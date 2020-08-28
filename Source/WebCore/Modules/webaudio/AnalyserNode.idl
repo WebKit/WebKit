@@ -40,10 +40,10 @@
 
     // Copies the current frequency data into the passed array.
     // If the array has fewer elements than the frequencyBinCount, the excess elements will be dropped.
-    void getFloatFrequencyData(Float32Array array);
-    void getByteFrequencyData(Uint8Array array);
+    undefined getFloatFrequencyData(Float32Array array);
+    undefined getByteFrequencyData(Uint8Array array);
 
     // Real-time waveform data
-    [EnabledBySetting=ModernUnprefixedWebAudio] void getFloatTimeDomainData(Float32Array array);
-    void getByteTimeDomainData(Uint8Array array);
+    [EnabledBySetting=ModernUnprefixedWebAudio] undefined getFloatTimeDomainData(Float32Array array);
+    undefined getByteTimeDomainData(Uint8Array array);
 };

@@ -55,16 +55,16 @@ enum ReadyState {
     attribute unrestricted double duration;
 
     [NewObject, MayThrowException] SourceBuffer addSourceBuffer(DOMString type);
-    [MayThrowException] void removeSourceBuffer(SourceBuffer buffer);
+    [MayThrowException] undefined removeSourceBuffer(SourceBuffer buffer);
 
     readonly attribute ReadyState readyState;
     
-    [MayThrowException] void endOfStream(optional EndOfStreamError error);
+    [MayThrowException] undefined endOfStream(optional EndOfStreamError error);
 
     [CallWith=ScriptExecutionContext] static boolean isTypeSupported (DOMString type);
 
-    [MayThrowException] void setLiveSeekableRange(double start, double end);
-    [MayThrowException] void clearLiveSeekableRange();
+    [MayThrowException] undefined setLiveSeekableRange(double start, double end);
+    [MayThrowException] undefined clearLiveSeekableRange();
 
     attribute EventHandler onsourceopen;
     attribute EventHandler onsourceended;

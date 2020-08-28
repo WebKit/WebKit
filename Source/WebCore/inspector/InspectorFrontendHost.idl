@@ -34,34 +34,34 @@
     ImplementationLacksVTable,
     NoInterfaceObject,
 ] interface InspectorFrontendHost {
-    void loaded();
-    void closeWindow();
-    void reopen();
-    void reset();
+    undefined loaded();
+    undefined closeWindow();
+    undefined reopen();
+    undefined reset();
 
-    void bringToFront();
-    void inspectedURLChanged(DOMString newURL);
+    undefined bringToFront();
+    undefined inspectedURLChanged(DOMString newURL);
 
     readonly attribute boolean supportsShowCertificate;
     boolean showCertificate(DOMString serializedCertificate);
 
-    void setZoomFactor(unrestricted float zoom);
+    undefined setZoomFactor(unrestricted float zoom);
     float zoomFactor();
 
-    void setForcedAppearance(DOMString appearance);
+    undefined setForcedAppearance(DOMString appearance);
 
     DOMString userInterfaceLayoutDirection();
 
     boolean supportsDockSide(DOMString dockSide);
-    void requestSetDockSide(DOMString dockSide);
+    undefined requestSetDockSide(DOMString dockSide);
 
-    void setAttachedWindowHeight(unsigned long height);
-    void setAttachedWindowWidth(unsigned long width);
+    undefined setAttachedWindowHeight(unsigned long height);
+    undefined setAttachedWindowWidth(unsigned long width);
 
-    void setSheetRect(unrestricted float x, unrestricted float y, unsigned long width, unsigned long height);
+    undefined setSheetRect(unrestricted float x, unrestricted float y, unsigned long width, unsigned long height);
 
-    void startWindowDrag();
-    void moveWindowBy(unrestricted float x, unrestricted float y);
+    undefined startWindowDrag();
+    undefined moveWindowBy(unrestricted float x, unrestricted float y);
 
     readonly attribute boolean isRemote;
     readonly attribute DOMString localizedStringsURL;
@@ -69,31 +69,31 @@
     readonly attribute unsigned long inspectionLevel;
     readonly attribute DebuggableInfo debuggableInfo;
 
-    void copyText(DOMString text);
-    void killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
-    void openInNewTab(DOMString url);
+    undefined copyText(DOMString text);
+    undefined killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
+    undefined openInNewTab(DOMString url);
     boolean canSave();
-    void save(DOMString url, DOMString content, boolean base64Encoded, boolean forceSaveAs);
-    void append(DOMString url, DOMString content);
-    void close(DOMString url);
+    undefined save(DOMString url, DOMString content, boolean base64Encoded, boolean forceSaveAs);
+    undefined append(DOMString url, DOMString content);
+    undefined close(DOMString url);
 
     readonly attribute DOMString port;
     readonly attribute DOMString platform;
 
-    void showContextMenu(Event event, sequence<ContextMenuItem> items);
-    void dispatchEventAsContextMenuEvent(Event event);
-    void sendMessageToBackend(DOMString message);
-    void unbufferedLog(DOMString message);
+    undefined showContextMenu(Event event, sequence<ContextMenuItem> items);
+    undefined dispatchEventAsContextMenuEvent(Event event);
+    undefined sendMessageToBackend(DOMString message);
+    undefined unbufferedLog(DOMString message);
 
     boolean isUnderTest();
     boolean isExperimentalBuild();
 
-    void beep();
-    void inspectInspector();
+    undefined beep();
+    undefined inspectInspector();
     boolean isBeingInspected();
 
     readonly attribute boolean supportsDiagnosticLogging;
-    [Conditional=INSPECTOR_TELEMETRY] void logDiagnosticEvent(DOMString eventName, DOMString content);
+    [Conditional=INSPECTOR_TELEMETRY] undefined logDiagnosticEvent(DOMString eventName, DOMString content);
 };
 
 dictionary ContextMenuItem {

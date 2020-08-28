@@ -24,4 +24,4 @@
 
 [
     Conditional=GEOLOCATION,
-] callback PositionErrorCallback = void (GeolocationPositionError error);
+] callback PositionErrorCallback = undefined (GeolocationPositionError error);

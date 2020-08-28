@@ -34,23 +34,23 @@ typedef unsigned long long u64;
     InterfaceName=GPURenderPassEncoder,
     JSGenerateToJSObject
 ] interface WebGPURenderPassEncoder : WebGPUProgrammablePassEncoder {
-    void setPipeline(WebGPURenderPipeline pipeline);
-    void setBlendColor(GPUColor color);
+    undefined setPipeline(WebGPURenderPipeline pipeline);
+    undefined setBlendColor(GPUColor color);
 
     // The default viewport is (0.0, 0.0, w, h, 0.0, 1.0), where w and h are the dimensions of back buffer
-    void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
+    undefined setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
 
     // The default scissor rectangle is (0, 0, w, h), where w and h are the dimensions of back buffer.
     // Width and height must be greater than 0. Otherwise, an error will be generated.
-    void setScissorRect(u32 x, u32 y, u32 width, u32 height);
+    undefined setScissorRect(u32 x, u32 y, u32 width, u32 height);
 
-    void setIndexBuffer(WebGPUBuffer buffer, u64 offset);
-    void setVertexBuffers(u32 startSlot, sequence<WebGPUBuffer> buffers, sequence<u64> offsets);
+    undefined setIndexBuffer(WebGPUBuffer buffer, u64 offset);
+    undefined setVertexBuffers(u32 startSlot, sequence<WebGPUBuffer> buffers, sequence<u64> offsets);
 
-    void draw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance);
-    void drawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex, i32 baseVertex, u32 firstInstance);
+    undefined draw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance);
+    undefined drawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex, i32 baseVertex, u32 firstInstance);
 
 /* Not Yet Implemented
-    void setStencilReference(u32 reference);
+    undefined setStencilReference(u32 reference);
 */
 };

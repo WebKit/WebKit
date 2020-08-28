@@ -30,4 +30,4 @@
 
 [
     ExportMacro=WEBCORE_EXPORT
-] callback StringCallback = void (DOMString data);
+] callback StringCallback = undefined (DOMString data);

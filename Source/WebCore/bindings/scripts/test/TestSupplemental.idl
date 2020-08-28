@@ -40,15 +40,15 @@
 
     [Reflect] attribute DOMString reflectAttribute;
 
-    void supplementalMethod1();
+    undefined supplementalMethod1();
     [CallWith=ScriptExecutionContext, MayThrowException] TestObj supplementalMethod2(DOMString strArg, TestObj objArg);
-    [Custom] void supplementalMethod3();
-    static void supplementalMethod4();
+    [Custom] undefined supplementalMethod3();
+    static undefined supplementalMethod4();
 
     const unsigned short SUPPLEMENTALCONSTANT1 = 1;
     [Reflect=CONST_IMPL] const unsigned short SUPPLEMENTALCONSTANT2 = 2;
 
-    [JSBuiltin] void builtinFunction();
+    [JSBuiltin] undefined builtinFunction();
     [JSBuiltin] attribute unsigned short builtinAttribute;
 };
 

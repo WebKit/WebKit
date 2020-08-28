@@ -33,7 +33,7 @@
     [CallWith=Document, MayThrowException] constructor(sequence<PaymentMethodData> methodData, PaymentDetailsInit details, optional PaymentOptions options);
 
     [CallWith=Document] Promise<PaymentResponse> show(optional Promise<PaymentDetailsUpdate> detailsPromise);
-    Promise<void> abort();
+    Promise<undefined> abort();
     [CallWith=Document] Promise<boolean> canMakePayment();
 
     readonly attribute DOMString id;

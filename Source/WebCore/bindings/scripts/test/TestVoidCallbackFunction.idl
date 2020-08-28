@@ -28,4 +28,4 @@
 
 [
     Conditional=TEST_CONDITIONAL,
-] callback TestVoidCallbackFunction = void (Float32Array arrayParam, SerializedScriptValue srzParam, DOMString strArg, boolean boolParam, long longParam, TestNode testNodeParam);
+] callback TestVoidCallbackFunction = undefined (Float32Array arrayParam, SerializedScriptValue srzParam, DOMString strArg, boolean boolParam, long longParam, TestNode testNodeParam);

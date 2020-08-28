@@ -25,6 +25,6 @@
 
 typedef long LONG;
 typedef sequence<LONG?> SEQUENCE_OF_NULLABLE_LONGS;
-typedef void VOID;
+typedef undefined UNDEFINED;
 
-callback TestCallbackFunctionWithTypedefs = VOID (SEQUENCE_OF_NULLABLE_LONGS sequenceArg, LONG longArg);
+callback TestCallbackFunctionWithTypedefs = UNDEFINED (SEQUENCE_OF_NULLABLE_LONGS sequenceArg, LONG longArg);

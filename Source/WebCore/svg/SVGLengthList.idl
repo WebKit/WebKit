@@ -30,12 +30,12 @@
     readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowException] void clear();
+    [MayThrowException] undefined clear();
     [MayThrowException] SVGLength initialize(SVGLength newItem);
     [MayThrowException] getter SVGLength getItem(unsigned long index);
     [MayThrowException] SVGLength insertItemBefore(SVGLength newItem, unsigned long index);
     [MayThrowException] SVGLength replaceItem(SVGLength newItem, unsigned long index);
     [MayThrowException] SVGLength removeItem(unsigned long index);
     [MayThrowException] SVGLength appendItem(SVGLength newItem);
-    [MayThrowException] setter void (unsigned long index, SVGLength newItem);
+    [MayThrowException] setter undefined (unsigned long index, SVGLength newItem);
 };

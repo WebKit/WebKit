@@ -28,5 +28,5 @@ interface HTMLTableRowElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect=charoff] attribute DOMString chOff;
     [CEReactions=NotNeeded, Reflect] attribute DOMString vAlign;
     [MayThrowException] HTMLElement insertCell(optional long index = -1);
-    [CEReactions, MayThrowException] void deleteCell(long index);
+    [CEReactions, MayThrowException] undefined deleteCell(long index);
 };

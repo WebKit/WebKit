@@ -38,13 +38,13 @@
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
-    [MayThrowException] void webkitEnterFullscreen();
-    void webkitExitFullscreen();
+    [MayThrowException] undefined webkitEnterFullscreen();
+    undefined webkitExitFullscreen();
 
     // Maintain "FullScreen" capitalization scheme for backwards compatibility.
     // https://bugs.webkit.org/show_bug.cgi?id=36081
-    [ImplementedAs=webkitEnterFullscreen, MayThrowException] void webkitEnterFullScreen();
-    [ImplementedAs=webkitExitFullscreen] void webkitExitFullScreen();
+    [ImplementedAs=webkitEnterFullscreen, MayThrowException] undefined webkitEnterFullScreen();
+    [ImplementedAs=webkitExitFullscreen] undefined webkitExitFullScreen();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] attribute boolean webkitWirelessVideoPlaybackDisabled;
 
@@ -56,7 +56,7 @@
 
     [Conditional=VIDEO_PRESENTATION_MODE] boolean webkitSupportsPresentationMode(VideoPresentationMode mode);
     [Conditional=VIDEO_PRESENTATION_MODE] readonly attribute VideoPresentationMode webkitPresentationMode;
-    [Conditional=VIDEO_PRESENTATION_MODE] void webkitSetPresentationMode(VideoPresentationMode mode);
+    [Conditional=VIDEO_PRESENTATION_MODE] undefined webkitSetPresentationMode(VideoPresentationMode mode);
 };
 
 [Conditional=VIDEO_PRESENTATION_MODE] enum VideoPresentationMode { "inline", "fullscreen", "picture-in-picture" };

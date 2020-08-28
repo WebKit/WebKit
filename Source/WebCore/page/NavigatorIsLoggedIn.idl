@@ -28,7 +28,7 @@
     Exposed=Window,
     EnabledBySetting=IsLoggedInAPI
 ] partial interface Navigator {
-    Promise<void> setLoggedIn();
-    Promise<void> setLoggedOut();
+    Promise<undefined> setLoggedIn();
+    Promise<undefined> setLoggedOut();
     Promise<bool> isLoggedIn();
 };

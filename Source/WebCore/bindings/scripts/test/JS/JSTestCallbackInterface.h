@@ -45,13 +45,13 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 
     // Functions
-    CallbackResult<typename IDLVoid::ImplementationType> callbackWithNoParam() override;
-    CallbackResult<typename IDLVoid::ImplementationType> callbackWithArrayParam(typename IDLFloat32Array::ParameterType arrayParam) override;
-    CallbackResult<typename IDLVoid::ImplementationType> callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam) override;
+    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithNoParam() override;
+    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithArrayParam(typename IDLFloat32Array::ParameterType arrayParam) override;
+    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam) override;
     CallbackResult<typename IDLLong::ImplementationType> customCallback(typename IDLInterface<TestObj>::ParameterType testObjParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
-    CallbackResult<typename IDLVoid::ImplementationType> callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam) override;
-    CallbackResult<typename IDLVoid::ImplementationType> callbackWithBoolean(typename IDLBoolean::ParameterType boolParam) override;
-    CallbackResult<typename IDLVoid::ImplementationType> callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
+    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam) override;
+    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithBoolean(typename IDLBoolean::ParameterType boolParam) override;
+    CallbackResult<typename IDLUndefined::ImplementationType> callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
     CallbackResult<typename IDLDOMString::ImplementationType> callbackWithAReturnValue() override;
     CallbackResult<typename IDLDOMString::ImplementationType> callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam) override;
     CallbackResult<typename IDLDOMString::ImplementationType> callbackThatSkipsInvokeCheck(typename IDLDictionary<TestCallbackInterface::Dictionary>::ParameterType dictionaryParam) override;

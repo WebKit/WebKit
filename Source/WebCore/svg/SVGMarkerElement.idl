@@ -44,8 +44,8 @@ interface SVGMarkerElement : SVGElement {
 
     attribute DOMString orient;
 
-    void setOrientToAuto();
-    void setOrientToAngle(SVGAngle angle);
+    undefined setOrientToAuto();
+    undefined setOrientToAngle(SVGAngle angle);
 };
 
 SVGMarkerElement implements SVGFitToViewBox;

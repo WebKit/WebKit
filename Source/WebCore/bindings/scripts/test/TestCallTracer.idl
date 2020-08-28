@@ -36,14 +36,14 @@ typedef (boolean or float or DOMString) VariantType;
 
     const boolean testConstValue = false;
 
-    void testOperationInterface();
-    [CallTracingCallback=testCallTracerOperation] void testOperationSpecified();
+    undefined testOperationInterface();
+    [CallTracingCallback=testCallTracerOperation] undefined testOperationSpecified();
 
-    void testOperationWithArguments(boolean a, float b, DOMString c);
-    void testOperationWithNullableArgument(Node? nodeNullableArg);
-    void testOperationWithVariantArgument(VariantType variantArg);
-    void testOperationWithNullableVariantArgument(VariantType? variantNullableArg);
-    void testOperationWithOptionalVariantArgument(optional VariantType variantOptionalArg);
-    void testOperationWithDefaultVariantArgument(optional VariantType variantDefaultArg = "");
+    undefined testOperationWithArguments(boolean a, float b, DOMString c);
+    undefined testOperationWithNullableArgument(Node? nodeNullableArg);
+    undefined testOperationWithVariantArgument(VariantType variantArg);
+    undefined testOperationWithNullableVariantArgument(VariantType? variantNullableArg);
+    undefined testOperationWithOptionalVariantArgument(optional VariantType variantOptionalArg);
+    undefined testOperationWithDefaultVariantArgument(optional VariantType variantDefaultArg = "");
 };
 

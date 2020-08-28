@@ -33,96 +33,96 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     JSGenerateToJSObject,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface InternalSettings : InternalSettingsGenerated {
-    [MayThrowException] void setTouchEventEmulationEnabled(boolean enabled);
+    [MayThrowException] undefined setTouchEventEmulationEnabled(boolean enabled);
 
     // Fonts, text
-    [MayThrowException] void setStandardFontFamily(DOMString family, DOMString script);
-    [MayThrowException] void setSerifFontFamily(DOMString family, DOMString script);
-    [MayThrowException] void setSansSerifFontFamily(DOMString family, DOMString script);
-    [MayThrowException] void setFixedFontFamily(DOMString family, DOMString script);
-    [MayThrowException] void setCursiveFontFamily(DOMString family, DOMString script);
-    [MayThrowException] void setFantasyFontFamily(DOMString family, DOMString script);
-    [MayThrowException] void setPictographFontFamily(DOMString family, DOMString script);
-    [MayThrowException] void setFontFallbackPrefersPictographs(boolean preferPictographs);
-    [MayThrowException] void setFontLoadTimingOverride(FontLoadTimingOverride override);
-    [MayThrowException] void setShouldIgnoreFontLoadCompletions(boolean ignore);
+    [MayThrowException] undefined setStandardFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setSerifFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setSansSerifFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setFixedFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setCursiveFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setFantasyFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setPictographFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setFontFallbackPrefersPictographs(boolean preferPictographs);
+    [MayThrowException] undefined setFontLoadTimingOverride(FontLoadTimingOverride override);
+    [MayThrowException] undefined setShouldIgnoreFontLoadCompletions(boolean ignore);
 
-    [MayThrowException] void setTextAutosizingEnabled(boolean enabled);
-    [MayThrowException] void setTextAutosizingWindowSizeOverride(long width, long height);
-    [MayThrowException] void setTextAutosizingUsesIdempotentMode(boolean enabled);
+    [MayThrowException] undefined setTextAutosizingEnabled(boolean enabled);
+    [MayThrowException] undefined setTextAutosizingWindowSizeOverride(long width, long height);
+    [MayThrowException] undefined setTextAutosizingUsesIdempotentMode(boolean enabled);
 
     // Media
-    [MayThrowException] void setCanStartMedia(boolean enabled);
-    [MayThrowException] void setShouldDisplayTrackKind(DOMString kind, boolean enabled);
+    [MayThrowException] undefined setCanStartMedia(boolean enabled);
+    [MayThrowException] undefined setShouldDisplayTrackKind(DOMString kind, boolean enabled);
     [MayThrowException] boolean shouldDisplayTrackKind(DOMString trackKind);
-    [MayThrowException] void setDefaultVideoPosterURL(DOMString poster);
-    [MayThrowException] void setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double time);
-    [MayThrowException] void setMediaTypeOverride(DOMString mediaTypeOverride);
-    void setAllowsAirPlayForMediaPlayback(boolean available);
-    [Conditional=MEDIA_STREAM, MayThrowException] void setMediaCaptureRequiresSecureConnection(boolean enable);
+    [MayThrowException] undefined setDefaultVideoPosterURL(DOMString poster);
+    [MayThrowException] undefined setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double time);
+    [MayThrowException] undefined setMediaTypeOverride(DOMString mediaTypeOverride);
+    undefined setAllowsAirPlayForMediaPlayback(boolean available);
+    [Conditional=MEDIA_STREAM, MayThrowException] undefined setMediaCaptureRequiresSecureConnection(boolean enable);
 
-    [MayThrowException] void setForcePendingWebGLPolicy(boolean forced);
+    [MayThrowException] undefined setForcePendingWebGLPolicy(boolean forced);
 
-    [MayThrowException] void setQuickTimePluginReplacementEnabled(boolean enabled);
-    [MayThrowException] void setYouTubeFlashPluginReplacementEnabled(boolean enabled);
+    [MayThrowException] undefined setQuickTimePluginReplacementEnabled(boolean enabled);
+    [MayThrowException] undefined setYouTubeFlashPluginReplacementEnabled(boolean enabled);
 
     // Editing, forms
-    [MayThrowException] void setEditingBehavior(DOMString behavior);
-    [MayThrowException] void setShouldConvertPositionStyleOnCopy(boolean convertPosition);
-    [MayThrowException] void setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
+    [MayThrowException] undefined setEditingBehavior(DOMString behavior);
+    [MayThrowException] undefined setShouldConvertPositionStyleOnCopy(boolean convertPosition);
+    [MayThrowException] undefined setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
 
     // Other switches
-    [MayThrowException] void setUseDarkAppearance(boolean enabled);
-    [MayThrowException] void setStorageBlockingPolicy(DOMString policy);
-    [MayThrowException] void setImagesEnabled(boolean enabled);
-    [MayThrowException] void setPDFImageCachingPolicy(DOMString policy);
-    [MayThrowException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
-    [MayThrowException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
-    [MayThrowException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
-    [MayThrowException] void setScrollingTreeIncludesFrames(boolean enabled);
-    [MayThrowException] void setAllowUnclampedScrollPosition(boolean allowUnclamped);
-    [MayThrowException] void setAnimatedImageDebugCanvasDrawingEnabled(boolean enable);
+    [MayThrowException] undefined setUseDarkAppearance(boolean enabled);
+    [MayThrowException] undefined setStorageBlockingPolicy(DOMString policy);
+    [MayThrowException] undefined setImagesEnabled(boolean enabled);
+    [MayThrowException] undefined setPDFImageCachingPolicy(DOMString policy);
+    [MayThrowException] undefined setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
+    [MayThrowException] undefined setAutoscrollForDragAndDropEnabled(boolean enabled);
+    [MayThrowException] undefined setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
+    [MayThrowException] undefined setScrollingTreeIncludesFrames(boolean enabled);
+    [MayThrowException] undefined setAllowUnclampedScrollPosition(boolean allowUnclamped);
+    [MayThrowException] undefined setAnimatedImageDebugCanvasDrawingEnabled(boolean enable);
 
-    [MayThrowException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
-    [MayThrowException] void setAllowsInlineMediaPlayback(boolean allows);
-    [MayThrowException] void setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
-    [MayThrowException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
-    [MayThrowException] void setFrameFlattening(FrameFlatteningValue frameFlattening);
-    [MayThrowException] void setIncompleteImageBorderEnabled(boolean enabled);
-    [MayThrowException] void setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(boolean shouldDispatch);
-    [MayThrowException] void setShouldDispatchSyntheticMouseOutAfterSyntheticClick(boolean shouldDispatch);
+    [MayThrowException] undefined setMinimumTimerInterval(unrestricted double intervalInSeconds);
+    [MayThrowException] undefined setAllowsInlineMediaPlayback(boolean allows);
+    [MayThrowException] undefined setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
+    [MayThrowException] undefined setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
+    [MayThrowException] undefined setFrameFlattening(FrameFlatteningValue frameFlattening);
+    [MayThrowException] undefined setIncompleteImageBorderEnabled(boolean enabled);
+    [MayThrowException] undefined setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(boolean shouldDispatch);
+    [MayThrowException] undefined setShouldDispatchSyntheticMouseOutAfterSyntheticClick(boolean shouldDispatch);
 
     // RuntimeEnabledFeatures.
-    void setIndexedDBWorkersEnabled(boolean enabled);
-    void setWebGL2Enabled(boolean enabled);
-    void setWebGPUEnabled(boolean enabled);
-    void setScreenCaptureEnabled(boolean enabled);
-    void setFetchAPIKeepAliveEnabled(boolean enabled);
+    undefined setIndexedDBWorkersEnabled(boolean enabled);
+    undefined setWebGL2Enabled(boolean enabled);
+    undefined setWebGPUEnabled(boolean enabled);
+    undefined setScreenCaptureEnabled(boolean enabled);
+    undefined setFetchAPIKeepAliveEnabled(boolean enabled);
 
     [MayThrowException] DOMString userInterfaceDirectionPolicy();
-    [MayThrowException] void setUserInterfaceDirectionPolicy(DOMString policy);
+    [MayThrowException] undefined setUserInterfaceDirectionPolicy(DOMString policy);
     [MayThrowException] DOMString systemLayoutDirection();
-    [MayThrowException] void setSystemLayoutDirection(DOMString direction);
+    [MayThrowException] undefined setSystemLayoutDirection(DOMString direction);
 
     [MayThrowException] boolean deferredCSSParserEnabled();
-    [MayThrowException] void setDeferredCSSParserEnabled(boolean enabled);
+    [MayThrowException] undefined setDeferredCSSParserEnabled(boolean enabled);
 
-    [MayThrowException] void setShouldMockBoldSystemFontForAccessibility(boolean shouldMock);
+    [MayThrowException] undefined setShouldMockBoldSystemFontForAccessibility(boolean shouldMock);
 
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
     attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
     attribute ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue;
 
-    [MayThrowException] void setShouldManageAudioSessionCategory(boolean should);
-    [MayThrowException] void setCustomPasteboardDataEnabled(boolean enabled);
+    [MayThrowException] undefined setShouldManageAudioSessionCategory(boolean should);
+    [MayThrowException] undefined setCustomPasteboardDataEnabled(boolean enabled);
 
     [EnabledAtRuntime=WebAnimations] boolean webAnimationsCSSIntegrationEnabled();
 
-    void setShouldDeactivateAudioSession(boolean shouldDeactivate);
+    undefined setShouldDeactivateAudioSession(boolean shouldDeactivate);
     
-    void setStorageAccessAPIPerPageScopeEnabled(boolean enabled);
+    undefined setStorageAccessAPIPerPageScopeEnabled(boolean enabled);
 
-    [MayThrowException] void setEditableRegionEnabled(boolean enabled);
+    [MayThrowException] undefined setEditableRegionEnabled(boolean enabled);
 };
 

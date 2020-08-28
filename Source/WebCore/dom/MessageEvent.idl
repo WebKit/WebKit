@@ -45,7 +45,7 @@ typedef (WindowProxy or MessagePort) MessageEventSource;
     [CustomGetter] readonly attribute any data;
     [CustomGetter] readonly attribute FrozenArray<MessagePort> ports;
 
-    void initMessageEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false,
+    undefined initMessageEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false,
         optional any data = null, optional USVString originArg = "", optional DOMString lastEventId = "", optional MessageEventSource? source = null,
         optional sequence<MessagePort> messagePorts = []);
 };

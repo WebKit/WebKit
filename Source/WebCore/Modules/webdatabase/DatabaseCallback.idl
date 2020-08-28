@@ -26,4 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback DatabaseCallback = void (Database database);
+callback DatabaseCallback = undefined (Database database);

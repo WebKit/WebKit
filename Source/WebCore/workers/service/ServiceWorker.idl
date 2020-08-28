@@ -36,8 +36,8 @@
 ] interface ServiceWorker : EventTarget {
     readonly attribute USVString scriptURL;
     readonly attribute ServiceWorkerState state;
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, sequence<object> transfer);
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, optional PostMessageOptions options);
+    [CallWith=GlobalObject, MayThrowException] undefined postMessage(any message, sequence<object> transfer);
+    [CallWith=GlobalObject, MayThrowException] undefined postMessage(any message, optional PostMessageOptions options);
 
     // event
     attribute EventHandler onstatechange;

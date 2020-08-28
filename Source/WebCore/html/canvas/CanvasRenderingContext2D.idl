@@ -33,24 +33,24 @@
     readonly attribute HTMLCanvasElement canvas;
 
     // Non-standard legacy aliases (Compositing).
-    [ImplementedAs=setGlobalAlpha] void setAlpha(optional unrestricted float alpha = NaN);
-    [ImplementedAs=setGlobalCompositeOperation] void setCompositeOperation(optional DOMString compositeOperation = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
+    [ImplementedAs=setGlobalAlpha] undefined setAlpha(optional unrestricted float alpha = NaN);
+    [ImplementedAs=setGlobalCompositeOperation] undefined setCompositeOperation(optional DOMString compositeOperation = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
 
     // Non-standard functionality (CanvasDrawImage).
-    void drawImageFromRect(HTMLImageElement image,
+    undefined drawImageFromRect(HTMLImageElement image,
         optional unrestricted float sx = 0, optional unrestricted float sy = 0, optional unrestricted float sw = 0, optional unrestricted float sh = 0,
         optional unrestricted float dx = 0, optional unrestricted float dy = 0, optional unrestricted float dw = 0, optional unrestricted float dh = 0,
         optional DOMString compositeOperation = "");
 
     // Non-standard legacy aliases (CanvasFillStrokeStyles).
-    void setStrokeColor(DOMString color, optional unrestricted float alpha);
-    void setStrokeColor(unrestricted float grayLevel, optional float alpha = 1);
-    void setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    void setStrokeColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
-    void setFillColor(DOMString color, optional unrestricted float alpha);
-    void setFillColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
-    void setFillColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    void setFillColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
+    undefined setStrokeColor(DOMString color, optional unrestricted float alpha);
+    undefined setStrokeColor(unrestricted float grayLevel, optional float alpha = 1);
+    undefined setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
+    undefined setStrokeColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
+    undefined setFillColor(DOMString color, optional unrestricted float alpha);
+    undefined setFillColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
+    undefined setFillColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
+    undefined setFillColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
 
     // Non-standard functionality (CanvasImageData).
     readonly attribute float webkitBackingStorePixelRatio; // Always returns 1.
@@ -59,22 +59,22 @@
     [ImplementedAs=imageSmoothingEnabled] attribute boolean webkitImageSmoothingEnabled;
 
     // Non-standard legacy aliases (CanvasPathDrawingStyles).
-    void setLineWidth(optional unrestricted float width = NaN);
-    void setLineCap(optional DOMString cap = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
-    void setLineJoin(optional DOMString join = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
-    void setMiterLimit(optional unrestricted float limit = NaN);
+    undefined setLineWidth(optional unrestricted float width = NaN);
+    undefined setLineCap(optional DOMString cap = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
+    undefined setLineJoin(optional DOMString join = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
+    undefined setMiterLimit(optional unrestricted float limit = NaN);
     attribute sequence<unrestricted float> webkitLineDash;
     [ImplementedAs=lineDashOffset] attribute unrestricted float webkitLineDashOffset;
 
     // Non-standard legacy aliases (CanvasShadowStyles).
-    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, optional DOMString color, optional unrestricted float alpha);
-    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, optional unrestricted float alpha = 1);
-    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    void setShadow(float width, unrestricted float height, unrestricted float blur, unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
-    void clearShadow();
+    undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, optional DOMString color, optional unrestricted float alpha);
+    undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, optional unrestricted float alpha = 1);
+    undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
+    undefined setShadow(float width, unrestricted float height, unrestricted float blur, unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
+    undefined clearShadow();
 
     // Inspector-only.
-    [EnabledAtRuntime=InspectorAdditions] void setPath(Path2D path);
+    [EnabledAtRuntime=InspectorAdditions] undefined setPath(Path2D path);
     [EnabledAtRuntime=InspectorAdditions, NewObject] Path2D getPath();
 };
 

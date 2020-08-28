@@ -27,7 +27,7 @@
     attribute DOMString name;
 
     [EnabledAtRuntime=DOMIterator] iterable<TestNode>;
-    Promise<void> testWorkerPromise();
+    Promise<undefined> testWorkerPromise();
 
     // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
     // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)

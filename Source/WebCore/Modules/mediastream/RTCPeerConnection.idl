@@ -79,7 +79,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     [JSBuiltin, CallWith=Document] constructor();
 
     // JS built-in constructor handles the optional RTCConfiguration
-    [PrivateIdentifier, CallWith=Document, MayThrowException] void initializeWith(RTCConfiguration configuration);
+    [PrivateIdentifier, CallWith=Document, MayThrowException] undefined initializeWith(RTCConfiguration configuration);
 
 
     // 4.3.2 Interface Definition
@@ -87,17 +87,17 @@ typedef (object or DOMString) AlgorithmIdentifier;
     [JSBuiltin] Promise<RTCSessionDescriptionInit> createOffer(optional RTCOfferOptions offerOptions);
     [JSBuiltin] Promise<RTCSessionDescriptionInit> createAnswer(optional RTCAnswerOptions answerOptions);
 
-    [JSBuiltin] Promise<void> setLocalDescription(RTCSessionDescriptionInit description);
+    [JSBuiltin] Promise<undefined> setLocalDescription(RTCSessionDescriptionInit description);
     readonly attribute RTCSessionDescription? localDescription;
     readonly attribute RTCSessionDescription? currentLocalDescription;
     readonly attribute RTCSessionDescription? pendingLocalDescription;
 
-    [JSBuiltin] Promise<void> setRemoteDescription(RTCSessionDescriptionInit description);
+    [JSBuiltin] Promise<undefined> setRemoteDescription(RTCSessionDescriptionInit description);
     readonly attribute RTCSessionDescription? remoteDescription;
     readonly attribute RTCSessionDescription? currentRemoteDescription;
     readonly attribute RTCSessionDescription? pendingRemoteDescription;
 
-    [JSBuiltin] Promise<void> addIceCandidate((RTCIceCandidateInit or RTCIceCandidate) candidate);
+    [JSBuiltin] Promise<undefined> addIceCandidate((RTCIceCandidateInit or RTCIceCandidate) candidate);
 
     readonly attribute RTCSignalingState signalingState;
     readonly attribute RTCIceGatheringState iceGatheringState;
@@ -107,8 +107,8 @@ typedef (object or DOMString) AlgorithmIdentifier;
     // FIXME 169644: missing defaultIceServers
 
     RTCConfiguration getConfiguration();
-    [MayThrowException] void setConfiguration(RTCConfiguration configuration);
-    void close();
+    [MayThrowException] undefined setConfiguration(RTCConfiguration configuration);
+    undefined close();
 
     attribute EventHandler onnegotiationneeded;
     attribute EventHandler onicecandidate;
@@ -122,9 +122,9 @@ typedef (object or DOMString) AlgorithmIdentifier;
     // See RTCPeerConnectionInternals.js.
     [PrivateIdentifier] Promise<RTCSessionDescriptionInit> queuedCreateOffer(optional RTCOfferOptions offerOptions);
     [PrivateIdentifier] Promise<RTCSessionDescriptionInit> queuedCreateAnswer(optional RTCAnswerOptions answerOptions);
-    [PrivateIdentifier] Promise<void> queuedSetLocalDescription(RTCSessionDescription description);
-    [PrivateIdentifier] Promise<void> queuedSetRemoteDescription(RTCSessionDescription description);
-    [PrivateIdentifier] Promise<void> queuedAddIceCandidate(RTCIceCandidate? candidate);
+    [PrivateIdentifier] Promise<undefined> queuedSetLocalDescription(RTCSessionDescription description);
+    [PrivateIdentifier] Promise<undefined> queuedSetRemoteDescription(RTCSessionDescription description);
+    [PrivateIdentifier] Promise<undefined> queuedAddIceCandidate(RTCIceCandidate? candidate);
 
 
     // 4.11 Certificate management
@@ -137,7 +137,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     sequence<RTCRtpTransceiver> getTransceivers();
 
     [MayThrowException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
-    [MayThrowException] void removeTrack(RTCRtpSender sender);
+    [MayThrowException] undefined removeTrack(RTCRtpSender sender);
 
     [MayThrowException] RTCRtpTransceiver addTransceiver((MediaStreamTrack or DOMString) track, optional RTCRtpTransceiverInit init);
 

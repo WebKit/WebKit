@@ -29,7 +29,7 @@
     ImplementationLacksVTable,
     NoInterfaceObject,
 ] interface ServiceWorkerInternals {
-    void setOnline(boolean isOnline);
+    undefined setOnline(boolean isOnline);
     Promise<Response> waitForFetchEventToFinish(FetchEvent event);
     [CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
     [CallWith=ScriptExecutionContext] FetchResponse createOpaqueWithBlobBodyResponse();

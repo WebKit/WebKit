@@ -34,7 +34,7 @@
     attribute unrestricted float dopplerFactor;  // same as OpenAL (default 1.0)
     attribute unrestricted float speedOfSound;   // in meters / second (default 343.3)
 
-    void setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
-    void setOrientation(unrestricted float x, unrestricted float y, unrestricted float z, unrestricted float xUp, unrestricted float yUp, unrestricted float zUp);
-    void setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
+    undefined setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
+    undefined setOrientation(unrestricted float x, unrestricted float y, unrestricted float z, unrestricted float xUp, unrestricted float yUp, unrestricted float zUp);
+    undefined setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
 };

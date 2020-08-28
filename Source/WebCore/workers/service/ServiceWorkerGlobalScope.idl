@@ -37,7 +37,7 @@
     [SameObject] readonly attribute ServiceWorkerClients clients;
     [SameObject] readonly attribute ServiceWorkerRegistration registration;
 
-    [NewObject] Promise<void> skipWaiting();
+    [NewObject] Promise<undefined> skipWaiting();
 
     attribute EventHandler oninstall;
     attribute EventHandler onactivate;

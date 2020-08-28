@@ -32,31 +32,31 @@
 ] interface WebFakeXRDevice {
   // Sets the values to be used for subsequent
   // requestAnimationFrame() callbacks.
-  void setViews(sequence<FakeXRViewInit> views);
+  undefined setViews(sequence<FakeXRViewInit> views);
 
   // behaves as if device was disconnected
-  Promise<void> disconnect();
+  Promise<undefined> disconnect();
 
   // Sets the origin of the viewer
-  void setViewerOrigin(FakeXRRigidTransformInit origin, optional boolean emulatedPosition = false);
+  undefined setViewerOrigin(FakeXRRigidTransformInit origin, optional boolean emulatedPosition = false);
 
   // If an origin is not specified, then the device is assumed to not be tracking, emulatedPosition should
   // be assumed for cases where the UA must always provide a pose.
-  void clearViewerOrigin();
+  undefined clearViewerOrigin();
 
   // Simulates devices focusing and blurring sessions.
-  void simulateVisibilityChange(XRVisibilityState visibilityState);
+  undefined simulateVisibilityChange(XRVisibilityState visibilityState);
 
-  void setBoundsGeometry(sequence<FakeXRBoundsPoint> boundsCoordinates);
+  undefined setBoundsGeometry(sequence<FakeXRBoundsPoint> boundsCoordinates);
   // Sets the native origin of the physical floor
-  void setFloorOrigin(FakeXRRigidTransformInit floorOrigin);
+  undefined setFloorOrigin(FakeXRRigidTransformInit floorOrigin);
 
   // Indicates that the device can no longer identify the location of the physical floor.
-  void clearFloorOrigin();
+  undefined clearFloorOrigin();
 
   // Used to simulate a major change in tracking and that a reset pose event should be fired
   // https://immersive-web.github.io/webxr/#event-types
-  void simulateResetPose();
+  undefined simulateResetPose();
 
   // Used to connect and send input events
   WebFakeXRInputController simulateInputSourceConnection(FakeXRInputSourceInit inputSource);

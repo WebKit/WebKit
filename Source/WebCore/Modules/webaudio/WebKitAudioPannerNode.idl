@@ -32,9 +32,9 @@
     attribute PanningModelType panningModel;
 
     // Uses a 3D cartesian coordinate system
-    void setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
-    void setOrientation(unrestricted float x, unrestricted float y, unrestricted float z);
-    void setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
+    undefined setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
+    undefined setOrientation(unrestricted float x, unrestricted float y, unrestricted float z);
+    undefined setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
 
     // Distance model
     attribute DistanceModelType distanceModel;

@@ -42,13 +42,13 @@ dictionary TestCallbackInterfaceDictionary {
     const unsigned short CONSTANT2 = 2;
 
     // Operations.
-    void callbackWithNoParam();
-    void callbackWithArrayParam(Float32Array arrayParam);
-    void callbackWithSerializedScriptValueParam(SerializedScriptValue srzParam, DOMString strParam);
+    undefined callbackWithNoParam();
+    undefined callbackWithArrayParam(Float32Array arrayParam);
+    undefined callbackWithSerializedScriptValueParam(SerializedScriptValue srzParam, DOMString strParam);
     [Custom] long customCallback(TestObj testObjParam, TestNode testNodeParam);
-    void callbackWithStringList(DOMStringList listParam);
-    void callbackWithBoolean(boolean boolParam);
-    void callbackRequiresThisToPass(long longParam, TestNode testNodeParam);
+    undefined callbackWithStringList(DOMStringList listParam);
+    undefined callbackWithBoolean(boolean boolParam);
+    undefined callbackRequiresThisToPass(long longParam, TestNode testNodeParam);
     DOMString callbackWithAReturnValue();
     [RethrowException] DOMString callbackThatRethrowsExceptions(TestCallbackInterfaceEnum enumParam);
     [SkipCallbackInvokeCheck] DOMString callbackThatSkipsInvokeCheck(TestCallbackInterfaceDictionary dictionaryParam);

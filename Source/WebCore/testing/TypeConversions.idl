@@ -66,13 +66,13 @@
     attribute USVString testUSVString;
     attribute [TreatNullAs=EmptyString] DOMString testTreatNullAsEmptyString;
 
-    void setTestLongRecord(record<DOMString, long> record);
+    undefined setTestLongRecord(record<DOMString, long> record);
     record<DOMString, long> testLongRecord();
 
-    void setTestNodeRecord(record<USVString, Node> record);
+    undefined setTestNodeRecord(record<USVString, Node> record);
     record<USVString, Node> testNodeRecord();
 
-    void setTestSequenceRecord(record<ByteString, sequence<DOMString>> record);
+    undefined setTestSequenceRecord(record<ByteString, sequence<DOMString>> record);
     record<ByteString, sequence<DOMString>> testSequenceRecord();
 
     attribute (DOMString or long or boolean or Node or sequence<long>) testUnion;

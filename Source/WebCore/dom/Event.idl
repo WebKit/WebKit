@@ -40,20 +40,20 @@ typedef double DOMHighResTimeStamp;
     const unsigned short BUBBLING_PHASE = 3;
     readonly attribute unsigned short eventPhase;
 
-    void stopPropagation();
+    undefined stopPropagation();
     attribute boolean cancelBubble; // historical alias of .stopPropagation.
-    void stopImmediatePropagation();
+    undefined stopImmediatePropagation();
 
     readonly attribute boolean bubbles;
     readonly attribute boolean cancelable;
-    void preventDefault();
+    undefined preventDefault();
     readonly attribute boolean defaultPrevented;
     [EnabledAtRuntime=ShadowDOM] readonly attribute boolean composed;
 
     [Unforgeable] readonly attribute boolean isTrusted;
     [CallWith=ScriptExecutionContext, ImplementedAs=timeStampForBindings] readonly attribute DOMHighResTimeStamp timeStamp;
 
-    void initEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false); // Historical.
+    undefined initEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false); // Historical.
 
     // IE extensions that may get standardized (https://github.com/whatwg/dom/issues/334).
     [ImplementedAs=target] readonly attribute EventTarget srcElement;

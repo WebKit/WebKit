@@ -36,9 +36,9 @@
     readonly attribute DOMString rootMargin;
     readonly attribute sequence<double> thresholds;
 
-    void observe(Element target);
-    void unobserve(Element target);
-    void disconnect();
+    undefined observe(Element target);
+    undefined unobserve(Element target);
+    undefined disconnect();
     [ResultField=records] sequence<IntersectionObserverEntry> takeRecords();
 };
 

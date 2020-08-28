@@ -28,6 +28,6 @@
     Conditional=QUOTA,
     ImplementationLacksVTable,
 ] interface StorageQuota {
-    [CallWith=ScriptExecutionContext] void queryUsageAndQuota(StorageUsageCallback usageCallback, optional StorageErrorCallback? errorCallback);
-    [CallWith=ScriptExecutionContext] void requestQuota(unsigned long long newQuotaInBytes, optional StorageQuotaCallback? quotaCallback, optional StorageErrorCallback? errorCallback);
+    [CallWith=ScriptExecutionContext] undefined queryUsageAndQuota(StorageUsageCallback usageCallback, optional StorageErrorCallback? errorCallback);
+    [CallWith=ScriptExecutionContext] undefined requestQuota(unsigned long long newQuotaInBytes, optional StorageQuotaCallback? quotaCallback, optional StorageErrorCallback? errorCallback);
 };

@@ -33,7 +33,7 @@ interface StorageEvent : Event {
     readonly attribute Storage? storageArea;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    void initStorageEvent(optional DOMString typeArg = "undefined",
+    undefined initStorageEvent(optional DOMString typeArg = "undefined",
                           optional boolean canBubbleArg = false,
                           optional boolean cancelableArg = false,
                           optional DOMString keyArg = "undefined",
@@ -43,7 +43,7 @@ interface StorageEvent : Event {
                           optional Storage? storageAreaArg = null);
 
     // Needed once we support init<blank>EventNS
-    // void initStorageEventNS(DOMString namespaceURI, DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, DOMString keyArg, DOMString oldValueArg, DOMString newValueArg, USVString urlArg, Storage? storageAreaArg);
+    // undefined initStorageEventNS(DOMString namespaceURI, DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, DOMString keyArg, DOMString oldValueArg, DOMString newValueArg, USVString urlArg, Storage? storageAreaArg);
 };
 
 dictionary StorageEventInit : EventInit {

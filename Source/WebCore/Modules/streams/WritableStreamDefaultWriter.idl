@@ -32,12 +32,12 @@
 ] interface WritableStreamDefaultWriter {
     constructor(WritableStream stream);
 
-    readonly attribute Promise<void> closed;
+    readonly attribute Promise<undefined> closed;
     readonly attribute unrestricted double? desiredSize;
-    readonly attribute Promise<void> ready;
+    readonly attribute Promise<undefined> ready;
 
-    Promise<void> abort(optional any reason);
-    Promise<void> close();
-    void releaseLock();
-    Promise<void> write(optional any chunk);
+    Promise<undefined> abort(optional any reason);
+    Promise<undefined> close();
+    undefined releaseLock();
+    Promise<undefined> write(optional any chunk);
 };

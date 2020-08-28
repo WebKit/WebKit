@@ -37,12 +37,12 @@
     // FIXME: items should use [SameObject] once that is supported.
     [EnabledAtRuntime=DataTransferItems, CallWith=Document] readonly attribute DataTransferItemList items;
 
-    void setDragImage(Element? image, long x, long y); // FIXME: Element argument is not nullable in the HTML standard.
+    undefined setDragImage(Element? image, long x, long y); // FIXME: Element argument is not nullable in the HTML standard.
 
     readonly attribute FrozenArray<DOMString> types;
     [CallWith=Document] DOMString getData(DOMString format);
-    void setData(DOMString format, DOMString data);
-    void clearData(optional DOMString format);
+    undefined setData(DOMString format, DOMString data);
+    undefined clearData(optional DOMString format);
     // FIXME: files should use [SameObject] once that is supported.
     [CallWith=Document] readonly attribute FileList files;
 };

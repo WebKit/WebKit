@@ -31,8 +31,8 @@
     EnabledAtRuntime=WebSQL,
 ] interface Database {
     readonly attribute DOMString version;
-    void changeVersion(DOMString oldVersion, DOMString newVersion, optional SQLTransactionCallback? callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
-    void transaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
-    void readTransaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
+    undefined changeVersion(DOMString oldVersion, DOMString newVersion, optional SQLTransactionCallback? callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
+    undefined transaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
+    undefined readTransaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
 };
 

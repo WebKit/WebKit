@@ -36,7 +36,7 @@
     readonly attribute DOMException error;
 
     [MayThrowException] IDBObjectStore objectStore(DOMString name);
-    [MayThrowException] void abort();
+    [MayThrowException] undefined abort();
 
     attribute EventHandler onabort;
     attribute EventHandler oncomplete;

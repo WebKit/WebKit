@@ -25,4 +25,4 @@
 
 [
     ExportMacro=WEBCORE_EXPORT
-] callback VoidCallback = void ();
+] callback VoidCallback = undefined ();

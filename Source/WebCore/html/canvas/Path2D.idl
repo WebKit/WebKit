@@ -36,7 +36,7 @@
     // constructor(sequence<Path2D> paths, optional CanvasFillRule fillRule = "nonzero");
     constructor(DOMString d);
 
-    [MayThrowException] void addPath(Path2D path, optional DOMMatrix2DInit transform);
+    [MayThrowException] undefined addPath(Path2D path, optional DOMMatrix2DInit transform);
 };
 
 Path2D implements CanvasPath;

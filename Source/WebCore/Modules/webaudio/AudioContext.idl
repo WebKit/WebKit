@@ -39,9 +39,9 @@
 
     [CallWith=ActiveWindow] AudioTimestamp getOutputTimestamp();
 
-    [ImplementedAs=suspendRendering] Promise<void> suspend();
-    [ImplementedAs=resumeRendering] Promise<void> resume();
-    Promise<void> close();
+    [ImplementedAs=suspendRendering] Promise<undefined> suspend();
+    [ImplementedAs=resumeRendering] Promise<undefined> resume();
+    Promise<undefined> close();
 
     [Conditional=VIDEO, MayThrowException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
     [Conditional=MEDIA_STREAM, MayThrowException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);

@@ -34,13 +34,13 @@
     attribute ChannelInterpretation channelInterpretation;
 
     [MayThrowException] AudioNode connect([ReturnValue] AudioNode destination, optional unsigned long output = 0, optional unsigned long input = 0);
-    [MayThrowException] void connect(AudioParam destination, optional unsigned long output = 0);
+    [MayThrowException] undefined connect(AudioParam destination, optional unsigned long output = 0);
 
-    void disconnect();
-    [MayThrowException] void disconnect(unsigned long output);
-    [MayThrowException] void disconnect(AudioNode destinationNode);
-    [MayThrowException] void disconnect(AudioNode destinationNode, unsigned long output);
-    [MayThrowException] void disconnect(AudioNode destinationNode, unsigned long output, unsigned long input);
-    [MayThrowException] void disconnect(AudioParam destinationParam);
-    [MayThrowException] void disconnect(AudioParam destinationParam, unsigned long output);
+    undefined disconnect();
+    [MayThrowException] undefined disconnect(unsigned long output);
+    [MayThrowException] undefined disconnect(AudioNode destinationNode);
+    [MayThrowException] undefined disconnect(AudioNode destinationNode, unsigned long output);
+    [MayThrowException] undefined disconnect(AudioNode destinationNode, unsigned long output, unsigned long input);
+    [MayThrowException] undefined disconnect(AudioParam destinationParam);
+    [MayThrowException] undefined disconnect(AudioParam destinationParam, unsigned long output);
 };

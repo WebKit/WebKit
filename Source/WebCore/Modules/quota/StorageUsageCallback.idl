@@ -30,4 +30,4 @@
 
 [
     Conditional=QUOTA,
-] callback StorageUsageCallback = void (unsigned long long currentUsageInBytes, unsigned long long currentQuotaInBytes);
+] callback StorageUsageCallback = undefined (unsigned long long currentUsageInBytes, unsigned long long currentQuotaInBytes);

@@ -35,11 +35,11 @@
     readonly attribute SVGMatrix matrix;
     readonly attribute unrestricted float angle;
 
-    [MayThrowException] void setMatrix(optional DOMMatrix2DInit matrix);
-    [MayThrowException] void setTranslate(unrestricted float tx, unrestricted float ty);
-    [MayThrowException] void setScale(unrestricted float sx, unrestricted float sy);
-    [MayThrowException] void setRotate(unrestricted float angle, unrestricted float cx, unrestricted float cy);
-    [MayThrowException] void setSkewX(unrestricted float angle);
-    [MayThrowException] void setSkewY(unrestricted float angle);
+    [MayThrowException] undefined setMatrix(optional DOMMatrix2DInit matrix);
+    [MayThrowException] undefined setTranslate(unrestricted float tx, unrestricted float ty);
+    [MayThrowException] undefined setScale(unrestricted float sx, unrestricted float sy);
+    [MayThrowException] undefined setRotate(unrestricted float angle, unrestricted float cx, unrestricted float cy);
+    [MayThrowException] undefined setSkewX(unrestricted float angle);
+    [MayThrowException] undefined setSkewY(unrestricted float angle);
 };
 

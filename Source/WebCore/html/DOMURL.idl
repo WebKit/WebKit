@@ -52,5 +52,5 @@
 
     // https://w3c.github.io/FileAPI/#creating-revoking.
     [CallWith=ScriptExecutionContext] static DOMString createObjectURL(Blob blob);
-    [CallWith=ScriptExecutionContext] static void revokeObjectURL(DOMString url);
+    [CallWith=ScriptExecutionContext] static undefined revokeObjectURL(DOMString url);
 };

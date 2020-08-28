@@ -59,7 +59,7 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
     [CallWith=GlobalObject, MayThrowException] IDBRequest getAllKeys(any key, optional [EnforceRange] unsigned long count);
     [CallWith=GlobalObject, MayThrowException] IDBIndex createIndex(DOMString name, (DOMString or sequence<DOMString>) keyPath, optional IDBIndexParameters options);
     [MayThrowException] IDBIndex index(DOMString name);
-    [MayThrowException] void deleteIndex(DOMString name);
+    [MayThrowException] undefined deleteIndex(DOMString name);
     [CallWith=GlobalObject, MayThrowException] IDBRequest count(optional IDBKeyRange? range = null);
     [CallWith=GlobalObject, MayThrowException] IDBRequest count(any key);
 };

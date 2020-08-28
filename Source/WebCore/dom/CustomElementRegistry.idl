@@ -28,8 +28,8 @@
     GenerateIsReachable=ImplScriptExecutionContext,
     JSGenerateToNativeObject,
 ] interface CustomElementRegistry {
-    [CEReactions, Custom] void define(DOMString name, Function constructor);
+    [CEReactions, Custom] undefined define(DOMString name, Function constructor);
     any get(DOMString name);
-    [Custom, MayThrowException, ReturnsOwnPromise] Promise<void> whenDefined(DOMString name);
-    [CEReactions] void upgrade(Node root);
+    [Custom, MayThrowException, ReturnsOwnPromise] Promise<undefined> whenDefined(DOMString name);
+    [CEReactions] undefined upgrade(Node root);
 };

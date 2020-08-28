@@ -40,21 +40,21 @@ interface TestTypedefs {
     
     static readonly attribute T TestSubObj;
 
-    void func(optional SEQUENCE_OF_LONGS x = []);
+    undefined func(optional SEQUENCE_OF_LONGS x = []);
 
-    void setShadow(DOUBLE width, DOUBLE height, unrestricted float blur, optional STRING color, optional DOUBLE alpha);
+    undefined setShadow(DOUBLE width, DOUBLE height, unrestricted float blur, optional STRING color, optional DOUBLE alpha);
 
     ULONGLONG methodWithSequenceArg(sequence<SCRIPT_VALUE> sequenceArg);
 
-    void nullableSequenceArg(SEQUENCE_OF_STRINGS? sequenceArg);
-    void sequenceOfNullablesArg(sequence<STRING?> sequenceArg);
-    void nullableSequenceOfNullablesArg(SEQUENCE_OF_NULLABLE_STRINGS? sequenceArg);
-    void nullableSequenceOfUnionsArg(sequence<(STRING or SEQUENCE_OF_STRINGS)>? sequenceArg);
+    undefined nullableSequenceArg(SEQUENCE_OF_STRINGS? sequenceArg);
+    undefined sequenceOfNullablesArg(sequence<STRING?> sequenceArg);
+    undefined nullableSequenceOfNullablesArg(SEQUENCE_OF_NULLABLE_STRINGS? sequenceArg);
+    undefined nullableSequenceOfUnionsArg(sequence<(STRING or SEQUENCE_OF_STRINGS)>? sequenceArg);
 
-    void unionArg(UNION_STRING_LONG unionArg);
+    undefined unionArg(UNION_STRING_LONG unionArg);
 
-    void funcWithClamp([Clamp] ULONGLONG arg1, optional [Clamp] ULONGLONG arg2);
-    void funcWithClampInTypedef(CLAMPED_LONG arg);
+    undefined funcWithClamp([Clamp] ULONGLONG arg1, optional [Clamp] ULONGLONG arg2);
+    undefined funcWithClampInTypedef(CLAMPED_LONG arg);
 
     attribute [Clamp] ULONGLONG attributeWithClamp;
     attribute CLAMPED_LONG attributeWithClampInTypedef;
@@ -67,7 +67,7 @@ interface TestTypedefs {
     boolean callWithSequenceThatRequiresInclude(sequence<TestEventTarget> sequenceArg);
 
     // Exceptions
-    [MayThrowException] void methodWithException();
+    [MayThrowException] undefined methodWithException();
 
     // Builtin Typedefs
     attribute BufferSource bufferSourceAttr;

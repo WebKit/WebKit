@@ -32,7 +32,7 @@
     const unsigned long VERTEX_ARRAY_BINDING_OES = 0x85B5;
 
     WebGLVertexArrayObjectOES createVertexArrayOES();
-    void deleteVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
+    undefined deleteVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
     boolean isVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
-    void bindVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
+    undefined bindVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
 };

@@ -31,4 +31,4 @@
 // highResTime is passed as high resolution timestamp, see
 // http://www.w3.org/TR/hr-time/ for details.
 
-callback RequestAnimationFrameCallback = void (unrestricted double highResTime);
+callback RequestAnimationFrameCallback = undefined (unrestricted double highResTime);

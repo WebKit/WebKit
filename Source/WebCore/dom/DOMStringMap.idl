@@ -29,7 +29,7 @@
     SkipVTableValidation,
 ] interface DOMStringMap {
     getter DOMString (DOMString name);
-    [CEReactions, MayThrowException] setter void (DOMString name, DOMString value);
-    [CEReactions] deleter void (DOMString name);
+    [CEReactions, MayThrowException] setter undefined (DOMString name, DOMString value);
+    [CEReactions] deleter undefined (DOMString name);
 };
 

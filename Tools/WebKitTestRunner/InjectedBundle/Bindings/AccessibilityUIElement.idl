@@ -39,10 +39,10 @@
     unsigned long indexOfChild(AccessibilityUIElement child);
     AccessibilityUIElement linkedUIElementAtIndex(unsigned long index);
     AccessibilityUIElement selectedChildAtIndex(unsigned long index);
-    void setSelectedChild(AccessibilityUIElement element);
-    void setSelectedChildAtIndex(unsigned long index);
-    void removeSelectionAtIndex(unsigned long index);
-    void clearSelectedChildren();
+    undefined setSelectedChild(AccessibilityUIElement element);
+    undefined setSelectedChildAtIndex(unsigned long index);
+    undefined removeSelectionAtIndex(unsigned long index);
+    undefined clearSelectedChildren();
     AccessibilityUIElement titleUIElement();
     AccessibilityUIElement parentElement();
     
@@ -67,14 +67,14 @@
     object uiElementArrayAttributeValue(DOMString attr);
     AccessibilityUIElement uiElementAttributeValue(DOMString attr);  
     boolean boolAttributeValue(DOMString attr);
-    void attributeValueAsync(DOMString attributeName, object callbackFunction);
-    void setBoolAttributeValue(DOMString attr, boolean value);
+    undefined attributeValueAsync(DOMString attributeName, object callbackFunction);
+    undefined setBoolAttributeValue(DOMString attr, boolean value);
     boolean isAttributeSupported(DOMString attr);
     boolean isAttributeSettable(DOMString attr);
     boolean isPressActionSupported();
     boolean isIncrementActionSupported();
     boolean isDecrementActionSupported();
-    void setValue(DOMString value);
+    undefined setValue(DOMString value);
 
     readonly attribute DOMString stringValue;
     readonly attribute long intValue;
@@ -119,14 +119,14 @@
     readonly attribute long columnCount;
 
     // Actions.
-    void increment();
-    void decrement();
-    void asyncIncrement();
-    void asyncDecrement();
-    void press();
-    void syncPress();
-    void showMenu();
-    void dismiss();
+    undefined increment();
+    undefined decrement();
+    undefined asyncIncrement();
+    undefined asyncDecrement();
+    undefined press();
+    undefined syncPress();
+    undefined showMenu();
+    undefined dismiss();
 
     // Attribute info.
     DOMString allAttributes();
@@ -196,11 +196,11 @@
     readonly attribute AccessibilityUIElement horizontalScrollbar;
     readonly attribute AccessibilityUIElement verticalScrollbar;
 
-    void scrollToMakeVisible();
-    void scrollToGlobalPoint(long x, long y);
-    void scrollToMakeVisibleWithSubFocus(long x, long y, long width, long height);
+    undefined scrollToMakeVisible();
+    undefined scrollToGlobalPoint(long x, long y);
+    undefined scrollToMakeVisibleWithSubFocus(long x, long y, long width, long height);
 
-    void takeFocus();
+    undefined takeFocus();
     boolean scrollPageDown();
     boolean scrollPageUp();
     boolean scrollPageLeft();
@@ -212,7 +212,7 @@
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement element);
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
     AccessibilityTextMarkerRange selectedTextMarkerRange();
-    void resetSelectedTextMarkerRange();
+    undefined resetSelectedTextMarkerRange();
     boolean replaceTextInRange(DOMString string, long position, long length);
     boolean insertText(DOMString text);
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
@@ -260,12 +260,12 @@
     readonly attribute long elementTextLength;
     readonly attribute DOMString stringForSelection;
     object elementsForRange(unsigned long location, unsigned long length);
-    void increaseTextSelection();
-    void decreaseTextSelection();
+    undefined increaseTextSelection();
+    undefined decreaseTextSelection();
     AccessibilityUIElement linkedElement();
     AccessibilityUIElement headerElementAtIndex(unsigned long index);
     // This will simulate the accessibilityDidBecomeFocused API in UIKit.
-    void assistiveTechnologySimulatedFocus();
+    undefined assistiveTechnologySimulatedFocus();
     readonly attribute boolean isSearchField;
     readonly attribute boolean isTextArea;
     readonly attribute boolean isInDefinitionListDefinition;

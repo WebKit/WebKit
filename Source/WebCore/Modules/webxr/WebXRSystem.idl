@@ -32,7 +32,7 @@
     InterfaceName=XRSystem
 ] interface WebXRSystem : EventTarget {
     // Methods
-    Promise<void> isSessionSupported(XRSessionMode mode);
+    Promise<undefined> isSessionSupported(XRSessionMode mode);
     [NewObject, CallWith=Document] Promise<WebXRSession> requestSession(XRSessionMode mode, optional XRSessionInit options);
 
     // Events

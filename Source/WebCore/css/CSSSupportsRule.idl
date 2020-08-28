@@ -31,5 +31,5 @@ interface CSSSupportsRule : CSSRule {
     readonly attribute DOMString conditionText;
 
     [MayThrowException] unsigned long insertRule(DOMString rule, optional unsigned long index = 0);
-    [MayThrowException] void deleteRule(unsigned long index);
+    [MayThrowException] undefined deleteRule(unsigned long index);
 };

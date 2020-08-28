@@ -34,8 +34,8 @@
 ] interface PerformanceObserver {
     [CallWith=ScriptExecutionContext] constructor(PerformanceObserverCallback callback);
 
-    [MayThrowException] void observe(PerformanceObserverInit options);
-    void disconnect();
+    [MayThrowException] undefined observe(PerformanceObserverInit options);
+    undefined disconnect();
     [CallWith=ScriptExecutionContext] static readonly attribute FrozenArray<DOMString> supportedEntryTypes;
 };
 

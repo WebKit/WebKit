@@ -29,5 +29,5 @@
     EnabledAtRuntime=WebShare
 ] interface NavigatorShare {
     [CallWith=ScriptExecutionContext, SecureContext] boolean canShare(optional ShareData shareData);
-    [CallWith=ScriptExecutionContext, SecureContext] Promise<void> share(optional ShareData shareData);
+    [CallWith=ScriptExecutionContext, SecureContext] Promise<undefined> share(optional ShareData shareData);
 };

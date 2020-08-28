@@ -31,15 +31,15 @@
     readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
-    [MayThrowException] void setStart(Node node, unsigned long offset);
-    [MayThrowException] void setEnd(Node node, unsigned long offset);
-    [MayThrowException] void setStartBefore(Node node);
-    [MayThrowException] void setStartAfter(Node node);
-    [MayThrowException] void setEndBefore(Node node);
-    [MayThrowException] void setEndAfter(Node node);
-    void collapse(optional boolean toStart = false);
-    [MayThrowException] void selectNode(Node node);
-    [MayThrowException] void selectNodeContents(Node node);
+    [MayThrowException] undefined setStart(Node node, unsigned long offset);
+    [MayThrowException] undefined setEnd(Node node, unsigned long offset);
+    [MayThrowException] undefined setStartBefore(Node node);
+    [MayThrowException] undefined setStartAfter(Node node);
+    [MayThrowException] undefined setEndBefore(Node node);
+    [MayThrowException] undefined setEndAfter(Node node);
+    undefined collapse(optional boolean toStart = false);
+    [MayThrowException] undefined selectNode(Node node);
+    [MayThrowException] undefined selectNodeContents(Node node);
 
     const unsigned short START_TO_START = 0;
     const unsigned short START_TO_END = 1;
@@ -47,14 +47,14 @@
     const unsigned short END_TO_START = 3;
     [MayThrowException] short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
-    [CEReactions, MayThrowException] void deleteContents();
+    [CEReactions, MayThrowException] undefined deleteContents();
     [CEReactions, MayThrowException, NewObject] DocumentFragment extractContents();
     [CEReactions, MayThrowException, NewObject] DocumentFragment cloneContents();
-    [CEReactions, MayThrowException] void insertNode(Node node);
-    [CEReactions, MayThrowException] void surroundContents(Node newParent);
+    [CEReactions, MayThrowException] undefined insertNode(Node node);
+    [CEReactions, MayThrowException] undefined surroundContents(Node newParent);
 
     [NewObject] Range cloneRange();
-    void detach();
+    undefined detach();
 
     [MayThrowException] boolean isPointInRange(Node node, unsigned long offset);
     [MayThrowException] short comparePoint(Node node, unsigned long offset);
@@ -72,7 +72,7 @@
 
     // Non-standard extension.
     // FIXME: We should eventually drop this since no other browser supports it.
-    [MayThrowException] void expand(optional DOMString unit);
+    [MayThrowException] undefined expand(optional DOMString unit);
 
     // FIXME: We should likely drop this since we added it for Firefox interoperability, but now no other browser supports it.
     [MayThrowException] short compareNode(Node node);

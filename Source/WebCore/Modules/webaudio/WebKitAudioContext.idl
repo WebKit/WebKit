@@ -44,9 +44,9 @@
     // All panning is relative to this listener.
     readonly attribute WebKitAudioListener listener;
 
-    [ImplementedAs=suspendRendering] Promise<void> suspend();
-    [ImplementedAs=resumeRendering] Promise<void> resume();
-    Promise<void> close();
+    [ImplementedAs=suspendRendering] Promise<undefined> suspend();
+    [ImplementedAs=resumeRendering] Promise<undefined> resume();
+    Promise<undefined> close();
 
     readonly attribute AudioContextState state;
     attribute EventHandler onstatechange;
@@ -58,7 +58,7 @@
     [MayThrowException, ImplementedAs=createLegacyBuffer] AudioBuffer createBuffer(ArrayBuffer buffer, boolean mixToMono);
 
     // Asynchronous audio file data decoding.
-    void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
+    undefined decodeAudioData(ArrayBuffer audioData, AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
 
     // Sources
     [MayThrowException, ImplementedAs=createWebKitBufferSource] WebKitAudioBufferSourceNode createBufferSource();
@@ -86,7 +86,7 @@
     [MayThrowException] ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs = 6);
 
     // Offline rendering
-    // void prepareOfflineBufferRendering(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
+    // undefined prepareOfflineBufferRendering(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
     attribute EventHandler oncomplete;
-    void startRendering();
+    undefined startRendering();
 };

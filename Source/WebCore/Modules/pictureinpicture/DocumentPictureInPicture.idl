@@ -30,5 +30,5 @@
 ] partial interface Document {
     readonly attribute boolean pictureInPictureEnabled;
 
-    [NewObject] Promise<void> exitPictureInPicture();
+    [NewObject] Promise<undefined> exitPictureInPicture();
 };

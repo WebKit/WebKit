@@ -112,13 +112,13 @@ enum TestConfidence { "high", "kinda-low" };
 
     // [EnabledAtRuntime] attributes and operations.
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature&TestFeature1] attribute DOMString enabledAtRuntimeAttribute;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static void enabledAtRuntimeOperationStatic(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] undefined enabledAtRuntimeOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] undefined enabledAtRuntimeOperation(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static undefined enabledAtRuntimeOperationStatic(long testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static attribute DOMString enabledAtRuntimeAttributeStatic;
 
-    [EnabledForWorld=someWorld, EnabledAtRuntime=TestFeature] void enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
-    [EnabledForWorld=someWorld] void worldSpecificMethod(long testParam);
+    [EnabledForWorld=someWorld, EnabledAtRuntime=TestFeature] undefined enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
+    [EnabledForWorld=someWorld] undefined worldSpecificMethod(long testParam);
 
     // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
     // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)
@@ -132,8 +132,8 @@ enum TestConfidence { "high", "kinda-low" };
     iterable<DOMString>;
 
     // Methods
-    [Unscopable] void voidMethod();
-    void voidMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    [Unscopable] undefined undefinedMethod();
+    undefined undefinedMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     byte byteMethod();
     byte byteMethodWithArgs(byte byteArg, DOMString strArg, TestObj objArg);
     octet octetMethod();
@@ -143,45 +143,45 @@ enum TestConfidence { "high", "kinda-low" };
     TestObj objMethod();
     TestObj objMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     [Unforgeable] long unforgeableMethod();
-    void methodWithArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] DOMString arg);
-    void methodWithXPathNSResolverParameter(XPathNSResolver resolver);
+    undefined methodWithArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] DOMString arg);
+    undefined methodWithXPathNSResolverParameter(XPathNSResolver resolver);
 
     // Nullable String return values.
     DOMString? nullableStringMethod();
     static DOMString? nullableStringStaticMethod();
     getter DOMString? nullableStringSpecialMethod(unsigned long index);
 
-    void methodWithEnumArg(TestEnumType enumArg);
-    void methodWithStandaloneEnumArg(TestStandaloneEnumeration enumArg);
-    void methodWithOptionalEnumArg(optional TestEnumType enumArg);
-    void methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
+    undefined methodWithEnumArg(TestEnumType enumArg);
+    undefined methodWithStandaloneEnumArg(TestStandaloneEnumeration enumArg);
+    undefined methodWithOptionalEnumArg(optional TestEnumType enumArg);
+    undefined methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
     [MayThrowException] TestObj methodThatRequiresAllArgsAndThrows(DOMString strArg, TestObj objArg);
 
-    void methodWithUSVStringArg(USVString str);
-    void methodWithNullableUSVStringArg(USVString? str);
-    void methodWithUSVStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] USVString str);
+    undefined methodWithUSVStringArg(USVString str);
+    undefined methodWithNullableUSVStringArg(USVString? str);
+    undefined methodWithUSVStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] USVString str);
 
-    void methodWithByteStringArg(ByteString str);
-    void methodWithNullableByteStringArg(ByteString? str);
-    void methodWithByteStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] ByteString str);
+    undefined methodWithByteStringArg(ByteString str);
+    undefined methodWithNullableByteStringArg(ByteString? str);
+    undefined methodWithByteStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] ByteString str);
 
-    void serializedValue(SerializedScriptValue serializedArg);
+    undefined serializedValue(SerializedScriptValue serializedArg);
 
-    void methodWithRecord(record<DOMString, long> recordParameter);
+    undefined methodWithRecord(record<DOMString, long> recordParameter);
 
     // Exceptions
-    [MayThrowException] void methodWithException();
+    [MayThrowException] undefined methodWithException();
     [MayThrowException] long methodWithExceptionReturningLong();
     [MayThrowException] TestObj methodWithExceptionReturningObject();
 
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
-    [Custom] void customMethod();
-    [Custom] void customMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    [Custom] undefined customMethod();
+    [Custom] undefined customMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
 
     // 'JSBuiltin' extended attribute
-    [Conditional=Condition3, JSBuiltin] void jsBuiltinMethod();
-    [Conditional=Condition3, JSBuiltin] void jsBuiltinMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    [Conditional=Condition3, JSBuiltin] undefined jsBuiltinMethod();
+    [Conditional=Condition3, JSBuiltin] undefined jsBuiltinMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     [Conditional=Condition4, JSBuiltin] attribute TestObj jsBuiltinAttribute;
     [Conditional=Condition4, JSBuiltin] readonly attribute TestObj jsBuiltinReadOnlyAttribute;
 
@@ -189,23 +189,23 @@ enum TestConfidence { "high", "kinda-low" };
     [PrivateIdentifier] DOMString privateMethod(DOMString argument);
     [PrivateIdentifier, PublicIdentifier] DOMString publicAndPrivateMethod(DOMString argument);
 
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
+    undefined addEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
+    undefined removeEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
     attribute EventHandler onfoo;
     [ImplementedAs=onfoo] attribute EventHandler onwebkitfoo;
 
     // 'CallWith' extended attribute
-    [CallWith=GlobalObject] void withExecStateVoid();
+    [CallWith=GlobalObject] undefined withExecStateVoid();
     [CallWith=GlobalObject] TestObj withExecStateObj();
-    [CallWith=GlobalObject, MayThrowException] void withExecStateVoidException();
+    [CallWith=GlobalObject, MayThrowException] undefined withExecStateVoidException();
     [CallWith=GlobalObject, MayThrowException] TestObj withExecStateObjException();
-    [CallWith=ScriptExecutionContext] void withScriptExecutionContext();
-    [CallWith=ScriptExecutionContext&ExecState] void withScriptExecutionContextAndExecState();
+    [CallWith=ScriptExecutionContext] undefined withScriptExecutionContext();
+    [CallWith=ScriptExecutionContext&ExecState] undefined withScriptExecutionContextAndExecState();
     [CallWith=ScriptExecutionContext&ExecState, MayThrowException] TestObj withScriptExecutionContextAndExecStateObjException();
     [CallWith=  ScriptExecutionContext  &  ExecState  ] TestObj withScriptExecutionContextAndExecStateWithSpaces();
-    [CallWith=Document] void withDocumentArgument();
-    [CallWith=IncumbentDocument] void withCallerDocumentArgument();
-    [CallWith=IncumbentWindow] void withCallerWindowArgument();
+    [CallWith=Document] undefined withDocumentArgument();
+    [CallWith=IncumbentDocument] undefined withCallerDocumentArgument();
+    [CallWith=IncumbentWindow] undefined withCallerWindowArgument();
 
     [CallWith=GlobalObject] attribute long withExecStateAttribute;
     [CallWith=GlobalObject, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
@@ -214,52 +214,52 @@ enum TestConfidence { "high", "kinda-low" };
     [CallWith=  ScriptExecutionContext  &  ExecState  ] attribute TestObj withScriptExecutionContextAndExecStateWithSpacesAttribute;
 
     // Optional parameters.
-    void    methodWithOptionalArg(optional long opt);
-    void    methodWithOptionalArgAndDefaultValue(optional long opt = 666);
-    void    methodWithNonOptionalArgAndOptionalArg(long nonOpt, optional long opt);
-    void    methodWithNonOptionalArgAndTwoOptionalArgs(long nonOpt, optional long opt1, optional long opt2);
-    void    methodWithOptionalString(optional DOMString str);
-    void    methodWithOptionalUSVString(optional USVString str);
-    void    methodWithOptionalAtomString(optional [AtomString] DOMString str);
-    void    methodWithOptionalStringAndDefaultValue(optional DOMString str = "foo");
-    void    methodWithOptionalAtomStringAndDefaultValue(optional [AtomString] DOMString str = "foo");
-    void    methodWithOptionalStringIsNull(optional DOMString str = null);
-    void    methodWithOptionalStringIsUndefined(optional DOMString str = "undefined");
-    void    methodWithOptionalAtomStringIsNull(optional [AtomString] DOMString str = null);
-    void    methodWithOptionalStringIsEmptyString(optional DOMString str = "");
-    void    methodWithOptionalUSVStringIsEmptyString(optional USVString str = "");
-    void    methodWithOptionalAtomStringIsEmptyString(optional [AtomString] DOMString str = "");
-    void    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
-    void    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
-    void    methodWithOptionalLongLong(optional long long number);
-    void    methodWithOptionalLongLongIsZero(optional long long number = 0);
-    void    methodWithOptionalUnsignedLongLong(optional unsigned long long number);
-    void    methodWithOptionalUnsignedLongLongIsZero(optional unsigned long long number = 0);
-    void    methodWithOptionalSequence(optional sequence<DOMString> array);
-    void    methodWithOptionalSequenceIsEmpty(optional sequence<DOMString> array = []);
-    void    methodWithOptionalBoolean(optional boolean b);
-    void    methodWithOptionalBooleanIsFalse(optional boolean b = false);
-    void    methodWithOptionalAny(optional any a);
-    void    methodWithOptionalObject(optional object a);
-    void    methodWithOptionalNullableWrapper(optional TestObj? obj);
-    void    methodWithOptionalNullableWrapperIsNull(optional TestObj? obj = null);
-    void    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
-    void    methodWithOptionalRecord(optional record<DOMString, long>? record = null);
-    void    methodWithOptionalPromise(optional Promise<void> promise);
+    undefined    methodWithOptionalArg(optional long opt);
+    undefined    methodWithOptionalArgAndDefaultValue(optional long opt = 666);
+    undefined    methodWithNonOptionalArgAndOptionalArg(long nonOpt, optional long opt);
+    undefined    methodWithNonOptionalArgAndTwoOptionalArgs(long nonOpt, optional long opt1, optional long opt2);
+    undefined    methodWithOptionalString(optional DOMString str);
+    undefined    methodWithOptionalUSVString(optional USVString str);
+    undefined    methodWithOptionalAtomString(optional [AtomString] DOMString str);
+    undefined    methodWithOptionalStringAndDefaultValue(optional DOMString str = "foo");
+    undefined    methodWithOptionalAtomStringAndDefaultValue(optional [AtomString] DOMString str = "foo");
+    undefined    methodWithOptionalStringIsNull(optional DOMString str = null);
+    undefined    methodWithOptionalStringIsUndefined(optional DOMString str = "undefined");
+    undefined    methodWithOptionalAtomStringIsNull(optional [AtomString] DOMString str = null);
+    undefined    methodWithOptionalStringIsEmptyString(optional DOMString str = "");
+    undefined    methodWithOptionalUSVStringIsEmptyString(optional USVString str = "");
+    undefined    methodWithOptionalAtomStringIsEmptyString(optional [AtomString] DOMString str = "");
+    undefined    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
+    undefined    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
+    undefined    methodWithOptionalLongLong(optional long long number);
+    undefined    methodWithOptionalLongLongIsZero(optional long long number = 0);
+    undefined    methodWithOptionalUnsignedLongLong(optional unsigned long long number);
+    undefined    methodWithOptionalUnsignedLongLongIsZero(optional unsigned long long number = 0);
+    undefined    methodWithOptionalSequence(optional sequence<DOMString> array);
+    undefined    methodWithOptionalSequenceIsEmpty(optional sequence<DOMString> array = []);
+    undefined    methodWithOptionalBoolean(optional boolean b);
+    undefined    methodWithOptionalBooleanIsFalse(optional boolean b = false);
+    undefined    methodWithOptionalAny(optional any a);
+    undefined    methodWithOptionalObject(optional object a);
+    undefined    methodWithOptionalNullableWrapper(optional TestObj? obj);
+    undefined    methodWithOptionalNullableWrapperIsNull(optional TestObj? obj = null);
+    undefined    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
+    undefined    methodWithOptionalRecord(optional record<DOMString, long>? record = null);
+    undefined    methodWithOptionalPromise(optional Promise<undefined> promise);
 
     // Callback interface parameters.
-    void    methodWithCallbackArg(TestCallbackInterface callback);
-    void    methodWithNonCallbackArgAndCallbackArg(long nonCallback, TestCallbackInterface callback);
-    void    methodWithCallbackAndOptionalArg(optional TestCallbackInterface? callback);
+    undefined    methodWithCallbackArg(TestCallbackInterface callback);
+    undefined    methodWithNonCallbackArgAndCallbackArg(long nonCallback, TestCallbackInterface callback);
+    undefined    methodWithCallbackAndOptionalArg(optional TestCallbackInterface? callback);
 
     // Callback function parameters.
-    void    methodWithCallbackFunctionArg(TestCallbackFunction callback);
-    void    methodWithNonCallbackArgAndCallbackFunctionArg(long nonCallback, TestCallbackFunction callback);
-    void    methodWithCallbackFunctionAndOptionalArg(optional TestCallbackFunction? callback);
+    undefined    methodWithCallbackFunctionArg(TestCallbackFunction callback);
+    undefined    methodWithNonCallbackArgAndCallbackFunctionArg(long nonCallback, TestCallbackFunction callback);
+    undefined    methodWithCallbackFunctionAndOptionalArg(optional TestCallbackFunction? callback);
 
     // static methods with 'Callback' extended attribute
-    static void    staticMethodWithCallbackAndOptionalArg(optional TestCallbackInterface? callback);
-    static void    staticMethodWithCallbackArg(TestCallbackInterface callback);
+    static undefined    staticMethodWithCallbackAndOptionalArg(optional TestCallbackInterface? callback);
+    static undefined    staticMethodWithCallbackArg(TestCallbackInterface callback);
 
     // 'Conditional' extended attribute
     [Conditional=Condition1] attribute long conditionalAttr1;
@@ -268,8 +268,8 @@ enum TestConfidence { "high", "kinda-low" };
 
     // 'Conditional' extended method
     [Conditional=Condition1] DOMString conditionalMethod1();
-    [Conditional=Condition1&Condition2] void conditionalMethod2();
-    [Conditional=Condition1|Condition2] void conditionalMethod3();
+    [Conditional=Condition1&Condition2] undefined conditionalMethod2();
+    [Conditional=Condition1|Condition2] undefined conditionalMethod3();
 
     [Conditional=Condition1] attribute TestObjectAConstructor conditionalAttr4;
     [Conditional=Condition1&Condition2] attribute TestObjectBConstructor conditionalAttr5;
@@ -285,79 +285,79 @@ enum TestConfidence { "high", "kinda-low" };
     attribute object objectAttribute;
 
     // Overloads
-    void    overloadedMethod(TestObj? objArg, DOMString strArg);
-    void    overloadedMethod(TestObj? objArg, optional long longArg);
-    void    overloadedMethod(DOMString strArg);
-    void    overloadedMethod(long longArg);
-    void    overloadedMethod(TestCallbackInterface callback);
-    void    overloadedMethod(DOMStringList? listArg);
-    void    overloadedMethod(sequence<DOMString>? arrayArg);
-    void    overloadedMethod(TestObj objArg);
-    void    overloadedMethod(WindowProxy window);
-    void    overloadedMethod(sequence<DOMString> arrayArg);
-    void    overloadedMethod(sequence<unsigned long> arrayArg);
-    void    overloadedMethod(DOMString strArg);
+    undefined    overloadedMethod(TestObj? objArg, DOMString strArg);
+    undefined    overloadedMethod(TestObj? objArg, optional long longArg);
+    undefined    overloadedMethod(DOMString strArg);
+    undefined    overloadedMethod(long longArg);
+    undefined    overloadedMethod(TestCallbackInterface callback);
+    undefined    overloadedMethod(DOMStringList? listArg);
+    undefined    overloadedMethod(sequence<DOMString>? arrayArg);
+    undefined    overloadedMethod(TestObj objArg);
+    undefined    overloadedMethod(WindowProxy window);
+    undefined    overloadedMethod(sequence<DOMString> arrayArg);
+    undefined    overloadedMethod(sequence<unsigned long> arrayArg);
+    undefined    overloadedMethod(DOMString strArg);
 
     // FIXME: Implement support for overloaded functions with variadic arguments.
-    void    overloadedMethod(Blob... blobArgs);
+    undefined    overloadedMethod(Blob... blobArgs);
 
-    void overloadedMethodWithOptionalParameter(DOMString strArg, optional TestObj? objArg = null);
-    void overloadedMethodWithOptionalParameter(TestObj? objArg, optional long longArg);
+    undefined overloadedMethodWithOptionalParameter(DOMString strArg, optional TestObj? objArg = null);
+    undefined overloadedMethodWithOptionalParameter(TestObj? objArg, optional long longArg);
 
-    void overloadedMethodWithDistinguishingUnion((TestObj or TestNode) objectOrNode);
-    void overloadedMethodWithDistinguishingUnion(long value);
+    undefined overloadedMethodWithDistinguishingUnion((TestObj or TestNode) objectOrNode);
+    undefined overloadedMethodWithDistinguishingUnion(long value);
 
-    void overloadedMethodWith2DistinguishingUnions((TestObj or TestNode) objectOrNode);
-    void overloadedMethodWith2DistinguishingUnions((TestInterface or DOMString or long) value);
+    undefined overloadedMethodWith2DistinguishingUnions((TestObj or TestNode) objectOrNode);
+    undefined overloadedMethodWith2DistinguishingUnions((TestInterface or DOMString or long) value);
 
-    void overloadedMethodWithNonDistinguishingUnion((TestObj or TestNode) objectOrNode, TestObj object);
-    void overloadedMethodWithNonDistinguishingUnion((TestObj or TestNode) objectOrNode, TestNode node);
+    undefined overloadedMethodWithNonDistinguishingUnion((TestObj or TestNode) objectOrNode, TestObj object);
+    undefined overloadedMethodWithNonDistinguishingUnion((TestObj or TestNode) objectOrNode, TestNode node);
 
-    void overloadWithNullableUnion((TestObj or TestNode)? objectOrNode);
-    void overloadWithNullableUnion(long index);
+    undefined overloadWithNullableUnion((TestObj or TestNode)? objectOrNode);
+    undefined overloadWithNullableUnion(long index);
 
-    void overloadWithOptionalUnion(optional (DOMString or boolean) objectOrNode = true);
-    void overloadWithOptionalUnion(long index);
+    undefined overloadWithOptionalUnion(optional (DOMString or boolean) objectOrNode = true);
+    undefined overloadWithOptionalUnion(long index);
 
-    void overloadWithNullableNonDistinguishingParameter(TestObj? obj, TestNode node);
-    void overloadWithNullableNonDistinguishingParameter(TestNode? node, long index);
+    undefined overloadWithNullableNonDistinguishingParameter(TestObj? obj, TestNode node);
+    undefined overloadWithNullableNonDistinguishingParameter(TestNode? node, long index);
 
     // Class methods within JavaScript (like what's used for IDBKeyRange).
-    static void classMethod();
+    static undefined classMethod();
     static long classMethodWithOptional(optional long arg);
-    [Custom] static void classMethod2(long arg);
+    [Custom] static undefined classMethod2(long arg);
 
     // Static method with conditional on overloaded methods
-    [Conditional=Condition1] static void overloadedMethod1(long arg);
-    [Conditional=Condition1] static void overloadedMethod1(DOMString type);
+    [Conditional=Condition1] static undefined overloadedMethod1(long arg);
+    [Conditional=Condition1] static undefined overloadedMethod1(DOMString type);
 
-    void classMethodWithClamp([Clamp] unsigned short objArgsShort, [Clamp] unsigned long objArgsLong);
-    void classMethodWithClampOnOptional(optional [Clamp] long objArgsLong = 0);
-    void classMethodWithEnforceRange([EnforceRange] unsigned short objArgsShort, [EnforceRange] unsigned long objArgsLong);
-    void classMethodWithEnforceRangeOnOptional(optional [EnforceRange] long objArgsLong = 0);
+    undefined classMethodWithClamp([Clamp] unsigned short objArgsShort, [Clamp] unsigned long objArgsLong);
+    undefined classMethodWithClampOnOptional(optional [Clamp] long objArgsLong = 0);
+    undefined classMethodWithEnforceRange([EnforceRange] unsigned short objArgsShort, [EnforceRange] unsigned long objArgsLong);
+    undefined classMethodWithEnforceRangeOnOptional(optional [EnforceRange] long objArgsLong = 0);
 
-    void methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);
+    undefined methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);
     [MayThrowException] sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
     [MayThrowException] DOMStringList domStringListFunction(DOMStringList values);
 
-    void operationWithOptionalUnionParameter(optional (DOMString or sequence<unrestricted double>) optionalUnion);
+    undefined operationWithOptionalUnionParameter(optional (DOMString or sequence<unrestricted double>) optionalUnion);
 
-    void methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
+    undefined methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
 
     Element? getElementById([RequiresExistingAtomString] DOMString elementId);
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
     [CheckSecurityForNode, MayThrowException] SVGDocument getSVGDocument();
 
-    void convert1(TestNode value);
-    void convert2(TestNode? value);
-    void convert3(DOMString value);
-    void convert4(DOMString? value);
+    undefined convert1(TestNode value);
+    undefined convert2(TestNode? value);
+    undefined convert3(DOMString value);
+    undefined convert4(DOMString? value);
 
     attribute SVGPoint mutablePoint;
     SVGPoint mutablePointFunction();
 
-    [ImplementedAs=banana] void orange();
+    [ImplementedAs=banana] undefined orange();
     [ImplementedAs=blueberry] attribute long strawberry;
 
     // ObjectiveC reserved words.
@@ -380,10 +380,10 @@ enum TestConfidence { "high", "kinda-low" };
 
     [Replaceable] readonly attribute long replaceableAttribute;
 
-    void variadicStringMethod(DOMString head, DOMString... tail);
-    void variadicDoubleMethod(unrestricted double head, unrestricted double... tail);
-    void variadicNodeMethod(Node head, Node... tail);
-    void variadicUnionMethod(DOMString head, (Node or DOMString)... tail);
+    undefined variadicStringMethod(DOMString head, DOMString... tail);
+    undefined variadicDoubleMethod(unrestricted double head, unrestricted double... tail);
+    undefined variadicNodeMethod(Node head, Node... tail);
+    undefined variadicUnionMethod(DOMString head, (Node or DOMString)... tail);
 
     // Nullable attributes.
     readonly attribute unrestricted double? nullableDoubleAttribute;
@@ -400,48 +400,48 @@ enum TestConfidence { "high", "kinda-low" };
     const unsigned short               _readonly = 0;
     readonly attribute DOMString       _attribute;
     attribute _optional                attributeWithReservedEnumType;
-    void _any(unrestricted float a, long b);
+    undefined _any(unrestricted float a, long b);
 
-    readonly attribute Promise<void> testReadOnlyVoidPromiseAttribute;
+    readonly attribute Promise<undefined> testReadOnlyVoidPromiseAttribute;
     readonly attribute Promise<TestNode> testReadOnlyPromiseAttribute;
 
     // Promise function
-    Promise<void> testPromiseFunction();
-    Promise<void> testPromiseFunctionWithFloatArgument(float a);
-    [MayThrowException] Promise<void> testPromiseFunctionWithException();
-    Promise<void> testPromiseFunctionWithOptionalIntArgument(optional long a);
-    Promise<void> testPromiseOverloadedFunction(float a);
-    Promise<void> testPromiseOverloadedFunction(FetchRequest request);
-    static Promise<void> testStaticPromiseFunction();
-    [MayThrowException] static Promise<void> testStaticPromiseFunctionWithException();
-    [Custom] Promise<void> testCustomPromiseFunction();
-    [Custom] static Promise<void> testStaticCustomPromiseFunction();
-    [Custom, ReturnsOwnPromise] Promise<void> testCustomReturnsOwnPromiseFunction();
-    [ReturnsOwnPromise, PromiseProxy] Promise<void> testReturnsOwnPromiseAndPromiseProxyFunction();
+    Promise<undefined> testPromiseFunction();
+    Promise<undefined> testPromiseFunctionWithFloatArgument(float a);
+    [MayThrowException] Promise<undefined> testPromiseFunctionWithException();
+    Promise<undefined> testPromiseFunctionWithOptionalIntArgument(optional long a);
+    Promise<undefined> testPromiseOverloadedFunction(float a);
+    Promise<undefined> testPromiseOverloadedFunction(FetchRequest request);
+    static Promise<undefined> testStaticPromiseFunction();
+    [MayThrowException] static Promise<undefined> testStaticPromiseFunctionWithException();
+    [Custom] Promise<undefined> testCustomPromiseFunction();
+    [Custom] static Promise<undefined> testStaticCustomPromiseFunction();
+    [Custom, ReturnsOwnPromise] Promise<undefined> testCustomReturnsOwnPromiseFunction();
+    [ReturnsOwnPromise, PromiseProxy] Promise<undefined> testReturnsOwnPromiseAndPromiseProxyFunction();
 
     // PutForwards
     [PutForwards=name] readonly attribute TestNode putForwardsAttribute;
     [PutForwards=name] readonly attribute TestNode? putForwardsNullableAttribute;
 
     // Overloading with conditionals.
-    [Conditional=CONDITION1] void conditionalOverload(DOMString str);
-    [Conditional=CONDITION2] void conditionalOverload(long a);
+    [Conditional=CONDITION1] undefined conditionalOverload(DOMString str);
+    [Conditional=CONDITION2] undefined conditionalOverload(long a);
 
-    void singleConditionalOverload(DOMString str);
-    [Conditional=CONDITION] void singleConditionalOverload(long a);
+    undefined singleConditionalOverload(DOMString str);
+    [Conditional=CONDITION] undefined singleConditionalOverload(long a);
 
-    void attachShadowRoot(TestDictionary init);
-    void operationWithExternalDictionaryParameter(TestStandaloneDictionary dict);
+    undefined attachShadowRoot(TestDictionary init);
+    undefined operationWithExternalDictionaryParameter(TestStandaloneDictionary dict);
 
     stringifier attribute USVString stringifierAttribute;
 
     serializer = {create, readOnlyStringAttr, enumAttr, longAttr};
 
-    void bufferSourceParameter(BufferSource data);
+    undefined bufferSourceParameter(BufferSource data);
 
-    legacycaller void legacyCallerNamed(long param);
+    legacycaller undefined legacyCallerNamed(long param);
     legacycaller long (DOMString param);
-    legacycaller void ();
+    legacycaller undefined ();
 
     Node testReturnValueOptimization([ReturnValue] Node a, Node b);
     [MayThrowException] Node testReturnValueOptimizationWithException([ReturnValue] Node a, Node b);
@@ -457,9 +457,9 @@ enum TestConfidence { "high", "kinda-low" };
     [Exposed=Window] attribute long conditionallyExposedToWindowAttribute;
     [Exposed=Worker] attribute long conditionallyExposedToWorkerAttribute;
     [Exposed=(Worker, Window)] attribute long conditionallyExposedToWindowAndWorkerAttribute;
-    [Exposed=Window] void conditionallyExposedToWindowFunction();
-    [Exposed=Worker] void conditionallyExposedToWorkerFunction();
-    [Exposed=(Window, Worker)] void conditionallyExposedToWindowAndWorkerFunction();
+    [Exposed=Window] undefined conditionallyExposedToWindowFunction();
+    [Exposed=Worker] undefined conditionallyExposedToWorkerFunction();
+    [Exposed=(Window, Worker)] undefined conditionallyExposedToWindowAndWorkerFunction();
 };
 
 // The following comment should not generate any code.

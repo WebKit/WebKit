@@ -45,18 +45,18 @@
     [CallWith=Document, MayThrowException] static Promise<boolean> canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
     [CallWith=Document, MayThrowException] static Promise<boolean> openPaymentSetup(DOMString merchantIdentifier);
 
-    [CallWith=Document, MayThrowException] void begin();
-    [MayThrowException] void abort();
-    [MayThrowException, CallWith=GlobalObject] void completeMerchantValidation(any merchantSession);
-    [MayThrowException] void completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
-    [MayThrowException] void completeShippingContactSelection(ApplePayShippingContactUpdate update);
-    [MayThrowException] void completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
-    [MayThrowException] void completePayment(ApplePayPaymentAuthorizationResult result);
+    [CallWith=Document, MayThrowException] undefined begin();
+    [MayThrowException] undefined abort();
+    [MayThrowException, CallWith=GlobalObject] undefined completeMerchantValidation(any merchantSession);
+    [MayThrowException] undefined completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
+    [MayThrowException] undefined completeShippingContactSelection(ApplePayShippingContactUpdate update);
+    [MayThrowException] undefined completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
+    [MayThrowException] undefined completePayment(ApplePayPaymentAuthorizationResult result);
 
-    [MayThrowException] void completeShippingMethodSelection(unsigned short status, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
-    [MayThrowException] void completeShippingContactSelection(unsigned short status, sequence<ApplePayShippingMethod> newShippingMethods, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
-    [MayThrowException] void completePaymentMethodSelection(ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
-    [MayThrowException] void completePayment(unsigned short status);
+    [MayThrowException] undefined completeShippingMethodSelection(unsigned short status, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    [MayThrowException] undefined completeShippingContactSelection(unsigned short status, sequence<ApplePayShippingMethod> newShippingMethods, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    [MayThrowException] undefined completePaymentMethodSelection(ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    [MayThrowException] undefined completePayment(unsigned short status);
 
     attribute EventHandler onvalidatemerchant;
     attribute EventHandler onpaymentmethodselected;

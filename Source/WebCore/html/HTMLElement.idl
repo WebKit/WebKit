@@ -33,13 +33,13 @@
 
     // User interaction.
     [CEReactions, Reflect] attribute boolean hidden;
-    void click();
+    undefined click();
     [CEReactions, Reflect] attribute DOMString accessKey;
     readonly attribute DOMString accessKeyLabel;
     [CEReactions] attribute boolean draggable;
     // [CEReactions] attribute HTMLMenuElement? contextMenu; // FIXME: Not supported.
     [CEReactions] attribute boolean spellcheck;
-    // void forceSpellCheck(); // FIXME: Not supported.
+    // undefined forceSpellCheck(); // FIXME: Not supported.
 
     [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerText;
 

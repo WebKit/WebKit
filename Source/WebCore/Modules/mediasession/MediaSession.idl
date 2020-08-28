@@ -33,9 +33,9 @@
     readonly attribute MediaSessionKind kind;
     readonly attribute MediaRemoteControls? controls;
 
-    void setMetadata(MediaMetadata? metadata);
+    undefined setMetadata(MediaMetadata? metadata);
 
-    void deactivate();
+    undefined deactivate();
 };
 
 enum MediaSessionKind {

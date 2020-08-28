@@ -32,7 +32,7 @@
 ] interface ResizeObserver {
     [CallWith=Document] constructor(ResizeObserverCallback callback);
 
-    void observe(Element target);
-    void unobserve(Element target);
-    void disconnect();
+    undefined observe(Element target);
+    undefined unobserve(Element target);
+    undefined disconnect();
 };

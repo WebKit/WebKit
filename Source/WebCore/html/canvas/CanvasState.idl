@@ -28,6 +28,6 @@
     Exposed=(Window,Worker)
 ] interface CanvasState {
     // state
-    void save(); // push state on state stack
-    void restore(); // pop state stack and restore state
+    undefined save(); // push state on state stack
+    undefined restore(); // pop state stack and restore state
 };

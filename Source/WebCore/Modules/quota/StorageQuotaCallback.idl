@@ -30,4 +30,4 @@
 
 [
     Conditional=QUOTA,
-] callback StorageQuotaCallback = void (unsigned long long grantedQuotaInBytes);
+] callback StorageQuotaCallback = undefined (unsigned long long grantedQuotaInBytes);

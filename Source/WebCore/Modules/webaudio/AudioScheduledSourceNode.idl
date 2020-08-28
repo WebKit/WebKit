@@ -28,6 +28,6 @@
     ActiveDOMObject,
 ] interface AudioScheduledSourceNode : AudioNode {
     attribute EventHandler onended;
-    [MayThrowException, ImplementedAs=startLater] void start(optional double when = 0);
-    [MayThrowException, ImplementedAs=stopLater] void stop(optional double when = 0);
+    [MayThrowException, ImplementedAs=startLater] undefined start(optional double when = 0);
+    [MayThrowException, ImplementedAs=stopLater] undefined stop(optional double when = 0);
 };

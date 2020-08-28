@@ -37,9 +37,9 @@
     const unsigned short OBSOLETE = 5;
     readonly attribute unsigned short status;
 
-    [MayThrowException] void update();
-    [MayThrowException] void swapCache();
-    void abort();
+    [MayThrowException] undefined update();
+    [MayThrowException] undefined swapCache();
+    undefined abort();
 
     attribute EventHandler onchecking;
     attribute EventHandler onerror;

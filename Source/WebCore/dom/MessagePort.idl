@@ -31,10 +31,10 @@
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
 ] interface MessagePort : EventTarget {
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, sequence<object> transfer);
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, optional PostMessageOptions options);
-    void start();
-    void close();
+    [CallWith=GlobalObject, MayThrowException] undefined postMessage(any message, sequence<object> transfer);
+    [CallWith=GlobalObject, MayThrowException] undefined postMessage(any message, optional PostMessageOptions options);
+    undefined start();
+    undefined close();
 
     attribute EventHandler onmessage;
 };

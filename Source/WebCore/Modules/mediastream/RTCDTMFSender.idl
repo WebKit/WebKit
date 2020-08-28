@@ -29,7 +29,7 @@
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
 ] interface RTCDTMFSender : EventTarget {
-    [MayThrowException] void insertDTMF(DOMString tones, optional unsigned long duration = 100, optional unsigned long interToneGap = 70);
+    [MayThrowException] undefined insertDTMF(DOMString tones, optional unsigned long duration = 100, optional unsigned long interToneGap = 70);
     attribute EventHandler ontonechange;
 
     readonly attribute boolean canInsertDTMF;

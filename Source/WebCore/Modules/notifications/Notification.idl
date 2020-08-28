@@ -37,7 +37,7 @@
     [CallWith=Document] constructor(DOMString title, optional NotificationOptions options);
 
     [CallWith=Document] static readonly attribute NotificationPermission permission;
-    [CallWith=Document] static void requestPermission(optional NotificationPermissionCallback? deprecatedCallback); // FIXME: This should return a Promise<NotificationPermission>.
+    [CallWith=Document] static undefined requestPermission(optional NotificationPermissionCallback? deprecatedCallback); // FIXME: This should return a Promise<NotificationPermission>.
 
     // static readonly attribute unsigned long maxActions;
 
@@ -61,10 +61,10 @@
     // [SameObject] readonly attribute any data;
     // [SameObject] readonly attribute FrozenArray<NotificationAction> actions;
 
-    void close();
+    undefined close();
 
     // Legacy. Not in the specification.
-    void show();
+    undefined show();
 
     attribute EventHandler onclose;
     [ImplementedAs=onshow] attribute EventHandler ondisplay;

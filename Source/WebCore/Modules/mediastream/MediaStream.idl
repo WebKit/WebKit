@@ -40,8 +40,8 @@
     [PrivateIdentifier, PublicIdentifier] sequence<MediaStreamTrack> getTracks();
     MediaStreamTrack getTrackById(DOMString trackId);
 
-    void addTrack(MediaStreamTrack track);
-    void removeTrack(MediaStreamTrack track);
+    undefined addTrack(MediaStreamTrack track);
+    undefined removeTrack(MediaStreamTrack track);
 
     MediaStream clone();
 

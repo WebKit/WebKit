@@ -36,7 +36,7 @@
     readonly attribute AudioParam frequency; // in Hertz
     readonly attribute AudioParam detune; // in Cents
 
-    void setPeriodicWave(PeriodicWave wave);
+    undefined setPeriodicWave(PeriodicWave wave);
 
     // FIXME: Those legacy playback state constants are kept for backward compatibility with the
     // prefixed API and should be removed once we stop supporting the prefixed API.

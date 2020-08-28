@@ -41,7 +41,7 @@
     [NewObject] Promise<any> getRegistration(optional USVString clientURL = "");
     [NewObject] Promise<sequence<ServiceWorkerRegistration>> getRegistrations();
 
-    void startMessages();
+    undefined startMessages();
 
     // events
     attribute EventHandler oncontrollerchange;

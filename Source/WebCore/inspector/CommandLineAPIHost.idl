@@ -34,10 +34,10 @@
     NoInterfaceObject,
     ImplementationLacksVTable
 ] interface CommandLineAPIHost {
-    void clearConsoleMessages();
-    void copyText(DOMString text);
+    undefined clearConsoleMessages();
+    undefined copyText(DOMString text);
 
-    [CallWith=GlobalObject] void inspect(any objectToInspect, any hints);
+    [CallWith=GlobalObject] undefined inspect(any objectToInspect, any hints);
     [CallWith=GlobalObject] any inspectedObject();
 
     [CallWith=GlobalObject] record<DOMString, sequence<ListenerEntry>> getEventListeners(EventTarget target);

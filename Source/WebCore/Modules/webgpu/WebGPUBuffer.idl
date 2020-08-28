@@ -33,7 +33,7 @@ typedef unsigned long long u64;
 ] interface WebGPUBuffer {
     Promise<ArrayBuffer> mapReadAsync();
     Promise<ArrayBuffer> mapWriteAsync();
-    void unmap();
+    undefined unmap();
 
-    void destroy();
+    undefined destroy();
 };

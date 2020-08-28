@@ -27,5 +27,5 @@
     SkipVTableValidation,
 ] interface CanvasCaptureMediaStreamTrack : MediaStreamTrack {
     readonly attribute HTMLCanvasElement canvas;
-    void requestFrame();
+    undefined requestFrame();
 };

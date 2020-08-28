@@ -33,8 +33,8 @@
 ] interface ReadableStreamBYOBRequest {
     constructor(ReadableByteStreamController controller, TypedArray view);
 
-    [NotEnumerable] void respond(optional any bytesWritten);
-    [NotEnumerable] void respondWithNewView(optional any view);
+    [NotEnumerable] undefined respond(optional any bytesWritten);
+    [NotEnumerable] undefined respondWithNewView(optional any view);
 
     [NotEnumerable] readonly attribute TypedArray view;
 };

@@ -26,11 +26,11 @@
 [
     OverrideBuiltins
 ] interface TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins {
-    setter void (DOMString name, DOMString value);
+    setter undefined (DOMString name, DOMString value);
 
     // NOTE: Named setters require the presence of a named getter as well.
     getter DOMString (DOMString name);
 
     [Unforgeable] readonly attribute DOMString unforgeableAttribute;
-    [Unforgeable] void unforgeableOperation();
+    [Unforgeable] undefined unforgeableOperation();
 };

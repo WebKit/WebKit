@@ -1,3 +1,27 @@
+2020-08-28  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] 'void' type is changing to 'undefined'
+        https://bugs.webkit.org/show_bug.cgi?id=215514
+        <rdar://problem/67566201>
+
+        Reviewed by Darin Adler.
+
+        Update IDLs and IDL parsing / code generation for the switch from 'void' to 'undefined'.
+
+        * DumpRenderTree/Bindings/CodeGeneratorDumpRenderTree.pm:
+        (_generateImplementationFile):
+        (_returnExpression):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityController.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (_generateImplementationFile):
+        (_returnExpression):
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/GCController.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/Bindings/TextInputController.idl:
+
 2020-08-28  Darin Adler  <darin@apple.com>
 
         Remove almost all the remaining uses of live ranges

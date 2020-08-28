@@ -30,9 +30,9 @@
     CheckSecurity
 ] interface TestActiveDOMObject {
     readonly attribute long excitingAttr;
-    void excitingFunction(Node nextChild);
-    [DoNotCheckSecurity] void postMessage(DOMString message);
+    undefined excitingFunction(Node nextChild);
+    [DoNotCheckSecurity] undefined postMessage(DOMString message);
 
-    [CEReactions] void overloadedMethod(DOMString param);
-    void overloadedMethod(Node param1, Node param2);
+    [CEReactions] undefined overloadedMethod(DOMString param);
+    undefined overloadedMethod(Node param1, Node param2);
 };

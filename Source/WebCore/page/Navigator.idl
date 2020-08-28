@@ -25,7 +25,7 @@
 
     [Conditional=NAVIGATOR_STANDALONE] readonly attribute boolean standalone;
 
-    void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
+    undefined getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
 };
 
 Navigator implements NavigatorID;

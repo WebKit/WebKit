@@ -28,48 +28,48 @@ dictionary MonitorWheelEventsOptions {
 };
 
 interface EventSendingController {
-    void mouseDown(long buttonNumber, object modifierArray);
-    void mouseUp(long buttonNumber, object modifierArray);
-    void mouseMoveTo(long x, long y);
-    void mouseForceClick();
-    void startAndCancelMouseForceClick();
-    void mouseForceDown();
-    void mouseForceUp();
-    void mouseForceChanged(double force);
-    void mouseScrollBy(long x, long y);
-    void mouseScrollByWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum);
-    void continuousMouseScrollBy(long x, long y, optional boolean paged);
+    undefined mouseDown(long buttonNumber, object modifierArray);
+    undefined mouseUp(long buttonNumber, object modifierArray);
+    undefined mouseMoveTo(long x, long y);
+    undefined mouseForceClick();
+    undefined startAndCancelMouseForceClick();
+    undefined mouseForceDown();
+    undefined mouseForceUp();
+    undefined mouseForceChanged(double force);
+    undefined mouseScrollBy(long x, long y);
+    undefined mouseScrollByWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum);
+    undefined continuousMouseScrollBy(long x, long y, optional boolean paged);
     object contextClick();
-    void scheduleAsynchronousClick();
+    undefined scheduleAsynchronousClick();
 
-    void leapForward(long milliseconds);
+    undefined leapForward(long milliseconds);
 
-    void keyDown(DOMString key, object modifierArray, long location);
-    void scheduleAsynchronousKeyDown(DOMString key);
+    undefined keyDown(DOMString key, object modifierArray, long location);
+    undefined scheduleAsynchronousKeyDown(DOMString key);
 
     // Zoom functions.
-    void textZoomIn();
-    void textZoomOut();
-    void zoomPageIn();
-    void zoomPageOut();
-    void scalePageBy(double scale, double x, double y);
+    undefined textZoomIn();
+    undefined textZoomOut();
+    undefined zoomPageIn();
+    undefined zoomPageOut();
+    undefined scalePageBy(double scale, double x, double y);
 
-    void monitorWheelEvents(optional MonitorWheelEventsOptions options);
-    void callAfterScrollingCompletes(object functionCallback);
+    undefined monitorWheelEvents(optional MonitorWheelEventsOptions options);
+    undefined callAfterScrollingCompletes(object functionCallback);
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
     // Touch events.
-    void addTouchPoint(long x, long y);
-    void updateTouchPoint(long index, long x, long y);
-    void setTouchModifier(DOMString modifier, boolean enable);
-    void setTouchPointRadius(long radiusX, long radiusY);
-    void touchStart();
-    void touchMove();
-    void touchEnd();
-    void touchCancel();
-    void clearTouchPoints();
-    void releaseTouchPoint(long index);
-    void cancelTouchPoint(long index);
+    undefined addTouchPoint(long x, long y);
+    undefined updateTouchPoint(long index, long x, long y);
+    undefined setTouchModifier(DOMString modifier, boolean enable);
+    undefined setTouchPointRadius(long radiusX, long radiusY);
+    undefined touchStart();
+    undefined touchMove();
+    undefined touchEnd();
+    undefined touchCancel();
+    undefined clearTouchPoints();
+    undefined releaseTouchPoint(long index);
+    undefined cancelTouchPoint(long index);
 #endif
 };
 

@@ -31,7 +31,7 @@
 ] interface InternalSettingsGenerated {
 <%- for @setting in @settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
-    void <%= @setting.setterFunctionName %>(<%= @setting.idlType %> <%= @setting.name %>);
+    undefined <%= @setting.setterFunctionName %>(<%= @setting.idlType %> <%= @setting.name %>);
 <%- end -%>
 <%- end -%>
 };

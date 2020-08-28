@@ -29,5 +29,5 @@
     ImplementationLacksVTable,
     Global=Worklet,
 ] interface Worklet {
-    [CallWith=Document, MayThrowException] void addModule(USVString moduleURL/*, optional WorkletOptions options*/);
+    [CallWith=Document, MayThrowException] undefined addModule(USVString moduleURL/*, optional WorkletOptions options*/);
 };

@@ -31,5 +31,5 @@ typedef (DOMString? or unrestricted double) SQLValue;
 [
     SkipVTableValidation,
 ] interface SQLTransaction {
-    [MayThrowException] void executeSql(DOMString sqlStatement, optional sequence<SQLValue>? arguments = [], optional SQLStatementCallback? callback, optional SQLStatementErrorCallback? errorCallback);
+    [MayThrowException] undefined executeSql(DOMString sqlStatement, optional sequence<SQLValue>? arguments = [], optional SQLStatementCallback? callback, optional SQLStatementErrorCallback? errorCallback);
 };

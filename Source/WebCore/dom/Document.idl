@@ -113,9 +113,9 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     // the existing 'incumbent document' concept.
     [CEReactions, CallWith=ResponsibleDocument, ImplementedAs=openForBindings, MayThrowException] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
     [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings, MayThrowException] WindowProxy open(USVString url, DOMString name, DOMString features);
-    [CEReactions, ImplementedAs=closeForBindings, MayThrowException] void close();
-    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] void write(DOMString... text);
-    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] void writeln(DOMString... text);
+    [CEReactions, ImplementedAs=closeForBindings, MayThrowException] undefined close();
+    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] undefined write(DOMString... text);
+    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] undefined writeln(DOMString... text);
 
     // User interaction.
     [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;
@@ -147,7 +147,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     // Extensions from Pointer Lock API (https://www.w3.org/TR/pointerlock/#extensions-to-the-document-interface).
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange; // FIXME: Should be enumerable.
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror; // FIXME: Should be enumerable.
-    [Conditional=POINTER_LOCK] void exitPointerLock();
+    [Conditional=POINTER_LOCK] undefined exitPointerLock();
 
     // Extensions from CSS Font Loading API (https://drafts.csswg.org/css-font-loading/#font-face-source).
     // FIXME: Should be in a separate FontFaceSource interface.
@@ -188,9 +188,9 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     readonly attribute HTMLCollection anchors; /* [SameObject] */
     readonly attribute HTMLCollection applets; /* [SameObject] */
 
-    void clear();
-    void captureEvents();
-    void releaseEvents();
+    undefined clear();
+    undefined captureEvents();
+    undefined releaseEvents();
 
     [Replaceable] readonly attribute HTMLAllCollection all; /* [SameObject] */
 

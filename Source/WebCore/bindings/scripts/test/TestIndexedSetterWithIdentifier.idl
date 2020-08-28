@@ -24,7 +24,7 @@
  */
 
 interface TestIndexedSetterWithIdentifier {
-    setter void indexedSetter(unsigned long index, DOMString value);
+    setter undefined indexedSetter(unsigned long index, DOMString value);
 
     // NOTE: Indexed setters require the presence of a indexed getter as well.
     getter DOMString (unsigned long index);

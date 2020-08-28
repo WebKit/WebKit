@@ -38,8 +38,8 @@
     getter Element? (unsigned long index);
     getter (RadioNodeList or Element)? (DOMString name);
 
-    [ImplementedAs=submitFromJavaScript] void submit();
-    [CEReactions=NotNeeded] void reset();
+    [ImplementedAs=submitFromJavaScript] undefined submit();
+    [CEReactions=NotNeeded] undefined reset();
     boolean checkValidity();
     [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
 };

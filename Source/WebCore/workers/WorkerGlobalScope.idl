@@ -44,7 +44,7 @@
 
     // WorkerUtils
 
-    [MayThrowException] void importScripts(USVString... urls);
+    [MayThrowException] undefined importScripts(USVString... urls);
     readonly attribute WorkerNavigator navigator;
 
     // Additional constructors

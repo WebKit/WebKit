@@ -40,8 +40,8 @@
     // FIXME 169662: missing setStreams
     [CallWith=ScriptExecutionContext] static RTCRtpCapabilities? getCapabilities(DOMString kind);
     RTCRtpSendParameters getParameters();
-    Promise<void> setParameters(RTCRtpSendParameters parameters);
-    [CallWith=ScriptExecutionContext] Promise<void> replaceTrack(MediaStreamTrack? withTrack);
+    Promise<undefined> setParameters(RTCRtpSendParameters parameters);
+    [CallWith=ScriptExecutionContext] Promise<undefined> replaceTrack(MediaStreamTrack? withTrack);
     Promise<RTCStatsReport> getStats();
 
     [Conditional=WEB_RTC, EnabledAtRuntime=WebRTCDTMF] readonly attribute RTCDTMFSender? dtmf;

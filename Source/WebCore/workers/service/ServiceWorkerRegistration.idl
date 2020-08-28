@@ -41,7 +41,7 @@
     readonly attribute USVString scope;
     readonly attribute ServiceWorkerUpdateViaCache updateViaCache;
 
-    [NewObject] Promise<void> update();
+    [NewObject] Promise<undefined> update();
     [NewObject] Promise<boolean> unregister();
 
     // event

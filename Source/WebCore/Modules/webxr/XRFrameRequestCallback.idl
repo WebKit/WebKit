@@ -27,4 +27,4 @@ typedef double DOMHighResTimeStamp;
 
 [
     Conditional=WEBXR
-] callback XRFrameRequestCallback = void (DOMHighResTimeStamp time, WebXRFrame frame);
+] callback XRFrameRequestCallback = undefined (DOMHighResTimeStamp time, WebXRFrame frame);

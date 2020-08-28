@@ -24,7 +24,7 @@
  */
 
 interface TestNamedDeleterWithIdentifier {
-    deleter void namedDeleter(DOMString name);
+    deleter undefined namedDeleter(DOMString name);
 
     // NOTE: Named deleters require the presence of a named getter as well.
     getter DOMString (DOMString name);

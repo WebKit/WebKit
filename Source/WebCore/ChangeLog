@@ -1,3 +1,379 @@
+2020-08-28  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] 'void' type is changing to 'undefined'
+        https://bugs.webkit.org/show_bug.cgi?id=215514
+        <rdar://problem/67566201>
+
+        Reviewed by Darin Adler.
+
+        Update IDLs and IDL parsing / code generation for the switch from 'void' to 'undefined'.
+        Also updates the parser to better match current WebIDL grammar, removing the special 
+        'ReturnType' construction and just using 'Type' instead. 
+
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/async-clipboard/Clipboard.idl:
+        * Modules/cache/DOMCache.idl:
+        * Modules/credentialmanagement/CredentialsContainer.idl:
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.idl:
+        * Modules/entriesapi/ErrorCallback.idl:
+        * Modules/entriesapi/FileCallback.idl:
+        * Modules/entriesapi/FileSystemDirectoryEntry.idl:
+        * Modules/entriesapi/FileSystemDirectoryReader.idl:
+        * Modules/entriesapi/FileSystemEntriesCallback.idl:
+        * Modules/entriesapi/FileSystemEntry.idl:
+        * Modules/entriesapi/FileSystemEntryCallback.idl:
+        * Modules/entriesapi/FileSystemFileEntry.idl:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/geolocation/Geolocation.idl:
+        * Modules/geolocation/PositionCallback.idl:
+        * Modules/geolocation/PositionErrorCallback.idl:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * Modules/mediasession/MediaSession.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.idl:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * Modules/mediastream/NavigatorMediaDevices.idl:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpTransceiver.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationPermissionCallback.idl:
+        * Modules/paymentrequest/MerchantValidationEvent.idl:
+        * Modules/paymentrequest/PaymentRequest.idl:
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.idl:
+        * Modules/paymentrequest/PaymentResponse.idl:
+        * Modules/pictureinpicture/DocumentPictureInPicture.idl:
+        * Modules/plugins/QuickTimePluginReplacement.idl:
+        * Modules/quota/StorageErrorCallback.idl:
+        * Modules/quota/StorageInfo.idl:
+        * Modules/quota/StorageQuota.idl:
+        * Modules/quota/StorageQuotaCallback.idl:
+        * Modules/quota/StorageUsageCallback.idl:
+        * Modules/remoteplayback/RemotePlayback.idl:
+        * Modules/speech/SpeechSynthesis.idl:
+        * Modules/streams/ReadableByteStreamController.idl:
+        * Modules/streams/ReadableStreamBYOBReader.idl:
+        * Modules/streams/ReadableStreamBYOBRequest.idl:
+        * Modules/streams/ReadableStreamDefaultController.idl:
+        * Modules/streams/ReadableStreamDefaultReader.idl:
+        * Modules/streams/ReadableStreamSink.idl:
+        * Modules/streams/ReadableStreamSource.idl:
+        * Modules/streams/TransformStreamDefaultController.idl:
+        * Modules/streams/WritableStreamDefaultController.idl:
+        * Modules/streams/WritableStreamDefaultWriter.idl:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferCallback.idl:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioListener.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/AudioScheduledSourceNode.idl:
+        * Modules/webaudio/BiquadFilterNode.idl:
+        * Modules/webaudio/IIRFilterNode.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webaudio/PannerNode.idl:
+        * Modules/webaudio/WebKitAudioBufferSourceNode.idl:
+        * Modules/webaudio/WebKitAudioContext.idl:
+        * Modules/webaudio/WebKitAudioListener.idl:
+        * Modules/webaudio/WebKitAudioPannerNode.idl:
+        * Modules/webaudio/WebKitOscillatorNode.idl:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/DatabaseCallback.idl:
+        * Modules/webdatabase/SQLStatementCallback.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * Modules/webdatabase/SQLTransactionCallback.idl:
+        * Modules/webdatabase/SQLTransactionErrorCallback.idl:
+        * Modules/webgpu/WebGPUBuffer.idl:
+        * Modules/webgpu/WebGPUCommandEncoder.idl:
+        * Modules/webgpu/WebGPUComputePassEncoder.idl:
+        * Modules/webgpu/WebGPUDeviceErrorScopes.idl:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl:
+        * Modules/webgpu/WebGPUQueue.idl:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * Modules/webgpu/WebGPUTexture.idl:
+        * Modules/websockets/WebSocket.idl:
+        * Modules/webxr/WebXRSession.idl:
+        * Modules/webxr/WebXRSystem.idl:
+        * Modules/webxr/XRFrameRequestCallback.idl:
+        * Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb:
+        * animation/AnimationEffect.idl:
+        * animation/KeyframeEffect.idl:
+        * animation/WebAnimation.idl:
+        * bindings/IDLTypes.h:
+        * bindings/js/DOMPromiseProxy.h:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsExplicitPropagateExceptionCall):
+        (GenerateCallbackImplementationContent):
+        (GenerateImplementationFunctionCall):
+        (GetBaseIDLType):
+        * bindings/scripts/IDLParser.pm:
+        (parseCallbackRest):
+        (parseAttributeOrOperationForStringifierOrStatic):
+        (parseOperation):
+        (parseSpecialOperation):
+        (parseMapLikeProperties):
+        (parseSetLikeProperties):
+        (parseSingleType):
+        (parseUnionMemberType):
+        (parseDistinguishableType):
+        (parseConstType):
+        (parsePrimitiveType):
+        (parseNonAnyType): Deleted.
+        (parseReturnType): Deleted.
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithThisObject.cpp:
+        (WebCore::JSTestCallbackFunctionWithThisObject::handleEvent):
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithThisObject.h:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        (WebCore::JSTestCallbackFunctionWithTypedefs::handleEvent):
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.h:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::JSTestCallbackInterface::callbackWithNoParam):
+        (WebCore::JSTestCallbackInterface::callbackWithArrayParam):
+        (WebCore::JSTestCallbackInterface::callbackWithSerializedScriptValueParam):
+        (WebCore::JSTestCallbackInterface::callbackWithStringList):
+        (WebCore::JSTestCallbackInterface::callbackWithBoolean):
+        (WebCore::JSTestCallbackInterface::callbackRequiresThisToPass):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::jsTestObjTestReadOnlyVoidPromiseAttributeGetter):
+        (WebCore::jsTestObjPrototypeFunctionUndefinedMethodBody):
+        (WebCore::jsTestObjPrototypeFunctionUndefinedMethod):
+        (WebCore::jsTestObjPrototypeFunctionUndefinedMethodWithArgsBody):
+        (WebCore::jsTestObjPrototypeFunctionUndefinedMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalPromiseBody):
+        (WebCore::jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunctionBody):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionVoidMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgsBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs): Deleted.
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.cpp:
+        (WebCore::JSTestVoidCallbackFunction::handleEvent):
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.h:
+        * bindings/scripts/test/TestCEReactions.idl:
+        * bindings/scripts/test/TestCallTracer.idl:
+        * bindings/scripts/test/TestCallbackFunctionWithThisObject.idl:
+        * bindings/scripts/test/TestCallbackFunctionWithTypedefs.idl:
+        * bindings/scripts/test/TestCallbackInterface.idl:
+        * bindings/scripts/test/TestDomainSecurity.idl:
+        * bindings/scripts/test/TestEnabledBySetting.idl:
+        * bindings/scripts/test/TestGlobalObject.idl:
+        * bindings/scripts/test/TestImplements.idl:
+        * bindings/scripts/test/TestIndexedSetterNoIdentifier.idl:
+        * bindings/scripts/test/TestIndexedSetterThrowingException.idl:
+        * bindings/scripts/test/TestIndexedSetterWithIdentifier.idl:
+        * bindings/scripts/test/TestJSBuiltinConstructor.idl:
+        * bindings/scripts/test/TestNamedAndIndexedSetterNoIdentifier.idl:
+        * bindings/scripts/test/TestNamedAndIndexedSetterThrowingException.idl:
+        * bindings/scripts/test/TestNamedAndIndexedSetterWithIdentifier.idl:
+        * bindings/scripts/test/TestNamedDeleterNoIdentifier.idl:
+        * bindings/scripts/test/TestNamedDeleterThrowingException.idl:
+        * bindings/scripts/test/TestNamedDeleterWithIdentifier.idl:
+        * bindings/scripts/test/TestNamedDeleterWithIndexedGetter.idl:
+        * bindings/scripts/test/TestNamedSetterNoIdentifier.idl:
+        * bindings/scripts/test/TestNamedSetterThrowingException.idl:
+        * bindings/scripts/test/TestNamedSetterWithIdentifier.idl:
+        * bindings/scripts/test/TestNamedSetterWithIndexedGetter.idl:
+        * bindings/scripts/test/TestNamedSetterWithIndexedGetterAndSetter.idl:
+        * bindings/scripts/test/TestNamedSetterWithOverrideBuiltins.idl:
+        * bindings/scripts/test/TestNamedSetterWithUnforgableProperties.idl:
+        * bindings/scripts/test/TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.idl:
+        * bindings/scripts/test/TestNode.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestOperationBase.idl:
+        * bindings/scripts/test/TestSerializedScriptValueInterface.idl:
+        * bindings/scripts/test/TestSupplemental.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        * bindings/scripts/test/TestVoidCallbackFunction.idl:
+        * css/CSSKeyframesRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPaintCallback.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSSupportsRule.idl:
+        * css/DOMCSSRegisterCustomProperty.idl:
+        * css/DeprecatedCSSOMPrimitiveValue.idl:
+        * css/FontFaceSet.idl:
+        * css/MediaList.idl:
+        * css/MediaQueryList.idl:
+        * css/WebKitCSSMatrix.idl:
+        * dom/AbortAlgorithm.idl:
+        * dom/AbortController.idl:
+        * dom/AbortSignal.idl:
+        * dom/CharacterData.idl:
+        * dom/ChildNode.idl:
+        * dom/CompositionEvent.idl:
+        * dom/CustomElementRegistry.idl:
+        * dom/CustomEvent.idl:
+        * dom/DOMStringMap.idl:
+        * dom/DataTransfer.idl:
+        * dom/DataTransferItem.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/DeviceMotionEvent.idl:
+        * dom/DeviceOrientationEvent.idl:
+        * dom/Document.idl:
+        * dom/DocumentFullscreen.idl:
+        * dom/DocumentStorageAccess.idl:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/EventListener.idl:
+        * dom/EventTarget.idl:
+        * dom/HashChangeEvent.idl:
+        * dom/IdleRequestCallback.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MessageEvent.idl:
+        * dom/MessagePort.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationCallback.idl:
+        * dom/MutationEvent.idl:
+        * dom/MutationObserver.idl:
+        * dom/Node.idl:
+        * dom/NodeIterator.idl:
+        * dom/ParentNode.idl:
+        * dom/Range.idl:
+        * dom/RequestAnimationFrameCallback.idl:
+        * dom/StringCallback.idl:
+        * dom/TextEvent.idl:
+        * dom/TouchEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+        * fileapi/BlobCallback.idl:
+        * fileapi/FileReader.idl:
+        * html/DOMFormData.idl:
+        * html/DOMTokenList.idl:
+        * html/DOMURL.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLDialogElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLKeygenElement.idl:
+        * html/HTMLMarqueeElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLOrForeignElement.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLVideoElement.idl:
+        * html/ImageBitmap.idl:
+        * html/MediaController.idl:
+        * html/URLSearchParams.idl:
+        * html/VoidCallback.idl:
+        * html/canvas/ANGLEInstancedArrays.idl:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasDrawPath.idl:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasImageData.idl:
+        * html/canvas/CanvasPath.idl:
+        * html/canvas/CanvasPathDrawingStyles.idl:
+        * html/canvas/CanvasPattern.idl:
+        * html/canvas/CanvasRect.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/CanvasState.idl:
+        * html/canvas/CanvasText.idl:
+        * html/canvas/CanvasTransform.idl:
+        * html/canvas/CanvasUserInterface.idl:
+        * html/canvas/ImageBitmapRenderingContext.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/OffscreenCanvasRenderingContext2D.idl:
+        * html/canvas/Path2D.idl:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLDrawBuffers.idl:
+        * html/canvas/WebGLLoseContext.idl:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * html/track/TextTrack.idl:
+        * inspector/CommandLineAPIHost.idl:
+        * inspector/InspectorFrontendHost.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.idl:
+        * page/EventSource.idl:
+        * page/History.idl:
+        * page/IntersectionObserver.idl:
+        * page/IntersectionObserverCallback.idl:
+        * page/Location.idl:
+        * page/Navigator.idl:
+        * page/NavigatorIsLoggedIn.idl:
+        * page/NavigatorShare.idl:
+        * page/Performance.idl:
+        * page/PerformanceObserver.idl:
+        * page/PerformanceObserverCallback.idl:
+        * page/RemoteDOMWindow.idl:
+        * page/ResizeObserver.idl:
+        * page/ResizeObserverCallback.idl:
+        * page/UndoManager.idl:
+        * page/WindowOrWorkerGlobalScope.idl:
+        * plugins/DOMPluginArray.idl:
+        * storage/Storage.idl:
+        * storage/StorageEvent.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGFEDropShadowElement.idl:
+        * svg/SVGFEGaussianBlurElement.idl:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGLengthList.idl:
+        * svg/SVGMarkerElement.idl:
+        * svg/SVGNumberList.idl:
+        * svg/SVGPathSegList.idl:
+        * svg/SVGPointList.idl:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGStringList.idl:
+        * svg/SVGTextContentElement.idl:
+        * svg/SVGTransform.idl:
+        * svg/SVGTransformList.idl:
+        * testing/InternalSettings.idl:
+        * testing/Internals.idl:
+        * testing/MockCDMFactory.idl:
+        * testing/MockPageOverlay.idl:
+        * testing/MockPaymentCoordinator.idl:
+        * testing/ServiceWorkerInternals.idl:
+        * testing/TypeConversions.idl:
+        * testing/WebFakeXRDevice.idl:
+        * testing/WebFakeXRInputController.idl:
+        * testing/WebXRTest.idl:
+        * testing/XRSimulateUserActivationFunction.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/Worker.idl:
+        * workers/WorkerGlobalScope.idl:
+        * workers/service/ExtendableEvent.idl:
+        * workers/service/FetchEvent.idl:
+        * workers/service/ServiceWorker.idl:
+        * workers/service/ServiceWorkerClient.idl:
+        * workers/service/ServiceWorkerClients.idl:
+        * workers/service/ServiceWorkerContainer.idl:
+        * workers/service/ServiceWorkerGlobalScope.idl:
+        * workers/service/ServiceWorkerRegistration.idl:
+        * worklets/PaintWorkletGlobalScope.idl:
+        * worklets/Worklet.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XSLTProcessor.idl:
+
 2020-08-28  Darin Adler  <darin@apple.com>
 
         Remove almost all the remaining uses of live ranges

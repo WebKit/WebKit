@@ -39,13 +39,13 @@
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
     [Replaceable] readonly attribute DOMString name;
 
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, sequence<object> transfer);
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, optional PostMessageOptions options);
+    [CallWith=GlobalObject, MayThrowException] undefined postMessage(any message, sequence<object> transfer);
+    [CallWith=GlobalObject, MayThrowException] undefined postMessage(any message, optional PostMessageOptions options);
 
     [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas] long requestAnimationFrame(RequestAnimationFrameCallback callback); // FIXME: Should return an unsigned long.
-    [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas] void cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
+    [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas] undefined cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
 
-    void close();
+    undefined close();
 
     attribute EventHandler onmessage;
 };

@@ -43,7 +43,7 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
     // FIXME: All the unrestricted float arguments below should be unrestricted doubles.
 
     // drawing images
-    [MayThrowException] void drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy);
-    [MayThrowException] void drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);
-    [MayThrowException] void drawImage(CanvasImageSource image, unrestricted double sx, unrestricted double sy, unrestricted double sw, unrestricted double sh, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);
+    [MayThrowException] undefined drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy);
+    [MayThrowException] undefined drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);
+    [MayThrowException] undefined drawImage(CanvasImageSource image, unrestricted double sx, unrestricted double sy, unrestricted double sw, unrestricted double sh, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);
 };

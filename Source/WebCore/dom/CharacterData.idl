@@ -21,10 +21,10 @@ interface CharacterData : Node {
     attribute [TreatNullAs=EmptyString] DOMString data;
     readonly attribute unsigned long length;
     [MayThrowException] DOMString substringData(unsigned long offset, unsigned long count);
-    void appendData(DOMString data);
-    [MayThrowException] void insertData(unsigned long offset, DOMString data);
-    [MayThrowException] void deleteData(unsigned long offset, unsigned long count);
-    [MayThrowException] void replaceData(unsigned long offset, unsigned long count, DOMString data);
+    undefined appendData(DOMString data);
+    [MayThrowException] undefined insertData(unsigned long offset, DOMString data);
+    [MayThrowException] undefined deleteData(unsigned long offset, unsigned long count);
+    [MayThrowException] undefined replaceData(unsigned long offset, unsigned long count, DOMString data);
 };
 
 CharacterData implements ChildNode;

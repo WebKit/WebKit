@@ -55,10 +55,10 @@
     
     readonly attribute unsigned short primitiveType;
 
-    [MayThrowException] void setFloatValue(optional unsigned short unitType = 0, optional unrestricted float floatValue = NaN);
+    [MayThrowException] undefined setFloatValue(optional unsigned short unitType = 0, optional unrestricted float floatValue = NaN);
     [MayThrowException] unrestricted float getFloatValue(optional unsigned short unitType = 0);
 
-    [MayThrowException] void setStringValue(optional unsigned short stringType = 0, optional DOMString stringValue);
+    [MayThrowException] undefined setStringValue(optional unsigned short stringType = 0, optional DOMString stringValue);
     [MayThrowException] DOMString getStringValue();
 
     [MayThrowException] DeprecatedCSSOMCounter getCounterValue();

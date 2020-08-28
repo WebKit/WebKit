@@ -37,10 +37,10 @@
     [CEReactions] attribute unsigned long length;
     getter HTMLOptionElement? item(unsigned long index); // FIXME: The spec has this returning Element?.
     HTMLOptionElement? namedItem([RequiresExistingAtomString] DOMString name);
-    [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-    [CEReactions, MayThrowException] void remove(); // ChildNode overload
-    [CEReactions] void remove(long index);
-    [CEReactions] setter void (unsigned long index, HTMLOptionElement? option);
+    [CEReactions, MayThrowException] undefined add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
+    [CEReactions, MayThrowException] undefined remove(); // ChildNode overload
+    [CEReactions] undefined remove(long index);
+    [CEReactions] setter undefined (unsigned long index, HTMLOptionElement? option);
 
     /* [SameObject] */ readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;
@@ -51,7 +51,7 @@
     readonly attribute DOMString validationMessage;
     boolean checkValidity();
     [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
-    void setCustomValidity(DOMString error);
+    undefined setCustomValidity(DOMString error);
 
     readonly attribute NodeList labels;
 };

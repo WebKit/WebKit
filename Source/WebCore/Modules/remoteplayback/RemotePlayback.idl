@@ -42,6 +42,6 @@ interface RemotePlayback : EventTarget {
     attribute EventHandler ondisconnect;
 
     Promise<long> watchAvailability(RemotePlaybackAvailabilityCallback callback);
-    Promise<void> cancelWatchAvailability(optional long id);
-    Promise<void> prompt();
+    Promise<undefined> cancelWatchAvailability(optional long id);
+    Promise<undefined> prompt();
 };

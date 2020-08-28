@@ -40,7 +40,7 @@ enum DeviceType {
     readonly attribute TextTrack captionMenuOffItem;
     readonly attribute TextTrack captionMenuAutomaticItem;
     readonly attribute DOMString captionDisplayMode;
-    void setSelectedTextTrack(TextTrack? track);
+    undefined setSelectedTextTrack(TextTrack? track);
     readonly attribute HTMLElement textTrackContainer;
     readonly attribute boolean allowsInlineMediaPlayback;
     readonly attribute boolean supportsFullscreen;
@@ -55,9 +55,9 @@ enum DeviceType {
 
     attribute boolean controlsDependOnPageScaleFactor;
     
-    void updateTextTrackContainer();
-    void enteredFullscreen();
-    void exitedFullscreen();
+    undefined updateTextTrackContainer();
+    undefined enteredFullscreen();
+    undefined exitedFullscreen();
 
     DOMString generateUUID();
 

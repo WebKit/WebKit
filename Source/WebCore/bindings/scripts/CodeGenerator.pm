@@ -90,7 +90,7 @@ my %bufferSourceTypes = (
 
 my %primitiveTypeHash = ( 
     "boolean" => 1, 
-    "void" => 1,
+    "undefined" => 1,
     "Date" => 1
 );
 

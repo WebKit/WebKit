@@ -40,7 +40,7 @@
     [MayThrowException] DataTransferItem? add(DOMString data, DOMString type);
     DataTransferItem? add(File file);
 
-    [MayThrowException] void remove(unsigned long index);
+    [MayThrowException] undefined remove(unsigned long index);
 
-    void clear();
+    undefined clear();
 };

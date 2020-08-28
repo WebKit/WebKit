@@ -33,6 +33,6 @@
     Conditional=ConditionBase,
     NoInterfaceObject,
 ] interface TestOperationBase {
-    void nonConditionalOperation();
-    [Conditional=ConditionOperation] void conditionalOperation();
+    undefined nonConditionalOperation();
+    [Conditional=ConditionOperation] undefined conditionalOperation();
 };

@@ -26,4 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback SQLStatementCallback = void (SQLTransaction transaction, SQLResultSet resultSet);
+callback SQLStatementCallback = undefined (SQLTransaction transaction, SQLResultSet resultSet);

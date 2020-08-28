@@ -31,47 +31,47 @@
     NoInterfaceObject
 ] interface WebFakeXRInputController {
     // Indicates that the handedness of the device has changed.
-    void setHandedness(XRHandedness handedness);
+    undefined setHandedness(XRHandedness handedness);
 
     // Indicates that the target ray mode of the device has changed.
-    void setTargetRayMode(XRTargetRayMode targetRayMode);
+    undefined setTargetRayMode(XRTargetRayMode targetRayMode);
 
     // Indicates that the list of profiles representing the device has changed.
-    void setProfiles(sequence<DOMString> profiles);
+    undefined setProfiles(sequence<DOMString> profiles);
 
     // Sets or clears the position of the controller.  If not set, the controller is assumed to
     // not be tracked.
-    void setGripOrigin(FakeXRRigidTransformInit gripOrigin, optional boolean emulatedPosition = false);
-    void clearGripOrigin();
+    undefined setGripOrigin(FakeXRRigidTransformInit gripOrigin, optional boolean emulatedPosition = false);
+    undefined clearGripOrigin();
 
     // Sets the pointer origin for the controller.
-    void setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, optional boolean emulatedPosition = false);
+    undefined setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, optional boolean emulatedPosition = false);
 
     // Temporarily disconnect the input device
-    void disconnect();
+    undefined disconnect();
 
     // Reconnect a disconnected input device
-    void reconnect();
+    undefined reconnect();
 
     // Start a selection for the current frame with the primary input
     // If a gamepad is supported, should update the state of the primary button accordingly.
-    void startSelection();
+    undefined startSelection();
 
     // End selection for the current frame with the primary input
     // If a gamepad is supported, should update the state of the primary button accordingly.
-    void endSelection();
+    undefined endSelection();
 
     // Simulates a start/endSelection for the current frame with the primary input
     // If a gamepad is supported, should update the state of the primary button accordingly.
-    void simulateSelect();
+    undefined simulateSelect();
 
     // Updates the set of supported buttons, including any initial state.
     // Note that this method should not be generally used to update the state of the
     // buttons, as the UA may treat this as re-creating the Gamepad.
     // Note that if any FakeXRButtonType is repeated the behavior is undefined.
-    void setSupportedButtons(sequence<FakeXRButtonStateInit> supportedButtons);
+    undefined setSupportedButtons(sequence<FakeXRButtonStateInit> supportedButtons);
 
     // Used to update the state of a button currently supported by the input source
     // Will not add support for that button if it is not currently supported.
-    void updateButtonState(FakeXRButtonStateInit buttonState);
+    undefined updateButtonState(FakeXRButtonStateInit buttonState);
 };

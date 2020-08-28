@@ -31,7 +31,7 @@
     InterfaceName=GPUTexture
 ] interface WebGPUTexture {
     WebGPUTextureView createDefaultView();
-    void destroy();
+    undefined destroy();
 
     // Not Yet Implemented:
     // WebGPUTextureView createTextureView(WebGPUTextureViewDescriptor desc);

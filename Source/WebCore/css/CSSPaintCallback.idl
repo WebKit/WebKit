@@ -27,4 +27,4 @@
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
     CallbackThisObject=any
-] callback CSSPaintCallback = void (PaintRenderingContext2D context, CSSPaintSize size, StylePropertyMapReadOnly styleMap, sequence<USVString> arguments);
+] callback CSSPaintCallback = undefined (PaintRenderingContext2D context, CSSPaintSize size, StylePropertyMapReadOnly styleMap, sequence<USVString> arguments);

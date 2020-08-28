@@ -56,7 +56,7 @@
     attribute unrestricted double m44;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [MayThrowException] void setMatrixValue(optional DOMString string = "undefined");
+    [MayThrowException] undefined setMatrixValue(optional DOMString string = "undefined");
     
     // Multiply this matrix by secondMatrix, on the right (result = this * secondMatrix)
     WebKitCSSMatrix multiply(optional WebKitCSSMatrix? secondMatrix = null);

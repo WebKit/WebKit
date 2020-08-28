@@ -28,4 +28,4 @@
 
 [
     CallbackThisObject=TestNode
-] callback TestCallbackFunctionWithThisObject = void (sequence<TestNode> parameter);
+] callback TestCallbackFunctionWithThisObject = undefined (sequence<TestNode> parameter);

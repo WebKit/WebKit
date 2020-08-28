@@ -344,7 +344,7 @@ EOF
                 $functionCall = "impl->" . $operation->name . "(" . join(", ", @arguments) . ")";
             }
             
-            push(@contents, "    ${functionCall};\n\n") if $operation->type->name eq "void";
+            push(@contents, "    ${functionCall};\n\n") if $operation->type->name eq "undefined";
             push(@contents, "    return " . $self->_returnExpression($operation->type, $functionCall) . ";\n}\n");
         }
     }
@@ -517,7 +517,7 @@ sub _returnExpression
 {
     my ($self, $returnType, $expression) = @_;
 
-    return "JSValueMakeUndefined(context)" if $returnType->name eq "void";
+    return "JSValueMakeUndefined(context)" if $returnType->name eq "undefined";
     return "JSValueMakeBooleanOrNull(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
     return "JSValueMakeBoolean(context, ${expression})" if $returnType->name eq "boolean";
     return "${expression}" if $returnType->name eq "object";

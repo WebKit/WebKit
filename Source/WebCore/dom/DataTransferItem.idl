@@ -36,7 +36,7 @@
     readonly attribute DOMString kind;
     readonly attribute DOMString type;
 
-    [CallWith=Document] void getAsString(StringCallback? callback);
+    [CallWith=Document] undefined getAsString(StringCallback? callback);
     File getAsFile();
 
     // https://wicg.github.io/entries-api/#html-data

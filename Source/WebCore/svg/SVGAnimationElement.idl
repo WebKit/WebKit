@@ -31,10 +31,10 @@ interface SVGAnimationElement : SVGElement {
     unrestricted float getCurrentTime();
     unrestricted float getSimpleDuration();
 
-    void beginElement();
-    void beginElementAt(optional unrestricted float offset = NaN);
-    void endElement();
-    void endElementAt(optional unrestricted float offset = NaN);
+    undefined beginElement();
+    undefined beginElementAt(optional unrestricted float offset = NaN);
+    undefined endElement();
+    undefined endElementAt(optional unrestricted float offset = NaN);
 };
 
 SVGAnimationElement implements SVGTests;

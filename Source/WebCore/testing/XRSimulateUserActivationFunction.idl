@@ -25,4 +25,4 @@
 [
     Conditional=WEBXR,
     EnabledAtRuntime=WebXR
-] callback XRSimulateUserActivationFunction = void ();
+] callback XRSimulateUserActivationFunction = undefined ();

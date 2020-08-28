@@ -58,10 +58,10 @@
 
     attribute DOMString binaryType;
 
-    [MayThrowException] void send(ArrayBuffer data);
-    [MayThrowException] void send(ArrayBufferView data);
-    [MayThrowException] void send(Blob data);
-    [MayThrowException] void send(USVString data);
+    [MayThrowException] undefined send(ArrayBuffer data);
+    [MayThrowException] undefined send(ArrayBufferView data);
+    [MayThrowException] undefined send(Blob data);
+    [MayThrowException] undefined send(USVString data);
 
-    [MayThrowException] void close(optional [Clamp] unsigned short code, optional USVString reason);
+    [MayThrowException] undefined close(optional [Clamp] unsigned short code, optional USVString reason);
 };

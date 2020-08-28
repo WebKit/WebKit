@@ -23,4 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback ErrorCallback = void (DOMException error);
+callback ErrorCallback = undefined (DOMException error);

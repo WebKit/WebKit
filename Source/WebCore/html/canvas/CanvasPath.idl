@@ -30,16 +30,16 @@
     Exposed=(Window,Worker)
 ] interface CanvasPath {
     // shared path API methods
-    void closePath();
-    void moveTo(unrestricted double x, unrestricted double y);
-    void lineTo(unrestricted double x, unrestricted double y);
-    void quadraticCurveTo(unrestricted double cpx, unrestricted double cpy, unrestricted double x, unrestricted double y);
-    void bezierCurveTo(unrestricted double cp1x, unrestricted double cp1y, unrestricted double cp2x, unrestricted double cp2y, unrestricted double x, unrestricted double y);
-    [MayThrowException] void arcTo(unrestricted double x1, unrestricted double y1, unrestricted double x2, unrestricted double y2, unrestricted double radius);
-    // [MayThrowException] void arcTo(unrestricted double x1, unrestricted double y1, unrestricted double x2, unrestricted double y2, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation);
-    void rect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h);
-    [MayThrowException] void arc(unrestricted double x, unrestricted double y, unrestricted double radius, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
-    [MayThrowException] void ellipse(unrestricted double x, unrestricted double y, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
+    undefined closePath();
+    undefined moveTo(unrestricted double x, unrestricted double y);
+    undefined lineTo(unrestricted double x, unrestricted double y);
+    undefined quadraticCurveTo(unrestricted double cpx, unrestricted double cpy, unrestricted double x, unrestricted double y);
+    undefined bezierCurveTo(unrestricted double cp1x, unrestricted double cp1y, unrestricted double cp2x, unrestricted double cp2y, unrestricted double x, unrestricted double y);
+    [MayThrowException] undefined arcTo(unrestricted double x1, unrestricted double y1, unrestricted double x2, unrestricted double y2, unrestricted double radius);
+    // [MayThrowException] undefined arcTo(unrestricted double x1, unrestricted double y1, unrestricted double x2, unrestricted double y2, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation);
+    undefined rect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h);
+    [MayThrowException] undefined arc(unrestricted double x, unrestricted double y, unrestricted double radius, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
+    [MayThrowException] undefined ellipse(unrestricted double x, unrestricted double y, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
 
     [EnabledAtRuntime=InspectorAdditions] readonly attribute float currentX;
     [EnabledAtRuntime=InspectorAdditions] readonly attribute float currentY;

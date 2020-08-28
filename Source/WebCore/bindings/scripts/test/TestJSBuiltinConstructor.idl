@@ -31,10 +31,10 @@
 ] interface TestJSBuiltinConstructor {
     constructor();
 
-    void testFunction();
+    undefined testFunction();
     attribute boolean testAttribute;
 
-    [ Custom ] void testCustomFunction();
+    [ Custom ] undefined testCustomFunction();
     [ CustomGetter ] readonly attribute boolean testAttributeCustom;
     [ CustomGetter, CustomSetter ] attribute boolean testAttributeRWCustom;
 

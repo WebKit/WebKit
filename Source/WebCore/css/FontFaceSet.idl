@@ -42,7 +42,7 @@ enum FontFaceSetLoadStatus {
 
     FontFaceSet add(FontFace font);
     [ImplementedAs=remove] boolean delete(FontFace font);
-    void clear();
+    undefined clear();
 
     attribute EventHandler onloading;
     attribute EventHandler onloadingdone;

@@ -38,13 +38,13 @@ interface HTMLTableElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString width;
 
     HTMLElement createTHead();
-    [CEReactions] void deleteTHead();
+    [CEReactions] undefined deleteTHead();
     HTMLElement createTFoot();
-    [CEReactions] void deleteTFoot();
+    [CEReactions] undefined deleteTFoot();
     HTMLElement createTBody();
     HTMLElement createCaption();
-    [CEReactions] void deleteCaption();
+    [CEReactions] undefined deleteCaption();
 
     [MayThrowException] HTMLElement insertRow(optional long index = -1);
-    [CEReactions, MayThrowException] void deleteRow(long index);
+    [CEReactions, MayThrowException] undefined deleteRow(long index);
 };

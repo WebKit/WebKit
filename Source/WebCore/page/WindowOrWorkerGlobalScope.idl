@@ -50,12 +50,12 @@ typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
     // Timers
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
     [CallWith=GlobalObject, MayThrowException] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
-    void clearTimeout(optional long handle = 0);
+    undefined clearTimeout(optional long handle = 0);
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
     [CallWith=GlobalObject, MayThrowException] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
-    void clearInterval(optional long handle = 0);
+    undefined clearInterval(optional long handle = 0);
 
-    [Custom] void queueMicrotask(VoidCallback callback);
+    [Custom] undefined queueMicrotask(VoidCallback callback);
 
     // Base64 utility methods.
     [MayThrowException] DOMString atob(DOMString string);

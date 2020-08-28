@@ -1435,8 +1435,8 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSecretBoolean(JSC
 #if ENABLE(TEST_FEATURE)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestFeatureGetSecretBoolean(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionUndefinedMethod(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionUndefinedMethodWithArgs(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(JSC::JSGlobalObject*, JSC::CallFrame*);
@@ -2171,8 +2171,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
-    { "voidMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t) (0) } },
-    { "voidMethodWithArgs", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t) (3) } },
+    { "undefinedMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionUndefinedMethod), (intptr_t) (0) } },
+    { "undefinedMethodWithArgs", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionUndefinedMethodWithArgs), (intptr_t) (3) } },
     { "byteMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionByteMethod), (intptr_t) (0) } },
     { "byteMethodWithArgs", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionByteMethodWithArgs), (intptr_t) (3) } },
     { "octetMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionOctetMethod), (intptr_t) (0) } },
@@ -2478,7 +2478,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     addValueIterableMethods(*globalObject(), *this);
     JSObject& unscopables = *constructEmptyObject(globalObject()->vm(), globalObject()->nullPrototypeObjectStructure());
-    unscopables.putDirect(vm, Identifier::fromString(vm, "voidMethod"), jsBoolean(true));
+    unscopables.putDirect(vm, Identifier::fromString(vm, "undefinedMethod"), jsBoolean(true));
     unscopables.putDirect(vm, Identifier::fromString(vm, "shortAttr"), jsBoolean(true));
     putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
@@ -5157,7 +5157,7 @@ static inline JSValue jsTestObjTestReadOnlyVoidPromiseAttributeGetter(JSGlobalOb
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLVoid>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testReadOnlyVoidPromiseAttribute())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLUndefined>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testReadOnlyVoidPromiseAttribute())));
 }
 
 EncodedJSValue jsTestObjTestReadOnlyVoidPromiseAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -5755,7 +5755,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestFeatureGetSecretBoole
 
 #endif
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionUndefinedMethodBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -5763,16 +5763,16 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodBody(JSC::
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     throwScope.release();
-    impl.voidMethod();
+    impl.undefinedMethod();
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionUndefinedMethod(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVoidMethodBody>(*lexicalGlobalObject, *callFrame, "voidMethod");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionUndefinedMethodBody>(*lexicalGlobalObject, *callFrame, "undefinedMethod");
 }
 
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodWithArgsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionUndefinedMethodWithArgsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -5788,16 +5788,16 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodWithArgsBo
     auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     EnsureStillAliveScope argument2 = callFrame->uncheckedArgument(2);
-    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument2.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 2, "objArg", "TestObject", "voidMethodWithArgs", "TestObj"); });
+    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument2.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 2, "objArg", "TestObject", "undefinedMethodWithArgs", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     throwScope.release();
-    impl.voidMethodWithArgs(WTFMove(longArg), WTFMove(strArg), *objArg);
+    impl.undefinedMethodWithArgs(WTFMove(longArg), WTFMove(strArg), *objArg);
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionUndefinedMethodWithArgs(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionVoidMethodWithArgsBody>(*lexicalGlobalObject, *callFrame, "voidMethodWithArgs");
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionUndefinedMethodWithArgsBody>(*lexicalGlobalObject, *callFrame, "undefinedMethodWithArgs");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
@@ -7368,7 +7368,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalPr
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto promise = argument0.value().isUndefined() ? nullptr : convert<IDLPromise<IDLVoid>>(*lexicalGlobalObject, argument0.value());
+    auto promise = argument0.value().isUndefined() ? nullptr : convert<IDLPromise<IDLUndefined>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     throwScope.release();
     impl.methodWithOptionalPromise(WTFMove(promise));
@@ -9068,7 +9068,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestReturnsOwnPromis
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLPromise<IDLVoid>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.testReturnsOwnPromiseAndPromiseProxyFunction())));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLPromise<IDLUndefined>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.testReturnsOwnPromiseAndPromiseProxyFunction())));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunction(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

@@ -609,25 +609,25 @@ my $nextAttribute_1 = '^(attribute|inherit)$';
 my $nextAttribute_2 = '^(readonly|attribute)$';
 my $nextPrimitiveType_1 = '^(int|long|short|unsigned)$';
 my $nextPrimitiveType_2 = '^(double|float|unrestricted)$';
-my $nextArgumentList_1 = '^(\(|ByteString|DOMString|USVString|Date|\[|any|boolean|byte|double|float|in|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
-my $nextNonAnyType_1 = '^(boolean|byte|double|float|long|octet|short|unrestricted|unsigned)$';
+my $nextArgumentList_1 = '^(\(|ByteString|DOMString|USVString|Date|\[|any|boolean|byte|double|float|in|long|object|octet|optional|sequence|short|undefined|unrestricted|unsigned)$';
+my $nextDistinguishableType_1 = '^(boolean|byte|double|float|long|octet|short|undefined|unrestricted|unsigned)$';
 my $nextStringType_1 = '^(ByteString|DOMString|USVString)$';
-my $nextInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|Date|any|attribute|boolean|byte|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|setter|short|unrestricted|unsigned|void)$';
-my $nextOperation_1 = '^(\(|ByteString|DOMString|USVString|Date|any|boolean|byte|deleter|double|float|getter|legacycaller|long|object|octet|sequence|setter|short|unrestricted|unsigned|void)$';
+my $nextInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|Date|any|attribute|boolean|byte|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|setter|short|undefined|unrestricted|unsigned)$';
+my $nextOperation_1 = '^(\(|ByteString|DOMString|USVString|Date|any|boolean|byte|deleter|double|float|getter|legacycaller|long|object|octet|sequence|setter|short|undefined|unrestricted|unsigned)$';
 my $nextUnrestrictedFloatType_1 = '^(double|float)$';
 my $nextExtendedAttributeRest3_1 = '^(\,|\])$';
-my $nextExceptionField_1 = '^(\(|ByteString|DOMString|USVString|Date|any|boolean|byte|double|float|long|object|octet|sequence|short|unrestricted|unsigned)$';
-my $nextType_1 = '^(ByteString|DOMString|USVString|Date|any|boolean|byte|double|float|long|object|octet|sequence|short|unrestricted|unsigned)$';
+my $nextExceptionField_1 = '^(\(|ByteString|DOMString|USVString|Date|any|boolean|byte|double|float|long|object|octet|sequence|short|undefined|unrestricted|unsigned)$';
+my $nextType_1 = '^(ByteString|DOMString|USVString|Date|any|boolean|byte|double|float|long|object|octet|sequence|short|undefined|unrestricted|unsigned)$';
 my $nextSpecials_1 = '^(deleter|getter|legacycaller|setter)$';
 my $nextDefinitions_1 = '^(callback|dictionary|enum|exception|interface|partial|typedef)$';
-my $nextExceptionMembers_1 = '^(\(|ByteString|DOMString|USVString|Date|\[|any|boolean|byte|const|double|float|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
-my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|Date|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
-my $nextSingleType_1 = '^(ByteString|DOMString|USVString|Date|boolean|byte|double|float|long|object|octet|sequence|short|unrestricted|unsigned)$';
-my $nextArgumentName_1 = '^(attribute|callback|const|deleter|dictionary|enum|exception|getter|implements|inherit|interface|legacycaller|partial|serializer|setter|static|stringifier|typedef|unrestricted)$';
+my $nextExceptionMembers_1 = '^(\(|ByteString|DOMString|USVString|Date|\[|any|boolean|byte|const|double|float|long|object|octet|optional|sequence|short|undefined|unrestricted|unsigned)$';
+my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|Date|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|undefined|unrestricted|unsigned)$';
+my $nextSingleType_1 = '^(ByteString|DOMString|USVString|Date|boolean|byte|double|float|long|object|octet|sequence|short|undefined|unrestricted|unsigned)$';
+my $nextArgumentName_1 = '^(attribute|callback|const|deleter|dictionary|enum|exception|getter|implements|inherit|interface|legacycaller|partial|serializer|setter|static|stringifier|typedef|undefined|unrestricted)$';
 my $nextConstValue_1 = '^(false|true)$';
 my $nextConstValue_2 = '^(-|Infinity|NaN)$';
 my $nextDefinition_1 = '^(callback|interface)$';
-my $nextOperationRest_1 = '^(\(|ByteString|DOMString|USVString|Date|any|boolean|byte|double|float|long|object|octet|sequence|short|unrestricted|unsigned|void)$';
+my $nextOperationRest_1 = '^(\(|ByteString|DOMString|USVString|Date|any|boolean|byte|double|float|long|object|octet|sequence|short|undefined|unrestricted|unsigned)$';
 my $nextUnsignedIntegerType_1 = '^(long|short)$';
 my $nextDefaultValue_1 = '^(-|Infinity|NaN|false|null|true)$';
 
@@ -1224,7 +1224,7 @@ sub parseCallbackRest
         $self->assertTokenValue($self->getToken(), "=", __LINE__);
 
         my $operation = IDLOperation->new();
-        $operation->type($self->parseReturnType());
+        $operation->type($self->parseType());
         
         $self->assertExtendedAttributesValidForContext($extendedAttributeList, "callback-function", "operation");
         $operation->extendedAttributes($extendedAttributeList);
@@ -1645,7 +1645,7 @@ sub parseAttributeOrOperationForStringifierOrStatic
     }
 
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextOperationRest_1/) {
-        my $returnType = $self->parseReturnType();
+        my $returnType = $self->parseType();
 
         # NOTE: This is a non-standard addition. In WebIDL, there is no way to associate
         # extended attributes with a return type.
@@ -1741,7 +1741,7 @@ sub parseOperation
         return $self->parseSpecialOperation($extendedAttributeList);
     }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextOperationRest_1/) {
-        my $returnType = $self->parseReturnType();
+        my $returnType = $self->parseType();
 
         # NOTE: This is a non-standard addition. In WebIDL, there is no way to associate
         # extended attributes with a return type.
@@ -1764,7 +1764,7 @@ sub parseSpecialOperation
     if ($next->value() =~ /$nextSpecials_1/) {
         my @specials = ();
         push(@specials, @{$self->parseSpecials()});
-        my $returnType = $self->parseReturnType();
+        my $returnType = $self->parseType();
 
         # NOTE: This is a non-standard addition. In WebIDL, there is no way to associate
         # extended attributes with a return type.
@@ -2024,7 +2024,7 @@ sub parseMapLikeProperties
     $clearOperation->name("clear");
     $clearOperation->isMapLike(1);
     $clearOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $clearOperation->type(makeSimpleType("void"));
+    $clearOperation->type(makeSimpleType("undefined"));
 
     my $deleteOperation = IDLOperation->new();
     $deleteOperation->name("delete");
@@ -2152,7 +2152,7 @@ sub parseSetLikeProperties
     $clearOperation->name("clear");
     $clearOperation->isSetLike(1);
     $clearOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $clearOperation->type(makeSimpleType("void"));
+    $clearOperation->type(makeSimpleType("undefined"));
 
     my $deleteOperation = IDLOperation->new();
     $deleteOperation->name("delete");
@@ -2616,10 +2616,23 @@ sub parseSingleType
         $anyType->name("any");
         return $anyType;
     }
+    if ($next->value() eq "Promise") {
+        $self->assertTokenValue($self->getToken(), "Promise", __LINE__);
+        $self->assertTokenValue($self->getToken(), "<", __LINE__);
+
+        my $subtype = $self->parseType();
+
+        $self->assertTokenValue($self->getToken(), ">", __LINE__);
+
+        my $type = IDLType->new();
+        $type->name("Promise");
+        push(@{$type->subtypes}, $subtype);
+        return $type;
+    }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextSingleType_1/) {
-        my $nonAnyType = $self->parseNonAnyType();
-        $nonAnyType->isNullable($self->parseNull());
-        return $nonAnyType;
+        my $distinguishableType = $self->parseDistinguishableType();
+        $distinguishableType->isNullable($self->parseNull());
+        return $distinguishableType;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -2663,10 +2676,10 @@ sub parseUnionMemberType
     }
 
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextSingleType_1/) {
-        my $nonAnyType = $self->parseNonAnyType();
-        $nonAnyType->isNullable($self->parseNull());
-        $nonAnyType->extendedAttributes($extendedAttributeList);
-        return $nonAnyType;
+        my $distinguishableType = $self->parseDistinguishableType();
+        $distinguishableType->isNullable($self->parseNull());
+        $distinguishableType->extendedAttributes($extendedAttributeList);
+        return $distinguishableType;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -2687,14 +2700,14 @@ sub parseUnionMemberTypes
     return @subtypes;
 }
 
-sub parseNonAnyType
+sub parseDistinguishableType
 {
     my $self = shift;
     my $next = $self->nextToken();
 
     my $type = IDLType->new();
 
-    if ($next->value() =~ /$nextNonAnyType_1/) {
+    if ($next->value() =~ /$nextDistinguishableType_1/) {
         $type->name($self->parsePrimitiveType());
         return $type;
     }
@@ -2752,19 +2765,6 @@ sub parseNonAnyType
 
         return $type;
     }
-    if ($next->value() eq "Promise") {
-        $self->assertTokenValue($self->getToken(), "Promise", __LINE__);
-        $self->assertTokenValue($self->getToken(), "<", __LINE__);
-
-        my $subtype = $self->parseReturnType();
-
-        $self->assertTokenValue($self->getToken(), ">", __LINE__);
-
-        $type->name("Promise");
-        push(@{$type->subtypes}, $subtype);
-
-        return $type;
-    }
     if ($next->value() eq "record") {
         $self->assertTokenValue($self->getToken(), "record", __LINE__);
         $self->assertTokenValue($self->getToken(), "<", __LINE__);
@@ -2800,7 +2800,7 @@ sub parseConstType
 
     my $type = IDLType->new();
 
-    if ($next->value() =~ /$nextNonAnyType_1/) {
+    if ($next->value() =~ /$nextDistinguishableType_1/) {
         $type->name($self->parsePrimitiveType());
         $type->isNullable($self->parseNull());
         return $type;
@@ -2844,6 +2844,10 @@ sub parsePrimitiveType
     }
     if ($next->value() =~ /$nextPrimitiveType_2/) {
         return $self->parseUnrestrictedFloatType();
+    }
+    if ($next->value() eq "undefined") {
+        $self->assertTokenValue($self->getToken(), "undefined", __LINE__);
+        return "undefined";
     }
     if ($next->value() eq "boolean") {
         $self->assertTokenValue($self->getToken(), "boolean", __LINE__);
@@ -2945,23 +2949,6 @@ sub parseNull
         return 1;
     }
     return 0;
-}
-
-sub parseReturnType
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "void") {
-        $self->assertTokenValue($self->getToken(), "void", __LINE__);
-        
-        my $voidType = IDLType->new();
-        $voidType->name("void");
-        return $voidType;
-    }
-    if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
-        return $self->parseType();
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 
 sub parseOptionalSemicolon

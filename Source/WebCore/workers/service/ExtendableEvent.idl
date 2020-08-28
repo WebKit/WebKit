@@ -32,5 +32,5 @@
 ] interface ExtendableEvent : Event {
     constructor(DOMString type, optional ExtendableEventInit eventInitDict);
 
-    [MayThrowException] void waitUntil(Promise<any> f);
+    [MayThrowException] undefined waitUntil(Promise<any> f);
 };

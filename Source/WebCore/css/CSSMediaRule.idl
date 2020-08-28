@@ -23,5 +23,5 @@ interface CSSMediaRule : CSSRule {
     readonly attribute CSSRuleList cssRules;
 
     [MayThrowException] unsigned long insertRule(optional DOMString rule = "undefined", optional unsigned long index = 0);
-    [MayThrowException] void deleteRule(optional unsigned long index = 0);
+    [MayThrowException] undefined deleteRule(optional unsigned long index = 0);
 };

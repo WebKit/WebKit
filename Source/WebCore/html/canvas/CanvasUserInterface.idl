@@ -27,10 +27,10 @@
     NoInterfaceObject,
     Exposed=Window
 ] interface CanvasUserInterface {
-    void drawFocusIfNeeded(Element element);
-    void drawFocusIfNeeded(Path2D path, Element element);
+    undefined drawFocusIfNeeded(Element element);
+    undefined drawFocusIfNeeded(Path2D path, Element element);
 
     // FIXME: Implement scrollPathIntoView.
-    // void scrollPathIntoView();
-    // void scrollPathIntoView(Path2D path);
+    // undefined scrollPathIntoView();
+    // undefined scrollPathIntoView(Path2D path);
 };

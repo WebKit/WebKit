@@ -172,7 +172,7 @@ JSValue JSTestCallbackInterface::getConstructor(VM& vm, const JSGlobalObject* gl
     return getDOMConstructor<JSTestCallbackInterfaceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::callbackWithNoParam()
+CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterface::callbackWithNoParam()
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -198,7 +198,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     return { };
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::callbackWithArrayParam(typename IDLFloat32Array::ParameterType arrayParam)
+CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterface::callbackWithArrayParam(typename IDLFloat32Array::ParameterType arrayParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -225,7 +225,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     return { };
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam)
+CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterface::callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -253,7 +253,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     return { };
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam)
+CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterface::callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -280,7 +280,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     return { };
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::callbackWithBoolean(typename IDLBoolean::ParameterType boolParam)
+CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterface::callbackWithBoolean(typename IDLBoolean::ParameterType boolParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -307,7 +307,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     return { };
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
+CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterface::callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

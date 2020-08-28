@@ -33,7 +33,7 @@
     [CEReactions, MayThrowException] DOMString removeProperty(DOMString propertyName);
     DOMString? getPropertyPriority(DOMString propertyName);
 
-    [CEReactions, MayThrowException] void setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, optional [TreatNullAs=EmptyString] DOMString priority = "");
+    [CEReactions, MayThrowException] undefined setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, optional [TreatNullAs=EmptyString] DOMString priority = "");
 
     readonly attribute unsigned long length;
     getter DOMString item(unsigned long index);
@@ -49,7 +49,7 @@
     // prefixes for this to be practical. If we remove legacy aliases, we should
     // reconsider this decision.
     getter (DOMString or double) (DOMString name);
-    [CEReactions, MayThrowException, CallNamedSetterOnlyForSupportedProperties] setter void (DOMString name, [TreatNullAs=EmptyString] DOMString value);
+    [CEReactions, MayThrowException, CallNamedSetterOnlyForSupportedProperties] setter undefined (DOMString name, [TreatNullAs=EmptyString] DOMString value);
 
     // This method is deprecated, and we would like to drop support for it someday
     DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);

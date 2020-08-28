@@ -28,6 +28,6 @@
     getter DOMPlugin? item(unsigned long index);
     getter DOMPlugin? namedItem(DOMString name);
 
-    void refresh(optional boolean reload = false);
+    undefined refresh(optional boolean reload = false);
 };
 

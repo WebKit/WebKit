@@ -38,7 +38,7 @@
     readonly attribute DOMString reservedClientId;
     readonly attribute DOMString targetClientId;
 
-    [MayThrowException] void respondWith(Promise<FetchResponse> r);
+    [MayThrowException] undefined respondWith(Promise<FetchResponse> r);
 };
 
 dictionary FetchEventInit : ExtendableEventInit {

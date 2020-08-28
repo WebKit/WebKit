@@ -24,4 +24,4 @@
  */
 
 [
-] callback AbortAlgorithm = void ();
+] callback AbortAlgorithm = undefined ();

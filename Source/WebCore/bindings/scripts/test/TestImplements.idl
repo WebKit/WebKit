@@ -40,10 +40,10 @@
     [CustomGetter, CustomSetter] attribute DOMString implementsStr3;
     attribute Node implementsNode;
 
-    void implementsMethod1();
+    undefined implementsMethod1();
     [CallWith=ScriptExecutionContext, MayThrowException] TestObj implementsMethod2(DOMString strArg, TestObj objArg);
-    [Custom] void implementsMethod3();
-    static void implementsMethod4();
+    [Custom] undefined implementsMethod3();
+    static undefined implementsMethod4();
 
     const unsigned short IMPLEMENTSCONSTANT1 = 1;
     [Reflect=CONST_IMPL] const unsigned short IMPLEMENTSCONSTANT2 = 2;

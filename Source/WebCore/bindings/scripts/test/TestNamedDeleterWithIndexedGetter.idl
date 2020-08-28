@@ -24,7 +24,7 @@
  */
 
 interface TestNamedDeleterWithIndexedGetter {
-    deleter void (DOMString name);
+    deleter undefined (DOMString name);
 
     // The presence of an index getter changes adds additional
     // checks to the delete algorithm.

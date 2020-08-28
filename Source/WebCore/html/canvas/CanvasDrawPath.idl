@@ -28,15 +28,15 @@
     Exposed=(Window,Worker)
 ] interface CanvasDrawPath {
     // path API (see also CanvasPath)
-    void beginPath();
-    void fill(optional CanvasFillRule fillRule = "nonzero");
-    void fill(Path2D path, optional CanvasFillRule fillRule = "nonzero");
-    void stroke();
-    void stroke(Path2D path);
-    void clip(optional CanvasFillRule fillRule = "nonzero");
-    void clip(Path2D path, optional CanvasFillRule fillRule = "nonzero");
+    undefined beginPath();
+    undefined fill(optional CanvasFillRule fillRule = "nonzero");
+    undefined fill(Path2D path, optional CanvasFillRule fillRule = "nonzero");
+    undefined stroke();
+    undefined stroke(Path2D path);
+    undefined clip(optional CanvasFillRule fillRule = "nonzero");
+    undefined clip(Path2D path, optional CanvasFillRule fillRule = "nonzero");
     // FIXME: Implement resetClip.
-    // void resetClip();
+    // undefined resetClip();
 
     // FIXME: All the unrestricted float parameters below should be unrestricted doubles.
     boolean isPointInPath(unrestricted float x, unrestricted float y, optional CanvasFillRule fillRule = "nonzero");

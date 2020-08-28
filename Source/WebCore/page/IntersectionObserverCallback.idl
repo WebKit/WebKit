@@ -28,4 +28,4 @@
 [
     Conditional=INTERSECTION_OBSERVER,
     CallbackThisObject=IntersectionObserver,
-] callback IntersectionObserverCallback = void (sequence<IntersectionObserverEntry> entries, IntersectionObserver observer);
+] callback IntersectionObserverCallback = undefined (sequence<IntersectionObserverEntry> entries, IntersectionObserver observer);

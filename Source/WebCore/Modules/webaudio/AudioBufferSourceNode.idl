@@ -40,7 +40,7 @@
     attribute double loopStart;
     attribute double loopEnd;
 
-    [MayThrowException, ImplementedAs=startLater] void start(optional double when = 0, optional double grainOffset = 0, optional double grainDuration);
+    [MayThrowException, ImplementedAs=startLater] undefined start(optional double when = 0, optional double grainOffset = 0, optional double grainDuration);
 
     // FIXME: Those constants are kept for backward compatibility with the prefixed API and should
     // be removed once we stop supporting it.

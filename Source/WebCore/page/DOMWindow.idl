@@ -65,11 +65,11 @@ typedef USVString CSSOMString;
     [Replaceable] readonly attribute BarProp statusbar;
     [Replaceable] readonly attribute BarProp toolbar;
     attribute DOMString status;
-    [DoNotCheckSecurity, CallWith=IncumbentDocument, ForwardDeclareInHeader] void close();
+    [DoNotCheckSecurity, CallWith=IncumbentDocument, ForwardDeclareInHeader] undefined close();
     [DoNotCheckSecurity, ForwardDeclareInHeader] readonly attribute boolean closed;
-    void stop();
-    [DoNotCheckSecurity, CallWith=IncumbentWindow, ForwardDeclareInHeader] void focus();
-    [DoNotCheckSecurity, ForwardDeclareInHeader] void blur();
+    undefined stop();
+    [DoNotCheckSecurity, CallWith=IncumbentWindow, ForwardDeclareInHeader] undefined focus();
+    [DoNotCheckSecurity, ForwardDeclareInHeader] undefined blur();
 
     // Other browsing contexts.
     [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy frames;
@@ -85,24 +85,24 @@ typedef USVString CSSOMString;
     readonly attribute DOMApplicationCache applicationCache;
 
     // User prompts.
-    void alert();
-    void alert(DOMString message);
+    undefined alert();
+    undefined alert(DOMString message);
     [ImplementedAs=confirmForBindings]boolean confirm(optional DOMString message = "");
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
-    void print();
+    undefined print();
 
     long requestAnimationFrame(RequestAnimationFrameCallback callback); // FIXME: Should return an unsigned long.
-    void cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
+    undefined cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
 
     [EnabledBySetting=requestIdleCallback] unsigned long requestIdleCallback(IdleRequestCallback callback, optional IdleRequestOptions options);
-    [EnabledBySetting=requestIdleCallback] void cancelIdleCallback(unsigned long handle);
+    [EnabledBySetting=requestIdleCallback] undefined cancelIdleCallback(unsigned long handle);
 
-    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, optional WindowPostMessageOptions options);
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] undefined postMessage(any message, optional WindowPostMessageOptions options);
 
     // Obsolete members, still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).
-    void captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
-    void releaseEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
+    undefined captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
+    undefined releaseEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
 
     // WebStorage (https://html.spec.whatwg.org/multipage/webstorage.html#the-sessionstorage-attribute).
     readonly attribute Storage sessionStorage;
@@ -118,10 +118,10 @@ typedef USVString CSSOMString;
     [Replaceable] readonly attribute Screen screen; // FIXME: Should be [SameObject].
 
     // Browsing context (CSSOM-View).
-    void moveTo(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
-    void moveBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
-    void resizeTo(optional unrestricted float width = NaN, optional unrestricted float height = NaN); // Parameters should be mandatory and of type long.
-    void resizeBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
+    undefined moveTo(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
+    undefined moveBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
+    undefined resizeTo(optional unrestricted float width = NaN, optional unrestricted float height = NaN); // Parameters should be mandatory and of type long.
+    undefined resizeBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
 
     // Viewport (CSSOM-View).
     [Replaceable] readonly attribute long innerHeight;
@@ -132,12 +132,12 @@ typedef USVString CSSOMString;
     [Replaceable, ImplementedAs=scrollX] readonly attribute double pageXOffset;
     [Replaceable] readonly attribute double scrollY;
     [Replaceable, ImplementedAs=scrollY] readonly attribute double pageYOffset;
-    [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);
-    [ImplementedAs=scrollTo] void scroll(unrestricted double x, unrestricted double y);
-    void scrollTo(optional ScrollToOptions options);
-    void scrollTo(unrestricted double x, unrestricted double y);
-    void scrollBy(optional ScrollToOptions option);
-    void scrollBy(unrestricted double x, unrestricted double y);
+    [ImplementedAs=scrollTo] undefined scroll(optional ScrollToOptions options);
+    [ImplementedAs=scrollTo] undefined scroll(unrestricted double x, unrestricted double y);
+    undefined scrollTo(optional ScrollToOptions options);
+    undefined scrollTo(unrestricted double x, unrestricted double y);
+    undefined scrollBy(optional ScrollToOptions option);
+    undefined scrollBy(unrestricted double x, unrestricted double y);
 
     // Visual Viewport (https://wicg.github.io/ViewportAPI/spec.html)
     [EnabledBySetting=VisualViewportAPI, Replaceable] readonly attribute VisualViewport visualViewport; // FIXME: Should be [SameObject]. https://bugs.webkit.org/show_bug.cgi?id=163414
@@ -164,8 +164,8 @@ typedef USVString CSSOMString;
     [Replaceable] readonly attribute long screenLeft;
     [Replaceable] readonly attribute long screenTop;
     long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
-    [ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
-    [ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id);
+    [ImplementedAs=cancelAnimationFrame] undefined webkitCancelAnimationFrame(long id);
+    [ImplementedAs=cancelAnimationFrame] undefined webkitCancelRequestAnimationFrame(long id);
 
     // Non standard but may get added (https://github.com/whatwg/html/issues/2379).
     [Replaceable] readonly attribute Navigator clientInformation;

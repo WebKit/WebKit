@@ -36,7 +36,7 @@
     attribute unrestricted float miterLimit; // (default 10)
 
     // dashed lines
-    void setLineDash(sequence<unrestricted float> segments); // default empty
+    undefined setLineDash(sequence<unrestricted float> segments); // default empty
     sequence<unrestricted float> getLineDash();
     attribute unrestricted float lineDashOffset;
 };

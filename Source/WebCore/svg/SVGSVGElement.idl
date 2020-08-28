@@ -44,7 +44,7 @@
     boolean checkIntersection(SVGElement element, SVGRect rect);
     boolean checkEnclosure(SVGElement element, SVGRect rect);
 
-    void deselectAll();
+    undefined deselectAll();
 
     [NewObject] SVGNumber createSVGNumber();
     [NewObject] SVGLength createSVGLength();
@@ -59,17 +59,17 @@
 
     // SVG animations extensions
     // https://svgwg.org/specs/animations/#InterfaceSVGSVGElement
-    void pauseAnimations();
-    void unpauseAnimations();
+    undefined pauseAnimations();
+    undefined unpauseAnimations();
     boolean animationsPaused();
     unrestricted float getCurrentTime();
-    void setCurrentTime(optional unrestricted float seconds = NaN);
+    undefined setCurrentTime(optional unrestricted float seconds = NaN);
 
     // Deprecated SVG redrawing
     unsigned long suspendRedraw(optional unsigned long maxWaitMilliseconds = 0);
-    void unsuspendRedraw(optional unsigned long suspendHandleId = 0);
-    void unsuspendRedrawAll();
-    void forceRedraw();
+    undefined unsuspendRedraw(optional unsigned long suspendHandleId = 0);
+    undefined unsuspendRedrawAll();
+    undefined forceRedraw();
 };
 
 SVGSVGElement implements SVGFitToViewBox;

@@ -28,5 +28,5 @@
     ImplementationLacksVTable
 ] interface CanvasPattern {
     // opaque object
-    [MayThrowException] void setTransform(optional DOMMatrix2DInit transform);
+    [MayThrowException] undefined setTransform(optional DOMMatrix2DInit transform);
 };

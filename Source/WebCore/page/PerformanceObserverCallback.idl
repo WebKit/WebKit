@@ -28,4 +28,4 @@
 [
     IsWeakCallback,
     CallbackThisObject=PerformanceObserver,
-] callback PerformanceObserverCallback = void (PerformanceObserverEntryList entries, PerformanceObserver observer);
+] callback PerformanceObserverCallback = undefined (PerformanceObserverEntryList entries, PerformanceObserver observer);

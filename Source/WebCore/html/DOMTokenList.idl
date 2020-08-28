@@ -30,8 +30,8 @@
     readonly attribute unsigned long length;
     getter DOMString? item(unsigned long index);
     boolean contains(DOMString token);
-    [CEReactions, MayThrowException] void add(DOMString... tokens);
-    [CEReactions, MayThrowException] void remove(DOMString... tokens);
+    [CEReactions, MayThrowException] undefined add(DOMString... tokens);
+    [CEReactions, MayThrowException] undefined remove(DOMString... tokens);
     [CEReactions, MayThrowException] boolean toggle(DOMString token, optional boolean force);
     [CEReactions, MayThrowException] boolean replace(DOMString token, DOMString newToken);
     [MayThrowException] boolean supports(DOMString token);

@@ -33,11 +33,11 @@
     // CallTracingCallback=recordCanvasAction, // FIXME: OffscreenCanvas.
 ] interface OffscreenCanvasRenderingContext2D {
     readonly attribute OffscreenCanvas canvas;
-    void commit();
+    undefined commit();
 
     // Inspector-only.
     // FIXME: OffscreenCanvas.
-    // [EnabledAtRuntime=InspectorAdditions] void setPath(Path2D path);
+    // [EnabledAtRuntime=InspectorAdditions] undefined setPath(Path2D path);
     // [EnabledAtRuntime=InspectorAdditions, NewObject] Path2D getPath();
 };
 

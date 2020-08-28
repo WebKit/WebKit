@@ -39,13 +39,13 @@
     [SameObject] readonly attribute WebXRInputSourceArray inputSources;
 
     // Methods
-    [MayThrowException] void updateRenderState(optional XRRenderStateInit stateInit);
+    [MayThrowException] undefined updateRenderState(optional XRRenderStateInit stateInit);
     [NewObject] Promise<WebXRReferenceSpace> requestReferenceSpace(XRReferenceSpaceType type);
 
     unsigned long requestAnimationFrame(XRFrameRequestCallback callback);
-    void cancelAnimationFrame(unsigned long handle);
+    undefined cancelAnimationFrame(unsigned long handle);
 
-    Promise<void> end();
+    Promise<undefined> end();
 
     // Events
     attribute EventHandler onend;

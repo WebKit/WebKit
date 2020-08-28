@@ -31,18 +31,18 @@
     [PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateAttribute;
     [Conditional=TEST_FEATURE, PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateConditionalAttribute;
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] attribute DOMString enabledAtRuntimeAttribute;
-    void regularOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static void enabledAtRuntimeOperationStatic(long testParam);
+    undefined regularOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] undefined enabledAtRuntimeOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] undefined enabledAtRuntimeOperation(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static undefined enabledAtRuntimeOperationStatic(long testParam);
 
-    [EnabledForWorld=specificWorld] void enabledInSpecificWorld(long testParam);
+    [EnabledForWorld=specificWorld] undefined enabledInSpecificWorld(long testParam);
 
-    [EnabledForWorld=specificWorld, EnabledAtRuntime=TestFeature] void enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
-    [EnabledForWorld=specificWorld, EnabledAtRuntime=TestFeature&TestFeature1] void enabledInSpecificWorldWhenRuntimeFeaturesEnabled(long testParam);
+    [EnabledForWorld=specificWorld, EnabledAtRuntime=TestFeature] undefined enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
+    [EnabledForWorld=specificWorld, EnabledAtRuntime=TestFeature&TestFeature1] undefined enabledInSpecificWorldWhenRuntimeFeaturesEnabled(long testParam);
 
-    [PrivateIdentifier, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testPrivateFunction();
-    [JSBuiltin, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void testJSBuiltinFunction();
+    [PrivateIdentifier, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] undefined testPrivateFunction();
+    [JSBuiltin, Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] undefined testJSBuiltinFunction();
 
     // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
     // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)

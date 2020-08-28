@@ -30,4 +30,4 @@
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
-] callback AudioBufferCallback = void (AudioBuffer? audioBuffer);
+] callback AudioBufferCallback = undefined (AudioBuffer? audioBuffer);

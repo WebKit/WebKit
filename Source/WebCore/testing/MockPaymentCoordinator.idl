@@ -27,15 +27,15 @@
     Conditional=APPLE_PAY,
     NoInterfaceObject,
 ] interface MockPaymentCoordinator {
-    void setCanMakePayments(boolean canMakePayments);
-    void setCanMakePaymentsWithActiveCard(boolean canMakePaymentsWithActiveCard);
-    void setShippingAddress(MockPaymentAddress shippingAddress);
-    void changeShippingOption(DOMString shippingOption);
-    void changePaymentMethod(ApplePayPaymentMethod paymentMethod);
-    void acceptPayment();
-    void cancelPayment();
+    undefined setCanMakePayments(boolean canMakePayments);
+    undefined setCanMakePaymentsWithActiveCard(boolean canMakePaymentsWithActiveCard);
+    undefined setShippingAddress(MockPaymentAddress shippingAddress);
+    undefined changeShippingOption(DOMString shippingOption);
+    undefined changePaymentMethod(ApplePayPaymentMethod paymentMethod);
+    undefined acceptPayment();
+    undefined cancelPayment();
 
-    void addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, boolean supportsInstallments);
+    undefined addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, boolean supportsInstallments);
 
     readonly attribute ApplePayLineItem total;
     readonly attribute sequence<ApplePayLineItem> lineItems;

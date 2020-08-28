@@ -37,7 +37,7 @@
     readonly attribute SVGAnimatedNumber stdDeviationY;
     readonly attribute SVGAnimatedEnumeration edgeMode;
 
-    void setStdDeviation(optional unrestricted float stdDeviationX = NaN,
+    undefined setStdDeviation(optional unrestricted float stdDeviationX = NaN,
                          optional unrestricted float stdDeviationY = NaN);
 };
 

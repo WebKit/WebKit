@@ -38,6 +38,6 @@
     attribute boolean supportsSessions;
     attribute sequence<MediaKeyEncryptionScheme> supportedEncryptionSchemes;
 
-    void unregister();
+    undefined unregister();
 };
 

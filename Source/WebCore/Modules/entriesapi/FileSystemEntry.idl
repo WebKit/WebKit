@@ -34,5 +34,5 @@
     [ImplementedAs=virtualPath] readonly attribute USVString fullPath;
     readonly attribute DOMFileSystem filesystem;
 
-    [CallWith=ScriptExecutionContext] void getParent(optional FileSystemEntryCallback? successCallback, optional ErrorCallback? errorCallback);
+    [CallWith=ScriptExecutionContext] undefined getParent(optional FileSystemEntryCallback? successCallback, optional ErrorCallback? errorCallback);
 };

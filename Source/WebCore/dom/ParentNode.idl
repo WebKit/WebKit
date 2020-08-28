@@ -33,9 +33,9 @@
     readonly attribute Element? lastElementChild;
     readonly attribute unsigned long childElementCount;
 
-    [CEReactions, Unscopable, MayThrowException] void prepend((Node or DOMString)... nodes);
-    [CEReactions, Unscopable, MayThrowException] void append((Node or DOMString)... nodes);
-    [CEReactions, Unscopable, MayThrowException] void replaceChildren((Node or DOMString)... nodes);
+    [CEReactions, Unscopable, MayThrowException] undefined prepend((Node or DOMString)... nodes);
+    [CEReactions, Unscopable, MayThrowException] undefined append((Node or DOMString)... nodes);
+    [CEReactions, Unscopable, MayThrowException] undefined replaceChildren((Node or DOMString)... nodes);
 
     [MayThrowException] Element? querySelector(DOMString selectors);
     [MayThrowException, NewObject] NodeList querySelectorAll(DOMString selectors);

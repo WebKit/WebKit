@@ -36,14 +36,14 @@
 ] interface XSLTProcessor {
     constructor();
 
-    void importStylesheet(optional Node? stylesheet = null);
+    undefined importStylesheet(optional Node? stylesheet = null);
     DocumentFragment transformToFragment(optional Node? source = null, optional Document? docVal = null);
     Document transformToDocument(optional Node? source = null);
 
-    void setParameter(DOMString? namespaceURI, DOMString? localName, DOMString? value);
+    undefined setParameter(DOMString? namespaceURI, DOMString? localName, DOMString? value);
     DOMString? getParameter(DOMString? namespaceURI, DOMString? localName);
-    void removeParameter(DOMString? namespaceURI, DOMString? localName);
-    void clearParameters();
+    undefined removeParameter(DOMString? namespaceURI, DOMString? localName);
+    undefined clearParameters();
 
-    void reset();
+    undefined reset();
 };

@@ -33,6 +33,6 @@
     [CachedAttribute] attribute SerializedScriptValue cachedValue;
     readonly attribute sequence<MessagePort> ports;
     [CachedAttribute] readonly attribute SerializedScriptValue cachedReadonlyValue;
-    void function(SerializedScriptValue value);
+    undefined function(SerializedScriptValue value);
     SerializedScriptValue functionReturning();
 };

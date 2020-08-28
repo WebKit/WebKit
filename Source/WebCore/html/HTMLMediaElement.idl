@@ -57,7 +57,7 @@ typedef (
     [CEReactions=NotNeeded] attribute DOMString preload;
 
     readonly attribute TimeRanges buffered;
-    void load();
+    undefined load();
 
     DOMString canPlayType(DOMString type);
 
@@ -82,9 +82,9 @@ typedef (
     readonly attribute boolean ended;
     [CEReactions=NotNeeded, Reflect] attribute boolean autoplay;
     [CEReactions=NotNeeded, Reflect] attribute boolean loop;
-    Promise<void> play();
-    void pause();
-    void fastSeek(unrestricted double time);
+    Promise<undefined> play();
+    undefined pause();
+    undefined fastSeek(unrestricted double time);
 
     // controls
     [CEReactions=NotNeeded] attribute boolean controls;
@@ -103,11 +103,11 @@ typedef (
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
     [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] readonly attribute WebKitMediaKeys webkitKeys;
-    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] void webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
+    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] undefined webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
     [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] readonly attribute MediaKeys mediaKeys;
     [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onencrypted;
     [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onwaitingforkey;
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<void> setMediaKeys(MediaKeys? mediaKeys);
+    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<undefined> setMediaKeys(MediaKeys? mediaKeys);
 
     [MayThrowException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
     [ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;
@@ -120,6 +120,6 @@ typedef (
 
     VideoPlaybackQuality getVideoPlaybackQuality();
 
-    [Conditional=WIRELESS_PLAYBACK_TARGET] void webkitShowPlaybackTargetPicker();
+    [Conditional=WIRELESS_PLAYBACK_TARGET] undefined webkitShowPlaybackTargetPicker();
     [Conditional=WIRELESS_PLAYBACK_TARGET] readonly attribute boolean webkitCurrentPlaybackTargetIsWireless;
 };

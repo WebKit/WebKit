@@ -32,8 +32,8 @@ typedef unsigned long u32;
     InterfaceName=GPUComputePassEncoder,
     JSGenerateToJSObject
 ] interface WebGPUComputePassEncoder : WebGPUProgrammablePassEncoder {
-    void setPipeline(WebGPUComputePipeline pipeline);
-    void dispatch(u32 x, u32 y, u32 z);
+    undefined setPipeline(WebGPUComputePipeline pipeline);
+    undefined dispatch(u32 x, u32 y, u32 z);
 
     // TODO add missing commands
 };

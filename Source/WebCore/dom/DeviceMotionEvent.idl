@@ -31,7 +31,7 @@
     readonly attribute RotationRate? rotationRate;
     readonly attribute unrestricted double? interval;
 
-    void initDeviceMotionEvent(optional DOMString type = "",
+    undefined initDeviceMotionEvent(optional DOMString type = "",
                                optional boolean bubbles = false,
                                optional boolean cancelable = false,
                                optional Acceleration? acceleration = null,

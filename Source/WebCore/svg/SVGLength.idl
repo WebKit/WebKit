@@ -40,6 +40,6 @@ interface SVGLength {
     attribute unrestricted float valueInSpecifiedUnits;
     attribute DOMString valueAsString;
 
-    [MayThrowException] void newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
-    [MayThrowException] void convertToSpecifiedUnits(unsigned short unitType);
+    [MayThrowException] undefined newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
+    [MayThrowException] undefined convertToSpecifiedUnits(unsigned short unitType);
 };

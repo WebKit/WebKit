@@ -30,7 +30,7 @@
     // FIXME: All the unrestricted float parameters below should be unrestricted doubles.
 
     // rects
-    void clearRect(unrestricted float x, unrestricted float y, unrestricted float w, unrestricted float h);
-    void fillRect(unrestricted float x, unrestricted float y, unrestricted float w, unrestricted float h);
-    void strokeRect(unrestricted float x, unrestricted float y, unrestricted float w, unrestricted float h);
+    undefined clearRect(unrestricted float x, unrestricted float y, unrestricted float w, unrestricted float h);
+    undefined fillRect(unrestricted float x, unrestricted float y, unrestricted float w, unrestricted float h);
+    undefined strokeRect(unrestricted float x, unrestricted float y, unrestricted float w, unrestricted float h);
 };

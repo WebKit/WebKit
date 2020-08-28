@@ -27,5 +27,5 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString vAlign;
     readonly attribute HTMLCollection rows;
     [MayThrowException] HTMLElement insertRow(optional long index = -1);
-    [CEReactions, MayThrowException] void deleteRow(long index);
+    [CEReactions, MayThrowException] undefined deleteRow(long index);
 };

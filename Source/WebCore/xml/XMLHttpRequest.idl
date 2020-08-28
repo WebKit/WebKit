@@ -61,14 +61,14 @@ enum XMLHttpRequestResponseType {
     readonly attribute unsigned short readyState;
 
     // request
-    [MayThrowException] void open(ByteString method, USVString url);
-    [MayThrowException] void open(ByteString method, USVString url, boolean async, optional USVString? user = null, optional USVString? password = null);
-    [MayThrowException] void setRequestHeader(ByteString header, ByteString value);
+    [MayThrowException] undefined open(ByteString method, USVString url);
+    [MayThrowException] undefined open(ByteString method, USVString url, boolean async, optional USVString? user = null, optional USVString? password = null);
+    [MayThrowException] undefined setRequestHeader(ByteString header, ByteString value);
     attribute unsigned long timeout;
     attribute boolean withCredentials;
     readonly attribute XMLHttpRequestUpload upload;
-    [MayThrowException] void send(optional (Document or BodyInit)? body = null);
-    void abort();
+    [MayThrowException] undefined send(optional (Document or BodyInit)? body = null);
+    undefined abort();
 
     // response
     readonly attribute USVString responseURL;
@@ -76,7 +76,7 @@ enum XMLHttpRequestResponseType {
     readonly attribute ByteString statusText;
     ByteString? getResponseHeader(ByteString name);
     ByteString getAllResponseHeaders();
-    [MayThrowException] void overrideMimeType(DOMString mime);
+    [MayThrowException] undefined overrideMimeType(DOMString mime);
     attribute XMLHttpRequestResponseType responseType;
     [CachedAttribute, CustomGetter] readonly attribute any response;
     readonly attribute USVString responseText;

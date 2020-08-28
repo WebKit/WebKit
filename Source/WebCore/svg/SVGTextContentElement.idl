@@ -40,5 +40,5 @@ interface SVGTextContentElement : SVGGraphicsElement {
     [MayThrowException, NewObject] SVGRect getExtentOfChar(optional unsigned long offset = 0);
     [MayThrowException] unrestricted float getRotationOfChar(optional unsigned long offset = 0);
     long getCharNumAtPosition(DOMPointInit point);
-    [MayThrowException] void selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
+    [MayThrowException] undefined selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
 };

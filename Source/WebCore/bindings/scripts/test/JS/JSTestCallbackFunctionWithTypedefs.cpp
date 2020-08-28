@@ -53,7 +53,7 @@ JSTestCallbackFunctionWithTypedefs::~JSTestCallbackFunctionWithTypedefs()
 #endif
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackFunctionWithTypedefs::handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg)
+CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackFunctionWithTypedefs::handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

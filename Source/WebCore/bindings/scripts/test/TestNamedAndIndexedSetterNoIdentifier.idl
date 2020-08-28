@@ -24,9 +24,9 @@
  */
 
 interface TestNamedAndIndexedSetterNoIdentifier {
-    setter void (DOMString name, DOMString value);
+    setter undefined (DOMString name, DOMString value);
     getter DOMString (DOMString name);
 
-    setter void (unsigned long index, DOMString value);
+    setter undefined (unsigned long index, DOMString value);
     getter DOMString (unsigned long index);
 };

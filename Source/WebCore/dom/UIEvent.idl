@@ -24,7 +24,7 @@ interface UIEvent : Event {
     readonly attribute long detail;
     
     // FIXME: Using "undefined" as default parameter value is wrong.
-    void initUIEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false, optional WindowProxy? view = null, optional long detail = 0);
+    undefined initUIEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false, optional WindowProxy? view = null, optional long detail = 0);
 
     readonly attribute long layerX;
     readonly attribute long layerY;

@@ -28,5 +28,5 @@ interface TestEnabledBySetting {
 
     // [EnabledBySetting] attributes and operations.
     [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] attribute DOMString enabledBySettingAttribute;
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] void enabledBySettingOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] undefined enabledBySettingOperation(DOMString testParam);
 };

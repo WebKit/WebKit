@@ -27,12 +27,12 @@ interface SVGPointList {
     readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowException] void clear();
+    [MayThrowException] undefined clear();
     [MayThrowException] SVGPoint initialize(SVGPoint newItem);
     [MayThrowException] getter SVGPoint getItem(unsigned long index);
     [MayThrowException] SVGPoint insertItemBefore(SVGPoint newItem, unsigned long index);
     [MayThrowException] SVGPoint replaceItem(SVGPoint newItem, unsigned long index);
     [MayThrowException] SVGPoint removeItem(unsigned long index);
     [MayThrowException] SVGPoint appendItem(SVGPoint newItem);
-    [MayThrowException] setter void (unsigned long index, SVGPoint newItem);
+    [MayThrowException] setter undefined (unsigned long index, SVGPoint newItem);
 };

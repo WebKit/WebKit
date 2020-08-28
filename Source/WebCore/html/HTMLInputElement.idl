@@ -63,8 +63,8 @@
     attribute Date? valueAsDate;
     attribute unrestricted double valueAsNumber;
 
-    [MayThrowException] void stepUp(optional long n = 1);
-    [MayThrowException] void stepDown(optional long n = 1);
+    [MayThrowException] undefined stepUp(optional long n = 1);
+    [MayThrowException] undefined stepDown(optional long n = 1);
 
     [CEReactions=NotNeeded] attribute unsigned long width;
     readonly attribute boolean willValidate;
@@ -72,19 +72,19 @@
     readonly attribute DOMString validationMessage;
     boolean checkValidity();
     [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
-    void setCustomValidity(DOMString error);
+    undefined setCustomValidity(DOMString error);
 
     readonly attribute NodeList labels;
 
-    void select();
+    undefined select();
     [ImplementedAs=selectionStartForBindings] attribute long selectionStart;
     [ImplementedAs=selectionEndForBindings] attribute long selectionEnd;
     [ImplementedAs=selectionDirectionForBindings] attribute DOMString selectionDirection;
 
-    [MayThrowException] void setRangeText(DOMString replacement);
-    [MayThrowException] void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
+    [MayThrowException] undefined setRangeText(DOMString replacement);
+    [MayThrowException] undefined setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
 
-    [ImplementedAs=setSelectionRangeForBindings, MayThrowException] void setSelectionRange(long start, long end, optional DOMString direction);
+    [ImplementedAs=setSelectionRangeForBindings, MayThrowException] undefined setSelectionRange(long start, long end, optional DOMString direction);
 
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;

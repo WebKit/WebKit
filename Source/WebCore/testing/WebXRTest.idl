@@ -37,10 +37,10 @@
     // Simulates a user activation (aka user gesture) for the current scope.
     // The activation is only guaranteed to be valid in the provided function and only applies to WebXR
     // Device API methods.
-    [CallWith=Document] void simulateUserActivation(XRSimulateUserActivationFunction f);
+    [CallWith=Document] undefined simulateUserActivation(XRSimulateUserActivationFunction f);
 
     // Disconnect all fake devices
-    Promise<void> disconnectAllDevices();
+    Promise<undefined> disconnectAllDevices();
 };
 
 [

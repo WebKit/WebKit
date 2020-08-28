@@ -32,13 +32,13 @@
     // FIXME: Should probably be unprefixed.
     readonly attribute boolean webkitFullscreenEnabled;
     readonly attribute Element? webkitFullscreenElement;
-    void webkitExitFullscreen();
+    undefined webkitExitFullscreen();
 
     // Mozilla versions.
     readonly attribute boolean webkitIsFullScreen;
     readonly attribute boolean webkitFullScreenKeyboardInputAllowed;
     readonly attribute Element webkitCurrentFullScreenElement;
-    void webkitCancelFullScreen();
+    undefined webkitCancelFullScreen();
 
     [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
     [NotEnumerable] attribute EventHandler onwebkitfullscreenerror;

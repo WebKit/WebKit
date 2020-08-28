@@ -35,7 +35,7 @@
     [NewObject, CallWith=ScriptExecutionContext] Promise<any> get(DOMString id);
     [NewObject, CallWith=ScriptExecutionContext] Promise<sequence<Client>> matchAll(optional ClientQueryOptions options);
     [NewObject, CallWith=ScriptExecutionContext] Promise<WindowClient?> openWindow(USVString url);
-    [NewObject, CallWith=ScriptExecutionContext] Promise<void> claim();
+    [NewObject, CallWith=ScriptExecutionContext] Promise<undefined> claim();
 };
 
 dictionary ClientQueryOptions {

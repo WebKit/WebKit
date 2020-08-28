@@ -55,6 +55,6 @@
     readonly attribute long x;
     readonly attribute long y;
 
-    Promise<void> decode();
+    Promise<undefined> decode();
 };
 

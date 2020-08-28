@@ -53,7 +53,7 @@ JSTestCallbackFunctionWithThisObject::~JSTestCallbackFunctionWithThisObject()
 #endif
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackFunctionWithThisObject::handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter)
+CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackFunctionWithThisObject::handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

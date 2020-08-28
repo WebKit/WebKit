@@ -33,6 +33,6 @@
     [MayThrowException] ImageData createImageData(float sw, float sh);
     ImageData createImageData(ImageData imagedata);
     [MayThrowException] ImageData getImageData(float sx, float sy, float sw, float sh);
-    void putImageData(ImageData imagedata, float dx, float dy);
-    void putImageData(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    undefined putImageData(ImageData imagedata, float dx, float dy);
+    undefined putImageData(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 };

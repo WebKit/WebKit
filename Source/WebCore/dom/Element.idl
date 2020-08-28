@@ -41,10 +41,10 @@
     sequence<DOMString> getAttributeNames();
     [DOMJIT=ReadDOM] DOMString? getAttribute(DOMString qualifiedName);
     DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
-    [CEReactions, MayThrowException] void setAttribute(DOMString qualifiedName, DOMString value);
-    [CEReactions, MayThrowException] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
-    [CEReactions] void removeAttribute(DOMString qualifiedName);
-    [CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions, MayThrowException] undefined setAttribute(DOMString qualifiedName, DOMString value);
+    [CEReactions, MayThrowException] undefined setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
+    [CEReactions] undefined removeAttribute(DOMString qualifiedName);
+    [CEReactions] undefined removeAttributeNS(DOMString? namespaceURI, DOMString localName);
     [CEReactions, MayThrowException] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
     boolean hasAttribute(DOMString qualifiedName);
     boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
@@ -67,18 +67,18 @@
     HTMLCollection getElementsByClassName(DOMString name);
 
     [CEReactions, MayThrowException] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
-    [MayThrowException] void insertAdjacentText(DOMString where, DOMString data); // Historical.
+    [MayThrowException] undefined insertAdjacentText(DOMString where, DOMString data); // Historical.
 
     // CSSOM-view extensions (https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface).
     DOMRectList getClientRects();
     [NewObject] DOMRect getBoundingClientRect();
-    void scrollIntoView(optional (boolean or ScrollIntoViewOptions) arg);
-    [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);
-    [ImplementedAs=scrollTo] void scroll(unrestricted double x, unrestricted double y);
-    void scrollTo(optional ScrollToOptions options);
-    void scrollTo(unrestricted double x, unrestricted double y);
-    void scrollBy(optional ScrollToOptions option);
-    void scrollBy(unrestricted double x, unrestricted double y);
+    undefined scrollIntoView(optional (boolean or ScrollIntoViewOptions) arg);
+    [ImplementedAs=scrollTo] undefined scroll(optional ScrollToOptions options);
+    [ImplementedAs=scrollTo] undefined scroll(unrestricted double x, unrestricted double y);
+    undefined scrollTo(optional ScrollToOptions options);
+    undefined scrollTo(unrestricted double x, unrestricted double y);
+    undefined scrollBy(optional ScrollToOptions option);
+    undefined scrollBy(unrestricted double x, unrestricted double y);
     attribute long scrollTop; // FIXME(webkit.org/b/188045): should be unrestricted double.
     attribute long scrollLeft; // FIXME(webkit.org/b/188045): should be unrestricted double.
     readonly attribute long scrollWidth;
@@ -92,23 +92,23 @@
     // https://w3c.github.io/DOM-Parsing/#extensions-to-the-element-interface
     [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerHTML;
     [CEReactions] attribute [TreatNullAs=EmptyString] DOMString outerHTML;
-    [CEReactions, MayThrowException] void insertAdjacentHTML(DOMString position, DOMString text);
+    [CEReactions, MayThrowException] undefined insertAdjacentHTML(DOMString position, DOMString text);
 
     // Extensions from Full Screen API (https://fullscreen.spec.whatwg.org/#api).
     // FIXME: Should we add unprefixed versions?
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitRequestFullscreen, DisabledByQuirk=shouldDisableElementFullscreen] void webkitRequestFullScreen(); // Prefixed Mozilla version.
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, DisabledByQuirk=shouldDisableElementFullscreen] void webkitRequestFullscreen(); // Prefixed W3C version.
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitRequestFullscreen, DisabledByQuirk=shouldDisableElementFullscreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, DisabledByQuirk=shouldDisableElementFullscreen] undefined webkitRequestFullscreen(); // Prefixed W3C version.
 
     // Extensions from Pointer Events API (https://w3c.github.io/pointerevents/#extensions-to-the-element-interface).
-    [MayThrowException] void setPointerCapture(long pointerId);
-    [MayThrowException] void releasePointerCapture(long pointerId);
+    [MayThrowException] undefined setPointerCapture(long pointerId);
+    [MayThrowException] undefined releasePointerCapture(long pointerId);
     boolean hasPointerCapture(long pointerId);
 
     // Extensions from Pointer Lock API (https://w3c.github.io/pointerlock/#extensions-to-the-element-interface).
-    [Conditional=POINTER_LOCK] void requestPointerLock();
+    [Conditional=POINTER_LOCK] undefined requestPointerLock();
 
     // Non standard API (https://www.w3.org/Bugs/Public/show_bug.cgi?id=17152).
-    void scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
+    undefined scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
 
     // Event handler from Selection API (http://w3c.github.io/selection-api/#extensions-to-globaleventhandlers).
     // FIXME: Should be moved to GlobalEventHandlers.

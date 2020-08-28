@@ -30,7 +30,7 @@
 ] interface ANGLEInstancedArrays {
     const GLenum VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE = 0x88FE;
 
-    void drawArraysInstancedANGLE(unsigned long mode, long first, long count, long primcount);
-    void drawElementsInstancedANGLE(unsigned long mode, long count, unsigned long type, long long offset, long primcount);
-    void vertexAttribDivisorANGLE(unsigned long index, unsigned long divisor);
+    undefined drawArraysInstancedANGLE(unsigned long mode, long first, long count, long primcount);
+    undefined drawElementsInstancedANGLE(unsigned long mode, long count, unsigned long type, long long offset, long primcount);
+    undefined vertexAttribDivisorANGLE(unsigned long index, unsigned long divisor);
 };

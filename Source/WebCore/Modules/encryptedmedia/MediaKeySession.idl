@@ -35,13 +35,13 @@
 ] interface MediaKeySession : EventTarget {
     readonly attribute DOMString sessionId;
     readonly attribute unrestricted double expiration;
-    readonly attribute Promise<void> closed;
+    readonly attribute Promise<undefined> closed;
     readonly attribute MediaKeyStatusMap keyStatuses;
     attribute EventHandler onkeystatuseschange;
     attribute EventHandler onmessage;
-    Promise<void> generateRequest(DOMString initDataType, BufferSource initData);
+    Promise<undefined> generateRequest(DOMString initDataType, BufferSource initData);
     Promise<bool> load(DOMString sessionId);
-    Promise<void> update(BufferSource response);
-    Promise<void> close();
-    Promise<void> remove();
+    Promise<undefined> update(BufferSource response);
+    Promise<undefined> close();
+    Promise<undefined> remove();
 };

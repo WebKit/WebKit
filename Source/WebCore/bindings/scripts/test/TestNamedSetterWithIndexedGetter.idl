@@ -24,7 +24,7 @@
  */
 
 interface TestNamedSetterWithIndexedGetter {
-    setter void namedSetter(DOMString name, DOMString value);
+    setter undefined namedSetter(DOMString name, DOMString value);
     getter DOMString (DOMString name);
 
     getter DOMString indexedSetter(unsigned long index);

@@ -36,11 +36,11 @@ typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) Heade
 ] interface FetchHeaders {
     [MayThrowException] constructor(optional HeadersInit init);
 
-    [MayThrowException] void append(ByteString name, ByteString value);
-    [MayThrowException, ImplementedAs=remove] void delete(ByteString name);
+    [MayThrowException] undefined append(ByteString name, ByteString value);
+    [MayThrowException, ImplementedAs=remove] undefined delete(ByteString name);
     [MayThrowException] ByteString? get(ByteString name);
     [MayThrowException] boolean has(ByteString name);
-    [MayThrowException] void set(ByteString name, ByteString value);
+    [MayThrowException] undefined set(ByteString name, ByteString value);
 
     iterable<ByteString, ByteString>;
 };

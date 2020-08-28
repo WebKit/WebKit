@@ -35,8 +35,8 @@
     readonly attribute ServiceWorkerClientType type;
     readonly attribute DOMString id;
 
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, sequence<object> transfer);
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, optional PostMessageOptions options);
+    [CallWith=GlobalObject, MayThrowException] undefined postMessage(any message, sequence<object> transfer);
+    [CallWith=GlobalObject, MayThrowException] undefined postMessage(any message, optional PostMessageOptions options);
 };
 
 enum FrameType {

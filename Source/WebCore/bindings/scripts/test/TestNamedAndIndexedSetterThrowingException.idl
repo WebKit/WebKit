@@ -24,9 +24,9 @@
  */
 
 interface TestNamedAndIndexedSetterThrowingException {
-    [MayThrowException] setter void (DOMString name, DOMString value);
+    [MayThrowException] setter undefined (DOMString name, DOMString value);
     getter DOMString (DOMString name);
 
-    [MayThrowException] setter void (unsigned long index, DOMString value);
+    [MayThrowException] setter undefined (unsigned long index, DOMString value);
     getter DOMString (unsigned long index);
 };

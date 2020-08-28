@@ -24,9 +24,9 @@
  */
 
 interface TextInputController {
-    void setMarkedText(DOMString string, long from, long length, boolean suppressUnderline, object highlights);
+    undefined setMarkedText(DOMString string, long from, long length, boolean suppressUnderline, object highlights);
     boolean hasMarkedText();
-    void unmarkText();
-    void insertText(DOMString string);
+    undefined unmarkText();
+    undefined insertText(DOMString string);
 };
 

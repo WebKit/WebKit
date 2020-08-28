@@ -27,13 +27,13 @@
  */
 
 interface TestCEReactions {
-    [CEReactions] void methodWithCEReactions();
+    [CEReactions] undefined methodWithCEReactions();
     [CEReactions] attribute DOMString attributeWithCEReactions;
     [CEReactions, Reflect] attribute DOMString reflectAttributeWithCEReactions;
 
     [PutForwards=value] attribute TestCEReactionsStringifier stringifierAttribute;
 
-    [CEReactions=NotNeeded] void methodWithCEReactionsNotNeeded();
+    [CEReactions=NotNeeded] undefined methodWithCEReactionsNotNeeded();
     [CEReactions=NotNeeded] attribute DOMString attributeWithCEReactionsNotNeeded;
     [CEReactions=NotNeeded, Reflect] attribute DOMString reflectAttributeWithCEReactionsNotNeeded;
 

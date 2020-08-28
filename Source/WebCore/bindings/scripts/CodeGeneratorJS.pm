@@ -5906,7 +5906,7 @@ sub NeedsExplicitPropagateExceptionCall
 
     return 0 unless $operation->extendedAttributes->{MayThrowException};
 
-    return $operation->type && ($operation->type->name eq "void" || $codeGenerator->IsPromiseType($operation->type) || GetOperationReturnedArgumentName($operation));
+    return $operation->type && ($operation->type->name eq "undefined" || $codeGenerator->IsPromiseType($operation->type) || GetOperationReturnedArgumentName($operation));
 }
 
 sub GenerateParametersCheck
@@ -6402,7 +6402,7 @@ sub GenerateCallbackImplementationContent
                 $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(vm, \"${functionName}\"), returnedException)";
             }
 
-            if ($operation->type->name eq "void") {
+            if ($operation->type->name eq "undefined") {
                 push(@$contentRef, "    ${callbackInvocation};\n");
             } else {
                 push(@$contentRef, "    auto jsResult = ${callbackInvocation};\n");
@@ -6419,7 +6419,7 @@ sub GenerateCallbackImplementationContent
             push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
             push(@$contentRef, "     }\n\n");
 
-            if ($operation->type->name eq "void") {
+            if ($operation->type->name eq "undefined") {
                 push(@$contentRef, "    return { };\n");
             } else {
                 my $nativeValue = JSValueToNative($interfaceOrCallback, $operation, "jsResult", "", "&lexicalGlobalObject", "lexicalGlobalObject");
@@ -6483,7 +6483,7 @@ sub GenerateImplementationFunctionCall
         push(@$outputArray, $indent . "$functionString;\n");
         GenerateWriteBarriersForArguments($outputArray, $operation, $indent);
         push(@$outputArray, $indent . "return JSValue::encode($returnArgumentName.value());\n");
-    } elsif ($operation->type->name eq "void" || ($codeGenerator->IsPromiseType($operation->type) && !$operation->extendedAttributes->{PromiseProxy})) {
+    } elsif ($operation->type->name eq "undefined" || ($codeGenerator->IsPromiseType($operation->type) && !$operation->extendedAttributes->{PromiseProxy})) {
         push(@$outputArray, $indent . "throwScope.release();\n") if ($hasThrowScope);
         push(@$outputArray, $indent . "$functionString;\n");
         GenerateWriteBarriersForArguments($outputArray, $operation, $indent);
@@ -6747,7 +6747,7 @@ sub GetBaseIDLType
     }
 
     my %IDLTypes = (
-        "void" => "IDLVoid",
+        "undefined" => "IDLUndefined",
         "any" => "IDLAny",
         "boolean" => "IDLBoolean",
         "byte" => "IDLByte",

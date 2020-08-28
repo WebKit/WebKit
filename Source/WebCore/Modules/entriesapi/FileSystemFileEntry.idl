@@ -26,5 +26,5 @@
 [
     EnabledAtRuntime=DirectoryUpload,
 ] interface FileSystemFileEntry : FileSystemEntry {
-    [CallWith=ScriptExecutionContext] void file(FileCallback successCallback, optional ErrorCallback? errorCallback);
+    [CallWith=ScriptExecutionContext] undefined file(FileCallback successCallback, optional ErrorCallback? errorCallback);
 };

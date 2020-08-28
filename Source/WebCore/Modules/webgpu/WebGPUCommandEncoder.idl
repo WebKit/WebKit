@@ -58,24 +58,24 @@ typedef unsigned long long u64;
     WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
     WebGPUComputePassEncoder beginComputePass();
 
-    void copyBufferToBuffer(
+    undefined copyBufferToBuffer(
         WebGPUBuffer src,
         u64 srcOffset,
         WebGPUBuffer dst,
         u64 dstOffset,
         u64 size);
 
-    void copyBufferToTexture(
+    undefined copyBufferToTexture(
         GPUBufferCopyView source,
         GPUTextureCopyView destination,
         GPUExtent3D copySize);
 
-    void copyTextureToBuffer(
+    undefined copyTextureToBuffer(
         GPUTextureCopyView source,
         GPUBufferCopyView destination,
         GPUExtent3D copySize);
 
-    void copyTextureToTexture(
+    undefined copyTextureToTexture(
         GPUTextureCopyView source,
         GPUTextureCopyView destination,
         GPUExtent3D copySize);

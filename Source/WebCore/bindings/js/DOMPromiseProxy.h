@@ -59,7 +59,7 @@ private:
 };
 
 template<>
-class DOMPromiseProxy<IDLVoid> {
+class DOMPromiseProxy<IDLUndefined> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     DOMPromiseProxy() = default;
@@ -183,9 +183,9 @@ inline void DOMPromiseProxy<IDLType>::reject(Exception exception, RejectAsHandle
 }
 
 
-// MARK: - DOMPromiseProxy<IDLVoid> specialization
+// MARK: - DOMPromiseProxy<IDLUndefined> specialization
 
-inline JSC::JSValue DOMPromiseProxy<IDLVoid>::promise(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject)
+inline JSC::JSValue DOMPromiseProxy<IDLUndefined>::promise(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
     for (auto& deferredPromise : m_deferredPromises) {
@@ -210,18 +210,18 @@ inline JSC::JSValue DOMPromiseProxy<IDLVoid>::promise(JSC::JSGlobalObject& lexic
     return result;
 }
 
-inline void DOMPromiseProxy<IDLVoid>::clear()
+inline void DOMPromiseProxy<IDLUndefined>::clear()
 {
     m_valueOrException = WTF::nullopt;
     m_deferredPromises.clear();
 }
 
-inline bool DOMPromiseProxy<IDLVoid>::isFulfilled() const
+inline bool DOMPromiseProxy<IDLUndefined>::isFulfilled() const
 {
     return m_valueOrException.hasValue();
 }
 
-inline void DOMPromiseProxy<IDLVoid>::resolve()
+inline void DOMPromiseProxy<IDLUndefined>::resolve()
 {
     ASSERT(!m_valueOrException);
     m_valueOrException = ExceptionOr<void> { };
@@ -229,7 +229,7 @@ inline void DOMPromiseProxy<IDLVoid>::resolve()
         deferredPromise->resolve();
 }
 
-inline void DOMPromiseProxy<IDLVoid>::reject(Exception exception, RejectAsHandled rejectAsHandled)
+inline void DOMPromiseProxy<IDLUndefined>::reject(Exception exception, RejectAsHandled rejectAsHandled)
 {
     ASSERT(!m_valueOrException);
     m_valueOrException = ExceptionOr<void> { WTFMove(exception) };

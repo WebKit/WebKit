@@ -30,5 +30,5 @@
     PrivateIdentifier,
     PublicIdentifier
 ] interface WritableStreamDefaultController {
-    void error(optional any e);
+    undefined error(optional any e);
 };
