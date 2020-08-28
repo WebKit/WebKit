@@ -60,6 +60,7 @@ public:
     ~LineLayout();
 
     static bool canUseFor(const RenderBlockFlow&, Optional<bool> couldUseSimpleLineLayout = { });
+    static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 
     void updateStyle();
     void layout();

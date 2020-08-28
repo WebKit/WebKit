@@ -45,6 +45,7 @@ namespace SimpleLineLayout {
 class RunResolver;
 
 bool canUseFor(const RenderBlockFlow&);
+bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow&, IncludeReasons);
 
 struct Run {

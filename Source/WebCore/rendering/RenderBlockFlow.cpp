@@ -2107,11 +2107,10 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         auto shouldInvalidateLineLayoutPath = [&] {
             if (selfNeedsLayout() || complexLineLayout())
                 return true;
-            // FIXME: This could use a cheaper style-only test instead of SimpleLineLayout::canUseFor.
-            if (simpleLineLayout() && !SimpleLineLayout::canUseFor(*this))
+            if (simpleLineLayout() && !SimpleLineLayout::canUseForAfterStyleChange(*this, diff))
                 return true;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-            if (layoutFormattingContextLineLayout() && !LayoutIntegration::LineLayout::canUseFor(*this))
+            if (layoutFormattingContextLineLayout() && !LayoutIntegration::LineLayout::canUseForAfterStyleChange(*this, diff))
                 return true;
 #endif
             return false;

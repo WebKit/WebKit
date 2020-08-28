@@ -83,6 +83,12 @@ bool LineLayout::canUseFor(const RenderBlockFlow& flow, Optional<bool> couldUseS
     return true;
 }
 
+bool LineLayout::canUseForAfterStyleChange(const RenderBlockFlow& flow, StyleDifference diff)
+{
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
+    return SimpleLineLayout::canUseForAfterStyleChange(flow, diff);
+}
+
 void LineLayout::updateStyle()
 {
     auto& root = rootLayoutBox();
