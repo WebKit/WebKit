@@ -1,3 +1,49 @@
+2020-08-28  Chris Lord  <clord@igalia.com>
+
+        Add WebGL(2) context support to OffscreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=209809
+
+        Reviewed by Dean Jackson.
+
+        Enable WebGL contexts with OffscreenCanvas by making sure the required
+        settings are marshalled to workers and that any functionality that
+        doesn't require an HTMLCanvasElement uses CanvasBase instead.
+
+        No new tests, rebaselined existing test.
+
+        * html/CanvasBase.h:
+        * html/CustomPaintCanvas.cpp:
+        (WebCore::CustomPaintCanvas::clearCopiedImage const):
+        * html/CustomPaintCanvas.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::clearCopiedImage const):
+        * html/HTMLCanvasElement.h:
+        * html/OffscreenCanvas.cpp:
+        (WebCore::requiresAcceleratedCompositingForWebGL):
+        (WebCore::shouldEnableWebGL):
+        (WebCore::OffscreenCanvas::createContextWebGL):
+        (WebCore::OffscreenCanvas::getContext):
+        * html/OffscreenCanvas.h:
+        * html/OffscreenCanvas.idl:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::markContextChanged):
+        (WebCore::WebGLRenderingContextBase::paintRenderingResultsToCanvas):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::acceleratedCompositingEnabled const):
+        (WebCore::WorkerGlobalScope::webGLEnabled const):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerParameters::isolatedCopy const):
+        * workers/WorkerThread.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+
 2020-08-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBuilder:Run should not have vertical geometry

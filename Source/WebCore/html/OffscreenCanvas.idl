@@ -23,11 +23,14 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+typedef (
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
-typedef (OffscreenCanvasRenderingContext2D or WebGLRenderingContext) OffscreenRenderingContext;
-#else
-typedef (OffscreenCanvasRenderingContext2D) OffscreenRenderingContext;
+    WebGLRenderingContext or
 #endif
+#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
+    WebGL2RenderingContext or
+#endif
+    OffscreenCanvasRenderingContext2D) OffscreenRenderingContext;
 
 dictionary ImageEncodeOptions
 {
@@ -38,7 +41,8 @@ dictionary ImageEncodeOptions
 enum OffscreenRenderingContextType
 {
    "2d",
-   "webgl"
+   "webgl",
+   "webgl2"
 };
 
 [

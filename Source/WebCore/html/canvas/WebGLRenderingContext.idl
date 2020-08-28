@@ -41,6 +41,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
     JSGenerateToJSObject,
     DoNotCheckConstants,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=(Window,Worker),
     CallTracingCallback=recordCanvasAction,
 ] interface WebGLRenderingContext {
 };

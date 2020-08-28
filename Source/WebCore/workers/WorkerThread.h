@@ -69,6 +69,8 @@ public:
     MonotonicTime timeOrigin;
     ReferrerPolicy referrerPolicy;
     bool requestAnimationFrameEnabled;
+    bool acceleratedCompositingEnabled;
+    bool webGLEnabled;
 
     WorkerParameters isolatedCopy() const;
 };

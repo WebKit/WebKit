@@ -105,6 +105,11 @@ Image* CustomPaintCanvas::copiedImage() const
     return m_copiedImage.get();
 }
 
+void CustomPaintCanvas::clearCopiedImage() const
+{
+    m_copiedImage = nullptr;
+}
+
 GraphicsContext* CustomPaintCanvas::drawingContext() const
 {
     return m_destinationGraphicsContext;

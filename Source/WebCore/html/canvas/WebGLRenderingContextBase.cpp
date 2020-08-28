@@ -751,7 +751,8 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
     m_restoreTimer.suspendIfNeeded();
 
     registerWithWebGLStateTracker();
-    m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
+    if (canvas.isHTMLCanvasElement())
+        m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
 }
 
 WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<GraphicsContextGLOpenGL>&& context, WebGLContextAttributes attributes)
@@ -778,7 +779,8 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
     setupFlags();
 
     registerWithWebGLStateTracker();
-    m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
+    if (canvas.isHTMLCanvasElement())
+        m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
 
     addActivityStateChangeObserverIfNecessary();
 }
@@ -1067,20 +1069,19 @@ void WebGLRenderingContextBase::markContextChanged()
 
     m_layerCleared = false;
 
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
-    RenderBox* renderBox = canvas->renderBox();
-    if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
-        m_markedCanvasDirty = true;
-        htmlCanvas()->clearCopiedImage();
-        renderBox->contentChanged(CanvasPixelsChanged);
-    } else {
-        if (!m_markedCanvasDirty) {
+    if (auto* canvas = htmlCanvas()) {
+        RenderBox* renderBox = canvas->renderBox();
+        if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
             m_markedCanvasDirty = true;
-            canvas->didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+            canvas->clearCopiedImage();
+            renderBox->contentChanged(CanvasPixelsChanged);
+            return;
         }
+    }
+
+    if (!m_markedCanvasDirty) {
+        m_markedCanvasDirty = true;
+        canvasBase().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
     }
 }
 
@@ -1192,30 +1193,31 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     if (isContextLostOrPending())
         return;
 
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
+    if (auto* canvas = htmlCanvas()) {
+        if (canvas->document().printing() || (canvas->isSnapshotting() && canvas->document().page()->isVisible()))
+            canvas->clearPresentationCopy();
 
-    if (canvas->document().printing() || (canvas->isSnapshotting() && canvas->document().page()->isVisible()))
-        canvas->clearPresentationCopy();
+        // Until the canvas is written to by the application, the clear that
+        // happened after it was composited should be ignored by the compositor.
+        if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer) {
+            m_context->paintRenderingResultsToCanvas(canvas->buffer());
 
-    // Until the canvas is written to by the application, the clear that
-    // happened after it was composited should be ignored by the compositor.
-    if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer) {
-        m_context->paintRenderingResultsToCanvas(canvas->buffer());
+            canvas->makePresentationCopy();
+        } else
+            canvas->clearPresentationCopy();
+    }
 
-        canvas->makePresentationCopy();
-    } else
-        canvas->clearPresentationCopy();
     clearIfComposited();
 
     if (!m_markedCanvasDirty && !m_layerCleared)
         return;
 
-    canvas->clearCopiedImage();
+    auto& base = canvasBase();
+    base.clearCopiedImage();
+
     m_markedCanvasDirty = false;
 
-    m_context->paintRenderingResultsToCanvas(canvas->buffer());
+    m_context->paintRenderingResultsToCanvas(base.buffer());
 }
 
 RefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()

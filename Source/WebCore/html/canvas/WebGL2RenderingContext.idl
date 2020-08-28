@@ -58,6 +58,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     DoNotCheckConstants,
+    Exposed=(Window,Worker),
     CallTracingCallback=recordCanvasAction,
 ] interface WebGL2RenderingContext {
 

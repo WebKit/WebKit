@@ -101,6 +101,8 @@ public:
     virtual void didDraw(const FloatRect&) = 0;
 
     virtual Image* copiedImage() const = 0;
+    virtual void clearCopiedImage() const = 0;
+
     bool callTracingActive() const;
 
 protected:

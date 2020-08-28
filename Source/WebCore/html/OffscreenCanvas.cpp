@@ -39,9 +39,17 @@
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "PlaceholderRenderingContext.h"
-#include "WebGLRenderingContext.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
+
+#if ENABLE(WEBGL)
+#include "Settings.h"
+#include "WebGLRenderingContext.h"
+
+#if ENABLE(WEBGL2)
+#include "WebGL2RenderingContext.h"
+#endif
+#endif // ENABLE(WEBGL)
 
 namespace WebCore {
 
@@ -141,6 +149,48 @@ void OffscreenCanvas::setSize(const IntSize& newSize)
     reset();
 }
 
+#if ENABLE(WEBGL)
+static bool requiresAcceleratedCompositingForWebGL()
+{
+#if PLATFORM(GTK) || PLATFORM(WIN_CAIRO)
+    return false;
+#else
+    return true;
+#endif
+}
+
+static bool shouldEnableWebGL(bool webGLEnabled, bool acceleratedCompositingEnabled)
+{
+    if (!webGLEnabled)
+        return false;
+
+    if (!requiresAcceleratedCompositingForWebGL())
+        return true;
+
+    return acceleratedCompositingEnabled;
+}
+
+void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGLContextAttributes&& attrs)
+{
+    ASSERT(!m_context);
+
+    auto context = scriptExecutionContext();
+    if (context->isWorkerGlobalScope()) {
+        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*context);
+        if (!shouldEnableWebGL(workerGlobalScope.webGLEnabled(), workerGlobalScope.acceleratedCompositingEnabled()))
+            return;
+    } else if (context->isDocument()) {
+        auto& settings = downcast<Document>(*context).settings();
+        if (!shouldEnableWebGL(settings.webGLEnabled(), settings.acceleratedCompositingEnabled()))
+            return;
+    } else
+        return;
+
+    m_context = WebGLRenderingContextBase::create(*this, attrs, (contextType == RenderingContextType::Webgl) ? "webgl" : "webgl2");
+}
+
+#endif // ENABLE(WEBGL)
+
 ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_detached)
@@ -160,10 +210,14 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
         return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
     }
 #if ENABLE(WEBGL)
-    if (contextType == RenderingContextType::Webgl) {
+    else {
         if (m_context) {
             if (is<WebGLRenderingContext>(*m_context))
                 return { { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } } };
+#if ENABLE(WEBGL2)
+            if (is<WebGL2RenderingContext>(*m_context))
+                return { { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*m_context) } } };
+#endif
             return { { WTF::nullopt } };
         }
 
@@ -171,10 +225,14 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
         auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-        m_context = WebGLRenderingContextBase::create(*this, attributes, "webgl");
+        createContextWebGL(contextType, WTFMove(attributes));
         if (!m_context)
             return { { WTF::nullopt } };
 
+#if ENABLE(WEBGL2)
+        if (is<WebGL2RenderingContext>(*m_context))
+            return { { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*m_context) } } };
+#endif
         return { { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } } };
     }
 #endif

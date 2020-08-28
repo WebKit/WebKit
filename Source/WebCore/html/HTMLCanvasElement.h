@@ -113,7 +113,7 @@ public:
 #endif
 
     Image* copiedImage() const final;
-    void clearCopiedImage();
+    void clearCopiedImage() const final;
     RefPtr<ImageData> getImageData();
     void makePresentationCopy();
     void clearPresentationCopy();

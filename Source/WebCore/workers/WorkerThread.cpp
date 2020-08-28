@@ -82,6 +82,8 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         timeOrigin,
         referrerPolicy,
         requestAnimationFrameEnabled,
+        acceleratedCompositingEnabled,
+        webGLEnabled,
     };
 }
 
