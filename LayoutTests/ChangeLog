@@ -1,3 +1,12 @@
+2020-08-28  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html
+        <rdar://66295552> 
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Vertical scrolling gets stuck when a horizontal scroller is under the mouse (google search results)

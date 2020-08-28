@@ -2226,4 +2226,6 @@ webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rec
 [ BigSur+ ] tables/mozilla/bugs/bug33855.html [ Failure ]
 [ BigSur+ ] tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure ]
 
+# <rdar://66295552> [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html
+[ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
 
