@@ -2557,6 +2557,12 @@ void Internals::changeSelectionListType()
         frame->editor().changeSelectionListType();
 }
 
+void Internals::changeBackToReplacedString(const String& replacedString)
+{
+    if (auto frame = makeRefPtr(this->frame()))
+        frame->editor().changeBackToReplacedString(replacedString);
+}
+
 bool Internals::isOverwriteModeEnabled()
 {
     Document* document = contextDocument();

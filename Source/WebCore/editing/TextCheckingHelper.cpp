@@ -106,10 +106,11 @@ static void findMisspellings(TextCheckerClient& client, StringView text, Vector<
 
 static SimpleRange expandToParagraphBoundary(const SimpleRange& range)
 {
-    return {
-        *makeBoundaryPoint(startOfParagraph(createLegacyEditingPosition(range.start))),
-        *makeBoundaryPoint(endOfParagraph(createLegacyEditingPosition(range.end)))
-    };
+    auto start = makeBoundaryPoint(startOfParagraph(createLegacyEditingPosition(range.start)));
+    auto end = makeBoundaryPoint(endOfParagraph(createLegacyEditingPosition(range.end)));
+    if (!start || !end)
+        return range;
+    return { *start, *end };
 }
 
 TextCheckingParagraph::TextCheckingParagraph(const SimpleRange& range)
