@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -82,7 +82,7 @@ public:
         , m_currentRequest(request)
 #endif
 #if PLATFORM(HAIKU)
-		, m_urlrequest(0)
+        , m_urlrequest(0)
 #endif
         , m_failureTimer(*loader, &ResourceHandle::failureTimerFired)
     {
@@ -91,7 +91,7 @@ public:
         m_password = url.password();
         m_firstRequest.removeCredentials();
     }
-    
+
     ~ResourceHandleInternal();
 
     ResourceHandleClient* client() { return m_client; }
@@ -105,9 +105,9 @@ public:
     // Suggested credentials for the current redirection step.
     String m_user;
     String m_password;
-    
+
     Credential m_initialCredential;
-    
+
     int status { 0 };
 
     bool m_defersLoading;
@@ -130,7 +130,7 @@ public:
 #endif
 #if USE(CURL)
     std::unique_ptr<CurlResourceHandleDelegate> m_delegate;
-    
+
     bool m_cancelled { false };
     unsigned m_redirectCount { 0 };
     unsigned m_authFailureCount { 0 };
@@ -141,8 +141,8 @@ public:
 #endif
 
 #if PLATFORM(HAIKU)
-		BUrlProtocolHandler* m_urlrequest;
-		BString	m_url;
+    BUrlProtocolHandler* m_urlrequest;
+    BString m_url;
 #endif
 
 #if PLATFORM(COCOA)

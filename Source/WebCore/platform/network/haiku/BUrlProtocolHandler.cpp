@@ -46,94 +46,232 @@ static const int gMaxRecursionLimit = 10;
 
 namespace WebCore {
 
-BUrlProtocolHandler::BUrlProtocolHandler(NetworkingContext* context,
-        ResourceHandle* handle, bool synchronous)
-    : BUrlProtocolAsynchronousListener(!synchronous)
-    , m_resourceHandle(handle)
-    , m_redirected(false)
-    , m_responseDataSent(false)
-    , m_postData(NULL)
-    , m_request(handle->firstRequest().toNetworkRequest(
-        context ? &context->storageSession()->platformSession() : nullptr))
-    , m_position(0)
-    , m_redirectionTries(gMaxRecursionLimit)
+static bool shouldRedirectAsGET(const ResourceRequest& request, int statusCode, bool crossOrigin)
 {
-    if (!m_resourceHandle)
-        return;
-
-    BString method = BString(m_resourceHandle->firstRequest().httpMethod());
-
-    m_postData = NULL;
-
-    if (m_request == NULL)
-        return;
-
-    m_baseUrl = URL(m_request->Url());
-
-    BHttpRequest* httpRequest = dynamic_cast<BHttpRequest*>(m_request);
-    if(httpRequest) {
-        // TODO maybe we have data to send in other cases ?
-        if(method == B_HTTP_POST || method == B_HTTP_PUT) {
-            FormData* form = m_resourceHandle->firstRequest().httpBody();
-            if(form) {
-                m_postData = new BFormDataIO(form, context->storageSession()->sessionID());
-                httpRequest->AdoptInputData(m_postData, m_postData->Size());
-            }
-        }
-
-        httpRequest->SetMethod(method.String());
-    }
-
-    // In synchronous mode, call this listener directly.
-    // In asynchronous mode, go through a BMessage
-    if(this->SynchronousListener()) {
-        m_request->SetListener(this->SynchronousListener());
-    } else {
-        m_request->SetListener(this);
-    }
-
-    if (m_request->Run() < B_OK) {
-        ResourceHandleClient* client = m_resourceHandle->client();
-        if (!client)
-            return;
-
-        ResourceError error("BUrlProtocol", 42,
-            handle->firstRequest().url(),
-            "The service kit failed to start the request.");
-        client->didFail(m_resourceHandle, error);
-    }
-}
-
-BUrlProtocolHandler::~BUrlProtocolHandler()
-{
-    abort();
-    if (m_request)
-        m_request->SetListener(NULL);
-    delete m_request;
-}
-
-void BUrlProtocolHandler::abort()
-{
-    if (m_resourceHandle != NULL && m_request != NULL)
-        m_request->Stop();
-
-    m_resourceHandle = NULL;
-}
-
-static bool ignoreHttpError(BHttpRequest* reply, bool receivedData)
-{
-    int httpStatusCode = static_cast<const BHttpResult&>(reply->Result()).StatusCode();
-
-    if (httpStatusCode == 401 || httpStatusCode == 407)
+    if (request.httpMethod() == "GET" || request.httpMethod() == "HEAD")
         return false;
 
-    if (receivedData && (httpStatusCode >= 400 && httpStatusCode < 600))
+    if (statusCode == 303)
+        return true;
+
+    if ((statusCode == 301 || statusCode == 302) && request.httpMethod() == "POST")
+        return true;
+
+    if (crossOrigin && request.httpMethod() == "DELETE")
         return true;
 
     return false;
 }
 
-void BUrlProtocolHandler::RequestCompleted(BUrlRequest* caller, bool success)
+RefPtr<BUrlRequestWrapper> BUrlRequestWrapper::create(BUrlProtocolHandler* handler, NetworkStorageSession* storageSession, ResourceRequest& request)
+{
+    return adoptRef(*new BUrlRequestWrapper(handler, storageSession, request));
+}
+
+BUrlRequestWrapper::BUrlRequestWrapper(BUrlProtocolHandler* handler, NetworkStorageSession* storageSession, ResourceRequest& request)
+    : BUrlProtocolAsynchronousListener(true)
+    , m_handler(handler)
+{
+    ASSERT(m_handler);
+    ASSERT(storageSession);
+
+    m_request = request.toNetworkRequest(&storageSession->platformSession());
+
+    if (!m_request)
+        return;
+
+    m_request->SetListener(SynchronousListener());
+
+    BHttpRequest* httpRequest = dynamic_cast<BHttpRequest*>(m_request);
+    if (httpRequest) {
+        if (request.httpMethod() == "POST" || request.httpMethod() == "PUT") {
+            if (request.httpBody()) {
+                auto postData = new BFormDataIO(request.httpBody(), storageSession->sessionID());
+                httpRequest->AdoptInputData(postData, postData->Size());
+            }
+        }
+
+        httpRequest->SetMethod(request.httpMethod().utf8().data());
+        // Redirections will be handled by this class.
+        httpRequest->SetFollowLocation(false);
+    } else if (request.httpMethod() != "GET") {
+        // Only the HTTP backend support things other than GET.
+        // Remove m_request to signify to ResourceHandle that the request was
+        // invalid.
+        delete m_request;
+        m_request = NULL;
+        return;
+    }
+
+    if (m_request->Run() < B_OK) {
+        ResourceError error("BUrlProtocol", 42,
+            request.url(),
+            "The service kit failed to start the request.");
+        m_handler->didFail(error);
+
+        return;
+    }
+
+    // Keep self alive while BUrlRequest is running as we hold
+    // the main dispatcher.
+    ref();
+}
+
+BUrlRequestWrapper::~BUrlRequestWrapper()
+{
+    abort();
+    delete m_request;
+}
+
+void BUrlRequestWrapper::abort()
+{
+    if (m_request)
+        m_request->Stop();
+
+    m_handler = nullptr;
+}
+
+void BUrlRequestWrapper::HeadersReceived(BUrlRequest* caller, const BUrlResult& result)
+{
+    if (!m_handler)
+        return;
+
+    ResourceResponse response(URL(caller->Url()),
+        extractMIMETypeFromMediaType(result.ContentType()), result.Length(),
+        extractCharsetFromMediaType(result.ContentType()));
+
+    const BHttpResult* httpResult = dynamic_cast<const BHttpResult*>(&result);
+    if (httpResult) {
+        String suggestedFilename = filenameFromHTTPContentDisposition(
+            httpResult->Headers()["Content-Disposition"]);
+
+        if (!suggestedFilename.isEmpty())
+            response.setSuggestedFilename(suggestedFilename);
+
+        response.setHTTPStatusCode(httpResult->StatusCode());
+        response.setHTTPStatusText(httpResult->StatusText());
+
+        // Add remaining headers.
+        const BHttpHeaders& resultHeaders = httpResult->Headers();
+        for (int i = 0; i < resultHeaders.CountHeaders(); i++) {
+            BHttpHeader& headerPair = resultHeaders.HeaderAt(i);
+            response.setHTTPHeaderField(headerPair.Name(), headerPair.Value());
+        }
+
+        if (response.isRedirection() && !response.httpHeaderField(HTTPHeaderName::Location).isEmpty()) {
+            m_handler->willSendRequest(response);
+            return;
+        }
+
+        if (response.httpStatusCode() == 401 && m_handler->didReceiveAuthenticationChallenge(response))
+            return;
+    }
+
+    ResourceResponse responseCopy = response;
+    m_handler->didReceiveResponse(WTFMove(responseCopy));
+}
+
+void BUrlRequestWrapper::DataReceived(BUrlRequest*, const char* data,
+    off_t, ssize_t size)
+{
+    if (!m_handler)
+        return;
+
+    if (size > 0) {
+        m_didReceiveData = true;
+        m_handler->didReceiveData(data, size);
+    }
+}
+
+void BUrlRequestWrapper::UploadProgress(BUrlRequest*, ssize_t bytesSent, ssize_t bytesTotal)
+{
+    if (!m_handler)
+        return;
+
+    m_handler->didSendData(bytesSent, bytesTotal);
+}
+
+void BUrlRequestWrapper::RequestCompleted(BUrlRequest* caller, bool success)
+{
+    // We held a pointer to keep the main dispatcher alive for the duration
+    // of the request run.
+    //
+    // As the request completes, we adopt the ref here so that it can
+    // release itself after completion.
+    auto releaseThis = adoptRef(*this);
+
+    if (!m_handler)
+        return;
+
+    BHttpRequest* httpRequest = dynamic_cast<BHttpRequest*>(m_request);
+
+    if (success || (httpRequest && m_didReceiveData)) {
+        m_handler->didFinishLoading();
+        return;
+    } else if (httpRequest) {
+        const BHttpResult& result = static_cast<const BHttpResult&>(httpRequest->Result());
+        int httpStatusCode = result.StatusCode();
+
+        if (httpStatusCode != 0) {
+            ResourceError error("HTTP", httpStatusCode,
+                URL(caller->Url()), strerror(caller->Status()));
+
+            m_handler->didFail(error);
+            return;
+        }
+    }
+
+    // If we get here, it means we are in failure without an HTTP error code
+    // (DNS error, or error from a protocol other than HTTP).
+    ResourceError error("BUrlRequest", caller->Status(), URL(caller->Url()), strerror(caller->Status()));
+    m_handler->didFail(error);
+}
+
+bool BUrlRequestWrapper::CertificateVerificationFailed(BUrlRequest*,
+    BCertificate& certificate, const char* message)
+{
+    if (!m_handler)
+        return false;
+
+    return m_handler->didReceiveInvalidCertificate(certificate, message);
+}
+
+BUrlProtocolHandler::BUrlProtocolHandler(ResourceHandle* handle)
+    : m_resourceHandle(handle)
+    , m_request()
+{
+    if (!m_resourceHandle)
+        return;
+
+    m_resourceRequest = m_resourceHandle->firstRequest();
+    m_request = BUrlRequestWrapper::create(this,
+        m_resourceHandle->context()->storageSession(),
+        m_resourceRequest);
+}
+
+BUrlProtocolHandler::~BUrlProtocolHandler()
+{
+    abort();
+}
+
+void BUrlProtocolHandler::abort()
+{
+    if (m_request)
+        m_request->abort();
+
+    m_resourceHandle = nullptr;
+}
+
+void BUrlProtocolHandler::didFail(const ResourceError& error)
+{
+    ResourceHandleClient* client = m_resourceHandle->client();
+    if (!client)
+        return;
+
+    client->didFail(m_resourceHandle, error);
+}
+
+void BUrlProtocolHandler::willSendRequest(const ResourceResponse& response)
 {
     if (!m_resourceHandle)
         return;
@@ -142,56 +280,65 @@ void BUrlProtocolHandler::RequestCompleted(BUrlRequest* caller, bool success)
     if (!client)
         return;
 
-    BHttpRequest* httpRequest = dynamic_cast<BHttpRequest*>(m_request);
+    ResourceRequest request = m_resourceHandle->firstRequest();
 
-    if (success || (httpRequest && ignoreHttpError(httpRequest, m_responseDataSent))) {
-        client->didFinishLoading(m_resourceHandle);
+    m_redirectionTries++;
+
+    if (m_redirectionTries > gMaxRecursionLimit) {
+        ResourceError error(request.url().host().utf8().data(), 400, request.url(),
+            "Redirection limit reached");
+        client->didFail(m_resourceHandle, error);
         return;
-    } else if(httpRequest) {
-        const BHttpResult& result = static_cast<const BHttpResult&>(httpRequest->Result());
-        int httpStatusCode = result.StatusCode();
-
-        if (httpStatusCode != 0) {
-            ResourceError error("HTTP", httpStatusCode,
-                URL(caller->Url()), strerror(caller->Status()));
-
-            client->didFail(m_resourceHandle, error);
-            return;
-        }
     }
 
-    // If we get here, it means we are in failure without an HTTP error code
-    // (DNS error, or error from a protocol other than HTTP).
-    ResourceError error("BUrlRequest", caller->Status(), URL(caller->Url()), strerror(caller->Status()));
-    client->didFail(m_resourceHandle, error);
+    URL newUrl = URL(request.url(), response.httpHeaderField(HTTPHeaderName::Location));
+
+    bool crossOrigin = !protocolHostAndPortAreEqual(request.url(), newUrl);
+
+    request.setURL(newUrl);
+
+    if (!newUrl.protocolIsInHTTPFamily() || shouldRedirectAsGET(request, response.httpStatusCode(), crossOrigin)) {
+        request.setHTTPMethod("GET");
+        request.setHTTPBody(nullptr);
+        request.clearHTTPContentType();
+    }
+
+    if (crossOrigin) {
+        request.clearHTTPAuthorization();
+        request.clearHTTPOrigin();
+    }
+
+    m_request->abort();
+    ResourceResponse responseCopy = response;
+    client->willSendRequestAsync(m_resourceHandle, WTFMove(request), WTFMove(responseCopy), [this] (ResourceRequest&& request) {
+        continueAfterWillSendRequest(WTFMove(request));
+    });
 }
 
-
-bool BUrlProtocolHandler::CertificateVerificationFailed(BUrlRequest*,
-    BCertificate& certificate, const char* message)
+void BUrlProtocolHandler::continueAfterWillSendRequest(ResourceRequest&& request)
 {
-    return m_resourceHandle->didReceiveInvalidCertificate(certificate, message);
-}
-
-
-void BUrlProtocolHandler::AuthenticationNeeded(BHttpRequest* request, ResourceResponse& response)
-{
-    if (!m_resourceHandle)
+    // willSendRequestAsync might cancel the request
+    if (!m_resourceHandle->client() || request.isNull())
         return;
 
-    ResourceHandleInternal* d = m_resourceHandle->getInternal();
-    unsigned failureCount = 0;
+    m_resourceRequest = request;
+    m_request = BUrlRequestWrapper::create(this, m_resourceHandle->context()->storageSession(), request);
+}
 
-    const URL& url = m_resourceHandle->firstRequest().url();
+bool BUrlProtocolHandler::didReceiveAuthenticationChallenge(const ResourceResponse& response)
+{
+    if (!m_resourceHandle || !m_resourceHandle->client())
+        return false;
+
+    const URL& url = response.url();
     ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
     if (url.protocolIs("https"))
         serverType = ProtectionSpaceServerHTTPS;
 
-    String challenge = static_cast<const BHttpResult&>(request->Result()).Headers()["WWW-Authenticate"];
+    static NeverDestroyed<String> wwwAuthenticate(MAKE_STATIC_STRING_IMPL("www-authenticate"));
+    String challenge = response.httpHeaderField(wwwAuthenticate);
+
     ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeDefault;
-
-    ResourceHandleClient* client = m_resourceHandle->client();
-
     // TODO according to RFC7235, there could be more than one challenge in WWW-Authenticate. We
     // should parse them all, instead of just the first one.
     if (challenge.startsWith("Digest"))
@@ -201,7 +348,7 @@ void BUrlProtocolHandler::AuthenticationNeeded(BHttpRequest* request, ResourceRe
     else {
         // Unknown authentication type, ignore (various websites are intercepting the auth and
         // handling it by themselves)
-        return;
+        return false;
     }
 
     String realm;
@@ -223,177 +370,75 @@ void BUrlProtocolHandler::AuthenticationNeeded(BHttpRequest* request, ResourceRe
     ProtectionSpace protectionSpace(url.host().utf8().data(), port, serverType, realm, scheme);
     ResourceError resourceError(url.host().utf8().data(), 401, url, String());
 
-    m_redirectionTries--;
-    if(m_redirectionTries == 0)
-    {
-        client->didFinishLoading(m_resourceHandle);
-        return;
-    }
+    ResourceHandleInternal* d = m_resourceHandle->getInternal();
 
     Credential proposedCredential(d->m_user, d->m_password, CredentialPersistenceForSession);
 
     AuthenticationChallenge authenticationChallenge(protectionSpace,
-        proposedCredential, failureCount++, response, resourceError);
+        proposedCredential, m_authenticationTries++, response, resourceError);
     authenticationChallenge.m_authenticationClient = m_resourceHandle;
     m_resourceHandle->didReceiveAuthenticationChallenge(authenticationChallenge);
-            // will set m_user and m_password in ResourceHandleInternal
+    // will set m_user and m_password in ResourceHandleInternal
 
     if (d->m_user != "") {
-        // Handle this just like redirects.
-        m_redirected = true;
-
-        ResourceRequest request = m_resourceHandle->firstRequest();
-		ResourceResponse responseCopy = response;
+        ResourceRequest request = m_resourceRequest;
+        ResourceResponse responseCopy = response;
         request.setCredentials(d->m_user.utf8().data(), d->m_password.utf8().data());
-		client->willSendRequestAsync(m_resourceHandle, WTFMove(request), WTFMove(responseCopy),
-    	[handle = makeRef(*m_resourceHandle)] (ResourceRequest&& request) {
-        	//continueAfterWillSendRequest(handle.ptr(), WTFMove(request));
-    	});
-    } else {
-        // Anything to do in case of failure?
-    }
-}
-
-
-void BUrlProtocolHandler::ConnectionOpened(BUrlRequest*)
-{
-    m_responseDataSent = false;
-}
-
-
-void BUrlProtocolHandler::HeadersReceived(BUrlRequest* caller,
-    const BUrlResult& result)
-{
-    if (!m_resourceHandle)
-        return;
-
-    const BHttpResult* httpResult = dynamic_cast<const BHttpResult*>(&result);
-
-    WTF::String contentType = result.ContentType();
-    int contentLength = result.Length();
-    URL url;
-
-    WTF::String encoding = extractCharsetFromMediaType(contentType);
-    WTF::String mimeType = extractMIMETypeFromMediaType(contentType);
-
-    if (httpResult) {
-        url = URL(httpResult->Url());
-
-        BString location = httpResult->Headers()["Location"];
-        if (location.Length() > 0) {
-            m_redirected = true;
-            url = URL(url, location);
-        } else {
-            m_redirected = false;
-        }
-    } else {
-        url = m_baseUrl;
-    }
-
-    ResourceResponse response(url, mimeType, contentLength, encoding);
-
-    if (httpResult) {
-        int statusCode = httpResult->StatusCode();
-
-        String suggestedFilename = filenameFromHTTPContentDisposition(
-            httpResult->Headers()["Content-Disposition"]);
-
-        if (!suggestedFilename.isEmpty())
-            response.setSuggestedFilename(suggestedFilename);
-
-        response.setHTTPStatusCode(statusCode);
-        response.setHTTPStatusText(httpResult->StatusText());
-
-        // Add remaining headers.
-        const BHttpHeaders& resultHeaders = httpResult->Headers();
-        for (int i = 0; i < resultHeaders.CountHeaders(); i++) {
-            BHttpHeader& headerPair = resultHeaders.HeaderAt(i);
-            response.setHTTPHeaderField(headerPair.Name(), headerPair.Value());
-        }
-
-        if (statusCode == 401) {
-            AuthenticationNeeded((BHttpRequest*)m_request, response);
-            // AuthenticationNeeded may have aborted the request
-            // so we need to make sure we can continue.
-            if (!m_resourceHandle)
-                return;
-        }
-    }
-
-    ResourceHandleClient* client = m_resourceHandle->client();
-    if (!client)
-        return;
-
-    if (m_redirected) {
-        m_redirectionTries--;
-
-        if (m_redirectionTries == 0) {
-            ResourceError error(url.host().utf8().data(), 400, url,
-                "Redirection limit reached");
-            client->didFail(m_resourceHandle, error);
-            return;
-        }
-
-        // Notify the client that we are redirecting.
-        ResourceRequest request = m_resourceHandle->firstRequest();
-        ResourceResponse responseCopy = response;
-        request.setURL(url);
-
-		client->willSendRequestAsync(m_resourceHandle, WTFMove(request), WTFMove(responseCopy),
-    	[handle = makeRef(*m_resourceHandle)] (ResourceRequest&& request) {
-        	//continueAfterWillSendRequest(handle.ptr(), WTFMove(request));
-    	});
-    } else {
-        ResourceResponse responseCopy = response;
-        // Make sure the resource handle is not deleted immediately, otherwise
-        // didReceiveResponse would crash. Keep a reference to it so it can be
-        // deleted cleanly after the function returns.
-        RefPtr<ResourceHandle> protectedHandle(m_resourceHandle);
-        protectedHandle->didReceiveResponse(WTFMove(responseCopy), [this/*, protectedThis = makeRef(*this)*/] {
-            //continueAfterDidReceiveResponse();
+        m_request->abort();
+        m_resourceHandle->client()->willSendRequestAsync(m_resourceHandle,
+                WTFMove(request), WTFMove(responseCopy), [this] (ResourceRequest&& request) {
+            continueAfterWillSendRequest(WTFMove(request));
         });
+        return true;
     }
+
+    return false;
 }
 
-void BUrlProtocolHandler::DataReceived(BUrlRequest* caller, const char* data,
-    off_t position, ssize_t size)
+void BUrlProtocolHandler::didReceiveResponse(ResourceResponse&& response)
 {
     if (!m_resourceHandle)
         return;
 
-    ResourceHandleClient* client = m_resourceHandle->client();
-    if (!client)
-        return;
-
-    // don't emit the "Document has moved here" type of HTML
-    if (m_redirected)
-        return;
-
-    if (position != m_position)
-    {
-        debugger("bad redirect");
-        return;
-    }
-
-    if (size > 0) {
-        m_responseDataSent = true;
-        client->didReceiveData(m_resourceHandle, data, size, size);
-    }
-
-    m_position += size;
+    // Make sure the resource handle is not deleted immediately, otherwise
+    // didReceiveResponse would crash. Keep a reference to it so it can be
+    // deleted cleanly after the function returns.
+    auto protectedHandle = makeRef(*m_resourceHandle);
+    protectedHandle->didReceiveResponse(WTFMove(response), [this/*, protectedThis = makeRef(*this)*/] {
+        //continueAfterDidReceiveResponse();
+    });
 }
 
-void BUrlProtocolHandler::UploadProgress(BUrlRequest* caller, ssize_t bytesSent, ssize_t bytesTotal)
+void BUrlProtocolHandler::didReceiveData(const char* data, size_t size)
+{
+    if (!m_resourceHandle || !m_resourceHandle->client())
+        return;
+
+    m_resourceHandle->client()->didReceiveData(m_resourceHandle, data, size, size);
+}
+
+void BUrlProtocolHandler::didSendData(ssize_t bytesSent, ssize_t bytesTotal)
+{
+    if (!m_resourceHandle || !m_resourceHandle->client())
+        return;
+
+    m_resourceHandle->client()->didSendData(m_resourceHandle, bytesSent, bytesTotal);
+}
+
+void BUrlProtocolHandler::didFinishLoading()
+{
+    if (!m_resourceHandle || !m_resourceHandle->client())
+        return;
+
+    m_resourceHandle->client()->didFinishLoading(m_resourceHandle);
+}
+
+bool BUrlProtocolHandler::didReceiveInvalidCertificate(BCertificate& certificate, const char* message)
 {
     if (!m_resourceHandle)
-        return;
+        return false;
 
-    ResourceHandleClient* client = m_resourceHandle->client();
-    if (!client)
-        return;
-
-    client->didSendData(m_resourceHandle, bytesSent, bytesTotal);
+    return m_resourceHandle->didReceiveInvalidCertificate(certificate, message);
 }
 
-
-}
+} // namespace WebCore

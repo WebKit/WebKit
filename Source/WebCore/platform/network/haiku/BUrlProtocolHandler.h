@@ -21,6 +21,7 @@
 
 #include "HaikuFormDataStream.h"
 #include "ResourceRequest.h"
+#include "ResourceError.h"
 
 #include <support/Locker.h>
 #include <Messenger.h>
@@ -32,41 +33,67 @@ class BFile;
 namespace WebCore {
 
 class NetworkingContext;
+class NetworkStorageSession;
 class ResourceHandle;
 class ResourceResponse;
 
-class BUrlProtocolHandler : public BUrlProtocolAsynchronousListener
-{
+class BUrlProtocolHandler;
+
+class BUrlRequestWrapper : public RefCounted<BUrlRequestWrapper>, public BUrlProtocolAsynchronousListener {
 public:
-    BUrlProtocolHandler(NetworkingContext* context, ResourceHandle *handle, 
-        bool synchronous);
-    virtual ~BUrlProtocolHandler();
+    static RefPtr<BUrlRequestWrapper> create(BUrlProtocolHandler*, NetworkStorageSession*, ResourceRequest&);
+    virtual ~BUrlRequestWrapper();
+
     void abort();
 
-    bool isValid() { return m_request != NULL; }
+    bool isValid() const { return m_request; };
 
-private:
-    void AuthenticationNeeded(BHttpRequest* caller, ResourceResponse& response);
-
-    // BUrlListener hooks
-    void ConnectionOpened(BUrlRequest* caller) override;
-    void HeadersReceived(BUrlRequest* caller, const BUrlResult& result) override;
-    void DataReceived(BUrlRequest* caller, const char* data, off_t position,
-        ssize_t size) override;
+    // BUrlProtocolListener hooks
+    void HeadersReceived(BUrlRequest* caller, const BUrlResult&) override;
+    void DataReceived(BUrlRequest* caller, const char* data, off_t position, ssize_t) override;
     void UploadProgress(BUrlRequest* caller, ssize_t bytesSent, ssize_t bytesTotal) override;
     void RequestCompleted(BUrlRequest* caller, bool success) override;
-    bool CertificateVerificationFailed(BUrlRequest* caller, BCertificate& certificate, const char* message) override;
+    bool CertificateVerificationFailed(BUrlRequest* caller, BCertificate&, const char* message) override;
 
 private:
-    ResourceHandle* m_resourceHandle;
-    bool m_redirected;
-    bool m_responseDataSent;
-    BFormDataIO* m_postData;
-    BUrlRequest* m_request;
-    off_t m_position;
-    URL m_baseUrl;
+    BUrlRequestWrapper(BUrlProtocolHandler*, NetworkStorageSession*, ResourceRequest&);
 
-    int m_redirectionTries;
+private:
+    BUrlProtocolHandler* m_handler { nullptr };
+    BUrlRequest* m_request { nullptr };
+
+    bool m_didReceiveData { false };
+};
+
+class BUrlProtocolHandler {
+public:
+    explicit BUrlProtocolHandler(ResourceHandle *handle);
+    virtual ~BUrlProtocolHandler();
+
+    void abort();
+
+    bool isValid() const { return m_request && m_request->isValid(); }
+
+private:
+    void didFail(const ResourceError& error);
+    void willSendRequest(const ResourceResponse& response);
+    void continueAfterWillSendRequest(ResourceRequest&& request);
+    bool didReceiveAuthenticationChallenge(const ResourceResponse& response);
+    void didReceiveResponse(ResourceResponse&& response);
+    void didReceiveData(const char* data, size_t);
+    void didSendData(ssize_t bytesSent, ssize_t bytesTotal);
+    void didFinishLoading();
+    bool didReceiveInvalidCertificate(BCertificate&, const char* message);
+
+private:
+    friend class BUrlRequestWrapper;
+
+    ResourceRequest m_resourceRequest;
+    ResourceHandle* m_resourceHandle;
+    RefPtr<BUrlRequestWrapper> m_request;
+
+    unsigned m_redirectionTries { 0 };
+    unsigned m_authenticationTries { 0 };
 };
 
 }

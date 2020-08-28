@@ -69,7 +69,7 @@ bool ResourceHandle::start()
         d->m_firstRequest.setURL(urlWithCredentials);
     }
 
-    d->m_urlrequest = new BUrlProtocolHandler(d->m_context.get(), this, false);
+    d->m_urlrequest = new BUrlProtocolHandler(this);
 
     if (!d->m_urlrequest->isValid())
         scheduleFailure(InvalidURLFailure);
@@ -106,6 +106,13 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     ASSERT(internal->m_currentWebChallenge.isNull());
     ASSERT(challenge.authenticationClient() == this); // Should be already set.
     internal->m_currentWebChallenge = challenge;
+
+    if (challenge.previousFailureCount()) {
+        // The stored credentials weren't accepted, clear it from storage
+        // to prevent reuse if the client refuses to provide credentials.
+        d->m_user = String();
+        d->m_password = String();
+    }
 
     if (client())
         client()->didReceiveAuthenticationChallenge(this, challenge);
@@ -162,6 +169,7 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
     /*if (d->m_job)
         d->m_job->setLoadMode(QNetworkReplyHandler::LoadMode(defers));*/
 }
+
 
 // TODO move to SynchronousLoaderClientHaiku.cpp
 void SynchronousLoaderClient::didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&)
