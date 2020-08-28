@@ -1,3 +1,10 @@
+2020-08-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, add Windows baselines after r266228.
+
+        * platform/win/streams/reference-implementation/transform-stream-errors-expected.txt: Added.
+        * platform/win/streams/reference-implementation/transform-stream-expected.txt: Added.
+
 2020-08-27  Chris Dumez  <cdumez@apple.com>
 
         AudioParam's minValue / maxValue are ignored
