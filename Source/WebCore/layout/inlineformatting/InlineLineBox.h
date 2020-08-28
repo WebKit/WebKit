@@ -29,9 +29,13 @@
 
 #include "DisplayBox.h"
 #include "DisplayInlineRect.h"
+#include "InlineLineBuilder.h"
 
 namespace WebCore {
 namespace Layout {
+
+class InlineFormattingContext;
+struct HangingContent;
 
 struct AscentAndDescent {
     InlineLayoutUnit height() const { return ascent + descent; }
@@ -50,19 +54,24 @@ public:
         AscentAndDescent ascentAndDescent;
     };
 
-    LineBox(const Display::InlineRect&, const AscentAndDescent&);
-    LineBox() = default;
+    enum class IsLastLineWithInlineContent { No, Yes };
+    enum class IsLineVisuallyEmpty { No, Yes };
+    LineBox(const InlineFormattingContext&, const Display::InlineRect&, const LineBuilder::RunList&, IsLineVisuallyEmpty, IsLastLineWithInlineContent);
 
-    const Display::InlineRect& logicalRect() const { return m_rect; }
-    const Display::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
+    using InlineRunRectList = Vector<Display::InlineRect, 10>;
+    const InlineRunRectList& inlineRectList() const { return m_runRectList; }
 
     InlineLayoutUnit logicalLeft() const { return m_rect.left(); }
     InlineLayoutUnit logicalRight() const { return m_rect.right(); }
     InlineLayoutUnit logicalTop() const { return m_rect.top(); }
     InlineLayoutUnit logicalBottom() const { return m_rect.bottom(); }
-
     InlineLayoutUnit logicalWidth() const { return m_rect.width(); }
     InlineLayoutUnit logicalHeight() const { return m_rect.height(); }
+
+    const Display::InlineRect& logicalRect() const { return m_rect; }
+    const Display::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
+
+    static AscentAndDescent halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
 
     // Aligment baseline from line logical top.
     //
@@ -80,62 +89,38 @@ public:
     //   v
     // -------------------    line logical bottom  -------------------
     InlineLayoutUnit alignmentBaseline() const;
+
+private:
     const AscentAndDescent& ascentAndDescent() const { return m_rootInlineBox.ascentAndDescent; }
 
     void setAlignmentBaselineIfGreater(InlineLayoutUnit);
     void setAscentIfGreater(InlineLayoutUnit);
     void setDescentIfGreater(InlineLayoutUnit);
-
-    void resetAlignmentBaseline();
-    void resetDescent() { m_rootInlineBox.ascentAndDescent.descent = { }; }
-
-    void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_rect.setHeight(logicalHeight); }
-
     void setLogicalHeightIfGreater(InlineLayoutUnit);
-    void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_rect.setWidth(logicalWidth); }
 
     void setScrollableOverflow(const Display::InlineRect& rect) { m_scrollableOverflow = rect; }
 
-    void moveHorizontally(InlineLayoutUnit delta) { m_rect.moveHorizontally(delta); }
+    void alignHorizontally(InlineLayoutUnit availableWidth, IsLastLineWithInlineContent);
+    void alignVertically();
+    void adjustBaselineAndLineHeight();
 
-    void expandHorizontally(InlineLayoutUnit delta) { m_rect.expandHorizontally(delta); }
-    void shrinkHorizontally(InlineLayoutUnit delta) { expandHorizontally(-delta); }
+    HangingContent collectHangingContent(IsLastLineWithInlineContent) const;
 
-    void expandVertically(InlineLayoutUnit delta) { m_rect.expandVertically(delta); }
-    void shrinkVertically(InlineLayoutUnit delta) { expandVertically(-delta); }
-
-    // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
-    // Line boxes that contain no text, no preserved white space, no inline elements with non-zero margins, padding, or borders,
-    // and no other in-flow content (such as images, inline blocks or inline tables), and do not end with a preserved newline
-    // must be treated as zero-height line boxes for the purposes of determining the positions of any elements inside of them,
-    // and must be treated as not existing for any other purpose.
-    // Note that it does not necessarily mean visually non-empty line. <span style="font-size: 0px">this is still considered non-empty</span>
-    bool isConsideredEmpty() const { return m_isConsideredEmpty; }
-    void setIsConsideredEmpty() { m_isConsideredEmpty = true; }
-    void setIsConsideredNonEmpty() { m_isConsideredEmpty = false; }
-
-    static AscentAndDescent halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
+    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
 #if ASSERT_ENABLED
     bool m_hasValidAlignmentBaseline { false };
 #endif
+    const InlineFormattingContext& m_inlineFormattingContext;
+    const LineBuilder::RunList& m_runs;
     Display::InlineRect m_rect;
     Display::InlineRect m_scrollableOverflow;
     InlineLayoutUnit m_alignmentBaseline { 0 };
-    bool m_isConsideredEmpty { true };
     InlineBox m_rootInlineBox;
+    InlineRunRectList m_runRectList;
 };
-
-inline LineBox::LineBox(const Display::InlineRect& rect, const AscentAndDescent& ascentAndDescent)
-    : m_rect(rect)
-    , m_alignmentBaseline(ascentAndDescent.ascent)
-    , m_rootInlineBox(ascentAndDescent)
-{
-#if ASSERT_ENABLED
-    m_hasValidAlignmentBaseline = true;
-#endif
-}
 
 inline LineBox::InlineBox::InlineBox(const AscentAndDescent& ascentAndDescent)
     : ascentAndDescent(ascentAndDescent)
@@ -176,16 +161,6 @@ inline InlineLayoutUnit LineBox::alignmentBaseline() const
 {
     ASSERT(m_hasValidAlignmentBaseline);
     return m_alignmentBaseline;
-}
-
-inline void LineBox::resetAlignmentBaseline()
-{
-#if ASSERT_ENABLED
-    m_hasValidAlignmentBaseline = true;
-#endif
-    m_alignmentBaseline = 0_lu;
-    m_rootInlineBox.ascentAndDescent.descent = { };
-    m_rootInlineBox.ascentAndDescent.ascent = { };
 }
 
 inline AscentAndDescent LineBox::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)

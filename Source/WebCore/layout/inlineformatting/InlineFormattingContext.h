@@ -36,6 +36,7 @@ namespace Layout {
 
 class InlineFormattingState;
 class InvalidationState;
+class LineBox;
 
 // This class implements the layout logic for inline formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
@@ -94,7 +95,7 @@ private:
         bool lineIsConstrainedByFloat { false };
     };
     LineConstraints constraintsForLine(const HorizontalConstraints&, InlineLayoutUnit lineLogicalTop);
-    void setDisplayBoxesForLine(const LineBuilder&, const Vector<Display::InlineRect, 10>&, const LineBox&, const LineLayoutContext::LineContent&, const HorizontalConstraints&);
+    void setDisplayBoxesForLine(const LineLayoutContext::LineContent&, const LineBox&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }

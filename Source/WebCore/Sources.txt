@@ -1436,6 +1436,7 @@ layout/inlineformatting/InlineFormattingContextGeometry.cpp
 layout/inlineformatting/InlineFormattingContextQuirks.cpp
 layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineItem.cpp
+layout/inlineformatting/InlineLineBox.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
 layout/inlineformatting/InlineLineBuilder.cpp
 layout/inlineformatting/InlineTextItem.cpp

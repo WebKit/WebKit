@@ -58,6 +58,7 @@ public:
         };
         using FloatList = Vector<Float>;
         FloatList floats;
+        const LineBuilder::RunList& runs;
     };
     LineContent layoutInlineContent(LineBuilder&, const InlineItemRange&, Optional<unsigned> partialLeadingContentLength);
 

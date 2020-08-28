@@ -24,7 +24,9 @@
  */
 
 #include "config.h"
+#include "DisplayBox.h"
 #include "InlineFormattingContext.h"
+#include "InlineLineBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 

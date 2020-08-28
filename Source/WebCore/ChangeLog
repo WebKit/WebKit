@@ -1,3 +1,59 @@
+2020-08-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move inline alignment code to LineBox
+        https://bugs.webkit.org/show_bug.cgi?id=215117
+
+        Reviewed by Antti Koivisto.
+
+        LineBox is responsible for aligning the runs both vertically and horizontally (LineContentAligner -> LineBox).
+        (Note that LineBox::m_runRectList is transitional and will eventually be converted to inline boxes.)
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        (WebCore::Layout::HangingContent::width const): Deleted.
+        (WebCore::Layout::HangingContent::isConditional const): Deleted.
+        (WebCore::Layout::HangingContent::setIsConditional): Deleted.
+        (WebCore::Layout::HangingContent::expand): Deleted.
+        (): Deleted.
+        (WebCore::Layout::HangingContent::reset): Deleted.
+        (WebCore::Layout::LineContentAligner::inlineRectList const): Deleted.
+        (WebCore::Layout::LineContentAligner::formattingContext const): Deleted.
+        (WebCore::Layout::LineContentAligner::layoutState const): Deleted.
+        (WebCore::Layout::LineContentAligner::LineContentAligner): Deleted.
+        (WebCore::Layout::LineContentAligner::alignHorizontally): Deleted.
+        (WebCore::Layout::LineContentAligner::alignVertically): Deleted.
+        (WebCore::Layout::LineContentAligner::adjustBaselineAndLineHeight): Deleted.
+        (WebCore::Layout::LineContentAligner::collectHangingContent const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::inlineRectList const):
+        (WebCore::Layout::LineBox::logicalBottom const):
+        (WebCore::Layout::LineBox::logicalRect const):
+        (WebCore::Layout::LineBox::scrollableOverflow const):
+        (WebCore::Layout::LineBox::formattingContext const):
+        (WebCore::Layout::LineBox::layoutState const):
+        (WebCore::Layout::LineBox::setLogicalHeight): Deleted.
+        (WebCore::Layout::LineBox::setLogicalWidth): Deleted.
+        (WebCore::Layout::LineBox::moveHorizontally): Deleted.
+        (WebCore::Layout::LineBox::expandHorizontally): Deleted.
+        (WebCore::Layout::LineBox::shrinkHorizontally): Deleted.
+        (WebCore::Layout::LineBox::expandVertically): Deleted.
+        (WebCore::Layout::LineBox::shrinkVertically): Deleted.
+        (WebCore::Layout::LineBox::isConsideredEmpty const): Deleted.
+        (WebCore::Layout::LineBox::setIsConsideredEmpty): Deleted.
+        (WebCore::Layout::LineBox::setIsConsideredNonEmpty): Deleted.
+        (WebCore::Layout::LineBox::LineBox): Deleted.
+        (WebCore::Layout::LineBox::resetAlignmentBaseline): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::lineLogicalWidth const):
+        (WebCore::Layout::LineBuilder::availableWidth const):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::close):
+        * layout/inlineformatting/LineLayoutContext.h:
+
 2020-08-28  Chris Lord  <clord@igalia.com>
 
         Add WebGL(2) context support to OffscreenCanvas
@@ -44,7 +100,7 @@
         * workers/service/context/ServiceWorkerThread.cpp:
         (WebCore::ServiceWorkerThread::ServiceWorkerThread):
 
-2020-08-27  Zalan Bujtas  <zalan@apple.com>
+2020-08-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBuilder:Run should not have vertical geometry
         https://bugs.webkit.org/show_bug.cgi?id=215068

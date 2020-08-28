@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBox.h"
 #include "InlineFormattingContext.h"
 #include "LayoutBox.h"
 #include "TextUtil.h"
@@ -334,7 +335,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(const LineBuilder& line,
     ASSERT(lineRange.end <= layoutRange.end);
     // Adjust hyphenated line count.
     m_successiveHyphenatedLineCount = partialContent && partialContent->trailingContentHasHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
-    return LineContent { partialContent, lineRange, WTFMove(m_floats) };
+    return LineContent { partialContent, lineRange, WTFMove(m_floats), line.runs() };
 }
 
 void LineLayoutContext::nextContentForLine(LineCandidate& lineCandidate, unsigned currentInlineItemIndex, const InlineItemRange& layoutRange, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight)

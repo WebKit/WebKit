@@ -29,7 +29,6 @@
 
 #include "DisplayRun.h"
 #include "InlineItem.h"
-#include "InlineLineBox.h"
 #include "InlineTextItem.h"
 
 namespace WebCore {
@@ -37,7 +36,6 @@ namespace Layout {
 
 class InlineFormattingContext;
 class InlineSoftLineBreakItem;
-class LineContentAligner;
 
 class LineBuilder {
 public:
@@ -56,8 +54,9 @@ public:
 
     bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
 
-    InlineLayoutUnit availableWidth() const { return m_lineLogicalWidth - contentLogicalWidth(); }
+    InlineLayoutUnit lineLogicalWidth() const { return m_lineLogicalWidth; }
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
+    InlineLayoutUnit availableWidth() const { return lineLogicalWidth() - contentLogicalWidth(); }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
