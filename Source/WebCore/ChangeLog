@@ -1,3 +1,18 @@
+2020-08-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] AirPlay device name is wrong when playing to multiple devices
+        https://bugs.webkit.org/show_bug.cgi?id=215952
+        <rdar://problem/66930799>
+
+        Reviewed by Jer Noble.
+
+        Tested manually because this requires a specific hardware setup.
+
+        * platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm:
+        (WebCore::MediaPlaybackTargetCocoa::deviceName const): If the AVOutputContext
+        supports multiple output devices, create the device name by concatenating the names
+        of all of the active output devices.
+
 2020-08-28  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] 'void' type is changing to 'undefined'

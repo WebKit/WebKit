@@ -98,6 +98,7 @@ typedef NS_OPTIONS(NSUInteger, AVOutputDeviceFeatures) {
 
 @interface AVOutputDevice : NSObject
 @property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) NSString *deviceName;
 @property (nonatomic, readonly) AVOutputDeviceFeatures deviceFeatures;
 @end
 
