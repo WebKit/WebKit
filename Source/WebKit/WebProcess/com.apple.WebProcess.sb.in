@@ -223,6 +223,7 @@
     (iokit-property "CapsLockDelay")
     (iokit-property "CaseSensitive")
     (iokit-property "ConfigState")
+    (iokit-property "DPLanes")
     (iokit-property "DPLinkBit")
     (iokit-property "DPLinkRate")
     (iokit-property "Description")

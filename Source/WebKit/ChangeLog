@@ -1,3 +1,14 @@
+2020-08-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Fix iokit-get-properties sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=215925
+
+        Reviewed by Brent Fulgham.
+
+        Add iokit-property to WebContent sandbox that should have been a part of r266282.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-08-28  Darin Adler  <darin@apple.com>
 
         Remove almost all the remaining uses of live ranges
