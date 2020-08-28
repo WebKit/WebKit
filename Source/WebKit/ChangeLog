@@ -1,3 +1,17 @@
+2020-08-28  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r266187): ARGUMENT BAD: WebIconUtilities.mm(138) : RetainPtr<UIImage> WebKit::iconForFile(NSURL *) file, [file isFileURL]
+        https://bugs.webkit.org/show_bug.cgi?id=215931
+
+        Reviewed by Wenson Hsieh.
+
+        It's possible for JavaScript to make a filename that doesn't convert to a file URL, such as the empty string.
+        When this happens, we would've returned null for the icon later anyways, but adding a null check prevents an assertion.
+        Covered by 7 existing tests which would have hit that assertion.
+
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::createIconForFiles):
+
 2020-08-28  Youenn Fablet  <youenn@apple.com>
 
         Enable TransformStream by default
