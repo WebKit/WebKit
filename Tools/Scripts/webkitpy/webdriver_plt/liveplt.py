@@ -2,7 +2,6 @@ from pltresults import PLTResults
 from selenium import webdriver
 from time import sleep
 from webkitpy.benchmark_runner.utils import get_driver_binary_path
-from webkitpy.common.timeout_context import Timeout
 
 # FIXME: we want to avoid hardcoding the offsets
 # we use this to make sure the window.innerHeight of each browser is the same

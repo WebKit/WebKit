@@ -1,3 +1,17 @@
+2020-08-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Move Timeout to webkitcorepy (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=215584
+        <rdar://problem/67270713>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py: Use webkitcorepy's Timeout object.
+        * Scripts/webkitpy/common/timeout_context.py: Removed.
+        * Scripts/webkitpy/port/simulator_process.py: Use webkitcorepy's Timeout object.
+        * Scripts/webkitpy/webdriver_plt/liveplt.py: Ditto.
+        * Scripts/webkitpy/xcode/simulated_device.py: Ditto.
+
 2020-08-27  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r266221) Layout tests step hanging due to slow WaveDiff comparison

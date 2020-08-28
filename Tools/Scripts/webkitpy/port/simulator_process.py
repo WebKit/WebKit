@@ -25,7 +25,8 @@ import os
 import sys
 import time
 
-from webkitpy.common.timeout_context import Timeout
+from webkitcorepy import Timeout
+
 from webkitpy.port.server_process import ServerProcess
 
 

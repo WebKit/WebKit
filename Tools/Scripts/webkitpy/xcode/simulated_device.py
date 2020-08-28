@@ -27,12 +27,11 @@ import plistlib
 import re
 import time
 
-from webkitcorepy import Version
+from webkitcorepy import Version, Timeout
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.common.timeout_context import Timeout
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
 
