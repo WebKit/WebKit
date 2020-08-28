@@ -1,0 +1,103 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        
+        .container {
+            padding: 10px;
+            margin: 20px;
+            border: 1px solid gray;
+        }
+        
+        .scroller {
+            margin-top: 100px;
+            height: 200px;
+            width: 300px;
+            border: 1px solid black;
+            padding: 5px;
+            overflow: scroll;
+        }
+        .content {
+            width: 500%;
+            height: 100%;
+            background-image: repeating-linear-gradient(to right, white, silver 200px);
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var overflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            window.scrollTo(0, 100);
+            scroller.scrollLeft = 100;
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+        }
+        
+        async function doMouseWheelScroll()
+        {
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -5, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(2, -5, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -5, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            return new Promise(resolve => {
+                eventSender.callAfterScrollingCompletes(() => {
+                    requestAnimationFrame(resolve);
+                });
+            });
+        }
+        
+        async function scrollTest()
+        {
+            debug('');
+            debug('Test that events with a small X delta do not cause trapping in the horizontal overflow');
+            await doMouseWheelScroll();
+
+            shouldBe('overflowScrollEventCount == 0', 'true');
+            shouldBe('windowScrollEventCount > 0', 'true');
+            
+            finishJSTest();
+        }
+
+        window.addEventListener('load', async () => {
+            document.body.addEventListener('wheel', () => { }, false);
+
+            scroller = document.querySelector('.scroller');
+            await resetScrollPositions();
+
+            scroller.addEventListener('scroll', () => {
+                ++overflowScrollEventCount;
+            }, false);
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="scroller">
+            <div class="content"></div>
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

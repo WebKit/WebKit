@@ -1,3 +1,43 @@
+2020-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Vertical scrolling gets stuck when a horizontal scroller is under the mouse (google search results)
+        https://bugs.webkit.org/show_bug.cgi?id=215641
+        <rdar://problem/67430532>
+
+        Reviewed by Tim Horton.
+
+        There are two parts to this fix. First, findEnclosingScrollableContainer() needs
+        to use the same vertical-biasing delta fixup that we use in other places, to bias towards
+        vertical scrolling.
+
+        Second, when we've determined that the main frame should perform the scroll and dispatch
+        the wheel event to the scrolling thread, we used to hit-test from scratch on the scrolling
+        thread and and try to send the event to a scroller which we already know should not handle
+        it. So pass along a target ScrollingNodeID, and start the scrolling thread handling from
+        that node.
+
+        Test: fast/scrolling/mac/horizontal-overflow-trapping-small-deltas.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::wheelEvent):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::findEnclosingScrollableContainer):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::handleWheelEvent):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::handleWheelEventWithNode):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::handleWheelEventAfterMainThread):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+        (WebCore::ScrollingCoordinatorNicosia::handleWheelEvent):
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.h:
+
 2020-08-28  Zalan Bujtas  <zalan@apple.com>
 
         No need to run full can-use-for (fast inline layout codepath) check on every style change.

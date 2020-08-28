@@ -1,3 +1,23 @@
+2020-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Vertical scrolling gets stuck when a horizontal scroller is under the mouse (google search results)
+        https://bugs.webkit.org/show_bug.cgi?id=215641
+        <rdar://problem/67430532>
+
+        Reviewed by Tim Horton.
+        
+        After this change iframe-latch-small-deltas.html would time-out because WheelEventTestMonitor
+        would get stuck with a "content scrolling" defer region, due to begin/end wheel
+        events not getting both sent to the iframe. But the test was actually broken; logging shows
+        that it reset latching state anyway, and it's not testing the shipping configuration of
+        async iframe scrolling. So fix the test to use async iframe scrolling, and to avoid
+        rubber-banding, so that latching is not cleared due to elapsed time.
+
+        * fast/scrolling/latching/iframe-latch-small-deltas-expected.txt:
+        * fast/scrolling/latching/iframe-latch-small-deltas.html:
+        * fast/scrolling/mac/horizontal-overflow-trapping-small-deltas-expected.txt: Added.
+        * fast/scrolling/mac/horizontal-overflow-trapping-small-deltas.html: Added.
+
 2020-08-28  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r263506): scale transform transitions won't overshoot
