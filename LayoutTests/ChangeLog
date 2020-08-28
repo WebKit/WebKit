@@ -1,3 +1,15 @@
+2020-08-27  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam's minValue / maxValue are ignored
+        https://bugs.webkit.org/show_bug.cgi?id=215905
+
+        Reviewed by Darin Adler.
+
+        Import layout test coverage from Blink.
+
+        * webaudio/audioparam-nominal-range-expected.txt: Added.
+        * webaudio/audioparam-nominal-range.html: Added.
+
 2020-08-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Prevent infinite recursion when upgrading custom elements

@@ -37,7 +37,7 @@ BiquadProcessor::BiquadProcessor(BaseAudioContext& context, float sampleRate, si
     , m_type(BiquadFilterType::Lowpass)
     , m_parameter1(AudioParam::create(context, "frequency", 350.0, 0.0, 0.5 * sampleRate, AutomationRate::ARate))
     , m_parameter2(AudioParam::create(context, "Q", 1, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
-    , m_parameter3(AudioParam::create(context, "gain", 0.0, -FLT_MAX, 1541, AutomationRate::ARate))
+    , m_parameter3(AudioParam::create(context, "gain", 0.0, -FLT_MAX, 40 * std::log10(std::numeric_limits<float>::max()), AutomationRate::ARate))
     , m_parameter4(AudioParam::create(context, "detune", 0.0, -153600, 153600, AutomationRate::ARate))
     , m_filterCoefficientsDirty(true)
     , m_hasSampleAccurateValues(false)

@@ -34,6 +34,7 @@
 #include "AudioUtilities.h"
 #include "FloatConversion.h"
 #include "Logging.h"
+#include "VectorMath.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -64,11 +65,9 @@ float AudioParam::value()
 {
     // Update value for timeline.
     if (context().isAudioThread()) {
-        bool hasValue;
-        float timelineValue = m_timeline.valueForContextTime(context(), m_value, hasValue);
-
-        if (hasValue)
-            m_value = timelineValue;
+        auto timelineValue = m_timeline.valueForContextTime(context(), m_value, minValue(), maxValue());
+        if (timelineValue)
+            m_value = *timelineValue;
     }
 
     return m_value;
@@ -78,10 +77,7 @@ void AudioParam::setValue(float value)
 {
     DEBUG_LOG(LOGIDENTIFIER, value);
 
-    // Check against JavaScript giving us bogus floating-point values.
-    // Don't ASSERT, since this can happen if somebody writes bad JS.
-    if (!std::isnan(value) && !std::isinf(value))
-        m_value = value;
+    m_value = std::clamp(value, minValue(), maxValue());
 }
 
 ExceptionOr<void> AudioParam::setAutomationRate(AutomationRate automationRate)
@@ -102,15 +98,16 @@ bool AudioParam::smooth()
 {
     // If values have been explicitly scheduled on the timeline, then use the exact value.
     // Smoothing effectively is performed by the timeline.
-    bool useTimelineValue = false;
-    m_value = m_timeline.valueForContextTime(context(), m_value, useTimelineValue);
+    auto timelineValue = m_timeline.valueForContextTime(context(), m_value, minValue(), maxValue());
+    if (timelineValue)
+        m_value = *timelineValue;
 
     if (m_smoothedValue == m_value) {
         // Smoothed value has already approached and snapped to value.
         return true;
     }
     
-    if (useTimelineValue)
+    if (timelineValue)
         m_smoothedValue = m_value;
     else {
         // Dezipper - exponential approach.
@@ -227,11 +224,10 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
         calculateTimelineValues(values, numberOfValues);
     } else {
         // Calculate control-rate (k-rate) intrinsic value.
-        bool hasValue;
-        float timelineValue = m_timeline.valueForContextTime(context(), m_value, hasValue);
+        auto timelineValue = m_timeline.valueForContextTime(context(), m_value, minValue(), maxValue());
 
-        if (hasValue)
-            m_value = timelineValue;
+        if (timelineValue)
+            m_value = *timelineValue;
 
         values[0] = m_value;
     }
@@ -250,6 +246,11 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
         // Sum, with unity-gain.
         summingBus->sumFrom(*connectionBus);
     }
+
+    // Clamp values based on range allowed by AudioParam's min and max values.
+    float minValue = this->minValue();
+    float maxValue = this->maxValue();
+    VectorMath::vclip(values, 1, &minValue, &maxValue, values, 1, numberOfValues);
 }
 
 void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
@@ -262,7 +263,7 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
 
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.
-    m_value = m_timeline.valuesForTimeRange(startTime, endTime, m_value, values, numberOfValues, sampleRate, sampleRate);
+    m_value = m_timeline.valuesForTimeRange(startTime, endTime, m_value, minValue(), maxValue(), values, numberOfValues, sampleRate, sampleRate);
 }
 
 void AudioParam::connect(AudioNodeOutput* output)

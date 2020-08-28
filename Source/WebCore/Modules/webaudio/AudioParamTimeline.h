@@ -52,14 +52,14 @@ public:
 
     // hasValue is set to true if a valid timeline value is returned.
     // otherwise defaultValue is returned.
-    float valueForContextTime(BaseAudioContext&, float defaultValue, bool& hasValue);
+    Optional<float> valueForContextTime(BaseAudioContext&, float defaultValue, float minValue, float maxValue);
 
     // Given the time range, calculates parameter values into the values buffer
     // and returns the last parameter value calculated for "values" or the defaultValue if none were calculated.
     // controlRate is the rate (number per second) at which parameter values will be calculated.
     // It should equal sampleRate for sample-accurate parameter changes, and otherwise will usually match
     // the render quantum size such that the parameter value changes once per render quantum.
-    float valuesForTimeRange(Seconds startTime, Seconds endTime, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
+    float valuesForTimeRange(Seconds startTime, Seconds endTime, float defaultValue, float minValue, float maxValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
 
     bool hasValues() { return m_events.size(); }
 

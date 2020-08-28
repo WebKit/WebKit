@@ -31,6 +31,7 @@
 
 #include "AudioUtilities.h"
 #include "FloatConversion.h"
+#include "VectorMath.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -133,14 +134,12 @@ void AudioParamTimeline::cancelScheduledValues(Seconds startTime)
     }
 }
 
-float AudioParamTimeline::valueForContextTime(BaseAudioContext& context, float defaultValue, bool& hasValue)
+Optional<float> AudioParamTimeline::valueForContextTime(BaseAudioContext& context, float defaultValue, float minValue, float maxValue)
 {
     {
         std::unique_lock<Lock> lock(m_eventsMutex, std::try_to_lock);
-        if (!lock.owns_lock() || !m_events.size() || Seconds { context.currentTime() } < m_events[0].time()) {
-            hasValue = false;
-            return defaultValue;
-        }
+        if (!lock.owns_lock() || !m_events.size() || Seconds { context.currentTime() } < m_events[0].time())
+            return WTF::nullopt;
     }
 
     // Ask for just a single value.
@@ -149,13 +148,11 @@ float AudioParamTimeline::valueForContextTime(BaseAudioContext& context, float d
     Seconds startTime = Seconds { context.currentTime() };
     Seconds endTime = startTime + Seconds { 1.1 / sampleRate }; // time just beyond one sample-frame
     double controlRate = sampleRate / AudioNode::ProcessingSizeInFrames; // one parameter change per render quantum
-    value = valuesForTimeRange(startTime, endTime, defaultValue, &value, 1, sampleRate, controlRate);
-
-    hasValue = true;
+    value = valuesForTimeRange(startTime, endTime, defaultValue, minValue, maxValue, &value, 1, sampleRate, controlRate);
     return value;
 }
 
-float AudioParamTimeline::valuesForTimeRange(Seconds startTime, Seconds endTime, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate)
+float AudioParamTimeline::valuesForTimeRange(Seconds startTime, Seconds endTime, float defaultValue, float minValue, float maxValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate)
 {
     // We can't contend the lock in the realtime audio thread.
     std::unique_lock<Lock> lock(m_eventsMutex, std::try_to_lock);
@@ -168,6 +165,9 @@ float AudioParamTimeline::valuesForTimeRange(Seconds startTime, Seconds endTime,
     }
 
     float value = valuesForTimeRangeImpl(startTime, endTime, defaultValue, values, numberOfValues, sampleRate, controlRate);
+
+    // Clamp values based on range allowed by AudioParam's min and max values.
+    VectorMath::vclip(values, 1, &minValue, &maxValue, values, 1, numberOfValues);
 
     return value;
 }
