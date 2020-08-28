@@ -1,3 +1,15 @@
+2020-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Vertical text's logical width calculation is stale from the previous height of the WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=215910
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/OrthogonalFlowAvailableSize.mm: Added.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit/orthogonal-flow-available-size.html: Added.
+
 2020-08-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Move Timeout to webkitcorepy (Part 3)

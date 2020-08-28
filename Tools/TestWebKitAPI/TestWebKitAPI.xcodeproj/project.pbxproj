@@ -110,6 +110,8 @@
 		1C90420C2326E03C00BEF91E /* SelectionByWord.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C90420B2326E03C00BEF91E /* SelectionByWord.mm */; };
 		1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */; };
 		1CACADA1230620AE0007D54C /* WKWebViewOpaque.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CACADA0230620AD0007D54C /* WKWebViewOpaque.mm */; };
+		1CB2F27C24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CB2F27B24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm */; };
+		1CB2F27E24F88A52000A5BC1 /* orthogonal-flow-available-size.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CB2F27D24F883BE000A5BC1 /* orthogonal-flow-available-size.html */; };
 		1CC80CEA2474F249004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */; };
 		1CE6FAC32320267C00E48F6E /* rich-color-filtered.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CE6FAC12320264F00E48F6E /* rich-color-filtered.html */; };
 		1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */; };
@@ -1540,6 +1542,7 @@
 				41848F4424891879000E2588 /* open-window-with-file-url-with-host.html in Copy Resources */,
 				931C281E22BC579A001D98C4 /* opendatabase-always-exists.html in Copy Resources */,
 				290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */,
+				1CB2F27E24F88A52000A5BC1 /* orthogonal-flow-available-size.html in Copy Resources */,
 				F49992C6248DABFD00034167 /* overflow-hidden.html in Copy Resources */,
 				0F340779230382870060A1A0 /* overflow-scroll.html in Copy Resources */,
 				83148B09202AC78D00BADE99 /* override-builtins-test.html in Copy Resources */,
@@ -1751,6 +1754,8 @@
 		1C90420B2326E03C00BEF91E /* SelectionByWord.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionByWord.mm; sourceTree = "<group>"; };
 		1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		1CACADA0230620AD0007D54C /* WKWebViewOpaque.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewOpaque.mm; sourceTree = "<group>"; };
+		1CB2F27B24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthogonalFlowAvailableSize.mm; sourceTree = "<group>"; };
+		1CB2F27D24F883BE000A5BC1 /* orthogonal-flow-available-size.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "orthogonal-flow-available-size.html"; sourceTree = "<group>"; };
 		1CB9BC371A67482300FE5678 /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "idempotent-mode-autosizing-only-honors-percentages.html"; sourceTree = "<group>"; };
 		1CE6FAC12320264F00E48F6E /* rich-color-filtered.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "rich-color-filtered.html"; sourceTree = "<group>"; };
@@ -4064,6 +4069,7 @@
 				93F7E86B14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp */,
 				93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */,
 				0F5651F61FCE4DDB00310FBC /* NoHistoryItemScrollToFragment.mm */,
+				1CB2F27B24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm */,
 				7CCB4DA71C83AE7300CC6918 /* PageGroup.cpp */,
 				BC909779125571AB00083756 /* PageLoadBasic.cpp */,
 				BC2D004812A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp */,
@@ -4294,6 +4300,7 @@
 				CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */,
 				468BC454226539C800A36C96 /* open-window-then-write-to-it.html */,
 				41848F4324891815000E2588 /* open-window-with-file-url-with-host.html */,
+				1CB2F27D24F883BE000A5BC1 /* orthogonal-flow-available-size.html */,
 				83148B08202AC76800BADE99 /* override-builtins-test.html */,
 				0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */,
 				F6FDDDD514241C48004F1729 /* push-state.html */,
@@ -4402,8 +4409,8 @@
 				C9E6DD311EA972D800DD78AA /* FirstResponderSuppression.mm */,
 				F456AB1B213EDBA300CB2CEF /* FontManagerTests.mm */,
 				1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */,
-				CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */,
 				CDB213BC24EF522800FDE301 /* FullscreenFocus.mm */,
+				CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */,
 				51EB125824C68589000CB030 /* HIDGamepads.mm */,
 				9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */,
 				9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */,
@@ -5054,7 +5061,6 @@
 				46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */,
 				751B05D61F8EAC410028A09E /* DatabaseTrackerTest.mm in Sources */,
 				2DC4CF771D2D9DD800ECCC94 /* DataDetection.mm in Sources */,
-				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
 				44077BB123144B5000179E2D /* DataDetectorsTestIOS.mm in Sources */,
 				9BAD7F3E22690F2000F8DA66 /* DeallocWebViewInEventListener.mm in Sources */,
 				518EE51D20A78D3600E024F3 /* DecidePolicyForNavigationAction.mm in Sources */,
@@ -5133,6 +5139,7 @@
 				7CCE7EF71A411AE600447C4C /* FrameMIMETypePNG.cpp in Sources */,
 				CDCF78A8244A32F700480311 /* FullscreenAlert.mm in Sources */,
 				CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */,
+				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,
 				83DB79691EF63B3C00BFA5E5 /* Function.cpp in Sources */,
 				7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */,
@@ -5261,6 +5268,7 @@
 				37A22AA71DCAA27200AFBFC4 /* ObservedRenderingProgressEventsAfterCrash.mm in Sources */,
 				2D70059921EDA4D0003463CB /* OffscreenWindow.mm in Sources */,
 				7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */,
+				1CB2F27C24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm in Sources */,
 				0F34077623037FDC0060A1A0 /* OverflowScrollViewTests.mm in Sources */,
 				CEBCA12F1E3A660100C73293 /* OverrideContentSecurityPolicy.mm in Sources */,
 				2DA2586F225C67DC00B45C1C /* OverrideViewportArguments.mm in Sources */,

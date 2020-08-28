@@ -1,3 +1,34 @@
+2020-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Vertical text's logical width calculation is stale from the previous height of the WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=215910
+
+        Reviewed by Simon Fraser.
+
+        When there is vertical text (really: orthogonal flows) in the content, the available width of the vertical
+        text is the height of its containing block. However, the height of the containing block (indeed: all ancestors)
+        may be "auto", in which case the CSS spec says the available width of the element should be "the initial
+        containing block's size."[1]
+
+        Previously, we were using the FrameView's visibleHeight as this metric. However, the visibleHeight is calculated
+        asynchronously, after layout, after a round-trip from the Web Process to the UI Process and back to the Web
+        Process. Therefore, if content changes the WKWebView's size and the web view immediatey re-lays-out, this
+        visibleHeight metric is stale from whatever the previous height of the WKWebView was. In addition, the
+        visibleHeight metric isn't even supposed to be used inside layout; it's instead only supposed to be used for
+        things like position: fixed elements.
+
+        Instead, we should use FrameView::layoutSize(), which is set before layout to the size of the WKWebView. The
+        name even indicates that it should be used for layout purposes.
+
+        [1] https://drafts.csswg.org/css-writing-modes-4/#orthogonal-auto
+
+        Test: WebKit.OrthogonalFlowAvailableSize
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight const):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::availableLogicalHeight const):
+
 2020-08-28  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Fix text-transform inheritance to ::marker
