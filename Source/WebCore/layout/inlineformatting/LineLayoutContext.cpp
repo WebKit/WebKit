@@ -325,14 +325,13 @@ LineLayoutContext::LineContent LineLayoutContext::layoutInlineContent(LineBuilde
     return close(line, layoutRange, committedInlineItemCount, { });
 }
 
-LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent> partialContent)
+LineLayoutContext::LineContent LineLayoutContext::close(const LineBuilder& line, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent> partialContent)
 {
-    ASSERT(committedInlineItemCount || !m_floats.isEmpty() || line.hasIntrusiveFloat());
+    ASSERT_UNUSED(line, committedInlineItemCount || !m_floats.isEmpty() || line.hasIntrusiveFloat());
     auto numberOfCommittedItems = committedInlineItemCount + m_floats.size();
     auto trailingInlineItemIndex = layoutRange.start + numberOfCommittedItems - 1;
     auto lineRange = InlineItemRange { layoutRange.start, trailingInlineItemIndex + 1 };
     ASSERT(lineRange.end <= layoutRange.end);
-    line.close();
     // Adjust hyphenated line count.
     m_successiveHyphenatedLineCount = partialContent && partialContent->trailingContentHasHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
     return LineContent { partialContent, lineRange, WTFMove(m_floats) };

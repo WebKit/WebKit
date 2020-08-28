@@ -31,6 +31,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineSoftLineBreakItem.h"
 #include "RuntimeEnabledFeatures.h"
+#include "TextFlags.h"
 #include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -72,13 +73,51 @@ void LineBuilder::clearContent()
     m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
 }
 
-void LineBuilder::close()
+void LineBuilder::close(bool isLastLineWithInlineContent)
 {
 #if ASSERT_ENABLED
     m_isClosed = true;
 #endif
     removeTrailingTrimmableContent();
     visuallyCollapsePreWrapOverflowContent();
+
+    auto computeExpansionForRunsIfNeeded = [&] {
+        if (formattingContext().root().style().textAlign() != TextAlignMode::Justify)
+            return;
+        // Text is justified according to the method specified by the text-justify property,
+        // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
+        // the last line before a forced break or the end of the block is start-aligned.
+        if (isLastLineWithInlineContent)
+            return;
+        if (m_runs.isEmpty() || m_runs.last().isLineBreak())
+            return;
+
+        auto expansionOpportunityCount = 0;
+        Run* lastRunWithContent = nullptr;
+        // Collect and distribute the expansion opportunities.
+        for (auto& run : m_runs) {
+            expansionOpportunityCount += run.expansionOpportunityCount();
+            if (run.isText() || run.isBox())
+                lastRunWithContent = &run;
+        }
+        // Need to fix up the last run's trailing expansion.
+        if (lastRunWithContent && lastRunWithContent->hasExpansionOpportunity()) {
+            // Turn off the trailing bits first and add the forbid trailing expansion.
+            auto leadingExpansion = lastRunWithContent->expansionBehavior() & LeftExpansionMask;
+            lastRunWithContent->setExpansionBehavior(leadingExpansion | ForbidRightExpansion);
+        }
+        // Anything to distribute?
+        if (expansionOpportunityCount && availableWidth()) {
+            // Distribute the extra space.
+            auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
+            for (auto& run : m_runs) {
+                // Expand and moves runs by the accumulated expansion.
+                if (run.hasExpansionOpportunity())
+                    run.setHorizontalExpansion(expansionToDistribute * run.expansionOpportunityCount());
+            }
+        }
+    };
+    computeExpansionForRunsIfNeeded();
 }
 
 void LineBuilder::removeTrailingTrimmableContent()
@@ -143,7 +182,7 @@ void LineBuilder::visuallyCollapsePreWrapOverflowContent()
         InlineLayoutUnit trimmableWidth = { };
         if (run.isText()) {
             // FIXME: We should always collapse the run at a glyph boundary as the spec indicates: "collapse the character advance widths of any that would otherwise overflow"
-            // and the trimmed width should be capped at std::min(run.trailingWhitespaceWidth(), overflowWidth) for texgt runs. Both FF and Chrome agree.
+            // and the trimmed width should be capped at std::min(run.trailingWhitespaceWidth(), overflowWidth) for text runs. Both FF and Chrome agree.
             trimmableWidth = run.trailingWhitespaceWidth();
             run.visuallyCollapseTrailingWhitespace();
         } else {
@@ -359,14 +398,14 @@ void LineBuilder::TrimmableTrailingContent::addFullyTrimmableContent(size_t runI
     // Any subsequent trimmable whitespace should collapse to zero advanced width and ignored at ::appendTextContent().
     ASSERT(!m_hasFullyTrimmableContent);
     m_fullyTrimmableWidth = trimmableWidth;
-    // Note that just becasue the trimmable width is 0 (font-size: 0px), it does not mean we don't have a trimmable trailing content.
+    // Note that just because the trimmable width is 0 (font-size: 0px), it does not mean we don't have a trimmable trailing content.
     m_hasFullyTrimmableContent = true;
     m_firstRunIndex = m_firstRunIndex.valueOr(runIndex);
 }
 
 void LineBuilder::TrimmableTrailingContent::addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth)
 {
-    // Do not add trimmable letter spacing after a fully trimmable whitesapce.
+    // Do not add trimmable letter spacing after a fully trimmable whitespace.
     ASSERT(!m_firstRunIndex);
     ASSERT(!m_hasFullyTrimmableContent);
     ASSERT(!m_partiallyTrimmableWidth);
@@ -411,14 +450,15 @@ InlineLayoutUnit LineBuilder::TrimmableTrailingContent::removePartiallyTrimmable
 LineBuilder::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
     : m_type(inlineItem.type())
     , m_layoutBox(&inlineItem.layoutBox())
-    , m_logicalRect({ 0, logicalLeft, logicalWidth, 0 })
+    , m_logicalLeft(logicalLeft)
+    , m_logicalWidth(logicalWidth)
 {
 }
 
 LineBuilder::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLayoutUnit logicalLeft)
     : m_type(softLineBreakItem.type())
     , m_layoutBox(&softLineBreakItem.layoutBox())
-    , m_logicalRect({ 0, logicalLeft, 0, 0 })
+    , m_logicalLeft(logicalLeft)
     , m_textContent({ softLineBreakItem.position(), 1, softLineBreakItem.inlineTextBox().content(), false })
 {
 }
@@ -426,7 +466,8 @@ LineBuilder::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLa
 LineBuilder::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool needsHyphen)
     : m_type(InlineItem::Type::Text)
     , m_layoutBox(&inlineTextItem.layoutBox())
-    , m_logicalRect({ 0, logicalLeft, logicalWidth, 0 })
+    , m_logicalLeft(logicalLeft)
+    , m_logicalWidth(logicalWidth)
     , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
     , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.inlineTextBox().content(), needsHyphen })
 {
@@ -444,7 +485,7 @@ void LineBuilder::Run::expand(const InlineTextItem& inlineTextItem, InlineLayout
     ASSERT(isText() && inlineTextItem.isText());
     ASSERT(m_layoutBox == &inlineTextItem.layoutBox());
 
-    m_logicalRect.expandHorizontally(logicalWidth);
+    m_logicalWidth += logicalWidth;
     m_trailingWhitespaceType = trailingWhitespaceType(inlineTextItem);
 
     if (m_trailingWhitespaceType == TrailingWhitespace::None) {
@@ -485,7 +526,7 @@ void LineBuilder::Run::removeTrailingLetterSpacing()
 void LineBuilder::Run::removeTrailingWhitespace()
 {
     // According to https://www.w3.org/TR/css-text-3/#white-space-property matrix
-    // Trimmable whitespace is always collapsable so the length of the trailing trimmable whitespace is always 1 (or non-existent).
+    // Trimmable whitespace is always collapsible so the length of the trailing trimmable whitespace is always 1 (or non-existent).
     ASSERT(m_textContent->length());
     constexpr size_t trailingTrimmableContentLength = 1;
     m_textContent->shrink(trailingTrimmableContentLength);
@@ -518,11 +559,10 @@ ExpansionBehavior LineBuilder::Run::expansionBehavior() const
     return m_expansion.behavior;
 }
 
-void LineBuilder::Run::setComputedHorizontalExpansion(InlineLayoutUnit logicalExpansion)
+void LineBuilder::Run::setHorizontalExpansion(InlineLayoutUnit logicalExpansion)
 {
     ASSERT(isText());
     ASSERT(hasExpansionOpportunity());
-    m_logicalRect.expandHorizontally(logicalExpansion);
     m_expansion.horizontalExpansion = logicalExpansion;
 }
 

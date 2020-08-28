@@ -94,7 +94,7 @@ private:
         bool lineIsConstrainedByFloat { false };
     };
     LineConstraints constraintsForLine(const HorizontalConstraints&, InlineLayoutUnit lineLogicalTop);
-    void setDisplayBoxesForLine(const LineBuilder&, const LineBox&, const LineLayoutContext::LineContent&, const HorizontalConstraints&);
+    void setDisplayBoxesForLine(const LineBuilder&, const Vector<Display::InlineRect, 10>&, const LineBox&, const LineLayoutContext::LineContent&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }

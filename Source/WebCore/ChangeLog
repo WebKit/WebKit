@@ -1,3 +1,57 @@
+2020-08-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineBuilder:Run should not have vertical geometry
+        https://bugs.webkit.org/show_bug.cgi?id=215068
+
+        Reviewed by Antti Koivisto.
+
+        Since LineBuilder only takes care of the horizontal ascpect of a run, LineBuilder::Run should only have logical left and width geometry.
+        The vertical geometry is computed as part of the content alignment phase in LineContentAligner (along with the final horizontal position
+        adjusted with the alignment).
+        This is still a transitional state (see InlineRunRectList m_runRectList) and all the line box related code will get moved to the LineBox class.
+        This patch also enables us to keep LineBuilder::Run const.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::LineContentAligner::inlineRectList const):
+        (WebCore::Layout::LineContentAligner::LineContentAligner):
+        (WebCore::Layout::LineContentAligner::alignHorizontally):
+        (WebCore::Layout::LineContentAligner::alignVertically):
+        (WebCore::Layout::LineContentAligner::adjustBaselineAndLineHeight):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        (WebCore::Layout::LineContentAligner::justifyRuns): Deleted.
+        (WebCore::Layout::LineContentAligner::runContentHeight const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::visuallyCollapsePreWrapOverflowContent):
+        (WebCore::Layout::LineBuilder::TrimmableTrailingContent::addFullyTrimmableContent):
+        (WebCore::Layout::LineBuilder::TrimmableTrailingContent::addPartiallyTrimmableContent):
+        (WebCore::Layout::LineBuilder::Run::Run):
+        (WebCore::Layout::LineBuilder::Run::expand):
+        (WebCore::Layout::LineBuilder::Run::removeTrailingWhitespace):
+        (WebCore::Layout::LineBuilder::Run::setHorizontalExpansion):
+        (WebCore::Layout::m_textContent): Deleted.
+        (WebCore::Layout::LineBuilder::Run::setComputedHorizontalExpansion): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::Run::style const):
+        (WebCore::Layout::LineBuilder::Run::logicalWidth const):
+        (WebCore::Layout::LineBuilder::Run::logicalLeft const):
+        (WebCore::Layout::LineBuilder::Run::expansion const):
+        (WebCore::Layout::LineBuilder::Run::hasExpansionOpportunity const):
+        (WebCore::Layout::LineBuilder::Run::expansionOpportunityCount const):
+        (WebCore::Layout::LineBuilder::Run::hasTrailingWhitespace const):
+        (WebCore::Layout::LineBuilder::Run::trailingWhitespaceWidth const):
+        (WebCore::Layout::LineBuilder::Run::moveHorizontally):
+        (WebCore::Layout::LineBuilder::Run::shrinkHorizontally):
+        (WebCore::Layout::LineBuilder::Run::hasCollapsedTrailingWhitespace const):
+        (WebCore::Layout::LineBuilder::runs const):
+        (WebCore::Layout::LineBuilder::Run::logicalRect const): Deleted.
+        (WebCore::Layout::LineBuilder::Run::adjustLogicalTop): Deleted.
+        (WebCore::Layout::LineBuilder::Run::moveVertically): Deleted.
+        (WebCore::Layout::LineBuilder::Run::setLogicalHeight): Deleted.
+        (WebCore::Layout::LineBuilder::runs): Deleted.
+
 2020-08-27  Chris Dumez  <cdumez@apple.com>
 
         AudioParam's minValue / maxValue are ignored

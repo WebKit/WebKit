@@ -77,7 +77,7 @@ private:
     Result handleFloatsAndInlineContent(LineBreaker&, LineBuilder&, const InlineItemRange& layoutRange, const LineCandidate&);
     size_t rebuildLine(LineBuilder&, const InlineItemRange& layoutRange);
     void commitPartialContent(LineBuilder&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
-    LineContent close(LineBuilder&, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
+    LineContent close(const LineBuilder&, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
 

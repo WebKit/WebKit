@@ -45,7 +45,7 @@ public:
     ~LineBuilder();
 
     void open(InlineLayoutUnit availableLogicalWidth);
-    void close();
+    void close(bool isLastLineWithInlineContent);
     void clearContent();
 
     void setHasIntrusiveFloat(bool hasIntrusiveFloat) { m_hasIntrusiveFloat = hasIntrusiveFloat; }
@@ -74,38 +74,31 @@ public:
 
         const Box& layoutBox() const { return *m_layoutBox; }
         const RenderStyle& style() const { return m_layoutBox->style(); }
-        const Display::InlineRect& logicalRect() const { return m_logicalRect; }
-        Display::Run::Expansion expansion() const { return m_expansion; }
         const Optional<Display::Run::TextContent>& textContent() const { return m_textContent; }
 
-        Run(Run&&) = default;
-        Run& operator=(Run&& other) = default;
+        InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
+        InlineLayoutUnit logicalLeft() const { return m_logicalLeft; }
+
+        const Display::Run::Expansion& expansion() const { return m_expansion; }
+        bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }
+        ExpansionBehavior expansionBehavior() const;
+        unsigned expansionOpportunityCount() const { return m_expansionOpportunityCount; }
+
+        bool hasTrailingWhitespace() const { return m_trailingWhitespaceType != TrailingWhitespace::None; }
+        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
 
     private:
         friend class LineBuilder;
-        friend class LineContentAligner;
 
         Run(const InlineTextItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool needsHypen);
         Run(const InlineSoftLineBreakItem&, InlineLayoutUnit logicalLeft);
         Run(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
 
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
-
-        InlineLayoutUnit logicalWidth() const { return m_logicalRect.width(); }
-
-        void moveHorizontally(InlineLayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
-        void shrinkHorizontally(InlineLayoutUnit width) { m_logicalRect.expandHorizontally(-width); }
-
-        void adjustLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
-        void moveVertically(InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
-        void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
-
-        bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }
-        ExpansionBehavior expansionBehavior() const;
-        unsigned expansionOpportunityCount() const { return m_expansionOpportunityCount; }
-        void setComputedHorizontalExpansion(InlineLayoutUnit logicalExpansion);
+        void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
+        void shrinkHorizontally(InlineLayoutUnit width) { m_logicalWidth -= width; }
         void setExpansionBehavior(ExpansionBehavior);
-
+        void setHorizontalExpansion(InlineLayoutUnit logicalExpansion);
         void setNeedsHyphen() { m_textContent->setNeedsHyphen(); }
 
         enum class TrailingWhitespace {
@@ -114,10 +107,8 @@ public:
             Collapsible,
             Collapsed
         };
-        bool hasTrailingWhitespace() const { return m_trailingWhitespaceType != TrailingWhitespace::None; }
         bool hasCollapsibleTrailingWhitespace() const { return m_trailingWhitespaceType == TrailingWhitespace::Collapsible || hasCollapsedTrailingWhitespace(); }
         bool hasCollapsedTrailingWhitespace() const { return m_trailingWhitespaceType == TrailingWhitespace::Collapsed; }
-        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
         TrailingWhitespace trailingWhitespaceType(const InlineTextItem&) const;
         void removeTrailingWhitespace();
         void visuallyCollapseTrailingWhitespace();
@@ -128,7 +119,8 @@ public:
 
         InlineItem::Type m_type { InlineItem::Type::Text };
         const Box* m_layoutBox { nullptr };
-        Display::InlineRect m_logicalRect;
+        InlineLayoutUnit m_logicalLeft { 0 };
+        InlineLayoutUnit m_logicalWidth { 0 };
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
         Optional<Display::Run::TextContent> m_textContent;
@@ -137,7 +129,6 @@ public:
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
-    RunList& runs() { return m_runs; }
 
 private:
     InlineLayoutUnit contentLogicalRight() const { return m_lineLogicalLeft + m_contentLogicalWidth; }
