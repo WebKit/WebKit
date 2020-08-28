@@ -1,3 +1,42 @@
+2020-08-28  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r263506): scale transform transitions won't overshoot
+        https://bugs.webkit.org/show_bug.cgi?id=215826
+        <rdar://problem/67759310>
+
+        Reviewed by Simon Fraser.
+
+        Test: webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html
+
+        In r263506 we made a change where accelerated animations would set their animation-wide
+        timing functions using PlatformCAAnimation::setTimingFunction() instead of setting it
+        on individual keyframes. This change was required to support the unique ability of
+        JS-originated animations to specify both an animation-wide timing function as well as
+        per-keyframe timing functions.
+
+        In the case of CSS Transitions, this meant that instead of setting a per-keyframe timing
+        function, this change would set the animation-wide timing function since CSS Transitions
+        should map the transition-timing-function property to the "easing" property of the Animation
+        object exposed by the Web Animations API, not as the timing function of the single keyframe
+        interval.
+
+        However, this change surfaced a bug in Core Animation on macOS and iOS where a cubic-bezier()
+        timing function with y values above 1 get clipped when applied to a CAKeyframeAnimation using
+        the timingFunction property (singular) instead of the timingFunctions property (plural).
+
+        To work around this issue, we set Animation::property() on the generated Animation object passed
+        to GraphicsLayerCA to make it possible to detect when we're dealing with a CSS Transition and
+        set the timing function on the keyframe interval rather than on the animation itself.
+
+        Alas, this does not fix the case where a JS-originated animation will specify an animation-wide
+        timing function with a cubic-bezier() timing function with y values above 1. There is no known
+        workaround at this time for this case and this is covered by bug 215918.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::backingAnimationForCompositedRenderer const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+
 2020-08-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move inline alignment code to LineBox
