@@ -29,7 +29,6 @@
 #include "DisplayListItems.h"
 #include "GraphicsContext.h"
 #include "Logging.h"
-#include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -46,7 +45,6 @@ Replayer::~Replayer() = default;
 
 std::unique_ptr<DisplayList> Replayer::replay(const FloatRect& initialClip, bool trackReplayList)
 {
-    TraceScope tracingScope(DisplayListReplayStart, DisplayListReplayEnd);
     LOG_WITH_STREAM(DisplayLists, stream << "\nReplaying with clip " << initialClip);
     UNUSED_PARAM(initialClip);
 

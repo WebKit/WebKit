@@ -1,3 +1,16 @@
+2020-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the system tracing from DisplayList::Replayer::replay()
+        https://bugs.webkit.org/show_bug.cgi?id=215933
+
+        Reviewed by Simon Fraser.
+
+        Remove this expensive tracing point since it can affect the tracing of
+        the MotionMark Design test.
+
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::Replayer::replay):
+
 2020-08-28  Youenn Fablet  <youenn@apple.com>
 
         initializeReadableStream should check for highWaterMark be undefined
