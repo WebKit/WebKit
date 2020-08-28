@@ -70,7 +70,7 @@ public:
     ~CustomElementReactionQueue();
 
     static void enqueueElementUpgrade(Element&, bool alreadyScheduledToUpgrade);
-    static void enqueueElementUpgradeIfDefined(Element&);
+    static void tryToUpgradeElement(Element&);
     static void enqueueConnectedCallbackIfNeeded(Element&);
     static void enqueueDisconnectedCallbackIfNeeded(Element&);
     static void enqueueAdoptedCallbackIfNeeded(Element&, Document& oldDocument, Document& newDocument);
@@ -80,6 +80,10 @@ public:
     bool observesStyleAttribute() const;
     void invokeAll(Element&);
     void clear();
+    bool isEmpty() const { return m_items.isEmpty(); }
+#if ASSERT_ENABLED
+    bool hasJustUpgradeReaction() const;
+#endif
 
     static void processBackupQueue(CustomElementQueue&);
 

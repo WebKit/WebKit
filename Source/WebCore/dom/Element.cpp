@@ -2173,7 +2173,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     if (becomeConnected) {
         if (UNLIKELY(isCustomElementUpgradeCandidate())) {
             ASSERT(isConnected());
-            CustomElementReactionQueue::enqueueElementUpgradeIfDefined(*this);
+            CustomElementReactionQueue::tryToUpgradeElement(*this);
         }
         if (UNLIKELY(isDefinedCustomElement()))
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
@@ -2413,18 +2413,28 @@ void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterfa
     InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
-void Element::setIsFailedCustomElement(JSCustomElementInterface&)
+void Element::setIsFailedCustomElement()
+{
+    setIsFailedCustomElementWithoutClearingReactionQueue();
+    clearReactionQueueFromFailedCustomElement();
+}
+
+void Element::setIsFailedCustomElementWithoutClearingReactionQueue()
 {
     ASSERT(isUndefinedCustomElement());
     ASSERT(getFlag(IsEditingTextOrUndefinedCustomElementFlag));
     clearFlag(IsCustomElement);
+    InspectorInstrumentation::didChangeCustomElementState(*this);
+}
 
+void Element::clearReactionQueueFromFailedCustomElement()
+{
+    ASSERT(isFailedCustomElement());
     if (hasRareData()) {
         // Clear the queue instead of deleting it since this function can be called inside CustomElementReactionQueue::invokeAll during upgrades.
         if (auto* queue = elementRareData()->customElementReactionQueue())
             queue->clear();
     }
-    InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
 void Element::setIsCustomElementUpgradeCandidate()
@@ -2437,11 +2447,8 @@ void Element::setIsCustomElementUpgradeCandidate()
 
 void Element::enqueueToUpgrade(JSCustomElementInterface& elementInterface)
 {
+    ASSERT(isCustomElementUpgradeCandidate());
     ASSERT(!isDefinedCustomElement() && !isFailedCustomElement());
-    setFlag(IsCustomElement);
-    setFlag(IsEditingTextOrUndefinedCustomElementFlag);
-    InspectorInstrumentation::didChangeCustomElementState(*this);
-
     auto& data = ensureElementRareData();
     bool alreadyScheduledToUpgrade = data.customElementReactionQueue();
     if (!alreadyScheduledToUpgrade)
@@ -2451,7 +2458,14 @@ void Element::enqueueToUpgrade(JSCustomElementInterface& elementInterface)
 
 CustomElementReactionQueue* Element::reactionQueue() const
 {
-    ASSERT(isDefinedCustomElement() || isCustomElementUpgradeCandidate());
+#if ASSERT_ENABLED
+    if (isFailedCustomElement()) {
+        auto* queue = elementRareData()->customElementReactionQueue();
+        ASSERT(queue);
+        ASSERT(queue->isEmpty() || queue->hasJustUpgradeReaction());
+    } else
+        ASSERT(isDefinedCustomElement() || isCustomElementUpgradeCandidate());
+#endif
     if (!hasRareData())
         return nullptr;
     return elementRareData()->customElementReactionQueue();

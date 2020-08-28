@@ -567,7 +567,6 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-co
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy [ Skip ]
 
 # Newly imported WPT tests that are crashing.
-[ Debug ] imported/w3c/web-platform-tests/custom-elements/upgrading.html [ Crash ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure Crash ]
 
 # Newly imported WPT tests that are flaky.

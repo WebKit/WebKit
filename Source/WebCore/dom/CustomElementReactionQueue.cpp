@@ -118,21 +118,27 @@ void CustomElementReactionQueue::clear()
     m_items.clear();
 }
 
+#if ASSERT_ENABLED
+bool CustomElementReactionQueue::hasJustUpgradeReaction() const
+{
+    return m_items.size() == 1 && m_items[0].type() == CustomElementReactionQueueItem::Type::ElementUpgrade;
+}
+#endif
+
 void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, bool alreadyScheduledToUpgrade)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.reactionQueue());
     auto& queue = *element.reactionQueue();
-    if (alreadyScheduledToUpgrade) {
-        ASSERT(queue.m_items.size() == 1);
-        ASSERT(queue.m_items[0].type() == CustomElementReactionQueueItem::Type::ElementUpgrade);
-    } else {
+    if (alreadyScheduledToUpgrade)
+        ASSERT(queue.hasJustUpgradeReaction());
+    else
         queue.m_items.append({CustomElementReactionQueueItem::Type::ElementUpgrade});
-        enqueueElementOnAppropriateElementQueue(element);
-    }
+    enqueueElementOnAppropriateElementQueue(element);
 }
 
-void CustomElementReactionQueue::enqueueElementUpgradeIfDefined(Element& element)
+// https://html.spec.whatwg.org/multipage/custom-elements.html#concept-try-upgrade
+void CustomElementReactionQueue::tryToUpgradeElement(Element& element)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isCustomElementUpgradeCandidate());

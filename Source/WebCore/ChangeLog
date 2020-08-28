@@ -1,3 +1,56 @@
+2020-08-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Prevent infinite recursion when upgrading custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=206605
+
+        Reviewed by Antti Koivisto.
+
+        This patch updates our implementation of the concept to upgrade an element [1] and related algorithms
+        to match the latest HTML5 specification. In particular, it incorporates the algorithmic change [2] to
+        prevent infinite recursion an element is re-inserted into a document tree inside its constructor.
+
+        The key code change is in JSCustomElementInterface::upgradeElement where this patch adds an early exit
+        when custom element is not "undefined" or "uncustomized" and the custom element state is set to "failed"
+        immediately before invoking the constructor. The rest of code changes deals with this "failed" state
+        appearing during upgrades and updates various debug assertions.
+
+        [1] https://html.spec.whatwg.org/multipage/custom-elements.html#concept-upgrade-an-element
+        [2] https://github.com/whatwg/html/pull/5126
+        [3] https://html.spec.whatwg.org/multipage/custom-elements.html#concept-try-upgrade
+
+        Test: imported/w3c/web-platform-tests/custom-elements/upgrading.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::constructElementWithFallback):
+        (WebCore::JSCustomElementInterface::upgradeElement): Implements the new behavior. Note that we still
+        need to clear the queue where we used to set the custom element state to "failed" to avoid memory leaks.
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::hasJustUpgradeReaction const): Added.
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgrade): Enqueue the element to the element queue
+        even if it had already been scheduled to upgrade previously. This makes the innermost attempt to upgrade
+        to succeed instead of the outermost. Also updated debug assertions.
+        (WebCore::CustomElementReactionQueue::tryToUpgradeElement): Renamed from enqueueElementUpgradeIfDefined
+        to match the spec's name [3]. Unlike the concept in the spec, this function doesn't get called when
+        the custom element state of the elemnt is either "undefined" or "uncustomized" to avoid unnecessary work.
+        * dom/CustomElementReactionQueue.h:
+        (WebCore::CustomElementReactionQueue::isEmpty const): Added.
+        * dom/CustomElementRegistry.cpp:
+        (WebCore::upgradeElementsInShadowIncludingDescendants):
+        (WebCore::CustomElementRegistry::upgrade):
+        * dom/Document.cpp:
+        (WebCore::createFallbackHTMLElement): Call setIsCustomElementUpgradeCandidate on a newly created since
+        we can no longer update node flags in enqueueToUpgrade
+        * dom/Element.cpp:
+        (WebCore::Element::insertedIntoAncestor):
+        (WebCore::Element::setIsFailedCustomElement): Removed the unused function argument.
+        (WebCore::Element::setIsFailedCustomElementWithoutClearingReactionQueue): Extracted from
+        setIsFailedCustomElement.
+        (WebCore::Element::clearReactionQueueFromFailedCustomElement): Ditto.
+        (WebCore::Element::enqueueToUpgrade): No longer updates node flags as this would clear "failed" state
+        from a custom element which is currently being upgraded and cause all sorts of issues.
+        (WebCore::Element::reactionQueue const): Updated debug assertions.
+        * dom/Element.h:
+
 2020-08-27  John Wilander  <wilander@apple.com>
 
         Remove the feature flag for capped cookies set in 3rd-party CNAME cloaked HTTP responses and add ITP debug logging

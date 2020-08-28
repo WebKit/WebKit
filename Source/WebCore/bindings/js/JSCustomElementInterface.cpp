@@ -64,7 +64,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
 
     auto element = HTMLUnknownElement::create(QualifiedName(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI), document);
     element->setIsCustomElementUpgradeCandidate();
-    element->setIsFailedCustomElement(*this);
+    element->setIsFailedCustomElement();
 
     return element;
 }
@@ -79,7 +79,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
 
     auto element = HTMLUnknownElement::create(name, document);
     element->setIsCustomElementUpgradeCandidate();
-    element->setIsFailedCustomElement(*this);
+    element->setIsFailedCustomElement();
 
     return element;
 }
@@ -162,9 +162,14 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
     return wrappedElement;
 }
 
+// https://html.spec.whatwg.org/multipage/custom-elements.html#concept-upgrade-an-element
 void JSCustomElementInterface::upgradeElement(Element& element)
 {
     ASSERT(element.tagQName() == name());
+
+    if (element.isDefinedCustomElement() || element.isFailedCustomElement())
+        return; // If element's custom element state is not "undefined" or "uncustomized", then return.
+
     ASSERT(element.isCustomElementUpgradeCandidate());
     if (!canInvokeCallback())
         return;
@@ -193,6 +198,10 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     CustomElementReactionQueue::enqueuePostUpgradeReactions(element);
 
+    // Unlike spec, set element's custom element state to "failed" after enqueueing post-upgrade reactions
+    // to avoid hitting debug assertions in enqueuePostUpgradeReactions.
+    element.setIsFailedCustomElementWithoutClearingReactionQueue();
+
     m_constructionStack.append(&element);
 
     MarkedArgumentBuffer args;
@@ -204,14 +213,14 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     m_constructionStack.removeLast();
 
     if (UNLIKELY(scope.exception())) {
-        element.setIsFailedCustomElement(*this);
+        element.clearReactionQueueFromFailedCustomElement();
         reportException(lexicalGlobalObject, scope.exception());
         return;
     }
 
     Element* wrappedElement = JSElement::toWrapped(vm, returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
-        element.setIsFailedCustomElement(*this);
+        element.clearReactionQueueFromFailedCustomElement();
         reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, TypeError, "Custom element constructor returned a wrong element"));
         return;
     }

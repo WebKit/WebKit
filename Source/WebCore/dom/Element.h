@@ -303,7 +303,9 @@ public:
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
 
     void setIsDefinedCustomElement(JSCustomElementInterface&);
-    void setIsFailedCustomElement(JSCustomElementInterface&);
+    void setIsFailedCustomElement();
+    void setIsFailedCustomElementWithoutClearingReactionQueue();
+    void clearReactionQueueFromFailedCustomElement();
     void setIsCustomElementUpgradeCandidate();
     void enqueueToUpgrade(JSCustomElementInterface&);
     CustomElementReactionQueue* reactionQueue() const;
