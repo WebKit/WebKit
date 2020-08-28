@@ -113,6 +113,9 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << characterAfterSelection;
     encoder << characterBeforeSelection;
     encoder << twoCharacterBeforeSelection;
+#if USE(DICTATION_ALTERNATIVES)
+    encoder << dictationContextsForSelection;
+#endif
     encoder << isReplaceAllowed;
     encoder << hasContent;
     encoder << isStableStateUpdate;
@@ -184,6 +187,10 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
     if (!decoder.decode(result.twoCharacterBeforeSelection))
         return false;
+#if USE(DICTATION_ALTERNATIVES)
+    if (!decoder.decode(result.dictationContextsForSelection))
+        return false;
+#endif
     if (!decoder.decode(result.isReplaceAllowed))
         return false;
     if (!decoder.decode(result.hasContent))

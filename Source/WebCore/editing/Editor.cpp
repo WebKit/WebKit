@@ -4221,7 +4221,7 @@ Vector<String> Editor::dictationAlternativesForMarker(const DocumentMarker& mark
     return m_alternativeTextController->dictationAlternativesForMarker(marker);
 }
 
-void Editor::applyDictationAlternativelternative(const String& alternativeString)
+void Editor::applyDictationAlternative(const String& alternativeString)
 {
     m_alternativeTextController->applyDictationAlternative(alternativeString);
 }

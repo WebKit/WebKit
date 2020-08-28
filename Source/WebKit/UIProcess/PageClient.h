@@ -378,6 +378,7 @@ public:
     virtual void removeDictationAlternatives(WebCore::DictationContext) = 0;
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) = 0;
     virtual Vector<String> dictationAlternatives(WebCore::DictationContext) = 0;
+    virtual NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) = 0;
 #endif
 
 #if PLATFORM(MAC)

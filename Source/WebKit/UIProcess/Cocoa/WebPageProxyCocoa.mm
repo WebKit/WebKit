@@ -299,6 +299,15 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTFMove(options) });
 }
 
+#if USE(DICTATION_ALTERNATIVES)
+
+NSTextAlternatives *WebPageProxy::platformDictationAlternatives(WebCore::DictationContext dictationContext)
+{
+    return pageClient().platformDictationAlternatives(dictationContext);
+}
+
+#endif
+
 ResourceError WebPageProxy::errorForUnpermittedAppBoundDomainNavigation(const URL& url)
 {
     return { WKErrorDomain, WKErrorNavigationAppBoundDomain, url, localizedDescriptionForErrorCode(WKErrorNavigationAppBoundDomain) };

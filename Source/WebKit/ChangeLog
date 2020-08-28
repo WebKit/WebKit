@@ -1,3 +1,36 @@
+2020-08-27  Devin Rousso  <drousso@apple.com>
+
+        [iOS] provide a way to get previously inserted alternatives for the selected text
+        https://bugs.webkit.org/show_bug.cgi?id=215816
+        <rdar://problem/66646042>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView alternativesForSelectedText]):
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::platformDictationAlternatives): Added.
+        * UIProcess/PageClient.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::dictationAlternatives):
+        (WebKit::PageClientImplCocoa::platformDictationAlternatives): Added.
+        Provide a way to get the raw `NSTextAlternatives *` for a given `WebCore::DictationContext`.
+
+        * Shared/EditorState.h:
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+        Include a `Vector<WebCore::DictationContext>` as part of the `EditorState` that contains all
+        of the `WebCore::DictationContext` that exist in the currently selected range (or the range
+        of the word containing the cursor if nothing is selected).
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2020-08-27  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r264710): Initializing the AVPlayer Obj-C class at process start up causes a regression in power-use tests

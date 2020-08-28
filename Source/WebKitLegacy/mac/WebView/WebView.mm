@@ -9596,7 +9596,7 @@ bool LayerFlushController::flushLayers()
 
 - (Vector<String>)_dictationAlternatives:(WebCore::DictationContext)dictationContext
 {
-    return _private->m_alternativeTextUIController->alternativesForContext(dictationContext);
+    return makeVector<String>(_private->m_alternativeTextUIController->alternativesForContext(dictationContext).alternativeStrings);
 }
 
 #if ENABLE(SERVICE_CONTROLS)
