@@ -1144,3 +1144,5 @@ webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeo
 
 webkit.org/b/215819 [ Mojave ] fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Pass Failure ]
 
+webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
+
