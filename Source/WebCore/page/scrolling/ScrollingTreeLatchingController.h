@@ -51,6 +51,8 @@ public:
     void clearLatchedNode();
 
 private:
+    bool latchedNodeIsRelevant() const;
+
     mutable Lock m_latchedNodeMutex;
     Markable<ScrollingNodeID, IntegralMarkableTraits<ScrollingNodeID, 0>> m_latchedNodeID;
     MonotonicTime m_lastLatchedNodeInterationTime;
