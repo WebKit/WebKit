@@ -694,7 +694,6 @@ http/tests/inspector [ Skip ]
 http/tests/local [ Skip ]
 http/tests/media [ Skip ]
 http/tests/navigation/ping-attribute/ [ Skip ]
-http/tests/notifications [ Skip ]
 http/tests/pointer-lock [ Skip ]
 http/tests/security [ Skip ]
 
@@ -712,7 +711,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-work
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-fromelement [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/media-source [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/notifications [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/webrtc [ Skip ]
 
 Bug(WPE) fast/dom/DeviceMotion [ Skip ]
@@ -981,6 +979,8 @@ webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure
 webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
 
 webkit.org/b/187593 http/tests/cache/disk-cache/disk-cache-cancel.html [ Failure Pass ]
+
+webkit.org/b/215950 imported/w3c/web-platform-tests/notifications/shownotification-resolve-manual.https.html [ Timeout Pass ]
 
 webkit.org/b/187594 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Failure Pass ]
 

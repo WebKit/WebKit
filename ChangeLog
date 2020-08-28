@@ -1,3 +1,18 @@
+2020-08-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Enable Notifications support
+        https://bugs.webkit.org/show_bug.cgi?id=215924
+
+        Reviewed by Philippe Normand.
+
+        Enable web notifications support for the WPE port. The code is shared with the GTK
+        port, but as we do not try to find and enable libnotify the default implementation
+        is a stub: embedders can customize how to display notifications by connecting to
+        the WebKitWebView:show-notification signal. This way we do not add any additional
+        build dependencies.
+
+        * Source/cmake/OptionsWPE.cmake: Flip ENABLE_NOTIFICATIONS to ON.
+
 2020-08-27  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Build fix due to memmem not always being available.
