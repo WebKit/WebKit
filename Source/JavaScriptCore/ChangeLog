@@ -1,3 +1,16 @@
+2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] `new import.meta()` is acceptable
+        https://bugs.webkit.org/show_bug.cgi?id=215915
+
+        Reviewed by Ross Kirsling.
+
+        `new import.meta()` is valid in terms of syntax while it throws runtime error.
+        We should accept this code, while `new import()` is not correct syntax.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+
 2020-08-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         __proto__ in object literal should perform [[SetPrototypeOf]] directly

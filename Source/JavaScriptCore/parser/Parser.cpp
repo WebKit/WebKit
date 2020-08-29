@@ -4843,7 +4843,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     bool baseIsSuper = match(SUPER);
     bool previousBaseWasSuper = false;
     bool baseIsImport = match(IMPORT);
-    semanticFailIfTrue((baseIsSuper || baseIsImport) && newCount, "Cannot use new with ", getToken());
+    semanticFailIfTrue(baseIsSuper && newCount, "Cannot use new with ", getToken());
 
     bool baseIsNewTarget = false;
     if (newCount && match(DOT)) {
@@ -4903,6 +4903,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 failDueToUnexpectedToken();
             }
         } else {
+            semanticFailIfTrue(newCount, "Cannot use new with import");
             consumeOrFail(OPENPAREN, "import call expects exactly one argument");
             TreeExpression expr = parseAssignmentExpression(context);
             failIfFalse(expr, "Cannot parse expression");

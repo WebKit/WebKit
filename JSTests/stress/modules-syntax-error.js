@@ -316,3 +316,11 @@ super.test();
 checkModuleSyntaxError(String.raw`
 super.test = 20;
 `, `SyntaxError: super is not valid in this context.:2`);
+
+checkModuleSyntaxError(String.raw`
+new import()
+`, `SyntaxError: Cannot use new with import.:2`);
+
+checkModuleSyntaxError(String.raw`
+new import
+`, `SyntaxError: Cannot use new with import.:3`);

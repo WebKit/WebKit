@@ -310,3 +310,15 @@ let i = 20;
 checkModuleSyntax(String.raw`
 const i = 20;
 `);
+
+checkModuleSyntax(String.raw`
+new import.meta
+`);
+
+checkModuleSyntax(String.raw`
+new import.meta();
+`);
+
+checkModuleSyntax(String.raw`
+new import.meta.hey();
+`);

@@ -2362,8 +2362,6 @@ test/language/expressions/generators/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/import.meta/import-meta-is-an-ordinary-object.js:
-  module: 'SyntaxError: Cannot use new with import.'
 test/language/expressions/import.meta/syntax/invalid-assignment-target-for-await-of-loop.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/expressions/import.meta/syntax/invalid-assignment-target-for-in-loop.js:
