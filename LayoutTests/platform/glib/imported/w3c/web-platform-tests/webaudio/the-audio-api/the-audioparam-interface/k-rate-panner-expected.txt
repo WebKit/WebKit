@@ -22,38 +22,14 @@ PASS   k-rate positionX: k-rate node: positionX.linearRampToValueAtTime(1000,0.0
 PASS   k-rate positionX: a-rate node:positionX.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate positionX: a-rate node:positionX.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
 PASS   k-rate positionX: Output of k-rate PannerNode is identical to the array [0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652...]. 
-PASS   k-rate positionX: Output of a-rate PannerNode is identical to the array [0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652...]. 
-PASS   k-rate positionX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 158 different values). 
+PASS   k-rate positionX: Output of a-rate PannerNode is identical to the array [0.00005495094956131652,0.07824615389108658,0.06072939559817314,0.0456632636487484,0.03603517264127731,0.029616545885801315,0.02508825622498989,0.021739639341831207,0.019169362261891365,0.017137136310338974,0.015491393394768238,0.01413218304514885,0.01299106702208519,0.012019679881632328,0.0111829349771142,0.010454746894538403...]. 
+PASS   k-rate positionX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 635 different values). 
 PASS   k-rate positionX k-rate output [0: 127] contains only the constant 0.00005495094956131652. 
-FAIL X k-rate positionX k-rate output [128: 255]: Expected 0.00006342888082144782 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.00007185198774095625
-	[2]	0.00008022063411772251
-	[3]	0.00008853514736983925
-	[4]	0.00009679589129518718
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate positionX k-rate output [256: 383]: Expected 0.0008111122879199684 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0008106461027637124
-	[2]	0.000810180907137692
-	[3]	0.0008097169338725507
-	[4]	0.0008092541247606277
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate positionX k-rate output [384: 511]: Expected 0.0005070299375802279 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0005068035679869354
-	[2]	0.000506577780470252
-	[3]	0.0005063525750301778
-	[4]	0.0005061278934590518
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate positionX k-rate output [512: 639]: Expected 0.00036178954178467393 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.000361666054232046
-	[2]	0.00036154291592538357
-	[3]	0.00036142003955319524
-	[4]	0.0003612974542193115
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Panner k-rate positionX] 4 out of 13 assertions were failed. assert_true: expected true got false
+PASS   k-rate positionX k-rate output [128: 255] contains only the constant 0.0012474509421736002. 
+PASS   k-rate positionX k-rate output [256: 383] contains only the constant 0.0006243652314879. 
+PASS   k-rate positionX k-rate output [384: 511] contains only the constant 0.00041637703543528914. 
+PASS   k-rate positionX k-rate output [512: 639] contains only the constant 0.0003123344504274428. 
+PASS < [Panner k-rate positionX] All assertions passed. (total 13 assertions) 
 PASS > [Panner k-rate positionY]  
 PASS   k-rate positionY: Setting positionY.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate positionY: k-rate node: positionY.setValueAtTime(0,0) did not throw an exception. 
@@ -61,77 +37,29 @@ PASS   k-rate positionY: k-rate node: positionY.linearRampToValueAtTime(1000,0.0
 PASS   k-rate positionY: a-rate node:positionY.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate positionY: a-rate node:positionY.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
 PASS   k-rate positionY: Output of k-rate PannerNode is identical to the array [0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686...]. 
-PASS   k-rate positionY: Output of a-rate PannerNode is identical to the array [0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686...]. 
-PASS   k-rate positionY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 300 different values). 
+PASS   k-rate positionY: Output of a-rate PannerNode is identical to the array [0.15397992730140686,0.052883081138134,0.03359358385205269,0.0257780309766531,0.020881211385130882,0.01750437170267105,0.015046179294586182,0.01318277046084404,0.011724472045898438,0.010553551837801933,0.009593425318598747,0.008792280219495296,0.008113890886306763,0.007532191462814808,0.007027977146208286,0.006586793810129166...]. 
+PASS   k-rate positionY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 637 different values). 
 PASS   k-rate positionY k-rate output [0: 127] contains only the constant 0.15397992730140686. 
-FAIL X k-rate positionY k-rate output [128: 255]: Expected 0.15321409702301025 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.15245208144187927
-	[2]	0.15169388055801392
-	[3]	0.1509394645690918
-	[4]	0.15018883347511292
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate positionY k-rate output [256: 383]: Expected 0.08104125410318375 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.08063808083534241
-	[2]	0.08023692667484283
-	[3]	0.07983777672052383
-	[4]	0.07944062352180481
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate positionY k-rate output [384: 511]: Expected 0.04285595566034317 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.04264303669333458
-	[2]	0.04243118315935135
-	[3]	0.042220380157232285
-	[4]	0.04201063886284828
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate positionY k-rate output [512: 639]: Expected 0.022689655423164368 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.022577229887247086
-	[2]	0.022465361282229424
-	[3]	0.02235405147075653
-	[4]	0.022243302315473557
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Panner k-rate positionY] 4 out of 13 assertions were failed. assert_true: expected true got false
+PASS   k-rate positionY k-rate output [128: 255] contains only the constant 0.0008113961666822433. 
+PASS   k-rate positionY k-rate output [256: 383] contains only the constant 0.00040700039244256914. 
+PASS   k-rate positionY k-rate output [384: 511] contains only the constant 0.0002716227318160236. 
+PASS   k-rate positionY k-rate output [512: 639] contains only the constant 0.00020382541697472334. 
+PASS < [Panner k-rate positionY] All assertions passed. (total 13 assertions) 
 PASS > [Panner k-rate orientationX]  
 PASS   k-rate orientationX: Setting orientationX.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate orientationX: k-rate node: orientationX.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationX: k-rate node: orientationX.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationX: a-rate node:orientationX.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationX: a-rate node:orientationX.linearRampToValueAtTime(10,0.08) did not throw an exception. 
-PASS   k-rate orientationX: Output of k-rate PannerNode is identical to the array [0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766...]. 
-PASS   k-rate orientationX: Output of a-rate PannerNode is identical to the array [0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766...]. 
-PASS   k-rate orientationX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 319 different values). 
-PASS   k-rate orientationX k-rate output [0: 127] contains only the constant 0.000041451945435255766. 
-FAIL X k-rate orientationX k-rate output [128: 255]: Expected 0.0003339551039971411 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0006249957368709147
-	[2]	0.0009145812364295125
-	[3]	0.001202718704007566
-	[4]	0.0014894155319780111
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationX k-rate output [256: 383]: Expected 0.028000328689813614 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.02825474739074707
-	[2]	0.028507892042398453
-	[3]	0.028759770095348358
-	[4]	0.029010390862822533
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationX k-rate output [384: 511]: Expected 0.05214492604136467 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.05232711881399155
-	[2]	0.0525084063410759
-	[3]	0.052688777446746826
-	[4]	0.052868250757455826
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationX k-rate output [512: 639]: Expected 0.06942851096391678 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.06955230981111526
-	[2]	0.0696754977107048
-	[3]	0.0697980672121048
-	[4]	0.06992001831531525
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Panner k-rate orientationX] 4 out of 13 assertions were failed. assert_true: expected true got false
+PASS   k-rate orientationX: Output of k-rate PannerNode is identical to the array [0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696...]. 
+PASS   k-rate orientationX: Output of a-rate PannerNode is identical to the array [0.00004145194179727696,0.000793023849837482,0.001577909803017974,0.0023536905646324158,0.0031244209967553616,0.0038864966481924057,0.004642166662961245,0.005390639882534742,0.006131631787866354,0.006865708157420158,0.007592291571199894,0.008312128484249115,0.009024947881698608,0.009730719029903412,0.010429740883409977,0.011122064664959908...]. 
+PASS   k-rate orientationX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 637 different values). 
+PASS   k-rate orientationX k-rate output [0: 127] contains only the constant 0.00004145194179727696. 
+PASS   k-rate orientationX k-rate output [128: 255] contains only the constant 0.05854203552007675. 
+PASS   k-rate orientationX k-rate output [256: 383] contains only the constant 0.07888391613960266. 
+PASS   k-rate orientationX k-rate output [384: 511] contains only the constant 0.08858339488506317. 
+PASS   k-rate orientationX k-rate output [512: 639] contains only the constant 0.09418903291225433. 
+PASS < [Panner k-rate orientationX] All assertions passed. (total 13 assertions) 
 PASS > [Panner k-rate orientationY]  
 PASS   k-rate orientationY: Setting orientationY.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate orientationY: k-rate node: orientationY.setValueAtTime(1,0) did not throw an exception. 
@@ -139,38 +67,14 @@ PASS   k-rate orientationY: k-rate node: orientationY.linearRampToValueAtTime(10
 PASS   k-rate orientationY: a-rate node:orientationY.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationY: a-rate node:orientationY.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationY: Output of k-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
-PASS   k-rate orientationY: Output of a-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
-PASS   k-rate orientationY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 161 different values). 
+PASS   k-rate orientationY: Output of a-rate PannerNode is identical to the array [0.07389305531978607,0.07389718294143677,0.07390934973955154,0.07392928004264832,0.07395651191473007,0.0739908292889595,0.07403187453746796,0.07407934963703156,0.07413297146558762,0.07419241219758987,0.07425744831562042,0.07432779669761658,0.07440316677093506,0.07448334991931915,0.07456807047128677,0.07465710490942001...]. 
+PASS   k-rate orientationY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 635 different values). 
 PASS   k-rate orientationY k-rate output [0: 127] contains only the constant 0.07389305531978607. 
-FAIL X k-rate orientationY k-rate output [128: 255]: Expected 0.0739683136343956 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.07404319196939468
-	[2]	0.07411769032478333
-	[3]	0.07419182360172272
-	[4]	0.07426558434963226
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationY k-rate output [256: 383]: Expected 0.0811038538813591 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.08118678629398346
-	[2]	0.08126930147409439
-	[3]	0.0813513994216919
-	[4]	0.08143309503793716
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationY k-rate output [384: 511]: Expected 0.08898043632507324 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.08904612064361572
-	[2]	0.08911147713661194
-	[3]	0.08917650580406189
-	[4]	0.08924121409654617
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationY k-rate output [512: 639]: Expected 0.09521431475877762 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.09526193141937256
-	[2]	0.0953093022108078
-	[3]	0.09535645693540573
-	[4]	0.09540335834026337
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Panner k-rate orientationY] 4 out of 13 assertions were failed. assert_true: expected true got false
+PASS   k-rate orientationY k-rate output [128: 255] contains only the constant 0.08894404023885727. 
+PASS   k-rate orientationY k-rate output [256: 383] contains only the constant 0.09769000858068466. 
+PASS   k-rate orientationY k-rate output [384: 511] contains only the constant 0.10211685299873352. 
+PASS   k-rate orientationY k-rate output [512: 639] contains only the constant 0.1047375425696373. 
+PASS < [Panner k-rate orientationY] All assertions passed. (total 13 assertions) 
 PASS > [Panner k-rate orientationZ]  
 PASS   k-rate orientationZ: Setting orientationZ.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate orientationZ: k-rate node: orientationZ.setValueAtTime(1,0) did not throw an exception. 
@@ -178,352 +82,112 @@ PASS   k-rate orientationZ: k-rate node: orientationZ.linearRampToValueAtTime(10
 PASS   k-rate orientationZ: a-rate node:orientationZ.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationZ: a-rate node:orientationZ.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationZ: Output of k-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
-PASS   k-rate orientationZ: Output of a-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
-PASS   k-rate orientationZ: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 161 different values). 
+PASS   k-rate orientationZ: Output of a-rate PannerNode is identical to the array [0.07389305531978607,0.07389718294143677,0.07390934973955154,0.07392928004264832,0.07395651191473007,0.0739908292889595,0.07403187453746796,0.07407934963703156,0.07413297146558762,0.07419241219758987,0.07425744831562042,0.07432779669761658,0.07440316677093506,0.07448334991931915,0.07456807047128677,0.07465710490942001...]. 
+PASS   k-rate orientationZ: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 635 different values). 
 PASS   k-rate orientationZ k-rate output [0: 127] contains only the constant 0.07389305531978607. 
-FAIL X k-rate orientationZ k-rate output [128: 255]: Expected 0.0739683136343956 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.07404319196939468
-	[2]	0.07411769032478333
-	[3]	0.07419182360172272
-	[4]	0.07426558434963226
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationZ k-rate output [256: 383]: Expected 0.0811038538813591 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.08118678629398346
-	[2]	0.08126930147409439
-	[3]	0.0813513994216919
-	[4]	0.08143309503793716
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationZ k-rate output [384: 511]: Expected 0.08898043632507324 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.08904612064361572
-	[2]	0.08911147713661194
-	[3]	0.08917650580406189
-	[4]	0.08924121409654617
-	...and 123 more errors. assert_true: expected true got false
-FAIL X k-rate orientationZ k-rate output [512: 639]: Expected 0.09521431475877762 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.09526193141937256
-	[2]	0.0953093022108078
-	[3]	0.09535645693540573
-	[4]	0.09540335834026337
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Panner k-rate orientationZ] 4 out of 13 assertions were failed. assert_true: expected true got false
+PASS   k-rate orientationZ k-rate output [128: 255] contains only the constant 0.08894404023885727. 
+PASS   k-rate orientationZ k-rate output [256: 383] contains only the constant 0.09769000858068466. 
+PASS   k-rate orientationZ k-rate output [384: 511] contains only the constant 0.10211685299873352. 
+PASS   k-rate orientationZ k-rate output [512: 639] contains only the constant 0.1047375425696373. 
+PASS < [Panner k-rate orientationZ] All assertions passed. (total 13 assertions) 
 PASS > [Listener k-rate positionX]  
 PASS   Listener positionX.automationRate is equal to k-rate. 
 PASS   Listener positionX.setValueAtTime(1,0) did not throw an exception. 
 PASS   Listener positionX.linearRampToValueAtTime(1000,1) did not throw an exception. 
 PASS   Listener k-rate positionX: Output is not constantly 0.0012908608186990023 (contains 512 different values). 
 PASS   Listener k-rate positionX: Output [0, 127] contains only the constant 0.0012908608186990023. 
-FAIL X Listener k-rate positionX: Output [128, 255]: Expected 0.0013597570359706879 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0014282511547207832
-	[2]	0.001496345503255725
-	[3]	0.0015640419442206621
-	[4]	0.0016313435044139624
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionX: Output [256, 383]: Expected 0.007541896775364876 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.007567491382360458
-	[2]	0.007592945825308561
-	[3]	0.007618261035531759
-	[4]	0.007643438410013914
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionX: Output [384, 511]: Expected 0.009286545217037201 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.00928572192788124
-	[2]	0.00928490050137043
-	[3]	0.009284080937504768
-	[4]	0.009283263236284256
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionX: Output [512, 639]: Expected 0.009185688570141792 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.009174649603664875
-	[2]	0.009163666516542435
-	[3]	0.009152736514806747
-	[4]	0.009141861461102962
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate positionX] 4 out of 9 assertions were failed. assert_true: expected true got false
+PASS   Listener k-rate positionX: Output [128, 255] contains only the constant 0.012697511352598667. 
+PASS   Listener k-rate positionX: Output [256, 383] contains only the constant 0.012066216208040714. 
+PASS   Listener k-rate positionX: Output [384, 511] contains only the constant 0.008956578560173512. 
+PASS   Listener k-rate positionX: Output [512, 639] contains only the constant 0.006926611997187138. 
+PASS < [Listener k-rate positionX] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate positionY]  
 PASS   Listener positionY.automationRate is equal to k-rate. 
 PASS   Listener positionY.setValueAtTime(1,0) did not throw an exception. 
 PASS   Listener positionY.linearRampToValueAtTime(1000,1) did not throw an exception. 
 PASS   Listener k-rate positionY: Output is not constantly 0.00111640605609864 (contains 512 different values). 
 PASS   Listener k-rate positionY: Output [0, 127] contains only the constant 0.00111640605609864. 
-FAIL X Listener k-rate positionY: Output [128, 255]: Expected 0.0011780501808971167 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0012394015211611986
-	[2]	0.001300461357459426
-	[3]	0.0013612312031909823
-	[4]	0.001421712338924408
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionY: Output [256, 383]: Expected 0.007064284756779671 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.007093656342476606
-	[2]	0.007122887298464775
-	[3]	0.007151978090405464
-	[4]	0.0071809301152825356
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionY: Output [384, 511]: Expected 0.009714743122458458 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.009715245105326176
-	[2]	0.009715745225548744
-	[3]	0.009716244414448738
-	[4]	0.009716741740703583
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionY: Output [512, 639]: Expected 0.00975877046585083 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.009748218581080437
-	[2]	0.009737721644341946
-	[3]	0.009727276861667633
-	[4]	0.009716883301734924
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate positionY] 4 out of 9 assertions were failed. assert_true: expected true got false
+PASS   Listener k-rate positionY: Output [128, 255] contains only the constant 0.014077913016080856. 
+PASS   Listener k-rate positionY: Output [256, 383] contains only the constant 0.013252438977360725. 
+PASS   Listener k-rate positionY: Output [384, 511] contains only the constant 0.009915567003190517. 
+PASS   Listener k-rate positionY: Output [512, 639] contains only the constant 0.007681305520236492. 
+PASS < [Listener k-rate positionY] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate positionZ]  
 PASS   Listener positionZ.automationRate is equal to k-rate. 
 PASS   Listener positionZ.setValueAtTime(1,0) did not throw an exception. 
 PASS   Listener positionZ.linearRampToValueAtTime(1000,1) did not throw an exception. 
 PASS   Listener k-rate positionZ: Output is not constantly 0.0012348657473921776 (contains 512 different values). 
 PASS   Listener k-rate positionZ: Output [0, 127] contains only the constant 0.0012348657473921776. 
-FAIL X Listener k-rate positionZ: Output [128, 255]: Expected 0.0013007703237235546 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0013662896817550063
-	[2]	0.0014314261497929692
-	[3]	0.0014961820561438799
-	[4]	0.001560559612698853
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionZ: Output [256, 383]: Expected 0.007213294040411711 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.007238387130200863
-	[2]	0.0072633493691682816
-	[3]	0.007288181688636541
-	[4]	0.007312884088605642
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionZ: Output [384, 511]: Expected 0.008966494351625443 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.008966692723333836
-	[2]	0.00896688923239708
-	[3]	0.008967086672782898
-	[4]	0.008967283181846142
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate positionZ: Output [512, 639]: Expected 0.00897815078496933 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.008968304842710495
-	[2]	0.008958508260548115
-	[3]	0.00894876103848219
-	[4]	0.008939062245190144
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate positionZ] 4 out of 9 assertions were failed. assert_true: expected true got false
+PASS   Listener k-rate positionZ: Output [128, 255] contains only the constant 0.012132230214774609. 
+PASS   Listener k-rate positionZ: Output [256, 383] contains only the constant 0.011959895491600037. 
+PASS   Listener k-rate positionZ: Output [384, 511] contains only the constant 0.009045719169080257. 
+PASS   Listener k-rate positionZ: Output [512, 639] contains only the constant 0.007061483338475227. 
+PASS < [Listener k-rate positionZ] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate forwardX]  
 PASS   Listener forwardX.automationRate is equal to k-rate. 
 PASS   Listener forwardX.setValueAtTime(-1,0) did not throw an exception. 
 PASS   Listener forwardX.linearRampToValueAtTime(1,1) did not throw an exception. 
 PASS   Listener k-rate forwardX: Output is not constantly 0.00111640605609864 (contains 512 different values). 
 PASS   Listener k-rate forwardX: Output [0, 127] contains only the constant 0.00111640605609864. 
-FAIL X Listener k-rate forwardX: Output [128, 255]: Expected 0.0011164029128849506 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011163998860865831
-	[2]	0.0011163968592882156
-	[3]	0.0011163937160745263
-	[4]	0.0011163906892761588
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardX: Output [256, 383]: Expected 0.001116060302592814 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.001116054831072688
-	[2]	0.0011160492431372404
-	[3]	0.0011160437716171145
-	[4]	0.0011160383000969887
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardX: Output [384, 511]: Expected 0.0011154524981975555 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011154450476169586
-	[2]	0.0011154375970363617
-	[3]	0.0011154301464557648
-	[4]	0.0011154226958751678
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardX: Output [512, 639]: Expected 0.0011146317701786757 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.001114622806198895
-	[2]	0.0011146137258037925
-	[3]	0.0011146047618240118
-	[4]	0.0011145957978442311
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate forwardX] 4 out of 9 assertions were failed. assert_true: expected true got false
+PASS   Listener k-rate forwardX: Output [128, 255] contains only the constant 0.001115163555368781. 
+PASS   Listener k-rate forwardX: Output [256, 383] contains only the constant 0.001113853300921619. 
+PASS   Listener k-rate forwardX: Output [384, 511] contains only the constant 0.0011124692391604185. 
+PASS   Listener k-rate forwardX: Output [512, 639] contains only the constant 0.0011110050836578012. 
+PASS < [Listener k-rate forwardX] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate forwardY]  
 PASS   Listener forwardY.automationRate is equal to k-rate. 
 PASS   Listener forwardY.setValueAtTime(-1,0) did not throw an exception. 
 PASS   Listener forwardY.linearRampToValueAtTime(1,1) did not throw an exception. 
-PASS   Listener k-rate forwardY: Output is not constantly 0.0011711575789377093 (contains 512 different values). 
-PASS   Listener k-rate forwardY: Output [0, 127] contains only the constant 0.0011711575789377093. 
-FAIL X Listener k-rate forwardY: Output [128, 255]: Expected 0.0011711581610143185 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011711588595062494
-	[2]	0.0011711594415828586
-	[3]	0.0011711600236594677
-	[4]	0.0011711607221513987
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardY: Output [256, 383]: Expected 0.001171227777376771 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011712288251146674
-	[2]	0.0011712298728525639
-	[3]	0.0011712308041751385
-	[4]	0.0011712319683283567
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardY: Output [384, 511]: Expected 0.0011713400017470121 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011713411659002304
-	[2]	0.0011713425628840923
-	[3]	0.0011713437270373106
-	[4]	0.0011713448911905289
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardY: Output [512, 639]: Expected 0.0011714731808751822 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011714743450284004
-	[2]	0.0011714756255969405
-	[3]	0.0011714769061654806
-	[4]	0.0011714780703186989
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate forwardY] 4 out of 9 assertions were failed. assert_true: expected true got false
+PASS   Listener k-rate forwardY: Output is not constantly 0.0011711574625223875 (contains 512 different values). 
+PASS   Listener k-rate forwardY: Output [0, 127] contains only the constant 0.0011711574625223875. 
+PASS   Listener k-rate forwardY: Output [128, 255] contains only the constant 0.0011714103166013956. 
+PASS   Listener k-rate forwardY: Output [256, 383] contains only the constant 0.0011716359294950962. 
+PASS   Listener k-rate forwardY: Output [384, 511] contains only the constant 0.0011718249879777431. 
+PASS   Listener k-rate forwardY: Output [512, 639] contains only the constant 0.001171967014670372. 
+PASS < [Listener k-rate forwardY] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate forwardZ]  
 PASS   Listener forwardZ.automationRate is equal to k-rate. 
 PASS   Listener forwardZ.setValueAtTime(-1,0) did not throw an exception. 
 PASS   Listener forwardZ.linearRampToValueAtTime(1,1) did not throw an exception. 
 PASS   Listener k-rate forwardZ: Output is not constantly 0.00111640605609864 (contains 512 different values). 
 PASS   Listener k-rate forwardZ: Output [0, 127] contains only the constant 0.00111640605609864. 
-FAIL X Listener k-rate forwardZ: Output [128, 255]: Expected 0.0011164022143930197 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011163983726873994
-	[2]	0.001116394530981779
-	[3]	0.0011163906892761588
-	[4]	0.0011163868475705385
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardZ: Output [256, 383]: Expected 0.0011159759014844894 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011159689165651798
-	[2]	0.0011159621644765139
-	[3]	0.0011159551795572042
-	[4]	0.0011159484274685383
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardZ: Output [384, 511]: Expected 0.0011152158258482814 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011152063962072134
-	[2]	0.0011151970829814672
-	[3]	0.001115187769755721
-	[4]	0.001115178456529975
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate forwardZ: Output [512, 639]: Expected 0.001114184153266251 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.001114172744564712
-	[2]	0.0011141612194478512
-	[3]	0.0011141498107463121
-	[4]	0.001114138518460095
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate forwardZ] 4 out of 9 assertions were failed. assert_true: expected true got false
+PASS   Listener k-rate forwardZ: Output [128, 255] contains only the constant 0.001114860293455422. 
+PASS   Listener k-rate forwardZ: Output [256, 383] contains only the constant 0.0011132163926959038. 
+PASS   Listener k-rate forwardZ: Output [384, 511] contains only the constant 0.0011114655062556267. 
+PASS   Listener k-rate forwardZ: Output [512, 639] contains only the constant 0.0011095982044935226. 
+PASS < [Listener k-rate forwardZ] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate upX]  
 PASS   Listener upX.automationRate is equal to k-rate. 
 PASS   Listener upX.setValueAtTime(-1,0) did not throw an exception. 
 PASS   Listener upX.linearRampToValueAtTime(1000,1) did not throw an exception. 
-PASS   Listener k-rate upX: Output is not constantly 0.001004426390863955 (contains 512 different values). 
-PASS   Listener k-rate upX: Output [0, 127] contains only the constant 0.001004426390863955. 
-FAIL X Listener k-rate upX: Output [128, 255]: Expected 0.0010044657392427325 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0010045049712061882
-	[2]	0.0010045442031696439
-	[3]	0.0010045833187177777
-	[4]	0.0010046223178505898
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upX: Output [256, 383]: Expected 0.0010087541304528713 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0010087603004649282
-	[2]	0.001008766470476985
-	[3]	0.00100877252407372
-	[4]	0.001008778577670455
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upX: Output [384, 511]: Expected 0.0010094215394929051 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0010094197932630777
-	[2]	0.0010094181634485722
-	[3]	0.0010094164172187448
-	[4]	0.0010094147874042392
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upX: Output [512, 639]: Expected 0.001009229919873178 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.001009225845336914
-	[2]	0.0010092216543853283
-	[3]	0.0010092175798490644
-	[4]	0.0010092135053128004
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate upX] 4 out of 9 assertions were failed. assert_true: expected true got false
+PASS   Listener k-rate upX: Output is not constantly 0.0010044262744486332 (contains 512 different values). 
+PASS   Listener k-rate upX: Output [0, 127] contains only the constant 0.0010044262744486332. 
+PASS   Listener k-rate upX: Output [128, 255] contains only the constant 0.0010202075354754925. 
+PASS   Listener k-rate upX: Output [256, 383] contains only the constant 0.0010112138697877526. 
+PASS   Listener k-rate upX: Output [384, 511] contains only the constant 0.0010087324772030115. 
+PASS   Listener k-rate upX: Output [512, 639] contains only the constant 0.0010075774043798447. 
+PASS < [Listener k-rate upX] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate upY]  
 PASS   Listener upY.automationRate is equal to k-rate. 
 PASS   Listener upY.setValueAtTime(-1,0) did not throw an exception. 
 PASS   Listener upY.linearRampToValueAtTime(1000,1) did not throw an exception. 
-PASS   Listener k-rate upY: Output is not constantly 0.001004426390863955 (contains 512 different values). 
-PASS   Listener k-rate upY: Output [0, 127] contains only the constant 0.001004426390863955. 
-FAIL X Listener k-rate upY: Output [128, 255]: Expected 0.001004840130917728 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.001005253056064248
-	[2]	0.0010056649334728718
-	[3]	0.0010060756467282772
-	[4]	0.0010064853122457862
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upY: Output [256, 383]: Expected 0.0010501231299713254 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0010504263918846846
-	[2]	0.001050728838890791
-	[3]	0.0010510305874049664
-	[4]	0.0010513316374272108
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upY: Output [384, 511]: Expected 0.0010833843844011426 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0010836052242666483
-	[2]	0.0010838255984708667
-	[3]	0.0010840455070137978
-	[4]	0.001084264600649476
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upY: Output [512, 639]: Expected 0.0011076105292886496 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0011077711824327707
-	[2]	0.0011079313699156046
-	[3]	0.001108091208152473
-	[4]	0.001108250580728054
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate upY] 4 out of 9 assertions were failed. assert_true: expected true got false
+PASS   Listener k-rate upY: Output is not constantly 0.0010044262744486332 (contains 512 different values). 
+PASS   Listener k-rate upY: Output [0, 127] contains only the constant 0.0010044262744486332. 
+PASS   Listener k-rate upY: Output [128, 255] contains only the constant 0.0011701835319399834. 
+PASS   Listener k-rate upY: Output [256, 383] contains only the constant 0.0011715784203261137. 
+PASS   Listener k-rate upY: Output [384, 511] contains only the constant 0.0011718480382114649. 
+PASS   Listener k-rate upY: Output [512, 639] contains only the constant 0.0011719437316060066. 
+PASS < [Listener k-rate upY] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate upZ]  
 PASS   Listener upZ.automationRate is equal to k-rate. 
 PASS   Listener upZ.setValueAtTime(-1,0) did not throw an exception. 
 PASS   Listener upZ.linearRampToValueAtTime(1000,1) did not throw an exception. 
-PASS   Listener k-rate upZ: Output is not constantly 0.001004426390863955 (contains 512 different values). 
-PASS   Listener k-rate upZ: Output [0, 127] contains only the constant 0.001004426390863955. 
-FAIL X Listener k-rate upZ: Output [128, 255]: Expected 0.0010044500231742859 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0010044737718999386
-	[2]	0.0010044974042102695
-	[3]	0.0010045210365206003
-	[4]	0.0010045445524156094
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upZ: Output [256, 383]: Expected 0.0010070358403027058 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0010070400312542915
-	[2]	0.0010070442222058773
-	[3]	0.001007048413157463
-	[4]	0.0010070527205243707
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upZ: Output [384, 511]: Expected 0.0010074966121464968 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.0010074959136545658
-	[2]	0.0010074952151626348
-	[3]	0.0010074945166707039
-	[4]	0.001007493701763451
-	...and 123 more errors. assert_true: expected true got false
-FAIL X Listener k-rate upZ: Output [512, 639]: Expected 0.0010074147721752524 for all values but found 127 unexpected values: 
-	Index	Actual
-	[1]	0.001007412327453494
-	[2]	0.0010074099991470575
-	[3]	0.001007407670840621
-	[4]	0.0010074053425341845
-	...and 123 more errors. assert_true: expected true got false
-FAIL < [Listener k-rate upZ] 4 out of 9 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 14 out of 14 tasks were failed. assert_true: expected true got false
+PASS   Listener k-rate upZ: Output is not constantly 0.0010044262744486332 (contains 512 different values). 
+PASS   Listener k-rate upZ: Output [0, 127] contains only the constant 0.0010044262744486332. 
+PASS   Listener k-rate upZ: Output [128, 255] contains only the constant 0.0010139397345483303. 
+PASS   Listener k-rate upZ: Output [256, 383] contains only the constant 0.0010087323607876897. 
+PASS   Listener k-rate upZ: Output [384, 511] contains only the constant 0.0010072041768580675. 
+PASS   Listener k-rate upZ: Output [512, 639] contains only the constant 0.0010064761154353619. 
+PASS < [Listener k-rate upZ] All assertions passed. (total 9 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 14 tasks ran successfully. 
 

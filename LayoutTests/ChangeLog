@@ -1,3 +1,13 @@
+2020-08-29  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Rebaseline webaudio tests after k-rate changes in r266319
+
+        Unreviewed test gardening.
+
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic-expected.txt:
+
 2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] for-of / for-in left-hand-side target should be simple-assignment-target
