@@ -3053,13 +3053,9 @@ test/language/statements/const/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js
 test/language/statements/const/dstr/ary-ptrn-rest-id-direct.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/statements/do-while/let-array-with-newline.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/async-from-sync-iterator-continuation-abrupt-completion-get-constructor.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
-test/language/statements/for-await-of/let-array-with-newline.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/ticks-with-async-iter-resolved-promise-and-constructor-lookup-two.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, tick 2, loop] and [pre, constructor, tick 1, loop, constructor, tick 2, post] to have the same contents. Ticks and constructor lookups'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, tick 2, loop] and [pre, constructor, tick 1, loop, constructor, tick 2, post] to have the same contents. Ticks and constructor lookups'
@@ -3073,8 +3069,6 @@ test/language/statements/for-in/head-lhs-let.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
-test/language/statements/for-in/let-array-with-newline.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/order-enumerable-shadowed.js:
   default: 'Test262Error: Expected [p1, p2] and [p1] to have the same contents. '
   strict mode: 'Test262Error: Expected [p1, p2] and [p1] to have the same contents. '
@@ -3156,8 +3150,6 @@ test/language/statements/for-of/dstr/obj-id-put-const.js:
 test/language/statements/for-of/dstr/obj-id-put-let.js:
   default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/language/statements/for-of/let-array-with-newline.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for/dstr/const-ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -3187,8 +3179,6 @@ test/language/statements/for/dstr/var-ary-ptrn-rest-id-direct.js:
   strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."
-test/language/statements/for/let-array-with-newline.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for/scope-body-lex-open.js:
   default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
   strict mode: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
@@ -3230,8 +3220,6 @@ test/language/statements/if/if-stmt-else-async-fun.js:
 test/language/statements/if/if-stmt-else-async-gen.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-stmt-else-gen.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/decl-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -3368,10 +3356,6 @@ test/language/statements/variable/dstr/ary-ptrn-elem-id-iter-val-array-prototype
 test/language/statements/variable/dstr/ary-ptrn-rest-id-direct.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/statements/while/let-array-with-newline.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/with/let-array-with-newline.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/types/reference/put-value-prop-base-primitive-realm.js:
   default: 'Test262Error: number Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: number Expected SameValue(«0», «1») to be true'

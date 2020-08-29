@@ -1970,6 +1970,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         // These tokens imply the end of a set of source elements
         return 0;
     case LET: {
+        // https://tc39.es/ecma262/#sec-expression-statement
+        // ExpressionStatement's lookahead includes `let [` sequence.
+        SavePoint savePoint = createSavePoint(context);
+        next();
+        failIfTrue(match(OPENBRACKET), "Cannot use lexical declaration in single-statement context");
+        restoreSavePoint(context, savePoint);
         if (!strictMode())
             goto identcase;
         goto defaultCase;

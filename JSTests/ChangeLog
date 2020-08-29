@@ -1,5 +1,17 @@
 2020-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] `let [` sequence cannot appear in ExpressionStatement context
+        https://bugs.webkit.org/show_bug.cgi?id=215977
+
+        Reviewed by Ross Kirsling.
+
+        * stress/let-and-open-bracket.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        * test262/expectations.yaml:
+
+2020-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] for-of uses AssignmentExpression while for-in uses Expression
         https://bugs.webkit.org/show_bug.cgi?id=215975
 
