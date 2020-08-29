@@ -109,7 +109,7 @@ public:
     ExceptionOr<AudioParam&> setValueCurveAtTime(Vector<float>&& curve, double startTime, double duration);
     ExceptionOr<AudioParam&> cancelScheduledValues(double cancelTime);
 
-    bool hasSampleAccurateValues() { return m_timeline.hasValues() || numberOfRenderingConnections(); }
+    bool hasSampleAccurateValues() const { return m_timeline.hasValues() || numberOfRenderingConnections(); }
     
     // Calculates numberOfValues parameter values starting at the context's current time.
     // Must be called in the context's render thread.

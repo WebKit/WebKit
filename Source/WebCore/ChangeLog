@@ -1,3 +1,103 @@
+2020-08-28  Chris Dumez  <cdumez@apple.com>
+
+        Update PannerNode to support k-rate automation of its AudioParams
+        https://bugs.webkit.org/show_bug.cgi?id=215901
+
+        Reviewed by Darin Adler.
+
+        Update PannerNode to support k-rate automation of its AudioParams.
+
+        This patch is based on Chromium's implementation and the following
+        change in particular:
+        - https://chromium-review.googlesource.com/c/chromium/src/+/2096786
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioListener.cpp:
+        (WebCore::AudioListener::AudioListener):
+        (WebCore::AudioListener::hasSampleAccurateValues const):
+        (WebCore::AudioListener::shouldUseARate const):
+        (WebCore::AudioListener::updateValuesIfNeeded):
+        (WebCore::AudioListener::positionXValues):
+        (WebCore::AudioListener::positionYValues):
+        (WebCore::AudioListener::positionZValues):
+        (WebCore::AudioListener::forwardXValues):
+        (WebCore::AudioListener::forwardYValues):
+        (WebCore::AudioListener::forwardZValues):
+        (WebCore::AudioListener::upXValues):
+        (WebCore::AudioListener::upYValues):
+        (WebCore::AudioListener::upZValues):
+        Add functions to retrieve sample accurate values from the AudioListener's
+        AudioParams. Those values are cached for performance.
+
+        (WebCore::AudioListener::setPosition):
+        Call AudioParam::setValueAtTime(value, now) instead of
+        AudioParam::setValue(), as per:
+        - https://www.w3.org/TR/webaudio/#dom-audiolistener-setposition
+
+        (WebCore::AudioListener::setOrientation):
+        Call AudioParam::setValueAtTime(value, now) instead of
+        AudioParam::setValue(), as per:
+        - https://www.w3.org/TR/webaudio/#dom-audiolistener-setorientation
+
+        * Modules/webaudio/AudioListener.h:
+        * Modules/webaudio/AudioListener.idl:
+        Update IDL to indicate that setPosition() / setOrientation() may now
+        throw exceptions.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::calculateFinalValues):
+        If we're not sample accurate, make sure we duplicate the first element of
+        |values| to other elements. Some WPT tests kept failing without this change.
+
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParamTimeline.h:
+        (WebCore::AudioParamTimeline::hasValues const):
+        Add more constness.
+
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::process):
+        (WebCore::PannerNode::processSampleAccurateValues):
+        Add support for k-rate automation of PannerNode's AudioParams.
+
+        (WebCore::PannerNode::hasSampleAccurateValues const):
+        (WebCore::PannerNode::shouldUseARate const):
+        (WebCore::PannerNode::setPanningModel):
+
+        (WebCore::PannerNode::setPosition):
+        Call AudioParam::setValueAtTime(value, now) instead of
+        AudioParam::setValue(), as per:
+        - https://www.w3.org/TR/webaudio/#dom-pannernode-setposition
+
+        (WebCore::PannerNode::setOrientation):
+        Call AudioParam::setValueAtTime(value, now) instead of
+        AudioParam::setValue(), as per:
+        - https://www.w3.org/TR/webaudio/#dom-pannernode-setorientation
+
+        (WebCore::PannerNode::setDistanceModel):
+        (WebCore::PannerNode::setRefDistance):
+        (WebCore::PannerNode::setMaxDistance):
+        (WebCore::PannerNode::setRolloffFactor):
+        (WebCore::PannerNode::setConeOuterGain):
+        (WebCore::PannerNode::setConeOuterAngle):
+        (WebCore::PannerNode::setConeInnerAngle):
+        (WebCore::PannerNode::setChannelCount):
+        (WebCore::PannerNode::setChannelCountMode):
+        (WebCore::PannerNode::calculateAzimuthElevation):
+        (WebCore::PannerNode::azimuthElevation):
+        (WebCore::PannerNode::calculateDistanceConeGain):
+        (WebCore::PannerNode::distanceConeGain):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/PannerNode.idl:
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::calculateDesiredGain):
+        (WebCore::EqualPowerPanner::panWithSampleAccurateValues):
+        * platform/audio/EqualPowerPanner.h:
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::panWithSampleAccurateValues):
+        * platform/audio/HRTFPanner.h:
+        * platform/audio/Panner.h:
+
 2020-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Debug event regions should paint the interactive region

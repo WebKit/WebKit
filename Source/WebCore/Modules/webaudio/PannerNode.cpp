@@ -163,10 +163,15 @@ void PannerNode::process(size_t framesToProcess)
         return;
     }
 
+    if ((hasSampleAccurateValues() || listener().hasSampleAccurateValues()) && (shouldUseARate() || listener().shouldUseARate())) {
+        processSampleAccurateValues(destination, source, framesToProcess);
+        return;
+    }
+
     // Apply the panning effect.
     double azimuth;
     double elevation;
-    getAzimuthElevation(&azimuth, &elevation);
+    azimuthElevation(&azimuth, &elevation);
     m_panner->pan(azimuth, elevation, source, destination, framesToProcess);
 
     // Get the distance and cone gain.
@@ -178,6 +183,80 @@ void PannerNode::process(size_t framesToProcess)
 
     // Apply gain in-place with de-zippering.
     destination->copyWithGainFrom(*destination, &m_lastGain, totalGain);
+}
+
+void PannerNode::processSampleAccurateValues(AudioBus* destination, const AudioBus* source, size_t framesToProcess)
+{
+    // Get the sample accurate values from all of the AudioParams, including the
+    // values from the AudioListener.
+    float pannerX[AudioNode::ProcessingSizeInFrames];
+    float pannerY[AudioNode::ProcessingSizeInFrames];
+    float pannerZ[AudioNode::ProcessingSizeInFrames];
+
+    float orientationX[AudioNode::ProcessingSizeInFrames];
+    float orientationY[AudioNode::ProcessingSizeInFrames];
+    float orientationZ[AudioNode::ProcessingSizeInFrames];
+
+    m_positionX->calculateSampleAccurateValues(pannerX, framesToProcess);
+    m_positionY->calculateSampleAccurateValues(pannerY, framesToProcess);
+    m_positionZ->calculateSampleAccurateValues(pannerZ, framesToProcess);
+    m_orientationX->calculateSampleAccurateValues(orientationX, framesToProcess);
+    m_orientationY->calculateSampleAccurateValues(orientationY, framesToProcess);
+    m_orientationZ->calculateSampleAccurateValues(orientationZ, framesToProcess);
+
+    // Get the automation values from the listener.
+    const float* listenerX = listener().positionXValues(AudioNode::ProcessingSizeInFrames);
+    const float* listenerY = listener().positionYValues(AudioNode::ProcessingSizeInFrames);
+    const float* listenerZ = listener().positionZValues(AudioNode::ProcessingSizeInFrames);
+
+    const float* forwardX = listener().forwardXValues(AudioNode::ProcessingSizeInFrames);
+    const float* forwardY = listener().forwardYValues(AudioNode::ProcessingSizeInFrames);
+    const float* forwardZ = listener().forwardZValues(AudioNode::ProcessingSizeInFrames);
+
+    const float* upX = listener().upXValues(AudioNode::ProcessingSizeInFrames);
+    const float* upY = listener().upYValues(AudioNode::ProcessingSizeInFrames);
+    const float* upZ = listener().upZValues(AudioNode::ProcessingSizeInFrames);
+
+    // Compute the azimuth, elevation, and total gains for each position.
+    double azimuth[AudioNode::ProcessingSizeInFrames];
+    double elevation[AudioNode::ProcessingSizeInFrames];
+    float totalGain[AudioNode::ProcessingSizeInFrames];
+
+    for (size_t k = 0; k < framesToProcess; ++k) {
+        FloatPoint3D pannerPosition(pannerX[k], pannerY[k], pannerZ[k]);
+        FloatPoint3D orientation(orientationX[k], orientationY[k], orientationZ[k]);
+        FloatPoint3D listenerPosition(listenerX[k], listenerY[k], listenerZ[k]);
+        FloatPoint3D listenerFront(forwardX[k], forwardY[k], forwardZ[k]);
+        FloatPoint3D listenerUp(upX[k], upY[k], upZ[k]);
+
+        calculateAzimuthElevation(&azimuth[k], &elevation[k], pannerPosition, listenerPosition, listenerFront, listenerUp);
+
+        // Get distance and cone gain
+        totalGain[k] = calculateDistanceConeGain(pannerPosition, orientation, listenerPosition);
+    }
+
+    m_panner->panWithSampleAccurateValues(azimuth, elevation, source, destination, framesToProcess);
+    destination->copyWithSampleAccurateGainValuesFrom(*destination, totalGain, framesToProcess);
+}
+
+bool PannerNode::hasSampleAccurateValues() const
+{
+    return m_positionX->hasSampleAccurateValues()
+        || m_positionY->hasSampleAccurateValues()
+        || m_positionZ->hasSampleAccurateValues()
+        || m_orientationX->hasSampleAccurateValues()
+        || m_orientationY->hasSampleAccurateValues()
+        || m_orientationZ->hasSampleAccurateValues();
+}
+
+bool PannerNode::shouldUseARate() const
+{
+    return m_positionX->automationRate() == AutomationRate::ARate
+        || m_positionY->automationRate() == AutomationRate::ARate
+        || m_positionZ->automationRate() == AutomationRate::ARate
+        || m_orientationX->automationRate() == AutomationRate::ARate
+        || m_orientationY->automationRate() == AutomationRate::ARate
+        || m_orientationZ->automationRate() == AutomationRate::ARate;
 }
 
 void PannerNode::reset()
@@ -213,6 +292,8 @@ AudioListener& PannerNode::listener()
 
 void PannerNode::setPanningModel(PanningModelType model)
 {
+    ASSERT(isMainThread());
+
     if (!m_panner.get() || model != m_panningModel) {
         // This synchronizes with process().
         auto locker = holdLock(m_pannerMutex);
@@ -227,11 +308,26 @@ FloatPoint3D PannerNode::position() const
     return FloatPoint3D(m_positionX->value(), m_positionY->value(), m_positionZ->value());
 }
 
-void PannerNode::setPosition(float x, float y, float z)
+ExceptionOr<void> PannerNode::setPosition(float x, float y, float z)
 {
-    m_positionX->setValue(x);
-    m_positionY->setValue(y);
-    m_positionZ->setValue(z);
+    ASSERT(isMainThread());
+
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
+    auto now = context().currentTime();
+
+    auto result = m_positionX->setValueAtTime(x, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_positionY->setValueAtTime(y, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_positionZ->setValueAtTime(z, now);
+    if (result.hasException())
+        return result.releaseException();
+
+    return { };
 }
 
 FloatPoint3D PannerNode::orientation() const
@@ -239,11 +335,26 @@ FloatPoint3D PannerNode::orientation() const
     return FloatPoint3D(m_orientationX->value(), m_orientationY->value(), m_orientationZ->value());
 }
 
-void PannerNode::setOrientation(float x, float y, float z)
+ExceptionOr<void> PannerNode::setOrientation(float x, float y, float z)
 {
-    m_orientationX->setValue(x);
-    m_orientationY->setValue(y);
-    m_orientationZ->setValue(z);
+    ASSERT(isMainThread());
+
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
+    auto now = context().currentTime();
+
+    auto result = m_orientationX->setValueAtTime(x, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_orientationY->setValueAtTime(y, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_orientationZ->setValueAtTime(z, now);
+    if (result.hasException())
+        return result.releaseException();
+
+    return { };
 }
 
 DistanceModelType PannerNode::distanceModel() const
@@ -253,47 +364,94 @@ DistanceModelType PannerNode::distanceModel() const
 
 void PannerNode::setDistanceModel(DistanceModelType model)
 {
+    ASSERT(isMainThread());
+
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
     m_distanceEffect.setModel(model, true);
 }
 
 ExceptionOr<void> PannerNode::setRefDistance(double refDistance)
 {
+    ASSERT(isMainThread());
+
     if (refDistance < 0)
         return Exception { RangeError, "refDistance cannot be set to a negative value"_s };
     
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
     m_distanceEffect.setRefDistance(refDistance);
     return { };
 }
 
 ExceptionOr<void> PannerNode::setMaxDistance(double maxDistance)
 {
+    ASSERT(isMainThread());
+
     if (maxDistance <= 0)
         return Exception { RangeError, "maxDistance cannot be set to a non-positive value"_s };
     
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
     m_distanceEffect.setMaxDistance(maxDistance);
     return { };
 }
 
 ExceptionOr<void> PannerNode::setRolloffFactor(double rolloffFactor)
 {
+    ASSERT(isMainThread());
+
     if (rolloffFactor < 0)
         return Exception { RangeError, "rolloffFactor cannot be set to a negative value"_s };
     
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
     m_distanceEffect.setRolloffFactor(rolloffFactor);
     return { };
 }
 
 ExceptionOr<void> PannerNode::setConeOuterGain(double gain)
 {
+    ASSERT(isMainThread());
+
     if (gain < 0 || gain > 1)
         return Exception { InvalidStateError, "coneOuterGain must be in [0, 1]"_s };
     
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
     m_coneEffect.setOuterGain(gain);
     return { };
 }
 
+void PannerNode::setConeOuterAngle(double angle)
+{
+    ASSERT(isMainThread());
+
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
+    m_coneEffect.setOuterAngle(angle);
+}
+
+void PannerNode::setConeInnerAngle(double angle)
+{
+    ASSERT(isMainThread());
+
+    // This synchronizes with process().
+    auto locker = holdLock(m_pannerMutex);
+
+    m_coneEffect.setInnerAngle(angle);
+}
+
 ExceptionOr<void> PannerNode::setChannelCount(unsigned channelCount)
 {
+    ASSERT(isMainThread());
+
     if (channelCount > 2)
         return Exception { NotSupportedError, "PannerNode's channelCount cannot be greater than 2"_s };
     
@@ -302,21 +460,20 @@ ExceptionOr<void> PannerNode::setChannelCount(unsigned channelCount)
 
 ExceptionOr<void> PannerNode::setChannelCountMode(ChannelCountMode mode)
 {
+    ASSERT(isMainThread());
+
     if (mode == ChannelCountMode::Max)
         return Exception { NotSupportedError, "PannerNode's channelCountMode cannot be max"_s };
     
     return AudioNode::setChannelCountMode(mode);
 }
 
-void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
+void PannerNode::calculateAzimuthElevation(double* outAzimuth, double* outElevation, const FloatPoint3D& position, const FloatPoint3D& listenerPosition, const FloatPoint3D& listenerFront, const FloatPoint3D& listenerUp)
 {
     // FIXME: we should cache azimuth and elevation (if possible), so we only re-calculate if a change has been made.
 
-    double azimuth = 0.0;
-
     // Calculate the source-listener vector
-    FloatPoint3D listenerPosition = listener().position();
-    FloatPoint3D sourceListener = position() - listenerPosition;
+    FloatPoint3D sourceListener = position - listenerPosition;
 
     if (sourceListener.isZero()) {
         // degenerate case if source and listener are at the same point
@@ -328,8 +485,6 @@ void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
     sourceListener.normalize();
 
     // Align axes
-    FloatPoint3D listenerFront = listener().orientation();
-    FloatPoint3D listenerUp = listener().upVector();
     FloatPoint3D listenerRight = listenerFront.cross(listenerUp);
     listenerRight.normalize();
 
@@ -343,7 +498,7 @@ void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
     FloatPoint3D projectedSource = sourceListener - upProjection * up;
     projectedSource.normalize();
 
-    azimuth = 180.0 * acos(projectedSource.dot(listenerRight)) / piDouble;
+    double azimuth = rad2deg(std::acos(std::clamp(projectedSource.dot(listenerRight), -1.0f, 1.0f)));
     fixNANs(azimuth); // avoid illegal values
 
     // Source  in front or behind the listener
@@ -372,23 +527,34 @@ void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
         *outElevation = elevation;
 }
 
+void PannerNode::azimuthElevation(double* outAzimuth, double* outElevation)
+{
+    ASSERT(context().isAudioThread());
+
+    calculateAzimuthElevation(outAzimuth, outElevation, position(), listener().position(), listener().orientation(), listener().upVector());
+}
+
 float PannerNode::dopplerRate()
 {
     return 1.0f;
 }
 
-float PannerNode::distanceConeGain()
+float PannerNode::calculateDistanceConeGain(const FloatPoint3D& sourcePosition, const FloatPoint3D& orientation, const FloatPoint3D& listenerPosition)
 {
-    FloatPoint3D listenerPosition = listener().position();
-    FloatPoint3D sourcePosition = position();
-
     double listenerDistance = sourcePosition.distanceTo(listenerPosition);
     double distanceGain = m_distanceEffect.gain(listenerDistance);
 
     // FIXME: could optimize by caching coneGain
-    double coneGain = m_coneEffect.gain(sourcePosition, orientation(), listenerPosition);
+    double coneGain = m_coneEffect.gain(sourcePosition, orientation, listenerPosition);
 
     return float(distanceGain * coneGain);
+}
+
+float PannerNode::distanceConeGain()
+{
+    ASSERT(context().isAudioThread());
+
+    return calculateDistanceConeGain(position(), orientation(), listener().position());
 }
 
 void PannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node, HashSet<AudioNode*>& visitedNodes)

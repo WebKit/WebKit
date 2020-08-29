@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include "AudioArray.h"
+#include "ExceptionOr.h"
 #include "FloatPoint3D.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -59,21 +61,38 @@ public:
     AudioParam& upZ() { return m_upZ.get(); }
 
     // Position
-    void setPosition(float x, float y, float z);
+    ExceptionOr<void> setPosition(float x, float y, float z);
     FloatPoint3D position() const;
 
     // Orientation
-    void setOrientation(float x, float y, float z, float upX, float upY, float upZ);
+    ExceptionOr<void> setOrientation(float x, float y, float z, float upX, float upY, float upZ);
     FloatPoint3D orientation() const;
 
     FloatPoint3D upVector() const;
 
     virtual bool isWebKitAudioListener() const { return false; }
 
+    bool hasSampleAccurateValues() const;
+    bool shouldUseARate() const;
+
+    const float* positionXValues(size_t framesToProcess);
+    const float* positionYValues(size_t framesToProcess);
+    const float* positionZValues(size_t framesToProcess);
+
+    const float* forwardXValues(size_t framesToProcess);
+    const float* forwardYValues(size_t framesToProcess);
+    const float* forwardZValues(size_t framesToProcess);
+
+    const float* upXValues(size_t framesToProcess);
+    const float* upYValues(size_t framesToProcess);
+    const float* upZValues(size_t framesToProcess);
+
 protected:
     explicit AudioListener(BaseAudioContext&);
 
 private:
+    void updateValuesIfNeeded(size_t framesToProcess);
+
     Ref<AudioParam> m_positionX;
     Ref<AudioParam> m_positionY;
     Ref<AudioParam> m_positionZ;
@@ -83,6 +102,21 @@ private:
     Ref<AudioParam> m_upX;
     Ref<AudioParam> m_upY;
     Ref<AudioParam> m_upZ;
+
+    // Last time that the automations were updated.
+    double m_lastUpdateTime { -1 };
+
+    AudioFloatArray m_positionXValues;
+    AudioFloatArray m_positionYValues;
+    AudioFloatArray m_positionZValues;
+
+    AudioFloatArray m_forwardXValues;
+    AudioFloatArray m_forwardYValues;
+    AudioFloatArray m_forwardZValues;
+
+    AudioFloatArray m_upXValues;
+    AudioFloatArray m_upYValues;
+    AudioFloatArray m_upZValues;
 };
 
 } // namespace WebCore

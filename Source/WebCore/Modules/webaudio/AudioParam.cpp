@@ -246,13 +246,21 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
         if (timelineValue)
             m_value = *timelineValue;
 
-        values[0] = m_value;
+        for (unsigned i = 0; i < numberOfValues; ++i)
+            values[i] = m_value;
     }
+
+    if (!numberOfRenderingConnections())
+        return;
 
     // Now sum all of the audio-rate connections together (unity-gain summing junction).
     // Note that connections would normally be mono, but we mix down to mono if necessary.
     auto summingBus = AudioBus::create(1, numberOfValues, false);
-    summingBus->setChannelMemory(0, values, numberOfValues);
+
+    // If we're not sample accurate, we only need one value, so make the summing
+    // bus have length 1. When the connections are added in, only the first
+    // value will be added. Which is exactly what we want.
+    summingBus->setChannelMemory(0, values, sampleAccurate ? numberOfValues : 1);
 
     for (auto& output : m_renderingOutputs) {
         ASSERT(output);
@@ -262,6 +270,12 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
 
         // Sum, with unity-gain.
         summingBus->sumFrom(*connectionBus);
+    }
+
+    // If we're not sample accurate, duplicate the first element of |values| to all of the elements.
+    if (!sampleAccurate) {
+        for (unsigned i = 1; i < numberOfValues; ++i)
+            values[i] = values[0];
     }
 
     // Clamp values based on range allowed by AudioParam's min and max values.

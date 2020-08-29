@@ -41,6 +41,6 @@
     readonly attribute AudioParam upY;
     readonly attribute AudioParam upZ;
 
-    undefined setPosition(float x, float y, float z);
-    undefined setOrientation(float x, float y, float z, float xUp, float yUp, float zUp);
+    [MayThrowException] undefined setPosition(float x, float y, float z);
+    [MayThrowException] undefined setOrientation(float x, float y, float z, float xUp, float yUp, float zUp);
 };

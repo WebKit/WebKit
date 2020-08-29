@@ -313,6 +313,20 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
     }
 }
 
+void HRTFPanner::panWithSampleAccurateValues(double* azimuth, double* elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)
+{
+    // Sample-accurate (a-rate) HRTF panner is not implemented, just k-rate. Just
+    // grab the current azimuth/elevation and use that.
+    //
+    // We are assuming that the inherent smoothing in the HRTF processing is good
+    // enough, and we don't want to increase the complexity of the HRTF panner by
+    // 15-20 times. (We need to compute one output sample for each possibly
+    // different impulse response. That N^2. Previously, we used an FFT to do
+    // them all at once for a complexity of N/log2(N). Hence, N/log2(N) times
+    // more complex.)
+    pan(azimuth[0], elevation[0], inputBus, outputBus, framesToProcess);
+}
+
 double HRTFPanner::tailTime() const
 {
     // Because HRTFPanner is implemented with a DelayKernel and a FFTConvolver, the tailTime of the HRTFPanner

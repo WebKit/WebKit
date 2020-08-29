@@ -35,7 +35,8 @@ class EqualPowerPanner final : public Panner {
 public:
     explicit EqualPowerPanner(float sampleRate);
 
-    void pan(double azimuth, double elevation, const AudioBus* inputBus, AudioBus* outputBuf, size_t framesToProcess) override;
+    void pan(double azimuth, double elevation, const AudioBus* inputBus, AudioBus* outputBuf, size_t framesToProcess) final;
+    void panWithSampleAccurateValues(double* azimuth, double* elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess) final;
 
     void reset() override { m_isFirstRender = true; }
 
@@ -43,6 +44,8 @@ public:
     double latencyTime() const override { return 0; }
 
 private:
+    void calculateDesiredGain(double& desiredGainL, double& desiredGainR, double azimuth, unsigned numberOfChannels);
+
     // For smoothing / de-zippering
     bool m_isFirstRender;
     double m_smoothingConstant;

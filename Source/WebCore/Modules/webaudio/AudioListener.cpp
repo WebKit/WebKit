@@ -32,9 +32,9 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioListener.h"
-#include "AudioParam.h"
 
 #include "AudioBus.h"
+#include "AudioParam.h"
 
 namespace WebCore {
 
@@ -48,16 +48,148 @@ AudioListener::AudioListener(BaseAudioContext& context)
     , m_upX(AudioParam::create(context, "upX", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
     , m_upY(AudioParam::create(context, "upY", 1.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
     , m_upZ(AudioParam::create(context, "upZ", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_positionXValues(AudioNode::ProcessingSizeInFrames)
+    , m_positionYValues(AudioNode::ProcessingSizeInFrames)
+    , m_positionZValues(AudioNode::ProcessingSizeInFrames)
+    , m_forwardXValues(AudioNode::ProcessingSizeInFrames)
+    , m_forwardYValues(AudioNode::ProcessingSizeInFrames)
+    , m_forwardZValues(AudioNode::ProcessingSizeInFrames)
+    , m_upXValues(AudioNode::ProcessingSizeInFrames)
+    , m_upYValues(AudioNode::ProcessingSizeInFrames)
+    , m_upZValues(AudioNode::ProcessingSizeInFrames)
 {
 }
 
 AudioListener::~AudioListener() = default;
 
-void AudioListener::setPosition(float x, float y, float z)
+bool AudioListener::hasSampleAccurateValues() const
 {
-    m_positionX->setValue(x);
-    m_positionY->setValue(y);
-    m_positionZ->setValue(z);
+    return m_positionX->hasSampleAccurateValues()
+        || m_positionY->hasSampleAccurateValues()
+        || m_positionZ->hasSampleAccurateValues()
+        || m_forwardX->hasSampleAccurateValues()
+        || m_forwardY->hasSampleAccurateValues()
+        || m_forwardZ->hasSampleAccurateValues()
+        || m_upX->hasSampleAccurateValues()
+        || m_upY->hasSampleAccurateValues()
+        || m_upZ->hasSampleAccurateValues();
+}
+
+bool AudioListener::shouldUseARate() const
+{
+    return m_positionX->automationRate() == AutomationRate::ARate
+        || m_positionY->automationRate() == AutomationRate::ARate
+        || m_positionZ->automationRate() == AutomationRate::ARate
+        || m_forwardX->automationRate() == AutomationRate::ARate
+        || m_forwardY->automationRate() == AutomationRate::ARate
+        || m_forwardZ->automationRate() == AutomationRate::ARate
+        || m_upX->automationRate() == AutomationRate::ARate
+        || m_upY->automationRate() == AutomationRate::ARate
+        || m_upZ->automationRate() == AutomationRate::ARate;
+}
+
+void AudioListener::updateValuesIfNeeded(size_t framesToProcess)
+{
+    double currentTime = positionX().context().currentTime();
+    if (m_lastUpdateTime != currentTime) {
+        // Time has changed. Update all of the automation values now.
+        m_lastUpdateTime = currentTime;
+
+        ASSERT(framesToProcess <= m_positionXValues.size());
+        ASSERT(framesToProcess <= m_positionYValues.size());
+        ASSERT(framesToProcess <= m_positionZValues.size());
+        ASSERT(framesToProcess <= m_forwardXValues.size());
+        ASSERT(framesToProcess <= m_forwardYValues.size());
+        ASSERT(framesToProcess <= m_forwardZValues.size());
+        ASSERT(framesToProcess <= m_upXValues.size());
+        ASSERT(framesToProcess <= m_upYValues.size());
+        ASSERT(framesToProcess <= m_upZValues.size());
+
+        positionX().calculateSampleAccurateValues(m_positionXValues.data(), framesToProcess);
+        positionY().calculateSampleAccurateValues(m_positionYValues.data(), framesToProcess);
+        positionZ().calculateSampleAccurateValues(m_positionZValues.data(), framesToProcess);
+
+        forwardX().calculateSampleAccurateValues(m_forwardXValues.data(), framesToProcess);
+        forwardY().calculateSampleAccurateValues(m_forwardYValues.data(), framesToProcess);
+        forwardZ().calculateSampleAccurateValues(m_forwardZValues.data(), framesToProcess);
+
+        upX().calculateSampleAccurateValues(m_upXValues.data(), framesToProcess);
+        upY().calculateSampleAccurateValues(m_upYValues.data(), framesToProcess);
+        upZ().calculateSampleAccurateValues(m_upZValues.data(), framesToProcess);
+    }
+}
+
+const float* AudioListener::positionXValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_positionXValues.data();
+}
+
+const float* AudioListener::positionYValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_positionYValues.data();
+}
+
+const float* AudioListener::positionZValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_positionZValues.data();
+}
+
+const float* AudioListener::forwardXValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_forwardXValues.data();
+}
+
+const float* AudioListener::forwardYValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_forwardYValues.data();
+}
+
+const float* AudioListener::forwardZValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_forwardZValues.data();
+}
+
+const float* AudioListener::upXValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_upXValues.data();
+}
+
+const float* AudioListener::upYValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_upYValues.data();
+}
+
+const float* AudioListener::upZValues(size_t framesToProcess)
+{
+    updateValuesIfNeeded(framesToProcess);
+    return m_upZValues.data();
+}
+
+ExceptionOr<void> AudioListener::setPosition(float x, float y, float z)
+{
+    ASSERT(isMainThread());
+
+    double now = m_positionX->context().currentTime();
+
+    auto result = m_positionX->setValueAtTime(x, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_positionY->setValueAtTime(y, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_positionZ->setValueAtTime(z, now);
+    if (result.hasException())
+        return result.releaseException();
+
+    return { };
 }
 
 FloatPoint3D AudioListener::position() const
@@ -65,14 +197,32 @@ FloatPoint3D AudioListener::position() const
     return FloatPoint3D { m_positionX->value(), m_positionY->value(), m_positionZ->value() };
 }
 
-void AudioListener::setOrientation(float x, float y, float z, float upX, float upY, float upZ)
+ExceptionOr<void> AudioListener::setOrientation(float x, float y, float z, float upX, float upY, float upZ)
 {
-    m_forwardX->setValue(x);
-    m_forwardY->setValue(y);
-    m_forwardZ->setValue(z);
-    m_upX->setValue(upX);
-    m_upY->setValue(upY);
-    m_upZ->setValue(upZ);
+    ASSERT(isMainThread());
+
+    double now = m_forwardX->context().currentTime();
+
+    auto result = m_forwardX->setValueAtTime(x, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_forwardY->setValueAtTime(y, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_forwardZ->setValueAtTime(z, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_upX->setValueAtTime(upX, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_upY->setValueAtTime(upY, now);
+    if (result.hasException())
+        return result.releaseException();
+    result = m_upZ->setValueAtTime(upZ, now);
+    if (result.hasException())
+        return result.releaseException();
+
+    return { };
 }
 
 FloatPoint3D AudioListener::orientation() const

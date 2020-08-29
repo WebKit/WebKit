@@ -1,5 +1,23 @@
 2020-08-28  Chris Dumez  <cdumez@apple.com>
 
+        Update PannerNode to support k-rate automation of its AudioParams
+        https://bugs.webkit.org/show_bug.cgi?id=215901
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-equalpower-stereo-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-position-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-stereo-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/test-pannernode-automation-expected.txt:
+
+2020-08-28  Chris Dumez  <cdumez@apple.com>
+
         AudioParam.value setter should call setValueAtTime(value, now)
         https://bugs.webkit.org/show_bug.cgi?id=215946
 
