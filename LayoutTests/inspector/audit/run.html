@@ -31,7 +31,17 @@ function test()
     });
 
     suite.addTestCase({
-        name: "Audit.run.Valid.InjectedObject",
+        name: "Audit.run.Valid.InjectedObject.BeforeSetup",
+        description: "Check that an error is not thrown if trying to reference the injected object without calling setup.",
+        async test() {
+            await auditRun(`function() { return WebInspectorAudit; }`, (result) => {
+                InspectorTest.expectEqual(result.type, "undefined", "The injected WebInspectorAudit should be undefined.");
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.run.Valid.InjectedObject.AfterSetup",
         description: "Check that an object is injected into the function that is executed.",
         async test() {
             await InspectorTest.Audit.setupAudit();

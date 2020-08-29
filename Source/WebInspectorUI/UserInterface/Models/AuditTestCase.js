@@ -27,7 +27,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 {
     constructor(name, test, options = {})
     {
-        console.assert(typeof test === "string");
+        console.assert(typeof test === "string", test);
 
         super(name, options);
 
@@ -77,9 +77,41 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         return new WI.AuditTestCase(payload.name, payload.test, options);
     }
 
+    static stringifyFunction(func, indentLevel)
+    {
+        let string = func.toString();
+
+        // Remove spaces to make the function look unindented.
+        string = string.replaceAll(new RegExp(`^ {${indentLevel}}`, "gm"), "");
+
+        // Replace remaining indentations with the user set indent string.
+        string = string.replaceAll(/^    /gm, WI.indentString());
+
+        return string;
+    }
+
     // Public
 
-    get test() { return this._test; }
+    get test()
+    {
+        return this._test;
+    }
+
+    set test(test)
+    {
+        console.assert(this.editable);
+        console.assert(WI.auditManager.editing);
+        console.assert(typeof test === "string", test);
+
+        if (test === this._test)
+            return;
+
+        this._test = test;
+
+        this.clearResult();
+
+        this.dispatchEventToListeners(WI.AuditTestBase.Event.TestChanged);
+    }
 
     toJSON(key)
     {
@@ -343,9 +375,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             options.data = data;
         if (resolvedDOMNodes)
             options.resolvedDOMNodes = resolvedDOMNodes;
-        this._result = new WI.AuditTestCaseResult(this.name, level, options);
-
-        this.dispatchEventToListeners(WI.AuditTestBase.Event.ResultChanged);
+        this.updateResult(new WI.AuditTestCaseResult(this.name, level, options));
     }
 };
 

@@ -9,8 +9,6 @@ if (window.internals)
 
 function test()
 {
-    InspectorTest.debug();
-
     let suite = InspectorTest.Audit.createSuite("Audit.Basic");
 
     InspectorTest.Audit.addPromiseTest("Audit.Basic.Timeout.Pass", `setTimeout(resolve, 0, "${WI.AuditTestCaseResult.Level.Pass}")`, WI.AuditTestCaseResult.Level.Pass);

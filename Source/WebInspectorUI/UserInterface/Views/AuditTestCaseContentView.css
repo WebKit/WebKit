@@ -23,18 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.content-view-container > .content-view.audit-test-case {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
 .content-view-container > .content-view.audit-test-case > header {
+    flex-shrink: 0;
     position: sticky;
-    top: -1px;
+    top: 0;
     z-index: var(--z-index-header);
-    margin-top: -1px;
     background-color: var(--audit-test-header-background-color);
-    border-top: 1px solid var(--border-color);
     -webkit-backdrop-filter: blur(20px);
 }
 
-.content-view-container > .content-view.audit-test-case > section > :not(.message-text-view):first-child {
+.content-view-container > .content-view.audit-test-case.manager-editing > header h1 > img {
+    width: 0.75em;
+    min-width: 12px;
+    height: 0.75em;
+    min-height: 12px;
+    margin: 0.125em;
+    margin-inline-end: 0.375em;
+}
+
+.content-view-container > .content-view.audit-test-case > section > :not(.message-text-view, .editor):first-child {
     margin-top: var(--audit-test-vertical-space);
+}
+
+.content-view-container > .content-view.audit-test-case > section {
+    overflow-y: scroll;
+}
+
+.content-view-container > .content-view.audit-test-case > section,
+.content-view-container > .content-view.audit-test-case > section :is(.editor, .CodeMirror) {
+    height: 100%;
 }
 
 .content-view.audit-test-case > header {
@@ -52,6 +76,11 @@
     min-width: 16px;
     min-height: 16px;
     -webkit-margin-end: 0.25em;
+}
+
+.content-view.audit-test-case.manager-editing.disabled:not(.editable) > header h1 > img {
+    opacity: 0.3;
+    pointer-events: none;
 }
 
 .content-view.audit-test-case > header > .metadata {
@@ -83,16 +112,16 @@
     font-weight: bold;
 }
 
-.content-view.audit-test-case > section > :not(.message-text-view) {
+.content-view.audit-test-case > section > :not(.message-text-view, .editor) {
     margin-right: var(--audit-test-horizontal-space);
     margin-left: var(--audit-test-horizontal-space);
 }
 
-.content-view.audit-test-case > section > :not(.message-text-view):last-child {
+.content-view.audit-test-case > section > :not(.message-text-view, .editor):last-child {
     margin-bottom: var(--audit-test-vertical-space);
 }
 
-.content-view.audit-test-case > section > :not(.message-text-view) + :not(.message-text-view) {
+.content-view.audit-test-case > section > :not(.message-text-view, .editor) + :not(.message-text-view, .editor) {
     margin-top: var(--audit-test-vertical-space);
 }
 
@@ -131,12 +160,13 @@
     width: 100%;
 }
 
-.content-view.audit-test-case > section .CodeMirror {
-    width: 100%;
-    height: auto;
-}
-
 .content-view.audit-test-case > section .mark {
     background-color: hsla(53, 83%, 53%, 0.2);
     border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .content-view.audit-test-case.manager-editing > header h1 > img {
+        filter: var(--filter-invert);
+    }
 }

@@ -35,17 +35,35 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         console.assert(this.constructor !== WI.AuditTestContentView && this instanceof WI.AuditTestContentView);
 
         this.element.classList.add("audit-test");
+        if (this.representedObject.editable)
+            this.element.classList.add("editable");
 
-        this._exportButtonNavigationItem = new WI.ButtonNavigationItem("audit-export", WI.UIString("Export"), "Images/Export.svg", 15, 15);
-        this._exportButtonNavigationItem.tooltip = WI.UIString("Export result (%s)").format(WI.saveKeyboardShortcut.displayName);
-        this._exportButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-        this._exportButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportButtonNavigationItemClicked, this);
-        this._updateExportButtonNavigationItemState();
+        if (this.representedObject instanceof WI.AuditTestBase) {
+            this._exportTestButtonNavigationItem = new WI.ButtonNavigationItem("audit-export-test", WI.UIString("Export Audit"), "Images/Export.svg", 15, 15);
+            this._exportTestButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+            this._exportTestButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+            this._exportTestButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportTestButtonNavigationItemClicked, this);
+        }
+
+        this._exportResultButtonNavigationItem = new WI.ButtonNavigationItem("audit-export-result", WI.UIString("Export Result"), "Images/Export.svg", 15, 15);
+        this._exportResultButtonNavigationItem.tooltip = WI.UIString("Export result (%s)", "Export result (%s) @ Audit Tab", "Tooltip for button that exports the most recent result after running an audit.").format(WI.saveKeyboardShortcut.displayName);
+        this._exportResultButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        this._exportResultButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._exportResultButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportResultButtonNavigationItemClicked, this);
+
+        this._updateExportNavigationItems();
 
         this._headerView = new WI.View(document.createElement("header"));
         this._contentView = new WI.View(document.createElement("section"));
         this._placeholderElement = null;
+
+        this._cachedName = this.representedObject.name;
+        this._nameElement = null;
+
+        this._descriptionElement = null;
+
+        this._supportsInputElement = null;
+        this._supportsWarningElement = null;
 
         this._shownResult = null;
     }
@@ -54,7 +72,11 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
     get navigationItems()
     {
-        return [this._exportButtonNavigationItem];
+        let navigationItems = [];
+        if (this._exportTestButtonNavigationItem)
+            navigationItems.push(this._exportTestButtonNavigationItem);
+        navigationItems.push(this._exportResultButtonNavigationItem);
+        return navigationItems;
     }
 
     // Protected
@@ -64,7 +86,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
     get supportsSave()
     {
-        return !!this.representedObject.result;
+        return !WI.auditManager.editing && !!this.representedObject.result;
     }
 
     get saveData()
@@ -79,6 +101,123 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         return this.representedObject.result;
     }
 
+    createNameElement(tagName)
+    {
+        console.assert(!this._nameElement);
+
+        this._nameElement = document.createElement(tagName);
+        this._nameElement.textContent = this.representedObject.name;
+        this._nameElement.className = "name";
+
+        if (this.representedObject.editable) {
+            this._nameElement.spellcheck = false;
+
+            this._nameElement.addEventListener("keydown", (event) => {
+                this._handleEditorKeydown(event, this._descriptionElement);
+            });
+
+            this._nameElement.addEventListener("input", (event) => {
+                console.assert(WI.auditManager.editing);
+
+                let name = this._nameElement.textContent;
+                if (!name.trim()) {
+                    name = this._cachedName;
+                    this._nameElement.removeChildren();
+                }
+                this.representedObject.name = name;
+            });
+        }
+
+        return this._nameElement;
+    }
+
+    createDescriptionElement(tagName)
+    {
+        console.assert(!this._descriptionElement);
+
+        this._descriptionElement = document.createElement(tagName);
+        this._descriptionElement.textContent = this.representedObject.description;
+        this._descriptionElement.className = "description";
+
+        if (this.representedObject.editable) {
+            this._descriptionElement.spellcheck = false;
+
+            this._descriptionElement.addEventListener("keydown", (event) => {
+                this._handleEditorKeydown(event, this._supportsInputElement);
+            });
+
+            this._descriptionElement.addEventListener("input", (event) => {
+                console.assert(WI.auditManager.editing);
+
+                let description = this._descriptionElement.textContent;
+                if (!description.trim()) {
+                    description = "";
+                    this._descriptionElement.removeChildren();
+                }
+                this.representedObject.description = description;
+            });
+        }
+
+        return this._descriptionElement;
+    }
+
+    createControlsTableElement()
+    {
+        console.assert(this.representedObject instanceof WI.AuditTestBase);
+        console.assert(!this._supportsInputElement);
+        console.assert(!this._supportsWarningElement);
+
+        let controlsTableElement = document.createElement("table");
+        controlsTableElement.className = "controls";
+
+        let supportsRowElement = controlsTableElement.appendChild(document.createElement("tr"));
+        supportsRowElement.className = "supports";
+
+        let supportsHeaderElement = supportsRowElement.appendChild(document.createElement("th"));
+        supportsHeaderElement.textContent = WI.unlocalizedString("supports");
+
+        let supportsDataElement = supportsRowElement.appendChild(document.createElement("td"));
+
+        this._supportsInputElement = supportsDataElement.appendChild(document.createElement("input"));
+        this._supportsInputElement.type = "number";
+        this._supportsInputElement.disabled = !this.representedObject.editable;
+        this._supportsInputElement.min = 0;
+        this._supportsInputElement.placeholder = Math.min(WI.AuditTestBase.Version, InspectorBackend.hasDomain("Audit") ? InspectorBackend.getVersion("Audit") : Infinity);
+        if (!isNaN(this.representedObject.supports))
+            this._supportsInputElement.value = this.representedObject.supports;
+
+        if (this.representedObject.editable) {
+            this._supportsInputElement.addEventListener("keydown", (event) => {
+                this._handleEditorKeydown(event, this._setupEditorElement);
+            });
+        }
+
+        this._supportsWarningElement = supportsDataElement.appendChild(document.createElement("span"));
+        this._supportsWarningElement.className = "warning";
+
+        if (this.representedObject.topLevelTest === this.representedObject) {
+            let setupRowElement = controlsTableElement.appendChild(document.createElement("tr"));
+            setupRowElement.className = "setup";
+
+            let setupHeaderElement = setupRowElement.appendChild(document.createElement("th"));
+            setupHeaderElement.textContent = WI.unlocalizedString("setup");
+
+            let setupDataElement = setupRowElement.appendChild(document.createElement("td"));
+
+            this._setupEditorElement = setupDataElement.appendChild(document.createElement("div"));
+        }
+
+        if (this.representedObject.editable) {
+            this._supportsInputElement.addEventListener("input", (event) => {
+                this.representedObject.supports = parseInt(this._supportsInputElement.value);
+
+                this._updateSupportsInputState();
+            });
+        }
+
+        return controlsTableElement;
+    }
+
     initialLayout()
     {
         super.initialLayout();
@@ -91,8 +230,32 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
     {
         super.layout();
 
+        if (this.representedObject instanceof WI.AuditTestBase) {
+            this.element.classList.toggle("unsupported", !this.representedObject.supported);
+            this.element.classList.toggle("disabled", this.representedObject.disabled);
+            this.element.classList.toggle("manager-editing", WI.auditManager.editing);
+
+            if (this.representedObject.editable) {
+                let contentEditable = WI.auditManager.editing ? "plaintext-only" : "inherit";
+                this._nameElement.contentEditable = contentEditable;
+                this._descriptionElement.contentEditable = contentEditable;
+            }
+
+            if (WI.auditManager.editing) {
+                this._cachedName = this.representedObject.name;
+                this._nameElement.dataset.name = this._cachedName;
+
+                this._updateSupportsInputState();
+                this._createSetupEditor();
+            } else {
+                this._nameElement.textContent ||= this._cachedName;
+
+                this._setupEditorElement?.removeChildren();
+            }
+        }
+
         this.hidePlaceholder();
-        this._updateExportButtonNavigationItemState();
+        this._updateExportNavigationItems();
     }
 
     shown()
@@ -101,17 +264,30 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
         if (this.representedObject instanceof WI.AuditTestBase) {
             this.representedObject.addEventListener(WI.AuditTestBase.Event.Completed, this._handleTestChanged, this);
+            this.representedObject.addEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
             this.representedObject.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestChanged, this);
             this.representedObject.addEventListener(WI.AuditTestBase.Event.ResultChanged, this.handleResultChanged, this);
             this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestChanged, this);
             this.representedObject.addEventListener(WI.AuditTestBase.Event.Stopping, this._handleTestChanged, this);
+            this.representedObject.addEventListener(WI.AuditTestBase.Event.SupportedChanged, this._handleTestSupportedChanged, this);
+
+            WI.auditManager.addEventListener(WI.AuditManager.Event.EditingChanged, this._handleEditingChanged, this);
         }
     }
 
     hidden()
     {
-        if (this.representedObject instanceof WI.AuditTestBase)
-            this.representedObject.removeEventListener(null, null, this);
+        if (this.representedObject instanceof WI.AuditTestBase) {
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.Completed, this._handleTestChanged, this);
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.Progress, this._handleTestChanged, this);
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.ResultChanged, this.handleResultChanged, this);
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestChanged, this);
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.Stopping, this._handleTestChanged, this);
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.SupportedChanged, this._handleTestSupportedChanged, this);
+
+            WI.auditManager.removeEventListener(WI.AuditManager.Event.EditingChanged, this._handleEditingChanged, this);
+        }
 
         super.hidden();
     }
@@ -120,7 +296,8 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
     {
         // Overridden by sub-classes.
 
-        this.needsLayout();
+        if (!WI.auditManager.editing)
+            this.needsLayout();
     }
 
     get placeholderElement()
@@ -152,6 +329,8 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
             let spinner = new WI.IndeterminateProgressSpinner;
             this.placeholderElement.appendChild(spinner.element);
+
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         this._showPlaceholder();
@@ -169,8 +348,10 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
                 WI.auditManager.start([this.representedObject]);
             });
 
-            let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to start running the audit"), startNavigationItem);
+            let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to start running the audit."), startNavigationItem);
             this.placeholderElement.appendChild(importHelpElement);
+
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         this._showPlaceholder();
@@ -203,6 +384,8 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
             this.placeholderElement = WI.createMessageTextView(message.format(this.representedObject.name), result.didError);
             this.placeholderElement.__placeholderNoResultData = true;
+
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         this._showPlaceholder();
@@ -220,6 +403,8 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
                 this.resetFilter();
                 this.needsLayout();
             });
+
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         this._showPlaceholder();
@@ -278,9 +463,57 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         WI.auditManager.export(this.representedObject.result);
     }
 
-    _updateExportButtonNavigationItemState()
+    _updateExportNavigationItems()
     {
-        this._exportButtonNavigationItem.enabled = !!this.representedObject.result;
+        if (this._exportTestButtonNavigationItem)
+            this._exportTestButtonNavigationItem.enabled = !WI.auditManager.editing;
+
+        this._exportResultButtonNavigationItem.enabled = !WI.auditManager.editing && this.representedObject.result;
+    }
+
+    _updateSupportsInputState()
+    {
+        console.assert(WI.auditManager.editing);
+
+        this._supportsInputElement.autosize(4);
+
+        this._supportsWarningElement.removeChildren();
+        if (this.representedObject.supports > WI.AuditTestBase.Version)
+            this._supportsWarningElement.textContent = WI.UIString("too new to run in this Web Inspector", "too new to run in this Web Inspector @ Audit Tab", "Warning text shown if the version number in the 'supports' input is too new.");
+        else if (InspectorBackend.hasDomain("Audit") && this._supports > InspectorBackend.getVersion("Audit"))
+            this._supportsWarningElement.textContent = WI.UIString("too new to run in the inspected page", "too new to run in the inspected page @ Audit Tab", "Warning text shown if the version number in the 'supports' input is too new.");
+    }
+
+    _createSetupEditor()
+    {
+        if (!this._setupEditorElement)
+            return;
+
+        let setupEditorElement = document.createElement(this._setupEditorElement.nodeName);
+        setupEditorElement.className = "editor";
+
+        // Give the rest of the view a chance to load.
+        setTimeout(() => {
+            let setupCodeMirror = WI.CodeMirrorEditor.create(setupEditorElement, {
+                autoCloseBrackets: true,
+                lineNumbers: true,
+                lineWrapping: true,
+                matchBrackets: true,
+                mode: "text/javascript",
+                readOnly: this.representedObject.editable ? false : "nocursor",
+                styleSelectedText: true,
+                value: this.representedObject.setup,
+            });
+
+            if (this.representedObject.editable) {
+                setupCodeMirror.on("blur", (event) => {
+                    this.representedObject.setup = setupCodeMirror.getValue().trim();
+                });
+            }
+        });
+
+        this._setupEditorElement.parentNode.replaceChild(setupEditorElement, this._setupEditorElement);
+        this._setupEditorElement = setupEditorElement;
     }
 
     _showPlaceholder()
@@ -289,7 +522,35 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         this.contentView.element.appendChild(this.placeholderElement);
     }
 
-    _handleExportButtonNavigationItemClicked(event)
+    _handleEditorKeydown(event, nextEditor)
+    {
+        console.assert(WI.auditManager.editing);
+
+        switch (event.keyCode) {
+        case WI.KeyboardShortcut.Key.Enter.keyCode:
+            if (nextEditor) {
+                nextEditor.focus();
+                break;
+            }
+            // fallthrough
+
+        case WI.KeyboardShortcut.Key.Escape.keyCode:
+            event.target.blur();
+            break;
+
+        default:
+            return;
+        }
+
+        event.preventDefault();
+    }
+
+    _handleExportTestButtonNavigationItemClicked(event)
+    {
+        WI.auditManager.export(this.representedObject);
+    }
+
+    _handleExportResultButtonNavigationItemClicked(event)
     {
         this._exportResult();
     }
@@ -297,5 +558,26 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
     _handleTestChanged(event)
     {
         this.needsLayout();
+    }
+
+    _handleTestDisabledChanged(event)
+    {
+        console.assert(WI.auditManager.editing);
+
+        this.element.classList.toggle("disabled", this.representedObject.disabled);
+    }
+
+    _handleTestSupportedChanged(event)
+    {
+        console.assert(WI.auditManager.editing);
+
+        this.element.classList.toggle("unsupported", !this.representedObject.supported);
+    }
+
+    _handleEditingChanged(event)
+    {
+        this.needsLayout();
+
+        this._updateExportNavigationItems();
     }
 };

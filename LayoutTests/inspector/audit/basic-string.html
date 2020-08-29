@@ -9,8 +9,6 @@ if (window.internals)
 
 function test()
 {
-    InspectorTest.debug();
-
     let suite = InspectorTest.Audit.createSuite("Audit.Basic");
 
     InspectorTest.Audit.addStringTest("Audit.Basic.String.Pass", WI.AuditTestCaseResult.Level.Pass, WI.AuditTestCaseResult.Level.Pass);

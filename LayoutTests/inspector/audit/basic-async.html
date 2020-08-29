@@ -9,8 +9,6 @@ if (window.internals)
 
 function test()
 {
-    InspectorTest.debug();
-
     let suite = InspectorTest.Audit.createSuite("Audit.Basic");
 
     InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Async.Boolean.True", true, WI.AuditTestCaseResult.Level.Pass, {async: true});

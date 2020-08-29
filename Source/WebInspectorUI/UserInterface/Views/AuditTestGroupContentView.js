@@ -32,13 +32,51 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         super(representedObject);
 
         this.element.classList.add("audit-test-group");
-        this.element.classList.toggle("contains-test-case", this._subobjects().some((test) => test instanceof WI.AuditTestCase || test instanceof WI.AuditTestCaseResult));
-        this.element.classList.toggle("contains-test-group", this._subobjects().some((test) => test instanceof WI.AuditTestGroup || test instanceof WI.AuditTestGroupResult));
 
         this._levelScopeBar = null;
+
+        this._viewForSubobject = new Map;
+    }
+
+    // Popover delegate
+
+    willDismissPopover(popover)
+    {
+        console.assert(popover instanceof WI.CreateAuditPopover, popover);
+
+        let audit = popover.audit;
+        if (!audit) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        this.representedObject.addTest(audit);
     }
 
     // Protected
+
+    createControlsTableElement()
+    {
+        let controlsTableElement = super.createControlsTableElement();
+
+        let actionsRowElement = controlsTableElement.appendChild(document.createElement("tr"));
+        actionsRowElement.className = "actions";
+
+        let actionsHeaderElement = controlsTableElement.appendChild(document.createElement("th"));
+        let actionsDataElement = controlsTableElement.appendChild(document.createElement("td"));
+
+        let addTestCaseButtonElement = actionsDataElement.appendChild(document.createElement("button"));
+        addTestCaseButtonElement.disabled = !this.representedObject.editable;
+        addTestCaseButtonElement.textContent = WI.UIString("Add Test Case", "Add Test Case @ Audit Tab - Group", "Text of button to add a new audit test case to the currently shown audit group.");
+        addTestCaseButtonElement.addEventListener("click", (event) => {
+            console.assert(WI.auditManager.editing);
+
+            let popover = new WI.CreateAuditPopover(this);
+            popover.show(addTestCaseButtonElement, [WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X, WI.RectEdge.MIN_X]);
+        });
+
+        return controlsTableElement;
+    }
 
     initialLayout()
     {
@@ -47,13 +85,14 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         let informationContainer = this.headerView.element.appendChild(document.createElement("div"));
         informationContainer.classList.add("information");
 
-        let nameElement = informationContainer.appendChild(document.createElement("h1"));
-        nameElement.textContent = this.representedObject.name;
+        let nameContainer = informationContainer.appendChild(document.createElement("h1"));
 
-        if (this.representedObject.description) {
-            let descriptionElement = informationContainer.appendChild(document.createElement("p"));
-            descriptionElement.textContent = this.representedObject.description;
-        }
+        nameContainer.appendChild(this.createNameElement("span"));
+
+        informationContainer.appendChild(this.createDescriptionElement("p"));
+
+        if (this.representedObject instanceof WI.AuditTestGroup)
+            informationContainer.appendChild(this.createControlsTableElement());
 
         this._levelNavigationBar = new WI.NavigationBar(document.createElement("nav"));
         this.headerView.addSubview(this._levelNavigationBar);
@@ -69,6 +108,8 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
             a.append(b);
             return a;
         });
+
+        this._updateClassList();
     }
 
     layout()
@@ -77,6 +118,18 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
             return;
 
         super.layout();
+
+        if (WI.auditManager.editing) {
+            if (this._levelScopeBar) {
+                this._levelNavigationBar.removeNavigationItem(this._levelScopeBar);
+                this._levelScopeBar = null;
+            }
+
+            this._percentageContainer.hidden = true;
+
+            this.resetFilter();
+            return;
+        }
 
         let result = this.representedObject.result;
         if (!result) {
@@ -148,24 +201,34 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         if (this.representedObject instanceof WI.AuditTestGroup) {
             this.representedObject.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestGroupProgress, this);
             this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestGroupScheduled, this);
+
+            if (this.representedObject.editable) {
+                this.representedObject.addEventListener(WI.AuditTestGroup.Event.TestAdded, this._handleTestGroupTestAdded, this);
+                this.representedObject.addEventListener(WI.AuditTestGroup.Event.TestRemoved, this._handleTestGroupTestRemoved, this);
+            }
         }
 
-        for (let subobject of this._subobjects()) {
-            if (subobject instanceof WI.AuditTestBase && subobject.disabled)
-                continue;
-
-            let view = WI.ContentView.contentViewForRepresentedObject(subobject);
-            this.contentView.addSubview(view);
-            view.shown();
-        }
+        console.assert(!this._viewForSubobject.size);
+        for (let subobject of this._subobjects())
+            this._addTest(subobject);
     }
 
     hidden()
     {
-        for (let view of this.contentView.subviews)
-            view.hidden();
+        if (this.representedObject instanceof WI.AuditTestGroup) {
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.Progress, this._handleTestGroupProgress, this);
+            this.representedObject.removeEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestGroupScheduled, this);
 
+            if (this.representedObject.editable) {
+                this.representedObject.removeEventListener(WI.AuditTestGroup.Event.TestAdded, this._handleTestGroupTestAdded, this);
+                this.representedObject.removeEventListener(WI.AuditTestGroup.Event.TestRemoved, this._handleTestGroupTestRemoved, this);
+            }
+        }
+
+        for (let view of this._viewForSubobject.values())
+            view.hidden();
         this.contentView.removeAllSubviews();
+        this._viewForSubobject.clear();
 
         super.hidden();
     }
@@ -196,6 +259,17 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
             this.placeholderElement.__progress = document.createElement("progress");
             this.placeholderElement.__progress.value = 0;
             this.placeholderElement.appendChild(this.placeholderElement.__progress);
+
+            let stopAuditNavigationItem = new WI.ButtonNavigationItem("stop-audit", WI.UIString("Stop"), "Images/AuditStop.svg", 13, 13);
+            stopAuditNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+            stopAuditNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, (event) => {
+                WI.auditManager.stop();
+            }, WI.auditManager);
+
+            let stopAuditHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to stop running."), stopAuditNavigationItem);
+            this.placeholderElement.appendChild(stopAuditHelpElement);
+
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         super.showRunningPlaceholder();
@@ -215,6 +289,14 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         return [];
     }
 
+    _updateClassList()
+    {
+        let subobjects = this._subobjects();
+        let containsTestGroup = subobjects.some((test) => test instanceof WI.AuditTestGroup || test instanceof WI.AuditTestGroupResult);
+        this.element.classList.toggle("contains-test-group", containsTestGroup);
+        this.element.classList.toggle("contains-test-case", !containsTestGroup && subobjects.some((test) => test instanceof WI.AuditTestCase || test instanceof WI.AuditTestCaseResult));
+    }
+
     _updateLevelScopeBar(levels)
     {
         if (!this._levelScopeBar)
@@ -223,10 +305,21 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         for (let item of this._levelScopeBar.items)
             item.selected = levels.includes(item.id);
 
-        for (let view of this.contentView.subviews) {
+        for (let view of this._viewForSubobject.values()) {
             if (view instanceof WI.AuditTestGroupContentView)
                 view._updateLevelScopeBar(levels);
         }
+    }
+
+    _addTest(test)
+    {
+        console.assert(!this._viewForSubobject.has(test));
+
+        let view = WI.ContentView.contentViewForRepresentedObject(test);
+        this.contentView.addSubview(view);
+        view.shown();
+
+        this._viewForSubobject.set(test, view);
     }
 
     _handleTestGroupProgress(event)
@@ -240,6 +333,32 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
     {
         if (this.placeholderElement && this.placeholderElement.__progress)
             this.placeholderElement.__progress.value = 0;
+    }
+
+    _handleTestGroupTestAdded(event)
+    {
+        console.assert(WI.auditManager.editing);
+
+        let {test} = event.data;
+
+        this._addTest(test);
+
+        this._updateClassList();
+    }
+
+    _handleTestGroupTestRemoved(event)
+    {
+        console.assert(WI.auditManager.editing);
+
+        let {test} = event.data;
+
+        let view = this._viewForSubobject.get(test);
+        console.assert(view);
+
+        view.hidden();
+        this.contentView.removeSubview(view);
+
+        this._updateClassList();
     }
 
     _handleLevelScopeBarSelectionChanged(event)

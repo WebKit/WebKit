@@ -1,3 +1,33 @@
+2020-08-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: should be able to create/edit imported audits
+        https://bugs.webkit.org/show_bug.cgi?id=215555
+        <rdar://problem/67255483>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/model/auditTestGroup.html:
+        * inspector/model/auditTestGroup-expected.txt:
+        Add tests that check how `disabled` and `supported` (via `supports`) is propagated in groups.
+
+        * inspector/audit/run.html:
+        * inspector/audit/run-expected.txt:
+        Add tests for `WebInspectorAudit` before `Audit.setup` is called.
+
+        * inspector/audit/manager-start-setup.html:
+        Renaming function call.
+
+        * inspector/audit/basic-async.html:
+        * inspector/audit/basic-boolean.html:
+        * inspector/audit/basic-debugger.html:
+        * inspector/audit/basic-error.html:
+        * inspector/audit/basic-object.html:
+        * inspector/audit/basic-promise.html:
+        * inspector/audit/basic-string.html:
+        * inspector/audit/basic-timeout.html:
+        * inspector/audit/run-resources.html:
+        Drive-by: remove `InspectorTest.debug()`.
+
 2020-08-28  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] Tests expectations changed as test passing but expected to fail

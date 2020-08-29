@@ -201,12 +201,8 @@
 .navigation-bar > .item.canvas-recording-auto-capture > label > input {
     width: 1.5em;
     min-width: 1.5em;
-    margin: 0 var(--recording-auto-capture-input-margin);
+    margin: 0 4px;
     text-align: center;
-}
-
-.navigation-bar > .item.canvas-recording-auto-capture > label > input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
 }
 
 @media (prefers-color-scheme: dark) {

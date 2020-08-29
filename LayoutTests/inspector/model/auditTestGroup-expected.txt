@@ -109,3 +109,180 @@ WARN: Audit Warning: "validWithInvalidOptionals group name" is too new to run in
   ]
 }
 
+-- Running test case: AuditTestGroup.Disabled.Constructor.Enabled
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should not be disabled.
+
+-- Running test case: AuditTestGroup.Disabled.Constructor.Disabled
+PASS: Group should be disabled.
+PASS: Test1 should be disabled.
+PASS: Test2 should be disabled.
+
+-- Running test case: AuditTestGroup.Disabled.ChangeGroup.Enabled
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should not be disabled.
+
+Marking group as disabled...
+PASS: Group should be disabled.
+PASS: Test1 should be disabled.
+PASS: Test2 should be disabled.
+
+-- Running test case: AuditTestGroup.Disabled.ChangeGroup.DisabledGroup
+PASS: Group should be disabled.
+PASS: Test1 should be disabled.
+PASS: Test2 should be disabled.
+
+Marking group as enabled...
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should not be disabled.
+
+-- Running test case: AuditTestGroup.Disabled.ChangeGroup.DisabledTests
+PASS: Group should be disabled.
+PASS: Test1 should be disabled.
+PASS: Test2 should be disabled.
+
+Marking group as enabled...
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should not be disabled.
+
+-- Running test case: AuditTestGroup.Disabled.ChangeTests.Enabled
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should not be disabled.
+
+Marking Test1 as disabled...
+PASS: Group should not be disabled.
+PASS: Test1 should be disabled.
+PASS: Test2 should not be disabled.
+
+Marking Test2 as disabled...
+PASS: Group should be disabled.
+PASS: Test1 should be disabled.
+PASS: Test2 should be disabled.
+
+-- Running test case: AuditTestGroup.Disabled.ChangeTests.DisabledGroup
+PASS: Group should be disabled.
+PASS: Test1 should be disabled.
+PASS: Test2 should be disabled.
+
+Marking test as enabled 1...
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should be disabled.
+
+Marking test as enabled 2...
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should not be disabled.
+
+-- Running test case: AuditTestGroup.Disabled.ChangeTests.DisabledTests
+PASS: Group should be disabled.
+PASS: Test1 should be disabled.
+PASS: Test2 should be disabled.
+
+Marking test as enabled 1...
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should be disabled.
+
+Marking test as enabled 2...
+PASS: Group should not be disabled.
+PASS: Test1 should not be disabled.
+PASS: Test2 should not be disabled.
+
+-- Running test case: AuditTestGroup.Supports.Constructor.Supported
+PASS: Group should be supported.
+PASS: Test1 should be supported.
+PASS: Test2 should be supported.
+
+-- Running test case: AuditTestGroup.Supports.Constructor.Unsupported
+WARN: Audit Warning: "Group" is too new to run in this Web Inspector
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+-- Running test case: AuditTestGroup.Supports.ChangeGroup.Supported
+PASS: Group should be supported.
+PASS: Test1 should be supported.
+PASS: Test2 should be supported.
+
+Marking group as unsupported...
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+-- Running test case: AuditTestGroup.Supports.ChangeGroup.UnsupportedGroup
+WARN: Audit Warning: "Group" is too new to run in this Web Inspector
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+Marking group as supported...
+PASS: Group should be supported.
+PASS: Test1 should be supported.
+PASS: Test2 should be supported.
+
+-- Running test case: AuditTestGroup.Supports.ChangeGroup.UnsupportedTests
+WARN: Audit Warning: "Test1" is too new to run in this Web Inspector
+WARN: Audit Warning: "Test2" is too new to run in this Web Inspector
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+Marking group as supported...
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+-- Running test case: AuditTestGroup.Supports.ChangeTests.Supported
+PASS: Group should be supported.
+PASS: Test1 should be supported.
+PASS: Test2 should be supported.
+
+Marking Test1 as unsupported...
+PASS: Group should be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should be supported.
+
+Marking Test2 as unsupported...
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+-- Running test case: AuditTestGroup.Supports.ChangeTests.UnsupportedGroup
+WARN: Audit Warning: "Group" is too new to run in this Web Inspector
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+Marking Test1 as supported...
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+Marking Test2 as supported...
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+-- Running test case: AuditTestGroup.Supports.ChangeTests.UnsupportedTests
+WARN: Audit Warning: "Test1" is too new to run in this Web Inspector
+WARN: Audit Warning: "Test2" is too new to run in this Web Inspector
+PASS: Group should not be supported.
+PASS: Test1 should not be supported.
+PASS: Test2 should not be supported.
+
+Marking Test1 as supported...
+PASS: Group should be supported.
+PASS: Test1 should be supported.
+PASS: Test2 should not be supported.
+
+Marking Test2 as supported...
+PASS: Group should be supported.
+PASS: Test1 should be supported.
+PASS: Test2 should be supported.
+

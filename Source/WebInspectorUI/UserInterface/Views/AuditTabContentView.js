@@ -29,6 +29,7 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
     {
         super(AuditTabContentView.tabInfo(), {
             navigationSidebarPanelConstructor: WI.AuditNavigationSidebarPanel,
+            disableBackForward: true,
         });
 
         this._startStopShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
@@ -111,7 +112,7 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
         super.initialLayout();
 
         let dropZoneView = new WI.DropZoneView(this);
-        dropZoneView.text = WI.UIString("Import Audit");
+        dropZoneView.text = WI.UIString("Import Audit or Result");
         dropZoneView.targetElement = this.element;
         this.addSubview(dropZoneView);
 

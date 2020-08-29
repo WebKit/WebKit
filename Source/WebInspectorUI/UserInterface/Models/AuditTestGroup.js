@@ -27,7 +27,7 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
 {
     constructor(name, tests, options = {})
     {
-        console.assert(Array.isArray(tests));
+        console.assert(Array.isArray(tests), tests);
 
         // Set disabled once `_tests` is set so that it propagates.
         let disabled = options.disabled;
@@ -35,28 +35,12 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
 
         super(name, options);
 
-        this._tests = tests;
-        this._preventDisabledPropagation = false;
+        this._tests = [];
+        for (let test of tests)
+            this.addTest(test);
 
-        if (disabled || !this.supported)
-            this.disabled = true;
-
-        let hasSupportedTest = false;
-
-        for (let test of this._tests) {
-            if (!this.supported)
-                test.supported = false;
-            else if (test.supported)
-                hasSupportedTest = true;
-
-            test.addEventListener(WI.AuditTestBase.Event.Completed, this._handleTestCompleted, this);
-            test.addEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
-            test.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestProgress, this);
-
-        }
-
-        if (!hasSupportedTest)
-            this.supported = false;
+        if (disabled)
+            this.updateDisabled(true);
     }
 
     // Static
@@ -121,32 +105,54 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
 
     get tests() { return this._tests; }
 
-    get supported()
+    addTest(test)
     {
-        return super.supported;
-    }
+        console.assert(test instanceof WI.AuditTestBase, test);
+        console.assert(!this._tests.includes(test), test);
+        console.assert(!test._parent, test);
 
-    set supported(supported)
-    {
-        for (let test of this._tests)
-            test.supported = supported;
+        this._tests.push(test);
+        test._parent = this;
 
-        super.supported = supported;
-    }
-
-    get disabled()
-    {
-        return super.disabled;
-    }
-
-    set disabled(disabled)
-    {
-        if (!this._preventDisabledPropagation) {
-            for (let test of this._tests)
-                test.disabled = disabled;
+        test.addEventListener(WI.AuditTestBase.Event.Completed, this._handleTestCompleted, this);
+        test.addEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
+        test.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestProgress, this);
+        if (this.editable) {
+            test.addEventListener(WI.AuditTestBase.Event.SupportedChanged, this._handleTestSupportedChanged, this);
+            test.addEventListener(WI.AuditTestBase.Event.TestChanged, this._handleTestChanged, this);
         }
 
-        super.disabled = disabled;
+        this.dispatchEventToListeners(WI.AuditTestGroup.Event.TestAdded, {test});
+
+        this.determineIfSupported();
+
+        if (this._checkDisabled(test))
+            test.updateDisabled(true, {silent: true});
+    }
+
+    removeTest(test)
+    {
+        console.assert(this.editable);
+        console.assert(WI.auditManager.editing);
+        console.assert(test instanceof WI.AuditTestBase, test);
+        console.assert(test.editable, test);
+        console.assert(this._tests.includes(test), test);
+        console.assert(test._parent === this, test);
+
+        test.removeEventListener(WI.AuditTestBase.Event.Completed, this._handleTestCompleted, this);
+        test.removeEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
+        test.removeEventListener(WI.AuditTestBase.Event.Progress, this._handleTestProgress, this);
+        test.removeEventListener(WI.AuditTestBase.Event.SupportedChanged, this._handleTestSupportedChanged, this);
+        test.removeEventListener(WI.AuditTestBase.Event.TestChanged, this._handleTestChanged, this);
+
+        this._tests.remove(test);
+        test._parent = null;
+
+        this.dispatchEventToListeners(WI.AuditTestGroup.Event.TestRemoved, {test});
+
+        this.determineIfSupported();
+
+        this._checkDisabled();
     }
 
     stop()
@@ -161,10 +167,13 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
 
     clearResult(options = {})
     {
-        let cleared = !!this._result;
-        for (let test of this._tests) {
-            if (test.clearResult(options))
-                cleared = true;
+        let cleared = !!this.result;
+
+        if (!options.excludeTests && this._tests) {
+            for (let test of this._tests) {
+                if (test.clearResult(options))
+                    cleared = true;
+            }
         }
 
         return super.clearResult({
@@ -187,7 +196,7 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         let count = this._tests.length;
         for (let index = 0; index < count && this._runningState === WI.AuditManager.RunningState.Active; ++index) {
             let test = this._tests[index];
-            if (test.disabled)
+            if (test.disabled || !test.supported)
                 continue;
 
             await test.start();
@@ -196,22 +205,69 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
                 this.dispatchEventToListeners(WI.AuditTestBase.Event.Progress, {index, count});
         }
 
-        this._updateResult();
+        this.updateResult();
     }
 
-    // Private
+    determineIfSupported(options = {})
+    {
+        if (this._tests) {
+            for (let test of this._tests)
+                test.determineIfSupported({...options, warn: false, silent: true});
+        }
 
-    _updateResult()
+        return super.determineIfSupported(options);
+    }
+
+    updateSupported(supported, options = {})
+    {
+        if (this._tests && (!supported || this._tests.every((test) => !test.supported))) {
+            supported = false;
+
+            for (let test of this._tests)
+                test.updateSupported(supported, {silent: true});
+        }
+
+        super.updateSupported(supported, options);
+    }
+
+    updateDisabled(disabled, options = {})
+    {
+        if (!options.excludeTests && this._tests) {
+            for (let test of this._tests)
+                test.updateDisabled(disabled, options);
+        }
+
+        super.updateDisabled(disabled, options);
+    }
+
+    updateResult()
     {
         let results = this._tests.map((test) => test.result).filter((result) => !!result);
         if (!results.length)
             return;
 
-        this._result = new WI.AuditTestGroupResult(this.name, results, {
+        super.updateResult(new WI.AuditTestGroupResult(this.name, results, {
             description: this.description,
-        });
+        }));
+    }
 
-        this.dispatchEventToListeners(WI.AuditTestBase.Event.ResultChanged);
+    // Private
+
+    _checkDisabled(test)
+    {
+        let testDisabled = !test || !test.supported || test.disabled;
+        let enabledTestCount = this._tests.filter((existing) => existing.supported && !existing.disabled).length;
+
+        if (testDisabled && !enabledTestCount)
+            this.updateDisabled(true);
+        else if (!testDisabled && enabledTestCount === 1)
+            this.updateDisabled(false, {excludeTests: true});
+        else {
+            // Don't change `disabled`, as we're currently in an "indeterminate" state.
+            this.dispatchEventToListeners(WI.AuditTestBase.Event.DisabledChanged);
+        }
+
+        return this.disabled;
     }
 
     _handleTestCompleted(event)
@@ -219,23 +275,14 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         if (this._runningState === WI.AuditManager.RunningState.Active)
             return;
 
-        this._updateResult();
+        this.updateResult();
+
         this.dispatchEventToListeners(WI.AuditTestBase.Event.Completed);
     }
 
     _handleTestDisabledChanged(event)
     {
-        let enabledTestCount = this._tests.filter((test) => !test.disabled).length;
-        if (event.target.disabled && !enabledTestCount)
-            this.disabled = true;
-        else if (!event.target.disabled && enabledTestCount === 1) {
-            this._preventDisabledPropagation = true;
-            this.disabled = false;
-            this._preventDisabledPropagation = false;
-        } else {
-            // Don't change `disabled`, as we're currently in an "indeterminate" state.
-            this.dispatchEventToListeners(WI.AuditTestBase.Event.DisabledChanged);
-        }
+        this._checkDisabled(event.target);
     }
 
     _handleTestProgress(event)
@@ -246,7 +293,7 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         let walk = (tests) => {
             let count = 0;
             for (let test of tests) {
-                if (test.disabled)
+                if (test.disabled || !test.supported)
                     continue;
 
                 if (test instanceof WI.AuditTestCase)
@@ -262,6 +309,25 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
             count: walk(this._tests),
         });
     }
+
+    _handleTestSupportedChanged(event)
+    {
+        this.determineIfSupported();
+    }
+
+    _handleTestChanged(event)
+    {
+        console.assert(WI.auditManager.editing);
+
+        this.clearResult({excludeTests: true});
+
+        this.dispatchEventToListeners(WI.AuditTestBase.Event.TestChanged);
+    }
 };
 
 WI.AuditTestGroup.TypeIdentifier = "test-group";
+
+WI.AuditTestGroup.Event = {
+    TestAdded: "audit-test-group-test-added",
+    TestRemoved: "audit-test-group-test-removed",
+};

@@ -190,6 +190,9 @@
 
     --focus-ring-outline-offset: -2px;
 
+    /* Invert colors yet preserve the hue */
+    --filter-invert: invert(100%) hue-rotate(180deg);
+
     --undocked-title-area-height: 0px;
     --tab-bar-height: var(--navigation-bar-height);
     --navigation-bar-height: 29px;
@@ -361,9 +364,6 @@ body.mac-platform.big-sur:not(.docked) {
         --timeline-even-background-color: hsl(0, 0%, 25%);
 
         --timeline-scanner-color: hsl(0, 0%, 80%);
-
-        /* Invert colors yet preserve the hue */
-        --filter-invert: invert(100%) hue-rotate(180deg);
 
         /* TODO: Use the same variable for the default theme */
         --overlay-background: hsla(0, 0%, 24%, 0.9);

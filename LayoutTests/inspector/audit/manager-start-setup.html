@@ -14,7 +14,7 @@ function test()
 }).toString();
 
     async function wrapTest(audit, expected, {getResultCallback} = {}) {
-        WI.auditManager._addTest(audit);
+        WI.auditManager.addTest(audit);
 
         let [result] = await WI.auditManager.start([audit]);
         if (getResultCallback)

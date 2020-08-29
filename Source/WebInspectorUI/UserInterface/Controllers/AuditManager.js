@@ -103,7 +103,7 @@ WI.AuditManager = class AuditManager extends WI.Object
 
             let disabledDefaultTests = [];
             let saveDisabledDefaultTest = (test) => {
-                if (test.disabled)
+                if (test.supported && test.disabled)
                     disabledDefaultTests.push(test.name);
 
                 if (test instanceof WI.AuditTestGroup) {
@@ -113,7 +113,7 @@ WI.AuditManager = class AuditManager extends WI.Object
             };
 
             for (let test of this._tests) {
-                if (test.__default)
+                if (test.default)
                     saveDisabledDefaultTest(test);
                 else
                     WI.objectStores.audits.putObject(test);
@@ -141,6 +141,8 @@ WI.AuditManager = class AuditManager extends WI.Object
         let mainResource = WI.networkManager.mainFrame.mainResource;
 
         this._runningState = WI.AuditManager.RunningState.Active;
+        this.dispatchEventToListeners(WI.AuditManager.Event.RunningStateChanged);
+
         this._runningTests = tests;
         for (let test of this._runningTests)
             test.clearResult();
@@ -156,10 +158,10 @@ WI.AuditManager = class AuditManager extends WI.Object
             if (target.hasDomain("Audit"))
                 await target.AuditAgent.setup();
 
-            let topLevelTest = this._topLevelTestForTest(test);
+            let topLevelTest = test.topLevelTest;
             console.assert(topLevelTest || window.InspectorTest, "No matching top-level test found", test);
             if (topLevelTest)
-                await topLevelTest.setup();
+                await topLevelTest.runSetup();
 
             await test.start();
 
@@ -170,6 +172,8 @@ WI.AuditManager = class AuditManager extends WI.Object
         let result = this._runningTests.map((test) => test.result).filter((result) => !!result);
 
         this._runningState = WI.AuditManager.RunningState.Inactive;
+        this.dispatchEventToListeners(WI.AuditManager.Event.RunningStateChanged);
+
         this._runningTests = [];
 
         this._addResult(result);
@@ -190,6 +194,7 @@ WI.AuditManager = class AuditManager extends WI.Object
             return;
 
         this._runningState = WI.AuditManager.RunningState.Stopping;
+        this.dispatchEventToListeners(WI.AuditManager.Event.RunningStateChanged);
 
         for (let test of this._runningTests)
             test.stop();
@@ -218,7 +223,7 @@ WI.AuditManager = class AuditManager extends WI.Object
             return;
 
         if (object instanceof WI.AuditTestBase) {
-            this._addTest(object);
+            this.addTest(object);
             WI.objectStores.audits.putObject(object);
         } else if (object instanceof WI.AuditTestResultBase)
             this._addResult(object);
@@ -257,14 +262,30 @@ WI.AuditManager = class AuditManager extends WI.Object
                 const key = null;
                 WI.objectStores.audits.associateObject(test, key, payload);
 
-                this._addTest(test);
+                this.addTest(test);
             }
         });
     }
 
+    addTest(test)
+    {
+        console.assert(test instanceof WI.AuditTestBase, test);
+        console.assert(!this._tests.includes(test), test);
+
+        this._tests.push(test);
+
+        this.dispatchEventToListeners(WI.AuditManager.Event.TestAdded, {test});
+    }
+
     removeTest(test)
     {
-        if (test.__default) {
+        console.assert(this.editing);
+        console.assert(test instanceof WI.AuditTestBase, test);
+        console.assert(this._tests.includes(test) || test.default, test);
+
+        if (test.default) {
+            test.clearResult();
+
             if (test.disabled) {
                 InspectorFrontendHost.beep();
                 return;
@@ -279,6 +300,8 @@ WI.AuditManager = class AuditManager extends WI.Object
             return;
         }
 
+        console.assert(test.editable, test);
+
         this._tests.remove(test);
 
         this.dispatchEventToListeners(WI.AuditManager.Event.TestRemoved, {test});
@@ -287,13 +310,6 @@ WI.AuditManager = class AuditManager extends WI.Object
     }
 
     // Private
-
-    _addTest(test)
-    {
-        this._tests.push(test);
-
-        this.dispatchEventToListeners(WI.AuditManager.Event.TestAdded, {test});
-    }
 
     _addResult(result)
     {
@@ -306,28 +322,6 @@ WI.AuditManager = class AuditManager extends WI.Object
             result,
             index: this._results.length - 1,
         });
-    }
-
-    _topLevelTestForTest(test)
-    {
-        function walk(group) {
-            if (group === test)
-                return true;
-            if (group instanceof WI.AuditTestGroup) {
-                for (let subtest of group.tests) {
-                    if (walk(subtest))
-                        return true;
-                }
-            }
-            return false;
-        }
-
-        for (let topLevelTest of this._tests) {
-            if (walk(topLevelTest))
-                return topLevelTest;
-        }
-
-        return null;
     }
 
     _handleFrameMainResourceDidChange(event)
@@ -458,6 +452,10 @@ WI.AuditManager = class AuditManager extends WI.Object
             let resources = WebInspectorAudit.Resources.getResources();
             let mainResource = resources.find((resource) => resource.url === window.location.href);
             return {level: "pass", mainResource, resourceContent: WebInspectorAudit.Resources.getResourceContent(mainResource.id)};
+        };
+
+        const unsupported = function() {
+            throw Error("this test should not be supported.");
         };
 
         const testMenuRoleForRequiredChildren = function() {
@@ -998,7 +996,7 @@ WI.AuditManager = class AuditManager extends WI.Object
         };
 
         function removeWhitespace(func) {
-            return func.toString().replace(/\s+/g, " ");
+            return WI.AuditTestCase.stringifyFunction(func, 8);
         }
 
         const defaultTests = [
@@ -1038,6 +1036,7 @@ WI.AuditManager = class AuditManager extends WI.Object
                         new WI.AuditTestCase("getResourceContent", removeWhitespace(getResourceContent), {description: WI.UIString("This test will pass with the contents of the main resource."), supports: 3}),
                     ], {description: WI.UIString("These tests demonstrate how to use %s to get information about loaded resources.").format(WI.unlocalizedString("WebInspectorAudit.Resources")), supports: 2}),
                 ], {description: WI.UIString("These tests demonstrate how to use %s to access information not normally available to JavaScript.").format(WI.unlocalizedString("WebInspectorAudit")), supports: 1}),
+                new WI.AuditTestCase("unsupported", removeWhitespace(unsupported), {description: WI.UIString("This test should not run because it should be unsupported."), supports: Infinity}),
             ], {description: WI.UIString("These tests serve as a demonstration of the functionality and structure of audits.")}),
             new WI.AuditTestGroup(WI.UIString("Accessibility"), [
                 new WI.AuditTestCase("testMenuRoleForRequiredChildren", removeWhitespace(testMenuRoleForRequiredChildren), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 and \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("menu"), WI.unlocalizedString("menubar")), supports: 1}),
@@ -1066,6 +1065,8 @@ WI.AuditManager = class AuditManager extends WI.Object
         ];
 
         let checkDisabledDefaultTest = (test) => {
+            test.markAsDefault();
+
             if (this._disabledDefaultTestsSetting.value.includes(test.name))
                 test.disabled = true;
 
@@ -1078,8 +1079,7 @@ WI.AuditManager = class AuditManager extends WI.Object
         for (let test of defaultTests) {
             checkDisabledDefaultTest(test);
 
-            test.__default = true;
-            this._addTest(test);
+            this.addTest(test);
         }
     }
 };
@@ -1093,6 +1093,7 @@ WI.AuditManager.RunningState = {
 
 WI.AuditManager.Event = {
     EditingChanged: "audit-manager-editing-changed",
+    RunningStateChanged: "audit-manager-running-state-changed",
     TestAdded: "audit-manager-test-added",
     TestCompleted: "audit-manager-test-completed",
     TestRemoved: "audit-manager-test-removed",

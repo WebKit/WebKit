@@ -69,7 +69,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         let searchNavigationItem = new WI.ButtonNavigationItem("search", WI.UIString("Search Resource Content"), "Images/Search.svg", 15, 15);
         searchNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleDefaultContentViewSearchNavigationItemClicked, this);
 
-        let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to see recent searches"), searchNavigationItem);
+        let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to see recent searches."), searchNavigationItem);
         contentPlaceholder.appendChild(importHelpElement);
 
         this.contentBrowser.showContentView(contentView);

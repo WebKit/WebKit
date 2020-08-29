@@ -35,20 +35,26 @@
     height: 100%;
 }
 
-.tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active) > .status:hover > img {
+.tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img {
     width: 75%;
     height: 75%;
     margin: 0 auto;
     content: url(../Images/AuditStart.svg) !important;
 }
 
-.tree-outline .item.audit > .status:not(:hover) > img.show-on-hover,
-.tree-outline .item.audit.test-group.expanded:not(.unsupported, .editing-audits) > .status:not(:hover) {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active).selected:hover > .status > img,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit.test-case.selected > .status > .indeterminate-progress-spinner,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit.test-group.selected > .status > progress {
+    filter: var(--filter-invert);
+}
+
+.tree-outline .item.audit:not(:hover) > .status > img.show-on-hover,
+.tree-outline .item.audit.test-group.expanded:not(.unsupported, .editing-audits):not(:hover) > .status {
     opacity: 0;
 }
 
 .tree-outline .item.audit.manager-active > .status > img.show-on-hover,
-.tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:hover > :not(img),
+.tree-outline .item.audit.test-group.expanded:not(.editing-audits):hover > .status > :not(img),
 .tree-outline .item.audit.test-group-result.expanded > .status,
 .tree-outline .item.audit.unsupported + .children .item.audit.unsupported  > .status > img {
     display: none;
@@ -102,6 +108,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
+    .tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img {
+        filter: var(--filter-invert) brightness(90%);
+    }
+
     .audit.test-case .icon {
         content: url(../Images/TypeIcons.svg#AuditTestCase-dark);
     }

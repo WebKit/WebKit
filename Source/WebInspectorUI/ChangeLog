@@ -1,3 +1,305 @@
+2020-08-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: should be able to create/edit imported audits
+        https://bugs.webkit.org/show_bug.cgi?id=215555
+        <rdar://problem/67255483>
+
+        Reviewed by Devin Rousso.
+
+        Extend the existing audit edit mode (which previously only let audits be disabled/deleted)
+        to also allow other JSON properties of audits to be added/edited/removed, meaning that
+        audits can now be completely created/configured from within the Web Inspector UI. \(o.o)/
+
+        * UserInterface/Models/AuditTestBase.js:
+        (WI.AuditTestBase):
+        (WI.AuditTestBase.prototype.set name): Added.
+        (WI.AuditTestBase.prototype.set description): Added.
+        (WI.AuditTestBase.prototype.get supports): Added.
+        (WI.AuditTestBase.prototype.set supports): Added.
+        (WI.AuditTestBase.prototype.get setup): Added.
+        (WI.AuditTestBase.prototype.set setup): Added.
+        (WI.AuditTestBase.prototype.set disabled):
+        (WI.AuditTestBase.prototype.get editable): Added.
+        (WI.AuditTestBase.prototype.get default): Added.
+        (WI.AuditTestBase.prototype.markAsDefault): Added.
+        (WI.AuditTestBase.prototype.get topLevelTest): Added.
+        (WI.AuditTestBase.prototype.async runSetup): Added.
+        (WI.AuditTestBase.prototype.async start()):
+        (WI.AuditTestBase.prototype.stop()):
+        (WI.AuditTestBase.prototype.async clone): Added.
+        (WI.AuditTestBase.remove): Added.
+        (WI.AuditTestBase.saveIdentityToCookie):
+        (WI.AuditTestBase.toJSON):
+        (WI.AuditTestBase.prototype.determineIfSupported): Added.
+        (WI.AuditTestBase.prototype.updateSupported): Added.
+        (WI.AuditTestBase.prototype.updateResult): Added.
+        (WI.AuditTestBase.prototype.set supported): Deleted.
+        (WI.AuditTestBase.async setup): Deleted.
+        (WI.AuditTestBase.prototype.async setup): Deleted.
+        * UserInterface/Models/AuditTestGroup.js:
+        (WI.AuditTestGroup):
+        (WI.AuditTestGroup.prototype.addTest): Added.
+        (WI.AuditTestGroup.prototype.removeTest): Added.
+        (WI.AuditTestGroup.prototype.clearResult):
+        (WI.AuditTestGroup.prototype.async run):
+        (WI.AuditTestGroup.prototype.determineIfSupported): Added.
+        (WI.AuditTestGroup.prototype.updateSupported): Added.
+        (WI.AuditTestGroup.prototype.updateResult): Added.
+        (WI.AuditTestGroup.prototype._checkDisabled): Added.
+        (WI.AuditTestGroup.prototype._handleTestCompleted):
+        (WI.AuditTestGroup.prototype._handleTestDisabledChanged):
+        (WI.AuditTestGroup.prototype._handleTestSupportedChanged): Added.
+        (WI.AuditTestGroup.prototype._handleTestChanged): Added.
+        (WI.AuditTestGroup.prototype.get supported): Deleted.
+        (WI.AuditTestGroup.prototype.set supported): Deleted.
+        (WI.AuditTestGroup.prototype.get disabled): Deleted.
+        (WI.AuditTestGroup.prototype.set disabled): Deleted.
+        (WI.AuditTestGroup.prototype._updateResult): Deleted.
+        (WI.AuditTestGroup.prototype._updateResult): Deleted.
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase):
+        (WI.AuditTestCase.stringifyFunction): Added.
+        (WI.AuditTestCase.prototype.set test): Added.
+        (WI.AuditTestCase.prototype.async run):
+        Allow additional JSON keys to be changed in the UI:
+         - `name`
+         - `description`
+         - `supports` (ensure that changes recalculate whether the audit is actually supported)
+         - `setup`
+         - (groups) `tests` (via separate add and remove functions)
+         - (test cases) the actual `test` function
+        These properties are expected to only change in edit mode.
+
+        * UserInterface/Models/AuditTestResultBase.js:
+        (WI.AuditTestResultBase.prototype.get disabled): Added.
+        (WI.AuditTestResultBase.prototype.get editable): Added.
+        Audit results are never disabled and not editable.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager):
+        (WI.AuditManager.prototype.set editing):
+        (WI.AuditManager.async start):
+        (WI.AuditManager.prototype.async start):
+        (WI.AuditManager.prototype.stop):
+        (WI.AuditManager.prototype.async processJSON):
+        (WI.AuditManager.prototype.loadStoredTests):
+        (WI.AuditManager.prototype.async addTest): Added.
+        (WI.AuditManager.prototype.removeTest):
+        (WI.AuditManager.prototype._addDefaultTests):
+        (WI.AuditManager.prototype._addDefaultTests.removeWhitespace):
+        (WI.AuditManager.prototype._addTest): Deleted.
+        (WI.AuditManager.prototype._topLevelTestForTest): Deleted.
+        Add helper functions and events for when the audit manager running mode changes to update UI.
+        Also add another default test that demonstrates the `supports` JSON key.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.showDefaultContentView):
+        (WI.AuditNavigationSidebarPanel.prototype.willDismissPopover): Added.
+        (WI.AuditNavigationSidebarPanel.prototype.initialLayout):
+        (WI.AuditNavigationSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WI.AuditNavigationSidebarPanel.prototype._addTest):
+        (WI.AuditNavigationSidebarPanel.prototype._addResult):
+        (WI.AuditNavigationSidebarPanel.prototype._updateControlNavigationItems): Added.
+        (WI.AuditNavigationSidebarPanel.prototype._updateEditNavigationItems): Added.
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditManagerEditingChanged):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditManagerRunningStateChanged): Added.
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestAdded):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestCompleted):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestRemoved):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestScheduled):
+        (WI.AuditNavigationSidebarPanel.prototype._treeSelectionDidChange):
+        (WI.AuditNavigationSidebarPanel.prototype._handleStartStopButtonNavigationItemClicked):
+        (WI.AuditNavigationSidebarPanel.prototype._handleCreateButtonNavigationItemClicked): Added.
+        (WI.AuditNavigationSidebarPanel.prototype._updateStartStopButtonNavigationItemState): Deleted.
+        (WI.AuditNavigationSidebarPanel.prototype._updateEditButtonNavigationItemState): Deleted.
+        * UserInterface/Views/AuditNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.audit .edit-audits:not(.disabled):active): Added.
+        (.sidebar > .panel.navigation.audit .edit-audits:not(.disabled).activated): Added.
+        (.sidebar > .panel.navigation.audit .edit-audits:not(.disabled).activated:active): Added.
+        (.sidebar > .panel.navigation.audit .edit-audits.disabled): Added.
+        (.content-view.audit .message-text-view .navigation-item-help:is(.start-editing-audits, .stop-editing-audits) .navigation-bar): Added.
+        (.content-view.tab.audit .content-view > .audit-version): Added.
+        (.content-view.tab.audit .content-view .reference-page-link-container): Added.
+        (body[dir=ltr] .content-view.tab.audit .content-view .reference-page-link-container): Added.
+        (body[dir=rtl] .content-view.tab.audit .content-view .reference-page-link-container): Added.
+        (.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled):active): Deleted.
+        (.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled).activated): Deleted.
+        (.sidebar > .panel.navigation.audit > .content .edit-audits:not(.disabled).activated:active): Deleted.
+        (.sidebar > .panel.navigation.audit > .content .edit-audits.disabled): Deleted.
+        (.finish-editing-audits-placeholder.message-text-view .navigation-item-help .navigation-bar): Deleted.
+        (.audit-version): Deleted.
+        Move the "Edit" toggle to be next to the filter bar so that it's always visible. Replace the
+        "[|>] Start" button  with a "[+] Create" button when in edit mode, which adds a new audit at
+        the top-level.
+
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView):
+        (WI.AuditTestContentView.get navigationItems):
+        (WI.AuditTestContentView.get supportsSave):
+        (WI.AuditTestContentView.prototype.createNameElement): Added.
+        (WI.AuditTestContentView.prototype.createDescriptionElement): Added.
+        (WI.AuditTestContentView.prototype.createControlsTableElement): Added.
+        (WI.AuditTestContentView.prototype.layout):
+        (WI.AuditTestContentView.prototype.shown):
+        (WI.AuditTestContentView.prototype.hidden):
+        (WI.AuditTestContentView.prototype.handleResultChanged):
+        (WI.AuditTestContentView.prototype.showStoppingPlaceholder):
+        (WI.AuditTestContentView.prototype.showNoResultPlaceholder):
+        (WI.AuditTestContentView.prototype.showNoResultDataPlaceholder):
+        (WI.AuditTestContentView.prototype.showFilteredPlaceholder):
+        (WI.AuditTestContentView.prototype._updateExportNavigationItems): Added.
+        (WI.AuditTestContentView.prototype._updateSupportsInputState): Added.
+        (WI.AuditTestContentView.prototype._createSetupEditor): Added.
+        (WI.AuditTestContentView.prototype._handleEditorKeydown): Added.
+        (WI.AuditTestContentView.prototype._handleExportTestButtonNavigationItemClicked): Added.
+        (WI.AuditTestContentView.prototype._handleExportResultButtonNavigationItemClicked): Added.
+        (WI.AuditTestContentView.prototype._handleTestDisabledChanged): Added.
+        (WI.AuditTestContentView.prototype._handleTestSupportedChanged): Added.
+        (WI.AuditTestContentView.prototype._handleEditingChanged): Added.
+        (WI.AuditTestContentView.prototype._updateExportButtonNavigationItemState): Deleted.
+        (WI.AuditTestContentView.prototype._handleExportButtonNavigationItemClicked): Deleted.
+        * UserInterface/Views/AuditTestContentView.css:
+        (.content-view.audit-test:is(.unsupported, .disabled):not(.manager-editing)): Added.
+        (.content-view.audit-test.manager-editing .editor:not(:empty)): Added.
+        (.content-view.audit-test.manager-editing :is(.content-view.audit-test, header) .editor:not(:empty)): Added.
+        (.content-view.audit-test .CodeMirror): Added.
+        (.content-view.audit-test > header :is(.name, .description):not([contenteditable])): Added.
+        (.content-view.audit-test.manager-editing > header :is(.name, .description)[contenteditable]): Added.
+        (.content-view.audit-test.manager-editing > header .name[contenteditable]:empty): Added.
+        (.content-view.audit-test.manager-editing > header .name[contenteditable]:empty:before): Added.
+        (.content-view.audit-test.manager-editing > header .description[contenteditable]:empty:before): Added.
+        (.content-view.audit-test:not(.manager-editing) > header .description:empty): Added.
+        (.content-view.audit-test:not(.manager-editing) > header .description:empty, .content-view.audit-test:not(.manager-editing) > header table.controls): Added.
+        (.content-view.audit-test > header table.controls, .content-view.audit-test > header table.controls > tr > td): Added.
+        (.content-view.audit-test > header table.controls > tr > th): Added.
+        (.content-view.audit-test > header table.controls > tr.supports input[type="number"]): Added.
+        (.content-view.audit-test > header table.controls > tr.supports .warning): Added.
+        (.content-view.audit-test > header table.controls > tr.supports .warning:not(:empty)::before ): Added.
+        (.content-view.audit-test > header table.controls > tr.setup .editor): Added.
+        (.content-view.audit-test > section > .message-text-view > :is(progress, .indeterminate-progress-spinner)): Added.
+        (@media (prefers-color-scheme: dark) .content-view.audit-test > header table.controls > tr > th): Added.
+        Create helper functions for subclasses that simplify creating the editing UI. When in edit
+        mode, add `contenteditable` to the `name`/`description` and inputs for `supports`/`setup`.
+
+        * UserInterface/Views/AuditTestGroupContentView.js:
+        (WI.AuditTestGroupContentView):
+        (WI.AuditTestGroupContentView.prototype.willDismissPopover): Added.
+        (WI.AuditTestGroupContentView.prototype.createControlsTableElement): Added.
+        (WI.AuditTestGroupContentView.prototype.initialLayout):
+        (WI.AuditTestGroupContentView.prototype.layout):
+        (WI.AuditTestGroupContentView.prototype.shown):
+        (WI.AuditTestGroupContentView.prototype.hidden):
+        (WI.AuditTestGroupContentView.prototype.showRunningPlaceholder):
+        (WI.AuditTestGroupContentView.prototype._updateClassList): Added.
+        (WI.AuditTestGroupContentView.prototype._updateLevelScopeBar):
+        (WI.AuditTestGroupContentView.prototype._addTest): Added.
+        (WI.AuditTestGroupContentView.prototype._handleTestGroupTestAdded): Added.
+        (WI.AuditTestGroupContentView.prototype._handleTestGroupTestRemoved): Added.
+        * UserInterface/Views/AuditTestGroupContentView.css:
+        (.content-view.audit-test-group > section > .audit-test-group > header): Added.
+        (.content-view.audit-test-group.contains-test-case > header):
+        (.content-view.audit-test-group > section > .audit-test-group.contains-test-case > header): Added.
+        (.content-view.audit-test-group.contains-test-case + .audit-test-group.contains-test-case, .content-view.audit-test-group + .content-view.audit-test-case): Added.
+        (.content-view.audit-test-group.contains-test-case + .audit-test-group.contains-test-case): Deleted.
+        When in edit mode, add buttons for removing the audit and adding a new sub-audit (using the
+        new `WI.CreateAuditPopover` popover).
+
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView):
+        (WI.AuditTestCaseContentView.prototype.initialLayout):
+        (WI.AuditTestCaseContentView.prototype.layout):
+        (WI.AuditTestCaseContentView.prototype.showRunningPlaceholder):
+        * UserInterface/Views/AuditTestCaseContentView.css:
+        (.content-view-container > .content-view.audit-test-case): Added.
+        (.content-view-container > .content-view.audit-test-case > header):
+        (.content-view-container > .content-view.audit-test-case.manager-editing > header h1 > img): Added.
+        (.content-view-container > .content-view.audit-test-case > section > :not(.message-text-view, .editor):first-child): Added.
+        (.content-view-container > .content-view.audit-test-case > section): Added.
+        (.content-view-container > .content-view.audit-test-case > section, .content-view-container > .content-view.audit-test-case > section :is(.editor, .CodeMirror)): Added.
+        (.content-view.audit-test-case.manager-editing.disabled:not(.editable) > header h1 > img): Added.
+        (.content-view.audit-test-case > section > :not(.message-text-view, .editor)): Added.
+        (.content-view.audit-test-case > section > :not(.message-text-view, .editor):last-child): Added.
+        (.content-view.audit-test-case > section > :not(.message-text-view, .editor) + :not(.message-text-view, .editor)): Added.
+        (@media (prefers-color-scheme: dark) .content-view.audit-test-case.manager-editing > header h1 > img): Added.
+        (.content-view-container > .content-view.audit-test-case > section > :not(.message-text-view):first-child): Deleted.
+        (.content-view.audit-test-case > section > :not(.message-text-view)): Deleted.
+        (.content-view.audit-test-case > section > :not(.message-text-view):last-child): Deleted.
+        (.content-view.audit-test-case > section > :not(.message-text-view) + :not(.message-text-view)): Deleted.
+        (.content-view.audit-test-case > section .CodeMirror): Deleted.
+        When in edit mode, replace the icon with a (X) to remove the audit and show a `CodeMirror`
+        instance to allow editing the content.
+
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement):
+        (WI.AuditTreeElement.expandedSettingKey): Added.
+        (WI.AuditTreeElement.prototype.onattach):
+        (WI.AuditTreeElement.prototype.ondelete):
+        (WI.AuditTreeElement.prototype.canSelectOnMouseDown): Added.
+        (WI.AuditTreeElement.prototype.populateContextMenu):
+        (WI.AuditTreeElement.prototype._handleTestNameChanged): Added.
+        (WI.AuditTreeElement.prototype._handleTestSupportedChanged): Added.
+        (WI.AuditTreeElement.prototype._handleTestGroupTestAdded): Added.
+        * UserInterface/Views/AuditTreeElement.css:
+        (.tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active).selected:hover > .status > img, body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit.test-case.selected > .status > .indeterminate-progress-spinner, body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit.test-group.selected > .status > progress): Added.
+        (.tree-outline .item.audit:not(:hover) > .status > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.unsupported, .editing-audits):not(:hover) > .status): Added.
+        (.tree-outline .item.audit.manager-active > .status > img.show-on-hover, .tree-outline .item.audit.manager-active > .status > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.editing-audits):hover > .status > :not(img), .tree-outline .item.audit.test-group-result.expanded > .status, .tree-outline .item.audit.unsupported + .children .item.audit.unsupported  > .status > img): Added.
+        (@media (prefers-color-scheme: dark) .tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img): Added.
+        (.tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active) > .status:hover > img): Deleted.
+        (.tree-outline .item.audit > .status:not(:hover) > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.unsupported, .editing-audits) > .status:not(:hover)): Deleted.
+        (.tree-outline .item.audit.manager-active > .status > img.show-on-hover, .tree-outline .item.audit.test-group.expanded:not(.editing-audits) > .status:hover > :not(img), .tree-outline .item.audit.test-group-result.expanded > .status, .tree-outline .item.audit.unsupported + .children .item.audit.unsupported  > .status > img): Deleted.
+        Add context menu items for duplicating/deleting tests when in edit mode. Adjust the label
+        and disabled state of existing context menu items for clarity.
+
+        * UserInterface/Views/CreateAuditPopover.js: Added.
+        (WI.CreateAuditPopover):
+        (WI.CreateAuditPopover.prototype.get audit):
+        (WI.CreateAuditPopover.prototype.show):
+        (WI.CreateAuditPopover.prototype.dismiss.const.testFunction):
+        (WI.CreateAuditPopover.prototype.dismiss):
+        (WI.CreateAuditPopover.prototype._presentOverTargetElement):
+        * UserInterface/Views/CreateAuditPopover.css: Added.
+        (.popover .create-audit-content):
+        (.popover .create-audit-content > .editor-wrapper):
+        (.popover .create-audit-content > .editor-wrapper > .reference-page-link):
+        New popover for creating an audit:
+
+            [<select> of group or test case] [<input> for name] (?)
+
+        * UserInterface/Views/Main.css:
+        (.navigation-item-help > .navigation-bar):
+        (.message-text-view > .navigation-item-help + .navigation-item-help): Added.
+        Add styles for when multiple navigation help items are used in the same message text view.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-color-scheme: dark) :root):
+        Add `--filter-invert` to light mode too.
+
+        * UserInterface/Base/Utilities.js:
+        (HTMLInputElement.prototype.autosize):
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype._updateRecordingAutoCaptureInputElementSize):
+        (WI.CanvasOverviewContentView.get recordingAutoCaptureInputMargin): Deleted.
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.navigation-bar > .item.canvas-recording-auto-capture > label > input):
+        (.navigation-bar > .item.canvas-recording-auto-capture > label > input::-webkit-inner-spin-button): Deleted.
+        Create a helper function for autosizing an `<input>`.
+
+        * UserInterface/Views/AuditTabContentView.js:
+        (WI.AuditTabContentView):
+        (WI.AuditTabContentView.prototype.initialLayout):
+        Remove the back/foward arrows as they can get into an inconsistent state when editing.
+        Drive-by: update the drop zone text for clarity.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.showDefaultContentView):
+        Drive-by: add period to help text.
+
+        * UserInterface/Main.html:
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Include the run loop source name in frame rendering timeline

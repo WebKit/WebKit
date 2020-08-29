@@ -484,6 +484,29 @@ Object.defineProperty(DocumentFragment.prototype, "createChild",
     value: Element.prototype.createChild
 });
 
+(function() {
+    const fontSymbol = Symbol("font");
+
+    Object.defineProperty(HTMLInputElement.prototype, "autosize",
+    {
+        value(extra = 0)
+        {
+            extra += 6; // UserAgent styles add 1px padding and 2px border.
+            if (this.type === "number")
+                extra += 13; // Number input inner spin button width.
+            extra += 2; // Add extra pixels for the cursor.
+
+            WI.ImageUtilities.scratchCanvasContext2D((context) => {
+                this[fontSymbol] ||= window.getComputedStyle(this).font;
+
+                context.font = this[fontSymbol];
+                let textMetrics = context.measureText(this.value || this.placeholder);
+                this.style.setProperty("width", (textMetrics.width + extra) + "px");
+            });
+        },
+    });
+})();
+
 Object.defineProperty(Event.prototype, "stop",
 {
     value()

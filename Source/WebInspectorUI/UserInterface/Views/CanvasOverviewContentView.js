@@ -49,7 +49,6 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             this._recordingAutoCaptureFrameCountInputElement = document.createElement("input");
             this._recordingAutoCaptureFrameCountInputElement.type = "number";
             this._recordingAutoCaptureFrameCountInputElement.min = 0;
-            this._recordingAutoCaptureFrameCountInputElement.style.setProperty("--recording-auto-capture-input-margin", CanvasOverviewContentView.recordingAutoCaptureInputMargin + "px");
             this._recordingAutoCaptureFrameCountInputElement.addEventListener("input", this._handleRecordingAutoCaptureInput.bind(this));
             this._recordingAutoCaptureFrameCountInputElementValue = WI.settings.canvasRecordingAutoCaptureFrameCount.value;
 
@@ -68,10 +67,6 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         this._savedRecordingsContentView = null;
         this._savedRecordingsTreeOutline = null;
     }
-
-    // Static
-
-    static get recordingAutoCaptureInputMargin() { return 4; }
 
     // Public
 
@@ -226,16 +221,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             this._recordingAutoCaptureFrameCountInputElementValue = frameCount;
         }
 
-        WI.ImageUtilities.scratchCanvasContext2D((context) => {
-            if (!this._recordingAutoCaptureFrameCountInputElement.__cachedFont) {
-                let computedStyle = window.getComputedStyle(this._recordingAutoCaptureFrameCountInputElement);
-                this._recordingAutoCaptureFrameCountInputElement.__cachedFont = computedStyle.font;
-            }
-
-            context.font = this._recordingAutoCaptureFrameCountInputElement.__cachedFont;
-            let textMetrics = context.measureText(this._recordingAutoCaptureFrameCountInputElement.value || this._recordingAutoCaptureFrameCountInputElement.placeholder);
-            this._recordingAutoCaptureFrameCountInputElement.style.setProperty("width", (textMetrics.width + (2 * CanvasOverviewContentView.recordingAutoCaptureInputMargin)) + "px");
-        });
+        this._recordingAutoCaptureFrameCountInputElement.autosize();
 
         return frameCount;
     }

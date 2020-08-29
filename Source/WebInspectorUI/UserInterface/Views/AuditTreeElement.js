@@ -51,7 +51,14 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
         super(classNames, representedObject.name, subtitle, representedObject, options);
 
         if (isTestGroup)
-            this._expandedSetting = new WI.Setting(`audit-tree-element-${this.representedObject.name}-expanded`, false);
+            this._expandedSetting = new WI.Setting(WI.AuditTreeElement.expandedSettingKey(this.representedObject.name), false);
+    }
+
+    // Static
+
+    static expandedSettingKey(name)
+    {
+        return `audit-tree-element-${name}-expanded`;
     }
 
     // Protected
@@ -68,6 +75,14 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
                 this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestCaseScheduled, this);
             else if (this.representedObject instanceof WI.AuditTestGroup)
                 this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestGroupScheduled, this);
+
+            if (this.representedObject.editable) {
+                this.representedObject.addEventListener(WI.AuditTestBase.Event.NameChanged, this._handleTestNameChanged, this);
+                this.representedObject.addEventListener(WI.AuditTestBase.Event.SupportedChanged, this._handleTestSupportedChanged, this);
+
+                if (this.representedObject instanceof WI.AuditTestGroup)
+                    this.representedObject.addEventListener(WI.AuditTestGroup.Event.TestAdded, this._handleTestGroupTestAdded, this);
+            }
 
             WI.auditManager.addEventListener(WI.AuditManager.Event.EditingChanged, this._handleManagerEditingChanged, this);
             WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
@@ -129,37 +144,72 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
         if (!(this.representedObject instanceof WI.AuditTestBase))
             return false;
 
-        if (!(this.parent instanceof WI.TreeOutline))
-            return false;
-
         if (!WI.auditManager.editing)
             return false;
 
-        WI.auditManager.removeTest(this.representedObject);
+        this.representedObject.remove();
 
         return true;
     }
 
+    canSelectOnMouseDown(event)
+    {
+        if (this.representedObject instanceof WI.AuditTestBase && this.representedObject.supported && this.status.contains(event.target))
+            return false;
+
+        return super.canSelectOnMouseDown(event);
+    }
+
     populateContextMenu(contextMenu, event)
     {
-        if (WI.auditManager.runningState === WI.AuditManager.RunningState.Inactive) {
-            contextMenu.appendItem(WI.UIString("Start"), (event) => {
-                this._start();
-            });
-        }
+        let isTest = this.representedObject instanceof WI.AuditTestBase;
 
         contextMenu.appendSeparator();
 
-        if (this.representedObject instanceof WI.AuditTestBase) {
-            contextMenu.appendItem(WI.UIString("Export Test"), (event) => {
-                WI.auditManager.export(this.representedObject);
-            });
-        }
+        if (WI.auditManager.editing) {
+            if (isTest) {
+                if (this.representedObject.supported) {
+                    contextMenu.appendItem(this.representedObject.disabled ? WI.UIString("Enable Audit") : WI.UIString("Disable Audit"), () => {
+                        this.representedObject.disabled = !this.representedObject.disabled;
+                    });
+                }
 
-        if (this.representedObject.result) {
-            contextMenu.appendItem(WI.UIString("Export Result"), (event) => {
+                contextMenu.appendItem(WI.UIString("Duplicate Audit"), async () => {
+                    let audit = await this.representedObject.clone();
+                    WI.auditManager.addTest(audit);
+                });
+
+                if (this.representedObject.editable) {
+                    contextMenu.appendItem(WI.UIString("Delete Audit"), () => {
+                        this.representedObject.remove();
+                    });
+                }
+            }
+        } else {
+            if (isTest) {
+                contextMenu.appendItem(WI.UIString("Start Audit"), () => {
+                    this._start();
+                }, WI.auditManager.runningState !== WI.AuditManager.RunningState.Inactive);
+
+                contextMenu.appendSeparator();
+
+                contextMenu.appendItem(WI.UIString("Export Audit"), () => {
+                    WI.auditManager.export(this.representedObject);
+                });
+            }
+
+            contextMenu.appendItem(WI.UIString("Export Result"), () => {
                 WI.auditManager.export(this.representedObject.result);
-            });
+            }, !this.representedObject.result);
+
+            if (isTest && this.representedObject.editable) {
+                contextMenu.appendSeparator();
+
+                contextMenu.appendItem(WI.UIString("Edit Audit"), () => {
+                    WI.auditManager.editing = true;
+                    WI.showRepresentedObject(this.representedObject);
+                });
+            }
         }
 
         contextMenu.appendSeparator();
@@ -313,6 +363,26 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
         this.representedObject.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestGroupProgress, this);
 
         this._showRunningProgress();
+    }
+
+    _handleTestNameChanged(event)
+    {
+        this.mainTitle = this.representedObject.name;
+
+        if (this.representedObject instanceof WI.AuditTestGroup)
+            this._expandedSetting = new WI.Setting(WI.AuditTreeElement.expandedSettingKey(this.representedObject.name), !!WI.Setting.migrateValue(WI.AuditTreeElement.expandedSettingKey(event.data.oldName)));
+    }
+
+    _handleTestSupportedChanged(event)
+    {
+        this._updateStatus();
+    }
+
+    _handleTestGroupTestAdded(event)
+    {
+        let {test} = event.data;
+
+        this.appendChild(new WI.AuditTreeElement(test));
     }
 
     _handleManagerEditingChanged(event)

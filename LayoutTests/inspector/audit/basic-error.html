@@ -9,8 +9,6 @@ if (window.internals)
 
 function test()
 {
-    InspectorTest.debug();
-
     let suite = InspectorTest.Audit.createSuite("Audit.Basic");
 
     InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Undefined", undefined, WI.AuditTestCaseResult.Level.Error);

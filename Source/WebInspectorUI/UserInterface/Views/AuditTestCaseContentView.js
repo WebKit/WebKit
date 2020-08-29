@@ -47,16 +47,16 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
         let informationContainer = this.headerView.element.appendChild(document.createElement("div"));
         informationContainer.classList.add("information");
 
-        let nameElement = informationContainer.appendChild(document.createElement("h1"));
+        let nameContainer = informationContainer.appendChild(document.createElement("h1"));
 
-        this._resultImageElement = nameElement.appendChild(document.createElement("img"));
+        this._resultImageElement = nameContainer.appendChild(document.createElement("img"));
 
-        nameElement.appendChild(document.createTextNode(this.representedObject.name));
+        nameContainer.appendChild(this.createNameElement("span"));
 
-        if (this.representedObject.description) {
-            let descriptionElement = informationContainer.appendChild(document.createElement("p"));
-            descriptionElement.textContent = this.representedObject.description;
-        }
+        informationContainer.appendChild(this.createDescriptionElement("p"));
+
+        if (this.representedObject instanceof WI.AuditTestCase)
+            informationContainer.appendChild(this.createControlsTableElement());
 
         this._metadataElement = this.headerView.element.appendChild(document.createElement("div"));
         this._metadataElement.classList.add("metadata");
@@ -69,10 +69,40 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
 
         super.layout();
 
-        this._resultImageElement.src = "Images/AuditTestNoResult.svg";
         this._metadataElement.removeChildren();
-
         this.contentView.element.removeChildren();
+
+        if (WI.auditManager.editing) {
+            this._resultImageElement.src = "Images/Pencil.svg";
+            this._resultImageElement.title = WI.UIString("Editing audit", "Editing Audit @ Audit Tab - Test Case", "Title of icon indiciating that the selected audit is being edited.");
+
+            let testEditorElement = this.contentView.element.appendChild(document.createElement("div"));
+            testEditorElement.className = "editor";
+
+            // Give the rest of the view a chance to load.
+            setTimeout(() => {
+                let testCodeMirror = WI.CodeMirrorEditor.create(testEditorElement, {
+                    autoCloseBrackets: true,
+                    lineNumbers: true,
+                    lineWrapping: true,
+                    matchBrackets: true,
+                    mode: "text/javascript",
+                    readOnly: this.representedObject.editable ? false : "nocursor",
+                    styleSelectedText: true,
+                    value: this.representedObject.test,
+                });
+
+                if (this.representedObject.editable) {
+                    testCodeMirror.on("blur", (event) => {
+                        this.representedObject.test = testCodeMirror.getValue().trim();
+                    });
+                }
+            });
+            return;
+        }
+
+        this._resultImageElement.src = "Images/AuditTestNoResult.svg";
+        this._resultImageElement.title = WI.UIString("Not yet run", "Not yet run @ Audit Tab - Test Case", "Title of icon indicating that the selected audit has not been run yet.");
 
         let result = this.representedObject.result;
         if (!result) {
@@ -86,16 +116,22 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
             return;
         }
 
-        if (result.didError)
+        if (result.didError) {
             this._resultImageElement.src = "Images/AuditTestError.svg";
-        else if (result.didFail)
+            this._resultImageElement.title = WI.UIString("Error", "Error @ Audit Tab - Test Case", "Title of icon indicating that the selected audit threw an error.");
+        } else if (result.didFail) {
             this._resultImageElement.src = "Images/AuditTestFail.svg";
-        else if (result.didWarn)
+            this._resultImageElement.title = WI.UIString("Fail", "Fail @ Audit Tab - Test Case", "Title of icon indicating that the selected audit failed.");
+        } else if (result.didWarn) {
             this._resultImageElement.src = "Images/AuditTestWarn.svg";
-        else if (result.didPass)
+            this._resultImageElement.title = WI.UIString("Warn", "Warn @ Audit Tab - Test Case", "Title of icon indicating that the selected audit passed with issues (i.e. warnings).");
+        } else if (result.didPass) {
             this._resultImageElement.src = "Images/AuditTestPass.svg";
-        else if (result.unsupported)
+            this._resultImageElement.title = WI.UIString("Pass", "Pass @ Audit Tab - Test Case", "Title of icon indicating that the selected audit passed with no issues.");
+        } else if (result.unsupported) {
             this._resultImageElement.src = "Images/AuditTestUnsupported.svg";
+            this._resultImageElement.title = WI.UIString("Unsupported", "Unsupported @ Audit Tab - Test Case", "Title of icon indicating that the selected audit is not able to be run (i.e. unsupported).");
+        }
 
         let metadata = result.metadata;
         if (metadata) {
@@ -299,6 +335,17 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
 
             let spinner = new WI.IndeterminateProgressSpinner;
             this.placeholderElement.appendChild(spinner.element);
+
+            let stopAuditNavigationItem = new WI.ButtonNavigationItem("stop-audit", WI.UIString("Stop"), "Images/AuditStop.svg", 13, 13);
+            stopAuditNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+            stopAuditNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, (event) => {
+                WI.auditManager.stop();
+            }, WI.auditManager);
+
+            let stopAuditHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to stop running."), stopAuditNavigationItem);
+            this.placeholderElement.appendChild(stopAuditHelpElement);
+
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         super.showRunningPlaceholder();

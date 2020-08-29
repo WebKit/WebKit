@@ -69,6 +69,16 @@ WI.AuditTestResultBase = class AuditTestResultBase
         throw WI.NotImplementedError.subclassMustOverride();
     }
 
+    get disabled()
+    {
+        return false;
+    }
+
+    get editable()
+    {
+        return false;
+    }
+
     saveIdentityToCookie(cookie)
     {
         cookie["audit-" + this.constructor.TypeIdentifier + "-name"] = this._name;
