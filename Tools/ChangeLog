@@ -1,3 +1,15 @@
+2020-08-28  Tim Horton  <timothy_horton@apple.com>
+
+        Sites built with flambe.js don't work with trackpad on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=215954
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm:
+        (-[WKTestingHoverEvent locationInView:]):
+        (-[WKTestingTouch timestamp]):
+        (TEST):
+
 2020-08-28  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] 'void' type is changing to 'undefined'

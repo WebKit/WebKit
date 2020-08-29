@@ -36,6 +36,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WebKit.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 
 @interface WKMouseGestureRecognizer : UIGestureRecognizer
@@ -93,6 +94,11 @@
 - (NSUInteger)tapCount
 {
     return _tapCount;
+}
+
+- (NSTimeInterval)timestamp
+{
+    return MonotonicTime::now().secondsSinceEpoch().value();
 }
 
 @end
@@ -177,6 +183,51 @@ TEST(iOSMouseSupport, TrackButtonMaskFromTouchStart)
     [webView _doAfterProcessingAllPendingMouseEvents:^{
         NSNumber *result = [webView objectByEvaluatingJavaScript:@"window.didReleaseRightButton"];
         EXPECT_TRUE([result boolValue]);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(iOSMouseSupport, MouseTimestampTimebase)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<script>"
+    "window.mouseDownTimestamp = -1;"
+    "document.documentElement.addEventListener('mousedown', function (e) {"
+    "    window.mouseDownTimestamp = e.timeStamp;"
+    "});"
+    "</script>"];
+
+    auto contentView = [webView wkContentView];
+    auto gesture = mouseGesture(contentView);
+
+    RetainPtr<WKTestingTouch> touch = adoptNS([[WKTestingTouch alloc] init]);
+    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
+
+    RetainPtr<WKTestingEvent> hoverEvent = adoptNS([[NSClassFromString(@"UIHoverEvent") alloc] init]);
+    RetainPtr<WKTestingEvent> event = adoptNS([[WKTestingEvent alloc] init]);
+
+    [gesture _hoverEntered:touchSet.get() withEvent:hoverEvent.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+    [touch setTapCount:1];
+    [event _setButtonMask:UIEventButtonMaskPrimary];
+    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+
+    __block bool done = false;
+
+    [webView _doAfterProcessingAllPendingMouseEvents:^{
+        double mouseDownTimestamp = [[webView objectByEvaluatingJavaScript:@"window.mouseDownTimestamp"] doubleValue];
+        // Ensure that the timestamp is not clamped to 0.
+        EXPECT_GT(mouseDownTimestamp, 0);
+
+        // The test should always complete in 10 seconds, so ensure that
+        // the timestamp is also not overly large.
+        EXPECT_LE(mouseDownTimestamp, 10000);
         done = true;
     }];
 

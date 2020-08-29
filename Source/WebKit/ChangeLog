@@ -1,3 +1,19 @@
+2020-08-28  Tim Horton  <timothy_horton@apple.com>
+
+        Sites built with flambe.js don't work with trackpad on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=215954
+
+        Reviewed by Wenson Hsieh.
+
+        New API Test: iOSMouseSupport.MouseTimestampTimebase
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer createMouseEventWithType:]):
+        Use the timestamp property on UITouch instead of GSCurrentEventTimestamp().
+        This property is in the same units as mach_absolute_time/MonotonicTime.
+        Previously, treating a monotonic time as wall time resulted in it getting clamped to 0,
+        breaking sites that depend on it.
+
 2020-08-28  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Fix iokit-get-properties sandbox violations
