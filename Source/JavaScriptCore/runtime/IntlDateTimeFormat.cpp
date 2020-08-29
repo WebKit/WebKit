@@ -248,11 +248,18 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
     // 6. If required is "time" or "any",
     // Always "any".
 
-    // a. For each of the property names "hour", "minute", "second", "fractionalSecondDigits":
+    // a. For each of the property names ""dayPeriod", hour", "minute", "second", "fractionalSecondDigits":
     // i. Let prop be the property name.
     // ii. Let value be Get(options, prop).
     // iii. ReturnIfAbrupt(value).
     // iv. If value is not undefined, then let needDefaults be false.
+    if (Options::useIntlDateTimeFormatDayPeriod()) {
+        JSValue dayPeriod = options->get(globalObject, vm.propertyNames->dayPeriod);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        if (!dayPeriod.isUndefined())
+            needDefaults = false;
+    }
+
     JSValue hour = options->get(globalObject, vm.propertyNames->hour);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!hour.isUndefined())
@@ -377,6 +384,16 @@ void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
                 m_day = Day::Numeric;
             else if (count == 2)
                 m_day = Day::TwoDigit;
+            break;
+        case 'a':
+        case 'b':
+        case 'B':
+            if (count <= 3)
+                m_dayPeriod = DayPeriod::Short;
+            else if (count == 4)
+                m_dayPeriod = DayPeriod::Long;
+            else if (count == 5)
+                m_dayPeriod = DayPeriod::Narrow;
             break;
         case 'h':
         case 'H':
@@ -584,6 +601,12 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         break;
     }
 
+    DayPeriod dayPeriod = DayPeriod::None;
+    if (Options::useIntlDateTimeFormatDayPeriod()) {
+        dayPeriod = intlOption<DayPeriod>(globalObject, options, vm.propertyNames->dayPeriod, { { "narrow"_s, DayPeriod::Narrow }, { "short"_s, DayPeriod::Short }, { "long"_s, DayPeriod::Long } }, "dayPeriod must be \"narrow\", \"short\", or \"long\""_s, DayPeriod::None);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+
     Hour hour = intlOption<Hour>(globalObject, options, vm.propertyNames->hour, { { "2-digit"_s, Hour::TwoDigit }, { "numeric"_s, Hour::Numeric } }, "hour must be \"2-digit\" or \"numeric\""_s, Hour::None);
     RETURN_IF_EXCEPTION(scope, void());
     switch (hour) {
@@ -605,6 +628,24 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         break;
     case Hour::None:
         break;
+    }
+
+    if (Options::useIntlDateTimeFormatDayPeriod()) {
+        // dayPeriod must be set after setting hour.
+        // https://unicode-org.atlassian.net/browse/ICU-20731
+        switch (dayPeriod) {
+        case DayPeriod::Narrow:
+            skeletonBuilder.appendLiteral("BBBBB");
+            break;
+        case DayPeriod::Short:
+            skeletonBuilder.append('B');
+            break;
+        case DayPeriod::Long:
+            skeletonBuilder.appendLiteral("BBBB");
+            break;
+        case DayPeriod::None:
+            break;
+        }
     }
 
     Minute minute = intlOption<Minute>(globalObject, options, vm.propertyNames->minute, { { "2-digit"_s, Minute::TwoDigit }, { "numeric"_s, Minute::Numeric } }, "minute must be \"2-digit\" or \"numeric\""_s, Minute::None);
@@ -668,7 +709,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         //     ii. Let p be opt.[[<prop>]].
         //     iii. If p is not undefined, then
         //         1. Throw a TypeError exception.
-        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits != 0 || timeZoneName != TimeZoneName::None) {
+        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits != 0 || timeZoneName != TimeZoneName::None) {
             throwTypeError(globalObject, scope, "dateStyle and timeStyle may not be used with other DateTimeFormat options"_s);
             return;
         }
@@ -892,6 +933,23 @@ ASCIILiteral IntlDateTimeFormat::dayString(Day day)
     return ASCIILiteral::null();
 }
 
+ASCIILiteral IntlDateTimeFormat::dayPeriodString(DayPeriod dayPeriod)
+{
+    switch (dayPeriod) {
+    case DayPeriod::Narrow:
+        return "narrow"_s;
+    case DayPeriod::Short:
+        return "short"_s;
+    case DayPeriod::Long:
+        return "long"_s;
+    case DayPeriod::None:
+        ASSERT_NOT_REACHED();
+        return ASCIILiteral::null();
+    }
+    ASSERT_NOT_REACHED();
+    return ASCIILiteral::null();
+}
+
 ASCIILiteral IntlDateTimeFormat::hourString(Hour hour)
 {
     switch (hour) {
@@ -1001,6 +1059,11 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
 
     if (m_day != Day::None)
         options->putDirect(vm, vm.propertyNames->day, jsNontrivialString(vm, dayString(m_day)));
+
+    if (Options::useIntlDateTimeFormatDayPeriod()) {
+        if (m_dayPeriod != DayPeriod::None)
+            options->putDirect(vm, vm.propertyNames->dayPeriod, jsNontrivialString(vm, dayPeriodString(m_dayPeriod)));
+    }
 
     if (m_hour != Hour::None)
         options->putDirect(vm, vm.propertyNames->hour, jsNontrivialString(vm, hourString(m_hour)));

@@ -95,6 +95,7 @@
     macro(counters) \
     macro(dateStyle) \
     macro(day) \
+    macro(dayPeriod) \
     macro(defineProperty) \
     macro(deref) \
     macro(description) \

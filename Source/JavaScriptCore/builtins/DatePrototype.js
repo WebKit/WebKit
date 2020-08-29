@@ -46,6 +46,7 @@ function toLocaleString(/* locales, options */)
             options.year === @undefined &&
             options.month === @undefined &&
             options.day === @undefined &&
+            (!@useIntlDateTimeFormatDayPeriod || options.dayPeriod === @undefined) &&
             options.hour === @undefined &&
             options.minute === @undefined &&
             options.second === @undefined &&
@@ -162,6 +163,7 @@ function toLocaleTimeString(/* locales, options */)
 
         // Check original instead of descendant to reduce lookups up the prototype chain.
         var needsDefaults = !options || (
+            (!@useIntlDateTimeFormatDayPeriod || options.dayPeriod === @undefined) &&
             options.hour === @undefined &&
             options.minute === @undefined &&
             options.second === @undefined &&

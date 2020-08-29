@@ -81,6 +81,7 @@ private:
     enum class Year : uint8_t { None, TwoDigit, Numeric };
     enum class Month : uint8_t { None, TwoDigit, Numeric, Narrow, Short, Long };
     enum class Day : uint8_t { None, TwoDigit, Numeric };
+    enum class DayPeriod : uint8_t { None, Narrow, Short, Long };
     enum class Hour : uint8_t { None, TwoDigit, Numeric };
     enum class Minute : uint8_t { None, TwoDigit, Numeric };
     enum class Second : uint8_t { None, TwoDigit, Numeric };
@@ -93,6 +94,7 @@ private:
     static ASCIILiteral yearString(Year);
     static ASCIILiteral monthString(Month);
     static ASCIILiteral dayString(Day);
+    static ASCIILiteral dayPeriodString(DayPeriod);
     static ASCIILiteral hourString(Hour);
     static ASCIILiteral minuteString(Minute);
     static ASCIILiteral secondString(Second);
@@ -117,6 +119,7 @@ private:
     Year m_year { Year::None };
     Month m_month { Month::None };
     Day m_day { Day::None };
+    DayPeriod m_dayPeriod { DayPeriod::None };
     Hour m_hour { Hour::None };
     Minute m_minute { Minute::None };
     Second m_second { Second::None };

@@ -6,6 +6,7 @@ flags:
   FinalizationRegistry: useWeakRefs
   class-fields-public: usePublicClassFields
   class-fields-private: usePrivateClassFields
+  Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
 skip:
   features:
     - SharedArrayBuffer
@@ -23,7 +24,6 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=202475
     - regexp-match-indices
     - top-level-await
-    - Intl.DateTimeFormat-dayPeriod
     - Intl.ListFormat
   paths:
     - test/built-ins/DataView/prototype/getBigInt64
