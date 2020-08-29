@@ -3220,19 +3220,16 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     auto contentOffset = roundedIntSize(contentOffsetInCompositingLayer());
     context.translate(-contentOffset);
 
-#if ENABLE(TOUCH_ACTION_REGIONS) || ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(EDITABLE_REGION)
     auto visibleDebugOverlayRegions = renderer().settings().visibleDebugOverlayRegions();
-#endif
-
-    // The interactive part.
-#if ENABLE(TOUCH_ACTION_REGIONS)
-    // Paint rects for touch action.
-    if (visibleDebugOverlayRegions & TouchActionRegion) {
+    if (visibleDebugOverlayRegions & (TouchActionRegion | WheelEventHandlerRegion)) {
         constexpr auto regionColor = Color::blue.colorWithAlphaByte(50);
         context.setFillColor(regionColor);
         for (auto rect : eventRegion.region().rects())
             context.fillRect(rect);
+    }
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    if (visibleDebugOverlayRegions & TouchActionRegion) {
         const TouchAction touchActionList[] = {
             TouchAction::None,
             TouchAction::Manipulation,
@@ -3271,7 +3268,6 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    // Paint rects for editable elements.
     if (visibleDebugOverlayRegions & EditableElementRegion) {
         context.setFillColor(SRGBA<uint8_t> { 128, 0, 128, 50 });
         for (auto rect : eventRegion.rectsForEditableElements())
