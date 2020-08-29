@@ -1,13 +1,13 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "lowpass" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
-FAIL Executing "highpass" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
-FAIL Executing "bandpass" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
-FAIL Executing "lowshelf" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
-FAIL Executing "highshelf" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
-FAIL Executing "peaking" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
-FAIL Executing "notch" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
-FAIL Executing "allpass" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "lowpass" promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL Executing "highpass" promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL Executing "bandpass" promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL Executing "lowshelf" promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL Executing "highshelf" promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL Executing "peaking" promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL Executing "notch" promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL Executing "allpass" promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
 FAIL Executing "getFrequencyResponse" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [lowpass] Frequency response 
