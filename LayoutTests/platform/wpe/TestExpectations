@@ -41,6 +41,7 @@ webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeo
 
 # WPT tests
 webkit.org/b/215306 imported/w3c/web-platform-tests/html/user-activation/basic.html [ Timeout ]
+webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations

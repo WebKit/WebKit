@@ -1,3 +1,14 @@
+2020-08-28  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Gardening and rebaselining
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-constructor-001-expected.txt:
+        Added with specific failure due to DRAG_SUPPORT not enabled.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https-expected.txt: Removed.
+
 2020-08-28  Chris Dumez  <cdumez@apple.com>
 
         Update PannerNode to support k-rate automation of its AudioParams
