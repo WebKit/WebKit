@@ -1,3 +1,13 @@
+2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] super property with new should be accepted
+        https://bugs.webkit.org/show_bug.cgi?id=215966
+
+        Reviewed by Ross Kirsling.
+
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-super.js:
+
 2020-08-28  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Gardening and rebaselining

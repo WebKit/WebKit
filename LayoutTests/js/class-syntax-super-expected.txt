@@ -18,7 +18,7 @@ PASS (new SecondDerived).chainMethod().toString():::["base", "derived", "secondD
 PASS x = class extends Base { constructor() { super(); } super() {} }
 PASS x = class extends Base { constructor() { super(); } method() { super() } }:::SyntaxError: super is not valid in this context.
 PASS x = class extends Base { constructor() { super(); } method() { super } }:::SyntaxError: super is not valid in this context.
-PASS x = class extends Base { constructor() { super(); } method() { return new super } }:::SyntaxError: Cannot use new with super.
+PASS x = class extends Base { constructor() { super(); } method() { return new super } }:::SyntaxError: Cannot use new with super call.
 PASS x = class extends Base { constructor() { super(); } method1() { delete (super.foo) } method2() { delete super["foo"] } }
 PASS (new x).method1():::ReferenceError: Cannot delete a super property
 PASS (new x).method2():::ReferenceError: Cannot delete a super property

@@ -101,7 +101,7 @@ shouldNotThrow('x = class extends Base { constructor() { super(); } super() {} }
 shouldThrow('x = class extends Base { constructor() { super(); } method() { super() } }',
     '"SyntaxError: super is not valid in this context."');
 shouldThrow('x = class extends Base { constructor() { super(); } method() { super } }', '"SyntaxError: super is not valid in this context."');
-shouldThrow('x = class extends Base { constructor() { super(); } method() { return new super } }', '"SyntaxError: Cannot use new with super."');
+shouldThrow('x = class extends Base { constructor() { super(); } method() { return new super } }', '"SyntaxError: Cannot use new with super call."');
 shouldNotThrow('x = class extends Base { constructor() { super(); } method1() { delete (super.foo) } method2() { delete super["foo"] } }');
 shouldThrow('(new x).method1()', '"ReferenceError: Cannot delete a super property"');
 shouldThrow('(new x).method2()', '"ReferenceError: Cannot delete a super property"');

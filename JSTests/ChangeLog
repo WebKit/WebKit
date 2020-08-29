@@ -1,5 +1,21 @@
 2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] super property with new should be accepted
+        https://bugs.webkit.org/show_bug.cgi?id=215966
+
+        Reviewed by Ross Kirsling.
+
+        * stress/super-and-new.js: Added.
+        (testSyntaxError):
+        (shouldBe):
+        (test.A):
+        (test.A.prototype.get hey):
+        (test.A.prototype.get hey2):
+        (test.A.prototype.super):
+        (test.B.get super):
+
+2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] `new import.meta()` is acceptable
         https://bugs.webkit.org/show_bug.cgi?id=215915
 

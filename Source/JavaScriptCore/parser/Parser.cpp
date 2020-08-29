@@ -4843,7 +4843,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     bool baseIsSuper = match(SUPER);
     bool previousBaseWasSuper = false;
     bool baseIsImport = match(IMPORT);
-    semanticFailIfTrue(baseIsSuper && newCount, "Cannot use new with ", getToken());
 
     bool baseIsNewTarget = false;
     if (newCount && match(DOT)) {
@@ -4975,6 +4974,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 int nonLHSCount = m_parserState.nonLHSCount;
                 if (newCount) {
                     newCount--;
+                    semanticFailIfTrue(baseIsSuper, "Cannot use new with super call");
                     JSTextPosition expressionEnd = lastTokenEndPosition();
                     TreeArguments arguments = parseArguments(context);
                     failIfFalse(arguments, "Cannot parse call arguments");
@@ -5071,7 +5071,7 @@ endOfChain:
             base = context.createOptionalChain(optionalChainLocation, optionalChainBase, base, !match(QUESTIONDOT));
     } while (match(QUESTIONDOT));
 
-    semanticFailIfTrue(baseIsSuper, "super is not valid in this context");
+    semanticFailIfTrue(baseIsSuper, newCount ? "Cannot use new with super call" : "super is not valid in this context");
     while (newCount--)
         base = context.createNewExpr(location, base, expressionStart, lastTokenEndPosition());
     return base;
