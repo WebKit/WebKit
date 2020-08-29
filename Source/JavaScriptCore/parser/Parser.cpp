@@ -1418,7 +1418,14 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
             if (strictMode() || (isLetDeclaration || isConstDeclaration) || !context.isBindingNode(forInTarget))
                 internalFailWithMessage(false, "Cannot assign to the loop variable inside a for-in loop header");
         }
-        TreeExpression expr = parseExpression(context);
+
+        // While for-in uses Expression, for-of / for-await-of use AssignmentExpression.
+        // https://tc39.es/ecma262/#sec-for-in-and-for-of-statements
+        TreeExpression expr = 0;
+        if (isOfEnumeration)
+            expr = parseAssignmentExpression(context);
+        else
+            expr = parseExpression(context);
         failIfFalse(expr, "Expected expression to enumerate");
         recordPauseLocation(context.breakpointLocation(expr));
         JSTextPosition exprEnd = lastTokenEndPosition();
@@ -1516,7 +1523,13 @@ enumerationLoop:
         next();
     }
 
-    TreeExpression expr = parseExpression(context);
+    // While for-in uses Expression, for-of / for-await-of use AssignmentExpression.
+    // https://tc39.es/ecma262/#sec-for-in-and-for-of-statements
+    TreeExpression expr = 0;
+    if (isOfEnumeration)
+        expr = parseAssignmentExpression(context);
+    else
+        expr = parseExpression(context);
     failIfFalse(expr, "Cannot parse subject for-", isOfEnumeration ? "of" : "in", " statement");
     recordPauseLocation(context.breakpointLocation(expr));
     JSTextPosition exprEnd = lastTokenEndPosition();
