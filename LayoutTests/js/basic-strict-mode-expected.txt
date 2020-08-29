@@ -134,25 +134,25 @@ PASS 'use strict'; function f() { arguments-- } threw exception SyntaxError: 'ar
 PASS (function(){'use strict'; function f() { arguments-- }}) threw exception SyntaxError: 'arguments' cannot be modified in strict mode..
 PASS global.eval('"use strict"; if (0) ++arguments; true;') threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
 PASS 'use strict'; ++(1, eval) threw exception SyntaxError: Prefix ++ operator applied to value that is not a reference..
-PASS (function(){'use strict'; ++(1, eval)}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
+PASS (function(){'use strict'; ++(1, eval)}) threw exception SyntaxError: Prefix ++ operator applied to value that is not a reference..
 PASS 'use strict'; ++(1, 2, 3, eval) threw exception SyntaxError: Prefix ++ operator applied to value that is not a reference..
-PASS (function(){'use strict'; ++(1, 2, 3, eval)}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
+PASS (function(){'use strict'; ++(1, 2, 3, eval)}) threw exception SyntaxError: Prefix ++ operator applied to value that is not a reference..
 PASS 'use strict'; (1, eval)++ threw exception SyntaxError: Postfix ++ operator applied to value that is not a reference..
-PASS (function(){'use strict'; (1, eval)++}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
+PASS (function(){'use strict'; (1, eval)++}) threw exception SyntaxError: Postfix ++ operator applied to value that is not a reference..
 PASS 'use strict'; --(1, eval) threw exception SyntaxError: Prefix -- operator applied to value that is not a reference..
-PASS (function(){'use strict'; --(1, eval)}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
+PASS (function(){'use strict'; --(1, eval)}) threw exception SyntaxError: Prefix -- operator applied to value that is not a reference..
 PASS 'use strict'; (1, eval)-- threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
-PASS (function(){'use strict'; (1, eval)--}) threw exception SyntaxError: 'eval' cannot be modified in strict mode..
+PASS (function(){'use strict'; (1, eval)--}) threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
 PASS 'use strict'; (1, 2, 3, eval)-- threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
-PASS (function(){'use strict'; (1, 2, 3, eval)--}) threw exception SyntaxError: 'eval' cannot be modified in strict mode..
-PASS 'use strict'; function f() { ++(1, arguments) } threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
-PASS (function(){'use strict'; function f() { ++(1, arguments) }}) threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
-PASS 'use strict'; function f() { (1, arguments)++ } threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
-PASS (function(){'use strict'; function f() { (1, arguments)++ }}) threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
-PASS 'use strict'; function f() { --(1, arguments) } threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
-PASS (function(){'use strict'; function f() { --(1, arguments) }}) threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
-PASS 'use strict'; function f() { (1, arguments)-- } threw exception SyntaxError: 'arguments' cannot be modified in strict mode..
-PASS (function(){'use strict'; function f() { (1, arguments)-- }}) threw exception SyntaxError: 'arguments' cannot be modified in strict mode..
+PASS (function(){'use strict'; (1, 2, 3, eval)--}) threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
+PASS 'use strict'; function f() { ++(1, arguments) } threw exception SyntaxError: Prefix ++ operator applied to value that is not a reference..
+PASS (function(){'use strict'; function f() { ++(1, arguments) }}) threw exception SyntaxError: Prefix ++ operator applied to value that is not a reference..
+PASS 'use strict'; function f() { (1, arguments)++ } threw exception SyntaxError: Postfix ++ operator applied to value that is not a reference..
+PASS (function(){'use strict'; function f() { (1, arguments)++ }}) threw exception SyntaxError: Postfix ++ operator applied to value that is not a reference..
+PASS 'use strict'; function f() { --(1, arguments) } threw exception SyntaxError: Prefix -- operator applied to value that is not a reference..
+PASS (function(){'use strict'; function f() { --(1, arguments) }}) threw exception SyntaxError: Prefix -- operator applied to value that is not a reference..
+PASS 'use strict'; function f() { (1, arguments)-- } threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
+PASS (function(){'use strict'; function f() { (1, arguments)-- }}) threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
 PASS 'use strict'; if (0) delete +a.b did not throw exception.
 PASS (function(){'use strict'; if (0) delete +a.b}) did not throw exception.
 PASS 'use strict'; if (0) delete ++a.b did not throw exception.

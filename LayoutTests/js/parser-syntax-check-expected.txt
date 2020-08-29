@@ -472,36 +472,36 @@ PASS Valid:   "for (a() in b) break" with ReferenceError
 PASS Valid:   "function f() { for (a() in b) break }"
 PASS Valid:   "for (a().l[4] in b) break" with ReferenceError
 PASS Valid:   "function f() { for (a().l[4] in b) break }"
-PASS Valid:   "for (new a in b in c in d) break" with ReferenceError
-PASS Valid:   "function f() { for (new a in b in c in d) break }"
-PASS Valid:   "for (new new new a in b) break" with ReferenceError
-PASS Valid:   "function f() { for (new new new a in b) break }"
+PASS Invalid: "for (new a in b in c in d) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { for (new a in b in c in d) break }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "for (new new new a in b) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { for (new new new a in b) break }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Invalid: "for (delete new a() in b) break". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "function f() { for (delete new a() in b) break }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "for (a * a in b) break". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "function f() { for (a * a in b) break }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
-PASS Valid:   "for ((a * a) in b) break" with ReferenceError
-PASS Valid:   "function f() { for ((a * a) in b) break }"
+PASS Invalid: "for ((a * a) in b) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { for ((a * a) in b) break }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Invalid: "for (a++ in b) break". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "function f() { for (a++ in b) break }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
-PASS Valid:   "for ((a++) in b) break" with ReferenceError
-PASS Valid:   "function f() { for ((a++) in b) break }"
+PASS Invalid: "for ((a++) in b) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { for ((a++) in b) break }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Invalid: "for (++a in b) break". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "function f() { for (++a in b) break }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
-PASS Valid:   "for ((++a) in b) break" with ReferenceError
-PASS Valid:   "function f() { for ((++a) in b) break }"
+PASS Invalid: "for ((++a) in b) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { for ((++a) in b) break }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Invalid: "for (a, b in c) break". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "function f() { for (a, b in c) break }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "for (a,b in c ;;) break". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "function f() { for (a,b in c ;;) break }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Valid:   "for (a,(b in c) ;;) break" with ReferenceError
 PASS Valid:   "function f() { for (a,(b in c) ;;) break }"
-PASS Valid:   "for ((a, b) in c) break" with ReferenceError
-PASS Valid:   "function f() { for ((a, b) in c) break }"
+PASS Invalid: "for ((a, b) in c) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { for ((a, b) in c) break }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Invalid: "for (a ? b : c in c) break". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
 PASS Invalid: "function f() { for (a ? b : c in c) break }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'in'. Expected a reference on the left hand side of an enumeration statement."
-PASS Valid:   "for ((a ? b : c) in c) break" with ReferenceError
-PASS Valid:   "function f() { for ((a ? b : c) in c) break }"
+PASS Invalid: "for ((a ? b : c) in c) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
+PASS Invalid: "function f() { for ((a ? b : c) in c) break }". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."
 PASS Valid:   "for (var a in b in c) break" with ReferenceError
 PASS Valid:   "function f() { for (var a in b in c) break }"
 PASS Invalid: "for (var a = 5 += 6 in b) break". Produced the following syntax error: "SyntaxError: Left side of assignment is not a reference."

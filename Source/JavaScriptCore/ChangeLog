@@ -1,5 +1,25 @@
 2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] for-of / for-in left-hand-side target should be simple-assignment-target
+        https://bugs.webkit.org/show_bug.cgi?id=215969
+
+        Reviewed by Ross Kirsling.
+
+        Left-hand-side of `for-in`, `for-of`, and `for-await-of` should be simple assignment target[1]
+        if the target is not declaration and not destructuring pattern.
+
+        [1]: https://tc39.es/ecma262/#sec-for-in-and-for-of-statements-static-semantics-early-errors
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseForStatement):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createCommaExpr): Should return CommaExpr to align it to ASTBuilder.
+        (JSC::SyntaxChecker::appendToCommaExpr):
+        (JSC::SyntaxChecker::appendStatement):
+        (JSC::SyntaxChecker::combineCommaNodes): Deleted since it is not used.
+
+2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Implement Intl.DateTimeFormat dayPeriod
         https://bugs.webkit.org/show_bug.cgi?id=215839
 

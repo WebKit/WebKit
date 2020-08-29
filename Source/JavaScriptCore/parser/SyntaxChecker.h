@@ -147,8 +147,8 @@ public:
 
     int createSourceElements() { return SourceElementsResult; }
     ExpressionType makeFunctionCallNode(const JSTokenLocation&, ExpressionType, bool, int, int, int, int, size_t, bool) { return CallExpr; }
-    ExpressionType createCommaExpr(const JSTokenLocation&, ExpressionType expr) { return expr; }
-    ExpressionType appendToCommaExpr(const JSTokenLocation&, ExpressionType& head, ExpressionType, ExpressionType next) { head = next; return next; }
+    ExpressionType createCommaExpr(const JSTokenLocation&, ExpressionType) { return CommaExpr; }
+    ExpressionType appendToCommaExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return CommaExpr; }
     ExpressionType makeAssignNode(const JSTokenLocation&, ExpressionType, Operator, ExpressionType, bool, bool, int, int, int) { return AssignmentExpr; }
     ExpressionType makePrefixNode(const JSTokenLocation&, ExpressionType, Operator, int, int, int) { return PreExpr; }
     ExpressionType makePostfixNode(const JSTokenLocation&, ExpressionType, Operator, int, int, int) { return PostExpr; }
@@ -301,7 +301,6 @@ public:
     }
 
     void appendStatement(int, int) { }
-    int combineCommaNodes(const JSTokenLocation&, int, int) { return CommaExpr; }
     int evalCount() const { return 0; }
     void appendBinaryExpressionInfo(int& operandStackDepth, int expr, int, int, int, bool)
     {

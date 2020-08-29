@@ -2362,12 +2362,6 @@ test/language/expressions/generators/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/import.meta/syntax/invalid-assignment-target-for-await-of-loop.js:
-  module: 'Test262: This statement should not be evaluated.'
-test/language/expressions/import.meta/syntax/invalid-assignment-target-for-in-loop.js:
-  module: 'Test262: This statement should not be evaluated.'
-test/language/expressions/import.meta/syntax/invalid-assignment-target-for-of-loop.js:
-  module: 'Test262: This statement should not be evaluated.'
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
   default: "Test262Error: getter for 'prototype' called"
   strict mode: "Test262Error: getter for 'prototype' called"
@@ -3064,14 +3058,6 @@ test/language/statements/do-while/let-array-with-newline.js:
 test/language/statements/for-await-of/async-from-sync-iterator-continuation-abrupt-completion-get-constructor.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
-test/language/statements/for-await-of/async-func-decl-dstr-array-elem-nested-array-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-await-of/async-func-decl-dstr-array-elem-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-await-of/async-func-decl-dstr-array-elem-target-simple-strict.js:
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/ticks-with-async-iter-resolved-promise-and-constructor-lookup-two.js:
@@ -3083,60 +3069,8 @@ test/language/statements/for-await-of/ticks-with-sync-iter-resolved-promise-and-
 test/language/statements/for-in/12.6.4-2.js:
   default: 'Test262Error: accessedProp Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: accessedProp Expected SameValue(«true», «false») to be true'
-test/language/statements/for-in/dstr/array-elem-nested-array-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-elem-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-elem-target-simple-strict.js:
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-rest-before-element.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-rest-before-elision.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-rest-before-rest.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-rest-elision-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-rest-init.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-rest-nested-array-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-rest-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/obj-id-simple-strict.js:
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/obj-prop-nested-array-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/obj-prop-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/obj-rest-not-last-element-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/head-lhs-cover-non-asnmt-trgt.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/head-lhs-invalid-asnmt-ptrn-ary.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/head-lhs-invalid-asnmt-ptrn-obj.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/head-lhs-let.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
-test/language/statements/for-in/head-lhs-non-asnmt-trgt.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-in/let-array-with-newline.js:
@@ -3168,14 +3102,6 @@ test/language/statements/for-of/dstr/array-elem-iter-thrw-close-err.js:
 test/language/statements/for-of/dstr/array-elem-iter-thrw-close.js:
   default: 'Test262Error: Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
-test/language/statements/for-of/dstr/array-elem-nested-array-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-elem-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-elem-target-simple-strict.js:
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/array-elem-trlg-iter-list-rtrn-close-err.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
@@ -3206,21 +3132,6 @@ test/language/statements/for-of/dstr/array-elem-trlg-iter-rest-thrw-close-err.js
 test/language/statements/for-of/dstr/array-elem-trlg-iter-rest-thrw-close.js:
   default: 'Test262Error: Expected SameValue(«11», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«11», «1») to be true'
-test/language/statements/for-of/dstr/array-rest-before-element.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-rest-before-elision.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-rest-before-rest.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-rest-elision-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-rest-init.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/array-rest-iter-rtrn-close-err.js:
   default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
   strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
@@ -3239,45 +3150,16 @@ test/language/statements/for-of/dstr/array-rest-iter-thrw-close.js:
 test/language/statements/for-of/dstr/array-rest-lref-err.js:
   default: 'Test262Error: Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
-test/language/statements/for-of/dstr/array-rest-nested-array-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-rest-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/obj-id-put-const.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/for-of/dstr/obj-id-put-let.js:
   default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/language/statements/for-of/dstr/obj-id-simple-strict.js:
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/obj-prop-nested-array-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/obj-prop-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/obj-rest-not-last-element-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/head-decl-no-expr.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/head-expr-no-expr.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/head-lhs-cover-non-asnmt-trgt.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/head-lhs-invalid-asnmt-ptrn-ary.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/head-lhs-invalid-asnmt-ptrn-obj.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/head-lhs-non-asnmt-trgt.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/head-var-no-expr.js:

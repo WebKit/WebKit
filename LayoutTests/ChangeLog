@@ -1,5 +1,18 @@
 2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] for-of / for-in left-hand-side target should be simple-assignment-target
+        https://bugs.webkit.org/show_bug.cgi?id=215969
+
+        Reviewed by Ross Kirsling.
+
+        Fix for-in / for-of parser behavior.
+
+        * js/basic-strict-mode-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
+2020-08-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] super property with new should be accepted
         https://bugs.webkit.org/show_bug.cgi?id=215966
 

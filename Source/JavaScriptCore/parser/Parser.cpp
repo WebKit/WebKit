@@ -1542,6 +1542,8 @@ enumerationLoop:
         popLexicalScopeIfNecessary();
         return result;
     }
+
+    semanticFailIfFalse(isSimpleAssignmentTarget(context, decls), "Left side of assignment is not a reference");
     if (isOfEnumeration)
         result = context.createForOfLoop(isAwaitFor, location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
     else {
