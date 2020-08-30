@@ -1,3 +1,23 @@
+2020-08-29  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] MediaSample JSON strings are created for logging to disabled channels
+        https://bugs.webkit.org/show_bug.cgi?id=215980
+        <rdar://problem/68004132>
+
+        Reviewed by Simon Fraser.
+
+        On platforms that USE(OS_LOG), DEBUG_LOG() evaluates its arguments even in production
+        builds. In SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(), one DEBUG_LOG() call
+        involved creating a non-trivial JSON object describing a MediaSample then converting that to
+        a JSON string. This string was created even when debug logging was disabled at runtime.
+        Profiles showed this cost half a millisecond per second of video playback on netflix.com in
+        Safari on a MacBook Pro.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID): Rather than calling
+        MediaSample::toJSONString() directly, let the LogArgument<MediaSample> specialization call
+        toJSONString() iff the log channel is enabled.
+
 2020-08-29  Sam Weinig  <weinig@apple.com>
 
         Move PerformanceMonitor related DeprecatedGlobalSettings to Settings
