@@ -196,8 +196,8 @@ PASS U+2113 ℓ %A7%A4
 PASS U+2116 № %A2%E0 
 PASS U+2121 ℡ %A2%E5 
 PASS U+2122 ™ %A2%E2 
-FAIL U+2126 Ω %A7%D9 assert_equals: expected "%A7%D9" but got "%A5%D8"
-FAIL U+212B Å %A1%CA assert_equals: expected "%A1%CA" but got "%41"
+PASS U+2126 Ω %A7%D9 
+PASS U+212B Å %A1%CA 
 PASS U+2153 ⅓ %A8%F7 
 PASS U+2154 ⅔ %A8%F8 
 PASS U+215B ⅛ %A8%FB 
@@ -16679,274 +16679,274 @@ PASS U+D7A0 힠 %C6%4F
 PASS U+D7A1 힡 %C6%50 
 PASS U+D7A2 힢 %C6%51 
 PASS U+D7A3 힣 %C6%52 
-FAIL U+F900 豈 %CB%D0 assert_equals: expected "%CB%D0" but got "%D1%C2"
-FAIL U+F901 更 %CB%D6 assert_equals: expected "%CB%D6" but got "%CC%DA"
-FAIL U+F902 車 %CB%E7 assert_equals: expected "%CB%E7" but got "%F3%B3"
-FAIL U+F903 賈 %CD%CF assert_equals: expected "%CD%CF" but got "%CA%B9"
-FAIL U+F904 滑 %CD%E8 assert_equals: expected "%CD%E8" but got "%FC%C1"
-FAIL U+F905 串 %CE%AD assert_equals: expected "%CE%AD" but got "%CD%FA"
-FAIL U+F906 句 %CF%FB assert_equals: expected "%CF%FB" but got "%CF%A3"
-FAIL U+F907 龜 %D0%A2 assert_equals: expected "%D0%A2" but got "%CF%CF"
-FAIL U+F908 龜 %D0%B8 assert_equals: expected "%D0%B8" but got "%CF%CF"
-FAIL U+F909 契 %D0%D0 assert_equals: expected "%D0%D0" but got "%CC%F8"
-FAIL U+F90A 金 %D0%DD assert_equals: expected "%D0%DD" but got "%D1%D1"
-FAIL U+F90B 喇 %D1%D4 assert_equals: expected "%D1%D4" but got "%D4%FA"
-FAIL U+F90C 奈 %D1%D5 assert_equals: expected "%D1%D5" but got "%D2%AF"
-FAIL U+F90D 懶 %D1%D8 assert_equals: expected "%D1%D8" but got "%D4%FB"
-FAIL U+F90E 癩 %D1%DB assert_equals: expected "%D1%DB" but got "%D4%FD"
-FAIL U+F90F 羅 %D1%DC assert_equals: expected "%D1%DC" but got "%D4%FE"
-FAIL U+F910 蘿 %D1%DD assert_equals: expected "%D1%DD" but got "%D5%A1"
-FAIL U+F911 螺 %D1%DE assert_equals: expected "%D1%DE" but got "%D5%A2"
-FAIL U+F912 裸 %D1%DF assert_equals: expected "%D1%DF" but got "%D5%A3"
-FAIL U+F913 邏 %D1%E0 assert_equals: expected "%D1%E0" but got "%D5%A4"
-FAIL U+F914 樂 %D1%E2 assert_equals: expected "%D1%E2" but got "%E4%C5"
-FAIL U+F915 洛 %D1%E3 assert_equals: expected "%D1%E3" but got "%D5%A6"
-FAIL U+F916 烙 %D1%E4 assert_equals: expected "%D1%E4" but got "%D5%A7"
-FAIL U+F917 珞 %D1%E5 assert_equals: expected "%D1%E5" but got "%D5%A8"
-FAIL U+F918 落 %D1%E6 assert_equals: expected "%D1%E6" but got "%D5%AA"
-FAIL U+F919 酪 %D1%E8 assert_equals: expected "%D1%E8" but got "%D5%AC"
-FAIL U+F91A 駱 %D1%E9 assert_equals: expected "%D1%E9" but got "%D5%AD"
-FAIL U+F91B 亂 %D1%EA assert_equals: expected "%D1%EA" but got "%D5%AF"
-FAIL U+F91C 卵 %D1%EB assert_equals: expected "%D1%EB" but got "%D5%B0"
-FAIL U+F91D 欄 %D1%ED assert_equals: expected "%D1%ED" but got "%D5%B1"
-FAIL U+F91E 爛 %D1%EF assert_equals: expected "%D1%EF" but got "%D5%B4"
-FAIL U+F91F 蘭 %D1%F0 assert_equals: expected "%D1%F0" but got "%D5%B5"
-FAIL U+F920 鸞 %D1%F2 assert_equals: expected "%D1%F2" but got "%D5%B6"
-FAIL U+F921 嵐 %D1%F6 assert_equals: expected "%D1%F6" but got "%D5%B9"
-FAIL U+F922 濫 %D1%FA assert_equals: expected "%D1%FA" but got "%D5%BD"
-FAIL U+F923 藍 %D1%FC assert_equals: expected "%D1%FC" but got "%D5%C0"
-FAIL U+F924 襤 %D1%FD assert_equals: expected "%D1%FD" but got "%D5%C1"
-FAIL U+F925 拉 %D1%FE assert_equals: expected "%D1%FE" but got "%D5%C3"
-FAIL U+F926 臘 %D2%A2 assert_equals: expected "%D2%A2" but got "%D5%C4"
-FAIL U+F927 蠟 %D2%A3 assert_equals: expected "%D2%A3" but got "%D5%C5"
-FAIL U+F928 廊 %D2%A7 assert_equals: expected "%D2%A7" but got "%D5%C6"
-FAIL U+F929 朗 %D2%A8 assert_equals: expected "%D2%A8" but got "%D5%C7"
-FAIL U+F92A 浪 %D2%A9 assert_equals: expected "%D2%A9" but got "%D5%C8"
-FAIL U+F92B 狼 %D2%AA assert_equals: expected "%D2%AA" but got "%D5%C9"
-FAIL U+F92C 郎 %D2%AB assert_equals: expected "%D2%AB" but got "%26%23%33%37%30%37%30%3B"
-FAIL U+F92D 來 %D2%AD assert_equals: expected "%D2%AD" but got "%D5%CE"
-FAIL U+F92E 冷 %D2%B2 assert_equals: expected "%D2%B2" but got "%D5%D2"
-FAIL U+F92F 勞 %D2%BE assert_equals: expected "%D2%BE" but got "%D6%CC"
-FAIL U+F930 擄 %D2%C2 assert_equals: expected "%D2%C2" but got "%D6%CF"
-FAIL U+F931 櫓 %D2%C3 assert_equals: expected "%D2%C3" but got "%D6%D0"
-FAIL U+F932 爐 %D2%C4 assert_equals: expected "%D2%C4" but got "%D6%D3"
-FAIL U+F933 盧 %D2%C6 assert_equals: expected "%D2%C6" but got "%D6%D4"
-FAIL U+F934 老 %D2%C7 assert_equals: expected "%D2%C7" but got "%D6%D5"
-FAIL U+F935 蘆 %D2%C8 assert_equals: expected "%D2%C8" but got "%D6%D6"
-FAIL U+F936 虜 %D2%C9 assert_equals: expected "%D2%C9" but got "%D6%D7"
-FAIL U+F937 路 %D2%CA assert_equals: expected "%D2%CA" but got "%D6%D8"
-FAIL U+F938 露 %D2%CB assert_equals: expected "%D2%CB" but got "%D6%DA"
-FAIL U+F939 魯 %D2%CD assert_equals: expected "%D2%CD" but got "%D6%DB"
-FAIL U+F93A 鷺 %D2%CE assert_equals: expected "%D2%CE" but got "%D6%DC"
-FAIL U+F93B 碌 %D2%CF assert_equals: expected "%D2%CF" but got "%D6%DE"
-FAIL U+F93C 祿 %D2%D0 assert_equals: expected "%D2%D0" but got "%D6%DF"
-FAIL U+F93D 綠 %D2%D1 assert_equals: expected "%D2%D1" but got "%D6%E0"
-FAIL U+F93E 菉 %D2%D2 assert_equals: expected "%D2%D2" but got "%D6%E1"
-FAIL U+F93F 錄 %D2%D3 assert_equals: expected "%D2%D3" but got "%D6%E2"
-FAIL U+F940 鹿 %D2%D4 assert_equals: expected "%D2%D4" but got "%D6%E3"
-FAIL U+F941 論 %D2%D5 assert_equals: expected "%D2%D5" but got "%D6%E5"
-FAIL U+F942 壟 %D2%D6 assert_equals: expected "%D2%D6" but got "%D6%E6"
-FAIL U+F943 弄 %D2%D7 assert_equals: expected "%D2%D7" but got "%D6%E7"
-FAIL U+F944 籠 %D2%D9 assert_equals: expected "%D2%D9" but got "%D6%EB"
-FAIL U+F945 聾 %D2%DA assert_equals: expected "%D2%DA" but got "%D6%EC"
-FAIL U+F946 牢 %D2%DE assert_equals: expected "%D2%DE" but got "%D6%EF"
-FAIL U+F947 磊 %D2%DF assert_equals: expected "%D2%DF" but got "%D6%F0"
-FAIL U+F948 賂 %D2%E1 assert_equals: expected "%D2%E1" but got "%D6%F1"
-FAIL U+F949 雷 %D2%E2 assert_equals: expected "%D2%E2" but got "%D6%F4"
-FAIL U+F94A 壘 %D2%E4 assert_equals: expected "%D2%E4" but got "%D7%A4"
-FAIL U+F94B 屢 %D2%E5 assert_equals: expected "%D2%E5" but got "%D7%A6"
-FAIL U+F94C 樓 %D2%E6 assert_equals: expected "%D2%E6" but got "%D7%A7"
-FAIL U+F94D 淚 %D2%E7 assert_equals: expected "%D2%E7" but got "%D7%A8"
-FAIL U+F94E 漏 %D2%E8 assert_equals: expected "%D2%E8" but got "%D7%A9"
-FAIL U+F94F 累 %D2%E9 assert_equals: expected "%D2%E9" but got "%D7%AB"
-FAIL U+F950 縷 %D2%EA assert_equals: expected "%D2%EA" but got "%D7%AC"
-FAIL U+F951 陋 %D2%EB assert_equals: expected "%D2%EB" but got "%D7%B0"
-FAIL U+F952 勒 %D2%F0 assert_equals: expected "%D2%F0" but got "%D7%CD"
-FAIL U+F953 肋 %D2%F1 assert_equals: expected "%D2%F1" but got "%D7%CE"
-FAIL U+F954 凜 %D2%F2 assert_equals: expected "%D2%F2" but got "%D7%CF"
-FAIL U+F955 凌 %D2%F3 assert_equals: expected "%D2%F3" but got "%D7%D0"
-FAIL U+F956 稜 %D2%F4 assert_equals: expected "%D2%F4" but got "%D7%D2"
-FAIL U+F957 綾 %D2%F5 assert_equals: expected "%D2%F5" but got "%D7%D3"
-FAIL U+F958 菱 %D2%F7 assert_equals: expected "%D2%F7" but got "%D7%D4"
-FAIL U+F959 陵 %D2%F8 assert_equals: expected "%D2%F8" but got "%D7%D5"
-FAIL U+F95A 讀 %D4%E6 assert_equals: expected "%D4%E6" but got "%D4%C1"
-FAIL U+F95B 拏 %D4%FC assert_equals: expected "%D4%FC" but got "%D1%D9"
-FAIL U+F95C 樂 %D5%A5 assert_equals: expected "%D5%A5" but got "%E4%C5"
-FAIL U+F95D 諾 %D5%AB assert_equals: expected "%D5%AB" but got "%D1%E7"
-FAIL U+F95E 丹 %D5%AE assert_equals: expected "%D5%AE" but got "%D3%A1"
-FAIL U+F95F 寧 %D6%B8 assert_equals: expected "%D6%B8" but got "%D2%BB"
-FAIL U+F960 怒 %D6%CD assert_equals: expected "%D6%CD" but got "%D2%C1"
-FAIL U+F961 率 %D7%CB assert_equals: expected "%D7%CB" but got "%E1%E3"
-FAIL U+F962 異 %D7%E4 assert_equals: expected "%D7%E4" but got "%EC%B6"
-FAIL U+F963 北 %DB%C5 assert_equals: expected "%DB%C5" but got "%DD%C1"
-FAIL U+F964 磻 %DB%E4 assert_equals: expected "%DB%E4" but got "%DA%F2"
-FAIL U+F965 便 %DC%A5 assert_equals: expected "%DC%A5" but got "%F8%B5"
-FAIL U+F966 復 %DD%A5 assert_equals: expected "%DD%A5" but got "%DC%D6"
-FAIL U+F967 不 %DD%D5 assert_equals: expected "%DD%D5" but got "%DC%F4"
-FAIL U+F968 泌 %DD%F4 assert_equals: expected "%DD%F4" but got "%F9%B2"
-FAIL U+F969 數 %DE%FC assert_equals: expected "%DE%FC" but got "%E2%A6"
-FAIL U+F96A 索 %DE%FE assert_equals: expected "%DE%FE" but got "%DF%E3"
-FAIL U+F96B 參 %DF%B3 assert_equals: expected "%DF%B3" but got "%F3%D1"
-FAIL U+F96C 塞 %DF%E1 assert_equals: expected "%DF%E1" but got "%DF%DD"
-FAIL U+F96D 省 %DF%E8 assert_equals: expected "%DF%E8" but got "%E0%FD"
-FAIL U+F96E 葉 %E0%F1 assert_equals: expected "%E0%F1" but got "%E7%A8"
-FAIL U+F96F 說 %E1%AD assert_equals: expected "%E1%AD" but got "%E0%E3"
-FAIL U+F970 殺 %E1%ED assert_equals: expected "%E1%ED" but got "%DF%AF"
-FAIL U+F971 辰 %E3%F5 assert_equals: expected "%E3%F5" but got "%F2%E3"
-FAIL U+F972 沈 %E4%A1 assert_equals: expected "%E4%A1" but got "%F6%D8"
-FAIL U+F973 拾 %E4%A9 assert_equals: expected "%E4%A9" but got "%E3%A6"
-FAIL U+F974 若 %E5%AE assert_equals: expected "%E5%AE" but got "%E5%B4"
-FAIL U+F975 掠 %E5%B1 assert_equals: expected "%E5%B1" but got "%D5%D3"
-FAIL U+F976 略 %E5%B2 assert_equals: expected "%E5%B2" but got "%D5%D4"
-FAIL U+F977 亮 %E5%B9 assert_equals: expected "%E5%B9" but got "%D5%D5"
-FAIL U+F978 兩 %E5%BB assert_equals: expected "%E5%BB" but got "%D5%D7"
-FAIL U+F979 凉 %E5%BC assert_equals: expected "%E5%BC" but got "%D5%D8"
-FAIL U+F97A 梁 %E5%C4 assert_equals: expected "%E5%C4" but got "%D5%D9"
-FAIL U+F97B 糧 %E5%CE assert_equals: expected "%E5%CE" but got "%D5%DD"
-FAIL U+F97C 良 %E5%D0 assert_equals: expected "%E5%D0" but got "%D5%DE"
-FAIL U+F97D 諒 %E5%D2 assert_equals: expected "%E5%D2" but got "%D5%DF"
-FAIL U+F97E 量 %E5%D6 assert_equals: expected "%E5%D6" but got "%D5%E1"
-FAIL U+F97F 勵 %E5%FA assert_equals: expected "%E5%FA" but got "%D5%E4"
-FAIL U+F980 呂 %E5%FB assert_equals: expected "%E5%FB" but got "%D5%E5"
-FAIL U+F981 女 %E5%FC assert_equals: expected "%E5%FC" but got "%D2%B3"
-FAIL U+F982 廬 %E5%FE assert_equals: expected "%E5%FE" but got "%D5%E6"
-FAIL U+F983 旅 %E6%A1 assert_equals: expected "%E6%A1" but got "%D5%E9"
-FAIL U+F984 濾 %E6%A4 assert_equals: expected "%E6%A4" but got "%D5%EB"
-FAIL U+F985 礪 %E6%A7 assert_equals: expected "%E6%A7" but got "%D5%EC"
-FAIL U+F986 閭 %E6%AD assert_equals: expected "%E6%AD" but got "%D5%EF"
-FAIL U+F987 驪 %E6%AF assert_equals: expected "%E6%AF" but got "%D5%F1"
-FAIL U+F988 麗 %E6%B0 assert_equals: expected "%E6%B0" but got "%D5%F2"
-FAIL U+F989 黎 %E6%B1 assert_equals: expected "%E6%B1" but got "%D5%F3"
-FAIL U+F98A 力 %E6%B3 assert_equals: expected "%E6%B3" but got "%D5%F4"
-FAIL U+F98B 曆 %E6%B7 assert_equals: expected "%E6%B7" but got "%D5%F5"
-FAIL U+F98C 歷 %E6%B8 assert_equals: expected "%E6%B8" but got "%D5%F6"
-FAIL U+F98D 轢 %E6%BC assert_equals: expected "%E6%BC" but got "%D5%F9"
-FAIL U+F98E 年 %E6%C4 assert_equals: expected "%E6%C4" but got "%D2%B4"
-FAIL U+F98F 憐 %E6%C6 assert_equals: expected "%E6%C6" but got "%D5%FB"
-FAIL U+F990 戀 %E6%C7 assert_equals: expected "%E6%C7" but got "%D5%FC"
-FAIL U+F991 撚 %E6%CA assert_equals: expected "%E6%CA" but got "%D2%B5"
-FAIL U+F992 漣 %E6%D2 assert_equals: expected "%E6%D2" but got "%D5%FE"
-FAIL U+F993 煉 %E6%D6 assert_equals: expected "%E6%D6" but got "%D6%A1"
-FAIL U+F994 璉 %E6%D9 assert_equals: expected "%E6%D9" but got "%D6%A2"
-FAIL U+F995 秊 %E6%DC assert_equals: expected "%E6%DC" but got "%D2%B6"
-FAIL U+F996 練 %E6%DF assert_equals: expected "%E6%DF" but got "%D6%A3"
-FAIL U+F997 聯 %E6%E1 assert_equals: expected "%E6%E1" but got "%D6%A4"
-FAIL U+F998 輦 %E6%E4 assert_equals: expected "%E6%E4" but got "%D6%A6"
-FAIL U+F999 蓮 %E6%E5 assert_equals: expected "%E6%E5" but got "%D6%A5"
-FAIL U+F99A 連 %E6%E6 assert_equals: expected "%E6%E6" but got "%D6%A7"
-FAIL U+F99B 鍊 %E6%E8 assert_equals: expected "%E6%E8" but got "%D6%A8"
-FAIL U+F99C 列 %E6%EA assert_equals: expected "%E6%EA" but got "%D6%AA"
-FAIL U+F99D 劣 %E6%EB assert_equals: expected "%E6%EB" but got "%D6%AB"
-FAIL U+F99E 咽 %E6%EC assert_equals: expected "%E6%EC" but got "%EC%D6"
-FAIL U+F99F 烈 %E6%EF assert_equals: expected "%E6%EF" but got "%D6%AD"
-FAIL U+F9A0 裂 %E6%F1 assert_equals: expected "%E6%F1" but got "%D6%AE"
-FAIL U+F9A1 說 %E6%F2 assert_equals: expected "%E6%F2" but got "%E0%E3"
-FAIL U+F9A2 廉 %E6%F5 assert_equals: expected "%E6%F5" but got "%D6%AF"
-FAIL U+F9A3 念 %E6%F6 assert_equals: expected "%E6%F6" but got "%D2%B7"
-FAIL U+F9A4 捻 %E6%F7 assert_equals: expected "%E6%F7" but got "%D2%BA"
-FAIL U+F9A5 殮 %E6%F9 assert_equals: expected "%E6%F9" but got "%D6%B1"
-FAIL U+F9A6 簾 %E7%A1 assert_equals: expected "%E7%A1" but got "%D6%B3"
-FAIL U+F9A7 獵 %E7%A6 assert_equals: expected "%E7%A6" but got "%D6%B4"
-FAIL U+F9A8 令 %E7%A9 assert_equals: expected "%E7%A9" but got "%D6%B5"
-FAIL U+F9A9 囹 %E7%AA assert_equals: expected "%E7%AA" but got "%D6%B7"
-FAIL U+F9AA 寧 %E7%AC assert_equals: expected "%E7%AC" but got "%D2%BB"
-FAIL U+F9AB 嶺 %E7%AD assert_equals: expected "%E7%AD" but got "%D6%BA"
-FAIL U+F9AC 怜 %E7%B0 assert_equals: expected "%E7%B0" but got "%D6%BB"
-FAIL U+F9AD 玲 %E7%BF assert_equals: expected "%E7%BF" but got "%D6%BC"
-FAIL U+F9AE 瑩 %E7%C1 assert_equals: expected "%E7%C1" but got "%FB%A9"
-FAIL U+F9AF 羚 %E7%C6 assert_equals: expected "%E7%C6" but got "%D6%BE"
-FAIL U+F9B0 聆 %E7%C7 assert_equals: expected "%E7%C7" but got "%D6%C0"
-FAIL U+F9B1 鈴 %E7%CB assert_equals: expected "%E7%CB" but got "%D6%C2"
-FAIL U+F9B2 零 %E7%CD assert_equals: expected "%E7%CD" but got "%D6%C3"
-FAIL U+F9B3 靈 %E7%CF assert_equals: expected "%E7%CF" but got "%D6%C4"
-FAIL U+F9B4 領 %E7%D0 assert_equals: expected "%E7%D0" but got "%D6%C5"
-FAIL U+F9B5 例 %E7%D3 assert_equals: expected "%E7%D3" but got "%D6%C7"
-FAIL U+F9B6 禮 %E7%DF assert_equals: expected "%E7%DF" but got "%D6%C9"
-FAIL U+F9B7 醴 %E7%E4 assert_equals: expected "%E7%E4" but got "%D6%CA"
-FAIL U+F9B8 隸 %E7%E6 assert_equals: expected "%E7%E6" but got "%26%23%33%38%35%38%34%3B"
-FAIL U+F9B9 惡 %E7%F7 assert_equals: expected "%E7%F7" but got "%E4%C2"
-FAIL U+F9BA 了 %E8%E7 assert_equals: expected "%E8%E7" but got "%D6%F5"
-FAIL U+F9BB 僚 %E8%E8 assert_equals: expected "%E8%E8" but got "%D6%F6"
-FAIL U+F9BC 寮 %E8%F0 assert_equals: expected "%E8%F0" but got "%D6%F7"
-FAIL U+F9BD 尿 %E8%F1 assert_equals: expected "%E8%F1" but got "%D2%E3"
-FAIL U+F9BE 料 %E8%F7 assert_equals: expected "%E8%F7" but got "%D6%F9"
-FAIL U+F9BF 樂 %E8%F9 assert_equals: expected "%E8%F9" but got "%E4%C5"
-FAIL U+F9C0 燎 %E8%FB assert_equals: expected "%E8%FB" but got "%D6%FA"
-FAIL U+F9C1 療 %E8%FE assert_equals: expected "%E8%FE" but got "%D6%FB"
-FAIL U+F9C2 蓼 %E9%A7 assert_equals: expected "%E9%A7" but got "%D6%FE"
-FAIL U+F9C3 遼 %E9%AC assert_equals: expected "%E9%AC" but got "%D7%A1"
-FAIL U+F9C4 龍 %E9%CC assert_equals: expected "%E9%CC" but got "%D7%A3"
-FAIL U+F9C5 暈 %E9%F7 assert_equals: expected "%E9%F7" but got "%FD%BB"
-FAIL U+F9C6 阮 %EA%C1 assert_equals: expected "%EA%C1" but got "%E8%D6"
-FAIL U+F9C7 劉 %EA%E5 assert_equals: expected "%EA%E5" but got "%D7%B1"
-FAIL U+F9C8 杻 %EA%F4 assert_equals: expected "%EA%F4" but got "%D2%EE"
-FAIL U+F9C9 柳 %EA%F7 assert_equals: expected "%EA%F7" but got "%D7%B3"
-FAIL U+F9CA 流 %EA%FC assert_equals: expected "%EA%FC" but got "%D7%B5"
-FAIL U+F9CB 溜 %EA%FE assert_equals: expected "%EA%FE" but got "%D7%B6"
-FAIL U+F9CC 琉 %EB%A4 assert_equals: expected "%EB%A4" but got "%D7%B8"
-FAIL U+F9CD 留 %EB%A7 assert_equals: expected "%EB%A7" but got "%D7%BA"
-FAIL U+F9CE 硫 %EB%A9 assert_equals: expected "%EB%A9" but got "%D7%BC"
-FAIL U+F9CF 紐 %EB%AA assert_equals: expected "%EB%AA" but got "%D2%EF"
-FAIL U+F9D0 類 %EB%BA assert_equals: expected "%EB%BA" but got "%D7%BE"
-FAIL U+F9D1 六 %EB%BB assert_equals: expected "%EB%BB" but got "%D7%BF"
-FAIL U+F9D2 戮 %EB%BD assert_equals: expected "%EB%BD" but got "%D7%C0"
-FAIL U+F9D3 陸 %EB%C1 assert_equals: expected "%EB%C1" but got "%D7%C1"
-FAIL U+F9D4 倫 %EB%C2 assert_equals: expected "%EB%C2" but got "%D7%C3"
-FAIL U+F9D5 崙 %EB%C6 assert_equals: expected "%EB%C6" but got "%D7%C4"
-FAIL U+F9D6 淪 %EB%C7 assert_equals: expected "%EB%C7" but got "%D7%C5"
-FAIL U+F9D7 輪 %EB%CC assert_equals: expected "%EB%CC" but got "%D7%C7"
-FAIL U+F9D8 律 %EB%CF assert_equals: expected "%EB%CF" but got "%D7%C8"
-FAIL U+F9D9 慄 %EB%D0 assert_equals: expected "%EB%D0" but got "%D7%C9"
-FAIL U+F9DA 栗 %EB%D1 assert_equals: expected "%EB%D1" but got "%D7%CA"
-FAIL U+F9DB 率 %EB%D2 assert_equals: expected "%EB%D2" but got "%E1%E3"
-FAIL U+F9DC 隆 %EB%D8 assert_equals: expected "%EB%D8" but got "%D7%CC"
-FAIL U+F9DD 利 %EC%A6 assert_equals: expected "%EC%A6" but got "%D7%D7"
-FAIL U+F9DE 吏 %EC%A7 assert_equals: expected "%EC%A7" but got "%D7%D9"
-FAIL U+F9DF 履 %EC%AA assert_equals: expected "%EC%AA" but got "%D7%DB"
-FAIL U+F9E0 易 %EC%AF assert_equals: expected "%EC%AF" but got "%E6%B6"
-FAIL U+F9E1 李 %EC%B0 assert_equals: expected "%EC%B0" but got "%D7%DD"
-FAIL U+F9E2 梨 %EC%B1 assert_equals: expected "%EC%B1" but got "%D7%DE"
-FAIL U+F9E3 泥 %EC%B2 assert_equals: expected "%EC%B2" but got "%D2%FA"
-FAIL U+F9E4 理 %EC%B5 assert_equals: expected "%EC%B5" but got "%D7%E2"
-FAIL U+F9E5 痢 %EC%B8 assert_equals: expected "%EC%B8" but got "%D7%E5"
-FAIL U+F9E6 罹 %EC%BA assert_equals: expected "%EC%BA" but got "%D7%E7"
-FAIL U+F9E7 裏 %EC%C0 assert_equals: expected "%EC%C0" but got "%D7%EA"
-FAIL U+F9E8 裡 %EC%C1 assert_equals: expected "%EC%C1" but got "%D7%EB"
-FAIL U+F9E9 里 %EC%C5 assert_equals: expected "%EC%C5" but got "%D7%EC"
-FAIL U+F9EA 離 %EC%C6 assert_equals: expected "%EC%C6" but got "%D7%EE"
-FAIL U+F9EB 匿 %EC%C9 assert_equals: expected "%EC%C9" but got "%D2%FB"
-FAIL U+F9EC 溺 %EC%CA assert_equals: expected "%EC%CA" but got "%D2%FC"
-FAIL U+F9ED 吝 %EC%D5 assert_equals: expected "%EC%D5" but got "%D7%F0"
-FAIL U+F9EE 燐 %EC%DD assert_equals: expected "%EC%DD" but got "%D7%F2"
-FAIL U+F9EF 璘 %EC%DE assert_equals: expected "%EC%DE" but got "%D7%F3"
-FAIL U+F9F0 藺 %EC%E1 assert_equals: expected "%EC%E1" but got "%D7%F4"
-FAIL U+F9F1 隣 %EC%E4 assert_equals: expected "%EC%E4" but got "%D7%F6"
-FAIL U+F9F2 鱗 %EC%E7 assert_equals: expected "%EC%E7" but got "%D7%F7"
-FAIL U+F9F3 麟 %EC%E8 assert_equals: expected "%EC%E8" but got "%D7%F8"
-FAIL U+F9F4 林 %EC%F7 assert_equals: expected "%EC%F7" but got "%D7%F9"
-FAIL U+F9F5 淋 %EC%F8 assert_equals: expected "%EC%F8" but got "%D7%FA"
-FAIL U+F9F6 臨 %EC%FA assert_equals: expected "%EC%FA" but got "%D7%FC"
-FAIL U+F9F7 立 %ED%A1 assert_equals: expected "%ED%A1" but got "%D8%A1"
-FAIL U+F9F8 笠 %ED%A2 assert_equals: expected "%ED%A2" but got "%D8%A2"
-FAIL U+F9F9 粒 %ED%A3 assert_equals: expected "%ED%A3" but got "%D8%A3"
-FAIL U+F9FA 狀 %ED%EE assert_equals: expected "%ED%EE" but got "%DF%D2"
-FAIL U+F9FB 炙 %EE%DB assert_equals: expected "%EE%DB" but got "%ED%B3"
-FAIL U+F9FC 識 %F2%BD assert_equals: expected "%F2%BD" but got "%E3%DB"
-FAIL U+F9FD 什 %F2%FA assert_equals: expected "%F2%FA" but got "%E4%A7"
-FAIL U+F9FE 茶 %F3%B1 assert_equals: expected "%F3%B1" but got "%D2%FE"
-FAIL U+F9FF 刺 %F4%A7 assert_equals: expected "%F4%A7" but got "%ED%A9"
-FAIL U+FA00 切 %F4%EE assert_equals: expected "%F4%EE" but got "%EF%B7"
-FAIL U+FA01 度 %F6%F4 assert_equals: expected "%F6%F4" but got "%D3%F8"
-FAIL U+FA02 拓 %F6%F6 assert_equals: expected "%F6%F6" but got "%F4%AC"
-FAIL U+FA03 糖 %F7%B8 assert_equals: expected "%F7%B8" but got "%D3%D8"
-FAIL U+FA04 宅 %F7%C8 assert_equals: expected "%F7%C8" but got "%D3%EB"
-FAIL U+FA05 洞 %F7%D3 assert_equals: expected "%F7%D3" but got "%D4%D7"
-FAIL U+FA06 暴 %F8%DB assert_equals: expected "%F8%DB" but got "%F8%EC"
-FAIL U+FA07 輻 %F8%F0 assert_equals: expected "%F8%F0" but got "%DC%DF"
-FAIL U+FA08 行 %FA%A1 assert_equals: expected "%FA%A1" but got "%FA%BC"
-FAIL U+FA09 降 %FA%A2 assert_equals: expected "%FA%A2" but got "%CB%BD"
-FAIL U+FA0A 見 %FA%E6 assert_equals: expected "%FA%E6" but got "%CC%B8"
-FAIL U+FA0B 廓 %FC%A9 assert_equals: expected "%FC%A9" but got "%CE%A9"
+PASS U+F900 豈 %CB%D0 
+PASS U+F901 更 %CB%D6 
+PASS U+F902 車 %CB%E7 
+PASS U+F903 賈 %CD%CF 
+PASS U+F904 滑 %CD%E8 
+PASS U+F905 串 %CE%AD 
+PASS U+F906 句 %CF%FB 
+PASS U+F907 龜 %D0%A2 
+PASS U+F908 龜 %D0%B8 
+PASS U+F909 契 %D0%D0 
+PASS U+F90A 金 %D0%DD 
+PASS U+F90B 喇 %D1%D4 
+PASS U+F90C 奈 %D1%D5 
+PASS U+F90D 懶 %D1%D8 
+PASS U+F90E 癩 %D1%DB 
+PASS U+F90F 羅 %D1%DC 
+PASS U+F910 蘿 %D1%DD 
+PASS U+F911 螺 %D1%DE 
+PASS U+F912 裸 %D1%DF 
+PASS U+F913 邏 %D1%E0 
+PASS U+F914 樂 %D1%E2 
+PASS U+F915 洛 %D1%E3 
+PASS U+F916 烙 %D1%E4 
+PASS U+F917 珞 %D1%E5 
+PASS U+F918 落 %D1%E6 
+PASS U+F919 酪 %D1%E8 
+PASS U+F91A 駱 %D1%E9 
+PASS U+F91B 亂 %D1%EA 
+PASS U+F91C 卵 %D1%EB 
+PASS U+F91D 欄 %D1%ED 
+PASS U+F91E 爛 %D1%EF 
+PASS U+F91F 蘭 %D1%F0 
+PASS U+F920 鸞 %D1%F2 
+PASS U+F921 嵐 %D1%F6 
+PASS U+F922 濫 %D1%FA 
+PASS U+F923 藍 %D1%FC 
+PASS U+F924 襤 %D1%FD 
+PASS U+F925 拉 %D1%FE 
+PASS U+F926 臘 %D2%A2 
+PASS U+F927 蠟 %D2%A3 
+PASS U+F928 廊 %D2%A7 
+PASS U+F929 朗 %D2%A8 
+PASS U+F92A 浪 %D2%A9 
+PASS U+F92B 狼 %D2%AA 
+PASS U+F92C 郎 %D2%AB 
+PASS U+F92D 來 %D2%AD 
+PASS U+F92E 冷 %D2%B2 
+PASS U+F92F 勞 %D2%BE 
+PASS U+F930 擄 %D2%C2 
+PASS U+F931 櫓 %D2%C3 
+PASS U+F932 爐 %D2%C4 
+PASS U+F933 盧 %D2%C6 
+PASS U+F934 老 %D2%C7 
+PASS U+F935 蘆 %D2%C8 
+PASS U+F936 虜 %D2%C9 
+PASS U+F937 路 %D2%CA 
+PASS U+F938 露 %D2%CB 
+PASS U+F939 魯 %D2%CD 
+PASS U+F93A 鷺 %D2%CE 
+PASS U+F93B 碌 %D2%CF 
+PASS U+F93C 祿 %D2%D0 
+PASS U+F93D 綠 %D2%D1 
+PASS U+F93E 菉 %D2%D2 
+PASS U+F93F 錄 %D2%D3 
+PASS U+F940 鹿 %D2%D4 
+PASS U+F941 論 %D2%D5 
+PASS U+F942 壟 %D2%D6 
+PASS U+F943 弄 %D2%D7 
+PASS U+F944 籠 %D2%D9 
+PASS U+F945 聾 %D2%DA 
+PASS U+F946 牢 %D2%DE 
+PASS U+F947 磊 %D2%DF 
+PASS U+F948 賂 %D2%E1 
+PASS U+F949 雷 %D2%E2 
+PASS U+F94A 壘 %D2%E4 
+PASS U+F94B 屢 %D2%E5 
+PASS U+F94C 樓 %D2%E6 
+PASS U+F94D 淚 %D2%E7 
+PASS U+F94E 漏 %D2%E8 
+PASS U+F94F 累 %D2%E9 
+PASS U+F950 縷 %D2%EA 
+PASS U+F951 陋 %D2%EB 
+PASS U+F952 勒 %D2%F0 
+PASS U+F953 肋 %D2%F1 
+PASS U+F954 凜 %D2%F2 
+PASS U+F955 凌 %D2%F3 
+PASS U+F956 稜 %D2%F4 
+PASS U+F957 綾 %D2%F5 
+PASS U+F958 菱 %D2%F7 
+PASS U+F959 陵 %D2%F8 
+PASS U+F95A 讀 %D4%E6 
+PASS U+F95B 拏 %D4%FC 
+PASS U+F95C 樂 %D5%A5 
+PASS U+F95D 諾 %D5%AB 
+PASS U+F95E 丹 %D5%AE 
+PASS U+F95F 寧 %D6%B8 
+PASS U+F960 怒 %D6%CD 
+PASS U+F961 率 %D7%CB 
+PASS U+F962 異 %D7%E4 
+PASS U+F963 北 %DB%C5 
+PASS U+F964 磻 %DB%E4 
+PASS U+F965 便 %DC%A5 
+PASS U+F966 復 %DD%A5 
+PASS U+F967 不 %DD%D5 
+PASS U+F968 泌 %DD%F4 
+PASS U+F969 數 %DE%FC 
+PASS U+F96A 索 %DE%FE 
+PASS U+F96B 參 %DF%B3 
+PASS U+F96C 塞 %DF%E1 
+PASS U+F96D 省 %DF%E8 
+PASS U+F96E 葉 %E0%F1 
+PASS U+F96F 說 %E1%AD 
+PASS U+F970 殺 %E1%ED 
+PASS U+F971 辰 %E3%F5 
+PASS U+F972 沈 %E4%A1 
+PASS U+F973 拾 %E4%A9 
+PASS U+F974 若 %E5%AE 
+PASS U+F975 掠 %E5%B1 
+PASS U+F976 略 %E5%B2 
+PASS U+F977 亮 %E5%B9 
+PASS U+F978 兩 %E5%BB 
+PASS U+F979 凉 %E5%BC 
+PASS U+F97A 梁 %E5%C4 
+PASS U+F97B 糧 %E5%CE 
+PASS U+F97C 良 %E5%D0 
+PASS U+F97D 諒 %E5%D2 
+PASS U+F97E 量 %E5%D6 
+PASS U+F97F 勵 %E5%FA 
+PASS U+F980 呂 %E5%FB 
+PASS U+F981 女 %E5%FC 
+PASS U+F982 廬 %E5%FE 
+PASS U+F983 旅 %E6%A1 
+PASS U+F984 濾 %E6%A4 
+PASS U+F985 礪 %E6%A7 
+PASS U+F986 閭 %E6%AD 
+PASS U+F987 驪 %E6%AF 
+PASS U+F988 麗 %E6%B0 
+PASS U+F989 黎 %E6%B1 
+PASS U+F98A 力 %E6%B3 
+PASS U+F98B 曆 %E6%B7 
+PASS U+F98C 歷 %E6%B8 
+PASS U+F98D 轢 %E6%BC 
+PASS U+F98E 年 %E6%C4 
+PASS U+F98F 憐 %E6%C6 
+PASS U+F990 戀 %E6%C7 
+PASS U+F991 撚 %E6%CA 
+PASS U+F992 漣 %E6%D2 
+PASS U+F993 煉 %E6%D6 
+PASS U+F994 璉 %E6%D9 
+PASS U+F995 秊 %E6%DC 
+PASS U+F996 練 %E6%DF 
+PASS U+F997 聯 %E6%E1 
+PASS U+F998 輦 %E6%E4 
+PASS U+F999 蓮 %E6%E5 
+PASS U+F99A 連 %E6%E6 
+PASS U+F99B 鍊 %E6%E8 
+PASS U+F99C 列 %E6%EA 
+PASS U+F99D 劣 %E6%EB 
+PASS U+F99E 咽 %E6%EC 
+PASS U+F99F 烈 %E6%EF 
+PASS U+F9A0 裂 %E6%F1 
+PASS U+F9A1 說 %E6%F2 
+PASS U+F9A2 廉 %E6%F5 
+PASS U+F9A3 念 %E6%F6 
+PASS U+F9A4 捻 %E6%F7 
+PASS U+F9A5 殮 %E6%F9 
+PASS U+F9A6 簾 %E7%A1 
+PASS U+F9A7 獵 %E7%A6 
+PASS U+F9A8 令 %E7%A9 
+PASS U+F9A9 囹 %E7%AA 
+PASS U+F9AA 寧 %E7%AC 
+PASS U+F9AB 嶺 %E7%AD 
+PASS U+F9AC 怜 %E7%B0 
+PASS U+F9AD 玲 %E7%BF 
+PASS U+F9AE 瑩 %E7%C1 
+PASS U+F9AF 羚 %E7%C6 
+PASS U+F9B0 聆 %E7%C7 
+PASS U+F9B1 鈴 %E7%CB 
+PASS U+F9B2 零 %E7%CD 
+PASS U+F9B3 靈 %E7%CF 
+PASS U+F9B4 領 %E7%D0 
+PASS U+F9B5 例 %E7%D3 
+PASS U+F9B6 禮 %E7%DF 
+PASS U+F9B7 醴 %E7%E4 
+PASS U+F9B8 隸 %E7%E6 
+PASS U+F9B9 惡 %E7%F7 
+PASS U+F9BA 了 %E8%E7 
+PASS U+F9BB 僚 %E8%E8 
+PASS U+F9BC 寮 %E8%F0 
+PASS U+F9BD 尿 %E8%F1 
+PASS U+F9BE 料 %E8%F7 
+PASS U+F9BF 樂 %E8%F9 
+PASS U+F9C0 燎 %E8%FB 
+PASS U+F9C1 療 %E8%FE 
+PASS U+F9C2 蓼 %E9%A7 
+PASS U+F9C3 遼 %E9%AC 
+PASS U+F9C4 龍 %E9%CC 
+PASS U+F9C5 暈 %E9%F7 
+PASS U+F9C6 阮 %EA%C1 
+PASS U+F9C7 劉 %EA%E5 
+PASS U+F9C8 杻 %EA%F4 
+PASS U+F9C9 柳 %EA%F7 
+PASS U+F9CA 流 %EA%FC 
+PASS U+F9CB 溜 %EA%FE 
+PASS U+F9CC 琉 %EB%A4 
+PASS U+F9CD 留 %EB%A7 
+PASS U+F9CE 硫 %EB%A9 
+PASS U+F9CF 紐 %EB%AA 
+PASS U+F9D0 類 %EB%BA 
+PASS U+F9D1 六 %EB%BB 
+PASS U+F9D2 戮 %EB%BD 
+PASS U+F9D3 陸 %EB%C1 
+PASS U+F9D4 倫 %EB%C2 
+PASS U+F9D5 崙 %EB%C6 
+PASS U+F9D6 淪 %EB%C7 
+PASS U+F9D7 輪 %EB%CC 
+PASS U+F9D8 律 %EB%CF 
+PASS U+F9D9 慄 %EB%D0 
+PASS U+F9DA 栗 %EB%D1 
+PASS U+F9DB 率 %EB%D2 
+PASS U+F9DC 隆 %EB%D8 
+PASS U+F9DD 利 %EC%A6 
+PASS U+F9DE 吏 %EC%A7 
+PASS U+F9DF 履 %EC%AA 
+PASS U+F9E0 易 %EC%AF 
+PASS U+F9E1 李 %EC%B0 
+PASS U+F9E2 梨 %EC%B1 
+PASS U+F9E3 泥 %EC%B2 
+PASS U+F9E4 理 %EC%B5 
+PASS U+F9E5 痢 %EC%B8 
+PASS U+F9E6 罹 %EC%BA 
+PASS U+F9E7 裏 %EC%C0 
+PASS U+F9E8 裡 %EC%C1 
+PASS U+F9E9 里 %EC%C5 
+PASS U+F9EA 離 %EC%C6 
+PASS U+F9EB 匿 %EC%C9 
+PASS U+F9EC 溺 %EC%CA 
+PASS U+F9ED 吝 %EC%D5 
+PASS U+F9EE 燐 %EC%DD 
+PASS U+F9EF 璘 %EC%DE 
+PASS U+F9F0 藺 %EC%E1 
+PASS U+F9F1 隣 %EC%E4 
+PASS U+F9F2 鱗 %EC%E7 
+PASS U+F9F3 麟 %EC%E8 
+PASS U+F9F4 林 %EC%F7 
+PASS U+F9F5 淋 %EC%F8 
+PASS U+F9F6 臨 %EC%FA 
+PASS U+F9F7 立 %ED%A1 
+PASS U+F9F8 笠 %ED%A2 
+PASS U+F9F9 粒 %ED%A3 
+PASS U+F9FA 狀 %ED%EE 
+PASS U+F9FB 炙 %EE%DB 
+PASS U+F9FC 識 %F2%BD 
+PASS U+F9FD 什 %F2%FA 
+PASS U+F9FE 茶 %F3%B1 
+PASS U+F9FF 刺 %F4%A7 
+PASS U+FA00 切 %F4%EE 
+PASS U+FA01 度 %F6%F4 
+PASS U+FA02 拓 %F6%F6 
+PASS U+FA03 糖 %F7%B8 
+PASS U+FA04 宅 %F7%C8 
+PASS U+FA05 洞 %F7%D3 
+PASS U+FA06 暴 %F8%DB 
+PASS U+FA07 輻 %F8%F0 
+PASS U+FA08 行 %FA%A1 
+PASS U+FA09 降 %FA%A2 
+PASS U+FA0A 見 %FA%E6 
+PASS U+FA0B 廓 %FC%A9 
 PASS U+FF01 ！ %A3%A1 
 PASS U+FF02 ＂ %A3%A2 
 PASS U+FF03 ＃ %A3%A3 

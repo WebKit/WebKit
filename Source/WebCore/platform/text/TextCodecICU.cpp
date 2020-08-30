@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextCodecICU.h"
 
+#include "EncodingTables.h"
 #include "TextEncoding.h"
 #include "TextEncodingRegistry.h"
 #include "ThreadGlobalData.h"
@@ -403,10 +404,106 @@ static void gbkCallbackSubstitute(const void* context, UConverterFromUnicodeArgs
     UCNV_FROM_U_CALLBACK_SUBSTITUTE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
 }
 
+// https://encoding.spec.whatwg.org/#euc-jp-encoder
+static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar, Vector<uint8_t>&)> unencodableHandler)
+{
+    Vector<uint8_t> result;
+    result.reserveInitialCapacity(string.length());
+
+    auto characters = string.upconvertedCharacters();
+    for (size_t i = 0; i < string.length(); ++i) {
+        UChar c = characters.get()[i];
+        if (isASCII(c)) {
+            result.append(c);
+            continue;
+        }
+        if (c == 0x00A5) {
+            result.append(0x5C);
+            continue;
+        }
+        if (c == 0x203E) {
+            result.append(0x7E);
+            continue;
+        }
+        if (c >= 0xFF61 && c <= 0xFF9F) {
+            result.append(0x8E);
+            result.append(c - 0xFF61 + 0xA1);
+            continue;
+        }
+        if (c == 0x2212)
+            c = 0xFF0D;
+        
+        auto pointerRange = std::equal_range(jis0208, jis0208 + WTF_ARRAY_LENGTH(jis0208), std::pair<UChar, UChar>(c, 0), [](const auto& a, const auto& b) {
+            return a.first < b.first;
+        });
+        if (pointerRange.first == pointerRange.second) {
+            unencodableHandler(c, result);
+            continue;
+        }
+        UChar pointer = (pointerRange.second - 1)->second;
+        result.append(pointer / 94 + 0xA1);
+        result.append(pointer % 94 + 0xA1);
+    }
+    return result;
+}
+
+static void uncheckedAppendDecimal(UChar c, Vector<uint8_t>& result)
+{
+    uint8_t buffer[5];
+    WTF::writeIntegerToBuffer(static_cast<uint16_t>(c), buffer);
+    result.append(buffer, WTF::lengthOfIntegerAsString(c));
+}
+
+static void urlEncodedEntityUnencodableHandler(UChar c, Vector<uint8_t>& result)
+{
+    result.reserveCapacity(result.size() + 14);
+    result.uncheckedAppend('%');
+    result.uncheckedAppend('2');
+    result.uncheckedAppend('6');
+    result.uncheckedAppend('%');
+    result.uncheckedAppend('2');
+    result.uncheckedAppend('3');
+    uncheckedAppendDecimal(c, result);
+    result.uncheckedAppend('%');
+    result.uncheckedAppend('3');
+    result.uncheckedAppend('B');
+}
+
+static void entityUnencodableHandler(UChar c, Vector<uint8_t>& result)
+{
+    result.reserveCapacity(result.size() + 8);
+    result.uncheckedAppend('&');
+    result.uncheckedAppend('#');
+    uncheckedAppendDecimal(c, result);
+    result.uncheckedAppend(';');
+}
+
+static void questionMarkUnencodableHandler(UChar, Vector<uint8_t>& result)
+{
+    result.append('?');
+}
+
+static Function<void(UChar, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling handling)
+{
+    switch (handling) {
+    case UnencodableHandling::QuestionMarks:
+        return questionMarkUnencodableHandler;
+    case UnencodableHandling::Entities:
+        return entityUnencodableHandler;
+    case UnencodableHandling::URLEncodedEntities:
+        return urlEncodedEntityUnencodableHandler;
+    }
+    ASSERT_NOT_REACHED();
+    return entityUnencodableHandler;
+}
+
 Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling handling)
 {
     if (string.isEmpty())
         return { };
+    
+    if (!strcmp(m_canonicalConverterName, "euc-jp-2007"))
+        return eucJPEncode(string, unencodableHandler(handling));
 
     if (!m_converter) {
         createICUConverter();

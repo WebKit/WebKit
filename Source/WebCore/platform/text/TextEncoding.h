@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+enum class NFCNormalize : bool { No, Yes };
+
 class TextEncoding : public WTF::URLTextEncoding {
 public:
     TextEncoding() = default;
@@ -48,8 +50,8 @@ public:
 
     WEBCORE_EXPORT String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
     String decode(const char*, size_t length) const;
-    WEBCORE_EXPORT Vector<uint8_t> encode(StringView, UnencodableHandling) const;
-    Vector<uint8_t> encodeForURLParsing(StringView string) const final { return encode(string, UnencodableHandling::URLEncodedEntities); }
+    WEBCORE_EXPORT Vector<uint8_t> encode(StringView, UnencodableHandling, NFCNormalize = NFCNormalize::Yes) const;
+    Vector<uint8_t> encodeForURLParsing(StringView string) const final { return encode(string, UnencodableHandling::URLEncodedEntities, NFCNormalize::No); }
 
     UChar backslashAsCurrencySymbol() const;
     bool isByteBasedEncoding() const { return !isNonByteBasedEncoding(); }

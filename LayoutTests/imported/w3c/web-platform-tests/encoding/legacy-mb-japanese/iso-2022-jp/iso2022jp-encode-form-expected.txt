@@ -140,7 +140,7 @@ PASS U+203E ‾ %1B%28%4A%7E
 PASS U+2103 ℃ %1B%24%42%21%6E 
 PASS U+2116 № %1B%24%42%2D%62 
 PASS U+2121 ℡ %1B%24%42%2D%64 
-FAIL U+212B Å %1B%24%42%22%72 assert_equals: expected "%1B%24%42%22%72" but got "%26%23%31%39%37%3B"
+PASS U+212B Å %1B%24%42%22%72 
 PASS U+2160 Ⅰ %1B%24%42%2D%35 
 PASS U+2161 Ⅱ %1B%24%42%2D%36 
 PASS U+2162 Ⅲ %1B%24%42%2D%37 
@@ -7194,40 +7194,40 @@ PASS U+9F95 龕 %1B%24%42%73%7C
 PASS U+9F9C 龜 %1B%24%42%73%7D 
 PASS U+9F9D 龝 %1B%24%42%63%54 
 PASS U+9FA0 龠 %1B%24%42%73%7E 
-FAIL U+F929 朗 %1B%24%42%7A%46 assert_equals: expected "%1B%24%42%7A%46" but got "%1B%24%42%4F%2F"
-FAIL U+F9DC 隆 %1B%24%42%7C%4F assert_equals: expected "%1B%24%42%7C%4F" but got "%1B%24%42%4E%34"
+FAIL U+F929 朗 %1B%24%42%7A%46 assert_equals: expected "%1B%24%42%7A%46" but got "%26%23%36%33%37%38%35%3B"
+FAIL U+F9DC 隆 %1B%24%42%7C%4F assert_equals: expected "%1B%24%42%7C%4F" but got "%26%23%36%33%39%36%34%3B"
 FAIL U+FA0E 﨎 %1B%24%42%79%54 assert_equals: expected "%1B%24%42%79%54" but got "%26%23%36%34%30%31%34%3B"
 FAIL U+FA0F 﨏 %1B%24%42%79%5F assert_equals: expected "%1B%24%42%79%5F" but got "%26%23%36%34%30%31%35%3B"
-FAIL U+FA10 塚 %1B%24%42%79%60 assert_equals: expected "%1B%24%42%79%60" but got "%1B%24%42%44%4D"
+FAIL U+FA10 塚 %1B%24%42%79%60 assert_equals: expected "%1B%24%42%79%60" but got "%26%23%36%34%30%31%36%3B"
 FAIL U+FA11 﨑 %1B%24%42%79%75 assert_equals: expected "%1B%24%42%79%75" but got "%26%23%36%34%30%31%37%3B"
-FAIL U+FA12 晴 %1B%24%42%7A%3E assert_equals: expected "%1B%24%42%7A%3E" but got "%1B%24%42%40%32"
+FAIL U+FA12 晴 %1B%24%42%7A%3E assert_equals: expected "%1B%24%42%7A%3E" but got "%26%23%36%34%30%31%38%3B"
 FAIL U+FA13 﨓 %1B%24%42%7A%4E assert_equals: expected "%1B%24%42%7A%4E" but got "%26%23%36%34%30%31%39%3B"
 FAIL U+FA14 﨔 %1B%24%42%7A%50 assert_equals: expected "%1B%24%42%7A%50" but got "%26%23%36%34%30%32%30%3B"
-FAIL U+FA15 凞 %1B%24%42%7A%7B assert_equals: expected "%1B%24%42%7A%7B" but got "%26%23%32%30%39%35%38%3B"
-FAIL U+FA16 猪 %1B%24%42%7B%23 assert_equals: expected "%1B%24%42%7B%23" but got "%1B%24%42%43%76"
-FAIL U+FA17 益 %1B%24%42%7B%3A assert_equals: expected "%1B%24%42%7B%3A" but got "%1B%24%42%31%57"
-FAIL U+FA18 礼 %1B%24%42%7B%42 assert_equals: expected "%1B%24%42%7B%42" but got "%1B%24%42%4E%69"
-FAIL U+FA19 神 %1B%24%42%7B%43 assert_equals: expected "%1B%24%42%7B%43" but got "%1B%24%42%3F%40"
-FAIL U+FA1A 祥 %1B%24%42%7B%44 assert_equals: expected "%1B%24%42%7B%44" but got "%1B%24%42%3E%4D"
-FAIL U+FA1B 福 %1B%24%42%7B%46 assert_equals: expected "%1B%24%42%7B%46" but got "%1B%24%42%4A%21"
-FAIL U+FA1C 靖 %1B%24%42%7B%4A assert_equals: expected "%1B%24%42%7B%4A" but got "%1B%24%42%4C%77"
-FAIL U+FA1D 精 %1B%24%42%7B%4D assert_equals: expected "%1B%24%42%7B%4D" but got "%1B%24%42%40%3A"
-FAIL U+FA1E 羽 %1B%24%42%7B%56 assert_equals: expected "%1B%24%42%7B%56" but got "%1B%24%42%31%29"
+FAIL U+FA15 凞 %1B%24%42%7A%7B assert_equals: expected "%1B%24%42%7A%7B" but got "%26%23%36%34%30%32%31%3B"
+FAIL U+FA16 猪 %1B%24%42%7B%23 assert_equals: expected "%1B%24%42%7B%23" but got "%26%23%36%34%30%32%32%3B"
+FAIL U+FA17 益 %1B%24%42%7B%3A assert_equals: expected "%1B%24%42%7B%3A" but got "%26%23%36%34%30%32%33%3B"
+FAIL U+FA18 礼 %1B%24%42%7B%42 assert_equals: expected "%1B%24%42%7B%42" but got "%26%23%36%34%30%32%34%3B"
+FAIL U+FA19 神 %1B%24%42%7B%43 assert_equals: expected "%1B%24%42%7B%43" but got "%26%23%36%34%30%32%35%3B"
+FAIL U+FA1A 祥 %1B%24%42%7B%44 assert_equals: expected "%1B%24%42%7B%44" but got "%26%23%36%34%30%32%36%3B"
+FAIL U+FA1B 福 %1B%24%42%7B%46 assert_equals: expected "%1B%24%42%7B%46" but got "%26%23%36%34%30%32%37%3B"
+FAIL U+FA1C 靖 %1B%24%42%7B%4A assert_equals: expected "%1B%24%42%7B%4A" but got "%26%23%36%34%30%32%38%3B"
+FAIL U+FA1D 精 %1B%24%42%7B%4D assert_equals: expected "%1B%24%42%7B%4D" but got "%26%23%36%34%30%32%39%3B"
+FAIL U+FA1E 羽 %1B%24%42%7B%56 assert_equals: expected "%1B%24%42%7B%56" but got "%26%23%36%34%30%33%30%3B"
 FAIL U+FA1F 﨟 %1B%24%42%7B%61 assert_equals: expected "%1B%24%42%7B%61" but got "%26%23%36%34%30%33%31%3B"
-FAIL U+FA20 蘒 %1B%24%42%7B%63 assert_equals: expected "%1B%24%42%7B%63" but got "%26%23%33%34%33%32%32%3B"
+FAIL U+FA20 蘒 %1B%24%42%7B%63 assert_equals: expected "%1B%24%42%7B%63" but got "%26%23%36%34%30%33%32%3B"
 FAIL U+FA21 﨡 %1B%24%42%7B%64 assert_equals: expected "%1B%24%42%7B%64" but got "%26%23%36%34%30%33%33%3B"
-FAIL U+FA22 諸 %1B%24%42%7B%6D assert_equals: expected "%1B%24%42%7B%6D" but got "%1B%24%42%3D%74"
+FAIL U+FA22 諸 %1B%24%42%7B%6D assert_equals: expected "%1B%24%42%7B%6D" but got "%26%23%36%34%30%33%34%3B"
 FAIL U+FA23 﨣 %1B%24%42%7B%75 assert_equals: expected "%1B%24%42%7B%75" but got "%26%23%36%34%30%33%35%3B"
 FAIL U+FA24 﨤 %1B%24%42%7B%77 assert_equals: expected "%1B%24%42%7B%77" but got "%26%23%36%34%30%33%36%3B"
-FAIL U+FA25 逸 %1B%24%42%7B%78 assert_equals: expected "%1B%24%42%7B%78" but got "%1B%24%42%30%6F"
-FAIL U+FA26 都 %1B%24%42%7B%7B assert_equals: expected "%1B%24%42%7B%7B" but got "%1B%24%42%45%54"
+FAIL U+FA25 逸 %1B%24%42%7B%78 assert_equals: expected "%1B%24%42%7B%78" but got "%26%23%36%34%30%33%37%3B"
+FAIL U+FA26 都 %1B%24%42%7B%7B assert_equals: expected "%1B%24%42%7B%7B" but got "%26%23%36%34%30%33%38%3B"
 FAIL U+FA27 﨧 %1B%24%42%7C%39 assert_equals: expected "%1B%24%42%7C%39" but got "%26%23%36%34%30%33%39%3B"
 FAIL U+FA28 﨨 %1B%24%42%7C%40 assert_equals: expected "%1B%24%42%7C%40" but got "%26%23%36%34%30%34%30%3B"
 FAIL U+FA29 﨩 %1B%24%42%7C%50 assert_equals: expected "%1B%24%42%7C%50" but got "%26%23%36%34%30%34%31%3B"
-FAIL U+FA2A 飯 %1B%24%42%7C%5C assert_equals: expected "%1B%24%42%7C%5C" but got "%1B%24%42%48%53"
-FAIL U+FA2B 飼 %1B%24%42%7C%5D assert_equals: expected "%1B%24%42%7C%5D" but got "%1B%24%42%3B%74"
-FAIL U+FA2C 館 %1B%24%42%7C%5F assert_equals: expected "%1B%24%42%7C%5F" but got "%1B%24%42%34%5B"
-FAIL U+FA2D 鶴 %1B%24%42%7C%6C assert_equals: expected "%1B%24%42%7C%6C" but got "%1B%24%42%44%61"
+FAIL U+FA2A 飯 %1B%24%42%7C%5C assert_equals: expected "%1B%24%42%7C%5C" but got "%26%23%36%34%30%34%32%3B"
+FAIL U+FA2B 飼 %1B%24%42%7C%5D assert_equals: expected "%1B%24%42%7C%5D" but got "%26%23%36%34%30%34%33%3B"
+FAIL U+FA2C 館 %1B%24%42%7C%5F assert_equals: expected "%1B%24%42%7C%5F" but got "%26%23%36%34%30%34%34%3B"
+FAIL U+FA2D 鶴 %1B%24%42%7C%6C assert_equals: expected "%1B%24%42%7C%6C" but got "%26%23%36%34%30%34%35%3B"
 PASS U+FF01 ！ %1B%24%42%21%2A 
 FAIL U+FF02 ＂ %1B%24%42%7C%7E assert_equals: expected "%1B%24%42%7C%7E" but got "%26%23%36%35%32%38%32%3B"
 PASS U+FF03 ＃ %1B%24%42%21%74 

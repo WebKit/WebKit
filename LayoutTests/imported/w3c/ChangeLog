@@ -1,3 +1,64 @@
+2020-08-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove NFC normalization when submitting forms and encoding URL queries and fix EUC-JP encoding
+        https://bugs.webkit.org/show_bug.cgi?id=215970
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-cseucpkdfmtjapanese-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-x-euc-jp-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-csiso2022jp-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-href-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-csshiftjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms932-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms_kanji-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-shift-jis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-sjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-windows-31j-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-x-sjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-cseuckr-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-csksc56011987-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-iso-ir-149-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-korean-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1987-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1989-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc5601-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc_5601-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-windows-949-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-big5-hkscs-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-cn-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-csbig5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-x-x-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-expected.txt:
+
 2020-08-28  Chris Dumez  <cdumez@apple.com>
 
         Update PannerNode to support k-rate automation of its AudioParams

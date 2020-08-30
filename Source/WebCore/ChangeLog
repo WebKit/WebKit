@@ -1,3 +1,38 @@
+2020-08-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove NFC normalization when submitting forms and encoding URL queries and fix EUC-JP encoding
+        https://bugs.webkit.org/show_bug.cgi?id=215970
+
+        Reviewed by Darin Adler.
+
+        This fixes 3 things that were common between Chrome and Firefox but different in WebKit.
+        The first two are omitting NFC normalization when submitting forms and encoding URL queries
+        in documents with non-UTF-8 encodings.  The third is a problem with our use of ICU's EUC-JP encoding,
+        which uses the euc-jp-2007 table.  Chrome and Firefox use a slightly different table from
+        https://encoding.spec.whatwg.org/index-jis0208.txt which is not in ICU.  To be compatible and pass many
+        web platform tests, I include the table here, which adds about 30kb to WebKit's binary size.
+        I intend to do the same with Big5, ISO-2022-JP, Shift_JIS, and EUC-KR.
+
+        I opened https://github.com/whatwg/encoding/issues/225 to resolve an ambiguity in the standard related to this.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/FormData.cpp:
+        (WebCore::normalizeStringData):
+        * platform/text/EncodingTables.cpp: Added.
+        * platform/text/EncodingTables.h: Added.
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::eucJPEncode):
+        (WebCore::uncheckedAppendDecimal):
+        (WebCore::urlEncodedEntityUnencodableHandler):
+        (WebCore::entityUnencodableHandler):
+        (WebCore::questionMarkUnencodableHandler):
+        (WebCore::Function<void):
+        (WebCore::TextCodecICU::encode):
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode const):
+        * platform/text/TextEncoding.h:
+
 2020-08-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] MediaSample JSON strings are created for logging to disabled channels

@@ -197,7 +197,7 @@ void FormData::appendBlob(const URL& blobURL)
 
 static Vector<uint8_t> normalizeStringData(TextEncoding& encoding, const String& value)
 {
-    return normalizeLineEndingsToCRLF(encoding.encode(value, UnencodableHandling::Entities));
+    return normalizeLineEndingsToCRLF(encoding.encode(value, UnencodableHandling::Entities, NFCNormalize::No));
 }
 
 void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, TextEncoding& encoding)

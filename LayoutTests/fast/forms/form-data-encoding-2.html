@@ -20,10 +20,10 @@ if (document.URL.substring(0, 4) == "file") {
         document.f.submit();
 
     } else {
-        if (unescape(document.URL.substring(document.URL.indexOf('?')+1, document.URL.length)) == unescape("q=%D1%91%F0%90%90%80%F0%9D%84%AB%C3%A7%C3%A7"))
+        if (unescape(document.URL.substring(document.URL.indexOf('?')+1, document.URL.length)) == unescape("q=%D1%91%F0%90%90%80%F0%9D%84%AB%C3%A7c%CC%A7"))
             document.write("<p>Success</p>");
         else
-            document.write("<p>Failure</p>");
+            document.write("<p>Failure, query is " + document.URL.substring(document.URL.indexOf('?')+1, document.URL.length) + "</p>");
         
         if (window.testRunner)
             testRunner.notifyDone();

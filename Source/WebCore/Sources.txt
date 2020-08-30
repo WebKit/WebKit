@@ -2046,6 +2046,7 @@ platform/sql/SQLiteStatementAutoResetScope.cpp
 platform/sql/SQLiteTransaction.cpp
 platform/text/BidiContext.cpp
 platform/text/DateTimeFormat.cpp
+platform/text/EncodingTables.cpp
 platform/text/LocaleToScriptMappingDefault.cpp
 platform/text/PlatformLocale.cpp
 platform/text/QuotedPrintable.cpp

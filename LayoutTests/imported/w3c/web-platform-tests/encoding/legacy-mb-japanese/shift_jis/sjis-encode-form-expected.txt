@@ -141,7 +141,7 @@ PASS U+203E ‾ %7E
 PASS U+2103 ℃ %81%8E 
 PASS U+2116 № %87%82 
 PASS U+2121 ℡ %87%84 
-FAIL U+212B Å %81%F0 assert_equals: expected "%81%F0" but got "%26%23%31%39%37%3B"
+PASS U+212B Å %81%F0 
 PASS U+2160 Ⅰ %87%54 
 PASS U+2161 Ⅱ %87%55 
 PASS U+2162 Ⅲ %87%56 
@@ -7195,40 +7195,40 @@ PASS U+9F95 龕 %EA%9C
 PASS U+9F9C 龜 %EA%9D 
 PASS U+9F9D 龝 %E2%73 
 PASS U+9FA0 龠 %EA%9E 
-FAIL U+F929 朗 %FA%E0 assert_equals: expected "%FA%E0" but got "%98%4E"
-FAIL U+F9DC 隆 %FB%E9 assert_equals: expected "%FB%E9" but got "%97%B2"
+PASS U+F929 朗 %FA%E0 
+PASS U+F9DC 隆 %FB%E9 
 PASS U+FA0E 﨎 %FA%90 
 PASS U+FA0F 﨏 %FA%9B 
-FAIL U+FA10 塚 %FA%9C assert_equals: expected "%FA%9C" but got "%92%CB"
+PASS U+FA10 塚 %FA%9C 
 PASS U+FA11 﨑 %FA%B1 
-FAIL U+FA12 晴 %FA%D8 assert_equals: expected "%FA%D8" but got "%90%B0"
+PASS U+FA12 晴 %FA%D8 
 PASS U+FA13 﨓 %FA%E8 
 PASS U+FA14 﨔 %FA%EA 
-FAIL U+FA15 凞 %FB%58 assert_equals: expected "%FB%58" but got "%26%23%32%30%39%35%38%3B"
-FAIL U+FA16 猪 %FB%5E assert_equals: expected "%FB%5E" but got "%92%96"
-FAIL U+FA17 益 %FB%75 assert_equals: expected "%FB%75" but got "%89%76"
-FAIL U+FA18 礼 %FB%7D assert_equals: expected "%FB%7D" but got "%97%E7"
-FAIL U+FA19 神 %FB%7E assert_equals: expected "%FB%7E" but got "%90%5F"
-FAIL U+FA1A 祥 %FB%80 assert_equals: expected "%FB%80" but got "%8F%CB"
-FAIL U+FA1B 福 %FB%82 assert_equals: expected "%FB%82" but got "%95%9F"
-FAIL U+FA1C 靖 %FB%86 assert_equals: expected "%FB%86" but got "%96%F5"
-FAIL U+FA1D 精 %FB%89 assert_equals: expected "%FB%89" but got "%90%B8"
-FAIL U+FA1E 羽 %FB%92 assert_equals: expected "%FB%92" but got "%89%48"
+PASS U+FA15 凞 %FB%58 
+PASS U+FA16 猪 %FB%5E 
+PASS U+FA17 益 %FB%75 
+PASS U+FA18 礼 %FB%7D 
+PASS U+FA19 神 %FB%7E 
+PASS U+FA1A 祥 %FB%80 
+PASS U+FA1B 福 %FB%82 
+PASS U+FA1C 靖 %FB%86 
+PASS U+FA1D 精 %FB%89 
+PASS U+FA1E 羽 %FB%92 
 PASS U+FA1F 﨟 %FB%9D 
-FAIL U+FA20 蘒 %FB%9F assert_equals: expected "%FB%9F" but got "%26%23%33%34%33%32%32%3B"
+PASS U+FA20 蘒 %FB%9F 
 PASS U+FA21 﨡 %FB%A0 
-FAIL U+FA22 諸 %FB%A9 assert_equals: expected "%FB%A9" but got "%8F%94"
+PASS U+FA22 諸 %FB%A9 
 PASS U+FA23 﨣 %FB%B1 
 PASS U+FA24 﨤 %FB%B3 
-FAIL U+FA25 逸 %FB%B4 assert_equals: expected "%FB%B4" but got "%88%ED"
-FAIL U+FA26 都 %FB%B7 assert_equals: expected "%FB%B7" but got "%93%73"
+PASS U+FA25 逸 %FB%B4 
+PASS U+FA26 都 %FB%B7 
 PASS U+FA27 﨧 %FB%D3 
 PASS U+FA28 﨨 %FB%DA 
 PASS U+FA29 﨩 %FB%EA 
-FAIL U+FA2A 飯 %FB%F6 assert_equals: expected "%FB%F6" but got "%94%D1"
-FAIL U+FA2B 飼 %FB%F7 assert_equals: expected "%FB%F7" but got "%8E%94"
-FAIL U+FA2C 館 %FB%F9 assert_equals: expected "%FB%F9" but got "%8A%D9"
-FAIL U+FA2D 鶴 %FC%49 assert_equals: expected "%FC%49" but got "%92%DF"
+PASS U+FA2A 飯 %FB%F6 
+PASS U+FA2B 飼 %FB%F7 
+PASS U+FA2C 館 %FB%F9 
+PASS U+FA2D 鶴 %FC%49 
 PASS U+FF01 ！ %81%49 
 PASS U+FF02 ＂ %FA%57 
 PASS U+FF03 ＃ %81%94 

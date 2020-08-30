@@ -14208,8 +14208,8 @@ PASS U+9FA2 龢 %F7%CF
 PASS U+9FA4 龤 %F9%A1 
 FAIL U+9FB0 龰 %C8%A1 assert_equals: expected "%C8%A1" but got "%26%23%34%30%38%38%30%3B"
 FAIL U+9FB1 龱 %C8%A3 assert_equals: expected "%C8%A3" but got "%26%23%34%30%38%38%31%3B"
-FAIL U+FA0C 兀 %C9%4A assert_equals: expected "%C9%4A" but got "%A4%61"
-FAIL U+FA0D 嗀 %DD%FC assert_equals: expected "%DD%FC" but got "%DC%D1"
+PASS U+FA0C 兀 %C9%4A 
+PASS U+FA0D 嗀 %DD%FC 
 PASS U+FE30 ︰ %A1%4A 
 PASS U+FE31 ︱ %A1%57 
 PASS U+FE33 ︳ %A1%59 

@@ -1,3 +1,13 @@
+2020-08-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove NFC normalization when submitting forms and encoding URL queries and fix EUC-JP encoding
+        https://bugs.webkit.org/show_bug.cgi?id=215970
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/form-data-encoding-2.html:
+        * fast/forms/form-data-encoding.html:
+
 2020-08-29  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Rebaseline webaudio tests after k-rate changes in r266319
