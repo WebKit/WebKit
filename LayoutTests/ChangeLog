@@ -1,3 +1,16 @@
+2020-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Rewrite main thread scroll latching logic
+        https://bugs.webkit.org/show_bug.cgi?id=215979
+
+        Reviewed by Tim Horton.
+
+        Add a test for iframe unparenting in the middle of a latched scroll.
+
+        * fast/scrolling/latching/latched-scroll-remove-iframe.html: Added.
+        * fast/scrolling/latching/scroll-nested-iframe.html: 1000ms -> 0ms
+        * fast/scrolling/mac/rubberband-overflow-in-wheel-region.html: Test needs to latch the overflow by scrolling down then up.
+
 2020-08-30  Youenn Fablet  <youenn@apple.com>
 
         Add support for TextEncoderStream

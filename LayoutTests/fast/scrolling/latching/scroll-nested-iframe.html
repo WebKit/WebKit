@@ -62,7 +62,7 @@
         {
             description("Tests that iframe does scroll when inner iframe is NOT scrollable.");
             if (window.eventSender) {
-                setTimeout(scrollTest, 1000);
+                setTimeout(scrollTest, 0);
                 return;
             }
             var messageLocation = document.getElementById('parent');

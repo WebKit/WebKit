@@ -451,13 +451,13 @@ private:
     bool passMouseDownEventToWidget(Widget*);
 
     bool passWheelEventToWidget(const PlatformWheelEvent&, Widget&);
-    void determineWheelEventTarget(const PlatformWheelEvent&, const HitTestResult&, RefPtr<Element>& eventTarget, RefPtr<ContainerNode>& scrollableContainer, WeakPtr<ScrollableArea>&, bool& isOverWidget);
+    void determineWheelEventTarget(const PlatformWheelEvent&, RefPtr<Element>& eventTarget, WeakPtr<ScrollableArea>&, bool& isOverWidget);
     void recordWheelEventForDeltaFilter(const PlatformWheelEvent&);
-    bool processWheelEventForScrolling(const PlatformWheelEvent&, ContainerNode* scrollableContainer, const WeakPtr<ScrollableArea>&);
+    bool processWheelEventForScrolling(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&);
     void processWheelEventForScrollSnap(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&);
-    bool completeWidgetWheelEvent(const PlatformWheelEvent&, const WeakPtr<Widget>&, const WeakPtr<ScrollableArea>&, ContainerNode*);
+    bool completeWidgetWheelEvent(const PlatformWheelEvent&, const WeakPtr<Widget>&, const WeakPtr<ScrollableArea>&);
 
-    bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, ContainerNode* scrollableContainer);
+    bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, const WeakPtr<ScrollableArea>&);
 
     void defaultSpaceEventHandler(KeyboardEvent&);
     void defaultBackspaceEventHandler(KeyboardEvent&);
@@ -503,8 +503,6 @@ private:
     void autoHideCursorTimerFired();
 #endif
 
-    void clearOrScheduleClearingLatchedStateIfNeeded(const PlatformWheelEvent&);
-    void clearLatchedStateTimerFired();
     void clearLatchedState();
 
     bool shouldSendMouseEventsToInactiveWindows() const;
@@ -535,10 +533,6 @@ private:
 
     Timer m_hoverTimer;
     bool m_hasScheduledCursorUpdate { false };
-
-#if PLATFORM(MAC)
-    Timer m_clearLatchingStateTimer;
-#endif
 
     std::unique_ptr<AutoscrollController> m_autoscrollController;
     bool m_mouseDownMayStartAutoscroll { false };

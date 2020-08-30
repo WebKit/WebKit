@@ -1,3 +1,113 @@
+2020-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Rewrite main thread scroll latching logic
+        https://bugs.webkit.org/show_bug.cgi?id=215979
+
+        Reviewed by Tim Horton.
+        
+        The existing main thread wheel event handling and latching logic had a number of issues,
+        some of which were indicated via the FIXME comments added in r266016:
+        - It tracked scrollable containers as ContainerNodes rather than ScrollableAreas
+        - It fetched and used latched state from a different frame, causing an EventHandler
+          to end up scrolling some unrelated frame.
+        - Overflow scrolling ignored latched state.
+        - The latching stack's purpose was unclear.
+        
+        This patch fixes those issues. The design is as follow: 
+        - Latching logic is moved into ScrollLatchingController, which is owned by Page.
+        - ScrollLatchingController owns a stack of FrameState.
+        - When receiving a wheel event, determineWheelEventTarget() identifies the target
+          ScrollableArea, if any, for that frame only.
+        - As hit-testing descends into subframes, state is pushed onto ScrollLatchingController's
+          state stack. Frames with potential scrollers have a non-null ScrollableArea in their state.
+        - The latched ScrollableArea is the top non-null ScrollableArea in this stack.
+        - EventHandler consults ScrollLatchingController for select, overflow and frame scrolling.
+        
+        This change fixes an issue where scrolling over an overflow:scroll in the non-fast scrollable
+        region would rubber-band the overflow, rather than the main page (tested by the adjusted
+        fast/scrolling/mac/rubberband-overflow-in-wheel-region.html).
+
+        Tests: fast/scrolling/latching/latched-scroll-remove-iframe.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::determineWheelEventTarget):
+        (WebCore::EventHandler::processWheelEventForScrolling):
+        (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent):
+        (WebCore::EventHandler::processWheelEventForScrollSnap):
+        (WebCore::EventHandler::completeWidgetWheelEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::clearLatchedState):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        (WebCore::EventHandler::clearLatchedStateTimerFired): Deleted.
+        (WebCore::EventHandler::clearOrScheduleClearingLatchedStateIfNeeded): Deleted.
+        * page/EventHandler.h:
+        * page/Page.cpp:
+        (WebCore::Page::startMonitoringWheelEvents):
+        (WebCore::Page::scrollLatchingController):
+        (WebCore::Page::scrollLatchingControllerIfExists):
+        (WebCore::Page::latchingState): Deleted.
+        (WebCore::Page::pushNewLatchingState): Deleted.
+        (WebCore::Page::resetLatchingState): Deleted.
+        (WebCore::Page::popLatchingState): Deleted.
+        (WebCore::Page::removeLatchingStateForTarget): Deleted.
+        * page/Page.h:
+        (WebCore::Page::latchingStateStack const): Deleted.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::determineWheelEventTarget):
+        (WebCore::EventHandler::processWheelEventForScrolling):
+        (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent):
+        (WebCore::EventHandler::processWheelEventForScrollSnap):
+        (WebCore::deltaIsPredominantlyVertical): Deleted.
+        (WebCore::scrolledToEdgeInDominantDirection): Deleted.
+        (WebCore::latchingIsLockedToPlatformFrame): Deleted.
+        (WebCore::latchingIsLockedToAncestorOfThisFrame): Deleted.
+        (WebCore::latchedToFrameOrBody): Deleted.
+        (WebCore::EventHandler::clearOrScheduleClearingLatchedStateIfNeeded): Deleted.
+        (WebCore::frameViewForLatchingState): Deleted.
+        * page/scrolling/ScrollLatchingController.cpp: Added.
+        (WebCore::ScrollLatchingController::ScrollLatchingController):
+        (WebCore::ScrollLatchingController::clear):
+        (WebCore::ScrollLatchingController::clearOrScheduleClearIfNeeded):
+        (WebCore::ScrollLatchingController::clearTimerFired):
+        (WebCore::ScrollLatchingController::receivedWheelEvent):
+        (WebCore::ScrollLatchingController::latchingAllowsScrollingInFrame const):
+        (WebCore::ScrollLatchingController::updateLatchingStateForFrame):
+        (WebCore::ScrollLatchingController::getLatchingStateForFrame const):
+        (WebCore::ScrollLatchingController::removeLatchingStateForTarget):
+        (WebCore::ScrollLatchingController::removeLatchingStateForFrame):
+        (WebCore::deltaIsPredominantlyVertical):
+        (WebCore::ScrollLatchingController::shouldLatchToScrollableArea const):
+        (WebCore::ScrollLatchingController::hasStateForFrame const):
+        (WebCore::ScrollLatchingController::stateForFrame):
+        (WebCore::ScrollLatchingController::stateForFrame const):
+        (WebCore::ScrollLatchingController::dump const):
+        (WebCore::operator<<):
+        * page/scrolling/ScrollLatchingController.h: Added.
+        (WebCore::ScrollLatchingController::cumulativeEventDelta const):
+        * page/scrolling/ScrollLatchingState.cpp: Removed.
+        * page/scrolling/ScrollLatchingState.h: Removed.
+        * page/scrolling/ScrollingTreeLatchingController.cpp:
+        (WebCore::ScrollingTreeLatchingController::receivedWheelEvent):
+        (WebCore::ScrollingTreeLatchingController::nodeDidHandleEvent):
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::handleWheelEventAfterMainThread):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching const):
+        (WebCore::newGestureIsStarting): Deleted.
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::isGestureStart const):
+        (WebCore::PlatformWheelEvent::isGestureContinuation const):
+        (WebCore::PlatformWheelEvent::shouldResetLatching const):
+        (WebCore::PlatformWheelEvent::isNonGestureEvent const):
+        (WebCore::PlatformWheelEvent::shouldConsiderLatching const): Deleted. Renamed to isGestureStart(). This class
+        should not prescribe latching behaviors.
+
 2020-08-30  Youenn Fablet  <youenn@apple.com>
 
         Add support for TextEncoderStream

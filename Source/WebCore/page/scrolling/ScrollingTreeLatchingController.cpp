@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-// See also EventHandlerMac.cpp
+// See also ScrollLatchingController.cpp
 static const Seconds resetLatchedStateTimeout { 100_ms };
 
 ScrollingTreeLatchingController::ScrollingTreeLatchingController() = default;
@@ -47,7 +47,7 @@ void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEven
         return;
 
     LockHolder locker(m_latchedNodeMutex);
-    if (wheelEvent.shouldConsiderLatching() && m_latchedNodeID && !latchedNodeIsRelevant()) {
+    if (wheelEvent.isGestureStart() && m_latchedNodeID && !latchedNodeIsRelevant()) {
         LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " receivedWheelEvent - " << (MonotonicTime::now() - m_lastLatchedNodeInterationTime).milliseconds() << "ms since last event, clearing latched node");
         m_latchedNodeID.reset();
     }
@@ -87,7 +87,7 @@ void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrolli
         return;
     }
 
-    if (wheelEvent.delta().isZero() || !wheelEvent.shouldConsiderLatching())
+    if (wheelEvent.delta().isZero() || !wheelEvent.isGestureStart())
         return;
 
     LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " nodeDidHandleEvent: latching to " << scrollingNodeID);

@@ -112,7 +112,7 @@
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptedAnimationController.h"
-#include "ScrollLatchingState.h"
+#include "ScrollLatchingController.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -2838,7 +2838,7 @@ void Page::startMonitoringWheelEvents(bool clearLatchingState)
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     if (clearLatchingState)
-        resetLatchingState();
+        scrollLatchingController().clear();
 #endif
 
     if (auto* frameView = mainFrame().view()) {
@@ -3141,43 +3141,17 @@ void Page::applicationDidBecomeActive()
 }
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
-ScrollLatchingState* Page::latchingState()
+ScrollLatchingController& Page::scrollLatchingController()
 {
-    if (m_latchingState.isEmpty())
-        return nullptr;
-
-    return &m_latchingState.last();
+    if (!m_scrollLatchingController)
+        m_scrollLatchingController = makeUnique<ScrollLatchingController>();
+        
+    return *m_scrollLatchingController;
 }
 
-void Page::pushNewLatchingState(ScrollLatchingState&& state)
+ScrollLatchingController* Page::scrollLatchingControllerIfExists()
 {
-    m_latchingState.append(WTFMove(state));
-}
-
-void Page::resetLatchingState()
-{
-    m_latchingState.clear();
-}
-
-void Page::popLatchingState()
-{
-    m_latchingState.removeLast();
-    LOG_WITH_STREAM(ScrollLatching, stream << "Page::popLatchingState() - new state " << m_latchingState);
-}
-
-void Page::removeLatchingStateForTarget(Element& targetNode)
-{
-    if (m_latchingState.isEmpty())
-        return;
-
-    m_latchingState.removeAllMatching([&targetNode] (ScrollLatchingState& state) {
-        auto* wheelElement = state.wheelEventElement();
-        if (!wheelElement)
-            return false;
-
-        return targetNode.isEqualNode(wheelElement);
-    });
-    LOG_WITH_STREAM(ScrollLatching, stream << "Page::removeLatchingStateForTarget() - new state " << m_latchingState);
+    return m_scrollLatchingController.get();
 }
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 

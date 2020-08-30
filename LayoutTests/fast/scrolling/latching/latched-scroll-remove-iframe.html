@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            width: 600px;
+            height: 400px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        let iframe = undefined;
+        function iframeScrolled(offset)
+        {
+            if (offset >= 200)
+                iframe.remove();
+            
+            setTimeout(finishJSTest, 16);
+        }
+
+        async function doTest()
+        {
+            iframe = document.getElementsByTagName('iframe')[0];
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            eventSender.mouseMoveTo(100, 100); // Inside the iframe.
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        }
+
+        window.addEventListener('load', () => {
+            description("Test that removes an iframe during a latched scroll. Passes if the test does not crash.");
+            setTimeout(doTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <iframe srcdoc="
+    <style>
+        body { height: 2000px; }
+    </style>
+    <script>
+        window.addEventListener('scroll', () => {
+            parent.iframeScrolled(window.pageYOffset);
+        });
+    </script>
+    <body>
+        iframe
+    </body>
+    ">
+    </iframe>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

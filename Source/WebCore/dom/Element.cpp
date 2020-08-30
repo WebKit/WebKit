@@ -105,7 +105,7 @@
 #include "SVGSVGElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollIntoViewOptions.h"
-#include "ScrollLatchingState.h"
+#include "ScrollLatchingController.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "SimulatedClick.h"
@@ -2259,9 +2259,11 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     if (frame)
         frame->legacyAnimation().cancelAnimations(*this);
 
-#if PLATFORM(MAC)
-    if (frame && frame->page())
-        frame->page()->removeLatchingStateForTarget(*this);
+#if ENABLE(WHEEL_EVENT_LATCHING)
+    if (frame && frame->page()) {
+        if (auto* scrollLatchingController = frame->page()->scrollLatchingControllerIfExists())
+            scrollLatchingController->removeLatchingStateForTarget(*this);
+    }
 #endif
 
     if (hasRareData() && elementRareData()->hasElementIdentifier()) {

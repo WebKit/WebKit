@@ -131,7 +131,7 @@ class PointerLockController;
 class ProgressTracker;
 class RenderObject;
 class ResourceUsageOverlay;
-class ScrollLatchingState;
+class ScrollLatchingController;
 class ScrollingCoordinator;
 class ServicesOverlayController;
 class Settings;
@@ -448,12 +448,8 @@ public:
 #endif
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
-    ScrollLatchingState* latchingState();
-    const Vector<ScrollLatchingState>& latchingStateStack() const { return m_latchingState; }
-    void pushNewLatchingState(ScrollLatchingState&&);
-    void popLatchingState();
-    void resetLatchingState();
-    void removeLatchingStateForTarget(Element&);
+    ScrollLatchingController& scrollLatchingController();
+    ScrollLatchingController* scrollLatchingControllerIfExists();
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 #if ENABLE(APPLE_PAY)
@@ -1038,7 +1034,7 @@ private:
 
     std::unique_ptr<PerformanceLogging> m_performanceLogging;
 #if ENABLE(WHEEL_EVENT_LATCHING)
-    Vector<ScrollLatchingState> m_latchingState;
+    std::unique_ptr<ScrollLatchingController> m_scrollLatchingController;
 #endif
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;

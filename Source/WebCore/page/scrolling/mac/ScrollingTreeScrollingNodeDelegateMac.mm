@@ -167,12 +167,6 @@ bool ScrollingTreeScrollingNodeDelegateMac::isScrollSnapInProgress() const
 
 // FIXME: We should find a way to share some of the code from newGestureIsStarting(), isAlreadyPinnedInDirectionOfGesture(),
 // allowsVerticalStretching(), and allowsHorizontalStretching() with the implementation in ScrollAnimatorMac.
-// This is also the same as PlatformWheelEvent::shouldConsiderLatching().
-static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)
-{
-    return wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseBegan;
-}
-
 bool ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis) const
 {
     auto scrollPosition = currentScrollPosition();
@@ -200,7 +194,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const Pla
     switch (horizontalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
         bool scrollbarsAllowStretching = hasEnabledHorizontalScrollbar() || !hasEnabledVerticalScrollbar();
-        bool eventPreventsStretching = newGestureIsStarting(wheelEvent) && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Horizontal);
+        bool eventPreventsStretching = wheelEvent.isGestureStart() && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Horizontal);
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
     case ScrollElasticityNone:
@@ -222,7 +216,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const Platf
     switch (verticalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
         bool scrollbarsAllowStretching = hasEnabledVerticalScrollbar() || !hasEnabledHorizontalScrollbar();
-        bool eventPreventsStretching = newGestureIsStarting(wheelEvent) && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Vertical);
+        bool eventPreventsStretching = wheelEvent.isGestureStart() && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Vertical);
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
     case ScrollElasticityNone:

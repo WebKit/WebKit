@@ -151,8 +151,10 @@ public:
 
 #if ENABLE(ASYNC_SCROLLING)
     bool useLatchedEventElement() const;
-    bool shouldConsiderLatching() const;
+    bool isGestureStart() const;
+    bool isGestureContinuation() const; // The fingers-down part of the gesture excluding momentum.
     bool shouldResetLatching() const;
+    bool isNonGestureEvent() const;
     bool isEndOfMomentumScroll() const;
 #else
     bool useLatchedEventElement() const { return false; }
@@ -210,15 +212,24 @@ inline bool PlatformWheelEvent::useLatchedEventElement() const
         || (m_phase == PlatformWheelEventPhaseEnded && m_momentumPhase == PlatformWheelEventPhaseNone);
 }
 
-inline bool PlatformWheelEvent::shouldConsiderLatching() const
+inline bool PlatformWheelEvent::isGestureStart() const
 {
-    // FIXME: This should disallow latching if the delta is zero.
     return m_phase == PlatformWheelEventPhaseBegan || m_phase == PlatformWheelEventPhaseMayBegin;
+}
+
+inline bool PlatformWheelEvent::isGestureContinuation() const
+{
+    return m_phase == PlatformWheelEventPhaseChanged;
 }
 
 inline bool PlatformWheelEvent::shouldResetLatching() const
 {
-    return m_phase == PlatformWheelEventPhaseCancelled || m_phase == PlatformWheelEventPhaseMayBegin || isEndOfMomentumScroll();
+    return m_phase == PlatformWheelEventPhaseCancelled || m_phase == PlatformWheelEventPhaseMayBegin || (m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseNone) || isEndOfMomentumScroll();
+}
+
+inline bool PlatformWheelEvent::isNonGestureEvent() const
+{
+    return m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseNone;
 }
 
 inline bool PlatformWheelEvent::isEndOfMomentumScroll() const
