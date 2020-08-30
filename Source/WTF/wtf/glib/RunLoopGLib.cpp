@@ -159,7 +159,7 @@ void RunLoop::notify(RunLoop::Event event, const char* name)
 
 RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
-    , m_source(adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(GSource))))
+    , m_source(adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(RunLoopSource))))
 {
     auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(m_source.get());
     runLoopSource.runLoop = m_runLoop.ptr();

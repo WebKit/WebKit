@@ -1,3 +1,13 @@
+2020-08-30  Jim Mason  <jmason@ibinx.com>
+
+        [GTK] REGRESSION(r150392) insufficient space allocation results in heap corruption
+        https://bugs.webkit.org/show_bug.cgi?id=215976
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::TimerBase::TimerBase):
+
 2020-08-27  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Build fix due to memmem not always being available.
