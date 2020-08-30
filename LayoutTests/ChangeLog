@@ -1,3 +1,9 @@
+2020-08-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
 2020-08-30  Simon Fraser  <simon.fraser@apple.com>
 
         Add missing test result from r266333.
