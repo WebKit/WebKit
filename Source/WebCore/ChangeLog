@@ -1,5 +1,18 @@
 2020-08-30  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r266333): Mousewheel scrolling no longer works on WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=215990
+
+        Reviewed by Tim Horton.
+
+        Make sure we call processWheelEventForScrolling() when ENABLE(WHEEL_EVENT_LATCHING) is not
+        defined.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+
+2020-08-30  Simon Fraser  <simon.fraser@apple.com>
+
         Rubberbanding in an overflow:scroll can trigger page jiggles
         https://bugs.webkit.org/show_bug.cgi?id=215629
         <rdar://problem/67295797>

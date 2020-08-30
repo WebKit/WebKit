@@ -2944,14 +2944,15 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
         return false;
 
     bool handledEvent = false;
+    bool allowScrolling = true;
 #if ENABLE(WHEEL_EVENT_LATCHING)
-    WeakPtr<ScrollableArea> latchedScrollableArea;
-    if (m_frame.page()->scrollLatchingController().latchingAllowsScrollingInFrame(m_frame, latchedScrollableArea)) {
-        // FIXME: processWheelEventForScrolling() is only called for FrameView scrolling, not overflow scrolling, which is confusing.
-        handledEvent = processWheelEventForScrolling(event, latchedScrollableArea);
-        processWheelEventForScrollSnap(event, latchedScrollableArea);
-    }
+    allowScrolling = m_frame.page()->scrollLatchingController().latchingAllowsScrollingInFrame(m_frame, scrollableArea);
 #endif
+    if (allowScrolling) {
+        // FIXME: processWheelEventForScrolling() is only called for FrameView scrolling, not overflow scrolling, which is confusing.
+        handledEvent = processWheelEventForScrolling(event, scrollableArea);
+        processWheelEventForScrollSnap(event, scrollableArea);
+    }
     return handledEvent;
 }
 
