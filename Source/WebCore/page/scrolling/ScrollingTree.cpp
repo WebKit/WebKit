@@ -122,8 +122,10 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
             auto* node = nodeForID(*latchedNodeID);
             if (is<ScrollingTreeScrollingNode>(node)) {
                 auto result = downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
-                if (result.wasHandled)
+                if (result.wasHandled) {
+                    m_latchingController.nodeDidHandleEvent(*latchedNodeID, wheelEvent, m_allowLatching);
                     m_gestureState.nodeDidHandleEvent(*latchedNodeID, wheelEvent);
+                }
                 return result;
             }
         }
