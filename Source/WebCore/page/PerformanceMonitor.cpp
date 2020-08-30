@@ -28,7 +28,6 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DeprecatedGlobalSettings.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Frame.h"
@@ -36,23 +35,24 @@
 #include "Page.h"
 #include "PerformanceLogging.h"
 #include "RegistrableDomain.h"
+#include "Settings.h"
 
 namespace WebCore {
 
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - PerformanceMonitor::" fmt, this, ##__VA_ARGS__)
 
-static const Seconds cpuUsageMeasurementDelay { 5_s };
-static const Seconds postLoadCPUUsageMeasurementDuration { 10_s };
-static const Seconds backgroundCPUUsageMeasurementDuration { 5_min };
-static const Seconds cpuUsageSamplingInterval { 10_min };
+static constexpr const Seconds cpuUsageMeasurementDelay { 5_s };
+static constexpr const Seconds postLoadCPUUsageMeasurementDuration { 10_s };
+static constexpr const Seconds backgroundCPUUsageMeasurementDuration { 5_min };
+static constexpr const Seconds cpuUsageSamplingInterval { 10_min };
 
-static const Seconds memoryUsageMeasurementDelay { 10_s };
+static constexpr const Seconds memoryUsageMeasurementDelay { 10_s };
 
-static const Seconds delayBeforeProcessMayBecomeInactive { 8_min };
+static constexpr const Seconds delayBeforeProcessMayBecomeInactive { 8_min };
 
-static const double postPageLoadCPUUsageDomainReportingThreshold { 20.0 }; // Reporting pages using over 20% CPU is roughly equivalent to reporting the 10% worst pages.
+static constexpr const double postPageLoadCPUUsageDomainReportingThreshold { 20.0 }; // Reporting pages using over 20% CPU is roughly equivalent to reporting the 10% worst pages.
 #if !PLATFORM(IOS_FAMILY)
-static const uint64_t postPageLoadMemoryUsageDomainReportingThreshold { 2048 * MB };
+static constexpr const uint64_t postPageLoadMemoryUsageDomainReportingThreshold { 2048 * MB };
 #endif
 
 static inline ActivityStateForCPUSampling activityStateForCPUSampling(OptionSet<ActivityState::Flag> state)
@@ -75,7 +75,7 @@ PerformanceMonitor::PerformanceMonitor(Page& page)
 {
     ASSERT(!page.isUtilityPage());
 
-    if (DeprecatedGlobalSettings::isPerActivityStateCPUUsageMeasurementEnabled()) {
+    if (page.settings().isPerActivityStateCPUUsageMeasurementEnabled()) {
         m_perActivityStateCPUTime = CPUTime::get();
         m_perActivityStateCPUUsageTimer.startRepeating(cpuUsageSamplingInterval);
     }
@@ -91,13 +91,13 @@ void PerformanceMonitor::didStartProvisionalLoad()
 void PerformanceMonitor::didFinishLoad()
 {
     // Only do post-load CPU usage measurement if there is a single Page in the process in order to reduce noise.
-    if (DeprecatedGlobalSettings::isPostLoadCPUUsageMeasurementEnabled() && m_page.isOnlyNonUtilityPage()) {
+    if (m_page.settings().isPostLoadCPUUsageMeasurementEnabled() && m_page.isOnlyNonUtilityPage()) {
         m_postLoadCPUTime = WTF::nullopt;
         m_postPageLoadCPUUsageTimer.startOneShot(cpuUsageMeasurementDelay);
     }
 
     // Likewise for post-load memory usage measurement.
-    if (DeprecatedGlobalSettings::isPostLoadMemoryUsageMeasurementEnabled() && m_page.isOnlyNonUtilityPage())
+    if (m_page.settings().isPostLoadMemoryUsageMeasurementEnabled() && m_page.isOnlyNonUtilityPage())
         m_postPageLoadMemoryUsageTimer.startOneShot(memoryUsageMeasurementDelay);
 }
 
@@ -107,7 +107,7 @@ void PerformanceMonitor::activityStateChanged(OptionSet<ActivityState::Flag> old
     bool visibilityChanged = changed.contains(ActivityState::IsVisible);
 
     // Measure CPU usage of pages when they are no longer visible.
-    if (DeprecatedGlobalSettings::isPostBackgroundingCPUUsageMeasurementEnabled() && visibilityChanged) {
+    if (m_page.settings().isPostBackgroundingCPUUsageMeasurementEnabled() && visibilityChanged) {
         m_postBackgroundingCPUTime = WTF::nullopt;
         if (newState & ActivityState::IsVisible)
             m_postBackgroundingCPUUsageTimer.stop();
@@ -115,7 +115,7 @@ void PerformanceMonitor::activityStateChanged(OptionSet<ActivityState::Flag> old
             m_postBackgroundingCPUUsageTimer.startOneShot(cpuUsageMeasurementDelay);
     }
 
-    if (DeprecatedGlobalSettings::isPerActivityStateCPUUsageMeasurementEnabled()) {
+    if (m_page.settings().isPerActivityStateCPUUsageMeasurementEnabled()) {
         // If visibility changed then report CPU usage right away because CPU usage is connected to visibility state.
         auto oldActivityStateForCPUSampling = activityStateForCPUSampling(oldState);
         if (oldActivityStateForCPUSampling != activityStateForCPUSampling(newState)) {
@@ -124,7 +124,7 @@ void PerformanceMonitor::activityStateChanged(OptionSet<ActivityState::Flag> old
         }
     }
 
-    if (DeprecatedGlobalSettings::isPostBackgroundingMemoryUsageMeasurementEnabled() && visibilityChanged) {
+    if (m_page.settings().isPostBackgroundingMemoryUsageMeasurementEnabled() && visibilityChanged) {
         if (newState & ActivityState::IsVisible)
             m_postBackgroundingMemoryUsageTimer.stop();
         else if (m_page.isOnlyNonUtilityPage())

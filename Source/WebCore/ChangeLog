@@ -1,3 +1,29 @@
+2020-08-29  Sam Weinig  <weinig@apple.com>
+
+        Move PerformanceMonitor related DeprecatedGlobalSettings to Settings
+        https://bugs.webkit.org/show_bug.cgi?id=215963
+
+        Reviewed by Anders Carlsson.
+
+        The PerformanceMonitor related uses of DeprecatedGlobalSettings can easily be moved to Settings, as PerformanceMonitor 
+        has a Page reference. 
+
+        * page/DeprecatedGlobalSettings.h:
+        (WebCore::DeprecatedGlobalSettings::isPostLoadCPUUsageMeasurementEnabled): Deleted.
+        (WebCore::DeprecatedGlobalSettings::isPostBackgroundingCPUUsageMeasurementEnabled): Deleted.
+        (WebCore::DeprecatedGlobalSettings::isPerActivityStateCPUUsageMeasurementEnabled): Deleted.
+        (WebCore::DeprecatedGlobalSettings::isPostLoadMemoryUsageMeasurementEnabled): Deleted.
+        (WebCore::DeprecatedGlobalSettings::isPostBackgroundingMemoryUsageMeasurementEnabled): Deleted.
+        * page/Settings.yaml:
+        * page/SettingsDefaultValues.h:
+        Moved settings from DeprecatedGlobalSettings.h to Settings.yaml. Default values encoded in SettingsDefaultValues.h
+
+        * page/PerformanceMonitor.cpp:
+        (WebCore::PerformanceMonitor::PerformanceMonitor):
+        (WebCore::PerformanceMonitor::didFinishLoad):
+        (WebCore::PerformanceMonitor::activityStateChanged):
+        Access the settings via m_page.settings(). Update constants to use constexpr.
+
 2020-08-28  Chris Dumez  <cdumez@apple.com>
 
         Update PannerNode to support k-rate automation of its AudioParams

@@ -118,4 +118,23 @@ static const bool defaultApplePayEnabled = true;
 static const bool defaultApplePayEnabled = false;
 #endif
 
+
+#if PLATFORM(COCOA)
+static constexpr const bool defaultPostLoadCPUUsageMeasurementEnabled = true;
+static constexpr const bool defaultPostLoadMemoryUsageMeasurementEnabled = true;
+#else
+static constexpr const bool defaultPostLoadCPUUsageMeasurementEnabled = false;
+static constexpr const bool defaultPostLoadMemoryUsageMeasurementEnabled = false;
+#endif
+
+#if PLATFORM(MAC)
+static constexpr const bool defaultPostBackgroundingCPUUsageMeasurementEnabled = true;
+static constexpr const bool defaultPerActivityStateCPUUsageMeasurementEnabled = true;
+static constexpr const bool defaultPostBackgroundingMemoryUsageMeasurementEnabled = true;
+#else
+static constexpr const bool defaultPostBackgroundingCPUUsageMeasurementEnabled = false;
+static constexpr const bool defaultPerActivityStateCPUUsageMeasurementEnabled = false;
+static constexpr const bool defaultPostBackgroundingMemoryUsageMeasurementEnabled = false;
+#endif
+
 }

@@ -983,6 +983,21 @@ dateTimeInputsEditableComponentsEnabled:
   initial: false
   conditional: DATE_AND_TIME_INPUT_TYPES
 
+isPostLoadCPUUsageMeasurementEnabled:
+  initial: defaultPostLoadCPUUsageMeasurementEnabled
+
+isPostLoadMemoryUsageMeasurementEnabled:
+  initial: defaultPostLoadMemoryUsageMeasurementEnabled
+
+isPostBackgroundingCPUUsageMeasurementEnabled:
+  initial: defaultPostBackgroundingCPUUsageMeasurementEnabled
+
+isPostBackgroundingMemoryUsageMeasurementEnabled:
+  initial: defaultPostBackgroundingMemoryUsageMeasurementEnabled
+
+isPerActivityStateCPUUsageMeasurementEnabled:
+  initial: defaultPerActivityStateCPUUsageMeasurementEnabled
+
 # Deprecated
 
 iceCandidateFilteringEnabled:
@@ -1006,4 +1021,5 @@ shouldUseServiceWorkerShortTimeout:
 
 # Clients should use per-navigation "allowsContentJavaScript" policies instead
 scriptMarkupEnabled:
-    initial: true
+  initial: true
+
