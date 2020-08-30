@@ -1,3 +1,9 @@
+2020-08-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Add missing test result from r266333.
+
+        * fast/scrolling/latching/latched-scroll-remove-iframe-expected.txt: Added.
+
 2020-08-29  Simon Fraser  <simon.fraser@apple.com>
 
         Rewrite main thread scroll latching logic
