@@ -163,6 +163,10 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             m_ignoreMomentumScrolls = false;
             return true;
         }
+
+        if (isMomentumScrollEvent && m_ignoreMomentumScrolls)
+            return true;
+
         return false;
     }
 

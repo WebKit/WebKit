@@ -1,5 +1,23 @@
 2020-08-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Rubberbanding in an overflow:scroll can trigger page jiggles
+        https://bugs.webkit.org/show_bug.cgi?id=215629
+        <rdar://problem/67295797>
+
+        Reviewed by Tim Horton.
+
+        When a scroller starts to rubberband, and is receiving momentum scroll events, it gets
+        into a state where events are ignored (to stop endless stretching). When in that
+        state, ScrollController::handleWheelEvent() needs to report that it handled the event,
+        to avoid the event bouncing to the scrolling thread and triggering page scrolls.
+
+        Test: fast/scrolling/mac/rubberband-overflow-in-wheel-region-root-jiggle.html
+
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::handleWheelEvent):
+
+2020-08-30  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r266262): Scroll latching fails when scrolling into a preventDefault() region
         https://bugs.webkit.org/show_bug.cgi?id=215988
         <rdar://problem/68034716>

@@ -1,0 +1,112 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        
+        .container {
+            padding: 10px;
+            margin: 20px;
+            border: 1px solid gray;
+        }
+        
+        .scroller {
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            padding: 5px;
+            overflow: scroll;
+        }
+        .content {
+            width: 200%;
+            height: 300%;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var overflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            scroller.scrollTop = 0;
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+
+            windowScrollEventCount = 0;
+            overflowScrollEventCount = 0;
+        }
+        
+        async function doMouseWheelScroll()
+        {
+            eventSender.mouseMoveTo(100, 100);
+
+            // Scroll down to latch, then up to rubberband.
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 12, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 12, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            await UIHelper.renderingUpdate();
+        }
+        
+        async function scrollTest()
+        {
+            debug('');
+            debug('Test that rubberbanding inside overflow:scroll in the non-fast scrollable region does not trigger page scrolls');
+            await resetScrollPositions();
+            await doMouseWheelScroll();
+            
+            debug('Waiting for rubberband...');
+            await UIHelper.waitForCondition(() => {
+                return scroller.scrollTop < 0;
+            });
+
+            debug('Waiting for stabilization');
+            await UIHelper.waitForCondition(() => {
+                return scroller.scrollTop == 0;
+            });
+            
+            shouldBeTrue('overflowScrollEventCount > 0');
+            shouldBeTrue('windowScrollEventCount == 0');
+            
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            let container = document.querySelector('.container');
+            container.addEventListener('wheel', () => { }, false);
+
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                ++overflowScrollEventCount;
+            }, false);
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="scroller">
+            <div class="content"></div>
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
