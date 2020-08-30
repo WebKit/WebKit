@@ -952,6 +952,7 @@ webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html 
 
 # Tests in this directory take > 30 minutes to run on debug bots.
 [ Debug ] imported/w3c/web-platform-tests/encoding
+[ Debug ] imported/w3c/web-platform-tests/encoding/streams [ Pass ]
 
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]

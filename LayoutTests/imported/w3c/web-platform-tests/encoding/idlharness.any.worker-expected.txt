@@ -51,13 +51,13 @@ FAIL TextDecoderStream interface: attribute fatal assert_own_property: self does
 FAIL TextDecoderStream interface: attribute ignoreBOM assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
 FAIL TextDecoderStream interface: attribute readable assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
 FAIL TextDecoderStream interface: attribute writable assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextEncoderStream interface: existence and properties of interface object assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
-FAIL TextEncoderStream interface object length assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
-FAIL TextEncoderStream interface object name assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
-FAIL TextEncoderStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
-FAIL TextEncoderStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
-FAIL TextEncoderStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
-FAIL TextEncoderStream interface: attribute encoding assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
-FAIL TextEncoderStream interface: attribute readable assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
-FAIL TextEncoderStream interface: attribute writable assert_own_property: self does not have own property "TextEncoderStream" expected property "TextEncoderStream" missing
+PASS TextEncoderStream interface: existence and properties of interface object 
+PASS TextEncoderStream interface object length 
+PASS TextEncoderStream interface object name 
+PASS TextEncoderStream interface: existence and properties of interface prototype object 
+PASS TextEncoderStream interface: existence and properties of interface prototype object's "constructor" property 
+PASS TextEncoderStream interface: existence and properties of interface prototype object's @@unscopables property 
+PASS TextEncoderStream interface: attribute encoding 
+PASS TextEncoderStream interface: attribute readable 
+PASS TextEncoderStream interface: attribute writable 
 

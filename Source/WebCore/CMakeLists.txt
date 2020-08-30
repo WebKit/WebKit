@@ -819,6 +819,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Text.idl
     dom/TextDecoder.idl
     dom/TextEncoder.idl
+    dom/TextEncoderStream.idl
+    dom/TextEncoderStreamEncoder.idl
     dom/TextEvent.idl
     dom/Touch.idl
     dom/TouchEvent.idl
@@ -1952,6 +1954,7 @@ set(WebCore_BUILTINS_SOURCES
     ${WEBCORE_DIR}/Modules/streams/WritableStreamDefaultController.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamDefaultWriter.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamInternals.js
+    ${WEBCORE_DIR}/dom/TextEncoderStream.js
     ${WEBCORE_DIR}/bindings/js/JSDOMBindingInternals.js
 )
 

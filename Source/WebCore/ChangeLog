@@ -1,3 +1,42 @@
+2020-08-30  Youenn Fablet  <youenn@apple.com>
+
+        Add support for TextEncoderStream
+        https://bugs.webkit.org/show_bug.cgi?id=215916
+
+        Reviewed by Alex Christensen.
+
+        Implement TextEncoderStream as a JS built-in.
+        It is controlled by transform stream runtime flag.
+
+        TextEncoderStream takes a TransformStream and TextEncoderStreamEncoder as private slots.
+        Add TextEncoderStreamEncoder to implement the actual UTF-8 encoding steps.
+        Covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/streams/TransformStream.idl:
+        * Modules/streams/TransformStream.js:
+        (initializeTransformStream):
+        * Modules/streams/TransformStreamInternals.js:
+        (createTransformStream):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/TextEncoderStream.idl: Added.
+        * dom/TextEncoderStream.js: Added.
+        (initializeTextEncoderStream):
+        (getter.encoding):
+        (getter.readable):
+        (getter.writable):
+        * dom/TextEncoderStreamEncoder.cpp: Added.
+        (WebCore::TextEncoderStreamEncoder::encode):
+        (WebCore::TextEncoderStreamEncoder::flush):
+        * dom/TextEncoderStreamEncoder.h: Added.
+        (WebCore::TextEncoderStreamEncoder::create):
+        * dom/TextEncoderStreamEncoder.idl: Added.
+
 2020-08-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove NFC normalization when submitting forms and encoding URL queries and fix EUC-JP encoding

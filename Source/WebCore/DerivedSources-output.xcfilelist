@@ -1936,6 +1936,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoder.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoderStream.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoderStream.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoderStreamEncoder.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoderStreamEncoder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextMetrics.cpp
@@ -2364,6 +2368,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SupplementalDependencies.dep
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SupplementalDependencies.txt
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TextEncoderStreamBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Touch.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TouchEvent.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TouchList.idl

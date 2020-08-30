@@ -236,6 +236,8 @@ namespace WebCore {
     macro(StereoPannerNode) \
     macro(StylePropertyMapReadOnly) \
     macro(StylePropertyMap) \
+    macro(TextEncoderStream) \
+    macro(TextEncoderStreamEncoder) \
     macro(TextTrackCue) \
     macro(TransformStream) \
     macro(TransformStreamDefaultController) \
@@ -314,12 +316,14 @@ namespace WebCore {
     macro(customElements) \
     macro(disturbed) \
     macro(document) \
+    macro(encode) \
     macro(errorSteps) \
     macro(failureKind) \
     macro(fetch) \
     macro(fetchRequest) \
     macro(fillFromJS) \
     macro(finishConsumingStream) \
+    macro(flush) \
     macro(flushAlgorithm) \
     macro(focus) \
     macro(frames) \
@@ -413,6 +417,8 @@ namespace WebCore {
     macro(structuredCloneArrayBufferView) \
     macro(timeline) \
     macro(top) \
+    macro(textEncoderStreamEncoder) \
+    macro(textEncoderStreamTransform) \
     macro(transformAlgorithm) \
     macro(underlyingByteSource) \
     macro(underlyingSink) \

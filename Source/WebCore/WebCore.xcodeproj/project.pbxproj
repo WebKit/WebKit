@@ -7411,6 +7411,11 @@
 		41087F03248E59C900680E91 /* AudioMediaStreamTrackRendererUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRendererUnit.h; sourceTree = "<group>"; };
 		410938282347799A009428BA /* JSAbortControllerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortControllerCustom.cpp; sourceTree = "<group>"; };
 		4109382C2347850E009428BA /* JSAbortSignalCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortSignalCustom.cpp; sourceTree = "<group>"; };
+		410A8EF424F823B9004F9070 /* TextEncoderStream.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextEncoderStream.idl; sourceTree = "<group>"; };
+		410A8EF624F823BA004F9070 /* TextEncoderStream.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = TextEncoderStream.js; sourceTree = "<group>"; };
+		410A8EF724F8F3F6004F9070 /* TextEncoderStreamEncoder.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextEncoderStreamEncoder.idl; sourceTree = "<group>"; };
+		410A8EF824F8F47A004F9070 /* TextEncoderStreamEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncoderStreamEncoder.cpp; sourceTree = "<group>"; };
+		410A8EF924F8F47B004F9070 /* TextEncoderStreamEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextEncoderStreamEncoder.h; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
 		410E445F234373AD000173D4 /* LibWebRTCSocketIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCSocketIdentifier.h; path = libwebrtc/LibWebRTCSocketIdentifier.h; sourceTree = "<group>"; };
 		41100C7E23F73982001BC33B /* WebSocketChannelInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannelInspector.h; sourceTree = "<group>"; };
@@ -29445,6 +29450,11 @@
 				5CE5D9A31DB897C300CE7A8D /* TextEncoder.cpp */,
 				5CE5D9A41DB897C300CE7A8D /* TextEncoder.h */,
 				5CE5D9A51DB897C300CE7A8D /* TextEncoder.idl */,
+				410A8EF424F823B9004F9070 /* TextEncoderStream.idl */,
+				410A8EF624F823BA004F9070 /* TextEncoderStream.js */,
+				410A8EF824F8F47A004F9070 /* TextEncoderStreamEncoder.cpp */,
+				410A8EF924F8F47B004F9070 /* TextEncoderStreamEncoder.h */,
+				410A8EF724F8F3F6004F9070 /* TextEncoderStreamEncoder.idl */,
 				933A142B0B7D188600A53FFD /* TextEvent.cpp */,
 				933A142D0B7D188600A53FFD /* TextEvent.h */,
 				933A142C0B7D188600A53FFD /* TextEvent.idl */,

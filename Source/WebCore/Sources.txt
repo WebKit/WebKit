@@ -943,6 +943,7 @@ dom/TemplateContentDocumentFragment.cpp
 dom/Text.cpp
 dom/TextDecoder.cpp
 dom/TextEncoder.cpp
+dom/TextEncoderStreamEncoder.cpp
 dom/TextEvent.cpp
 dom/TextNodeTraversal.cpp
 dom/Touch.cpp @no-unify
@@ -3490,6 +3491,8 @@ JSSubtleCrypto.cpp
 JSText.cpp
 JSTextDecoder.cpp
 JSTextEncoder.cpp
+JSTextEncoderStream.cpp
+JSTextEncoderStreamEncoder.cpp
 JSTextEvent.cpp
 JSTextMetrics.cpp
 JSTextTrack.cpp

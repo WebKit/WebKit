@@ -26,7 +26,13 @@
 function initializeTransformStream()
 {
     "use strict";
+
     let transformer = arguments[0];
+
+    // This is the path for CreateTransformStream.
+    if (@isObject(transformer) && @getByIdDirectPrivate(transformer, "TransformStream"))
+        return this;
+
     let writableStrategy = arguments[1];
     let readableStrategy = arguments[2];
 
