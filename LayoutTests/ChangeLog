@@ -1,3 +1,14 @@
+2020-08-31  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some failures and flakies
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-08-31  Youenn Fablet  <youenn@apple.com>
 
         Update imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html so that it no longer times out if first test fails

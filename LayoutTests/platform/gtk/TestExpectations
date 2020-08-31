@@ -47,6 +47,9 @@ webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failu
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 
+# Media - GTK-X11 flaky crash
+webkit.org/b/215499 [ Release ] media/video-load-networkState.html [ Crash Pass ]
+
 # Printing
 webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
 webkit.org/b/196542 printing/printing-events.html [ Crash ]
@@ -2081,8 +2084,6 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Failure Pass ]
 
 webkit.org/b/214637 js/weakref-finalizationregistry.html [ Timeout Pass ]
-
-webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeout Pass ]
 
 webkit.org/b/214800 imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html [ ImageOnlyFailure Pass ]
 

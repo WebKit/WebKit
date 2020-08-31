@@ -15,6 +15,7 @@ webkit.org/b/210360 webrtc/video-update-often.html [ Pass ]
 webkit.org/b/210370 media/track/text-track-cue-is-reachable.html [ Pass ]
 webkit.org/b/210848 compositing/video/video-border-radius-clipping.html [ Pass ]
 webkit.org/b/190001 [ Release ] transitions/start-transform-transition.html [ Pass ]
+webkit.org/b/215499 media/video-load-networkState.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
