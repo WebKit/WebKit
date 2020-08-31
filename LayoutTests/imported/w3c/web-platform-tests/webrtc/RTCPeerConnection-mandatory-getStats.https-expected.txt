@@ -1,80 +1,79 @@
 
-Harness Error (TIMEOUT), message = null
-
-FAIL getStats succeeds assert_equals: Test error. String. expected "string" but got "undefined"
-TIMEOUT RTCRtpStreamStats's ssrc Test timed out
-NOTRUN RTCRtpStreamStats's kind 
-NOTRUN RTCRtpStreamStats's transportId 
-NOTRUN RTCRtpStreamStats's codecId 
-NOTRUN RTCReceivedRtpStreamStats's packetsReceived 
-NOTRUN RTCReceivedRtpStreamStats's packetsLost 
-NOTRUN RTCReceivedRtpStreamStats's jitter 
-NOTRUN RTCReceivedRtpStreamStats's packetsDiscarded 
-NOTRUN RTCInboundRtpStreamStats's trackId 
-NOTRUN RTCInboundRtpStreamStats's receiverId 
-NOTRUN RTCInboundRtpStreamStats's remoteId 
-NOTRUN RTCInboundRtpStreamStats's framesDecoded 
-NOTRUN RTCRemoteInboundRtpStreamStats's localId 
-NOTRUN RTCRemoteInboundRtpStreamStats's roundTripTime 
-NOTRUN RTCSentRtpStreamStats's packetsSent 
-NOTRUN RTCSentRtpStreamStats's bytesSent 
-NOTRUN RTCOutboundRtpStreamStats's trackId 
-NOTRUN RTCOutboundRtpStreamStats's senderId 
-NOTRUN RTCOutboundRtpStreamStats's remoteId 
-NOTRUN RTCOutboundRtpStreamStats's framesEncoded 
-NOTRUN RTCRemoteOutboundRtpStreamStats's localId 
-NOTRUN RTCRemoteOutboundRtpStreamStats's remoteTimestamp 
-NOTRUN RTCPeerConnectionStats's dataChannelsOpened 
-NOTRUN RTCPeerConnectionStats's dataChannelsClosed 
-NOTRUN RTCDataChannelStats's protocol 
-NOTRUN RTCDataChannelStats's dataChannelIdentifier 
-NOTRUN RTCDataChannelStats's state 
-NOTRUN RTCDataChannelStats's messagesSent 
-NOTRUN RTCDataChannelStats's bytesSent 
-NOTRUN RTCDataChannelStats's messagesReceived 
-NOTRUN RTCDataChannelStats's bytesReceived 
-NOTRUN RTCMediaStreamStats's streamIdentifer 
-NOTRUN RTCMediaStreamStats's trackIds 
-NOTRUN RTCMediaHandlerStats's trackIdentifier 
-NOTRUN RTCMediaHandlerStats's remoteSource 
-NOTRUN RTCMediaHandlerStats's ended 
-NOTRUN RTCAudioHandlerStats's audioLevel 
-NOTRUN RTCVideoHandlerStats's frameWidth 
-NOTRUN RTCVideoHandlerStats's frameHeight 
-NOTRUN RTCVideoHandlerStats's framesPerSecond 
-NOTRUN RTCVideoSenderStats's framesSent 
-NOTRUN RTCVideoReceiverStats's framesReceived 
-NOTRUN RTCVideoReceiverStats's framesDecoded 
-NOTRUN RTCVideoReceiverStats's framesDropped 
-NOTRUN RTCVideoReceiverStats's partialFramesLost 
-NOTRUN RTCCodecStats's payloadType 
-NOTRUN RTCCodecStats's codecType 
-NOTRUN RTCCodecStats's clockRate 
-NOTRUN RTCCodecStats's channels 
-NOTRUN RTCCodecStats's sdpFmtpLine 
-NOTRUN RTCTransportStats's bytesSent 
-NOTRUN RTCTransportStats's bytesReceived 
-NOTRUN RTCTransportStats's rtcpTransportStatsId 
-NOTRUN RTCTransportStats's selectedCandidatePairId 
-NOTRUN RTCTransportStats's localCertificateId 
-NOTRUN RTCTransportStats's remoteCertificateId 
-NOTRUN RTCIceCandidatePairStats's transportId 
-NOTRUN RTCIceCandidatePairStats's localCandidateId 
-NOTRUN RTCIceCandidatePairStats's remoteCandidateId 
-NOTRUN RTCIceCandidatePairStats's state 
-NOTRUN RTCIceCandidatePairStats's priority 
-NOTRUN RTCIceCandidatePairStats's nominated 
-NOTRUN RTCIceCandidatePairStats's bytesSent 
-NOTRUN RTCIceCandidatePairStats's bytesReceived 
-NOTRUN RTCIceCandidatePairStats's totalRoundTripTime 
-NOTRUN RTCIceCandidatePairStats's currentRoundTripTime 
-NOTRUN RTCIceCandidateStats's address 
-NOTRUN RTCIceCandidateStats's port 
-NOTRUN RTCIceCandidateStats's protocol 
-NOTRUN RTCIceCandidateStats's candidateType 
-NOTRUN RTCIceCandidateStats's url 
-NOTRUN RTCCertificateStats's fingerprint 
-NOTRUN RTCCertificateStats's fingerprintAlgorithm 
-NOTRUN RTCCertificateStats's base64Certificate 
-NOTRUN RTCCertificateStats's issuerCertificateId 
+PASS getStats succeeds 
+FAIL Validating stats assert_equals: Test error. String. expected "string" but got "undefined"
+PASS RTCRtpStreamStats's ssrc 
+PASS RTCRtpStreamStats's kind 
+PASS RTCRtpStreamStats's transportId 
+PASS RTCRtpStreamStats's codecId 
+PASS RTCReceivedRtpStreamStats's packetsReceived 
+PASS RTCReceivedRtpStreamStats's packetsLost 
+PASS RTCReceivedRtpStreamStats's jitter 
+FAIL RTCReceivedRtpStreamStats's packetsDiscarded assert_true: Is packetsDiscarded present expected true got false
+PASS RTCInboundRtpStreamStats's trackId 
+FAIL RTCInboundRtpStreamStats's receiverId assert_true: Is receiverId present expected true got false
+FAIL RTCInboundRtpStreamStats's remoteId assert_true: Is remoteId present expected true got false
+PASS RTCInboundRtpStreamStats's framesDecoded 
+FAIL RTCRemoteInboundRtpStreamStats's localId assert_true: Is localId present expected true got false
+FAIL RTCRemoteInboundRtpStreamStats's roundTripTime assert_true: Is roundTripTime present expected true got false
+FAIL RTCSentRtpStreamStats's packetsSent assert_true: Is packetsSent present expected true got false
+FAIL RTCSentRtpStreamStats's bytesSent assert_true: Is bytesSent present expected true got false
+FAIL RTCOutboundRtpStreamStats's trackId assert_true: Is trackId present expected true got false
+FAIL RTCOutboundRtpStreamStats's senderId assert_true: Is senderId present expected true got false
+FAIL RTCOutboundRtpStreamStats's remoteId assert_true: Is remoteId present expected true got false
+FAIL RTCOutboundRtpStreamStats's framesEncoded assert_true: Is framesEncoded present expected true got false
+FAIL RTCRemoteOutboundRtpStreamStats's localId assert_true: Is localId present expected true got false
+FAIL RTCRemoteOutboundRtpStreamStats's remoteTimestamp assert_true: Is remoteTimestamp present expected true got false
+FAIL RTCPeerConnectionStats's dataChannelsOpened assert_true: Is dataChannelsOpened present expected true got false
+FAIL RTCPeerConnectionStats's dataChannelsClosed assert_true: Is dataChannelsClosed present expected true got false
+PASS RTCDataChannelStats's protocol 
+FAIL RTCDataChannelStats's dataChannelIdentifier assert_true: Is dataChannelIdentifier present expected true got false
+PASS RTCDataChannelStats's state 
+PASS RTCDataChannelStats's messagesSent 
+PASS RTCDataChannelStats's bytesSent 
+PASS RTCDataChannelStats's messagesReceived 
+PASS RTCDataChannelStats's bytesReceived 
+FAIL RTCMediaStreamStats's streamIdentifer assert_true: Is streamIdentifer present expected true got false
+FAIL RTCMediaStreamStats's trackIds assert_true: Is trackIds present expected true got false
+FAIL RTCMediaHandlerStats's trackIdentifier assert_true: Is trackIdentifier present expected true got false
+FAIL RTCMediaHandlerStats's remoteSource assert_true: Is remoteSource present expected true got false
+FAIL RTCMediaHandlerStats's ended assert_true: Is ended present expected true got false
+FAIL RTCAudioHandlerStats's audioLevel assert_true: Is audioLevel present expected true got false
+FAIL RTCVideoHandlerStats's frameWidth assert_true: Is frameWidth present expected true got false
+FAIL RTCVideoHandlerStats's frameHeight assert_true: Is frameHeight present expected true got false
+FAIL RTCVideoHandlerStats's framesPerSecond assert_true: Is framesPerSecond present expected true got false
+FAIL RTCVideoSenderStats's framesSent assert_true: Is framesSent present expected true got false
+FAIL RTCVideoReceiverStats's framesReceived assert_true: Is framesReceived present expected true got false
+FAIL RTCVideoReceiverStats's framesDecoded assert_true: Is framesDecoded present expected true got false
+FAIL RTCVideoReceiverStats's framesDropped assert_true: Is framesDropped present expected true got false
+FAIL RTCVideoReceiverStats's partialFramesLost assert_true: Is partialFramesLost present expected true got false
+PASS RTCCodecStats's payloadType 
+FAIL RTCCodecStats's codecType assert_true: Is codecType present expected true got false
+PASS RTCCodecStats's clockRate 
+PASS RTCCodecStats's channels 
+PASS RTCCodecStats's sdpFmtpLine 
+FAIL RTCTransportStats's bytesSent assert_true: Is bytesSent present expected true got false
+FAIL RTCTransportStats's bytesReceived assert_true: Is bytesReceived present expected true got false
+FAIL RTCTransportStats's rtcpTransportStatsId assert_true: Is rtcpTransportStatsId present expected true got false
+FAIL RTCTransportStats's selectedCandidatePairId assert_true: Is selectedCandidatePairId present expected true got false
+FAIL RTCTransportStats's localCertificateId assert_true: Is localCertificateId present expected true got false
+FAIL RTCTransportStats's remoteCertificateId assert_true: Is remoteCertificateId present expected true got false
+PASS RTCIceCandidatePairStats's transportId 
+PASS RTCIceCandidatePairStats's localCandidateId 
+PASS RTCIceCandidatePairStats's remoteCandidateId 
+PASS RTCIceCandidatePairStats's state 
+PASS RTCIceCandidatePairStats's priority 
+PASS RTCIceCandidatePairStats's nominated 
+PASS RTCIceCandidatePairStats's bytesSent 
+PASS RTCIceCandidatePairStats's bytesReceived 
+PASS RTCIceCandidatePairStats's totalRoundTripTime 
+PASS RTCIceCandidatePairStats's currentRoundTripTime 
+FAIL RTCIceCandidateStats's address assert_true: Is address present expected true got false
+PASS RTCIceCandidateStats's port 
+PASS RTCIceCandidateStats's protocol 
+PASS RTCIceCandidateStats's candidateType 
+FAIL RTCIceCandidateStats's url assert_true: Is url present expected true got false
+PASS RTCCertificateStats's fingerprint 
+PASS RTCCertificateStats's fingerprintAlgorithm 
+PASS RTCCertificateStats's base64Certificate 
+FAIL RTCCertificateStats's issuerCertificateId assert_true: Is issuerCertificateId present expected true got false
 

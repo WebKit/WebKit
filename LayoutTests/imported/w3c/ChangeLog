@@ -1,3 +1,15 @@
+2020-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Update imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html so that it no longer times out if first test fails
+        https://bugs.webkit.org/show_bug.cgi?id=216009
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html:
+        Wrap internal asserts in first test in its own test wrapper.
+        Migrate all promise tests to simple synchronous tests.
+
 2020-08-31  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address flakiness of imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-minimum.html
