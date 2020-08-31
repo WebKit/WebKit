@@ -814,6 +814,8 @@ void HTMLImageElement::copyNonAttributePropertiesFromElement(const Element& sour
     auto& sourceImage = static_cast<const HTMLImageElement&>(source);
 #if ENABLE(ATTACHMENT_ELEMENT)
     m_pendingClonedAttachmentID = !sourceImage.m_pendingClonedAttachmentID.isEmpty() ? sourceImage.m_pendingClonedAttachmentID : sourceImage.attachmentIdentifier();
+#else
+    UNUSED_PARAM(sourceImage);
 #endif
     Element::copyNonAttributePropertiesFromElement(source);
 }

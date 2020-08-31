@@ -1,3 +1,12 @@
+2020-08-31  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the unused variable build warning since r238538.
+
+        No new tests, no new behaviors.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::copyNonAttributePropertiesFromElement):
+
 2020-08-31  James Darpinian  <jdarpinian@chromium.org>
 
         Implement WEBGL_compressed_texture_s3tc_srgb extension
