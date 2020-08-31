@@ -1,3 +1,35 @@
+2020-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Optimize the implementation of TransformationMatrix::rotate(double)
+        https://bugs.webkit.org/show_bug.cgi?id=215994
+
+        Reviewed by Tim Horton.
+
+        TransformationMatrix::rotate(angle) currently just calls TransformationMatrix::rotate3d(0, 0, 1, angle), which
+        has a fast path for the case where we're rotating about the z-axis. However, we can make this *slightly* faster
+        by omitting the hypotenuse computation, several floating point comparisons, and several assignments in this case
+        because we already know that we're just rotating about the z-axis.
+
+        This is a small (but measurable) improvement on the Multiply subtest of MotionMark, which applies a little over
+        3 million rotation transformations over the course of 30 seconds.
+
+        * platform/graphics/transforms/RotateTransformOperation.h:
+
+        Instead of calling `rotate3d`, just have `rotate` directly call `multiply` with the following
+        `TransformationMatrix`:
+        ```
+        [[  cos(z)  sin(z)  0   0 ]
+         [  -sin(z) cos(z)  0   0 ]
+         [  0       0       1   0 ]
+         [  0       0       0   1 ]]
+        ```
+        ...where `z` is the angle of rotation, in radians.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::rotate):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::rotate): Deleted.
+
 2020-08-31  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date inputs should contain editable components

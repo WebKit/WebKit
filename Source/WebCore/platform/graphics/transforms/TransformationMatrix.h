@@ -253,7 +253,7 @@ public:
     TransformationMatrix& scale3d(double sx, double sy, double sz);
 
     // Angle is in degrees.
-    TransformationMatrix& rotate(double d) { return rotate3d(0, 0, d); }
+    WEBCORE_EXPORT TransformationMatrix& rotate(double);
     TransformationMatrix& rotateFromVector(double x, double y);
     WEBCORE_EXPORT TransformationMatrix& rotate3d(double rx, double ry, double rz);
     

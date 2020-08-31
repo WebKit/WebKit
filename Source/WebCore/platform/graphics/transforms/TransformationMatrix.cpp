@@ -897,6 +897,15 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
     return *this;
 }
 
+TransformationMatrix& TransformationMatrix::rotate(double angle)
+{
+    angle = deg2rad(angle);
+    double sinZ = sin(angle);
+    double cosZ = cos(angle);
+    multiply({ cosZ, sinZ, -sinZ, cosZ, 0, 0 });
+    return *this;
+}
+
 TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, double rz)
 {
     // Angles are in degrees. Switch to radians.

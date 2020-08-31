@@ -60,7 +60,10 @@ private:
 
     bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const override
     {
-        transform.rotate3d(m_x, m_y, m_z, m_angle);
+        if (type() == TransformOperation::ROTATE)
+            transform.rotate(m_angle);
+        else
+            transform.rotate3d(m_x, m_y, m_z, m_angle);
         return false;
     }
 
