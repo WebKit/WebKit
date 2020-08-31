@@ -1,3 +1,14 @@
+2020-08-31  James Darpinian  <jdarpinian@chromium.org>
+
+        Implement WEBGL_compressed_texture_s3tc_srgb extension
+        https://bugs.webkit.org/show_bug.cgi?id=215973
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/gl/formatutilsgl.cpp:
+        (rx::nativegl::ExtAndVersionOrExt):
+        (rx::nativegl::BuildInternalFormatInfoMap):
+
 2020-08-12  Keith Rollin  <krollin@apple.com>
 
         Remove the need for defining USE_NEW_BUILD_SYSTEM

@@ -947,6 +947,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGLCompressedTextureETC1.idl \
     $(WebCore)/html/canvas/WebGLCompressedTexturePVRTC.idl \
     $(WebCore)/html/canvas/WebGLCompressedTextureS3TC.idl \
+    $(WebCore)/html/canvas/WebGLCompressedTextureS3TCsRGB.idl \
     $(WebCore)/html/canvas/WebGLContextAttributes.idl \
     $(WebCore)/html/canvas/WebGLContextEvent.idl \
     $(WebCore)/html/canvas/WebGLDebugRendererInfo.idl \

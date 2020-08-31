@@ -11996,6 +11996,9 @@
 		A31C4E5116E02B08002F7957 /* JSOESTextureHalfFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureHalfFloat.cpp; sourceTree = "<group>"; };
 		A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureHalfFloat.h; sourceTree = "<group>"; };
 		A334BD822194E4610000D77F /* SSLKeyGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SSLKeyGenerator.cpp; sourceTree = "<group>"; };
+		A33C9F9124F835AA000F0845 /* WebGLCompressedTextureS3TCsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLCompressedTextureS3TCsRGB.h; sourceTree = "<group>"; };
+		A33C9F9324F835AB000F0845 /* WebGLCompressedTextureS3TCsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLCompressedTextureS3TCsRGB.cpp; sourceTree = "<group>"; };
+		A33C9F9424F835AB000F0845 /* WebGLCompressedTextureS3TCsRGB.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLCompressedTextureS3TCsRGB.idl; sourceTree = "<group>"; };
 		A3AF9D81203252EE006CAD06 /* UserAgentCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentCocoa.mm; sourceTree = "<group>"; };
 		A3AF9D8220325324006CAD06 /* UserAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAgent.h; sourceTree = "<group>"; };
 		A3AF9D8320325691006CAD06 /* UserAgentIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentIOS.mm; sourceTree = "<group>"; };
@@ -19350,6 +19353,9 @@
 				6E3FAE8C14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp */,
 				6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextureS3TC.h */,
 				6E3FAE9014733FEA00E42306 /* WebGLCompressedTextureS3TC.idl */,
+				A33C9F9324F835AB000F0845 /* WebGLCompressedTextureS3TCsRGB.cpp */,
+				A33C9F9124F835AA000F0845 /* WebGLCompressedTextureS3TCsRGB.h */,
+				A33C9F9424F835AB000F0845 /* WebGLCompressedTextureS3TCsRGB.idl */,
 				6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */,
 				6E4E91AB10F7FB3100A2779C /* WebGLContextAttributes.idl */,
 				93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */,

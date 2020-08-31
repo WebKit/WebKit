@@ -1430,6 +1430,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLCompressedTextureETC1.cpp
         html/canvas/WebGLCompressedTexturePVRTC.cpp
         html/canvas/WebGLCompressedTextureS3TC.cpp
+        html/canvas/WebGLCompressedTextureS3TCsRGB.cpp
         html/canvas/WebGLContextEvent.cpp
         html/canvas/WebGLContextGroup.cpp
         html/canvas/WebGLContextObject.cpp
@@ -1486,6 +1487,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLCompressedTextureETC1.idl
     html/canvas/WebGLCompressedTexturePVRTC.idl
     html/canvas/WebGLCompressedTextureS3TC.idl
+    html/canvas/WebGLCompressedTextureS3TCsRGB.idl
     html/canvas/WebGLContextAttributes.idl
     html/canvas/WebGLContextEvent.idl
     html/canvas/WebGLDebugRendererInfo.idl

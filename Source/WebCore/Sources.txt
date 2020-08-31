@@ -1263,6 +1263,7 @@ html/canvas/WebGLCompressedTextureETC.cpp
 html/canvas/WebGLCompressedTextureETC1.cpp
 html/canvas/WebGLCompressedTexturePVRTC.cpp
 html/canvas/WebGLCompressedTextureS3TC.cpp
+html/canvas/WebGLCompressedTextureS3TCsRGB.cpp
 html/canvas/WebGLContextEvent.cpp
 html/canvas/WebGLContextGroup.cpp
 html/canvas/WebGLContextObject.cpp
@@ -3552,6 +3553,7 @@ JSWebGLCompressedTextureETC.cpp
 JSWebGLCompressedTextureETC1.cpp
 JSWebGLCompressedTexturePVRTC.cpp
 JSWebGLCompressedTextureS3TC.cpp
+JSWebGLCompressedTextureS3TCsRGB.cpp
 JSWebGLContextAttributes.cpp
 JSWebGLContextEvent.cpp
 JSWebGLDebugRendererInfo.cpp

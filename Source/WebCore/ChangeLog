@@ -1,3 +1,36 @@
+2020-08-31  James Darpinian  <jdarpinian@chromium.org>
+
+        Implement WEBGL_compressed_texture_s3tc_srgb extension
+        https://bugs.webkit.org/show_bug.cgi?id=215973
+
+        Reviewed by Dean Jackson.
+
+        Tested by webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/WebGLCompressedTextureS3TCsRGB.cpp: Added.
+        (WebCore::WebGLCompressedTextureS3TCsRGB::WebGLCompressedTextureS3TCsRGB):
+        (WebCore::WebGLCompressedTextureS3TCsRGB::getName const):
+        (WebCore::WebGLCompressedTextureS3TCsRGB::supported):
+        * html/canvas/WebGLCompressedTextureS3TCsRGB.h: Added.
+        * html/canvas/WebGLCompressedTextureS3TCsRGB.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::extensionIsEnabled):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexFuncData):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexDimensions):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexSubDimensions):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/ExtensionsGL.h:
+
 2020-08-31  Antti Koivisto  <antti@apple.com>
 
         Wheel event region code is not fully disabled
