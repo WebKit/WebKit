@@ -1,3 +1,12 @@
+2020-08-31  Karl Rackler  <rackler@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=215909
+        Removed test expectations
+
+        Unreviewed test gardening.
+
+        * platform/wincairo/TestExpectations:
+
 2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
 
         Unreviewed, reverting r266350.
