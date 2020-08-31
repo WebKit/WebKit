@@ -43,7 +43,7 @@
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
-#include "Settings.h"
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO)
@@ -208,7 +208,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         } else {
             if (m_lazyImageLoadState == LazyImageLoadState::None && isImageElement) {
                 auto& imageElement = downcast<HTMLImageElement>(element());
-                if (imageElement.isLazyLoadable() && document.settings().lazyImageLoadingEnabled()) {
+                if (imageElement.isLazyLoadable() && RuntimeEnabledFeatures::sharedFeatures().lazyImageLoadingEnabled()) {
                     m_lazyImageLoadState = LazyImageLoadState::Deferred;
                     request.setIgnoreForRequestCount(true);
                 }

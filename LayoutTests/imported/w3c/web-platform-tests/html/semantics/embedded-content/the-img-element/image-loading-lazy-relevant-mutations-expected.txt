@@ -1,7 +1,10 @@
-    
+CONSOLE MESSAGE: Error: assert_false: below-viewport-1 image should never load expected false got true
+   
 
-PASS Images are lazyloaded 
-PASS Image referrerPolicy mutation does not cause deferred loading=lazy images to be fetched 
-PASS Image crossOrigin mutation does not cause deferred loading=lazy images to be fetched 
-PASS Image src mutation does not cause deferred loading=lazy images to be fetched 
+Harness Error (FAIL), message = Error: assert_false: below-viewport-1 image should never load expected false got true
+
+TIMEOUT Images are lazyloaded Test timed out
+NOTRUN Image referrerPolicy mutation does not cause deferred loading=lazy images to be fetched 
+NOTRUN Image crossOrigin mutation does not cause deferred loading=lazy images to be fetched 
+NOTRUN Image src mutation does not cause deferred loading=lazy images to be fetched 
 

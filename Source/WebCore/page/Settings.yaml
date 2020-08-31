@@ -372,8 +372,6 @@ inProcessCookieCacheEnabled:
 
 thirdPartyIframeRedirectBlockingEnabled:
   initial: true
-lazyImageLoadingEnabled:
-  initial: false
 
 cookieEnabled:
   initial: true
