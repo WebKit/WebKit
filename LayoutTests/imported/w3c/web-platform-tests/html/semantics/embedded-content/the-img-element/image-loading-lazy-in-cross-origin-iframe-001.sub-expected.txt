@@ -1,5 +1,5 @@
 
 
-FAIL A below-viewport loading=lazy image in a cross origin iframe loads only
-       when scrolled into viewport assert_equals: The loading=lazy image should not block the iframe's load event expected "window_loaded" but got "image_loaded"
+PASS A below-viewport loading=lazy image in a cross origin iframe loads only
+       when scrolled into viewport 
 

@@ -214,7 +214,7 @@ private:
                 m_sizesAttribute = attributeValue;
                 break;
             }
-            if (RuntimeEnabledFeatures::sharedFeatures().lazyImageLoadingEnabled()) {
+            if (document.settings().lazyImageLoadingEnabled()) {
                 if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
                     m_lazyloadAttribute = attributeValue;
                     break;

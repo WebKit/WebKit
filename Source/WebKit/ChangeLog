@@ -1,3 +1,18 @@
+2020-08-31  Rob Buis  <rbuis@igalia.com>
+
+        Convert runtime flag to setting for lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=215610
+
+        Reviewed by Youenn Fablet.
+
+        Remove lazy image loading runtime flag.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetLazyImageLoadingEnabled): Deleted.
+        (WKPreferencesGetLazyImageLoadingEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2020-08-31  Youenn Fablet  <youenn@apple.com>
 
         [Cocoa] Disable sniffing for WebSocket handshakes

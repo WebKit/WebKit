@@ -2040,7 +2040,6 @@ LazyImageLoadingEnabled:
   defaultValue: false
   humanReadableName: "Lazy Image Loading"
   humanReadableDescription: "Enable Lazy Image Loading support"
-  webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
 IsThirdPartyCookieBlockingDisabled:

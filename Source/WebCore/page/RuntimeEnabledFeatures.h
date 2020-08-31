@@ -361,9 +361,6 @@ public:
     bool linkPreloadResponsiveImagesEnabled() const { return m_linkPreloadResponsiveImagesEnabled; }
     void setLinkPreloadResponsiveImagesEnabled(bool isEnabled) { m_linkPreloadResponsiveImagesEnabled = isEnabled; }
 
-    void setLazyImageLoadingEnabled(bool areEnabled) { m_lazyImageLoadingEnabled = areEnabled; }
-    bool lazyImageLoadingEnabled() const { return m_lazyImageLoadingEnabled; }
-
     void setCSSShadowPartsEnabled(bool isEnabled) { m_isCSSShadowPartsEnabled = isEnabled; }
     bool cssShadowPartsEnabled() const { return m_isCSSShadowPartsEnabled; }
 
@@ -578,7 +575,6 @@ private:
     bool m_isNSURLSessionWebSocketEnabled { false };
 #endif
 
-    bool m_lazyImageLoadingEnabled { false };
     bool m_secureContextChecksEnabled { true };
     bool m_isCSSShadowPartsEnabled { true };
 
