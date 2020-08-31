@@ -1,3 +1,94 @@
+2020-08-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make StyleRareNonInheritedData::mask and StyleBackgroundData::background DataRefs
+        https://bugs.webkit.org/show_bug.cgi?id=215942
+
+        Reviewed by Darin Adler.
+
+        A significant amount of time in MotionMark's Multiply subtest is spent underneath the copy constructor
+        `StyleRareNonInheritedData`, and a significant amount of time underneath this copy constructor is spent copying
+        the rare non-inherited data's mask (a `FillLayer`).
+
+        This `FillLayer` is currently inline data in `StyleRareNonInheritedData`; to reduce the cost of copying rare
+        non-inherited data, we can instead make this a `DataRef<FillLayer>`, such that copying rare data will only copy
+        the reference to the `FillLayer` rather than the `FillLayer` itself.
+
+        Upon mutating the `FillLayer`, we now use `DataRef::access()` to ensure that these `FillLayer`s are copied
+        before writing. See below for more details.
+
+        * css/makeprop.pl:
+        (generateFillLayerPropertyInheritValueSetter):
+        (generateFillLayerPropertyValueSetter):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::create):
+        (WebCore::FillLayer::FillLayer):
+
+        Deeply copy the `FillLayer`'s linked list of `FillLayer`s. This preserves existing behavior, which currently
+        uses `std::unique_ptr` to store the pointer to the next `FillLayer` (and therefore, requires a deep copy of the
+        linked list when copying `FillLayer`).
+
+        In a future patch, we could probably further optimize this as well to behave in a copy-on-write way, by turning
+        the `RefPtr<FillLayer> m_next;` into an `Optional<DataRef<FillLayer>>` instead (and then use `access()` to copy
+        the next `FillLayer` prior to writing).
+
+        (WebCore::FillLayer::~FillLayer):
+        (WebCore::FillLayer::operator=):
+        * rendering/style/FillLayer.h:
+
+        Make `FillLayer` ref-counted, and introduce new `create` methods for constructing `FillLayer`s. Use these
+        methods in several places where we currently call the constructors directly, via `makeUnique`.
+
+        (WebCore::FillLayer::copy const):
+        (WebCore::FillLayer::setNext):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasBackgroundImage const):
+        (WebCore::RenderStyle::hasFixedBackgroundImage const):
+        (WebCore::RenderStyle::backgroundRepeatX const):
+        (WebCore::RenderStyle::backgroundRepeatY const):
+        (WebCore::RenderStyle::backgroundComposite const):
+        (WebCore::RenderStyle::backgroundAttachment const):
+        (WebCore::RenderStyle::backgroundClip const):
+        (WebCore::RenderStyle::backgroundOrigin const):
+        (WebCore::RenderStyle::backgroundXPosition const):
+        (WebCore::RenderStyle::backgroundYPosition const):
+        (WebCore::RenderStyle::backgroundSizeType const):
+        (WebCore::RenderStyle::backgroundSizeLength const):
+        (WebCore::RenderStyle::ensureBackgroundLayers):
+        (WebCore::RenderStyle::maskImage const):
+        (WebCore::RenderStyle::maskRepeatX const):
+        (WebCore::RenderStyle::maskRepeatY const):
+        (WebCore::RenderStyle::maskComposite const):
+        (WebCore::RenderStyle::maskClip const):
+        (WebCore::RenderStyle::maskOrigin const):
+        (WebCore::RenderStyle::maskXPosition const):
+        (WebCore::RenderStyle::maskYPosition const):
+        (WebCore::RenderStyle::maskSizeType const):
+        (WebCore::RenderStyle::maskSizeLength const):
+        (WebCore::RenderStyle::ensureMaskLayers):
+        (WebCore::RenderStyle::hasMask const):
+        (WebCore::RenderStyle::setBackgroundXPosition):
+        (WebCore::RenderStyle::setBackgroundYPosition):
+        (WebCore::RenderStyle::setBackgroundSize):
+        (WebCore::RenderStyle::setBackgroundSizeLength):
+        (WebCore::RenderStyle::clearBackgroundLayers):
+        (WebCore::RenderStyle::inheritBackgroundLayers):
+        (WebCore::RenderStyle::clearMaskLayers):
+        (WebCore::RenderStyle::inheritMaskLayers):
+        (WebCore::RenderStyle::setMaskImage):
+        (WebCore::RenderStyle::setMaskXPosition):
+        (WebCore::RenderStyle::setMaskYPosition):
+        (WebCore::RenderStyle::setMaskSize):
+        * rendering/style/StyleBackgroundData.cpp:
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        (WebCore::StyleBackgroundData::dump const):
+        * rendering/style/StyleBackgroundData.h:
+
+        Since `FillLayer` is now ref-counted, `StyleBackgroundData::background` needs to be a `DataRef` as well.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2020-08-30  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused editable image code

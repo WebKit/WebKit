@@ -205,8 +205,8 @@ public:
     bool hasMarginBeforeQuirk() const { return marginBefore().hasQuirk(); }
     bool hasMarginAfterQuirk() const { return marginAfter().hasQuirk(); }
 
-    bool hasBackgroundImage() const { return m_backgroundData->background.hasImage(); }
-    bool hasFixedBackgroundImage() const { return m_backgroundData->background.hasFixedImage(); }
+    bool hasBackgroundImage() const { return m_backgroundData->background->hasImage(); }
+    bool hasFixedBackgroundImage() const { return m_backgroundData->background->hasFixedImage(); }
 
     bool hasEntirelyFixedBackground() const;
 
@@ -405,30 +405,30 @@ public:
     bool breakOnlyAfterWhiteSpace() const;
     bool breakWords() const;
 
-    FillRepeat backgroundRepeatX() const { return static_cast<FillRepeat>(m_backgroundData->background.repeatX()); }
-    FillRepeat backgroundRepeatY() const { return static_cast<FillRepeat>(m_backgroundData->background.repeatY()); }
-    CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(m_backgroundData->background.composite()); }
-    FillAttachment backgroundAttachment() const { return static_cast<FillAttachment>(m_backgroundData->background.attachment()); }
-    FillBox backgroundClip() const { return static_cast<FillBox>(m_backgroundData->background.clip()); }
-    FillBox backgroundOrigin() const { return static_cast<FillBox>(m_backgroundData->background.origin()); }
-    const Length& backgroundXPosition() const { return m_backgroundData->background.xPosition(); }
-    const Length& backgroundYPosition() const { return m_backgroundData->background.yPosition(); }
-    FillSizeType backgroundSizeType() const { return m_backgroundData->background.sizeType(); }
-    const LengthSize& backgroundSizeLength() const { return m_backgroundData->background.sizeLength(); }
-    FillLayer& ensureBackgroundLayers() { return m_backgroundData.access().background; }
+    FillRepeat backgroundRepeatX() const { return static_cast<FillRepeat>(m_backgroundData->background->repeatX()); }
+    FillRepeat backgroundRepeatY() const { return static_cast<FillRepeat>(m_backgroundData->background->repeatY()); }
+    CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(m_backgroundData->background->composite()); }
+    FillAttachment backgroundAttachment() const { return static_cast<FillAttachment>(m_backgroundData->background->attachment()); }
+    FillBox backgroundClip() const { return static_cast<FillBox>(m_backgroundData->background->clip()); }
+    FillBox backgroundOrigin() const { return static_cast<FillBox>(m_backgroundData->background->origin()); }
+    const Length& backgroundXPosition() const { return m_backgroundData->background->xPosition(); }
+    const Length& backgroundYPosition() const { return m_backgroundData->background->yPosition(); }
+    FillSizeType backgroundSizeType() const { return m_backgroundData->background->sizeType(); }
+    const LengthSize& backgroundSizeLength() const { return m_backgroundData->background->sizeLength(); }
+    FillLayer& ensureBackgroundLayers() { return m_backgroundData.access().background.access(); }
     const FillLayer& backgroundLayers() const { return m_backgroundData->background; }
 
-    StyleImage* maskImage() const { return m_rareNonInheritedData->mask.image(); }
-    FillRepeat maskRepeatX() const { return static_cast<FillRepeat>(m_rareNonInheritedData->mask.repeatX()); }
-    FillRepeat maskRepeatY() const { return static_cast<FillRepeat>(m_rareNonInheritedData->mask.repeatY()); }
-    CompositeOperator maskComposite() const { return static_cast<CompositeOperator>(m_rareNonInheritedData->mask.composite()); }
-    FillBox maskClip() const { return static_cast<FillBox>(m_rareNonInheritedData->mask.clip()); }
-    FillBox maskOrigin() const { return static_cast<FillBox>(m_rareNonInheritedData->mask.origin()); }
-    const Length& maskXPosition() const { return m_rareNonInheritedData->mask.xPosition(); }
-    const Length& maskYPosition() const { return m_rareNonInheritedData->mask.yPosition(); }
-    FillSizeType maskSizeType() const { return m_rareNonInheritedData->mask.sizeType(); }
-    const LengthSize& maskSizeLength() const { return m_rareNonInheritedData->mask.sizeLength(); }
-    FillLayer& ensureMaskLayers() { return m_rareNonInheritedData.access().mask; }
+    StyleImage* maskImage() const { return m_rareNonInheritedData->mask->image(); }
+    FillRepeat maskRepeatX() const { return static_cast<FillRepeat>(m_rareNonInheritedData->mask->repeatX()); }
+    FillRepeat maskRepeatY() const { return static_cast<FillRepeat>(m_rareNonInheritedData->mask->repeatY()); }
+    CompositeOperator maskComposite() const { return static_cast<CompositeOperator>(m_rareNonInheritedData->mask->composite()); }
+    FillBox maskClip() const { return static_cast<FillBox>(m_rareNonInheritedData->mask->clip()); }
+    FillBox maskOrigin() const { return static_cast<FillBox>(m_rareNonInheritedData->mask->origin()); }
+    const Length& maskXPosition() const { return m_rareNonInheritedData->mask->xPosition(); }
+    const Length& maskYPosition() const { return m_rareNonInheritedData->mask->yPosition(); }
+    FillSizeType maskSizeType() const { return m_rareNonInheritedData->mask->sizeType(); }
+    const LengthSize& maskSizeLength() const { return m_rareNonInheritedData->mask->sizeLength(); }
+    FillLayer& ensureMaskLayers() { return m_rareNonInheritedData.access().mask.access(); }
     const FillLayer& maskLayers() const { return m_rareNonInheritedData->mask; }
     const NinePieceImage& maskBoxImage() const { return m_rareNonInheritedData->maskBoxImage; }
     StyleImage* maskBoxImageSource() const { return m_rareNonInheritedData->maskBoxImage.image(); }
@@ -649,7 +649,7 @@ public:
     void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, ApplyTransformOrigin = IncludeTransformOrigin) const;
     void setPageScaleTransform(float);
 
-    bool hasMask() const { return m_rareNonInheritedData->mask.hasImage() || m_rareNonInheritedData->maskBoxImage.hasImage(); }
+    bool hasMask() const { return m_rareNonInheritedData->mask->hasImage() || m_rareNonInheritedData->maskBoxImage.hasImage(); }
 
     TextCombine textCombine() const { return static_cast<TextCombine>(m_rareNonInheritedData->textCombine); }
     bool hasTextCombine() const { return textCombine() != TextCombine::None; }
@@ -845,10 +845,10 @@ public:
 
     void setBackgroundColor(const Color& v) { SET_VAR(m_backgroundData, color, v); }
 
-    void setBackgroundXPosition(Length&& length) { SET_VAR(m_backgroundData, background.m_xPosition, WTFMove(length)); }
-    void setBackgroundYPosition(Length&& length) { SET_VAR(m_backgroundData, background.m_yPosition, WTFMove(length)); }
-    void setBackgroundSize(FillSizeType b) { SET_VAR(m_backgroundData, background.m_sizeType, static_cast<unsigned>(b)); }
-    void setBackgroundSizeLength(LengthSize&& size) { SET_VAR(m_backgroundData, background.m_sizeLength, WTFMove(size)); }
+    void setBackgroundXPosition(Length&& length) { SET_NESTED_VAR(m_backgroundData, background, m_xPosition, WTFMove(length)); }
+    void setBackgroundYPosition(Length&& length) { SET_NESTED_VAR(m_backgroundData, background, m_yPosition, WTFMove(length)); }
+    void setBackgroundSize(FillSizeType b) { SET_NESTED_VAR(m_backgroundData, background, m_sizeType, static_cast<unsigned>(b)); }
+    void setBackgroundSizeLength(LengthSize&& size) { SET_NESTED_VAR(m_backgroundData, background, m_sizeLength, WTFMove(size)); }
     
     void setBorderImage(const NinePieceImage& b) { SET_VAR(m_surroundData, border.m_image, b); }
     void setBorderImageSource(RefPtr<StyleImage>&&);
@@ -965,23 +965,23 @@ public:
     void setWordSpacing(Length&&);
     void setLetterSpacing(float);
 
-    void clearBackgroundLayers() { m_backgroundData.access().background = FillLayer(FillLayerType::Background); }
-    void inheritBackgroundLayers(const FillLayer& parent) { m_backgroundData.access().background = parent; }
+    void clearBackgroundLayers() { m_backgroundData.access().background = FillLayer::create(FillLayerType::Background); }
+    void inheritBackgroundLayers(const FillLayer& parent) { m_backgroundData.access().background = FillLayer::create(parent); }
 
     void adjustBackgroundLayers();
 
-    void clearMaskLayers() { m_rareNonInheritedData.access().mask = FillLayer(FillLayerType::Mask); }
-    void inheritMaskLayers(const FillLayer& parent) { m_rareNonInheritedData.access().mask = parent; }
+    void clearMaskLayers() { m_rareNonInheritedData.access().mask = FillLayer::create(FillLayerType::Mask); }
+    void inheritMaskLayers(const FillLayer& parent) { m_rareNonInheritedData.access().mask = FillLayer::create(parent); }
 
     void adjustMaskLayers();
 
-    void setMaskImage(RefPtr<StyleImage>&& v) { m_rareNonInheritedData.access().mask.setImage(WTFMove(v)); }
+    void setMaskImage(RefPtr<StyleImage>&& v) { m_rareNonInheritedData.access().mask.access().setImage(WTFMove(v)); }
 
     void setMaskBoxImage(const NinePieceImage& b) { SET_VAR(m_rareNonInheritedData, maskBoxImage, b); }
     void setMaskBoxImageSource(RefPtr<StyleImage>&& v) { m_rareNonInheritedData.access().maskBoxImage.setImage(WTFMove(v)); }
-    void setMaskXPosition(Length&& length) { SET_VAR(m_rareNonInheritedData, mask.m_xPosition, WTFMove(length)); }
-    void setMaskYPosition(Length&& length) { SET_VAR(m_rareNonInheritedData, mask.m_yPosition, WTFMove(length)); }
-    void setMaskSize(LengthSize size) { SET_VAR(m_rareNonInheritedData, mask.m_sizeLength, WTFMove(size)); }
+    void setMaskXPosition(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, mask, m_xPosition, WTFMove(length)); }
+    void setMaskYPosition(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, mask, m_yPosition, WTFMove(length)); }
+    void setMaskSize(LengthSize size) { SET_NESTED_VAR(m_rareNonInheritedData, mask, m_sizeLength, WTFMove(size)); }
 
     void setBorderCollapse(BorderCollapse collapse) { m_inheritedFlags.borderCollapse = static_cast<unsigned>(collapse); }
     void setHorizontalBorderSpacing(float);

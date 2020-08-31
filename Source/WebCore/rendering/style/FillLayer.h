@@ -60,10 +60,14 @@ inline bool operator!=(const FillSize& a, const FillSize& b)
     return !(a == b);
 }
 
-class FillLayer {
+class FillLayer : public RefCounted<FillLayer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FillLayer(FillLayerType);
+    static Ref<FillLayer> create(FillLayerType);
+    static Ref<FillLayer> create(const FillLayer&);
+
+    Ref<FillLayer> copy() const { return create(*this); }
+
     ~FillLayer();
 
     StyleImage* image() const { return m_image.get(); }
@@ -135,10 +139,9 @@ public:
     void clearSize() { m_sizeType = static_cast<unsigned>(FillSizeType::None); }
     void clearMaskSourceType() { m_maskSourceTypeSet = false; }
 
-    void setNext(std::unique_ptr<FillLayer> next) { m_next = WTFMove(next); }
+    void setNext(RefPtr<FillLayer>&& next) { m_next = WTFMove(next); }
 
     FillLayer& operator=(const FillLayer&);
-    FillLayer(const FillLayer&);
 
     bool operator==(const FillLayer&) const;
     bool operator!=(const FillLayer& other) const { return !(*this == other); }
@@ -174,11 +177,14 @@ public:
 private:
     friend class RenderStyle;
 
+    explicit FillLayer(FillLayerType);
+    FillLayer(const FillLayer&);
+
     void computeClipMax() const;
 
     bool hasImageInAnyLayer() const;
 
-    std::unique_ptr<FillLayer> m_next;
+    RefPtr<FillLayer> m_next;
 
     RefPtr<StyleImage> m_image;
 
