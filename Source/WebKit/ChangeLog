@@ -1,3 +1,15 @@
+2020-08-31  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Disable sniffing for WebSocket handshakes
+        https://bugs.webkit.org/show_bug.cgi?id=215932
+
+        Reviewed by Darin Adler.
+
+        Covered by http/tests/websocket/tests/hybi/handshake-error.html no longer timing out with NSURLSession WebSocket code path.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+
 2020-08-30  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused editable image code

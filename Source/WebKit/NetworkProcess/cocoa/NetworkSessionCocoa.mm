@@ -1604,6 +1604,9 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(NetworkS
         [requestWithProtocols addValue: StringView(protocol).createNSString().get() forHTTPHeaderField:@"Sec-WebSocket-Protocol"];
         nsRequest = requestWithProtocols;
     }
+    // rdar://problem/68057031: explicitly disable sniffing for WebSocket handshakes.
+    [nsRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
+
     RetainPtr<NSURLSessionWebSocketTask> task = [m_sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest];
     return makeUnique<WebSocketTask>(channel, WTFMove(task));
 }
