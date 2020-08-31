@@ -1,3 +1,20 @@
+2020-08-31  Sam Weinig  <weinig@apple.com>
+
+        DeprecatedGlobalSettings::globalConstRedeclarationShouldThrow() is not actually a setting, so should not be in DeprecatedGlobalSettings
+        https://bugs.webkit.org/show_bug.cgi?id=215978
+
+        Reviewed by Darin Adler.
+
+        Move behavior quirk defined by DeprecatedGlobalSettings::globalConstRedeclarationShouldThrow() to its 
+        only call site in CommonVM.cpp
+
+        * bindings/js/CommonVM.cpp:
+        (WebCore::globalConstRedeclarationShouldThrow):
+        (WebCore::commonVMSlow):
+        * page/DeprecatedGlobalSettings.cpp:
+        (WebCore::DeprecatedGlobalSettings::globalConstRedeclarationShouldThrow): Deleted.
+        * page/DeprecatedGlobalSettings.h:
+
 2020-08-31  Alex Christensen  <achristensen@webkit.org>
 
         Make Big5 encoder conform to the specification and behavior of Chrome and Firefox

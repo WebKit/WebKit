@@ -28,7 +28,6 @@
 
 #include "AudioSession.h"
 #include "HTMLMediaElement.h"
-#include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -196,17 +195,6 @@ const String& DeprecatedGlobalSettings::networkInterfaceName()
     return sharedNetworkInterfaceNameGlobal();
 }
 #endif
-
-bool DeprecatedGlobalSettings::globalConstRedeclarationShouldThrow()
-{
-#if PLATFORM(MAC)
-    return !MacApplication::isIBooks();
-#elif PLATFORM(IOS_FAMILY)
-    return !IOSApplication::isIBooks();
-#else
-    return true;
-#endif
-}
 
 void DeprecatedGlobalSettings::setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
 {
