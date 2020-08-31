@@ -1720,7 +1720,6 @@ private:
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt);
     template <class TreeBuilder> TreeStatement parseFunctionDeclarationStatement(TreeBuilder&, bool isAsync, bool parentAllowsFunctionDeclarationAsStatement);
     template <class TreeBuilder> TreeStatement parseAsyncFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt);
-    template <class TreeBuilder> NEVER_INLINE bool maybeParseAsyncFunctionDeclarationStatement(TreeBuilder& context, TreeStatement& result, bool parentAllowsFunctionDeclarationAsStatement);
     template <class TreeBuilder> TreeStatement parseVariableDeclaration(TreeBuilder&, DeclarationType, ExportType = ExportType::NotExported);
     template <class TreeBuilder> TreeStatement parseDoWhileStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseWhileStatement(TreeBuilder&);

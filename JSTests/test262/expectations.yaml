@@ -3197,27 +3197,11 @@ test/language/statements/generators/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/statements/if/if-async-fun-else-async-fun.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-async-fun-else-stmt.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-async-fun-no-else.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-async-gen-else-async-gen.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-async-gen-else-stmt.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-async-gen-no-else.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-gen-else-gen.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-gen-else-stmt.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-gen-no-else.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-stmt-else-async-fun.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-stmt-else-async-gen.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-stmt-else-gen.js:
   default: 'Test262: This statement should not be evaluated.'

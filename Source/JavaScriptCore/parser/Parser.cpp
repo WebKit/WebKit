@@ -1982,8 +1982,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     }
     case IDENT:
         if (UNLIKELY(*m_token.m_data.ident == m_vm.propertyNames->async && !m_token.m_data.escaped)) {
-            if (maybeParseAsyncFunctionDeclarationStatement(context, result, parentAllowsFunctionDeclarationAsStatement))
-                break;
+            SavePoint savePoint = createSavePoint(context);
+            next();
+            failIfTrue(match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken(), "Cannot use async function declaration in single-statement context");
+            restoreSavePoint(context, savePoint);
         }
         FALLTHROUGH;
     case AWAIT:
@@ -2065,21 +2067,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     TreeStatement result = context.createBlockStatement(location, sourceElements, start, m_lastTokenEndPosition.line, currentScope()->finalizeLexicalEnvironment(), currentScope()->takeFunctionDeclarations());
     popScope(blockScope, TreeBuilder::NeedsFreeVariableInfo);
     return result;
-}
-
-template <typename LexerType>
-template <class TreeBuilder> bool Parser<LexerType>::maybeParseAsyncFunctionDeclarationStatement(TreeBuilder& context, TreeStatement& result, bool parentAllowsFunctionDeclarationAsStatement)
-{
-    ASSERT(matchContextualKeyword(m_vm.propertyNames->async));
-    SavePoint savePoint = createSavePoint(context);
-    next();
-    if (match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken()) {
-        const bool isAsync = true;
-        result = parseFunctionDeclarationStatement(context, isAsync, parentAllowsFunctionDeclarationAsStatement);
-        return true;
-    }
-    restoreSavePoint(context, savePoint);
-    return false;
 }
 
 template <typename LexerType>
