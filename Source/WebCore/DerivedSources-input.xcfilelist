@@ -927,6 +927,7 @@ $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureETC.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureETC1.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTexturePVRTC.idl
 $(PROJECT_DIR)/html/canvas/WebGLCompressedTextureS3TC.idl
+$(PROJECT_DIR)/html/canvas/WebGLCompressedTextureS3TCsRGB.idl
 $(PROJECT_DIR)/html/canvas/WebGLContextAttributes.idl
 $(PROJECT_DIR)/html/canvas/WebGLContextEvent.idl
 $(PROJECT_DIR)/html/canvas/WebGLDebugRendererInfo.idl
