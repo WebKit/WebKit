@@ -49,26 +49,7 @@ function then(onFulfilled, onRejected)
         promise = promiseOrCapability.@promise;
     }
 
-    if (!@isCallable(onFulfilled))
-        onFulfilled = function (argument) { return argument; };
-
-    if (!@isCallable(onRejected))
-        onRejected = function (argument) { throw argument; };
-
-    var reaction = @newPromiseReaction(promiseOrCapability, onFulfilled, onRejected);
-
-    var flags = @getPromiseInternalField(this, @promiseFieldFlags);
-    var state = flags & @promiseStateMask;
-    if (state === @promiseStatePending) {
-        reaction.@next = @getPromiseInternalField(this, @promiseFieldReactionsOrResult);
-        @putPromiseInternalField(this, @promiseFieldReactionsOrResult, reaction);
-    } else {
-        if (state === @promiseStateRejected && !(flags & @promiseFlagsIsHandled))
-            @hostPromiseRejectionTracker(this, @promiseRejectionHandle);
-        @enqueueJob(@promiseReactionJob, state, reaction, @getPromiseInternalField(this, @promiseFieldReactionsOrResult));
-    }
-    @putPromiseInternalField(this, @promiseFieldFlags, @getPromiseInternalField(this, @promiseFieldFlags) | @promiseFlagsIsHandled);
-
+    @performPromiseThen(this, onFulfilled, onRejected, promiseOrCapability);
     return promise;
 }
 

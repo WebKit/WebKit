@@ -931,15 +931,6 @@ test/built-ins/Object/keys/order-after-define-property.js:
 test/built-ins/Object/seal/proxy-no-ownkeys-returned-keys-order.js:
   default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
   strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-test/built-ins/Promise/prototype/finally/species-constructor.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: 7 new promises were created Expected SameValue(«6», «7») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: 7 new promises were created Expected SameValue(«6», «7») to be true'
-test/built-ins/Promise/prototype/finally/subclass-reject-count.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«6», «7») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«6», «7») to be true'
-test/built-ins/Promise/prototype/finally/subclass-resolve-count.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«6», «7») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«6», «7») to be true'
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(«function Array() {'
@@ -3057,11 +3048,11 @@ test/language/statements/for-await-of/async-from-sync-iterator-continuation-abru
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
 test/language/statements/for-await-of/ticks-with-async-iter-resolved-promise-and-constructor-lookup-two.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, tick 2, loop] and [pre, constructor, tick 1, loop, constructor, tick 2, post] to have the same contents. Ticks and constructor lookups'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, tick 2, loop] and [pre, constructor, tick 1, loop, constructor, tick 2, post] to have the same contents. Ticks and constructor lookups'
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, tick 2, loop] and [pre, constructor, tick 1, loop, constructor, tick 2, post] to have the same contents. Ticks and constructor lookups'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, tick 2, loop] and [pre, constructor, tick 1, loop, constructor, tick 2, post] to have the same contents. Ticks and constructor lookups'
 test/language/statements/for-await-of/ticks-with-sync-iter-resolved-promise-and-constructor-lookup.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, tick 2, tick 3, loop, tick 4] and [pre, constructor, constructor, tick 1, tick 2, loop, constructor, tick 3, tick 4, post] to have the same contents. Ticks and constructor lookups'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, tick 2, tick 3, loop, tick 4] and [pre, constructor, constructor, tick 1, tick 2, loop, constructor, tick 3, tick 4, post] to have the same contents. Ticks and constructor lookups'
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, constructor, tick 2, tick 3, loop, tick 4, constructor] and [pre, constructor, constructor, tick 1, tick 2, loop, constructor, tick 3, tick 4, post] to have the same contents. Ticks and constructor lookups'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, constructor, tick 2, tick 3, loop, tick 4, constructor] and [pre, constructor, constructor, tick 1, tick 2, loop, constructor, tick 3, tick 4, post] to have the same contents. Ticks and constructor lookups'
 test/language/statements/for-in/12.6.4-2.js:
   default: 'Test262Error: accessedProp Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: accessedProp Expected SameValue(«true», «false») to be true'

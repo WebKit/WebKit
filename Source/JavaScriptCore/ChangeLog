@@ -1,5 +1,33 @@
 2020-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] @defaultPromiseThen fast path should check species constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215996
+
+        Reviewed by Ross Kirsling.
+
+        When executing @defaultPromiseThen fast path, we assumed that this execution is not observable.
+        This is wrong only for species constructor part: this @@species access & derived constructor calls
+        can be observable. In this patch,
+
+            1. We extract part of Promise#then as @performPromiseThen, which corresponds to the spec's PerformPromiseThen.
+            2. In promise fast path, we check @speciesConstructor is @Promise or @InternalPromise. If it is not, then we go to the slow path.
+
+        This fixes Promise#finally failures in test262.
+
+        * builtins/PromiseOperations.js:
+        (globalPrivate.promiseResolveThenableJobFast):
+        (globalPrivate.promiseResolveThenableJobWithoutPromiseFast):
+        (globalPrivate.promiseResolveThenableJobWithDerivedPromise):
+        (onFulfilled):
+        (onRejected):
+        (globalPrivate.performPromiseThen):
+        * builtins/PromisePrototype.js:
+        (then):
+        (onFulfilled): Deleted.
+        (onRejected): Deleted.
+
+2020-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Use -2 for grouping options in IntlRelativeTimeFormat
         https://bugs.webkit.org/show_bug.cgi?id=215984
 
