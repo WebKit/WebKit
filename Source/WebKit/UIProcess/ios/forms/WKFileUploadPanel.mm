@@ -556,7 +556,15 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     _imagePicker = adoptNS([[UIImagePickerController alloc] init]);
     [_imagePicker setSourceType:sourceType];
     [_imagePicker setMediaTypes:[self _mediaTypesForPickerSourceType:sourceType]];
-    [self _configureImagePicker:_imagePicker.get()];
+    [_imagePicker setDelegate:self];
+    [_imagePicker setAllowsEditing:NO];
+    [_imagePicker setModalPresentationStyle:UIModalPresentationFullScreen];
+    [_imagePicker _setAllowsMultipleSelection:_allowMultipleFiles];
+    [_imagePicker _setRequiresPickingConfirmation:YES];
+    [_imagePicker _setShowsFileSizePicker:YES];
+
+    if (_mediaCaptureType != WebCore::MediaCaptureTypeNone)
+        [_imagePicker setCameraDevice:cameraDeviceForMediaCaptureType(_mediaCaptureType)];
 
     // Use a popover on the iPad if the source type is not the camera.
     // The camera will use a fullscreen, modal view controller.
@@ -565,17 +573,6 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
         [self _presentPopoverWithContentViewController:_imagePicker.get() animated:YES];
     else
         [self _presentFullscreenViewController:_imagePicker.get() animated:YES];
-}
-
-- (void)_configureImagePicker:(UIImagePickerController *)imagePicker
-{
-    [imagePicker setDelegate:self];
-    [imagePicker setAllowsEditing:NO];
-    [imagePicker setModalPresentationStyle:UIModalPresentationFullScreen];
-    [imagePicker _setAllowsMultipleSelection:_allowMultipleFiles];
-
-    if (_mediaCaptureType != WebCore::MediaCaptureTypeNone)
-        [imagePicker setCameraDevice:cameraDeviceForMediaCaptureType(_mediaCaptureType)];
 }
 
 #pragma mark - Presenting View Controllers

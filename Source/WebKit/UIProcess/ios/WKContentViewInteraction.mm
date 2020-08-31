@@ -161,10 +161,6 @@
 #import "WKWebEvent.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKPlatformFileUploadPanel.mm>)
-#import <WebKitAdditions/WKPlatformFileUploadPanel.mm>
-#endif
-
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #endif
@@ -6785,15 +6781,8 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     if (_fileUploadPanel)
         return;
 
-    Class ownClass = self.class;
-    Class panelClass = nil;
-    if ([ownClass respondsToSelector:@selector(_fileUploadPanelClass)])
-        panelClass = [ownClass _fileUploadPanelClass];
-    if (!panelClass)
-        panelClass = [WKFileUploadPanel class];
-
     _frameInfoForFileUploadPanel = frameInfo;
-    _fileUploadPanel = adoptNS([[panelClass alloc] initWithView:self]);
+    _fileUploadPanel = adoptNS([[WKFileUploadPanel alloc] initWithView:self]);
     [_fileUploadPanel setDelegate:self];
     [_fileUploadPanel presentWithParameters:parameters resultListener:listener];
 }
