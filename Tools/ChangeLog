@@ -1,3 +1,19 @@
+2020-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak] SDK branch upgrade path is broken
+        https://bugs.webkit.org/show_bug.cgi?id=215927
+
+        Reviewed by Adrian Perez de Castro.
+
+        The development environment (flatpak install) needs to be performed before attempting to
+        rebuild toolchain archives. In most cases this wasn't an issue, but when the SDK needs to be
+        upgraded to a new ABI/branch, the previous version needs to be removed, that triggers a new
+        `flatpak install` and toolchain archives update, which need then to be done in the right
+        order.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.main):
+
 2020-08-30  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused editable image code

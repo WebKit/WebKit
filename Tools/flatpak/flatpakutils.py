@@ -873,13 +873,14 @@ class WebkitFlatpak:
         else:
             regenerate_toolchains = self.regenerate_toolchains
 
+        result = self.setup_dev_env()
         if regenerate_toolchains:
             self.icc_version = {}
             toolchains = self.pack_toolchain(("gcc", "g++"), {"/usr/bin/c++": "/usr/bin/g++"})
             toolchains.extend(self.pack_toolchain(("clang", "clang++"), {"/usr/bin/clang++": "/usr/bin/clang++"}))
             self.save_config(toolchains)
 
-        return self.setup_dev_env()
+        return result
 
     def run(self):
         try:
