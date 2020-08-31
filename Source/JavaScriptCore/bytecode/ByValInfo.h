@@ -225,23 +225,25 @@ inline JITArrayMode jitArrayModeForStructure(Structure* structure)
 }
 
 struct ByValInfo {
-    ByValInfo() { }
-
-    ByValInfo(BytecodeIndex bytecodeIndex, CodeLocationJump<JSInternalPtrTag> notIndexJump, CodeLocationJump<JSInternalPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, CodeLocationLabel<JSInternalPtrTag> doneTarget, CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget, CodeLocationLabel<JSInternalPtrTag> slowPathTarget)
-        : notIndexJump(notIndexJump)
-        , badTypeJump(badTypeJump)
-        , exceptionHandler(exceptionHandler)
-        , doneTarget(doneTarget)
-        , badTypeNextHotPathTarget(badTypeNextHotPathTarget)
-        , slowPathTarget(slowPathTarget)
-        , arrayProfile(arrayProfile)
-        , bytecodeIndex(bytecodeIndex)
-        , slowPathCount(0)
-        , stubInfo(nullptr)
-        , arrayMode(arrayMode)
-        , tookSlowPath(false)
-        , seen(false)
+    ByValInfo(BytecodeIndex bytecodeIndex)
+        : bytecodeIndex(bytecodeIndex)
     {
+    }
+
+    void setUp(CodeLocationJump<JSInternalPtrTag> notIndexJump, CodeLocationJump<JSInternalPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, CodeLocationLabel<JSInternalPtrTag> doneTarget, CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget, CodeLocationLabel<JSInternalPtrTag> slowPathTarget)
+    {
+        this->notIndexJump = notIndexJump;
+        this->badTypeJump = badTypeJump;
+        this->exceptionHandler = exceptionHandler;
+        this->doneTarget = doneTarget;
+        this->badTypeNextHotPathTarget = badTypeNextHotPathTarget;
+        this->slowPathTarget = slowPathTarget;
+        this->arrayProfile = arrayProfile;
+        this->slowPathCount = 0;
+        this->stubInfo = nullptr;
+        this->arrayMode = arrayMode;
+        this->tookSlowPath = false;
+        this->seen = false;
     }
 
     void visitAggregate(SlotVisitor&);

@@ -1,3 +1,72 @@
+2020-08-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] StructureStubInfo / CallLinkInfo / ByValInfo should set CodeOrigin or BytecodeIndex at construction
+        https://bugs.webkit.org/show_bug.cgi?id=215987
+        <rdar://problem/66370323>
+
+        Reviewed by Mark Lam.
+
+        We had race condition during construction of StructureStubInfo and CodeOrigin field setting.
+
+            1. The thread creates StructureStubInfo by calling CodeBlock::addStubInfo. This is guarded by the lock. But at this point we are not setting StructureStubInfo::codeOrigin.
+            2. Then (1)'s thread attempts to set StructureStubInfo::codeOrigin. But at this point, it is not guarded by the lock.
+            3. Before (2) is executed, DFG ByteCodeParser calls CodeBlock::getICStatusMap. It creates HashMap<CodeOrigin, StructureStubInfo*>.
+            4. Since StructureStubInfo*'s codeOrigin is not configured yet, (3) sees invalid CodeOrigin. And storing invalid CodeOrigin as a HashMap key is not correct.
+
+        We should configure CodeOrigin at construction of StructureStubInfo, which is guarded by the lock. We have the same problem for CallLinkInfo and ByValInfo. This patch fixes them.
+        To reproduce this, we need to execute a script 2~ days repeatedly. So it is difficult to add a test.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo):
+        (JSC::ByValInfo::setUp):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setUpCall):
+        (JSC::CallLinkInfo::setCodeOrigin): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addStubInfo):
+        (JSC::CodeBlock::addByValInfo):
+        (JSC::CodeBlock::addCallLinkInfo):
+        * bytecode/CodeBlock.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::garbageStubInfo):
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2020-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] @defaultPromiseThen fast path should check species constructor

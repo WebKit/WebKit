@@ -1582,10 +1582,10 @@ void CodeBlock::getICStatusMap(ICStatusMap& result)
 }
 
 #if ENABLE(JIT)
-StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType)
+StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType, CodeOrigin codeOrigin)
 {
     ConcurrentJSLocker locker(m_lock);
-    return ensureJITData(locker).m_stubInfos.add(accessType);
+    return ensureJITData(locker).m_stubInfos.add(accessType, codeOrigin);
 }
 
 JITAddIC* CodeBlock::addJITAddIC(BinaryArithProfile* arithProfile)
@@ -1636,16 +1636,16 @@ ByValInfo* CodeBlock::findByValInfo(CodeOrigin codeOrigin)
     return nullptr;
 }
 
-ByValInfo* CodeBlock::addByValInfo()
+ByValInfo* CodeBlock::addByValInfo(BytecodeIndex bytecodeIndex)
 {
     ConcurrentJSLocker locker(m_lock);
-    return ensureJITData(locker).m_byValInfos.add();
+    return ensureJITData(locker).m_byValInfos.add(bytecodeIndex);
 }
 
-CallLinkInfo* CodeBlock::addCallLinkInfo()
+CallLinkInfo* CodeBlock::addCallLinkInfo(CodeOrigin codeOrigin)
 {
     ConcurrentJSLocker locker(m_lock);
-    return ensureJITData(locker).m_callLinkInfos.add();
+    return ensureJITData(locker).m_callLinkInfos.add(codeOrigin);
 }
 
 CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(BytecodeIndex index)

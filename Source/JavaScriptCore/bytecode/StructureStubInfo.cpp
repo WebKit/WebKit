@@ -38,8 +38,9 @@ namespace StructureStubInfoInternal {
 static constexpr bool verbose = false;
 }
 
-StructureStubInfo::StructureStubInfo(AccessType accessType)
-    : accessType(accessType)
+StructureStubInfo::StructureStubInfo(AccessType accessType, CodeOrigin codeOrigin)
+    : codeOrigin(codeOrigin)
+    , accessType(accessType)
     , bufferingCountdown(Options::repatchBufferingCountdown())
     , resetByGC(false)
     , tookSlowPath(false)

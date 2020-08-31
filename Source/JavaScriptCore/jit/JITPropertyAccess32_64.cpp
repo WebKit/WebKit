@@ -344,7 +344,7 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
     ArrayProfile* profile = &metadata.m_arrayProfile;
-    ByValInfo* byValInfo = m_codeBlock->addByValInfo();
+    ByValInfo* byValInfo = m_codeBlock->addByValInfo(m_bytecodeIndex);
     
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
     

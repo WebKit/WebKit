@@ -1201,7 +1201,7 @@ void JIT::emit_op_has_indexed_property(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
     ArrayProfile* profile = &metadata.m_arrayProfile;
-    ByValInfo* byValInfo = m_codeBlock->addByValInfo();
+    ByValInfo* byValInfo = m_codeBlock->addByValInfo(m_bytecodeIndex);
     
     emitLoadPayload(base, regT0);
     emitJumpSlowCaseIfNotJSCell(base);

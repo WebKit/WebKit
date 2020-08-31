@@ -71,7 +71,7 @@ public:
         }
     }
 
-    CallLinkInfo();
+    CallLinkInfo(CodeOrigin);
         
     ~CallLinkInfo();
     
@@ -157,10 +157,9 @@ public:
     bool isLinked() const { return m_stub || m_calleeOrCodeBlock; }
     void unlink(VM&);
 
-    void setUpCall(CallType callType, CodeOrigin codeOrigin, GPRReg calleeGPR)
+    void setUpCall(CallType callType, GPRReg calleeGPR)
     {
         m_callType = callType;
-        m_codeOrigin = codeOrigin;
         m_calleeGPR = calleeGPR;
     }
 
@@ -320,11 +319,6 @@ public:
     uint32_t slowPathCount()
     {
         return m_slowPathCount;
-    }
-
-    void setCodeOrigin(CodeOrigin codeOrigin)
-    {
-        m_codeOrigin = codeOrigin;
     }
 
     CodeOrigin codeOrigin()
