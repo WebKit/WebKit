@@ -143,7 +143,32 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
         return;
     }
 
-    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), nullptr, icuStyle, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
+    // Align to IntlNumberFormat's default.
+    unum_setAttribute(m_numberFormat.get(), UNUM_MIN_INTEGER_DIGITS, 1);
+    unum_setAttribute(m_numberFormat.get(), UNUM_MIN_FRACTION_DIGITS, 0);
+    unum_setAttribute(m_numberFormat.get(), UNUM_MAX_FRACTION_DIGITS, 3);
+    unum_setAttribute(m_numberFormat.get(), UNUM_GROUPING_USED, true);
+
+    // Grouping attributes have hidden -2 option which makes grouping rules locale-sensitive.
+    // While this is supported so long, this is not explicitly exposed as APIs.
+    // After ICU 68, it is now exposed as UNUM_MINIMUM_GROUPING_DIGITS_AUTO. Before ICU 68, we can directly use -2.
+    // https://unicode-org.atlassian.net/browse/ICU-21109
+    // https://github.com/unicode-org/icu/commit/e7bd5b1cefa47a043a9714e21eb9946dd54d593f
+    //
+    // These options are tested in test262/test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-long.js etc.
+    // e.g. https://github.com/tc39/test262/commit/79c1818a6812a2a6c47e3e3c56ba9f2b3eaff4d5
+    constexpr int32_t useLocaleDefault = -2;
+    unum_setAttribute(m_numberFormat.get(), UNUM_GROUPING_SIZE, useLocaleDefault);
+    unum_setAttribute(m_numberFormat.get(), UNUM_SECONDARY_GROUPING_SIZE, useLocaleDefault);
+    unum_setAttribute(m_numberFormat.get(), UNUM_MINIMUM_GROUPING_DIGITS, useLocaleDefault);
+
+    UNumberFormat* clonedNumberFormat = unum_clone(m_numberFormat.get(), &status);
+    if (UNLIKELY(U_FAILURE(status))) {
+        throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
+        return;
+    }
+
+    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), clonedNumberFormat, icuStyle, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
     if (UNLIKELY(U_FAILURE(status))) {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;

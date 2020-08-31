@@ -1,5 +1,19 @@
 2020-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Use -2 for grouping options in IntlRelativeTimeFormat
+        https://bugs.webkit.org/show_bug.cgi?id=215984
+
+        Reviewed by Ross Kirsling.
+
+        Several test262 tests are failing after ICU 67. This is because Intl.RelativeTimeFormat is not using locale-sensitive grouping option.
+        There are hidden option -2 for UNumberFormat. It is supported so long, but it is not explicitly documented. After ICU 68, it is exposed as a constant,
+        we should pass -2 to UNumberFormat's grouping options to use locale-sensitive grouping option here.
+
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+
+2020-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] async function cannot appear in single-statement context
         https://bugs.webkit.org/show_bug.cgi?id=215993
 

@@ -179,11 +179,11 @@ if (icuVersion >= 63)
 for (let unit of units) {
     shouldBe(defaultRTF.format(10, unit), defaultRTF.format(10, `${unit}s`));
 
-    shouldBe(defaultRTF.format(10000.5, unit), `in 10,000.5 ${unit}s`);
+    shouldBe([`in 10,000.5 ${unit}s`, `in 10000.5 ${unit}s`].includes(defaultRTF.format(10000.5, unit)), true);
     shouldBe(defaultRTF.format(10, unit), `in 10 ${unit}s`);
     shouldBe(defaultRTF.format(0, unit), `in 0 ${unit}s`);
     shouldBe(defaultRTF.format(-10, unit), `10 ${unit}s ago`);
-    shouldBe(defaultRTF.format(-10000.5, unit), `10,000.5 ${unit}s ago`);
+    shouldBe([`10,000.5 ${unit}s ago`, `10000.5 ${unit}s ago`].includes(defaultRTF.format(-10000.5, unit)), true);
 
     shouldBeForICUVersion(64, defaultRTF.format(1, unit), `in 1 ${unit}`);
     shouldBeForICUVersion(63, defaultRTF.format(-0, unit), `0 ${unit}s ago`);
@@ -219,29 +219,31 @@ for (let unit of units) {
 
     const concatenateValues = (parts) => parts.map(part => part.value).join('');
 
-    shouldBe(concatenateValues(defaultRTF.formatToParts(10000.5, unit)), `in 10,000.5 ${unit}s`);
+    shouldBe([`in 10,000.5 ${unit}s`, `in 10000.5 ${unit}s`].includes(concatenateValues(defaultRTF.formatToParts(10000.5, unit))), true);
     shouldBe(concatenateValues(defaultRTF.formatToParts(10, unit)), `in 10 ${unit}s`);
     shouldBe(concatenateValues(defaultRTF.formatToParts(0, unit)), `in 0 ${unit}s`);
     shouldBe(concatenateValues(defaultRTF.formatToParts(-10, unit)), `10 ${unit}s ago`);
-    shouldBe(concatenateValues(defaultRTF.formatToParts(-10000.5, unit)), `10,000.5 ${unit}s ago`);
+    shouldBe([`10,000.5 ${unit}s ago`, `10000.5 ${unit}s ago`].includes(concatenateValues(defaultRTF.formatToParts(-10000.5, unit))), true);
 
     shouldBeForICUVersion(64, concatenateValues(defaultRTF.formatToParts(1, unit)), `in 1 ${unit}`);
     shouldBeForICUVersion(63, concatenateValues(defaultRTF.formatToParts(-0, unit)), `0 ${unit}s ago`);
     shouldBeForICUVersion(64, concatenateValues(defaultRTF.formatToParts(-1, unit)), `1 ${unit} ago`);
 }
 
-shouldBe(
-    JSON.stringify(defaultRTF.formatToParts(10000.5, 'day')),
-    JSON.stringify([
-        { type: 'literal', value: 'in ' },
-        { type: 'integer', value: '10', unit: 'day' },
-        { type: 'group', value: ',', unit: 'day' },
-        { type: 'integer', value: '000', unit: 'day' },
-        { type: 'decimal', value: '.', unit: 'day' },
-        { type: 'fraction', value: '5', unit: 'day' },
-        { type: 'literal', value: ' days' }
-    ])
-);
+if ($vm.icuVersion() >= 64) {
+    shouldBe(
+        JSON.stringify(defaultRTF.formatToParts(10000.5, 'day')),
+        JSON.stringify([
+            { type: 'literal', value: 'in ' },
+            { type: 'integer', value: '10', unit: 'day' },
+            { type: 'group', value: ',', unit: 'day' },
+            { type: 'integer', value: '000', unit: 'day' },
+            { type: 'decimal', value: '.', unit: 'day' },
+            { type: 'fraction', value: '5', unit: 'day' },
+            { type: 'literal', value: ' days' }
+        ])
+    );
+}
 
 shouldBe(
     JSON.stringify(new Intl.RelativeTimeFormat('sw').formatToParts(10, 'year')),
