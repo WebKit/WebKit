@@ -68,6 +68,9 @@
         "subtests": {
             "testShouldNotSwitchMagicallyToTheTopWindow": {
                 "expected": {"all": {"slow": true}}
+            },
+            "testShouldNotBeAbleToDoAnythingTheFrameIsDeletedFromUnderUs": {
+                "expected": {"wpe": {"status": ["FAIL"], "reason": "Marked fail upstream through annotations for gtk and safari"}}
             }
         }
     },
@@ -90,7 +93,10 @@
     "imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py": {
         "subtests": {
             "testClickShouldTimeout": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
+                "expected": {
+                        "gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"},
+                        "wpe": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}
+                }
             }
         }
     },
@@ -174,13 +180,20 @@
         "subtests": {
             "test_double_click": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/174674"}}
+            },
+            "testSendingKeysToActiveElementWithModifier": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212953"}}
             }
+
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py": {
         "subtests": {
             "testCanCallGetWindowHandlesAfterClosingAWindow": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184963"}}
+            },
+            "testShouldBeAbleToCreateANewWindow": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212949"}}
             }
         }
     },
