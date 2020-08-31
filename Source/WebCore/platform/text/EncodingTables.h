@@ -30,5 +30,6 @@
 namespace WebCore {
 
 extern const std::pair<UChar, UChar> jis0208[7724];
+extern const std::pair<UChar32, UChar> big5[14686];
 
 }

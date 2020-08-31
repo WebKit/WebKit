@@ -1,3 +1,24 @@
+2020-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Make Big5 encoder conform to the specification and behavior of Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=215983
+
+        Reviewed by Darin Adler.
+
+        Covered by web platform tests.
+
+        * platform/text/EncodingTables.cpp:
+        * platform/text/EncodingTables.h:
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::eucJPEncode):
+        (WebCore::big5Encode):
+        (WebCore::uncheckedAppendDecimal):
+        (WebCore::urlEncodedEntityUnencodableHandler):
+        (WebCore::entityUnencodableHandler):
+        (WebCore::questionMarkUnencodableHandler):
+        (WebCore::Function<void):
+        (WebCore::TextCodecICU::encode):
+
 2020-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Optimize the implementation of TransformationMatrix::rotate(double)

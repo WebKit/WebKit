@@ -5,11 +5,11 @@ PASS big5 encoder: Highest-pointer character excluded from encoder
 PASS big5 encoder: Lowest-pointer character included in encoder 
 PASS big5 encoder: Euro; the highest-pointer character before a range of 30 unmapped pointers 
 PASS big5 encoder: The lowest-pointer character after the range of 30 unmapped pointers 
-FAIL big5 encoder: The highest-pointer character before a range of 41 unmapped pointers assert_equals: expected "X%C8%A4X" but got "X%26%23161287%3BX"
-FAIL big5 encoder: The lowest-pointer character after the range of 41 unmapped pointers assert_equals: expected "X%C8%CDX" but got "X%26%2365506%3BX"
-FAIL big5 encoder: The last character in the index assert_equals: expected "X%FE%FEX" but got "X%26%2331188%3BX"
+PASS big5 encoder: The highest-pointer character before a range of 41 unmapped pointers 
+PASS big5 encoder: The lowest-pointer character after the range of 41 unmapped pointers 
+PASS big5 encoder: The last character in the index 
 PASS big5 encoder: The canonical BMP test character that is not in the index 
 PASS big5 encoder: The canonical astral test character that is not in the index 
-FAIL big5 encoder: A Plane 2 character whose low 16 bits match a BMP character that has a lower pointer assert_equals: expected "X%FDjX" but got "X%26%23132021%3BX"
+PASS big5 encoder: A Plane 2 character whose low 16 bits match a BMP character that has a lower pointer 
 PASS big5 encoder: A duplicate-mapped code point that prefers the highest pointer in the encoder 
 

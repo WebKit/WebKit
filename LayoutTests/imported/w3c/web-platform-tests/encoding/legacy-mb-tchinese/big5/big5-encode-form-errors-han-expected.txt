@@ -7420,306 +7420,306 @@ PASS cjk U+9FB6 龶 %26%2340886%3B
 PASS cjk U+9FB7 龷 %26%2340887%3B 
 PASS cjk U+9FB8 龸 %26%2340888%3B 
 PASS cjk U+9FB9 龹 %26%2340889%3B 
-FAIL compatibility U+F900 豈 %26%2363744%3B assert_equals: expected "%26%2363744%3B" but got "%B0Z"
-FAIL compatibility U+F901 更 %26%2363745%3B assert_equals: expected "%26%2363745%3B" but got "%A7%F3"
-FAIL compatibility U+F902 車 %26%2363746%3B assert_equals: expected "%26%2363746%3B" but got "%A8%AE"
-FAIL compatibility U+F903 賈 %26%2363747%3B assert_equals: expected "%26%2363747%3B" but got "%B8%EB"
-FAIL compatibility U+F904 滑 %26%2363748%3B assert_equals: expected "%26%2363748%3B" but got "%B7%C6"
-FAIL compatibility U+F905 串 %26%2363749%3B assert_equals: expected "%26%2363749%3B" but got "%A6%EA"
-FAIL compatibility U+F906 句 %26%2363750%3B assert_equals: expected "%26%2363750%3B" but got "%A5y"
-FAIL compatibility U+F907 龜 %26%2363751%3B assert_equals: expected "%26%2363751%3B" but got "%C0t"
-FAIL compatibility U+F908 龜 %26%2363752%3B assert_equals: expected "%26%2363752%3B" but got "%C0t"
-FAIL compatibility U+F909 契 %26%2363753%3B assert_equals: expected "%26%2363753%3B" but got "%AB%B4"
-FAIL compatibility U+F90A 金 %26%2363754%3B assert_equals: expected "%26%2363754%3B" but got "%AA%F7"
-FAIL compatibility U+F90B 喇 %26%2363755%3B assert_equals: expected "%26%2363755%3B" but got "%B3%E2"
-FAIL compatibility U+F90C 奈 %26%2363756%3B assert_equals: expected "%26%2363756%3B" but got "%A9%60"
-FAIL compatibility U+F90D 懶 %26%2363757%3B assert_equals: expected "%26%2363757%3B" but got "%C3i"
-FAIL compatibility U+F90E 癩 %26%2363758%3B assert_equals: expected "%26%2363758%3B" but got "%C4%EE"
-FAIL compatibility U+F90F 羅 %26%2363759%3B assert_equals: expected "%26%2363759%3B" but got "%C3%B9"
-FAIL compatibility U+F910 蘿 %26%2363760%3B assert_equals: expected "%26%2363760%3B" but got "%C5%DA"
-FAIL compatibility U+F911 螺 %26%2363761%3B assert_equals: expected "%26%2363761%3B" but got "%C1%B3"
-FAIL compatibility U+F912 裸 %26%2363762%3B assert_equals: expected "%26%2363762%3B" but got "%BBr"
-FAIL compatibility U+F913 邏 %26%2363763%3B assert_equals: expected "%26%2363763%3B" but got "%C5%DE"
-FAIL compatibility U+F914 樂 %26%2363764%3B assert_equals: expected "%26%2363764%3B" but got "%BC%D6"
-FAIL compatibility U+F915 洛 %26%2363765%3B assert_equals: expected "%26%2363765%3B" but got "%AC%A5"
-FAIL compatibility U+F916 烙 %26%2363766%3B assert_equals: expected "%26%2363766%3B" but got "%AFO"
-FAIL compatibility U+F917 珞 %26%2363767%3B assert_equals: expected "%26%2363767%3B" but got "%AF_"
-FAIL compatibility U+F918 落 %26%2363768%3B assert_equals: expected "%26%2363768%3B" but got "%B8%A8"
-FAIL compatibility U+F919 酪 %26%2363769%3B assert_equals: expected "%26%2363769%3B" but got "%B9T"
-FAIL compatibility U+F91A 駱 %26%2363770%3B assert_equals: expected "%26%2363770%3B" but got "%C0d"
-FAIL compatibility U+F91B 亂 %26%2363771%3B assert_equals: expected "%26%2363771%3B" but got "%B6%C3"
-FAIL compatibility U+F91C 卵 %26%2363772%3B assert_equals: expected "%26%2363772%3B" but got "%A7Z"
-FAIL compatibility U+F91D 欄 %26%2363773%3B assert_equals: expected "%26%2363773%3B" but got "%C4%E6"
-FAIL compatibility U+F91E 爛 %26%2363774%3B assert_equals: expected "%26%2363774%3B" but got "%C4%EA"
-FAIL compatibility U+F91F 蘭 %26%2363775%3B assert_equals: expected "%26%2363775%3B" but got "%C4%F5"
-FAIL compatibility U+F920 鸞 %26%2363776%3B assert_equals: expected "%26%2363776%3B" but got "%C6%7D"
-FAIL compatibility U+F921 嵐 %26%2363777%3B assert_equals: expected "%26%2363777%3B" but got "%B4P"
-FAIL compatibility U+F922 濫 %26%2363778%3B assert_equals: expected "%26%2363778%3B" but got "%C0%DD"
-FAIL compatibility U+F923 藍 %26%2363779%3B assert_equals: expected "%26%2363779%3B" but got "%C2%C5"
-FAIL compatibility U+F924 襤 %26%2363780%3B assert_equals: expected "%26%2363780%3B" but got "%C4%B0"
-FAIL compatibility U+F925 拉 %26%2363781%3B assert_equals: expected "%26%2363781%3B" but got "%A9%D4"
-FAIL compatibility U+F926 臘 %26%2363782%3B assert_equals: expected "%26%2363782%3B" but got "%C3%BE"
-FAIL compatibility U+F927 蠟 %26%2363783%3B assert_equals: expected "%26%2363783%3B" but got "%C4%FA"
-FAIL compatibility U+F928 廊 %26%2363784%3B assert_equals: expected "%26%2363784%3B" but got "%B4Y"
-FAIL compatibility U+F929 朗 %26%2363785%3B assert_equals: expected "%26%2363785%3B" but got "%AE%D4"
-FAIL compatibility U+F92A 浪 %26%2363786%3B assert_equals: expected "%26%2363786%3B" but got "%AE%F6"
-FAIL compatibility U+F92B 狼 %26%2363787%3B assert_equals: expected "%26%2363787%3B" but got "%AFT"
+PASS compatibility U+F900 豈 %26%2363744%3B 
+PASS compatibility U+F901 更 %26%2363745%3B 
+PASS compatibility U+F902 車 %26%2363746%3B 
+PASS compatibility U+F903 賈 %26%2363747%3B 
+PASS compatibility U+F904 滑 %26%2363748%3B 
+PASS compatibility U+F905 串 %26%2363749%3B 
+PASS compatibility U+F906 句 %26%2363750%3B 
+PASS compatibility U+F907 龜 %26%2363751%3B 
+PASS compatibility U+F908 龜 %26%2363752%3B 
+PASS compatibility U+F909 契 %26%2363753%3B 
+PASS compatibility U+F90A 金 %26%2363754%3B 
+PASS compatibility U+F90B 喇 %26%2363755%3B 
+PASS compatibility U+F90C 奈 %26%2363756%3B 
+PASS compatibility U+F90D 懶 %26%2363757%3B 
+PASS compatibility U+F90E 癩 %26%2363758%3B 
+PASS compatibility U+F90F 羅 %26%2363759%3B 
+PASS compatibility U+F910 蘿 %26%2363760%3B 
+PASS compatibility U+F911 螺 %26%2363761%3B 
+PASS compatibility U+F912 裸 %26%2363762%3B 
+PASS compatibility U+F913 邏 %26%2363763%3B 
+PASS compatibility U+F914 樂 %26%2363764%3B 
+PASS compatibility U+F915 洛 %26%2363765%3B 
+PASS compatibility U+F916 烙 %26%2363766%3B 
+PASS compatibility U+F917 珞 %26%2363767%3B 
+PASS compatibility U+F918 落 %26%2363768%3B 
+PASS compatibility U+F919 酪 %26%2363769%3B 
+PASS compatibility U+F91A 駱 %26%2363770%3B 
+PASS compatibility U+F91B 亂 %26%2363771%3B 
+PASS compatibility U+F91C 卵 %26%2363772%3B 
+PASS compatibility U+F91D 欄 %26%2363773%3B 
+PASS compatibility U+F91E 爛 %26%2363774%3B 
+PASS compatibility U+F91F 蘭 %26%2363775%3B 
+PASS compatibility U+F920 鸞 %26%2363776%3B 
+PASS compatibility U+F921 嵐 %26%2363777%3B 
+PASS compatibility U+F922 濫 %26%2363778%3B 
+PASS compatibility U+F923 藍 %26%2363779%3B 
+PASS compatibility U+F924 襤 %26%2363780%3B 
+PASS compatibility U+F925 拉 %26%2363781%3B 
+PASS compatibility U+F926 臘 %26%2363782%3B 
+PASS compatibility U+F927 蠟 %26%2363783%3B 
+PASS compatibility U+F928 廊 %26%2363784%3B 
+PASS compatibility U+F929 朗 %26%2363785%3B 
+PASS compatibility U+F92A 浪 %26%2363786%3B 
+PASS compatibility U+F92B 狼 %26%2363787%3B 
 PASS compatibility U+F92C 郎 %26%2363788%3B 
-FAIL compatibility U+F92D 來 %26%2363789%3B assert_equals: expected "%26%2363789%3B" but got "%A8%D3"
-FAIL compatibility U+F92E 冷 %26%2363790%3B assert_equals: expected "%26%2363790%3B" but got "%A7N"
-FAIL compatibility U+F92F 勞 %26%2363791%3B assert_equals: expected "%26%2363791%3B" but got "%B3%D2"
-FAIL compatibility U+F930 擄 %26%2363792%3B assert_equals: expected "%26%2363792%3B" but got "%BE%DB"
-FAIL compatibility U+F931 櫓 %26%2363793%3B assert_equals: expected "%26%2363793%3B" but got "%C3r"
-FAIL compatibility U+F932 爐 %26%2363794%3B assert_equals: expected "%26%2363794%3B" but got "%C4l"
-FAIL compatibility U+F933 盧 %26%2363795%3B assert_equals: expected "%26%2363795%3B" but got "%BFc"
-FAIL compatibility U+F934 老 %26%2363796%3B assert_equals: expected "%26%2363796%3B" but got "%A6%D1"
-FAIL compatibility U+F935 蘆 %26%2363797%3B assert_equals: expected "%26%2363797%3B" but got "%C4%AA"
-FAIL compatibility U+F936 虜 %26%2363798%3B assert_equals: expected "%26%2363798%3B" but got "%B8%B8"
-FAIL compatibility U+F937 路 %26%2363799%3B assert_equals: expected "%26%2363799%3B" but got "%B8%F4"
-FAIL compatibility U+F938 露 %26%2363800%3B assert_equals: expected "%26%2363800%3B" but got "%C5S"
-FAIL compatibility U+F939 魯 %26%2363801%3B assert_equals: expected "%26%2363801%3B" but got "%BE%7C"
-FAIL compatibility U+F93A 鷺 %26%2363802%3B assert_equals: expected "%26%2363802%3B" but got "%C6O"
-FAIL compatibility U+F93B 碌 %26%2363803%3B assert_equals: expected "%26%2363803%3B" but got "%B8L"
-FAIL compatibility U+F93C 祿 %26%2363804%3B assert_equals: expected "%26%2363804%3B" but got "%B8S"
-FAIL compatibility U+F93D 綠 %26%2363805%3B assert_equals: expected "%26%2363805%3B" but got "%BA%F1"
-FAIL compatibility U+F93E 菉 %26%2363806%3B assert_equals: expected "%26%2363806%3B" but got "%DBw"
-FAIL compatibility U+F93F 錄 %26%2363807%3B assert_equals: expected "%26%2363807%3B" but got "%BF%FD"
-FAIL compatibility U+F940 鹿 %26%2363808%3B assert_equals: expected "%26%2363808%3B" but got "%B3%C0"
-FAIL compatibility U+F941 論 %26%2363809%3B assert_equals: expected "%26%2363809%3B" but got "%BD%D7"
-FAIL compatibility U+F942 壟 %26%2363810%3B assert_equals: expected "%26%2363810%3B" but got "%C3b"
-FAIL compatibility U+F943 弄 %26%2363811%3B assert_equals: expected "%26%2363811%3B" but got "%A7%CB"
-FAIL compatibility U+F944 籠 %26%2363812%3B assert_equals: expected "%26%2363812%3B" but got "%C5%A2"
-FAIL compatibility U+F945 聾 %26%2363813%3B assert_equals: expected "%26%2363813%3B" but got "%C5%A4"
-FAIL compatibility U+F946 牢 %26%2363814%3B assert_equals: expected "%26%2363814%3B" but got "%A8c"
-FAIL compatibility U+F947 磊 %26%2363815%3B assert_equals: expected "%26%2363815%3B" but got "%BDU"
-FAIL compatibility U+F948 賂 %26%2363816%3B assert_equals: expected "%26%2363816%3B" but got "%B8%EF"
-FAIL compatibility U+F949 雷 %26%2363817%3B assert_equals: expected "%26%2363817%3B" but got "%B9p"
-FAIL compatibility U+F94A 壘 %26%2363818%3B assert_equals: expected "%26%2363818%3B" but got "%C2S"
-FAIL compatibility U+F94B 屢 %26%2363819%3B assert_equals: expected "%26%2363819%3B" but got "%B9%F0"
-FAIL compatibility U+F94C 樓 %26%2363820%3B assert_equals: expected "%26%2363820%3B" but got "%BC%D3"
-FAIL compatibility U+F94D 淚 %26%2363821%3B assert_equals: expected "%26%2363821%3B" but got "%B2%5C"
-FAIL compatibility U+F94E 漏 %26%2363822%3B assert_equals: expected "%26%2363822%3B" but got "%BA%7C"
-FAIL compatibility U+F94F 累 %26%2363823%3B assert_equals: expected "%26%2363823%3B" but got "%B2%D6"
-FAIL compatibility U+F950 縷 %26%2363824%3B assert_equals: expected "%26%2363824%3B" but got "%C1%5C"
-FAIL compatibility U+F951 陋 %26%2363825%3B assert_equals: expected "%26%2363825%3B" but got "%AD%AE"
-FAIL compatibility U+F952 勒 %26%2363826%3B assert_equals: expected "%26%2363826%3B" but got "%B0%C7"
-FAIL compatibility U+F953 肋 %26%2363827%3B assert_equals: expected "%26%2363827%3B" but got "%A6%D8"
-FAIL compatibility U+F954 凜 %26%2363828%3B assert_equals: expected "%26%2363828%3B" but got "%BB%FE"
-FAIL compatibility U+F955 凌 %26%2363829%3B assert_equals: expected "%26%2363829%3B" but got "%AD%E2"
-FAIL compatibility U+F956 稜 %26%2363830%3B assert_equals: expected "%26%2363830%3B" but got "%B8W"
-FAIL compatibility U+F957 綾 %26%2363831%3B assert_equals: expected "%26%2363831%3B" but got "%BA%F0"
-FAIL compatibility U+F958 菱 %26%2363832%3B assert_equals: expected "%26%2363832%3B" but got "%B5%D9"
-FAIL compatibility U+F959 陵 %26%2363833%3B assert_equals: expected "%26%2363833%3B" but got "%B3%AE"
-FAIL compatibility U+F95A 讀 %26%2363834%3B assert_equals: expected "%26%2363834%3B" but got "%C5%AA"
-FAIL compatibility U+F95B 拏 %26%2363835%3B assert_equals: expected "%26%2363835%3B" but got "%CE%D4"
-FAIL compatibility U+F95C 樂 %26%2363836%3B assert_equals: expected "%26%2363836%3B" but got "%BC%D6"
-FAIL compatibility U+F95D 諾 %26%2363837%3B assert_equals: expected "%26%2363837%3B" but got "%BF%D5"
-FAIL compatibility U+F95E 丹 %26%2363838%3B assert_equals: expected "%26%2363838%3B" but got "%A4%A6"
-FAIL compatibility U+F95F 寧 %26%2363839%3B assert_equals: expected "%26%2363839%3B" but got "%B9%E7"
-FAIL compatibility U+F960 怒 %26%2363840%3B assert_equals: expected "%26%2363840%3B" but got "%AB%E3"
-FAIL compatibility U+F961 率 %26%2363841%3B assert_equals: expected "%26%2363841%3B" but got "%B2v"
-FAIL compatibility U+F962 異 %26%2363842%3B assert_equals: expected "%26%2363842%3B" but got "%B2%A7"
-FAIL compatibility U+F963 北 %26%2363843%3B assert_equals: expected "%26%2363843%3B" but got "%A5_"
-FAIL compatibility U+F964 磻 %26%2363844%3B assert_equals: expected "%26%2363844%3B" but got "%ED%A8"
-FAIL compatibility U+F965 便 %26%2363845%3B assert_equals: expected "%26%2363845%3B" but got "%ABK"
-FAIL compatibility U+F966 復 %26%2363846%3B assert_equals: expected "%26%2363846%3B" but got "%B4_"
-FAIL compatibility U+F967 不 %26%2363847%3B assert_equals: expected "%26%2363847%3B" but got "%A4%A3"
-FAIL compatibility U+F968 泌 %26%2363848%3B assert_equals: expected "%26%2363848%3B" but got "%AAc"
-FAIL compatibility U+F969 數 %26%2363849%3B assert_equals: expected "%26%2363849%3B" but got "%BC%C6"
-FAIL compatibility U+F96A 索 %26%2363850%3B assert_equals: expected "%26%2363850%3B" but got "%AF%C1"
-FAIL compatibility U+F96B 參 %26%2363851%3B assert_equals: expected "%26%2363851%3B" but got "%B0%D1"
-FAIL compatibility U+F96C 塞 %26%2363852%3B assert_equals: expected "%26%2363852%3B" but got "%B6%EB"
-FAIL compatibility U+F96D 省 %26%2363853%3B assert_equals: expected "%26%2363853%3B" but got "%AC%D9"
-FAIL compatibility U+F96E 葉 %26%2363854%3B assert_equals: expected "%26%2363854%3B" but got "%B8%AD"
-FAIL compatibility U+F96F 說 %26%2363855%3B assert_equals: expected "%26%2363855%3B" but got "%BB%A1"
-FAIL compatibility U+F970 殺 %26%2363856%3B assert_equals: expected "%26%2363856%3B" but got "%B1%FE"
-FAIL compatibility U+F971 辰 %26%2363857%3B assert_equals: expected "%26%2363857%3B" but got "%A8%B0"
-FAIL compatibility U+F972 沈 %26%2363858%3B assert_equals: expected "%26%2363858%3B" but got "%A8H"
-FAIL compatibility U+F973 拾 %26%2363859%3B assert_equals: expected "%26%2363859%3B" but got "%ACB"
-FAIL compatibility U+F974 若 %26%2363860%3B assert_equals: expected "%26%2363860%3B" but got "%ADY"
-FAIL compatibility U+F975 掠 %26%2363861%3B assert_equals: expected "%26%2363861%3B" but got "%B1%B0"
-FAIL compatibility U+F976 略 %26%2363862%3B assert_equals: expected "%26%2363862%3B" but got "%B2%A4"
-FAIL compatibility U+F977 亮 %26%2363863%3B assert_equals: expected "%26%2363863%3B" but got "%ABG"
-FAIL compatibility U+F978 兩 %26%2363864%3B assert_equals: expected "%26%2363864%3B" but got "%A8%E2"
+PASS compatibility U+F92D 來 %26%2363789%3B 
+PASS compatibility U+F92E 冷 %26%2363790%3B 
+PASS compatibility U+F92F 勞 %26%2363791%3B 
+PASS compatibility U+F930 擄 %26%2363792%3B 
+PASS compatibility U+F931 櫓 %26%2363793%3B 
+PASS compatibility U+F932 爐 %26%2363794%3B 
+PASS compatibility U+F933 盧 %26%2363795%3B 
+PASS compatibility U+F934 老 %26%2363796%3B 
+PASS compatibility U+F935 蘆 %26%2363797%3B 
+PASS compatibility U+F936 虜 %26%2363798%3B 
+PASS compatibility U+F937 路 %26%2363799%3B 
+PASS compatibility U+F938 露 %26%2363800%3B 
+PASS compatibility U+F939 魯 %26%2363801%3B 
+PASS compatibility U+F93A 鷺 %26%2363802%3B 
+PASS compatibility U+F93B 碌 %26%2363803%3B 
+PASS compatibility U+F93C 祿 %26%2363804%3B 
+PASS compatibility U+F93D 綠 %26%2363805%3B 
+PASS compatibility U+F93E 菉 %26%2363806%3B 
+PASS compatibility U+F93F 錄 %26%2363807%3B 
+PASS compatibility U+F940 鹿 %26%2363808%3B 
+PASS compatibility U+F941 論 %26%2363809%3B 
+PASS compatibility U+F942 壟 %26%2363810%3B 
+PASS compatibility U+F943 弄 %26%2363811%3B 
+PASS compatibility U+F944 籠 %26%2363812%3B 
+PASS compatibility U+F945 聾 %26%2363813%3B 
+PASS compatibility U+F946 牢 %26%2363814%3B 
+PASS compatibility U+F947 磊 %26%2363815%3B 
+PASS compatibility U+F948 賂 %26%2363816%3B 
+PASS compatibility U+F949 雷 %26%2363817%3B 
+PASS compatibility U+F94A 壘 %26%2363818%3B 
+PASS compatibility U+F94B 屢 %26%2363819%3B 
+PASS compatibility U+F94C 樓 %26%2363820%3B 
+PASS compatibility U+F94D 淚 %26%2363821%3B 
+PASS compatibility U+F94E 漏 %26%2363822%3B 
+PASS compatibility U+F94F 累 %26%2363823%3B 
+PASS compatibility U+F950 縷 %26%2363824%3B 
+PASS compatibility U+F951 陋 %26%2363825%3B 
+PASS compatibility U+F952 勒 %26%2363826%3B 
+PASS compatibility U+F953 肋 %26%2363827%3B 
+PASS compatibility U+F954 凜 %26%2363828%3B 
+PASS compatibility U+F955 凌 %26%2363829%3B 
+PASS compatibility U+F956 稜 %26%2363830%3B 
+PASS compatibility U+F957 綾 %26%2363831%3B 
+PASS compatibility U+F958 菱 %26%2363832%3B 
+PASS compatibility U+F959 陵 %26%2363833%3B 
+PASS compatibility U+F95A 讀 %26%2363834%3B 
+PASS compatibility U+F95B 拏 %26%2363835%3B 
+PASS compatibility U+F95C 樂 %26%2363836%3B 
+PASS compatibility U+F95D 諾 %26%2363837%3B 
+PASS compatibility U+F95E 丹 %26%2363838%3B 
+PASS compatibility U+F95F 寧 %26%2363839%3B 
+PASS compatibility U+F960 怒 %26%2363840%3B 
+PASS compatibility U+F961 率 %26%2363841%3B 
+PASS compatibility U+F962 異 %26%2363842%3B 
+PASS compatibility U+F963 北 %26%2363843%3B 
+PASS compatibility U+F964 磻 %26%2363844%3B 
+PASS compatibility U+F965 便 %26%2363845%3B 
+PASS compatibility U+F966 復 %26%2363846%3B 
+PASS compatibility U+F967 不 %26%2363847%3B 
+PASS compatibility U+F968 泌 %26%2363848%3B 
+PASS compatibility U+F969 數 %26%2363849%3B 
+PASS compatibility U+F96A 索 %26%2363850%3B 
+PASS compatibility U+F96B 參 %26%2363851%3B 
+PASS compatibility U+F96C 塞 %26%2363852%3B 
+PASS compatibility U+F96D 省 %26%2363853%3B 
+PASS compatibility U+F96E 葉 %26%2363854%3B 
+PASS compatibility U+F96F 說 %26%2363855%3B 
+PASS compatibility U+F970 殺 %26%2363856%3B 
+PASS compatibility U+F971 辰 %26%2363857%3B 
+PASS compatibility U+F972 沈 %26%2363858%3B 
+PASS compatibility U+F973 拾 %26%2363859%3B 
+PASS compatibility U+F974 若 %26%2363860%3B 
+PASS compatibility U+F975 掠 %26%2363861%3B 
+PASS compatibility U+F976 略 %26%2363862%3B 
+PASS compatibility U+F977 亮 %26%2363863%3B 
+PASS compatibility U+F978 兩 %26%2363864%3B 
 PASS compatibility U+F979 凉 %26%2363865%3B 
-FAIL compatibility U+F97A 梁 %26%2363866%3B assert_equals: expected "%26%2363866%3B" but got "%B1%E7"
-FAIL compatibility U+F97B 糧 %26%2363867%3B assert_equals: expected "%26%2363867%3B" but got "%C2%B3"
-FAIL compatibility U+F97C 良 %26%2363868%3B assert_equals: expected "%26%2363868%3B" but got "%A8%7D"
-FAIL compatibility U+F97D 諒 %26%2363869%3B assert_equals: expected "%26%2363869%3B" but got "%BD%CC"
-FAIL compatibility U+F97E 量 %26%2363870%3B assert_equals: expected "%26%2363870%3B" but got "%B6q"
-FAIL compatibility U+F97F 勵 %26%2363871%3B assert_equals: expected "%26%2363871%3B" but got "%C0y"
-FAIL compatibility U+F980 呂 %26%2363872%3B assert_equals: expected "%26%2363872%3B" but got "%A7f"
-FAIL compatibility U+F981 女 %26%2363873%3B assert_equals: expected "%26%2363873%3B" but got "%A4k"
-FAIL compatibility U+F982 廬 %26%2363874%3B assert_equals: expected "%26%2363874%3B" but got "%C3f"
-FAIL compatibility U+F983 旅 %26%2363875%3B assert_equals: expected "%26%2363875%3B" but got "%AE%C8"
-FAIL compatibility U+F984 濾 %26%2363876%3B assert_equals: expected "%26%2363876%3B" but got "%C2o"
-FAIL compatibility U+F985 礪 %26%2363877%3B assert_equals: expected "%26%2363877%3B" but got "%C4r"
-FAIL compatibility U+F986 閭 %26%2363878%3B assert_equals: expected "%26%2363878%3B" but got "%BE%5B"
-FAIL compatibility U+F987 驪 %26%2363879%3B assert_equals: expected "%26%2363879%3B" but got "%C6z"
-FAIL compatibility U+F988 麗 %26%2363880%3B assert_equals: expected "%26%2363880%3B" but got "%C4R"
-FAIL compatibility U+F989 黎 %26%2363881%3B assert_equals: expected "%26%2363881%3B" but got "%BE%A4"
-FAIL compatibility U+F98A 力 %26%2363882%3B assert_equals: expected "%26%2363882%3B" but got "%A4O"
-FAIL compatibility U+F98B 曆 %26%2363883%3B assert_equals: expected "%26%2363883%3B" but got "%BE%E4"
-FAIL compatibility U+F98C 歷 %26%2363884%3B assert_equals: expected "%26%2363884%3B" but got "%BE%FA"
-FAIL compatibility U+F98D 轢 %26%2363885%3B assert_equals: expected "%26%2363885%3B" but got "%F7e"
-FAIL compatibility U+F98E 年 %26%2363886%3B assert_equals: expected "%26%2363886%3B" but got "%A6%7E"
-FAIL compatibility U+F98F 憐 %26%2363887%3B assert_equals: expected "%26%2363887%3B" but got "%BC%A6"
-FAIL compatibility U+F990 戀 %26%2363888%3B assert_equals: expected "%26%2363888%3B" but got "%C5%CA"
-FAIL compatibility U+F991 撚 %26%2363889%3B assert_equals: expected "%26%2363889%3B" but got "%BC%BF"
-FAIL compatibility U+F992 漣 %26%2363890%3B assert_equals: expected "%26%2363890%3B" but got "%BA%A7"
-FAIL compatibility U+F993 煉 %26%2363891%3B assert_equals: expected "%26%2363891%3B" but got "%B7%D2"
-FAIL compatibility U+F994 璉 %26%2363892%3B assert_equals: expected "%26%2363892%3B" but got "%E6%A3"
+PASS compatibility U+F97A 梁 %26%2363866%3B 
+PASS compatibility U+F97B 糧 %26%2363867%3B 
+PASS compatibility U+F97C 良 %26%2363868%3B 
+PASS compatibility U+F97D 諒 %26%2363869%3B 
+PASS compatibility U+F97E 量 %26%2363870%3B 
+PASS compatibility U+F97F 勵 %26%2363871%3B 
+PASS compatibility U+F980 呂 %26%2363872%3B 
+PASS compatibility U+F981 女 %26%2363873%3B 
+PASS compatibility U+F982 廬 %26%2363874%3B 
+PASS compatibility U+F983 旅 %26%2363875%3B 
+PASS compatibility U+F984 濾 %26%2363876%3B 
+PASS compatibility U+F985 礪 %26%2363877%3B 
+PASS compatibility U+F986 閭 %26%2363878%3B 
+PASS compatibility U+F987 驪 %26%2363879%3B 
+PASS compatibility U+F988 麗 %26%2363880%3B 
+PASS compatibility U+F989 黎 %26%2363881%3B 
+PASS compatibility U+F98A 力 %26%2363882%3B 
+PASS compatibility U+F98B 曆 %26%2363883%3B 
+PASS compatibility U+F98C 歷 %26%2363884%3B 
+PASS compatibility U+F98D 轢 %26%2363885%3B 
+PASS compatibility U+F98E 年 %26%2363886%3B 
+PASS compatibility U+F98F 憐 %26%2363887%3B 
+PASS compatibility U+F990 戀 %26%2363888%3B 
+PASS compatibility U+F991 撚 %26%2363889%3B 
+PASS compatibility U+F992 漣 %26%2363890%3B 
+PASS compatibility U+F993 煉 %26%2363891%3B 
+PASS compatibility U+F994 璉 %26%2363892%3B 
 PASS compatibility U+F995 秊 %26%2363893%3B 
-FAIL compatibility U+F996 練 %26%2363894%3B assert_equals: expected "%26%2363894%3B" but got "%BDm"
-FAIL compatibility U+F997 聯 %26%2363895%3B assert_equals: expected "%26%2363895%3B" but got "%C1p"
-FAIL compatibility U+F998 輦 %26%2363896%3B assert_equals: expected "%26%2363896%3B" but got "%BD%FB"
-FAIL compatibility U+F999 蓮 %26%2363897%3B assert_equals: expected "%26%2363897%3B" but got "%BD%AC"
-FAIL compatibility U+F99A 連 %26%2363898%3B assert_equals: expected "%26%2363898%3B" but got "%B3s"
-FAIL compatibility U+F99B 鍊 %26%2363899%3B assert_equals: expected "%26%2363899%3B" but got "%C1%E5"
-FAIL compatibility U+F99C 列 %26%2363900%3B assert_equals: expected "%26%2363900%3B" but got "%A6C"
-FAIL compatibility U+F99D 劣 %26%2363901%3B assert_equals: expected "%26%2363901%3B" but got "%A6H"
-FAIL compatibility U+F99E 咽 %26%2363902%3B assert_equals: expected "%26%2363902%3B" but got "%AB%7C"
-FAIL compatibility U+F99F 烈 %26%2363903%3B assert_equals: expected "%26%2363903%3B" but got "%AFP"
-FAIL compatibility U+F9A0 裂 %26%2363904%3B assert_equals: expected "%26%2363904%3B" but got "%B5%F5"
-FAIL compatibility U+F9A1 說 %26%2363905%3B assert_equals: expected "%26%2363905%3B" but got "%BB%A1"
-FAIL compatibility U+F9A2 廉 %26%2363906%3B assert_equals: expected "%26%2363906%3B" but got "%B7G"
-FAIL compatibility U+F9A3 念 %26%2363907%3B assert_equals: expected "%26%2363907%3B" but got "%A9%C0"
-FAIL compatibility U+F9A4 捻 %26%2363908%3B assert_equals: expected "%26%2363908%3B" but got "%B1%C9"
-FAIL compatibility U+F9A5 殮 %26%2363909%3B assert_equals: expected "%26%2363909%3B" but got "%C0%D4"
-FAIL compatibility U+F9A6 簾 %26%2363910%3B assert_equals: expected "%26%2363910%3B" but got "%C3%AE"
-FAIL compatibility U+F9A7 獵 %26%2363911%3B assert_equals: expected "%26%2363911%3B" but got "%C2y"
-FAIL compatibility U+F9A8 令 %26%2363912%3B assert_equals: expected "%26%2363912%3B" but got "%A5O"
-FAIL compatibility U+F9A9 囹 %26%2363913%3B assert_equals: expected "%26%2363913%3B" but got "%CB%F1"
-FAIL compatibility U+F9AA 寧 %26%2363914%3B assert_equals: expected "%26%2363914%3B" but got "%B9%E7"
-FAIL compatibility U+F9AB 嶺 %26%2363915%3B assert_equals: expected "%26%2363915%3B" but got "%C0%AD"
-FAIL compatibility U+F9AC 怜 %26%2363916%3B assert_equals: expected "%26%2363916%3B" but got "%CC%B0"
-FAIL compatibility U+F9AD 玲 %26%2363917%3B assert_equals: expected "%26%2363917%3B" but got "%AC%C2"
-FAIL compatibility U+F9AE 瑩 %26%2363918%3B assert_equals: expected "%26%2363918%3B" but got "%BC%FC"
-FAIL compatibility U+F9AF 羚 %26%2363919%3B assert_equals: expected "%26%2363919%3B" but got "%B2%DC"
-FAIL compatibility U+F9B0 聆 %26%2363920%3B assert_equals: expected "%26%2363920%3B" but got "%B2%E2"
-FAIL compatibility U+F9B1 鈴 %26%2363921%3B assert_equals: expected "%26%2363921%3B" but got "%B9a"
-FAIL compatibility U+F9B2 零 %26%2363922%3B assert_equals: expected "%26%2363922%3B" but got "%B9s"
-FAIL compatibility U+F9B3 靈 %26%2363923%3B assert_equals: expected "%26%2363923%3B" but got "%C6F"
-FAIL compatibility U+F9B4 領 %26%2363924%3B assert_equals: expected "%26%2363924%3B" but got "%BB%E2"
-FAIL compatibility U+F9B5 例 %26%2363925%3B assert_equals: expected "%26%2363925%3B" but got "%A8%D2"
-FAIL compatibility U+F9B6 禮 %26%2363926%3B assert_equals: expected "%26%2363926%3B" but got "%C2%A7"
-FAIL compatibility U+F9B7 醴 %26%2363927%3B assert_equals: expected "%26%2363927%3B" but got "%C4%BF"
-FAIL compatibility U+F9B8 隸 %26%2363928%3B assert_equals: expected "%26%2363928%3B" but got "%C1%F5"
-FAIL compatibility U+F9B9 惡 %26%2363929%3B assert_equals: expected "%26%2363929%3B" but got "%B4c"
-FAIL compatibility U+F9BA 了 %26%2363930%3B assert_equals: expected "%26%2363930%3B" but got "%A4F"
-FAIL compatibility U+F9BB 僚 %26%2363931%3B assert_equals: expected "%26%2363931%3B" but got "%B9%B1"
-FAIL compatibility U+F9BC 寮 %26%2363932%3B assert_equals: expected "%26%2363932%3B" but got "%BCd"
-FAIL compatibility U+F9BD 尿 %26%2363933%3B assert_equals: expected "%26%2363933%3B" but got "%A7%BF"
-FAIL compatibility U+F9BE 料 %26%2363934%3B assert_equals: expected "%26%2363934%3B" but got "%AE%C6"
-FAIL compatibility U+F9BF 樂 %26%2363935%3B assert_equals: expected "%26%2363935%3B" but got "%BC%D6"
-FAIL compatibility U+F9C0 燎 %26%2363936%3B assert_equals: expected "%26%2363936%3B" but got "%BFR"
-FAIL compatibility U+F9C1 療 %26%2363937%3B assert_equals: expected "%26%2363937%3B" but got "%C0%F8"
-FAIL compatibility U+F9C2 蓼 %26%2363938%3B assert_equals: expected "%26%2363938%3B" but got "%E7d"
-FAIL compatibility U+F9C3 遼 %26%2363939%3B assert_equals: expected "%26%2363939%3B" but got "%BF%F1"
-FAIL compatibility U+F9C4 龍 %26%2363940%3B assert_equals: expected "%26%2363940%3B" but got "%C0s"
-FAIL compatibility U+F9C5 暈 %26%2363941%3B assert_equals: expected "%26%2363941%3B" but got "%B7w"
-FAIL compatibility U+F9C6 阮 %26%2363942%3B assert_equals: expected "%26%2363942%3B" but got "%A8%BF"
-FAIL compatibility U+F9C7 劉 %26%2363943%3B assert_equals: expected "%26%2363943%3B" but got "%BCB"
-FAIL compatibility U+F9C8 杻 %26%2363944%3B assert_equals: expected "%26%2363944%3B" but got "%CC%D8"
-FAIL compatibility U+F9C9 柳 %26%2363945%3B assert_equals: expected "%26%2363945%3B" but got "%ACh"
-FAIL compatibility U+F9CA 流 %26%2363946%3B assert_equals: expected "%26%2363946%3B" but got "%ACy"
-FAIL compatibility U+F9CB 溜 %26%2363947%3B assert_equals: expected "%26%2363947%3B" but got "%B7%C8"
-FAIL compatibility U+F9CC 琉 %26%2363948%3B assert_equals: expected "%26%2363948%3B" but got "%AF%5B"
-FAIL compatibility U+F9CD 留 %26%2363949%3B assert_equals: expected "%26%2363949%3B" but got "%AFd"
-FAIL compatibility U+F9CE 硫 %26%2363950%3B assert_equals: expected "%26%2363950%3B" but got "%B2%B8"
-FAIL compatibility U+F9CF 紐 %26%2363951%3B assert_equals: expected "%26%2363951%3B" but got "%AF%C3"
-FAIL compatibility U+F9D0 類 %26%2363952%3B assert_equals: expected "%26%2363952%3B" but got "%C3%FE"
-FAIL compatibility U+F9D1 六 %26%2363953%3B assert_equals: expected "%26%2363953%3B" but got "%A4%BB"
-FAIL compatibility U+F9D2 戮 %26%2363954%3B assert_equals: expected "%26%2363954%3B" but got "%BC%AE"
-FAIL compatibility U+F9D3 陸 %26%2363955%3B assert_equals: expected "%26%2363955%3B" but got "%B3%B0"
-FAIL compatibility U+F9D4 倫 %26%2363956%3B assert_equals: expected "%26%2363956%3B" but got "%AD%DB"
-FAIL compatibility U+F9D5 崙 %26%2363957%3B assert_equals: expected "%26%2363957%3B" but got "%B1%5B"
-FAIL compatibility U+F9D6 淪 %26%2363958%3B assert_equals: expected "%26%2363958%3B" but got "%B2_"
-FAIL compatibility U+F9D7 輪 %26%2363959%3B assert_equals: expected "%26%2363959%3B" but got "%BD%FC"
-FAIL compatibility U+F9D8 律 %26%2363960%3B assert_equals: expected "%26%2363960%3B" but got "%AB%DF"
-FAIL compatibility U+F9D9 慄 %26%2363961%3B assert_equals: expected "%26%2363961%3B" but got "%B7X"
-FAIL compatibility U+F9DA 栗 %26%2363962%3B assert_equals: expected "%26%2363962%3B" but got "%AE%DF"
-FAIL compatibility U+F9DB 率 %26%2363963%3B assert_equals: expected "%26%2363963%3B" but got "%B2v"
-FAIL compatibility U+F9DC 隆 %26%2363964%3B assert_equals: expected "%26%2363964%3B" but got "%B6%A9"
-FAIL compatibility U+F9DD 利 %26%2363965%3B assert_equals: expected "%26%2363965%3B" but got "%A7Q"
-FAIL compatibility U+F9DE 吏 %26%2363966%3B assert_equals: expected "%26%2363966%3B" but got "%A6O"
-FAIL compatibility U+F9DF 履 %26%2363967%3B assert_equals: expected "%26%2363967%3B" but got "%BCi"
-FAIL compatibility U+F9E0 易 %26%2363968%3B assert_equals: expected "%26%2363968%3B" but got "%A9%F6"
-FAIL compatibility U+F9E1 李 %26%2363969%3B assert_equals: expected "%26%2363969%3B" but got "%A7%F5"
-FAIL compatibility U+F9E2 梨 %26%2363970%3B assert_equals: expected "%26%2363970%3B" but got "%B1%F9"
-FAIL compatibility U+F9E3 泥 %26%2363971%3B assert_equals: expected "%26%2363971%3B" but got "%AAd"
-FAIL compatibility U+F9E4 理 %26%2363972%3B assert_equals: expected "%26%2363972%3B" but got "%B2z"
-FAIL compatibility U+F9E5 痢 %26%2363973%3B assert_equals: expected "%26%2363973%3B" but got "%B5g"
-FAIL compatibility U+F9E6 罹 %26%2363974%3B assert_equals: expected "%26%2363974%3B" but got "%BF%A9"
+PASS compatibility U+F996 練 %26%2363894%3B 
+PASS compatibility U+F997 聯 %26%2363895%3B 
+PASS compatibility U+F998 輦 %26%2363896%3B 
+PASS compatibility U+F999 蓮 %26%2363897%3B 
+PASS compatibility U+F99A 連 %26%2363898%3B 
+PASS compatibility U+F99B 鍊 %26%2363899%3B 
+PASS compatibility U+F99C 列 %26%2363900%3B 
+PASS compatibility U+F99D 劣 %26%2363901%3B 
+PASS compatibility U+F99E 咽 %26%2363902%3B 
+PASS compatibility U+F99F 烈 %26%2363903%3B 
+PASS compatibility U+F9A0 裂 %26%2363904%3B 
+PASS compatibility U+F9A1 說 %26%2363905%3B 
+PASS compatibility U+F9A2 廉 %26%2363906%3B 
+PASS compatibility U+F9A3 念 %26%2363907%3B 
+PASS compatibility U+F9A4 捻 %26%2363908%3B 
+PASS compatibility U+F9A5 殮 %26%2363909%3B 
+PASS compatibility U+F9A6 簾 %26%2363910%3B 
+PASS compatibility U+F9A7 獵 %26%2363911%3B 
+PASS compatibility U+F9A8 令 %26%2363912%3B 
+PASS compatibility U+F9A9 囹 %26%2363913%3B 
+PASS compatibility U+F9AA 寧 %26%2363914%3B 
+PASS compatibility U+F9AB 嶺 %26%2363915%3B 
+PASS compatibility U+F9AC 怜 %26%2363916%3B 
+PASS compatibility U+F9AD 玲 %26%2363917%3B 
+PASS compatibility U+F9AE 瑩 %26%2363918%3B 
+PASS compatibility U+F9AF 羚 %26%2363919%3B 
+PASS compatibility U+F9B0 聆 %26%2363920%3B 
+PASS compatibility U+F9B1 鈴 %26%2363921%3B 
+PASS compatibility U+F9B2 零 %26%2363922%3B 
+PASS compatibility U+F9B3 靈 %26%2363923%3B 
+PASS compatibility U+F9B4 領 %26%2363924%3B 
+PASS compatibility U+F9B5 例 %26%2363925%3B 
+PASS compatibility U+F9B6 禮 %26%2363926%3B 
+PASS compatibility U+F9B7 醴 %26%2363927%3B 
+PASS compatibility U+F9B8 隸 %26%2363928%3B 
+PASS compatibility U+F9B9 惡 %26%2363929%3B 
+PASS compatibility U+F9BA 了 %26%2363930%3B 
+PASS compatibility U+F9BB 僚 %26%2363931%3B 
+PASS compatibility U+F9BC 寮 %26%2363932%3B 
+PASS compatibility U+F9BD 尿 %26%2363933%3B 
+PASS compatibility U+F9BE 料 %26%2363934%3B 
+PASS compatibility U+F9BF 樂 %26%2363935%3B 
+PASS compatibility U+F9C0 燎 %26%2363936%3B 
+PASS compatibility U+F9C1 療 %26%2363937%3B 
+PASS compatibility U+F9C2 蓼 %26%2363938%3B 
+PASS compatibility U+F9C3 遼 %26%2363939%3B 
+PASS compatibility U+F9C4 龍 %26%2363940%3B 
+PASS compatibility U+F9C5 暈 %26%2363941%3B 
+PASS compatibility U+F9C6 阮 %26%2363942%3B 
+PASS compatibility U+F9C7 劉 %26%2363943%3B 
+PASS compatibility U+F9C8 杻 %26%2363944%3B 
+PASS compatibility U+F9C9 柳 %26%2363945%3B 
+PASS compatibility U+F9CA 流 %26%2363946%3B 
+PASS compatibility U+F9CB 溜 %26%2363947%3B 
+PASS compatibility U+F9CC 琉 %26%2363948%3B 
+PASS compatibility U+F9CD 留 %26%2363949%3B 
+PASS compatibility U+F9CE 硫 %26%2363950%3B 
+PASS compatibility U+F9CF 紐 %26%2363951%3B 
+PASS compatibility U+F9D0 類 %26%2363952%3B 
+PASS compatibility U+F9D1 六 %26%2363953%3B 
+PASS compatibility U+F9D2 戮 %26%2363954%3B 
+PASS compatibility U+F9D3 陸 %26%2363955%3B 
+PASS compatibility U+F9D4 倫 %26%2363956%3B 
+PASS compatibility U+F9D5 崙 %26%2363957%3B 
+PASS compatibility U+F9D6 淪 %26%2363958%3B 
+PASS compatibility U+F9D7 輪 %26%2363959%3B 
+PASS compatibility U+F9D8 律 %26%2363960%3B 
+PASS compatibility U+F9D9 慄 %26%2363961%3B 
+PASS compatibility U+F9DA 栗 %26%2363962%3B 
+PASS compatibility U+F9DB 率 %26%2363963%3B 
+PASS compatibility U+F9DC 隆 %26%2363964%3B 
+PASS compatibility U+F9DD 利 %26%2363965%3B 
+PASS compatibility U+F9DE 吏 %26%2363966%3B 
+PASS compatibility U+F9DF 履 %26%2363967%3B 
+PASS compatibility U+F9E0 易 %26%2363968%3B 
+PASS compatibility U+F9E1 李 %26%2363969%3B 
+PASS compatibility U+F9E2 梨 %26%2363970%3B 
+PASS compatibility U+F9E3 泥 %26%2363971%3B 
+PASS compatibility U+F9E4 理 %26%2363972%3B 
+PASS compatibility U+F9E5 痢 %26%2363973%3B 
+PASS compatibility U+F9E6 罹 %26%2363974%3B 
 PASS compatibility U+F9E7 裏 %26%2363975%3B 
-FAIL compatibility U+F9E8 裡 %26%2363976%3B assert_equals: expected "%26%2363976%3B" but got "%B8%CC"
-FAIL compatibility U+F9E9 里 %26%2363977%3B assert_equals: expected "%26%2363977%3B" but got "%A8%BD"
-FAIL compatibility U+F9EA 離 %26%2363978%3B assert_equals: expected "%26%2363978%3B" but got "%C2%F7"
-FAIL compatibility U+F9EB 匿 %26%2363979%3B assert_equals: expected "%26%2363979%3B" but got "%B0%CE"
-FAIL compatibility U+F9EC 溺 %26%2363980%3B assert_equals: expected "%26%2363980%3B" but got "%B7%C4"
-FAIL compatibility U+F9ED 吝 %26%2363981%3B assert_equals: expected "%26%2363981%3B" but got "%A7%5B"
-FAIL compatibility U+F9EE 燐 %26%2363982%3B assert_equals: expected "%26%2363982%3B" but got "%BFM"
-FAIL compatibility U+F9EF 璘 %26%2363983%3B assert_equals: expected "%26%2363983%3B" but got "%BFZ"
-FAIL compatibility U+F9F0 藺 %26%2363984%3B assert_equals: expected "%26%2363984%3B" but got "%C4%A9"
+PASS compatibility U+F9E8 裡 %26%2363976%3B 
+PASS compatibility U+F9E9 里 %26%2363977%3B 
+PASS compatibility U+F9EA 離 %26%2363978%3B 
+PASS compatibility U+F9EB 匿 %26%2363979%3B 
+PASS compatibility U+F9EC 溺 %26%2363980%3B 
+PASS compatibility U+F9ED 吝 %26%2363981%3B 
+PASS compatibility U+F9EE 燐 %26%2363982%3B 
+PASS compatibility U+F9EF 璘 %26%2363983%3B 
+PASS compatibility U+F9F0 藺 %26%2363984%3B 
 PASS compatibility U+F9F1 隣 %26%2363985%3B 
-FAIL compatibility U+F9F2 鱗 %26%2363986%3B assert_equals: expected "%26%2363986%3B" but got "%C5%EC"
-FAIL compatibility U+F9F3 麟 %26%2363987%3B assert_equals: expected "%26%2363987%3B" but got "%C5%EF"
-FAIL compatibility U+F9F4 林 %26%2363988%3B assert_equals: expected "%26%2363988%3B" but got "%AAL"
-FAIL compatibility U+F9F5 淋 %26%2363989%3B assert_equals: expected "%26%2363989%3B" but got "%B2O"
-FAIL compatibility U+F9F6 臨 %26%2363990%3B assert_equals: expected "%26%2363990%3B" but got "%C1%7B"
-FAIL compatibility U+F9F7 立 %26%2363991%3B assert_equals: expected "%26%2363991%3B" but got "%A5%DF"
-FAIL compatibility U+F9F8 笠 %26%2363992%3B assert_equals: expected "%26%2363992%3B" but got "%B2%C1"
-FAIL compatibility U+F9F9 粒 %26%2363993%3B assert_equals: expected "%26%2363993%3B" but got "%B2%C9"
-FAIL compatibility U+F9FA 狀 %26%2363994%3B assert_equals: expected "%26%2363994%3B" but got "%AA%AC"
-FAIL compatibility U+F9FB 炙 %26%2363995%3B assert_equals: expected "%26%2363995%3B" but got "%AA%A5"
-FAIL compatibility U+F9FC 識 %26%2363996%3B assert_equals: expected "%26%2363996%3B" but got "%C3%D1"
-FAIL compatibility U+F9FD 什 %26%2363997%3B assert_equals: expected "%26%2363997%3B" but got "%A4%B0"
-FAIL compatibility U+F9FE 茶 %26%2363998%3B assert_equals: expected "%26%2363998%3B" but got "%AF%F9"
-FAIL compatibility U+F9FF 刺 %26%2363999%3B assert_equals: expected "%26%2363999%3B" but got "%A8%EB"
-FAIL compatibility U+FA00 切 %26%2364000%3B assert_equals: expected "%26%2364000%3B" but got "%A4%C1"
-FAIL compatibility U+FA01 度 %26%2364001%3B assert_equals: expected "%26%2364001%3B" but got "%AB%D7"
-FAIL compatibility U+FA02 拓 %26%2364002%3B assert_equals: expected "%26%2364002%3B" but got "%A9%DD"
-FAIL compatibility U+FA03 糖 %26%2364003%3B assert_equals: expected "%26%2364003%3B" but got "%BF%7D"
-FAIL compatibility U+FA04 宅 %26%2364004%3B assert_equals: expected "%26%2364004%3B" but got "%A6v"
-FAIL compatibility U+FA05 洞 %26%2364005%3B assert_equals: expected "%26%2364005%3B" but got "%AC%7D"
-FAIL compatibility U+FA06 暴 %26%2364006%3B assert_equals: expected "%26%2364006%3B" but got "%BC%C9"
-FAIL compatibility U+FA07 輻 %26%2364007%3B assert_equals: expected "%26%2364007%3B" but got "%BF%E7"
-FAIL compatibility U+FA08 行 %26%2364008%3B assert_equals: expected "%26%2364008%3B" but got "%A6%E6"
-FAIL compatibility U+FA09 降 %26%2364009%3B assert_equals: expected "%26%2364009%3B" but got "%AD%B0"
-FAIL compatibility U+FA0A 見 %26%2364010%3B assert_equals: expected "%26%2364010%3B" but got "%A8%A3"
-FAIL compatibility U+FA0B 廓 %26%2364011%3B assert_equals: expected "%26%2364011%3B" but got "%B9%F8"
+PASS compatibility U+F9F2 鱗 %26%2363986%3B 
+PASS compatibility U+F9F3 麟 %26%2363987%3B 
+PASS compatibility U+F9F4 林 %26%2363988%3B 
+PASS compatibility U+F9F5 淋 %26%2363989%3B 
+PASS compatibility U+F9F6 臨 %26%2363990%3B 
+PASS compatibility U+F9F7 立 %26%2363991%3B 
+PASS compatibility U+F9F8 笠 %26%2363992%3B 
+PASS compatibility U+F9F9 粒 %26%2363993%3B 
+PASS compatibility U+F9FA 狀 %26%2363994%3B 
+PASS compatibility U+F9FB 炙 %26%2363995%3B 
+PASS compatibility U+F9FC 識 %26%2363996%3B 
+PASS compatibility U+F9FD 什 %26%2363997%3B 
+PASS compatibility U+F9FE 茶 %26%2363998%3B 
+PASS compatibility U+F9FF 刺 %26%2363999%3B 
+PASS compatibility U+FA00 切 %26%2364000%3B 
+PASS compatibility U+FA01 度 %26%2364001%3B 
+PASS compatibility U+FA02 拓 %26%2364002%3B 
+PASS compatibility U+FA03 糖 %26%2364003%3B 
+PASS compatibility U+FA04 宅 %26%2364004%3B 
+PASS compatibility U+FA05 洞 %26%2364005%3B 
+PASS compatibility U+FA06 暴 %26%2364006%3B 
+PASS compatibility U+FA07 輻 %26%2364007%3B 
+PASS compatibility U+FA08 行 %26%2364008%3B 
+PASS compatibility U+FA09 降 %26%2364009%3B 
+PASS compatibility U+FA0A 見 %26%2364010%3B 
+PASS compatibility U+FA0B 廓 %26%2364011%3B 
 PASS compatibility U+FA0E 﨎 %26%2364014%3B 
 PASS compatibility U+FA0F 﨏 %26%2364015%3B 
-FAIL compatibility U+FA10 塚 %26%2364016%3B assert_equals: expected "%26%2364016%3B" but got "%B6%EF"
+PASS compatibility U+FA10 塚 %26%2364016%3B 
 PASS compatibility U+FA11 﨑 %26%2364017%3B 
-FAIL compatibility U+FA12 晴 %26%2364018%3B assert_equals: expected "%26%2364018%3B" but got "%B4%B8"
+PASS compatibility U+FA12 晴 %26%2364018%3B 
 PASS compatibility U+FA13 﨓 %26%2364019%3B 
 PASS compatibility U+FA14 﨔 %26%2364020%3B 
-FAIL compatibility U+FA15 凞 %26%2364021%3B assert_equals: expected "%26%2364021%3B" but got "%E8%F9"
-FAIL compatibility U+FA16 猪 %26%2364022%3B assert_equals: expected "%26%2364022%3B" but got "%BD%DE"
-FAIL compatibility U+FA17 益 %26%2364023%3B assert_equals: expected "%26%2364023%3B" but got "%AFq"
+PASS compatibility U+FA15 凞 %26%2364021%3B 
+PASS compatibility U+FA16 猪 %26%2364022%3B 
+PASS compatibility U+FA17 益 %26%2364023%3B 
 PASS compatibility U+FA18 礼 %26%2364024%3B 
-FAIL compatibility U+FA19 神 %26%2364025%3B assert_equals: expected "%26%2364025%3B" but got "%AF%AB"
-FAIL compatibility U+FA1A 祥 %26%2364026%3B assert_equals: expected "%26%2364026%3B" but got "%B2%BB"
-FAIL compatibility U+FA1B 福 %26%2364027%3B assert_equals: expected "%26%2364027%3B" but got "%BA%D6"
-FAIL compatibility U+FA1C 靖 %26%2364028%3B assert_equals: expected "%26%2364028%3B" but got "%B9t"
-FAIL compatibility U+FA1D 精 %26%2364029%3B assert_equals: expected "%26%2364029%3B" but got "%BA%EB"
-FAIL compatibility U+FA1E 羽 %26%2364030%3B assert_equals: expected "%26%2364030%3B" but got "%A6%D0"
+PASS compatibility U+FA19 神 %26%2364025%3B 
+PASS compatibility U+FA1A 祥 %26%2364026%3B 
+PASS compatibility U+FA1B 福 %26%2364027%3B 
+PASS compatibility U+FA1C 靖 %26%2364028%3B 
+PASS compatibility U+FA1D 精 %26%2364029%3B 
+PASS compatibility U+FA1E 羽 %26%2364030%3B 
 PASS compatibility U+FA1F 﨟 %26%2364031%3B 
 PASS compatibility U+FA20 蘒 %26%2364032%3B 
 PASS compatibility U+FA21 﨡 %26%2364033%3B 
-FAIL compatibility U+FA22 諸 %26%2364034%3B assert_equals: expected "%26%2364034%3B" but got "%BD%D1"
+PASS compatibility U+FA22 諸 %26%2364034%3B 
 PASS compatibility U+FA23 﨣 %26%2364035%3B 
 PASS compatibility U+FA24 﨤 %26%2364036%3B 
-FAIL compatibility U+FA25 逸 %26%2364037%3B assert_equals: expected "%26%2364037%3B" but got "%B6h"
-FAIL compatibility U+FA26 都 %26%2364038%3B assert_equals: expected "%26%2364038%3B" but got "%B3%A3"
+PASS compatibility U+FA25 逸 %26%2364037%3B 
+PASS compatibility U+FA26 都 %26%2364038%3B 
 PASS compatibility U+FA27 﨧 %26%2364039%3B 
 PASS compatibility U+FA28 﨨 %26%2364040%3B 
 PASS compatibility U+FA29 﨩 %26%2364041%3B 
-FAIL compatibility U+FA2A 飯 %26%2364042%3B assert_equals: expected "%26%2364042%3B" but got "%B6%BA"
-FAIL compatibility U+FA2B 飼 %26%2364043%3B assert_equals: expected "%26%2364043%3B" but got "%B9%7D"
-FAIL compatibility U+FA2C 館 %26%2364044%3B assert_equals: expected "%26%2364044%3B" but got "%C0%5D"
-FAIL compatibility U+FA2D 鶴 %26%2364045%3B assert_equals: expected "%26%2364045%3B" but got "%C5b"
+PASS compatibility U+FA2A 飯 %26%2364042%3B 
+PASS compatibility U+FA2B 飼 %26%2364043%3B 
+PASS compatibility U+FA2C 館 %26%2364044%3B 
+PASS compatibility U+FA2D 鶴 %26%2364045%3B 
 PASS compatibility U+FA2E 郞 %26%2364046%3B 
 PASS compatibility U+FA2F 隷 %26%2364047%3B 
 PASS compatibility U+FA30 侮 %26%2364048%3B 

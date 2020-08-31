@@ -1,5 +1,5 @@
 
-FAIL latin, greek, cyrillic, etc  U+80  %26%23128%3B assert_equals: expected "%26%23%31%32%38%3B" but got "%80"
+PASS latin, greek, cyrillic, etc  U+80  %26%23128%3B 
 PASS latin, greek, cyrillic, etc  U+81  %26%23129%3B 
 PASS latin, greek, cyrillic, etc  U+82  %26%23130%3B 
 PASS latin, greek, cyrillic, etc  U+83  %26%23131%3B 
@@ -32,92 +32,92 @@ PASS latin, greek, cyrillic, etc  U+9D  %26%23157%3B
 PASS latin, greek, cyrillic, etc  U+9E  %26%23158%3B 
 PASS latin, greek, cyrillic, etc  U+9F  %26%23159%3B 
 PASS latin, greek, cyrillic, etc  U+A0   %26%23160%3B 
-FAIL latin, greek, cyrillic, etc  U+A1 ¡ %26%23161%3B assert_equals: expected "%26%23%31%36%31%3B" but got "%21"
-FAIL latin, greek, cyrillic, etc  U+A2 ¢ %26%23162%3B assert_equals: expected "%26%23%31%36%32%3B" but got "%A2%46"
-FAIL latin, greek, cyrillic, etc  U+A3 £ %26%23163%3B assert_equals: expected "%26%23%31%36%33%3B" but got "%A2%47"
+PASS latin, greek, cyrillic, etc  U+A1 ¡ %26%23161%3B 
+PASS latin, greek, cyrillic, etc  U+A2 ¢ %26%23162%3B 
+PASS latin, greek, cyrillic, etc  U+A3 £ %26%23163%3B 
 PASS latin, greek, cyrillic, etc  U+A4 ¤ %26%23164%3B 
-FAIL latin, greek, cyrillic, etc  U+A5 ¥ %26%23165%3B assert_equals: expected "%26%23%31%36%35%3B" but got "%A2%44"
-FAIL latin, greek, cyrillic, etc  U+A6 ¦ %26%23166%3B assert_equals: expected "%26%23%31%36%36%3B" but got "%7C"
-FAIL latin, greek, cyrillic, etc  U+A9 © %26%23169%3B assert_equals: expected "%26%23%31%36%39%3B" but got "%63"
-FAIL latin, greek, cyrillic, etc  U+AA ª %26%23170%3B assert_equals: expected "%26%23%31%37%30%3B" but got "%61"
+PASS latin, greek, cyrillic, etc  U+A5 ¥ %26%23165%3B 
+PASS latin, greek, cyrillic, etc  U+A6 ¦ %26%23166%3B 
+PASS latin, greek, cyrillic, etc  U+A9 © %26%23169%3B 
+PASS latin, greek, cyrillic, etc  U+AA ª %26%23170%3B 
 PASS latin, greek, cyrillic, etc  U+AB « %26%23171%3B 
 PASS latin, greek, cyrillic, etc  U+AC ¬ %26%23172%3B 
-FAIL latin, greek, cyrillic, etc  U+AD ­ %26%23173%3B assert_equals: expected "%26%23%31%37%33%3B" but got "%2D"
-FAIL latin, greek, cyrillic, etc  U+AE ® %26%23174%3B assert_equals: expected "%26%23%31%37%34%3B" but got "%52"
-FAIL latin, greek, cyrillic, etc  U+B2 ² %26%23178%3B assert_equals: expected "%26%23%31%37%38%3B" but got "%32"
-FAIL latin, greek, cyrillic, etc  U+B3 ³ %26%23179%3B assert_equals: expected "%26%23%31%37%39%3B" but got "%33"
-FAIL latin, greek, cyrillic, etc  U+B4 ´ %26%23180%3B assert_equals: expected "%26%23%31%38%30%3B" but got "%A1%A6"
-FAIL latin, greek, cyrillic, etc  U+B5 µ %26%23181%3B assert_equals: expected "%26%23%31%38%31%3B" but got "%A3%67"
+PASS latin, greek, cyrillic, etc  U+AD ­ %26%23173%3B 
+PASS latin, greek, cyrillic, etc  U+AE ® %26%23174%3B 
+PASS latin, greek, cyrillic, etc  U+B2 ² %26%23178%3B 
+PASS latin, greek, cyrillic, etc  U+B3 ³ %26%23179%3B 
+PASS latin, greek, cyrillic, etc  U+B4 ´ %26%23180%3B 
+PASS latin, greek, cyrillic, etc  U+B5 µ %26%23181%3B 
 PASS latin, greek, cyrillic, etc  U+B6 ¶ %26%23182%3B 
-FAIL latin, greek, cyrillic, etc  U+B8 ¸ %26%23184%3B assert_equals: expected "%26%23%31%38%34%3B" but got "%A1%4D"
-FAIL latin, greek, cyrillic, etc  U+B9 ¹ %26%23185%3B assert_equals: expected "%26%23%31%38%35%3B" but got "%31"
-FAIL latin, greek, cyrillic, etc  U+BA º %26%23186%3B assert_equals: expected "%26%23%31%38%36%3B" but got "%6F"
+PASS latin, greek, cyrillic, etc  U+B8 ¸ %26%23184%3B 
+PASS latin, greek, cyrillic, etc  U+B9 ¹ %26%23185%3B 
+PASS latin, greek, cyrillic, etc  U+BA º %26%23186%3B 
 PASS latin, greek, cyrillic, etc  U+BB » %26%23187%3B 
 PASS latin, greek, cyrillic, etc  U+BC ¼ %26%23188%3B 
 PASS latin, greek, cyrillic, etc  U+BD ½ %26%23189%3B 
 PASS latin, greek, cyrillic, etc  U+BE ¾ %26%23190%3B 
 PASS latin, greek, cyrillic, etc  U+BF ¿ %26%23191%3B 
-FAIL latin, greek, cyrillic, etc  U+C0 À %26%23192%3B assert_equals: expected "%26%23%31%39%32%3B" but got "%41"
-FAIL latin, greek, cyrillic, etc  U+C1 Á %26%23193%3B assert_equals: expected "%26%23%31%39%33%3B" but got "%41"
-FAIL latin, greek, cyrillic, etc  U+C2 Â %26%23194%3B assert_equals: expected "%26%23%31%39%34%3B" but got "%41"
-FAIL latin, greek, cyrillic, etc  U+C3 Ã %26%23195%3B assert_equals: expected "%26%23%31%39%35%3B" but got "%41"
-FAIL latin, greek, cyrillic, etc  U+C4 Ä %26%23196%3B assert_equals: expected "%26%23%31%39%36%3B" but got "%41"
-FAIL latin, greek, cyrillic, etc  U+C5 Å %26%23197%3B assert_equals: expected "%26%23%31%39%37%3B" but got "%41"
-FAIL latin, greek, cyrillic, etc  U+C6 Æ %26%23198%3B assert_equals: expected "%26%23%31%39%38%3B" but got "%41"
-FAIL latin, greek, cyrillic, etc  U+C7 Ç %26%23199%3B assert_equals: expected "%26%23%31%39%39%3B" but got "%43"
-FAIL latin, greek, cyrillic, etc  U+C8 È %26%23200%3B assert_equals: expected "%26%23%32%30%30%3B" but got "%45"
-FAIL latin, greek, cyrillic, etc  U+C9 É %26%23201%3B assert_equals: expected "%26%23%32%30%31%3B" but got "%45"
-FAIL latin, greek, cyrillic, etc  U+CA Ê %26%23202%3B assert_equals: expected "%26%23%32%30%32%3B" but got "%45"
-FAIL latin, greek, cyrillic, etc  U+CB Ë %26%23203%3B assert_equals: expected "%26%23%32%30%33%3B" but got "%45"
-FAIL latin, greek, cyrillic, etc  U+CC Ì %26%23204%3B assert_equals: expected "%26%23%32%30%34%3B" but got "%49"
-FAIL latin, greek, cyrillic, etc  U+CD Í %26%23205%3B assert_equals: expected "%26%23%32%30%35%3B" but got "%49"
-FAIL latin, greek, cyrillic, etc  U+CE Î %26%23206%3B assert_equals: expected "%26%23%32%30%36%3B" but got "%49"
-FAIL latin, greek, cyrillic, etc  U+CF Ï %26%23207%3B assert_equals: expected "%26%23%32%30%37%3B" but got "%49"
-FAIL latin, greek, cyrillic, etc  U+D0 Ð %26%23208%3B assert_equals: expected "%26%23%32%30%38%3B" but got "%44"
-FAIL latin, greek, cyrillic, etc  U+D1 Ñ %26%23209%3B assert_equals: expected "%26%23%32%30%39%3B" but got "%4E"
-FAIL latin, greek, cyrillic, etc  U+D2 Ò %26%23210%3B assert_equals: expected "%26%23%32%31%30%3B" but got "%4F"
-FAIL latin, greek, cyrillic, etc  U+D3 Ó %26%23211%3B assert_equals: expected "%26%23%32%31%31%3B" but got "%4F"
-FAIL latin, greek, cyrillic, etc  U+D4 Ô %26%23212%3B assert_equals: expected "%26%23%32%31%32%3B" but got "%4F"
-FAIL latin, greek, cyrillic, etc  U+D5 Õ %26%23213%3B assert_equals: expected "%26%23%32%31%33%3B" but got "%4F"
-FAIL latin, greek, cyrillic, etc  U+D6 Ö %26%23214%3B assert_equals: expected "%26%23%32%31%34%3B" but got "%4F"
-FAIL latin, greek, cyrillic, etc  U+D8 Ø %26%23216%3B assert_equals: expected "%26%23%32%31%36%3B" but got "%4F"
-FAIL latin, greek, cyrillic, etc  U+D9 Ù %26%23217%3B assert_equals: expected "%26%23%32%31%37%3B" but got "%55"
-FAIL latin, greek, cyrillic, etc  U+DA Ú %26%23218%3B assert_equals: expected "%26%23%32%31%38%3B" but got "%55"
-FAIL latin, greek, cyrillic, etc  U+DB Û %26%23219%3B assert_equals: expected "%26%23%32%31%39%3B" but got "%55"
-FAIL latin, greek, cyrillic, etc  U+DC Ü %26%23220%3B assert_equals: expected "%26%23%32%32%30%3B" but got "%55"
-FAIL latin, greek, cyrillic, etc  U+DD Ý %26%23221%3B assert_equals: expected "%26%23%32%32%31%3B" but got "%59"
-FAIL latin, greek, cyrillic, etc  U+DE Þ %26%23222%3B assert_equals: expected "%26%23%32%32%32%3B" but got "%54"
-FAIL latin, greek, cyrillic, etc  U+DF ß %26%23223%3B assert_equals: expected "%26%23%32%32%33%3B" but got "%73"
-FAIL latin, greek, cyrillic, etc  U+E0 à %26%23224%3B assert_equals: expected "%26%23%32%32%34%3B" but got "%61"
-FAIL latin, greek, cyrillic, etc  U+E1 á %26%23225%3B assert_equals: expected "%26%23%32%32%35%3B" but got "%61"
-FAIL latin, greek, cyrillic, etc  U+E2 â %26%23226%3B assert_equals: expected "%26%23%32%32%36%3B" but got "%61"
-FAIL latin, greek, cyrillic, etc  U+E3 ã %26%23227%3B assert_equals: expected "%26%23%32%32%37%3B" but got "%61"
-FAIL latin, greek, cyrillic, etc  U+E4 ä %26%23228%3B assert_equals: expected "%26%23%32%32%38%3B" but got "%61"
-FAIL latin, greek, cyrillic, etc  U+E5 å %26%23229%3B assert_equals: expected "%26%23%32%32%39%3B" but got "%61"
-FAIL latin, greek, cyrillic, etc  U+E6 æ %26%23230%3B assert_equals: expected "%26%23%32%33%30%3B" but got "%61"
-FAIL latin, greek, cyrillic, etc  U+E7 ç %26%23231%3B assert_equals: expected "%26%23%32%33%31%3B" but got "%63"
-FAIL latin, greek, cyrillic, etc  U+E8 è %26%23232%3B assert_equals: expected "%26%23%32%33%32%3B" but got "%65"
-FAIL latin, greek, cyrillic, etc  U+E9 é %26%23233%3B assert_equals: expected "%26%23%32%33%33%3B" but got "%65"
-FAIL latin, greek, cyrillic, etc  U+EA ê %26%23234%3B assert_equals: expected "%26%23%32%33%34%3B" but got "%65"
-FAIL latin, greek, cyrillic, etc  U+EB ë %26%23235%3B assert_equals: expected "%26%23%32%33%35%3B" but got "%65"
-FAIL latin, greek, cyrillic, etc  U+EC ì %26%23236%3B assert_equals: expected "%26%23%32%33%36%3B" but got "%69"
-FAIL latin, greek, cyrillic, etc  U+ED í %26%23237%3B assert_equals: expected "%26%23%32%33%37%3B" but got "%69"
-FAIL latin, greek, cyrillic, etc  U+EE î %26%23238%3B assert_equals: expected "%26%23%32%33%38%3B" but got "%69"
-FAIL latin, greek, cyrillic, etc  U+EF ï %26%23239%3B assert_equals: expected "%26%23%32%33%39%3B" but got "%69"
-FAIL latin, greek, cyrillic, etc  U+F0 ð %26%23240%3B assert_equals: expected "%26%23%32%34%30%3B" but got "%65"
-FAIL latin, greek, cyrillic, etc  U+F1 ñ %26%23241%3B assert_equals: expected "%26%23%32%34%31%3B" but got "%6E"
-FAIL latin, greek, cyrillic, etc  U+F2 ò %26%23242%3B assert_equals: expected "%26%23%32%34%32%3B" but got "%6F"
-FAIL latin, greek, cyrillic, etc  U+F3 ó %26%23243%3B assert_equals: expected "%26%23%32%34%33%3B" but got "%6F"
-FAIL latin, greek, cyrillic, etc  U+F4 ô %26%23244%3B assert_equals: expected "%26%23%32%34%34%3B" but got "%6F"
-FAIL latin, greek, cyrillic, etc  U+F5 õ %26%23245%3B assert_equals: expected "%26%23%32%34%35%3B" but got "%6F"
-FAIL latin, greek, cyrillic, etc  U+F6 ö %26%23246%3B assert_equals: expected "%26%23%32%34%36%3B" but got "%6F"
-FAIL latin, greek, cyrillic, etc  U+F9 ù %26%23249%3B assert_equals: expected "%26%23%32%34%39%3B" but got "%75"
-FAIL latin, greek, cyrillic, etc  U+FA ú %26%23250%3B assert_equals: expected "%26%23%32%35%30%3B" but got "%75"
-FAIL latin, greek, cyrillic, etc  U+FB û %26%23251%3B assert_equals: expected "%26%23%32%35%31%3B" but got "%75"
-FAIL latin, greek, cyrillic, etc  U+FC ü %26%23252%3B assert_equals: expected "%26%23%32%35%32%3B" but got "%75"
-FAIL latin, greek, cyrillic, etc  U+FD ý %26%23253%3B assert_equals: expected "%26%23%32%35%33%3B" but got "%79"
-FAIL latin, greek, cyrillic, etc  U+FE þ %26%23254%3B assert_equals: expected "%26%23%32%35%34%3B" but got "%74"
-FAIL latin, greek, cyrillic, etc  U+FF ÿ %26%23255%3B assert_equals: expected "%26%23%32%35%35%3B" but got "%79"
+PASS latin, greek, cyrillic, etc  U+C0 À %26%23192%3B 
+PASS latin, greek, cyrillic, etc  U+C1 Á %26%23193%3B 
+PASS latin, greek, cyrillic, etc  U+C2 Â %26%23194%3B 
+PASS latin, greek, cyrillic, etc  U+C3 Ã %26%23195%3B 
+PASS latin, greek, cyrillic, etc  U+C4 Ä %26%23196%3B 
+PASS latin, greek, cyrillic, etc  U+C5 Å %26%23197%3B 
+PASS latin, greek, cyrillic, etc  U+C6 Æ %26%23198%3B 
+PASS latin, greek, cyrillic, etc  U+C7 Ç %26%23199%3B 
+PASS latin, greek, cyrillic, etc  U+C8 È %26%23200%3B 
+PASS latin, greek, cyrillic, etc  U+C9 É %26%23201%3B 
+PASS latin, greek, cyrillic, etc  U+CA Ê %26%23202%3B 
+PASS latin, greek, cyrillic, etc  U+CB Ë %26%23203%3B 
+PASS latin, greek, cyrillic, etc  U+CC Ì %26%23204%3B 
+PASS latin, greek, cyrillic, etc  U+CD Í %26%23205%3B 
+PASS latin, greek, cyrillic, etc  U+CE Î %26%23206%3B 
+PASS latin, greek, cyrillic, etc  U+CF Ï %26%23207%3B 
+PASS latin, greek, cyrillic, etc  U+D0 Ð %26%23208%3B 
+PASS latin, greek, cyrillic, etc  U+D1 Ñ %26%23209%3B 
+PASS latin, greek, cyrillic, etc  U+D2 Ò %26%23210%3B 
+PASS latin, greek, cyrillic, etc  U+D3 Ó %26%23211%3B 
+PASS latin, greek, cyrillic, etc  U+D4 Ô %26%23212%3B 
+PASS latin, greek, cyrillic, etc  U+D5 Õ %26%23213%3B 
+PASS latin, greek, cyrillic, etc  U+D6 Ö %26%23214%3B 
+PASS latin, greek, cyrillic, etc  U+D8 Ø %26%23216%3B 
+PASS latin, greek, cyrillic, etc  U+D9 Ù %26%23217%3B 
+PASS latin, greek, cyrillic, etc  U+DA Ú %26%23218%3B 
+PASS latin, greek, cyrillic, etc  U+DB Û %26%23219%3B 
+PASS latin, greek, cyrillic, etc  U+DC Ü %26%23220%3B 
+PASS latin, greek, cyrillic, etc  U+DD Ý %26%23221%3B 
+PASS latin, greek, cyrillic, etc  U+DE Þ %26%23222%3B 
+PASS latin, greek, cyrillic, etc  U+DF ß %26%23223%3B 
+PASS latin, greek, cyrillic, etc  U+E0 à %26%23224%3B 
+PASS latin, greek, cyrillic, etc  U+E1 á %26%23225%3B 
+PASS latin, greek, cyrillic, etc  U+E2 â %26%23226%3B 
+PASS latin, greek, cyrillic, etc  U+E3 ã %26%23227%3B 
+PASS latin, greek, cyrillic, etc  U+E4 ä %26%23228%3B 
+PASS latin, greek, cyrillic, etc  U+E5 å %26%23229%3B 
+PASS latin, greek, cyrillic, etc  U+E6 æ %26%23230%3B 
+PASS latin, greek, cyrillic, etc  U+E7 ç %26%23231%3B 
+PASS latin, greek, cyrillic, etc  U+E8 è %26%23232%3B 
+PASS latin, greek, cyrillic, etc  U+E9 é %26%23233%3B 
+PASS latin, greek, cyrillic, etc  U+EA ê %26%23234%3B 
+PASS latin, greek, cyrillic, etc  U+EB ë %26%23235%3B 
+PASS latin, greek, cyrillic, etc  U+EC ì %26%23236%3B 
+PASS latin, greek, cyrillic, etc  U+ED í %26%23237%3B 
+PASS latin, greek, cyrillic, etc  U+EE î %26%23238%3B 
+PASS latin, greek, cyrillic, etc  U+EF ï %26%23239%3B 
+PASS latin, greek, cyrillic, etc  U+F0 ð %26%23240%3B 
+PASS latin, greek, cyrillic, etc  U+F1 ñ %26%23241%3B 
+PASS latin, greek, cyrillic, etc  U+F2 ò %26%23242%3B 
+PASS latin, greek, cyrillic, etc  U+F3 ó %26%23243%3B 
+PASS latin, greek, cyrillic, etc  U+F4 ô %26%23244%3B 
+PASS latin, greek, cyrillic, etc  U+F5 õ %26%23245%3B 
+PASS latin, greek, cyrillic, etc  U+F6 ö %26%23246%3B 
+PASS latin, greek, cyrillic, etc  U+F9 ù %26%23249%3B 
+PASS latin, greek, cyrillic, etc  U+FA ú %26%23250%3B 
+PASS latin, greek, cyrillic, etc  U+FB û %26%23251%3B 
+PASS latin, greek, cyrillic, etc  U+FC ü %26%23252%3B 
+PASS latin, greek, cyrillic, etc  U+FD ý %26%23253%3B 
+PASS latin, greek, cyrillic, etc  U+FE þ %26%23254%3B 
+PASS latin, greek, cyrillic, etc  U+FF ÿ %26%23255%3B 
 PASS latin, greek, cyrillic, etc  U+100 Ā %26%23256%3B 
 PASS latin, greek, cyrillic, etc  U+101 ā %26%23257%3B 
 PASS latin, greek, cyrillic, etc  U+102 Ă %26%23258%3B 
@@ -619,7 +619,7 @@ PASS latin, greek, cyrillic, etc  U+301 ́ %26%23769%3B
 PASS latin, greek, cyrillic, etc  U+302 ̂ %26%23770%3B 
 PASS latin, greek, cyrillic, etc  U+303 ̃ %26%23771%3B 
 PASS latin, greek, cyrillic, etc  U+304 ̄ %26%23772%3B 
-FAIL latin, greek, cyrillic, etc  U+305 ̅ %26%23773%3B assert_equals: expected "%26%23%37%37%33%3B" but got "%A1%C2"
+PASS latin, greek, cyrillic, etc  U+305 ̅ %26%23773%3B 
 PASS latin, greek, cyrillic, etc  U+306 ̆ %26%23774%3B 
 PASS latin, greek, cyrillic, etc  U+307 ̇ %26%23775%3B 
 PASS latin, greek, cyrillic, etc  U+308 ̈ %26%23776%3B 
@@ -1030,8 +1030,8 @@ PASS punctuation, currency, symbols  U+200F ‏ %26%238207%3B
 PASS punctuation, currency, symbols  U+2010 ‐ %26%238208%3B 
 PASS punctuation, currency, symbols  U+2011 ‑ %26%238209%3B 
 PASS punctuation, currency, symbols  U+2012 ‒ %26%238210%3B 
-FAIL punctuation, currency, symbols  U+2015 ― %26%238213%3B assert_equals: expected "%26%23%38%32%31%33%3B" but got "%A2%77"
-FAIL punctuation, currency, symbols  U+2016 ‖ %26%238214%3B assert_equals: expected "%26%23%38%32%31%34%3B" but got "%A1%FC"
+PASS punctuation, currency, symbols  U+2015 ― %26%238213%3B 
+PASS punctuation, currency, symbols  U+2016 ‖ %26%238214%3B 
 PASS punctuation, currency, symbols  U+2017 ‗ %26%238215%3B 
 PASS punctuation, currency, symbols  U+201A ‚ %26%238218%3B 
 PASS punctuation, currency, symbols  U+201B ‛ %26%238219%3B 
@@ -1039,9 +1039,9 @@ PASS punctuation, currency, symbols  U+201E „ %26%238222%3B
 PASS punctuation, currency, symbols  U+201F ‟ %26%238223%3B 
 PASS punctuation, currency, symbols  U+2020 † %26%238224%3B 
 PASS punctuation, currency, symbols  U+2021 ‡ %26%238225%3B 
-FAIL punctuation, currency, symbols  U+2022 • %26%238226%3B assert_equals: expected "%26%23%38%32%32%36%3B" but got "%A1%45"
+PASS punctuation, currency, symbols  U+2022 • %26%238226%3B 
 PASS punctuation, currency, symbols  U+2023 ‣ %26%238227%3B 
-FAIL punctuation, currency, symbols  U+2024 ․ %26%238228%3B assert_equals: expected "%26%23%38%32%32%38%3B" but got "%A3%BB"
+PASS punctuation, currency, symbols  U+2024 ․ %26%238228%3B 
 PASS punctuation, currency, symbols  U+2028   %26%238232%3B 
 PASS punctuation, currency, symbols  U+2029   %26%238233%3B 
 PASS punctuation, currency, symbols  U+202A ‪ %26%238234%3B 
@@ -1052,7 +1052,7 @@ PASS punctuation, currency, symbols  U+202E ‮ %26%238238%3B
 PASS punctuation, currency, symbols  U+202F   %26%238239%3B 
 PASS punctuation, currency, symbols  U+2030 ‰ %26%238240%3B 
 PASS punctuation, currency, symbols  U+2031 ‱ %26%238241%3B 
-FAIL punctuation, currency, symbols  U+2033 ″ %26%238243%3B assert_equals: expected "%26%23%38%32%34%33%3B" but got "%A1%B2"
+PASS punctuation, currency, symbols  U+2033 ″ %26%238243%3B 
 PASS punctuation, currency, symbols  U+2034 ‴ %26%238244%3B 
 PASS punctuation, currency, symbols  U+2036 ‶ %26%238246%3B 
 PASS punctuation, currency, symbols  U+2037 ‷ %26%238247%3B 
@@ -1061,7 +1061,7 @@ PASS punctuation, currency, symbols  U+2039 ‹ %26%238249%3B
 PASS punctuation, currency, symbols  U+203A › %26%238250%3B 
 PASS punctuation, currency, symbols  U+203C ‼ %26%238252%3B 
 PASS punctuation, currency, symbols  U+203D ‽ %26%238253%3B 
-FAIL punctuation, currency, symbols  U+203E ‾ %26%238254%3B assert_equals: expected "%26%23%38%32%35%34%3B" but got "%A1%C3"
+PASS punctuation, currency, symbols  U+203E ‾ %26%238254%3B 
 PASS punctuation, currency, symbols  U+203F ‿ %26%238255%3B 
 PASS punctuation, currency, symbols  U+2040 ⁀ %26%238256%3B 
 PASS punctuation, currency, symbols  U+2041 ⁁ %26%238257%3B 
@@ -1495,9 +1495,9 @@ PASS punctuation, currency, symbols  U+2211 ∑ %26%238721%3B
 PASS punctuation, currency, symbols  U+2212 − %26%238722%3B 
 PASS punctuation, currency, symbols  U+2213 ∓ %26%238723%3B 
 PASS punctuation, currency, symbols  U+2214 ∔ %26%238724%3B 
-FAIL punctuation, currency, symbols  U+2216 ∖ %26%238726%3B assert_equals: expected "%26%23%38%37%32%36%3B" but got "%A2%42"
+PASS punctuation, currency, symbols  U+2216 ∖ %26%238726%3B 
 PASS punctuation, currency, symbols  U+2217 ∗ %26%238727%3B 
-FAIL punctuation, currency, symbols  U+2218 ∘ %26%238728%3B assert_equals: expected "%26%23%38%37%32%38%3B" but got "%A2%58"
+PASS punctuation, currency, symbols  U+2218 ∘ %26%238728%3B 
 PASS punctuation, currency, symbols  U+2219 ∙ %26%238729%3B 
 PASS punctuation, currency, symbols  U+221B ∛ %26%238731%3B 
 PASS punctuation, currency, symbols  U+221C ∜ %26%238732%3B 
@@ -1557,7 +1557,7 @@ PASS punctuation, currency, symbols  U+225D ≝ %26%238797%3B
 PASS punctuation, currency, symbols  U+225E ≞ %26%238798%3B 
 PASS punctuation, currency, symbols  U+225F ≟ %26%238799%3B 
 PASS punctuation, currency, symbols  U+2262 ≢ %26%238802%3B 
-FAIL punctuation, currency, symbols  U+2263 ≣ %26%238803%3B assert_equals: expected "%26%23%38%38%30%33%3B" but got "%A1%DD"
+PASS punctuation, currency, symbols  U+2263 ≣ %26%238803%3B 
 PASS punctuation, currency, symbols  U+2264 ≤ %26%238804%3B 
 PASS punctuation, currency, symbols  U+2265 ≥ %26%238805%3B 
 PASS punctuation, currency, symbols  U+2268 ≨ %26%238808%3B 
@@ -1715,7 +1715,7 @@ PASS punctuation, currency, symbols  U+2303 ⌃ %26%238963%3B
 PASS punctuation, currency, symbols  U+2304 ⌄ %26%238964%3B 
 PASS punctuation, currency, symbols  U+2305 ⌅ %26%238965%3B 
 PASS punctuation, currency, symbols  U+2306 ⌆ %26%238966%3B 
-FAIL punctuation, currency, symbols  U+2307 ⌇ %26%238967%3B assert_equals: expected "%26%23%38%39%36%37%3B" but got "%A1%5B"
+PASS punctuation, currency, symbols  U+2307 ⌇ %26%238967%3B 
 PASS punctuation, currency, symbols  U+2308 ⌈ %26%238968%3B 
 PASS punctuation, currency, symbols  U+2309 ⌉ %26%238969%3B 
 PASS punctuation, currency, symbols  U+230A ⌊ %26%238970%3B 
@@ -2187,7 +2187,7 @@ PASS enclosed chars and boxes  U+2580 ▀ %26%239600%3B
 PASS enclosed chars and boxes  U+2590 ▐ %26%239616%3B 
 PASS enclosed chars and boxes  U+2591 ░ %26%239617%3B 
 PASS enclosed chars and boxes  U+2592 ▒ %26%239618%3B 
-FAIL enclosed chars and boxes  U+2593 ▓ %26%239619%3B assert_equals: expected "%26%23%39%36%31%39%3B" but got "%F9%FE"
+PASS enclosed chars and boxes  U+2593 ▓ %26%239619%3B 
 PASS enclosed chars and boxes  U+2596 ▖ %26%239622%3B 
 PASS enclosed chars and boxes  U+2597 ▗ %26%239623%3B 
 PASS enclosed chars and boxes  U+2598 ▘ %26%239624%3B 
@@ -2286,7 +2286,7 @@ PASS enclosed chars and boxes  U+2603 ☃ %26%239731%3B
 PASS enclosed chars and boxes  U+2604 ☄ %26%239732%3B 
 PASS enclosed chars and boxes  U+2607 ☇ %26%239735%3B 
 PASS enclosed chars and boxes  U+2608 ☈ %26%239736%3B 
-FAIL enclosed chars and boxes  U+2609 ☉ %26%239737%3B assert_equals: expected "%26%23%39%37%33%37%3B" but got "%A1%F3"
+PASS enclosed chars and boxes  U+2609 ☉ %26%239737%3B 
 PASS enclosed chars and boxes  U+260A ☊ %26%239738%3B 
 PASS enclosed chars and boxes  U+260B ☋ %26%239739%3B 
 PASS enclosed chars and boxes  U+260C ☌ %26%239740%3B 
@@ -2341,7 +2341,7 @@ PASS enclosed chars and boxes  U+263C ☼ %26%239788%3B
 PASS enclosed chars and boxes  U+263D ☽ %26%239789%3B 
 PASS enclosed chars and boxes  U+263E ☾ %26%239790%3B 
 PASS enclosed chars and boxes  U+263F ☿ %26%239791%3B 
-FAIL enclosed chars and boxes  U+2641 ♁ %26%239793%3B assert_equals: expected "%26%23%39%37%39%33%3B" but got "%A1%F2"
+PASS enclosed chars and boxes  U+2641 ♁ %26%239793%3B 
 PASS enclosed chars and boxes  U+2643 ♃ %26%239795%3B 
 PASS enclosed chars and boxes  U+2644 ♄ %26%239796%3B 
 PASS enclosed chars and boxes  U+2645 ♅ %26%239797%3B 
@@ -2538,7 +2538,7 @@ PASS various asian  U+3018 〘 %26%2312312%3B
 PASS various asian  U+3019 〙 %26%2312313%3B 
 PASS various asian  U+301A 〚 %26%2312314%3B 
 PASS various asian  U+301B 〛 %26%2312315%3B 
-FAIL various asian  U+301C 〜 %26%2312316%3B assert_equals: expected "%26%23%31%32%33%31%36%3B" but got "%A1%E3"
+PASS various asian  U+301C 〜 %26%2312316%3B 
 PASS various asian  U+301F 〟 %26%2312319%3B 
 PASS various asian  U+3020 〠 %26%2312320%3B 
 PASS various asian  U+302A 〪 %26%2312330%3B 
@@ -2547,7 +2547,7 @@ PASS various asian  U+302C 〬 %26%2312332%3B
 PASS various asian  U+302D 〭 %26%2312333%3B 
 PASS various asian  U+302E 〮 %26%2312334%3B 
 PASS various asian  U+302F 〯 %26%2312335%3B 
-FAIL various asian  U+3030 〰 %26%2312336%3B assert_equals: expected "%26%23%31%32%33%33%36%3B" but got "%A1%CA"
+PASS various asian  U+3030 〰 %26%2312336%3B 
 PASS various asian  U+3031 〱 %26%2312337%3B 
 PASS various asian  U+3032 〲 %26%2312338%3B 
 PASS various asian  U+3033 〳 %26%2312339%3B 
@@ -2688,20 +2688,20 @@ PASS various asian  U+318E ㆎ %26%2312686%3B
 PASS various asian  U+318F ㆏ %26%2312687%3B 
 PASS various asian  U+3190 ㆐ %26%2312688%3B 
 PASS various asian  U+3191 ㆑ %26%2312689%3B 
-FAIL various asian  U+3192 ㆒ %26%2312690%3B assert_equals: expected "%26%23%31%32%36%39%30%3B" but got "%A4%40"
-FAIL various asian  U+3193 ㆓ %26%2312691%3B assert_equals: expected "%26%23%31%32%36%39%31%3B" but got "%A4%47"
-FAIL various asian  U+3194 ㆔ %26%2312692%3B assert_equals: expected "%26%23%31%32%36%39%32%3B" but got "%A4%54"
-FAIL various asian  U+3195 ㆕ %26%2312693%3B assert_equals: expected "%26%23%31%32%36%39%33%3B" but got "%A5%7C"
-FAIL various asian  U+3196 ㆖ %26%2312694%3B assert_equals: expected "%26%23%31%32%36%39%34%3B" but got "%A4%57"
-FAIL various asian  U+3197 ㆗ %26%2312695%3B assert_equals: expected "%26%23%31%32%36%39%35%3B" but got "%A4%A4"
-FAIL various asian  U+3198 ㆘ %26%2312696%3B assert_equals: expected "%26%23%31%32%36%39%36%3B" but got "%A4%55"
-FAIL various asian  U+3199 ㆙ %26%2312697%3B assert_equals: expected "%26%23%31%32%36%39%37%3B" but got "%A5%D2"
-FAIL various asian  U+319A ㆚ %26%2312698%3B assert_equals: expected "%26%23%31%32%36%39%38%3B" but got "%A4%41"
-FAIL various asian  U+319B ㆛ %26%2312699%3B assert_equals: expected "%26%23%31%32%36%39%39%3B" but got "%A4%FE"
-FAIL various asian  U+319C ㆜ %26%2312700%3B assert_equals: expected "%26%23%31%32%37%30%30%3B" but got "%A4%42"
-FAIL various asian  U+319D ㆝ %26%2312701%3B assert_equals: expected "%26%23%31%32%37%30%31%3B" but got "%A4%D1"
-FAIL various asian  U+319E ㆞ %26%2312702%3B assert_equals: expected "%26%23%31%32%37%30%32%3B" but got "%A6%61"
-FAIL various asian  U+319F ㆟ %26%2312703%3B assert_equals: expected "%26%23%31%32%37%30%33%3B" but got "%A4%48"
+PASS various asian  U+3192 ㆒ %26%2312690%3B 
+PASS various asian  U+3193 ㆓ %26%2312691%3B 
+PASS various asian  U+3194 ㆔ %26%2312692%3B 
+PASS various asian  U+3195 ㆕ %26%2312693%3B 
+PASS various asian  U+3196 ㆖ %26%2312694%3B 
+PASS various asian  U+3197 ㆗ %26%2312695%3B 
+PASS various asian  U+3198 ㆘ %26%2312696%3B 
+PASS various asian  U+3199 ㆙ %26%2312697%3B 
+PASS various asian  U+319A ㆚ %26%2312698%3B 
+PASS various asian  U+319B ㆛ %26%2312699%3B 
+PASS various asian  U+319C ㆜ %26%2312700%3B 
+PASS various asian  U+319D ㆝ %26%2312701%3B 
+PASS various asian  U+319E ㆞ %26%2312702%3B 
+PASS various asian  U+319F ㆟ %26%2312703%3B 
 PASS various asian  U+31A0 ㆠ %26%2312704%3B 
 PASS various asian  U+31A1 ㆡ %26%2312705%3B 
 PASS various asian  U+31A2 ㆢ %26%2312706%3B 
@@ -2829,41 +2829,41 @@ PASS various asian  U+321C ㈜ %26%2312828%3B
 PASS various asian  U+321D ㈝ %26%2312829%3B 
 PASS various asian  U+321E ㈞ %26%2312830%3B 
 PASS various asian  U+321F ㈟ %26%2312831%3B 
-FAIL various asian  U+3220 ㈠ %26%2312832%3B assert_equals: expected "%26%23%31%32%38%33%32%3B" but got "%A4%40"
-FAIL various asian  U+3221 ㈡ %26%2312833%3B assert_equals: expected "%26%23%31%32%38%33%33%3B" but got "%A4%47"
-FAIL various asian  U+3222 ㈢ %26%2312834%3B assert_equals: expected "%26%23%31%32%38%33%34%3B" but got "%A4%54"
-FAIL various asian  U+3223 ㈣ %26%2312835%3B assert_equals: expected "%26%23%31%32%38%33%35%3B" but got "%A5%7C"
-FAIL various asian  U+3224 ㈤ %26%2312836%3B assert_equals: expected "%26%23%31%32%38%33%36%3B" but got "%A4%AD"
-FAIL various asian  U+3225 ㈥ %26%2312837%3B assert_equals: expected "%26%23%31%32%38%33%37%3B" but got "%A4%BB"
-FAIL various asian  U+3226 ㈦ %26%2312838%3B assert_equals: expected "%26%23%31%32%38%33%38%3B" but got "%A4%43"
-FAIL various asian  U+3227 ㈧ %26%2312839%3B assert_equals: expected "%26%23%31%32%38%33%39%3B" but got "%A4%4B"
-FAIL various asian  U+3228 ㈨ %26%2312840%3B assert_equals: expected "%26%23%31%32%38%34%30%3B" but got "%A4%45"
-FAIL various asian  U+3229 ㈩ %26%2312841%3B assert_equals: expected "%26%23%31%32%38%34%31%3B" but got "%A4%51"
-FAIL various asian  U+322A ㈪ %26%2312842%3B assert_equals: expected "%26%23%31%32%38%34%32%3B" but got "%A4%EB"
-FAIL various asian  U+322B ㈫ %26%2312843%3B assert_equals: expected "%26%23%31%32%38%34%33%3B" but got "%A4%F5"
-FAIL various asian  U+322C ㈬ %26%2312844%3B assert_equals: expected "%26%23%31%32%38%34%34%3B" but got "%A4%F4"
-FAIL various asian  U+322D ㈭ %26%2312845%3B assert_equals: expected "%26%23%31%32%38%34%35%3B" but got "%A4%EC"
-FAIL various asian  U+322E ㈮ %26%2312846%3B assert_equals: expected "%26%23%31%32%38%34%36%3B" but got "%AA%F7"
-FAIL various asian  U+322F ㈯ %26%2312847%3B assert_equals: expected "%26%23%31%32%38%34%37%3B" but got "%A4%67"
-FAIL various asian  U+3230 ㈰ %26%2312848%3B assert_equals: expected "%26%23%31%32%38%34%38%3B" but got "%A4%E9"
-FAIL various asian  U+3232 ㈲ %26%2312850%3B assert_equals: expected "%26%23%31%32%38%35%30%3B" but got "%A6%B3"
-FAIL various asian  U+3233 ㈳ %26%2312851%3B assert_equals: expected "%26%23%31%32%38%35%31%3B" but got "%AA%C0"
-FAIL various asian  U+3234 ㈴ %26%2312852%3B assert_equals: expected "%26%23%31%32%38%35%32%3B" but got "%A6%57"
-FAIL various asian  U+3235 ㈵ %26%2312853%3B assert_equals: expected "%26%23%31%32%38%35%33%3B" but got "%AF%53"
-FAIL various asian  U+3236 ㈶ %26%2312854%3B assert_equals: expected "%26%23%31%32%38%35%34%3B" but got "%B0%5D"
-FAIL various asian  U+3237 ㈷ %26%2312855%3B assert_equals: expected "%26%23%31%32%38%35%35%3B" but got "%AF%AC"
-FAIL various asian  U+3238 ㈸ %26%2312856%3B assert_equals: expected "%26%23%31%32%38%35%36%3B" but got "%B3%D2"
-FAIL various asian  U+3239 ㈹ %26%2312857%3B assert_equals: expected "%26%23%31%32%38%35%37%3B" but got "%A5%4E"
-FAIL various asian  U+323A ㈺ %26%2312858%3B assert_equals: expected "%26%23%31%32%38%35%38%3B" but got "%A9%49"
-FAIL various asian  U+323B ㈻ %26%2312859%3B assert_equals: expected "%26%23%31%32%38%35%39%3B" but got "%BE%C7"
-FAIL various asian  U+323C ㈼ %26%2312860%3B assert_equals: expected "%26%23%31%32%38%36%30%3B" but got "%BA%CA"
-FAIL various asian  U+323D ㈽ %26%2312861%3B assert_equals: expected "%26%23%31%32%38%36%31%3B" but got "%A5%F8"
-FAIL various asian  U+323E ㈾ %26%2312862%3B assert_equals: expected "%26%23%31%32%38%36%32%3B" but got "%B8%EA"
-FAIL various asian  U+323F ㈿ %26%2312863%3B assert_equals: expected "%26%23%31%32%38%36%33%3B" but got "%A8%F3"
-FAIL various asian  U+3240 ㉀ %26%2312864%3B assert_equals: expected "%26%23%31%32%38%36%34%3B" but got "%B2%BD"
-FAIL various asian  U+3241 ㉁ %26%2312865%3B assert_equals: expected "%26%23%31%32%38%36%35%3B" but got "%A5%F0"
-FAIL various asian  U+3242 ㉂ %26%2312866%3B assert_equals: expected "%26%23%31%32%38%36%36%3B" but got "%A6%DB"
-FAIL various asian  U+3243 ㉃ %26%2312867%3B assert_equals: expected "%26%23%31%32%38%36%37%3B" but got "%A6%DC"
+PASS various asian  U+3220 ㈠ %26%2312832%3B 
+PASS various asian  U+3221 ㈡ %26%2312833%3B 
+PASS various asian  U+3222 ㈢ %26%2312834%3B 
+PASS various asian  U+3223 ㈣ %26%2312835%3B 
+PASS various asian  U+3224 ㈤ %26%2312836%3B 
+PASS various asian  U+3225 ㈥ %26%2312837%3B 
+PASS various asian  U+3226 ㈦ %26%2312838%3B 
+PASS various asian  U+3227 ㈧ %26%2312839%3B 
+PASS various asian  U+3228 ㈨ %26%2312840%3B 
+PASS various asian  U+3229 ㈩ %26%2312841%3B 
+PASS various asian  U+322A ㈪ %26%2312842%3B 
+PASS various asian  U+322B ㈫ %26%2312843%3B 
+PASS various asian  U+322C ㈬ %26%2312844%3B 
+PASS various asian  U+322D ㈭ %26%2312845%3B 
+PASS various asian  U+322E ㈮ %26%2312846%3B 
+PASS various asian  U+322F ㈯ %26%2312847%3B 
+PASS various asian  U+3230 ㈰ %26%2312848%3B 
+PASS various asian  U+3232 ㈲ %26%2312850%3B 
+PASS various asian  U+3233 ㈳ %26%2312851%3B 
+PASS various asian  U+3234 ㈴ %26%2312852%3B 
+PASS various asian  U+3235 ㈵ %26%2312853%3B 
+PASS various asian  U+3236 ㈶ %26%2312854%3B 
+PASS various asian  U+3237 ㈷ %26%2312855%3B 
+PASS various asian  U+3238 ㈸ %26%2312856%3B 
+PASS various asian  U+3239 ㈹ %26%2312857%3B 
+PASS various asian  U+323A ㈺ %26%2312858%3B 
+PASS various asian  U+323B ㈻ %26%2312859%3B 
+PASS various asian  U+323C ㈼ %26%2312860%3B 
+PASS various asian  U+323D ㈽ %26%2312861%3B 
+PASS various asian  U+323E ㈾ %26%2312862%3B 
+PASS various asian  U+323F ㈿ %26%2312863%3B 
+PASS various asian  U+3240 ㉀ %26%2312864%3B 
+PASS various asian  U+3241 ㉁ %26%2312865%3B 
+PASS various asian  U+3242 ㉂ %26%2312866%3B 
+PASS various asian  U+3243 ㉃ %26%2312867%3B 
 PASS various asian  U+3244 ㉄ %26%2312868%3B 
 PASS various asian  U+3245 ㉅ %26%2312869%3B 
 PASS various asian  U+3246 ㉆ %26%2312870%3B 
@@ -2924,54 +2924,54 @@ PASS various asian  U+327C ㉼ %26%2312924%3B
 PASS various asian  U+327D ㉽ %26%2312925%3B 
 PASS various asian  U+327E ㉾ %26%2312926%3B 
 PASS various asian  U+327F ㉿ %26%2312927%3B 
-FAIL various asian  U+3280 ㊀ %26%2312928%3B assert_equals: expected "%26%23%31%32%39%32%38%3B" but got "%A4%40"
-FAIL various asian  U+3281 ㊁ %26%2312929%3B assert_equals: expected "%26%23%31%32%39%32%39%3B" but got "%A4%47"
-FAIL various asian  U+3282 ㊂ %26%2312930%3B assert_equals: expected "%26%23%31%32%39%33%30%3B" but got "%A4%54"
-FAIL various asian  U+3283 ㊃ %26%2312931%3B assert_equals: expected "%26%23%31%32%39%33%31%3B" but got "%A5%7C"
-FAIL various asian  U+3284 ㊄ %26%2312932%3B assert_equals: expected "%26%23%31%32%39%33%32%3B" but got "%A4%AD"
-FAIL various asian  U+3285 ㊅ %26%2312933%3B assert_equals: expected "%26%23%31%32%39%33%33%3B" but got "%A4%BB"
-FAIL various asian  U+3286 ㊆ %26%2312934%3B assert_equals: expected "%26%23%31%32%39%33%34%3B" but got "%A4%43"
-FAIL various asian  U+3287 ㊇ %26%2312935%3B assert_equals: expected "%26%23%31%32%39%33%35%3B" but got "%A4%4B"
-FAIL various asian  U+3288 ㊈ %26%2312936%3B assert_equals: expected "%26%23%31%32%39%33%36%3B" but got "%A4%45"
-FAIL various asian  U+3289 ㊉ %26%2312937%3B assert_equals: expected "%26%23%31%32%39%33%37%3B" but got "%A4%51"
-FAIL various asian  U+328A ㊊ %26%2312938%3B assert_equals: expected "%26%23%31%32%39%33%38%3B" but got "%A4%EB"
-FAIL various asian  U+328B ㊋ %26%2312939%3B assert_equals: expected "%26%23%31%32%39%33%39%3B" but got "%A4%F5"
-FAIL various asian  U+328C ㊌ %26%2312940%3B assert_equals: expected "%26%23%31%32%39%34%30%3B" but got "%A4%F4"
-FAIL various asian  U+328D ㊍ %26%2312941%3B assert_equals: expected "%26%23%31%32%39%34%31%3B" but got "%A4%EC"
-FAIL various asian  U+328E ㊎ %26%2312942%3B assert_equals: expected "%26%23%31%32%39%34%32%3B" but got "%AA%F7"
-FAIL various asian  U+328F ㊏ %26%2312943%3B assert_equals: expected "%26%23%31%32%39%34%33%3B" but got "%A4%67"
-FAIL various asian  U+3290 ㊐ %26%2312944%3B assert_equals: expected "%26%23%31%32%39%34%34%3B" but got "%A4%E9"
-FAIL various asian  U+3291 ㊑ %26%2312945%3B assert_equals: expected "%26%23%31%32%39%34%35%3B" but got "%AE%E8"
-FAIL various asian  U+3292 ㊒ %26%2312946%3B assert_equals: expected "%26%23%31%32%39%34%36%3B" but got "%A6%B3"
-FAIL various asian  U+3293 ㊓ %26%2312947%3B assert_equals: expected "%26%23%31%32%39%34%37%3B" but got "%AA%C0"
-FAIL various asian  U+3294 ㊔ %26%2312948%3B assert_equals: expected "%26%23%31%32%39%34%38%3B" but got "%A6%57"
-FAIL various asian  U+3295 ㊕ %26%2312949%3B assert_equals: expected "%26%23%31%32%39%34%39%3B" but got "%AF%53"
-FAIL various asian  U+3296 ㊖ %26%2312950%3B assert_equals: expected "%26%23%31%32%39%35%30%3B" but got "%B0%5D"
-FAIL various asian  U+3297 ㊗ %26%2312951%3B assert_equals: expected "%26%23%31%32%39%35%31%3B" but got "%AF%AC"
-FAIL various asian  U+3298 ㊘ %26%2312952%3B assert_equals: expected "%26%23%31%32%39%35%32%3B" but got "%B3%D2"
-FAIL various asian  U+3299 ㊙ %26%2312953%3B assert_equals: expected "%26%23%31%32%39%35%33%3B" but got "%AF%B5"
-FAIL various asian  U+329A ㊚ %26%2312954%3B assert_equals: expected "%26%23%31%32%39%35%34%3B" but got "%A8%6B"
-FAIL various asian  U+329B ㊛ %26%2312955%3B assert_equals: expected "%26%23%31%32%39%35%35%3B" but got "%A4%6B"
-FAIL various asian  U+329C ㊜ %26%2312956%3B assert_equals: expected "%26%23%31%32%39%35%36%3B" but got "%BE%41"
-FAIL various asian  U+329D ㊝ %26%2312957%3B assert_equals: expected "%26%23%31%32%39%35%37%3B" but got "%C0%75"
-FAIL various asian  U+329E ㊞ %26%2312958%3B assert_equals: expected "%26%23%31%32%39%35%38%3B" but got "%A6%4C"
-FAIL various asian  U+329F ㊟ %26%2312959%3B assert_equals: expected "%26%23%31%32%39%35%39%3B" but got "%AA%60"
-FAIL various asian  U+32A0 ㊠ %26%2312960%3B assert_equals: expected "%26%23%31%32%39%36%30%3B" but got "%B6%B5"
-FAIL various asian  U+32A1 ㊡ %26%2312961%3B assert_equals: expected "%26%23%31%32%39%36%31%3B" but got "%A5%F0"
-FAIL various asian  U+32A2 ㊢ %26%2312962%3B assert_equals: expected "%26%23%31%32%39%36%32%3B" but got "%BC%67"
-FAIL various asian  U+32A4 ㊤ %26%2312964%3B assert_equals: expected "%26%23%31%32%39%36%34%3B" but got "%A4%57"
-FAIL various asian  U+32A5 ㊥ %26%2312965%3B assert_equals: expected "%26%23%31%32%39%36%35%3B" but got "%A4%A4"
-FAIL various asian  U+32A6 ㊦ %26%2312966%3B assert_equals: expected "%26%23%31%32%39%36%36%3B" but got "%A4%55"
-FAIL various asian  U+32A7 ㊧ %26%2312967%3B assert_equals: expected "%26%23%31%32%39%36%37%3B" but got "%A5%AA"
-FAIL various asian  U+32A8 ㊨ %26%2312968%3B assert_equals: expected "%26%23%31%32%39%36%38%3B" but got "%A5%6B"
-FAIL various asian  U+32A9 ㊩ %26%2312969%3B assert_equals: expected "%26%23%31%32%39%36%39%3B" but got "%C2%E5"
-FAIL various asian  U+32AA ㊪ %26%2312970%3B assert_equals: expected "%26%23%31%32%39%37%30%3B" but got "%A9%76"
-FAIL various asian  U+32AB ㊫ %26%2312971%3B assert_equals: expected "%26%23%31%32%39%37%31%3B" but got "%BE%C7"
-FAIL various asian  U+32AC ㊬ %26%2312972%3B assert_equals: expected "%26%23%31%32%39%37%32%3B" but got "%BA%CA"
-FAIL various asian  U+32AD ㊭ %26%2312973%3B assert_equals: expected "%26%23%31%32%39%37%33%3B" but got "%A5%F8"
-FAIL various asian  U+32AE ㊮ %26%2312974%3B assert_equals: expected "%26%23%31%32%39%37%34%3B" but got "%B8%EA"
-FAIL various asian  U+32AF ㊯ %26%2312975%3B assert_equals: expected "%26%23%31%32%39%37%35%3B" but got "%A8%F3"
-FAIL various asian  U+32B0 ㊰ %26%2312976%3B assert_equals: expected "%26%23%31%32%39%37%36%3B" but got "%A9%5D"
+PASS various asian  U+3280 ㊀ %26%2312928%3B 
+PASS various asian  U+3281 ㊁ %26%2312929%3B 
+PASS various asian  U+3282 ㊂ %26%2312930%3B 
+PASS various asian  U+3283 ㊃ %26%2312931%3B 
+PASS various asian  U+3284 ㊄ %26%2312932%3B 
+PASS various asian  U+3285 ㊅ %26%2312933%3B 
+PASS various asian  U+3286 ㊆ %26%2312934%3B 
+PASS various asian  U+3287 ㊇ %26%2312935%3B 
+PASS various asian  U+3288 ㊈ %26%2312936%3B 
+PASS various asian  U+3289 ㊉ %26%2312937%3B 
+PASS various asian  U+328A ㊊ %26%2312938%3B 
+PASS various asian  U+328B ㊋ %26%2312939%3B 
+PASS various asian  U+328C ㊌ %26%2312940%3B 
+PASS various asian  U+328D ㊍ %26%2312941%3B 
+PASS various asian  U+328E ㊎ %26%2312942%3B 
+PASS various asian  U+328F ㊏ %26%2312943%3B 
+PASS various asian  U+3290 ㊐ %26%2312944%3B 
+PASS various asian  U+3291 ㊑ %26%2312945%3B 
+PASS various asian  U+3292 ㊒ %26%2312946%3B 
+PASS various asian  U+3293 ㊓ %26%2312947%3B 
+PASS various asian  U+3294 ㊔ %26%2312948%3B 
+PASS various asian  U+3295 ㊕ %26%2312949%3B 
+PASS various asian  U+3296 ㊖ %26%2312950%3B 
+PASS various asian  U+3297 ㊗ %26%2312951%3B 
+PASS various asian  U+3298 ㊘ %26%2312952%3B 
+PASS various asian  U+3299 ㊙ %26%2312953%3B 
+PASS various asian  U+329A ㊚ %26%2312954%3B 
+PASS various asian  U+329B ㊛ %26%2312955%3B 
+PASS various asian  U+329C ㊜ %26%2312956%3B 
+PASS various asian  U+329D ㊝ %26%2312957%3B 
+PASS various asian  U+329E ㊞ %26%2312958%3B 
+PASS various asian  U+329F ㊟ %26%2312959%3B 
+PASS various asian  U+32A0 ㊠ %26%2312960%3B 
+PASS various asian  U+32A1 ㊡ %26%2312961%3B 
+PASS various asian  U+32A2 ㊢ %26%2312962%3B 
+PASS various asian  U+32A4 ㊤ %26%2312964%3B 
+PASS various asian  U+32A5 ㊥ %26%2312965%3B 
+PASS various asian  U+32A6 ㊦ %26%2312966%3B 
+PASS various asian  U+32A7 ㊧ %26%2312967%3B 
+PASS various asian  U+32A8 ㊨ %26%2312968%3B 
+PASS various asian  U+32A9 ㊩ %26%2312969%3B 
+PASS various asian  U+32AA ㊪ %26%2312970%3B 
+PASS various asian  U+32AB ㊫ %26%2312971%3B 
+PASS various asian  U+32AC ㊬ %26%2312972%3B 
+PASS various asian  U+32AD ㊭ %26%2312973%3B 
+PASS various asian  U+32AE ㊮ %26%2312974%3B 
+PASS various asian  U+32AF ㊯ %26%2312975%3B 
+PASS various asian  U+32B0 ㊰ %26%2312976%3B 
 PASS various asian  U+32B1 ㊱ %26%2312977%3B 
 PASS various asian  U+32B2 ㊲ %26%2312978%3B 
 PASS various asian  U+32B3 ㊳ %26%2312979%3B 
@@ -3296,14 +3296,14 @@ PASS various asian  U+33FC ㏼ %26%2313308%3B
 PASS various asian  U+33FD ㏽ %26%2313309%3B 
 PASS various asian  U+33FE ㏾ %26%2313310%3B 
 PASS half/full width  U+FF00 ＀ %26%2365280%3B 
-FAIL half/full width  U+FF3E ＾ %26%2365342%3B assert_equals: expected "%26%23%36%35%33%34%32%3B" but got "%A1%73"
-FAIL half/full width  U+FF40 ｀ %26%2365344%3B assert_equals: expected "%26%23%36%35%33%34%34%3B" but got "%A1%A5"
+PASS half/full width  U+FF3E ＾ %26%2365342%3B 
+PASS half/full width  U+FF40 ｀ %26%2365344%3B 
 PASS half/full width  U+FF5F ｟ %26%2365375%3B 
 PASS half/full width  U+FF60 ｠ %26%2365376%3B 
 PASS half/full width  U+FF61 ｡ %26%2365377%3B 
 PASS half/full width  U+FF62 ｢ %26%2365378%3B 
 PASS half/full width  U+FF63 ｣ %26%2365379%3B 
-FAIL half/full width  U+FF64 ､ %26%2365380%3B assert_equals: expected "%26%23%36%35%33%38%30%3B" but got "%A1%4E"
+PASS half/full width  U+FF64 ､ %26%2365380%3B 
 PASS half/full width  U+FF65 ･ %26%2365381%3B 
 PASS half/full width  U+FF66 ｦ %26%2365382%3B 
 PASS half/full width  U+FF67 ｧ %26%2365383%3B 

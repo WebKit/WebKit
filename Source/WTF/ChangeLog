@@ -1,3 +1,33 @@
+2020-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Make Big5 encoder conform to the specification and behavior of Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=215983
+
+        Reviewed by Darin Adler.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/URLParser.cpp:
+        (WTF::CodePointIterator::CodePointIterator): Deleted.
+        (WTF::CodePointIterator::operator== const): Deleted.
+        (WTF::CodePointIterator::operator!= const): Deleted.
+        (WTF::CodePointIterator::atEnd const): Deleted.
+        (WTF::CodePointIterator::codeUnitsSince const): Deleted.
+        (WTF::CodePointIterator<LChar>::operator const): Deleted.
+        (WTF::CodePointIterator<LChar>::operator): Deleted.
+        (WTF::CodePointIterator<UChar>::operator const): Deleted.
+        (WTF::CodePointIterator<UChar>::operator): Deleted.
+        * wtf/text/CodePointIterator.h: Added.
+        (WTF::CodePointIterator::CodePointIterator):
+        (WTF::CodePointIterator::operator== const):
+        (WTF::CodePointIterator::operator!= const):
+        (WTF::CodePointIterator::atEnd const):
+        (WTF::CodePointIterator::codeUnitsSince const):
+        (WTF::CodePointIterator<LChar>::operator const):
+        (WTF::CodePointIterator<LChar>::operator):
+        (WTF::CodePointIterator<UChar>::operator const):
+        (WTF::CodePointIterator<UChar>::operator):
+
 2020-08-30  Jim Mason  <jmason@ibinx.com>
 
         [GTK] REGRESSION(r150392) insufficient space allocation results in heap corruption

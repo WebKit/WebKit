@@ -35,6 +35,7 @@
 #include <unicode/ucnv_cb.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -405,14 +406,14 @@ static void gbkCallbackSubstitute(const void* context, UConverterFromUnicodeArgs
 }
 
 // https://encoding.spec.whatwg.org/#euc-jp-encoder
-static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar, Vector<uint8_t>&)> unencodableHandler)
+static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler)
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
 
     auto characters = string.upconvertedCharacters();
-    for (size_t i = 0; i < string.length(); ++i) {
-        UChar c = characters.get()[i];
+    for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
+        auto c = *iterator;
         if (isASCII(c)) {
             result.append(c);
             continue;
@@ -432,8 +433,13 @@ static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar, Vecto
         }
         if (c == 0x2212)
             c = 0xFF0D;
+
+        if (static_cast<UChar>(c) != c) {
+            unencodableHandler(c, result);
+            continue;
+        }
         
-        auto pointerRange = std::equal_range(jis0208, jis0208 + WTF_ARRAY_LENGTH(jis0208), std::pair<UChar, UChar>(c, 0), [](const auto& a, const auto& b) {
+        auto pointerRange = std::equal_range(jis0208, jis0208 + WTF_ARRAY_LENGTH(jis0208), std::pair<UChar, UChar>(static_cast<UChar>(c), 0), [](const auto& a, const auto& b) {
             return a.first < b.first;
         });
         if (pointerRange.first == pointerRange.second) {
@@ -447,16 +453,56 @@ static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar, Vecto
     return result;
 }
 
-static void uncheckedAppendDecimal(UChar c, Vector<uint8_t>& result)
+// https://encoding.spec.whatwg.org/#big5-encoder
+static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler)
 {
-    uint8_t buffer[5];
-    WTF::writeIntegerToBuffer(static_cast<uint16_t>(c), buffer);
+    Vector<uint8_t> result;
+    result.reserveInitialCapacity(string.length());
+
+    auto characters = string.upconvertedCharacters();
+    for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
+        auto c = *iterator;
+        if (isASCII(c)) {
+            result.append(c);
+            continue;
+        }
+
+        auto pointerRange = std::equal_range(big5, big5 + WTF_ARRAY_LENGTH(big5), std::pair<UChar32, UChar>(c, 0), [](const auto& a, const auto& b) {
+            return a.first < b.first;
+        });
+        
+        if (pointerRange.first == pointerRange.second) {
+            unencodableHandler(c, result);
+            continue;
+        }
+
+        UChar pointer = 0;
+        if (c == 0x2550 || c == 0x255E || c == 0x2561 || c == 0x256A || c == 0x5341 || c == 0x5345)
+            pointer = (pointerRange.second - 1)->second;
+        else
+            pointer = pointerRange.first->second;
+        
+        uint8_t lead = pointer / 157 + 0x81;
+        uint8_t trail = pointer % 157;
+        uint8_t offset = trail < 0x3F ? 0x40 : 0x62;
+        result.append(lead);
+        result.append(trail + offset);
+    }
+    return result;
+}
+
+constexpr size_t maxUChar32Digits = 10;
+
+static void uncheckedAppendDecimal(UChar32 c, Vector<uint8_t>& result)
+{
+    uint8_t buffer[10];
+    WTF::writeIntegerToBuffer(static_cast<uint32_t>(c), buffer);
     result.append(buffer, WTF::lengthOfIntegerAsString(c));
 }
 
-static void urlEncodedEntityUnencodableHandler(UChar c, Vector<uint8_t>& result)
+static void urlEncodedEntityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)
 {
-    result.reserveCapacity(result.size() + 14);
+    result.reserveCapacity(result.size() + 9 + maxUChar32Digits);
     result.uncheckedAppend('%');
     result.uncheckedAppend('2');
     result.uncheckedAppend('6');
@@ -469,21 +515,21 @@ static void urlEncodedEntityUnencodableHandler(UChar c, Vector<uint8_t>& result)
     result.uncheckedAppend('B');
 }
 
-static void entityUnencodableHandler(UChar c, Vector<uint8_t>& result)
+static void entityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)
 {
-    result.reserveCapacity(result.size() + 8);
+    result.reserveCapacity(result.size() + 3 + maxUChar32Digits);
     result.uncheckedAppend('&');
     result.uncheckedAppend('#');
     uncheckedAppendDecimal(c, result);
     result.uncheckedAppend(';');
 }
 
-static void questionMarkUnencodableHandler(UChar, Vector<uint8_t>& result)
+static void questionMarkUnencodableHandler(UChar32, Vector<uint8_t>& result)
 {
     result.append('?');
 }
 
-static Function<void(UChar, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling handling)
+static Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling handling)
 {
     switch (handling) {
     case UnencodableHandling::QuestionMarks:
@@ -505,6 +551,9 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
     if (!strcmp(m_canonicalConverterName, "euc-jp-2007"))
         return eucJPEncode(string, unencodableHandler(handling));
 
+    if (!strcmp(m_canonicalConverterName, "windows-950-2000"))
+        return big5Encode(string, unencodableHandler(handling));
+    
     if (!m_converter) {
         createICUConverter();
         if (!m_converter)

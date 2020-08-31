@@ -29,7 +29,7 @@
 #include <array>
 #include <mutex>
 #include <unicode/uidna.h>
-#include <unicode/utypes.h>
+#include <wtf/text/CodePointIterator.h>
 
 namespace WTF {
 
@@ -40,89 +40,7 @@ namespace WTF {
 #else
 #define URL_PARSER_LOG(...)
 #endif
-    
-template<typename CharacterType>
-class CodePointIterator {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    ALWAYS_INLINE CodePointIterator() { }
-    ALWAYS_INLINE CodePointIterator(const CharacterType* begin, const CharacterType* end)
-        : m_begin(begin)
-        , m_end(end)
-    {
-    }
-    
-    ALWAYS_INLINE CodePointIterator(const CodePointIterator& begin, const CodePointIterator& end)
-        : CodePointIterator(begin.m_begin, end.m_begin)
-    {
-        ASSERT(end.m_begin >= begin.m_begin);
-    }
-    
-    ALWAYS_INLINE UChar32 operator*() const;
-    ALWAYS_INLINE CodePointIterator& operator++();
 
-    ALWAYS_INLINE bool operator==(const CodePointIterator& other) const
-    {
-        return m_begin == other.m_begin
-            && m_end == other.m_end;
-    }
-    ALWAYS_INLINE bool operator!=(const CodePointIterator& other) const { return !(*this == other); }
-
-    ALWAYS_INLINE bool atEnd() const
-    {
-        ASSERT(m_begin <= m_end);
-        return m_begin >= m_end;
-    }
-    
-    ALWAYS_INLINE size_t codeUnitsSince(const CharacterType* reference) const
-    {
-        ASSERT(m_begin >= reference);
-        return m_begin - reference;
-    }
-
-    ALWAYS_INLINE size_t codeUnitsSince(const CodePointIterator& other) const
-    {
-        return codeUnitsSince(other.m_begin);
-    }
-    
-private:
-    const CharacterType* m_begin { nullptr };
-    const CharacterType* m_end { nullptr };
-};
-
-template<>
-ALWAYS_INLINE UChar32 CodePointIterator<LChar>::operator*() const
-{
-    ASSERT(!atEnd());
-    return *m_begin;
-}
-
-template<>
-ALWAYS_INLINE auto CodePointIterator<LChar>::operator++() -> CodePointIterator&
-{
-    m_begin++;
-    return *this;
-}
-
-template<>
-ALWAYS_INLINE UChar32 CodePointIterator<UChar>::operator*() const
-{
-    ASSERT(!atEnd());
-    UChar32 c;
-    U16_GET(m_begin, 0, 0, m_end - m_begin, c);
-    return c;
-}
-
-template<>
-ALWAYS_INLINE auto CodePointIterator<UChar>::operator++() -> CodePointIterator&
-{
-    unsigned i = 0;
-    size_t length = m_end - m_begin;
-    U16_FWD_1(m_begin, i, length);
-    m_begin += i;
-    return *this;
-}
-    
 ALWAYS_INLINE static void appendCodePoint(Vector<UChar>& destination, UChar32 codePoint)
 {
     if (U_IS_BMP(codePoint)) {

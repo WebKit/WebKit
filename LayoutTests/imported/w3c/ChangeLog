@@ -1,3 +1,22 @@
+2020-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Make Big5 encoder conform to the specification and behavior of Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=215983
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/big5-encoder-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-cn-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-csbig5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-pua-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-x-x-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-expected.txt:
+
 2020-08-31  Rob Buis  <rbuis@igalia.com>
 
         Convert runtime flag to setting for lazy image loading
