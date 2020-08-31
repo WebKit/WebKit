@@ -15,6 +15,16 @@
         * platform/mac-wk2/fast/forms/time/time-appearance-basic-expected.txt: Added.
         * platform/mac-wk2/fast/forms/time/time-input-rendering-basic-expected.txt:
 
+2020-08-31  Karl Rackler  <rackler@apple.com>
+
+        Windows baselines after r266228 and r266273.
+        Add wincairo
+
+        Unreviewed test gardening.
+
+        * platform/wincairo/streams/reference-implementation/transform-stream-errors-expected.txt: Added.
+        * platform/wincairo/streams/reference-implementation/transform-stream-expected.txt: Added.
+
 2020-08-31  Rob Buis  <rbuis@igalia.com>
 
         Convert runtime flag to setting for lazy image loading
