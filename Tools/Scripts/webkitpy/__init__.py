@@ -30,3 +30,5 @@ AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.f
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
 AutoInstall.register(Package('selenium', Version(3, 141, 0)))
 AutoInstall.register(Package('toml', Version(0, 10, 1)))
+
+AutoInstall.register(Package('webkitscmpy', Version(0, 0, 1)), local=True)

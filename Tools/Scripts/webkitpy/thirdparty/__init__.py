@@ -42,6 +42,7 @@ from collections import namedtuple
 from distutils import spawn
 from webkitpy.common.system.autoinstall import AutoInstaller
 from webkitpy.common.system.filesystem import FileSystem
+from webkitcorepy import AutoInstall
 
 _THIRDPARTY_DIR = os.path.dirname(__file__)
 _AUTOINSTALLED_DIR = os.path.join(_THIRDPARTY_DIR, "autoinstalled")
@@ -83,7 +84,7 @@ class AutoinstallImportHook(object):
     def _ensure_autoinstalled_dir_is_in_sys_path(self):
         # Some packages require that the are being put somewhere under a directory in sys.path.
         if not _AUTOINSTALLED_DIR in sys.path:
-            sys.path.insert(1 if 'libraries/autoinstalled' in sys.path[0] else 0, _AUTOINSTALLED_DIR)
+            sys.path.insert(sys.path.index(AutoInstall.directory) + 1 if AutoInstall.directory in sys.path else 0, _AUTOINSTALLED_DIR)
 
     def find_module(self, fullname, path=None):
         # This method will run before each import. See http://www.python.org/dev/peps/pep-0302/

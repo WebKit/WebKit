@@ -420,7 +420,7 @@ class AutoInstall(object):
         cls.timeout = math.ceil(timeout)
 
     @classmethod
-    def register(cls, package):
+    def register(cls, package, local=False):
         if isinstance(package, str):
             if cls.packages.get(package):
                 return cls.packages[package]
@@ -433,6 +433,23 @@ class AutoInstall(object):
                 return cls.packages.get(package.name)
         else:
             raise ValueError('Expected package to be str or Package, not {}'.format(type(package)))
+
+        # If inside the WebKit checkout, a local library is likely checked in at Tools/Scripts/libraries.
+        # When we detect such a library, we should not register it to be auto-installed
+        if local and package.name != 'autoinstalled':
+            libraries = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            checkout_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(libraries))))
+            for candidate in [
+                os.path.join(libraries, package.name),
+                os.path.join(checkout_root, 'Internal', 'Tools', 'Scripts', 'libraries')
+            ]:
+                if candidate in sys.path:
+                    return package
+                if not os.path.isdir(os.path.join(candidate, package.name)):
+                    continue
+                sys.path.insert(0, candidate)
+                return package
+
         for alias in package.aliases:
             cls.packages[alias] = package
         cls.packages[package.name] = package
