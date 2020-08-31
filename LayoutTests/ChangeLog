@@ -1,5 +1,16 @@
 2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
 
+        Unreviewed, reverting r266374.
+
+        Revision set up incorrect expectation
+
+        Reverted changeset:
+
+        "[ BigSur+ ] media/media-source/media-source-webm.html"
+        https://trac.webkit.org/changeset/266374
+
+2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ BigSur+ ] media/media-source/media-source-webm.html
         rdar://66487888
 
