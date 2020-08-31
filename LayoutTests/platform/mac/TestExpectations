@@ -1893,7 +1893,7 @@ fast/text/text-styles/-apple-system [ Pass ]
 webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Failure ]
 
 # These test requires system platform support.
-[ Catalina Mojave ] media/media-source/media-source-webm.html [ Skip ]
+media/media-source/media-source-webm.html [ Skip ]
 [ Catalina Mojave ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
 [ Catalina Mojave ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
 
