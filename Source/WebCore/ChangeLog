@@ -1,3 +1,18 @@
+2020-08-31  Antti Koivisto  <antti@apple.com>
+
+        Wheel event region code is not fully disabled
+        https://bugs.webkit.org/show_bug.cgi?id=216008
+        <rdar://problem/68086333>
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::maintainsEventRegion const):
+
+        Use the relevant ENABLE flag rather than !PLATFORM_IOS to compile out the code.
+
 2020-08-31  James Darpinian  <jdarpinian@chromium.org>
 
         WebGL goes in a bad state where glContext.createProgram() returns null

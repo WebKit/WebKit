@@ -1704,8 +1704,8 @@ bool RenderLayerBacking::maintainsEventRegion() const
     if (renderer().document().mayHaveEditableElements() && renderer().page().shouldBuildEditableRegion())
         return true;
 #endif
-#if !PLATFORM(IOS_FAMILY)
-    if (renderer().document().wheelEventTargets())
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    if (renderer().document().hasWheelEventHandlers())
         return true;
 #endif
     if (m_owningLayer.isRenderViewLayer())
