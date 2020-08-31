@@ -1,3 +1,20 @@
+2020-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid computing metadata for idempotent text autosizing on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=216011
+
+        Reviewed by Darin Adler.
+
+        Avoids an unnecessary call to `adjustForTextAutosizing` during style resolution on macOS, where idempotent text
+        autosizing is disabled. This function call populates the `AutosizeStatus` fields on `RenderStyle` that are used
+        by the idempotent text autosizing heuristic. This function call appears consistently in traces taken while
+        running the Multiply subtest of MotionMark, if only for a relatively small number of samples. While
+        `AutosizeStatus::computeStatus` is designed to be very cheap, it ends up being called around 1.6 million times
+        over the course of the subtest.
+
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+
 2020-08-31  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the unused variable build warning since r238538.
