@@ -1,3 +1,15 @@
+2020-08-31  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Build fix for intermittent copy errors
+        https://bugs.webkit.org/show_bug.cgi?id=215951
+
+        Reviewed by Ross Kirsling.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        When copying platform specific files into the binary
+        directory post build on executable targets, we'd
+        intermittently get copy errors in parallel builds.
+
 2020-08-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Enable Notifications support

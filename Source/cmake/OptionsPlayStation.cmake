@@ -222,6 +222,12 @@ function(add_library target type)
     endif ()
 endfunction()
 
+add_custom_target(playstation_tools_copy
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${WEBKIT_LIBRARIES_DIR}/tools/sce_sys/
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/sce_sys/
+)
+
 macro(WEBKIT_EXECUTABLE _target)
     _WEBKIT_EXECUTABLE(${_target})
     playstation_setup_libc(${_target})
@@ -234,12 +240,7 @@ macro(WEBKIT_EXECUTABLE _target)
             target_link_options(${_target} PRIVATE -Wl,--wrap=${WRAP})
         endforeach ()
     endif ()
-    add_custom_command(TARGET ${_target}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${WEBKIT_LIBRARIES_DIR}/tools/sce_sys/
-            $<TARGET_FILE_DIR:${_target}>/sce_sys/
-    )
+    add_dependencies(${_target} playstation_tools_copy)
 endmacro()
 
 function(PLAYSTATION_COPY_SHARED_LIBRARIES target_name)
