@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_true: silent input process -Infinity in decibel bins expected true got false
 
 FAIL Test AnalyserNode when the input is silent Error: assert_true: silent input process -Infinity in decibel bins expected true got false
 
