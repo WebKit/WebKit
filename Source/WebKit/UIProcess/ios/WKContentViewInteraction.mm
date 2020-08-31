@@ -31,7 +31,6 @@
 #import "APIUIClient.h"
 #import "CompletionHandlerCallChecker.h"
 #import "DocumentEditingContext.h"
-#import "EditableImageController.h"
 #import "InputViewUpdateDeferrer.h"
 #import "InsertTextOptions.h"
 #import "Logging.h"
@@ -51,7 +50,6 @@
 #import "WKContextMenuElementInfoPrivate.h"
 #import "WKDatePickerViewController.h"
 #import "WKDateTimeInputControl.h"
-#import "WKDrawingCoordinator.h"
 #import "WKError.h"
 #import "WKFocusedFormControlView.h"
 #import "WKFormSelectControl.h"
@@ -850,12 +848,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [_twoFingerSingleTapGestureRecognizer setEnabled:!self.webView._editable];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 
-    _stylusSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_stylusSingleTapRecognized:)]);
-    [_stylusSingleTapGestureRecognizer setNumberOfTapsRequired:1];
-    [_stylusSingleTapGestureRecognizer setDelegate:self];
-    [_stylusSingleTapGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypePencil) ]];
-    [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
-
     _touchActionGestureRecognizer = adoptNS([[WKTouchActionGestureRecognizer alloc] initWithTouchActionDelegate:self]);
     [self addGestureRecognizer:_touchActionGestureRecognizer.get()];
 
@@ -992,9 +984,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [_twoFingerSingleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 
-    [_stylusSingleTapGestureRecognizer setDelegate:nil];
-    [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
-
     [self removeGestureRecognizer:_touchActionGestureRecognizer.get()];
     [self removeGestureRecognizer:_touchActionLeftSwipeGestureRecognizer.get()];
     [self removeGestureRecognizer:_touchActionRightSwipeGestureRecognizer.get()];
@@ -1048,10 +1037,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [_keyboardScrollingAnimator invalidate];
     _keyboardScrollingAnimator = nil;
 
-#if HAVE(PENCILKIT)
-    _drawingCoordinator = nil;
-#endif
-
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
     _dataListTextSuggestions = nil;
@@ -1094,7 +1079,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_doubleTapGestureRecognizerForDoubleClick.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
-    [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
@@ -1122,7 +1106,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_doubleTapGestureRecognizerForDoubleClick.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
-    [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
@@ -2412,9 +2395,6 @@ static Class tapAndAHalfRecognizerClass()
 {
     CGPoint point = [gestureRecognizer locationInView:self];
 
-    if (gestureRecognizer == _stylusSingleTapGestureRecognizer)
-        return self.webView._stylusTapGestureShouldCreateEditableImage;
-
     auto isInterruptingDecelerationForScrollViewOrAncestor = [&] (UIScrollView *scrollView) {
         UIScrollView *mainScroller = self.webView.scrollView;
         UIView *view = scrollView ?: mainScroller;
@@ -2705,13 +2685,6 @@ static Class tapAndAHalfRecognizerClass()
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = YES;
     _page->handleTwoFingerTapAtPoint(WebCore::roundedIntPoint(gestureRecognizer.centroid), WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer) | UIKeyModifierCommand), ++_latestTapID);
-}
-
-- (void)_stylusSingleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
-{
-    ASSERT(self.webView._stylusTapGestureShouldCreateEditableImage);
-    ASSERT(gestureRecognizer == _stylusSingleTapGestureRecognizer);
-    _page->handleStylusSingleTapAtPoint(WebCore::roundedIntPoint(gestureRecognizer.location), ++_latestTapID);
 }
 
 - (void)_longPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer
@@ -5983,11 +5956,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         [self _elementDidBlur];
     }
 
-#if HAVE(PENCILKIT)
-    if (information.elementType == WebKit::InputType::Drawing)
-        [_drawingCoordinator installInkPickerForDrawing:information.embeddedViewID];
-#endif
-
     if (!shouldShowInputView || information.elementType == WebKit::InputType::None) {
         _page->setIsShowingInputViewForFocusedElement(false);
         return;
@@ -6092,10 +6060,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 - (void)_elementDidBlur
 {
     SetForScope<BOOL> isBlurringFocusedElementForScope { _isBlurringFocusedElement, YES };
-
-#if HAVE(PENCILKIT)
-    [_drawingCoordinator uninstallInkPicker];
-#endif
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     [self _endEditing];
@@ -8600,15 +8564,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     _page->performDictionaryLookupAtLocation(WebCore::FloatPoint(locationInViewCoordinates));
 }
 #endif
-
-#if HAVE(PENCILKIT)
-- (WKDrawingCoordinator *)_drawingCoordinator
-{
-    if (!_drawingCoordinator)
-        _drawingCoordinator = adoptNS([[WKDrawingCoordinator alloc] initWithContentView:self]);
-    return _drawingCoordinator.get();
-}
-#endif // HAVE(PENCILKIT)
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled
 {

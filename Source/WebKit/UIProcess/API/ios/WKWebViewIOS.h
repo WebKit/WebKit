@@ -131,7 +131,6 @@
 
 @property (nonatomic, readonly) BOOL _isBackground;
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
-@property (nonatomic, readonly) BOOL _stylusTapGestureShouldCreateEditableImage;
 @property (nonatomic, readonly) BOOL _haveSetObscuredInsets;
 @property (nonatomic, readonly) UIEdgeInsets _computedObscuredInset;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;

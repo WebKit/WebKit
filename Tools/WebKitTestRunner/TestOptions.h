@@ -91,7 +91,6 @@ struct TestOptions {
     bool shouldIgnoreMetaViewport { false };
     bool shouldShowSpellCheckingDots { false };
     bool enableServiceControls { false };
-    bool enableEditableImages { false };
     bool editable { false };
     bool shouldHandleRunOpenPanel { true };
     bool shouldPresentPopovers { true };
@@ -158,7 +157,6 @@ struct TestOptions {
             || shouldShowSpellCheckingDots != options.shouldShowSpellCheckingDots
             || enableServiceControls != options.enableServiceControls
             || shouldIgnoreMetaViewport != options.shouldIgnoreMetaViewport
-            || enableEditableImages != options.enableEditableImages
             || editable != options.editable
             || shouldHandleRunOpenPanel != options.shouldHandleRunOpenPanel
             || shouldPresentPopovers != options.shouldPresentPopovers

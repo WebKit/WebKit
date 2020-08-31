@@ -212,24 +212,6 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     return ImageSizeChangeForAltText;
 }
 
-bool RenderImage::isEditableImage() const
-{
-    if (!element() || !is<HTMLImageElement>(element()))
-        return false;
-    return downcast<HTMLImageElement>(element())->hasEditableImageAttribute();
-}
-    
-bool RenderImage::requiresLayer() const
-{
-    if (RenderReplaced::requiresLayer())
-        return true;
-    
-    if (isEditableImage())
-        return true;
-    
-    return false;
-}
-
 void RenderImage::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     if (!hasInitializedStyle())

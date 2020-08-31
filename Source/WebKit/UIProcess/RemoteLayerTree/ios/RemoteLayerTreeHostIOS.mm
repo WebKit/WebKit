@@ -28,11 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "EditableImageController.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "UIKitSPI.h"
-#import "WKDrawingView.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -97,37 +95,10 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
         return makeAdoptingView([[UIView alloc] init]);
 
-    case PlatformCALayer::LayerTypeEditableImageLayer:
-        return makeWithView(createEmbeddedView(properties));
-
     default:
         ASSERT_NOT_REACHED();
         return nullptr;
     }
-}
-
-RetainPtr<WKEmbeddedView> RemoteLayerTreeHost::createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
-{
-    if (m_isDebugLayerTreeHost)
-        return adoptNS([[UIView alloc] init]);
-
-    auto result = m_embeddedViews.ensure(properties.embeddedViewID, [&]() -> RetainPtr<UIView> {
-        switch (properties.type) {
-#if HAVE(PENCILKIT)
-        case PlatformCALayer::LayerTypeEditableImageLayer: {
-            auto editableImage = m_drawingArea->page().editableImageController().editableImage(properties.embeddedViewID);
-            return editableImage ? editableImage->drawingView : nil;
-        }
-#endif
-        default:
-            return adoptNS([[UIView alloc] init]);
-        }
-    });
-    auto view = result.iterator->value;
-    if (!result.isNewEntry)
-        m_layerToEmbeddedViewMap.remove(RemoteLayerTreeNode::layerID([view layer]));
-    m_layerToEmbeddedViewMap.set(properties.layerID, properties.embeddedViewID);
-    return view;
 }
 
 } // namespace WebKit

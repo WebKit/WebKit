@@ -57,7 +57,6 @@ OBJC_CLASS NSMenu;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
-OBJC_CLASS WKDrawingView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
@@ -535,10 +534,6 @@ public:
     virtual NSFileWrapper *allocFileWrapperInstance() const { return nullptr; }
     virtual NSSet *serializableFileWrapperClasses() const { return nullptr; }
 #endif
-#endif
-
-#if HAVE(PENCILKIT)
-    virtual RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) { return nullptr; }
 #endif
 
 #if PLATFORM(COCOA)

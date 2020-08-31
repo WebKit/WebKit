@@ -28,7 +28,6 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "EditableImageReference.h"
 #include "Editor.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
@@ -287,9 +286,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         m_experimentalImageMenuEnabled = !value.isNull();
         updateImageControls();
 #endif
-    } else if (name == x_apple_editable_imageAttr)
-        updateEditableImage();
-    else if (name == loadingAttr) {
+    } else if (name == loadingAttr) {
         // No action needed for eager to lazy transition.
         if (!hasLazyLoadableAttributeValue(value))
             loadDeferredImage();
@@ -345,20 +342,6 @@ bool HTMLImageElement::canStartSelection() const
     return false;
 }
 
-bool HTMLImageElement::supportsFocus() const
-{
-    if (hasEditableImageAttribute())
-        return true;
-    return HTMLElement::supportsFocus();
-}
-
-bool HTMLImageElement::isFocusable() const
-{
-    if (hasEditableImageAttribute())
-        return true;
-    return HTMLElement::isFocusable();
-}
-
 bool HTMLImageElement::isInteractiveContent() const
 {
     return hasAttributeWithoutSynchronization(usemapAttr);
@@ -410,9 +393,6 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
     // in callbacks back to this node.
     Node::InsertedIntoAncestorResult insertNotificationRequest = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
-    if (insertionType.connectedToDocument && hasEditableImageAttribute())
-        insertNotificationRequest = InsertedIntoAncestorResult::NeedsPostInsertionCallback;
-
     if (insertionType.treeScopeChanged && !m_parsedUsemap.isNull())
         treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
@@ -437,12 +417,6 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
     return insertNotificationRequest;
 }
 
-void HTMLImageElement::didFinishInsertingNode()
-{
-    if (hasEditableImageAttribute())
-        updateEditableImage();
-}
-
 void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (m_form)
@@ -456,67 +430,8 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
         m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
     }
 
-    if (removalType.disconnectedFromDocument)
-        updateEditableImage();
-
     m_form = nullptr;
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-}
-
-bool HTMLImageElement::hasEditableImageAttribute() const
-{
-    if (!document().settings().editableImagesEnabled())
-        return false;
-    return hasAttributeWithoutSynchronization(x_apple_editable_imageAttr);
-}
-
-GraphicsLayer::EmbeddedViewID HTMLImageElement::editableImageViewID() const
-{
-    if (!m_editableImage)
-        return 0;
-    return m_editableImage->embeddedViewID();
-}
-
-void HTMLImageElement::updateEditableImage()
-{
-    if (!document().settings().editableImagesEnabled())
-        return;
-
-    auto* page = document().page();
-    if (!page)
-        return;
-
-    bool hasEditableAttribute = hasEditableImageAttribute();
-    bool isCurrentlyEditable = !!m_editableImage;
-    bool shouldBeEditable = isConnected() && hasEditableAttribute;
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-    // Create the inner attachment for editable images, or non-editable
-    // images that were cloned from editable image sources.
-    if (!attachmentElement() && (shouldBeEditable || !m_pendingClonedAttachmentID.isEmpty())) {
-        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
-        if (!m_pendingClonedAttachmentID.isEmpty())
-            attachment->setUniqueIdentifier(WTFMove(m_pendingClonedAttachmentID));
-        else
-            attachment->ensureUniqueIdentifier();
-        setAttachmentElement(WTFMove(attachment));
-    }
-#endif
-
-    if (shouldBeEditable == isCurrentlyEditable)
-        return;
-
-    if (!hasEditableAttribute) {
-        m_editableImage = nullptr;
-        return;
-    }
-
-    if (!m_editableImage)
-        m_editableImage = EditableImageReference::create(document());
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-    m_editableImage->associateWithAttachment(attachmentElement()->uniqueIdentifier());
-#endif
 }
 
 HTMLPictureElement* HTMLImageElement::pictureElement() const
@@ -900,18 +815,7 @@ void HTMLImageElement::copyNonAttributePropertiesFromElement(const Element& sour
 #if ENABLE(ATTACHMENT_ELEMENT)
     m_pendingClonedAttachmentID = !sourceImage.m_pendingClonedAttachmentID.isEmpty() ? sourceImage.m_pendingClonedAttachmentID : sourceImage.attachmentIdentifier();
 #endif
-    m_editableImage = sourceImage.m_editableImage;
     Element::copyNonAttributePropertiesFromElement(source);
-}
-
-void HTMLImageElement::defaultEventHandler(Event& event)
-{
-    if (hasEditableImageAttribute() && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
-        focus();
-        event.setDefaultHandled();
-        return;
-    }
-    HTMLElement::defaultEventHandler(event);
 }
 
 CachedImage* HTMLImageElement::cachedImage() const

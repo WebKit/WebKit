@@ -1,3 +1,0 @@
-
-Had 0 strokes in editable image before drawing.
-Had 1 stroke in editable image after drawing.

@@ -266,11 +266,6 @@ public:
     virtual void simulateRotation(DeviceOrientation*, JSValueRef) { notImplemented(); }
     virtual void simulateRotationLikeSafari(DeviceOrientation*, JSValueRef) { notImplemented(); }
 
-    // Editable Images
-
-    virtual void drawSquareInEditableImage() { notImplemented(); }
-    virtual long numberOfStrokesInEditableImage() { notImplemented(); return 0; }
-
     // Undo/Redo
 
     virtual JSRetainPtr<JSStringRef> lastUndoLabel() const { notImplemented(); return nullptr; }

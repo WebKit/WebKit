@@ -133,7 +133,6 @@ struct FocusedElementInformation {
     String placeholder;
     String label;
     String ariaLabel;
-    WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID;
 #if ENABLE(DATALIST_ELEMENT)
     bool hasSuggestions { false };
 #if ENABLE(INPUT_TYPE_COLOR)

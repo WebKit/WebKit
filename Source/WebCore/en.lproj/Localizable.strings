@@ -413,9 +413,6 @@
 "Indent (Undo action name)" = "Indent";
 
 /* Undo action name */
-"Insert Drawing (Undo action name)" = "Insert Drawing";
-
-/* Undo action name */
 "Insert List (Undo action name)" = "Insert List";
 
 /* Inspect Element context menu item */

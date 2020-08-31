@@ -150,12 +150,6 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLay
         m_animationDelegates.remove(animationDelegateIter);
     }
 
-    auto embeddedViewIter = m_layerToEmbeddedViewMap.find(layerID);
-    if (embeddedViewIter != m_layerToEmbeddedViewMap.end()) {
-        m_embeddedViews.remove(embeddedViewIter->value);
-        m_layerToEmbeddedViewMap.remove(embeddedViewIter);
-    }
-
     m_nodes.remove(layerID);
 }
 
@@ -214,8 +208,6 @@ void RemoteLayerTreeHost::clearLayers()
     }
 
     m_nodes.clear();
-    m_embeddedViews.clear();
-    m_layerToEmbeddedViewMap.clear();
     m_rootNode = nullptr;
 }
 
@@ -267,7 +259,6 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
     case PlatformCALayer::LayerTypeScrollContainerLayer:
-    case PlatformCALayer::LayerTypeEditableImageLayer:
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeTransformLayer:

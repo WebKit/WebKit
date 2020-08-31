@@ -755,7 +755,6 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
     char* layerTypeName = nullptr;
     switch (layer->layerType()) {
     case PlatformCALayer::LayerTypeLayer: layerTypeName = "layer"; break;
-    case PlatformCALayer::LayerTypeEditableImageLayer:
     case PlatformCALayer::LayerTypeWebLayer: layerTypeName = "web-layer"; break;
     case PlatformCALayer::LayerTypeSimpleLayer: layerTypeName = "simple-layer"; break;
     case PlatformCALayer::LayerTypeTransformLayer: layerTypeName = "transform-layer"; break;
@@ -938,12 +937,6 @@ String PlatformCALayerWin::layerTreeAsString() const
 Ref<PlatformCALayer> PlatformCALayerWin::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
     return PlatformCALayerWin::create(layerType, client);
-}
-
-GraphicsLayer::EmbeddedViewID PlatformCALayerWin::embeddedViewID() const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 TiledBacking* PlatformCALayerWin::tiledBacking()

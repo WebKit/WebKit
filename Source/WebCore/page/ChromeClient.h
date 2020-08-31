@@ -525,10 +525,6 @@ public:
 
     virtual String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&) const { return emptyString(); }
 
-    virtual void associateEditableImageWithAttachment(GraphicsLayer::EmbeddedViewID, const String&) { }
-    virtual void didCreateEditableImage(GraphicsLayer::EmbeddedViewID) { }
-    virtual void didDestroyEditableImage(GraphicsLayer::EmbeddedViewID) { }
-
     virtual void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) { }
 
     virtual bool userIsInteracting() const { return false; }

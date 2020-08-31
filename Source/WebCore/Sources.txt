@@ -1002,7 +1002,6 @@ editing/FormatBlockCommand.cpp
 editing/FrameSelection.cpp
 editing/HTMLInterchange.cpp
 editing/IndentOutdentCommand.cpp
-editing/InsertEditableImageCommand.cpp
 editing/InsertIntoTextNodeCommand.cpp
 editing/InsertLineBreakCommand.cpp
 editing/InsertListCommand.cpp
@@ -1588,7 +1587,6 @@ page/DeviceController.cpp
 page/DiagnosticLoggingKeys.cpp
 page/DisabledAdaptations.cpp
 page/DragController.cpp
-page/EditableImageReference.cpp
 page/EventHandler.cpp
 page/EventSource.cpp
 page/FocusController.cpp

@@ -183,8 +183,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in
 
-    UIProcess/ios/EditableImageController.messages.in
-
     UIProcess/mac/SecItemShimProxy.messages.in
 
     WebProcess/ApplePay/WebPaymentCoordinator.messages.in

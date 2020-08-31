@@ -260,10 +260,6 @@ private:
 
     void setMouseEventPolicy(WebCore::MouseEventPolicy) final;
 
-#if HAVE(PENCILKIT)
-    RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) override;
-#endif
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     void writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&&) final;
 #endif

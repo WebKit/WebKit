@@ -98,7 +98,6 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << placeholder;
     encoder << label;
     encoder << ariaLabel;
-    encoder << embeddedViewID;
     encoder << focusedElementIdentifier;
 #if ENABLE(DATALIST_ELEMENT)
     encoder << hasSuggestions;
@@ -218,9 +217,6 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
         return false;
 
     if (!decoder.decode(result.ariaLabel))
-        return false;
-
-    if (!decoder.decode(result.embeddedViewID))
         return false;
 
     if (!decoder.decode(result.focusedElementIdentifier))

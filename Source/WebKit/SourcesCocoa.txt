@@ -442,10 +442,8 @@ UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
 
 UIProcess/ios/AppKitSoftLink.mm
 UIProcess/ios/DragDropInteractionState.mm
-UIProcess/ios/EditableImageController.mm
 UIProcess/ios/InputViewUpdateDeferrer.mm
 UIProcess/ios/PageClientImplIOS.mm
-UIProcess/ios/PencilKitSoftLink.mm
 UIProcess/ios/ProcessAssertionIOS.mm
 UIProcess/ios/ResourceLoadStatisticsPersistentStorageIOS.mm
 UIProcess/ios/SmartMagnificationController.mm
@@ -460,8 +458,6 @@ UIProcess/ios/WKApplicationStateTrackingView.mm
 UIProcess/ios/WKContentView.mm @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @no-unify
 UIProcess/ios/WKDeferringGestureRecognizer.mm
-UIProcess/ios/WKDrawingCoordinator.mm
-UIProcess/ios/WKDrawingView.mm
 UIProcess/ios/WKGeolocationProviderIOS.mm
 UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm
@@ -657,7 +653,6 @@ WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @no-unify
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
 
 // Derived Sources
-EditableImageControllerMessageReceiver.cpp
 GPUConnectionToWebProcessMessageReceiver.cpp
 GPUProcessConnectionMessageReceiver.cpp
 GPUProcessProxyMessageReceiver.cpp

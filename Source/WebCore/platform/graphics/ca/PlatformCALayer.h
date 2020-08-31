@@ -76,7 +76,6 @@ public:
         LayerTypeLightSystemBackdropLayer,
         LayerTypeDarkSystemBackdropLayer,
         LayerTypeScrollContainerLayer,
-        LayerTypeEditableImageLayer,
         LayerTypeCustom,
     };
     enum FilterType { Linear, Nearest, Trilinear };
@@ -247,8 +246,6 @@ public:
     virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) = 0;
 
-    virtual GraphicsLayer::EmbeddedViewID embeddedViewID() const = 0;
-
     virtual TiledBacking* tiledBacking() = 0;
 
     virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length, CGFloat strokeWidthAsPercentageOfFontSize = 0, Color strokeColor = Color()) const;
@@ -345,7 +342,6 @@ template<> struct EnumTraits<WebCore::PlatformCALayer::LayerType> {
         WebCore::PlatformCALayer::LayerType::LayerTypeLightSystemBackdropLayer,
         WebCore::PlatformCALayer::LayerType::LayerTypeDarkSystemBackdropLayer,
         WebCore::PlatformCALayer::LayerType::LayerTypeScrollContainerLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeEditableImageLayer,
         WebCore::PlatformCALayer::LayerType::LayerTypeCustom
     >;
 };

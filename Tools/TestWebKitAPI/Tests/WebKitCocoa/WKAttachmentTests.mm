@@ -29,7 +29,6 @@
 
 #import "DragAndDropSimulator.h"
 #import "NSItemProviderAdditions.h"
-#import "PencilKitTestSPI.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -201,7 +200,6 @@ static NSString *attachmentEditingTestMarkup = @"<meta name='viewport' content='
 static RetainPtr<TestWKWebView> webViewForTestingAttachments(CGSize webViewSize, WKWebViewConfiguration *configuration)
 {
     configuration._attachmentElementEnabled = YES;
-    configuration._editableImagesEnabled = YES;
     WKPreferencesSetCustomPasteboardDataEnabled((__bridge WKPreferencesRef)[configuration preferences], YES);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, webViewSize.width, webViewSize.height) configuration:configuration]);
@@ -2225,76 +2223,6 @@ TEST(WKAttachmentTestsIOS, CopyAttachmentUsingElementAction)
     }];
     TestWebKitAPI::Util::run(&done);
 }
-
-#if HAVE(PENCILKIT)
-static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subview, BOOL *stop))
-{
-    BOOL stop = NO;
-    mapFunction(view, &stop);
-    if (stop)
-        return YES;
-
-    for (UIView *subview in view.subviews) {
-        stop = forEachViewInHierarchy(subview, mapFunction);
-        if (stop)
-            break;
-    }
-    return stop;
-}
-
-static PKCanvasView *findEditableImageCanvas(WKWebView *webView)
-{
-    Class pkCanvasViewClass = NSClassFromString(@"PKCanvasView");
-    __block PKCanvasView *canvasView = nil;
-    forEachViewInHierarchy(webView.window, ^(UIView *subview, BOOL *stop) {
-        if (![subview isKindOfClass:pkCanvasViewClass])
-            return;
-
-        canvasView = (PKCanvasView *)subview;
-        *stop = YES;
-    });
-    return canvasView;
-}
-
-static void drawSquareInEditableImage(WKWebView *webView)
-{
-    Class pkDrawingClass = NSClassFromString(@"PKDrawing");
-    Class pkInkClass = NSClassFromString(@"PKInk");
-    Class pkStrokeClass = NSClassFromString(@"PKStroke");
-
-    PKCanvasView *canvasView = findEditableImageCanvas(webView);
-    RetainPtr<PKDrawing> drawing = canvasView.drawing ?: adoptNS([[pkDrawingClass alloc] init]);
-    RetainPtr<CGPathRef> path = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, 50, 50), NULL));
-    RetainPtr<PKInk> ink = [pkInkClass inkWithIdentifier:@"com.apple.ink.pen" color:UIColor.greenColor weight:100.0];
-    RetainPtr<PKStroke> stroke = adoptNS([[pkStrokeClass alloc] _initWithPath:path.get() ink:ink.get() inputScale:1]);
-    [drawing _addStroke:stroke.get()];
-
-    [canvasView setDrawing:drawing.get()];
-}
-
-TEST(WKAttachmentTestsIOS, EditableImageAttachmentDataInvalidation)
-{
-    auto webView = webViewForTestingAttachments();
-
-    RetainPtr<_WKAttachment> attachment;
-
-    {
-        ObserveAttachmentUpdatesForScope observer(webView.get());
-        EXPECT_TRUE([webView _synchronouslyExecuteEditCommand:@"InsertEditableImage" argument:nil]);
-        EXPECT_EQ(observer.observer().inserted.count, 1LU);
-        attachment = observer.observer().inserted.firstObject;
-    }
-
-    [webView waitForNextPresentationUpdate];
-
-    {
-        ObserveAttachmentUpdatesForScope observer(webView.get());
-        drawSquareInEditableImage(webView.get());
-        observer.expectAttachmentInvalidation(@[ attachment.get() ]);
-    }
-}
-
-#endif // HAVE(PENCILKIT)
 
 #endif // PLATFORM(IOS_FAMILY)
 

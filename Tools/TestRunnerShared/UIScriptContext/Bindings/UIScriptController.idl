@@ -347,9 +347,6 @@ interface UIScriptController {
 
     object attachmentInfo(DOMString attachmentIdentifier);
 
-    // Editing
-    undefined drawSquareInEditableImage();
-    readonly attribute long numberOfStrokesInEditableImage;
     readonly attribute DOMString lastUndoLabel;
     readonly attribute DOMString firstRedoLabel;
 };

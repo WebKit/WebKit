@@ -1,3 +1,30 @@
+2020-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused editable image code
+        https://bugs.webkit.org/show_bug.cgi?id=215991
+
+        Reviewed by Simon Fraser.
+
+        * editing/images/basic-editable-image-expected.txt: Removed.
+        * editing/images/basic-editable-image-from-execCommand-expected.txt: Removed.
+        * editing/images/basic-editable-image-from-execCommand.html: Removed.
+        * editing/images/basic-editable-image-with-gesture-expected.txt: Removed.
+        * editing/images/basic-editable-image-with-gesture.html: Removed.
+        * editing/images/basic-editable-image.html: Removed.
+        * editing/images/editable-image-creates-attachment-expected.txt: Removed.
+        * editing/images/editable-image-creates-attachment.html: Removed.
+        * editing/images/paste-editable-image-expected.txt: Removed.
+        * editing/images/paste-editable-image.html: Removed.
+        * editing/images/redo-insert-editable-image-maintains-strokes-expected.txt: Removed.
+        * editing/images/redo-insert-editable-image-maintains-strokes.html: Removed.
+        * editing/images/reparent-editable-image-maintains-strokes-expected.txt: Removed.
+        * editing/images/reparent-editable-image-maintains-strokes.html: Removed.
+        * editing/images/undo-insert-editable-image-expected.txt: Removed.
+        * editing/images/undo-insert-editable-image.html: Removed.
+        * resources/ui-helper.js:
+        (window.UIHelper.drawSquareInEditableImage): Deleted.
+        (window.UIHelper.numberOfStrokesInEditableImage): Deleted.
+
 2020-08-30  Simon Fraser  <simon.fraser@apple.com>
 
         Rubberbanding in an overflow:scroll can trigger page jiggles

@@ -266,10 +266,6 @@
 #include "SecKeyProxyStore.h"
 #endif
 
-#if HAVE(PENCILKIT)
-#include "EditableImageController.h"
-#endif
-
 #if HAVE(APP_SSO)
 #include "SOAuthorizationCoordinator.h"
 #endif
@@ -994,11 +990,6 @@ void WebPageProxy::didAttachToRunningProcess()
     m_credentialsMessenger = makeUnique<WebAuthenticatorCoordinatorProxy>(*this);
 #endif
 
-#if HAVE(PENCILKIT)
-    ASSERT(!m_editableImageController);
-    m_editableImageController = makeUnique<EditableImageController>(*this);
-#endif
-    
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     ASSERT(!m_webDeviceOrientationUpdateProviderProxy);
     m_webDeviceOrientationUpdateProviderProxy = makeUnique<WebDeviceOrientationUpdateProviderProxy>(*this);
@@ -7640,10 +7631,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_credentialsMessenger = nullptr;
 #endif
 
-#if HAVE(PENCILKIT)
-    m_editableImageController = nullptr;
-#endif
-    
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     m_webDeviceOrientationUpdateProviderProxy = nullptr;
 #endif
@@ -9730,11 +9717,7 @@ void WebPageProxy::didInvalidateDataForAttachment(API::Attachment& attachment)
 
 WebPageProxy::ShouldUpdateAttachmentAttributes WebPageProxy::willUpdateAttachmentAttributes(const API::Attachment& attachment)
 {
-#if HAVE(PENCILKIT)
-    return m_editableImageController->willUpdateAttachmentAttributes(attachment);
-#else
     return ShouldUpdateAttachmentAttributes::Yes;
-#endif
 }
 
 #if !PLATFORM(COCOA)

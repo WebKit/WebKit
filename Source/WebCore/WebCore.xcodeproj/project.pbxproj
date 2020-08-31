@@ -727,7 +727,6 @@
 		2D29ECC8192ECC8300984B78 /* DisplayRefreshMonitorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ECC4192ECC8300984B78 /* DisplayRefreshMonitorManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D29ECCA192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ECC9192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h */; };
 		2D2BEB312234A335005544CA /* ElementIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2BEB2F2234A334005544CA /* ElementIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2D2E34AC21A4E192004598B5 /* EditableImageReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2E34A921A4E191004598B5 /* EditableImageReference.h */; };
 		2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3EF4481917915C00034184 /* WebActionDisablingCALayerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4441917915C00034184 /* WebActionDisablingCALayerDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3EF44A1917915C00034184 /* WebCoreCALayerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4461917915C00034184 /* WebCoreCALayerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -751,7 +750,6 @@
 		2D76BB821945632400CFD29A /* RunLoopObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D76BB801945632400CFD29A /* RunLoopObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D7DA0F22435EB1900F048D1 /* WebViewVisualIdentificationOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7DA0EF2435EB1700F048D1 /* WebViewVisualIdentificationOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D7ED0AB1BAE99170043B3E5 /* TimerEventBasedMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */; };
-		2D81E1CF21A78CC200A32CF4 /* InsertEditableImageCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D81E1CD21A78CC200A32CF4 /* InsertEditableImageCommand.h */; };
 		2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8287F516E4A0380086BD00 /* HitTestLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D8B92CE203D13E1009C868F /* UnifiedSource481.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F84AD1FA1A48B006DB63B /* UnifiedSource481.cpp */; };
 		2D8B92CF203D13E1009C868F /* UnifiedSource482.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F84C81FA1A4A4006DB63B /* UnifiedSource482.cpp */; };
@@ -6906,8 +6904,6 @@
 		2D29ECC4192ECC8300984B78 /* DisplayRefreshMonitorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorManager.h; sourceTree = "<group>"; };
 		2D29ECC9192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorIOS.h; sourceTree = "<group>"; };
 		2D2BEB2F2234A334005544CA /* ElementIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIdentifier.h; sourceTree = "<group>"; };
-		2D2E34A921A4E191004598B5 /* EditableImageReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableImageReference.h; sourceTree = "<group>"; };
-		2D2E34AB21A4E192004598B5 /* EditableImageReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditableImageReference.cpp; sourceTree = "<group>"; };
 		2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossfadeGeneratedImage.cpp; sourceTree = "<group>"; };
 		2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossfadeGeneratedImage.h; sourceTree = "<group>"; };
 		2D2FC0561460CD6F00263633 /* GradientImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GradientImage.cpp; sourceTree = "<group>"; };
@@ -6952,8 +6948,6 @@
 		2D7DA0EF2435EB1700F048D1 /* WebViewVisualIdentificationOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewVisualIdentificationOverlay.h; sourceTree = "<group>"; };
 		2D7DA0F12435EB1800F048D1 /* WebViewVisualIdentificationOverlay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewVisualIdentificationOverlay.mm; sourceTree = "<group>"; };
 		2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerEventBasedMock.h; sourceTree = "<group>"; };
-		2D81E1CB21A78CC100A32CF4 /* InsertEditableImageCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertEditableImageCommand.cpp; sourceTree = "<group>"; };
-		2D81E1CD21A78CC200A32CF4 /* InsertEditableImageCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertEditableImageCommand.h; sourceTree = "<group>"; };
 		2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestLocation.cpp; sourceTree = "<group>"; };
 		2D8287F516E4A0380086BD00 /* HitTestLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HitTestLocation.h; sourceTree = "<group>"; };
 		2D8D3BEB23847AC900657075 /* gesture-recognizer.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "gesture-recognizer.js"; sourceTree = "<group>"; };
@@ -21386,8 +21380,6 @@
 				A7CA595C0B27BD9E00FA021D /* DragController.cpp */,
 				A7CA595B0B27BD9E00FA021D /* DragController.h */,
 				81F65FF513788FAA00FF6F2D /* DragState.h */,
-				2D2E34AB21A4E192004598B5 /* EditableImageReference.cpp */,
-				2D2E34A921A4E191004598B5 /* EditableImageReference.h */,
 				1AF326770D78B9440068F0C4 /* EditorClient.h */,
 				93C09A800B064F00005ABD4D /* EventHandler.cpp */,
 				93C09A520B064DB3005ABD4D /* EventHandler.h */,
@@ -22392,8 +22384,6 @@
 				93309D97099E64910056E581 /* HTMLInterchange.h */,
 				DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */,
 				DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */,
-				2D81E1CB21A78CC100A32CF4 /* InsertEditableImageCommand.cpp */,
-				2D81E1CD21A78CC200A32CF4 /* InsertEditableImageCommand.h */,
 				93309D9A099E64910056E581 /* InsertIntoTextNodeCommand.cpp */,
 				93309D9B099E64910056E581 /* InsertIntoTextNodeCommand.h */,
 				93309D9C099E64910056E581 /* InsertLineBreakCommand.cpp */,
@@ -30205,7 +30195,6 @@
 				63BD4A5F1F778E9F00438722 /* ApplicationManifest.h in Headers */,
 				63152D191F9531EE007A5E4B /* ApplicationManifestLoader.h in Headers */,
 				6354F4C91F7AFC9400D89DF3 /* ApplicationManifestParser.h in Headers */,
-				DFC610A624FB2A7D006254C8 /* EncodingTables.h in Headers */,
 				9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */,
 				93309DD9099E64920056E581 /* ApplyStyleCommand.h in Headers */,
 				512DD8F60D91E6AF000F89EE /* Archive.h in Headers */,
@@ -31000,7 +30989,6 @@
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
 				FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */,
 				837C0B7624DB3850005D5959 /* DynamicsCompressorOptions.h in Headers */,
-				2D2E34AC21A4E192004598B5 /* EditableImageReference.h in Headers */,
 				93309DE2099E64920056E581 /* EditAction.h in Headers */,
 				93309DE4099E64920056E581 /* EditCommand.h in Headers */,
 				93309DE8099E64920056E581 /* Editing.h in Headers */,
@@ -31032,6 +31020,7 @@
 				414DEDE71F9FE91E0047C40D /* EmptyFrameLoaderClient.h in Headers */,
 				515BE1901D54F5FB00DD7C68 /* EmptyGamepadProvider.h in Headers */,
 				93849C1F24BE404B00448D5A /* EmptyScriptExecutionContext.h in Headers */,
+				DFC610A624FB2A7D006254C8 /* EncodingTables.h in Headers */,
 				7C77C3D71DEF850A00A50BFA /* EndingType.h in Headers */,
 				F403E7872363B58C00044550 /* EnterKeyHint.h in Headers */,
 				1D2F8E042344751600993B68 /* EnterPictureInPictureEvent.h in Headers */,
@@ -31593,7 +31582,6 @@
 				E52EFDF42112875A00AD282A /* InputMode.h in Headers */,
 				37E3524D12450C6600BAF5D9 /* InputType.h in Headers */,
 				C348612415FDE21E007A1CC9 /* InputTypeNames.h in Headers */,
-				2D81E1CF21A78CC200A32CF4 /* InsertEditableImageCommand.h in Headers */,
 				93309DEA099E64920056E581 /* InsertIntoTextNodeCommand.h in Headers */,
 				93309DEC099E64920056E581 /* InsertLineBreakCommand.h in Headers */,
 				D07DEABA0A36554A00CA30F8 /* InsertListCommand.h in Headers */,

@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "HIDEventGenerator.h"
-#import "PencilKitTestSPI.h"
 #import "PlatformViewHelpers.h"
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
@@ -1154,52 +1153,6 @@ bool UIScriptControllerIOS::isShowingDataListSuggestions() const
         *stop = YES;
     });
     return foundDataListSuggestionsPickerView;
-}
-
-#if HAVE(PENCILKIT)
-
-PKCanvasView *UIScriptControllerIOS::findEditableImageCanvas() const
-{
-    Class pkCanvasViewClass = NSClassFromString(@"PKCanvasView");
-    __block PKCanvasView *canvasView = nil;
-    forEachViewInHierarchy(webView().window, ^(UIView *subview, BOOL *stop) {
-        if (![subview isKindOfClass:pkCanvasViewClass])
-            return;
-
-        canvasView = (PKCanvasView *)subview;
-        *stop = YES;
-    });
-    return canvasView;
-}
-
-#endif // HAVE(PENCILKIT)
-
-void UIScriptControllerIOS::drawSquareInEditableImage()
-{
-#if HAVE(PENCILKIT)
-    Class pkDrawingClass = NSClassFromString(@"PKDrawing");
-    Class pkInkClass = NSClassFromString(@"PKInk");
-    Class pkStrokeClass = NSClassFromString(@"PKStroke");
-
-    PKCanvasView *canvasView = findEditableImageCanvas();
-    RetainPtr<PKDrawing> drawing = canvasView.drawing ?: adoptNS([[pkDrawingClass alloc] init]);
-    RetainPtr<CGPathRef> path = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, 50, 50), NULL));
-    RetainPtr<PKInk> ink = [pkInkClass inkWithIdentifier:@"com.apple.ink.pen" color:UIColor.greenColor weight:100.0];
-    RetainPtr<PKStroke> stroke = adoptNS([[pkStrokeClass alloc] _initWithPath:path.get() ink:ink.get() inputScale:1]);
-    [drawing _addStroke:stroke.get()];
-
-    [canvasView setDrawing:drawing.get()];
-#endif
-}
-
-long UIScriptControllerIOS::numberOfStrokesInEditableImage()
-{
-#if HAVE(PENCILKIT)
-    PKCanvasView *canvasView = findEditableImageCanvas();
-    return canvasView.drawing._allStrokes.count;
-#else
-    return 0;
-#endif
 }
 
 void UIScriptControllerIOS::setKeyboardInputModeIdentifier(JSStringRef identifier)

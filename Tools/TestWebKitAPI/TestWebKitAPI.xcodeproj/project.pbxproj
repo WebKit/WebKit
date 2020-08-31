@@ -1816,7 +1816,6 @@
 		2D4CF8BC1D8360CC0001CE8D /* WKThumbnailView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKThumbnailView.mm; path = WebKit/WKThumbnailView.mm; sourceTree = "<group>"; };
 		2D51A0C51C8BF00400765C45 /* DOMHTMLVideoElementWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLVideoElementWrapper.mm; sourceTree = "<group>"; };
 		2D520634245A603C00338F88 /* ViewExposedRect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewExposedRect.mm; sourceTree = "<group>"; };
-		2D61EC3021B0B75C00A7D1CB /* PencilKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PencilKitTestSPI.h; sourceTree = "<group>"; };
 		2D640B5417875DFF00BFAF99 /* ScrollPinningBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPinningBehaviors.cpp; sourceTree = "<group>"; };
 		2D70059521EDA0C6003463CB /* TabOutOfWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TabOutOfWebView.mm; sourceTree = "<group>"; };
 		2D70059721EDA4D0003463CB /* OffscreenWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OffscreenWindow.mm; sourceTree = "<group>"; };
@@ -3417,7 +3416,6 @@
 			children = (
 				F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */,
 				2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */,
-				2D61EC3021B0B75C00A7D1CB /* PencilKitTestSPI.h */,
 				F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */,
 				F4517B652054C49500C26721 /* TestWKWebViewController.h */,
 				F4517B662054C49500C26721 /* TestWKWebViewController.mm */,

@@ -1,3 +1,104 @@
+2020-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused editable image code
+        https://bugs.webkit.org/show_bug.cgi?id=215991
+
+        Reviewed by Simon Fraser.
+
+        * DerivedSources.make:
+        * Platform/spi/ios/PencilKitSPI.h: Removed.
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::encode const):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::decode):
+        * Shared/WebPreferences.yaml:
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _setEditableImagesEnabled:]): Deleted.
+        (-[WKWebViewConfiguration _editableImagesEnabled]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setupScrollAndContentViews]):
+        (-[WKWebView _stylusTapGestureShouldCreateEditableImage]): Deleted.
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::createDrawingView): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::layerWillBeRemoved):
+        (WebKit::RemoteLayerTreeHost::clearLayers):
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        (WebKit::RemoteLayerTreeHost::createEmbeddedView): Deleted.
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (-[WKEmbeddedView initWithEmbeddedViewID:]): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::willUpdateAttachmentAttributes):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::editableImageController): Deleted.
+        * UIProcess/ios/EditableImageController.h: Removed.
+        * UIProcess/ios/EditableImageController.messages.in: Removed.
+        * UIProcess/ios/EditableImageController.mm: Removed.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createDrawingView): Deleted.
+        * UIProcess/ios/PencilKitSoftLink.h: Removed.
+        * UIProcess/ios/PencilKitSoftLink.mm: Removed.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView _stylusSingleTapRecognized:]): Deleted.
+        (-[WKContentView _drawingCoordinator]): Deleted.
+        * UIProcess/ios/WKDrawingCoordinator.h: Removed.
+        * UIProcess/ios/WKDrawingCoordinator.mm: Removed.
+        * UIProcess/ios/WKDrawingView.h: Removed.
+        * UIProcess/ios/WKDrawingView.mm: Removed.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleStylusSingleTapAtPoint): Deleted.
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::associateEditableImageWithAttachment): Deleted.
+        (WebKit::WebChromeClient::didCreateEditableImage): Deleted.
+        (WebKit::WebChromeClient::didDestroyEditableImage): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::createPlatformCALayerForEmbeddedView): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::createForEmbeddedView): Deleted.
+        (WebKit::PlatformCALayerRemote::embeddedViewID const): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerDidEnterContext):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isAssistableElement):
+        (WebKit::WebPage::getFocusedElementInformation):
+        (WebKit::WebPage::handleStylusSingleTapAtPoint): Deleted.
+
 2020-08-28  Tim Horton  <timothy_horton@apple.com>
 
         Sites built with flambe.js don't work with trackpad on iPad

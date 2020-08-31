@@ -280,7 +280,6 @@
 		2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerCocoa.h; sourceTree = "<group>"; };
 		2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerMac.h; sourceTree = "<group>"; };
 		2D0BEE1722EAD1360092B738 /* UIScriptControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerIOS.h; sourceTree = "<group>"; };
-		2D0FF14A2192C78300C975D6 /* PencilKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PencilKitTestSPI.h; path = ../TestRunnerShared/spi/PencilKitTestSPI.h; sourceTree = "<group>"; };
 		2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreGraphicsTestSPI.h; path = ../TestRunnerShared/spi/CoreGraphicsTestSPI.h; sourceTree = "<group>"; };
 		2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerCocoa.mm; sourceTree = "<group>"; };
 		2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventSerializerMac.h; path = mac/EventSerializerMac.h; sourceTree = "<group>"; };
@@ -642,7 +641,6 @@
 			isa = PBXGroup;
 			children = (
 				2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */,
-				2D0FF14A2192C78300C975D6 /* PencilKitTestSPI.h */,
 			);
 			name = spi;
 			sourceTree = "<group>";

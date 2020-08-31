@@ -1108,38 +1108,6 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
     completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::TwoFingerTap);
 }
 
-void WebPage::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
-{
-    SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
-
-    auto& frame = m_page->focusController().focusedOrMainFrame();
-
-    auto pointInDocument = frame.view()->rootViewToContents(point);
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
-    HitTestResult hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, hitType);
-
-    Node* node = hitTest.innerNonSharedNode();
-    if (!node)
-        return;
-    auto renderer = node->renderer();
-    if (!renderer)
-        return;
-
-    if (renderer->isReplaced())
-        return;
-
-    auto position = renderer->positionForPoint(hitTest.localPoint(), nullptr);
-    if (position.isNull())
-        position = firstPositionInOrBeforeNode(node);
-    auto range = makeSimpleRange(position);
-    if (!range)
-        return;
-
-    frame.selection().setSelectedRange(*range, position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
-    auto image = frame.editor().insertEditableImage();
-    frame.document()->setFocusedElement(image.get());
-}
-
 void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation)
 {
     m_potentialTapNode = m_page->mainFrame().nodeRespondingToClickEvents(position, m_potentialTapLocation, m_potentialTapSecurityOrigin.get());
@@ -2542,8 +2510,6 @@ static inline bool isAssistableElement(Element& element)
         return true;
     if (is<HTMLTextAreaElement>(element))
         return true;
-    if (is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element).hasEditableImageAttribute())
-        return true;
     if (is<HTMLInputElement>(element)) {
         HTMLInputElement& inputElement = downcast<HTMLInputElement>(element);
         // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
@@ -3218,9 +3184,6 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
-    } else if (is<HTMLImageElement>(*focusedElement) && downcast<HTMLImageElement>(*focusedElement).hasEditableImageAttribute()) {
-        information.elementType = InputType::Drawing;
-        information.embeddedViewID = downcast<HTMLImageElement>(*focusedElement).editableImageViewID();
     } else if (focusedElement->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
         if (is<HTMLElement>(*focusedElement)) {

@@ -889,9 +889,6 @@ videoQualityIncludesDisplayCompositingEnabled:
   initial: false
   conditional: VIDEO
 
-editableImagesEnabled:
-  initial: false
-
 adClickAttributionEnabled:
   initial: false
 

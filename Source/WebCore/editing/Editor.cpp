@@ -75,7 +75,6 @@
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
 #include "InputEvent.h"
-#include "InsertEditableImageCommand.h"
 #include "InsertListCommand.h"
 #include "InsertTextCommand.h"
 #include "KeyboardEvent.h"
@@ -4317,11 +4316,6 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
     }
 
     return font;
-}
-
-RefPtr<HTMLImageElement> Editor::insertEditableImage()
-{
-    return InsertEditableImageCommand::insertEditableImage(document());
 }
 
 bool Editor::canCopyExcludingStandaloneImages() const

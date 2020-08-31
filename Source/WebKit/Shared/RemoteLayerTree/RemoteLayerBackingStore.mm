@@ -352,7 +352,6 @@ void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, C
     case WebCore::PlatformCALayer::LayerTypeContentsProvidedLayer:
     case WebCore::PlatformCALayer::LayerTypeShapeLayer:
     case WebCore::PlatformCALayer::LayerTypeScrollContainerLayer:
-    case WebCore::PlatformCALayer::LayerTypeEditableImageLayer:
     case WebCore::PlatformCALayer::LayerTypeCustom:
         ASSERT_NOT_REACHED();
         break;

@@ -293,7 +293,6 @@ typedef HWND PlatformViewWidget;
 namespace WebKit {
 class AudioSessionRoutingArbitratorProxy;
 class DrawingAreaProxy;
-class EditableImageController;
 class GamepadData;
 class MediaUsageManager;
 class NativeWebGestureEvent;
@@ -818,7 +817,6 @@ public:
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
     void getSelectionContext(WTF::Function<void(const String&, const String&, const String&, CallbackBase::Error)>&&);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);
-    void handleStylusSingleTapAtPoint(const WebCore::IntPoint&, uint64_t requestID);
     void setForceAlwaysUserScalable(bool);
     bool forceAlwaysUserScalable() const { return m_forceAlwaysUserScalable; }
     double layoutSizeScaleFactor() const { return m_viewportConfigurationLayoutSizeScaleFactor; }
@@ -1663,10 +1661,6 @@ public:
 #endif
 
     void updateCurrentModifierState();
-
-#if HAVE(PENCILKIT)
-    EditableImageController& editableImageController() { return *m_editableImageController; }
-#endif
 
     ProvisionalPageProxy* provisionalPageProxy() const { return m_provisionalPage.get(); }
     void commitProvisionalPage(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
@@ -2815,10 +2809,6 @@ private:
     WeakPtr<SuspendedPageProxy> m_lastSuspendedPage;
 
     TextManipulationItemCallback m_textManipulationItemCallback;
-
-#if HAVE(PENCILKIT)
-    std::unique_ptr<EditableImageController> m_editableImageController;
-#endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID m_contextIDForVisibilityPropagation { 0 };

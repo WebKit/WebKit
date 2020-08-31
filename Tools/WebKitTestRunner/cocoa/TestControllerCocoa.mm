@@ -163,9 +163,6 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     if (options.enableColorFilter)
         [copiedConfiguration _setColorFilterEnabled:YES];
 
-    if (options.enableEditableImages)
-        [copiedConfiguration _setEditableImagesEnabled:YES];
-
     [copiedConfiguration setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore()];
 
     [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs];

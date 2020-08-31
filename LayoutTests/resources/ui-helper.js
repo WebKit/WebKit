@@ -966,14 +966,6 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static drawSquareInEditableImage()
-    {
-        if (!this.isWebKit2())
-            return Promise.resolve();
-
-        return new Promise(resolve => testRunner.runUIScript(`uiController.drawSquareInEditableImage()`, resolve));
-    }
-
     static stylusTapAt(x, y, modifiers=[])
     {
         if (!this.isWebKit2())
@@ -984,18 +976,6 @@ window.UIHelper = class UIHelper {
                 uiController.stylusTapAtPointWithModifiers(${x}, ${y}, 2, 1, 0.5, ${JSON.stringify(modifiers)}, function() {
                     uiController.uiScriptComplete();
                 });`, resolve);
-        });
-    }
-
-    static numberOfStrokesInEditableImage()
-    {
-        if (!this.isWebKit2())
-            return Promise.resolve();
-
-        return new Promise(resolve => {
-            testRunner.runUIScript(`(() => {
-                uiController.uiScriptComplete(uiController.numberOfStrokesInEditableImage);
-            })()`, numberAsString => resolve(parseInt(numberAsString, 10)))
         });
     }
 

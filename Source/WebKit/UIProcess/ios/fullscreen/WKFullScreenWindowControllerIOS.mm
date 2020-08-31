@@ -29,6 +29,7 @@
 #import "WKFullScreenWindowControllerIOS.h"
 
 #import "UIKitSPI.h"
+#import "VideoFullscreenManagerProxy.h"
 #import "WKFullScreenViewController.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebView.h"
@@ -44,6 +45,8 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/VideoFullscreenInterfaceAVKit.h>
+#import <WebCore/VideoFullscreenModel.h>
 #import <WebCore/ViewportArguments.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSStringSPI.h>

@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "DrawingArea.h"
-#import "EditableImageControllerMessages.h"
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
 #import "UIKitSPI.h"
@@ -159,34 +158,6 @@ RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames
         return nullptr;
 
     return Icon::createIconForImage(iconForFile(url).get().CGImage);
-}
-
-void WebChromeClient::associateEditableImageWithAttachment(GraphicsLayer::EmbeddedViewID embeddedViewID, const String& attachmentID)
-{
-#if HAVE(PENCILKIT)
-    m_page.send(Messages::EditableImageController::AssociateWithAttachment(embeddedViewID, attachmentID));
-#else
-    UNUSED_PARAM(embeddedViewID);
-    UNUSED_PARAM(attachmentID);
-#endif
-}
-
-void WebChromeClient::didCreateEditableImage(GraphicsLayer::EmbeddedViewID embeddedViewID)
-{
-#if HAVE(PENCILKIT)
-    m_page.send(Messages::EditableImageController::DidCreateEditableImage(embeddedViewID));
-#else
-    UNUSED_PARAM(embeddedViewID);
-#endif
-}
-
-void WebChromeClient::didDestroyEditableImage(GraphicsLayer::EmbeddedViewID embeddedViewID)
-{
-#if HAVE(PENCILKIT)
-    m_page.send(Messages::EditableImageController::DidDestroyEditableImage(embeddedViewID));
-#else
-    UNUSED_PARAM(embeddedViewID);
-#endif
 }
 
 bool WebChromeClient::shouldUseMouseEventForSelection(const WebCore::PlatformMouseEvent& event)

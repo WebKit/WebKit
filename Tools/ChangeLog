@@ -1,3 +1,35 @@
+2020-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused editable image code
+        https://bugs.webkit.org/show_bug.cgi?id=215991
+
+        Reviewed by Simon Fraser.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::drawSquareInEditableImage): Deleted.
+        (WTR::UIScriptController::numberOfStrokesInEditableImage): Deleted.
+        * TestRunnerShared/spi/PencilKitTestSPI.h: Removed.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (webViewForTestingAttachments):
+        (TestWebKitAPI::forEachViewInHierarchy): Deleted.
+        (TestWebKitAPI::findEditableImageCanvas): Deleted.
+        (TestWebKitAPI::drawSquareInEditableImage): Deleted.
+        * TestWebKitAPI/ios/PencilKitTestSPI.h: Removed.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::findEditableImageCanvas const): Deleted.
+        (WTR::UIScriptControllerIOS::drawSquareInEditableImage): Deleted.
+        (WTR::UIScriptControllerIOS::numberOfStrokesInEditableImage): Deleted.
+
 2020-08-28  Tim Horton  <timothy_horton@apple.com>
 
         Sites built with flambe.js don't work with trackpad on iPad

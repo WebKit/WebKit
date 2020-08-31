@@ -30,6 +30,7 @@
 
 asm(".linker_option \"-framework\", \"PepperUICore\"");
 
+#import "PepperUICoreSPI.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <wtf/NeverDestroyed.h>

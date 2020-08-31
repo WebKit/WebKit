@@ -514,7 +514,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     pageConfiguration->preferences()->setColorFilterEnabled(!![_configuration _colorFilterEnabled]);
 
-    pageConfiguration->preferences()->setEditableImagesEnabled(!![_configuration _editableImagesEnabled]);
     pageConfiguration->preferences()->setUndoManagerAPIEnabled(!![_configuration _undoManagerAPIEnabled]);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

@@ -570,8 +570,6 @@ public:
 #endif
 #endif
 
-    WEBCORE_EXPORT RefPtr<HTMLImageElement> insertEditableImage();
-
     WEBCORE_EXPORT RefPtr<TextPlaceholderElement> insertTextPlaceholder(const IntSize&);
     WEBCORE_EXPORT void removeTextPlaceholder(TextPlaceholderElement&);
 

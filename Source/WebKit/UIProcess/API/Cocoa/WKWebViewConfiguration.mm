@@ -173,7 +173,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _incompleteImageBorderEnabled;
     BOOL _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
     BOOL _drawsBackground;
-    BOOL _editableImagesEnabled;
     BOOL _undoManagerAPIEnabled;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
@@ -269,7 +268,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = YES;
     _drawsBackground = YES;
 
-    _editableImagesEnabled = NO;
     _undoManagerAPIEnabled = NO;
 
 #if ENABLE(APPLE_PAY)
@@ -446,7 +444,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = self->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
     configuration->_drawsBackground = self->_drawsBackground;
 
-    configuration->_editableImagesEnabled = self->_editableImagesEnabled;
     configuration->_undoManagerAPIEnabled = self->_undoManagerAPIEnabled;
 
     return configuration;
@@ -1186,16 +1183,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)_allowMediaContentTypesRequiringHardwareSupportAsFallback
 {
     return _allowMediaContentTypesRequiringHardwareSupportAsFallback;
-}
-
-- (void)_setEditableImagesEnabled:(BOOL)enabled
-{
-    _editableImagesEnabled = enabled;
-}
-
-- (BOOL)_editableImagesEnabled
-{
-    return _editableImagesEnabled;
 }
 
 - (void)_setUndoManagerAPIEnabled:(BOOL)enabled

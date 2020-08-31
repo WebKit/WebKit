@@ -33,7 +33,6 @@
 #import "RemoteLayerTreeNode.h"
 #import "UIKitSPI.h"
 #import "WKDeferringGestureRecognizer.h"
-#import "WKDrawingView.h"
 #import <WebCore/Region.h>
 #import <WebCore/TransformationMatrix.h>
 #import <WebCore/WebCoreCALayerExtras.h>
@@ -422,21 +421,6 @@ static Class scrollViewScrollIndicatorClass()
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
 
     return NO;
-}
-
-@end
-
-@implementation WKEmbeddedView
-
-- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _embeddedViewID = embeddedViewID;
-
-    return self;
 }
 
 @end

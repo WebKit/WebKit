@@ -46,7 +46,6 @@
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
-#import "WKDrawingView.h"
 #import "WKEditCommand.h"
 #import "WKGeolocationProviderIOS.h"
 #import "WKPasswordView.h"
@@ -916,13 +915,6 @@ void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, 
 {
     [m_contentView _requestDOMPasteAccessWithElementRect:elementRect originIdentifier:originIdentifier completionHandler:WTFMove(completionHandler)];
 }
-
-#if HAVE(PENCILKIT)
-RetainPtr<WKDrawingView> PageClientImpl::createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID)
-{
-    return adoptNS([[WKDrawingView alloc] initWithEmbeddedViewID:embeddedViewID contentView:m_contentView.getAutoreleased()]);
-}
-#endif
 
 void PageClientImpl::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {

@@ -176,8 +176,6 @@ public:
     void setScrollingNodeID(ScrollingNodeID nodeID) override { m_scrollingNodeID = nodeID; }
 #endif
 
-    GraphicsLayer::EmbeddedViewID embeddedViewID() const override;
-
     TiledBacking* tiledBacking() override;
 
     Ref<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;

@@ -1330,10 +1330,6 @@ VideoQualityIncludesDisplayCompositingEnabled:
   defaultValue: false
   condition: ENABLE(VIDEO)
 
-EditableImagesEnabled:
-  type: bool
-  defaultValue: false
-
 ShouldDecidePolicyBeforeLoadingQuickLookPreview:
   defaultValue: false
   type: bool

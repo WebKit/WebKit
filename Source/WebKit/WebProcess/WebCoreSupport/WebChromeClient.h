@@ -184,10 +184,6 @@ private:
 
     Seconds eventThrottlingDelay() final;
 
-    void associateEditableImageWithAttachment(WebCore::GraphicsLayer::EmbeddedViewID, const String& attachmentID) final;
-    void didCreateEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
-    void didDestroyEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
-
     bool shouldUseMouseEventForSelection(const WebCore::PlatformMouseEvent&) final;
 
     bool showDataDetectorsUIForElement(const WebCore::Element&, const WebCore::Event&) final;

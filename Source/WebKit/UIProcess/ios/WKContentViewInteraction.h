@@ -102,7 +102,6 @@ class WebPageProxy;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
 @class WKDateTimeInputControl;
-@class WKDrawingCoordinator;
 @class WKFocusedFormControlView;
 @class WKFormInputSession;
 @class WKHighlightLongPressGestureRecognizer;
@@ -228,7 +227,6 @@ struct WKAutoCorrectionData {
     RetainPtr<UITapGestureRecognizer> _doubleTapGestureRecognizerForDoubleClick;
     RetainPtr<UITapGestureRecognizer> _twoFingerDoubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _twoFingerSingleTapGestureRecognizer;
-    RetainPtr<UITapGestureRecognizer> _stylusSingleTapGestureRecognizer;
     RetainPtr<WKInspectorNodeSearchGestureRecognizer> _inspectorNodeSearchGestureRecognizer;
 
     RetainPtr<WKTouchActionGestureRecognizer> _touchActionGestureRecognizer;
@@ -337,10 +335,6 @@ struct WKAutoCorrectionData {
 #if ENABLE(DATALIST_ELEMENT)
     RetainPtr<UIView <WKFormControl>> _dataListTextSuggestionsInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _dataListTextSuggestions;
-#endif
-
-#if HAVE(PENCILKIT)
-    RetainPtr<WKDrawingCoordinator> _drawingCoordinator;
 #endif
 
     BOOL _isEditable;
@@ -581,10 +575,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(DATALIST_ELEMENT)
 - (void)updateTextSuggestionsForInputDelegate;
-#endif
-
-#if HAVE(PENCILKIT)
-- (WKDrawingCoordinator *)_drawingCoordinator;
 #endif
 
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler;
