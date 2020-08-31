@@ -43,7 +43,8 @@
         },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],
-            "values": ["Document", "ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World"]
+            "values": ["Document", "ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World"],
+            "supportsConjunction": true
         },
         "CheckSecurity": {
             "contextsAllowed": ["interface"]
@@ -59,11 +60,13 @@
         },
         "Conditional": {
             "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function"],
-            "values": ["*"]
+            "values": ["*"],
+            "supportsConjunction": true
         },
         "ConditionallyReadWrite": {
             "contextsAllowed": ["attribute"],
-            "values": ["*"]
+            "values": ["*"],
+            "supportsConjunction": true
         },
         "ConstantsScope": {
             "contextsAllowed": ["interface"],
@@ -77,11 +80,13 @@
         },
         "ConstructorCallWith": {
             "contextsAllowed": ["interface"],
-            "values": ["Document", "ExecState", "RuntimeFlags", "ScriptExecutionContext"]
+            "values": ["Document", "ExecState", "RuntimeFlags", "ScriptExecutionContext"],
+            "supportsConjunction": true
         },
         "ConstructorEnabledBySetting": {
             "contextsAllowed": ["attribute", "interface"],
-            "values": ["*"]
+            "values": ["*"],
+            "supportsConjunction": true
         },
         "ConstructorMayThrowException": {
             "contextsAllowed": ["interface"]
@@ -154,7 +159,8 @@
         },
         "DOMJIT": {
             "contextsAllowed": ["interface", "attribute", "operation"],
-            "values": ["", "ReadDOM", "Getter"]
+            "values": ["", "ReadDOM", "Getter"],
+            "supportsConjunction": true
         },
         "DefaultDefineOwnProperty": {
             "contextsAllowed": ["interface"]
@@ -176,11 +182,13 @@
         },
         "EnabledAtRuntime": {
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "iterable"],
-            "values": ["*"]
+            "values": ["*"],
+            "supportsConjunction": true
         },
         "EnabledBySetting": {
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member"],
-            "values": ["*"]
+            "values": ["*"],
+            "supportsConjunction": true
         },
         "DisabledByQuirk": {
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
@@ -191,7 +199,8 @@
         },
         "EnabledForWorld": {
             "contextsAllowed": ["attribute", "operation"],
-            "values": ["*"]
+            "values": ["*"],
+            "supportsConjunction": true
         },
         "EnforceRange": {
             "contextsAllowed": ["type"],
@@ -409,7 +418,8 @@
         },
         "RuntimeConditionallyReadWrite": {
             "contextsAllowed": ["attribute"],
-            "values": ["*"]
+            "values": ["*"],
+            "supportsConjunction": true
         },
         "SameObject": {
             "contextsAllowed": ["attribute"],
@@ -426,7 +436,8 @@
         },
         "SetterCallWith": {
             "contextsAllowed": ["attribute"],
-            "values": ["ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow"]
+            "values": ["ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow"],
+            "supportsConjunction": true
         },
         "SkipCallbackInvokeCheck": {
             "contextsAllowed": ["operation", "callback-function"]

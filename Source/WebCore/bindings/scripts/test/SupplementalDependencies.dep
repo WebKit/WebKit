@@ -38,9 +38,10 @@ WebDOMTestDerivedDictionary2.h:
 JSTestDomainSecurity.h: 
 DOMTestDomainSecurity.h: 
 WebDOMTestDomainSecurity.h: 
-JSTestEnabledBySetting.h: 
-DOMTestEnabledBySetting.h: 
-WebDOMTestEnabledBySetting.h: 
+JSTestEnabledBySetting.h: TestEnabledBySettingSupplemental.idl
+DOMTestEnabledBySetting.h: TestEnabledBySettingSupplemental.idl
+WebDOMTestEnabledBySetting.h: TestEnabledBySettingSupplemental.idl
+TestEnabledBySettingSupplemental.idl:
 JSTestEnabledForContext.h: 
 DOMTestEnabledForContext.h: 
 WebDOMTestEnabledForContext.h: 

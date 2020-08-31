@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestEnabledBySetting {
-    [EnabledBySetting=TestSetting] attribute TestSubObjConstructor TestSubObjEnabledBySetting;
+// This IDL file is for testing the bindings code generator and for tracking
+// changes in its output.
 
-    // [EnabledBySetting] attributes and operations.
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] attribute DOMString enabledBySettingAttribute;
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] undefined enabledBySettingOperation(DOMString testParam);
-
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting&OtherTestSetting] attribute DOMString enabledByTwoSettingsAttribute;
+[
+    EnabledBySetting=TestSettingFromPartialInterface
+] partial interface TestEnabledBySetting {
+    [EnabledBySetting=TestSettingFromPartialInterfaceAttribute] attribute DOMString supplementalAttribute;
 };

@@ -1,3 +1,57 @@
+2020-08-30  Sam Weinig  <weinig@apple.com>
+
+        EnabledBySetting extended attributes on a partial interface do not get merged with EnabledBySetting extended attributes on properties of that partial interface
+        https://bugs.webkit.org/show_bug.cgi?id=215992
+
+        Reviewed by Darin Adler.
+
+        Add support for merging extended attributes that support conjunctions (like EnabledBySetting) when
+        they are used in both a partial wide context and on a member. This allows a case like:
+        
+            [
+                EnabledBySettings=FirstSetting
+            ] partial interface Foo {
+                [EnabledBySettings=SecondSetting] attribute DOMString bar;
+            };
+
+        to be identical to:
+        
+            partial interface Foo {
+                [EnabledBySettings=FirstSetting&SecondSetting] attribute DOMString bar;
+            };
+
+        * bindings/scripts/CodeGenerator.pm:
+        (MergeExtendedAttributesFromSupplemental):
+        Factor out and rework merging logic. Only allow adding extended attributes that are allowed for the context
+        they are being merge into to be merged, and only allow extended attributes declared in IDLAttributes.json as
+        supporting conjunctions to be merged.
+
+        (ProcessSupplementalDependencies):
+        Call MergeExtendedAttributesFromSupplemental for each type of member.
+
+        (ExtendedAttributeContains):
+        Fix variable name, since this is used for all extended attributes, not just callWith.
+
+        * bindings/scripts/IDLAttributes.json:
+        Add supportsConjunction keys for extended attributes that support the conjunction (&) syntax and semantics.
+
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySettingPrototype::finishCreation):
+        (WebCore::jsTestEnabledBySettingEnabledByTwoSettingsAttributeGetter):
+        (WebCore::jsTestEnabledBySettingEnabledByTwoSettingsAttribute):
+        (WebCore::setJSTestEnabledBySettingEnabledByTwoSettingsAttributeSetter):
+        (WebCore::setJSTestEnabledBySettingEnabledByTwoSettingsAttribute):
+        (WebCore::jsTestEnabledBySettingSupplementalAttributeGetter):
+        (WebCore::jsTestEnabledBySettingSupplementalAttribute):
+        (WebCore::setJSTestEnabledBySettingSupplementalAttributeSetter):
+        (WebCore::setJSTestEnabledBySettingSupplementalAttribute):
+        * bindings/scripts/test/JS/JSTestEnabledBySettingSupplemental.cpp: Added.
+        * bindings/scripts/test/JS/JSTestEnabledBySettingSupplemental.h: Added.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestEnabledBySetting.idl:
+        * bindings/scripts/test/TestEnabledBySettingSupplemental.idl: Added.
+        Add/update tests.
+
 2020-08-30  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r266333): Mousewheel scrolling no longer works on WinCairo

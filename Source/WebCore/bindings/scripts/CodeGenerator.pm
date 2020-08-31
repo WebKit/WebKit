@@ -247,6 +247,40 @@ sub ProcessDocument
     die "Processing document " . $useDocument->fileName . " did not generate anything"
 }
 
+sub MergeExtendedAttributesFromSupplemental
+{
+    my ($object, $supplemental, $property, $context) = @_;
+
+    foreach my $extendedAttributeName (keys %{$supplemental->extendedAttributes}) {
+        my $isAllowed = 0;
+        for my $contextAllowed (@{$idlAttributes->{$extendedAttributeName}->{"contextsAllowed"}}) {
+            if ($contextAllowed eq $context) {
+                $isAllowed = 1;
+                last;
+            }
+        }
+        next unless $isAllowed;
+
+        # FIXME: Tests currently depend on special case for Conditional overwriting non-operation cases, but this should
+        # be fixed. Ultimately, this will probably mean either removing support for disjunctions for Conditional,
+        # which is not used outside of the tests, or adding support for parentheses to disambiguate.
+        if ($extendedAttributeName eq "Conditional" && $context ne "operation") {
+            $property->extendedAttributes->{$extendedAttributeName} = $supplemental->extendedAttributes->{$extendedAttributeName};
+            next;
+        }
+
+        # Handle case that the attribute already has a extented attribute with this key.
+        if ($property->extendedAttributes->{$extendedAttributeName}) {
+            if (!$idlAttributes->{$extendedAttributeName}->{"supportsConjunction"}) {
+                die "Duplicate non-mergeable extended attribute ($extendedAttributeName) found when merging extended attributes for ${property->name}";
+            }
+            $property->extendedAttributes->{$extendedAttributeName} = $property->extendedAttributes->{$extendedAttributeName} . "&" . $supplemental->extendedAttributes->{$extendedAttributeName};
+        } else {
+            $property->extendedAttributes->{$extendedAttributeName} = $supplemental->extendedAttributes->{$extendedAttributeName};
+        }
+    }
+}
+
 sub ProcessSupplementalDependencies
 {
     my ($object, $targetDocument) = @_;
@@ -288,9 +322,8 @@ sub ProcessSupplementalDependencies
                 $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial && !$attribute->extendedAttributes->{Reflect};
 
                 # Add interface-wide extended attributes to each attribute.
-                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $attribute->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                }
+                $object->MergeExtendedAttributesFromSupplemental($interface, $attribute, "attribute");
+
                 push(@{$targetDataNode->attributes}, $attribute);
             }
 
@@ -300,15 +333,9 @@ sub ProcessSupplementalDependencies
 
                 # Record that this method is implemented by $interfaceName.
                 $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
-
-                # Add interface-wide extended attributes to each method.
-                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    if ($operation->extendedAttributes->{$extendedAttributeName} && $extendedAttributeName eq "Conditional") {
-                        $operation->extendedAttributes->{$extendedAttributeName} = $operation->extendedAttributes->{$extendedAttributeName} . '&' . $interface->extendedAttributes->{$extendedAttributeName};
-                    } else {
-                        $operation->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                    }
-                }
+    
+                # Add interface-wide extended attributes to each operation.
+                $object->MergeExtendedAttributesFromSupplemental($interface, $operation, "operation");
                 push(@{$targetDataNode->operations}, $operation);
             }
 
@@ -320,9 +347,8 @@ sub ProcessSupplementalDependencies
                 $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
                 # Add interface-wide extended attributes to each constant.
-                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $constant->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                }
+                $object->MergeExtendedAttributesFromSupplemental($interface, $constant, "constant");
+
                 push(@{$targetDataNode->constants}, $constant);
             }
         }
@@ -351,9 +377,8 @@ sub ProcessSupplementalDependencies
                 $member->extendedAttributes->{"ImplementedBy"} = $interfaceName;
 
                 # Add interface-wide extended attributes to each member.
-                foreach my $extendedAttributeName (keys %{$dictionary->extendedAttributes}) {
-                    $member->extendedAttributes->{$extendedAttributeName} = $dictionary->extendedAttributes->{$extendedAttributeName};
-                }
+                $object->MergeExtendedAttributesFromSupplemental($dictionary, $member, "dictionary-member");
+
                 push(@{$targetDataNode->members}, $member);
             }
         }
@@ -1313,12 +1338,12 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
 sub ExtendedAttributeContains
 {
     my $object = shift;
-    my $callWith = shift;
-    return 0 unless $callWith;
+    my $extendedAttribute = shift;
+    return 0 unless $extendedAttribute;
     my $keyword = shift;
 
-    my @callWithKeywords = split /\s*\&\s*/, $callWith;
-    return grep { $_ eq $keyword } @callWithKeywords;
+    my @extendedAttributeKeywords = split /\s*\&\s*/, $extendedAttribute;
+    return grep { $_ eq $keyword } @extendedAttributeKeywords;
 }
 
 # FIXME: This is backwards. We currently name the interface and the IDL files with the implementation name. We
