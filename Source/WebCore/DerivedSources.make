@@ -769,6 +769,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/StringCallback.idl \
     $(WebCore)/dom/Text.idl \
     $(WebCore)/dom/TextDecoder.idl \
+    $(WebCore)/dom/TextDecoderStream.idl \
+    $(WebCore)/dom/TextDecoderStreamDecoder.idl \
     $(WebCore)/dom/TextEncoder.idl \
     $(WebCore)/dom/TextEncoderStream.idl \
     $(WebCore)/dom/TextEncoderStreamEncoder.idl \
@@ -1782,6 +1784,7 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/streams/WritableStreamDefaultController.js \
     $(WebCore)/Modules/streams/WritableStreamDefaultWriter.js \
     $(WebCore)/Modules/streams/WritableStreamInternals.js \
+    $(WebCore)/dom/TextDecoderStream.js \
     $(WebCore)/dom/TextEncoderStream.js \
     $(WebCore)/bindings/js/JSDOMBindingInternals.js \
 #

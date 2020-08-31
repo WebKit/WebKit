@@ -951,8 +951,9 @@ http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html
 webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
 
 # Tests in this directory take > 30 minutes to run on debug bots.
-[ Debug ] imported/w3c/web-platform-tests/encoding
-[ Debug ] imported/w3c/web-platform-tests/encoding/streams [ Pass ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese
 
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]

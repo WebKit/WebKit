@@ -738,6 +738,9 @@ $(PROJECT_DIR)/dom/StaticRange.idl
 $(PROJECT_DIR)/dom/StringCallback.idl
 $(PROJECT_DIR)/dom/Text.idl
 $(PROJECT_DIR)/dom/TextDecoder.idl
+$(PROJECT_DIR)/dom/TextDecoderStream.idl
+$(PROJECT_DIR)/dom/TextDecoderStream.js
+$(PROJECT_DIR)/dom/TextDecoderStreamDecoder.idl
 $(PROJECT_DIR)/dom/TextEncoder.idl
 $(PROJECT_DIR)/dom/TextEncoderStream.idl
 $(PROJECT_DIR)/dom/TextEncoderStream.js

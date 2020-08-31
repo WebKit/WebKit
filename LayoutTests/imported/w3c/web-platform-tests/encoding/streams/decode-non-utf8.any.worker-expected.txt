@@ -1,12 +1,12 @@
 
-FAIL TextDecoderStream should be able to decode UTF-16BE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to decode invalid sequences in UTF-16BE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to reject invalid sequences in UTF-16BE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to decode UTF-16LE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to decode invalid sequences in UTF-16LE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to reject invalid sequences in UTF-16LE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to decode Shift_JIS promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to decode invalid sequences in Shift_JIS promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to reject invalid sequences in Shift_JIS promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL TextDecoderStream should be able to decode ISO-8859-14 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+PASS TextDecoderStream should be able to decode UTF-16BE 
+FAIL TextDecoderStream should be able to decode invalid sequences in UTF-16BE assert_equals: output should be replacement character expected "\ufffd" but got "�"
+FAIL TextDecoderStream should be able to reject invalid sequences in UTF-16BE assert_unreached: Should have rejected: readable should be errored Reached unreachable code
+PASS TextDecoderStream should be able to decode UTF-16LE 
+FAIL TextDecoderStream should be able to decode invalid sequences in UTF-16LE assert_equals: output should be replacement character expected "\ufffd" but got "�"
+FAIL TextDecoderStream should be able to reject invalid sequences in UTF-16LE assert_unreached: Should have rejected: readable should be errored Reached unreachable code
+PASS TextDecoderStream should be able to decode Shift_JIS 
+FAIL TextDecoderStream should be able to decode invalid sequences in Shift_JIS assert_equals: output should be replacement character expected "\ufffd" but got "\x1a"
+FAIL TextDecoderStream should be able to reject invalid sequences in Shift_JIS assert_unreached: Should have rejected: readable should be errored Reached unreachable code
+PASS TextDecoderStream should be able to decode ISO-8859-14 
 

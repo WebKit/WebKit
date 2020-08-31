@@ -7701,6 +7701,11 @@
 		41E9DCEA2319CAE800F35949 /* NetworkSendQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSendQueue.cpp; sourceTree = "<group>"; };
 		41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDatabaseResource.h; sourceTree = "<group>"; };
 		41F062130F5F192600A07EAC /* InspectorDatabaseResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDatabaseResource.cpp; sourceTree = "<group>"; };
+		41F0963424F90DEA0009FB93 /* TextDecoderStreamDecoder.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextDecoderStreamDecoder.idl; sourceTree = "<group>"; };
+		41F0963624F90DEB0009FB93 /* TextDecoderStream.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextDecoderStream.idl; sourceTree = "<group>"; };
+		41F0963724F90DEB0009FB93 /* TextDecoderStream.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = TextDecoderStream.js; sourceTree = "<group>"; };
+		41F0963824F90DEC0009FB93 /* TextDecoderStreamDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextDecoderStreamDecoder.h; sourceTree = "<group>"; };
+		41F0963924F90DEC0009FB93 /* TextDecoderStreamDecoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextDecoderStreamDecoder.cpp; sourceTree = "<group>"; };
 		41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCachedFrameData.h; sourceTree = "<group>"; };
 		41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCachedFrameData.cpp; sourceTree = "<group>"; };
 		41F2354422F5503300B4FCDB /* RTCDTMFSenderBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDTMFSenderBackend.h; sourceTree = "<group>"; };
@@ -29436,6 +29441,11 @@
 				5CE5D9A01DB897C300CE7A8D /* TextDecoder.cpp */,
 				5CE5D9A11DB897C300CE7A8D /* TextDecoder.h */,
 				5CE5D9A21DB897C300CE7A8D /* TextDecoder.idl */,
+				41F0963624F90DEB0009FB93 /* TextDecoderStream.idl */,
+				41F0963724F90DEB0009FB93 /* TextDecoderStream.js */,
+				41F0963924F90DEC0009FB93 /* TextDecoderStreamDecoder.cpp */,
+				41F0963824F90DEC0009FB93 /* TextDecoderStreamDecoder.h */,
+				41F0963424F90DEA0009FB93 /* TextDecoderStreamDecoder.idl */,
 				5CE5D9A31DB897C300CE7A8D /* TextEncoder.cpp */,
 				5CE5D9A41DB897C300CE7A8D /* TextEncoder.h */,
 				5CE5D9A51DB897C300CE7A8D /* TextEncoder.idl */,

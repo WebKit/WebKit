@@ -1,6 +1,6 @@
 
-FAIL write() should not complete until read relieves backpressure for TextDecoderStream promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new self[streamClass.name]()')"
-FAIL additional writes should wait for backpressure to be relieved for class TextDecoderStream promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new self[streamClass.name]()')"
+PASS write() should not complete until read relieves backpressure for TextDecoderStream 
+PASS additional writes should wait for backpressure to be relieved for class TextDecoderStream 
 PASS write() should not complete until read relieves backpressure for TextEncoderStream 
 PASS additional writes should wait for backpressure to be relieved for class TextEncoderStream 
 

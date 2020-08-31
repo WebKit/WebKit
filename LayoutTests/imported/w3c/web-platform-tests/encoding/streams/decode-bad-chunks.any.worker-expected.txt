@@ -1,7 +1,7 @@
 
-FAIL chunk of type undefined should error the stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL chunk of type null should error the stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL chunk of type numeric should error the stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL chunk of type object, not BufferSource should error the stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL chunk of type array should error the stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+PASS chunk of type undefined should error the stream 
+PASS chunk of type null should error the stream 
+PASS chunk of type numeric should error the stream 
+PASS chunk of type object, not BufferSource should error the stream 
+PASS chunk of type array should error the stream 
 

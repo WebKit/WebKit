@@ -818,6 +818,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/StringCallback.idl
     dom/Text.idl
     dom/TextDecoder.idl
+    dom/TextDecoderStream.idl
+    dom/TextDecoderStreamDecoder.idl
     dom/TextEncoder.idl
     dom/TextEncoderStream.idl
     dom/TextEncoderStreamEncoder.idl
@@ -1954,6 +1956,7 @@ set(WebCore_BUILTINS_SOURCES
     ${WEBCORE_DIR}/Modules/streams/WritableStreamDefaultController.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamDefaultWriter.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamInternals.js
+    ${WEBCORE_DIR}/dom/TextDecoderStream.js
     ${WEBCORE_DIR}/dom/TextEncoderStream.js
     ${WEBCORE_DIR}/bindings/js/JSDOMBindingInternals.js
 )

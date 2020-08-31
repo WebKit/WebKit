@@ -942,6 +942,7 @@ dom/TagCollection.cpp
 dom/TemplateContentDocumentFragment.cpp
 dom/Text.cpp
 dom/TextDecoder.cpp
+dom/TextDecoderStreamDecoder.cpp
 dom/TextEncoder.cpp
 dom/TextEncoderStreamEncoder.cpp
 dom/TextEvent.cpp
@@ -3488,6 +3489,8 @@ JSStyleSheetList.cpp
 JSSubtleCrypto.cpp
 JSText.cpp
 JSTextDecoder.cpp
+JSTextDecoderStream.cpp
+JSTextDecoderStreamDecoder.cpp
 JSTextEncoder.cpp
 JSTextEncoderStream.cpp
 JSTextEncoderStreamEncoder.cpp

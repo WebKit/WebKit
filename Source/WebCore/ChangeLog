@@ -1,3 +1,42 @@
+2020-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Add support for TextDecoderStream
+        https://bugs.webkit.org/show_bug.cgi?id=215919
+
+        Reviewed by Alex Christensen.
+
+        Implement TextEncoderStream as a JS built-in.
+        It is enabled by transform stream runtime flag.
+
+        TextDecoderStream takes a TransformStream and TextDecoderStreamEncoder as private slots.
+        Add TextDecoderStreamEncoder to implement the actual UTF-8 encoding steps, as a wrapper around TextDecoder.
+
+        Covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/TextDecoderStream.idl: Added.
+        * dom/TextDecoderStream.js: Added.
+        (initializeTextDecoderStream):
+        (getter.encoding):
+        (getter.fatal):
+        (getter.ignoreBOM):
+        (getter.readable):
+        (getter.writable):
+        * dom/TextDecoderStreamDecoder.cpp: Added.
+        (WebCore::TextDecoderStreamDecoder::create):
+        (WebCore::TextDecoderStreamDecoder::TextDecoderStreamDecoder):
+        (WebCore::TextDecoderStreamDecoder::decode):
+        (WebCore::TextDecoderStreamDecoder::flush):
+        * dom/TextDecoderStreamDecoder.h: Added.
+        (WebCore::TextDecoderStreamDecoder::encoding const):
+        * dom/TextDecoderStreamDecoder.idl: Added.
+
 2020-08-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make StyleRareNonInheritedData::mask and StyleBackgroundData::background DataRefs

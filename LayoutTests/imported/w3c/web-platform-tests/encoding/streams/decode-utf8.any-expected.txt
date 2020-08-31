@@ -1,12 +1,12 @@
 
-FAIL decoding one UTF-8 chunk should give one output string - ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL decoding an empty chunk should give no output chunks - ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL an initial empty chunk should be ignored - ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL a trailing empty chunk should be ignored- ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL decoding one UTF-8 chunk should give one output string - SharedArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL decoding an empty chunk should give no output chunks - SharedArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL an initial empty chunk should be ignored - SharedArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL a trailing empty chunk should be ignored- SharedArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL decoding a transferred Uint8Array chunk should give no output promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL decoding a transferred ArrayBuffer chunk should give no output promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+PASS decoding one UTF-8 chunk should give one output string - ArrayBuffer 
+PASS decoding an empty chunk should give no output chunks - ArrayBuffer 
+PASS an initial empty chunk should be ignored - ArrayBuffer 
+PASS a trailing empty chunk should be ignored- ArrayBuffer 
+PASS decoding one UTF-8 chunk should give one output string - SharedArrayBuffer 
+PASS decoding an empty chunk should give no output chunks - SharedArrayBuffer 
+PASS an initial empty chunk should be ignored - SharedArrayBuffer 
+PASS a trailing empty chunk should be ignored- SharedArrayBuffer 
+PASS decoding a transferred Uint8Array chunk should give no output 
+PASS decoding a transferred ArrayBuffer chunk should give no output 
 

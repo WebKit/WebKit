@@ -1,44 +1,30 @@
 
-FAIL encoding attribute should have correct value for 'unicode-1-1-utf-8' Can't find variable: TextDecoderStream
-FAIL encoding attribute should have correct value for 'iso-8859-2' Can't find variable: TextDecoderStream
-FAIL encoding attribute should have correct value for 'ascii' Can't find variable: TextDecoderStream
-FAIL encoding attribute should have correct value for 'utf-16' Can't find variable: TextDecoderStream
-FAIL setting fatal to 'false' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to 'false' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting fatal to '0' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to '0' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting fatal to '' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to '' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting fatal to 'undefined' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to 'undefined' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting fatal to 'null' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to 'null' should set the attribute to false Can't find variable: TextDecoderStream
-FAIL setting fatal to 'true' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to 'true' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting fatal to '1' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to '1' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting fatal to '[object Object]' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to '[object Object]' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting fatal to '' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to '' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting fatal to 'yes' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL setting ignoreBOM to 'yes' should set the attribute to true Can't find variable: TextDecoderStream
-FAIL constructing with an invalid encoding should throw assert_throws_js: the constructor should throw function "() => new TextDecoderStream('')" threw object "ReferenceError: Can't find variable: TextDecoderStream" ("ReferenceError") expected instance of function "function RangeError() {
-    [native code]
-}" ("RangeError")
-FAIL constructing with a non-stringifiable encoding should throw assert_throws_js: the constructor should throw function "() => new TextDecoderStream({
-    toString() { return {}; }
-  })" threw object "ReferenceError: Can't find variable: TextDecoderStream" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL a throwing fatal member should cause the constructor to throw assert_throws_js: the constructor should throw function "() => new TextDecoderStream('utf-8', {
-                     get fatal() { throw new Error(); }
-                   })" threw object "ReferenceError: Can't find variable: TextDecoderStream" ("ReferenceError") expected instance of function "function Error() {
-    [native code]
-}" ("Error")
-FAIL a throwing ignoreBOM member should cause the constructor to throw assert_throws_js: the constructor should throw function "() => new TextDecoderStream('utf-8', {
-                     get ignoreBOM() { throw new Error(); }
-                   })" threw object "ReferenceError: Can't find variable: TextDecoderStream" ("ReferenceError") expected instance of function "function Error() {
-    [native code]
-}" ("Error")
+FAIL encoding attribute should have correct value for 'unicode-1-1-utf-8' assert_equals: encoding should match expected (string) "utf-8" but got (undefined) undefined
+FAIL encoding attribute should have correct value for 'iso-8859-2' assert_equals: encoding should match expected (string) "iso-8859-2" but got (undefined) undefined
+FAIL encoding attribute should have correct value for 'ascii' assert_equals: encoding should match expected (string) "windows-1252" but got (undefined) undefined
+FAIL encoding attribute should have correct value for 'utf-16' assert_equals: encoding should match expected (string) "utf-16le" but got (undefined) undefined
+PASS setting fatal to 'false' should set the attribute to false 
+PASS setting ignoreBOM to 'false' should set the attribute to false 
+PASS setting fatal to '0' should set the attribute to false 
+PASS setting ignoreBOM to '0' should set the attribute to false 
+PASS setting fatal to '' should set the attribute to false 
+PASS setting ignoreBOM to '' should set the attribute to false 
+PASS setting fatal to 'undefined' should set the attribute to false 
+PASS setting ignoreBOM to 'undefined' should set the attribute to false 
+PASS setting fatal to 'null' should set the attribute to false 
+PASS setting ignoreBOM to 'null' should set the attribute to false 
+PASS setting fatal to 'true' should set the attribute to true 
+PASS setting ignoreBOM to 'true' should set the attribute to true 
+PASS setting fatal to '1' should set the attribute to true 
+PASS setting ignoreBOM to '1' should set the attribute to true 
+PASS setting fatal to '[object Object]' should set the attribute to true 
+PASS setting ignoreBOM to '[object Object]' should set the attribute to true 
+PASS setting fatal to '' should set the attribute to true 
+PASS setting ignoreBOM to '' should set the attribute to true 
+PASS setting fatal to 'yes' should set the attribute to true 
+PASS setting ignoreBOM to 'yes' should set the attribute to true 
+PASS constructing with an invalid encoding should throw 
+PASS constructing with a non-stringifiable encoding should throw 
+PASS a throwing fatal member should cause the constructor to throw 
+PASS a throwing ignoreBOM member should cause the constructor to throw 
 

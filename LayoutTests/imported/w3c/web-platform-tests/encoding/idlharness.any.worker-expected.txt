@@ -40,17 +40,17 @@ PASS TextEncoder interface: calling encode(optional USVString) on new TextEncode
 FAIL TextEncoder interface: new TextEncoder() must inherit property "encodeInto(USVString, Uint8Array)" with the proper type assert_inherits: property "encodeInto" not found in prototype chain
 FAIL TextEncoder interface: calling encodeInto(USVString, Uint8Array) on new TextEncoder() with too few arguments must throw TypeError assert_inherits: property "encodeInto" not found in prototype chain
 PASS TextEncoder interface: new TextEncoder() must inherit property "encoding" with the proper type 
-FAIL TextDecoderStream interface: existence and properties of interface object assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface object length assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface object name assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface: attribute encoding assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface: attribute fatal assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface: attribute ignoreBOM assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface: attribute readable assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
-FAIL TextDecoderStream interface: attribute writable assert_own_property: self does not have own property "TextDecoderStream" expected property "TextDecoderStream" missing
+PASS TextDecoderStream interface: existence and properties of interface object 
+PASS TextDecoderStream interface object length 
+PASS TextDecoderStream interface object name 
+PASS TextDecoderStream interface: existence and properties of interface prototype object 
+PASS TextDecoderStream interface: existence and properties of interface prototype object's "constructor" property 
+PASS TextDecoderStream interface: existence and properties of interface prototype object's @@unscopables property 
+PASS TextDecoderStream interface: attribute encoding 
+PASS TextDecoderStream interface: attribute fatal 
+PASS TextDecoderStream interface: attribute ignoreBOM 
+PASS TextDecoderStream interface: attribute readable 
+PASS TextDecoderStream interface: attribute writable 
 PASS TextEncoderStream interface: existence and properties of interface object 
 PASS TextEncoderStream interface object length 
 PASS TextEncoderStream interface object name 

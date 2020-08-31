@@ -236,6 +236,8 @@ namespace WebCore {
     macro(StereoPannerNode) \
     macro(StylePropertyMapReadOnly) \
     macro(StylePropertyMap) \
+    macro(TextDecoderStream) \
+    macro(TextDecoderStreamDecoder) \
     macro(TextEncoderStream) \
     macro(TextEncoderStreamEncoder) \
     macro(TextTrackCue) \
@@ -314,11 +316,14 @@ namespace WebCore {
     macro(createImageBitmap) \
     macro(createReadableStream) \
     macro(customElements) \
+    macro(decode) \
     macro(disturbed) \
     macro(document) \
     macro(encode) \
+    macro(encoding) \
     macro(errorSteps) \
     macro(failureKind) \
+    macro(fatal) \
     macro(fetch) \
     macro(fetchRequest) \
     macro(fillFromJS) \
@@ -333,6 +338,7 @@ namespace WebCore {
     macro(header) \
     macro(highWaterMark) \
     macro(href) \
+    macro(ignoreBOM) \
     macro(inFlightCloseRequest) \
     macro(inFlightWriteRequest) \
     macro(indexedDB) \
@@ -417,6 +423,8 @@ namespace WebCore {
     macro(structuredCloneArrayBufferView) \
     macro(timeline) \
     macro(top) \
+    macro(textDecoderStreamDecoder) \
+    macro(textDecoderStreamTransform) \
     macro(textEncoderStreamEncoder) \
     macro(textEncoderStreamTransform) \
     macro(transformAlgorithm) \

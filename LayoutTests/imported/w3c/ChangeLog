@@ -1,3 +1,32 @@
+2020-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Add support for TextDecoderStream
+        https://bugs.webkit.org/show_bug.cgi?id=215919
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/encoding/streams/backpressure.any-expected.txt:
+        * web-platform-tests/encoding/streams/backpressure.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/decode-attributes.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-attributes.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/decode-bad-chunks.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-bad-chunks.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/decode-ignore-bom.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-ignore-bom.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/decode-incomplete-input.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-incomplete-input.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/decode-non-utf8.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-non-utf8.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/decode-split-character.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-split-character.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/decode-utf8.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-utf8.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/encode-bad-chunks.any-expected.txt:
+        * web-platform-tests/encoding/streams/encode-bad-chunks.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/readable-writable-properties.any-expected.txt:
+        * web-platform-tests/encoding/streams/readable-writable-properties.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/realms.window-expected.txt:
+
 2020-08-30  Youenn Fablet  <youenn@apple.com>
 
         Add support for TextEncoderStream

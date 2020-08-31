@@ -1,4 +1,4 @@
 
-FAIL incomplete input with error mode "replacement" should end with a replacement character promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
-FAIL incomplete input with error mode "fatal" should error the stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+PASS incomplete input with error mode "replacement" should end with a replacement character 
+PASS incomplete input with error mode "fatal" should error the stream 
 
