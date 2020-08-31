@@ -31,6 +31,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
+#include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/CString.h>
 
@@ -71,7 +72,9 @@ RefPtr<BUrlRequestWrapper> BUrlRequestWrapper::create(BUrlProtocolHandler* handl
 BUrlRequestWrapper::BUrlRequestWrapper(BUrlProtocolHandler* handler, NetworkStorageSession* storageSession, ResourceRequest& request)
     : BUrlProtocolAsynchronousListener(true)
     , m_handler(handler)
+    , m_receiveMutex()
 {
+    ASSERT(isMainThread());
     ASSERT(m_handler);
     ASSERT(storageSession);
 
@@ -81,6 +84,7 @@ BUrlRequestWrapper::BUrlRequestWrapper(BUrlProtocolHandler* handler, NetworkStor
         return;
 
     m_request->SetListener(SynchronousListener());
+    m_request->SetOutput(this);
 
     BHttpRequest* httpRequest = dynamic_cast<BHttpRequest*>(m_request);
     if (httpRequest) {
@@ -103,7 +107,16 @@ BUrlRequestWrapper::BUrlRequestWrapper(BUrlProtocolHandler* handler, NetworkStor
         return;
     }
 
+    // Keep self alive while BUrlRequest is running as we hold
+    // the main dispatcher.
+    ref();
+
+    // Block the receiving thread until headers are parsed.
+    m_receiveMutex.lock();
+
     if (m_request->Run() < B_OK) {
+        deref();
+
         ResourceError error("BUrlProtocol", 42,
             request.url(),
             "The service kit failed to start the request.");
@@ -111,10 +124,6 @@ BUrlRequestWrapper::BUrlRequestWrapper(BUrlProtocolHandler* handler, NetworkStor
 
         return;
     }
-
-    // Keep self alive while BUrlRequest is running as we hold
-    // the main dispatcher.
-    ref();
 }
 
 BUrlRequestWrapper::~BUrlRequestWrapper()
@@ -125,16 +134,35 @@ BUrlRequestWrapper::~BUrlRequestWrapper()
 
 void BUrlRequestWrapper::abort()
 {
+    ASSERT(isMainThread());
+
+    {
+        // Lock if we have already unblocked the receive thread to
+        // synchronize cancellation status.
+        auto locker = holdLockIf(m_receiveMutex, m_didUnblockReceive);
+
+        m_handler = nullptr;
+    }
+
+    // If the receive thread is still blocked, unblock it so that it
+    // become aware of the state change.
+    if (!m_didUnblockReceive) {
+        m_didUnblockReceive = true;
+        m_receiveMutex.unlock();
+    }
+
     if (m_request)
         m_request->Stop();
-
-    m_handler = nullptr;
 }
 
-void BUrlRequestWrapper::HeadersReceived(BUrlRequest* caller, const BUrlResult& result)
+void BUrlRequestWrapper::HeadersReceived(BUrlRequest* caller)
 {
+    ASSERT(isMainThread());
+
     if (!m_handler)
         return;
+
+    const BUrlResult& result = caller->Result();
 
     ResourceResponse response(URL(caller->Url()),
         extractMIMETypeFromMediaType(result.ContentType()), result.Length(),
@@ -169,22 +197,18 @@ void BUrlRequestWrapper::HeadersReceived(BUrlRequest* caller, const BUrlResult& 
 
     ResourceResponse responseCopy = response;
     m_handler->didReceiveResponse(WTFMove(responseCopy));
-}
 
-void BUrlRequestWrapper::DataReceived(BUrlRequest*, const char* data,
-    off_t, ssize_t size)
-{
-    if (!m_handler)
-        return;
-
-    if (size > 0) {
-        m_didReceiveData = true;
-        m_handler->didReceiveData(data, size);
+    // Unblock receive thread
+    if (!m_didUnblockReceive) {
+        m_didUnblockReceive = true;
+        m_receiveMutex.unlock();
     }
 }
 
 void BUrlRequestWrapper::UploadProgress(BUrlRequest*, ssize_t bytesSent, ssize_t bytesTotal)
 {
+    ASSERT(isMainThread());
+
     if (!m_handler)
         return;
 
@@ -193,6 +217,8 @@ void BUrlRequestWrapper::UploadProgress(BUrlRequest*, ssize_t bytesSent, ssize_t
 
 void BUrlRequestWrapper::RequestCompleted(BUrlRequest* caller, bool success)
 {
+    ASSERT(isMainThread());
+
     // We held a pointer to keep the main dispatcher alive for the duration
     // of the request run.
     //
@@ -230,10 +256,33 @@ void BUrlRequestWrapper::RequestCompleted(BUrlRequest* caller, bool success)
 bool BUrlRequestWrapper::CertificateVerificationFailed(BUrlRequest*,
     BCertificate& certificate, const char* message)
 {
+    ASSERT(isMainThread());
+
     if (!m_handler)
         return false;
 
     return m_handler->didReceiveInvalidCertificate(certificate, message);
+}
+
+ssize_t BUrlRequestWrapper::Write(const void* data, size_t size)
+{
+    auto locker = holdLock(m_receiveMutex);
+
+    if (!m_handler)
+        return size;
+
+    if (size > 0) {
+        m_didReceiveData = true;
+
+        auto buffer = SharedBuffer::create(reinterpret_cast<const char*>(data), size);
+
+        callOnMainThread([this, protectedThis = makeRef(*this), buffer = WTFMove(buffer)]() mutable {
+            if (m_handler)
+                m_handler->didReceiveBuffer(WTFMove(buffer));
+        });
+    }
+
+    return size;
 }
 
 BUrlProtocolHandler::BUrlProtocolHandler(ResourceHandle* handle)
@@ -256,6 +305,8 @@ BUrlProtocolHandler::~BUrlProtocolHandler()
 
 void BUrlProtocolHandler::abort()
 {
+    ASSERT(isMainThread());
+
     if (m_request)
         m_request->abort();
 
@@ -264,6 +315,8 @@ void BUrlProtocolHandler::abort()
 
 void BUrlProtocolHandler::didFail(const ResourceError& error)
 {
+    ASSERT(isMainThread());
+
     ResourceHandleClient* client = m_resourceHandle->client();
     if (!client)
         return;
@@ -273,6 +326,8 @@ void BUrlProtocolHandler::didFail(const ResourceError& error)
 
 void BUrlProtocolHandler::willSendRequest(const ResourceResponse& response)
 {
+    ASSERT(isMainThread());
+
     if (!m_resourceHandle)
         return;
 
@@ -317,6 +372,8 @@ void BUrlProtocolHandler::willSendRequest(const ResourceResponse& response)
 
 void BUrlProtocolHandler::continueAfterWillSendRequest(ResourceRequest&& request)
 {
+    ASSERT(isMainThread());
+
     // willSendRequestAsync might cancel the request
     if (!m_resourceHandle->client() || request.isNull())
         return;
@@ -327,6 +384,8 @@ void BUrlProtocolHandler::continueAfterWillSendRequest(ResourceRequest&& request
 
 bool BUrlProtocolHandler::didReceiveAuthenticationChallenge(const ResourceResponse& response)
 {
+    ASSERT(isMainThread());
+
     if (!m_resourceHandle || !m_resourceHandle->client())
         return false;
 
@@ -397,6 +456,8 @@ bool BUrlProtocolHandler::didReceiveAuthenticationChallenge(const ResourceRespon
 
 void BUrlProtocolHandler::didReceiveResponse(ResourceResponse&& response)
 {
+    ASSERT(isMainThread());
+
     if (!m_resourceHandle)
         return;
 
@@ -409,16 +470,20 @@ void BUrlProtocolHandler::didReceiveResponse(ResourceResponse&& response)
     });
 }
 
-void BUrlProtocolHandler::didReceiveData(const char* data, size_t size)
+void BUrlProtocolHandler::didReceiveBuffer(Ref<SharedBuffer>&& buffer)
 {
+    ASSERT(isMainThread());
+
     if (!m_resourceHandle || !m_resourceHandle->client())
         return;
 
-    m_resourceHandle->client()->didReceiveData(m_resourceHandle, data, size, size);
+    m_resourceHandle->client()->didReceiveBuffer(m_resourceHandle, WTFMove(buffer), buffer->size());
 }
 
 void BUrlProtocolHandler::didSendData(ssize_t bytesSent, ssize_t bytesTotal)
 {
+    ASSERT(isMainThread());
+
     if (!m_resourceHandle || !m_resourceHandle->client())
         return;
 
@@ -427,6 +492,8 @@ void BUrlProtocolHandler::didSendData(ssize_t bytesSent, ssize_t bytesTotal)
 
 void BUrlProtocolHandler::didFinishLoading()
 {
+    ASSERT(isMainThread());
+
     if (!m_resourceHandle || !m_resourceHandle->client())
         return;
 
@@ -435,6 +502,8 @@ void BUrlProtocolHandler::didFinishLoading()
 
 bool BUrlProtocolHandler::didReceiveInvalidCertificate(BCertificate& certificate, const char* message)
 {
+    ASSERT(isMainThread());
+
     if (!m_resourceHandle)
         return false;
 

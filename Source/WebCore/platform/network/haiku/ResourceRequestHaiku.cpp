@@ -34,7 +34,7 @@ namespace WebCore {
 
 BUrlRequest* ResourceRequest::toNetworkRequest(BUrlContext* context)
 {
-    BUrlRequest* request = BUrlProtocolRoster::MakeRequest(url());
+    BUrlRequest* request = BUrlProtocolRoster::MakeRequest(url(), nullptr);
 
     if (!request) {
         m_url = WTF::aboutBlankURL(); // This tells the ResourceLoader we failed.

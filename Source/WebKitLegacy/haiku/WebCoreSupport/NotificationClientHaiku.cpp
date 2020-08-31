@@ -10,28 +10,6 @@
 
 namespace WebCore {
 
-class NotificationClientHaiku::SynchronousListener
-    : public BUrlSynchronousRequest
-{
-    public:
-        SynchronousListener(BUrlRequest& request)
-            : BUrlSynchronousRequest(request)
-        {}
-        virtual	~SynchronousListener() {};
-        void	DataReceived(BUrlRequest*, const char* data, off_t position,
-                ssize_t size) override {
-            result.WriteAt(position, data, size);
-        }
-
-        const BUrlResult&  Result() const override
-            { return fWrappedRequest.Result(); }
-        status_t    _ProtocolLoop() override
-            { return B_ERROR; }
-
-        BMallocIO result;
-};
-
-
 BNotification
 NotificationClientHaiku::fromDescriptor(Notification* descriptor)
 {
@@ -48,13 +26,15 @@ NotificationClientHaiku::fromDescriptor(Notification* descriptor)
     // TODO we should cache the data, in case the notification is re-sent
     // with some changes for an update.
     BUrl iconURL(descriptor->icon());
-    BUrlRequest* request = BUrlProtocolRoster::MakeRequest(iconURL);
+    BMallocIO buffer;
+    BUrlRequest* request = BUrlProtocolRoster::MakeRequest(iconURL, &buffer);
     if (request) {
-        SynchronousListener synchronous(*request);
-        synchronous.Perform();
-        synchronous.WaitUntilCompletion();
+        thread_id thread = request->Run();
+        status_t dummy;
+        if (thread > B_OK)
+            wait_for_thread(thread, &dummy);
 
-        BBitmap* bitmap = BTranslationUtils::GetBitmap(&synchronous.result);
+        BBitmap* bitmap = BTranslationUtils::GetBitmap(&buffer);
         if (bitmap) {
             notification.SetIcon(bitmap);
             delete bitmap;
