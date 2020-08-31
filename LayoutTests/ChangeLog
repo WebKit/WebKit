@@ -1,5 +1,14 @@
 2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ macOS ] Tests expectations changed as test passing but expected to fail
+        https://bugs.webkit.org/show_bug.cgi?id=215786
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: correction
+
+2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ Mac wk2 ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html
         rdar://problem/66492801
 
