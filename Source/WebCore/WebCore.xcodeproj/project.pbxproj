@@ -5086,6 +5086,11 @@
 		E59DD4B821098287003C8B47 /* ListButtonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E59DD4B721098285003C8B47 /* ListButtonArrow.png */; };
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E5C59A9A24D0E1AA003B86E1 /* DateTimeChooserParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E5C59A9924D0E1AA003B86E1 /* DateTimeChooserParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E5F06AE724D4847B00BBC4F8 /* DateTimeFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E5F06AE524D4847B00BBC4F8 /* DateTimeFieldElement.h */; };
+		E5F06AEB24D49BF700BBC4F8 /* DateTimeNumericFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E5F06AE924D49BF700BBC4F8 /* DateTimeNumericFieldElement.h */; };
+		E5F06AEF24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E5F06AED24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h */; };
+		E5F06AF324D4AAE400BBC4F8 /* DateTimeFieldElements.h in Headers */ = {isa = PBXBuildFile; fileRef = E5F06AF124D4AAE400BBC4F8 /* DateTimeFieldElements.h */; };
+		E5F06AF724D4BB5600BBC4F8 /* DateTimeEditElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E5F06AF524D4BB5600BBC4F8 /* DateTimeEditElement.h */; };
 		E71467B324ABAEF200FB2F50 /* AudioNodeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */; };
 		E71467B624ABAF1D00FB2F50 /* PannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B524ABAF1D00FB2F50 /* PannerOptions.h */; };
 		E755E89224C7434B009F7C23 /* PeriodicWaveConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = E755E88F24C7434B009F7C23 /* PeriodicWaveConstraints.h */; };
@@ -15960,6 +15965,16 @@
 		E59DD4B721098285003C8B47 /* ListButtonArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ListButtonArrow.png; sourceTree = "<group>"; };
 		E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthFunctions.h; sourceTree = "<group>"; };
 		E5C59A9924D0E1AA003B86E1 /* DateTimeChooserParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeChooserParameters.h; sourceTree = "<group>"; };
+		E5F06AE524D4847B00BBC4F8 /* DateTimeFieldElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateTimeFieldElement.h; sourceTree = "<group>"; };
+		E5F06AE624D4847B00BBC4F8 /* DateTimeFieldElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFieldElement.cpp; sourceTree = "<group>"; };
+		E5F06AE924D49BF700BBC4F8 /* DateTimeNumericFieldElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateTimeNumericFieldElement.h; sourceTree = "<group>"; };
+		E5F06AEA24D49BF700BBC4F8 /* DateTimeNumericFieldElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeNumericFieldElement.cpp; sourceTree = "<group>"; };
+		E5F06AED24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateTimeSymbolicFieldElement.h; sourceTree = "<group>"; };
+		E5F06AEE24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeSymbolicFieldElement.cpp; sourceTree = "<group>"; };
+		E5F06AF124D4AAE400BBC4F8 /* DateTimeFieldElements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateTimeFieldElements.h; sourceTree = "<group>"; };
+		E5F06AF224D4AAE400BBC4F8 /* DateTimeFieldElements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFieldElements.cpp; sourceTree = "<group>"; };
+		E5F06AF524D4BB5600BBC4F8 /* DateTimeEditElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateTimeEditElement.h; sourceTree = "<group>"; };
+		E5F06AF624D4BB5600BBC4F8 /* DateTimeEditElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeEditElement.cpp; sourceTree = "<group>"; };
 		E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioNodeOptions.h; sourceTree = "<group>"; };
 		E71467B424ABAF0B00FB2F50 /* AudioNodeOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioNodeOptions.idl; sourceTree = "<group>"; };
 		E71467B524ABAF1D00FB2F50 /* PannerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PannerOptions.h; sourceTree = "<group>"; };
@@ -18710,6 +18725,16 @@
 				7C1E97251A9F9834007BF0FB /* AutoFillButtonElement.cpp */,
 				7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */,
 				E58B45B820AD07DD00991025 /* DataListButtonElement.h */,
+				E5F06AF624D4BB5600BBC4F8 /* DateTimeEditElement.cpp */,
+				E5F06AF524D4BB5600BBC4F8 /* DateTimeEditElement.h */,
+				E5F06AE624D4847B00BBC4F8 /* DateTimeFieldElement.cpp */,
+				E5F06AE524D4847B00BBC4F8 /* DateTimeFieldElement.h */,
+				E5F06AF224D4AAE400BBC4F8 /* DateTimeFieldElements.cpp */,
+				E5F06AF124D4AAE400BBC4F8 /* DateTimeFieldElements.h */,
+				E5F06AEA24D49BF700BBC4F8 /* DateTimeNumericFieldElement.cpp */,
+				E5F06AE924D49BF700BBC4F8 /* DateTimeNumericFieldElement.h */,
+				E5F06AEE24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.cpp */,
+				E5F06AED24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h */,
 				A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */,
 				A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */,
 				510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */,
@@ -30816,8 +30841,13 @@
 				37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */,
 				37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */,
 				E5C59A9A24D0E1AA003B86E1 /* DateTimeChooserParameters.h in Headers */,
+				E5F06AF724D4BB5600BBC4F8 /* DateTimeEditElement.h in Headers */,
+				E5F06AE724D4847B00BBC4F8 /* DateTimeFieldElement.h in Headers */,
+				E5F06AF324D4AAE400BBC4F8 /* DateTimeFieldElements.h in Headers */,
 				453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */,
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
+				E5F06AEB24D49BF700BBC4F8 /* DateTimeNumericFieldElement.h in Headers */,
+				E5F06AEF24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h in Headers */,
 				0F6A12BE1A00923700C6DE72 /* DebugPageOverlays.h in Headers */,
 				45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */,
 				715AD7202050513200D592DC /* DeclarativeAnimation.h in Headers */,

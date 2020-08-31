@@ -87,6 +87,15 @@ void WeekInputType::handleDOMActivateEvent(Event&)
 {
 }
 
+bool WeekInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
+{
+    return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasWeek });
+}
+
+void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
+{
+}
+
 } // namespace WebCore
 
 #endif

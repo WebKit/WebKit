@@ -1315,6 +1315,11 @@ html/parser/XSSAuditorDelegate.cpp
 html/shadow/AutoFillButtonElement.cpp
 html/shadow/DataListButtonElement.cpp
 html/shadow/DetailsMarkerControl.cpp
+html/shadow/DateTimeEditElement.cpp
+html/shadow/DateTimeFieldElement.cpp
+html/shadow/DateTimeFieldElements.cpp
+html/shadow/DateTimeNumericFieldElement.cpp
+html/shadow/DateTimeSymbolicFieldElement.cpp
 html/shadow/MediaControlTextTrackContainerElement.cpp
 html/shadow/ProgressShadowElement.cpp
 html/shadow/SliderThumbElement.cpp

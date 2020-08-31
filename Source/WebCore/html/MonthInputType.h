@@ -52,6 +52,9 @@ private:
     Optional<DateComponents> setMillisecondToDateComponents(double) const override;
     bool isMonthField() const override;
     void handleDOMActivateEvent(Event&) override;
+
+    bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
+    void setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const final;
 };
 
 } // namespace WebCore

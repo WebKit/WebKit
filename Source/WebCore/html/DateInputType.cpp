@@ -36,6 +36,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
+#include "PlatformLocale.h"
 #include "StepRange.h"
 
 namespace WebCore {
@@ -85,6 +86,17 @@ Optional<DateComponents> DateInputType::setMillisecondToDateComponents(double va
 bool DateInputType::isDateField() const
 {
     return true;
+}
+
+bool DateInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
+{
+    return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay });
+}
+
+void DateInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters) const
+{
+    layoutParameters.dateTimeFormat = layoutParameters.locale.dateFormat();
+    layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd"_s;
 }
 
 } // namespace WebCore

@@ -1,3 +1,135 @@
+2020-08-31  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Date inputs should contain editable components
+        https://bugs.webkit.org/show_bug.cgi?id=215155
+
+        Reviewed by Devin Rousso.
+
+        Currently, users are unable to edit the values in date and time input types.
+        To match system date controls, users should be able to select and edit
+        individual components of the input. For example, <input type="date"> should
+        contain an editable year, month, and day control.
+
+        Note that this functionality was present in WebKit, up until it was removed
+        in r150876. Previously known as "INPUT_MULTIPLE_FIELDS_UI", the feature was
+        removed as it was only used by Chromium port. However, much of the removed
+        logic remains useful and is resurfaced in this patch. Modifications were made
+        to update the code to follow current WebKit practices.
+
+        DateTimeEditElement is a wrapper element that contains individual fields.
+        The fields are all DateTimeFieldElements. Note that DateTimeFieldElements
+        are further specialized into DateTimeNumericFieldElement (for integral
+        values) and DateTimeSymbolicFieldElement (for symbolic values such as A.M
+        and P.M). DateTimeEditElement builds the control using the visitor pattern
+        and existing parsing logic contained in DateTimeFormat.
+
+        In order to reduce the patch size, this patch only sets up the rendering
+        and layout of multiple fields for <input type="date">. Upcoming patches will
+        add rendering for other date/time input types and introduce editability.
+
+        Test: fast/forms/date/date-pseudo-elements.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/html.css:
+        (input::-webkit-datetime-edit):
+        (input::-webkit-datetime-edit-fields-wrapper):
+        (input::-webkit-datetime-edit-year-field,):
+        (input::-webkit-datetime-edit-year-field:focus,):
+        (input::-webkit-datetime-edit-text):
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::DateTimeFormatValidator::visitField):
+        (WebCore::DateTimeFormatValidator::validateFormat):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::createShadowSubtree):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::destroyShadowSubtree):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::valueForEditControl const):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::localeIdentifier const):
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        * html/BaseDateAndTimeInputType.h:
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::isValidFormat const):
+        (WebCore::DateInputType::setupLayoutParameters const):
+        * html/DateInputType.h:
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::isValidFormat const):
+        (WebCore::DateTimeLocalInputType::setupLayoutParameters const):
+        * html/DateTimeLocalInputType.h:
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::isValidFormat const):
+        (WebCore::MonthInputType::setupLayoutParameters const):
+        * html/MonthInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::isValidFormat const):
+        (WebCore::TimeInputType::setupLayoutParameters const):
+        * html/TimeInputType.h:
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::isValidFormat const):
+        (WebCore::WeekInputType::setupLayoutParameters const):
+        * html/WeekInputType.h:
+        * html/shadow/DateTimeEditElement.cpp: Added.
+        (WebCore::DateTimeEditBuilder::DateTimeEditBuilder):
+        (WebCore::DateTimeEditBuilder::build):
+        (WebCore::DateTimeEditBuilder::visitField):
+        (WebCore::DateTimeEditBuilder::visitLiteral):
+        (WebCore::DateTimeEditElement::DateTimeEditElement):
+        (WebCore::DateTimeEditElement::fieldsWrapperElement const):
+        (WebCore::DateTimeEditElement::addField):
+        (WebCore::DateTimeEditElement::create):
+        (WebCore::DateTimeEditElement::layout):
+        (WebCore::DateTimeEditElement::localeIdentifier const):
+        (WebCore::DateTimeEditElement::resetFields):
+        (WebCore::DateTimeEditElement::setValueAsDate):
+        (WebCore::DateTimeEditElement::setEmptyValue):
+        (WebCore::DateTimeEditElement::value const):
+        * html/shadow/DateTimeEditElement.h: Added.
+        * html/shadow/DateTimeFieldElement.cpp: Added.
+        (WebCore::DateTimeFieldElement::DateTimeFieldElement):
+        (WebCore::DateTimeFieldElement::initialize):
+        (WebCore::DateTimeFieldElement::localeForOwner const):
+        (WebCore::DateTimeFieldElement::localeIdentifier const):
+        (WebCore::DateTimeFieldElement::updateVisibleValue):
+        (WebCore::DateTimeFieldElement::supportsFocus const):
+        * html/shadow/DateTimeFieldElement.h: Added.
+        * html/shadow/DateTimeFieldElements.cpp: Added.
+        (WebCore::DateTimeDayFieldElement::DateTimeDayFieldElement):
+        (WebCore::DateTimeDayFieldElement::create):
+        (WebCore::DateTimeDayFieldElement::setValueAsDate):
+        (WebCore::DateTimeMonthFieldElement::DateTimeMonthFieldElement):
+        (WebCore::DateTimeMonthFieldElement::create):
+        (WebCore::DateTimeMonthFieldElement::setValueAsDate):
+        (WebCore::DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement):
+        (WebCore::DateTimeSymbolicMonthFieldElement::create):
+        (WebCore::DateTimeSymbolicMonthFieldElement::setValueAsDate):
+        (WebCore::DateTimeYearFieldElement::DateTimeYearFieldElement):
+        (WebCore::DateTimeYearFieldElement::create):
+        (WebCore::DateTimeYearFieldElement::setValueAsDate):
+        * html/shadow/DateTimeFieldElements.h: Added.
+        * html/shadow/DateTimeNumericFieldElement.cpp: Added.
+        (WebCore::DateTimeNumericFieldElement::DateTimeNumericFieldElement):
+        (WebCore::DateTimeNumericFieldElement::formatValue const):
+        (WebCore::DateTimeNumericFieldElement::hasValue const):
+        (WebCore::DateTimeNumericFieldElement::initialize):
+        (WebCore::DateTimeNumericFieldElement::setEmptyValue):
+        (WebCore::DateTimeNumericFieldElement::setValueAsInteger):
+        (WebCore::DateTimeNumericFieldElement::value const):
+        (WebCore::DateTimeNumericFieldElement::valueAsInteger const):
+        (WebCore::DateTimeNumericFieldElement::visibleValue const):
+        * html/shadow/DateTimeNumericFieldElement.h: Added.
+        * html/shadow/DateTimeSymbolicFieldElement.cpp: Added.
+        (WebCore::makeVisibleEmptyValue):
+        (WebCore::DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement):
+        (WebCore::DateTimeSymbolicFieldElement::hasValue const):
+        (WebCore::DateTimeSymbolicFieldElement::initialize):
+        (WebCore::DateTimeSymbolicFieldElement::setEmptyValue):
+        (WebCore::DateTimeSymbolicFieldElement::setValueAsInteger):
+        (WebCore::DateTimeSymbolicFieldElement::value const):
+        (WebCore::DateTimeSymbolicFieldElement::valueAsInteger const):
+        (WebCore::DateTimeSymbolicFieldElement::visibleEmptyValue const):
+        (WebCore::DateTimeSymbolicFieldElement::visibleValue const):
+        * html/shadow/DateTimeSymbolicFieldElement.h: Added.
+        (WebCore::DateTimeSymbolicFieldElement::symbolsSize const):
+
 2020-08-31  Rob Buis  <rbuis@igalia.com>
 
         Convert runtime flag to setting for lazy image loading

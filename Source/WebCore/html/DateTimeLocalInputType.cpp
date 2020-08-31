@@ -96,6 +96,15 @@ bool DateTimeLocalInputType::isDateTimeLocalField() const
     return true;
 }
 
+bool DateTimeLocalInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
+{
+    return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay, DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute });
+}
+
+void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
+{
+}
+
 } // namespace WebCore
 
 #endif

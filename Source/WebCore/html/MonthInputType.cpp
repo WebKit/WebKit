@@ -134,6 +134,15 @@ void MonthInputType::handleDOMActivateEvent(Event&)
 {
 }
 
+bool MonthInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
+{
+    return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth });
+}
+
+void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
+{
+}
+
 } // namespace WebCore
 
 #endif

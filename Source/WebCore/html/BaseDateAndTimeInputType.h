@@ -54,8 +54,9 @@ protected:
     bool isKeyboardFocusable(KeyboardEvent*) const override;
 #endif
 
-private:
     virtual Optional<DateComponents> parseToDateComponents(const StringView&) const = 0;
+
+private:
     virtual Optional<DateComponents> setMillisecondToDateComponents(double) const = 0;
 
     double valueAsDate() const override;

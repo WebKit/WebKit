@@ -32,20 +32,43 @@
 #include "BaseDateAndTimeInputType.h"
 #include "DateTimeChooser.h"
 #include "DateTimeChooserClient.h"
+#include "DateTimeEditElement.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
-class BaseChooserOnlyDateAndTimeInputType : public BaseDateAndTimeInputType, private DateTimeChooserClient {
+enum class DateTimeFormatValidationResults : uint8_t {
+    HasYear = 1 << 0,
+    HasMonth = 1 << 1,
+    HasWeek = 1 << 2,
+    HasDay = 1 << 3,
+    HasAMPM = 1 << 4,
+    HasHour = 1 << 5,
+    HasMinute = 1 << 6,
+    HasSecond = 1 << 7,
+};
+
+class BaseChooserOnlyDateAndTimeInputType : public BaseDateAndTimeInputType, private DateTimeChooserClient, private DateTimeEditElement::EditControlOwner {
+public:
+    virtual bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const = 0;
+
 protected:
     explicit BaseChooserOnlyDateAndTimeInputType(HTMLInputElement& element) : BaseDateAndTimeInputType(element) { }
     ~BaseChooserOnlyDateAndTimeInputType();
+
+    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const = 0;
 
 private:
     void updateInnerTextValue() override;
     void closeDateTimeChooser();
 
+    // DateTimeEditElement::EditControlOwner functions:
+    String valueForEditControl() const final;
+    AtomString localeIdentifier() const final;
+
     // InputType functions:
     void createShadowSubtree() override;
+    void destroyShadowSubtree() override;
     void detach() override;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
     void handleDOMActivateEvent(Event&) override;
@@ -63,6 +86,7 @@ private:
     void didEndChooser() final;
 
     std::unique_ptr<DateTimeChooser> m_dateTimeChooser;
+    RefPtr<DateTimeEditElement> m_dateTimeEditElement;
 };
 
 } // namespace WebCore

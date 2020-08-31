@@ -47,6 +47,9 @@ private:
     Optional<DateComponents> parseToDateComponents(const StringView&) const override;
     Optional<DateComponents> setMillisecondToDateComponents(double) const override;
     bool isDateField() const override;
+
+    bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
+    void setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const final;
 };
 
 } // namespace WebCore

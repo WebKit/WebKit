@@ -31,15 +31,87 @@
 
 #include "Chrome.h"
 #include "DateTimeChooserParameters.h"
+#include "DateTimeFormat.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "Page.h"
+#include "PlatformLocale.h"
 #include "RenderElement.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
+#include "Text.h"
 #include "UserGestureIndicator.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+class DateTimeFormatValidator final : public DateTimeFormat::TokenHandler {
+public:
+    DateTimeFormatValidator() { }
+
+    void visitField(DateTimeFormat::FieldType, int);
+    void visitLiteral(const String&) { }
+
+    bool validateFormat(const String& format, const BaseChooserOnlyDateAndTimeInputType&);
+
+private:
+    OptionSet<DateTimeFormatValidationResults> m_results;
+};
+
+void DateTimeFormatValidator::visitField(DateTimeFormat::FieldType fieldType, int)
+{
+    switch (fieldType) {
+    case DateTimeFormat::FieldTypeYear:
+        m_results.add(DateTimeFormatValidationResults::HasYear);
+        break;
+
+    case DateTimeFormat::FieldTypeMonth:
+    case DateTimeFormat::FieldTypeMonthStandAlone:
+        m_results.add(DateTimeFormatValidationResults::HasMonth);
+        break;
+
+    case DateTimeFormat::FieldTypeWeekOfYear:
+        m_results.add(DateTimeFormatValidationResults::HasWeek);
+        break;
+
+    case DateTimeFormat::FieldTypeDayOfMonth:
+        m_results.add(DateTimeFormatValidationResults::HasDay);
+        break;
+
+    case DateTimeFormat::FieldTypePeriod:
+        m_results.add(DateTimeFormatValidationResults::HasAMPM);
+        break;
+
+    case DateTimeFormat::FieldTypeHour11:
+    case DateTimeFormat::FieldTypeHour12:
+        m_results.add(DateTimeFormatValidationResults::HasHour);
+        break;
+
+    case DateTimeFormat::FieldTypeHour23:
+    case DateTimeFormat::FieldTypeHour24:
+        m_results.add(DateTimeFormatValidationResults::HasHour);
+        m_results.add(DateTimeFormatValidationResults::HasAMPM);
+        break;
+
+    case DateTimeFormat::FieldTypeMinute:
+        m_results.add(DateTimeFormatValidationResults::HasMinute);
+        break;
+
+    case DateTimeFormat::FieldTypeSecond:
+        m_results.add(DateTimeFormatValidationResults::HasSecond);
+        break;
+
+    default:
+        break;
+    }
+}
+
+bool DateTimeFormatValidator::validateFormat(const String& format, const BaseChooserOnlyDateAndTimeInputType& inputType)
+{
+    if (!DateTimeFormat::parse(format, *this))
+        return false;
+    return inputType.isValidFormat(m_results);
+}
 
 BaseChooserOnlyDateAndTimeInputType::~BaseChooserOnlyDateAndTimeInputType()
 {
@@ -79,27 +151,55 @@ bool BaseChooserOnlyDateAndTimeInputType::isPresentingAttachedView() const
 
 void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
 {
-    static MainThreadNeverDestroyed<const AtomString> valueContainerPseudo("-webkit-date-and-time-value", AtomString::ConstructFromLiteral);
-
     ASSERT(element());
-    auto valueContainer = HTMLDivElement::create(element()->document());
-    valueContainer->setPseudo(valueContainerPseudo);
-    element()->userAgentShadowRoot()->appendChild(valueContainer);
+
+    auto& element = *this->element();
+    auto& document = element.document();
+
+    if (document.settings().dateTimeInputsEditableComponentsEnabled()) {
+        m_dateTimeEditElement = DateTimeEditElement::create(document, *this);
+        element.userAgentShadowRoot()->appendChild(*m_dateTimeEditElement);
+    } else {
+        static MainThreadNeverDestroyed<const AtomString> valueContainerPseudo("-webkit-date-and-time-value", AtomString::ConstructFromLiteral);
+        auto valueContainer = HTMLDivElement::create(document);
+        valueContainer->setPseudo(valueContainerPseudo);
+        element.userAgentShadowRoot()->appendChild(valueContainer);
+    }
     updateInnerTextValue();
+}
+
+void BaseChooserOnlyDateAndTimeInputType::destroyShadowSubtree()
+{
+    InputType::destroyShadowSubtree();
+    m_dateTimeEditElement = nullptr;
 }
 
 void BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue()
 {
     ASSERT(element());
-    RefPtr<Node> node = element()->userAgentShadowRoot()->firstChild();
-    if (!is<HTMLElement>(node))
+    if (!m_dateTimeEditElement) {
+        auto node = element()->userAgentShadowRoot()->firstChild();
+        if (!is<HTMLElement>(node))
+            return;
+        String displayValue = visibleValue();
+        if (displayValue.isEmpty()) {
+            // Need to put something to keep text baseline.
+            displayValue = " "_s;
+        }
+        downcast<HTMLElement>(*node).setInnerText(displayValue);
         return;
-    String displayValue = visibleValue();
-    if (displayValue.isEmpty()) {
-        // Need to put something to keep text baseline.
-        displayValue = " "_s;
     }
-    downcast<HTMLElement>(*node).setInnerText(displayValue);
+
+    DateTimeEditElement::LayoutParameters layoutParameters(element()->locale());
+    setupLayoutParameters(layoutParameters);
+
+    if (!DateTimeFormatValidator().validateFormat(layoutParameters.dateTimeFormat, *this))
+        layoutParameters.dateTimeFormat = layoutParameters.fallbackDateTimeFormat;
+
+    if (auto date = parseToDateComponents(element()->value()))
+        m_dateTimeEditElement->setValueAsDate(layoutParameters, *date);
+    else
+        m_dateTimeEditElement->setEmptyValue(layoutParameters);
 }
 
 void BaseChooserOnlyDateAndTimeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)
@@ -170,6 +270,18 @@ void BaseChooserOnlyDateAndTimeInputType::attributeChanged(const QualifiedName& 
         }
     }
     BaseDateAndTimeInputType::attributeChanged(name);
+}
+
+String BaseChooserOnlyDateAndTimeInputType::valueForEditControl() const
+{
+    ASSERT(element());
+    return element()->value();
+}
+
+AtomString BaseChooserOnlyDateAndTimeInputType::localeIdentifier() const
+{
+    ASSERT(element());
+    return element()->computeInheritedLanguage();
 }
 
 }
