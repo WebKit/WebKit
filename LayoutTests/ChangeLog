@@ -1,3 +1,47 @@
+2020-08-31  Joonghun Park  <jh718.park@samsung.com>
+
+        Import css-conditional tests.
+        https://bugs.webkit.org/show_bug.cgi?id=216000
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        * css3/conditional/w3c/at-supports-001-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-002-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-003-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-004-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-005-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-006-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-007-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-008-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-009-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-010-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-011-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-012-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-013-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-014-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-015-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-016-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-017-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-018-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-019-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-020-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-021-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-022-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-023-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-024-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-025-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-026-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-027-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-028-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-029-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-030-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-031-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-032-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-033-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-040-expected.html: Removed.
+        * css3/conditional/w3c/at-supports-042-expected.html: Removed.
+
 2020-08-31  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date inputs should contain editable components

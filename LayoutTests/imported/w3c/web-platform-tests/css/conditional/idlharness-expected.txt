@@ -1,0 +1,43 @@
+
+PASS idl_test setup 
+PASS idl_test validation 
+PASS Partial interface CSSRule: original interface defined 
+PASS Partial interface CSSRule: member names are unique 
+PASS Partial namespace CSS: original namespace defined 
+PASS Partial namespace CSS: member names are unique 
+FAIL CSSConditionRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+FAIL CSSConditionRule interface object length assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+FAIL CSSConditionRule interface object name assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+FAIL CSSConditionRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+FAIL CSSConditionRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+FAIL CSSConditionRule interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+FAIL CSSConditionRule interface: attribute conditionText assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+FAIL CSSMediaRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+PASS CSSMediaRule interface object length 
+PASS CSSMediaRule interface object name 
+FAIL CSSMediaRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+PASS CSSMediaRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSMediaRule interface: existence and properties of interface prototype object's @@unscopables property 
+FAIL CSSMediaRule interface: attribute media assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS CSSMediaRule must be primary interface of cssMediaRule 
+PASS Stringification of cssMediaRule 
+PASS CSSMediaRule interface: cssMediaRule must inherit property "media" with the proper type 
+FAIL CSSConditionRule interface: cssMediaRule must inherit property "conditionText" with the proper type assert_inherits: property "conditionText" not found in prototype chain
+PASS CSSRule interface: cssMediaRule must inherit property "SUPPORTS_RULE" with the proper type 
+FAIL CSSSupportsRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+PASS CSSSupportsRule interface object length 
+PASS CSSSupportsRule interface object name 
+FAIL CSSSupportsRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+PASS CSSSupportsRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSSupportsRule interface: existence and properties of interface prototype object's @@unscopables property 
+PASS CSSSupportsRule must be primary interface of cssSupportsRule 
+PASS Stringification of cssSupportsRule 
+PASS CSSConditionRule interface: cssSupportsRule must inherit property "conditionText" with the proper type 
+PASS CSSRule interface: cssSupportsRule must inherit property "SUPPORTS_RULE" with the proper type 
+PASS CSSRule interface: constant SUPPORTS_RULE on interface object 
+PASS CSSRule interface: constant SUPPORTS_RULE on interface prototype object 
+PASS CSSRule interface: cssRule must inherit property "SUPPORTS_RULE" with the proper type 
+PASS CSS namespace: operation escape(CSSOMString) 
+PASS CSS namespace: operation supports(CSSOMString, CSSOMString) 
+PASS CSS namespace: operation supports(CSSOMString) 
+

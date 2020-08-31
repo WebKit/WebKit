@@ -1503,7 +1503,8 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub.html [ Skip ]
 
 # @supports W3C Failures
-webkit.org/b/137568 css3/conditional/w3c/at-supports-014.html [ ImageOnlyFailure ]
+webkit.org/b/137568 imported/w3c/web-platform-tests/css/conditional/at-supports-014.html [ ImageOnlyFailure ]
+webkit.org/b/216003 imported/w3c/web-platform-tests/css/conditional/at-supports-043.html [ ImageOnlyFailure ]
 
 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]
