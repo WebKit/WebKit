@@ -49,8 +49,8 @@ public:
     String platform() const final;
     void userAgentChanged();
     bool onLine() const final;
-    bool canShare(ScriptExecutionContext&, const ShareData&);
-    void share(ScriptExecutionContext&, const ShareData&, Ref<DeferredPromise>&&);
+    bool canShare(Document&, const ShareData&);
+    void share(Document&, const ShareData&, Ref<DeferredPromise>&&);
     
 #if PLATFORM(IOS_FAMILY)
     bool standalone() const;

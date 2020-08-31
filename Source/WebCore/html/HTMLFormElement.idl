@@ -41,5 +41,5 @@
     [ImplementedAs=submitFromJavaScript] undefined submit();
     [CEReactions=NotNeeded] undefined reset();
     boolean checkValidity();
-    [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
+    [EnabledBySetting=InteractiveFormValidation] boolean reportValidity();
 };

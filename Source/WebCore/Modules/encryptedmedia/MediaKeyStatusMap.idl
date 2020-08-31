@@ -38,7 +38,7 @@ enum MediaKeyStatus {
 
 [
     Conditional=ENCRYPTED_MEDIA,
-    EnabledAtRuntime=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPI,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
 ] interface MediaKeyStatusMap {
     iterable<BufferSource, MediaKeyStatus>;

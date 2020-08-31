@@ -29,7 +29,7 @@
 [
     ActiveDOMObject,
     Conditional=ENCRYPTED_MEDIA,
-    EnabledAtRuntime=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPI,
     ExportToWrappedFunction,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
 ] interface MediaKeySession : EventTarget {

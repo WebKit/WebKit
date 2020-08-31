@@ -33,7 +33,7 @@
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"
-#include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
@@ -61,7 +61,7 @@ PublicKeyCredential::PublicKeyCredential(Ref<AuthenticatorResponse>&& response)
 
 void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationLocalAuthenticatorEnabled()) {
+    if (!document.settings().webAuthenticationLocalAuthenticatorEnabled()) {
         promise.resolve(false);
         return;
     }

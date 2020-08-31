@@ -24,7 +24,7 @@
 */
 
 [
-    EnabledAtRuntime=CustomElements,
+    EnabledBySetting=CustomElements,
     GenerateIsReachable=ImplScriptExecutionContext,
     JSGenerateToNativeObject,
 ] interface CustomElementRegistry {

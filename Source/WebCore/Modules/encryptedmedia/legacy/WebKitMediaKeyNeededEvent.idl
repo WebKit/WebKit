@@ -25,7 +25,7 @@
 
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
-    EnabledAtRuntime=LegacyEncryptedMediaAPI,
+    EnabledBySetting=LegacyEncryptedMediaAPI,
 ] interface WebKitMediaKeyNeededEvent : Event {
     constructor(DOMString type, optional WebKitMediaKeyNeededEventInit eventInitDict);
 

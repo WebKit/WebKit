@@ -1820,7 +1820,7 @@ void Editor::redo()
 
 void Editor::registerCustomUndoStep(Ref<CustomUndoStep>&& undoStep)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().undoManagerAPIEnabled());
+    ASSERT(m_document.settings().undoManagerAPIEnabled());
     if (auto* client = this->client())
         client->registerUndoStep(WTFMove(undoStep));
 }

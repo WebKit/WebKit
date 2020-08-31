@@ -25,7 +25,7 @@
 
 [
     Conditional=WEB_AUTHN,
-    EnabledAtRuntime=WebAuthentication,
+    EnabledBySetting=WebAuthentication,
     Exposed=Window,
     SecureContext
 ] interface AuthenticatorAssertionResponse : AuthenticatorResponse {

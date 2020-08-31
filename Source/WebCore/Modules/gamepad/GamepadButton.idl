@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=Gamepads,
+    EnabledBySetting=Gamepads,
     Conditional=GAMEPAD,
     ImplementationLacksVTable
 ] interface GamepadButton {

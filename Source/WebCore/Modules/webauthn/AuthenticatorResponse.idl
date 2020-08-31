@@ -26,7 +26,7 @@
 [
     Conditional=WEB_AUTHN,
     CustomToJSObject,
-    EnabledAtRuntime=WebAuthentication,
+    EnabledBySetting=WebAuthentication,
     Exposed=Window,
     SecureContext,
 ] interface AuthenticatorResponse {

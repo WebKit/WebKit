@@ -30,7 +30,7 @@
 
 [
     Conditional=MEDIA_STREAM,
-    EnabledAtRuntime=MediaDevices,
+    EnabledBySetting=MediaDevices,
 ] partial interface Navigator {
     [SameObject, SecureContext, ContextAllowsMediaDevices] readonly attribute MediaDevices mediaDevices;
     [Custom, EnabledBySetting=LegacyGetUserMedia] undefined getUserMedia(object constraints, object? successCallback, object? errorCallback);

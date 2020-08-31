@@ -25,7 +25,7 @@
  */
 
 [
-    EnabledAtRuntime=LegacyBeforeLoadEvent
+    EnabledBySetting=LegacyBeforeLoadEvent
 ] interface BeforeLoadEvent : Event {
     constructor(DOMString type, optional BeforeLoadEventInit eventInitDict);
 

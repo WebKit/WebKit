@@ -203,9 +203,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     if (preference == "WebKitTransformStreamAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setTransformStreamAPIEnabled(enabled);
 
-    if (preference == "WebKitInteractiveFormValidationEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setInteractiveFormValidationEnabled(enabled);
-
 #if ENABLE(WEBGL2)
     if (preference == "WebKitWebGL2Enabled")
         RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enabled);
@@ -218,20 +215,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 
     if (preference == "WebKitModernMediaControlsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setModernMediaControlsEnabled(enabled);
-
-#if ENABLE(ENCRYPTED_MEDIA)
-    if (preference == "WebKitEncryptedMediaAPIEnabled") {
-        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::encryptedMediaAPIEnabledKey(), enabled);
-        RuntimeEnabledFeatures::sharedFeatures().setEncryptedMediaAPIEnabled(enabled);
-    }
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-    if (preference == "WebKitMediaDevicesEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled(enabled);
-    if (preference == "WebKitScreenCaptureEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setScreenCaptureEnabled(enabled);
-#endif
 
 #if ENABLE(WEB_RTC)
     if (preference == "WebKitWebRTCMDNSICECandidatesEnabled")
@@ -261,9 +244,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 
     if (preference == "WebKitWebAPIStatisticsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setWebAPIStatisticsEnabled(enabled);
-
-    if (preference == "CSSCustomPropertiesAndValuesEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setCSSCustomPropertiesAndValuesEnabled(enabled);
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (preference == "LayoutFormattingContextEnabled")

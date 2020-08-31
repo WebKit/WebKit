@@ -71,9 +71,9 @@ LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
         isDNSPrefetch = true;
     else if (document.settings().linkPreconnectEnabled() && equalLettersIgnoringASCIICase(rel, "preconnect"))
         isLinkPreconnect = true;
-    else if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"))
+    else if (document.settings().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"))
         isLinkPreload = true;
-    else if (RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(rel, "prefetch"))
+    else if (document.settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(rel, "prefetch"))
         isLinkPrefetch = true;
     else if (equalLettersIgnoringASCIICase(rel, "alternate stylesheet") || equalLettersIgnoringASCIICase(rel, "stylesheet alternate")) {
         isStyleSheet = true;
@@ -119,10 +119,10 @@ bool LinkRelAttribute::isSupported(Document& document, StringView attribute)
     if (document.settings().linkPreconnectEnabled() && equalIgnoringASCIICase(attribute, "preconnect"))
         return true;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalIgnoringASCIICase(attribute, "preload"))
+    if (document.settings().linkPreloadEnabled() && equalIgnoringASCIICase(attribute, "preload"))
         return true;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled() && equalIgnoringASCIICase(attribute, "prefetch"))
+    if (document.settings().linkPrefetchEnabled() && equalIgnoringASCIICase(attribute, "prefetch"))
         return true;
 
     return false;

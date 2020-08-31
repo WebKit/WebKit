@@ -10028,6 +10028,12 @@
 		7AF9B20918CFB5F200C64BEF /* JSVTTRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTRegion.h; sourceTree = "<group>"; };
 		7AF9B20A18CFB5F300C64BEF /* JSVTTRegionList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVTTRegionList.cpp; sourceTree = "<group>"; };
 		7AF9B20B18CFB5F300C64BEF /* JSVTTRegionList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTRegionList.h; sourceTree = "<group>"; };
+		7C011F3D24FAD360005BEF10 /* Settings.cpp.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = Settings.cpp.erb; sourceTree = "<group>"; };
+		7C011F3E24FAD360005BEF10 /* InternalSettingsGenerated.cpp.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = InternalSettingsGenerated.cpp.erb; sourceTree = "<group>"; };
+		7C011F3F24FAD360005BEF10 /* InternalSettingsGenerated.idl.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = InternalSettingsGenerated.idl.erb; sourceTree = "<group>"; };
+		7C011F4024FAD360005BEF10 /* Settings.h.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = Settings.h.erb; sourceTree = "<group>"; };
+		7C011F4124FAD360005BEF10 /* InternalSettingsGenerated.h.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = InternalSettingsGenerated.h.erb; sourceTree = "<group>"; };
+		7C011F4324FAD361005BEF10 /* GenerateSettings.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; name = GenerateSettings.rb; path = Scripts/GenerateSettings.rb; sourceTree = "<group>"; };
 		7C017C3D24969F1300DC0C02 /* NavigatorPlugins.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigatorPlugins.idl; sourceTree = "<group>"; };
 		7C029C6D2493C8F800268204 /* ColorTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorTypes.h; sourceTree = "<group>"; };
 		7C0CEF281E4A542C008DEB80 /* JSDOMConstructorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructorBase.h; sourceTree = "<group>"; };
@@ -18669,10 +18675,12 @@
 			isa = PBXGroup;
 			children = (
 				F48389791E1DD23A0076B7EA /* EditingHistory */,
+				7C011F3C24FAD360005BEF10 /* SettingsTemplates */,
 				A1E0866F248AAC8500E496D9 /* check-xcfilelists.sh */,
 				3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */,
 				A1E08670248AAC8500E496D9 /* generate-derived-sources.sh */,
 				A1E0866E248AAC8500E496D9 /* generate-unified-sources.sh */,
+				7C011F4324FAD361005BEF10 /* GenerateSettings.rb */,
 				37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */,
 			);
 			name = Scripts;
@@ -21955,6 +21963,19 @@
 				71D6AAAB1DA4EAF700B23969 /* pip-placard@2x.png */,
 			);
 			path = macOS;
+			sourceTree = "<group>";
+		};
+		7C011F3C24FAD360005BEF10 /* SettingsTemplates */ = {
+			isa = PBXGroup;
+			children = (
+				7C011F3E24FAD360005BEF10 /* InternalSettingsGenerated.cpp.erb */,
+				7C011F4124FAD360005BEF10 /* InternalSettingsGenerated.h.erb */,
+				7C011F3F24FAD360005BEF10 /* InternalSettingsGenerated.idl.erb */,
+				7C011F3D24FAD360005BEF10 /* Settings.cpp.erb */,
+				7C011F4024FAD360005BEF10 /* Settings.h.erb */,
+			);
+			name = SettingsTemplates;
+			path = Scripts/SettingsTemplates;
 			sourceTree = "<group>";
 		};
 		7C330A041DF9F93B00D3395C /* Geolocation */ = {

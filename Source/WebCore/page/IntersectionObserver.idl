@@ -28,7 +28,7 @@
 [
     ActiveDOMObject,
     Conditional=INTERSECTION_OBSERVER,
-    EnabledAtRuntime=IntersectionObserver
+    EnabledBySetting=IntersectionObserver
 ] interface IntersectionObserver {
     [CallWith=Document, MayThrowException] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options);
 

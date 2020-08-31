@@ -40,7 +40,7 @@ dictionary MediaKeyMessageEventInit : EventInit {
 
 [
     Conditional=ENCRYPTED_MEDIA,
-    EnabledAtRuntime=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPI,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
 ] interface MediaKeyMessageEvent : Event {
     constructor(DOMString type, MediaKeyMessageEventInit eventInitDict);

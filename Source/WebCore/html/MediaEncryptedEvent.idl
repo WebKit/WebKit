@@ -33,7 +33,7 @@ dictionary MediaEncryptedEventInit : EventInit {
 
 [
     Conditional=ENCRYPTED_MEDIA,
-    EnabledAtRuntime=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPI,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
 ] interface MediaEncryptedEvent : Event {
     constructor(DOMString type, optional MediaEncryptedEventInit eventInitDict);

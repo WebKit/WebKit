@@ -132,7 +132,6 @@ public:
     static void setWebGL2Enabled(bool);
     static void setWebGPUEnabled(bool);
     static void setPictureInPictureAPIEnabled(bool);
-    static void setScreenCaptureEnabled(bool);
     static void setFetchAPIKeepAliveEnabled(bool);
 
     static bool webAnimationsCSSIntegrationEnabled();
@@ -224,7 +223,6 @@ private:
         // Runtime enabled settings.
         bool m_indexedDBWorkersEnabled;
         bool m_webGL2Enabled;
-        bool m_setScreenCaptureEnabled;
         bool m_fetchAPIKeepAliveAPIEnabled;
         
         bool m_shouldMockBoldSystemFontForAccessibility;

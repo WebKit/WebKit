@@ -124,16 +124,16 @@ static Optional<URL> shareableURLForShareData(ScriptExecutionContext& context, c
     return url;
 }
 
-bool Navigator::canShare(ScriptExecutionContext& context, const ShareData& data)
+bool Navigator::canShare(Document& document, const ShareData& data)
 {
     auto* frame = this->frame();
     if (!frame || !frame->page())
         return false;
 
     bool hasShareableTitleOrText = !data.title.isNull() || !data.text.isNull();
-    bool hasShareableURL = !!shareableURLForShareData(context, data);
+    bool hasShareableURL = !!shareableURLForShareData(document, data);
 #if ENABLE(FILE_SHARE)
-    bool hasShareableFiles = RuntimeEnabledFeatures::sharedFeatures().webShareFileAPIEnabled() && !data.files.isEmpty();
+    bool hasShareableFiles = document.settings().webShareFileAPIEnabled() && !data.files.isEmpty();
 #else
     bool hasShareableFiles = false;
 #endif
@@ -141,9 +141,9 @@ bool Navigator::canShare(ScriptExecutionContext& context, const ShareData& data)
     return hasShareableTitleOrText || hasShareableURL || hasShareableFiles;
 }
 
-void Navigator::share(ScriptExecutionContext& context, const ShareData& data, Ref<DeferredPromise>&& promise)
+void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPromise>&& promise)
 {
-    if (!canShare(context, data)) {
+    if (!canShare(document, data)) {
         promise->reject(TypeError);
         return;
     }
@@ -155,21 +155,21 @@ void Navigator::share(ScriptExecutionContext& context, const ShareData& data, Re
         return;
     }
 
-    Optional<URL> url = shareableURLForShareData(context, data);
+    Optional<URL> url = shareableURLForShareData(document, data);
     ShareDataWithParsedURL shareData = {
         data,
         url,
         { },
     };
 #if ENABLE(FILE_SHARE)
-    if (RuntimeEnabledFeatures::sharedFeatures().webShareFileAPIEnabled() && !data.files.isEmpty()) {
+    if (document.settings().webShareFileAPIEnabled() && !data.files.isEmpty()) {
         if (m_loader)
             m_loader->cancel();
         
         m_loader = ShareDataReader::create([this, promise = WTFMove(promise)] (ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
             showShareData(readData, WTFMove(promise));
         });
-        m_loader->start(frame()->document(), WTFMove(shareData));
+        m_loader->start(&document, WTFMove(shareData));
         return;
     }
 #endif

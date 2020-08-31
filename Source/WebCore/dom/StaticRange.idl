@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=InputEvents,
+    EnabledBySetting=InputEvents,
     ImplementationLacksVTable,
     Exposed=Window,
 ] interface StaticRange {

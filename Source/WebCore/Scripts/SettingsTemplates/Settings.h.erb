@@ -54,7 +54,7 @@ public:
 <%- end -%>
 
 <%- for @conditional in @conditionals do -%>
-#if ENABLE(<%= @conditional.condition %>)
+#if <%= @conditional.condition %>
 <%- for @setting in @conditional.settings do -%>
     <%- if @setting.hasComplexGetter? -%>
     WEBCORE_EXPORT <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const;
@@ -91,7 +91,7 @@ private:
 
 <%- for @conditional in @conditionals do -%>
 <%- if @conditional.nonBoolSettings.length != 0 -%>
-#if ENABLE(<%= @conditional.condition %>)
+#if <%= @conditional.condition %>
 <%- for @setting in @conditional.nonBoolSettings -%>
     <%= @setting.type %> m_<%= @setting.name %>;
 <%- end -%>
@@ -105,7 +105,7 @@ private:
 
 <%- for @conditional in @conditionals do -%>
 <%- if @conditional.boolSettings.length != 0 -%>
-#if ENABLE(<%= @conditional.condition %>)
+#if <%= @conditional.condition %>
 <%- for @setting in @conditional.boolSettings -%>
     <%= @setting.type %> m_<%= @setting.name %> : 1;
 <%- end -%>

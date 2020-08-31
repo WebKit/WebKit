@@ -27,7 +27,7 @@ enum RecordingState { "inactive", "recording", "paused" };
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
-    EnabledAtRuntime=MediaRecorder,
+    EnabledBySetting=MediaRecorder,
     Exposed=Window
 ] interface MediaRecorder : EventTarget {
     [CallWith=Document, MayThrowException] constructor(MediaStream stream, optional MediaRecorderOptions options);

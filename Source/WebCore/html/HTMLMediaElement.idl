@@ -102,12 +102,12 @@ typedef (
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
-    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] readonly attribute WebKitMediaKeys webkitKeys;
-    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] undefined webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] readonly attribute MediaKeys mediaKeys;
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onencrypted;
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onwaitingforkey;
-    [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<undefined> setMediaKeys(MediaKeys? mediaKeys);
+    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPI] readonly attribute WebKitMediaKeys webkitKeys;
+    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPI] undefined webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
+    [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] readonly attribute MediaKeys mediaKeys;
+    [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onencrypted;
+    [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onwaitingforkey;
+    [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<undefined> setMediaKeys(MediaKeys? mediaKeys);
 
     [MayThrowException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
     [ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;

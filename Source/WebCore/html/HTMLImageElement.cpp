@@ -250,7 +250,7 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 
-    if (name == referrerpolicyAttr && RuntimeEnabledFeatures::sharedFeatures().referrerPolicyAttributeEnabled()) {
+    if (name == referrerpolicyAttr && document().settings().referrerPolicyAttributeEnabled()) {
         auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
         auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
         if (oldReferrerPolicy != newReferrerPolicy)
@@ -797,7 +797,7 @@ bool HTMLImageElement::willRespondToMouseClickEvents()
 #if USE(SYSTEM_PREVIEW)
 bool HTMLImageElement::isSystemPreviewImage() const
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
+    if (!document().settings().systemPreviewEnabled())
         return false;
 
     auto* parent = parentElement();
@@ -875,7 +875,7 @@ String HTMLImageElement::referrerPolicyForBindings() const
 
 ReferrerPolicy HTMLImageElement::referrerPolicy() const
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().referrerPolicyAttributeEnabled())
+    if (document().settings().referrerPolicyAttributeEnabled())
         return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
     return ReferrerPolicy::EmptyString;
 }

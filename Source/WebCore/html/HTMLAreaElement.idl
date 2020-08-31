@@ -27,7 +27,7 @@ interface HTMLAreaElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString shape;
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
 
-    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
+    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledBySetting=DownloadAttribute, Reflect] attribute DOMString download;
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
 };

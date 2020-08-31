@@ -30,8 +30,8 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderIFrame.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptableDocumentParser.h"
+#include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -130,7 +130,7 @@ String HTMLIFrameElement::referrerPolicyForBindings() const
 
 ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().referrerPolicyAttributeEnabled())
+    if (document().settings().referrerPolicyAttributeEnabled())
         return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
     return ReferrerPolicy::EmptyString;
 }

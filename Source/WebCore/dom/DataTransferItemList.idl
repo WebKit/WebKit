@@ -30,7 +30,7 @@
  */
 
 [
-    EnabledAtRuntime=DataTransferItems,
+    EnabledBySetting=DataTransferItems,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
 ] interface DataTransferItemList {

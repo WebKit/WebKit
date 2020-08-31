@@ -1,7 +1,6 @@
 BlankAnchorTargetImpliesNoOpenerEnabled:
    type: bool
    defaultValue: true
-   webcoreBinding: RuntimeEnabledFeatures
    humanReadableName: "Blank anchor target implies rel=noopener"
    humanReadableDescription: "target=_blank on anchor elements implies rel=noopener"
    category: experimental
@@ -558,24 +557,21 @@ UseGiantTiles:
   defaultValue: false
 
 MediaRecorderEnabled:
-    type: bool
-    defaultValue: false
-    webcoreBinding: RuntimeEnabledFeatures
-    condition: ENABLE(MEDIA_STREAM)
-    humanReadableName: "MediaRecorder"
-    humanReadableDescription: "MediaRecorder"
-    category: experimental
+  type: bool
+  defaultValue: false
+  condition: ENABLE(MEDIA_STREAM)
+  humanReadableName: "MediaRecorder"
+  humanReadableDescription: "MediaRecorder"
+  category: experimental
 
 MediaDevicesEnabled:
   type: bool
   defaultValue: false
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM)
 
 MediaStreamEnabled:
   type: bool
   defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM)
 
 MediaEnabled:
@@ -587,7 +583,6 @@ MediaEnabled:
 ScreenCaptureEnabled:
   type: bool
   defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
   humanReadableName: "ScreenCapture"
   humanReadableDescription: "Enable ScreenCapture"
@@ -602,7 +597,6 @@ PeerConnectionEnabled:
 InterruptAudioOnPageVisibilityChangeEnabled:
   type: bool
   defaultValue: WebCore::RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM)
 
 WebRTCH264LowLatencyEncoderEnabled:
@@ -795,7 +789,6 @@ FetchAPIEnabled:
 DownloadAttributeEnabled:
   type: bool
   defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(DOWNLOAD_ATTRIBUTE)
 
 SelectionPaintingWithoutSelectionGapsEnabled:
@@ -831,7 +824,6 @@ AnimatedImageAsyncDecodingEnabled:
 CustomElementsEnabled:
   type: bool
   defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
 
 MenuItemElementEnabled:
   type: bool
@@ -841,14 +833,12 @@ MenuItemElementEnabled:
 MediaPreloadingEnabled:
   type: bool
   defaultValue: false
-  webcoreBinding: RuntimeEnabledFeatures
 
 InteractiveFormValidationEnabled:
   type: bool
   defaultValue: true
   humanReadableName: "HTML Interactive Form Validation"
   humanReadableDescription: "HTML interactive form validation"
-  webcoreBinding: RuntimeEnabledFeatures
 
 ShouldSuppressTextInputFromEditingDuringProvisionalNavigation:
   type: bool
@@ -859,30 +849,27 @@ GamepadsEnabled:
   defaultValue: true
   humanReadableName: "Gamepads"
   humanReadableDescription: "Web Gamepad API support"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(GAMEPAD)
 
 HighlightAPIEnabled:
-    type: bool
-    defaultValue: false
-    humanReadableName: "Highlight API"
-    humanReadableDescription: "Highlight API support"
-    webcoreBinding: RuntimeEnabledFeatures
-    category: experimental
+  type: bool
+  defaultValue: false
+  humanReadableName: "Highlight API"
+  humanReadableDescription: "Highlight API support"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
 
 InputEventsEnabled:
   type: bool
   defaultValue: true
   humanReadableName: "Input Events"
   humanReadableDescription: "Enable InputEvents support"
-  webcoreBinding: RuntimeEnabledFeatures
 
 WebAuthenticationEnabled:
   type: bool
   defaultValue: false
   humanReadableName: "Web Authentication"
   humanReadableDescription: "Enable Web Authentication support"
-  webcoreBinding: RuntimeEnabledFeatures
   category: experimental
   condition: ENABLE(WEB_AUTHN)
 
@@ -891,7 +878,6 @@ WebAuthenticationLocalAuthenticatorEnabled:
   defaultValue: false
   humanReadableName: "Web Authentication Local Authenticator"
   humanReadableDescription: "Enable Web Authentication local authenticator support"
-  webcoreBinding: RuntimeEnabledFeatures
   category: experimental
   condition: ENABLE(WEB_AUTHN)
 
@@ -935,7 +921,6 @@ LegacyEncryptedMediaAPIEnabled:
   defaultValue: true
   humanReadableName: "Enable Legacy EME API"
   humanReadableDescription: "Enable legacy EME API"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 AllowMediaContentTypesRequiringHardwareSupportAsFallback:
@@ -963,7 +948,6 @@ DataTransferItemsEnabled:
   defaultValue: DEFAULT_DATA_TRANSFER_ITEMS_ENABLED
   humanReadableName: "Data Transfer Items"
   humanReadableDescription: "Enables DataTransferItem in the clipboard API"
-  webcoreBinding: RuntimeEnabledFeatures
 
 CustomPasteboardDataEnabled:
   type: bool
@@ -984,7 +968,6 @@ WebShareEnabled:
   defaultValue: DEFAULT_WEB_SHARE_ENABLED
   humanReadableName: "Web Share"
   humanReadableDescription: "Enable support for share sheet via Web Share API"
-  webcoreBinding: RuntimeEnabledFeatures
 
 ViewportFitEnabled:
   type: bool
@@ -1247,7 +1230,6 @@ MediaCapabilitiesEnabled:
 SystemPreviewEnabled:
   type: bool
   defaultValue: false
-  webcoreBinding: RuntimeEnabledFeatures
   condition: USE(SYSTEM_PREVIEW)
 
 CacheAPIEnabled:
@@ -1271,7 +1253,6 @@ CrossOriginResourcePolicyEnabled:
 DisabledAdaptationsMetaTagEnabled:
   type: bool
   defaultValue: DISABLED_ADAPTATIONS_META_TAG_ENABLED
-  webcoreBinding: RuntimeEnabledFeatures
 
 ColorFilterEnabled:
   type: bool
@@ -1299,7 +1280,6 @@ StorageAccessAPIEnabled:
 LinkPreloadEnabled:
   type: bool
   defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
 
 IsSecureContextAttributeEnabled:
   type: bool
@@ -1322,7 +1302,6 @@ KeygenElementEnabled:
 EncryptedMediaAPIEnabled:
   type: bool
   defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(ENCRYPTED_MEDIA)
 
 VideoQualityIncludesDisplayCompositingEnabled:
@@ -1343,7 +1322,6 @@ IsInAppBrowserPrivacyEnabled:
     defaultValue: defaultInAppBrowserPrivacy()
     humanReadableName: "In-App Browser Privacy"
     humanReadableDescription: "Enable In-App Browser Privacy"
-    webcoreBinding: RuntimeEnabledFeatures
     category: debug
 
 NeedsInAppBrowserPrivacyQuirks:
@@ -1351,7 +1329,6 @@ NeedsInAppBrowserPrivacyQuirks:
     defaultValue: false
     humanReadableName: "Needs In-App Browser Privacy Quirks"
     humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
-    webcoreBinding: RuntimeEnabledFeatures
     category: debug
 
 ServiceWorkerEntitlementDisabledForTesting:
@@ -1406,7 +1383,6 @@ IntersectionObserverEnabled:
   defaultValue: true
   humanReadableName: "Intersection Observer"
   humanReadableDescription: "Enable Intersection Observer support"
-  webcoreBinding: RuntimeEnabledFeatures
   category: experimental
   condition: ENABLE(INTERSECTION_OBSERVER)
 
@@ -1526,7 +1502,6 @@ CSSCustomPropertiesAndValuesEnabled:
   defaultValue: false
   humanReadableName: "CSS Custom Properties and Values API"
   humanReadableDescription: "Enable CSS Custom Properties and Values API"
-  webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
 CSSPaintingAPIEnabled:
@@ -1586,20 +1561,19 @@ ResizeObserverEnabled:
   condition: ENABLE(RESIZE_OBSERVER)
 
 AdClickAttributionEnabled:
-    type: bool
-    defaultValue: false
-    humanReadableName: "Ad Click Attribution"
-    humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
-    webcoreBinding: RuntimeEnabledFeatures
-    category: experimental
+  type: bool
+  defaultValue: false
+  humanReadableName: "Ad Click Attribution"
+  humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
+  category: experimental
 
 AdClickAttributionDebugModeEnabled:
-    type: bool
-    defaultValue: false
-    humanReadableName: "Ad Click Attribution Debug Mode"
-    humanReadableDescription: "Enable Ad Click Attribution Debug Mode"
-    webcoreBinding: RuntimeEnabledFeatures
-    category: experimental
+  type: bool
+  defaultValue: false
+  humanReadableName: "Ad Click Attribution Debug Mode"
+  humanReadableDescription: "Enable Ad Click Attribution Debug Mode"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
 
 FetchAPIKeepAliveEnabled:
   type: bool
@@ -1922,7 +1896,6 @@ UndoManagerAPIEnabled:
   humanReadableName: "UndoManager DOM API"
   humanReadableDescription: "Enable the UndoManager DOM API"
   category: internal
-  webcoreBinding: RuntimeEnabledFeatures
 
 CSSLogicalEnabled:
   type: bool
@@ -1985,7 +1958,6 @@ ReferrerPolicyAttributeEnabled:
   humanReadableName: "Referrer Policy attribute"
   humanReadableDescription: "Enable Referrer Policy attribute"
   category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
 
 PageAtRuleSupportEnabled:
   type: bool
@@ -2015,7 +1987,6 @@ LinkPrefetchEnabled:
   defaultValue: false
   humanReadableName: "LinkPrefetch"
   humanReadableDescription: "Enable LinkedPrefetch"
-  webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
 LinkPreloadResponsiveImagesEnabled:
@@ -2023,7 +1994,6 @@ LinkPreloadResponsiveImagesEnabled:
   defaultValue: false
   humanReadableName: "Link preload responsive images"
   humanReadableDescription: "Enable link preload responsive images"
-  webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
 IsNSURLSessionWebSocketEnabled:
@@ -2040,7 +2010,6 @@ LazyImageLoadingEnabled:
   defaultValue: false
   humanReadableName: "Lazy Image Loading"
   humanReadableDescription: "Enable Lazy Image Loading support"
-  webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
 IsThirdPartyCookieBlockingDisabled:
@@ -2129,7 +2098,6 @@ WebShareFileAPIEnabled:
     defaultValue: false
     humanReadableName: "Web Share API Level 2"
     humanReadableDescription: "Enable level 2 of Web Share API"
-    webcoreBinding: RuntimeEnabledFeatures
     category: experimental
 
 IncrementalPDFLoadingEnabled:

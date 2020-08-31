@@ -30,7 +30,7 @@
  */
 
 [
-    EnabledAtRuntime=DataTransferItems,
+    EnabledBySetting=DataTransferItems,
     ImplementationLacksVTable,
 ] interface DataTransferItem {
     readonly attribute DOMString kind;

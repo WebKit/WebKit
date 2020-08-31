@@ -29,7 +29,7 @@ dictionary MediaRecorderErrorEventInit : EventInit {
 [
     Conditional=MEDIA_STREAM,
     Exposed=Window,
-    EnabledAtRuntime=MediaRecorder
+    EnabledBySetting=MediaRecorder
 ] interface MediaRecorderErrorEvent : Event {
     constructor(DOMString type, MediaRecorderErrorEventInit eventInitDict);
 

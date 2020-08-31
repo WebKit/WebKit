@@ -30,6 +30,6 @@ interface HTMLFieldSetElement : HTMLElement {
     readonly attribute ValidityState   validity;
     readonly attribute DOMString       validationMessage;
     boolean  checkValidity();
-    [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
+    [EnabledBySetting=InteractiveFormValidation] boolean reportValidity();
     undefined setCustomValidity(DOMString error);
 };

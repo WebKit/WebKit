@@ -52,7 +52,6 @@
 #include "MouseEvent.h"
 #include "ParsedContentType.h"
 #include "RenderStyle.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleInheritedData.h"
@@ -241,9 +240,7 @@ String HTMLLinkElement::as() const
         || equalLettersIgnoringASCIICase(as, "image")
         || equalLettersIgnoringASCIICase(as, "script")
         || equalLettersIgnoringASCIICase(as, "style")
-        || (RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled()
-            && (equalLettersIgnoringASCIICase(as, "video")
-                || equalLettersIgnoringASCIICase(as, "audio")))
+        || (document().settings().mediaPreloadingEnabled() && (equalLettersIgnoringASCIICase(as, "video") || equalLettersIgnoringASCIICase(as, "audio")))
         || equalLettersIgnoringASCIICase(as, "track")
         || equalLettersIgnoringASCIICase(as, "font"))
         return as.convertToASCIILowercase();
@@ -678,7 +675,7 @@ String HTMLLinkElement::referrerPolicyForBindings() const
 
 ReferrerPolicy HTMLLinkElement::referrerPolicy() const
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().referrerPolicyAttributeEnabled())
+    if (document().settings().referrerPolicyAttributeEnabled())
         return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
     return ReferrerPolicy::EmptyString;
 }

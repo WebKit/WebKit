@@ -384,7 +384,7 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
 #if USE(SYSTEM_PREVIEW)
 bool HTMLAnchorElement::isSystemPreviewLink()
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
+    if (!document().settings().systemPreviewEnabled())
         return false;
 
     static MainThreadNeverDestroyed<const AtomString> systemPreviewRelValue("ar", AtomString::ConstructFromLiteral);
@@ -412,7 +412,7 @@ Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
 
     auto* page = document().page();
     if (!page || page->sessionID().isEphemeral()
-        || !RuntimeEnabledFeatures::sharedFeatures().adClickAttributionEnabled()
+        || !document().settings().adClickAttributionEnabled()
         || !UserGestureIndicator::processingUserGesture())
         return WTF::nullopt;
 
@@ -486,7 +486,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 
     String downloadAttribute;
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
-    if (RuntimeEnabledFeatures::sharedFeatures().downloadAttributeEnabled()) {
+    if (document().settings().downloadAttributeEnabled()) {
         // Ignore the download attribute completely if the href URL is cross origin.
         bool isSameOrigin = completedURL.protocolIsData() || document().securityOrigin().canRequest(completedURL);
         if (isSameOrigin)
@@ -498,7 +498,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 
     SystemPreviewInfo systemPreviewInfo;
 #if USE(SYSTEM_PREVIEW)
-    systemPreviewInfo.isPreview = isSystemPreviewLink() && RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled();
+    systemPreviewInfo.isPreview = isSystemPreviewLink() && document().settings().systemPreviewEnabled();
 
     if (systemPreviewInfo.isPreview) {
         systemPreviewInfo.element.elementIdentifier = document().identifierForElement(*this);
@@ -515,7 +515,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     Optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
     if (hasRel(Relation::Opener))
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Allow;
-    else if (hasRel(Relation::NoOpener) || (RuntimeEnabledFeatures::sharedFeatures().blankAnchorTargetImpliesNoOpenerEnabled() && equalIgnoringASCIICase(effectiveTarget, "_blank")))
+    else if (hasRel(Relation::NoOpener) || (document().settings().blankAnchorTargetImpliesNoOpenerEnabled() && equalIgnoringASCIICase(effectiveTarget, "_blank")))
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Suppress;
 
     auto adClickAttribution = parseAdClickAttribution();
@@ -631,7 +631,7 @@ String HTMLAnchorElement::referrerPolicyForBindings() const
 
 ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().referrerPolicyAttributeEnabled())
+    if (document().settings().referrerPolicyAttributeEnabled())
         return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
     return ReferrerPolicy::EmptyString;
 }

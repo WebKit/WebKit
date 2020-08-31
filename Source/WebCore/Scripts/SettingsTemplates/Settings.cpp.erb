@@ -46,7 +46,7 @@ Settings::Settings(Page* page)
 <%- end -%>
 <%- for @conditional in @conditionals do -%>
 <%- if @conditional.nonBoolSettings.length != 0 -%>
-#if ENABLE(<%= @conditional.condition %>)
+#if <%= @conditional.condition %>
 <%- for @setting in @conditional.nonBoolSettings -%>
     , m_<%= @setting.name %>(<%= @setting.initial %>)
 <%- end -%>
@@ -58,7 +58,7 @@ Settings::Settings(Page* page)
 <%- end -%>
 <%- for @conditional in @conditionals do -%>
 <%- if @conditional.boolSettings.length != 0 -%>
-#if ENABLE(<%= @conditional.condition %>)
+#if <%= @conditional.condition %>
 <%- for @setting in @conditional.boolSettings -%>
     , m_<%= @setting.name %>(<%= @setting.initial %>)
 <%- end -%>
@@ -97,7 +97,7 @@ void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> 
 <%- end -%>
 <%- for @conditional in @conditionals do -%>
 <%- if @conditional.settingsWithComplexGetters.length != 0 or @conditional.settingsWithComplexSetters.length != 0-%>
-#if ENABLE(<%= @conditional.condition %>)
+#if <%= @conditional.condition %>
 <%- for @setting in @conditional.settingsWithComplexGetters do -%>
 <%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
 {
@@ -131,7 +131,7 @@ void Settings::<%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= 
         return;
     m_<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride;
 <%- if @setting.conditional -%>
-#if ENABLE(<%= @setting.conditional %>)
+#if <%= @setting.conditional %>
 <%- end -%>
     <%= @setting.onChange %>();
 <%- if @setting.conditional -%>

@@ -204,7 +204,7 @@ domTimersThrottlingEnabled:
   initial: true
 webArchiveDebugModeEnabled:
   initial: false
-  conditional: WEB_ARCHIVE
+  conditional: ENABLE(WEB_ARCHIVE)
 localFileContentSniffingEnabled:
   initial: false
 offlineWebApplicationCacheEnabled:
@@ -237,7 +237,7 @@ acceleratedCompositingForFixedPositionEnabled:
   initial: defaultAcceleratedCompositingForFixedPositionEnabled
 rubberBandingForSubScrollableRegionsEnabled:
   initial: true
-  conditional: RUBBER_BANDING
+  conditional: ENABLE(RUBBER_BANDING)
 
 experimentalNotificationsEnabled:
   initial: false
@@ -263,7 +263,7 @@ paginateDuringLayoutEnabled:
   initial: false
 fullScreenEnabled:
   initial: false
-  conditional: FULLSCREEN_API
+  conditional: ENABLE(FULLSCREEN_API)
 asynchronousSpellCheckingEnabled:
   initial: false
 
@@ -322,26 +322,26 @@ backspaceKeyNavigationEnabled:
   initial: true
 shouldDisplaySubtitles:
   initial: false
-  conditional: VIDEO
+  conditional: ENABLE(VIDEO)
 shouldDisplayCaptions:
   initial: false
-  conditional: VIDEO
+  conditional: ENABLE(VIDEO)
 shouldDisplayTextDescriptions:
   initial: false
-  conditional: VIDEO
+  conditional: ENABLE(VIDEO)
 genericCueAPIEnabled:
   initial: false
-  conditional: VIDEO
+  conditional: ENABLE(VIDEO)
 useGPUProcessForMedia:
   initial: false
-  conditional: GPU_PROCESS
+  conditional: ENABLE(GPU_PROCESS)
 scrollingCoordinatorEnabled:
   initial: false
 scrollingTreeIncludesFrames:
   initial: defaultScrollingTreeIncludesFrames
 scrollAnimatorEnabled:
   initial: true
-  conditional: SMOOTH_SCROLLING
+  conditional: ENABLE(SMOOTH_SCROLLING)
 forceUpdateScrollbarsOnMainThreadForPerformanceTesting:
   initial: false
 notificationsEnabled:
@@ -428,7 +428,7 @@ coreImageAcceleratedFilterRenderEnabled:
 legacyOverflowScrollingTouchEnabled:
   initial: true
   onChange: setNeedsRelayoutAllFrames
-  conditional: OVERFLOW_SCROLLING_TOUCH
+  conditional: ENABLE(OVERFLOW_SCROLLING_TOUCH)
 
 webSecurityEnabled:
   initial: true
@@ -468,22 +468,22 @@ fixedBackgroundsPaintRelativeToDocument:
 textAutosizingEnabled:
   initial: defaultTextAutosizingEnabled()
   onChange: setNeedsRecalcStyleInAllFrames
-  conditional: TEXT_AUTOSIZING
+  conditional: ENABLE(TEXT_AUTOSIZING)
 textAutosizingWindowSizeOverride:
   type: IntSize
   onChange: setNeedsRecalcStyleInAllFrames
-  conditional: TEXT_AUTOSIZING
+  conditional: ENABLE(TEXT_AUTOSIZING)
 minimumZoomFontSize:
   type: float
   initial: defaultMinimumZoomFontSize()
-  conditional: TEXT_AUTOSIZING
+  conditional: ENABLE(TEXT_AUTOSIZING)
 textAutosizingUsesIdempotentMode:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames
-  conditional: TEXT_AUTOSIZING
+  conditional: ENABLE(TEXT_AUTOSIZING)
 idempotentModeAutosizingOnlyHonorsPercentages:
   initial: false
-  conditional: TEXT_AUTOSIZING
+  conditional: ENABLE(TEXT_AUTOSIZING)
   # This is only set before the main frame load, so there's no need to specify setNeedsRecalcStyleInAllFrames.
 
 subpixelAntialiasedLayerTextEnabled:
@@ -507,11 +507,11 @@ useGiantTiles:
 
 mediaSourceEnabled:
   initial: platformDefaultMediaSourceEnabled()
-  conditional: MEDIA_SOURCE
+  conditional: ENABLE(MEDIA_SOURCE)
 
 sourceBufferChangeTypeEnabled:
   initial: true
-  conditional: MEDIA_SOURCE
+  conditional: ENABLE(MEDIA_SOURCE)
 
 # FIXME: Rename to allowMultiElementImplicitFormSubmission once we upstream the iOS changes to WebView.mm.
 allowMultiElementImplicitSubmission:
@@ -519,11 +519,11 @@ allowMultiElementImplicitSubmission:
 
 allowsAirPlayForMediaPlayback:
   initial: true
-  conditional: WIRELESS_PLAYBACK_TARGET
+  conditional: ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 remotePlaybackEnabled:
   initial: true
-  conditional: WIRELESS_PLAYBACK_TARGET
+  conditional: ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 shouldConvertPositionStyleOnCopy:
   initial: false
@@ -541,7 +541,7 @@ alwaysUseAcceleratedOverflowScroll:
   initial: false
 imageControlsEnabled:
   initial: false
-  conditional: SERVICE_CONTROLS
+  conditional: ENABLE(SERVICE_CONTROLS)
 
 enableInheritURIQueryComponent:
   initial: false
@@ -556,18 +556,18 @@ useImageDocumentForSubframePDF:
 dataDetectorTypes:
   type: DataDetectorTypes
   initial: 
-  conditional: DATA_DETECTION
+  conditional: ENABLE(DATA_DETECTION)
 
 # Allow SourceBuffers to store up to 304MB each, enough for approximately five minutes
 # of 1080p video and stereo audio.
 maximumSourceBufferSize:
   type: int
   initial: 318767104
-  conditional: MEDIA_SOURCE
+  conditional: ENABLE(MEDIA_SOURCE)
 
 serviceControlsEnabled:
   initial: false
-  conditional: SERVICE_CONTROLS
+  conditional: ENABLE(SERVICE_CONTROLS)
 
 appleMailPaginationQuirkEnabled:
   initial: false
@@ -626,7 +626,6 @@ layoutViewportHeightExpansionFactor:
   initial: 0
   onChange: setNeedsRecalcStyleInAllFrames
 
-# Runtime-enabled features
 visualViewportEnabled:
   initial: true
   onChange: setNeedsRecalcStyleInAllFrames
@@ -720,16 +719,16 @@ shouldIgnoreFontLoadCompletions:
   initial: false
 
 applePayCapabilityDisclosureAllowed:
-  conditional: APPLE_PAY
+  conditional: ENABLE(APPLE_PAY)
   initial: true
 applePayEnabled:
-  conditional: APPLE_PAY
+  conditional: ENABLE(APPLE_PAY)
   initial: defaultApplePayEnabled
 applePayRemoteUIEnabled:
-  conditional: APPLE_PAY_REMOTE_UI
+  conditional: ENABLE(APPLE_PAY_REMOTE_UI)
   initial: true
 paymentRequestEnabled:
-  conditional: PAYMENT_REQUEST
+  conditional: ENABLE(PAYMENT_REQUEST)
   initial: false
 
 javaEnabled:
@@ -799,7 +798,7 @@ shouldAllowUserInstalledFonts:
 
 resizeObserverEnabled:
   initial: false
-  conditional: RESIZE_OBSERVER
+  conditional: ENABLE(RESIZE_OBSERVER)
 
 # Only set by Layout Tests.
 mediaTypeOverride:
@@ -829,7 +828,7 @@ exposeSpeakersEnabled:
 
 mediaDeviceIdentifierStorageDirectory:
   type: String
-  conditional: MEDIA_STREAM
+  conditional: ENABLE(MEDIA_STREAM)
 
 # FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
 # can fix the bug from their end.
@@ -843,22 +842,22 @@ passiveTouchListenersAsDefaultOnDocument:
 touchEventEmulationEnabled:
   initial: false
   getter: isTouchEventEmulationEnabled
-  conditional: TOUCH_EVENTS
+  conditional: ENABLE(TOUCH_EVENTS)
 
 deviceOrientationEventEnabled:
   type: bool
   initial: true
-  conditional: DEVICE_ORIENTATION
+  conditional: ENABLE(DEVICE_ORIENTATION)
 
 deviceOrientationPermissionAPIEnabled:
   type: bool
   initial: false
-  conditional: DEVICE_ORIENTATION
+  conditional: ENABLE(DEVICE_ORIENTATION)
 
 shouldEnableTextAutosizingBoost:
   type: bool
   initial: false
-  conditional: TEXT_AUTOSIZING
+  conditional: ENABLE(TEXT_AUTOSIZING)
   onChange: shouldEnableTextAutosizingBoostChanged
 
 mediaCapabilitiesEnabled:
@@ -887,7 +886,7 @@ shouldIgnoreMetaViewport:
 
 videoQualityIncludesDisplayCompositingEnabled:
   initial: false
-  conditional: VIDEO
+  conditional: ENABLE(VIDEO)
 
 adClickAttributionEnabled:
   initial: false
@@ -938,11 +937,13 @@ enterKeyHintEnabled:
 
 legacyGetUserMediaEnabled:
   initial: false
-  conditional: MEDIA_STREAM
+  conditional: ENABLE(MEDIA_STREAM)
 
+# FIXME: Seems to be unused. Remove once verified.
 isInAppBrowserPrivacyEnabled:
   initial: false
 
+# FIXME: Seems to be unused. Remove once verified.
 NeedsInAppBrowserPrivacyQuirks:
   initial: false
 
@@ -954,31 +955,126 @@ aspectRatioOfImgFromWidthAndHeightEnabled:
 
 inputTypeColorEnabled:
   initial: false
-  conditional: INPUT_TYPE_COLOR
+  conditional: ENABLE(INPUT_TYPE_COLOR)
 
 inputTypeDateEnabled:
   initial: false
-  conditional: INPUT_TYPE_DATE
+  conditional: ENABLE(INPUT_TYPE_DATE)
 
 inputTypeDateTimeLocalEnabled:
   initial: false
-  conditional: INPUT_TYPE_DATETIMELOCAL
+  conditional: ENABLE(INPUT_TYPE_DATETIMELOCAL)
 
 inputTypeMonthEnabled:
   initial: false
-  conditional: INPUT_TYPE_MONTH
+  conditional: ENABLE(INPUT_TYPE_MONTH)
 
 inputTypeTimeEnabled:
   initial: false
-  conditional: INPUT_TYPE_TIME
+  conditional: ENABLE(INPUT_TYPE_TIME)
 
 inputTypeWeekEnabled:
   initial: false
-  conditional: INPUT_TYPE_WEEK
+  conditional: ENABLE(INPUT_TYPE_WEEK)
 
 dateTimeInputsEditableComponentsEnabled:
   initial: false
-  conditional: DATE_AND_TIME_INPUT_TYPES
+  conditional: ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
+blankAnchorTargetImpliesNoOpenerEnabled:
+  initial: true
+
+linkPreloadEnabled:
+  initial: true
+
+linkPrefetchEnabled:
+  initial: false
+
+linkPreloadResponsiveImagesEnabled:
+  initial: false
+
+disabledAdaptationsMetaTagEnabled:
+  initial: false
+
+lazyImageLoadingEnabled:
+  initial: false
+
+referrerPolicyAttributeEnabled:
+  initial: true
+
+customElementsEnabled:
+  initial: true
+
+dataTransferItemsEnabled:
+  initial: false
+
+webAuthenticationEnabled:
+  initial: false
+
+webAuthenticationLocalAuthenticatorEnabled:
+  initial: false
+
+# FIXME: Seems to be unused. Remove once verified.
+mediaStreamEnabled:
+  initial: true
+  conditional: ENABLE(MEDIA_STREAM)
+
+mediaRecorderEnabled:
+  initial: false
+  conditional: ENABLE(MEDIA_STREAM)
+
+mediaDevicesEnabled:
+  initial: false
+  conditional: ENABLE(MEDIA_STREAM)
+
+screenCaptureEnabled:
+  initial: false
+  conditional: ENABLE(MEDIA_STREAM)
+
+gamepadsEnabled:
+  initial: false
+  conditional: ENABLE(GAMEPAD)
+
+cssCustomPropertiesAndValuesEnabled:
+  initial: false
+
+webShareEnabled:
+  initial: false
+
+webShareFileAPIEnabled:
+  initial: false
+
+undoManagerAPIEnabled:
+  initial: false
+
+intersectionObserverEnabled:
+  initial: false
+  conditional: ENABLE(INTERSECTION_OBSERVER)
+
+downloadAttributeEnabled:
+  initial: false
+  conditional: ENABLE(DOWNLOAD_ATTRIBUTE)
+
+systemPreviewEnabled:
+  initial: false
+  conditional: USE(SYSTEM_PREVIEW)
+
+interruptAudioOnPageVisibilityChangeEnabled:
+  initial: false
+  conditional: ENABLE(MEDIA_STREAM)
+
+encryptedMediaAPIEnabled:
+  intiial: false
+  conditiona: ENABLE(ENCRYPTED_MEDIA)
+
+legacyEncryptedMediaAPIEnabled:
+  intiial: true
+  conditiona: ENABLE(LEGACY_ENCRYPTED_MEDIA)
+
+# FIMXE: This does not appear to ever be set to true. Remove once verified.
+legacyBeforeLoadEventEnabled:
+  initial: false
+
 
 isPostLoadCPUUsageMeasurementEnabled:
   initial: defaultPostLoadCPUUsageMeasurementEnabled
@@ -1004,13 +1100,13 @@ iceCandidateFilteringEnabled:
 
 mockCaptureDevicesEnabled:
   initial: false
-  conditional: MEDIA_STREAM
+  conditional: ENABLE(MEDIA_STREAM)
   onChange: mockCaptureDevicesEnabledChanged
   inspectorOverride: true
 
 mediaCaptureRequiresSecureConnection:
   initial: true
-  conditional: MEDIA_STREAM
+  conditional: ENABLE(MEDIA_STREAM)
   inspectorOverride: true
 
 shouldUseServiceWorkerShortTimeout:

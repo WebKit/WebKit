@@ -53,7 +53,7 @@ private:
 <%- for @setting in @settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 <%- if @setting.conditional -%>
-#if ENABLE(<%= @setting.conditional %>)
+#if <%= @setting.conditional %>
 <%- end -%>
     <%= @setting.type %> m_<%= @setting.name %>;
 <%- if @setting.conditional -%>

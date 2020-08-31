@@ -578,7 +578,7 @@ void Internals::resetToConsistentState(Page& page)
     MediaEngineConfigurationFactory::disableMock();
 
 #if ENABLE(MEDIA_STREAM)
-    RuntimeEnabledFeatures::sharedFeatures().setInterruptAudioOnPageVisibilityChangeEnabled(false);
+    page.settings().setInterruptAudioOnPageVisibilityChangeEnabled(false);
     WebCore::MediaRecorder::setCustomPrivateRecorderCreator(nullptr);
 #endif
 
@@ -1681,7 +1681,9 @@ void Internals::setUseGPUProcessForWebRTC(bool useGPUProcess)
 #if ENABLE(MEDIA_STREAM)
 void Internals::setShouldInterruptAudioOnPageVisibilityChange(bool shouldInterrupt)
 {
-    RuntimeEnabledFeatures::sharedFeatures().setInterruptAudioOnPageVisibilityChangeEnabled(shouldInterrupt);
+    Document* document = contextDocument();
+    if (auto* page = document->page())
+        page->settings().setInterruptAudioOnPageVisibilityChangeEnabled(shouldInterrupt);
 }
 
 void Internals::setMediaCaptureRequiresSecureConnection(bool enabled)
@@ -5814,7 +5816,7 @@ Internals::TextIndicatorInfo Internals::textIndicatorForRange(const Range& range
 
 void Internals::addPrefetchLoadEventListener(HTMLLinkElement& link, RefPtr<EventListener>&& listener)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(link.rel(), "prefetch")) {
+    if (link.document().settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(link.rel(), "prefetch")) {
         link.allowPrefetchLoadAndErrorForTesting();
         link.addEventListener(eventNames().loadEvent, listener.releaseNonNull(), false);
     }
