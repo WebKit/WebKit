@@ -117,7 +117,11 @@ bool TextChecker::isTestingMode()
 
 bool TextChecker::isSmartInsertDeleteEnabled()
 {
+#if HAVE(UIKEYBOARDIMPL_SMARTINSERTDELETE_CLASS_METHOD)
+    return [UIKeyboardImpl smartInsertDeleteIsEnabled];
+#else
     return [[UIKeyboardImpl sharedInstance] smartInsertDeleteIsEnabled];
+#endif
 }
 
 void TextChecker::setSmartInsertDeleteEnabled(bool)

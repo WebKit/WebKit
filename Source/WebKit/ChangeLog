@@ -1,3 +1,17 @@
+2020-09-01  Megan Gardner  <megan_gardner@apple.com>
+
+        Switch to class method for smart insert/delete
+        https://bugs.webkit.org/show_bug.cgi?id=215871
+        <rdar://problem/67281776>
+
+        Reviewed by Darin Adler.
+
+        No process changes. Covered by existing tests.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::isSmartInsertDeleteEnabled):
+
 2020-09-01  Tim Horton  <timothy_horton@apple.com>
 
         Upstream PencilKit text input support
