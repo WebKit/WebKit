@@ -182,18 +182,24 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     globalObject->setCurrentEvent(savedEvent);
 
-    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-        auto& scriptController = *downcast<WorkerGlobalScope>(scriptExecutionContext).script();
-        bool terminatorCausedException = (scope.exception() && isTerminatedExecutionException(vm, scope.exception()));
-        if (terminatorCausedException || scriptController.isTerminatingExecution())
-            scriptController.forbidExecution();
-    }
+    auto handleExceptionIfNeeded = [&] () -> bool {
+        if (is<WorkerGlobalScope>(scriptExecutionContext)) {
+            auto& scriptController = *downcast<WorkerGlobalScope>(scriptExecutionContext).script();
+            bool terminatorCausedException = (scope.exception() && isTerminatedExecutionException(vm, scope.exception()));
+            if (terminatorCausedException || scriptController.isTerminatingExecution())
+                scriptController.forbidExecution();
+        }
 
-    if (exception) {
-        event.target()->uncaughtExceptionInEventHandler();
-        reportException(lexicalGlobalObject, exception);
+        if (exception) {
+            event.target()->uncaughtExceptionInEventHandler();
+            reportException(lexicalGlobalObject, exception);
+            return true;
+        }
+        return false;
+    };
+
+    if (handleExceptionIfNeeded())
         return;
-    }
 
     if (!m_isAttribute) {
         // This is an EventListener and there is therefore no need for any return value handling.
@@ -204,8 +210,15 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     if (event.type() == eventNames().beforeunloadEvent) {
         // This is a OnBeforeUnloadEventHandler, and therefore the return value must be coerced into a String.
-        if (is<BeforeUnloadEvent>(event))
-            handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), convert<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, retval));
+        if (is<BeforeUnloadEvent>(event)) {
+            String resultStr = convert<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, retval);
+            if (UNLIKELY(scope.exception())) {
+                exception = scope.exception();
+                if (handleExceptionIfNeeded())
+                    return;
+            }
+            handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), resultStr);
+        }
         return;
     }
 

@@ -1,3 +1,16 @@
+2020-08-31  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check while handling the onbeforeunload event.
+        https://bugs.webkit.org/show_bug.cgi?id=216015
+        <rdar://problem/66324934>
+
+        Reviewed by Saam Barati.
+
+        Test: js/dom/missing-exception-check-while-handling-onbeforeunload.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+
 2020-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid computing metadata for idempotent text autosizing on macOS

@@ -1,3 +1,14 @@
+2020-08-31  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check while handling the onbeforeunload event.
+        https://bugs.webkit.org/show_bug.cgi?id=216015
+        <rdar://problem/66324934>
+
+        Reviewed by Saam Barati.
+
+        * js/dom/missing-exception-check-while-handling-onbeforeunload-expected.txt: Added.
+        * js/dom/missing-exception-check-while-handling-onbeforeunload.html: Added.
+
 2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ BigSur+ ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html
