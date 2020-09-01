@@ -272,6 +272,12 @@ double ScriptProcessorNode::latencyTime() const
     return std::numeric_limits<double>::infinity();
 }
 
+bool ScriptProcessorNode::requiresTailProcessing() const
+{
+    // Always return true since the tail and latency are never zero.
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

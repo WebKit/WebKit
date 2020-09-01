@@ -54,6 +54,8 @@ public:
 
     void updateCoefficients(size_t numberOfFrames, const float* cutoffFrequency, const float* q, const float* gain, const float* detune);
 
+    bool requiresTailProcessing() const final;
+
 private:
     Biquad m_biquad;
     BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }

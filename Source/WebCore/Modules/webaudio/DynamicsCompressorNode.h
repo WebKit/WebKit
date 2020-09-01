@@ -67,6 +67,7 @@ protected:
 private:
     double tailTime() const override;
     double latencyTime() const override;
+    bool requiresTailProcessing() const final;
 
     std::unique_ptr<DynamicsCompressor> m_dynamicsCompressor;
     Ref<AudioParam> m_threshold;

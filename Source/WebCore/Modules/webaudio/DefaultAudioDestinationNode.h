@@ -51,6 +51,8 @@ private:
     void uninitialize() final;
     ExceptionOr<void> setChannelCount(unsigned) final;
 
+    bool requiresTailProcessing() const final { return false; }
+
     void enableInput(const String& inputDeviceId) final;
     ExceptionOr<void> startRendering() final;
     void resume(Function<void ()>&&) final;

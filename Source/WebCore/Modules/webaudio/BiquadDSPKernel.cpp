@@ -204,6 +204,16 @@ void BiquadDSPKernel::updateTailTime(size_t coefIndex)
     m_tailTime = std::clamp(tail, 0.0, maxTailTime);
 }
 
+bool BiquadDSPKernel::requiresTailProcessing() const
+{
+    // Always return true even if the tail time and latency might both
+    // be zero. This is for simplicity and because TailTime() is 0
+    // basically only when the filter response H(z) = 0 or H(z) = 1. And
+    // it's ok to return true. It just means the node lives a little
+    // longer than strictly necessary.
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

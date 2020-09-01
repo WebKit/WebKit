@@ -55,6 +55,7 @@ public:
 protected:
     double tailTime() const override;
     double latencyTime() const override;
+    bool requiresTailProcessing() const override;
 
     AudioProcessor* processor() { return m_processor.get(); }
     std::unique_ptr<AudioProcessor> m_processor;

@@ -81,6 +81,11 @@ public:
 
     double tailTime() const { return 0; }
     double latencyTime() const { return m_compressor.latencyFrames() / static_cast<double>(sampleRate()); }
+    bool requiresTailProcessing() const
+    {
+        // Always return true even if the tail time and latency might both be zero.
+        return true;
+    }
 
 protected:
     unsigned m_numberOfChannels;

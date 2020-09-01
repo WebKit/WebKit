@@ -46,6 +46,7 @@ public:
 
     double tailTime() const override;
     double latencyTime() const override;
+    bool requiresTailProcessing() const final;
 
 private:
     AudioFloatArray m_buffer;

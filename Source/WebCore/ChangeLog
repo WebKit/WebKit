@@ -1,5 +1,80 @@
 2020-09-01  Chris Dumez  <cdumez@apple.com>
 
+        Make sure BiquadFilterNode tail is getting processed
+        https://bugs.webkit.org/show_bug.cgi?id=216050
+
+        Reviewed by Darin Adler.
+
+        Some nodes have have a significant tail-time and shouldn't be disconnected simply because
+        they no longer have any input connections. We used to deal with this by hard-coding
+        node types in AudioNode::disableOutputsIfNecessary() which was not ideal. We now use
+        a AudioNode::requiresTailProcessing() virtual function instead, similarly to what Blink
+        is doing.
+
+        This patch fixes tail processing for BiquadFilterNode.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::requiresTailProcessing const):
+        * Modules/webaudio/AnalyserNode.h:
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::requiresTailProcessing const):
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::disableOutputsIfNecessary):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/BiquadDSPKernel.cpp:
+        (WebCore::BiquadDSPKernel::requiresTailProcessing const):
+        * Modules/webaudio/BiquadDSPKernel.h:
+        * Modules/webaudio/ChannelMergerNode.h:
+        * Modules/webaudio/ChannelSplitterNode.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::requiresTailProcessing const):
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::requiresTailProcessing const):
+        * Modules/webaudio/DelayDSPKernel.h:
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::requiresTailProcessing const):
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        * Modules/webaudio/GainNode.h:
+        * Modules/webaudio/IIRDSPKernel.cpp:
+        (WebCore::IIRDSPKernel::requiresTailProcessing const):
+        * Modules/webaudio/IIRDSPKernel.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::requiresTailProcessing const):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::requiresTailProcessing const):
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webaudio/StereoPannerNode.h:
+        * Modules/webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::requiresTailProcessing const):
+        * Modules/webaudio/WaveShaperDSPKernel.h:
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::requiresTailProcessing const):
+        * Modules/webaudio/WebKitAudioPannerNode.h:
+        * platform/audio/AudioDSPKernel.h:
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::requiresTailProcessing const):
+        * platform/audio/AudioDSPKernelProcessor.h:
+        * platform/audio/AudioProcessor.h:
+        * platform/audio/DynamicsCompressor.h:
+        * platform/audio/EqualPowerPanner.h:
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::requiresTailProcessing const):
+        * platform/audio/HRTFPanner.h:
+        * platform/audio/Panner.h:
+
+2020-09-01  Chris Dumez  <cdumez@apple.com>
+
         <video> element prevents screen from sleeping even after playback finishes
         https://bugs.webkit.org/show_bug.cgi?id=216017
         <rdar://problem/66665846>

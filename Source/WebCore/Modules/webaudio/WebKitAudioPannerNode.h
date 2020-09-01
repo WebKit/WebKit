@@ -117,6 +117,7 @@ public:
 
     double tailTime() const override { return m_panner ? m_panner->tailTime() : 0; }
     double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }
+    bool requiresTailProcessing() const final;
 
 private:
     explicit WebKitAudioPannerNode(WebKitAudioContext&);

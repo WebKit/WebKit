@@ -59,6 +59,7 @@ private:
 
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }
+    bool requiresTailProcessing() const final { return false; }
 
     // As an audio source, we will never propagate silence.
     bool propagatesSilence() const override { return false; }

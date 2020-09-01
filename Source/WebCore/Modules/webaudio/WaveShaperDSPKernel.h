@@ -56,6 +56,8 @@ private:
     void processCurve2x(const float* source, float* dest, size_t framesToProcess);
     void processCurve4x(const float* source, float* dest, size_t framesToProcess);
 
+    bool requiresTailProcessing() const final;
+
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
 
     // Oversampling.

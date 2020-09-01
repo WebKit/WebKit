@@ -149,6 +149,11 @@ double AudioBasicProcessorNode::latencyTime() const
     return m_processor->latencyTime();
 }
 
+bool AudioBasicProcessorNode::requiresTailProcessing() const
+{
+    return m_processor->requiresTailProcessing();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

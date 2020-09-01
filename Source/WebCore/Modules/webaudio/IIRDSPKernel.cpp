@@ -66,6 +66,12 @@ void IIRDSPKernel::reset()
     m_iirFilter.reset();
 }
 
+bool IIRDSPKernel::requiresTailProcessing() const
+{
+    // Always return true even if the tail time and latency might both be zero.
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

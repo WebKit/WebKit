@@ -70,6 +70,7 @@ public:
 private:
     double tailTime() const override;
     double latencyTime() const override;
+    bool requiresTailProcessing() const final;
 
     ScriptProcessorNode(BaseAudioContext&, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
 

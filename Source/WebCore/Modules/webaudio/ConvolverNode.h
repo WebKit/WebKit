@@ -55,6 +55,7 @@ private:
 
     double tailTime() const final;
     double latencyTime() const final;
+    bool requiresTailProcessing() const final;
 
     void process(size_t framesToProcess) final;
     void reset() final;

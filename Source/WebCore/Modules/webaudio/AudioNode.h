@@ -172,6 +172,13 @@ public:
     // example, a "delay" effect is expected to delay the signal, and thus would not be considered latency.
     virtual double latencyTime() const = 0;
 
+    // True if the node has a tail time or latency time that requires
+    // special tail processing to behave properly. Ideally, this can be
+    // checked using tailTime and latencyTime, but these aren't
+    // available on the main thread, and the tail processing check can
+    // happen on the main thread.
+    virtual bool requiresTailProcessing() const = 0;
+
     // propagatesSilence() should return true if the node will generate silent output when given silent input. By default, AudioNode
     // will take tailTime() and latencyTime() into account when determining whether the node will propagate silence.
     virtual bool propagatesSilence() const;

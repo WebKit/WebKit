@@ -539,6 +539,14 @@ float PannerNode::dopplerRate()
     return 1.0f;
 }
 
+bool PannerNode::requiresTailProcessing() const
+{
+    // If there's no internal panner method set up yet, assume we require tail
+    // processing in case the HRTF panner is set later, which does require tail
+    // processing.
+    return !m_panner || m_panner->requiresTailProcessing();
+}
+
 float PannerNode::calculateDistanceConeGain(const FloatPoint3D& sourcePosition, const FloatPoint3D& orientation, const FloatPoint3D& listenerPosition)
 {
     double listenerDistance = sourcePosition.distanceTo(listenerPosition);

@@ -147,6 +147,12 @@ ExceptionOr<void> AnalyserNode::setSmoothingTimeConstant(double k)
     return { };
 }
 
+bool AnalyserNode::requiresTailProcessing() const
+{
+    // Tail time is always non-zero so tail processing is required.
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

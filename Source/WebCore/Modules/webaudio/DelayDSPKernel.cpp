@@ -171,6 +171,16 @@ double DelayDSPKernel::latencyTime() const
     return 0;
 }
 
+bool DelayDSPKernel::requiresTailProcessing() const
+{
+    // Always return true even if the tail time and latency might both
+    // be zero. This is for simplicity; most interesting delay nodes
+    // have non-zero delay times anyway. And it's ok to return true. It
+    // just means the node lives a little longer than strictly
+    // necessary.
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

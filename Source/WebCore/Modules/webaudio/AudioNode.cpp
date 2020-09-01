@@ -548,13 +548,10 @@ void AudioNode::disableOutputsIfNecessary()
         // But internally our outputs should be disabled from the inputs they're connected to.
         // disable() can recursively deref connections (and call disable()) down a whole chain of connected nodes.
 
-        // FIXME: we special case the convolver and delay since they have a significant tail-time and shouldn't be disconnected simply
-        // because they no longer have any input connections. This needs to be handled more generally where AudioNodes have
-        // a tailTime attribute. Then the AudioNode only needs to remain "active" for tailTime seconds after there are no
-        // longer any active connections.
-        // Also, WaveShaperNode may produce non-silence even when it no longer has any output. For this reason, we cannot
-        // disable it either.
-        if (nodeType() != NodeTypeConvolver && nodeType() != NodeTypeDelay && nodeType() != NodeTypeWaveShaper && nodeType() != NodeTypeIIRFilter) {
+        // If a node requires tail processing, we defer the disabling of
+        // the outputs so that the tail for the node can be output.
+        // Otherwise, we can disable the outputs right away.
+        if (!requiresTailProcessing()) {
             m_isDisabled = true;
             for (auto& output : m_outputs)
                 output->disable();

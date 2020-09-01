@@ -79,6 +79,8 @@ protected:
     // Called when we have no more sound to play or the noteOff() time has been reached.
     virtual void finish();
 
+    bool requiresTailProcessing() const final { return false; }
+
     PlaybackState m_playbackState { UNSCHEDULED_STATE };
 
     RefPtr<PendingActivity<AudioScheduledSourceNode>> m_pendingActivity;

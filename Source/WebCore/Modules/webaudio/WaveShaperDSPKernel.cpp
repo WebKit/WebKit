@@ -193,6 +193,12 @@ double WaveShaperDSPKernel::latencyTime() const
     return static_cast<double>(latencyFrames) / sampleRate();
 }
 
+bool WaveShaperDSPKernel::requiresTailProcessing() const
+{
+    // Always return true even if the tail time and latency might both be zero.
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

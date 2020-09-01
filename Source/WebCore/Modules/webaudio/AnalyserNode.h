@@ -66,6 +66,7 @@ private:
 
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
+    bool requiresTailProcessing() const final;
 
     RealtimeAnalyser m_analyser;
 };

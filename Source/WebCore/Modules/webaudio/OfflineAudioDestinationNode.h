@@ -63,6 +63,8 @@ private:
     OfflineRenderResult offlineRender();
     void notifyOfflineRenderingSuspended();
 
+    bool requiresTailProcessing() const final { return false; }
+
     unsigned maxChannelCount() const final;
 
     // This AudioNode renders into this AudioBuffer.

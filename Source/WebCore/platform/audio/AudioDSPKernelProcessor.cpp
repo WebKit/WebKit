@@ -126,6 +126,12 @@ double AudioDSPKernelProcessor::latencyTime() const
     return !m_kernels.isEmpty() ? m_kernels.first()->latencyTime() : 0;
 }
 
+bool AudioDSPKernelProcessor::requiresTailProcessing() const
+{
+    // Always return true even if the tail time and latency might both be zero.
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

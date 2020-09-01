@@ -47,6 +47,7 @@ public:
 private:
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }
+    bool requiresTailProcessing() const final { return false; }
 
     ChannelSplitterNode(BaseAudioContext&, unsigned numberOfOutputs);
 };

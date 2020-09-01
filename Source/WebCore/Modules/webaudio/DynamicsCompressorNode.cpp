@@ -136,6 +136,12 @@ double DynamicsCompressorNode::latencyTime() const
     return m_dynamicsCompressor->latencyTime();
 }
 
+bool DynamicsCompressorNode::requiresTailProcessing() const
+{
+    // Always return true even if the tail time and latency might both be zero.
+    return true;
+}
+
 ExceptionOr<void> DynamicsCompressorNode::setChannelCount(unsigned count)
 {
     if (count > 2)

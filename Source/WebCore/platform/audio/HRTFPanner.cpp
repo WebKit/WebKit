@@ -342,6 +342,12 @@ double HRTFPanner::latencyTime() const
     return (fftSize() / 2) / static_cast<double>(sampleRate());
 }
 
+bool HRTFPanner::requiresTailProcessing() const
+{
+    // Always return true since the tail and latency are never zero.
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

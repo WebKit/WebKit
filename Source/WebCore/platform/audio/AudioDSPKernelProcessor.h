@@ -64,6 +64,7 @@ public:
 
     double tailTime() const override;
     double latencyTime() const override;
+    bool requiresTailProcessing() const override;
 
 protected:
     Vector<std::unique_ptr<AudioDSPKernel>> m_kernels;

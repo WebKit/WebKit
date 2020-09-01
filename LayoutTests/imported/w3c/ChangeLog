@@ -1,5 +1,16 @@
 2020-09-01  Chris Dumez  <cdumez@apple.com>
 
+        Make sure BiquadFilterNode tail is getting processed
+        https://bugs.webkit.org/show_bug.cgi?id=216050
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that it is passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-tail-expected.txt:
+
+2020-09-01  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline flaky Web Audio WPT tests.
 
         * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:

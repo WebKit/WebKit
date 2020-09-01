@@ -191,6 +191,12 @@ double ConvolverNode::latencyTime() const
     return m_reverb ? m_reverb->latencyFrames() / static_cast<double>(sampleRate()) : 0;
 }
 
+bool ConvolverNode::requiresTailProcessing() const
+{
+    // Always return true even if the tail time and latency might both be zero.
+    return true;
+}
+
 ExceptionOr<void> ConvolverNode::setChannelCount(unsigned count)
 {
     if (count > 2)

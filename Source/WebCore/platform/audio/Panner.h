@@ -58,6 +58,7 @@ public:
 
     virtual double tailTime() const = 0;
     virtual double latencyTime() const = 0;
+    virtual bool requiresTailProcessing() const = 0;
 
 protected:
     Panner(PanningModelType model)

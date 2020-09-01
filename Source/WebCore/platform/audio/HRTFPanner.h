@@ -50,6 +50,7 @@ public:
 
     double tailTime() const override;
     double latencyTime() const override;
+    bool requiresTailProcessing() const final;
 
 private:
     // Given an azimuth angle in the range -180 -> +180, returns the corresponding azimuth index for the database,

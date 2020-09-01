@@ -347,6 +347,14 @@ void WebKitAudioPannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node, H
     }
 }
 
+bool WebKitAudioPannerNode::requiresTailProcessing() const
+{
+    // If there's no internal panner method set up yet, assume we require tail
+    // processing in case the HRTF panner is set later, which does require tail
+    // processing.
+    return !m_panner || m_panner->requiresTailProcessing();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)
