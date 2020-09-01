@@ -532,6 +532,12 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
         disableServiceWorkerEntitlementInNetworkProcess();
 #endif
 
+#if PLATFORM(COCOA)
+    m_activityStateChangeDispatcher = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::ActivityStateChange), [this] {
+        this->dispatchActivityStateChange();
+    });
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
     m_inspectorDebuggable->setRemoteDebuggingAllowed(true);
     m_inspectorDebuggable->init();
@@ -1850,7 +1856,7 @@ void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
 
     if (!m_suppressVisibilityUpdates) {
 #if PLATFORM(COCOA)
-        scheduleActivityStateUpdate();
+        m_activityStateChangeDispatcher->schedule();
 #else
         dispatchActivityStateChange();
 #endif
@@ -1902,7 +1908,7 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState::Flag> mayHave
         dispatchActivityStateChange();
         return;
     }
-    scheduleActivityStateUpdate();
+    m_activityStateChangeDispatcher->schedule();
 #else
     UNUSED_PARAM(dispatchMode);
     dispatchActivityStateChange();
@@ -1930,6 +1936,10 @@ void WebPageProxy::viewDidEnterWindow()
 
 void WebPageProxy::dispatchActivityStateChange()
 {
+#if PLATFORM(COCOA)
+    m_activityStateChangeDispatcher->invalidate();
+#endif
+
     if (!hasRunningProcess())
         return;
 
