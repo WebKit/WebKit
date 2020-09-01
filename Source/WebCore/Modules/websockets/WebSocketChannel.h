@@ -64,8 +64,6 @@ public:
     static Ref<WebSocketChannel> create(Document& document, WebSocketChannelClient& client, SocketProvider& provider) { return adoptRef(*new WebSocketChannel(document, client, provider)); }
     virtual ~WebSocketChannel();
 
-    bool isWebSocketChannel() const final { return true; }
-
     bool send(const char* data, int length);
 
     // ThreadableWebSocketChannel functions.
@@ -117,10 +115,11 @@ public:
     void didFail(ExceptionCode errorCode) override;
 
     unsigned identifier() const { return m_identifier; }
-    bool hasCreatedHandshake() { return !!m_handshake; }
-    ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue);
-    const ResourceResponse& serverHandshakeResponse() const;
-    WebSocketHandshake::Mode handshakeMode() const;
+    unsigned channelIdentifier() const final { return m_identifier; }
+    bool hasCreatedHandshake() const final { return !!m_handshake; }
+    bool isConnected() const final { return m_handshake->mode() == WebSocketHandshake::Mode::Connected; }
+    ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue) const final;
+    const ResourceResponse& serverHandshakeResponse() const final;
 
     using RefCounted<WebSocketChannel>::ref;
     using RefCounted<WebSocketChannel>::deref;
@@ -232,7 +231,3 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebSocketChannel)
-    static bool isType(const WebCore::ThreadableWebSocketChannel& threadableWebSocketChannel) { return threadableWebSocketChannel.isWebSocketChannel(); }
-SPECIALIZE_TYPE_TRAITS_END()

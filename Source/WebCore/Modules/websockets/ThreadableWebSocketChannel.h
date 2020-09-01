@@ -43,6 +43,7 @@ namespace WebCore {
 class Blob;
 class Document;
 class ResourceRequest;
+class ResourceResponse;
 class ScriptExecutionContext;
 class SocketProvider;
 class WebSocketChannelClient;
@@ -53,8 +54,6 @@ public:
     static Ref<ThreadableWebSocketChannel> create(Document&, WebSocketChannelClient&, SocketProvider&);
     static Ref<ThreadableWebSocketChannel> create(ScriptExecutionContext&, WebSocketChannelClient&, SocketProvider&);
     ThreadableWebSocketChannel() = default;
-
-    virtual bool isWebSocketChannel() const { return false; }
 
     enum SendResult {
         SendSuccess,
@@ -79,6 +78,13 @@ public:
 
     void ref() { refThreadableWebSocketChannel(); }
     void deref() { derefThreadableWebSocketChannel(); }
+
+    // FIXME: Merge channelIdentifier and identifier.
+    virtual unsigned channelIdentifier() const = 0;
+    virtual bool hasCreatedHandshake() const = 0;
+    virtual bool isConnected() const = 0;
+    virtual ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&&) const = 0;
+    virtual const ResourceResponse& serverHandshakeResponse() const = 0;
 
 protected:
     virtual ~ThreadableWebSocketChannel() = default;

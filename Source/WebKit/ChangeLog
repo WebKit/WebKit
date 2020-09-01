@@ -1,3 +1,22 @@
+2020-09-01  Youenn Fablet  <youenn@apple.com>
+
+        Enable inspection of WebSocket when opening Web Inspector in the middle of the connection like done for the legacy WebSocket implementation
+        https://bugs.webkit.org/show_bug.cgi?id=215928
+
+        Reviewed by Devin Rousso.
+
+        Implement inspector related API and add additional messages for WebSocket frames.
+
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::close):
+        (WebKit::WebSocketChannel::didClose):
+        (WebKit::WebSocketChannel::didSendHandshakeRequest):
+        (WebKit::WebSocketChannel::didReceiveHandshakeResponse):
+        (WebKit::WebSocketChannel::clientHandshakeRequest const):
+        (WebKit::WebSocketChannel::serverHandshakeResponse const):
+        (WebKit::WebSocketChannel::handshakeMode const):
+        * WebProcess/Network/WebSocketChannel.h:
+
 2020-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Do not use the default WebsiteDataStore for downloads

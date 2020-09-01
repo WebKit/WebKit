@@ -833,7 +833,7 @@ void WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     m_handle->sendData(frameData.data(), frameData.size(), WTFMove(completionHandler));
 }
 
-ResourceRequest WebSocketChannel::clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue)
+ResourceRequest WebSocketChannel::clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue) const
 {
     return m_handshake->clientHandshakeRequest(WTFMove(cookieRequestHeaderFieldValue));
 }
@@ -841,11 +841,6 @@ ResourceRequest WebSocketChannel::clientHandshakeRequest(Function<String(const U
 const ResourceResponse& WebSocketChannel::serverHandshakeResponse() const
 {
     return m_handshake->serverHandshakeResponse();
-}
-
-WebSocketHandshake::Mode WebSocketChannel::handshakeMode() const
-{
-    return m_handshake->mode();
 }
 
 } // namespace WebCore

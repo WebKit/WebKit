@@ -204,6 +204,9 @@ void WebSocketChannel::close(int code, const String& reason)
 
     ASSERT(code >= 0 || code == WebCore::WebSocketChannel::CloseEventCodeNotSpecified);
 
+    WebSocketFrame closingFrame(WebSocketFrame::OpCodeClose, true, false, true);
+    m_inspector.didSendWebSocketFrame(m_document.get(), closingFrame);
+
     MessageSender::send(Messages::NetworkSocketChannel::Close { code, reason });
 }
 
@@ -321,6 +324,8 @@ void WebSocketChannel::didClose(unsigned short code, String&& reason)
         return;
     }
 
+    WebSocketFrame closingFrame(WebSocketFrame::OpCodeClose, true, false, false);
+    m_inspector.didReceiveWebSocketFrame(m_document.get(), closingFrame);
     m_inspector.didCloseWebSocket(m_document.get());
 
     bool receivedClosingHandshake = code != WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure;
@@ -389,7 +394,9 @@ void WebSocketChannel::didSendHandshakeRequest(ResourceRequest&& request)
         });
         return;
     }
+
     m_inspector.willSendWebSocketHandshakeRequest(m_document.get(), request);
+    m_handshakeRequest = WTFMove(request);
 }
 
 void WebSocketChannel::didReceiveHandshakeResponse(ResourceResponse&& response)
@@ -400,7 +407,9 @@ void WebSocketChannel::didReceiveHandshakeResponse(ResourceResponse&& response)
         });
         return;
     }
+
     m_inspector.didReceiveWebSocketHandshakeResponse(m_document.get(), response);
+    m_handshakeResponse = WTFMove(response);
 }
 
 } // namespace WebKit

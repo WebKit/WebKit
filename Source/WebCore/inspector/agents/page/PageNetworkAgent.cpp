@@ -69,11 +69,8 @@ Vector<WebSocket*> PageNetworkAgent::activeWebSockets(const LockHolder& lock)
 {
     Vector<WebSocket*> webSockets;
 
-    for (WebSocket* webSocket : WebSocket::allActiveWebSockets(lock)) {
-        if (!is<WebSocketChannel>(webSocket->channel().get()))
-            continue;
-
-        auto* channel = downcast<WebSocketChannel>(webSocket->channel().get());
+    for (auto* webSocket : WebSocket::allActiveWebSockets(lock)) {
+        auto channel = webSocket->channel();
         if (!channel)
             continue;
 

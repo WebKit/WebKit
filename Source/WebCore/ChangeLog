@@ -1,3 +1,26 @@
+2020-09-01  Youenn Fablet  <youenn@apple.com>
+
+        Enable inspection of WebSocket when opening Web Inspector in the middle of the connection like done for the legacy WebSocket implementation
+        https://bugs.webkit.org/show_bug.cgi?id=215928
+
+        Reviewed by Devin Rousso.
+
+        Retrofit API used by Inspector from WebCore::WebSocketChannel to ThreadableWebSocketChannel.
+        Make Inspector code work with ThreadableWebSocketChannel.
+        Add a dummy implementation for Worker WebSocket (not supported currently by Web Inspector).
+
+        Covered by http/tests/websocket/tests/hybi/inspector with NSURLSession WebSocket code path enabled.
+
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::clientHandshakeRequest const):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::enable):
+        (WebCore::InspectorNetworkAgent::webSocketForRequestId):
+        * inspector/agents/page/PageNetworkAgent.cpp:
+
 2020-09-01  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] Add support for smooth scrolling animation with async scrolling

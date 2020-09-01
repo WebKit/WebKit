@@ -160,10 +160,19 @@ private:
 
     class WorkerGlobalScopeDidInitializeTask;
 
+    // Dummy implementation of inspector related APIs.
+    unsigned channelIdentifier() const final { return 1; }
+    bool hasCreatedHandshake() const final { return false; }
+    bool isConnected() const final { return false; }
+    ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&&) const final { return m_handshakeRequest; }
+    const ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
+
     Ref<WorkerGlobalScope> m_workerGlobalScope;
     Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
     RefPtr<Bridge> m_bridge;
     Ref<SocketProvider> m_socketProvider;
+    ResourceRequest m_handshakeRequest;
+    ResourceResponse m_handshakeResponse;
 };
 
 } // namespace WebCore

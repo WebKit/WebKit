@@ -812,20 +812,24 @@ void InspectorNetworkAgent::enable()
     {
         LockHolder lock(WebSocket::allActiveWebSocketsMutex());
 
-        for (WebSocket* webSocket : activeWebSockets(lock)) {
-            ASSERT(is<WebSocketChannel>(webSocket->channel().get()));
-            WebSocketChannel* channel = downcast<WebSocketChannel>(webSocket->channel().get());
+        for (auto* webSocket : activeWebSockets(lock)) {
+            if (!is<Document>(webSocket->scriptExecutionContext()))
+                continue;
 
-            unsigned identifier = channel->identifier();
+            auto& document = downcast<Document>(*webSocket->scriptExecutionContext());
+            auto channel = webSocket->channel();
+
+            auto identifier = channel->channelIdentifier();
             didCreateWebSocket(identifier, webSocket->url());
-            auto cookieRequestHeaderFieldValue = [document = makeWeakPtr(channel->document())] (const URL& url) -> String {
+
+            auto cookieRequestHeaderFieldValue = [document = makeWeakPtr(document)](const URL& url) -> String {
                 if (!document || !document->page())
                     return { };
                 return document->page()->cookieJar().cookieRequestHeaderFieldValue(*document, url);
             };
             willSendWebSocketHandshakeRequest(identifier, channel->clientHandshakeRequest(WTFMove(cookieRequestHeaderFieldValue)));
 
-            if (channel->handshakeMode() == WebSocketHandshake::Connected)
+            if (channel->isConnected())
                 didReceiveWebSocketHandshakeResponse(identifier, channel->serverHandshakeResponse());
 
             if (webSocket->readyState() == WebSocket::CLOSED)
@@ -992,10 +996,8 @@ WebSocket* InspectorNetworkAgent::webSocketForRequestId(const String& requestId)
 {
     LockHolder lock(WebSocket::allActiveWebSocketsMutex());
 
-    for (WebSocket* webSocket : activeWebSockets(lock)) {
-        ASSERT(is<WebSocketChannel>(webSocket->channel().get()));
-        WebSocketChannel* channel = downcast<WebSocketChannel>(webSocket->channel().get());
-        if (IdentifiersFactory::requestId(channel->identifier()) == requestId)
+    for (auto* webSocket : activeWebSockets(lock)) {
+        if (IdentifiersFactory::requestId(webSocket->channel()->channelIdentifier()) == requestId)
             return webSocket;
     }
 
