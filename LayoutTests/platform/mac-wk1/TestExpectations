@@ -1151,3 +1151,6 @@ webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
 # rdar://65188503
 [ BigSur+ ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
+
+# rdar://65188503
+[ BigSur+ ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
