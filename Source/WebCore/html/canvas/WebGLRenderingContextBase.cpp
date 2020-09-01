@@ -1082,6 +1082,10 @@ void WebGLRenderingContextBase::markContextChanged()
 
 void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver()
 {
+    // If we're not touching the default framebuffer, nothing visible has changed.
+    if (m_framebufferBinding)
+        return;
+
     markContextChanged();
     if (!isAccelerated())
         return;
