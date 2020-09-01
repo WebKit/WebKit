@@ -8563,40 +8563,49 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
+static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
+{
+    // System apps will always be linked on the current OS, so
+    // check them before the linked-on-or-after.
+
+    // <rdar://problem/59521967> iAd Video does not respond to mouse events, only touch events
+    if (WebCore::IOSApplication::isNews() || WebCore::IOSApplication::isStocks()) {
+        warningVersion = nullptr;
+        return YES;
+    }
+
+    if (!WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstVersionWithiOSAppsOnMacOS)) {
+        if (WebCore::IOSApplication::isFIFACompanion() // <rdar://problem/67093487>
+            || WebCore::IOSApplication::isNoggin() // <rdar://problem/64830335>
+            || WebCore::IOSApplication::isOKCupid()) { // <rdar://problem/65698496>
+            warningVersion = "14.2";
+            return YES;
+        }
+    }
+
+    if (!WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstThatSendsNativeMouseEvents)) {
+        if (WebCore::IOSApplication::isPocketCity() // <rdar://problem/62273077>
+            || WebCore::IOSApplication::isEssentialSkeleton() // <rdar://problem/62694519>
+            || WebCore::IOSApplication::isESPNFantasySports() // <rdar://problem/64671543>
+            || WebCore::IOSApplication::isDoubleDown()) { // <rdar://problem/64668138>
+            warningVersion = "13.4";
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
 - (BOOL)shouldUseMouseGestureRecognizer
 {
     static const BOOL shouldUseMouseGestureRecognizer = []() -> BOOL {
-        // System apps will always be linked on the current OS, so
-        // check them before the linked-on-or-after.
+        const char* warningVersion = nullptr;
+        BOOL knownToIgnoreMouseEvents = applicationIsKnownToIgnoreMouseEvents(warningVersion);
 
-        // <rdar://problem/59521967> iAd Video does not respond to mouse events, only touch events
-        if (WebCore::IOSApplication::isNews() || WebCore::IOSApplication::isStocks())
-            return NO;
+        if (knownToIgnoreMouseEvents && warningVersion)
+            os_log_error(OS_LOG_DEFAULT, "WARNING: This application has been observed to ignore mouse events in web content; touch events will be sent until it is built against the iOS %s SDK, but after that, the web content must respect mouse or pointer events in addition to touch events in order to behave correctly when a trackpad or mouse is used.", warningVersion);
 
-        if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstThatSendsNativeMouseEvents))
-            return YES;
-
-        // <rdar://problem/59155220> Some Feedly UI does not respond to mouse events, only touch events
-        if (WebCore::IOSApplication::isFeedly())
-            return NO;
-
-        // <rdar://problem/62273077> "Pocket City" does not respond to mouse events, only touch events
-        if (WebCore::IOSApplication::isPocketCity())
-            return NO;
-
-        // <rdar://problem/62694519> "Essential Skeleton" does not respond to mouse events, only touch events
-        if (WebCore::IOSApplication::isEssentialSkeleton())
-            return NO;
-
-        // <rdar://problem/64671543> "ESPN Fantasy Sports" does not respond to mouse events, only touch events
-        if (WebCore::IOSApplication::isESPNFantasySports())
-            return NO;
-
-        // <rdar://problem/64668138> DoubleDown Casino respin button stops working with trackpad
-        if (WebCore::IOSApplication::isDoubleDown())
-            return NO;
-
-        return YES;
+        return !knownToIgnoreMouseEvents;
     }();
 
     switch (_mouseEventPolicy) {

@@ -1,3 +1,18 @@
+2020-09-01  Tim Horton  <timothy_horton@apple.com>
+
+        Some apps linked beyond iOS 13.4 don't respect mouse events, only touch events
+        https://bugs.webkit.org/show_bug.cgi?id=216021
+        <rdar://problem/64830335>
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isFIFACompanion):
+        (WebCore::IOSApplication::isNoggin):
+        (WebCore::IOSApplication::isOKCupid):
+        Add some more bundle checks.
+
 2020-09-01  Brady Eidson  <beidson@apple.com>
 
         Crashtracer in SubresourceLoader::didCancel.
