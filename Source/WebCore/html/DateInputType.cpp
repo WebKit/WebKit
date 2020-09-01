@@ -33,6 +33,7 @@
 #include "DateInputType.h"
 
 #include "DateComponents.h"
+#include "DateTimeFieldsState.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -91,6 +92,14 @@ bool DateInputType::isDateField() const
 bool DateInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
 {
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay });
+}
+
+String DateInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
+{
+    if (!state.dayOfMonth || !state.month || !state.year)
+        return emptyString();
+
+    return makeString(pad('0', 4, *state.year), '-', pad('0', 2, *state.month), '-', pad('0', 2, *state.dayOfMonth));
 }
 
 void DateInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters) const

@@ -63,16 +63,16 @@ void DateTimeSymbolicFieldElement::initialize(const AtomString& pseudo)
     DateTimeFieldElement::initialize(pseudo);
 }
 
-void DateTimeSymbolicFieldElement::setEmptyValue()
+void DateTimeSymbolicFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
     m_selectedIndex = invalidIndex;
-    updateVisibleValue();
+    updateVisibleValue(eventBehavior);
 }
 
-void DateTimeSymbolicFieldElement::setValueAsInteger(int newSelectedIndex)
+void DateTimeSymbolicFieldElement::setValueAsInteger(int newSelectedIndex, EventBehavior eventBehavior)
 {
     m_selectedIndex = std::max(0, std::min(newSelectedIndex, static_cast<int>(m_symbols.size() - 1)));
-    updateVisibleValue();
+    updateVisibleValue(eventBehavior);
 }
 
 String DateTimeSymbolicFieldElement::value() const
@@ -93,6 +93,11 @@ String DateTimeSymbolicFieldElement::visibleEmptyValue() const
 String DateTimeSymbolicFieldElement::visibleValue() const
 {
     return hasValue() ? m_symbols[m_selectedIndex] : visibleEmptyValue();
+}
+
+void DateTimeSymbolicFieldElement::handleKeyboardEvent(KeyboardEvent&)
+{
+    // FIXME: Implement after adding layout for <input type=time>.
 }
 
 } // namespace WebCore

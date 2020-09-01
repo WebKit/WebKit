@@ -101,6 +101,11 @@ bool DateTimeLocalInputType::isValidFormat(OptionSet<DateTimeFormatValidationRes
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay, DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute });
 }
 
+String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
+{
+    return emptyString();
+}
+
 void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
 {
 }

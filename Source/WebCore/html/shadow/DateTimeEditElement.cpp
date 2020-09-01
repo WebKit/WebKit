@@ -31,6 +31,7 @@
 
 #include "DateComponents.h"
 #include "DateTimeFieldElements.h"
+#include "DateTimeFieldsState.h"
 #include "DateTimeFormat.h"
 #include "DateTimeSymbolicFieldElement.h"
 #include "HTMLNames.h"
@@ -154,6 +155,13 @@ void DateTimeEditElement::addField(Ref<DateTimeFieldElement> field)
     fieldsWrapperElement().appendChild(field);
 }
 
+size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& fieldToFind) const
+{
+    return m_fields.findMatching([&] (auto& field) {
+        return field.ptr() == &fieldToFind;
+    });
+}
+
 Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, EditControlOwner& editControlOwner)
 {
     return adoptRef(*new DateTimeEditElement(document, editControlOwner));
@@ -187,6 +195,67 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
     }
 }
 
+void DateTimeEditElement::blurFromField(RefPtr<Element>&& newFocusedElement)
+{
+    bool notifyOwner = notFound == m_fields.findMatching([&] (auto& field) {
+        return field.ptr() == newFocusedElement.get();
+    });
+
+    HTMLElement::dispatchBlurEvent(WTFMove(newFocusedElement));
+
+    if (m_editControlOwner && notifyOwner)
+        m_editControlOwner->didBlurFromControl();
+}
+
+void DateTimeEditElement::fieldValueChanged()
+{
+    if (m_editControlOwner)
+        m_editControlOwner->didChangeValueFromControl();
+}
+
+bool DateTimeEditElement::focusOnNextFocusableField(size_t startIndex)
+{
+    for (size_t i = startIndex; i < m_fields.size(); ++i) {
+        if (m_fields[i]->isFocusable()) {
+            m_fields[i]->focus();
+            return true;
+        }
+    }
+    return false;
+}
+
+void DateTimeEditElement::focusByOwner()
+{
+    focusOnNextFocusableField(0);
+}
+
+bool DateTimeEditElement::focusOnNextField(const DateTimeFieldElement& field)
+{
+    auto startFieldIndex = fieldIndexOf(field);
+    if (startFieldIndex == notFound)
+        return false;
+
+    return focusOnNextFocusableField(startFieldIndex + 1);
+}
+
+bool DateTimeEditElement::focusOnPreviousField(const DateTimeFieldElement& field)
+{
+    auto startFieldIndex = fieldIndexOf(field);
+    if (startFieldIndex == notFound)
+        return false;
+
+    auto fieldIndex = startFieldIndex;
+    while (fieldIndex > 0) {
+        --fieldIndex;
+        if (m_fields[fieldIndex]->isFocusable()) {
+            m_fields[fieldIndex]->focus();
+            return true;
+        }
+    }
+
+    return false;
+}
+
 AtomString DateTimeEditElement::localeIdentifier() const
 {
     return m_editControlOwner ? m_editControlOwner->localeIdentifier() : nullAtom();
@@ -213,7 +282,15 @@ void DateTimeEditElement::setEmptyValue(const LayoutParameters& layoutParameters
 
 String DateTimeEditElement::value() const
 {
-    return m_editControlOwner ? m_editControlOwner->valueForEditControl() : emptyString();
+    return m_editControlOwner ? m_editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState()) : emptyString();
+}
+
+DateTimeFieldsState DateTimeEditElement::valueAsDateTimeFieldsState() const
+{
+    DateTimeFieldsState dateTimeFieldsState;
+    for (auto& field : m_fields)
+        field->populateDateTimeFieldsState(dateTimeFieldsState);
+    return dateTimeFieldsState;
 }
 
 } // namespace WebCore

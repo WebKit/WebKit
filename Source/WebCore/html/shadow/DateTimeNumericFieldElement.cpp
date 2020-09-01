@@ -29,15 +29,30 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "EventNames.h"
+#include "KeyboardEvent.h"
 #include "PlatformLocale.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
+constexpr Seconds typeAheadTimeout { 1_s };
+
+int DateTimeNumericFieldElement::Range::clampValue(int value) const
+{
+    return std::clamp(value, minimum, maximum);
+}
+
+bool DateTimeNumericFieldElement::Range::isInRange(int value) const
+{
+    return value >= minimum && value <= maximum;
+}
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeNumericFieldElement);
 
-DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, FieldOwner& fieldOwner, const String& placeholder)
+DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, FieldOwner& fieldOwner, const Range& range, const String& placeholder)
     : DateTimeFieldElement(document, fieldOwner)
+    , m_range(range)
     , m_placeholder(placeholder)
 {
 }
@@ -45,6 +60,11 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Fie
 String DateTimeNumericFieldElement::formatValue(int value) const
 {
     Locale& locale = localeForOwner();
+
+    if (m_range.maximum > 999)
+        return locale.convertToLocalizedNumber(makeString(pad('0', 4, value)));
+    if (m_range.maximum > 99)
+        return locale.convertToLocalizedNumber(makeString(pad('0', 3, value)));
     return locale.convertToLocalizedNumber(makeString(pad('0', 2, value)));
 }
 
@@ -58,18 +78,19 @@ void DateTimeNumericFieldElement::initialize(const AtomString& pseudo)
     DateTimeFieldElement::initialize(pseudo);
 }
 
-void DateTimeNumericFieldElement::setEmptyValue()
+void DateTimeNumericFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
     m_value = 0;
     m_hasValue = false;
-    updateVisibleValue();
+    m_typeAheadBuffer.clear();
+    updateVisibleValue(eventBehavior);
 }
 
-void DateTimeNumericFieldElement::setValueAsInteger(int value)
+void DateTimeNumericFieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
 {
-    m_value = value;
+    m_value = m_range.clampValue(value);
     m_hasValue = true;
-    updateVisibleValue();
+    updateVisibleValue(eventBehavior);
 }
 
 String DateTimeNumericFieldElement::value() const
@@ -85,6 +106,39 @@ int DateTimeNumericFieldElement::valueAsInteger() const
 String DateTimeNumericFieldElement::visibleValue() const
 {
     return m_hasValue ? value() : m_placeholder;
+}
+
+void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEvent)
+{
+    if (keyboardEvent.type() != eventNames().keypressEvent)
+        return;
+
+    auto charCode = static_cast<UChar>(keyboardEvent.charCode());
+    String number = localeForOwner().convertFromLocalizedNumber(String(&charCode, 1));
+    int digit = number[0] - '0';
+    if (digit < 0 || digit > 9)
+        return;
+
+    Seconds timeSinceLastDigitChar = keyboardEvent.timeStamp() - m_lastDigitCharTime;
+    m_lastDigitCharTime = keyboardEvent.timeStamp();
+
+    if (timeSinceLastDigitChar > typeAheadTimeout) {
+        m_typeAheadBuffer.clear();
+    } else if (auto length = m_typeAheadBuffer.length()) {
+        unsigned maxLength = formatValue(m_range.maximum).length();
+        if (length == maxLength)
+            m_typeAheadBuffer.clear();
+    }
+
+    m_typeAheadBuffer.append(number);
+    setValueAsInteger(m_typeAheadBuffer.toString().toInt(), DispatchInputAndChangeEvents);
+
+    keyboardEvent.setDefaultHandled();
+}
+
+void DateTimeNumericFieldElement::didBlur()
+{
+    m_typeAheadBuffer.clear();
 }
 
 } // namespace WebCore

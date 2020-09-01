@@ -43,7 +43,9 @@ public:
     class EditControlOwner : public CanMakeWeakPtr<EditControlOwner> {
     public:
         virtual ~EditControlOwner();
-        virtual String valueForEditControl() const = 0;
+        virtual void didBlurFromControl() = 0;
+        virtual void didChangeValueFromControl() = 0;
+        virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
         virtual AtomString localeIdentifier() const = 0;
     };
 
@@ -63,6 +65,7 @@ public:
     virtual ~DateTimeEditElement();
     void addField(Ref<DateTimeFieldElement>);
     Element& fieldsWrapperElement() const;
+    void focusByOwner();
     void resetFields();
     void setEmptyValue(const LayoutParameters&);
     void setValueAsDate(const LayoutParameters&, const DateComponents&);
@@ -82,9 +85,17 @@ private:
 
     DateTimeEditElement(Document&, EditControlOwner&);
 
+    size_t fieldIndexOf(const DateTimeFieldElement&) const;
     void layout(const LayoutParameters&);
+    DateTimeFieldsState valueAsDateTimeFieldsState() const;
+
+    bool focusOnNextFocusableField(size_t startIndex);
 
     // DateTimeFieldElement::FieldOwner functions:
+    void blurFromField(RefPtr<Element>&& newFocusedElement) final;
+    void fieldValueChanged() final;
+    bool focusOnNextField(const DateTimeFieldElement&) final;
+    bool focusOnPreviousField(const DateTimeFieldElement&) final;
     AtomString localeIdentifier() const final;
 
     Vector<Ref<DateTimeFieldElement>, maximumNumberOfFields> m_fields;

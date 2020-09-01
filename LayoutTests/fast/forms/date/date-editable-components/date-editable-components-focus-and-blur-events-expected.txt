@@ -1,0 +1,40 @@
+Test for focus and blur events for <input type=date>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Focus/blur using mouse
+
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 1
+
+Focus/blur using keyboard
+
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 1
+PASS focusEventsFired is 2
+PASS blurEventsFired is 1
+PASS focusEventsFired is 2
+PASS blurEventsFired is 1
+PASS focusEventsFired is 2
+PASS blurEventsFired is 1
+PASS focusEventsFired is 2
+PASS blurEventsFired is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

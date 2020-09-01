@@ -29,33 +29,49 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "DateTimeFieldElement.h"
+#include <wtf/MonotonicTime.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 class DateTimeNumericFieldElement : public DateTimeFieldElement {
     WTF_MAKE_ISO_ALLOCATED(DateTimeNumericFieldElement);
 public:
+    struct Range {
+        Range(int minimum, int maximum)
+            : minimum(minimum), maximum(maximum) { }
+        int clampValue(int) const;
+        bool isInRange(int) const;
+
+        int minimum;
+        int maximum;
+    };
 
 protected:
-    DateTimeNumericFieldElement(Document&, FieldOwner&, const String& placeholder);
+    DateTimeNumericFieldElement(Document&, FieldOwner&, const Range&, const String& placeholder);
 
     // DateTimeFieldElement functions:
     bool hasValue() const final;
     void initialize(const AtomString&);
-    void setEmptyValue() final;
-    void setValueAsInteger(int) final;
+    void setEmptyValue(EventBehavior = DispatchNoEvent) final;
+    void setValueAsInteger(int, EventBehavior = DispatchNoEvent) final;
     int valueAsInteger() const final;
     String visibleValue() const final;
 
 private:
     // DateTimeFieldElement functions:
     String value() const final;
+    void handleKeyboardEvent(KeyboardEvent&) final;
+    void didBlur() final;
 
     String formatValue(int) const;
 
+    const Range m_range;
     const String m_placeholder;
     int m_value { 0 };
     bool m_hasValue { false };
+    StringBuilder m_typeAheadBuffer;
+    MonotonicTime m_lastDigitCharTime;
 };
 
 } // namespace WebCore

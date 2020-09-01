@@ -28,35 +28,14 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
-#include "DateTimeFieldElement.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
-class DateTimeSymbolicFieldElement : public DateTimeFieldElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeSymbolicFieldElement);
-protected:
-    DateTimeSymbolicFieldElement(Document&, FieldOwner&, const Vector<String>&);
-    size_t symbolsSize() const { return m_symbols.size(); }
-    bool hasValue() const final;
-    void initialize(const AtomString& pseudo);
-    void setEmptyValue(EventBehavior = DispatchNoEvent) final;
-    void setValueAsInteger(int, EventBehavior = DispatchNoEvent) final;
-    int valueAsInteger() const final;
-
-private:
-    static constexpr int invalidIndex = -1;
-
-    String visibleEmptyValue() const;
-
-    // DateTimeFieldElement functions:
-    String value() const final;
-    String visibleValue() const final;
-    void handleKeyboardEvent(KeyboardEvent&) final;
-
-    const Vector<String> m_symbols;
-
-    const AtomString m_visibleEmptyValue;
-    int m_selectedIndex { invalidIndex };
+struct DateTimeFieldsState {
+    Optional<unsigned> year;
+    Optional<unsigned> month;
+    Optional<unsigned> dayOfMonth;
 };
 
 } // namespace WebCore

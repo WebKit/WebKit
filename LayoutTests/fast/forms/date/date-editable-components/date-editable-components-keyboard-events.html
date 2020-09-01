@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="before" type="text">
+<input id="input" type="date">
+<input id="after" type="text">
+
+<script>
+
+jsTestIsAsync = true;
+
+changeEventsFired = 0;
+function onChangeEvent() {
+    changeEventsFired++;
+}
+
+inputEventsFired = 0;
+function onInputEvent() {
+    inputEventsFired++;
+}
+
+function beginTest(title, value) {
+    debug("\n" + title);
+    input.value = value || "";
+    input.blur();
+    input.focus();
+
+    changeEventsFired = 0;
+    inputEventsFired = 0;
+}
+
+input.addEventListener("change", onChangeEvent);
+input.addEventListener("input", onInputEvent);
+
+addEventListener("load", async () => {
+    description("Test for keyboard operations for &lt;input type=date&gt;");
+
+    beginTest("Digit keys");                               // [mm]/dd/yyyy
+    UIHelper.keyDown("9");                                 // -> [09]/dd/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 09/[dd]/yyyy
+    UIHelper.keyDown("2");                                 // -> 09/[02]/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 09/02/[yyyy]
+    UIHelper.keyDown("2");                                 // -> 09/02/[0002]
+    UIHelper.keyDown("0");                                 // -> 09/02/[0020]
+    UIHelper.keyDown("1");                                 // -> 09/02/[0201]
+    UIHelper.keyDown("2");                                 // -> 09/02/[2012]
+    UIHelper.keyDown("A");                                 // Ignored.
+    shouldBeEqualToString("input.value", "2012-09-02");
+    shouldBe("changeEventsFired", "4");
+    shouldBe("inputEventsFired", "4");
+
+    beginTest("Digit keys with leading zero");             // [mm]/dd/yyyy
+    UIHelper.keyDown("0");                                 // -> [00]/dd/yyyy
+    UIHelper.keyDown("5");                                 // -> [05]/dd/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 05/[dd]/yyyy
+    UIHelper.keyDown("0");                                 // -> 05/[00]/yyyy
+    UIHelper.keyDown("6");                                 // -> 05/[06]/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 05/06/[yyyy]
+    UIHelper.keyDown("0");                                 // -> 05/06/[0001]
+    UIHelper.keyDown("0");                                 // -> 05/06/[0001]
+    UIHelper.keyDown("3");                                 // -> 05/06/[0003]
+    UIHelper.keyDown("4");                                 // -> 05/06/[0034]
+    shouldBeEqualToString("input.value", "0034-05-06");
+    shouldBe("changeEventsFired", "3");
+    shouldBe("inputEventsFired", "3");
+
+    beginTest("Digit keys and backspace key");             // [mm]/dd/yyyy
+    UIHelper.keyDown("1");                                 // -> [01]/dd/yyyy
+    UIHelper.keyDown("\b");                                // -> [mm]/dd/yyyy
+    UIHelper.keyDown("2");                                 // -> [02]/dd/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 02/[dd]/yyyy
+    UIHelper.keyDown("3");                                 // -> 02/[03]/yyyy
+    UIHelper.keyDown("\b");                                // -> 02/[dd]/yyyy
+    UIHelper.keyDown("4");                                 // -> 02/[04]/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 02/04/[yyyy]
+    UIHelper.keyDown("4");                                 // -> 02/04/[0004]
+    UIHelper.keyDown("\b");                                // -> 02/04/[yyyy]
+    UIHelper.keyDown("2");                                 // -> 02/04/[0002]
+    UIHelper.keyDown("0");                                 // -> 02/04/[0020]
+    UIHelper.keyDown("2");                                 // -> 02/04/[0202]
+    UIHelper.keyDown("0");                                 // -> 02/04/[2020]
+    shouldBeEqualToString("input.value", "2020-02-04");
+    shouldBe("changeEventsFired", "6");
+    shouldBe("inputEventsFired", "6");
+
+    beginTest("Digit keys with timeout");                  // [mm]/dd/yyyy
+    UIHelper.keyDown("2");                                 // -> [02]/dd/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 02/[dd]/yyyy
+    UIHelper.keyDown("4");                                 // -> 02/[04]/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 02/04/[yyyy]
+    UIHelper.keyDown("4");                                 // -> 02/04/[0004]
+    await UIHelper.delayFor(1500);                         // Wait.
+    UIHelper.keyDown("1");                                 // -> 02/04/[0001]
+    shouldBeEqualToString("input.value", "0001-02-04");
+    shouldBe("changeEventsFired", "2");
+    shouldBe("inputEventsFired", "2");
+
+    beginTest("Digit keys clamp value");                   // [mm]/dd/yyyy
+    UIHelper.keyDown("9");                                 // -> [09]/dd/yyyy
+    UIHelper.keyDown("9");                                 // -> [12]/dd/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 12/[dd]/yyyy
+    UIHelper.keyDown("9");                                 // -> 12/[09]/yyyy
+    UIHelper.keyDown("9");                                 // -> 12/[31]/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 12/31/[yyyy]
+    UIHelper.keyDown("9");                                 // -> 12/31/[0009]
+    UIHelper.keyDown("9");                                 // -> 12/31/[0099]
+    UIHelper.keyDown("9");                                 // -> 12/31/[0999]
+    UIHelper.keyDown("9");                                 // -> 12/31/[9999]
+    shouldBeEqualToString("input.value", "9999-12-31");
+    shouldBe("changeEventsFired", "4");
+    shouldBe("inputEventsFired", "4");
+
+    beginTest("Left/Right arrow keys");                    // [mm]/dd/yyyy
+    UIHelper.keyDown("2");                                 // -> [02]/dd/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 02/[dd]/yyyy
+    UIHelper.keyDown("2");                                 // -> 02/[02]/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 02/02/[yyyy]
+    UIHelper.keyDown("2");                                 // -> 02/02/[0002]
+    shouldBeEqualToString("input.value", "0002-02-02");
+    UIHelper.keyDown("leftArrow");                         // -> 02/[02]/0002
+    UIHelper.keyDown("3");                                 // -> 02/[03]/0002
+    UIHelper.keyDown("leftArrow");                         // -> [02]/03/0002
+    UIHelper.keyDown("3");                                 // -> [03]/03/0002
+    shouldBeEqualToString("input.value", "0002-03-03");
+    shouldBe("changeEventsFired", "3");
+    shouldBe("inputEventsFired", "3");
+
+    beginTest("Tab key");
+    UIHelper.keyDown("2");                                 // -> [02]/dd/yyyy
+    UIHelper.keyDown("\t");                                // -> 02/[dd]/yyyy
+    UIHelper.keyDown("2");                                 // -> 02/[02]/yyyy
+    UIHelper.keyDown("\t");                                // -> 02/02/[yyyy]
+    UIHelper.keyDown("2");                                 // -> 02/02/[0002]
+    shouldBeEqualToString("input.value", "0002-02-02");
+    UIHelper.keyDown("\t");                                // Focus out.
+    shouldBeEqualToString("document.activeElement.id", "after");
+    UIHelper.keyDown("\t", ["shiftKey"]);                  // -> 02/02/[0002]
+    UIHelper.keyDown("\t", ["shiftKey"]);                  // -> 02/[02]/0002
+    UIHelper.keyDown("3");                                 // -> 02/[03]/0002
+    UIHelper.keyDown("\t", ["shiftKey"]);                  // -> [02]/03/0002
+    UIHelper.keyDown("3");                                 // -> [03]/03/0002
+    shouldBeEqualToString("input.value", "0002-03-03");
+    UIHelper.keyDown("\t", ["shiftKey"]);                  // Focus out.
+    shouldBeEqualToString("document.activeElement.id", "before");
+    shouldBe("changeEventsFired", "3");
+    shouldBe("inputEventsFired", "3");
+
+    beginTest("Backspace key", "2020-08-26");              // [08]/26/2020
+    UIHelper.keyDown("\b");                                // -> [mm]/26/2020
+    shouldBeEqualToString("input.value", "");
+    UIHelper.keyDown("7");                                 // -> [07]/26/2020
+    shouldBeEqualToString("input.value", "2020-07-26");
+    shouldBe("changeEventsFired", "2");
+    shouldBe("inputEventsFired", "2");
+
+    beginTest("Delete key", "2020-08-26");                 // [08]/26/2021
+    UIHelper.keyDown("delete");                            // -> [mm]/26/2021
+    shouldBeEqualToString("input.value", "");
+    shouldBe("changeEventsFired", "1");
+    shouldBe("inputEventsFired", "1");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

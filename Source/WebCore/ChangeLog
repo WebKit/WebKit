@@ -1,3 +1,127 @@
+2020-09-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Handle events for date inputs with editable components
+        https://bugs.webkit.org/show_bug.cgi?id=215938
+
+        Reviewed by Darin Adler.
+
+        This patch adds actual editability to date inputs with editable
+        components, as the individual components now respond to keyboard
+        events. Number keys can be used to enter a day, month, or year. The
+        left and right arrow keys, as well as the tab key, can be used to
+        traverse the various components. Finally, the backspace and delete keys
+        can be used to clear the value of a particular component.
+
+        To match the behavior of NSDatePicker, a typeahead buffer with a
+        timeout is used when editing. For example, entering "2" and "3" in
+        immediate succession will result in a year of "0023", but a one second
+        gap between the two characters will result in a year of "0003".
+
+        Finally, this patch ensures that "focus", "blur", "input", and "change"
+        events are dispatched appropriately.
+
+        Tests: fast/forms/date/date-editable-components/date-editable-components-focus-and-blur-events.html
+               fast/forms/date/date-editable-components/date-editable-components-keyboard-events.html
+               fast/forms/date/date-editable-components/date-editable-components-mouse-events.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleFocusEvent):
+
+        Override this method so that any attempt to focus the date input
+        element will focus the appropriate editable component.
+
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::hasCustomFocusLogic const):
+
+        Override this method and return false if editable components are
+        present so that the element can be a FocusScopeOwner. This is needed to
+        be able to tab through individual components.
+
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::didBlurFromControl):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::didChangeValueFromControl):
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::isKeyboardFocusable const): Date inputs should be keyboard focusable on all platforms.
+        * html/BaseDateAndTimeInputType.h:
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::formatDateTimeFieldsState const): Serialize the state of the edit control into a valid HTML date string.
+        * html/DateInputType.h:
+        * html/DateTimeFieldsState.h: Added.
+
+        DateTimeFieldsState is used to serialize and deserialize the contents of
+        DateTimeEditElement. In the future, this class will also be used to
+        save form state on forward/backward navigation.
+
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::formatDateTimeFieldsState const):
+        * html/DateTimeLocalInputType.h:
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::formatDateTimeFieldsState const):
+        * html/MonthInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::formatDateTimeFieldsState const):
+        * html/TimeInputType.h:
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::formatDateTimeFieldsState const):
+        * html/WeekInputType.h:
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::fieldIndexOf const):
+        (WebCore::DateTimeEditElement::blurFromField):
+
+        If a field is blurred, ensure the owner is notified if none of the
+        other fields are focused.
+
+        (WebCore::DateTimeEditElement::fieldValueChanged):
+        (WebCore::DateTimeEditElement::focusOnNextFocusableField):
+        (WebCore::DateTimeEditElement::focusByOwner):
+        (WebCore::DateTimeEditElement::focusOnNextField):
+        (WebCore::DateTimeEditElement::focusOnPreviousField):
+        (WebCore::DateTimeEditElement::value const):
+        (WebCore::DateTimeEditElement::valueAsDateTimeFieldsState const):
+        * html/shadow/DateTimeEditElement.h:
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::defaultEventHandler):
+        (WebCore::DateTimeFieldElement::defaultKeyboardEventHandler):
+        (WebCore::DateTimeFieldElement::dispatchBlurEvent):
+        (WebCore::DateTimeFieldElement::didBlur):
+        (WebCore::DateTimeFieldElement::updateVisibleValue): Add EventBehavior parameter to dispatch "input" and "change" events accordingly.
+        * html/shadow/DateTimeFieldElement.h:
+        * html/shadow/DateTimeFieldElements.cpp:
+        (WebCore::DateTimeDayFieldElement::DateTimeDayFieldElement):
+        (WebCore::DateTimeDayFieldElement::populateDateTimeFieldsState):
+        (WebCore::DateTimeMonthFieldElement::DateTimeMonthFieldElement):
+        (WebCore::DateTimeMonthFieldElement::populateDateTimeFieldsState):
+        (WebCore::DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState):
+        (WebCore::DateTimeYearFieldElement::DateTimeYearFieldElement):
+        (WebCore::DateTimeYearFieldElement::populateDateTimeFieldsState):
+        * html/shadow/DateTimeFieldElements.h:
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::Range::clampValue const):
+        (WebCore::DateTimeNumericFieldElement::Range::isInRange const):
+        (WebCore::DateTimeNumericFieldElement::DateTimeNumericFieldElement):
+        (WebCore::DateTimeNumericFieldElement::formatValue const):
+        (WebCore::DateTimeNumericFieldElement::setEmptyValue):
+        (WebCore::DateTimeNumericFieldElement::setValueAsInteger):
+        (WebCore::DateTimeNumericFieldElement::handleKeyboardEvent):
+        (WebCore::DateTimeNumericFieldElement::didBlur):
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (WebCore::DateTimeNumericFieldElement::Range::Range):
+        * html/shadow/DateTimeSymbolicFieldElement.cpp:
+        (WebCore::DateTimeSymbolicFieldElement::setEmptyValue):
+        (WebCore::DateTimeSymbolicFieldElement::setValueAsInteger):
+        (WebCore::DateTimeSymbolicFieldElement::handleKeyboardEvent):
+        * html/shadow/DateTimeSymbolicFieldElement.h:
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::parseYear):
+        (WebCore::withinHTMLDateLimits):
+        (WebCore::DateComponents::parseWeek):
+        (WebCore::DateComponents::setMonthsSinceEpoch):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForWeek):
+        * platform/DateComponents.h: Partial revert of changes made in r265126, to ensure the minimumYear and maximumYear are accessible.
+        (WebCore::DateComponents::minimumYear):
+        (WebCore::DateComponents::maximumYear):
+
 2020-09-01  Youenn Fablet  <youenn@apple.com>
 
         Enable inspection of WebSocket when opening Web Inspector in the middle of the connection like done for the legacy WebSocket implementation

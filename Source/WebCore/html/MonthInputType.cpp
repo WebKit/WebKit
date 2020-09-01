@@ -139,6 +139,11 @@ bool MonthInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> re
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth });
 }
 
+String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
+{
+    return emptyString();
+}
+
 void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
 {
 }

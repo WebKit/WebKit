@@ -1,0 +1,15 @@
+Test for mouse events for <input type=date>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value is "2020-09-26"
+PASS input.value is "2020-09-12"
+PASS input.value is "3030-09-12"
+PASS input.value is "3030-05-12"
+PASS input.value is "3030-05-12"
+PASS clickEventsFired is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

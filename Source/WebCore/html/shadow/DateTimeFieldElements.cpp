@@ -30,6 +30,7 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "DateComponents.h"
+#include "DateTimeFieldsState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeDayFieldElement);
 
 DateTimeDayFieldElement::DateTimeDayFieldElement(Document& document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, "--"_s)
+    : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 31), "--"_s)
 {
     static MainThreadNeverDestroyed<const AtomString> dayPseudoId("-webkit-datetime-edit-day-field", AtomString::ConstructFromLiteral);
     initialize(dayPseudoId);
@@ -48,6 +49,12 @@ Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document,
     return adoptRef(*new DateTimeDayFieldElement(document, fieldOwner));
 }
 
+void DateTimeDayFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+{
+    if (hasValue())
+        state.dayOfMonth = valueAsInteger();
+}
+
 void DateTimeDayFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.monthDay());
@@ -56,7 +63,7 @@ void DateTimeDayFieldElement::setValueAsDate(const DateComponents& date)
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMonthFieldElement);
 
 DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document& document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, "--"_s)
+    : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 12), "--"_s)
 {
     static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field", AtomString::ConstructFromLiteral);
     initialize(monthPseudoId);
@@ -65,6 +72,12 @@ DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document& document, FieldOw
 Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
     return adoptRef(*new DateTimeMonthFieldElement(document, fieldOwner));
+}
+
+void DateTimeMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+{
+    if (hasValue())
+        state.month = valueAsInteger();
 }
 
 void DateTimeMonthFieldElement::setValueAsDate(const DateComponents& date)
@@ -87,6 +100,12 @@ Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create
     return adoptRef(*new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels));
 }
 
+void DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+{
+    if (hasValue())
+        state.month = valueAsInteger() + 1;
+}
+
 void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.month());
@@ -95,7 +114,7 @@ void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& dat
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeYearFieldElement);
 
 DateTimeYearFieldElement::DateTimeYearFieldElement(Document& document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, "----"_s)
+    : DateTimeNumericFieldElement(document, fieldOwner, Range(DateComponents::minimumYear(), DateComponents::maximumYear()), "----"_s)
 {
     static MainThreadNeverDestroyed<const AtomString> yearPseudoId("-webkit-datetime-edit-year-field", AtomString::ConstructFromLiteral);
     initialize(yearPseudoId);
@@ -104,6 +123,12 @@ DateTimeYearFieldElement::DateTimeYearFieldElement(Document& document, FieldOwne
 Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
     return adoptRef(*new DateTimeYearFieldElement(document, fieldOwner));
+}
+
+void DateTimeYearFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+{
+    if (hasValue())
+        state.year = valueAsInteger();
 }
 
 void DateTimeYearFieldElement::setValueAsDate(const DateComponents& date)

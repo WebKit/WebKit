@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+}
+
+input::-webkit-datetime-edit-text {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-month-field {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-day-field {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-year-field {
+    font-size: 30px;
+}
+</style>
+</head>
+<body>
+
+<input id="input" type="date" value="2020-08-26">
+
+<script>
+
+description("Test for mouse events for &lt;input type=date&gt;");
+
+clickEventsFired = 0;
+function onClickEvent() {
+    clickEventsFired++;
+}
+
+function mouseClickOn(x, y) {
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(x + input.offsetLeft, y + input.offsetTop);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+input.addEventListener("click", onClickEvent);
+const center = input.offsetHeight / 2;
+
+// Click on month field.
+mouseClickOn(20, center);
+UIHelper.keyDown("9");
+shouldBeEqualToString("input.value", "2020-09-26");
+
+// Click on day field.
+mouseClickOn(60, center);
+UIHelper.keyDown("1");
+UIHelper.keyDown("2");
+shouldBeEqualToString("input.value", "2020-09-12");
+
+// Click on year field.
+mouseClickOn(120, center);
+UIHelper.keyDown("3");
+UIHelper.keyDown("0");
+UIHelper.keyDown("3");
+UIHelper.keyDown("0");
+shouldBeEqualToString("input.value", "3030-09-12");
+
+// Click on control, but not a specific field, defaults to first field.
+mouseClickOn(250, center);
+UIHelper.keyDown("5");
+shouldBeEqualToString("input.value", "3030-05-12");
+
+// Click outside control.
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+UIHelper.keyDown("5");
+shouldBeEqualToString("input.value", "3030-05-12");
+
+shouldBe("clickEventsFired", "4");
+
+</script>
+
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

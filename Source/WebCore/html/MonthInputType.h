@@ -54,6 +54,7 @@ private:
     void handleDOMActivateEvent(Event&) override;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
+    String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;
     void setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const final;
 };
 

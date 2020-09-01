@@ -30,7 +30,9 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "DateComponents.h"
+#include "EventNames.h"
 #include "HTMLNames.h"
+#include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "PlatformLocale.h"
 #include "Text.h"
@@ -55,6 +57,60 @@ void DateTimeFieldElement::initialize(const AtomString& pseudo)
     setPseudo(pseudo);
 }
 
+void DateTimeFieldElement::defaultEventHandler(Event& event)
+{
+    if (is<KeyboardEvent>(event)) {
+        auto& keyboardEvent = downcast<KeyboardEvent>(event);
+        handleKeyboardEvent(keyboardEvent);
+        if (keyboardEvent.defaultHandled())
+            return;
+        defaultKeyboardEventHandler(keyboardEvent);
+        if (keyboardEvent.defaultHandled())
+            return;
+    }
+
+    HTMLDivElement::defaultEventHandler(event);
+}
+
+void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEvent)
+{
+    if (keyboardEvent.type() != eventNames().keydownEvent)
+        return;
+
+    auto key = keyboardEvent.keyIdentifier();
+
+    if (key == "Left" && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
+        keyboardEvent.setDefaultHandled();
+        return;
+    }
+
+    if (key == "Right" && m_fieldOwner && m_fieldOwner->focusOnNextField(*this)) {
+        keyboardEvent.setDefaultHandled();
+        return;
+    }
+
+    // Clear value when pressing backspace or delete.
+    if (key == "U+0008" || key == "U+007F") {
+        keyboardEvent.setDefaultHandled();
+        setEmptyValue(DispatchInputAndChangeEvents);
+        return;
+    }
+}
+
+void DateTimeFieldElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
+{
+    if (m_fieldOwner)
+        m_fieldOwner->blurFromField(WTFMove(newFocusedElement));
+    else
+        HTMLElement::dispatchBlurEvent(WTFMove(newFocusedElement));
+
+    didBlur();
+}
+
+void DateTimeFieldElement::didBlur()
+{
+}
+
 Locale& DateTimeFieldElement::localeForOwner() const
 {
     return document().getCachedLocale(localeIdentifier());
@@ -65,7 +121,7 @@ AtomString DateTimeFieldElement::localeIdentifier() const
     return m_fieldOwner ? m_fieldOwner->localeIdentifier() : nullAtom();
 }
 
-void DateTimeFieldElement::updateVisibleValue()
+void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 {
     if (!firstChild())
         appendChild(Text::create(document(), emptyString()));
@@ -76,6 +132,9 @@ void DateTimeFieldElement::updateVisibleValue()
         return;
 
     textNode.replaceWholeText(newVisibleValue);
+
+    if (eventBehavior == DispatchInputAndChangeEvents && m_fieldOwner)
+        m_fieldOwner->fieldValueChanged();
 }
 
 bool DateTimeFieldElement::supportsFocus() const

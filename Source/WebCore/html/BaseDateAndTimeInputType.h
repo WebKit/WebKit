@@ -50,9 +50,7 @@ protected:
     String serializeWithComponents(const DateComponents&) const;
     String visibleValue() const override;
     void attributeChanged(const QualifiedName&) override;
-#if PLATFORM(IOS_FAMILY)
     bool isKeyboardFocusable(KeyboardEvent*) const override;
-#endif
 
     virtual Optional<DateComponents> parseToDateComponents(const StringView&) const = 0;
 

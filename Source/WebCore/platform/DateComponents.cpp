@@ -41,15 +41,7 @@
 
 namespace WebCore {
 
-// HTML uses ISO-8601 format with year >= 1. Gregorian calendar started in
-// 1582. However, we need to support 0001-01-01 in Gregorian calendar rule.
-static constexpr int minimumYear = 1;
-
-// Date in ECMAScript can't represent dates later than 275760-09-13T00:00Z.
-// So, we have the same upper limit in HTML5 date/time types.
-static constexpr int maximumYear = 275760;
-
-// HTMLdefines minimum week of year is one.
+// HTML defines minimum week of year is one.
 static constexpr int minimumWeekNumber = 1;
 
 // HTML defines maximum week of year is 53.
@@ -151,7 +143,7 @@ template<typename CharacterType> bool DateComponents::parseYear(StringParsingBuf
     if (digitsLength < 4)
         return false;
 
-    auto year = parseIntWithinLimits(buffer, digitsLength, minimumYear, maximumYear);
+    auto year = parseIntWithinLimits(buffer, digitsLength, minimumYear(), maximumYear());
     if (!year)
         return false;
 
@@ -161,18 +153,18 @@ template<typename CharacterType> bool DateComponents::parseYear(StringParsingBuf
 
 static bool withinHTMLDateLimits(int year, int month)
 {
-    if (year < minimumYear)
+    if (year < DateComponents::minimumYear())
         return false;
-    if (year < maximumYear)
+    if (year < DateComponents::maximumYear())
         return true;
     return month <= maximumMonthInMaximumYear;
 }
 
 static bool withinHTMLDateLimits(int year, int month, int monthDay)
 {
-    if (year < minimumYear)
+    if (year < DateComponents::minimumYear())
         return false;
-    if (year < maximumYear)
+    if (year < DateComponents::maximumYear())
         return true;
     if (month < maximumMonthInMaximumYear)
         return true;
@@ -181,9 +173,9 @@ static bool withinHTMLDateLimits(int year, int month, int monthDay)
 
 static bool withinHTMLDateLimits(int year, int month, int monthDay, int hour, int minute, int second, int millisecond)
 {
-    if (year < minimumYear)
+    if (year < DateComponents::minimumYear())
         return false;
-    if (year < maximumYear)
+    if (year < DateComponents::maximumYear())
         return true;
     if (month < maximumMonthInMaximumYear)
         return true;
@@ -436,7 +428,7 @@ template<typename CharacterType> bool DateComponents::parseWeek(StringParsingBuf
     if (!week)
         return false;
 
-    if (m_year == maximumYear && *week > maximumWeekInMaximumYear)
+    if (m_year == maximumYear() && *week > maximumWeekInMaximumYear)
         return false;
 
     m_week = *week;
@@ -656,7 +648,7 @@ bool DateComponents::setMonthsSinceEpoch(double months)
     months = round(months);
     double doubleMonth = positiveFmod(months, 12);
     double doubleYear = 1970 + (months - doubleMonth) / 12;
-    if (doubleYear < minimumYear || maximumYear < doubleYear)
+    if (doubleYear < minimumYear() || maximumYear() < doubleYear)
         return false;
     int year = static_cast<int>(doubleYear);
     int month = static_cast<int>(doubleMonth);
@@ -686,7 +678,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     ms = round(ms);
 
     m_year = msToYear(ms);
-    if (m_year < minimumYear || m_year > maximumYear)
+    if (m_year < minimumYear() || m_year > maximumYear())
         return false;
 
     int yearDay = dayInYear(ms, m_year);
@@ -694,7 +686,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     if (yearDay < offset) {
         // The day belongs to the last week of the previous year.
         m_year--;
-        if (m_year <= minimumYear)
+        if (m_year <= minimumYear())
             return false;
         m_week = maxWeekNumberInYear();
     } else {
@@ -703,7 +695,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
             m_year++;
             m_week = 1;
         }
-        if (m_year > maximumYear || (m_year == maximumYear && m_week > maximumWeekInMaximumYear))
+        if (m_year > maximumYear() || (m_year == maximumYear() && m_week > maximumWeekInMaximumYear))
             return false;
     }
     m_type = DateComponentsType::Week;

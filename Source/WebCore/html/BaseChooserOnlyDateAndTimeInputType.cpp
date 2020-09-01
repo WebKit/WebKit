@@ -32,6 +32,7 @@
 #include "Chrome.h"
 #include "DateTimeChooserParameters.h"
 #include "DateTimeFormat.h"
+#include "FocusController.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "Page.h"
@@ -248,6 +249,28 @@ void BaseChooserOnlyDateAndTimeInputType::handleKeyupEvent(KeyboardEvent& event)
     BaseClickableWithKeyInputType::handleKeyupEvent(*this, event);
 }
 
+void BaseChooserOnlyDateAndTimeInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection direction)
+{
+    if (!m_dateTimeEditElement) {
+        InputType::handleFocusEvent(oldFocusedNode, direction);
+        return;
+    }
+
+    // If the element contains editable components, the element itself should not
+    // be focused. Instead, one of it's children should receive focus.
+
+    if (direction == FocusDirectionBackward) {
+        // If the element received focus when going backwards, advance the focus one more time
+        // so that this element no longer has focus. In this case, one of the children should
+        // not be focused as the element is losing focus entirely.
+        if (auto* page = element()->document().page())
+            page->focusController().advanceFocus(direction, 0);
+    } else {
+        // If the element received focus in any other direction, transfer focus to the first focusable child.
+        m_dateTimeEditElement->focusByOwner();
+    }
+}
+
 bool BaseChooserOnlyDateAndTimeInputType::accessKeyAction(bool sendMouseEvents)
 {
     BaseDateAndTimeInputType::accessKeyAction(sendMouseEvents);
@@ -261,6 +284,13 @@ bool BaseChooserOnlyDateAndTimeInputType::isMouseFocusable() const
     return element()->isTextFormControlFocusable();
 }
 
+bool BaseChooserOnlyDateAndTimeInputType::hasCustomFocusLogic() const
+{
+    if (m_dateTimeEditElement)
+        return false;
+    return InputType::hasCustomFocusLogic();
+}
+
 void BaseChooserOnlyDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == valueAttr) {
@@ -272,10 +302,15 @@ void BaseChooserOnlyDateAndTimeInputType::attributeChanged(const QualifiedName& 
     BaseDateAndTimeInputType::attributeChanged(name);
 }
 
-String BaseChooserOnlyDateAndTimeInputType::valueForEditControl() const
+void BaseChooserOnlyDateAndTimeInputType::didBlurFromControl()
 {
-    ASSERT(element());
-    return element()->value();
+    closeDateTimeChooser();
+}
+
+void BaseChooserOnlyDateAndTimeInputType::didChangeValueFromControl()
+{
+    String value = sanitizeValue(m_dateTimeEditElement->value());
+    BaseDateAndTimeInputType::setValue(value, value != element()->value(), DispatchInputAndChangeEvent);
 }
 
 AtomString BaseChooserOnlyDateAndTimeInputType::localeIdentifier() const

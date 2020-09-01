@@ -49,6 +49,7 @@ private:
     bool isDateField() const override;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
+    String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;
     void setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const final;
 };
 

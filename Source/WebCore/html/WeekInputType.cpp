@@ -92,6 +92,11 @@ bool WeekInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> res
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasWeek });
 }
 
+String WeekInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
+{
+    return emptyString();
+}
+
 void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
 {
 }

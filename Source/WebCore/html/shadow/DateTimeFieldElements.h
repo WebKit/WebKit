@@ -44,6 +44,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&);
+    void populateDateTimeFieldsState(DateTimeFieldsState&);
 };
 
 class DateTimeMonthFieldElement final : public DateTimeNumericFieldElement {
@@ -57,6 +58,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&);
+    void populateDateTimeFieldsState(DateTimeFieldsState&);
 };
 
 class DateTimeSymbolicMonthFieldElement final : public DateTimeSymbolicFieldElement {
@@ -70,6 +72,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&);
+    void populateDateTimeFieldsState(DateTimeFieldsState&);
 };
 
 class DateTimeYearFieldElement final : public DateTimeNumericFieldElement {
@@ -83,6 +86,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&);
+    void populateDateTimeFieldsState(DateTimeFieldsState&);
 };
 
 } // namespace WebCore

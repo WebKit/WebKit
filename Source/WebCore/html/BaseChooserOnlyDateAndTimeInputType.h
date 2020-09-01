@@ -63,7 +63,8 @@ private:
     void closeDateTimeChooser();
 
     // DateTimeEditElement::EditControlOwner functions:
-    String valueForEditControl() const final;
+    void didBlurFromControl() final;
+    void didChangeValueFromControl() final;
     AtomString localeIdentifier() const final;
 
     // InputType functions:
@@ -76,9 +77,11 @@ private:
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
     void handleKeypressEvent(KeyboardEvent&) override;
     void handleKeyupEvent(KeyboardEvent&) override;
+    void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
     bool accessKeyAction(bool sendMouseEvents) override;
     bool isMouseFocusable() const override;
     bool isPresentingAttachedView() const final;
+    bool hasCustomFocusLogic() const final;
     void attributeChanged(const QualifiedName&) override;
 
     // DateTimeChooserClient functions:

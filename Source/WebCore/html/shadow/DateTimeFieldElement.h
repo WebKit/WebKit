@@ -35,20 +35,31 @@
 namespace WebCore {
 
 class DateComponents;
+struct DateTimeFieldsState;
 
 class DateTimeFieldElement : public HTMLDivElement {
     WTF_MAKE_ISO_ALLOCATED(DateTimeFieldElement);
 public:
+    enum EventBehavior : bool { DispatchNoEvent, DispatchInputAndChangeEvents };
+
     class FieldOwner : public CanMakeWeakPtr<FieldOwner> {
     public:
         virtual ~FieldOwner();
+        virtual void blurFromField(RefPtr<Element>&& newFocusedElement) = 0;
+        virtual void fieldValueChanged() = 0;
+        virtual bool focusOnNextField(const DateTimeFieldElement&) = 0;
+        virtual bool focusOnPreviousField(const DateTimeFieldElement&) = 0;
         virtual AtomString localeIdentifier() const = 0;
     };
 
+    void defaultEventHandler(Event&) override;
+    void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
+
     virtual bool hasValue() const = 0;
-    virtual void setEmptyValue() = 0;
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) = 0;
+    virtual void setEmptyValue(EventBehavior = DispatchNoEvent) = 0;
     virtual void setValueAsDate(const DateComponents&) = 0;
-    virtual void setValueAsInteger(int) = 0;
+    virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) = 0;
     virtual String value() const = 0;
     virtual String visibleValue() const = 0;
 
@@ -57,11 +68,16 @@ protected:
     void initialize(const AtomString& pseudo);
     Locale& localeForOwner() const;
     AtomString localeIdentifier() const;
-    void updateVisibleValue();
+    void updateVisibleValue(EventBehavior);
     virtual int valueAsInteger() const = 0;
+    virtual void handleKeyboardEvent(KeyboardEvent&) = 0;
+
+    virtual void didBlur();
 
 private:
     bool supportsFocus() const override;
+
+    void defaultKeyboardEventHandler(KeyboardEvent&);
 
     WeakPtr<FieldOwner> m_fieldOwner;
 };

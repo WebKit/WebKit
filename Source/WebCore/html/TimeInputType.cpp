@@ -115,6 +115,11 @@ bool TimeInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> res
     return results.containsAll({ DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute });
 }
 
+String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
+{
+    return emptyString();
+}
+
 void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
 {
 }
