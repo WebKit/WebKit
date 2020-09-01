@@ -1,3 +1,15 @@
+2020-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline flaky Web Audio WPT tests.
+
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/ctor-iirfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-copy-curve-expected.txt:
+
 2020-09-01  Rob Buis  <rbuis@igalia.com>
 
         Convert runtime flag to setting for lazy image loading
