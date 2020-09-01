@@ -7,6 +7,15 @@
 
         * platform/mac-wk1/TestExpectations:
 
+2020-08-31  Karl Rackler  <rackler@apple.com>
+
+        Rebaseline after macOS build progression.
+        Add for Big-Sur
+
+        Unreviewed test gardening.
+
+        * platform/mac/fast/forms/date/date-input-rendering-basic-expected.txt: Added.
+
 2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ BigSur+ ] media/media-source/media-source-webm.html is a constant failure
