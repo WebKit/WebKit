@@ -1,3 +1,19 @@
+2020-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Linux] Web Inspector: show per thread cpu usage
+        https://bugs.webkit.org/show_bug.cgi?id=215883
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove platform specific getter machThread() and add thread() to return the Thread instead. The caller knows how
+        to get the machThread or id from a Thread.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        (JSC::SamplingProfiler::machThread): Deleted.
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::thread):
+
 2020-08-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] StructureStubInfo / CallLinkInfo / ByValInfo should set CodeOrigin or BytecodeIndex at construction

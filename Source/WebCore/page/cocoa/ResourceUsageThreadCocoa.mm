@@ -136,7 +136,12 @@ static Vector<ThreadInfo> threadInfos()
 void ResourceUsageThread::platformSaveStateBeforeStarting()
 {
 #if ENABLE(SAMPLING_PROFILER)
-    m_samplingProfilerMachThread = m_vm->samplingProfiler() ? m_vm->samplingProfiler()->machThread() : MACH_PORT_NULL;
+    m_samplingProfilerMachThread = MACH_PORT_NULL;
+
+    if (auto* profiler = m_vm->samplingProfiler()) {
+        if (auto* thread = profiler->thread())
+            m_samplingProfilerMachThread = thread->machThread();
+    }
 #endif
 }
 

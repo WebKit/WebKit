@@ -1,3 +1,20 @@
+2020-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Linux] Web Inspector: show per thread cpu usage
+        https://bugs.webkit.org/show_bug.cgi?id=215883
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add API to get the thread ID in Linux platform.
+
+        * wtf/Threading.cpp:
+        (WTF::Thread::initializeInThread):
+        * wtf/Threading.h:
+        (WTF::Thread::id const):
+        * wtf/ThreadingPrimitives.h:
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::currentID):
+
 2020-08-31  Alex Christensen  <achristensen@webkit.org>
 
         Make Big5 encoder conform to the specification and behavior of Chrome and Firefox

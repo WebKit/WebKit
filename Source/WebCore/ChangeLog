@@ -1,3 +1,23 @@
+2020-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Linux] Web Inspector: show per thread cpu usage
+        https://bugs.webkit.org/show_bug.cgi?id=215883
+
+        Reviewed by Adrian Perez de Castro.
+
+        Get per thread CPU usage and information to fill ResourceUsageData in Linux.
+
+        * page/ResourceUsageThread.h:
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::ResourceUsageThread::platformSaveStateBeforeStarting): Update to new API in SamplingProfiler.
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        (WebCore::ResourceUsageThread::platformSaveStateBeforeStarting): Initialize m_samplingProfilerThreadID.
+        (WebCore::threadInfoMap):
+        (WebCore::threadCPUUsage):
+        (WebCore::collectCPUUsage):
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        (WebCore::cpuUsage): Deleted.
+
 2020-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Ahom text is still busted

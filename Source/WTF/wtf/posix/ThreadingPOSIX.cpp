@@ -68,6 +68,10 @@
 #include <mach/thread_switch.h>
 #endif
 
+#if OS(LINUX)
+#include <sys/syscall.h>
+#endif
+
 namespace WTF {
 
 static Lock globalSuspendLock;
@@ -186,6 +190,13 @@ void Thread::initializePlatformThreading()
     sigaction(SigThreadSuspendResume, &action, 0);
 #endif
 }
+
+#if OS(LINUX)
+ThreadIdentifier Thread::currentID()
+{
+    return static_cast<ThreadIdentifier>(syscall(SYS_gettid));
+}
+#endif
 
 void Thread::initializeCurrentThreadEvenIfNonWTFCreated()
 {

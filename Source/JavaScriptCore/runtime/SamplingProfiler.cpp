@@ -1141,15 +1141,10 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     }
 }
 
-#if OS(DARWIN)
-mach_port_t SamplingProfiler::machThread()
+Thread* SamplingProfiler::thread() const
 {
-    if (!m_thread)
-        return MACH_PORT_NULL;
-
-    return m_thread->machThread();
+    return m_thread.get();
 }
-#endif
 
 } // namespace JSC
 
