@@ -290,6 +290,18 @@ static const Vector<ASCIILiteral>& agxCompilerClasses()
 
 #endif
 
+#if PLATFORM(IOS)
+static const Vector<ASCIILiteral>& agxCompilerServices()
+{
+    ASSERT(isMainThread());
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.AGXCompilerService"_s,
+        "com.apple.AGXCompilerService-S2A8"_s
+    });
+    return services;
+}
+#endif
+
 static bool requiresContainerManagerAccess()
 {
 #if PLATFORM(MAC)
@@ -402,11 +414,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
     
 #if PLATFORM(IOS)
-    if (WebCore::deviceHasAGXCompilerService()) {
-        SandboxExtension::Handle compilerServiceExtensionHandle;
-        SandboxExtension::createHandleForMachLookup("com.apple.AGXCompilerService"_s, WTF::nullopt, compilerServiceExtensionHandle);
-        parameters.compilerServiceExtensionHandle = WTFMove(compilerServiceExtensionHandle);
-    }
+    if (WebCore::deviceHasAGXCompilerService())
+        parameters.compilerServiceExtensionHandles = SandboxExtension::createHandlesForMachLookup(agxCompilerServices(), WTF::nullopt);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

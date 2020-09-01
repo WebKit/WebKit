@@ -1,3 +1,25 @@
+2020-09-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] AGX compiler service sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=216042
+        <rdar://problem/68111667>
+
+        Reviewed by Brent Fulgham.
+
+        For a set of devices, mach-lookup sandbox violations have been observed for an AGX compiler service. For these devices,
+        we currently issue an extension for one AGX compiler service, but this is not sufficient since there is a similar
+        service name that needs to be added as well.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::agxCompilerServices):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-09-01  Rob Buis  <rbuis@igalia.com>
 
         Convert runtime flag to setting for lazy image loading
