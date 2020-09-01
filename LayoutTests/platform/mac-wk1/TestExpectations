@@ -1146,3 +1146,5 @@ webkit.org/b/215819 [ Mojave ] fast/layers/hidpi-transform-on-child-content-is-m
 
 webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
+# rdar://problem/66487888 [ BigSur+ ] media/media-source/media-source-webm.html is a constant failure
+[ BigSur+ ] media/media-source/media-source-webm.html [ Failure ]
