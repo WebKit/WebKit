@@ -1,3 +1,50 @@
+2020-09-01  Chris Lord  <clord@igalia.com>
+
+        [GTK][WPE] Add support for smooth scrolling animation with async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=210382
+
+        Reviewed by Carlos Garcia Campos.
+
+        This removes the dependency on ScrollableArea from
+        ScrollAnimationSmooth, which allows its use as a utility class for
+        smooth scrolling. This class is then used in the Nicosia async layer
+        composition scrolling code to provide smooth scrolling, when the
+        feature is enabled. This mirrors the work done in bug 209230 for
+        kinetic scrolling.
+
+        No new tests, enabling existing functionality in more situations.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::scrollTo):
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::ScrollingTreeFrameScrollingNodeNicosia):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::stopScrollAnimations):
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.h:
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::ScrollingTreeOverflowScrollingNodeNicosia):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::commitStateAfterChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::stopScrollAnimations):
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.h:
+        * platform/ScrollAnimation.h:
+        (WebCore::ScrollAnimation::serviceAnimation):
+        * platform/ScrollAnimationKinetic.cpp:
+        * platform/ScrollAnimationKinetic.h:
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        (WebCore::ScrollAnimationSmooth::scroll):
+        (WebCore::ScrollAnimationSmooth::stop):
+        (WebCore::ScrollAnimationSmooth::updateVisibleLengths):
+        (WebCore::ScrollAnimationSmooth::animationTimerFired):
+        * platform/ScrollAnimationSmooth.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::ScrollAnimatorGeneric):
+        (WebCore::ScrollAnimatorGeneric::ensureSmoothScrollingAnimation):
+
 2020-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Linux] Web Inspector: show per thread cpu usage

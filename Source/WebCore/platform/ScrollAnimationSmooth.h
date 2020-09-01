@@ -27,7 +27,7 @@
 
 #include "ScrollAnimation.h"
 
-#include "Timer.h"
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -37,7 +37,11 @@ enum class ScrollClamping : bool;
 
 class ScrollAnimationSmooth final: public ScrollAnimation {
 public:
-    ScrollAnimationSmooth(ScrollableArea&, const FloatPoint&, WTF::Function<void (FloatPoint&&)>&& notifyPositionChangedFunction);
+    using ScrollExtentsCallback = WTF::Function<ScrollExtents(void)>;
+    using NotifyPositionChangedCallback = WTF::Function<void(FloatPoint&&)>;
+    using NotifyAnimationStoppedCallback = WTF::Function<void(void)>;
+
+    ScrollAnimationSmooth(ScrollExtentsCallback&&, const FloatPoint& position, NotifyPositionChangedCallback&&, NotifyAnimationStoppedCallback&&);
     virtual ~ScrollAnimationSmooth();
 
     enum class Curve {
@@ -57,6 +61,8 @@ private:
 
     struct PerAxisData {
         PerAxisData() = delete;
+
+        PerAxisData(ScrollbarOrientation, const FloatPoint& position, ScrollExtentsCallback&);
 
         PerAxisData(float position, int length)
             : currentPosition(position)
@@ -97,13 +103,15 @@ private:
     void animationTimerFired();
     bool animationTimerActive() const;
 
-    WTF::Function<void (FloatPoint&&)> m_notifyPositionChangedFunction;
+    ScrollExtentsCallback m_scrollExtentsFunction;
+    NotifyPositionChangedCallback m_notifyPositionChangedFunction;
+    NotifyAnimationStoppedCallback m_notifyAnimationStoppedFunction;
 
     PerAxisData m_horizontalData;
     PerAxisData m_verticalData;
 
     MonotonicTime m_startTime;
-    Timer m_animationTimer;
+    RunLoop::Timer<ScrollAnimationSmooth> m_animationTimer;
 };
 
 } // namespace WebCore

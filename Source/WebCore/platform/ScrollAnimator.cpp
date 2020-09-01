@@ -57,11 +57,19 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     , m_scrollController(*this)
 #endif
-    , m_animationProgrammaticScroll(makeUnique<ScrollAnimationSmooth>(scrollableArea, m_currentPosition, [this](FloatPoint&& position) {
-        FloatSize delta = position - m_currentPosition;
-        m_currentPosition = WTFMove(position);
-        notifyPositionChanged(delta);
-    }))
+    , m_animationProgrammaticScroll(makeUnique<ScrollAnimationSmooth>(
+        [this]() -> ScrollExtents {
+            return { m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition(), m_scrollableArea.visibleSize() };
+        },
+        m_currentPosition,
+        [this](FloatPoint&& position) {
+            FloatSize delta = position - m_currentPosition;
+            m_currentPosition = WTFMove(position);
+            notifyPositionChanged(delta);
+        },
+        [this] {
+            m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
+        }))
 {
 }
 

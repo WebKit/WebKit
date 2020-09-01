@@ -33,6 +33,7 @@
 #include "ScrollingTreeOverflowScrollingNode.h"
 
 namespace WebCore {
+class ScrollAnimation;
 class ScrollAnimationKinetic;
 
 class ScrollingTreeOverflowScrollingNodeNicosia final : public ScrollingTreeOverflowScrollingNode {
@@ -55,6 +56,9 @@ private:
 
 #if ENABLE(KINETIC_SCROLLING)
     std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
+#endif
+#if ENABLE(SMOOTH_SCROLLING)
+    std::unique_ptr<ScrollAnimation> m_smoothAnimation;
 #endif
 };
 

@@ -256,9 +256,6 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
     if (position == m_currentScrollPosition)
         return;
 
-    if (scrollType == ScrollType::Programmatic)
-        stopScrollAnimations();
-
     scrollingTree().setIsHandlingProgrammaticScroll(scrollType == ScrollType::Programmatic);
     
     m_currentScrollPosition = adjustedScrollPosition(position, clamp);

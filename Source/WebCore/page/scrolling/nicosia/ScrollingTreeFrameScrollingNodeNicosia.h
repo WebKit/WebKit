@@ -39,6 +39,7 @@ class CompositionLayer;
 }
 
 namespace WebCore {
+class ScrollAnimation;
 class ScrollAnimationKinetic;
 
 class ScrollingTreeFrameScrollingNodeNicosia final : public ScrollingTreeFrameScrollingNode {
@@ -72,6 +73,9 @@ private:
 
 #if ENABLE(KINETIC_SCROLLING)
     std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
+#endif
+#if ENABLE(SMOOTH_SCROLLING)
+    std::unique_ptr<ScrollAnimation> m_smoothAnimation;
 #endif
 };
 
