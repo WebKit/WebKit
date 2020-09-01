@@ -46,11 +46,17 @@
             "testShouldBeAbleToClickElementThatIsOutOfViewInAFrameThatIsOutOfView": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
             },
+            "testShouldBeAbleToClickElementThatIsOutOfViewInANestedFrame": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/216026"}}
+            },
             "testShouldBeAbleToClickElementThatIsOutOfViewInANestedFrameThatIsOutOfView": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
             },
             "testShouldBeAbleToClickElementInATallFrame": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
+            },
+            "testShouldBeAbleToClickOnAnElementHiddenByDoubleOverflow": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/216026"}}
             }
         }
     },
@@ -191,6 +197,9 @@
         "subtests": {
             "testCanCallGetWindowHandlesAfterClosingAWindow": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184963"}}
+            },
+            "testClickingOnAButtonThatClosesAnOpenWindowDoesNotCauseTheBrowserToHang": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/188509"}}
             },
             "testShouldBeAbleToCreateANewWindow": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212949"}}

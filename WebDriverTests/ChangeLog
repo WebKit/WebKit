@@ -1,3 +1,11 @@
+2020-08-31  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE][WebDriver] Gardening a few more failures
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2020-08-30  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Gardening some webdriver failures
