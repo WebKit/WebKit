@@ -27,7 +27,6 @@
 #include "config.h"
 #include "TextCodecICU.h"
 
-#include "EncodingTables.h"
 #include "TextEncoding.h"
 #include "TextEncodingRegistry.h"
 #include "ThreadGlobalData.h"
@@ -35,7 +34,6 @@
 #include <unicode/ucnv_cb.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -78,15 +76,12 @@ DECLARE_ALIASES(windows_1258, "winvietnamese", "cp1258", "x-cp1258");
 DECLARE_ALIASES(x_mac_cyrillic, "maccyrillic", "x-mac-ukrainian", "windows-10007", "mac-cyrillic", "maccy", "x-MacCyrillic", "x-MacUkraine");
 DECLARE_ALIASES(GBK, "cn-gb", "csgb231280", "x-euc-cn", "chinese", "csgb2312", "csiso58gb231280", "gb2312", "gb_2312", "gb_2312-80", "iso-ir-58", "x-gbk", "euc-cn", "cp936", "ms936", "gb2312-1980", "windows-936", "windows-936-2000");
 DECLARE_ALIASES(gb18030, "ibm-1392", "windows-54936");
-DECLARE_ALIASES(Big5, "cn-big5", "x-x-big5", "csbig5", "windows-950", "windows-950-2000", "ms950", "x-windows-950", "x-big5");
-DECLARE_ALIASES(EUC_JP, "x-euc", "cseucpkdfmtjapanese", "x-euc-jp");
 DECLARE_ALIASES(ISO_2022_JP, "jis7", "csiso2022jp");
 DECLARE_ALIASES(Shift_JIS, "shift-jis", "csshiftjis", "ms932", "ms_kanji", "sjis", "windows-31j", "x-sjis");
 // Encodings below are not in the standard.
 DECLARE_ALIASES(x_mac_greek, "windows-10006", "macgr", "x-MacGreek");
 DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029", "x-mac-ce", "macce", "maccentraleurope", "x-MacCentralEurope");
 DECLARE_ALIASES(x_mac_turkish, "windows-10081", "mactr", "x-MacTurkish");
-DECLARE_ALIASES(Big5_HKSCS, "big5hk", "HKSCS-BIG5", "ibm-1375", "ibm-1375_P100-2008");
 
 #define DECLARE_ENCODING_NAME(encoding, alias_array) \
     { encoding, WTF_ARRAY_LENGTH(alias_array##_aliases), alias_array##_aliases }
@@ -129,15 +124,12 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("x-mac-cyrillic", x_mac_cyrillic),
     DECLARE_ENCODING_NAME("GBK", GBK),
     DECLARE_ENCODING_NAME("gb18030", gb18030),
-    DECLARE_ENCODING_NAME("Big5", Big5),
-    DECLARE_ENCODING_NAME("EUC-JP", EUC_JP),
     DECLARE_ENCODING_NAME("ISO-2022-JP", ISO_2022_JP),
     DECLARE_ENCODING_NAME("Shift_JIS", Shift_JIS),
     // Encodings below are not in the standard.
     DECLARE_ENCODING_NAME("x-mac-greek", x_mac_greek),
     DECLARE_ENCODING_NAME("x-mac-centraleurroman", x_mac_centraleurroman),
     DECLARE_ENCODING_NAME("x-mac-turkish", x_mac_turkish),
-    DECLARE_ENCODING_NAME("Big5-HKSCS", Big5_HKSCS),
     DECLARE_ENCODING_NAME_NO_ALIASES("EUC-TW"),
 };
 
@@ -405,155 +397,11 @@ static void gbkCallbackSubstitute(const void* context, UConverterFromUnicodeArgs
     UCNV_FROM_U_CALLBACK_SUBSTITUTE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
 }
 
-// https://encoding.spec.whatwg.org/#euc-jp-encoder
-static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler)
-{
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(string.length());
-
-    auto characters = string.upconvertedCharacters();
-    for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
-        auto c = *iterator;
-        if (isASCII(c)) {
-            result.append(c);
-            continue;
-        }
-        if (c == 0x00A5) {
-            result.append(0x5C);
-            continue;
-        }
-        if (c == 0x203E) {
-            result.append(0x7E);
-            continue;
-        }
-        if (c >= 0xFF61 && c <= 0xFF9F) {
-            result.append(0x8E);
-            result.append(c - 0xFF61 + 0xA1);
-            continue;
-        }
-        if (c == 0x2212)
-            c = 0xFF0D;
-
-        if (static_cast<UChar>(c) != c) {
-            unencodableHandler(c, result);
-            continue;
-        }
-        
-        auto pointerRange = std::equal_range(jis0208, jis0208 + WTF_ARRAY_LENGTH(jis0208), std::pair<UChar, UChar>(static_cast<UChar>(c), 0), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
-        if (pointerRange.first == pointerRange.second) {
-            unencodableHandler(c, result);
-            continue;
-        }
-        UChar pointer = (pointerRange.second - 1)->second;
-        result.append(pointer / 94 + 0xA1);
-        result.append(pointer % 94 + 0xA1);
-    }
-    return result;
-}
-
-// https://encoding.spec.whatwg.org/#big5-encoder
-static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler)
-{
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(string.length());
-
-    auto characters = string.upconvertedCharacters();
-    for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
-        auto c = *iterator;
-        if (isASCII(c)) {
-            result.append(c);
-            continue;
-        }
-
-        auto pointerRange = std::equal_range(big5, big5 + WTF_ARRAY_LENGTH(big5), std::pair<UChar32, UChar>(c, 0), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
-        
-        if (pointerRange.first == pointerRange.second) {
-            unencodableHandler(c, result);
-            continue;
-        }
-
-        UChar pointer = 0;
-        if (c == 0x2550 || c == 0x255E || c == 0x2561 || c == 0x256A || c == 0x5341 || c == 0x5345)
-            pointer = (pointerRange.second - 1)->second;
-        else
-            pointer = pointerRange.first->second;
-        
-        uint8_t lead = pointer / 157 + 0x81;
-        uint8_t trail = pointer % 157;
-        uint8_t offset = trail < 0x3F ? 0x40 : 0x62;
-        result.append(lead);
-        result.append(trail + offset);
-    }
-    return result;
-}
-
-constexpr size_t maxUChar32Digits = 10;
-
-static void uncheckedAppendDecimal(UChar32 c, Vector<uint8_t>& result)
-{
-    uint8_t buffer[10];
-    WTF::writeIntegerToBuffer(static_cast<uint32_t>(c), buffer);
-    result.append(buffer, WTF::lengthOfIntegerAsString(c));
-}
-
-static void urlEncodedEntityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)
-{
-    result.reserveCapacity(result.size() + 9 + maxUChar32Digits);
-    result.uncheckedAppend('%');
-    result.uncheckedAppend('2');
-    result.uncheckedAppend('6');
-    result.uncheckedAppend('%');
-    result.uncheckedAppend('2');
-    result.uncheckedAppend('3');
-    uncheckedAppendDecimal(c, result);
-    result.uncheckedAppend('%');
-    result.uncheckedAppend('3');
-    result.uncheckedAppend('B');
-}
-
-static void entityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)
-{
-    result.reserveCapacity(result.size() + 3 + maxUChar32Digits);
-    result.uncheckedAppend('&');
-    result.uncheckedAppend('#');
-    uncheckedAppendDecimal(c, result);
-    result.uncheckedAppend(';');
-}
-
-static void questionMarkUnencodableHandler(UChar32, Vector<uint8_t>& result)
-{
-    result.append('?');
-}
-
-static Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling handling)
-{
-    switch (handling) {
-    case UnencodableHandling::QuestionMarks:
-        return questionMarkUnencodableHandler;
-    case UnencodableHandling::Entities:
-        return entityUnencodableHandler;
-    case UnencodableHandling::URLEncodedEntities:
-        return urlEncodedEntityUnencodableHandler;
-    }
-    ASSERT_NOT_REACHED();
-    return entityUnencodableHandler;
-}
-
 Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling handling)
 {
     if (string.isEmpty())
         return { };
-    
-    if (!strcmp(m_canonicalConverterName, "euc-jp-2007"))
-        return eucJPEncode(string, unencodableHandler(handling));
 
-    if (!strcmp(m_canonicalConverterName, "windows-950-2000"))
-        return big5Encode(string, unencodableHandler(handling));
-    
     if (!m_converter) {
         createICUConverter();
         if (!m_converter)

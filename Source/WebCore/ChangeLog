@@ -1,3 +1,45 @@
+2020-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Align Big5 decoding with spec, Chrome, and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=216016
+
+        Reviewed by Darin Adler.
+
+        I also introduce a new class TextCodecCJK instead of duct taping this into TextCodecICU.
+        Covered by web platform tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/EncodingTables.cpp:
+        * platform/text/EncodingTables.h:
+        * platform/text/TextCodecCJK.cpp: Added.
+        (WebCore::TextCodecCJK::TextCodecCJK):
+        (WebCore::TextCodecCJK::registerEncodingNames):
+        (WebCore::TextCodecCJK::registerCodecs):
+        (WebCore::eucJPEncode):
+        (WebCore::big5Encode):
+        (WebCore::appendDecimal):
+        (WebCore::urlEncodedEntityUnencodableHandler):
+        (WebCore::entityUnencodableHandler):
+        (WebCore::questionMarkUnencodableHandler):
+        (WebCore::Function<void):
+        (WebCore::big5DecodeIndex):
+        (WebCore::TextCodecCJK::big5Decode):
+        (WebCore::TextCodecCJK::decode):
+        (WebCore::TextCodecCJK::encode):
+        * platform/text/TextCodecCJK.h: Added.
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::encode):
+        (WebCore::eucJPEncode): Deleted.
+        (WebCore::big5Encode): Deleted.
+        (WebCore::uncheckedAppendDecimal): Deleted.
+        (WebCore::urlEncodedEntityUnencodableHandler): Deleted.
+        (WebCore::entityUnencodableHandler): Deleted.
+        (WebCore::questionMarkUnencodableHandler): Deleted.
+        (WebCore::Function<void): Deleted.
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::extendTextCodecMaps):
+
 2020-09-01  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Handle events for date inputs with editable components

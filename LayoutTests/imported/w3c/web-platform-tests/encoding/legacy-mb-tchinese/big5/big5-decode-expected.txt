@@ -1,23 +1,23 @@
 
 PASS U+A7 § § A1 B1 
-FAIL U+A8 ¨ ¨ C6 D8 assert_equals: expected "¨" but got ""
+PASS U+A8 ¨ ¨ C6 D8 
 PASS U+AF ¯ ¯ A1 C2 
 PASS U+B0 ° ° A2 58 
 PASS U+B1 ± ± A1 D3 
 PASS U+B7 · · A1 50 
 PASS U+D7 × × A1 D1 
 PASS U+F7 ÷ ÷ A1 D2 
-FAIL U+F8 ø ø C8 FB assert_equals: expected "ø" but got ""
-FAIL U+14B ŋ ŋ C8 FC assert_equals: expected "ŋ" but got ""
-FAIL U+153 œ œ C8 FA assert_equals: expected "œ" but got ""
-FAIL U+250 ɐ ɐ C8 F6 assert_equals: expected "ɐ" but got ""
-FAIL U+254 ɔ ɔ C8 F8 assert_equals: expected "ɔ" but got ""
-FAIL U+25B ɛ ɛ C8 F7 assert_equals: expected "ɛ" but got ""
-FAIL U+26A ɪ ɪ C8 FE assert_equals: expected "ɪ" but got ""
-FAIL U+275 ɵ ɵ C8 F9 assert_equals: expected "ɵ" but got ""
-FAIL U+283 ʃ ʃ C8 F5 assert_equals: expected "ʃ" but got ""
-FAIL U+28A ʊ ʊ C8 FD assert_equals: expected "ʊ" but got ""
-FAIL U+2C6 ˆ ˆ C6 D9 assert_equals: expected "ˆ" but got ""
+PASS U+F8 ø ø C8 FB 
+PASS U+14B ŋ ŋ C8 FC 
+PASS U+153 œ œ C8 FA 
+PASS U+250 ɐ ɐ C8 F6 
+PASS U+254 ɔ ɔ C8 F8 
+PASS U+25B ɛ ɛ C8 F7 
+PASS U+26A ɪ ɪ C8 FE 
+PASS U+275 ɵ ɵ C8 F9 
+PASS U+283 ʃ ʃ C8 F5 
+PASS U+28A ʊ ʊ C8 FD 
+PASS U+2C6 ˆ ˆ C6 D9 
 PASS U+2C7 ˇ ˇ A3 BE 
 PASS U+2C9 ˉ ˉ A3 BC 
 PASS U+2CA ˊ ˊ A3 BD 
@@ -72,72 +72,72 @@ PASS U+3C6 φ φ A3 70
 PASS U+3C7 χ χ A3 71 
 PASS U+3C8 ψ ψ A3 72 
 PASS U+3C9 ω ω A3 73 
-FAIL U+401 Ё Ё C7 F9 assert_equals: expected "Ё" but got ""
-FAIL U+410 А А C7 F3 assert_equals: expected "А" but got ""
-FAIL U+411 Б Б C7 F4 assert_equals: expected "Б" but got ""
-FAIL U+412 В В C7 F5 assert_equals: expected "В" but got ""
-FAIL U+413 Г Г C7 F6 assert_equals: expected "Г" but got ""
-FAIL U+414 Д Д C7 F7 assert_equals: expected "Д" but got ""
-FAIL U+415 Е Е C7 F8 assert_equals: expected "Е" but got ""
-FAIL U+416 Ж Ж C7 FA assert_equals: expected "Ж" but got ""
-FAIL U+417 З З C7 FB assert_equals: expected "З" but got ""
-FAIL U+418 И И C7 FC assert_equals: expected "И" but got ""
-FAIL U+419 Й Й C7 FD assert_equals: expected "Й" but got ""
-FAIL U+41A К К C7 FE assert_equals: expected "К" but got ""
-FAIL U+41B Л Л C8 40 assert_equals: expected "Л" but got ""
-FAIL U+41C М М C8 41 assert_equals: expected "М" but got ""
-FAIL U+41D Н Н C8 42 assert_equals: expected "Н" but got ""
-FAIL U+41E О О C8 43 assert_equals: expected "О" but got ""
-FAIL U+41F П П C8 44 assert_equals: expected "П" but got ""
-FAIL U+420 Р Р C8 45 assert_equals: expected "Р" but got ""
-FAIL U+421 С С C8 46 assert_equals: expected "С" but got ""
-FAIL U+422 Т Т C8 47 assert_equals: expected "Т" but got ""
-FAIL U+423 У У C8 48 assert_equals: expected "У" but got ""
-FAIL U+424 Ф Ф C8 49 assert_equals: expected "Ф" but got ""
-FAIL U+425 Х Х C8 4A assert_equals: expected "Х" but got ""
-FAIL U+426 Ц Ц C8 4B assert_equals: expected "Ц" but got ""
-FAIL U+427 Ч Ч C8 4C assert_equals: expected "Ч" but got ""
-FAIL U+428 Ш Ш C8 4D assert_equals: expected "Ш" but got ""
-FAIL U+429 Щ Щ C8 4E assert_equals: expected "Щ" but got ""
-FAIL U+42A Ъ Ъ C8 4F assert_equals: expected "Ъ" but got ""
-FAIL U+42B Ы Ы C8 50 assert_equals: expected "Ы" but got ""
-FAIL U+42C Ь Ь C8 51 assert_equals: expected "Ь" but got ""
-FAIL U+42D Э Э C8 52 assert_equals: expected "Э" but got ""
-FAIL U+42E Ю Ю C8 53 assert_equals: expected "Ю" but got ""
-FAIL U+42F Я Я C8 54 assert_equals: expected "Я" but got ""
-FAIL U+430 а а C8 55 assert_equals: expected "а" but got ""
-FAIL U+431 б б C8 56 assert_equals: expected "б" but got ""
-FAIL U+432 в в C8 57 assert_equals: expected "в" but got ""
-FAIL U+433 г г C8 58 assert_equals: expected "г" but got ""
-FAIL U+434 д д C8 59 assert_equals: expected "д" but got ""
-FAIL U+435 е е C8 5A assert_equals: expected "е" but got ""
-FAIL U+436 ж ж C8 5C assert_equals: expected "ж" but got ""
-FAIL U+437 з з C8 5D assert_equals: expected "з" but got ""
-FAIL U+438 и и C8 5E assert_equals: expected "и" but got ""
-FAIL U+439 й й C8 5F assert_equals: expected "й" but got ""
-FAIL U+43A к к C8 60 assert_equals: expected "к" but got ""
-FAIL U+43B л л C8 61 assert_equals: expected "л" but got ""
-FAIL U+43C м м C8 62 assert_equals: expected "м" but got ""
-FAIL U+43D н н C8 63 assert_equals: expected "н" but got ""
-FAIL U+43E о о C8 64 assert_equals: expected "о" but got ""
-FAIL U+43F п п C8 65 assert_equals: expected "п" but got ""
-FAIL U+440 р р C8 66 assert_equals: expected "р" but got ""
-FAIL U+441 с с C8 67 assert_equals: expected "с" but got ""
-FAIL U+442 т т C8 68 assert_equals: expected "т" but got ""
-FAIL U+443 у у C8 69 assert_equals: expected "у" but got ""
-FAIL U+444 ф ф C8 6A assert_equals: expected "ф" but got ""
-FAIL U+445 х х C8 6B assert_equals: expected "х" but got ""
-FAIL U+446 ц ц C8 6C assert_equals: expected "ц" but got ""
-FAIL U+447 ч ч C8 6D assert_equals: expected "ч" but got ""
-FAIL U+448 ш ш C8 6E assert_equals: expected "ш" but got ""
-FAIL U+449 щ щ C8 6F assert_equals: expected "щ" but got ""
-FAIL U+44A ъ ъ C8 70 assert_equals: expected "ъ" but got ""
-FAIL U+44B ы ы C8 71 assert_equals: expected "ы" but got ""
-FAIL U+44C ь ь C8 72 assert_equals: expected "ь" but got ""
-FAIL U+44D э э C8 73 assert_equals: expected "э" but got ""
-FAIL U+44E ю ю C8 74 assert_equals: expected "ю" but got ""
-FAIL U+44F я я C8 75 assert_equals: expected "я" but got ""
-FAIL U+451 ё ё C8 5B assert_equals: expected "ё" but got ""
+PASS U+401 Ё Ё C7 F9 
+PASS U+410 А А C7 F3 
+PASS U+411 Б Б C7 F4 
+PASS U+412 В В C7 F5 
+PASS U+413 Г Г C7 F6 
+PASS U+414 Д Д C7 F7 
+PASS U+415 Е Е C7 F8 
+PASS U+416 Ж Ж C7 FA 
+PASS U+417 З З C7 FB 
+PASS U+418 И И C7 FC 
+PASS U+419 Й Й C7 FD 
+PASS U+41A К К C7 FE 
+PASS U+41B Л Л C8 40 
+PASS U+41C М М C8 41 
+PASS U+41D Н Н C8 42 
+PASS U+41E О О C8 43 
+PASS U+41F П П C8 44 
+PASS U+420 Р Р C8 45 
+PASS U+421 С С C8 46 
+PASS U+422 Т Т C8 47 
+PASS U+423 У У C8 48 
+PASS U+424 Ф Ф C8 49 
+PASS U+425 Х Х C8 4A 
+PASS U+426 Ц Ц C8 4B 
+PASS U+427 Ч Ч C8 4C 
+PASS U+428 Ш Ш C8 4D 
+PASS U+429 Щ Щ C8 4E 
+PASS U+42A Ъ Ъ C8 4F 
+PASS U+42B Ы Ы C8 50 
+PASS U+42C Ь Ь C8 51 
+PASS U+42D Э Э C8 52 
+PASS U+42E Ю Ю C8 53 
+PASS U+42F Я Я C8 54 
+PASS U+430 а а C8 55 
+PASS U+431 б б C8 56 
+PASS U+432 в в C8 57 
+PASS U+433 г г C8 58 
+PASS U+434 д д C8 59 
+PASS U+435 е е C8 5A 
+PASS U+436 ж ж C8 5C 
+PASS U+437 з з C8 5D 
+PASS U+438 и и C8 5E 
+PASS U+439 й й C8 5F 
+PASS U+43A к к C8 60 
+PASS U+43B л л C8 61 
+PASS U+43C м м C8 62 
+PASS U+43D н н C8 63 
+PASS U+43E о о C8 64 
+PASS U+43F п п C8 65 
+PASS U+440 р р C8 66 
+PASS U+441 с с C8 67 
+PASS U+442 т т C8 68 
+PASS U+443 у у C8 69 
+PASS U+444 ф ф C8 6A 
+PASS U+445 х х C8 6B 
+PASS U+446 ц ц C8 6C 
+PASS U+447 ч ч C8 6D 
+PASS U+448 ш ш C8 6E 
+PASS U+449 щ щ C8 6F 
+PASS U+44A ъ ъ C8 70 
+PASS U+44B ы ы C8 71 
+PASS U+44C ь ь C8 72 
+PASS U+44D э э C8 73 
+PASS U+44E ю ю C8 74 
+PASS U+44F я я C8 75 
+PASS U+451 ё ё C8 5B 
 PASS U+2013 – – A1 56 
 PASS U+2014 — — A1 58 
 PASS U+2018 ‘ ‘ A1 A5 
@@ -154,8 +154,8 @@ PASS U+20AC € € A3 E1
 PASS U+2103 ℃ ℃ A2 4A 
 PASS U+2105 ℅ ℅ A1 C1 
 PASS U+2109 ℉ ℉ A2 4B 
-FAIL U+2116 № № C8 D2 assert_equals: expected "№" but got ""
-FAIL U+2121 ℡ ℡ C8 D3 assert_equals: expected "℡" but got ""
+PASS U+2116 № № C8 D2 
+PASS U+2121 ℡ ℡ C8 D3 
 PASS U+2160 Ⅰ Ⅰ A2 B9 
 PASS U+2161 Ⅱ Ⅱ A2 BA 
 PASS U+2162 Ⅲ Ⅲ A2 BB 
@@ -166,16 +166,16 @@ PASS U+2166 Ⅶ Ⅶ A2 BF
 PASS U+2167 Ⅷ Ⅷ A2 C0 
 PASS U+2168 Ⅸ Ⅸ A2 C1 
 PASS U+2169 Ⅹ Ⅹ A2 C2 
-FAIL U+2170 ⅰ ⅰ C6 B5 assert_equals: expected "ⅰ" but got ""
-FAIL U+2171 ⅱ ⅱ C6 B6 assert_equals: expected "ⅱ" but got ""
-FAIL U+2172 ⅲ ⅲ C6 B7 assert_equals: expected "ⅲ" but got ""
-FAIL U+2173 ⅳ ⅳ C6 B8 assert_equals: expected "ⅳ" but got ""
-FAIL U+2174 ⅴ ⅴ C6 B9 assert_equals: expected "ⅴ" but got ""
-FAIL U+2175 ⅵ ⅵ C6 BA assert_equals: expected "ⅵ" but got ""
-FAIL U+2176 ⅶ ⅶ C6 BB assert_equals: expected "ⅶ" but got ""
-FAIL U+2177 ⅷ ⅷ C6 BC assert_equals: expected "ⅷ" but got ""
-FAIL U+2178 ⅸ ⅸ C6 BD assert_equals: expected "ⅸ" but got ""
-FAIL U+2179 ⅹ ⅹ C6 BE assert_equals: expected "ⅹ" but got ""
+PASS U+2170 ⅰ ⅰ C6 B5 
+PASS U+2171 ⅱ ⅱ C6 B6 
+PASS U+2172 ⅲ ⅲ C6 B7 
+PASS U+2173 ⅳ ⅳ C6 B8 
+PASS U+2174 ⅴ ⅴ C6 B9 
+PASS U+2175 ⅵ ⅵ C6 BA 
+PASS U+2176 ⅶ ⅶ C6 BB 
+PASS U+2177 ⅷ ⅷ C6 BC 
+PASS U+2178 ⅸ ⅸ C6 BD 
+PASS U+2179 ⅹ ⅹ C6 BE 
 PASS U+2190 ← ← A1 F6 
 PASS U+2191 ↑ ↑ A1 F4 
 PASS U+2192 → → A1 F7 
@@ -184,9 +184,9 @@ PASS U+2196 ↖ ↖ A1 F8
 PASS U+2197 ↗ ↗ A1 F9 
 PASS U+2198 ↘ ↘ A1 FB 
 PASS U+2199 ↙ ↙ A1 FA 
-FAIL U+21B8 ↸ ↸ C8 77 assert_equals: expected "↸" but got ""
-FAIL U+21B9 ↹ ↹ C8 78 assert_equals: expected "↹" but got ""
-FAIL U+21E7 ⇧ ⇧ C8 76 assert_equals: expected "⇧" but got ""
+PASS U+21B8 ↸ ↸ C8 77 
+PASS U+21B9 ↹ ↹ C8 78 
+PASS U+21E7 ⇧ ⇧ C8 76 
 PASS U+2215 ∕ ∕ A2 41 
 PASS U+221A √ √ A1 D4 
 PASS U+221E ∞ ∞ A1 DB 
@@ -209,59 +209,59 @@ PASS U+2295 ⊕ ⊕ A1 F2
 PASS U+2299 ⊙ ⊙ A1 F3 
 PASS U+22A5 ⊥ ⊥ A1 E6 
 PASS U+22BF ⊿ ⊿ A1 E9 
-FAIL U+2400 ␀ ␀ A3 C0 assert_equals: expected "␀" but got "\ufffd"
-FAIL U+2401 ␁ ␁ A3 C1 assert_equals: expected "␁" but got "\ufffd"
-FAIL U+2402 ␂ ␂ A3 C2 assert_equals: expected "␂" but got "\ufffd"
-FAIL U+2403 ␃ ␃ A3 C3 assert_equals: expected "␃" but got "\ufffd"
-FAIL U+2404 ␄ ␄ A3 C4 assert_equals: expected "␄" but got "\ufffd"
-FAIL U+2405 ␅ ␅ A3 C5 assert_equals: expected "␅" but got "\ufffd"
-FAIL U+2406 ␆ ␆ A3 C6 assert_equals: expected "␆" but got "\ufffd"
-FAIL U+2407 ␇ ␇ A3 C7 assert_equals: expected "␇" but got "\ufffd"
-FAIL U+2408 ␈ ␈ A3 C8 assert_equals: expected "␈" but got "\ufffd"
-FAIL U+2409 ␉ ␉ A3 C9 assert_equals: expected "␉" but got "\ufffd"
-FAIL U+240A ␊ ␊ A3 CA assert_equals: expected "␊" but got "\ufffd"
-FAIL U+240B ␋ ␋ A3 CB assert_equals: expected "␋" but got "\ufffd"
-FAIL U+240C ␌ ␌ A3 CC assert_equals: expected "␌" but got "\ufffd"
-FAIL U+240D ␍ ␍ A3 CD assert_equals: expected "␍" but got "\ufffd"
-FAIL U+240E ␎ ␎ A3 CE assert_equals: expected "␎" but got "\ufffd"
-FAIL U+240F ␏ ␏ A3 CF assert_equals: expected "␏" but got "\ufffd"
-FAIL U+2410 ␐ ␐ A3 D0 assert_equals: expected "␐" but got "\ufffd"
-FAIL U+2411 ␑ ␑ A3 D1 assert_equals: expected "␑" but got "\ufffd"
-FAIL U+2412 ␒ ␒ A3 D2 assert_equals: expected "␒" but got "\ufffd"
-FAIL U+2413 ␓ ␓ A3 D3 assert_equals: expected "␓" but got "\ufffd"
-FAIL U+2414 ␔ ␔ A3 D4 assert_equals: expected "␔" but got "\ufffd"
-FAIL U+2415 ␕ ␕ A3 D5 assert_equals: expected "␕" but got "\ufffd"
-FAIL U+2416 ␖ ␖ A3 D6 assert_equals: expected "␖" but got "\ufffd"
-FAIL U+2417 ␗ ␗ A3 D7 assert_equals: expected "␗" but got "\ufffd"
-FAIL U+2418 ␘ ␘ A3 D8 assert_equals: expected "␘" but got "\ufffd"
-FAIL U+2419 ␙ ␙ A3 D9 assert_equals: expected "␙" but got "\ufffd"
-FAIL U+241A ␚ ␚ A3 DA assert_equals: expected "␚" but got "\ufffd"
-FAIL U+241B ␛ ␛ A3 DB assert_equals: expected "␛" but got "\ufffd"
-FAIL U+241C ␜ ␜ A3 DC assert_equals: expected "␜" but got "\ufffd"
-FAIL U+241D ␝ ␝ A3 DD assert_equals: expected "␝" but got "\ufffd"
-FAIL U+241E ␞ ␞ A3 DE assert_equals: expected "␞" but got "\ufffd"
-FAIL U+241F ␟ ␟ A3 DF assert_equals: expected "␟" but got "\ufffd"
-FAIL U+2421 ␡ ␡ A3 E0 assert_equals: expected "␡" but got "\ufffd"
-FAIL U+2460 ① ① C6 A1 assert_equals: expected "①" but got ""
-FAIL U+2461 ② ② C6 A2 assert_equals: expected "②" but got ""
-FAIL U+2462 ③ ③ C6 A3 assert_equals: expected "③" but got ""
-FAIL U+2463 ④ ④ C6 A4 assert_equals: expected "④" but got ""
-FAIL U+2464 ⑤ ⑤ C6 A5 assert_equals: expected "⑤" but got ""
-FAIL U+2465 ⑥ ⑥ C6 A6 assert_equals: expected "⑥" but got ""
-FAIL U+2466 ⑦ ⑦ C6 A7 assert_equals: expected "⑦" but got ""
-FAIL U+2467 ⑧ ⑧ C6 A8 assert_equals: expected "⑧" but got ""
-FAIL U+2468 ⑨ ⑨ C6 A9 assert_equals: expected "⑨" but got ""
-FAIL U+2469 ⑩ ⑩ C6 AA assert_equals: expected "⑩" but got ""
-FAIL U+2474 ⑴ ⑴ C6 AB assert_equals: expected "⑴" but got ""
-FAIL U+2475 ⑵ ⑵ C6 AC assert_equals: expected "⑵" but got ""
-FAIL U+2476 ⑶ ⑶ C6 AD assert_equals: expected "⑶" but got ""
-FAIL U+2477 ⑷ ⑷ C6 AE assert_equals: expected "⑷" but got ""
-FAIL U+2478 ⑸ ⑸ C6 AF assert_equals: expected "⑸" but got ""
-FAIL U+2479 ⑹ ⑹ C6 B0 assert_equals: expected "⑹" but got ""
-FAIL U+247A ⑺ ⑺ C6 B1 assert_equals: expected "⑺" but got ""
-FAIL U+247B ⑻ ⑻ C6 B2 assert_equals: expected "⑻" but got ""
-FAIL U+247C ⑼ ⑼ C6 B3 assert_equals: expected "⑼" but got ""
-FAIL U+247D ⑽ ⑽ C6 B4 assert_equals: expected "⑽" but got ""
+PASS U+2400 ␀ ␀ A3 C0 
+PASS U+2401 ␁ ␁ A3 C1 
+PASS U+2402 ␂ ␂ A3 C2 
+PASS U+2403 ␃ ␃ A3 C3 
+PASS U+2404 ␄ ␄ A3 C4 
+PASS U+2405 ␅ ␅ A3 C5 
+PASS U+2406 ␆ ␆ A3 C6 
+PASS U+2407 ␇ ␇ A3 C7 
+PASS U+2408 ␈ ␈ A3 C8 
+PASS U+2409 ␉ ␉ A3 C9 
+PASS U+240A ␊ ␊ A3 CA 
+PASS U+240B ␋ ␋ A3 CB 
+PASS U+240C ␌ ␌ A3 CC 
+PASS U+240D ␍ ␍ A3 CD 
+PASS U+240E ␎ ␎ A3 CE 
+PASS U+240F ␏ ␏ A3 CF 
+PASS U+2410 ␐ ␐ A3 D0 
+PASS U+2411 ␑ ␑ A3 D1 
+PASS U+2412 ␒ ␒ A3 D2 
+PASS U+2413 ␓ ␓ A3 D3 
+PASS U+2414 ␔ ␔ A3 D4 
+PASS U+2415 ␕ ␕ A3 D5 
+PASS U+2416 ␖ ␖ A3 D6 
+PASS U+2417 ␗ ␗ A3 D7 
+PASS U+2418 ␘ ␘ A3 D8 
+PASS U+2419 ␙ ␙ A3 D9 
+PASS U+241A ␚ ␚ A3 DA 
+PASS U+241B ␛ ␛ A3 DB 
+PASS U+241C ␜ ␜ A3 DC 
+PASS U+241D ␝ ␝ A3 DD 
+PASS U+241E ␞ ␞ A3 DE 
+PASS U+241F ␟ ␟ A3 DF 
+PASS U+2421 ␡ ␡ A3 E0 
+PASS U+2460 ① ① C6 A1 
+PASS U+2461 ② ② C6 A2 
+PASS U+2462 ③ ③ C6 A3 
+PASS U+2463 ④ ④ C6 A4 
+PASS U+2464 ⑤ ⑤ C6 A5 
+PASS U+2465 ⑥ ⑥ C6 A6 
+PASS U+2466 ⑦ ⑦ C6 A7 
+PASS U+2467 ⑧ ⑧ C6 A8 
+PASS U+2468 ⑨ ⑨ C6 A9 
+PASS U+2469 ⑩ ⑩ C6 AA 
+PASS U+2474 ⑴ ⑴ C6 AB 
+PASS U+2475 ⑵ ⑵ C6 AC 
+PASS U+2476 ⑶ ⑶ C6 AD 
+PASS U+2477 ⑷ ⑷ C6 AE 
+PASS U+2478 ⑸ ⑸ C6 AF 
+PASS U+2479 ⑹ ⑹ C6 B0 
+PASS U+247A ⑺ ⑺ C6 B1 
+PASS U+247B ⑻ ⑻ C6 B2 
+PASS U+247C ⑼ ⑼ C6 B3 
+PASS U+247D ⑽ ⑽ C6 B4 
 PASS U+2500 ─ ─ A2 77 
 PASS U+2502 │ │ A2 78 
 PASS U+250C ┌ ┌ A2 7A 
@@ -346,43 +346,43 @@ PASS U+2605 ★ ★ A1 B9
 PASS U+2606 ☆ ☆ A1 B8 
 PASS U+2640 ♀ ♀ A1 F0 
 PASS U+2642 ♂ ♂ A1 F1 
-FAIL U+273D ✽ ✽ C6 E6 assert_equals: expected "✽" but got ""
-FAIL U+2E80 ⺀ ⺀ C8 D6 assert_equals: expected "⺀" but got ""
-FAIL U+2E84 ⺄ ⺄ C8 D7 assert_equals: expected "⺄" but got ""
-FAIL U+2E86 ⺆ ⺆ C8 D8 assert_equals: expected "⺆" but got ""
-FAIL U+2E87 ⺇ ⺇ C8 D9 assert_equals: expected "⺇" but got ""
-FAIL U+2E88 ⺈ ⺈ C8 DA assert_equals: expected "⺈" but got ""
-FAIL U+2E8A ⺊ ⺊ C8 DB assert_equals: expected "⺊" but got ""
-FAIL U+2E8C ⺌ ⺌ C8 DC assert_equals: expected "⺌" but got ""
-FAIL U+2E8D ⺍ ⺍ C8 DD assert_equals: expected "⺍" but got ""
-FAIL U+2E95 ⺕ ⺕ C8 DE assert_equals: expected "⺕" but got ""
-FAIL U+2E9C ⺜ ⺜ C8 DF assert_equals: expected "⺜" but got ""
-FAIL U+2E9D ⺝ ⺝ C8 E0 assert_equals: expected "⺝" but got ""
-FAIL U+2EA5 ⺥ ⺥ C8 E1 assert_equals: expected "⺥" but got ""
-FAIL U+2EA7 ⺧ ⺧ C8 E2 assert_equals: expected "⺧" but got ""
-FAIL U+2EAA ⺪ ⺪ C8 E3 assert_equals: expected "⺪" but got ""
-FAIL U+2EAC ⺬ ⺬ C8 E4 assert_equals: expected "⺬" but got ""
-FAIL U+2EAE ⺮ ⺮ C8 E5 assert_equals: expected "⺮" but got ""
-FAIL U+2EB6 ⺶ ⺶ C8 E6 assert_equals: expected "⺶" but got ""
-FAIL U+2EBC ⺼ ⺼ C8 E7 assert_equals: expected "⺼" but got ""
-FAIL U+2EBE ⺾ ⺾ C8 E8 assert_equals: expected "⺾" but got ""
-FAIL U+2EC6 ⻆ ⻆ C8 E9 assert_equals: expected "⻆" but got ""
-FAIL U+2ECA ⻊ ⻊ C8 EA assert_equals: expected "⻊" but got ""
-FAIL U+2ECC ⻌ ⻌ C8 EB assert_equals: expected "⻌" but got ""
-FAIL U+2ECD ⻍ ⻍ C8 EC assert_equals: expected "⻍" but got ""
-FAIL U+2ECF ⻏ ⻏ C8 ED assert_equals: expected "⻏" but got ""
-FAIL U+2ED6 ⻖ ⻖ C8 EE assert_equals: expected "⻖" but got ""
-FAIL U+2ED7 ⻗ ⻗ C8 EF assert_equals: expected "⻗" but got ""
-FAIL U+2EDE ⻞ ⻞ C8 F0 assert_equals: expected "⻞" but got ""
-FAIL U+2EE3 ⻣ ⻣ C8 F1 assert_equals: expected "⻣" but got ""
-FAIL U+2F33 ⼳ ⼳ C6 CD assert_equals: expected "⼳" but got ""
+PASS U+273D ✽ ✽ C6 E6 
+PASS U+2E80 ⺀ ⺀ C8 D6 
+PASS U+2E84 ⺄ ⺄ C8 D7 
+PASS U+2E86 ⺆ ⺆ C8 D8 
+PASS U+2E87 ⺇ ⺇ C8 D9 
+PASS U+2E88 ⺈ ⺈ C8 DA 
+PASS U+2E8A ⺊ ⺊ C8 DB 
+PASS U+2E8C ⺌ ⺌ C8 DC 
+PASS U+2E8D ⺍ ⺍ C8 DD 
+PASS U+2E95 ⺕ ⺕ C8 DE 
+PASS U+2E9C ⺜ ⺜ C8 DF 
+PASS U+2E9D ⺝ ⺝ C8 E0 
+PASS U+2EA5 ⺥ ⺥ C8 E1 
+PASS U+2EA7 ⺧ ⺧ C8 E2 
+PASS U+2EAA ⺪ ⺪ C8 E3 
+PASS U+2EAC ⺬ ⺬ C8 E4 
+PASS U+2EAE ⺮ ⺮ C8 E5 
+PASS U+2EB6 ⺶ ⺶ C8 E6 
+PASS U+2EBC ⺼ ⺼ C8 E7 
+PASS U+2EBE ⺾ ⺾ C8 E8 
+PASS U+2EC6 ⻆ ⻆ C8 E9 
+PASS U+2ECA ⻊ ⻊ C8 EA 
+PASS U+2ECC ⻌ ⻌ C8 EB 
+PASS U+2ECD ⻍ ⻍ C8 EC 
+PASS U+2ECF ⻏ ⻏ C8 ED 
+PASS U+2ED6 ⻖ ⻖ C8 EE 
+PASS U+2ED7 ⻗ ⻗ C8 EF 
+PASS U+2EDE ⻞ ⻞ C8 F0 
+PASS U+2EE3 ⻣ ⻣ C8 F1 
+PASS U+2F33 ⼳ ⼳ C6 CD 
 PASS U+3000 　 　 A1 40 
 PASS U+3001 、 、 A1 42 
 PASS U+3002 。 。 A1 43 
 PASS U+3003 〃 〃 A1 B2 
-FAIL U+3005 々 々 C6 E0 assert_equals: expected "々" but got ""
-FAIL U+3006 〆 〆 C6 E1 assert_equals: expected "〆" but got ""
-FAIL U+3007 〇 〇 C6 E2 assert_equals: expected "〇" but got ""
+PASS U+3005 々 々 C6 E0 
+PASS U+3006 〆 〆 C6 E1 
+PASS U+3007 〇 〇 C6 E2 
 PASS U+3008 〈 〈 A1 71 
 PASS U+3009 〉 〉 A1 72 
 PASS U+300A 《 《 A1 6D 
@@ -407,182 +407,182 @@ PASS U+3026 〦 〦 A2 C8
 PASS U+3027 〧 〧 A2 C9 
 PASS U+3028 〨 〨 A2 CA 
 PASS U+3029 〩 〩 A2 CB 
-FAIL U+3041 ぁ ぁ C6 E7 assert_equals: expected "ぁ" but got ""
-FAIL U+3042 あ あ C6 E8 assert_equals: expected "あ" but got ""
-FAIL U+3043 ぃ ぃ C6 E9 assert_equals: expected "ぃ" but got ""
-FAIL U+3044 い い C6 EA assert_equals: expected "い" but got ""
-FAIL U+3045 ぅ ぅ C6 EB assert_equals: expected "ぅ" but got ""
-FAIL U+3046 う う C6 EC assert_equals: expected "う" but got ""
-FAIL U+3047 ぇ ぇ C6 ED assert_equals: expected "ぇ" but got ""
-FAIL U+3048 え え C6 EE assert_equals: expected "え" but got ""
-FAIL U+3049 ぉ ぉ C6 EF assert_equals: expected "ぉ" but got ""
-FAIL U+304A お お C6 F0 assert_equals: expected "お" but got ""
-FAIL U+304B か か C6 F1 assert_equals: expected "か" but got ""
-FAIL U+304C が が C6 F2 assert_equals: expected "が" but got ""
-FAIL U+304D き き C6 F3 assert_equals: expected "き" but got ""
-FAIL U+304E ぎ ぎ C6 F4 assert_equals: expected "ぎ" but got ""
-FAIL U+304F く く C6 F5 assert_equals: expected "く" but got ""
-FAIL U+3050 ぐ ぐ C6 F6 assert_equals: expected "ぐ" but got ""
-FAIL U+3051 け け C6 F7 assert_equals: expected "け" but got ""
-FAIL U+3052 げ げ C6 F8 assert_equals: expected "げ" but got ""
-FAIL U+3053 こ こ C6 F9 assert_equals: expected "こ" but got ""
-FAIL U+3054 ご ご C6 FA assert_equals: expected "ご" but got ""
-FAIL U+3055 さ さ C6 FB assert_equals: expected "さ" but got ""
-FAIL U+3056 ざ ざ C6 FC assert_equals: expected "ざ" but got ""
-FAIL U+3057 し し C6 FD assert_equals: expected "し" but got ""
-FAIL U+3058 じ じ C6 FE assert_equals: expected "じ" but got ""
-FAIL U+3059 す す C7 40 assert_equals: expected "す" but got ""
-FAIL U+305A ず ず C7 41 assert_equals: expected "ず" but got ""
-FAIL U+305B せ せ C7 42 assert_equals: expected "せ" but got ""
-FAIL U+305C ぜ ぜ C7 43 assert_equals: expected "ぜ" but got ""
-FAIL U+305D そ そ C7 44 assert_equals: expected "そ" but got ""
-FAIL U+305E ぞ ぞ C7 45 assert_equals: expected "ぞ" but got ""
-FAIL U+305F た た C7 46 assert_equals: expected "た" but got ""
-FAIL U+3060 だ だ C7 47 assert_equals: expected "だ" but got ""
-FAIL U+3061 ち ち C7 48 assert_equals: expected "ち" but got ""
-FAIL U+3062 ぢ ぢ C7 49 assert_equals: expected "ぢ" but got ""
-FAIL U+3063 っ っ C7 4A assert_equals: expected "っ" but got ""
-FAIL U+3064 つ つ C7 4B assert_equals: expected "つ" but got ""
-FAIL U+3065 づ づ C7 4C assert_equals: expected "づ" but got ""
-FAIL U+3066 て て C7 4D assert_equals: expected "て" but got ""
-FAIL U+3067 で で C7 4E assert_equals: expected "で" but got ""
-FAIL U+3068 と と C7 4F assert_equals: expected "と" but got ""
-FAIL U+3069 ど ど C7 50 assert_equals: expected "ど" but got ""
-FAIL U+306A な な C7 51 assert_equals: expected "な" but got ""
-FAIL U+306B に に C7 52 assert_equals: expected "に" but got ""
-FAIL U+306C ぬ ぬ C7 53 assert_equals: expected "ぬ" but got ""
-FAIL U+306D ね ね C7 54 assert_equals: expected "ね" but got ""
-FAIL U+306E の の C7 55 assert_equals: expected "の" but got ""
-FAIL U+306F は は C7 56 assert_equals: expected "は" but got ""
-FAIL U+3070 ば ば C7 57 assert_equals: expected "ば" but got ""
-FAIL U+3071 ぱ ぱ C7 58 assert_equals: expected "ぱ" but got ""
-FAIL U+3072 ひ ひ C7 59 assert_equals: expected "ひ" but got ""
-FAIL U+3073 び び C7 5A assert_equals: expected "び" but got ""
-FAIL U+3074 ぴ ぴ C7 5B assert_equals: expected "ぴ" but got ""
-FAIL U+3075 ふ ふ C7 5C assert_equals: expected "ふ" but got ""
-FAIL U+3076 ぶ ぶ C7 5D assert_equals: expected "ぶ" but got ""
-FAIL U+3077 ぷ ぷ C7 5E assert_equals: expected "ぷ" but got ""
-FAIL U+3078 へ へ C7 5F assert_equals: expected "へ" but got ""
-FAIL U+3079 べ べ C7 60 assert_equals: expected "べ" but got ""
-FAIL U+307A ぺ ぺ C7 61 assert_equals: expected "ぺ" but got ""
-FAIL U+307B ほ ほ C7 62 assert_equals: expected "ほ" but got ""
-FAIL U+307C ぼ ぼ C7 63 assert_equals: expected "ぼ" but got ""
-FAIL U+307D ぽ ぽ C7 64 assert_equals: expected "ぽ" but got ""
-FAIL U+307E ま ま C7 65 assert_equals: expected "ま" but got ""
-FAIL U+307F み み C7 66 assert_equals: expected "み" but got ""
-FAIL U+3080 む む C7 67 assert_equals: expected "む" but got ""
-FAIL U+3081 め め C7 68 assert_equals: expected "め" but got ""
-FAIL U+3082 も も C7 69 assert_equals: expected "も" but got ""
-FAIL U+3083 ゃ ゃ C7 6A assert_equals: expected "ゃ" but got ""
-FAIL U+3084 や や C7 6B assert_equals: expected "や" but got ""
-FAIL U+3085 ゅ ゅ C7 6C assert_equals: expected "ゅ" but got ""
-FAIL U+3086 ゆ ゆ C7 6D assert_equals: expected "ゆ" but got ""
-FAIL U+3087 ょ ょ C7 6E assert_equals: expected "ょ" but got ""
-FAIL U+3088 よ よ C7 6F assert_equals: expected "よ" but got ""
-FAIL U+3089 ら ら C7 70 assert_equals: expected "ら" but got ""
-FAIL U+308A り り C7 71 assert_equals: expected "り" but got ""
-FAIL U+308B る る C7 72 assert_equals: expected "る" but got ""
-FAIL U+308C れ れ C7 73 assert_equals: expected "れ" but got ""
-FAIL U+308D ろ ろ C7 74 assert_equals: expected "ろ" but got ""
-FAIL U+308E ゎ ゎ C7 75 assert_equals: expected "ゎ" but got ""
-FAIL U+308F わ わ C7 76 assert_equals: expected "わ" but got ""
-FAIL U+3090 ゐ ゐ C7 77 assert_equals: expected "ゐ" but got ""
-FAIL U+3091 ゑ ゑ C7 78 assert_equals: expected "ゑ" but got ""
-FAIL U+3092 を を C7 79 assert_equals: expected "を" but got ""
-FAIL U+3093 ん ん C7 7A assert_equals: expected "ん" but got ""
-FAIL U+309B ゛ ゛ C8 D4 assert_equals: expected "゛" but got ""
-FAIL U+309C ゜ ゜ C8 D5 assert_equals: expected "゜" but got ""
-FAIL U+309D ゝ ゝ C6 DC assert_equals: expected "ゝ" but got ""
-FAIL U+309E ゞ ゞ C6 DD assert_equals: expected "ゞ" but got ""
-FAIL U+30A1 ァ ァ C7 7B assert_equals: expected "ァ" but got ""
-FAIL U+30A2 ア ア C7 7C assert_equals: expected "ア" but got ""
-FAIL U+30A3 ィ ィ C7 7D assert_equals: expected "ィ" but got ""
-FAIL U+30A4 イ イ C7 7E assert_equals: expected "イ" but got ""
-FAIL U+30A5 ゥ ゥ C7 A1 assert_equals: expected "ゥ" but got ""
-FAIL U+30A6 ウ ウ C7 A2 assert_equals: expected "ウ" but got ""
-FAIL U+30A7 ェ ェ C7 A3 assert_equals: expected "ェ" but got ""
-FAIL U+30A8 エ エ C7 A4 assert_equals: expected "エ" but got ""
-FAIL U+30A9 ォ ォ C7 A5 assert_equals: expected "ォ" but got ""
-FAIL U+30AA オ オ C7 A6 assert_equals: expected "オ" but got ""
-FAIL U+30AB カ カ C7 A7 assert_equals: expected "カ" but got ""
-FAIL U+30AC ガ ガ C7 A8 assert_equals: expected "ガ" but got ""
-FAIL U+30AD キ キ C7 A9 assert_equals: expected "キ" but got ""
-FAIL U+30AE ギ ギ C7 AA assert_equals: expected "ギ" but got ""
-FAIL U+30AF ク ク C7 AB assert_equals: expected "ク" but got ""
-FAIL U+30B0 グ グ C7 AC assert_equals: expected "グ" but got ""
-FAIL U+30B1 ケ ケ C7 AD assert_equals: expected "ケ" but got ""
-FAIL U+30B2 ゲ ゲ C7 AE assert_equals: expected "ゲ" but got ""
-FAIL U+30B3 コ コ C7 AF assert_equals: expected "コ" but got ""
-FAIL U+30B4 ゴ ゴ C7 B0 assert_equals: expected "ゴ" but got ""
-FAIL U+30B5 サ サ C7 B1 assert_equals: expected "サ" but got ""
-FAIL U+30B6 ザ ザ C7 B2 assert_equals: expected "ザ" but got ""
-FAIL U+30B7 シ シ C7 B3 assert_equals: expected "シ" but got ""
-FAIL U+30B8 ジ ジ C7 B4 assert_equals: expected "ジ" but got ""
-FAIL U+30B9 ス ス C7 B5 assert_equals: expected "ス" but got ""
-FAIL U+30BA ズ ズ C7 B6 assert_equals: expected "ズ" but got ""
-FAIL U+30BB セ セ C7 B7 assert_equals: expected "セ" but got ""
-FAIL U+30BC ゼ ゼ C7 B8 assert_equals: expected "ゼ" but got ""
-FAIL U+30BD ソ ソ C7 B9 assert_equals: expected "ソ" but got ""
-FAIL U+30BE ゾ ゾ C7 BA assert_equals: expected "ゾ" but got ""
-FAIL U+30BF タ タ C7 BB assert_equals: expected "タ" but got ""
-FAIL U+30C0 ダ ダ C7 BC assert_equals: expected "ダ" but got ""
-FAIL U+30C1 チ チ C7 BD assert_equals: expected "チ" but got ""
-FAIL U+30C2 ヂ ヂ C7 BE assert_equals: expected "ヂ" but got ""
-FAIL U+30C3 ッ ッ C7 BF assert_equals: expected "ッ" but got ""
-FAIL U+30C4 ツ ツ C7 C0 assert_equals: expected "ツ" but got ""
-FAIL U+30C5 ヅ ヅ C7 C1 assert_equals: expected "ヅ" but got ""
-FAIL U+30C6 テ テ C7 C2 assert_equals: expected "テ" but got ""
-FAIL U+30C7 デ デ C7 C3 assert_equals: expected "デ" but got ""
-FAIL U+30C8 ト ト C7 C4 assert_equals: expected "ト" but got ""
-FAIL U+30C9 ド ド C7 C5 assert_equals: expected "ド" but got ""
-FAIL U+30CA ナ ナ C7 C6 assert_equals: expected "ナ" but got ""
-FAIL U+30CB ニ ニ C7 C7 assert_equals: expected "ニ" but got ""
-FAIL U+30CC ヌ ヌ C7 C8 assert_equals: expected "ヌ" but got ""
-FAIL U+30CD ネ ネ C7 C9 assert_equals: expected "ネ" but got ""
-FAIL U+30CE ノ ノ C7 CA assert_equals: expected "ノ" but got ""
-FAIL U+30CF ハ ハ C7 CB assert_equals: expected "ハ" but got ""
-FAIL U+30D0 バ バ C7 CC assert_equals: expected "バ" but got ""
-FAIL U+30D1 パ パ C7 CD assert_equals: expected "パ" but got ""
-FAIL U+30D2 ヒ ヒ C7 CE assert_equals: expected "ヒ" but got ""
-FAIL U+30D3 ビ ビ C7 CF assert_equals: expected "ビ" but got ""
-FAIL U+30D4 ピ ピ C7 D0 assert_equals: expected "ピ" but got ""
-FAIL U+30D5 フ フ C7 D1 assert_equals: expected "フ" but got ""
-FAIL U+30D6 ブ ブ C7 D2 assert_equals: expected "ブ" but got ""
-FAIL U+30D7 プ プ C7 D3 assert_equals: expected "プ" but got ""
-FAIL U+30D8 ヘ ヘ C7 D4 assert_equals: expected "ヘ" but got ""
-FAIL U+30D9 ベ ベ C7 D5 assert_equals: expected "ベ" but got ""
-FAIL U+30DA ペ ペ C7 D6 assert_equals: expected "ペ" but got ""
-FAIL U+30DB ホ ホ C7 D7 assert_equals: expected "ホ" but got ""
-FAIL U+30DC ボ ボ C7 D8 assert_equals: expected "ボ" but got ""
-FAIL U+30DD ポ ポ C7 D9 assert_equals: expected "ポ" but got ""
-FAIL U+30DE マ マ C7 DA assert_equals: expected "マ" but got ""
-FAIL U+30DF ミ ミ C7 DB assert_equals: expected "ミ" but got ""
-FAIL U+30E0 ム ム C7 DC assert_equals: expected "ム" but got ""
-FAIL U+30E1 メ メ C7 DD assert_equals: expected "メ" but got ""
-FAIL U+30E2 モ モ C7 DE assert_equals: expected "モ" but got ""
-FAIL U+30E3 ャ ャ C7 DF assert_equals: expected "ャ" but got ""
-FAIL U+30E4 ヤ ヤ C7 E0 assert_equals: expected "ヤ" but got ""
-FAIL U+30E5 ュ ュ C7 E1 assert_equals: expected "ュ" but got ""
-FAIL U+30E6 ユ ユ C7 E2 assert_equals: expected "ユ" but got ""
-FAIL U+30E7 ョ ョ C7 E3 assert_equals: expected "ョ" but got ""
-FAIL U+30E8 ヨ ヨ C7 E4 assert_equals: expected "ヨ" but got ""
-FAIL U+30E9 ラ ラ C7 E5 assert_equals: expected "ラ" but got ""
-FAIL U+30EA リ リ C7 E6 assert_equals: expected "リ" but got ""
-FAIL U+30EB ル ル C7 E7 assert_equals: expected "ル" but got ""
-FAIL U+30EC レ レ C7 E8 assert_equals: expected "レ" but got ""
-FAIL U+30ED ロ ロ C7 E9 assert_equals: expected "ロ" but got ""
-FAIL U+30EE ヮ ヮ C7 EA assert_equals: expected "ヮ" but got ""
-FAIL U+30EF ワ ワ C7 EB assert_equals: expected "ワ" but got ""
-FAIL U+30F0 ヰ ヰ C7 EC assert_equals: expected "ヰ" but got ""
-FAIL U+30F1 ヱ ヱ C7 ED assert_equals: expected "ヱ" but got ""
-FAIL U+30F2 ヲ ヲ C7 EE assert_equals: expected "ヲ" but got ""
-FAIL U+30F3 ン ン C7 EF assert_equals: expected "ン" but got ""
-FAIL U+30F4 ヴ ヴ C7 F0 assert_equals: expected "ヴ" but got ""
-FAIL U+30F5 ヵ ヵ C7 F1 assert_equals: expected "ヵ" but got ""
-FAIL U+30F6 ヶ ヶ C7 F2 assert_equals: expected "ヶ" but got ""
-FAIL U+30FC ー ー C6 E3 assert_equals: expected "ー" but got ""
-FAIL U+30FD ヽ ヽ C6 DA assert_equals: expected "ヽ" but got ""
-FAIL U+30FE ヾ ヾ C6 DB assert_equals: expected "ヾ" but got ""
+PASS U+3041 ぁ ぁ C6 E7 
+PASS U+3042 あ あ C6 E8 
+PASS U+3043 ぃ ぃ C6 E9 
+PASS U+3044 い い C6 EA 
+PASS U+3045 ぅ ぅ C6 EB 
+PASS U+3046 う う C6 EC 
+PASS U+3047 ぇ ぇ C6 ED 
+PASS U+3048 え え C6 EE 
+PASS U+3049 ぉ ぉ C6 EF 
+PASS U+304A お お C6 F0 
+PASS U+304B か か C6 F1 
+PASS U+304C が が C6 F2 
+PASS U+304D き き C6 F3 
+PASS U+304E ぎ ぎ C6 F4 
+PASS U+304F く く C6 F5 
+PASS U+3050 ぐ ぐ C6 F6 
+PASS U+3051 け け C6 F7 
+PASS U+3052 げ げ C6 F8 
+PASS U+3053 こ こ C6 F9 
+PASS U+3054 ご ご C6 FA 
+PASS U+3055 さ さ C6 FB 
+PASS U+3056 ざ ざ C6 FC 
+PASS U+3057 し し C6 FD 
+PASS U+3058 じ じ C6 FE 
+PASS U+3059 す す C7 40 
+PASS U+305A ず ず C7 41 
+PASS U+305B せ せ C7 42 
+PASS U+305C ぜ ぜ C7 43 
+PASS U+305D そ そ C7 44 
+PASS U+305E ぞ ぞ C7 45 
+PASS U+305F た た C7 46 
+PASS U+3060 だ だ C7 47 
+PASS U+3061 ち ち C7 48 
+PASS U+3062 ぢ ぢ C7 49 
+PASS U+3063 っ っ C7 4A 
+PASS U+3064 つ つ C7 4B 
+PASS U+3065 づ づ C7 4C 
+PASS U+3066 て て C7 4D 
+PASS U+3067 で で C7 4E 
+PASS U+3068 と と C7 4F 
+PASS U+3069 ど ど C7 50 
+PASS U+306A な な C7 51 
+PASS U+306B に に C7 52 
+PASS U+306C ぬ ぬ C7 53 
+PASS U+306D ね ね C7 54 
+PASS U+306E の の C7 55 
+PASS U+306F は は C7 56 
+PASS U+3070 ば ば C7 57 
+PASS U+3071 ぱ ぱ C7 58 
+PASS U+3072 ひ ひ C7 59 
+PASS U+3073 び び C7 5A 
+PASS U+3074 ぴ ぴ C7 5B 
+PASS U+3075 ふ ふ C7 5C 
+PASS U+3076 ぶ ぶ C7 5D 
+PASS U+3077 ぷ ぷ C7 5E 
+PASS U+3078 へ へ C7 5F 
+PASS U+3079 べ べ C7 60 
+PASS U+307A ぺ ぺ C7 61 
+PASS U+307B ほ ほ C7 62 
+PASS U+307C ぼ ぼ C7 63 
+PASS U+307D ぽ ぽ C7 64 
+PASS U+307E ま ま C7 65 
+PASS U+307F み み C7 66 
+PASS U+3080 む む C7 67 
+PASS U+3081 め め C7 68 
+PASS U+3082 も も C7 69 
+PASS U+3083 ゃ ゃ C7 6A 
+PASS U+3084 や や C7 6B 
+PASS U+3085 ゅ ゅ C7 6C 
+PASS U+3086 ゆ ゆ C7 6D 
+PASS U+3087 ょ ょ C7 6E 
+PASS U+3088 よ よ C7 6F 
+PASS U+3089 ら ら C7 70 
+PASS U+308A り り C7 71 
+PASS U+308B る る C7 72 
+PASS U+308C れ れ C7 73 
+PASS U+308D ろ ろ C7 74 
+PASS U+308E ゎ ゎ C7 75 
+PASS U+308F わ わ C7 76 
+PASS U+3090 ゐ ゐ C7 77 
+PASS U+3091 ゑ ゑ C7 78 
+PASS U+3092 を を C7 79 
+PASS U+3093 ん ん C7 7A 
+PASS U+309B ゛ ゛ C8 D4 
+PASS U+309C ゜ ゜ C8 D5 
+PASS U+309D ゝ ゝ C6 DC 
+PASS U+309E ゞ ゞ C6 DD 
+PASS U+30A1 ァ ァ C7 7B 
+PASS U+30A2 ア ア C7 7C 
+PASS U+30A3 ィ ィ C7 7D 
+PASS U+30A4 イ イ C7 7E 
+PASS U+30A5 ゥ ゥ C7 A1 
+PASS U+30A6 ウ ウ C7 A2 
+PASS U+30A7 ェ ェ C7 A3 
+PASS U+30A8 エ エ C7 A4 
+PASS U+30A9 ォ ォ C7 A5 
+PASS U+30AA オ オ C7 A6 
+PASS U+30AB カ カ C7 A7 
+PASS U+30AC ガ ガ C7 A8 
+PASS U+30AD キ キ C7 A9 
+PASS U+30AE ギ ギ C7 AA 
+PASS U+30AF ク ク C7 AB 
+PASS U+30B0 グ グ C7 AC 
+PASS U+30B1 ケ ケ C7 AD 
+PASS U+30B2 ゲ ゲ C7 AE 
+PASS U+30B3 コ コ C7 AF 
+PASS U+30B4 ゴ ゴ C7 B0 
+PASS U+30B5 サ サ C7 B1 
+PASS U+30B6 ザ ザ C7 B2 
+PASS U+30B7 シ シ C7 B3 
+PASS U+30B8 ジ ジ C7 B4 
+PASS U+30B9 ス ス C7 B5 
+PASS U+30BA ズ ズ C7 B6 
+PASS U+30BB セ セ C7 B7 
+PASS U+30BC ゼ ゼ C7 B8 
+PASS U+30BD ソ ソ C7 B9 
+PASS U+30BE ゾ ゾ C7 BA 
+PASS U+30BF タ タ C7 BB 
+PASS U+30C0 ダ ダ C7 BC 
+PASS U+30C1 チ チ C7 BD 
+PASS U+30C2 ヂ ヂ C7 BE 
+PASS U+30C3 ッ ッ C7 BF 
+PASS U+30C4 ツ ツ C7 C0 
+PASS U+30C5 ヅ ヅ C7 C1 
+PASS U+30C6 テ テ C7 C2 
+PASS U+30C7 デ デ C7 C3 
+PASS U+30C8 ト ト C7 C4 
+PASS U+30C9 ド ド C7 C5 
+PASS U+30CA ナ ナ C7 C6 
+PASS U+30CB ニ ニ C7 C7 
+PASS U+30CC ヌ ヌ C7 C8 
+PASS U+30CD ネ ネ C7 C9 
+PASS U+30CE ノ ノ C7 CA 
+PASS U+30CF ハ ハ C7 CB 
+PASS U+30D0 バ バ C7 CC 
+PASS U+30D1 パ パ C7 CD 
+PASS U+30D2 ヒ ヒ C7 CE 
+PASS U+30D3 ビ ビ C7 CF 
+PASS U+30D4 ピ ピ C7 D0 
+PASS U+30D5 フ フ C7 D1 
+PASS U+30D6 ブ ブ C7 D2 
+PASS U+30D7 プ プ C7 D3 
+PASS U+30D8 ヘ ヘ C7 D4 
+PASS U+30D9 ベ ベ C7 D5 
+PASS U+30DA ペ ペ C7 D6 
+PASS U+30DB ホ ホ C7 D7 
+PASS U+30DC ボ ボ C7 D8 
+PASS U+30DD ポ ポ C7 D9 
+PASS U+30DE マ マ C7 DA 
+PASS U+30DF ミ ミ C7 DB 
+PASS U+30E0 ム ム C7 DC 
+PASS U+30E1 メ メ C7 DD 
+PASS U+30E2 モ モ C7 DE 
+PASS U+30E3 ャ ャ C7 DF 
+PASS U+30E4 ヤ ヤ C7 E0 
+PASS U+30E5 ュ ュ C7 E1 
+PASS U+30E6 ユ ユ C7 E2 
+PASS U+30E7 ョ ョ C7 E3 
+PASS U+30E8 ヨ ヨ C7 E4 
+PASS U+30E9 ラ ラ C7 E5 
+PASS U+30EA リ リ C7 E6 
+PASS U+30EB ル ル C7 E7 
+PASS U+30EC レ レ C7 E8 
+PASS U+30ED ロ ロ C7 E9 
+PASS U+30EE ヮ ヮ C7 EA 
+PASS U+30EF ワ ワ C7 EB 
+PASS U+30F0 ヰ ヰ C7 EC 
+PASS U+30F1 ヱ ヱ C7 ED 
+PASS U+30F2 ヲ ヲ C7 EE 
+PASS U+30F3 ン ン C7 EF 
+PASS U+30F4 ヴ ヴ C7 F0 
+PASS U+30F5 ヵ ヵ C7 F1 
+PASS U+30F6 ヶ ヶ C7 F2 
+PASS U+30FC ー ー C6 E3 
+PASS U+30FD ヽ ヽ C6 DA 
+PASS U+30FE ヾ ヾ C6 DB 
 PASS U+3105 ㄅ ㄅ A3 74 
 PASS U+3106 ㄆ ㄆ A3 75 
 PASS U+3107 ㄇ ㄇ A3 76 
@@ -620,8 +620,8 @@ PASS U+3126 ㄦ ㄦ A3 B7
 PASS U+3127 ㄧ ㄧ A3 B8 
 PASS U+3128 ㄨ ㄨ A3 B9 
 PASS U+3129 ㄩ ㄩ A3 BA 
-FAIL U+31CF ㇏ ㇏ C8 79 assert_equals: expected "㇏" but got ""
-FAIL U+3231 ㈱ ㈱ C8 D1 assert_equals: expected "㈱" but got ""
+PASS U+31CF ㇏ ㇏ C8 79 
+PASS U+3231 ㈱ ㈱ C8 D1 
 PASS U+32A3 ㊣ ㊣ A1 C0 
 PASS U+338E ㎎ ㎎ A2 55 
 PASS U+338F ㎏ ㎏ A2 56 
@@ -634,79 +634,79 @@ PASS U+33CE ㏎ ㏎ A2 53
 PASS U+33D1 ㏑ ㏑ A1 EB 
 PASS U+33D2 ㏒ ㏒ A1 EA 
 PASS U+33D5 ㏕ ㏕ A2 4F 
-FAIL U+347A 㑺 㑺 FA 68 assert_equals: expected "㑺" but got ""
-FAIL U+3561 㕡 㕡 FB 70 assert_equals: expected "㕡" but got ""
-FAIL U+35A1 㖡 㖡 FB 7A assert_equals: expected "㖡" but got ""
-FAIL U+3623 㘣 㘣 FB 5E assert_equals: expected "㘣" but got ""
-FAIL U+3639 㘹 㘹 FC 66 assert_equals: expected "㘹" but got ""
-FAIL U+3649 㙉 㙉 FA 48 assert_equals: expected "㙉" but got ""
-FAIL U+36B1 㚱 㚱 FB 65 assert_equals: expected "㚱" but got ""
-FAIL U+36C3 㛃 㛃 FB 7D assert_equals: expected "㛃" but got ""
-FAIL U+36C5 㛅 㛅 FE 64 assert_equals: expected "㛅" but got ""
-FAIL U+36E5 㛥 㛥 FD A2 assert_equals: expected "㛥" but got ""
-FAIL U+36E6 㛦 㛦 FB B6 assert_equals: expected "㛦" but got ""
-FAIL U+3708 㜈 㜈 FB B9 assert_equals: expected "㜈" but got ""
-FAIL U+370D 㜍 㜍 FD C4 assert_equals: expected "㜍" but got ""
-FAIL U+3730 㜰 㜰 FE 78 assert_equals: expected "㜰" but got ""
-FAIL U+3732 㜲 㜲 FB C1 assert_equals: expected "㜲" but got ""
-FAIL U+3740 㝀 㝀 FD 6C assert_equals: expected "㝀" but got ""
-FAIL U+3743 㝃 㝃 FA 6B assert_equals: expected "㝃" but got ""
-FAIL U+37F8 㟸 㟸 FE C5 assert_equals: expected "㟸" but got ""
-FAIL U+382D 㠭 㠭 FB EA assert_equals: expected "㠭" but got ""
-FAIL U+3836 㠶 㠶 FB EF assert_equals: expected "㠶" but got ""
-FAIL U+38A0 㢠 㢠 FC 42 assert_equals: expected "㢠" but got ""
-FAIL U+38CC 㣌 㣌 FA CD assert_equals: expected "㣌" but got ""
-FAIL U+3932 㤲 㤲 FC A6 assert_equals: expected "㤲" but got ""
-FAIL U+3963 㥣 㥣 FC 64 assert_equals: expected "㥣" but got ""
-FAIL U+3A01 㨁 㨁 FD 4A assert_equals: expected "㨁" but got ""
-FAIL U+3A17 㨗 㨗 FC B4 assert_equals: expected "㨗" but got ""
-FAIL U+3A57 㩗 㩗 FC C4 assert_equals: expected "㩗" but got ""
-FAIL U+3A66 㩦 㩦 FC C2 assert_equals: expected "㩦" but got ""
-FAIL U+3AAB 㪫 㪫 FA E8 assert_equals: expected "㪫" but got ""
-FAIL U+3ADE 㫞 㫞 FC 49 assert_equals: expected "㫞" but got ""
-FAIL U+3B2B 㬫 㬫 FC EE assert_equals: expected "㬫" but got ""
-FAIL U+3B80 㮀 㮀 FD 4C assert_equals: expected "㮀" but got ""
-FAIL U+3BA1 㮡 㮡 FD 53 assert_equals: expected "㮡" but got ""
-FAIL U+3BC2 㯂 㯂 FB F0 assert_equals: expected "㯂" but got ""
-FAIL U+3BF3 㯳 㯳 FD 5D assert_equals: expected "㯳" but got ""
-FAIL U+3C0D 㰍 㰍 FD 61 assert_equals: expected "㰍" but got ""
-FAIL U+3CDC 㳜 㳜 FA A5 assert_equals: expected "㳜" but got ""
-FAIL U+3CEB 㳫 㳫 FD A3 assert_equals: expected "㳫" but got ""
-FAIL U+3D32 㴲 㴲 FD 49 assert_equals: expected "㴲" but got ""
-FAIL U+3D3B 㴻 㴻 FD D1 assert_equals: expected "㴻" but got ""
-FAIL U+3D4E 㵎 㵎 FD CE assert_equals: expected "㵎" but got ""
-FAIL U+3D5F 㵟 㵟 FC 59 assert_equals: expected "㵟" but got ""
-FAIL U+3D85 㶅 㶅 FB BF assert_equals: expected "㶅" but got ""
-FAIL U+3DB4 㶴 㶴 FA FD assert_equals: expected "㶴" but got ""
-FAIL U+3DC7 㷇 㷇 FC 65 assert_equals: expected "㷇" but got ""
-FAIL U+3DE8 㷨 㷨 FD E9 assert_equals: expected "㷨" but got ""
-FAIL U+3E40 㹀 㹀 FC 6A assert_equals: expected "㹀" but got ""
-FAIL U+3E55 㹕 㹕 FE 4D assert_equals: expected "㹕" but got ""
-FAIL U+3EA8 㺨 㺨 FE FB assert_equals: expected "㺨" but got ""
-FAIL U+3EAA 㺪 㺪 FA CC assert_equals: expected "㺪" but got ""
-FAIL U+3ED7 㻗 㻗 FE 6E assert_equals: expected "㻗" but got ""
-FAIL U+3F04 㼄 㼄 FE B6 assert_equals: expected "㼄" but got ""
-FAIL U+3F59 㽙 㽙 FA E0 assert_equals: expected "㽙" but got ""
-FAIL U+4004 䀄 䀄 FB C9 assert_equals: expected "䀄" but got ""
-FAIL U+40D8 䃘 䃘 FC D1 assert_equals: expected "䃘" but got ""
-FAIL U+4104 䄄 䄄 FD E8 assert_equals: expected "䄄" but got ""
-FAIL U+42B5 䊵 䊵 FA 45 assert_equals: expected "䊵" but got ""
-FAIL U+42FC 䋼 䋼 FD 50 assert_equals: expected "䋼" but got ""
-FAIL U+4491 䒑 䒑 C8 7E assert_equals: expected "䒑" but got ""
-FAIL U+44A2 䒢 䒢 FA D0 assert_equals: expected "䒢" but got ""
-FAIL U+44C5 䓅 䓅 FD 7A assert_equals: expected "䓅" but got ""
-FAIL U+44E9 䓩 䓩 FC F7 assert_equals: expected "䓩" but got ""
-FAIL U+4552 䕒 䕒 FB 4B assert_equals: expected "䕒" but got ""
-FAIL U+4555 䕕 䕕 FD CA assert_equals: expected "䕕" but got ""
-FAIL U+47A6 䞦 䞦 FA FA assert_equals: expected "䞦" but got ""
-FAIL U+485D 䡝 䡝 FB CA assert_equals: expected "䡝" but got ""
-FAIL U+48AE 䢮 䢮 FC 4A assert_equals: expected "䢮" but got ""
-FAIL U+48DD 䣝 䣝 FB DC assert_equals: expected "䣝" but got ""
-FAIL U+48ED 䣭 䣭 FE 56 assert_equals: expected "䣭" but got ""
-FAIL U+4953 䥓 䥓 FE 7D assert_equals: expected "䥓" but got ""
-FAIL U+4B37 䬷 䬷 FC CF assert_equals: expected "䬷" but got ""
-FAIL U+4CED 䳭 䳭 FB 43 assert_equals: expected "䳭" but got ""
-FAIL U+4D10 䴐 䴐 FB D3 assert_equals: expected "䴐" but got ""
+PASS U+347A 㑺 㑺 FA 68 
+PASS U+3561 㕡 㕡 FB 70 
+PASS U+35A1 㖡 㖡 FB 7A 
+PASS U+3623 㘣 㘣 FB 5E 
+PASS U+3639 㘹 㘹 FC 66 
+PASS U+3649 㙉 㙉 FA 48 
+PASS U+36B1 㚱 㚱 FB 65 
+PASS U+36C3 㛃 㛃 FB 7D 
+PASS U+36C5 㛅 㛅 FE 64 
+PASS U+36E5 㛥 㛥 FD A2 
+PASS U+36E6 㛦 㛦 FB B6 
+PASS U+3708 㜈 㜈 FB B9 
+PASS U+370D 㜍 㜍 FD C4 
+PASS U+3730 㜰 㜰 FE 78 
+PASS U+3732 㜲 㜲 FB C1 
+PASS U+3740 㝀 㝀 FD 6C 
+PASS U+3743 㝃 㝃 FA 6B 
+PASS U+37F8 㟸 㟸 FE C5 
+PASS U+382D 㠭 㠭 FB EA 
+PASS U+3836 㠶 㠶 FB EF 
+PASS U+38A0 㢠 㢠 FC 42 
+PASS U+38CC 㣌 㣌 FA CD 
+PASS U+3932 㤲 㤲 FC A6 
+PASS U+3963 㥣 㥣 FC 64 
+PASS U+3A01 㨁 㨁 FD 4A 
+PASS U+3A17 㨗 㨗 FC B4 
+PASS U+3A57 㩗 㩗 FC C4 
+PASS U+3A66 㩦 㩦 FC C2 
+PASS U+3AAB 㪫 㪫 FA E8 
+PASS U+3ADE 㫞 㫞 FC 49 
+PASS U+3B2B 㬫 㬫 FC EE 
+PASS U+3B80 㮀 㮀 FD 4C 
+PASS U+3BA1 㮡 㮡 FD 53 
+PASS U+3BC2 㯂 㯂 FB F0 
+PASS U+3BF3 㯳 㯳 FD 5D 
+PASS U+3C0D 㰍 㰍 FD 61 
+PASS U+3CDC 㳜 㳜 FA A5 
+PASS U+3CEB 㳫 㳫 FD A3 
+PASS U+3D32 㴲 㴲 FD 49 
+PASS U+3D3B 㴻 㴻 FD D1 
+PASS U+3D4E 㵎 㵎 FD CE 
+PASS U+3D5F 㵟 㵟 FC 59 
+PASS U+3D85 㶅 㶅 FB BF 
+PASS U+3DB4 㶴 㶴 FA FD 
+PASS U+3DC7 㷇 㷇 FC 65 
+PASS U+3DE8 㷨 㷨 FD E9 
+PASS U+3E40 㹀 㹀 FC 6A 
+PASS U+3E55 㹕 㹕 FE 4D 
+PASS U+3EA8 㺨 㺨 FE FB 
+PASS U+3EAA 㺪 㺪 FA CC 
+PASS U+3ED7 㻗 㻗 FE 6E 
+PASS U+3F04 㼄 㼄 FE B6 
+PASS U+3F59 㽙 㽙 FA E0 
+PASS U+4004 䀄 䀄 FB C9 
+PASS U+40D8 䃘 䃘 FC D1 
+PASS U+4104 䄄 䄄 FD E8 
+PASS U+42B5 䊵 䊵 FA 45 
+PASS U+42FC 䋼 䋼 FD 50 
+PASS U+4491 䒑 䒑 C8 7E 
+PASS U+44A2 䒢 䒢 FA D0 
+PASS U+44C5 䓅 䓅 FD 7A 
+PASS U+44E9 䓩 䓩 FC F7 
+PASS U+4552 䕒 䕒 FB 4B 
+PASS U+4555 䕕 䕕 FD CA 
+PASS U+47A6 䞦 䞦 FA FA 
+PASS U+485D 䡝 䡝 FB CA 
+PASS U+48AE 䢮 䢮 FC 4A 
+PASS U+48DD 䣝 䣝 FB DC 
+PASS U+48ED 䣭 䣭 FE 56 
+PASS U+4953 䥓 䥓 FE 7D 
+PASS U+4B37 䬷 䬷 FC CF 
+PASS U+4CED 䳭 䳭 FB 43 
+PASS U+4D10 䴐 䴐 FB D3 
 PASS U+4E00 一 一 A4 40 
 PASS U+4E01 丁 丁 A4 42 
 PASS U+4E03 七 七 A4 43 
@@ -736,18 +736,18 @@ PASS U+4E30 丰 丰 A4 A5
 PASS U+4E31 丱 丱 C9 63 
 PASS U+4E32 串 串 A6 EA 
 PASS U+4E33 丳 丳 CB B1 
-FAIL U+4E36 丶 丶 C6 BF assert_equals: expected "丶" but got ""
+PASS U+4E36 丶 丶 C6 BF 
 PASS U+4E38 丸 丸 A4 59 
 PASS U+4E39 丹 丹 A4 A6 
 PASS U+4E3B 主 主 A5 44 
 PASS U+4E3C 丼 丼 C9 64 
-FAIL U+4E3F 丿 丿 C6 C0 assert_equals: expected "丿" but got ""
+PASS U+4E3F 丿 丿 C6 C0 
 PASS U+4E42 乂 乂 C9 40 
 PASS U+4E43 乃 乃 A4 44 
 PASS U+4E45 久 久 A4 5B 
 PASS U+4E47 乇 乇 C9 47 
 PASS U+4E48 么 么 A4 5C 
-FAIL U+4E49 义 义 FA E5 assert_equals: expected "义" but got ""
+PASS U+4E49 义 义 FA E5 
 PASS U+4E4B 之 之 A4 A7 
 PASS U+4E4D 乍 乍 A5 45 
 PASS U+4E4E 乎 乎 A5 47 
@@ -757,7 +757,7 @@ PASS U+4E53 乓 乓 A5 E3
 PASS U+4E56 乖 乖 A8 C4 
 PASS U+4E58 乘 乘 AD BC 
 PASS U+4E59 乙 乙 A4 41 
-FAIL U+4E5A 乚 乚 C8 7B assert_equals: expected "乚" but got ""
+PASS U+4E5A 乚 乚 C8 7B 
 PASS U+4E5C 乜 乜 C9 41 
 PASS U+4E5D 九 九 A4 45 
 PASS U+4E5E 乞 乞 A4 5E 
@@ -769,7 +769,7 @@ PASS U+4E7F 乿 乿 D4 4B
 PASS U+4E82 亂 亂 B6 C3 
 PASS U+4E83 亃 亃 DC B1 
 PASS U+4E84 亄 亄 DC B2 
-FAIL U+4E85 亅 亅 C6 C1 assert_equals: expected "亅" but got ""
+PASS U+4E85 亅 亅 C6 C1 
 PASS U+4E86 了 了 A4 46 
 PASS U+4E88 予 予 A4 A9 
 PASS U+4E8B 事 事 A8 C6 
@@ -785,7 +785,7 @@ PASS U+4E99 亙 亙 A5 E5
 PASS U+4E9B 些 些 A8 C7 
 PASS U+4E9E 亞 亞 A8 C8 
 PASS U+4E9F 亟 亟 AB 45 
-FAIL U+4EA0 亠 亠 C6 C2 assert_equals: expected "亠" but got ""
+PASS U+4EA0 亠 亠 C6 C2 
 PASS U+4EA1 亡 亡 A4 60 
 PASS U+4EA2 亢 亢 A4 AE 
 PASS U+4EA4 交 交 A5 E6 
@@ -798,7 +798,7 @@ PASS U+4EAD 亭 亭 AB 46
 PASS U+4EAE 亮 亮 AB 47 
 PASS U+4EB3 亳 亳 AD BD 
 PASS U+4EB6 亶 亶 DC B3 
-FAIL U+4EB7 亷 亷 FB F8 assert_equals: expected "亷" but got ""
+PASS U+4EB7 亷 亷 FB F8 
 PASS U+4EB9 亹 亹 F6 D6 
 PASS U+4EBA 人 人 A4 48 
 PASS U+4EC0 什 什 A4 B0 
@@ -821,7 +821,7 @@ PASS U+4ED8 付 付 A5 49
 PASS U+4ED9 仙 仙 A5 50 
 PASS U+4EDA 仚 仚 C9 6A 
 PASS U+4EDC 仜 仜 C9 66 
-FAIL U+4EDD 仝 仝 C6 DF assert_equals: expected "仝" but got ""
+PASS U+4EDD 仝 仝 C6 DF 
 PASS U+4EDE 仞 仞 A5 51 
 PASS U+4EDF 仟 仟 A5 61 
 PASS U+4EE1 仡 仡 C9 68 
@@ -955,7 +955,7 @@ PASS U+4F9B 供 供 A8 D1
 PASS U+4F9C 侜 侜 CB C5 
 PASS U+4F9D 依 依 A8 CC 
 PASS U+4F9E 侞 侞 CB C7 
-FAIL U+4FAB 侫 侫 FA 57 assert_equals: expected "侫" but got ""
+PASS U+4FAB 侫 侫 FA 57 
 PASS U+4FAE 侮 侮 AB 56 
 PASS U+4FAF 侯 侯 AB 4A 
 PASS U+4FB2 侲 侲 CD E0 
@@ -1012,7 +1012,7 @@ PASS U+5000 倀 倀 AD CE
 PASS U+5005 倅 倅 D0 C9 
 PASS U+5006 倆 倆 AD C7 
 PASS U+5007 倇 倇 D0 CA 
-FAIL U+5008 倈 倈 FA 59 assert_equals: expected "倈" but got ""
+PASS U+5008 倈 倈 FA 59 
 PASS U+5009 倉 倉 AD DC 
 PASS U+500B 個 個 AD D3 
 PASS U+500C 倌 倌 AD BE 
@@ -1108,7 +1108,7 @@ PASS U+508B 傋 傋 D8 55
 PASS U+508C 傌 傌 D8 58 
 PASS U+508D 傍 傍 B3 C4 
 PASS U+508E 傎 傎 D8 59 
-FAIL U+5090 傐 傐 FD 56 assert_equals: expected "傐" but got ""
+PASS U+5090 傐 傐 FD 56 
 PASS U+5091 傑 傑 B3 C7 
 PASS U+5092 傒 傒 D8 5D 
 PASS U+5094 傔 傔 D8 53 
@@ -1163,7 +1163,7 @@ PASS U+50DA 僚 僚 B9 B1
 PASS U+50DB 僛 僛 E0 F5 
 PASS U+50DD 僝 僝 E0 F7 
 PASS U+50E0 僠 僠 E0 FE 
-FAIL U+50E1 僡 僡 FC 72 assert_equals: expected "僡" but got ""
+PASS U+50E1 僡 僡 FC 72 
 PASS U+50E3 僣 僣 E0 FD 
 PASS U+50E4 僤 僤 E0 F8 
 PASS U+50E5 僥 僥 B9 AE 
@@ -1188,7 +1188,7 @@ PASS U+50FD 僽 僽 E4 F0
 PASS U+50FE 僾 僾 E4 ED 
 PASS U+50FF 僿 僿 E4 E6 
 PASS U+5100 儀 儀 BB F6 
-FAIL U+5101 儁 儁 FA 67 assert_equals: expected "儁" but got ""
+PASS U+5101 儁 儁 FA 67 
 PASS U+5102 儂 儂 BB FA 
 PASS U+5103 儃 儃 E4 E7 
 PASS U+5104 億 億 BB F5 
@@ -1200,7 +1200,7 @@ PASS U+5109 儉 儉 BB FC
 PASS U+510A 儊 儊 E4 F1 
 PASS U+510B 儋 儋 E4 EE 
 PASS U+510C 儌 儌 E4 EF 
-FAIL U+510E 儎 儎 FA 69 assert_equals: expected "儎" but got ""
+PASS U+510E 儎 儎 FA 69 
 PASS U+5110 儐 儐 BE AA 
 PASS U+5111 儑 儑 E8 F8 
 PASS U+5112 儒 儒 BE A7 
@@ -1259,7 +1259,7 @@ PASS U+515C 兜 兜 B0 C2
 PASS U+515D 兝 兝 A2 5C 
 PASS U+515E 兞 兞 A2 5B 
 PASS U+515F 兟 兟 D8 60 
-FAIL U+5160 兠 兠 FA 6F assert_equals: expected "兠" but got ""
+PASS U+5160 兠 兠 FA 6F 
 PASS U+5161 兡 兡 A2 5D 
 PASS U+5162 兢 兢 B9 B8 
 PASS U+5163 兣 兣 A2 5E 
@@ -1267,7 +1267,7 @@ PASS U+5165 入 入 A4 4A
 PASS U+5167 內 內 A4 BA 
 PASS U+5168 全 全 A5 FE 
 PASS U+5169 兩 兩 A8 E2 
-FAIL U+516A 兪 兪 FA 71 assert_equals: expected "兪" but got ""
+PASS U+516A 兪 兪 FA 71 
 PASS U+516B 八 八 A4 4B 
 PASS U+516C 公 公 A4 BD 
 PASS U+516D 六 六 A4 BB 
@@ -1279,9 +1279,9 @@ PASS U+5177 具 具 A8 E3
 PASS U+5178 典 典 A8 E5 
 PASS U+517C 兼 兼 AD DD 
 PASS U+5180 冀 冀 BE AC 
-FAIL U+5182 冂 冂 C6 C3 assert_equals: expected "冂" but got ""
+PASS U+5182 冂 冂 C6 C3 
 PASS U+5187 冇 冇 C9 4E 
-FAIL U+5188 冈 冈 C8 A2 assert_equals: expected "冈" but got ""
+PASS U+5188 冈 冈 C8 A2 
 PASS U+5189 冉 冉 A5 54 
 PASS U+518A 冊 冊 A5 55 
 PASS U+518D 再 再 A6 41 
@@ -1291,7 +1291,7 @@ PASS U+5192 冒 冒 AB 5F
 PASS U+5193 冓 冓 D0 E0 
 PASS U+5194 冔 冔 D0 DF 
 PASS U+5195 冕 冕 B0 C3 
-FAIL U+5196 冖 冖 C6 C4 assert_equals: expected "冖" but got ""
+PASS U+5196 冖 冖 C6 C4 
 PASS U+5197 冗 冗 A4 BE 
 PASS U+5198 冘 冘 C9 55 
 PASS U+519E 冞 冞 CB CD 
@@ -1300,16 +1300,16 @@ PASS U+51A2 冢 冢 AD E0
 PASS U+51A4 冤 冤 AD DE 
 PASS U+51A5 冥 冥 AD DF 
 PASS U+51AA 冪 冪 BE AD 
-FAIL U+51AB 冫 冫 C6 C5 assert_equals: expected "冫" but got ""
+PASS U+51AB 冫 冫 C6 C5 
 PASS U+51AC 冬 冬 A5 56 
 PASS U+51B0 冰 冰 A6 42 
 PASS U+51B1 冱 冱 C9 BC 
-FAIL U+51B2 冲 冲 FA 7D assert_equals: expected "冲" but got ""
-FAIL U+51B3 决 决 FA A8 assert_equals: expected "决" but got ""
-FAIL U+51B5 况 况 FA 47 assert_equals: expected "况" but got ""
+PASS U+51B2 冲 冲 FA 7D 
+PASS U+51B3 决 决 FA A8 
+PASS U+51B5 况 况 FA 47 
 PASS U+51B6 冶 冶 A7 4D 
 PASS U+51B7 冷 冷 A7 4E 
-FAIL U+51B8 冸 冸 FA 7E assert_equals: expected "冸" but got ""
+PASS U+51B8 冸 冸 FA 7E 
 PASS U+51B9 冹 冹 CA 6B 
 PASS U+51BC 冼 冼 CB CE 
 PASS U+51BD 冽 冽 A8 E6 
@@ -1317,33 +1317,33 @@ PASS U+51BE 冾 冾 CB CF
 PASS U+51C4 凄 凄 D0 E2 
 PASS U+51C5 凅 凅 D0 E3 
 PASS U+51C6 准 准 AD E3 
-FAIL U+51C7 凇 凇 FD B6 assert_equals: expected "凇" but got ""
+PASS U+51C7 凇 凇 FD B6 
 PASS U+51C8 凈 凈 D0 E4 
-FAIL U+51C9 凉 凉 FA A2 assert_equals: expected "凉" but got ""
+PASS U+51C9 凉 凉 FA A2 
 PASS U+51CA 凊 凊 D0 E1 
 PASS U+51CB 凋 凋 AD E4 
 PASS U+51CC 凌 凌 AD E2 
 PASS U+51CD 凍 凍 AD E1 
 PASS U+51CE 凎 凎 D0 E5 
-FAIL U+51CF 减 减 FA A3 assert_equals: expected "减" but got ""
+PASS U+51CF 减 减 FA A3 
 PASS U+51D0 凐 凐 D4 68 
-FAIL U+51D1 凑 凑 FA A4 assert_equals: expected "凑" but got ""
-FAIL U+51D3 凓 凓 FA A6 assert_equals: expected "凓" but got ""
+PASS U+51D1 凑 凑 FA A4 
+PASS U+51D3 凓 凓 FA A6 
 PASS U+51D4 凔 凔 D8 61 
 PASS U+51D7 凗 凗 DC C5 
 PASS U+51D8 凘 凘 E1 40 
 PASS U+51DC 凜 凜 BB FE 
 PASS U+51DD 凝 凝 BE AE 
 PASS U+51DE 凞 凞 E8 F9 
-FAIL U+51DF 凟 凟 FD DB assert_equals: expected "凟" but got ""
+PASS U+51DF 凟 凟 FD DB 
 PASS U+51E0 几 几 A4 4C 
 PASS U+51E1 凡 凡 A4 5A 
-FAIL U+51E2 凢 凢 FA A9 assert_equals: expected "凢" but got ""
-FAIL U+51ED 凭 凭 FA AB assert_equals: expected "凭" but got ""
+PASS U+51E2 凢 凢 FA A9 
+PASS U+51ED 凭 凭 FA AB 
 PASS U+51F0 凰 凰 B0 C4 
 PASS U+51F1 凱 凱 B3 CD 
 PASS U+51F3 凳 凳 B9 B9 
-FAIL U+51F4 凴 凴 FC 7A assert_equals: expected "凴" but got ""
+PASS U+51F4 凴 凴 FC 7A 
 PASS U+51F5 凵 凵 C9 42 
 PASS U+51F6 凶 凶 A4 BF 
 PASS U+51F8 凸 凸 A5 59 
@@ -1352,14 +1352,14 @@ PASS U+51FA 出 出 A5 58
 PASS U+51FD 函 函 A8 E7 
 PASS U+5200 刀 刀 A4 4D 
 PASS U+5201 刁 刁 A4 4E 
-FAIL U+5202 刂 刂 C8 7D assert_equals: expected "刂" but got ""
+PASS U+5202 刂 刂 C8 7D 
 PASS U+5203 刃 刃 A4 62 
 PASS U+5206 分 分 A4 C0 
 PASS U+5207 切 切 A4 C1 
 PASS U+5208 刈 刈 A4 C2 
 PASS U+5209 刉 刉 C9 BE 
 PASS U+520A 刊 刊 A5 5A 
-FAIL U+520B 刋 刋 FA B0 assert_equals: expected "刋" but got ""
+PASS U+520B 刋 刋 FA B0 
 PASS U+520C 刌 刌 C9 6B 
 PASS U+520E 刎 刎 A6 46 
 PASS U+5210 刐 刐 C9 BF 
@@ -1374,7 +1374,7 @@ PASS U+521E 刞 刞 CA 6D
 PASS U+5221 刡 刡 CA 6E 
 PASS U+5224 判 判 A7 50 
 PASS U+5225 別 別 A7 4F 
-FAIL U+5226 刦 刦 FA B1 assert_equals: expected "刦" but got ""
+PASS U+5226 刦 刦 FA B1 
 PASS U+5228 刨 刨 A7 53 
 PASS U+5229 利 利 A7 51 
 PASS U+522A 刪 刪 A7 52 
@@ -1389,7 +1389,7 @@ PASS U+5237 刷 刷 A8 EA
 PASS U+5238 券 券 A8 E9 
 PASS U+523A 刺 刺 A8 EB 
 PASS U+523B 刻 刻 A8 E8 
-FAIL U+523C 刼 刼 FA B2 assert_equals: expected "刼" but got ""
+PASS U+523C 刼 刼 FA B2 
 PASS U+5241 剁 剁 A8 EF 
 PASS U+5243 剃 剃 AB 63 
 PASS U+5244 剄 剄 CD F0 
@@ -1405,7 +1405,7 @@ PASS U+5252 剒 剒 D0 E8
 PASS U+5254 剔 剔 AD E7 
 PASS U+5255 剕 剕 D0 EB 
 PASS U+5256 剖 剖 AD E5 
-FAIL U+5257 剗 剗 FA B4 assert_equals: expected "剗" but got ""
+PASS U+5257 剗 剗 FA B4 
 PASS U+525A 剚 剚 D0 E7 
 PASS U+525B 剛 剛 AD E8 
 PASS U+525C 剜 剜 AD E6 
@@ -1445,7 +1445,7 @@ PASS U+528C 劌 劌 E4 F3
 PASS U+528D 劍 劍 BC 43 
 PASS U+5291 劑 劑 BE AF 
 PASS U+5293 劓 劓 BE B0 
-FAIL U+5294 劔 劔 FA B5 assert_equals: expected "劔" but got ""
+PASS U+5294 劔 劔 FA B5 
 PASS U+5296 劖 劖 F1 ED 
 PASS U+5297 劗 劗 F5 C3 
 PASS U+5298 劘 劘 F5 C2 
@@ -1461,8 +1461,8 @@ PASS U+52AB 劫 劫 A7 54
 PASS U+52AC 劬 劬 A7 57 
 PASS U+52AD 劭 劭 CA 6F 
 PASS U+52AE 劮 劮 CA 70 
-FAIL U+52B5 劵 劵 FA B3 assert_equals: expected "劵" but got ""
-FAIL U+52B9 効 効 FA B6 assert_equals: expected "効" but got ""
+PASS U+52B5 劵 劵 FA B3 
+PASS U+52B9 効 効 FA B6 
 PASS U+52BB 劻 劻 A8 F1 
 PASS U+52BC 劼 劼 CB D5 
 PASS U+52BE 劾 劾 A8 F0 
@@ -1470,11 +1470,11 @@ PASS U+52C0 勀 勀 CD F2
 PASS U+52C1 勁 勁 AB 6C 
 PASS U+52C2 勂 勂 CD F3 
 PASS U+52C3 勃 勃 AB 6B 
-FAIL U+52C5 勅 勅 FA B7 assert_equals: expected "勅" but got ""
+PASS U+52C5 勅 勅 FA B7 
 PASS U+52C7 勇 勇 AB 69 
 PASS U+52C9 勉 勉 AB 6A 
 PASS U+52CD 勍 勍 D0 ED 
-FAIL U+52D0 勐 勐 FB C4 assert_equals: expected "勐" but got ""
+PASS U+52D0 勐 勐 FB C4 
 PASS U+52D2 勒 勒 B0 C7 
 PASS U+52D3 勓 勓 D4 6E 
 PASS U+52D5 動 動 B0 CA 
@@ -1486,7 +1486,7 @@ PASS U+52DB 勛 勛 B3 D4
 PASS U+52DD 勝 勝 B3 D3 
 PASS U+52DE 勞 勞 B3 D2 
 PASS U+52DF 募 募 B6 D2 
-FAIL U+52E0 勠 勠 FA BA assert_equals: expected "勠" but got ""
+PASS U+52E0 勠 勠 FA BA 
 PASS U+52E2 勢 勢 B6 D5 
 PASS U+52E3 勣 勣 B6 D6 
 PASS U+52E4 勤 勤 B6 D4 
@@ -1501,7 +1501,7 @@ PASS U+52F4 勴 勴 EC BF
 PASS U+52F5 勵 勵 C0 79 
 PASS U+52F7 勷 勷 F1 EE 
 PASS U+52F8 勸 勸 C4 55 
-FAIL U+52F9 勹 勹 C6 C6 assert_equals: expected "勹" but got ""
+PASS U+52F9 勹 勹 C6 C6 
 PASS U+52FA 勺 勺 A4 63 
 PASS U+52FB 勻 勻 A4 C3 
 PASS U+52FC 勼 勼 C9 56 
@@ -1536,10 +1536,10 @@ PASS U+532D 匭 匭 D4 6F
 PASS U+532F 匯 匯 B6 D7 
 PASS U+5330 匰 匰 E1 45 
 PASS U+5331 匱 匱 B9 BC 
-FAIL U+5333 匳 匳 FA C4 assert_equals: expected "匳" but got ""
+PASS U+5333 匳 匳 FA C4 
 PASS U+5334 匴 匴 E8 FA 
 PASS U+5337 匷 匷 F3 FD 
-FAIL U+5338 匸 匸 C6 C7 assert_equals: expected "匸" but got ""
+PASS U+5338 匸 匸 C6 C7 
 PASS U+5339 匹 匹 A4 C7 
 PASS U+533C 匼 匼 CB D8 
 PASS U+533D 匽 匽 CD F4 
@@ -1547,7 +1547,7 @@ PASS U+533E 匾 匾 B0 D0
 PASS U+533F 匿 匿 B0 CE 
 PASS U+5340 區 區 B0 CF 
 PASS U+5341 十 十 A4 51 
-FAIL U+5342 卂 卂 FA AA assert_equals: expected "卂" but got ""
+PASS U+5342 卂 卂 FA AA 
 PASS U+5343 千 千 A4 64 
 PASS U+5344 卄 卄 A2 CD 
 PASS U+5345 卅 卅 A4 CA 
@@ -1569,23 +1569,23 @@ PASS U+5360 占 占 A5 65
 PASS U+5361 卡 卡 A5 64 
 PASS U+5363 卣 卣 CA 72 
 PASS U+5366 卦 卦 A8 F6 
-FAIL U+5369 卩 卩 C6 C8 assert_equals: expected "卩" but got ""
+PASS U+5369 卩 卩 C6 C8 
 PASS U+536C 卬 卬 C9 57 
-FAIL U+536D 卭 卭 FA D1 assert_equals: expected "卭" but got ""
+PASS U+536D 卭 卭 FA D1 
 PASS U+536E 卮 卮 A5 67 
 PASS U+536F 卯 卯 A5 66 
 PASS U+5370 印 印 A6 4C 
 PASS U+5371 危 危 A6 4D 
 PASS U+5372 卲 卲 CA 73 
 PASS U+5373 即 即 A7 59 
-FAIL U+5374 却 却 FA D2 assert_equals: expected "却" but got ""
+PASS U+5374 却 却 FA D2 
 PASS U+5375 卵 卵 A7 5A 
 PASS U+5377 卷 卷 A8 F7 
 PASS U+5378 卸 卸 A8 F8 
 PASS U+5379 卹 卹 A8 F9 
 PASS U+537B 卻 卻 AB 6F 
 PASS U+537C 卼 卼 CD F5 
-FAIL U+537E 卾 卾 FA D4 assert_equals: expected "卾" but got ""
+PASS U+537E 卾 卾 FA D4 
 PASS U+537F 卿 卿 AD EB 
 PASS U+5382 厂 厂 C9 44 
 PASS U+5384 厄 厄 A4 CC 
@@ -1593,7 +1593,7 @@ PASS U+538A 厊 厊 C9 C4
 PASS U+538E 厎 厎 CA 74 
 PASS U+538F 厏 厏 CA 75 
 PASS U+5392 厒 厒 CB D9 
-FAIL U+5393 厓 厓 FA D9 assert_equals: expected "厓" but got ""
+PASS U+5393 厓 厓 FA D9 
 PASS U+5394 厔 厔 CB DA 
 PASS U+5396 厖 厖 CD F7 
 PASS U+5397 厗 厗 CD F6 
@@ -1604,24 +1604,24 @@ PASS U+539C 厜 厜 D4 70
 PASS U+539D 厝 厝 AD ED 
 PASS U+539E 厞 厞 D0 EF 
 PASS U+539F 原 原 AD EC 
-FAIL U+53A0 厠 厠 FA DB assert_equals: expected "厠" but got ""
+PASS U+53A0 厠 厠 FA DB 
 PASS U+53A4 厤 厤 D8 64 
 PASS U+53A5 厥 厥 B3 D6 
-FAIL U+53A6 厦 厦 FB F7 assert_equals: expected "厦" but got ""
+PASS U+53A6 厦 厦 FB F7 
 PASS U+53A7 厧 厧 D8 65 
-FAIL U+53A8 厨 厨 FB FA assert_equals: expected "厨" but got ""
-FAIL U+53AB 厫 厫 FA DC assert_equals: expected "厫" but got ""
+PASS U+53A8 厨 厨 FB FA 
+PASS U+53AB 厫 厫 FA DC 
 PASS U+53AC 厬 厬 E1 46 
 PASS U+53AD 厭 厭 B9 BD 
-FAIL U+53AE 厮 厮 FA DD assert_equals: expected "厮" but got ""
+PASS U+53AE 厮 厮 FA DD 
 PASS U+53B2 厲 厲 BC 46 
 PASS U+53B4 厴 厴 F1 EF 
-FAIL U+53B6 厶 厶 C6 C9 assert_equals: expected "厶" but got ""
+PASS U+53B6 厶 厶 C6 C9 
 PASS U+53B9 厹 厹 C9 58 
 PASS U+53BB 去 去 A5 68 
-FAIL U+53C1 叁 叁 FA E2 assert_equals: expected "叁" but got ""
+PASS U+53C1 叁 叁 FA E2 
 PASS U+53C3 參 參 B0 D1 
-FAIL U+53C5 叅 叅 FA E3 assert_equals: expected "叅" but got ""
+PASS U+53C5 叅 叅 FA E3 
 PASS U+53C8 又 又 A4 53 
 PASS U+53C9 叉 叉 A4 65 
 PASS U+53CA 及 及 A4 CE 
@@ -1630,10 +1630,10 @@ PASS U+53CD 反 反 A4 CF
 PASS U+53D4 叔 叔 A8 FB 
 PASS U+53D6 取 取 A8 FA 
 PASS U+53D7 受 受 A8 FC 
-FAIL U+53D9 叙 叙 FA E7 assert_equals: expected "叙" but got ""
+PASS U+53D9 叙 叙 FA E7 
 PASS U+53DB 叛 叛 AB 71 
 PASS U+53DF 叟 叟 AD EE 
-FAIL U+53E0 叠 叠 FA EA assert_equals: expected "叠" but got ""
+PASS U+53E0 叠 叠 FA EA 
 PASS U+53E1 叡 叡 E8 FB 
 PASS U+53E2 叢 叢 C2 4F 
 PASS U+53E3 口 口 A4 66 
@@ -1653,11 +1653,11 @@ PASS U+53F1 叱 叱 A5 77
 PASS U+53F2 史 史 A5 76 
 PASS U+53F3 右 右 A5 6B 
 PASS U+53F5 叵 叵 A5 72 
-FAIL U+53F6 叶 叶 FA ED assert_equals: expected "叶" but got ""
+PASS U+53F6 叶 叶 FA ED 
 PASS U+53F8 司 司 A5 71 
 PASS U+53FB 叻 叻 A5 7B 
 PASS U+53FC 叼 叼 A5 70 
-FAIL U+53FE 叾 叾 FB 59 assert_equals: expected "叾" but got ""
+PASS U+53FE 叾 叾 FB 59 
 PASS U+5401 吁 吁 A6 53 
 PASS U+5403 吃 吃 A6 59 
 PASS U+5404 各 各 A6 55 
@@ -1674,7 +1674,7 @@ PASS U+540F 吏 吏 A6 4F
 PASS U+5410 吐 吐 A6 52 
 PASS U+5411 向 向 A6 56 
 PASS U+5412 吒 吒 A6 5C 
-FAIL U+5413 吓 吓 FA EF assert_equals: expected "吓" but got ""
+PASS U+5413 吓 吓 FA EF 
 PASS U+5418 吘 吘 CA 7E 
 PASS U+5419 吙 吙 CA 7B 
 PASS U+541B 君 君 A7 67 
@@ -1683,7 +1683,7 @@ PASS U+541D 吝 吝 A7 5B
 PASS U+541E 吞 吞 A7 5D 
 PASS U+541F 吟 吟 A7 75 
 PASS U+5420 吠 吠 A7 70 
-FAIL U+5421 吡 吡 FD 6D assert_equals: expected "吡" but got ""
+PASS U+5421 吡 吡 FD 6D 
 PASS U+5424 吤 吤 CA A5 
 PASS U+5425 吥 吥 CA 7D 
 PASS U+5426 否 否 A7 5F 
@@ -1695,7 +1695,7 @@ PASS U+542B 含 含 A7 74
 PASS U+542C 听 听 A7 76 
 PASS U+542D 吭 吭 A7 5C 
 PASS U+542E 吮 吮 A7 6D 
-FAIL U+542F 启 启 FB 44 assert_equals: expected "启" but got ""
+PASS U+542F 启 启 FB 44 
 PASS U+5430 吰 吰 CA 76 
 PASS U+5431 吱 吱 A7 73 
 PASS U+5433 吳 吳 A7 64 
@@ -1731,7 +1731,7 @@ PASS U+5467 呧 呧 CB EE
 PASS U+5468 周 周 A9 50 
 PASS U+546B 呫 呫 CB E1 
 PASS U+546C 呬 呬 CB E5 
-FAIL U+546D 呭 呭 FA F4 assert_equals: expected "呭" but got ""
+PASS U+546D 呭 呭 FA F4 
 PASS U+546F 呯 呯 CB E9 
 PASS U+5470 呰 呰 CE 49 
 PASS U+5471 呱 呱 A9 4B 
@@ -1759,7 +1759,7 @@ PASS U+548B 咋 咋 A9 51
 PASS U+548C 和 和 A9 4D 
 PASS U+548D 咍 咍 CB E8 
 PASS U+548E 咎 咎 A9 53 
-FAIL U+548F 咏 咏 FA F8 assert_equals: expected "咏" but got ""
+PASS U+548F 咏 咏 FA F8 
 PASS U+5490 咐 咐 A9 4A 
 PASS U+5491 咑 咑 CB DE 
 PASS U+5492 咒 咒 A9 47 
@@ -1770,7 +1770,7 @@ PASS U+549A 咚 咚 A9 4E
 PASS U+54A0 咠 咠 CE 48 
 PASS U+54A1 咡 咡 CD FB 
 PASS U+54A2 咢 咢 CE 4B 
-FAIL U+54A4 咤 咤 FA F9 assert_equals: expected "咤" but got ""
+PASS U+54A4 咤 咤 FA F9 
 PASS U+54A5 咥 咥 CD FD 
 PASS U+54A6 咦 咦 AB 78 
 PASS U+54A7 咧 咧 AB A8 
@@ -1853,7 +1853,7 @@ PASS U+551A 唚 唚 D0 F7
 PASS U+5526 唦 唦 D0 F0 
 PASS U+5527 唧 唧 AE 41 
 PASS U+552A 唪 唪 D4 77 
-FAIL U+552B 唫 唫 FA F1 assert_equals: expected "唫" but got ""
+PASS U+552B 唫 唫 FA F1 
 PASS U+552C 唬 唬 B0 E4 
 PASS U+552D 唭 唭 D4 A7 
 PASS U+552E 售 售 B0 E2 
@@ -1877,9 +1877,9 @@ PASS U+5543 啃 啃 B0 D9
 PASS U+5544 啄 啄 B0 D6 
 PASS U+5545 啅 啅 D4 7E 
 PASS U+5546 商 商 B0 D3 
-FAIL U+5547 啇 啇 FB 42 assert_equals: expected "啇" but got ""
+PASS U+5547 啇 啇 FB 42 
 PASS U+5548 啈 啈 D4 A6 
-FAIL U+5549 啉 啉 FA BF assert_equals: expected "啉" but got ""
+PASS U+5549 啉 啉 FA BF 
 PASS U+554A 啊 啊 B0 DA 
 PASS U+554B 啋 啋 D4 AA 
 PASS U+554D 啍 啍 D4 74 
@@ -1888,12 +1888,12 @@ PASS U+554F 問 問 B0 DD
 PASS U+5550 啐 啐 D4 75 
 PASS U+5551 啑 啑 D4 78 
 PASS U+5552 啒 啒 D4 7D 
-FAIL U+5553 啓 啓 FB A3 assert_equals: expected "啓" but got ""
+PASS U+5553 啓 啓 FB A3 
 PASS U+5555 啕 啕 B0 DE 
 PASS U+5556 啖 啖 B0 DC 
 PASS U+5557 啗 啗 B0 E8 
 PASS U+555C 啜 啜 B0 E3 
-FAIL U+555D 啝 啝 FA F7 assert_equals: expected "啝" but got ""
+PASS U+555D 啝 啝 FA F7 
 PASS U+555E 啞 啞 B0 D7 
 PASS U+555F 啟 啟 B1 D2 
 PASS U+5561 啡 啡 B0 D8 
@@ -1916,7 +1916,7 @@ PASS U+5581 喁 喁 D8 71
 PASS U+5582 喂 喂 B3 DE 
 PASS U+5583 喃 喃 B3 E4 
 PASS U+5584 善 善 B5 BD 
-FAIL U+5586 喆 喆 FB 46 assert_equals: expected "喆" but got ""
+PASS U+5586 喆 喆 FB 46 
 PASS U+5587 喇 喇 B3 E2 
 PASS U+5588 喈 喈 D8 6E 
 PASS U+5589 喉 喉 B3 EF 
@@ -1945,7 +1945,7 @@ PASS U+55A5 喥 喥 D8 68
 PASS U+55A6 喦 喦 D8 77 
 PASS U+55A7 喧 喧 B3 D9 
 PASS U+55A8 喨 喨 D8 67 
-FAIL U+55A9 喩 喩 FB 47 assert_equals: expected "喩" but got ""
+PASS U+55A9 喩 喩 FB 47 
 PASS U+55AA 喪 喪 B3 E0 
 PASS U+55AB 喫 喫 B3 F0 
 PASS U+55AC 喬 喬 B3 EC 
@@ -2008,7 +2008,7 @@ PASS U+5600 嘀 嘀 B9 BF
 PASS U+5601 嘁 嘁 E1 4E 
 PASS U+5602 嘂 嘂 E1 50 
 PASS U+5604 嘄 嘄 E1 53 
-FAIL U+5605 嘅 嘅 FB 48 assert_equals: expected "嘅" but got ""
+PASS U+5605 嘅 嘅 FB 48 
 PASS U+5606 嘆 嘆 B9 C4 
 PASS U+5608 嘈 嘈 B9 CB 
 PASS U+5609 嘉 嘉 B9 C5 
@@ -2039,7 +2039,7 @@ PASS U+5633 嘳 嘳 E5 42
 PASS U+5634 嘴 嘴 BC 4C 
 PASS U+5635 嘵 嘵 E4 F9 
 PASS U+5636 嘶 嘶 BC 52 
-FAIL U+5637 嘷 嘷 FB 4F assert_equals: expected "嘷" but got ""
+PASS U+5637 嘷 嘷 FB 4F 
 PASS U+5638 嘸 嘸 E5 46 
 PASS U+5639 嘹 嘹 BC 49 
 PASS U+563A 嘺 嘺 E5 48 
@@ -2056,9 +2056,9 @@ PASS U+5648 噈 噈 E4 F6
 PASS U+5649 噉 噉 E4 FC 
 PASS U+564A 噊 噊 E4 FB 
 PASS U+564C 噌 噌 E4 F8 
-FAIL U+564D 噍 噍 FB 54 assert_equals: expected "噍" but got ""
+PASS U+564D 噍 噍 FB 54 
 PASS U+564E 噎 噎 BC 4F 
-FAIL U+564F 噏 噏 FB 55 assert_equals: expected "噏" but got ""
+PASS U+564F 噏 噏 FB 55 
 PASS U+5653 噓 噓 BC 4E 
 PASS U+5657 噗 噗 BC 50 
 PASS U+5658 噘 噘 E4 FE 
@@ -2157,16 +2157,16 @@ PASS U+56E5 囥 囥 CA A9
 PASS U+56E7 囧 囧 CA A8 
 PASS U+56EA 囪 囪 A7 77 
 PASS U+56EB 囫 囫 A7 7A 
-FAIL U+56ED 园 园 FB 5C assert_equals: expected "园" but got ""
+PASS U+56ED 园 园 FB 5C 
 PASS U+56EE 囮 囮 CA A7 
-FAIL U+56EF 囯 囯 FB 5B assert_equals: expected "囯" but got ""
+PASS U+56EF 囯 囯 FB 5B 
 PASS U+56F0 困 困 A7 78 
-FAIL U+56F1 囱 囱 FB 57 assert_equals: expected "囱" but got ""
+PASS U+56F1 囱 囱 FB 57 
 PASS U+56F7 囷 囷 CB F0 
 PASS U+56F9 囹 囹 CB F1 
 PASS U+56FA 固 固 A9 54 
 PASS U+56FF 囿 囿 AB AA 
-FAIL U+5700 圀 圀 FB 5A assert_equals: expected "圀" but got ""
+PASS U+5700 圀 圀 FB 5A 
 PASS U+5701 圁 圁 D1 48 
 PASS U+5702 圂 圂 D1 49 
 PASS U+5703 圃 圃 AE 45 
@@ -2205,10 +2205,10 @@ PASS U+573B 圻 圻 A7 A6
 PASS U+573E 圾 圾 A7 A3 
 PASS U+5740 址 址 A7 7D 
 PASS U+5741 坁 坁 CA AA 
-FAIL U+5742 坂 坂 FB 64 assert_equals: expected "坂" but got ""
-FAIL U+5743 坃 坃 FB 76 assert_equals: expected "坃" but got ""
+PASS U+5742 坂 坂 FB 64 
+PASS U+5743 坃 坃 FB 76 
 PASS U+5745 坅 坅 CA AB 
-FAIL U+5746 坆 坆 FB 60 assert_equals: expected "坆" but got ""
+PASS U+5746 坆 坆 FB 60 
 PASS U+5747 均 均 A7 A1 
 PASS U+5749 坉 坉 CA AD 
 PASS U+574A 坊 坊 A7 7B 
@@ -2247,7 +2247,7 @@ PASS U+5783 垃 垃 A9 55
 PASS U+578B 型 型 AB AC 
 PASS U+578C 垌 垌 CE 54 
 PASS U+578F 垏 垏 CE 5A 
-FAIL U+5790 垐 垐 FC 67 assert_equals: expected "垐" but got ""
+PASS U+5790 垐 垐 FC 67 
 PASS U+5793 垓 垓 AB B2 
 PASS U+5794 垔 垔 CE 58 
 PASS U+5795 垕 垕 CE 5E 
@@ -2294,7 +2294,7 @@ PASS U+57E2 埢 埢 D4 AF
 PASS U+57E3 埣 埣 D4 BD 
 PASS U+57E4 埤 埤 B0 F1 
 PASS U+57E5 埥 埥 D4 BF 
-FAIL U+57E6 埦 埦 FB 67 assert_equals: expected "埦" but got ""
+PASS U+57E6 埦 埦 FB 67 
 PASS U+57E7 埧 埧 D4 C5 
 PASS U+57E9 埩 埩 D4 C9 
 PASS U+57EC 埬 埬 D4 C0 
@@ -2314,11 +2314,11 @@ PASS U+57FA 基 基 B0 F2
 PASS U+57FB 埻 埻 D4 AD 
 PASS U+57FC 埼 埼 D4 C3 
 PASS U+57FD 埽 埽 D4 B5 
-FAIL U+57FE 埾 埾 FA E6 assert_equals: expected "埾" but got ""
+PASS U+57FE 埾 埾 FA E6 
 PASS U+5800 堀 堀 D4 B3 
 PASS U+5801 堁 堁 D4 C6 
 PASS U+5802 堂 堂 B0 F3 
-FAIL U+5803 堃 堃 FB 69 assert_equals: expected "堃" but got ""
+PASS U+5803 堃 堃 FB 69 
 PASS U+5804 堄 堄 D4 CC 
 PASS U+5805 堅 堅 B0 ED 
 PASS U+5806 堆 堆 B0 EF 
@@ -2342,7 +2342,7 @@ PASS U+5821 堡 堡 B3 F9
 PASS U+5823 堣 堣 D8 A4 
 PASS U+5824 堤 堤 B3 F6 
 PASS U+5825 堥 堥 D8 A8 
-FAIL U+5826 堦 堦 FB 6C assert_equals: expected "堦" but got ""
+PASS U+5826 堦 堦 FB 6C 
 PASS U+5827 堧 堧 D8 A3 
 PASS U+5828 堨 堨 D8 A5 
 PASS U+5829 堩 堩 D8 7D 
@@ -2382,7 +2382,7 @@ PASS U+5858 塘 塘 B6 ED
 PASS U+5859 塙 塙 DC EC 
 PASS U+585A 塚 塚 B6 EF 
 PASS U+585B 塛 塛 DC EE 
-FAIL U+585C 塜 塜 FB 6E assert_equals: expected "塜" but got ""
+PASS U+585C 塜 塜 FB 6E 
 PASS U+585D 塝 塝 DC EB 
 PASS U+585E 塞 塞 B6 EB 
 PASS U+5862 塢 塢 B6 F5 
@@ -2433,7 +2433,7 @@ PASS U+58A5 墥 墥 E5 51
 PASS U+58A6 墦 墦 BC 5C 
 PASS U+58A8 墨 墨 BE A5 
 PASS U+58A9 墩 墩 BC 5B 
-FAIL U+58AA 墪 墪 FB 6F assert_equals: expected "墪" but got ""
+PASS U+58AA 墪 墪 FB 6F 
 PASS U+58AB 墫 墫 E5 4A 
 PASS U+58AC 墬 墬 E5 50 
 PASS U+58AE 墮 墮 BC 5A 
@@ -2465,11 +2465,11 @@ PASS U+58D8 壘 壘 C2 53
 PASS U+58D9 壙 壙 C2 52 
 PASS U+58DA 壚 壚 F1 F6 
 PASS U+58DB 壛 壛 F1 F8 
-FAIL U+58DC 壜 壜 FB 72 assert_equals: expected "壜" but got ""
+PASS U+58DC 壜 壜 FB 72 
 PASS U+58DD 壝 壝 F1 F7 
 PASS U+58DE 壞 壞 C3 61 
 PASS U+58DF 壟 壟 C3 62 
-FAIL U+58E0 壠 壠 FB 71 assert_equals: expected "壠" but got ""
+PASS U+58E0 壠 壠 FB 71 
 PASS U+58E2 壢 壢 C3 63 
 PASS U+58E3 壣 壣 F4 42 
 PASS U+58E4 壤 壤 C4 5B 
@@ -2482,19 +2482,19 @@ PASS U+58EF 壯 壯 A7 A7
 PASS U+58F4 壴 壴 CE 5F 
 PASS U+58F9 壹 壹 B3 FC 
 PASS U+58FA 壺 壺 B3 FD 
-FAIL U+58FB 壻 壻 FB 74 assert_equals: expected "壻" but got ""
+PASS U+58FB 壻 壻 FB 74 
 PASS U+58FC 壼 壼 DC F2 
 PASS U+58FD 壽 壽 B9 D8 
 PASS U+58FE 壾 壾 E1 69 
 PASS U+58FF 壿 壿 E5 53 
 PASS U+5903 夃 夃 C9 5A 
 PASS U+5906 夆 夆 CA B0 
-FAIL U+590A 夊 夊 C6 CA assert_equals: expected "夊" but got ""
+PASS U+590A 夊 夊 C6 CA 
 PASS U+590C 夌 夌 CC 42 
 PASS U+590D 复 复 CE 60 
 PASS U+590E 夎 夎 D1 59 
 PASS U+590F 夏 夏 AE 4C 
-FAIL U+5911 夑 夑 FE 42 assert_equals: expected "夑" but got ""
+PASS U+5911 夑 夑 FE 42 
 PASS U+5912 夒 夒 F1 F9 
 PASS U+5914 夔 夔 C4 DC 
 PASS U+5915 夕 夕 A4 69 
@@ -2503,7 +2503,7 @@ PASS U+5917 夗 夗 C9 70
 PASS U+5919 夙 夙 A6 67 
 PASS U+591A 多 多 A6 68 
 PASS U+591C 夜 夜 A9 5D 
-FAIL U+591F 够 够 FB 7B assert_equals: expected "够" but got ""
+PASS U+591F 够 够 FB 7B 
 PASS U+5920 夠 夠 B0 F7 
 PASS U+5922 夢 夢 B9 DA 
 PASS U+5924 夤 夤 B9 DB 
@@ -2611,7 +2611,7 @@ PASS U+59C5 姅 姅 A9 72
 PASS U+59C6 姆 姆 A9 69 
 PASS U+59C7 姇 姇 CC 54 
 PASS U+59C8 姈 姈 CC 52 
-FAIL U+59C9 姉 姉 FB A6 assert_equals: expected "姉" but got ""
+PASS U+59C9 姉 姉 FB A6 
 PASS U+59CA 姊 姊 A9 6E 
 PASS U+59CB 始 始 A9 6C 
 PASS U+59CC 姌 姌 CC 49 
@@ -2625,7 +2625,7 @@ PASS U+59D3 姓 姓 A9 6D
 PASS U+59D4 委 委 A9 65 
 PASS U+59D6 姖 姖 CC 4E 
 PASS U+59D8 姘 姘 AB B9 
-FAIL U+59D9 姙 姙 FB AB assert_equals: expected "姙" but got ""
+PASS U+59D9 姙 姙 FB AB 
 PASS U+59DA 姚 姚 AB C0 
 PASS U+59DB 姛 姛 CE 6F 
 PASS U+59DC 姜 姜 AB B8 
@@ -2650,7 +2650,7 @@ PASS U+59F4 姴 姴 CE 75
 PASS U+59F5 姵 姵 CE 72 
 PASS U+59F6 姶 姶 CE 6B 
 PASS U+59F7 姷 姷 CE 6E 
-FAIL U+59F9 姹 姹 FB B2 assert_equals: expected "姹" but got ""
+PASS U+59F9 姹 姹 FB B2 
 PASS U+59FA 姺 姺 CE 68 
 PASS U+59FB 姻 姻 AB C3 
 PASS U+59FC 姼 姼 CE 6A 
@@ -2677,7 +2677,7 @@ PASS U+5A1E 娞 娞 D1 63
 PASS U+5A1F 娟 娟 AE 53 
 PASS U+5A20 娠 娠 AE 57 
 PASS U+5A23 娣 娣 AE 58 
-FAIL U+5A24 娤 娤 FB A2 assert_equals: expected "娤" but got ""
+PASS U+5A24 娤 娤 FB A2 
 PASS U+5A25 娥 娥 AE 5A 
 PASS U+5A29 娩 娩 AE 59 
 PASS U+5A2D 娭 娭 D1 5D 
@@ -2718,7 +2718,7 @@ PASS U+5A5E 婞 婞 D4 D2
 PASS U+5A5F 婟 婟 D4 D7 
 PASS U+5A60 婠 婠 D4 CE 
 PASS U+5A62 婢 婢 B1 41 
-FAIL U+5A63 婣 婣 FB B5 assert_equals: expected "婣" but got ""
+PASS U+5A63 婣 婣 FB B5 
 PASS U+5A64 婤 婤 D4 DB 
 PASS U+5A65 婥 婥 D4 D8 
 PASS U+5A66 婦 婦 B0 FC 
@@ -2737,19 +2737,19 @@ PASS U+5A7D 婽 婽 D8 CA
 PASS U+5A7F 婿 婿 B4 42 
 PASS U+5A83 媃 媃 D8 C6 
 PASS U+5A84 媄 媄 D8 C3 
-FAIL U+5A88 媈 媈 FD EF assert_equals: expected "媈" but got ""
+PASS U+5A88 媈 媈 FD EF 
 PASS U+5A8A 媊 媊 D8 C4 
 PASS U+5A8B 媋 媋 D8 C7 
 PASS U+5A8C 媌 媌 D8 CB 
 PASS U+5A8E 媎 媎 D4 E3 
 PASS U+5A8F 媏 媏 D8 CD 
 PASS U+5A90 媐 媐 DD 47 
-FAIL U+5A91 媑 媑 FD C1 assert_equals: expected "媑" but got ""
+PASS U+5A91 媑 媑 FD C1 
 PASS U+5A92 媒 媒 B4 43 
 PASS U+5A93 媓 媓 D8 CE 
 PASS U+5A94 媔 媔 D8 B6 
 PASS U+5A95 媕 媕 D8 C0 
-FAIL U+5A96 媖 媖 FB BA assert_equals: expected "媖" but got ""
+PASS U+5A96 媖 媖 FB BA 
 PASS U+5A97 媗 媗 D8 C5 
 PASS U+5A9A 媚 媚 B4 41 
 PASS U+5A9B 媛 媛 B4 44 
@@ -2757,13 +2757,13 @@ PASS U+5A9C 媜 媜 D8 CC
 PASS U+5A9D 媝 媝 D8 CF 
 PASS U+5A9E 媞 媞 D8 BA 
 PASS U+5A9F 媟 媟 D8 B7 
-FAIL U+5AA0 媠 媠 FC 73 assert_equals: expected "媠" but got ""
+PASS U+5AA0 媠 媠 FC 73 
 PASS U+5AA2 媢 媢 D8 B9 
 PASS U+5AA5 媥 媥 D8 BE 
 PASS U+5AA6 媦 媦 D8 BC 
 PASS U+5AA7 媧 媧 B4 45 
 PASS U+5AA9 媩 媩 D8 C8 
-FAIL U+5AAB 媫 媫 FB B4 assert_equals: expected "媫" but got ""
+PASS U+5AAB 媫 媫 FB B4 
 PASS U+5AAC 媬 媬 D8 BF 
 PASS U+5AAE 媮 媮 D8 C1 
 PASS U+5AAF 媯 媯 D8 B5 
@@ -2795,7 +2795,7 @@ PASS U+5ACA 嫊 嫊 DD 42
 PASS U+5ACB 嫋 嫋 DC F5 
 PASS U+5ACC 嫌 嫌 B6 FB 
 PASS U+5ACD 嫍 嫍 DD 45 
-FAIL U+5AD3 嫓 嫓 FB BC assert_equals: expected "嫓" but got ""
+PASS U+5AD3 嫓 嫓 FB BC 
 PASS U+5AD5 嫕 嫕 E1 6E 
 PASS U+5AD6 嫖 嫖 B9 E2 
 PASS U+5AD7 嫗 嫗 B9 E1 
@@ -2875,7 +2875,7 @@ PASS U+5B3F 嬿 嬿 F1 FC
 PASS U+5B40 孀 孀 C4 5C 
 PASS U+5B43 孃 孃 C4 5D 
 PASS U+5B45 孅 孅 F4 43 
-FAIL U+5B46 孆 孆 FE A4 assert_equals: expected "孆" but got ""
+PASS U+5B46 孆 孆 FE A4 
 PASS U+5B47 孇 孇 F5 C8 
 PASS U+5B48 孈 孈 F5 C7 
 PASS U+5B4B 孋 孋 F6 DB 
@@ -2908,17 +2908,17 @@ PASS U+5B71 孱 孱 B4 47
 PASS U+5B72 孲 孲 D4 EF 
 PASS U+5B73 孳 孳 B4 46 
 PASS U+5B75 孵 孵 B9 E5 
-FAIL U+5B76 孶 孶 FB C5 assert_equals: expected "孶" but got ""
+PASS U+5B76 孶 孶 FB C5 
 PASS U+5B77 孷 孷 E1 7D 
 PASS U+5B78 學 學 BE C7 
 PASS U+5B7A 孺 孺 C0 A9 
 PASS U+5B7B 孻 孻 EC D7 
-FAIL U+5B7C 孼 孼 FB C7 assert_equals: expected "孼" but got ""
+PASS U+5B7C 孼 孼 FB C7 
 PASS U+5B7D 孽 孽 C4 5E 
 PASS U+5B7F 孿 孿 C5 70 
-FAIL U+5B80 宀 宀 C6 CB assert_equals: expected "宀" but got ""
+PASS U+5B80 宀 宀 C6 CB 
 PASS U+5B81 宁 宁 C9 72 
-FAIL U+5B82 宂 宂 FA 79 assert_equals: expected "宂" but got ""
+PASS U+5B82 宂 宂 FA 79 
 PASS U+5B83 它 它 A5 A6 
 PASS U+5B84 宄 宄 C9 73 
 PASS U+5B85 宅 宅 A6 76 
@@ -2938,7 +2938,7 @@ PASS U+5B99 宙 宙 A9 7A
 PASS U+5B9A 定 定 A9 77 
 PASS U+5B9B 宛 宛 A9 7B 
 PASS U+5B9C 宜 宜 A9 79 
-FAIL U+5B9D 宝 宝 FB D2 assert_equals: expected "宝" but got ""
+PASS U+5B9D 宝 宝 FB D2 
 PASS U+5BA2 客 客 AB C8 
 PASS U+5BA3 宣 宣 AB C5 
 PASS U+5BA4 室 室 AB C7 
@@ -2946,7 +2946,7 @@ PASS U+5BA5 宥 宥 AB C9
 PASS U+5BA6 宦 宦 AB C6 
 PASS U+5BA7 宧 宧 D1 66 
 PASS U+5BA8 宨 宨 CE 77 
-FAIL U+5BAA 宪 宪 FC 7D assert_equals: expected "宪" but got ""
+PASS U+5BAA 宪 宪 FC 7D 
 PASS U+5BAC 宬 宬 D1 68 
 PASS U+5BAD 宭 宭 D1 67 
 PASS U+5BAE 宮 宮 AE 63 
@@ -2975,9 +2975,9 @@ PASS U+5BD1 寑 寑 D8 D4
 PASS U+5BD2 寒 寒 B4 48 
 PASS U+5BD3 寓 寓 B4 4A 
 PASS U+5BD4 寔 寔 D8 D3 
-FAIL U+5BD5 寕 寕 FB CC assert_equals: expected "寕" but got ""
+PASS U+5BD5 寕 寕 FB CC 
 PASS U+5BD6 寖 寖 DD 48 
-FAIL U+5BD7 寗 寗 FE AE assert_equals: expected "寗" but got ""
+PASS U+5BD7 寗 寗 FE AE 
 PASS U+5BD8 寘 寘 DD 49 
 PASS U+5BD9 寙 寙 DD 4A 
 PASS U+5BDE 寞 寞 B9 E6 
@@ -3000,16 +3000,16 @@ PASS U+5BEF 寯 寯 E9 5D
 PASS U+5BF0 寰 寰 BE C8 
 PASS U+5BF1 寱 寱 EC D8 
 PASS U+5BF2 寲 寲 EC D9 
-FAIL U+5BF3 寳 寳 FB D1 assert_equals: expected "寳" but got ""
+PASS U+5BF3 寳 寳 FB D1 
 PASS U+5BF5 寵 寵 C3 64 
 PASS U+5BF6 寶 寶 C4 5F 
 PASS U+5BF8 寸 寸 A4 6F 
 PASS U+5BFA 寺 寺 A6 78 
-FAIL U+5BFF 寿 寿 FB 75 assert_equals: expected "寿" but got ""
+PASS U+5BFF 寿 寿 FB 75 
 PASS U+5C01 封 封 AB CA 
 PASS U+5C03 尃 尃 D1 69 
 PASS U+5C04 射 射 AE 67 
-FAIL U+5C05 尅 尅 FB D4 assert_equals: expected "尅" but got ""
+PASS U+5C05 尅 尅 FB D4 
 PASS U+5C07 將 將 B1 4E 
 PASS U+5C08 專 專 B1 4D 
 PASS U+5C09 尉 尉 B1 4C 
@@ -3022,8 +3022,8 @@ PASS U+5C0F 小 小 A4 70
 PASS U+5C10 尐 尐 C9 5C 
 PASS U+5C11 少 少 A4 D6 
 PASS U+5C12 尒 尒 C9 74 
-FAIL U+5C13 尓 尓 FB D6 assert_equals: expected "尓" but got ""
-FAIL U+5C14 尔 尔 FB D8 assert_equals: expected "尔" but got ""
+PASS U+5C13 尓 尓 FB D6 
+PASS U+5C14 尔 尔 FB D8 
 PASS U+5C15 尕 尕 C9 D4 
 PASS U+5C16 尖 尖 A6 79 
 PASS U+5C1A 尚 尚 A9 7C 
@@ -3052,7 +3052,7 @@ PASS U+5C45 居 居 A9 7E
 PASS U+5C46 屆 屆 A9 A1 
 PASS U+5C47 屇 屇 CC 5A 
 PASS U+5C48 屈 屈 A9 7D 
-FAIL U+5C49 屉 屉 FB DB assert_equals: expected "屉" but got ""
+PASS U+5C49 屉 屉 FB DB 
 PASS U+5C4B 屋 屋 AB CE 
 PASS U+5C4C 屌 屌 CE 78 
 PASS U+5C4D 屍 屍 AB CD 
@@ -3088,7 +3088,7 @@ PASS U+5C7A 屺 屺 C9 D7
 PASS U+5C7B 屻 屻 C9 D8 
 PASS U+5C7C 屼 屼 C9 D6 
 PASS U+5C7E 屾 屾 C9 D9 
-FAIL U+5C85 岅 岅 FB DD assert_equals: expected "岅" but got ""
+PASS U+5C85 岅 岅 FB DD 
 PASS U+5C86 岆 岆 CA C7 
 PASS U+5C88 岈 岈 CA C2 
 PASS U+5C89 岉 岉 CA C4 
@@ -3103,7 +3103,7 @@ PASS U+5C92 岒 岒 CA C5
 PASS U+5C93 岓 岓 CA C8 
 PASS U+5C94 岔 岔 A7 C3 
 PASS U+5C95 岕 岕 CA C9 
-FAIL U+5C9C 岜 岜 FD F2 assert_equals: expected "岜" but got ""
+PASS U+5C9C 岜 岜 FD F2 
 PASS U+5C9D 岝 岝 CC 68 
 PASS U+5C9F 岟 岟 CC 62 
 PASS U+5CA0 岠 岠 CC 5D 
@@ -3129,7 +3129,7 @@ PASS U+5CB5 岵 岵 CC 5E
 PASS U+5CB6 岶 岶 CC 6A 
 PASS U+5CB7 岷 岷 A9 A2 
 PASS U+5CB8 岸 岸 A9 A4 
-FAIL U+5CBA 岺 岺 FB E7 assert_equals: expected "岺" but got ""
+PASS U+5CBA 岺 岺 FB E7 
 PASS U+5CC6 峆 峆 CE AB 
 PASS U+5CC7 峇 峇 CE A4 
 PASS U+5CC8 峈 峈 CE AA 
@@ -3152,12 +3152,12 @@ PASS U+5CDB 峛 峛 CE 7E
 PASS U+5CDE 峞 峞 CE A1 
 PASS U+5CDF 峟 峟 CE AD 
 PASS U+5CE8 峨 峨 AE 6F 
-FAIL U+5CE9 峩 峩 FB DE assert_equals: expected "峩" but got ""
+PASS U+5CE9 峩 峩 FB DE 
 PASS U+5CEA 峪 峪 AE 6E 
 PASS U+5CEC 峬 峬 D1 6C 
 PASS U+5CED 峭 峭 AE 6B 
 PASS U+5CEE 峮 峮 D1 6E 
-FAIL U+5CEF 峯 峯 FB DF assert_equals: expected "峯" but got ""
+PASS U+5CEF 峯 峯 FB DF 
 PASS U+5CF0 峰 峰 AE 70 
 PASS U+5CF1 峱 峱 D1 6F 
 PASS U+5CF4 峴 峴 AE 73 
@@ -3177,13 +3177,13 @@ PASS U+5D0C 崌 崌 D4 F9
 PASS U+5D0D 崍 崍 D4 FB 
 PASS U+5D0E 崎 崎 B1 54 
 PASS U+5D0F 崏 崏 D4 FE 
-FAIL U+5D10 崐 崐 FB E3 assert_equals: expected "崐" but got ""
+PASS U+5D10 崐 崐 FB E3 
 PASS U+5D11 崑 崑 B1 58 
 PASS U+5D12 崒 崒 D5 41 
 PASS U+5D14 崔 崔 B1 5A 
 PASS U+5D16 崖 崖 B1 56 
 PASS U+5D17 崗 崗 B1 5E 
-FAIL U+5D18 崘 崘 FB E4 assert_equals: expected "崘" but got ""
+PASS U+5D18 崘 崘 FB E4 
 PASS U+5D19 崙 崙 B1 5B 
 PASS U+5D1A 崚 崚 D4 F7 
 PASS U+5D1B 崛 崛 B1 55 
@@ -3219,7 +3219,7 @@ PASS U+5D41 嵁 嵁 D8 DC
 PASS U+5D42 嵂 嵂 D8 E9 
 PASS U+5D43 嵃 嵃 D8 DA 
 PASS U+5D45 嵅 嵅 D8 F1 
-FAIL U+5D46 嵆 嵆 FB E5 assert_equals: expected "嵆" but got ""
+PASS U+5D46 嵆 嵆 FB E5 
 PASS U+5D47 嵇 嵇 B4 52 
 PASS U+5D49 嵉 嵉 D8 EB 
 PASS U+5D4A 嵊 嵊 DD 4F 
@@ -3259,7 +3259,7 @@ PASS U+5D87 嶇 嶇 B9 F2
 PASS U+5D88 嶈 嶈 E1 AC 
 PASS U+5D89 嶉 嶉 E1 AB 
 PASS U+5D8A 嶊 嶊 E1 AA 
-FAIL U+5D8B 嶋 嶋 FB E0 assert_equals: expected "嶋" but got ""
+PASS U+5D8B 嶋 嶋 FB E0 
 PASS U+5D8D 嶍 嶍 E1 AF 
 PASS U+5D92 嶒 嶒 E5 65 
 PASS U+5D93 嶓 嶓 E5 67 
@@ -3288,7 +3288,7 @@ PASS U+5DB1 嶱 嶱 E9 5F
 PASS U+5DB2 嶲 嶲 E9 67 
 PASS U+5DB4 嶴 嶴 E9 6A 
 PASS U+5DB5 嶵 嶵 E9 62 
-FAIL U+5DB6 嶶 嶶 FC 58 assert_equals: expected "嶶" but got ""
+PASS U+5DB6 嶶 嶶 FC 58 
 PASS U+5DB7 嶷 嶷 EC DA 
 PASS U+5DB8 嶸 嶸 C0 AF 
 PASS U+5DBA 嶺 嶺 C0 AD 
@@ -3308,9 +3308,9 @@ PASS U+5DD2 巒 巒 C5 72
 PASS U+5DD4 巔 巔 C5 71 
 PASS U+5DD5 巕 巕 F6 DD 
 PASS U+5DD6 巖 巖 C5 C9 
-FAIL U+5DD7 巗 巗 FB E8 assert_equals: expected "巗" but got ""
+PASS U+5DD7 巗 巗 FB E8 
 PASS U+5DD8 巘 巘 F7 D6 
-FAIL U+5DDB 巛 巛 C6 CC assert_equals: expected "巛" but got ""
+PASS U+5DDB 巛 巛 C6 CC 
 PASS U+5DDD 川 川 A4 74 
 PASS U+5DDE 州 州 A6 7B 
 PASS U+5DDF 巟 巟 C9 DA 
@@ -3337,7 +3337,7 @@ PASS U+5E02 市 市 A5 AB
 PASS U+5E03 布 布 A5 AC 
 PASS U+5E04 帄 帄 C9 78 
 PASS U+5E06 帆 帆 A6 7C 
-FAIL U+5E09 帉 帉 FB FC assert_equals: expected "帉" but got ""
+PASS U+5E09 帉 帉 FB FC 
 PASS U+5E0A 帊 帊 CA CB 
 PASS U+5E0C 希 希 A7 C6 
 PASS U+5E0E 帎 帎 CA CC 
@@ -3362,7 +3362,7 @@ PASS U+5E28 帨 帨 D1 74
 PASS U+5E29 帩 帩 D1 73 
 PASS U+5E2B 師 師 AE 76 
 PASS U+5E2D 席 席 AE 75 
-FAIL U+5E2E 帮 帮 FB F1 assert_equals: expected "帮" but got ""
+PASS U+5E2E 帮 帮 FB F1 
 PASS U+5E33 帳 帳 B1 62 
 PASS U+5E34 帴 帴 D5 46 
 PASS U+5E36 帶 帶 B1 61 
@@ -3413,15 +3413,15 @@ PASS U+5E75 幵 幵 C9 DB
 PASS U+5E76 并 并 A6 7D 
 PASS U+5E78 幸 幸 A9 AF 
 PASS U+5E79 幹 幹 B7 46 
-FAIL U+5E7A 幺 幺 FB F4 assert_equals: expected "幺" but got ""
+PASS U+5E7A 幺 幺 FB F4 
 PASS U+5E7B 幻 幻 A4 DB 
 PASS U+5E7C 幼 幼 A5 AE 
 PASS U+5E7D 幽 幽 AB D5 
 PASS U+5E7E 幾 幾 B4 58 
-FAIL U+5E7F 广 广 C6 CE assert_equals: expected "广" but got ""
+PASS U+5E7F 广 广 C6 CE 
 PASS U+5E80 庀 庀 C9 79 
 PASS U+5E82 庂 庂 C9 7A 
-FAIL U+5E83 広 広 FB C3 assert_equals: expected "広" but got ""
+PASS U+5E83 広 広 FB C3 
 PASS U+5E84 庄 庄 C9 DC 
 PASS U+5E87 庇 庇 A7 C8 
 PASS U+5E88 庈 庈 CA D0 
@@ -3473,7 +3473,7 @@ PASS U+5ECA 廊 廊 B4 59
 PASS U+5ECB 廋 廋 DD 60 
 PASS U+5ECC 廌 廌 DD 5E 
 PASS U+5ECE 廎 廎 E1 B8 
-FAIL U+5ED0 廐 廐 FB F9 assert_equals: expected "廐" but got ""
+PASS U+5ED0 廐 廐 FB F9 
 PASS U+5ED1 廑 廑 E1 B6 
 PASS U+5ED2 廒 廒 E1 BC 
 PASS U+5ED3 廓 廓 B9 F8 
@@ -3504,13 +3504,13 @@ PASS U+5EEF 廯 廯 F4 47
 PASS U+5EF1 廱 廱 F5 CB 
 PASS U+5EF2 廲 廲 F6 DF 
 PASS U+5EF3 廳 廳 C6 55 
-FAIL U+5EF4 廴 廴 C6 CF assert_equals: expected "廴" but got ""
+PASS U+5EF4 廴 廴 C6 CF 
 PASS U+5EF6 延 延 A9 B5 
 PASS U+5EF7 廷 廷 A7 CA 
-FAIL U+5EF9 廹 廹 FC 40 assert_equals: expected "廹" but got ""
+PASS U+5EF9 廹 廹 FC 40 
 PASS U+5EFA 建 建 AB D8 
-FAIL U+5EFB 廻 廻 FC 41 assert_equals: expected "廻" but got ""
-FAIL U+5EFC 廼 廼 FC 43 assert_equals: expected "廼" but got ""
+PASS U+5EFB 廻 廻 FC 41 
+PASS U+5EFC 廼 廼 FC 43 
 PASS U+5EFE 廾 廾 A4 7B 
 PASS U+5EFF 廿 廿 A4 DC 
 PASS U+5F01 弁 弁 A5 AF 
@@ -3521,7 +3521,7 @@ PASS U+5F07 弇 弇 CE BB
 PASS U+5F08 弈 弈 AB D9 
 PASS U+5F0A 弊 弊 B9 FA 
 PASS U+5F0B 弋 弋 A4 7C 
-FAIL U+5F0D 弍 弍 FC 46 assert_equals: expected "弍" but got ""
+PASS U+5F0D 弍 弍 FC 46 
 PASS U+5F0F 式 式 A6 A1 
 PASS U+5F12 弒 弒 B7 49 
 PASS U+5F13 弓 弓 A4 7D 
@@ -3549,7 +3549,7 @@ PASS U+5F35 張 張 B1 69
 PASS U+5F36 弶 弶 D5 4C 
 PASS U+5F37 強 強 B1 6A 
 PASS U+5F38 弸 弸 D5 4D 
-FAIL U+5F3A 强 强 FC 4C assert_equals: expected "强" but got ""
+PASS U+5F3A 强 强 FC 4C 
 PASS U+5F3C 弼 弼 B4 5D 
 PASS U+5F40 彀 彀 DD 62 
 PASS U+5F43 彃 彃 E1 BF 
@@ -3562,16 +3562,16 @@ PASS U+5F4B 彋 彋 E9 74
 PASS U+5F4C 彌 彌 C0 B1 
 PASS U+5F4E 彎 彎 C5 73 
 PASS U+5F4F 彏 彏 F7 D8 
-FAIL U+5F50 彐 彐 C6 D0 assert_equals: expected "彐" but got ""
+PASS U+5F50 彐 彐 C6 D0 
 PASS U+5F54 彔 彔 CC 74 
 PASS U+5F56 彖 彖 CE BD 
 PASS U+5F57 彗 彗 B1 6B 
 PASS U+5F58 彘 彘 D8 F4 
 PASS U+5F59 彙 彙 B7 4A 
 PASS U+5F5D 彝 彝 C2 55 
-FAIL U+5F61 彡 彡 C6 D1 assert_equals: expected "彡" but got ""
+PASS U+5F61 彡 彡 C6 D1 
 PASS U+5F62 形 形 A7 CE 
-FAIL U+5F63 彣 彣 FC 51 assert_equals: expected "彣" but got ""
+PASS U+5F63 彣 彣 FC 51 
 PASS U+5F64 彤 彤 A7 CD 
 PASS U+5F65 彥 彥 AB DB 
 PASS U+5F67 彧 彧 D1 7B 
@@ -3583,14 +3583,14 @@ PASS U+5F6D 彭 彭 B4 5E
 PASS U+5F6F 彯 彯 E1 C0 
 PASS U+5F70 彰 彰 B9 FC 
 PASS U+5F71 影 影 BC 76 
-FAIL U+5F72 彲 彲 FC 54 assert_equals: expected "彲" but got ""
+PASS U+5F72 彲 彲 FC 54 
 PASS U+5F73 彳 彳 C9 4C 
 PASS U+5F74 彴 彴 C9 DF 
 PASS U+5F76 彶 彶 CA D5 
 PASS U+5F77 彷 彷 A7 CF 
 PASS U+5F78 彸 彸 CA D4 
 PASS U+5F79 役 役 A7 D0 
-FAIL U+5F7B 彻 彻 FA AF assert_equals: expected "彻" but got ""
+PASS U+5F7B 彻 彻 FA AF 
 PASS U+5F7C 彼 彼 A9 BC 
 PASS U+5F7D 彽 彽 CC 77 
 PASS U+5F7E 彾 彾 CC 76 
@@ -3619,10 +3619,10 @@ PASS U+5F9E 從 從 B1 71
 PASS U+5F9F 徟 徟 D5 50 
 PASS U+5FA0 徠 徠 B1 74 
 PASS U+5FA1 御 御 B1 73 
-FAIL U+5FA4 徤 徤 FA 61 assert_equals: expected "徤" but got ""
+PASS U+5FA4 徤 徤 FA 61 
 PASS U+5FA5 徥 徥 D8 F6 
 PASS U+5FA6 徦 徦 D8 F5 
-FAIL U+5FA7 徧 徧 FC 57 assert_equals: expected "徧" but got ""
+PASS U+5FA7 徧 徧 FC 57 
 PASS U+5FA8 徨 徨 B4 61 
 PASS U+5FA9 復 復 B4 5F 
 PASS U+5FAA 循 循 B4 60 
@@ -3660,7 +3660,7 @@ PASS U+5FD8 忘 忘 A7 D1
 PASS U+5FD9 忙 忙 A6 A3 
 PASS U+5FDD 忝 忝 A9 BD 
 PASS U+5FDE 忞 忞 CC 78 
-FAIL U+5FDF 忟 忟 FC D5 assert_equals: expected "忟" but got ""
+PASS U+5FDF 忟 忟 FC D5 
 PASS U+5FE0 忠 忠 A9 BE 
 PASS U+5FE1 忡 忡 CA DD 
 PASS U+5FE3 忣 忣 CA DF 
@@ -3707,7 +3707,7 @@ PASS U+601E 怞 怞 CC A6
 PASS U+6020 怠 怠 AB E5 
 PASS U+6021 怡 怡 A9 C9 
 PASS U+6022 怢 怢 CC A8 
-FAIL U+6023 怣 怣 FC A9 assert_equals: expected "怣" but got ""
+PASS U+6023 怣 怣 FC A9 
 PASS U+6024 怤 怤 CE CD 
 PASS U+6025 急 急 AB E6 
 PASS U+6026 怦 怦 CC 7B 
@@ -3720,7 +3720,7 @@ PASS U+602C 怬 怬 CC A7
 PASS U+602D 怭 怭 CC 7A 
 PASS U+602E 怮 怮 CC AB 
 PASS U+602F 怯 怯 A9 C4 
-FAIL U+6031 怱 怱 FC 61 assert_equals: expected "怱" but got ""
+PASS U+6031 怱 怱 FC 61 
 PASS U+6032 怲 怲 CC 7D 
 PASS U+6033 怳 怳 CC A4 
 PASS U+6034 怴 怴 CC A1 
@@ -3736,7 +3736,7 @@ PASS U+6045 恅 恅 CE C4
 PASS U+6046 恆 恆 AB ED 
 PASS U+6047 恇 恇 CE C6 
 PASS U+6049 恉 恉 CE C7 
-FAIL U+604A 恊 恊 FA CB assert_equals: expected "恊" but got ""
+PASS U+604A 恊 恊 FA CB 
 PASS U+604C 恌 恌 CE C9 
 PASS U+604D 恍 恍 AB E9 
 PASS U+6050 恐 恐 AE A3 
@@ -3791,17 +3791,17 @@ PASS U+609A 悚 悚 AE AA
 PASS U+609B 悛 悛 D1 AA 
 PASS U+609C 悜 悜 D1 AD 
 PASS U+609D 悝 悝 D1 A7 
-FAIL U+609E 悞 悞 FC 6B assert_equals: expected "悞" but got ""
+PASS U+609E 悞 悞 FC 6B 
 PASS U+609F 悟 悟 AE A9 
 PASS U+60A0 悠 悠 B1 79 
 PASS U+60A2 悢 悢 D1 A2 
 PASS U+60A3 患 患 B1 77 
-FAIL U+60A4 悤 悤 FC 6C assert_equals: expected "悤" but got ""
+PASS U+60A4 悤 悤 FC 6C 
 PASS U+60A8 您 您 B1 7A 
 PASS U+60B0 悰 悰 D5 55 
 PASS U+60B1 悱 悱 D5 5E 
 PASS U+60B2 悲 悲 B4 64 
-FAIL U+60B3 悳 悳 FC 6D assert_equals: expected "悳" but got ""
+PASS U+60B3 悳 悳 FC 6D 
 PASS U+60B4 悴 悴 B1 7C 
 PASS U+60B5 悵 悵 B1 A3 
 PASS U+60B6 悶 悶 B4 65 
@@ -3839,7 +3839,7 @@ PASS U+60DA 惚 惚 B1 AB
 PASS U+60DB 惛 惛 D5 5F 
 PASS U+60DC 惜 惜 B1 A4 
 PASS U+60DD 惝 惝 D5 5C 
-FAIL U+60DE 惞 惞 FD 64 assert_equals: expected "惞" but got ""
+PASS U+60DE 惞 惞 FD 64 
 PASS U+60DF 惟 惟 B1 A9 
 PASS U+60E0 惠 惠 B4 66 
 PASS U+60E1 惡 惡 B4 63 
@@ -3903,7 +3903,7 @@ PASS U+613E 愾 愾 B7 5A
 PASS U+613F 愿 愿 BA 40 
 PASS U+6140 慀 慀 DD 71 
 PASS U+6141 慁 慁 E1 C4 
-FAIL U+6142 慂 慂 FC 76 assert_equals: expected "慂" but got ""
+PASS U+6142 慂 慂 FC 76 
 PASS U+6144 慄 慄 B7 58 
 PASS U+6145 慅 慅 DD 69 
 PASS U+6146 慆 慆 DD 6D 
@@ -3924,15 +3924,15 @@ PASS U+6156 慖 慖 E1 D5
 PASS U+6158 慘 慘 BA 47 
 PASS U+615A 慚 慚 BA 46 
 PASS U+615B 慛 慛 E1 D0 
-FAIL U+615C 慜 慜 FC AA assert_equals: expected "慜" but got ""
+PASS U+615C 慜 慜 FC AA 
 PASS U+615D 慝 慝 BC 7C 
 PASS U+615E 慞 慞 E1 C5 
 PASS U+615F 慟 慟 BA 45 
-FAIL U+6160 慠 慠 FB CD assert_equals: expected "慠" but got ""
+PASS U+6160 慠 慠 FB CD 
 PASS U+6161 慡 慡 E1 D4 
 PASS U+6162 慢 慢 BA 43 
 PASS U+6163 慣 慣 BA 44 
-FAIL U+6164 慤 慤 FC 74 assert_equals: expected "慤" but got ""
+PASS U+6164 慤 慤 FC 74 
 PASS U+6165 慥 慥 E1 D1 
 PASS U+6166 慦 慦 E5 AA 
 PASS U+6167 慧 慧 BC 7A 
@@ -3954,10 +3954,10 @@ PASS U+617A 慺 慺 E1 CF
 PASS U+617C 慼 慼 BC A1 
 PASS U+617E 慾 慾 BC A4 
 PASS U+6180 憀 憀 E1 CC 
-FAIL U+6181 憁 憁 FC 79 assert_equals: expected "憁" but got ""
+PASS U+6181 憁 憁 FC 79 
 PASS U+6182 憂 憂 BC 7E 
 PASS U+6183 憃 憃 E5 79 
-FAIL U+6187 憇 憇 FC 7C assert_equals: expected "憇" but got ""
+PASS U+6187 憇 憇 FC 7C 
 PASS U+6189 憉 憉 E5 7E 
 PASS U+618A 憊 憊 BE CE 
 PASS U+618B 憋 憋 E5 78 
@@ -4010,8 +4010,8 @@ PASS U+61CA 懊 懊 BE D2
 PASS U+61CB 懋 懋 C0 B7 
 PASS U+61CC 懌 懌 E9 7D 
 PASS U+61CD 懍 懍 BE CF 
-FAIL U+61D0 懐 懐 FC A5 assert_equals: expected "懐" but got ""
-FAIL U+61D3 懓 懓 FC A2 assert_equals: expected "懓" but got ""
+PASS U+61D0 懐 懐 FC A5 
+PASS U+61D3 懓 懓 FC A2 
 PASS U+61D6 懖 懖 EF CF 
 PASS U+61D8 懘 懘 EF C7 
 PASS U+61DE 懞 懞 EC E7 
@@ -4174,7 +4174,7 @@ PASS U+62BE 抾 抾 CC B6
 PASS U+62BF 抿 抿 A9 D7 
 PASS U+62C2 拂 拂 A9 D8 
 PASS U+62C4 拄 拄 A9 D6 
-FAIL U+62C5 担 担 FC AE assert_equals: expected "担" but got ""
+PASS U+62C5 担 担 FC AE 
 PASS U+62C6 拆 拆 A9 EE 
 PASS U+62C7 拇 拇 A9 E6 
 PASS U+62C8 拈 拈 A9 E0 
@@ -4190,7 +4190,7 @@ PASS U+62D1 拑 拑 CC B5
 PASS U+62D2 拒 拒 A9 DA 
 PASS U+62D3 拓 拓 A9 DD 
 PASS U+62D4 拔 拔 A9 DE 
-FAIL U+62D5 拕 拕 FC B0 assert_equals: expected "拕" but got ""
+PASS U+62D5 拕 拕 FC B0 
 PASS U+62D6 拖 拖 A9 EC 
 PASS U+62D7 拗 拗 A9 ED 
 PASS U+62D8 拘 拘 A9 EB 
@@ -4198,7 +4198,7 @@ PASS U+62D9 拙 拙 A9 E5
 PASS U+62DA 拚 拚 A9 E9 
 PASS U+62DB 招 招 A9 DB 
 PASS U+62DC 拜 拜 AB F4 
-FAIL U+62DF 拟 拟 FA 51 assert_equals: expected "拟" but got ""
+PASS U+62DF 拟 拟 FA 51 
 PASS U+62EB 拫 拫 CE DA 
 PASS U+62EC 括 括 AC 41 
 PASS U+62ED 拭 拭 AB F8 
@@ -4286,7 +4286,7 @@ PASS U+6367 捧 捧 B1 B7
 PASS U+6368 捨 捨 B1 CB 
 PASS U+6369 捩 捩 B1 CA 
 PASS U+636B 捫 捫 B1 BF 
-FAIL U+636C 捬 捬 FC B2 assert_equals: expected "捬" but got ""
+PASS U+636C 捬 捬 FC B2 
 PASS U+636D 捭 捭 D5 79 
 PASS U+636E 据 据 D5 75 
 PASS U+636F 捯 捯 D5 72 
@@ -4311,7 +4311,7 @@ PASS U+6387 掇 掇 D5 73
 PASS U+6388 授 授 B1 C2 
 PASS U+6389 掉 掉 B1 BC 
 PASS U+638A 掊 掊 D5 68 
-FAIL U+638B 掋 掋 FC AC assert_equals: expected "掋" but got ""
+PASS U+638B 掋 掋 FC AC 
 PASS U+638C 掌 掌 B4 78 
 PASS U+638D 掍 掍 D5 A5 
 PASS U+638E 掎 掎 D5 71 
@@ -4396,7 +4396,7 @@ PASS U+63F3 揳 揳 D9 5B
 PASS U+63F4 援 援 B4 A9 
 PASS U+63F5 揵 揵 D9 61 
 PASS U+63F6 揶 揶 D9 5E 
-FAIL U+63F8 揸 揸 FC B6 assert_equals: expected "揸" but got ""
+PASS U+63F8 揸 揸 FC B6 
 PASS U+63F9 揹 揹 B4 AE 
 PASS U+6406 搆 搆 B7 70 
 PASS U+6409 搉 搉 DD 7C 
@@ -4440,9 +4440,9 @@ PASS U+6434 搴 搴 BA 53
 PASS U+6435 搵 搵 DD AF 
 PASS U+6436 搶 搶 B7 6D 
 PASS U+6437 搷 搷 DD A7 
-FAIL U+6438 搸 搸 FC B5 assert_equals: expected "搸" but got ""
+PASS U+6438 搸 搸 FC B5 
 PASS U+6439 搹 搹 DD A6 
-FAIL U+643A 携 携 FC C3 assert_equals: expected "携" but got ""
+PASS U+643A 携 携 FC C3 
 PASS U+643D 搽 搽 B7 67 
 PASS U+643E 搾 搾 B7 63 
 PASS U+643F 搿 搿 E1 EE 
@@ -4522,7 +4522,7 @@ PASS U+64AB 撫 撫 BC BE
 PASS U+64AC 撬 撬 BC C0 
 PASS U+64AD 播 播 BC BD 
 PASS U+64AE 撮 撮 BC BC 
-FAIL U+64AF 撯 撯 FE D4 assert_equals: expected "撯" but got ""
+PASS U+64AF 撯 撯 FE D4 
 PASS U+64B0 撰 撰 BC B6 
 PASS U+64B1 撱 撱 E5 BB 
 PASS U+64B2 撲 撲 BC B3 
@@ -4554,11 +4554,11 @@ PASS U+64D9 擙 擙 E9 AE
 PASS U+64DA 據 據 BE DA 
 PASS U+64DB 擛 擛 E9 AC 
 PASS U+64E0 擠 擠 C0 BD 
-FAIL U+64E1 擡 擡 FC BF assert_equals: expected "擡" but got ""
+PASS U+64E1 擡 擡 FC BF 
 PASS U+64E2 擢 擢 C0 C2 
 PASS U+64E3 擣 擣 EC EA 
 PASS U+64E4 擤 擤 EC EC 
-FAIL U+64E5 擥 擥 FC C0 assert_equals: expected "擥" but got ""
+PASS U+64E5 擥 擥 FC C0 
 PASS U+64E6 擦 擦 C0 BF 
 PASS U+64E8 擨 擨 EC ED 
 PASS U+64E9 擩 擩 EC E9 
@@ -4601,7 +4601,7 @@ PASS U+6519 攙 攙 C4 65
 PASS U+651B 攛 攛 F5 CD 
 PASS U+651C 攜 攜 C4 E2 
 PASS U+651D 攝 攝 C4 E1 
-FAIL U+651E 攞 攞 FC AB assert_equals: expected "攞" but got ""
+PASS U+651E 攞 攞 FC AB 
 PASS U+6520 攠 攠 F6 E1 
 PASS U+6521 攡 攡 F6 E0 
 PASS U+6522 攢 攢 F6 E3 
@@ -4618,7 +4618,7 @@ PASS U+652E 攮 攮 F8 EF
 PASS U+652F 支 支 A4 E4 
 PASS U+6532 攲 攲 D9 72 
 PASS U+6533 攳 攳 E9 AF 
-FAIL U+6534 攴 攴 C6 D2 assert_equals: expected "攴" but got ""
+PASS U+6534 攴 攴 C6 D2 
 PASS U+6536 收 收 A6 AC 
 PASS U+6537 攷 攷 CA F7 
 PASS U+6538 攸 攸 A7 F1 
@@ -4634,7 +4634,7 @@ PASS U+6546 敆 敆 D1 CE
 PASS U+6548 效 效 AE C4 
 PASS U+6549 敉 敉 AE C5 
 PASS U+654A 敊 敊 D1 CD 
-FAIL U+654D 敍 敍 FC C5 assert_equals: expected "敍" but got ""
+PASS U+654D 敍 敍 FC C5 
 PASS U+654F 敏 敏 B1 D3 
 PASS U+6551 救 救 B1 CF 
 PASS U+6553 敓 敓 D5 A7 
@@ -4647,7 +4647,7 @@ PASS U+6559 教 教 B1 D0
 PASS U+655C 敜 敜 D9 76 
 PASS U+655D 敝 敝 B1 CD 
 PASS U+655E 敞 敞 B4 AF 
-FAIL U+655F 敟 敟 FC CB assert_equals: expected "敟" but got ""
+PASS U+655F 敟 敟 FC CB 
 PASS U+6562 敢 敢 B4 B1 
 PASS U+6563 散 散 B4 B2 
 PASS U+6564 敤 敤 D9 75 
@@ -4657,7 +4657,7 @@ PASS U+6567 敧 敧 D9 73
 PASS U+6568 敨 敨 D9 77 
 PASS U+656A 敪 敪 D9 74 
 PASS U+656C 敬 敬 B7 71 
-FAIL U+656D 敭 敭 FC CA assert_equals: expected "敭" but got ""
+PASS U+656D 敭 敭 FC CA 
 PASS U+656F 敯 敯 DD BC 
 PASS U+6572 敲 敲 BA 56 
 PASS U+6573 敳 敳 E1 F4 
@@ -4676,9 +4676,9 @@ PASS U+6581 斁 斁 EC EE
 PASS U+6582 斂 斂 C0 C4 
 PASS U+6583 斃 斃 C0 C5 
 PASS U+6584 斄 斄 F2 48 
-FAIL U+6585 斅 斅 FC C9 assert_equals: expected "斅" but got ""
+PASS U+6585 斅 斅 FC C9 
 PASS U+6587 文 文 A4 E5 
-FAIL U+6588 斈 斈 FB C6 assert_equals: expected "斈" but got ""
+PASS U+6588 斈 斈 FB C6 
 PASS U+658C 斌 斌 D9 79 
 PASS U+6590 斐 斐 B4 B4 
 PASS U+6591 斑 斑 B4 B3 
@@ -4708,7 +4708,7 @@ PASS U+65AF 斯 斯 B4 B5
 PASS U+65B0 新 新 B7 73 
 PASS U+65B2 斲 斲 E5 C1 
 PASS U+65B3 斳 斳 E5 C2 
-FAIL U+65B5 斵 斵 FC CD assert_equals: expected "斵" but got ""
+PASS U+65B5 斵 斵 FC CD 
 PASS U+65B6 斶 斶 EC F0 
 PASS U+65B7 斷 斷 C2 5F 
 PASS U+65B8 斸 斸 F8 F0 
@@ -4729,7 +4729,7 @@ PASS U+65CD 旍 旍 D5 A8
 PASS U+65CE 旎 旎 B1 DD 
 PASS U+65CF 族 族 B1 DA 
 PASS U+65D0 旐 旐 D9 7D 
-FAIL U+65D1 旑 旑 FC D0 assert_equals: expected "旑" but got ""
+PASS U+65D1 旑 旑 FC D0 
 PASS U+65D2 旒 旒 D9 7E 
 PASS U+65D3 旓 旓 DD BE 
 PASS U+65D6 旖 旖 BA 59 
@@ -4739,10 +4739,10 @@ PASS U+65DB 旛 旛 EF D9
 PASS U+65DD 旝 旝 F2 4A 
 PASS U+65DE 旞 旞 F2 49 
 PASS U+65DF 旟 旟 F4 4F 
-FAIL U+65E0 无 无 C6 D3 assert_equals: expected "无" but got ""
+PASS U+65E0 无 无 C6 D3 
 PASS U+65E1 旡 旡 C9 5E 
 PASS U+65E2 既 既 AC 4A 
-FAIL U+65E3 旣 旣 FC D4 assert_equals: expected "旣" but got ""
+PASS U+65E3 旣 旣 FC D4 
 PASS U+65E5 日 日 A4 E9 
 PASS U+65E6 旦 旦 A5 B9 
 PASS U+65E8 旨 旨 A6 AE 
@@ -4782,14 +4782,14 @@ PASS U+6612 昒 昒 CC C7
 PASS U+6613 易 易 A9 F6 
 PASS U+6614 昔 昔 A9 F5 
 PASS U+6615 昕 昕 A9 FD 
-FAIL U+6618 昘 昘 FC D7 assert_equals: expected "昘" but got ""
+PASS U+6618 昘 昘 FC D7 
 PASS U+661C 昜 昜 CE EF 
 PASS U+661D 昝 昝 CE F5 
 PASS U+661F 星 星 AC 50 
 PASS U+6620 映 映 AC 4D 
 PASS U+6621 昡 昡 CE EC 
 PASS U+6622 昢 昢 CE F1 
-FAIL U+6623 昣 昣 FE 63 assert_equals: expected "昣" but got ""
+PASS U+6623 昣 昣 FE 63 
 PASS U+6624 昤 昤 AC 53 
 PASS U+6625 春 春 AC 4B 
 PASS U+6626 昦 昦 CE F0 
@@ -4810,17 +4810,17 @@ PASS U+663A 昺 昺 CE F4
 PASS U+6641 晁 晁 AE D0 
 PASS U+6642 時 時 AE C9 
 PASS U+6643 晃 晃 AE CC 
-FAIL U+6644 晄 晄 FC DA assert_equals: expected "晄" but got ""
+PASS U+6644 晄 晄 FC DA 
 PASS U+6645 晅 晅 AE CF 
 PASS U+6647 晇 晇 D1 D5 
 PASS U+6649 晉 晉 AE CA 
 PASS U+664A 晊 晊 D1 D3 
-FAIL U+664B 晋 晋 FC DD assert_equals: expected "晋" but got ""
+PASS U+664B 晋 晋 FC DD 
 PASS U+664C 晌 晌 AE CE 
 PASS U+664F 晏 晏 AE CB 
 PASS U+6651 晑 晑 D1 D6 
 PASS U+6652 晒 晒 AE CD 
-FAIL U+6657 晗 晗 FA F2 assert_equals: expected "晗" but got ""
+PASS U+6657 晗 晗 FA F2 
 PASS U+6659 晙 晙 D5 AC 
 PASS U+665A 晚 晚 B1 DF 
 PASS U+665B 晛 晛 D5 AB 
@@ -4833,7 +4833,7 @@ PASS U+6662 晢 晢 D5 AE
 PASS U+6664 晤 晤 B1 E0 
 PASS U+6665 晥 晥 D5 A9 
 PASS U+6666 晦 晦 B1 E2 
-FAIL U+6667 晧 晧 FC DF assert_equals: expected "晧" but got ""
+PASS U+6667 晧 晧 FC DF 
 PASS U+6668 晨 晨 B1 E1 
 PASS U+666A 晪 晪 D9 A7 
 PASS U+666C 晬 晬 D9 A2 
@@ -4842,7 +4842,7 @@ PASS U+666F 景 景 B4 BA
 PASS U+6670 晰 晰 B4 B7 
 PASS U+6671 晱 晱 D9 A5 
 PASS U+6672 晲 晲 D9 A8 
-FAIL U+6673 晳 晳 FC E1 assert_equals: expected "晳" but got ""
+PASS U+6673 晳 晳 FC E1 
 PASS U+6674 晴 晴 B4 B8 
 PASS U+6676 晶 晶 B4 B9 
 PASS U+6677 晷 晷 B4 BE 
@@ -4854,7 +4854,7 @@ PASS U+667C 晼 晼 D9 A1
 PASS U+667E 晾 晾 B4 BD 
 PASS U+6680 暀 暀 D9 A4 
 PASS U+6684 暄 暄 B7 79 
-FAIL U+6685 暅 暅 FC 62 assert_equals: expected "暅" but got ""
+PASS U+6685 暅 暅 FC 62 
 PASS U+6686 暆 暆 DD BF 
 PASS U+6687 暇 暇 B7 76 
 PASS U+6688 暈 暈 B7 77 
@@ -4876,18 +4876,18 @@ PASS U+669F 暟 暟 E1 F8
 PASS U+66A0 暠 暠 E1 F7 
 PASS U+66A1 暡 暡 E1 F6 
 PASS U+66A2 暢 暢 BA 5A 
-FAIL U+66A4 暤 暤 FB 52 assert_equals: expected "暤" but got ""
+PASS U+66A4 暤 暤 FB 52 
 PASS U+66A8 暨 暨 BA 5B 
 PASS U+66A9 暩 暩 E5 C5 
 PASS U+66AA 暪 暪 E5 C8 
 PASS U+66AB 暫 暫 BC C8 
-FAIL U+66AD 暭 暭 FB 53 assert_equals: expected "暭" but got ""
+PASS U+66AD 暭 暭 FB 53 
 PASS U+66AE 暮 暮 BC C7 
 PASS U+66AF 暯 暯 E5 C9 
 PASS U+66B0 暰 暰 E5 C4 
 PASS U+66B1 暱 暱 BC CA 
 PASS U+66B2 暲 暲 E5 C6 
-FAIL U+66B3 暳 暳 FB 4D assert_equals: expected "暳" but got ""
+PASS U+66B3 暳 暳 FB 4D 
 PASS U+66B4 暴 暴 BC C9 
 PASS U+66B5 暵 暵 E5 C3 
 PASS U+66B7 暷 暷 E5 C7 
@@ -4906,7 +4906,7 @@ PASS U+66C9 曉 曉 BE E5
 PASS U+66CA 曊 曊 E9 B6 
 PASS U+66CB 曋 曋 E9 B7 
 PASS U+66CC 曌 曌 E9 BC 
-FAIL U+66CD 曍 曍 FB 50 assert_equals: expected "曍" but got ""
+PASS U+66CD 曍 曍 FB 50 
 PASS U+66CF 曏 曏 E9 B8 
 PASS U+66D2 曒 曒 EC F2 
 PASS U+66D6 曖 曖 C0 C7 
@@ -4940,7 +4940,7 @@ PASS U+66FE 曾 曾 B4 BF
 PASS U+66FF 替 替 B4 C0 
 PASS U+6700 最 最 B3 CC 
 PASS U+6701 朁 朁 D9 A9 
-FAIL U+6702 朂 朂 FC EB assert_equals: expected "朂" but got ""
+PASS U+6702 朂 朂 FC EB 
 PASS U+6703 會 會 B7 7C 
 PASS U+6704 朄 朄 E1 FA 
 PASS U+6705 朅 朅 E1 F9 
@@ -4984,7 +4984,7 @@ PASS U+673C 朼 朼 C9 F5
 PASS U+673D 朽 朽 A6 B4 
 PASS U+673E 朾 朾 C9 EF 
 PASS U+673F 朿 朿 C9 F4 
-FAIL U+6744 杄 杄 FA 50 assert_equals: expected "杄" but got ""
+PASS U+6744 杄 杄 FA 50 
 PASS U+6745 杅 杅 CA FD 
 PASS U+6746 杆 杆 A7 FD 
 PASS U+6747 杇 杇 CA FE 
@@ -5008,8 +5008,8 @@ PASS U+675D 杝 杝 CB 44
 PASS U+675E 杞 杞 A7 FB 
 PASS U+675F 束 束 A7 F4 
 PASS U+6760 杠 杠 A7 FE 
-FAIL U+6762 杢 杢 FC F3 assert_equals: expected "杢" but got ""
-FAIL U+6767 杧 杧 FC F2 assert_equals: expected "杧" but got ""
+PASS U+6762 杢 杢 FC F3 
+PASS U+6767 杧 杧 FC F2 
 PASS U+676A 杪 杪 AA 57 
 PASS U+676C 杬 杬 CC D4 
 PASS U+676D 杭 杭 AA 43 
@@ -5054,11 +5054,11 @@ PASS U+679A 枚 枚 AA 54
 PASS U+679C 果 果 AA 47 
 PASS U+679D 枝 枝 AA 4B 
 PASS U+679F 枟 枟 CC E0 
-FAIL U+67AC 枬 枬 FD 4D assert_equals: expected "枬" but got ""
+PASS U+67AC 枬 枬 FD 4D 
 PASS U+67AE 枮 枮 CF 5B 
 PASS U+67AF 枯 枯 AC 5C 
 PASS U+67B0 枰 枰 AC 69 
-FAIL U+67B1 枱 枱 FD 5E assert_equals: expected "枱" but got ""
+PASS U+67B1 枱 枱 FD 5E 
 PASS U+67B2 枲 枲 CF 56 
 PASS U+67B3 枳 枳 CF 4C 
 PASS U+67B4 枴 枴 AC 62 
@@ -5089,7 +5089,7 @@ PASS U+67D1 柑 柑 AC 61
 PASS U+67D2 柒 柒 AC 6D 
 PASS U+67D3 染 染 AC 56 
 PASS U+67D4 柔 柔 AC 58 
-FAIL U+67D7 柗 柗 FC F6 assert_equals: expected "柗" but got ""
+PASS U+67D7 柗 柗 FC F6 
 PASS U+67D8 柘 柘 CF 43 
 PASS U+67D9 柙 柙 AC 6A 
 PASS U+67DA 柚 柚 AC 63 
@@ -5123,8 +5123,8 @@ PASS U+67F8 柸 柸 CF 42
 PASS U+67FA 柺 柺 CF 5E 
 PASS U+67FC 柼 柼 CF 57 
 PASS U+67FF 柿 柿 AC 55 
-FAIL U+6801 栁 栁 FC FB assert_equals: expected "栁" but got ""
-FAIL U+680D 栍 栍 FE 4F assert_equals: expected "栍" but got ""
+PASS U+6801 栁 栁 FC FB 
+PASS U+680D 栍 栍 FE 4F 
 PASS U+6812 栒 栒 D1 EC 
 PASS U+6813 栓 栓 AE EA 
 PASS U+6814 栔 栔 D1 ED 
@@ -5132,13 +5132,13 @@ PASS U+6816 栖 栖 D1 E1
 PASS U+6817 栗 栗 AE DF 
 PASS U+6818 栘 栘 AE EB 
 PASS U+681A 栚 栚 D1 DA 
-FAIL U+681B 栛 栛 FA C9 assert_equals: expected "栛" but got ""
+PASS U+681B 栛 栛 FA C9 
 PASS U+681C 栜 栜 D1 E3 
 PASS U+681D 栝 栝 D1 EB 
 PASS U+681F 栟 栟 D1 D9 
 PASS U+6820 栠 栠 D1 F4 
 PASS U+6821 校 校 AE D5 
-FAIL U+6822 栢 栢 FC F8 assert_equals: expected "栢" but got ""
+PASS U+6822 栢 栢 FC F8 
 PASS U+6825 栥 栥 D1 F3 
 PASS U+6826 栦 栦 D1 EE 
 PASS U+6828 栨 栨 D1 EF 
@@ -5153,14 +5153,14 @@ PASS U+6832 栲 栲 D1 DC
 PASS U+6833 栳 栳 D1 DD 
 PASS U+6834 栴 栴 D1 EA 
 PASS U+6835 栵 栵 D1 E4 
-FAIL U+6837 样 样 FD A9 assert_equals: expected "样" but got ""
+PASS U+6837 样 样 FD A9 
 PASS U+6838 核 核 AE D6 
 PASS U+6839 根 根 AE DA 
 PASS U+683A 栺 栺 D1 F2 
 PASS U+683B 栻 栻 D1 DE 
 PASS U+683C 格 格 AE E6 
 PASS U+683D 栽 栽 AE E2 
-FAIL U+683E 栾 栾 FC 44 assert_equals: expected "栾" but got ""
+PASS U+683E 栾 栾 FC 44 
 PASS U+6840 桀 桀 AE E5 
 PASS U+6841 桁 桁 AE EC 
 PASS U+6842 桂 桂 AE DB 
@@ -5179,7 +5179,7 @@ PASS U+6850 桐 桐 AE E4
 PASS U+6851 桑 桑 AE E1 
 PASS U+6853 桓 桓 AE D9 
 PASS U+6854 桔 桔 AE DC 
-FAIL U+685D 桝 桝 FC FE assert_equals: expected "桝" but got ""
+PASS U+685D 桝 桝 FC FE 
 PASS U+686B 桫 桫 D5 C4 
 PASS U+686D 桭 桭 D5 B4 
 PASS U+686E 桮 桮 D5 B5 
@@ -5225,7 +5225,7 @@ PASS U+68A1 梡 梡 B1 FB
 PASS U+68A2 梢 梢 B1 E9 
 PASS U+68A3 梣 梣 D5 BA 
 PASS U+68A4 梤 梤 D5 CF 
-FAIL U+68A6 梦 梦 FB 7C assert_equals: expected "梦" but got ""
+PASS U+68A6 梦 梦 FB 7C 
 PASS U+68A7 梧 梧 B1 EF 
 PASS U+68A8 梨 梨 B1 F9 
 PASS U+68A9 梩 梩 D5 BC 
@@ -5241,14 +5241,14 @@ PASS U+68B2 梲 梲 D5 BF
 PASS U+68B3 梳 梳 AE DE 
 PASS U+68B4 梴 梴 D9 C0 
 PASS U+68B5 梵 梵 B1 EB 
-FAIL U+68BD 梽 梽 FE 4A assert_equals: expected "梽" but got ""
-FAIL U+68C3 棃 棃 FD 45 assert_equals: expected "棃" but got ""
+PASS U+68BD 梽 梽 FE 4A 
+PASS U+68C3 棃 棃 FD 45 
 PASS U+68C4 棄 棄 B1 F3 
 PASS U+68C6 棆 棆 D9 C3 
 PASS U+68C7 棇 棇 D9 D9 
 PASS U+68C8 棈 棈 D9 CE 
 PASS U+68C9 棉 棉 B4 D6 
-FAIL U+68CA 棊 棊 FE E0 assert_equals: expected "棊" but got ""
+PASS U+68CA 棊 棊 FE E0 
 PASS U+68CB 棋 棋 B4 D1 
 PASS U+68CC 棌 棌 D9 BD 
 PASS U+68CD 棍 棍 B4 D2 
@@ -5294,10 +5294,10 @@ PASS U+68FA 棺 棺 B4 C3
 PASS U+68FB 棻 棻 B4 D9 
 PASS U+68FC 棼 棼 D9 C8 
 PASS U+68FD 棽 棽 D9 C7 
-FAIL U+6900 椀 椀 FD 48 assert_equals: expected "椀" but got ""
-FAIL U+6901 椁 椁 FD 47 assert_equals: expected "椁" but got ""
-FAIL U+6902 椂 椂 FE F2 assert_equals: expected "椂" but got ""
-FAIL U+6903 椃 椃 FE 6A assert_equals: expected "椃" but got ""
+PASS U+6900 椀 椀 FD 48 
+PASS U+6901 椁 椁 FD 47 
+PASS U+6902 椂 椂 FE F2 
+PASS U+6903 椃 椃 FE 6A 
 PASS U+6904 椄 椄 D9 AC 
 PASS U+6905 椅 椅 B4 C8 
 PASS U+6906 椆 椆 D9 D4 
@@ -5324,14 +5324,14 @@ PASS U+6932 椲 椲 DD F0
 PASS U+6933 椳 椳 DD DB 
 PASS U+6934 椴 椴 DD E0 
 PASS U+6935 椵 椵 DD D9 
-FAIL U+6936 椶 椶 FD 51 assert_equals: expected "椶" but got ""
+PASS U+6936 椶 椶 FD 51 
 PASS U+6937 椷 椷 DD EC 
 PASS U+6938 椸 椸 DD CB 
 PASS U+6939 椹 椹 DD D2 
 PASS U+693B 椻 椻 DD EA 
 PASS U+693C 椼 椼 DD F4 
 PASS U+693D 椽 椽 DD DC 
-FAIL U+693E 椾 椾 FA AD assert_equals: expected "椾" but got ""
+PASS U+693E 椾 椾 FA AD 
 PASS U+693F 椿 椿 DD CF 
 PASS U+6940 楀 楀 DD E2 
 PASS U+6941 楁 楁 DD E7 
@@ -5360,7 +5360,7 @@ PASS U+695D 楝 楝 B7 AF
 PASS U+695E 楞 楞 B7 AB 
 PASS U+695F 楟 楟 DD CA 
 PASS U+6960 楠 楠 B7 A3 
-FAIL U+6961 楡 楡 FD 4E assert_equals: expected "楡" but got ""
+PASS U+6961 楡 楡 FD 4E 
 PASS U+6962 楢 楢 DD CD 
 PASS U+6963 楣 楣 B7 B0 
 PASS U+6965 楥 楥 DD DD 
@@ -5375,7 +5375,7 @@ PASS U+696E 楮 楮 B4 D8
 PASS U+696F 楯 楯 DD E3 
 PASS U+6970 楰 楰 D9 BF 
 PASS U+6971 楱 楱 DD CE 
-FAIL U+6973 楳 楳 FD 44 assert_equals: expected "楳" but got ""
+PASS U+6973 楳 楳 FD 44 
 PASS U+6974 楴 楴 DD E8 
 PASS U+6975 極 極 B7 A5 
 PASS U+6976 楶 楶 DD E5 
@@ -5396,7 +5396,7 @@ PASS U+6994 榔 榔 B7 7D
 PASS U+6995 榕 榕 BA 5F 
 PASS U+6996 榖 榖 E2 42 
 PASS U+6997 榗 榗 E2 5D 
-FAIL U+6998 榘 榘 FD 52 assert_equals: expected "榘" but got ""
+PASS U+6998 榘 榘 FD 52 
 PASS U+6999 榙 榙 E2 47 
 PASS U+699A 榚 榚 E2 55 
 PASS U+699B 榛 榛 BA 64 
@@ -5446,7 +5446,7 @@ PASS U+69D0 槐 槐 BA 69
 PASS U+69D3 槓 槓 BA 62 
 PASS U+69D4 槔 槔 E2 52 
 PASS U+69D9 槙 槙 E2 5C 
-FAIL U+69E1 槡 槡 FD 41 assert_equals: expected "槡" but got ""
+PASS U+69E1 槡 槡 FD 41 
 PASS U+69E2 槢 槢 E5 D5 
 PASS U+69E4 槤 槤 E5 D1 
 PASS U+69E5 槥 槥 E5 CD 
@@ -5464,8 +5464,8 @@ PASS U+69F4 槴 槴 E5 EE
 PASS U+69F6 槶 槶 E5 EB 
 PASS U+69F7 槷 槷 E5 DD 
 PASS U+69F8 槸 槸 E5 CE 
-FAIL U+69F9 槹 槹 FD 57 assert_equals: expected "槹" but got ""
-FAIL U+69FA 槺 槺 FC EF assert_equals: expected "槺" but got ""
+PASS U+69F9 槹 槹 FD 57 
+PASS U+69FA 槺 槺 FC EF 
 PASS U+69FB 槻 槻 E5 E2 
 PASS U+69FC 槼 槼 E5 E4 
 PASS U+69FD 槽 槽 BC D1 
@@ -5481,7 +5481,7 @@ PASS U+6A07 樇 樇 E5 ED
 PASS U+6A08 樈 樈 E5 E0 
 PASS U+6A09 樉 樉 E5 E6 
 PASS U+6A0A 樊 樊 BC D4 
-FAIL U+6A0B 樋 樋 FD 42 assert_equals: expected "樋" but got ""
+PASS U+6A0B 樋 樋 FD 42 
 PASS U+6A0D 樍 樍 E5 E3 
 PASS U+6A0F 樏 樏 E5 EA 
 PASS U+6A11 樑 樑 BC D9 
@@ -5503,7 +5503,7 @@ PASS U+6A25 樥 樥 E5 E9
 PASS U+6A26 樦 樦 E5 EC 
 PASS U+6A27 樧 樧 E5 D9 
 PASS U+6A28 樨 樨 E9 CA 
-FAIL U+6A2C 樬 樬 FE 7B assert_equals: expected "樬" but got ""
+PASS U+6A2C 樬 樬 FE 7B 
 PASS U+6A32 樲 樲 E9 C2 
 PASS U+6A34 樴 樴 E9 BE 
 PASS U+6A35 樵 樵 BE F6 
@@ -5518,7 +5518,7 @@ PASS U+6A3F 樿 樿 E9 CD
 PASS U+6A40 橀 橀 E5 DF 
 PASS U+6A41 橁 橁 E9 CE 
 PASS U+6A44 橄 橄 BE F1 
-FAIL U+6A45 橅 橅 FD 5A assert_equals: expected "橅" but got ""
+PASS U+6A45 橅 橅 FD 5A 
 PASS U+6A46 橆 橆 E9 DD 
 PASS U+6A47 橇 橇 BE F5 
 PASS U+6A48 橈 橈 BE F8 
@@ -5561,7 +5561,7 @@ PASS U+6A84 檄 檄 C0 CA
 PASS U+6A85 檅 檅 ED 48 
 PASS U+6A87 檇 檇 EC FC 
 PASS U+6A89 檉 檉 EC F7 
-FAIL U+6A8A 檊 檊 FB F2 assert_equals: expected "檊" but got ""
+PASS U+6A8A 檊 檊 FB F2 
 PASS U+6A8C 檌 檌 ED 49 
 PASS U+6A8D 檍 檍 EC F3 
 PASS U+6A8E 檎 檎 EC FE 
@@ -5576,7 +5576,7 @@ PASS U+6A97 檗 檗 C0 D0
 PASS U+6A9A 檚 檚 ED 47 
 PASS U+6A9B 檛 檛 EC F9 
 PASS U+6A9C 檜 檜 C0 CC 
-FAIL U+6A9D 檝 檝 FD 5C assert_equals: expected "檝" but got ""
+PASS U+6A9D 檝 檝 FD 5C 
 PASS U+6A9E 檞 檞 EC FB 
 PASS U+6A9F 檟 檟 EC F8 
 PASS U+6AA0 檠 檠 C0 D2 
@@ -5605,7 +5605,7 @@ PASS U+6AC3 櫃 櫃 C2 64
 PASS U+6AC5 櫅 櫅 EF DD 
 PASS U+6AC6 櫆 櫆 EF E1 
 PASS U+6AC7 櫇 櫇 EF E5 
-FAIL U+6AC8 櫈 櫈 FD 5F assert_equals: expected "櫈" but got ""
+PASS U+6AC8 櫈 櫈 FD 5F 
 PASS U+6ACB 櫋 櫋 F2 51 
 PASS U+6ACC 櫌 櫌 F2 4E 
 PASS U+6ACD 櫍 櫍 F2 57 
@@ -5656,7 +5656,7 @@ PASS U+6B17 欗 欗 F8 F3
 PASS U+6B18 欘 欘 F8 F1 
 PASS U+6B19 欙 欙 F8 F2 
 PASS U+6B1A 欚 欚 F8 F4 
-FAIL U+6B1D 欝 欝 FD 62 assert_equals: expected "欝" but got ""
+PASS U+6B1D 欝 欝 FD 62 
 PASS U+6B1E 欞 欞 F9 BB 
 PASS U+6B20 欠 欠 A4 ED 
 PASS U+6B21 次 次 A6 B8 
@@ -5670,7 +5670,7 @@ PASS U+6B31 欱 欱 D1 F8
 PASS U+6B32 欲 欲 B1 FD 
 PASS U+6B33 欳 欳 D5 D7 
 PASS U+6B34 欴 欴 D1 F9 
-FAIL U+6B35 欵 欵 FD 65 assert_equals: expected "欵" but got ""
+PASS U+6B35 欵 欵 FD 65 
 PASS U+6B36 欶 欶 D5 D6 
 PASS U+6B37 欷 欷 D5 D8 
 PASS U+6B38 欸 欸 D5 D9 
@@ -5715,7 +5715,7 @@ PASS U+6B67 歧 歧 AA 5B
 PASS U+6B6A 歪 歪 AC 6E 
 PASS U+6B6D 歭 歭 D1 FA 
 PASS U+6B72 歲 歲 B7 B3 
-FAIL U+6B74 歴 歴 FD 66 assert_equals: expected "歴" but got ""
+PASS U+6B74 歴 歴 FD 66 
 PASS U+6B76 歶 歶 E6 D1 
 PASS U+6B77 歷 歷 BE FA 
 PASS U+6B78 歸 歸 C2 6B 
@@ -5789,10 +5789,10 @@ PASS U+6BD7 毗 毗 AC 73
 PASS U+6BD8 毘 毘 CF 69 
 PASS U+6BDA 毚 毚 C0 D5 
 PASS U+6BDB 毛 毛 A4 F2 
-FAIL U+6BDC 毜 毜 FD 71 assert_equals: expected "毜" but got ""
+PASS U+6BDC 毜 毜 FD 71 
 PASS U+6BDE 毞 毞 CC EC 
 PASS U+6BE0 毠 毠 CF 6A 
-FAIL U+6BE1 毡 毡 FD 6F assert_equals: expected "毡" but got ""
+PASS U+6BE1 毡 毡 FD 6F 
 PASS U+6BE2 毢 毢 D2 42 
 PASS U+6BE3 毣 毣 D2 41 
 PASS U+6BE4 毤 毤 D1 FE 
@@ -5855,7 +5855,7 @@ PASS U+6C30 氰 氰 D9 E6
 PASS U+6C33 氳 氳 BA 72 
 PASS U+6C34 水 水 A4 F4 
 PASS U+6C36 氶 氶 C9 A1 
-FAIL U+6C37 氷 氷 FD 72 assert_equals: expected "氷" but got ""
+PASS U+6C37 氷 氷 FD 72 
 PASS U+6C38 永 永 A5 C3 
 PASS U+6C3B 氻 氻 C9 A4 
 PASS U+6C3E 氾 氾 A5 C6 
@@ -5865,7 +5865,7 @@ PASS U+6C41 汁 汁 A5 C4
 PASS U+6C42 求 求 A8 44 
 PASS U+6C43 汃 汃 C9 A2 
 PASS U+6C46 汆 汆 C9 F8 
-FAIL U+6C49 汉 汉 FA E4 assert_equals: expected "汉" but got ""
+PASS U+6C49 汉 汉 FA E4 
 PASS U+6C4A 汊 汊 C9 FC 
 PASS U+6C4B 汋 汋 C9 FE 
 PASS U+6C4C 汌 汌 CA 40 
@@ -5878,7 +5878,7 @@ PASS U+6C54 汔 汔 C9 FD
 PASS U+6C55 汕 汕 A6 C2 
 PASS U+6C57 汗 汗 A6 BD 
 PASS U+6C59 汙 汙 A6 BE 
-FAIL U+6C5A 汚 汚 FD 76 assert_equals: expected "汚" but got ""
+PASS U+6C5A 汚 汚 FD 76 
 PASS U+6C5B 汛 汛 A6 C4 
 PASS U+6C5C 汜 汜 C9 FA 
 PASS U+6C5D 汝 汝 A6 BC 
@@ -5894,7 +5894,7 @@ PASS U+6C69 汩 汩 CB 53
 PASS U+6C6A 汪 汪 A8 4C 
 PASS U+6C6B 汫 汫 CB 4D 
 PASS U+6C6D 汭 汭 CB 55 
-FAIL U+6C6E 汮 汮 FB 62 assert_equals: expected "汮" but got ""
+PASS U+6C6E 汮 汮 FB 62 
 PASS U+6C6F 汯 汯 CB 52 
 PASS U+6C70 汰 汰 A8 4F 
 PASS U+6C71 汱 汱 CB 51 
@@ -5903,7 +5903,7 @@ PASS U+6C73 汳 汳 CB 5A
 PASS U+6C74 汴 汴 A8 58 
 PASS U+6C76 汶 汶 A8 5A 
 PASS U+6C78 汸 汸 CB 4B 
-FAIL U+6C79 汹 汹 FD 78 assert_equals: expected "汹" but got ""
+PASS U+6C79 汹 汹 FD 78 
 PASS U+6C7A 決 決 A8 4D 
 PASS U+6C7B 汻 汻 CB 5C 
 PASS U+6C7D 汽 汽 A8 54 
@@ -5964,7 +5964,7 @@ PASS U+6CC6 泆 泆 CC FC
 PASS U+6CC7 泇 泇 CD 4A 
 PASS U+6CC9 泉 泉 AC 75 
 PASS U+6CCA 泊 泊 AA 79 
-FAIL U+6CCB 泋 泋 FA C7 assert_equals: expected "泋" but got ""
+PASS U+6CCB 泋 泋 FA C7 
 PASS U+6CCC 泌 泌 AA 63 
 PASS U+6CCD 泍 泍 CD 49 
 PASS U+6CCF 泏 泏 CD 4D 
@@ -6060,8 +6060,8 @@ PASS U+6D42 浂 浂 CF 7E
 PASS U+6D58 浘 浘 D2 4C 
 PASS U+6D59 浙 浙 AE FD 
 PASS U+6D5A 浚 浚 AF 43 
-FAIL U+6D5B 浛 浛 FA F3 assert_equals: expected "浛" but got ""
-FAIL U+6D5C 浜 浜 FD AE assert_equals: expected "浜" but got ""
+PASS U+6D5B 浛 浛 FA F3 
+PASS U+6D5C 浜 浜 FD AE 
 PASS U+6D5E 浞 浞 D2 55 
 PASS U+6D5F 浟 浟 D2 5B 
 PASS U+6D60 浠 浠 D2 57 
@@ -6080,7 +6080,7 @@ PASS U+6D6D 浭 浭 D2 4E
 PASS U+6D6E 浮 浮 AF 42 
 PASS U+6D6F 浯 浯 D2 4F 
 PASS U+6D70 浰 浰 D2 59 
-FAIL U+6D71 浱 浱 FB AF assert_equals: expected "浱" but got ""
+PASS U+6D71 浱 浱 FB AF 
 PASS U+6D74 浴 浴 AF 44 
 PASS U+6D75 浵 浵 D2 68 
 PASS U+6D76 浶 浶 D2 48 
@@ -6113,7 +6113,7 @@ PASS U+6D92 涒 涒 D2 4B
 PASS U+6D93 涓 涓 AE FE 
 PASS U+6D94 涔 涔 AF 4B 
 PASS U+6D95 涕 涕 AE F7 
-FAIL U+6D96 涖 涖 FD AD assert_equals: expected "涖" but got ""
+PASS U+6D96 涖 涖 FD AD 
 PASS U+6D97 涗 涗 D2 58 
 PASS U+6D98 涘 涘 D2 5D 
 PASS U+6DAA 涪 涪 B2 65 
@@ -6208,7 +6208,7 @@ PASS U+6E25 渥 渥 B4 EC
 PASS U+6E26 渦 渦 B4 F5 
 PASS U+6E27 渧 渧 DA 4D 
 PASS U+6E28 渨 渨 DA 44 
-FAIL U+6E2A 渪 渪 FE F9 assert_equals: expected "渪" but got ""
+PASS U+6E2A 渪 渪 FE F9 
 PASS U+6E2B 渫 渫 D9 F1 
 PASS U+6E2C 測 測 B4 FA 
 PASS U+6E2D 渭 渭 B4 F4 
@@ -6241,8 +6241,8 @@ PASS U+6E4A 湊 湊 B4 EA
 PASS U+6E4B 湋 湋 D9 F8 
 PASS U+6E4D 湍 湍 B4 F8 
 PASS U+6E4E 湎 湎 B5 42 
-FAIL U+6E4F 湏 湏 FD C0 assert_equals: expected "湏" but got ""
-FAIL U+6E50 湐 湐 FC F9 assert_equals: expected "湐" but got ""
+PASS U+6E4F 湏 湏 FD C0 
+PASS U+6E50 湐 湐 FC F9 
 PASS U+6E51 湑 湑 D9 FA 
 PASS U+6E52 湒 湒 DA 53 
 PASS U+6E53 湓 湓 DA 4B 
@@ -6250,7 +6250,7 @@ PASS U+6E54 湔 湔 B4 E6
 PASS U+6E55 湕 湕 DA 51 
 PASS U+6E56 湖 湖 B4 F2 
 PASS U+6E58 湘 湘 B4 F0 
-FAIL U+6E59 湙 湙 FB 7E assert_equals: expected "湙" but got ""
+PASS U+6E59 湙 湙 FB 7E 
 PASS U+6E5A 湚 湚 DA 57 
 PASS U+6E5B 湛 湛 B4 EF 
 PASS U+6E5C 湜 湜 DA 41 
@@ -6277,7 +6277,7 @@ PASS U+6E74 湴 湴 D5 E4
 PASS U+6E77 湷 湷 DA 50 
 PASS U+6E78 湸 湸 DA 4E 
 PASS U+6E79 湹 湹 DA 52 
-FAIL U+6E7C 湼 湼 FD AF assert_equals: expected "湼" but got ""
+PASS U+6E7C 湼 湼 FD AF 
 PASS U+6E88 溈 溈 D9 EC 
 PASS U+6E89 溉 溉 B5 40 
 PASS U+6E8D 溍 溍 DE 61 
@@ -6313,7 +6313,7 @@ PASS U+6EB1 溱 溱 DE 4C
 PASS U+6EB2 溲 溲 DE 59 
 PASS U+6EB3 溳 溳 DE 65 
 PASS U+6EB4 溴 溴 B7 CD 
-FAIL U+6EB5 溵 溵 FD 68 assert_equals: expected "溵" but got ""
+PASS U+6EB5 溵 溵 FD 68 
 PASS U+6EB6 溶 溶 B7 BB 
 PASS U+6EB7 溷 溷 DE 54 
 PASS U+6EB9 溹 溹 DE 4D 
@@ -6346,8 +6346,8 @@ PASS U+6ED4 滔 滔 B7 CA
 PASS U+6ED5 滕 滕 BC F0 
 PASS U+6ED6 滖 滖 DE 44 
 PASS U+6ED8 滘 滘 DE 5D 
-FAIL U+6ED9 滙 滙 FA C0 assert_equals: expected "滙" but got ""
-FAIL U+6EDB 滛 滛 FA 64 assert_equals: expected "滛" but got ""
+PASS U+6ED9 滙 滙 FA C0 
+PASS U+6EDB 滛 滛 FA 64 
 PASS U+6EDC 滜 滜 DE 5C 
 PASS U+6EEB 滫 滫 E2 AA 
 PASS U+6EEC 滬 滬 BA AD 
@@ -6362,7 +6362,7 @@ PASS U+6EF6 滶 滶 E2 B0
 PASS U+6EF7 滷 滷 BA B1 
 PASS U+6EF8 滸 滸 E2 71 
 PASS U+6EF9 滹 滹 E2 A3 
-FAIL U+6EFA 滺 滺 FD C7 assert_equals: expected "滺" but got ""
+PASS U+6EFA 滺 滺 FD C7 
 PASS U+6EFB 滻 滻 E2 73 
 PASS U+6EFC 滼 滼 E2 B3 
 PASS U+6EFD 滽 滽 E2 AF 
@@ -6372,7 +6372,7 @@ PASS U+6F00 漀 漀 E6 53
 PASS U+6F01 漁 漁 BA AE 
 PASS U+6F02 漂 漂 BA 7D 
 PASS U+6F03 漃 漃 E2 6F 
-FAIL U+6F04 漄 漄 FD B0 assert_equals: expected "漄" but got ""
+PASS U+6F04 漄 漄 FD B0 
 PASS U+6F05 漅 漅 E2 AE 
 PASS U+6F06 漆 漆 BA A3 
 PASS U+6F07 漇 漇 E2 AB 
@@ -6386,7 +6386,7 @@ PASS U+6F12 漒 漒 E2 7C
 PASS U+6F13 漓 漓 BA 76 
 PASS U+6F14 演 演 BA 74 
 PASS U+6F15 漕 漕 BA A8 
-FAIL U+6F16 漖 漖 FC C6 assert_equals: expected "漖" but got ""
+PASS U+6F16 漖 漖 FC C6 
 PASS U+6F18 漘 漘 E2 7A 
 PASS U+6F19 漙 漙 E2 77 
 PASS U+6F1A 漚 漚 E2 78 
@@ -6419,13 +6419,13 @@ PASS U+6F39 漹 漹 E2 B1
 PASS U+6F3A 漺 漺 E2 B4 
 PASS U+6F3B 漻 漻 E2 7B 
 PASS U+6F3C 漼 漼 E2 A8 
-FAIL U+6F3D 漽 漽 FE 50 assert_equals: expected "漽" but got ""
+PASS U+6F3D 漽 漽 FE 50 
 PASS U+6F3E 漾 漾 BA 79 
 PASS U+6F3F 漿 漿 BC DF 
 PASS U+6F40 潀 潀 E2 A6 
 PASS U+6F41 潁 潁 E5 F9 
 PASS U+6F43 潃 潃 E2 AD 
-FAIL U+6F44 潄 潄 FD CC assert_equals: expected "潄" but got ""
+PASS U+6F44 潄 潄 FD CC 
 PASS U+6F4E 潎 潎 E2 76 
 PASS U+6F4F 潏 潏 E6 44 
 PASS U+6F50 潐 潐 E6 4E 
@@ -6438,7 +6438,7 @@ PASS U+6F57 潗 潗 E6 4F
 PASS U+6F58 潘 潘 BC EF 
 PASS U+6F5A 潚 潚 E6 46 
 PASS U+6F5B 潛 潛 BC E7 
-FAIL U+6F5C 潜 潜 FD CD assert_equals: expected "潜" but got ""
+PASS U+6F5C 潜 潜 FD CD 
 PASS U+6F5D 潝 潝 E6 52 
 PASS U+6F5E 潞 潞 E9 F0 
 PASS U+6F5F 潟 潟 BC F3 
@@ -6459,7 +6459,7 @@ PASS U+6F6F 潯 潯 BC F1
 PASS U+6F70 潰 潰 BC EC 
 PASS U+6F72 潲 潲 E6 4C 
 PASS U+6F73 潳 潳 E2 A2 
-FAIL U+6F74 潴 潴 FD CF assert_equals: expected "潴" but got ""
+PASS U+6F74 潴 潴 FD CF 
 PASS U+6F76 潶 潶 E6 48 
 PASS U+6F77 潷 潷 E6 5F 
 PASS U+6F78 潸 潸 BC E8 
@@ -6477,7 +6477,7 @@ PASS U+6F86 澆 澆 BC E5
 PASS U+6F87 澇 澇 E5 FC 
 PASS U+6F88 澈 澈 BA AB 
 PASS U+6F89 澉 澉 E6 41 
-FAIL U+6F8A 澊 澊 FC BA assert_equals: expected "澊" but got ""
+PASS U+6F8A 澊 澊 FC BA 
 PASS U+6F8B 澋 澋 E6 5A 
 PASS U+6F8C 澌 澌 E6 42 
 PASS U+6F8D 澍 澍 E6 40 
@@ -6489,9 +6489,9 @@ PASS U+6F94 澔 澔 E6 50
 PASS U+6F95 澕 澕 E6 5D 
 PASS U+6F96 澖 澖 E6 47 
 PASS U+6F97 澗 澗 BC EE 
-FAIL U+6F9D 澝 澝 FD C5 assert_equals: expected "澝" but got ""
+PASS U+6F9D 澝 澝 FD C5 
 PASS U+6F9E 澞 澞 E9 F3 
-FAIL U+6F9F 澟 澟 FD D2 assert_equals: expected "澟" but got ""
+PASS U+6F9F 澟 澟 FD D2 
 PASS U+6FA0 澠 澠 BF 49 
 PASS U+6FA1 澡 澡 BE FE 
 PASS U+6FA2 澢 澢 EA 40 
@@ -6535,7 +6535,7 @@ PASS U+6FCC 濌 濌 ED 4E
 PASS U+6FCD 濍 濍 EA 43 
 PASS U+6FCE 濎 濎 E9 EE 
 PASS U+6FCF 濏 濏 E9 FC 
-FAIL U+6FD3 濓 濓 FD D4 assert_equals: expected "濓" but got ""
+PASS U+6FD3 濓 濓 FD D4 
 PASS U+6FD4 濔 濔 ED 51 
 PASS U+6FD5 濕 濕 C0 E3 
 PASS U+6FD8 濘 濘 C0 D7 
@@ -6563,7 +6563,7 @@ PASS U+6FF1 濱 濱 C0 D8
 PASS U+6FF2 濲 濲 ED 58 
 PASS U+6FF4 濴 濴 ED 50 
 PASS U+6FF7 濷 濷 EF F7 
-FAIL U+6FF8 濸 濸 FD C3 assert_equals: expected "濸" but got ""
+PASS U+6FF8 濸 濸 FD C3 
 PASS U+6FFA 濺 濺 C2 71 
 PASS U+6FFB 濻 濻 EF F4 
 PASS U+6FFC 濼 濼 EF F6 
@@ -6630,7 +6630,7 @@ PASS U+7046 灆 灆 F5 D9
 PASS U+7048 灈 灈 F5 D6 
 PASS U+7049 灉 灉 F5 D7 
 PASS U+704A 灊 灊 F5 D5 
-FAIL U+704B 灋 灋 FD E0 assert_equals: expected "灋" but got ""
+PASS U+704B 灋 灋 FD E0 
 PASS U+704C 灌 灌 C4 E9 
 PASS U+7051 灑 灑 C5 78 
 PASS U+7052 灒 灒 F6 EB 
@@ -6659,19 +6659,19 @@ PASS U+7071 灱 灱 CA 41
 PASS U+7074 灴 灴 CB 5E 
 PASS U+7076 灶 灶 A8 5F 
 PASS U+7078 灸 灸 A8 62 
-FAIL U+7079 灹 灹 FA F0 assert_equals: expected "灹" but got ""
+PASS U+7079 灹 灹 FA F0 
 PASS U+707A 灺 灺 CB 5F 
 PASS U+707C 灼 灼 A8 60 
 PASS U+707D 災 災 A8 61 
-FAIL U+707E 灾 灾 FD E1 assert_equals: expected "灾" but got ""
-FAIL U+7081 炁 炁 FD E3 assert_equals: expected "炁" but got ""
+PASS U+707E 灾 灾 FD E1 
+PASS U+7081 炁 炁 FD E3 
 PASS U+7082 炂 炂 CD 58 
 PASS U+7083 炃 炃 CD 5A 
 PASS U+7084 炄 炄 CD 55 
 PASS U+7085 炅 炅 CD 52 
 PASS U+7086 炆 炆 CD 54 
 PASS U+708A 炊 炊 AA A4 
-FAIL U+708B 炋 炋 FB 63 assert_equals: expected "炋" but got ""
+PASS U+708B 炋 炋 FB 63 
 PASS U+708E 炎 炎 AA A2 
 PASS U+7091 炑 炑 CD 56 
 PASS U+7092 炒 炒 AA A3 
@@ -6685,7 +6685,7 @@ PASS U+709A 炚 炚 CD 59
 PASS U+709F 炟 炟 CF AF 
 PASS U+70A1 炡 炡 CF B3 
 PASS U+70A4 炤 炤 AC B7 
-FAIL U+70A7 炧 炧 FD E2 assert_equals: expected "炧" but got ""
+PASS U+70A7 炧 炧 FD E2 
 PASS U+70A9 炩 炩 CF B6 
 PASS U+70AB 炫 炫 AC AF 
 PASS U+70AC 炬 炬 AC B2 
@@ -6700,7 +6700,7 @@ PASS U+70B5 炵 炵 CF B5
 PASS U+70B7 炷 炷 CF AE 
 PASS U+70B8 炸 炸 AC B5 
 PASS U+70BA 為 為 AC B0 
-FAIL U+70BD 炽 炽 FD FD assert_equals: expected "炽" but got ""
+PASS U+70BD 炽 炽 FD FD 
 PASS U+70BE 炾 炾 CF B0 
 PASS U+70C5 烅 烅 D2 77 
 PASS U+70C6 烆 烆 D2 78 
@@ -6708,7 +6708,7 @@ PASS U+70C7 烇 烇 D2 79
 PASS U+70C8 烈 烈 AF 50 
 PASS U+70CA 烊 烊 AF 4C 
 PASS U+70CB 烋 烋 D2 6E 
-FAIL U+70CC 烌 烌 FD E4 assert_equals: expected "烌" but got ""
+PASS U+70CC 烌 烌 FD E4 
 PASS U+70CD 烍 烍 D2 76 
 PASS U+70CE 烎 烎 D2 7B 
 PASS U+70CF 烏 烏 AF 51 
@@ -6716,8 +6716,8 @@ PASS U+70D1 烑 烑 D2 6C
 PASS U+70D2 烒 烒 D2 72 
 PASS U+70D3 烓 烓 D2 6B 
 PASS U+70D4 烔 烔 D2 75 
-FAIL U+70D5 烕 烕 FD E5 assert_equals: expected "烕" but got ""
-FAIL U+70D6 烖 烖 FD E6 assert_equals: expected "烖" but got ""
+PASS U+70D5 烕 烕 FD E5 
+PASS U+70D6 烖 烖 FD E6 
 PASS U+70D7 烗 烗 D2 71 
 PASS U+70D8 烘 烘 AF 4D 
 PASS U+70D9 烙 烙 AF 4F 
@@ -6725,7 +6725,7 @@ PASS U+70DA 烚 烚 D2 7A
 PASS U+70DC 烜 烜 D2 6A 
 PASS U+70DD 烝 烝 D2 6D 
 PASS U+70DE 烞 烞 D2 73 
-FAIL U+70DF 烟 烟 FD E7 assert_equals: expected "烟" but got ""
+PASS U+70DF 烟 烟 FD E7 
 PASS U+70E0 烠 烠 D2 74 
 PASS U+70E1 烡 烡 D2 7C 
 PASS U+70E2 烢 烢 D2 70 
@@ -6769,8 +6769,8 @@ PASS U+7123 焣 焣 DA 5E
 PASS U+7125 焥 焥 DA 5F 
 PASS U+7126 焦 焦 B5 4A 
 PASS U+7128 焨 焨 DA 63 
-FAIL U+712B 焫 焫 FD ED assert_equals: expected "焫" but got ""
-FAIL U+712C 焬 焬 FD F7 assert_equals: expected "焬" but got ""
+PASS U+712B 焫 焫 FD ED 
+PASS U+712C 焬 焬 FD F7 
 PASS U+712E 焮 焮 DA 5C 
 PASS U+712F 焯 焯 DA 5A 
 PASS U+7130 焰 焰 B5 4B 
@@ -6782,16 +6782,16 @@ PASS U+7141 煁 煁 DE 70
 PASS U+7142 煂 煂 DE 77 
 PASS U+7143 煃 煃 DE 79 
 PASS U+7144 煄 煄 DE A1 
-FAIL U+7145 煅 煅 FD EE assert_equals: expected "煅" but got ""
+PASS U+7145 煅 煅 FD EE 
 PASS U+7146 煆 煆 B7 DA 
 PASS U+7147 煇 煇 DE 6B 
 PASS U+7149 煉 煉 B7 D2 
-FAIL U+714A 煊 煊 FD F0 assert_equals: expected "煊" but got ""
+PASS U+714A 煊 煊 FD F0 
 PASS U+714B 煋 煋 DE 7A 
 PASS U+714C 煌 煌 B7 D7 
 PASS U+714D 煍 煍 DE A2 
 PASS U+714E 煎 煎 B7 CE 
-FAIL U+714F 煏 煏 FD F4 assert_equals: expected "煏" but got ""
+PASS U+714F 煏 煏 FD F4 
 PASS U+7150 煐 煐 DE 7D 
 PASS U+7152 煒 煒 DE 6D 
 PASS U+7153 煓 煓 DE 7E 
@@ -6835,7 +6835,7 @@ PASS U+718F 熏 熏 E2 C0
 PASS U+7190 熐 熐 E2 BB 
 PASS U+7192 熒 熒 BA B7 
 PASS U+7194 熔 熔 BA B2 
-FAIL U+7196 熖 熖 FD EB assert_equals: expected "熖" but got ""
+PASS U+7196 熖 熖 FD EB 
 PASS U+7197 熗 熗 E2 C4 
 PASS U+7199 熙 熙 BA B3 
 PASS U+719A 熚 熚 E6 67 
@@ -6858,11 +6858,11 @@ PASS U+71B0 熰 熰 E6 65
 PASS U+71B1 熱 熱 BC F6 
 PASS U+71B2 熲 熲 E6 62 
 PASS U+71B3 熳 熳 E6 72 
-FAIL U+71B4 熴 熴 FD EA assert_equals: expected "熴" but got ""
+PASS U+71B4 熴 熴 FD EA 
 PASS U+71B5 熵 熵 E6 69 
 PASS U+71B8 熸 熸 EA 4A 
 PASS U+71B9 熹 熹 BF 51 
-FAIL U+71BA 熺 熺 FD FB assert_equals: expected "熺" but got ""
+PASS U+71BA 熺 熺 FD FB 
 PASS U+71BC 熼 熼 EA 55 
 PASS U+71BD 熽 熽 EA 53 
 PASS U+71BE 熾 熾 BF 4B 
@@ -6891,7 +6891,7 @@ PASS U+71D9 燙 燙 BF 53
 PASS U+71DA 燚 燚 EA 57 
 PASS U+71DB 燛 燛 EA 58 
 PASS U+71DC 燜 燜 BF 54 
-FAIL U+71DD 燝 燝 FA CF assert_equals: expected "燝" but got ""
+PASS U+71DD 燝 燝 FA CF 
 PASS U+71DF 營 營 C0 E7 
 PASS U+71E0 燠 燠 C0 EE 
 PASS U+71E1 燡 燡 ED 5C 
@@ -6924,11 +6924,11 @@ PASS U+7207 爇 爇 F2 6B
 PASS U+720A 爊 爊 F2 6A 
 PASS U+720C 爌 爌 F2 69 
 PASS U+720D 爍 爍 C3 7B 
-FAIL U+720E 爎 爎 FD FE assert_equals: expected "爎" but got ""
+PASS U+720E 爎 爎 FD FE 
 PASS U+7210 爐 爐 C4 6C 
 PASS U+7213 爓 爓 F4 6A 
 PASS U+7214 爔 爔 F4 6B 
-FAIL U+7215 爕 爕 FE 41 assert_equals: expected "爕" but got ""
+PASS U+7215 爕 爕 FE 41 
 PASS U+7219 爙 爙 F5 DC 
 PASS U+721A 爚 爚 F5 DB 
 PASS U+721B 爛 爛 C4 EA 
@@ -6937,7 +6937,7 @@ PASS U+721E 爞 爞 F6 EC
 PASS U+721F 爟 爟 F6 ED 
 PASS U+7222 爢 爢 F7 E6 
 PASS U+7223 爣 爣 F8 B1 
-FAIL U+7224 爤 爤 FE 44 assert_equals: expected "爤" but got ""
+PASS U+7224 爤 爤 FE 44 
 PASS U+7226 爦 爦 F8 F6 
 PASS U+7227 爧 爧 F9 BC 
 PASS U+7228 爨 爨 C6 79 
@@ -6945,7 +6945,7 @@ PASS U+7229 爩 爩 F9 C6
 PASS U+722A 爪 爪 A4 F6 
 PASS U+722C 爬 爬 AA A6 
 PASS U+722D 爭 爭 AA A7 
-FAIL U+722E 爮 爮 FE 47 assert_equals: expected "爮" but got ""
+PASS U+722E 爮 爮 FE 47 
 PASS U+7230 爰 爰 AC B8 
 PASS U+7235 爵 爵 C0 EF 
 PASS U+7236 父 父 A4 F7 
@@ -6956,7 +6956,7 @@ PASS U+723B 爻 爻 A4 F8
 PASS U+723D 爽 爽 B2 6E 
 PASS U+723E 爾 爾 BA B8 
 PASS U+723F 爿 爿 C9 62 
-FAIL U+7240 牀 牀 FE 48 assert_equals: expected "牀" but got ""
+PASS U+7240 牀 牀 FE 48 
 PASS U+7241 牁 牁 CF B7 
 PASS U+7242 牂 牂 D2 7D 
 PASS U+7244 牄 牄 E2 C5 
@@ -6970,9 +6970,9 @@ PASS U+724C 牌 牌 B5 50
 PASS U+724F 牏 牏 DE A4 
 PASS U+7252 牒 牒 B7 DE 
 PASS U+7253 牓 牓 E2 C6 
-FAIL U+7255 牕 牕 FE 4B assert_equals: expected "牕" but got ""
+PASS U+7255 牕 牕 FE 4B 
 PASS U+7256 牖 牖 BC F8 
-FAIL U+7257 牗 牗 FE 4C assert_equals: expected "牗" but got ""
+PASS U+7257 牗 牗 FE 4C 
 PASS U+7258 牘 牘 C3 7C 
 PASS U+7259 牙 牙 A4 FA 
 PASS U+725A 牚 牚 DA 67 
@@ -7005,7 +7005,7 @@ PASS U+727E 牾 牾 D6 5C
 PASS U+727F 牿 牿 D6 5F 
 PASS U+7280 犀 犀 B5 52 
 PASS U+7281 犁 犁 B2 70 
-FAIL U+7282 犂 犂 FE 51 assert_equals: expected "犂" but got ""
+PASS U+7282 犂 犂 FE 51 
 PASS U+7284 犄 犄 B5 51 
 PASS U+7285 犅 犅 DA 6B 
 PASS U+7286 犆 犆 DA 6A 
@@ -7114,12 +7114,12 @@ PASS U+7323 猣 猣 DA 77
 PASS U+7325 猥 猥 B5 54 
 PASS U+7326 猦 猦 DA 76 
 PASS U+7327 猧 猧 DA 73 
-FAIL U+7328 猨 猨 FE 58 assert_equals: expected "猨" but got ""
+PASS U+7328 猨 猨 FE 58 
 PASS U+7329 猩 猩 B5 56 
-FAIL U+732A 猪 猪 FE 52 assert_equals: expected "猪" but got ""
-FAIL U+732B 猫 猫 FE 53 assert_equals: expected "猫" but got ""
+PASS U+732A 猪 猪 FE 52 
+PASS U+732B 猫 猫 FE 53 
 PASS U+732D 猭 猭 DA 75 
-FAIL U+732E 献 献 FE 59 assert_equals: expected "献" but got ""
+PASS U+732E 献 献 FE 59 
 PASS U+7330 猰 猰 DA 6F 
 PASS U+7331 猱 猱 DA 71 
 PASS U+7332 猲 猲 DA 74 
@@ -7199,7 +7199,7 @@ PASS U+7394 玔 玔 CB 6B
 PASS U+7395 玕 玕 CB 68 
 PASS U+7396 玖 玖 A8 68 
 PASS U+7397 玗 玗 CB 69 
-FAIL U+739C 玜 玜 FA E1 assert_equals: expected "玜" but got ""
+PASS U+739C 玜 玜 FA E1 
 PASS U+739D 玝 玝 CD 6D 
 PASS U+739F 玟 玟 AA B3 
 PASS U+73A0 玠 玠 CD 6B 
@@ -7208,10 +7208,10 @@ PASS U+73A2 玢 玢 CD 6A
 PASS U+73A4 玤 玤 CD 66 
 PASS U+73A5 玥 玥 AA B5 
 PASS U+73A6 玦 玦 CD 69 
-FAIL U+73A7 玧 玧 FA DE assert_equals: expected "玧" but got ""
+PASS U+73A7 玧 玧 FA DE 
 PASS U+73A8 玨 玨 AA B2 
 PASS U+73A9 玩 玩 AA B1 
-FAIL U+73AA 玪 玪 FE 5B assert_equals: expected "玪" but got ""
+PASS U+73AA 玪 玪 FE 5B 
 PASS U+73AB 玫 玫 AA B4 
 PASS U+73AC 玬 玬 CD 6C 
 PASS U+73AD 玭 玭 CD 68 
@@ -7234,17 +7234,17 @@ PASS U+73C5 珅 珅 CF CA
 PASS U+73C6 珆 珆 CF D4 
 PASS U+73C7 珇 珇 CF D1 
 PASS U+73C8 珈 珈 CF C9 
-FAIL U+73C9 珉 珉 FE 5E assert_equals: expected "珉" but got ""
+PASS U+73C9 珉 珉 FE 5E 
 PASS U+73CA 珊 珊 AC C0 
 PASS U+73CB 珋 珋 CF D6 
 PASS U+73CC 珌 珌 CF C7 
 PASS U+73CD 珍 珍 AC C3 
-FAIL U+73CE 珎 珎 FB D7 assert_equals: expected "珎" but got ""
-FAIL U+73CF 珏 珏 FE 5A assert_equals: expected "珏" but got ""
+PASS U+73CE 珎 珎 FB D7 
+PASS U+73CF 珏 珏 FE 5A 
 PASS U+73D2 珒 珒 D2 B4 
 PASS U+73D3 珓 珓 D2 AB 
 PASS U+73D4 珔 珔 D2 B6 
-FAIL U+73D5 珕 珕 FA CA assert_equals: expected "珕" but got ""
+PASS U+73D5 珕 珕 FA CA 
 PASS U+73D6 珖 珖 D2 AE 
 PASS U+73D7 珗 珗 D2 B9 
 PASS U+73D8 珘 珘 D2 BA 
@@ -7256,7 +7256,7 @@ PASS U+73DD 珝 珝 D2 B7
 PASS U+73DE 珞 珞 AF 5F 
 PASS U+73E0 珠 珠 AF 5D 
 PASS U+73E3 珣 珣 D2 B1 
-FAIL U+73E4 珤 珤 FE 74 assert_equals: expected "珤" but got ""
+PASS U+73E4 珤 珤 FE 74 
 PASS U+73E5 珥 珥 D2 AD 
 PASS U+73E7 珧 珧 D2 B0 
 PASS U+73E8 珨 珨 D2 BB 
@@ -7265,11 +7265,11 @@ PASS U+73EA 珪 珪 AF 5E
 PASS U+73EB 珫 珫 CF CF 
 PASS U+73ED 班 班 AF 5A 
 PASS U+73EE 珮 珮 AF 5C 
-FAIL U+73EF 珯 珯 FA 46 assert_equals: expected "珯" but got ""
+PASS U+73EF 珯 珯 FA 46 
 PASS U+73F4 珴 珴 D6 78 
 PASS U+73F5 珵 珵 D6 6D 
 PASS U+73F6 珶 珶 D6 6B 
-FAIL U+73F7 珷 珷 FE 68 assert_equals: expected "珷" but got ""
+PASS U+73F7 珷 珷 FE 68 
 PASS U+73F8 珸 珸 D6 6C 
 PASS U+73FA 珺 珺 D6 73 
 PASS U+73FC 珼 珼 D6 74 
@@ -7289,9 +7289,9 @@ PASS U+740A 琊 琊 B2 78
 PASS U+740B 琋 琋 D6 77 
 PASS U+740C 琌 琌 D6 76 
 PASS U+740D 琍 琍 B2 7C 
-FAIL U+7415 琕 琕 FE 69 assert_equals: expected "琕" but got ""
+PASS U+7415 琕 琕 FE 69 
 PASS U+7416 琖 琖 DA 7E 
-FAIL U+7417 琗 琗 FB 45 assert_equals: expected "琗" but got ""
+PASS U+7417 琗 琗 FB 45 
 PASS U+741A 琚 琚 DA A1 
 PASS U+741B 琛 琛 B5 60 
 PASS U+741D 琝 琝 DA A7 
@@ -7317,7 +7317,7 @@ PASS U+7433 琳 琳 B5 59
 PASS U+7434 琴 琴 B5 5E 
 PASS U+7435 琵 琵 B5 5C 
 PASS U+7436 琶 琶 B5 5D 
-FAIL U+7439 琹 琹 FE 6C assert_equals: expected "琹" but got ""
+PASS U+7439 琹 琹 FE 6C 
 PASS U+743A 琺 琺 B5 57 
 PASS U+743F 琿 琿 B7 E9 
 PASS U+7440 瑀 瑀 DE B7 
@@ -7325,8 +7325,8 @@ PASS U+7441 瑁 瑁 B7 E8
 PASS U+7442 瑂 瑂 DE BB 
 PASS U+7444 瑄 瑄 DE B1 
 PASS U+7446 瑆 瑆 DE BC 
-FAIL U+7447 瑇 瑇 FE 73 assert_equals: expected "瑇" but got ""
-FAIL U+7449 瑉 瑉 FE 5F assert_equals: expected "瑉" but got ""
+PASS U+7447 瑇 瑇 FE 73 
+PASS U+7449 瑉 瑉 FE 5F 
 PASS U+744A 瑊 瑊 DE B2 
 PASS U+744B 瑋 瑋 DE B3 
 PASS U+744D 瑍 瑍 DE BD 
@@ -7335,7 +7335,7 @@ PASS U+744F 瑏 瑏 DE B8
 PASS U+7450 瑐 瑐 DE B9 
 PASS U+7451 瑑 瑑 DE B5 
 PASS U+7452 瑒 瑒 DE B4 
-FAIL U+7453 瑓 瑓 FD BD assert_equals: expected "瑓" but got ""
+PASS U+7453 瑓 瑓 FD BD 
 PASS U+7454 瑔 瑔 DE BE 
 PASS U+7455 瑕 瑕 B7 E5 
 PASS U+7457 瑗 瑗 DE B6 
@@ -7343,18 +7343,18 @@ PASS U+7459 瑙 瑙 B7 EA
 PASS U+745A 瑚 瑚 B7 E4 
 PASS U+745B 瑛 瑛 B7 EB 
 PASS U+745C 瑜 瑜 B7 EC 
-FAIL U+745D 瑝 瑝 FE B9 assert_equals: expected "瑝" but got ""
+PASS U+745D 瑝 瑝 FE B9 
 PASS U+745E 瑞 瑞 B7 E7 
 PASS U+745F 瑟 瑟 B7 E6 
-FAIL U+7460 瑠 瑠 FE 71 assert_equals: expected "瑠" but got ""
+PASS U+7460 瑠 瑠 FE 71 
 PASS U+7462 瑢 瑢 E2 CE 
 PASS U+7463 瑣 瑣 BA BE 
 PASS U+7464 瑤 瑤 BA BD 
-FAIL U+7465 瑥 瑥 FB BB assert_equals: expected "瑥" but got ""
+PASS U+7465 瑥 瑥 FB BB 
 PASS U+7467 瑧 瑧 E2 D3 
 PASS U+7469 瑩 瑩 BC FC 
 PASS U+746A 瑪 瑪 BA BF 
-FAIL U+746C 瑬 瑬 FE 77 assert_equals: expected "瑬" but got ""
+PASS U+746C 瑬 瑬 FE 77 
 PASS U+746D 瑭 瑭 BA C1 
 PASS U+746E 瑮 瑮 E2 D4 
 PASS U+746F 瑯 瑯 B7 E3 
@@ -7362,9 +7362,9 @@ PASS U+7470 瑰 瑰 BA C0
 PASS U+7471 瑱 瑱 E2 D0 
 PASS U+7472 瑲 瑲 E2 D2 
 PASS U+7473 瑳 瑳 E2 CF 
-FAIL U+7474 瑴 瑴 FE 79 assert_equals: expected "瑴" but got ""
+PASS U+7474 瑴 瑴 FE 79 
 PASS U+7475 瑵 瑵 E2 D1 
-FAIL U+7476 瑶 瑶 FE 75 assert_equals: expected "瑶" but got ""
+PASS U+7476 瑶 瑶 FE 75 
 PASS U+7479 瑹 瑹 E6 AB 
 PASS U+747C 瑼 瑼 E6 AA 
 PASS U+747D 瑽 瑽 E6 A7 
@@ -7372,7 +7372,7 @@ PASS U+747E 瑾 瑾 BD 40
 PASS U+747F 瑿 瑿 EA 62 
 PASS U+7480 璀 璀 BD 41 
 PASS U+7481 璁 璁 E6 A6 
-FAIL U+7482 璂 璂 FE 7C assert_equals: expected "璂" but got ""
+PASS U+7482 璂 璂 FE 7C 
 PASS U+7483 璃 璃 BC FE 
 PASS U+7485 璅 璅 E6 A8 
 PASS U+7486 璆 璆 E6 A5 
@@ -7394,7 +7394,7 @@ PASS U+749F 璟 璟 BF 5B
 PASS U+74A0 璠 璠 EA 64 
 PASS U+74A1 璡 璡 EA 68 
 PASS U+74A3 璣 璣 BF 59 
-FAIL U+74A4 璤 璤 FC 71 assert_equals: expected "璤" but got ""
+PASS U+74A4 璤 璤 FC 71 
 PASS U+74A5 璥 璥 ED 6D 
 PASS U+74A6 璦 璦 C0 F5 
 PASS U+74A7 璧 璧 C2 7A 
@@ -7421,7 +7421,7 @@ PASS U+74C1 瓁 瓁 F0 43
 PASS U+74C2 瓂 瓂 F0 47 
 PASS U+74C3 瓃 瓃 F2 76 
 PASS U+74C5 瓅 瓅 F2 74 
-FAIL U+74C8 瓈 瓈 FE A7 assert_equals: expected "瓈" but got ""
+PASS U+74C8 瓈 瓈 FE A7 
 PASS U+74CA 瓊 瓊 C3 A3 
 PASS U+74CB 瓋 瓋 F2 73 
 PASS U+74CF 瓏 瓏 C4 6E 
@@ -7465,7 +7465,7 @@ PASS U+7508 甈 甈 E6 AC
 PASS U+750B 甋 甋 EA 69 
 PASS U+750C 甌 甌 BF 5E 
 PASS U+750D 甍 甍 BF 5F 
-FAIL U+750E 甎 甎 FE A9 assert_equals: expected "甎" but got ""
+PASS U+750E 甎 甎 FE A9 
 PASS U+750F 甏 甏 ED 72 
 PASS U+7510 甐 甐 ED 6F 
 PASS U+7511 甑 甑 ED 70 
@@ -7479,7 +7479,7 @@ PASS U+7518 甘 甘 A5 CC
 PASS U+751A 甚 甚 AC C6 
 PASS U+751C 甜 甜 B2 A2 
 PASS U+751D 甝 甝 DE C3 
-FAIL U+751E 甞 甞 FE AB assert_equals: expected "甞" but got ""
+PASS U+751E 甞 甞 FE AB 
 PASS U+751F 生 生 A5 CD 
 PASS U+7521 甡 甡 D2 C0 
 PASS U+7522 產 產 B2 A3 
@@ -7507,10 +7507,10 @@ PASS U+753F 甿 甿 CD 70
 PASS U+7540 畀 畀 CD 71 
 PASS U+7547 畇 畇 CF DA 
 PASS U+7548 畈 畈 CF DB 
-FAIL U+754A 畊 畊 FE B2 assert_equals: expected "畊" but got ""
+PASS U+754A 畊 畊 FE B2 
 PASS U+754B 畋 畋 AC CB 
 PASS U+754C 界 界 AC C9 
-FAIL U+754D 畍 畍 FE B1 assert_equals: expected "畍" but got ""
+PASS U+754D 畍 畍 FE B1 
 PASS U+754E 畎 畎 AC CA 
 PASS U+754F 畏 畏 AC C8 
 PASS U+7554 畔 畔 AF 60 
@@ -7525,11 +7525,11 @@ PASS U+7563 畣 畣 D6 7B
 PASS U+7564 畤 畤 D6 7A 
 PASS U+7565 略 略 B2 A4 
 PASS U+7566 畦 畦 B2 A5 
-FAIL U+7567 畧 畧 FE B3 assert_equals: expected "畧" but got ""
+PASS U+7567 畧 畧 FE B3 
 PASS U+756A 番 番 B5 66 
 PASS U+756B 畫 畫 B5 65 
 PASS U+756C 畬 畬 DA AE 
-FAIL U+756E 畮 畮 FE B4 assert_equals: expected "畮" but got ""
+PASS U+756E 畮 畮 FE B4 
 PASS U+756F 畯 畯 DA AD 
 PASS U+7570 異 異 B2 A7 
 PASS U+7576 當 當 B7 ED 
@@ -7546,18 +7546,18 @@ PASS U+7587 疇 疇 C3 A5
 PASS U+758A 疊 疊 C5 7C 
 PASS U+758B 疋 疋 A5 D4 
 PASS U+758C 疌 疌 CD 73 
-FAIL U+758E 疎 疎 FE B8 assert_equals: expected "疎" but got ""
+PASS U+758E 疎 疎 FE B8 
 PASS U+758F 疏 疏 B2 A8 
 PASS U+7590 疐 疐 E2 D9 
 PASS U+7591 疑 疑 BA C3 
-FAIL U+7592 疒 疒 C6 D4 assert_equals: expected "疒" but got ""
+PASS U+7592 疒 疒 C6 D4 
 PASS U+7594 疔 疔 CB 6F 
 PASS U+7595 疕 疕 CB 70 
 PASS U+7598 疘 疘 CD 74 
 PASS U+7599 疙 疙 AA B8 
 PASS U+759A 疚 疚 AA B9 
 PASS U+759D 疝 疝 AA B7 
-FAIL U+759E 疞 疞 FE BA assert_equals: expected "疞" but got ""
+PASS U+759E 疞 疞 FE BA 
 PASS U+75A2 疢 疢 AC CF 
 PASS U+75A3 疣 疣 AC D0 
 PASS U+75A4 疤 疤 AC CD 
@@ -7568,7 +7568,7 @@ PASS U+75AB 疫 疫 AC CC
 PASS U+75B0 疰 疰 D2 C3 
 PASS U+75B2 疲 疲 AF 68 
 PASS U+75B3 疳 疳 AF 69 
-FAIL U+75B4 疴 疴 FE BB assert_equals: expected "疴" but got ""
+PASS U+75B4 疴 疴 FE BB 
 PASS U+75B5 疵 疵 B2 AB 
 PASS U+75B6 疶 疶 D2 C9 
 PASS U+75B8 疸 疸 AF 6E 
@@ -7631,7 +7631,7 @@ PASS U+75FE 痾 痾 DE CB
 PASS U+75FF 痿 痿 B7 F5 
 PASS U+7600 瘀 瘀 B7 EF 
 PASS U+7601 瘁 瘁 B7 F1 
-FAIL U+7602 瘂 瘂 FE BC assert_equals: expected "瘂" but got ""
+PASS U+7602 瘂 瘂 FE BC 
 PASS U+7603 瘃 瘃 DE C9 
 PASS U+7608 瘈 瘈 E2 DB 
 PASS U+7609 瘉 瘉 BA C7 
@@ -7663,7 +7663,7 @@ PASS U+7626 瘦 瘦 BD 47
 PASS U+7627 瘧 瘧 BA C4 
 PASS U+7628 瘨 瘨 E6 B6 
 PASS U+7629 瘩 瘩 BD 44 
-FAIL U+762C 瘬 瘬 FE BD assert_equals: expected "瘬" but got ""
+PASS U+762C 瘬 瘬 FE BD 
 PASS U+762D 瘭 瘭 EA 6C 
 PASS U+762F 瘯 瘯 EA 6B 
 PASS U+7630 瘰 瘰 EA 73 
@@ -7683,9 +7683,9 @@ PASS U+7647 癇 癇 ED 77
 PASS U+7648 癈 癈 ED 75 
 PASS U+7649 癉 癉 ED 76 
 PASS U+764C 癌 癌 C0 F9 
-FAIL U+764F 癏 癏 FE BF assert_equals: expected "癏" but got ""
+PASS U+764F 癏 癏 FE BF 
 PASS U+7650 癐 癐 F0 4D 
-FAIL U+7651 癑 癑 FE BE assert_equals: expected "癑" but got ""
+PASS U+7651 癑 癑 FE BE 
 PASS U+7652 癒 癒 C2 A1 
 PASS U+7653 癓 癓 F0 4E 
 PASS U+7656 癖 癖 C2 7D 
@@ -7705,12 +7705,12 @@ PASS U+766A 癪 癪 F5 DF
 PASS U+766C 癬 癬 C5 7E 
 PASS U+766D 癭 癭 F6 F4 
 PASS U+766E 癮 癮 C5 7D 
-FAIL U+766F 癯 癯 FE C0 assert_equals: expected "癯" but got ""
+PASS U+766F 癯 癯 FE C0 
 PASS U+7670 癰 癰 F7 EA 
 PASS U+7671 癱 癱 C5 F5 
 PASS U+7672 癲 癲 C5 F6 
 PASS U+7675 癵 癵 F9 CC 
-FAIL U+7676 癶 癶 C6 D5 assert_equals: expected "癶" but got ""
+PASS U+7676 癶 癶 C6 D5 
 PASS U+7678 癸 癸 AC D1 
 PASS U+7679 癹 癹 CF DE 
 PASS U+767B 登 登 B5 6E 
@@ -7729,7 +7729,7 @@ PASS U+768A 皊 皊 D2 CB
 PASS U+768B 皋 皋 AF 6F 
 PASS U+768E 皎 皎 B2 AE 
 PASS U+768F 皏 皏 D6 A5 
-FAIL U+7690 皐 皐 FE C3 assert_equals: expected "皐" but got ""
+PASS U+7690 皐 皐 FE C3 
 PASS U+7692 皒 皒 DA B8 
 PASS U+7693 皓 皓 B5 71 
 PASS U+7695 皕 皕 DA B7 
@@ -7740,9 +7740,9 @@ PASS U+769B 皛 皛 E6 BB
 PASS U+769C 皜 皜 E6 B8 
 PASS U+769D 皝 皝 E6 B9 
 PASS U+769E 皞 皞 E6 BA 
-FAIL U+76A1 皡 皡 FE C8 assert_equals: expected "皡" but got ""
+PASS U+76A1 皡 皡 FE C8 
 PASS U+76A4 皤 皤 ED 78 
-FAIL U+76A5 皥 皥 FE C9 assert_equals: expected "皥" but got ""
+PASS U+76A5 皥 皥 FE C9 
 PASS U+76A6 皦 皦 F0 51 
 PASS U+76AA 皪 皪 F4 71 
 PASS U+76AB 皫 皫 F4 70 
@@ -7752,7 +7752,7 @@ PASS U+76AF 皯 皯 CD 75
 PASS U+76B0 皰 皰 AF 70 
 PASS U+76B4 皴 皴 B5 72 
 PASS U+76B5 皵 皵 DE D6 
-FAIL U+76B7 皷 皷 FE CA assert_equals: expected "皷" but got ""
+PASS U+76B7 皷 皷 FE CA 
 PASS U+76B8 皸 皸 E2 E1 
 PASS U+76BA 皺 皺 BD 4B 
 PASS U+76BB 皻 皻 EA 74 
@@ -7767,7 +7767,7 @@ PASS U+76C6 盆 盆 AC D6
 PASS U+76C8 盈 盈 AC D5 
 PASS U+76C9 盉 盉 D2 CC 
 PASS U+76CA 益 益 AF 71 
-FAIL U+76CC 盌 盌 FE CB assert_equals: expected "盌" but got ""
+PASS U+76CC 盌 盌 FE CB 
 PASS U+76CD 盍 盍 AF 72 
 PASS U+76CE 盎 盎 AF 73 
 PASS U+76D2 盒 盒 B2 B0 
@@ -7822,13 +7822,13 @@ PASS U+7719 眙 眙 D2 D5
 PASS U+771A 眚 眚 D2 D6 
 PASS U+771B 眛 眛 D2 CE 
 PASS U+771D 眝 眝 D2 CD 
-FAIL U+771E 眞 眞 FE D1 assert_equals: expected "眞" but got ""
+PASS U+771E 眞 眞 FE D1 
 PASS U+771F 真 真 AF 75 
 PASS U+7720 眠 眠 AF 76 
 PASS U+7722 眢 眢 D2 D7 
 PASS U+7723 眣 眣 D2 D2 
 PASS U+7725 眥 眥 D6 B0 
-FAIL U+7726 眦 眦 FE D2 assert_equals: expected "眦" but got ""
+PASS U+7726 眦 眦 FE D2 
 PASS U+7727 眧 眧 D2 D8 
 PASS U+7728 眨 眨 AF 77 
 PASS U+7729 眩 眩 AF 74 
@@ -7848,7 +7848,7 @@ PASS U+773B 眻 眻 D6 B1
 PASS U+773C 眼 眼 B2 B4 
 PASS U+773D 眽 眽 D6 AF 
 PASS U+773E 眾 眾 B2 B3 
-FAIL U+7740 着 着 FE D3 assert_equals: expected "着" but got ""
+PASS U+7740 着 着 FE D3 
 PASS U+7744 睄 睄 DA BC 
 PASS U+7745 睅 睅 DA BE 
 PASS U+7746 睆 睆 DA BA 
@@ -7863,7 +7863,7 @@ PASS U+7752 睒 睒 DE DB
 PASS U+7754 睔 睔 DE E0 
 PASS U+7755 睕 睕 DE D8 
 PASS U+7756 睖 睖 DE DC 
-FAIL U+7758 睘 睘 FE D6 assert_equals: expected "睘" but got ""
+PASS U+7758 睘 睘 FE D6 
 PASS U+7759 睙 睙 DE E1 
 PASS U+775A 睚 睚 DE DD 
 PASS U+775B 睛 睛 B7 FA 
@@ -7925,7 +7925,7 @@ PASS U+77AA 瞪 瞪 C0 FC
 PASS U+77AB 瞫 瞫 ED 7B 
 PASS U+77AC 瞬 瞬 C0 FE 
 PASS U+77AD 瞭 瞭 C1 41 
-FAIL U+77AF 瞯 瞯 FE D8 assert_equals: expected "瞯" but got ""
+PASS U+77AF 瞯 瞯 FE D8 
 PASS U+77B0 瞰 瞰 C0 FD 
 PASS U+77B1 瞱 瞱 ED A2 
 PASS U+77B2 瞲 瞲 ED 7C 
@@ -7941,7 +7941,7 @@ PASS U+77BD 瞽 瞽 C2 A2
 PASS U+77BF 瞿 瞿 C2 A3 
 PASS U+77C2 矂 矂 F0 54 
 PASS U+77C4 矄 矄 F2 7B 
-FAIL U+77C5 矅 矅 FC E8 assert_equals: expected "矅" but got ""
+PASS U+77C5 矅 矅 FC E8 
 PASS U+77C7 矇 矇 C3 A9 
 PASS U+77C9 矉 矉 F2 79 
 PASS U+77CA 矊 矊 F2 7A 
@@ -7964,7 +7964,7 @@ PASS U+77E0 矠 矠 DE E3
 PASS U+77E2 矢 矢 A5 DA 
 PASS U+77E3 矣 矣 A8 6F 
 PASS U+77E5 知 知 AA BE 
-FAIL U+77E6 矦 矦 FA D8 assert_equals: expected "矦" but got ""
+PASS U+77E6 矦 矦 FA D8 
 PASS U+77E7 矧 矧 CF E8 
 PASS U+77E8 矨 矨 CF E9 
 PASS U+77E9 矩 矩 AF 78 
@@ -7976,7 +7976,7 @@ PASS U+77F0 矰 矰 ED A4
 PASS U+77F1 矱 矱 F2 7C 
 PASS U+77F2 矲 矲 F4 78 
 PASS U+77F3 石 石 A5 DB 
-FAIL U+77F4 矴 矴 FE DC assert_equals: expected "矴" but got ""
+PASS U+77F4 矴 矴 FE DC 
 PASS U+77F7 矷 矷 CD A1 
 PASS U+77F8 矸 矸 CD 7A 
 PASS U+77F9 矹 矹 CD 7C 
@@ -8023,7 +8023,7 @@ PASS U+7834 破 破 AF 7D
 PASS U+7835 砵 砵 D2 DC 
 PASS U+7837 砷 砷 AF 7E 
 PASS U+7838 砸 砸 AF 7B 
-FAIL U+783C 砼 砼 FA 4F assert_equals: expected "砼" but got ""
+PASS U+783C 砼 砼 FA 4F 
 PASS U+7843 硃 硃 B2 B9 
 PASS U+7845 硅 硅 D6 BA 
 PASS U+7848 硈 硈 D6 B3 
@@ -8091,9 +8091,9 @@ PASS U+78AA 碪 碪 E2 EC
 PASS U+78AB 碫 碫 E2 F1 
 PASS U+78AC 碬 碬 E2 F5 
 PASS U+78AD 碭 碭 E2 EE 
-FAIL U+78AF 碯 碯 FE E1 assert_equals: expected "碯" but got ""
+PASS U+78AF 碯 碯 FE E1 
 PASS U+78B0 碰 碰 B8 49 
-FAIL U+78B1 碱 碱 FE E9 assert_equals: expected "碱" but got ""
+PASS U+78B1 碱 碱 FE E9 
 PASS U+78B2 碲 碲 E2 EB 
 PASS U+78B3 碳 碳 BA D2 
 PASS U+78B4 碴 碴 E2 ED 
@@ -8105,7 +8105,7 @@ PASS U+78C1 磁 磁 BA CF
 PASS U+78C3 磃 磃 E6 C8 
 PASS U+78C4 磄 磄 E6 C9 
 PASS U+78C5 磅 磅 BD 53 
-FAIL U+78C7 磇 磇 FE E2 assert_equals: expected "磇" but got ""
+PASS U+78C7 磇 磇 FE E2 
 PASS U+78C8 磈 磈 E6 C7 
 PASS U+78C9 磉 磉 E6 CA 
 PASS U+78CA 磊 磊 BD 55 
@@ -8116,10 +8116,10 @@ PASS U+78CE 磎 磎 E6 C5
 PASS U+78CF 磏 磏 E6 C2 
 PASS U+78D0 磐 磐 BD 59 
 PASS U+78D1 磑 磑 E6 C4 
-FAIL U+78D3 磓 磓 FE E3 assert_equals: expected "磓" but got ""
+PASS U+78D3 磓 磓 FE E3 
 PASS U+78D4 磔 磔 E6 C6 
 PASS U+78D5 磕 磕 BD 57 
-FAIL U+78D7 磗 磗 FE E7 assert_equals: expected "磗" but got ""
+PASS U+78D7 磗 磗 FE E7 
 PASS U+78DA 磚 磚 BF 6A 
 PASS U+78DB 磛 磛 EA A8 
 PASS U+78DD 磝 磝 EA A2 
@@ -8137,7 +8137,7 @@ PASS U+78EA 磪 磪 EA A5
 PASS U+78EC 磬 磬 BF 6B 
 PASS U+78ED 磭 磭 EA AB 
 PASS U+78EF 磯 磯 C1 46 
-FAIL U+78F1 磱 磱 FB 56 assert_equals: expected "磱" but got ""
+PASS U+78F1 磱 磱 FB 56 
 PASS U+78F2 磲 磲 ED AA 
 PASS U+78F3 磳 磳 ED A5 
 PASS U+78F4 磴 磴 C1 45 
@@ -8179,15 +8179,15 @@ PASS U+792A 礪 礪 C4 72
 PASS U+792B 礫 礫 C4 74 
 PASS U+792C 礬 礬 C4 73 
 PASS U+792D 礭 礭 F5 E1 
-FAIL U+792E 礮 礮 FE E5 assert_equals: expected "礮" but got ""
+PASS U+792E 礮 礮 FE E5 
 PASS U+792F 礯 礯 F5 E3 
 PASS U+7931 礱 礱 F5 E2 
-FAIL U+7934 礴 礴 FE E8 assert_equals: expected "礴" but got ""
+PASS U+7934 礴 礴 FE E8 
 PASS U+7935 礵 礵 F6 F6 
 PASS U+7938 礸 礸 F8 B5 
 PASS U+7939 礹 礹 F8 FA 
 PASS U+793A 示 示 A5 DC 
-FAIL U+793C 礼 礼 FE F7 assert_equals: expected "礼" but got ""
+PASS U+793C 礼 礼 FE F7 
 PASS U+793D 礽 礽 CB 72 
 PASS U+793E 社 社 AA C0 
 PASS U+793F 礿 礿 CD A3 
@@ -8230,7 +8230,7 @@ PASS U+796A 祪 祪 D6 BF
 PASS U+796B 祫 祫 D6 C1 
 PASS U+796D 祭 祭 B2 BD 
 PASS U+7970 祰 祰 DA D5 
-FAIL U+7971 祱 祱 FC 69 assert_equals: expected "祱" but got ""
+PASS U+7971 祱 祱 FC 69 
 PASS U+7972 祲 祲 DA D4 
 PASS U+7973 祳 祳 DA D3 
 PASS U+7974 祴 祴 DA D2 
@@ -8239,10 +8239,10 @@ PASS U+797A 祺 祺 B8 52
 PASS U+797C 祼 祼 DE F3 
 PASS U+797D 祽 祽 DE F5 
 PASS U+797F 祿 祿 B8 53 
-FAIL U+7980 禀 禀 FE F3 assert_equals: expected "禀" but got ""
+PASS U+7980 禀 禀 FE F3 
 PASS U+7981 禁 禁 B8 54 
 PASS U+7982 禂 禂 DE F4 
-FAIL U+7986 禆 禆 FE F0 assert_equals: expected "禆" but got ""
+PASS U+7986 禆 禆 FE F0 
 PASS U+7988 禈 禈 E3 41 
 PASS U+798A 禊 禊 E2 F9 
 PASS U+798B 禋 禋 E2 FA 
@@ -8260,7 +8260,7 @@ PASS U+7998 禘 禘 E2 F8
 PASS U+799A 禚 禚 E6 CB 
 PASS U+799B 禛 禛 E6 D0 
 PASS U+799C 禜 禜 E6 CE 
-FAIL U+799D 禝 禝 FE F5 assert_equals: expected "禝" but got ""
+PASS U+799D 禝 禝 FE F5 
 PASS U+79A0 禠 禠 E6 CD 
 PASS U+79A1 禡 禡 E6 CC 
 PASS U+79A2 禢 禢 E6 CF 
@@ -8268,7 +8268,7 @@ PASS U+79A4 禤 禤 EA AE
 PASS U+79A6 禦 禦 BF 6D 
 PASS U+79A7 禧 禧 C1 48 
 PASS U+79A8 禨 禨 ED B0 
-FAIL U+79A9 禩 禩 FE F8 assert_equals: expected "禩" but got ""
+PASS U+79A9 禩 禩 FE F8 
 PASS U+79AA 禪 禪 C1 49 
 PASS U+79AB 禫 禫 ED AF 
 PASS U+79AC 禬 禬 F0 5F 
@@ -8291,17 +8291,17 @@ PASS U+79BF 禿 禿 A8 72
 PASS U+79C0 秀 秀 A8 71 
 PASS U+79C1 私 私 A8 70 
 PASS U+79C5 秅 秅 CD A4 
-FAIL U+79C6 秆 秆 FE FC assert_equals: expected "秆" but got ""
+PASS U+79C6 秆 秆 FE FC 
 PASS U+79C8 秈 秈 AA C4 
 PASS U+79C9 秉 秉 AA C3 
 PASS U+79CB 秋 秋 AC EE 
-FAIL U+79CC 秌 秌 FD BF assert_equals: expected "秌" but got ""
+PASS U+79CC 秌 秌 FD BF 
 PASS U+79CD 种 种 CF FA 
 PASS U+79CE 秎 秎 CF FD 
 PASS U+79CF 秏 秏 CF FB 
 PASS U+79D1 科 科 AC EC 
 PASS U+79D2 秒 秒 AC ED 
-FAIL U+79D4 秔 秔 FE FE assert_equals: expected "秔" but got ""
+PASS U+79D4 秔 秔 FE FE 
 PASS U+79D5 秕 秕 CF F9 
 PASS U+79D6 秖 秖 CF FC 
 PASS U+79D8 秘 秘 AF B5 
@@ -8647,7 +8647,7 @@ PASS U+7C0E 簎 簎 ED C0
 PASS U+7C0F 簏 簏 ED BB 
 PASS U+7C10 簐 簐 ED CD 
 PASS U+7C11 簑 簑 BF 75 
-FAIL U+7C15 簕 簕 FA B8 assert_equals: expected "簕" but got ""
+PASS U+7C15 簕 簕 FA B8 
 PASS U+7C19 簙 簙 F0 63 
 PASS U+7C1C 簜 簜 F0 61 
 PASS U+7C1D 簝 簝 F0 67 
@@ -9160,7 +9160,7 @@ PASS U+7F8B 羋 羋 AA CB
 PASS U+7F8C 羌 羌 AA CA 
 PASS U+7F8D 羍 羍 D0 4F 
 PASS U+7F8E 美 美 AC FC 
-FAIL U+7F8F 羏 羏 FD A8 assert_equals: expected "羏" but got ""
+PASS U+7F8F 羏 羏 FD A8 
 PASS U+7F91 羑 羑 D0 4E 
 PASS U+7F92 羒 羒 D3 62 
 PASS U+7F94 羔 羔 AF CC 
@@ -9560,7 +9560,7 @@ PASS U+81EA 自 自 A6 DB
 PASS U+81EC 臬 臬 AF E5 
 PASS U+81ED 臭 臭 AF E4 
 PASS U+81EE 臮 臮 DB 53 
-FAIL U+81EF 臯 臯 FE C4 assert_equals: expected "臯" but got ""
+PASS U+81EF 臯 臯 FE C4 
 PASS U+81F2 臲 臲 EA F4 
 PASS U+81F3 至 至 A6 DC 
 PASS U+81F4 致 致 AD 50 
@@ -9599,7 +9599,7 @@ PASS U+8220 舠 舠 CD B1
 PASS U+8221 舡 舡 D0 69 
 PASS U+8222 舢 舢 AD 51 
 PASS U+8225 舥 舥 D3 72 
-FAIL U+8226 舦 舦 FD 77 assert_equals: expected "舦" but got ""
+PASS U+8226 舦 舦 FD 77 
 PASS U+8228 舨 舨 AF EA 
 PASS U+822A 航 航 AF E8 
 PASS U+822B 舫 舫 AF E9 
@@ -9665,7 +9665,7 @@ PASS U+8280 芀 芀 CA 4C
 PASS U+8283 芃 芃 CB A2 
 PASS U+8284 芄 芄 CB A3 
 PASS U+8285 芅 芅 CB 7B 
-FAIL U+8287 芇 芇 FB EE assert_equals: expected "芇" but got ""
+PASS U+8287 芇 芇 FB EE 
 PASS U+828A 芊 芊 CB A1 
 PASS U+828B 芋 芋 A8 A1 
 PASS U+828D 芍 芍 A8 A2 
@@ -9738,7 +9738,7 @@ PASS U+82EA 苪 苪 D0 7E
 PASS U+82EB 苫 苫 D0 73 
 PASS U+82EC 苬 苬 D0 76 
 PASS U+82ED 苭 苭 D0 A5 
-FAIL U+82EE 苮 苮 FA 4D assert_equals: expected "苮" but got ""
+PASS U+82EE 苮 苮 FA 4D 
 PASS U+82EF 苯 苯 AD 66 
 PASS U+82F0 苰 苰 D0 7D 
 PASS U+82F1 英 英 AD 5E 
@@ -9750,7 +9750,7 @@ PASS U+82F6 苶 苶 D0 7C
 PASS U+82F9 苹 苹 D0 6D 
 PASS U+82FA 苺 苺 D0 A3 
 PASS U+82FB 苻 苻 D0 7B 
-FAIL U+82FC 苼 苼 FB E9 assert_equals: expected "苼" but got ""
+PASS U+82FC 苼 苼 FB E9 
 PASS U+82FE 苾 苾 D0 6C 
 PASS U+8300 茀 茀 D0 70 
 PASS U+8301 茁 茁 AD 5F 
@@ -9817,7 +9817,7 @@ PASS U+8352 荒 荒 AF EE
 PASS U+8353 荓 荓 D3 B1 
 PASS U+8354 荔 荔 AF EF 
 PASS U+8356 荖 荖 D3 79 
-FAIL U+8363 荣 荣 FD 55 assert_equals: expected "荣" but got ""
+PASS U+8363 荣 荣 FD 55 
 PASS U+8373 荳 荳 D7 5E 
 PASS U+8374 荴 荴 D7 60 
 PASS U+8375 荵 荵 D7 65 
@@ -9869,7 +9869,7 @@ PASS U+83AB 莫 莫 B2 F6
 PASS U+83AE 莮 莮 D7 78 
 PASS U+83AF 莯 莯 D7 71 
 PASS U+83B0 莰 莰 D7 74 
-FAIL U+83B9 莹 莹 FE 76 assert_equals: expected "莹" but got ""
+PASS U+83B9 莹 莹 FE 76 
 PASS U+83BD 莽 莽 B2 F5 
 PASS U+83BF 莿 莿 DB 6C 
 PASS U+83C0 菀 菀 DB 60 
@@ -9885,7 +9885,7 @@ PASS U+83C9 菉 菉 DB 77
 PASS U+83CA 菊 菊 B5 E2 
 PASS U+83CB 菋 菋 DB 73 
 PASS U+83CC 菌 菌 B5 DF 
-FAIL U+83CD 菍 菍 FA AC assert_equals: expected "菍" but got ""
+PASS U+83CD 菍 菍 FA AC 
 PASS U+83CE 菎 菎 DB 74 
 PASS U+83CF 菏 菏 DB 5D 
 PASS U+83D1 菑 菑 DB A4 
@@ -9945,15 +9945,15 @@ PASS U+8410 萐 萐 DB 67
 PASS U+8411 萑 萑 DB 7B 
 PASS U+8412 萒 萒 DB 62 
 PASS U+8413 萓 萓 DB A6 
-FAIL U+8416 萖 萖 FA 6C assert_equals: expected "萖" but got ""
+PASS U+8416 萖 萖 FA 6C 
 PASS U+841B 萛 萛 DB AE 
 PASS U+8423 萣 萣 DB 5F 
-FAIL U+8424 萤 萤 FC 75 assert_equals: expected "萤" but got ""
+PASS U+8424 萤 萤 FC 75 
 PASS U+8429 萩 萩 DF C7 
 PASS U+842B 萫 萫 DF DD 
 PASS U+842C 萬 萬 B8 55 
 PASS U+842D 萭 萭 DF CC 
-FAIL U+842E 萮 萮 FD B9 assert_equals: expected "萮" but got ""
+PASS U+842E 萮 萮 FD B9 
 PASS U+842F 萯 萯 DF CA 
 PASS U+8430 萰 萰 DF B5 
 PASS U+8431 萱 萱 B8 A9 
@@ -9996,7 +9996,7 @@ PASS U+845E 葞 葞 DF BE
 PASS U+845F 葟 葟 DF CD 
 PASS U+8460 葠 葠 DF DE 
 PASS U+8461 葡 葡 B8 B2 
-FAIL U+8462 葢 葢 FE CD assert_equals: expected "葢" but got ""
+PASS U+8462 葢 葢 FE CD 
 PASS U+8463 董 董 B8 B3 
 PASS U+8465 葥 葥 DF B0 
 PASS U+8466 葦 葦 B8 AB 
@@ -10105,7 +10105,7 @@ PASS U+84FE 蓾 蓾 E7 69
 PASS U+84FF 蓿 蓿 BD B6 
 PASS U+8500 蔀 蔀 E7 4F 
 PASS U+8502 蔂 蔂 E7 6D 
-FAIL U+8505 蔅 蔅 FB A5 assert_equals: expected "蔅" but got ""
+PASS U+8505 蔅 蔅 FB A5 
 PASS U+8506 蔆 蔆 BD B7 
 PASS U+8507 蔇 蔇 DF BD 
 PASS U+8508 蔈 蔈 E7 5B 
@@ -10147,13 +10147,13 @@ PASS U+852E 蔮 蔮 E7 6C
 PASS U+852F 蔯 蔯 E7 7D 
 PASS U+8530 蔰 蔰 E7 7A 
 PASS U+8531 蔱 蔱 E7 71 
-FAIL U+8533 蔳 蔳 FD B4 assert_equals: expected "蔳" but got ""
+PASS U+8533 蔳 蔳 FD B4 
 PASS U+853B 蔻 蔻 E7 4D 
 PASS U+853D 蔽 蔽 BD AA 
 PASS U+853E 蔾 蔾 EB 49 
 PASS U+8540 蕀 蕀 EB 40 
 PASS U+8541 蕁 蕁 EB 43 
-FAIL U+8542 蕂 蕂 FA B9 assert_equals: expected "蕂" but got ""
+PASS U+8542 蕂 蕂 FA B9 
 PASS U+8543 蕃 蕃 BF BB 
 PASS U+8544 蕄 蕄 EB 45 
 PASS U+8545 蕅 蕅 EA F9 
@@ -10162,7 +10162,7 @@ PASS U+8547 蕇 蕇 EB 47
 PASS U+8548 蕈 蕈 BF B8 
 PASS U+8549 蕉 蕉 BF BC 
 PASS U+854A 蕊 蕊 BF B6 
-FAIL U+854C 蕌 蕌 FA 44 assert_equals: expected "蕌" but got ""
+PASS U+854C 蕌 蕌 FA 44 
 PASS U+854D 蕍 蕍 EA FB 
 PASS U+854E 蕎 蕎 EB 4C 
 PASS U+8551 蕑 蕑 EB 46 
@@ -10314,7 +10314,7 @@ PASS U+8609 蘉 蘉 F4 C0
 PASS U+860A 蘊 蘊 C4 AD 
 PASS U+860B 蘋 蘋 C4 AB 
 PASS U+860C 蘌 蘌 F4 C2 
-FAIL U+860D 蘍 蘍 FA BB assert_equals: expected "蘍" but got ""
+PASS U+860D 蘍 蘍 FA BB 
 PASS U+8611 蘑 蘑 C4 A8 
 PASS U+8617 蘗 蘗 C4 F4 
 PASS U+8618 蘘 蘘 F5 F1 
@@ -10583,7 +10583,7 @@ PASS U+8778 蝸 蝸 BD BD
 PASS U+8779 蝹 蝹 EB 64 
 PASS U+877A 蝺 蝺 E7 B7 
 PASS U+877B 蝻 蝻 E7 BC 
-FAIL U+877D 蝽 蝽 FA 7A assert_equals: expected "蝽" but got ""
+PASS U+877D 蝽 蝽 FA 7A 
 PASS U+8781 螁 螁 EB 61 
 PASS U+8782 螂 螂 BD B8 
 PASS U+8783 螃 螃 BF C0 
@@ -10777,7 +10777,7 @@ PASS U+8880 袀 袀 D3 D5
 PASS U+8881 袁 袁 B0 4B 
 PASS U+8882 袂 袂 B0 4C 
 PASS U+8883 袃 袃 D3 D9 
-FAIL U+8884 袄 袄 FE EC assert_equals: expected "袄" but got ""
+PASS U+8884 袄 袄 FE EC 
 PASS U+8888 袈 袈 B3 50 
 PASS U+8889 袉 袉 D7 B2 
 PASS U+888B 袋 袋 B3 55 
@@ -10859,7 +10859,7 @@ PASS U+88FB 裻 裻 E3 FE
 PASS U+88FC 裼 裼 E3 FC 
 PASS U+88FD 製 製 BB 73 
 PASS U+88FE 裾 裾 E3 FA 
-FAIL U+8900 褀 褀 FE F1 assert_equals: expected "褀" but got ""
+PASS U+8900 褀 褀 FE F1 
 PASS U+8901 褁 褁 DB CE 
 PASS U+8902 褂 褂 BB 6F 
 PASS U+8905 褅 褅 E7 C2 
@@ -11883,8 +11883,8 @@ PASS U+8FB0 辰 辰 A8 B0
 PASS U+8FB1 辱 辱 B0 64 
 PASS U+8FB2 農 農 B9 41 
 PASS U+8FB4 辴 辴 F3 5B 
-FAIL U+8FB5 辵 辵 C6 D6 assert_equals: expected "辵" but got ""
-FAIL U+8FB8 辸 辸 FE EB assert_equals: expected "辸" but got ""
+PASS U+8FB5 辵 辵 C6 D6 
+PASS U+8FB8 辸 辸 FE EB 
 PASS U+8FBF 辿 辿 CB A6 
 PASS U+8FC2 迂 迂 A8 B1 
 PASS U+8FC4 迄 迄 A8 B4 
@@ -12269,7 +12269,7 @@ PASS U+91D1 金 金 AA F7
 PASS U+91D3 釓 釓 D0 C1 
 PASS U+91D4 釔 釔 D0 C0 
 PASS U+91D5 釕 釕 D4 42 
-FAIL U+91D6 釖 釖 FC 5E assert_equals: expected "釖" but got ""
+PASS U+91D6 釖 釖 FC 5E 
 PASS U+91D7 釗 釗 B0 78 
 PASS U+91D8 釘 釘 B0 76 
 PASS U+91D9 釙 釙 B0 7A 
@@ -12338,7 +12338,7 @@ PASS U+9237 鈷 鈷 B9 57
 PASS U+9238 鈸 鈸 B9 59 
 PASS U+9239 鈹 鈹 B9 65 
 PASS U+923A 鈺 鈺 E0 B1 
-FAIL U+923C 鈼 鈼 FC FA assert_equals: expected "鈼" but got ""
+PASS U+923C 鈼 鈼 FC FA 
 PASS U+923D 鈽 鈽 B9 5A 
 PASS U+923E 鈾 鈾 B9 5C 
 PASS U+923F 鈿 鈿 B9 66 
@@ -12454,7 +12454,7 @@ PASS U+92D5 鋕 鋕 E8 78
 PASS U+92D7 鋗 鋗 E8 6D 
 PASS U+92D8 鋘 鋘 E8 6B 
 PASS U+92D9 鋙 鋙 E8 66 
-FAIL U+92DB 鋛 鋛 FA 41 assert_equals: expected "鋛" but got ""
+PASS U+92DB 鋛 鋛 FA 41 
 PASS U+92DD 鋝 鋝 E8 6E 
 PASS U+92DE 鋞 鋞 E8 7B 
 PASS U+92DF 鋟 鋟 E8 6A 
@@ -12525,9 +12525,9 @@ PASS U+9336 錶 錶 BF F6
 PASS U+9338 錸 錸 EB E4 
 PASS U+9339 錹 錹 EB FA 
 PASS U+933C 錼 錼 EB E5 
-FAIL U+9340 鍀 鍀 FC 55 assert_equals: expected "鍀" but got ""
-FAIL U+9341 鍁 鍁 FE 45 assert_equals: expected "鍁" but got ""
-FAIL U+9344 鍄 鍄 FA 4B assert_equals: expected "鍄" but got ""
+PASS U+9340 鍀 鍀 FC 55 
+PASS U+9341 鍁 鍁 FE 45 
+PASS U+9344 鍄 鍄 FA 4B 
 PASS U+9346 鍆 鍆 EB EA 
 PASS U+9347 鍇 鍇 EE D2 
 PASS U+9349 鍉 鍉 EE D7 
@@ -12552,7 +12552,7 @@ PASS U+935C 鍜 鍜 EE D5
 PASS U+935E 鍞 鍞 EE E8 
 PASS U+9360 鍠 鍠 EE DA 
 PASS U+9361 鍡 鍡 EE E7 
-FAIL U+9362 鍢 鍢 FD F5 assert_equals: expected "鍢" but got ""
+PASS U+9362 鍢 鍢 FD F5 
 PASS U+9363 鍣 鍣 EE E9 
 PASS U+9364 鍤 鍤 EE D0 
 PASS U+9365 鍥 鍥 C1 E6 
@@ -12573,7 +12573,7 @@ PASS U+937E 鍾 鍾 C1 E9
 PASS U+9380 鎀 鎀 EE EB 
 PASS U+9382 鎂 鎂 C1 E2 
 PASS U+9383 鎃 鎃 EE CE 
-FAIL U+9385 鎅 鎅 FE B0 assert_equals: expected "鎅" but got ""
+PASS U+9385 鎅 鎅 FE B0 
 PASS U+9388 鎈 鎈 F1 60 
 PASS U+9389 鎉 鎉 F1 59 
 PASS U+938A 鎊 鎊 C2 E9 
@@ -12628,7 +12628,7 @@ PASS U+93CF 鏏 鏏 F3 62
 PASS U+93D0 鏐 鏐 F3 65 
 PASS U+93D1 鏑 鏑 C3 E9 
 PASS U+93D2 鏒 鏒 F3 74 
-FAIL U+93D3 鏓 鏓 FB 79 assert_equals: expected "鏓" but got ""
+PASS U+93D3 鏓 鏓 FB 79 
 PASS U+93D4 鏔 鏔 F3 6D 
 PASS U+93D5 鏕 鏕 F3 70 
 PASS U+93D6 鏖 鏖 C3 EF 
@@ -12649,8 +12649,8 @@ PASS U+93E7 鏧 鏧 F3 75
 PASS U+93E8 鏨 鏨 C3 F5 
 PASS U+93EC 鏬 鏬 F3 67 
 PASS U+93EE 鏮 鏮 F3 6E 
-FAIL U+93F0 鏰 鏰 FD CB assert_equals: expected "鏰" but got ""
-FAIL U+93F1 鏱 鏱 FE 7A assert_equals: expected "鏱" but got ""
+PASS U+93F0 鏰 鏰 FD CB 
+PASS U+93F1 鏱 鏱 FE 7A 
 PASS U+93F5 鏵 鏵 F4 F3 
 PASS U+93F6 鏶 鏶 F5 42 
 PASS U+93F7 鏷 鏷 F4 F5 
@@ -12682,7 +12682,7 @@ PASS U+9415 鐕 鐕 F4 EE
 PASS U+9416 鐖 鐖 F4 F8 
 PASS U+9418 鐘 鐘 C4 C1 
 PASS U+9419 鐙 鐙 F4 F1 
-FAIL U+941B 鐛 鐛 FC 45 assert_equals: expected "鐛" but got ""
+PASS U+941B 鐛 鐛 FC 45 
 PASS U+9420 鐠 鐠 F4 EA 
 PASS U+9428 鐨 鐨 F4 F0 
 PASS U+9429 鐩 鐩 F6 61 
@@ -12705,8 +12705,8 @@ PASS U+943C 鐼 鐼 F6 63
 PASS U+943D 鐽 鐽 F6 62 
 PASS U+943F 鐿 鐿 F6 5E 
 PASS U+9440 鑀 鑀 F6 69 
-FAIL U+9442 鑂 鑂 FE 40 assert_equals: expected "鑂" but got ""
-FAIL U+9443 鑃 鑃 FE 43 assert_equals: expected "鑃" but got ""
+PASS U+9442 鑂 鑂 FE 40 
+PASS U+9443 鑃 鑃 FE 43 
 PASS U+9444 鑄 鑄 C5 B1 
 PASS U+9445 鑅 鑅 F7 6D 
 PASS U+9446 鑆 鑆 F7 70 
@@ -12744,7 +12744,7 @@ PASS U+9475 鑵 鑵 F9 75
 PASS U+9476 鑶 鑶 F9 74 
 PASS U+9477 鑷 鑷 C6 68 
 PASS U+9478 鑸 鑸 F9 73 
-FAIL U+947B 鑻 鑻 FC C1 assert_equals: expected "鑻" but got ""
+PASS U+947B 鑻 鑻 FC C1 
 PASS U+947C 鑼 鑼 C6 72 
 PASS U+947D 鑽 鑽 C6 70 
 PASS U+947E 鑾 鑾 C6 71 
@@ -12919,7 +12919,7 @@ PASS U+969E 隞 隞 E4 BB
 PASS U+96A1 隡 隡 E4 BC 
 PASS U+96A2 隢 隢 E8 AB 
 PASS U+96A4 隤 隤 E8 AA 
-FAIL U+96A5 隥 隥 FE E4 assert_equals: expected "隥" but got ""
+PASS U+96A5 隥 隥 FE E4 
 PASS U+96A7 隧 隧 C0 47 
 PASS U+96A8 隨 隨 C0 48 
 PASS U+96A9 隩 隩 EC 4F 
@@ -12930,7 +12930,7 @@ PASS U+96B0 隰 隰 EE F5
 PASS U+96B1 隱 隱 C1 F4 
 PASS U+96B3 隳 隳 F1 6F 
 PASS U+96B4 隴 隴 C3 F7 
-FAIL U+96B6 隶 隶 C6 D7 assert_equals: expected "隶" but got ""
+PASS U+96B6 隶 隶 C6 D7 
 PASS U+96B8 隸 隸 C1 F5 
 PASS U+96B9 隹 隹 AB 41 
 PASS U+96BB 隻 隻 B0 A6 
@@ -13074,7 +13074,7 @@ PASS U+9782 鞂 鞂 E4 C4
 PASS U+9783 鞃 鞃 E4 C2 
 PASS U+9784 鞄 鞄 E4 C6 
 PASS U+9785 鞅 鞅 BB DF 
-FAIL U+9787 鞇 鞇 FB 58 assert_equals: expected "鞇" but got ""
+PASS U+9787 鞇 鞇 FB 58 
 PASS U+9788 鞈 鞈 E8 B3 
 PASS U+978A 鞊 鞊 E8 B1 
 PASS U+978B 鞋 鞋 BE 63 
@@ -13107,7 +13107,7 @@ PASS U+97B6 鞶 鞶 F3 A3
 PASS U+97B7 鞷 鞷 F3 A2 
 PASS U+97B9 鞹 鞹 F5 4A 
 PASS U+97BB 鞻 鞻 F5 4B 
-FAIL U+97BD 鞽 鞽 FC 52 assert_equals: expected "鞽" but got ""
+PASS U+97BD 鞽 鞽 FC 52 
 PASS U+97BF 鞿 鞿 F6 70 
 PASS U+97C1 韁 韁 C5 B7 
 PASS U+97C3 韃 韃 C5 B6 
@@ -13166,7 +13166,7 @@ PASS U+9810 預 預 B9 77
 PASS U+9811 頑 頑 B9 78 
 PASS U+9812 頒 頒 B9 7B 
 PASS U+9813 頓 頓 B9 79 
-FAIL U+9814 頔 頔 FC BC assert_equals: expected "頔" but got ""
+PASS U+9814 頔 頔 FC BC 
 PASS U+9816 頖 頖 E4 CB 
 PASS U+9817 頗 頗 BB E1 
 PASS U+9818 領 領 BB E2 
@@ -13224,7 +13224,7 @@ PASS U+9867 顧 顧 C5 55
 PASS U+9869 顩 顩 F7 74 
 PASS U+986A 顪 顪 F7 73 
 PASS U+986B 顫 顫 C5 B8 
-FAIL U+986C 顬 顬 FA 6A assert_equals: expected "顬" but got ""
+PASS U+986C 顬 顬 FA 6A 
 PASS U+986F 顯 顯 C5 E3 
 PASS U+9870 顰 顰 C6 49 
 PASS U+9871 顱 顱 C6 60 
@@ -13352,7 +13352,7 @@ PASS U+999D 馝 馝 E4 D1
 PASS U+999E 馞 馞 EC 60 
 PASS U+99A1 馡 馡 EF 57 
 PASS U+99A3 馣 馣 EF 56 
-FAIL U+99A4 馤 馤 FC EA assert_equals: expected "馤" but got ""
+PASS U+99A4 馤 馤 FC EA 
 PASS U+99A5 馥 馥 C3 4C 
 PASS U+99A6 馦 馦 F3 B2 
 PASS U+99A7 馧 馧 F3 B3 
@@ -13643,7 +13643,7 @@ PASS U+9B7D 魽 魽 EC A1
 PASS U+9B7E 魾 魾 EC 77 
 PASS U+9B80 鮀 鮀 EC 73 
 PASS U+9B82 鮂 鮂 EC 79 
-FAIL U+9B83 鮃 鮃 FD A5 assert_equals: expected "鮃" but got ""
+PASS U+9B83 鮃 鮃 FD A5 
 PASS U+9B85 鮅 鮅 EC 74 
 PASS U+9B86 鮆 鮆 EF 72 
 PASS U+9B87 鮇 鮇 EC 75 
@@ -13831,7 +13831,7 @@ PASS U+9D2F 鴯 鴯 EF 7B
 PASS U+9D30 鴰 鴰 EF 7E 
 PASS U+9D31 鴱 鴱 EF 7C 
 PASS U+9D33 鴳 鴳 EF 76 
-FAIL U+9D34 鴴 鴴 FA A1 assert_equals: expected "鴴" but got ""
+PASS U+9D34 鴴 鴴 FA A1 
 PASS U+9D36 鴶 鴶 EF 79 
 PASS U+9D37 鴷 鴷 EF A5 
 PASS U+9D38 鴸 鴸 EF 7D 
@@ -14206,8 +14206,8 @@ PASS U+9F9C 龜 龜 C0 74
 PASS U+9FA0 龠 龠 EF B6 
 PASS U+9FA2 龢 龢 F7 CF 
 PASS U+9FA4 龤 龤 F9 A1 
-FAIL U+9FB0 龰 龰 C8 A1 assert_equals: expected "龰" but got ""
-FAIL U+9FB1 龱 龱 C8 A3 assert_equals: expected "龱" but got ""
+PASS U+9FB0 龰 龰 C8 A1 
+PASS U+9FB1 龱 龱 C8 A3 
 PASS U+FA0C 兀 兀 C9 4A 
 PASS U+FA0D 嗀 嗀 DD FC 
 PASS U+FE30 ︰ ︰ A1 4A 
@@ -14263,12 +14263,12 @@ PASS U+FE69 ﹩ ﹩ A2 4C
 PASS U+FE6A ﹪ ﹪ A2 4D 
 PASS U+FE6B ﹫ ﹫ A2 4E 
 PASS U+FF01 ！ ！ A1 49 
-FAIL U+FF02 ＂ ＂ C8 D0 assert_equals: expected "＂" but got ""
+PASS U+FF02 ＂ ＂ C8 D0 
 PASS U+FF03 ＃ ＃ A1 AD 
 PASS U+FF04 ＄ ＄ A2 43 
 PASS U+FF05 ％ ％ A2 48 
 PASS U+FF06 ＆ ＆ A1 AE 
-FAIL U+FF07 ＇ ＇ C8 CF assert_equals: expected "＇" but got ""
+PASS U+FF07 ＇ ＇ C8 CF 
 PASS U+FF08 （ （ A1 5D 
 PASS U+FF09 ） ） A1 5E 
 PASS U+FF0A ＊ ＊ A1 AF 
@@ -14320,9 +14320,9 @@ PASS U+FF37 Ｗ Ｗ A2 E5
 PASS U+FF38 Ｘ Ｘ A2 E6 
 PASS U+FF39 Ｙ Ｙ A2 E7 
 PASS U+FF3A Ｚ Ｚ A2 E8 
-FAIL U+FF3B ［ ［ C6 E4 assert_equals: expected "［" but got ""
+PASS U+FF3B ［ ［ C6 E4 
 PASS U+FF3C ＼ ＼ A2 40 
-FAIL U+FF3D ］ ］ C6 E5 assert_equals: expected "］" but got ""
+PASS U+FF3D ］ ］ C6 E5 
 PASS U+FF3F ＿ ＿ A1 C4 
 PASS U+FF41 ａ ａ A2 E9 
 PASS U+FF42 ｂ ｂ A2 EA 
@@ -14356,298 +14356,298 @@ PASS U+FF5D ｝ ｝ A1 62
 PASS U+FF5E ～ ～ A1 E3 
 PASS U+FFE0 ￠ ￠ A2 46 
 PASS U+FFE1 ￡ ￡ A2 47 
-FAIL U+FFE2 ￢ ￢ C8 CD assert_equals: expected "￢" but got ""
+PASS U+FFE2 ￢ ￢ C8 CD 
 PASS U+FFE3 ￣ ￣ A1 C3 
-FAIL U+FFE4 ￤ ￤ C8 CE assert_equals: expected "￤" but got ""
+PASS U+FFE4 ￤ ￤ C8 CE 
 PASS U+FFE5 ￥ ￥ A2 44 
-FAIL U+FFED ￭ ￭ F9 FE assert_equals: expected "￭" but got "▓"
-FAIL U+2008A 𠂊 𠂊 C8 7C assert_equals: expected "𠂊" but got ""
-FAIL U+200CC 𠃌 𠃌 C8 7A assert_equals: expected "𠃌" but got ""
-FAIL U+20118 𠄘 𠄘 FC AD assert_equals: expected "𠄘" but got ""
-FAIL U+201C1 𠇁 𠇁 FC 47 assert_equals: expected "𠇁" but got ""
-FAIL U+20204 𠈄 𠈄 FB CB assert_equals: expected "𠈄" but got ""
-FAIL U+2029E 𠊞 𠊞 FC 5F assert_equals: expected "𠊞" but got ""
-FAIL U+202A0 𠊠 𠊠 FA 54 assert_equals: expected "𠊠" but got ""
-FAIL U+202E5 𠋥 𠋥 FA 74 assert_equals: expected "𠋥" but got ""
-FAIL U+20347 𠍇 𠍇 FA 63 assert_equals: expected "𠍇" but got ""
-FAIL U+2037E 𠍾 𠍾 FA 60 assert_equals: expected "𠍾" but got ""
-FAIL U+20380 𠎀 𠎀 FA 62 assert_equals: expected "𠎀" but got ""
-FAIL U+203B5 𠎵 𠎵 FD 6A assert_equals: expected "𠎵" but got ""
-FAIL U+203C9 𠏉 𠏉 FD 54 assert_equals: expected "𠏉" but got ""
-FAIL U+2041F 𠐟 𠐟 FA 65 assert_equals: expected "𠐟" but got ""
-FAIL U+20487 𠒇 𠒇 FA 6E assert_equals: expected "𠒇" but got ""
-FAIL U+20547 𠕇 𠕇 FA 40 assert_equals: expected "𠕇" but got ""
-FAIL U+2058E 𠖎 𠖎 FA 76 assert_equals: expected "𠖎" but got ""
-FAIL U+205A5 𠖥 𠖥 FB D0 assert_equals: expected "𠖥" but got ""
-FAIL U+205B3 𠖳 𠖳 FA 7B assert_equals: expected "𠖳" but got ""
-FAIL U+205C3 𠗃 𠗃 FE 6D assert_equals: expected "𠗃" but got ""
-FAIL U+205DF 𠗟 𠗟 FA 42 assert_equals: expected "𠗟" but got ""
-FAIL U+20656 𠙖 𠙖 FC 7B assert_equals: expected "𠙖" but got ""
-FAIL U+20923 𠤣 𠤣 FD 63 assert_equals: expected "𠤣" but got ""
-FAIL U+20954 𠥔 𠥔 FA C2 assert_equals: expected "𠥔" but got ""
-FAIL U+20B8F 𠮏 𠮏 FA E9 assert_equals: expected "𠮏" but got ""
-FAIL U+20BE2 𠯢 𠯢 FA C6 assert_equals: expected "𠯢" but got ""
-FAIL U+20BFF 𠯿 𠯿 FA 72 assert_equals: expected "𠯿" but got ""
-FAIL U+20C3A 𠰺 𠰺 FE 5C assert_equals: expected "𠰺" but got ""
-FAIL U+20C77 𠱷 𠱷 FA EE assert_equals: expected "𠱷" but got ""
-FAIL U+20CD3 𠳓 𠳓 FB F6 assert_equals: expected "𠳓" but got ""
-FAIL U+20D32 𠴲 𠴲 FD A4 assert_equals: expected "𠴲" but got ""
-FAIL U+20D4D 𠵍 𠵍 FA FE assert_equals: expected "𠵍" but got ""
-FAIL U+20D4E 𠵎 𠵎 FB A7 assert_equals: expected "𠵎" but got ""
-FAIL U+20D74 𠵴 𠵴 FA F6 assert_equals: expected "𠵴" but got ""
-FAIL U+20E75 𠹵 𠹵 FC DE assert_equals: expected "𠹵" but got ""
-FAIL U+20EDD 𠻝 𠻝 FA FC assert_equals: expected "𠻝" but got ""
-FAIL U+210B4 𡂴 𡂴 FB 4E assert_equals: expected "𡂴" but got ""
-FAIL U+2123C 𡈼 𡈼 FB 73 assert_equals: expected "𡈼" but got ""
-FAIL U+2124F 𡉏 𡉏 FB 5F assert_equals: expected "𡉏" but got ""
-FAIL U+21305 𡌅 𡌅 FA 56 assert_equals: expected "𡌅" but got ""
-FAIL U+2133A 𡌺 𡌺 FC 4B assert_equals: expected "𡌺" but got ""
-FAIL U+21376 𡍶 𡍶 FE DE assert_equals: expected "𡍶" but got ""
-FAIL U+2138E 𡎎 𡎎 FC B7 assert_equals: expected "𡎎" but got ""
-FAIL U+21416 𡐖 𡐖 FB 68 assert_equals: expected "𡐖" but got ""
-FAIL U+21454 𡑔 𡑔 FB 6A assert_equals: expected "𡑔" but got ""
-FAIL U+21497 𡒗 𡒗 FD C8 assert_equals: expected "𡒗" but got ""
-FAIL U+21596 𡖖 𡖖 FA D6 assert_equals: expected "𡖖" but got ""
-FAIL U+21613 𡘓 𡘓 FA D7 assert_equals: expected "𡘓" but got ""
-FAIL U+2163E 𡘾 𡘾 FB A1 assert_equals: expected "𡘾" but got ""
-FAIL U+21692 𡚒 𡚒 FB A4 assert_equals: expected "𡚒" but got ""
-FAIL U+216B8 𡚸 𡚸 FB C2 assert_equals: expected "𡚸" but got ""
-FAIL U+216C1 𡛁 𡛁 FE DB assert_equals: expected "𡛁" but got ""
-FAIL U+216D5 𡛕 𡛕 FB B1 assert_equals: expected "𡛕" but got ""
-FAIL U+216E7 𡛧 𡛧 FE 61 assert_equals: expected "𡛧" but got ""
-FAIL U+216E8 𡛨 𡛨 FA CE assert_equals: expected "𡛨" but got ""
-FAIL U+2170D 𡜍 𡜍 FA FB assert_equals: expected "𡜍" but got ""
-FAIL U+21726 𡜦 𡜦 FA C8 assert_equals: expected "𡜦" but got ""
-FAIL U+21770 𡝰 𡝰 FC AF assert_equals: expected "𡝰" but got ""
-FAIL U+21771 𡝱 𡝱 FB FB assert_equals: expected "𡝱" but got ""
-FAIL U+217B2 𡞲 𡞲 FB AD assert_equals: expected "𡞲" but got ""
-FAIL U+217DC 𡟜 𡟜 FB AA assert_equals: expected "𡟜" but got ""
-FAIL U+217FB 𡟻 𡟻 FB AC assert_equals: expected "𡟻" but got ""
-FAIL U+217FC 𡟼 𡟼 FC B8 assert_equals: expected "𡟼" but got ""
-FAIL U+21828 𡠨 𡠨 FB B0 assert_equals: expected "𡠨" but got ""
-FAIL U+21829 𡠩 𡠩 FC D2 assert_equals: expected "𡠩" but got ""
-FAIL U+21877 𡡷 𡡷 FC 63 assert_equals: expected "𡡷" but got ""
-FAIL U+2189E 𡢞 𡢞 FE A6 assert_equals: expected "𡢞" but got ""
-FAIL U+218D7 𡣗 𡣗 FB 49 assert_equals: expected "𡣗" but got ""
-FAIL U+21911 𡤑 𡤑 FB C0 assert_equals: expected "𡤑" but got ""
-FAIL U+21958 𡥘 𡥘 FD 6B assert_equals: expected "𡥘" but got ""
-FAIL U+21983 𡦃 𡦃 FA 78 assert_equals: expected "𡦃" but got ""
-FAIL U+21988 𡦈 𡦈 FE A8 assert_equals: expected "𡦈" but got ""
-FAIL U+219DB 𡧛 𡧛 FA 4C assert_equals: expected "𡧛" but got ""
-FAIL U+21A34 𡨴 𡨴 FB CE assert_equals: expected "𡨴" but got ""
-FAIL U+21A4B 𡩋 𡩋 FE AD assert_equals: expected "𡩋" but got ""
-FAIL U+21B44 𡭄 𡭄 FB D5 assert_equals: expected "𡭄" but got ""
-FAIL U+21CA5 𡲥 𡲥 FB D9 assert_equals: expected "𡲥" but got ""
-FAIL U+21DF9 𡷹 𡷹 FB E1 assert_equals: expected "𡷹" but got ""
-FAIL U+21E1C 𡸜 𡸜 FE D0 assert_equals: expected "𡸜" but got ""
-FAIL U+21E37 𡸷 𡸷 FB E2 assert_equals: expected "𡸷" but got ""
-FAIL U+21E3D 𡸽 𡸽 FC E3 assert_equals: expected "𡸽" but got ""
-FAIL U+21EA4 𡺤 𡺤 FB E6 assert_equals: expected "𡺤" but got ""
-FAIL U+21F6A 𡽪 𡽪 FC 5B assert_equals: expected "𡽪" but got ""
-FAIL U+22049 𢁉 𢁉 FB EC assert_equals: expected "𢁉" but got ""
-FAIL U+220FC 𢃼 𢃼 FA 73 assert_equals: expected "𢃼" but got ""
-FAIL U+2212A 𢄪 𢄪 FD 59 assert_equals: expected "𢄪" but got ""
-FAIL U+22173 𢅳 𢅳 FB ED assert_equals: expected "𢅳" but got ""
-FAIL U+223D0 𢏐 𢏐 FC 4E assert_equals: expected "𢏐" but got ""
-FAIL U+22471 𢑱 𢑱 FC 50 assert_equals: expected "𢑱" but got ""
-FAIL U+2248B 𢒋 𢒋 FD 73 assert_equals: expected "𢒋" but got ""
-FAIL U+22491 𢒑 𢒑 FD A7 assert_equals: expected "𢒑" but got ""
-FAIL U+224ED 𢓭 𢓭 FA 58 assert_equals: expected "𢓭" but got ""
-FAIL U+22513 𢔓 𢔓 FA 5E assert_equals: expected "𢔓" but got ""
-FAIL U+22530 𢔰 𢔰 FA 75 assert_equals: expected "𢔰" but got ""
-FAIL U+22554 𢕔 𢕔 FB BE assert_equals: expected "𢕔" but got ""
-FAIL U+2261C 𢘜 𢘜 FE EF assert_equals: expected "𢘜" but got ""
-FAIL U+22668 𢙨 𢙨 FC 5D assert_equals: expected "𢙨" but got ""
-FAIL U+22698 𢚘 𢚘 FB 41 assert_equals: expected "𢚘" but got ""
-FAIL U+227B4 𢞴 𢞴 FC 68 assert_equals: expected "𢞴" but got ""
-FAIL U+227CD 𢟍 𢟍 FD 67 assert_equals: expected "𢟍" but got ""
-FAIL U+2285F 𢡟 𢡟 FC A1 assert_equals: expected "𢡟" but got ""
-FAIL U+228AD 𢢭 𢢭 FE 70 assert_equals: expected "𢢭" but got ""
-FAIL U+228C1 𢣁 𢣁 FC A8 assert_equals: expected "𢣁" but got ""
-FAIL U+228F7 𢣷 𢣷 FC E9 assert_equals: expected "𢣷" but got ""
-FAIL U+22980 𢦀 𢦀 FC A7 assert_equals: expected "𢦀" but got ""
-FAIL U+22DA3 𢶣 𢶣 FA EC assert_equals: expected "𢶣" but got ""
-FAIL U+22E0D 𢸍 𢸍 FC B1 assert_equals: expected "𢸍" but got ""
-FAIL U+22E36 𢸶 𢸶 FC BB assert_equals: expected "𢸶" but got ""
-FAIL U+23044 𣁄 𣁄 FE 4E assert_equals: expected "𣁄" but got ""
-FAIL U+2304B 𣁋 𣁋 FD C2 assert_equals: expected "𣁋" but got ""
-FAIL U+2307E 𣁾 𣁾 FC CC assert_equals: expected "𣁾" but got ""
-FAIL U+231A4 𣆤 𣆤 FC DB assert_equals: expected "𣆤" but got ""
-FAIL U+231A5 𣆥 𣆥 FC DC assert_equals: expected "𣆥" but got ""
-FAIL U+231C8 𣇈 𣇈 FC E6 assert_equals: expected "𣇈" but got ""
-FAIL U+231F7 𣇷 𣇷 FC D8 assert_equals: expected "𣇷" but got ""
-FAIL U+231F8 𣇸 𣇸 FC D9 assert_equals: expected "𣇸" but got ""
-FAIL U+231F9 𣇹 𣇹 FD A6 assert_equals: expected "𣇹" but got ""
-FAIL U+23231 𣈱 𣈱 FC E4 assert_equals: expected "𣈱" but got ""
-FAIL U+23233 𣈳 𣈳 FA 77 assert_equals: expected "𣈳" but got ""
-FAIL U+2328A 𣊊 𣊊 FB 51 assert_equals: expected "𣊊" but got ""
-FAIL U+232AC 𣊬 𣊬 FE D7 assert_equals: expected "𣊬" but got ""
-FAIL U+233B4 𣎴 𣎴 FA 70 assert_equals: expected "𣎴" but got ""
-FAIL U+233E6 𣏦 𣏦 FC FC assert_equals: expected "𣏦" but got ""
-FAIL U+23400 𣐀 𣐀 FC D6 assert_equals: expected "𣐀" but got ""
-FAIL U+2346F 𣑯 𣑯 FD 40 assert_equals: expected "𣑯" but got ""
-FAIL U+235CD 𣗍 𣗍 FD 46 assert_equals: expected "𣗍" but got ""
-FAIL U+23600 𣘀 𣘀 FA 5C assert_equals: expected "𣘀" but got ""
-FAIL U+2363C 𣘼 𣘼 FD 4B assert_equals: expected "𣘼" but got ""
-FAIL U+23659 𣙙 𣙙 FD 58 assert_equals: expected "𣙙" but got ""
-FAIL U+23703 𣜃 𣜃 FD 5B assert_equals: expected "𣜃" but got ""
-FAIL U+2372D 𣜭 𣜭 FA AE assert_equals: expected "𣜭" but got ""
-FAIL U+237C2 𣟂 𣟂 FC F0 assert_equals: expected "𣟂" but got ""
-FAIL U+23ADB 𣫛 𣫛 FD 69 assert_equals: expected "𣫛" but got ""
-FAIL U+23B5A 𣭚 𣭚 FD 6E assert_equals: expected "𣭚" but got ""
-FAIL U+23C99 𣲙 𣲙 FA 7C assert_equals: expected "𣲙" but got ""
-FAIL U+23CC8 𣳈 𣳈 FA 4E assert_equals: expected "𣳈" but got ""
-FAIL U+23CC9 𣳉 𣳉 FD A1 assert_equals: expected "𣳉" but got ""
-FAIL U+23DBC 𣶼 𣶼 FD 79 assert_equals: expected "𣶼" but got ""
-FAIL U+23DBD 𣶽 𣶽 FD 7B assert_equals: expected "𣶽" but got ""
-FAIL U+23E2F 𣸯 𣸯 FD BC assert_equals: expected "𣸯" but got ""
-FAIL U+23E30 𣸰 𣸰 FD C6 assert_equals: expected "𣸰" but got ""
-FAIL U+23EFC 𣻼 𣻼 FD 70 assert_equals: expected "𣻼" but got ""
-FAIL U+23F80 𣾀 𣾀 FA C1 assert_equals: expected "𣾀" but got ""
-FAIL U+23F82 𣾂 𣾂 FD BE assert_equals: expected "𣾂" but got ""
-FAIL U+23FB4 𣾴 𣾴 FD D9 assert_equals: expected "𣾴" but got ""
-FAIL U+23FB7 𣾷 𣾷 FC 7E assert_equals: expected "𣾷" but got ""
-FAIL U+23FC5 𣿅 𣿅 FA 43 assert_equals: expected "𣿅" but got ""
-FAIL U+23FEB 𣿫 𣿫 FA EB assert_equals: expected "𣿫" but got ""
-FAIL U+23FEC 𣿬 𣿬 FA C3 assert_equals: expected "𣿬" but got ""
-FAIL U+23FF0 𣿰 𣿰 FD D8 assert_equals: expected "𣿰" but got ""
-FAIL U+24039 𤀹 𤀹 FD D7 assert_equals: expected "𤀹" but got ""
-FAIL U+2403A 𤀺 𤀺 FB 4A assert_equals: expected "𤀺" but got ""
-FAIL U+2403D 𤀽 𤀽 FD C9 assert_equals: expected "𤀽" but got ""
-FAIL U+24085 𤂅 𤂅 FD B2 assert_equals: expected "𤂅" but got ""
-FAIL U+2408C 𤂌 𤂌 FC BD assert_equals: expected "𤂌" but got ""
-FAIL U+24091 𤂑 𤂑 FD D5 assert_equals: expected "𤂑" but got ""
-FAIL U+2413F 𤄿 𤄿 FD DA assert_equals: expected "𤄿" but got ""
-FAIL U+24140 𤅀 𤅀 FD DE assert_equals: expected "𤅀" but got ""
-FAIL U+24144 𤅄 𤅄 FD D3 assert_equals: expected "𤅄" but got ""
-FAIL U+24155 𤅕 𤅕 FD D6 assert_equals: expected "𤅕" but got ""
-FAIL U+24156 𤅖 𤅖 FD DC assert_equals: expected "𤅖" but got ""
-FAIL U+24157 𤅗 𤅗 FD DD assert_equals: expected "𤅗" but got ""
-FAIL U+2415F 𤅟 𤅟 FE A1 assert_equals: expected "𤅟" but got ""
-FAIL U+241A4 𤆤 𤆤 FD 7C assert_equals: expected "𤆤" but got ""
-FAIL U+241A5 𤆥 𤆥 FB 61 assert_equals: expected "𤆥" but got ""
-FAIL U+241CD 𤇍 𤇍 FC F4 assert_equals: expected "𤇍" but got ""
-FAIL U+241E2 𤇢 𤇢 FE 60 assert_equals: expected "𤇢" but got ""
-FAIL U+24277 𤉷 𤉷 FD EC assert_equals: expected "𤉷" but got ""
-FAIL U+24278 𤉸 𤉸 FB 78 assert_equals: expected "𤉸" but got ""
-FAIL U+242C1 𤋁 𤋁 FD F6 assert_equals: expected "𤋁" but got ""
-FAIL U+24363 𤍣 𤍣 FB 6B assert_equals: expected "𤍣" but got ""
-FAIL U+24365 𤍥 𤍥 FD F3 assert_equals: expected "𤍥" but got ""
-FAIL U+2439C 𤎜 𤎜 FC EC assert_equals: expected "𤎜" but got ""
-FAIL U+24435 𤐵 𤐵 FB 4C assert_equals: expected "𤐵" but got ""
-FAIL U+2445A 𤑚 𤑚 FD F8 assert_equals: expected "𤑚" but got ""
-FAIL U+244BC 𤒼 𤒼 FB F5 assert_equals: expected "𤒼" but got ""
-FAIL U+24823 𤠣 𤠣 FE 54 assert_equals: expected "𤠣" but got ""
-FAIL U+248F1 𤣱 𤣱 FD 74 assert_equals: expected "𤣱" but got ""
-FAIL U+24900 𤤀 𤤀 FD 7E assert_equals: expected "𤤀" but got ""
-FAIL U+24901 𤤁 𤤁 FB EB assert_equals: expected "𤤁" but got ""
-FAIL U+2490C 𤤌 𤤌 FD 7D assert_equals: expected "𤤌" but got ""
-FAIL U+24933 𤤳 𤤳 FA 52 assert_equals: expected "𤤳" but got ""
-FAIL U+24940 𤥀 𤥀 FC CE assert_equals: expected "𤥀" but got ""
-FAIL U+24942 𤥂 𤥂 FA 49 assert_equals: expected "𤥂" but got ""
-FAIL U+24974 𤥴 𤥴 FE 49 assert_equals: expected "𤥴" but got ""
-FAIL U+2497F 𤥿 𤥿 FD B1 assert_equals: expected "𤥿" but got ""
-FAIL U+24982 𤦂 𤦂 FC 6E assert_equals: expected "𤦂" but got ""
-FAIL U+2498D 𤦍 𤦍 FE 66 assert_equals: expected "𤦍" but got ""
-FAIL U+2498F 𤦏 𤦏 FC 6F assert_equals: expected "𤦏" but got ""
-FAIL U+249A4 𤦤 𤦤 FA 6D assert_equals: expected "𤦤" but got ""
-FAIL U+249A9 𤦩 𤦩 FB B7 assert_equals: expected "𤦩" but got ""
-FAIL U+249B7 𤦷 𤦷 FE 65 assert_equals: expected "𤦷" but got ""
-FAIL U+249DF 𤧟 𤧟 FC B3 assert_equals: expected "𤧟" but got ""
-FAIL U+249FB 𤧻 𤧻 FE 67 assert_equals: expected "𤧻" but got ""
-FAIL U+24A12 𤨒 𤨒 FE DF assert_equals: expected "𤨒" but got ""
-FAIL U+24A21 𤨡 𤨡 FC ED assert_equals: expected "𤨡" but got ""
-FAIL U+24A22 𤨢 𤨢 FD FA assert_equals: expected "𤨢" but got ""
-FAIL U+24A23 𤨣 𤨣 FC C8 assert_equals: expected "𤨣" but got ""
-FAIL U+24A24 𤨤 𤨤 FE 62 assert_equals: expected "𤨤" but got ""
-FAIL U+24A26 𤨦 𤨦 FE 6B assert_equals: expected "𤨦" but got ""
-FAIL U+24A27 𤨧 𤨧 FD F9 assert_equals: expected "𤨧" but got ""
-FAIL U+24A28 𤨨 𤨨 FC C7 assert_equals: expected "𤨨" but got ""
-FAIL U+24A79 𤩹 𤩹 FE A2 assert_equals: expected "𤩹" but got ""
-FAIL U+24A8C 𤪌 𤪌 FE 7E assert_equals: expected "𤪌" but got ""
-FAIL U+24AA6 𤪦 𤪦 FA A7 assert_equals: expected "𤪦" but got ""
-FAIL U+24AB1 𤪱 𤪱 FA 5D assert_equals: expected "𤪱" but got ""
-FAIL U+24BF5 𤯵 𤯵 FB 6D assert_equals: expected "𤯵" but got ""
-FAIL U+24D13 𤴓 𤴓 FE B7 assert_equals: expected "𤴓" but got ""
-FAIL U+24F82 𤾂 𤾂 FE B5 assert_equals: expected "𤾂" but got ""
-FAIL U+2509D 𥂝 𥂝 FE CE assert_equals: expected "𥂝" but got ""
-FAIL U+2517D 𥅽 𥅽 FE CF assert_equals: expected "𥅽" but got ""
-FAIL U+251E6 𥇦 𥇦 FC E0 assert_equals: expected "𥇦" but got ""
-FAIL U+25220 𥈠 𥈠 FE D5 assert_equals: expected "𥈠" but got ""
-FAIL U+25250 𥉐 𥉐 FC 5A assert_equals: expected "𥉐" but got ""
-FAIL U+25313 𥌓 𥌓 FC E7 assert_equals: expected "𥌓" but got ""
-FAIL U+255E0 𥗠 𥗠 FE E6 assert_equals: expected "𥗠" but got ""
-FAIL U+25605 𥘅 𥘅 FE 46 assert_equals: expected "𥘅" but got ""
-FAIL U+2571D 𥜝 𥜝 FC BE assert_equals: expected "𥜝" but got ""
-FAIL U+25772 𥝲 𥝲 FA DF assert_equals: expected "𥝲" but got ""
-FAIL U+25857 𥡗 𥡗 FE F4 assert_equals: expected "𥡗" but got ""
-FAIL U+259CC 𥧌 𥧌 FB CF assert_equals: expected "𥧌" but got ""
-FAIL U+26083 𦂃 𦂃 FE EE assert_equals: expected "𦂃" but got ""
-FAIL U+261DD 𦇝 𦇝 FD DF assert_equals: expected "𦇝" but got ""
-FAIL U+263F5 𦏵 𦏵 FE C2 assert_equals: expected "𦏵" but got ""
-FAIL U+26888 𦢈 𦢈 FC 4D assert_equals: expected "𦢈" but got ""
-FAIL U+2690E 𦤎 𦤎 FE C7 assert_equals: expected "𦤎" but got ""
-FAIL U+26911 𦤑 𦤑 FE C6 assert_equals: expected "𦤑" but got ""
-FAIL U+26A2E 𦨮 𦨮 FE 5D assert_equals: expected "𦨮" but got ""
-FAIL U+26B13 𦬓 𦬓 FA BC assert_equals: expected "𦬓" but got ""
-FAIL U+26B28 𦬨 𦬨 FB DA assert_equals: expected "𦬨" but got ""
-FAIL U+26B51 𦭑 𦭑 FD 75 assert_equals: expected "𦭑" but got ""
-FAIL U+26B53 𦭓 𦭓 FA F5 assert_equals: expected "𦭓" but got ""
-FAIL U+26BB3 𦮳 𦮳 FA 55 assert_equals: expected "𦮳" but got ""
-FAIL U+26C7E 𦱾 𦱾 FB 66 assert_equals: expected "𦱾" but got ""
-FAIL U+26C81 𦲁 𦲁 FB A8 assert_equals: expected "𦲁" but got ""
-FAIL U+26D25 𦴥 𦴥 FD AA assert_equals: expected "𦴥" but got ""
-FAIL U+26D29 𦴩 𦴩 FA 5A assert_equals: expected "𦴩" but got ""
-FAIL U+26D2A 𦴪 𦴪 FB A9 assert_equals: expected "𦴪" but got ""
-FAIL U+26DA0 𦶠 𦶠 FC FD assert_equals: expected "𦶠" but got ""
-FAIL U+26DA1 𦶡 𦶡 FD AB assert_equals: expected "𦶡" but got ""
-FAIL U+26DA6 𦶦 𦶦 FB AE assert_equals: expected "𦶦" but got ""
-FAIL U+26DEB 𦷫 𦷫 FD AC assert_equals: expected "𦷫" but got ""
-FAIL U+26E45 𦹅 𦹅 FB B3 assert_equals: expected "𦹅" but got ""
-FAIL U+26E6E 𦹮 𦹮 FC 53 assert_equals: expected "𦹮" but got ""
-FAIL U+26E72 𦹲 𦹲 FD B3 assert_equals: expected "𦹲" but got ""
-FAIL U+26ED2 𦻒 𦻒 FC 78 assert_equals: expected "𦻒" but got ""
-FAIL U+26F74 𦽴 𦽴 FD B5 assert_equals: expected "𦽴" but got ""
-FAIL U+26F9F 𦾟 𦾟 FE CC assert_equals: expected "𦾟" but got ""
-FAIL U+26FA1 𦾡 𦾡 FB BD assert_equals: expected "𦾡" but got ""
-FAIL U+270F8 𧃸 𧃸 FC 5C assert_equals: expected "𧃸" but got ""
-FAIL U+27126 𧄦 𧄦 FE FA assert_equals: expected "𧄦" but got ""
-FAIL U+27607 𧘇 𧘇 C8 A4 assert_equals: expected "𧘇" but got ""
-FAIL U+2760C 𧘌 𧘌 FE EA assert_equals: expected "𧘌" but got ""
-FAIL U+27A0E 𧨎 𧨎 FB C8 assert_equals: expected "𧨎" but got ""
-FAIL U+27A53 𧩓 𧩓 FC 70 assert_equals: expected "𧩓" but got ""
-FAIL U+27A84 𧪄 𧪄 FA 5B assert_equals: expected "𧪄" but got ""
-FAIL U+27B39 𧬹 𧬹 FE F6 assert_equals: expected "𧬹" but got ""
-FAIL U+28482 𨒂 𨒂 FB FE assert_equals: expected "𨒂" but got ""
-FAIL U+285F4 𨗴 𨗴 FC E5 assert_equals: expected "𨗴" but got ""
-FAIL U+286AB 𨚫 𨚫 FA D3 assert_equals: expected "𨚫" but got ""
-FAIL U+28804 𨠄 𨠄 FE 57 assert_equals: expected "𨠄" but got ""
-FAIL U+2882B 𨠫 𨠫 FE 55 assert_equals: expected "𨠫" but got ""
-FAIL U+28964 𨥤 𨥤 FE D9 assert_equals: expected "𨥤" but got ""
-FAIL U+28968 𨥨 𨥨 FE DA assert_equals: expected "𨥨" but got ""
-FAIL U+289AA 𨦪 𨦪 FA 53 assert_equals: expected "𨦪" but got ""
-FAIL U+289BC 𨦼 𨦼 FB 40 assert_equals: expected "𨦼" but got ""
-FAIL U+289E4 𨧤 𨧤 FA 4A assert_equals: expected "𨧤" but got ""
-FAIL U+28A29 𨨩 𨨩 FC 60 assert_equals: expected "𨨩" but got ""
-FAIL U+28A36 𨨶 𨨶 FC 56 assert_equals: expected "𨨶" but got ""
-FAIL U+28A4A 𨩊 𨩊 FD 4F assert_equals: expected "𨩊" but got ""
-FAIL U+28A9B 𨪛 𨪛 FA DA assert_equals: expected "𨪛" but got ""
-FAIL U+28ADE 𨫞 𨫞 FA BE assert_equals: expected "𨫞" but got ""
-FAIL U+28ADF 𨫟 𨫟 FD 43 assert_equals: expected "𨫟" but got ""
-FAIL U+28B21 𨬡 𨬡 FD BA assert_equals: expected "𨬡" but got ""
-FAIL U+28B2B 𨬫 𨬫 FE ED assert_equals: expected "𨬫" but got ""
-FAIL U+28B66 𨭦 𨭦 FB 5D assert_equals: expected "𨭦" but got ""
-FAIL U+28B8F 𨮏 𨮏 FE A3 assert_equals: expected "𨮏" but got ""
-FAIL U+28B9D 𨮝 𨮝 FC A3 assert_equals: expected "𨮝" but got ""
-FAIL U+28BE8 𨯨 𨯨 FD FC assert_equals: expected "𨯨" but got ""
-FAIL U+28C03 𨰃 𨰃 FE A5 assert_equals: expected "𨰃" but got ""
-FAIL U+28EAC 𨺬 𨺬 FE AF assert_equals: expected "𨺬" but got ""
-FAIL U+28EB2 𨺲 𨺲 FE 72 assert_equals: expected "𨺲" but got ""
-FAIL U+28ED9 𨻙 𨻙 FE AC assert_equals: expected "𨻙" but got ""
-FAIL U+290ED 𩃭 𩃭 FC F5 assert_equals: expected "𩃭" but got ""
-FAIL U+2910D 𩄍 𩄍 FE FD assert_equals: expected "𩄍" but got ""
-FAIL U+29170 𩅰 𩅰 FD D0 assert_equals: expected "𩅰" but got ""
-FAIL U+2919C 𩆜 𩆜 FD 60 assert_equals: expected "𩆜" but got ""
-FAIL U+2995D 𩥝 𩥝 FC A4 assert_equals: expected "𩥝" but got ""
-FAIL U+2A150 𪅐 𪅐 FB 77 assert_equals: expected "𪅐" but got ""
+PASS U+FFED ￭ ￭ F9 FE 
+PASS U+2008A 𠂊 𠂊 C8 7C 
+PASS U+200CC 𠃌 𠃌 C8 7A 
+PASS U+20118 𠄘 𠄘 FC AD 
+PASS U+201C1 𠇁 𠇁 FC 47 
+PASS U+20204 𠈄 𠈄 FB CB 
+PASS U+2029E 𠊞 𠊞 FC 5F 
+PASS U+202A0 𠊠 𠊠 FA 54 
+PASS U+202E5 𠋥 𠋥 FA 74 
+PASS U+20347 𠍇 𠍇 FA 63 
+PASS U+2037E 𠍾 𠍾 FA 60 
+PASS U+20380 𠎀 𠎀 FA 62 
+PASS U+203B5 𠎵 𠎵 FD 6A 
+PASS U+203C9 𠏉 𠏉 FD 54 
+PASS U+2041F 𠐟 𠐟 FA 65 
+PASS U+20487 𠒇 𠒇 FA 6E 
+PASS U+20547 𠕇 𠕇 FA 40 
+PASS U+2058E 𠖎 𠖎 FA 76 
+PASS U+205A5 𠖥 𠖥 FB D0 
+PASS U+205B3 𠖳 𠖳 FA 7B 
+PASS U+205C3 𠗃 𠗃 FE 6D 
+PASS U+205DF 𠗟 𠗟 FA 42 
+PASS U+20656 𠙖 𠙖 FC 7B 
+PASS U+20923 𠤣 𠤣 FD 63 
+PASS U+20954 𠥔 𠥔 FA C2 
+PASS U+20B8F 𠮏 𠮏 FA E9 
+PASS U+20BE2 𠯢 𠯢 FA C6 
+PASS U+20BFF 𠯿 𠯿 FA 72 
+PASS U+20C3A 𠰺 𠰺 FE 5C 
+PASS U+20C77 𠱷 𠱷 FA EE 
+PASS U+20CD3 𠳓 𠳓 FB F6 
+PASS U+20D32 𠴲 𠴲 FD A4 
+PASS U+20D4D 𠵍 𠵍 FA FE 
+PASS U+20D4E 𠵎 𠵎 FB A7 
+PASS U+20D74 𠵴 𠵴 FA F6 
+PASS U+20E75 𠹵 𠹵 FC DE 
+PASS U+20EDD 𠻝 𠻝 FA FC 
+PASS U+210B4 𡂴 𡂴 FB 4E 
+PASS U+2123C 𡈼 𡈼 FB 73 
+PASS U+2124F 𡉏 𡉏 FB 5F 
+PASS U+21305 𡌅 𡌅 FA 56 
+PASS U+2133A 𡌺 𡌺 FC 4B 
+PASS U+21376 𡍶 𡍶 FE DE 
+PASS U+2138E 𡎎 𡎎 FC B7 
+PASS U+21416 𡐖 𡐖 FB 68 
+PASS U+21454 𡑔 𡑔 FB 6A 
+PASS U+21497 𡒗 𡒗 FD C8 
+PASS U+21596 𡖖 𡖖 FA D6 
+PASS U+21613 𡘓 𡘓 FA D7 
+PASS U+2163E 𡘾 𡘾 FB A1 
+PASS U+21692 𡚒 𡚒 FB A4 
+PASS U+216B8 𡚸 𡚸 FB C2 
+PASS U+216C1 𡛁 𡛁 FE DB 
+PASS U+216D5 𡛕 𡛕 FB B1 
+PASS U+216E7 𡛧 𡛧 FE 61 
+PASS U+216E8 𡛨 𡛨 FA CE 
+PASS U+2170D 𡜍 𡜍 FA FB 
+PASS U+21726 𡜦 𡜦 FA C8 
+PASS U+21770 𡝰 𡝰 FC AF 
+PASS U+21771 𡝱 𡝱 FB FB 
+PASS U+217B2 𡞲 𡞲 FB AD 
+PASS U+217DC 𡟜 𡟜 FB AA 
+PASS U+217FB 𡟻 𡟻 FB AC 
+PASS U+217FC 𡟼 𡟼 FC B8 
+PASS U+21828 𡠨 𡠨 FB B0 
+PASS U+21829 𡠩 𡠩 FC D2 
+PASS U+21877 𡡷 𡡷 FC 63 
+PASS U+2189E 𡢞 𡢞 FE A6 
+PASS U+218D7 𡣗 𡣗 FB 49 
+PASS U+21911 𡤑 𡤑 FB C0 
+PASS U+21958 𡥘 𡥘 FD 6B 
+PASS U+21983 𡦃 𡦃 FA 78 
+PASS U+21988 𡦈 𡦈 FE A8 
+PASS U+219DB 𡧛 𡧛 FA 4C 
+PASS U+21A34 𡨴 𡨴 FB CE 
+PASS U+21A4B 𡩋 𡩋 FE AD 
+PASS U+21B44 𡭄 𡭄 FB D5 
+PASS U+21CA5 𡲥 𡲥 FB D9 
+PASS U+21DF9 𡷹 𡷹 FB E1 
+PASS U+21E1C 𡸜 𡸜 FE D0 
+PASS U+21E37 𡸷 𡸷 FB E2 
+PASS U+21E3D 𡸽 𡸽 FC E3 
+PASS U+21EA4 𡺤 𡺤 FB E6 
+PASS U+21F6A 𡽪 𡽪 FC 5B 
+PASS U+22049 𢁉 𢁉 FB EC 
+PASS U+220FC 𢃼 𢃼 FA 73 
+PASS U+2212A 𢄪 𢄪 FD 59 
+PASS U+22173 𢅳 𢅳 FB ED 
+PASS U+223D0 𢏐 𢏐 FC 4E 
+PASS U+22471 𢑱 𢑱 FC 50 
+PASS U+2248B 𢒋 𢒋 FD 73 
+PASS U+22491 𢒑 𢒑 FD A7 
+PASS U+224ED 𢓭 𢓭 FA 58 
+PASS U+22513 𢔓 𢔓 FA 5E 
+PASS U+22530 𢔰 𢔰 FA 75 
+PASS U+22554 𢕔 𢕔 FB BE 
+PASS U+2261C 𢘜 𢘜 FE EF 
+PASS U+22668 𢙨 𢙨 FC 5D 
+PASS U+22698 𢚘 𢚘 FB 41 
+PASS U+227B4 𢞴 𢞴 FC 68 
+PASS U+227CD 𢟍 𢟍 FD 67 
+PASS U+2285F 𢡟 𢡟 FC A1 
+PASS U+228AD 𢢭 𢢭 FE 70 
+PASS U+228C1 𢣁 𢣁 FC A8 
+PASS U+228F7 𢣷 𢣷 FC E9 
+PASS U+22980 𢦀 𢦀 FC A7 
+PASS U+22DA3 𢶣 𢶣 FA EC 
+PASS U+22E0D 𢸍 𢸍 FC B1 
+PASS U+22E36 𢸶 𢸶 FC BB 
+PASS U+23044 𣁄 𣁄 FE 4E 
+PASS U+2304B 𣁋 𣁋 FD C2 
+PASS U+2307E 𣁾 𣁾 FC CC 
+PASS U+231A4 𣆤 𣆤 FC DB 
+PASS U+231A5 𣆥 𣆥 FC DC 
+PASS U+231C8 𣇈 𣇈 FC E6 
+PASS U+231F7 𣇷 𣇷 FC D8 
+PASS U+231F8 𣇸 𣇸 FC D9 
+PASS U+231F9 𣇹 𣇹 FD A6 
+PASS U+23231 𣈱 𣈱 FC E4 
+PASS U+23233 𣈳 𣈳 FA 77 
+PASS U+2328A 𣊊 𣊊 FB 51 
+PASS U+232AC 𣊬 𣊬 FE D7 
+PASS U+233B4 𣎴 𣎴 FA 70 
+PASS U+233E6 𣏦 𣏦 FC FC 
+PASS U+23400 𣐀 𣐀 FC D6 
+PASS U+2346F 𣑯 𣑯 FD 40 
+PASS U+235CD 𣗍 𣗍 FD 46 
+PASS U+23600 𣘀 𣘀 FA 5C 
+PASS U+2363C 𣘼 𣘼 FD 4B 
+PASS U+23659 𣙙 𣙙 FD 58 
+PASS U+23703 𣜃 𣜃 FD 5B 
+PASS U+2372D 𣜭 𣜭 FA AE 
+PASS U+237C2 𣟂 𣟂 FC F0 
+PASS U+23ADB 𣫛 𣫛 FD 69 
+PASS U+23B5A 𣭚 𣭚 FD 6E 
+PASS U+23C99 𣲙 𣲙 FA 7C 
+PASS U+23CC8 𣳈 𣳈 FA 4E 
+PASS U+23CC9 𣳉 𣳉 FD A1 
+PASS U+23DBC 𣶼 𣶼 FD 79 
+PASS U+23DBD 𣶽 𣶽 FD 7B 
+PASS U+23E2F 𣸯 𣸯 FD BC 
+PASS U+23E30 𣸰 𣸰 FD C6 
+PASS U+23EFC 𣻼 𣻼 FD 70 
+PASS U+23F80 𣾀 𣾀 FA C1 
+PASS U+23F82 𣾂 𣾂 FD BE 
+PASS U+23FB4 𣾴 𣾴 FD D9 
+PASS U+23FB7 𣾷 𣾷 FC 7E 
+PASS U+23FC5 𣿅 𣿅 FA 43 
+PASS U+23FEB 𣿫 𣿫 FA EB 
+PASS U+23FEC 𣿬 𣿬 FA C3 
+PASS U+23FF0 𣿰 𣿰 FD D8 
+PASS U+24039 𤀹 𤀹 FD D7 
+PASS U+2403A 𤀺 𤀺 FB 4A 
+PASS U+2403D 𤀽 𤀽 FD C9 
+PASS U+24085 𤂅 𤂅 FD B2 
+PASS U+2408C 𤂌 𤂌 FC BD 
+PASS U+24091 𤂑 𤂑 FD D5 
+PASS U+2413F 𤄿 𤄿 FD DA 
+PASS U+24140 𤅀 𤅀 FD DE 
+PASS U+24144 𤅄 𤅄 FD D3 
+PASS U+24155 𤅕 𤅕 FD D6 
+PASS U+24156 𤅖 𤅖 FD DC 
+PASS U+24157 𤅗 𤅗 FD DD 
+PASS U+2415F 𤅟 𤅟 FE A1 
+PASS U+241A4 𤆤 𤆤 FD 7C 
+PASS U+241A5 𤆥 𤆥 FB 61 
+PASS U+241CD 𤇍 𤇍 FC F4 
+PASS U+241E2 𤇢 𤇢 FE 60 
+PASS U+24277 𤉷 𤉷 FD EC 
+PASS U+24278 𤉸 𤉸 FB 78 
+PASS U+242C1 𤋁 𤋁 FD F6 
+PASS U+24363 𤍣 𤍣 FB 6B 
+PASS U+24365 𤍥 𤍥 FD F3 
+PASS U+2439C 𤎜 𤎜 FC EC 
+PASS U+24435 𤐵 𤐵 FB 4C 
+PASS U+2445A 𤑚 𤑚 FD F8 
+PASS U+244BC 𤒼 𤒼 FB F5 
+PASS U+24823 𤠣 𤠣 FE 54 
+PASS U+248F1 𤣱 𤣱 FD 74 
+PASS U+24900 𤤀 𤤀 FD 7E 
+PASS U+24901 𤤁 𤤁 FB EB 
+PASS U+2490C 𤤌 𤤌 FD 7D 
+PASS U+24933 𤤳 𤤳 FA 52 
+PASS U+24940 𤥀 𤥀 FC CE 
+PASS U+24942 𤥂 𤥂 FA 49 
+PASS U+24974 𤥴 𤥴 FE 49 
+PASS U+2497F 𤥿 𤥿 FD B1 
+PASS U+24982 𤦂 𤦂 FC 6E 
+PASS U+2498D 𤦍 𤦍 FE 66 
+PASS U+2498F 𤦏 𤦏 FC 6F 
+PASS U+249A4 𤦤 𤦤 FA 6D 
+PASS U+249A9 𤦩 𤦩 FB B7 
+PASS U+249B7 𤦷 𤦷 FE 65 
+PASS U+249DF 𤧟 𤧟 FC B3 
+PASS U+249FB 𤧻 𤧻 FE 67 
+PASS U+24A12 𤨒 𤨒 FE DF 
+PASS U+24A21 𤨡 𤨡 FC ED 
+PASS U+24A22 𤨢 𤨢 FD FA 
+PASS U+24A23 𤨣 𤨣 FC C8 
+PASS U+24A24 𤨤 𤨤 FE 62 
+PASS U+24A26 𤨦 𤨦 FE 6B 
+PASS U+24A27 𤨧 𤨧 FD F9 
+PASS U+24A28 𤨨 𤨨 FC C7 
+PASS U+24A79 𤩹 𤩹 FE A2 
+PASS U+24A8C 𤪌 𤪌 FE 7E 
+PASS U+24AA6 𤪦 𤪦 FA A7 
+PASS U+24AB1 𤪱 𤪱 FA 5D 
+PASS U+24BF5 𤯵 𤯵 FB 6D 
+PASS U+24D13 𤴓 𤴓 FE B7 
+PASS U+24F82 𤾂 𤾂 FE B5 
+PASS U+2509D 𥂝 𥂝 FE CE 
+PASS U+2517D 𥅽 𥅽 FE CF 
+PASS U+251E6 𥇦 𥇦 FC E0 
+PASS U+25220 𥈠 𥈠 FE D5 
+PASS U+25250 𥉐 𥉐 FC 5A 
+PASS U+25313 𥌓 𥌓 FC E7 
+PASS U+255E0 𥗠 𥗠 FE E6 
+PASS U+25605 𥘅 𥘅 FE 46 
+PASS U+2571D 𥜝 𥜝 FC BE 
+PASS U+25772 𥝲 𥝲 FA DF 
+PASS U+25857 𥡗 𥡗 FE F4 
+PASS U+259CC 𥧌 𥧌 FB CF 
+PASS U+26083 𦂃 𦂃 FE EE 
+PASS U+261DD 𦇝 𦇝 FD DF 
+PASS U+263F5 𦏵 𦏵 FE C2 
+PASS U+26888 𦢈 𦢈 FC 4D 
+PASS U+2690E 𦤎 𦤎 FE C7 
+PASS U+26911 𦤑 𦤑 FE C6 
+PASS U+26A2E 𦨮 𦨮 FE 5D 
+PASS U+26B13 𦬓 𦬓 FA BC 
+PASS U+26B28 𦬨 𦬨 FB DA 
+PASS U+26B51 𦭑 𦭑 FD 75 
+PASS U+26B53 𦭓 𦭓 FA F5 
+PASS U+26BB3 𦮳 𦮳 FA 55 
+PASS U+26C7E 𦱾 𦱾 FB 66 
+PASS U+26C81 𦲁 𦲁 FB A8 
+PASS U+26D25 𦴥 𦴥 FD AA 
+PASS U+26D29 𦴩 𦴩 FA 5A 
+PASS U+26D2A 𦴪 𦴪 FB A9 
+PASS U+26DA0 𦶠 𦶠 FC FD 
+PASS U+26DA1 𦶡 𦶡 FD AB 
+PASS U+26DA6 𦶦 𦶦 FB AE 
+PASS U+26DEB 𦷫 𦷫 FD AC 
+PASS U+26E45 𦹅 𦹅 FB B3 
+PASS U+26E6E 𦹮 𦹮 FC 53 
+PASS U+26E72 𦹲 𦹲 FD B3 
+PASS U+26ED2 𦻒 𦻒 FC 78 
+PASS U+26F74 𦽴 𦽴 FD B5 
+PASS U+26F9F 𦾟 𦾟 FE CC 
+PASS U+26FA1 𦾡 𦾡 FB BD 
+PASS U+270F8 𧃸 𧃸 FC 5C 
+PASS U+27126 𧄦 𧄦 FE FA 
+PASS U+27607 𧘇 𧘇 C8 A4 
+PASS U+2760C 𧘌 𧘌 FE EA 
+PASS U+27A0E 𧨎 𧨎 FB C8 
+PASS U+27A53 𧩓 𧩓 FC 70 
+PASS U+27A84 𧪄 𧪄 FA 5B 
+PASS U+27B39 𧬹 𧬹 FE F6 
+PASS U+28482 𨒂 𨒂 FB FE 
+PASS U+285F4 𨗴 𨗴 FC E5 
+PASS U+286AB 𨚫 𨚫 FA D3 
+PASS U+28804 𨠄 𨠄 FE 57 
+PASS U+2882B 𨠫 𨠫 FE 55 
+PASS U+28964 𨥤 𨥤 FE D9 
+PASS U+28968 𨥨 𨥨 FE DA 
+PASS U+289AA 𨦪 𨦪 FA 53 
+PASS U+289BC 𨦼 𨦼 FB 40 
+PASS U+289E4 𨧤 𨧤 FA 4A 
+PASS U+28A29 𨨩 𨨩 FC 60 
+PASS U+28A36 𨨶 𨨶 FC 56 
+PASS U+28A4A 𨩊 𨩊 FD 4F 
+PASS U+28A9B 𨪛 𨪛 FA DA 
+PASS U+28ADE 𨫞 𨫞 FA BE 
+PASS U+28ADF 𨫟 𨫟 FD 43 
+PASS U+28B21 𨬡 𨬡 FD BA 
+PASS U+28B2B 𨬫 𨬫 FE ED 
+PASS U+28B66 𨭦 𨭦 FB 5D 
+PASS U+28B8F 𨮏 𨮏 FE A3 
+PASS U+28B9D 𨮝 𨮝 FC A3 
+PASS U+28BE8 𨯨 𨯨 FD FC 
+PASS U+28C03 𨰃 𨰃 FE A5 
+PASS U+28EAC 𨺬 𨺬 FE AF 
+PASS U+28EB2 𨺲 𨺲 FE 72 
+PASS U+28ED9 𨻙 𨻙 FE AC 
+PASS U+290ED 𩃭 𩃭 FC F5 
+PASS U+2910D 𩄍 𩄍 FE FD 
+PASS U+29170 𩅰 𩅰 FD D0 
+PASS U+2919C 𩆜 𩆜 FD 60 
+PASS U+2995D 𩥝 𩥝 FC A4 
+PASS U+2A150 𪅐 𪅐 FB 77 
 

@@ -1,3 +1,12 @@
+2020-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Align Big5 decoding with spec, Chrome, and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=216016
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/CodePointIterator.h:
+
 2020-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Linux] Web Inspector: show per thread cpu usage

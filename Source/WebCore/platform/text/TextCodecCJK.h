@@ -25,12 +25,36 @@
 
 #pragma once
 
-#include <unicode/umachine.h>
+#include "TextCodec.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
-extern const std::pair<UChar, uint16_t> jis0208[7724];
-extern const std::pair<UChar32, uint16_t> big5EncodingMap[14686];
-extern const std::pair<uint16_t, UChar32> big5DecodingExtras[3904];
+class TextCodecCJK : public TextCodec {
+public:
+    enum class Encoding : uint8_t {
+        EUC_JP,
+        Big5
+    };
+    
+    explicit TextCodecCJK(Encoding);
 
-}
+    static void registerEncodingNames(EncodingNameRegistrar);
+    static void registerCodecs(TextCodecRegistrar);
+
+private:
+    String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) final;
+
+    String big5Decode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError);
+
+    Encoding m_encoding;
+
+    uint8_t m_lead { 0x00 };
+    Optional<uint8_t> m_prependedByte;
+    
+    std::unique_ptr<TextCodec> m_icuCodec;
+};
+
+} // namespace WebCore
+

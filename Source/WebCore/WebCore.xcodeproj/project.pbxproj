@@ -4793,6 +4793,7 @@
 		DECA806C1F9FED6A00E3B661 /* UnifiedSource299.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7FDA1F9FE9A200E3B661 /* UnifiedSource299.cpp */; };
 		DECA806D1F9FED6A00E3B661 /* UnifiedSource300.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7FBB1F9FE98300E3B661 /* UnifiedSource300.cpp */; };
 		DF19E2AC24772BC1007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h in Headers */ = {isa = PBXBuildFile; fileRef = DF19E2AA247729A6007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF95B14A24FDAFD300B1F4D7 /* TextCodecCJK.h in Headers */ = {isa = PBXBuildFile; fileRef = DF95B14824FDAFD300B1F4D7 /* TextCodecCJK.h */; };
 		DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = DF9AFD7013FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h */; };
 		DF9AFD7313FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */; };
 		DFC610A624FB2A7D006254C8 /* EncodingTables.h in Headers */ = {isa = PBXBuildFile; fileRef = DFC610A424FB2A7D006254C8 /* EncodingTables.h */; };
@@ -15366,6 +15367,8 @@
 		DECA7FF51F9FE9BA00E3B661 /* UnifiedSource256.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource256.cpp; path = "DerivedSources/WebCore/unified-sources/UnifiedSource256.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF19E2AA247729A6007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShouldRelaxThirdPartyCookieBlocking.h; sourceTree = "<group>"; };
 		DF7E9A294C7AACE0AD89B3DD /* MathMLOperatorDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLOperatorDictionary.h; sourceTree = "<group>"; };
+		DF95B14624FDAFD200B1F4D7 /* TextCodecCJK.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecCJK.cpp; sourceTree = "<group>"; };
+		DF95B14824FDAFD300B1F4D7 /* TextCodecCJK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecCJK.h; sourceTree = "<group>"; };
 		DF9AFD7013FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundationObjC.h; sourceTree = "<group>"; };
 		DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateAVFoundationObjC.mm; sourceTree = "<group>"; };
 		DFC610A224FB2A7C006254C8 /* EncodingTables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodingTables.cpp; sourceTree = "<group>"; };
@@ -26099,6 +26102,8 @@
 				B2C3DA090D006C1D00EF6F26 /* TextCodec.cpp */,
 				B2C3DA0A0D006C1D00EF6F26 /* TextCodec.h */,
 				26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */,
+				DF95B14624FDAFD200B1F4D7 /* TextCodecCJK.cpp */,
+				DF95B14824FDAFD300B1F4D7 /* TextCodecCJK.h */,
 				B2C3DA0B0D006C1D00EF6F26 /* TextCodecICU.cpp */,
 				B2C3DA0C0D006C1D00EF6F26 /* TextCodecICU.h */,
 				B2C3DA0D0D006C1D00EF6F26 /* TextCodecLatin1.cpp */,
@@ -34048,6 +34053,7 @@
 				A7DBF8DE1276919C006B6008 /* TextCheckingHelper.h in Headers */,
 				B2C3DA3A0D006C1D00EF6F26 /* TextCodec.h in Headers */,
 				26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */,
+				DF95B14A24FDAFD300B1F4D7 /* TextCodecCJK.h in Headers */,
 				B2C3DA3C0D006C1D00EF6F26 /* TextCodecICU.h in Headers */,
 				B2C3DA3E0D006C1D00EF6F26 /* TextCodecLatin1.h in Headers */,
 				57EF5E601D20C83900171E60 /* TextCodecReplacement.h in Headers */,

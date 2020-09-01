@@ -2059,6 +2059,7 @@ platform/text/QuotedPrintable.cpp
 platform/text/SegmentedString.cpp
 platform/text/TextBoundaries.cpp
 platform/text/TextCodec.cpp
+platform/text/TextCodecCJK.cpp
 platform/text/TextCodecICU.cpp
 platform/text/TextCodecLatin1.cpp
 platform/text/TextCodecReplacement.cpp

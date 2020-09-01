@@ -209,39 +209,39 @@ PASS U+2295 ⊕ %A1%F2
 PASS U+2299 ⊙ %A1%F3 
 PASS U+22A5 ⊥ %A1%E6 
 PASS U+22BF ⊿ %A1%E9 
-FAIL U+2400 ␀ %A3%C0 assert_equals: expected "%A3%C0" but got "%26%23%39%32%31%36%3B"
-FAIL U+2401 ␁ %A3%C1 assert_equals: expected "%A3%C1" but got "%26%23%39%32%31%37%3B"
-FAIL U+2402 ␂ %A3%C2 assert_equals: expected "%A3%C2" but got "%26%23%39%32%31%38%3B"
-FAIL U+2403 ␃ %A3%C3 assert_equals: expected "%A3%C3" but got "%26%23%39%32%31%39%3B"
-FAIL U+2404 ␄ %A3%C4 assert_equals: expected "%A3%C4" but got "%26%23%39%32%32%30%3B"
-FAIL U+2405 ␅ %A3%C5 assert_equals: expected "%A3%C5" but got "%26%23%39%32%32%31%3B"
-FAIL U+2406 ␆ %A3%C6 assert_equals: expected "%A3%C6" but got "%26%23%39%32%32%32%3B"
-FAIL U+2407 ␇ %A3%C7 assert_equals: expected "%A3%C7" but got "%26%23%39%32%32%33%3B"
-FAIL U+2408 ␈ %A3%C8 assert_equals: expected "%A3%C8" but got "%26%23%39%32%32%34%3B"
-FAIL U+2409 ␉ %A3%C9 assert_equals: expected "%A3%C9" but got "%26%23%39%32%32%35%3B"
-FAIL U+240A ␊ %A3%CA assert_equals: expected "%A3%CA" but got "%26%23%39%32%32%36%3B"
-FAIL U+240B ␋ %A3%CB assert_equals: expected "%A3%CB" but got "%26%23%39%32%32%37%3B"
-FAIL U+240C ␌ %A3%CC assert_equals: expected "%A3%CC" but got "%26%23%39%32%32%38%3B"
-FAIL U+240D ␍ %A3%CD assert_equals: expected "%A3%CD" but got "%26%23%39%32%32%39%3B"
-FAIL U+240E ␎ %A3%CE assert_equals: expected "%A3%CE" but got "%26%23%39%32%33%30%3B"
-FAIL U+240F ␏ %A3%CF assert_equals: expected "%A3%CF" but got "%26%23%39%32%33%31%3B"
-FAIL U+2410 ␐ %A3%D0 assert_equals: expected "%A3%D0" but got "%26%23%39%32%33%32%3B"
-FAIL U+2411 ␑ %A3%D1 assert_equals: expected "%A3%D1" but got "%26%23%39%32%33%33%3B"
-FAIL U+2412 ␒ %A3%D2 assert_equals: expected "%A3%D2" but got "%26%23%39%32%33%34%3B"
-FAIL U+2413 ␓ %A3%D3 assert_equals: expected "%A3%D3" but got "%26%23%39%32%33%35%3B"
-FAIL U+2414 ␔ %A3%D4 assert_equals: expected "%A3%D4" but got "%26%23%39%32%33%36%3B"
-FAIL U+2415 ␕ %A3%D5 assert_equals: expected "%A3%D5" but got "%26%23%39%32%33%37%3B"
-FAIL U+2416 ␖ %A3%D6 assert_equals: expected "%A3%D6" but got "%26%23%39%32%33%38%3B"
-FAIL U+2417 ␗ %A3%D7 assert_equals: expected "%A3%D7" but got "%26%23%39%32%33%39%3B"
-FAIL U+2418 ␘ %A3%D8 assert_equals: expected "%A3%D8" but got "%26%23%39%32%34%30%3B"
-FAIL U+2419 ␙ %A3%D9 assert_equals: expected "%A3%D9" but got "%26%23%39%32%34%31%3B"
-FAIL U+241A ␚ %A3%DA assert_equals: expected "%A3%DA" but got "%26%23%39%32%34%32%3B"
-FAIL U+241B ␛ %A3%DB assert_equals: expected "%A3%DB" but got "%26%23%39%32%34%33%3B"
-FAIL U+241C ␜ %A3%DC assert_equals: expected "%A3%DC" but got "%26%23%39%32%34%34%3B"
-FAIL U+241D ␝ %A3%DD assert_equals: expected "%A3%DD" but got "%26%23%39%32%34%35%3B"
-FAIL U+241E ␞ %A3%DE assert_equals: expected "%A3%DE" but got "%26%23%39%32%34%36%3B"
-FAIL U+241F ␟ %A3%DF assert_equals: expected "%A3%DF" but got "%26%23%39%32%34%37%3B"
-FAIL U+2421 ␡ %A3%E0 assert_equals: expected "%A3%E0" but got "%26%23%39%32%34%39%3B"
+PASS U+2400 ␀ %A3%C0 
+PASS U+2401 ␁ %A3%C1 
+PASS U+2402 ␂ %A3%C2 
+PASS U+2403 ␃ %A3%C3 
+PASS U+2404 ␄ %A3%C4 
+PASS U+2405 ␅ %A3%C5 
+PASS U+2406 ␆ %A3%C6 
+PASS U+2407 ␇ %A3%C7 
+PASS U+2408 ␈ %A3%C8 
+PASS U+2409 ␉ %A3%C9 
+PASS U+240A ␊ %A3%CA 
+PASS U+240B ␋ %A3%CB 
+PASS U+240C ␌ %A3%CC 
+PASS U+240D ␍ %A3%CD 
+PASS U+240E ␎ %A3%CE 
+PASS U+240F ␏ %A3%CF 
+PASS U+2410 ␐ %A3%D0 
+PASS U+2411 ␑ %A3%D1 
+PASS U+2412 ␒ %A3%D2 
+PASS U+2413 ␓ %A3%D3 
+PASS U+2414 ␔ %A3%D4 
+PASS U+2415 ␕ %A3%D5 
+PASS U+2416 ␖ %A3%D6 
+PASS U+2417 ␗ %A3%D7 
+PASS U+2418 ␘ %A3%D8 
+PASS U+2419 ␙ %A3%D9 
+PASS U+241A ␚ %A3%DA 
+PASS U+241B ␛ %A3%DB 
+PASS U+241C ␜ %A3%DC 
+PASS U+241D ␝ %A3%DD 
+PASS U+241E ␞ %A3%DE 
+PASS U+241F ␟ %A3%DF 
+PASS U+2421 ␡ %A3%E0 
 PASS U+2460 ① %C6%A1 
 PASS U+2461 ② %C6%A2 
 PASS U+2462 ③ %C6%A3 
@@ -821,7 +821,7 @@ PASS U+4ED8 付 %A5%49
 PASS U+4ED9 仙 %A5%50 
 PASS U+4EDA 仚 %C9%6A 
 PASS U+4EDC 仜 %C9%66 
-FAIL U+4EDD 仝 %C6%DF assert_equals: expected "%C6%DF" but got "%C9%69"
+PASS U+4EDD 仝 %C6%DF 
 PASS U+4EDE 仞 %A5%51 
 PASS U+4EDF 仟 %A5%61 
 PASS U+4EE1 仡 %C9%68 
@@ -2008,7 +2008,7 @@ PASS U+5600 嘀 %B9%BF
 PASS U+5601 嘁 %E1%4E 
 PASS U+5602 嘂 %E1%50 
 PASS U+5604 嘄 %E1%53 
-FAIL U+5605 嘅 %FB%48 assert_equals: expected "%FB%48" but got "%9D%EF"
+PASS U+5605 嘅 %FB%48 
 PASS U+5606 嘆 %B9%C4 
 PASS U+5608 嘈 %B9%CB 
 PASS U+5609 嘉 %B9%C5 
@@ -3473,7 +3473,7 @@ PASS U+5ECA 廊 %B4%59
 PASS U+5ECB 廋 %DD%60 
 PASS U+5ECC 廌 %DD%5E 
 PASS U+5ECE 廎 %E1%B8 
-FAIL U+5ED0 廐 %FB%F9 assert_equals: expected "%FB%F9" but got "%9D%FB"
+PASS U+5ED0 廐 %FB%F9 
 PASS U+5ED1 廑 %E1%B6 
 PASS U+5ED2 廒 %E1%BC 
 PASS U+5ED3 廓 %B9%F8 
@@ -3504,7 +3504,7 @@ PASS U+5EEF 廯 %F4%47
 PASS U+5EF1 廱 %F5%CB 
 PASS U+5EF2 廲 %F6%DF 
 PASS U+5EF3 廳 %C6%55 
-FAIL U+5EF4 廴 %C6%CF assert_equals: expected "%C6%CF" but got "%FB%FD"
+PASS U+5EF4 廴 %C6%CF 
 PASS U+5EF6 延 %A9%B5 
 PASS U+5EF7 廷 %A7%CA 
 PASS U+5EF9 廹 %FC%40 
@@ -3796,7 +3796,7 @@ PASS U+609F 悟 %AE%A9
 PASS U+60A0 悠 %B1%79 
 PASS U+60A2 悢 %D1%A2 
 PASS U+60A3 患 %B1%77 
-FAIL U+60A4 悤 %FC%6C assert_equals: expected "%FC%6C" but got "%A0%DC"
+PASS U+60A4 悤 %FC%6C 
 PASS U+60A8 您 %B1%7A 
 PASS U+60B0 悰 %D5%55 
 PASS U+60B1 悱 %D5%5E 
@@ -4739,7 +4739,7 @@ PASS U+65DB 旛 %EF%D9
 PASS U+65DD 旝 %F2%4A 
 PASS U+65DE 旞 %F2%49 
 PASS U+65DF 旟 %F4%4F 
-FAIL U+65E0 无 %C6%D3 assert_equals: expected "%C6%D3" but got "%FC%D3"
+PASS U+65E0 无 %C6%D3 
 PASS U+65E1 旡 %C9%5E 
 PASS U+65E2 既 %AC%4A 
 PASS U+65E3 旣 %FC%D4 
@@ -7116,7 +7116,7 @@ PASS U+7326 猦 %DA%76
 PASS U+7327 猧 %DA%73 
 PASS U+7328 猨 %FE%58 
 PASS U+7329 猩 %B5%56 
-FAIL U+732A 猪 %FE%52 assert_equals: expected "%FE%52" but got "%99%75"
+PASS U+732A 猪 %FE%52 
 PASS U+732B 猫 %FE%53 
 PASS U+732D 猭 %DA%75 
 PASS U+732E 献 %FE%59 
@@ -7710,7 +7710,7 @@ PASS U+7670 癰 %F7%EA
 PASS U+7671 癱 %C5%F5 
 PASS U+7672 癲 %C5%F6 
 PASS U+7675 癵 %F9%CC 
-FAIL U+7676 癶 %C6%D5 assert_equals: expected "%C6%D5" but got "%FE%C1"
+PASS U+7676 癶 %C6%D5 
 PASS U+7678 癸 %AC%D1 
 PASS U+7679 癹 %CF%DE 
 PASS U+767B 登 %B5%6E 
@@ -12930,7 +12930,7 @@ PASS U+96B0 隰 %EE%F5
 PASS U+96B1 隱 %C1%F4 
 PASS U+96B3 隳 %F1%6F 
 PASS U+96B4 隴 %C3%F7 
-FAIL U+96B6 隶 %C6%D7 assert_equals: expected "%C6%D7" but got "%90%C4"
+PASS U+96B6 隶 %C6%D7 
 PASS U+96B8 隸 %C1%F5 
 PASS U+96B9 隹 %AB%41 
 PASS U+96BB 隻 %B0%A6 

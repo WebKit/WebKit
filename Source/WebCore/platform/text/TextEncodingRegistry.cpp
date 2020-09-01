@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextEncodingRegistry.h"
 
+#include "TextCodecCJK.h"
 #include "TextCodecICU.h"
 #include "TextCodecLatin1.h"
 #include "TextCodecReplacement.h"
@@ -236,6 +237,9 @@ static void extendTextCodecMaps()
 
     TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerCodecs(addToTextCodecMap);
+    
+    TextCodecCJK::registerEncodingNames(addToTextEncodingNameMap);
+    TextCodecCJK::registerCodecs(addToTextCodecMap);
 
     pruneBlocklistedCodecs();
     buildQuirksSets();

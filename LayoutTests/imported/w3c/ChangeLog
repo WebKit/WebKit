@@ -1,3 +1,19 @@
+2020-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Align Big5 decoding with spec, Chrome, and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=216016
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-big5-hkscs-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-cn-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-csbig5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-errors-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-extra-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-x-x-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-big5-hkscs-expected.txt:
+
 2020-08-31  Youenn Fablet  <youenn@apple.com>
 
         Update imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html so that it no longer times out if first test fails

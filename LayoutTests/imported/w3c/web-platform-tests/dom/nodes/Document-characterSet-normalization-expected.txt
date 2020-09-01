@@ -557,9 +557,9 @@ PASS Name "gb18030" has label "gb18030" (charset)
 PASS Name "Big5" has label "big5" (characterSet) 
 PASS Name "Big5" has label "big5" (inputEncoding) 
 PASS Name "Big5" has label "big5" (charset) 
-FAIL Name "Big5" has label "big5-hkscs" (characterSet) assert_equals: expected "Big5" but got "Big5-HKSCS"
-FAIL Name "Big5" has label "big5-hkscs" (inputEncoding) assert_equals: expected "Big5" but got "Big5-HKSCS"
-FAIL Name "Big5" has label "big5-hkscs" (charset) assert_equals: expected "Big5" but got "Big5-HKSCS"
+PASS Name "Big5" has label "big5-hkscs" (characterSet) 
+PASS Name "Big5" has label "big5-hkscs" (inputEncoding) 
+PASS Name "Big5" has label "big5-hkscs" (charset) 
 PASS Name "Big5" has label "cn-big5" (characterSet) 
 PASS Name "Big5" has label "cn-big5" (inputEncoding) 
 PASS Name "Big5" has label "cn-big5" (charset) 

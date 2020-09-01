@@ -27,6 +27,7 @@
 
 #include <unicode/utypes.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/LChar.h>
 
 namespace WTF {
 
