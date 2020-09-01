@@ -179,6 +179,8 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/not-rendered-image-loading-lazy.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/picture-loading-lazy.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/remove-element-and-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/invisible-image.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-to-eager.html [ Skip ]
 
 # testRunner.queueLoad() does not support loading data URLs in Mac WK1
 http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]

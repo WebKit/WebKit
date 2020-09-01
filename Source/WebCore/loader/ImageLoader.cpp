@@ -43,7 +43,7 @@
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
-#include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO)

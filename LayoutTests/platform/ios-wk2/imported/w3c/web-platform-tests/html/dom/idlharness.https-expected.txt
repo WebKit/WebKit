@@ -900,7 +900,7 @@ PASS HTMLImageElement interface: attribute complete
 PASS HTMLImageElement interface: attribute currentSrc 
 PASS HTMLImageElement interface: attribute referrerPolicy 
 PASS HTMLImageElement interface: attribute decoding 
-FAIL HTMLImageElement interface: attribute loading assert_true: The prototype object must have a property "loading" expected true got false
+PASS HTMLImageElement interface: attribute loading 
 PASS HTMLImageElement interface: operation decode() 
 PASS HTMLImageElement interface: attribute name 
 PASS HTMLImageElement interface: attribute lowsrc 
@@ -926,7 +926,7 @@ PASS HTMLImageElement interface: document.createElement("img") must inherit prop
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "currentSrc" with the proper type 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "referrerPolicy" with the proper type 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "decoding" with the proper type 
-FAIL HTMLImageElement interface: document.createElement("img") must inherit property "loading" with the proper type assert_inherits: property "loading" not found in prototype chain
+PASS HTMLImageElement interface: document.createElement("img") must inherit property "loading" with the proper type 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "decode()" with the proper type 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "name" with the proper type 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "lowsrc" with the proper type 
@@ -952,7 +952,7 @@ PASS HTMLImageElement interface: new Image() must inherit property "complete" wi
 PASS HTMLImageElement interface: new Image() must inherit property "currentSrc" with the proper type 
 PASS HTMLImageElement interface: new Image() must inherit property "referrerPolicy" with the proper type 
 PASS HTMLImageElement interface: new Image() must inherit property "decoding" with the proper type 
-FAIL HTMLImageElement interface: new Image() must inherit property "loading" with the proper type assert_inherits: property "loading" not found in prototype chain
+PASS HTMLImageElement interface: new Image() must inherit property "loading" with the proper type 
 PASS HTMLImageElement interface: new Image() must inherit property "decode()" with the proper type 
 PASS HTMLImageElement interface: new Image() must inherit property "name" with the proper type 
 PASS HTMLImageElement interface: new Image() must inherit property "lowsrc" with the proper type 

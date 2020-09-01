@@ -96,7 +96,6 @@ struct TestOptions {
     bool shouldPresentPopovers { true };
     bool enableAppNap { false };
     bool enableBackForwardCache { false };
-    bool enableLazyImageLoading { false };
     bool allowsLinkPreview { true };
     bool enableCaptureVideoInUIProcess { false };
     bool enableCaptureVideoInGPUProcess { false };
@@ -165,7 +164,6 @@ struct TestOptions {
             || applicationBundleIdentifier != options.applicationBundleIdentifier
             || enableAppNap != options.enableAppNap
             || enableBackForwardCache != options.enableBackForwardCache
-            || enableLazyImageLoading != options.enableLazyImageLoading
             || allowsLinkPreview != options.allowsLinkPreview
             || enableCaptureVideoInUIProcess != options.enableCaptureVideoInUIProcess
             || enableCaptureVideoInGPUProcess != options.enableCaptureVideoInGPUProcess
