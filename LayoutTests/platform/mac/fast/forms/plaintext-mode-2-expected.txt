@@ -36,6 +36,6 @@ layer at (0,0) size 800x600
             text run at (0,0) width 331: "Success: document.execCommand(\"Paste\") == true"
 layer at (11,13) size 594x13
   RenderBlock {DIV} at (3,3) size 594x13
-    RenderText {#text} at (0,0) size 464x13
-      text run at (0,0) width 464: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
+    RenderText {#text} at (0,0) size 465x13
+      text run at (0,0) width 465: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
 caret: position 94 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body

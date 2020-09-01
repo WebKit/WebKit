@@ -1,3 +1,20 @@
+2020-08-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r266378 and r266381.
+        https://bugs.webkit.org/show_bug.cgi?id=216029
+
+        rebaselined tests for new OS without leaving old baselines
+        behind
+
+        Reverted changesets:
+
+        "[ BigSur+ ] media/media-source/media-source-webm.html"
+        https://trac.webkit.org/changeset/266378
+
+        "[ BigSur+ ] platform/mac/media/media-source/is-type-
+        supported-vp9-codec-check.html"
+        https://trac.webkit.org/changeset/266381
+
 2020-08-31  Mark Lam  <mark.lam@apple.com>
 
         Missing exception check while handling the onbeforeunload event.
