@@ -161,10 +161,6 @@
 #import "WKWebEvent.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
-#endif
-
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
@@ -176,6 +172,11 @@ static NSString * const cursorRegionIdentifier = @"WKCursorRegion";
 static NSString * const editableCursorRegionIdentifier = @"WKEditableCursorRegion";
 
 @interface WKContentView (WKUICursorInteractionDelegate) <_UICursorInteractionDelegate>
+@end
+#endif
+
+#if ENABLE(PENCILKIT_TEXT_INPUT)
+@interface WKContentView (WKUIIndirectScribbleInteractionDelegate) <UIIndirectScribbleInteractionDelegate>
 @end
 #endif
 
@@ -830,8 +831,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpCursorInteraction];
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-    [self setUpAdditionalInteractions];
+#if ENABLE(PENCILKIT_TEXT_INPUT)
+    [self setUpScribbleInteraction];
 #endif
 
     _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
@@ -998,8 +999,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _cursorInteraction = nil;
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-    [self cleanUpAdditionalInteractions];
+#if ENABLE(PENCILKIT_TEXT_INPUT)
+    [self cleanUpScribbleInteraction];
 #endif
 
     _inspectorNodeSearchEnabled = NO;
@@ -4839,8 +4840,8 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
 - (BOOL)_shouldSimulateKeyboardInputOnTextInsertion
 {
-#if USE(TEXT_INTERACTION_ADDITIONS)
-    return [self _shouldSimulateKeyboardInputOnTextInsertionInternal];
+#if ENABLE(PENCILKIT_TEXT_INPUT)
+    return [_scribbleInteraction isHandlingWriting];
 #else
     return NO;
 #endif
@@ -8773,6 +8774,81 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 
 #endif // HAVE(UI_CURSOR_INTERACTION)
+
+#if ENABLE(PENCILKIT_TEXT_INPUT)
+
+- (void)setUpScribbleInteraction
+{
+    _scribbleInteraction = adoptNS([[UIIndirectScribbleInteraction alloc] initWithDelegate:self]);
+    [self addInteraction:_scribbleInteraction.get()];
+}
+
+- (void)cleanUpScribbleInteraction
+{
+    [self removeInteraction:_scribbleInteraction.get()];
+    _scribbleInteraction = nil;
+}
+
+- (_WKTextInputContext *)_textInputContextByScribbleIdentifier:(UIScribbleElementIdentifier)identifier
+{
+    _WKTextInputContext *textInputContext = (_WKTextInputContext *)identifier;
+    if (![textInputContext isKindOfClass:_WKTextInputContext.class])
+        return nil;
+    auto elementContext = textInputContext._textInputContext;
+    if (elementContext.webPageIdentifier != _page->webPageID())
+        return nil;
+    return textInputContext;
+}
+
+- (BOOL)_elementForTextInputContextIsFocused:(_WKTextInputContext *)context
+{
+    // We ignore bounding rect changes as the bounding rect of the focused element is not kept up-to-date.
+    return self._hasFocusedElement && context && context._textInputContext.isSameElement(_focusedElementInformation.elementContext);
+}
+
+- (void)indirectScribbleInteraction:(UIIndirectScribbleInteraction *)interaction requestElementsInRect:(CGRect)rect completion:(void(^)(NSArray<UIScribbleElementIdentifier> *))completion
+{
+    ASSERT(_scribbleInteraction.get() == interaction);
+    [self _requestTextInputContextsInRect:rect completionHandler:completion];
+}
+
+- (BOOL)indirectScribbleInteraction:(UIIndirectScribbleInteraction *)interaction isElementFocused:(UIScribbleElementIdentifier)identifier
+{
+    ASSERT(_scribbleInteraction.get() == interaction);
+    return [self _elementForTextInputContextIsFocused:[self _textInputContextByScribbleIdentifier:identifier]];
+}
+
+- (void)indirectScribbleInteraction:(UIIndirectScribbleInteraction *)interaction focusElementIfNeeded:(UIScribbleElementIdentifier)identifier referencePoint:(CGPoint)initialPoint completion:(void (^)(UIResponder<UITextInput> *))completionBlock
+{
+    ASSERT(_scribbleInteraction.get() == interaction);
+    if (auto *textInputContext = [self _textInputContextByScribbleIdentifier:identifier])
+        [self _focusTextInputContext:textInputContext placeCaretAt:initialPoint completionHandler:completionBlock];
+    else
+        completionBlock(nil);
+}
+
+- (CGRect)indirectScribbleInteraction:(UIIndirectScribbleInteraction *)interaction frameForElement:(UIScribbleElementIdentifier)identifier
+{
+    ASSERT(_scribbleInteraction.get() == interaction);
+    auto *textInputContext = [self _textInputContextByScribbleIdentifier:identifier];
+    return textInputContext ? textInputContext.boundingRect : CGRectNull;
+}
+
+- (void)indirectScribbleInteraction:(UIIndirectScribbleInteraction *)interaction willBeginWritingInElement:(UIScribbleElementIdentifier)identifier
+{
+    ASSERT(_scribbleInteraction.get() == interaction);
+    if (auto *textInputContext = [self _textInputContextByScribbleIdentifier:identifier])
+        [self _willBeginTextInteractionInTextInputContext:textInputContext];
+}
+
+- (void)indirectScribbleInteraction:(UIIndirectScribbleInteraction *)interaction didFinishWritingInElement:(UIScribbleElementIdentifier)identifier
+{
+    ASSERT(_scribbleInteraction.get() == interaction);
+    if (auto *textInputContext = [self _textInputContextByScribbleIdentifier:identifier])
+        [self _didFinishTextInteractionInTextInputContext:textInputContext];
+}
+
+#endif // ENABLE(PENCILKIT_TEXT_INPUT)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
