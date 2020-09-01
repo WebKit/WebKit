@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS canonicalize('http://www.google.com/foo?bar=baz#') is 'http://www.google.com/foo?bar=baz#'
-FAIL canonicalize('http://www.google.com/foo?bar=baz# »') should be http://www.google.com/foo?bar=baz# ». Was http://www.google.com/foo?bar=baz# %C2%BB.
+FAIL canonicalize('http://www.google.com/foo?bar=baz# »') should be http://www.google.com/foo?bar=baz#%20». Was http://www.google.com/foo?bar=baz#%20%C2%BB.
 PASS canonicalize('http://[www.google.com]/') is 'http://[www.google.com]/'
 PASS canonicalize('http://www.google.com') is 'http://www.google.com/'
 PASS canonicalize('http:////////user:@google.com:99?foo') is 'http://user@google.com:99/?foo'

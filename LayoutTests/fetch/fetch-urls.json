@@ -95,7 +95,7 @@ executeTests(
   {
     "input": "http://f:21/ b ? d # e ",
     "base": "http://example.org/foo/bar",
-    "href": "http://f:21/%20b%20?%20d%20# e",
+    "href": "http://f:21/%20b%20?%20d%20#%20e",
     "origin": "http://f:21",
     "protocol": "http:",
     "username": "",
@@ -105,7 +105,7 @@ executeTests(
     "port": "21",
     "pathname": "/%20b%20",
     "search": "?%20d%20",
-    "hash": "# e"
+    "hash": "#%20e"
   },
   {
     "input": "http://f:/c",
@@ -2118,7 +2118,7 @@ executeTests(
   {
     "input": "http://www.google.com/foo?bar=baz# »",
     "base": "about:blank",
-    "href": "http://www.google.com/foo?bar=baz# »",
+    "href": "http://www.google.com/foo?bar=baz#%20»",
     "origin": "http://www.google.com",
     "protocol": "http:",
     "username": "",
@@ -2128,7 +2128,7 @@ executeTests(
     "port": "",
     "pathname": "/foo",
     "search": "?bar=baz",
-    "hash": "# »"
+    "hash": "#%20»"
   },
   {
     "input": "data:test# »",

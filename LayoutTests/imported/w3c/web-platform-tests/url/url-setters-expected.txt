@@ -33,18 +33,18 @@ PASS <area>: Setting <a://example.net>.protocol = 'bé' Non-ASCII is rejected
 PASS URL: Setting <http://test@example.net>.protocol = 'file' Can’t switch from URL containing username/password/port to file 
 PASS <a>: Setting <http://test@example.net>.protocol = 'file' Can’t switch from URL containing username/password/port to file 
 PASS <area>: Setting <http://test@example.net>.protocol = 'file' Can’t switch from URL containing username/password/port to file 
-PASS URL: Setting <gopher://example.net:1234>.protocol = 'file' 
-PASS <a>: Setting <gopher://example.net:1234>.protocol = 'file' 
-PASS <area>: Setting <gopher://example.net:1234>.protocol = 'file' 
+PASS URL: Setting <https://example.net:1234>.protocol = 'file' 
+PASS <a>: Setting <https://example.net:1234>.protocol = 'file' 
+PASS <area>: Setting <https://example.net:1234>.protocol = 'file' 
 PASS URL: Setting <wss://x:x@example.net:1234>.protocol = 'file' 
 PASS <a>: Setting <wss://x:x@example.net:1234>.protocol = 'file' 
 PASS <area>: Setting <wss://x:x@example.net:1234>.protocol = 'file' 
 PASS URL: Setting <file://localhost/>.protocol = 'http' Can’t switch from file URL with no host 
 PASS <a>: Setting <file://localhost/>.protocol = 'http' Can’t switch from file URL with no host 
 PASS <area>: Setting <file://localhost/>.protocol = 'http' Can’t switch from file URL with no host 
-PASS URL: Setting <file:///test>.protocol = 'gopher' 
-PASS <a>: Setting <file:///test>.protocol = 'gopher' 
-PASS <area>: Setting <file:///test>.protocol = 'gopher' 
+PASS URL: Setting <file:///test>.protocol = 'https' 
+PASS <a>: Setting <file:///test>.protocol = 'https' 
+PASS <area>: Setting <file:///test>.protocol = 'https' 
 PASS URL: Setting <file:>.protocol = 'wss' 
 PASS <a>: Setting <file:>.protocol = 'wss' 
 PASS <area>: Setting <file:>.protocol = 'wss' 
@@ -426,6 +426,12 @@ PASS <area>: Setting <sc://test@test/>.hostname = ''
 PASS URL: Setting <sc://test:12/>.hostname = '' 
 PASS <a>: Setting <sc://test:12/>.hostname = '' 
 PASS <area>: Setting <sc://test:12/>.hostname = '' 
+PASS URL: Setting <non-spec:/.//p>.hostname = 'h' Drop /. from path 
+PASS <a>: Setting <non-spec:/.//p>.hostname = 'h' Drop /. from path 
+PASS <area>: Setting <non-spec:/.//p>.hostname = 'h' Drop /. from path 
+FAIL URL: Setting <non-spec:/.//p>.hostname = '' assert_equals: expected "non-spec:////p" but got "non-spec://p"
+FAIL <a>: Setting <non-spec:/.//p>.hostname = '' assert_equals: expected "non-spec:////p" but got "non-spec://p"
+FAIL <area>: Setting <non-spec:/.//p>.hostname = '' assert_equals: expected "non-spec:////p" but got "non-spec://p"
 PASS URL: Setting <http://example.net>.port = '8080' 
 PASS <a>: Setting <http://example.net>.port = '8080' 
 PASS <area>: Setting <http://example.net>.port = '8080' 
@@ -537,6 +543,18 @@ FAIL <area>: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)sla
 FAIL URL: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://///"
 FAIL <a>: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://///"
 FAIL <area>: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes assert_equals: expected "file:///" but got "file://///"
+FAIL URL: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+FAIL <a>: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+FAIL <area>: Setting <non-spec:/>.pathname = '/.//p' Serialize /. in path assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+FAIL URL: Setting <non-spec:/>.pathname = '/..//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+FAIL <a>: Setting <non-spec:/>.pathname = '/..//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+FAIL <area>: Setting <non-spec:/>.pathname = '/..//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+FAIL URL: Setting <non-spec:/>.pathname = '//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+FAIL <a>: Setting <non-spec:/>.pathname = '//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+FAIL <area>: Setting <non-spec:/>.pathname = '//p' assert_equals: expected "non-spec:/.//p" but got "non-spec://p"
+PASS URL: Setting <non-spec:/.//>.pathname = 'p' Drop /. from path 
+PASS <a>: Setting <non-spec:/.//>.pathname = 'p' Drop /. from path 
+PASS <area>: Setting <non-spec:/.//>.pathname = 'p' Drop /. from path 
 PASS URL: Setting <https://example.net#nav>.search = 'lang=fr' 
 PASS <a>: Setting <https://example.net#nav>.search = 'lang=fr' 
 PASS <area>: Setting <https://example.net#nav>.search = 'lang=fr' 
@@ -588,27 +606,27 @@ PASS <area>: Setting <https://example.net?lang=en-US#nav>.hash = '#'
 PASS URL: Setting <https://example.net?lang=en-US#nav>.hash = '' 
 PASS <a>: Setting <https://example.net?lang=en-US#nav>.hash = '' 
 PASS <area>: Setting <https://example.net?lang=en-US#nav>.hash = '' 
-FAIL URL: Setting <http://example.net>.hash = '#foo bar' assert_equals: expected "http://example.net/#foo%20bar" but got "http://example.net/#foo bar"
-FAIL <a>: Setting <http://example.net>.hash = '#foo bar' assert_equals: expected "http://example.net/#foo%20bar" but got "http://example.net/#foo bar"
-FAIL <area>: Setting <http://example.net>.hash = '#foo bar' assert_equals: expected "http://example.net/#foo%20bar" but got "http://example.net/#foo bar"
-FAIL URL: Setting <http://example.net>.hash = '#foo"bar' assert_equals: expected "http://example.net/#foo%22bar" but got "http://example.net/#foo\"bar"
-FAIL <a>: Setting <http://example.net>.hash = '#foo"bar' assert_equals: expected "http://example.net/#foo%22bar" but got "http://example.net/#foo\"bar"
-FAIL <area>: Setting <http://example.net>.hash = '#foo"bar' assert_equals: expected "http://example.net/#foo%22bar" but got "http://example.net/#foo\"bar"
-FAIL URL: Setting <http://example.net>.hash = '#foo<bar' assert_equals: expected "http://example.net/#foo%3Cbar" but got "http://example.net/#foo<bar"
-FAIL <a>: Setting <http://example.net>.hash = '#foo<bar' assert_equals: expected "http://example.net/#foo%3Cbar" but got "http://example.net/#foo<bar"
-FAIL <area>: Setting <http://example.net>.hash = '#foo<bar' assert_equals: expected "http://example.net/#foo%3Cbar" but got "http://example.net/#foo<bar"
-FAIL URL: Setting <http://example.net>.hash = '#foo>bar' assert_equals: expected "http://example.net/#foo%3Ebar" but got "http://example.net/#foo>bar"
-FAIL <a>: Setting <http://example.net>.hash = '#foo>bar' assert_equals: expected "http://example.net/#foo%3Ebar" but got "http://example.net/#foo>bar"
-FAIL <area>: Setting <http://example.net>.hash = '#foo>bar' assert_equals: expected "http://example.net/#foo%3Ebar" but got "http://example.net/#foo>bar"
-FAIL URL: Setting <http://example.net>.hash = '#foo`bar' assert_equals: expected "http://example.net/#foo%60bar" but got "http://example.net/#foo`bar"
-FAIL <a>: Setting <http://example.net>.hash = '#foo`bar' assert_equals: expected "http://example.net/#foo%60bar" but got "http://example.net/#foo`bar"
-FAIL <area>: Setting <http://example.net>.hash = '#foo`bar' assert_equals: expected "http://example.net/#foo%60bar" but got "http://example.net/#foo`bar"
-FAIL URL: Setting <a:/>.hash = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; tabs and newlines are removed assert_equals: expected "a:/#%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
-FAIL <a>: Setting <a:/>.hash = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; tabs and newlines are removed assert_equals: expected "a:/#%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
-FAIL <area>: Setting <a:/>.hash = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; tabs and newlines are removed assert_equals: expected "a:/#%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
+PASS URL: Setting <http://example.net>.hash = '#foo bar' 
+PASS <a>: Setting <http://example.net>.hash = '#foo bar' 
+PASS <area>: Setting <http://example.net>.hash = '#foo bar' 
+PASS URL: Setting <http://example.net>.hash = '#foo"bar' 
+PASS <a>: Setting <http://example.net>.hash = '#foo"bar' 
+PASS <area>: Setting <http://example.net>.hash = '#foo"bar' 
+PASS URL: Setting <http://example.net>.hash = '#foo<bar' 
+PASS <a>: Setting <http://example.net>.hash = '#foo<bar' 
+PASS <area>: Setting <http://example.net>.hash = '#foo<bar' 
+PASS URL: Setting <http://example.net>.hash = '#foo>bar' 
+PASS <a>: Setting <http://example.net>.hash = '#foo>bar' 
+PASS <area>: Setting <http://example.net>.hash = '#foo>bar' 
+PASS URL: Setting <http://example.net>.hash = '#foo`bar' 
+PASS <a>: Setting <http://example.net>.hash = '#foo`bar' 
+PASS <area>: Setting <http://example.net>.hash = '#foo`bar' 
+PASS URL: Setting <a:/>.hash = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; tabs and newlines are removed 
+PASS <a>: Setting <a:/>.hash = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; tabs and newlines are removed 
+PASS <area>: Setting <a:/>.hash = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; tabs and newlines are removed 
 PASS URL: Setting <http://example.net>.hash = 'a\0b' Percent-encode NULLs in fragment 
 PASS <a>: Setting <http://example.net>.hash = 'a\0b' Percent-encode NULLs in fragment 
 PASS <area>: Setting <http://example.net>.hash = 'a\0b' Percent-encode NULLs in fragment 

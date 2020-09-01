@@ -2,7 +2,7 @@
 PASS location hash 
 PASS Setting location.hash on srcdoc iframe 
 PASS Setting hash should automatically include hash character 
-FAIL Setting hash should encode incompatible characters assert_equals: expected "#not%20encoded" but got "#not encoded"
+PASS Setting hash should encode incompatible characters 
 PASS Setting hash to an already encoded value should not double encode it 
-FAIL Setting hash which is partially encoded should only encode incompatible characters assert_equals: expected "#mixed%20encoding%20here" but got "#mixed encoding%20here"
+PASS Setting hash which is partially encoded should only encode incompatible characters 
 

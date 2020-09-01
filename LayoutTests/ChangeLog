@@ -1,3 +1,37 @@
+2020-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Update URL fragment percent encode set
+        https://bugs.webkit.org/show_bug.cgi?id=216022
+
+        Reviewed by Youenn Fablet.
+
+        * fast/dom/DOMURL/set-href-attribute-hash-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-hash.html:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash.html:
+        * fast/url/anchor-expected.txt:
+        * fast/url/anchor.html:
+        * fast/url/segments-expected.txt:
+        * fast/url/segments-from-data-url-expected.txt:
+        * fast/url/segments-from-data-url.html:
+        * fast/url/segments-from-data-url2-expected.txt:
+        * fast/url/segments-from-data-url2.html:
+        * fast/url/segments.html:
+        * fast/url/standard-url-expected.txt:
+        * fast/url/standard-url.html:
+        * fast/url/url-tojson-expected.txt:
+        * fast/url/url-tojson.html:
+        * fetch/fetch-url-serialization-expected.txt:
+        * fetch/fetch-urls.json:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-expected.txt:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location2-expected.txt:
+        * svg/dom/viewspec-parser-1-expected.txt:
+        * svg/dom/viewspec-parser-3-expected.txt:
+        * svg/dom/viewspec-parser-4-expected.txt:
+        * svg/dom/viewspec-parser-5-expected.txt:
+        * svg/dom/viewspec-parser-6-expected.txt:
+        * svg/dom/viewspec-parser-7-expected.txt:
+
 2020-09-01  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Handle events for date inputs with editable components

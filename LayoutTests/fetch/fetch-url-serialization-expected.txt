@@ -150,8 +150,8 @@ PASS Testing Request url 'http://example.com/‥/foo' with base 'about:blank'
 PASS Testing Request url 'http://example.com/﻿/foo' with base 'about:blank' 
 PASS Testing Request url 'http://example.com/‮/foo/‭/bar' with base 'about:blank' 
 PASS Testing Request url 'http://www.google.com/foo?bar=baz#' with base 'about:blank' 
-FAIL Testing Request url 'http://www.google.com/foo?bar=baz# »' with base 'about:blank' assert_equals: expected "http://www.google.com/foo?bar=baz# »" but got "http://www.google.com/foo?bar=baz# %C2%BB"
-FAIL Testing Request url 'data:test# »' with base 'about:blank' assert_equals: expected "data:test# »" but got "data:test# %C2%BB"
+FAIL Testing Request url 'http://www.google.com/foo?bar=baz# »' with base 'about:blank' assert_equals: expected "http://www.google.com/foo?bar=baz#%20»" but got "http://www.google.com/foo?bar=baz#%20%C2%BB"
+FAIL Testing Request url 'data:test# »' with base 'about:blank' assert_equals: expected "data:test# »" but got "data:test#%20%C2%BB"
 PASS Testing Request url 'http://[www.google.com]/' with base 'about:blank' 
 PASS Testing Request url 'http://www.google.com' with base 'about:blank' 
 PASS Testing Request url 'http://192.0x00A80001' with base 'about:blank' 

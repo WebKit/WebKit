@@ -9,7 +9,7 @@ Parsed: [initial view] from: [initial view]
 Loaded: resources/viewspec-target.svg#svgView(viewBox(0,0,200,200)))
 Parsed: svgView(viewBox(0 0 200 200)) from: svgView(viewBox(0,0,200,200)))
 
-Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(xMaxYMin slice))
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(xMaxYMin%20slice))
 Parsed: svgView(preserveAspectRatio(xMaxYMin slice)) from: svgView(preserveAspectRatio(xMaxYMin slice))
 
 Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(xMaxYMin))
@@ -54,10 +54,10 @@ Parsed: [initial view] from: svgView(;;transform(scale(.5)))
 Loaded: resources/viewspec-target.svg#svgView(transform(scale(.5));transform(scale(2));transform(scale(2)))
 Parsed: svgView(transform(scale(0.5 0.5) scale(2 2) scale(2 2))) from: svgView(transform(scale(.5));transform(scale(2));transform(scale(2)))
 
-Loaded: resources/viewspec-target.svg#svgView(viewBoxx(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(viewBoxx(0,%200)
 Parsed: [initial view] from: svgView(viewBoxx(0, 0)
 
-Loaded: resources/viewspec-target.svg#svgView(viewBo(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(viewBo(0,%200)
 Parsed: [initial view] from: svgView(viewBo(0, 0)
 
 Loaded: resources/viewspec-target.svg#svgView(viewBox
@@ -66,10 +66,10 @@ Parsed: [initial view] from: svgView(viewBox
 Loaded: resources/viewspec-target.svg#svgView(viewBox
 Parsed: [initial view] from: svgView(viewBox
 
-Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatioo(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatioo(0,%200)
 Parsed: [initial view] from: svgView(preserveAspectRatioo(0, 0)
 
-Loaded: resources/viewspec-target.svg#svgView(preserveAspectRati(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(preserveAspectRati(0,%200)
 Parsed: [initial view] from: svgView(preserveAspectRati(0, 0)
 
 Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio
@@ -78,10 +78,10 @@ Parsed: [initial view] from: svgView(preserveAspectRatio
 Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio
 Parsed: [initial view] from: svgView(preserveAspectRatio
 
-Loaded: resources/viewspec-target.svg#svgView(transformm(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(transformm(0,%200)
 Parsed: [initial view] from: svgView(transformm(0, 0)
 
-Loaded: resources/viewspec-target.svg#svgView(transfor(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(transfor(0,%200)
 Parsed: [initial view] from: svgView(transfor(0, 0)
 
 Loaded: resources/viewspec-target.svg#svgView(transform
@@ -90,10 +90,10 @@ Parsed: [initial view] from: svgView(transform
 Loaded: resources/viewspec-target.svg#svgView(transform
 Parsed: [initial view] from: svgView(transform
 
-Loaded: resources/viewspec-target.svg#svgView(zoomAndPann(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(zoomAndPann(0,%200)
 Parsed: [initial view] from: svgView(zoomAndPann(0, 0)
 
-Loaded: resources/viewspec-target.svg#svgView(zoomAndPa(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(zoomAndPa(0,%200)
 Parsed: [initial view] from: svgView(zoomAndPa(0, 0)
 
 Loaded: resources/viewspec-target.svg#svgView(zoomAndPan
@@ -102,10 +102,10 @@ Parsed: [initial view] from: svgView(zoomAndPan
 Loaded: resources/viewspec-target.svg#svgView(zoomAndPan
 Parsed: [initial view] from: svgView(zoomAndPan
 
-Loaded: resources/viewspec-target.svg#svgView(viewTargett(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(viewTargett(0,%200)
 Parsed: [initial view] from: svgView(viewTargett(0, 0)
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarge(0, 0)
+Loaded: resources/viewspec-target.svg#svgView(viewTarge(0,%200)
 Parsed: [initial view] from: svgView(viewTarge(0, 0)
 
 Loaded: resources/viewspec-target.svg#svgView(viewTarget

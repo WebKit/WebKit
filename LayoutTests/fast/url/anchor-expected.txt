@@ -3,7 +3,7 @@ Test URLs that have an anchor.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS canonicalize('http://www.example.com/#hello, world') is 'http://www.example.com/#hello, world'
+PASS canonicalize('http://www.example.com/#hello, world') is 'http://www.example.com/#hello,%20world'
 FAIL canonicalize('http://www.example.com/#Â©') should be http://www.example.com/#Â©. Was http://www.example.com/#%C3%82%C2%A9.
 FAIL canonicalize('http://www.example.com/#𐌀ss') should be http://www.example.com/#𐌀ss. Was http://www.example.com/#%F0%90%8C%80ss.
 PASS canonicalize('http://www.example.com/#%41%a') is 'http://www.example.com/#%41%a'

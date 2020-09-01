@@ -1,5 +1,19 @@
 2020-09-01  Alex Christensen  <achristensen@webkit.org>
 
+        Update URL fragment percent encode set
+        https://bugs.webkit.org/show_bug.cgi?id=216022
+
+        Reviewed by Youenn Fablet.
+
+        It now matches the behavior of Chrome and Firefox, as well as the spec at
+        https://url.spec.whatwg.org/#fragment-percent-encode-set
+
+        * wtf/URLParser.cpp:
+        (WTF::isInFragmentEncodeSet):
+        (WTF::URLParser::parse):
+
+2020-09-01  Alex Christensen  <achristensen@webkit.org>
+
         Align Big5 decoding with spec, Chrome, and Firefox
         https://bugs.webkit.org/show_bug.cgi?id=216016
 

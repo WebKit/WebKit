@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Loaded: resources/viewspec-target.svg#
 Parsed: [initial view] from: [initial view]
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget( 78)28
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(%2078)28
 Parsed: [initial view] from: svgView(viewTarget( 78)2	8	
 
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(e.
@@ -21,13 +21,13 @@ Parsed: [initial view] from: svgView(viewTarget(	(
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(
 Parsed: [initial view] from: svgView(viewTarget(
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(.)29e0 7950,- e
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(.)29e0%207950,-%20e
 Parsed: [initial view] from: svgView(viewTarget(.)2	9e0 795	0,- e
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(e,4(7- )+e(e8.
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(e,4(7-%20)+e(e8.
 Parsed: [initial view] from: svgView(viewTarget(e,4(7- )+e(e8.
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(74- 9.(+ e.0e635
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(74-%209.(+%20e.0e635
 Parsed: [initial view] from: svgView(viewTarget(74- 9.(+ e.0e635
 
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(-9,).8e7e4e9ee
@@ -60,7 +60,7 @@ Parsed: [initial view] from: svgView(viewTarget(.59e3...725-
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(6-)2).180
 Parsed: [initial view] from: svgView(viewTarget(6	-)2).180
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(,e 579++.
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(,e%20579++.
 Parsed: [initial view] from: svgView(viewTarget(,e 579	++.
 
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(-+
@@ -75,16 +75,16 @@ Parsed: [initial view] from: svgView(viewTarget(221e..+	+77
 Loaded: resources/viewspec-target.svg#svgView(viewTarget())4e1e).-e8378.
 Parsed: [initial view] from: svgView(viewTarget())4e	1e).-e8378.
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(4+01 e
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(4+01%20e
 Parsed: [initial view] from: svgView(viewTarget(	4+01 	e
 
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(
 Parsed: [initial view] from: svgView(viewTarget(
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(-6++9++ 9.3)6438
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(-6++9++%209.3)6438
 Parsed: [initial view] from: svgView(viewTarget(-6++9++ 9.3)6438
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(-,15e)(-+,- 6
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(-,15e)(-+,-%206
 Parsed: [initial view] from: svgView(viewTarget(-,15e)(-+,- 6
 
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(3e+)085932
@@ -111,13 +111,13 @@ Parsed: [initial view] from: svgView(viewTarget(3e(-2e3e
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(
 Parsed: [initial view] from: svgView(viewTarget(
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(65e 3e(.1 6916
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(65e%203e(.1%206916
 Parsed: [initial view] from: svgView(viewTarget(6	5e 3e	(.	1 69	16
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(1ee5 56,(8.5e,3
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(1ee5%2056,(8.5e,3
 Parsed: [initial view] from: svgView(viewTarget(1ee5 56,(8.5	e,3
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(e- e-
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(e-%20e-
 Parsed: [initial view] from: svgView(viewTarget(e-		 e-
 
 Loaded: resources/viewspec-target.svg#svgView(viewTarget()e0e)
@@ -135,10 +135,10 @@ Parsed: [initial view] from: svgView(viewTarget(18e805
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(0
 Parsed: [initial view] from: svgView(viewTarget(0
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(63) 693(
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(63)%20693(
 Parsed: [initial view] from: svgView(viewTarget(63) 693(
 
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(80,2)+ 4ee,
+Loaded: resources/viewspec-target.svg#svgView(viewTarget(80,2)+%204ee,
 Parsed: [initial view] from: svgView(viewTarget(80,2)+ 4ee,
 
 Loaded: resources/viewspec-target.svg#svgView(viewTarget(5e+59e2e5

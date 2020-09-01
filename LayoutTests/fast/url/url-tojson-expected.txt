@@ -6,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS new URL('https://example.com/').toJSON() is "https://example.com/"
 PASS new URL('https://example.com/').toString() is "https://example.com/"
 PASS new URL('https://example.com/').href is "https://example.com/"
-PASS JSON.stringify(new URL('https://example.com/#"')) is "\"https://example.com/#\\\"\""
-PASS JSON.parse(JSON.stringify(new URL('https://example.com/#"'))) is "https://example.com/#\""
+PASS JSON.stringify(new URL('https://example.com/#"')) is "\"https://example.com/#%22\""
+PASS JSON.parse(JSON.stringify(new URL('https://example.com/#"'))) is "https://example.com/#%22"
 PASS successfullyParsed is true
 
 TEST COMPLETE

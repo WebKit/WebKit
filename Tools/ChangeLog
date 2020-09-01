@@ -1,3 +1,13 @@
+2020-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Update URL fragment percent encode set
+        https://bugs.webkit.org/show_bug.cgi?id=216022
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2020-08-31  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Register another package in the WebKit repository

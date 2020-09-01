@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-dom-write-unescaped-location.html?#<script>alert('XS%41S')</script>' because its source code was found within the request. The auditor was enabled because the server did not send an 'X-XSS-Protection' header.
 

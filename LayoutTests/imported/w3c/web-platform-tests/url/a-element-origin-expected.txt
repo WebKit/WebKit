@@ -314,4 +314,7 @@ FAIL Parsing origin: <ldap://localhost:389/ou=People,o=JNDITutorial> against <ab
 FAIL Parsing origin: <git+https://github.com/foo/bar> against <about:blank> assert_equals: origin expected "null" but got "git+https://github.com"
 FAIL Parsing origin: <urn:ietf:rfc:2648> against <about:blank> assert_equals: origin expected "null" but got "urn://"
 FAIL Parsing origin: <tag:joe@example.org,2001:foo/bar> against <about:blank> assert_equals: origin expected "null" but got "tag://"
+FAIL Parsing origin: <non-special:cannot-be-a-base-url-\0~> against <about:blank> assert_equals: origin expected "null" but got "non-special://"
+PASS Parsing origin: <https://www.example.com/path{path.html?query'=query#fragment<fragment> against <about:blank> 
+PASS Parsing origin: <https://user:pass[@foo/bar> against <http://example.org> 
 

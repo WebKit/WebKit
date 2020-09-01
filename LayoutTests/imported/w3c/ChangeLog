@@ -1,3 +1,22 @@
+2020-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Update URL fragment percent encode set
+        https://bugs.webkit.org/show_bug.cgi?id=216022
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/failure-expected.txt:
+        * web-platform-tests/url/resources/setters_tests.json:
+        * web-platform-tests/url/resources/urltestdata.json:
+        Also add some new tests from upstream.  Some of them are failing now.  That's fine for now.
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2020-09-01  Chris Dumez  <cdumez@apple.com>
 
         Add proper k-rate automation support for BiquadFilterNode

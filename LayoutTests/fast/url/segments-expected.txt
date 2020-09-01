@@ -8,7 +8,7 @@ PASS segments('http:foo.com') is '["http:","example.org","","/foo/foo.com","",""
 PASS segments('\t   :foo.com   \n') is '["http:","example.org","","/foo/:foo.com","",""]'
 PASS segments(' foo.com  ') is '["http:","example.org","","/foo/foo.com","",""]'
 PASS segments('a:\t foo.com') is '["a:","",""," foo.com","",""]'
-PASS segments('http://f:21/ b ? d # e ') is '["http:","f","21","/%20b%20","?%20d%20","# e"]'
+PASS segments('http://f:21/ b ? d # e ') is '["http:","f","21","/%20b%20","?%20d%20","#%20e"]'
 PASS segments('http://f:/c') is '["http:","f","","/c","",""]'
 PASS segments('http://f:0/c') is '["http:","f","0","/c","",""]'
 PASS segments('http://f:00000000000000/c') is '["http:","f","0","/c","",""]'
