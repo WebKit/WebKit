@@ -49,6 +49,7 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -486,6 +487,21 @@ void WebPageProxy::requestThumbnailWithPath(const String& identifier, const Stri
 }
 
 #endif // HAVE(QUICKLOOK_THUMBNAILING)
+
+void WebPageProxy::scheduleActivityStateUpdate()
+{
+    if (m_hasScheduledActivityStateUpdate)
+        return;
+    m_hasScheduledActivityStateUpdate = true;
+
+    [CATransaction addCommitHandler:[weakThis = makeWeakPtr(*this)] {
+        auto strongThis = makeRefPtr(weakThis.get());
+        if (!strongThis)
+            return;
+        strongThis->m_hasScheduledActivityStateUpdate = false;
+        strongThis->dispatchActivityStateChange();
+    } forPhase:kCATransactionPhasePostCommit];
+}
 
 } // namespace WebKit
 

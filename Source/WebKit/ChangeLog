@@ -1,3 +1,38 @@
+2020-08-31  Sihui Liu  <sihui_liu@apple.com>
+
+        Webpages flash when switching between windows
+        https://bugs.webkit.org/show_bug.cgi?id=216012
+
+        Reviewed by Darin Adler.
+
+        Based on patches from Tim Horton. To avoid flash, we need to make sure view to be selected updates its content 
+        before UI process commits its transaction. We did this by making UI process block until receiving a reply 
+        DidUpdateActivityState from web process. However, web process did not make sure the reply would be sent after 
+        normal rendering update and corresponding transasction commit. Instead, it flushed transactions in progress and 
+        replied. To fix this, now we make web process reply in transaction commit handler after rendering update.
+
+        In the switching case, view to be unselected will detach from root layer in its web process, which makes its 
+        content empty. This change is independent from the UI process commit, so we want this to happen after UI process
+        commits (which submits the view hierachy change). Otherwise, empty content(white flash) on the unselected view 
+        will be displayed. To fix this, we let UI process send the activity state update message in transaction commit 
+        handler.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::scheduleActivityStateUpdate):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPageProxy::setSuppressVisibilityUpdates):
+        (WebKit::WebPageProxy::activityStateDidChange):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+        (WebKit::TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired): Deleted.
+
 2020-08-31  Tim Horton  <timothy_horton@apple.com>
 
         Upstream support for image picker confirmation and downscaling
