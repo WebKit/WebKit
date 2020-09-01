@@ -76,7 +76,7 @@ void BiquadFilterNode::setType(BiquadFilterType type)
 
 ExceptionOr<void> BiquadFilterNode::getFrequencyResponse(const Ref<Float32Array>& frequencyHz, const Ref<Float32Array>& magResponse, const Ref<Float32Array>& phaseResponse)
 {
-    auto length = frequencyHz->length();
+    unsigned length = frequencyHz->length();
     if (magResponse->length() != length || phaseResponse->length() != length)
         return Exception { InvalidStateError, "The arrays passed as arguments must have the same length" };
 

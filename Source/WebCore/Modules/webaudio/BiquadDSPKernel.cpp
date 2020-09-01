@@ -28,6 +28,7 @@
 
 #include "BiquadDSPKernel.h"
 
+#include "Biquad.h"
 #include "BiquadProcessor.h"
 #include "FloatConversion.h"
 #include <limits.h>
@@ -41,78 +42,109 @@ namespace WebCore {
 // settings of the Biquad.
 static const double MaxBiquadDelayTime = 0.2;
 
-void BiquadDSPKernel::updateCoefficientsIfNecessary(bool useSmoothing, bool forceUpdate)
+static bool hasConstantValues(float* values, int framesToProcess)
 {
-    if (forceUpdate || biquadProcessor()->filterCoefficientsDirty()) {
-        double value1;
-        double value2;
-        double gain;
-        double detune; // in Cents
+    // FIXME: Use SIMD to optimize this. This would speed up processing by a factor of 4
+    // because we can process 4 floats at a time.
+    float value = values[0];
+    for (int k = 1; k < framesToProcess; ++k) {
+        if (values[k] != value)
+            return false;
+    }
+    return true;
+}
 
-        bool shouldUseARate = biquadProcessor()->parameter1().automationRate() == AutomationRate::ARate
-            || biquadProcessor()->parameter2().automationRate() == AutomationRate::ARate
-            || biquadProcessor()->parameter3().automationRate() == AutomationRate::ARate
-            || biquadProcessor()->parameter4().automationRate() == AutomationRate::ARate;
-        if (biquadProcessor()->hasSampleAccurateValues() && shouldUseARate) {
-            value1 = biquadProcessor()->parameter1().finalValue();
-            value2 = biquadProcessor()->parameter2().finalValue();
-            gain = biquadProcessor()->parameter3().finalValue();
-            detune = biquadProcessor()->parameter4().finalValue();
-        } else if (useSmoothing) {
-            value1 = biquadProcessor()->parameter1().smoothedValue();
-            value2 = biquadProcessor()->parameter2().smoothedValue();
-            gain = biquadProcessor()->parameter3().smoothedValue();
-            detune = biquadProcessor()->parameter4().smoothedValue();
+void BiquadDSPKernel::updateCoefficientsIfNecessary(size_t framesToProcess)
+{
+    if (biquadProcessor()->filterCoefficientsDirty()) {
+        if (biquadProcessor()->hasSampleAccurateValues() && biquadProcessor()->shouldUseARate()) {
+            float cutoffFrequency[Biquad::MaxFramesToProcess];
+            float q[Biquad::MaxFramesToProcess];
+            float gain[Biquad::MaxFramesToProcess];
+            float detune[Biquad::MaxFramesToProcess]; // in Cents
+
+            ASSERT(framesToProcess <= Biquad::MaxFramesToProcess);
+
+            biquadProcessor()->parameter1().calculateSampleAccurateValues(cutoffFrequency, framesToProcess);
+            biquadProcessor()->parameter2().calculateSampleAccurateValues(q, framesToProcess);
+            biquadProcessor()->parameter3().calculateSampleAccurateValues(gain, framesToProcess);
+            biquadProcessor()->parameter4().calculateSampleAccurateValues(detune, framesToProcess);
+
+            // If all the values are actually constant for this render (or the
+            // automation rate is "k-rate" for all of the AudioParams), we don't need
+            // to compute filter coefficients for each frame since they would be the
+            // same as the first.
+            bool isConstant = hasConstantValues(cutoffFrequency, framesToProcess)
+                && hasConstantValues(q, framesToProcess)
+                && hasConstantValues(gain, framesToProcess)
+                && hasConstantValues(detune, framesToProcess);
+
+            updateCoefficients(isConstant ? 1 : framesToProcess, cutoffFrequency, q, gain, detune);
         } else {
-            value1 = biquadProcessor()->parameter1().value();
-            value2 = biquadProcessor()->parameter2().value();
-            gain = biquadProcessor()->parameter3().value();
-            detune = biquadProcessor()->parameter4().value();
+            float cutoffFrequency = biquadProcessor()->parameter1().finalValue();
+            float q = biquadProcessor()->parameter2().finalValue();
+            float gain = biquadProcessor()->parameter3().finalValue();
+            float detune = biquadProcessor()->parameter4().finalValue();
+            updateCoefficients(1, &cutoffFrequency, &q, &gain, &detune);
         }
+    }
+}
 
-        // Convert from Hertz to normalized frequency 0 -> 1.
-        double nyquist = this->nyquist();
-        double normalizedFrequency = value1 / nyquist;
+void BiquadDSPKernel::updateCoefficients(size_t numberOfFrames, const float* cutoffFrequency, const float* q, const float* gain, const float* detune)
+{
+    // Convert from Hertz to normalized frequency 0 -> 1.
+    double nyquist = this->nyquist();
+
+    m_biquad.setHasSampleAccurateValues(numberOfFrames > 1);
+
+    for (size_t k = 0; k < numberOfFrames; ++k) {
+        double normalizedFrequency = cutoffFrequency[k] / nyquist;
 
         // Offset frequency by detune.
-        if (detune)
-            normalizedFrequency *= pow(2, detune / 1200);
+        if (detune[k]) {
+            // Detune multiplies the frequency by 2^(detune[k] / 1200).
+            normalizedFrequency *= std::exp2(detune[k] / 1200);
+        }
 
-        // Configure the biquad with the new filter parameters for the appropriate type of filter.
+        // Configure the biquad with the new filter parameters for the appropriate
+        // type of filter.
         switch (biquadProcessor()->type()) {
         case BiquadFilterType::Lowpass:
-            m_biquad.setLowpassParams(normalizedFrequency, value2);
+            m_biquad.setLowpassParams(k, normalizedFrequency, q[k]);
             break;
 
         case BiquadFilterType::Highpass:
-            m_biquad.setHighpassParams(normalizedFrequency, value2);
+            m_biquad.setHighpassParams(k, normalizedFrequency, q[k]);
             break;
 
         case BiquadFilterType::Bandpass:
-            m_biquad.setBandpassParams(normalizedFrequency, value2);
+            m_biquad.setBandpassParams(k, normalizedFrequency, q[k]);
             break;
 
         case BiquadFilterType::Lowshelf:
-            m_biquad.setLowShelfParams(normalizedFrequency, gain);
+            m_biquad.setLowShelfParams(k, normalizedFrequency, gain[k]);
             break;
 
         case BiquadFilterType::Highshelf:
-            m_biquad.setHighShelfParams(normalizedFrequency, gain);
+            m_biquad.setHighShelfParams(k, normalizedFrequency, gain[k]);
             break;
 
         case BiquadFilterType::Peaking:
-            m_biquad.setPeakingParams(normalizedFrequency, value2, gain);
+            m_biquad.setPeakingParams(k, normalizedFrequency, q[k], gain[k]);
             break;
 
         case BiquadFilterType::Notch:
-            m_biquad.setNotchParams(normalizedFrequency, value2);
+            m_biquad.setNotchParams(k, normalizedFrequency, q[k]);
             break;
 
         case BiquadFilterType::Allpass:
-            m_biquad.setAllpassParams(normalizedFrequency, value2);
+            m_biquad.setAllpassParams(k, normalizedFrequency, q[k]);
             break;
         }
     }
+
+    ASSERT(numberOfFrames);
+    updateTailTime(numberOfFrames - 1);
 }
 
 void BiquadDSPKernel::process(const float* source, float* destination, size_t framesToProcess)
@@ -123,15 +155,12 @@ void BiquadDSPKernel::process(const float* source, float* destination, size_t fr
     // FIXME: as an optimization, implement a way that a Biquad object can simply copy its internal filter coefficients from another Biquad object.
     // Then re-factor this code to only run for the first BiquadDSPKernel of each BiquadProcessor.
 
-    updateCoefficientsIfNecessary(true, false);
+    updateCoefficientsIfNecessary(framesToProcess);
 
     m_biquad.process(source, destination, framesToProcess);
 }
 
-void BiquadDSPKernel::getFrequencyResponse(int nFrequencies,
-                                           const float* frequencyHz,
-                                           float* magResponse,
-                                           float* phaseResponse)
+void BiquadDSPKernel::getFrequencyResponse(unsigned nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse)
 {
     bool isGood = nFrequencies > 0 && frequencyHz && magResponse && phaseResponse;
     ASSERT(isGood);
@@ -144,27 +173,35 @@ void BiquadDSPKernel::getFrequencyResponse(int nFrequencies,
 
     // Convert from frequency in Hz to normalized frequency (0 -> 1),
     // with 1 equal to the Nyquist frequency.
-    for (int k = 0; k < nFrequencies; ++k)
-        frequency[k] = narrowPrecisionToFloat(frequencyHz[k] / nyquist);
-
-    // We want to get the final values of the coefficients and compute
-    // the response from that instead of some intermediate smoothed
-    // set. Forcefully update the coefficients even if they are not
-    // dirty.
-
-    updateCoefficientsIfNecessary(false, true);
+    for (unsigned k = 0; k < nFrequencies; ++k)
+        frequency[k] = frequencyHz[k] / nyquist;
 
     m_biquad.getFrequencyResponse(nFrequencies, frequency.data(), magResponse, phaseResponse);
 }
 
 double BiquadDSPKernel::tailTime() const
 {
-    return MaxBiquadDelayTime;
+    return m_tailTime;
 }
 
 double BiquadDSPKernel::latencyTime() const
 {
     return 0;
+}
+
+void BiquadDSPKernel::updateTailTime(size_t coefIndex)
+{
+    // A reasonable upper limit for the tail time. While it's easy to
+    // create biquad filters whose tail time can be much larger than
+    // this, limit the maximum to this value so that we don't keep such
+    // nodes alive "forever".
+    // TODO: What is a reasonable upper limit?
+    constexpr double maxTailTime = 30;
+
+    double sampleRate = this->sampleRate();
+    double tail = m_biquad.tailFrame(coefIndex, maxTailTime * sampleRate) / sampleRate;
+
+    m_tailTime = std::clamp(tail, 0.0, maxTailTime);
 }
 
 } // namespace WebCore

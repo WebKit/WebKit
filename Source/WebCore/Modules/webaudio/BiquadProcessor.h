@@ -50,10 +50,7 @@ public:
 
     // Get the magnitude and phase response of the filter at the given
     // set of frequencies (in Hz). The phase response is in radians.
-    void getFrequencyResponse(int nFrequencies,
-                              const float* frequencyHz,
-                              float* magResponse,
-                              float* phaseResponse);
+    void getFrequencyResponse(unsigned nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse);
 
     void checkForDirtyCoefficients();
     
@@ -68,6 +65,8 @@ public:
     BiquadFilterType type() const { return m_type; }
     void setType(BiquadFilterType);
 
+    bool shouldUseARate() const { return m_shouldUseARate; }
+
 private:
     BiquadFilterType m_type;
 
@@ -81,6 +80,8 @@ private:
 
     // Set to true if any of the filter parameters are sample-accurate.
     bool m_hasSampleAccurateValues;
+
+    bool m_shouldUseARate { true };
 };
 
 } // namespace WebCore

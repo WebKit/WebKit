@@ -68,6 +68,11 @@ void BiquadProcessor::checkForDirtyCoefficients()
     if (m_parameter1->hasSampleAccurateValues() || m_parameter2->hasSampleAccurateValues() || m_parameter3->hasSampleAccurateValues() || m_parameter4->hasSampleAccurateValues()) {
         m_filterCoefficientsDirty = true;
         m_hasSampleAccurateValues = true;
+
+        m_shouldUseARate = m_parameter1->automationRate() == AutomationRate::ARate
+            || m_parameter2->automationRate() == AutomationRate::ARate
+            || m_parameter3->automationRate() == AutomationRate::ARate
+            || m_parameter4->automationRate() == AutomationRate::ARate;
     } else {
         if (m_hasJustReset) {
             // Snap to exact values first time after reset, then smooth for subsequent changes.
@@ -111,7 +116,7 @@ void BiquadProcessor::setType(BiquadFilterType type)
     }
 }
 
-void BiquadProcessor::getFrequencyResponse(int nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse)
+void BiquadProcessor::getFrequencyResponse(unsigned nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse)
 {
     // Compute the frequency response on a separate temporary kernel
     // to avoid interfering with the processing running in the audio
@@ -119,6 +124,14 @@ void BiquadProcessor::getFrequencyResponse(int nFrequencies, const float* freque
     
     auto responseKernel = makeUnique<BiquadDSPKernel>(this);
 
+    // Get a copy of the current biquad filter coefficients so we can update
+    // |responseKernel| with these values.
+    float cutoffFrequency = parameter1().value();
+    float q = parameter2().value();
+    float gain = parameter3().value();
+    float detune = parameter4().value();
+
+    responseKernel->updateCoefficients(1, &cutoffFrequency, &q, &gain, &detune);
     responseKernel->getFrequencyResponse(nFrequencies, frequencyHz, magResponse, phaseResponse);
 }
 

@@ -46,26 +46,23 @@ public:
     Biquad();
     ~Biquad();
 
+    static constexpr size_t MaxFramesToProcess = 128;
+
     void process(const float* sourceP, float* destP, size_t framesToProcess);
+
+    bool hasSampleAccurateValues() const { return m_hasSampleAccurateValues; }
+    void setHasSampleAccurateValues(bool hasSampleAccurateValues) { m_hasSampleAccurateValues = hasSampleAccurateValues; }
 
     // frequency is 0 - 1 normalized, resonance and dbGain are in decibels.
     // Q is a unitless quality factor.
-    void setLowpassParams(double frequency, double resonance);
-    void setHighpassParams(double frequency, double resonance);
-    void setBandpassParams(double frequency, double Q);
-    void setLowShelfParams(double frequency, double dbGain);
-    void setHighShelfParams(double frequency, double dbGain);
-    void setPeakingParams(double frequency, double Q, double dbGain);
-    void setAllpassParams(double frequency, double Q);
-    void setNotchParams(double frequency, double Q);
-
-    // Set the biquad coefficients given a single zero (other zero will be conjugate)
-    // and a single pole (other pole will be conjugate)
-    void setZeroPolePairs(std::complex<double> zero, std::complex<double> pole);
-
-    // Set the biquad coefficients given a single pole (other pole will be conjugate)
-    // (The zeroes will be the inverse of the poles)
-    void setAllpassPole(std::complex<double>);
+    void setLowpassParams(size_t index, double frequency, double resonance);
+    void setHighpassParams(size_t index, double frequency, double resonance);
+    void setBandpassParams(size_t index, double frequency, double Q);
+    void setLowShelfParams(size_t index, double frequency, double dbGain);
+    void setHighShelfParams(size_t index, double frequency, double dbGain);
+    void setPeakingParams(size_t index, double frequency, double Q, double dbGain);
+    void setAllpassParams(size_t index, double frequency, double Q);
+    void setNotchParams(size_t index, double frequency, double Q);
 
     // Resets filter state
     void reset();
@@ -73,36 +70,41 @@ public:
     // Filter response at a set of n frequencies. The magnitude and
     // phase response are returned in magResponse and phaseResponse.
     // The phase response is in radians.
-    void getFrequencyResponse(int nFrequencies,
-                              const float* frequency,
-                              float* magResponse,
-                              float* phaseResponse);
+    void getFrequencyResponse(unsigned nFrequencies, const float* frequency, float* magResponse, float* phaseResponse);
+
+    // Compute tail frame based on the filter coefficents at index
+    // |coefIndex|. The tail frame is the frame number where the
+    // impulse response of the filter falls below a threshold value.
+    // The maximum allowed frame value is given by |maxFrame|. This
+    // limits how much work is done in computing the frame number.
+    double tailFrame(size_t coefIndex, double maxFrame);
+
 private:
-    void setNormalizedCoefficients(double b0, double b1, double b2, double a0, double a1, double a2);
-    
+    void setNormalizedCoefficients(size_t index, double b0, double b1, double b2, double a0, double a1, double a2);
+
     // Filter coefficients. The filter is defined as
     //
     // y[n] + m_a1*y[n-1] + m_a2*y[n-2] = m_b0*x[n] + m_b1*x[n-1] + m_b2*x[n-2].
-    double m_b0;
-    double m_b1;
-    double m_b2;
-    double m_a1;
-    double m_a2;
+    AudioDoubleArray m_b0;
+    AudioDoubleArray m_b1;
+    AudioDoubleArray m_b2;
+    AudioDoubleArray m_a1;
+    AudioDoubleArray m_a2;
 
 #if USE(ACCELERATE)
     void processFast(const float* sourceP, float* destP, size_t framesToProcess);
     void processSliceFast(double* sourceP, double* destP, double* coefficientsP, size_t framesToProcess);
-
     AudioDoubleArray m_inputBuffer;
     AudioDoubleArray m_outputBuffer;
+#endif
 
-#else
     // Filter memory
     double m_x1; // input delayed by 1 sample
     double m_x2; // input delayed by 2 samples
     double m_y1; // output delayed by 1 sample
     double m_y2; // output delayed by 2 samples
-#endif
+
+    bool m_hasSampleAccurateValues { false };
 };
 
 } // namespace WebCore

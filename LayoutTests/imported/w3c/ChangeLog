@@ -1,3 +1,17 @@
+2020-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Add proper k-rate automation support for BiquadFilterNode
+        https://bugs.webkit.org/show_bug.cgi?id=216027
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering-expected.txt:
+
 2020-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Align Big5 decoding with spec, Chrome, and Firefox

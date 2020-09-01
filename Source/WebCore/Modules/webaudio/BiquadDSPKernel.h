@@ -47,13 +47,12 @@ public:
 
     // Get the magnitude and phase response of the filter at the given
     // set of frequencies (in Hz). The phase response is in radians.
-    void getFrequencyResponse(int nFrequencies,
-                              const float* frequencyHz,
-                              float* magResponse,
-                              float* phaseResponse);
+    void getFrequencyResponse(unsigned nFrequencies, const float* frequencyHz, float* magResponse, float* phaseResponse);
 
     double tailTime() const override;
     double latencyTime() const override;
+
+    void updateCoefficients(size_t numberOfFrames, const float* cutoffFrequency, const float* q, const float* gain, const float* detune);
 
 private:
     Biquad m_biquad;
@@ -66,7 +65,10 @@ private:
     // used. If |forceUpdate| is true, we update the coefficients even
     // if they are not dirty. (Used when computing the frequency
     // response.)
-    void updateCoefficientsIfNecessary(bool useSmoothing, bool forceUpdate);
+    void updateCoefficientsIfNecessary(size_t framesToProcess);
+    void updateTailTime(size_t coefIndex);
+
+    double m_tailTime { std::numeric_limits<double>::infinity() };
 };
 
 } // namespace WebCore
