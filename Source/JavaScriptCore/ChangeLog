@@ -1,3 +1,16 @@
+2020-08-31  Mark Lam  <mark.lam@apple.com>
+
+        Remove some PtrTag debugging code from release builds.
+        https://bugs.webkit.org/show_bug.cgi?id=216025
+        <rdar://problem/68098263>
+
+        Reviewed by Saam Barati.
+
+        Removed PtrTag name lookup debugging utility from release builds.
+
+        * runtime/JSCPtrTag.cpp:
+        * runtime/JSCPtrTag.h:
+
 2020-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Linux] Web Inspector: show per thread cpu usage

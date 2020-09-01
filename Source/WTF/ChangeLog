@@ -1,3 +1,28 @@
+2020-08-31  Mark Lam  <mark.lam@apple.com>
+
+        Remove some PtrTag debugging code from release builds.
+        https://bugs.webkit.org/show_bug.cgi?id=216025
+        <rdar://problem/68098263>
+
+        Reviewed by Saam Barati.
+
+        Converted uses of PtrTagAction::ReleaseAssert to PtrTagAction::DebugAssert.
+        These assertions serve a purpose during development (hence, PtrTagAction::DebugAssert),
+        but is no longer needed for release builds.  Previously, we use these assertions
+        to verify that pointers are tagged correctly in release build.  Clang takes care
+        of that automatically now.
+
+        Also removed PtrTag name lookup debugging utility from release builds.
+
+        * wtf/PtrTag.cpp:
+        * wtf/PtrTag.h:
+        (WTF::untagCodePtr):
+        (WTF::retagCodePtrImpl):
+        (WTF::assertIsCFunctionPtr):
+        (WTF::assertIsNotTagged):
+        (WTF::assertIsTagged):
+        (WTF::assertIsTaggedWith):
+
 2020-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Update URL fragment percent encode set
