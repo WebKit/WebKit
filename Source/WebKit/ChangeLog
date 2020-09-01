@@ -1,3 +1,15 @@
+2020-09-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Do not use the default WebsiteDataStore for downloads
+        https://bugs.webkit.org/show_bug.cgi?id=216001
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use the web context one instead.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextStartDownload):
+
 2020-08-31  Sihui Liu  <sihui_liu@apple.com>
 
         Webpages flash when switching between windows
