@@ -1,5 +1,14 @@
 2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ BigSur+ ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html
+        rdar://65188503
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ BigSur+ ] media/media-source/media-source-webm.html is a constant failure
         rdar://problem/66487888 
 
