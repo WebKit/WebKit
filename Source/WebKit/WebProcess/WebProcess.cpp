@@ -1144,8 +1144,12 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         if (!Document::allDocuments().isEmpty())
             m_networkProcessConnection->serviceWorkerConnection().registerServiceWorkerClients();
 #endif
-        for (auto& webPage : m_pageMap.values())
-            webPage->synchronizeCORSDisablingPatternsWithNetworkProcess();
+
+        // This can be called during a WebPage's constructor, so wait until after the constructor returns to touch the WebPage.
+        RunLoop::main().dispatch([this] {
+            for (auto& webPage : m_pageMap.values())
+                webPage->synchronizeCORSDisablingPatternsWithNetworkProcess();
+        });
     }
     
     return *m_networkProcessConnection;
