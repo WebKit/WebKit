@@ -47,12 +47,12 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 205x18
             text run at (0,0) width 205: "2. 3. will not crash Safari either."
         RenderBlock (anonymous) at (40,144) size 744x22
-          RenderButton {INPUT} at (2,2) size 133x18 [color=#000000D8] [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (8,2) size 117x13
-              RenderText at (0,0) size 117x13
-                text run at (0,0) width 117: "1. Set outline property"
-          RenderText {#text} at (136,1) size 5x18
-            text run at (136,1) width 5: " "
+          RenderButton {INPUT} at (2,2) size 132x18 [color=#000000D8] [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (8,2) size 116x13
+              RenderText at (0,0) size 116x13
+                text run at (0,0) width 116: "1. Set outline property"
+          RenderText {#text} at (136,1) size 4x18
+            text run at (136,1) width 4: " "
           RenderButton {INPUT} at (142,2) size 136x18 [color=#000000D8] [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 120x13
               RenderText at (0,0) size 120x13

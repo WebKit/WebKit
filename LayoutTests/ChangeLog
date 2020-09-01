@@ -1,5 +1,14 @@
 2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ BigSur+ ] media/media-source/media-source-webm.html
+        rdar://66487888
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
+
         Unreviewed, reverting r266374.
 
         Revision set up incorrect expectation
@@ -9,14 +18,31 @@
         "[ BigSur+ ] media/media-source/media-source-webm.html"
         https://trac.webkit.org/changeset/266374
 
-2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
+2020-08-31  Karl Rackler  <rackler@apple.com>
 
-        [ BigSur+ ] media/media-source/media-source-webm.html
-        rdar://66487888
+        Rebaseline after macOS build progression.
+        Add for Big-Sur
 
         Unreviewed test gardening.
 
-        * platform/mac/TestExpectations:
+        * platform/mac-bigsur/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/css/continuationCrash-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/button-positioned-expected.txt:
+        * platform/mac/fast/forms/button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac/fast/forms/input-text-word-wrap-expected.txt:
+        * platform/mac/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/mac/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/mac/fast/forms/select-selected-expected.txt:
+        * platform/mac/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/mac/fast/parser/document-write-option-expected.txt:
+        * platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug33855-expected.txt:
 
 2020-08-31  Hector Lopez  <hector_i_lopez@apple.com>
 
