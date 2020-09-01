@@ -1,3 +1,20 @@
+2020-09-01  Brady Eidson  <beidson@apple.com>
+
+        Crashtracer in SubresourceLoader::didCancel.
+        <rdar://problem/32831629> and https://bugs.webkit.org/show_bug.cgi?id=216020
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Despite spotting theoretical ways this is possible, unable to construct a reproduction)
+        
+        It's possible for a newly created SubresourceLoader to be cancelled right after creation.
+        In this case, m_resource will be null inside of SubresourceLoader::didCancel.
+        
+        Other parts of SubresourceLoader null check m_resource, so it's reasonable to state ::didCancel should as well.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didCancel): Early return if reachedTerminalState(), and ASSERT(m_resource) after.
+
 2020-09-01  Antti Koivisto  <antti@apple.com>
 
         EventRegion paint should respect layer's foreground and background painting phases

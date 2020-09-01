@@ -821,8 +821,10 @@ void SubresourceLoader::willCancel(const ResourceError& error)
 
 void SubresourceLoader::didCancel(const ResourceError&)
 {
-    if (m_state == Uninitialized)
+    if (m_state == Uninitialized || reachedTerminalState())
         return;
+
+    ASSERT(m_resource);
 
     if (m_resource->type() != CachedResource::Type::MainResource)
         tracePoint(SubresourceLoadDidEnd);
