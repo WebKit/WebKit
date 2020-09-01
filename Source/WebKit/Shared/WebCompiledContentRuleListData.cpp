@@ -39,9 +39,9 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
     SharedMemory::Handle handle;
     data->createHandle(handle, SharedMemory::Protection::ReadOnly);
     
-    // FIXME: Add the exact data size being sent over IPC to the WebCompiledContentRuleListData() constructor to be encoded here.
 #if OS(DARWIN) || OS(WINDOWS)
-    uint64_t dataSize = handle.size();
+    // Exact data size is the last bytecode offset plus its size.
+    uint64_t dataSize = topURLFiltersBytecodeOffset + topURLFiltersBytecodeSize;
 #else
     uint64_t dataSize = 0;
 #endif

@@ -1,5 +1,18 @@
 2020-09-01  Kate Cheney  <katherine_cheney@apple.com>
 
+        Pass the correct data size for the SharedMemory::Handle in WebCompiledContentRuleListData::encode
+        https://bugs.webkit.org/show_bug.cgi?id=216049
+        <rdar://problem/60758278>
+
+        Reviewed by Alex Christensen.
+
+        No new tests, validated by existing API tests.
+
+        * Shared/WebCompiledContentRuleListData.cpp:
+        (WebKit::WebCompiledContentRuleListData::encode const):
+
+2020-09-01  Kate Cheney  <katherine_cheney@apple.com>
+
         WebPasteboardProxy::getPasteboardStringsForType() and WebPasteboardProxy::readURLFromPasteboard() should check return value of SharedMemory::createHandle()
         https://bugs.webkit.org/show_bug.cgi?id=211002
         <rdar://problem/60103950>
