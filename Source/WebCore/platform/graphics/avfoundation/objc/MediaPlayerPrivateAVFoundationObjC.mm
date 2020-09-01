@@ -3168,6 +3168,7 @@ void MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange(int timeCont
         return;
 
     m_cachedTimeControlStatus = timeControlStatus;
+    rateChanged();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (!isCurrentPlaybackTargetWireless())
