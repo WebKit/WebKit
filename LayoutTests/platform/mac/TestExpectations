@@ -2243,4 +2243,5 @@ webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rec
 # <rdar://problem/66351394> [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
 
-
+# This test requires the OS to have a font that supports the Ahom language.
+webkit.org/b/216024 [ Mojave Catalina ] fast/text/ahom.html [ ImageOnlyFailure ]

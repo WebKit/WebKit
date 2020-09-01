@@ -1,3 +1,17 @@
+2020-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Ahom text is still busted
+        https://bugs.webkit.org/show_bug.cgi?id=216024
+        <rdar://problem/60571257>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/ahom-expected-mismatch.html: Added.
+        * fast/text/ahom.html: Added.
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/ios-13/TestExpectations:
+
 2020-08-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r266378 and r266381.
