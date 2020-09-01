@@ -4650,6 +4650,14 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         if (isPaintingOverflowContents)
             paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
+        if (isCollectingEventRegion) {
+            paintBehavior = paintBehavior & PaintBehavior::CompositedOverflowScrollContent;
+            if (isPaintingCompositedForeground)
+                paintBehavior.add(PaintBehavior::EventRegionIncludeForeground);
+            if (isPaintingCompositedBackground)
+                paintBehavior.add(PaintBehavior::EventRegionIncludeBackground);
+        }
+
         return paintBehavior;
     }();
 
@@ -5207,7 +5215,7 @@ void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFrag
     ASSERT(localPaintingInfo.eventRegionContext);
 
     for (const auto& fragment : layerFragments) {
-        PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::EventRegion, paintBehavior & OptionSet<PaintBehavior> { PaintBehavior::CompositedOverflowScrollContent });
+        PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::EventRegion, paintBehavior);
         paintInfo.eventRegionContext = localPaintingInfo.eventRegionContext;
         renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelOffset));
     }
@@ -7132,6 +7140,8 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::TileFirstPaint: ts << "TileFirstPaint"; break;
     case PaintBehavior::CompositedOverflowScrollContent: ts << "CompositedOverflowScrollContent"; break;
     case PaintBehavior::AnnotateLinks: ts << "AnnotateLinks"; break;
+    case PaintBehavior::EventRegionIncludeForeground: ts << "EventRegionIncludeForeground"; break;
+    case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"; break;
     }
 
     return ts;

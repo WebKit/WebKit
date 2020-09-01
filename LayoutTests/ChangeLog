@@ -1,3 +1,17 @@
+2020-09-01  Antti Koivisto  <antti@apple.com>
+
+        EventRegion paint should respect layer's foreground and background painting phases
+        https://bugs.webkit.org/show_bug.cgi?id=216031
+        <rdar://problem/67282372>
+
+        Reviewed by Simon Fraser.
+
+        * editing/editable-region/text-field-inside-composited-negative-z-index-layer-expected.txt:
+        * fast/scrolling/mac/negative-z-index-overflow-scroll-expected.txt: Added.
+        * fast/scrolling/mac/negative-z-index-overflow-scroll.html: Added.
+        * pointerevents/ios/touch-action-none-relative-inside-composited-negative-z-index-layer-expected.txt:
+        * pointerevents/ios/touch-action-region-backing-sharing-expected.txt:
+
 2020-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Update URL fragment percent encode set

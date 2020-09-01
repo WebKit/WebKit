@@ -1,3 +1,41 @@
+2020-09-01  Antti Koivisto  <antti@apple.com>
+
+        EventRegion paint should respect layer's foreground and background painting phases
+        https://bugs.webkit.org/show_bug.cgi?id=216031
+        <rdar://problem/67282372>
+
+        Reviewed by Simon Fraser.
+
+        We are currently painting event region for the box background to the foreground layer, which can cause
+        foreground layer to wrongly catch scroll events. Similarly we are unnecessarily painting foreground for
+        layers that don't need it.
+
+        Test: fast/scrolling/mac/negative-z-index-overflow-scroll.html
+
+        * rendering/PaintPhase.h:
+
+        Add two new event region specific PaintBehaviors for foreground and background paint. This essentially duplicates
+        foreground/background PaintPhases but since event region paint is itself a paint phase we can't use those.
+        This should be reconciled at some point.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContents):
+
+        Add the background flag when painting contents as the descendant backgrounds are part of the layer foreground.
+
+        (WebCore::RenderBlock::paintObject):
+
+        Respect the new flags.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+
+        Setup the flags based on what we are supposed to be painting on this layer.
+
+        (WebCore::RenderLayer::collectEventRegionForFragments):
+
+        Flag filtering moves to paintLayerContents.
+
 2020-09-01  Chris Dumez  <cdumez@apple.com>
 
         Add proper k-rate automation support for BiquadFilterNode
