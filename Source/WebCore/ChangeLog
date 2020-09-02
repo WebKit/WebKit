@@ -1,3 +1,17 @@
+2020-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Align UTF-16 decoder with Chrome, Firefox, and specification
+        https://bugs.webkit.org/show_bug.cgi?id=216058
+
+        Reviewed by Youenn Fablet.
+
+        Covered by web platform tests.
+
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::decode):
+        * platform/text/TextCodecUTF16.h:
+        (): Deleted.
+
 2020-09-02  Youenn Fablet  <youenn@apple.com>
 
         Safari is not able to hear audio when using WebRTC in multiple tabs

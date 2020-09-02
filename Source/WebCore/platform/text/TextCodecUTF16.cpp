@@ -27,6 +27,7 @@
 #include "TextCodecUTF16.h"
 
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -61,54 +62,82 @@ void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool&)
+// https://encoding.spec.whatwg.org/#shared-utf-16-decoder
+String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool, bool& sawError)
 {
-    if (!length)
-        return String();
+    const auto* p = reinterpret_cast<const uint8_t*>(bytes);
+    const auto* const end = p + length;
+    const auto* const endMinusOneOrNull = end ? end - 1 : nullptr;
 
-    // FIXME: This should generate an error if there is an unpaired surrogate.
+    StringBuilder result;
+    result.reserveCapacity(length / 2);
 
-    const unsigned char* p = reinterpret_cast<const unsigned char*>(bytes);
-    size_t numBytes = length + m_haveBufferedByte;
-    size_t numCodeUnits = numBytes / 2;
-    RELEASE_ASSERT(numCodeUnits <= std::numeric_limits<unsigned>::max());
+    Function<void(UChar)> processBytesShared;
+    processBytesShared = [&] (UChar codeUnit) {
+        if (m_leadSurrogate) {
+            auto leadSurrogate = *std::exchange(m_leadSurrogate, WTF::nullopt);
+            if (codeUnit >= 0xDC00 && codeUnit <= 0xDFFF) {
+                result.appendCharacter(0x10000 + ((leadSurrogate - 0xD800) << 10) + codeUnit - 0xDC00);
+                return;
+            }
+            sawError = true;
+            result.append(replacementCharacter);
+            processBytesShared(codeUnit);
+            return;
+        }
+        if (codeUnit >= 0xD800 && codeUnit <= 0xDBFF) {
+            m_leadSurrogate = codeUnit;
+            return;
+        }
+        if (codeUnit >= 0xDC00 && codeUnit <=0xDFFF) {
+            sawError = true;
+            result.append(replacementCharacter);
+            return;
+        }
+        result.append(codeUnit);
+    };
+    auto processBytesLE = [&] (uint8_t first, uint8_t second) {
+        processBytesShared(first | (second << 8));
+    };
+    auto processBytesBE = [&] (uint8_t first, uint8_t second) {
+        processBytesShared((first << 8) | second);
+    };
 
-    UChar* q;
-    auto result = String::createUninitialized(numCodeUnits, q);
-
-    if (m_haveBufferedByte) {
-        UChar c;
+    if (m_leadByte && p < end) {
+        auto leadByte = *std::exchange(m_leadByte, WTF::nullopt);
         if (m_littleEndian)
-            c = m_bufferedByte | (p[0] << 8);
+            processBytesLE(leadByte, p[0]);
         else
-            c = (m_bufferedByte << 8) | p[0];
-        *q++ = c;
-        m_haveBufferedByte = false;
-        p += 1;
-        numCodeUnits -= 1;
+            processBytesBE(leadByte, p[0]);
+        p++;
     }
 
     if (m_littleEndian) {
-        for (size_t i = 0; i < numCodeUnits; ++i) {
-            UChar c = p[0] | (p[1] << 8);
+        while (p < endMinusOneOrNull) {
+            processBytesLE(p[0], p[1]);
             p += 2;
-            *q++ = c;
         }
     } else {
-        for (size_t i = 0; i < numCodeUnits; ++i) {
-            UChar c = (p[0] << 8) | p[1];
+        while (p < endMinusOneOrNull) {
+            processBytesBE(p[0], p[1]);
             p += 2;
-            *q++ = c;
         }
     }
 
-    if (numBytes & 1) {
-        ASSERT(!m_haveBufferedByte);
-        m_haveBufferedByte = true;
-        m_bufferedByte = p[0];
+    if (p && p == endMinusOneOrNull) {
+        ASSERT(!m_leadByte);
+        m_leadByte = p[0];
+    } else
+        ASSERT(!p || p == end);
+    
+    if (flush && (m_leadByte || m_leadSurrogate)) {
+        m_leadByte = WTF::nullopt;
+        m_leadSurrogate = WTF::nullopt;
+        sawError = true;
+        result.append(replacementCharacter);
     }
 
-    return result;
+    return result.toString();
 }
 
 Vector<uint8_t> TextCodecUTF16::encode(StringView string, UnencodableHandling)

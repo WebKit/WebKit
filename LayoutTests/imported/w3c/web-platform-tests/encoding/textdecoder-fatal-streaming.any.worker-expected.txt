@@ -1,4 +1,4 @@
 
-FAIL Fatal flag, non-streaming cases assert_equals: Unterminated UTF-8 sequence should emit replacement character if fatal flag is unset expected "\ufffd" but got ""
+PASS Fatal flag, non-streaming cases 
 FAIL Fatal flag, streaming cases assert_equals: expected "\0" but got ""
 

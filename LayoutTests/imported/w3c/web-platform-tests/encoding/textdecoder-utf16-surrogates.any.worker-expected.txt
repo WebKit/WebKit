@@ -1,22 +1,12 @@
 
-FAIL utf-16le - lone surrogate lead assert_equals: expected "\ufffd" but got "�"
-FAIL utf-16le - lone surrogate lead (fatal flag set) assert_throws_js: function "function () {
-            new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array(t.input))
-        }" did not throw
-FAIL utf-16le - lone surrogate trail assert_equals: expected "\ufffd" but got "�"
-FAIL utf-16le - lone surrogate trail (fatal flag set) assert_throws_js: function "function () {
-            new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array(t.input))
-        }" did not throw
-FAIL utf-16le - unmatched surrogate lead assert_equals: expected "\ufffd\0" but got "�\0"
-FAIL utf-16le - unmatched surrogate lead (fatal flag set) assert_throws_js: function "function () {
-            new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array(t.input))
-        }" did not throw
-FAIL utf-16le - unmatched surrogate trail assert_equals: expected "\ufffd\0" but got "�\0"
-FAIL utf-16le - unmatched surrogate trail (fatal flag set) assert_throws_js: function "function () {
-            new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array(t.input))
-        }" did not throw
-FAIL utf-16le - swapped surrogate pair assert_equals: expected "\ufffd\ufffd" but got "��"
-FAIL utf-16le - swapped surrogate pair (fatal flag set) assert_throws_js: function "function () {
-            new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array(t.input))
-        }" did not throw
+PASS utf-16le - lone surrogate lead 
+PASS utf-16le - lone surrogate lead (fatal flag set) 
+PASS utf-16le - lone surrogate trail 
+PASS utf-16le - lone surrogate trail (fatal flag set) 
+PASS utf-16le - unmatched surrogate lead 
+PASS utf-16le - unmatched surrogate lead (fatal flag set) 
+PASS utf-16le - unmatched surrogate trail 
+PASS utf-16le - unmatched surrogate trail (fatal flag set) 
+PASS utf-16le - swapped surrogate pair 
+PASS utf-16le - swapped surrogate pair (fatal flag set) 
 

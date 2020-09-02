@@ -1,3 +1,17 @@
+2020-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Align UTF-16 decoder with Chrome, Firefox, and specification
+        https://bugs.webkit.org/show_bug.cgi?id=216058
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/encoding/streams/decode-non-utf8.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-non-utf8.any.worker-expected.txt:
+        * web-platform-tests/encoding/textdecoder-fatal-streaming.any-expected.txt:
+        * web-platform-tests/encoding/textdecoder-fatal-streaming.any.worker-expected.txt:
+        * web-platform-tests/encoding/textdecoder-utf16-surrogates.any-expected.txt:
+        * web-platform-tests/encoding/textdecoder-utf16-surrogates.any.worker-expected.txt:
+
 2020-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Align ISO-2022-JP and Shift_JIS encodings with Chrome, Firefox, and the specification

@@ -1,3 +1,12 @@
+2020-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Align UTF-16 decoder with Chrome, Firefox, and specification
+        https://bugs.webkit.org/show_bug.cgi?id=216058
+
+        Reviewed by Youenn Fablet.
+
+        * imported/blink/fast/encoding/utf-16-odd-byte-expected.txt:
+
 2020-09-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update baselines and expectations after r266452.

@@ -41,8 +41,8 @@ private:
     Vector<uint8_t> encode(StringView, UnencodableHandling) final;
 
     bool m_littleEndian;
-    bool m_haveBufferedByte { false };
-    unsigned char m_bufferedByte;
+    Optional<uint8_t> m_leadByte;
+    Optional<UChar> m_leadSurrogate;
 };
 
 } // namespace WebCore
