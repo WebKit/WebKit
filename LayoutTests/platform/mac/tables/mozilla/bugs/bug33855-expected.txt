@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (8,2) size 48x13
                     RenderText at (0,0) size 48x13
                       text run at (0,0) width 48: "Select all"
-              RenderTableCell {TD} at (73,2) size 57x24 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (74,2) size 56x24 [r=0 c=1 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 50x18 [color=#000000D8] [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 34x13
                     RenderText at (0,0) size 34x13

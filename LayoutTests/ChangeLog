@@ -57,6 +57,32 @@
 
         * imported/blink/fast/encoding/utf-16-odd-byte-expected.txt:
 
+2020-09-02  Karl Rackler  <rackler@apple.com>
+
+        Rebaseline after macOS build progression.
+        Copy current test expectations to Catalina and Mojave and update Big Sur
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/css/continuationCrash-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/button-positioned-expected.txt:
+        * platform/mac/fast/forms/button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac/fast/forms/input-text-word-wrap-expected.txt:
+        * platform/mac/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/mac/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/mac/fast/forms/select-selected-expected.txt:
+        * platform/mac/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/mac/fast/parser/document-write-option-expected.txt:
+        * platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug33855-expected.txt:
+
 2020-09-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update baselines and expectations after r266452.
