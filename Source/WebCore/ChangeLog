@@ -1,3 +1,20 @@
+2020-09-02  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Allow requests for storage access from nested iframes
+        https://bugs.webkit.org/show_bug.cgi?id=216019
+        <rdar://problem/68109918>
+
+        Reviewed by Alex Christensen.
+
+        It was decided browsers should support requests for storage access from nested
+        iframes as part of the standardization of the Storage Access API. The issue is
+        discussed here: https://github.com/privacycg/storage-access/issues/10.
+
+        No new tests. Existing tests were changed.
+
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::requestStorageAccessQuickCheck):
+
 2020-09-02  Chris Dumez  <cdumez@apple.com>
 
         OfflineAudioContext incorrectly renders at beginning of output buffer after resuming

@@ -167,10 +167,6 @@ Optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAccessQu
     if (m_document.sandboxFlags() != SandboxNone && m_document.isSandboxed(SandboxStorageAccessByUserActivation))
         return StorageAccessQuickResult::Reject;
 
-    // The iframe has to be a direct child of the top document.
-    if (&topDocument != m_document.parentDocument())
-        return StorageAccessQuickResult::Reject;
-
     if (!UserGestureIndicator::processingUserGesture())
         return StorageAccessQuickResult::Reject;
 

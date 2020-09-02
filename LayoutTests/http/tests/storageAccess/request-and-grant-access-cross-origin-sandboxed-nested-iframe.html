@@ -5,13 +5,31 @@
     <script src="/js-test-resources/ui-helper.js"></script>
     <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
-        description("Tests that cross-origin iframe storage access is denied if the iframe is sandboxed, has the allow token, but is nested.");
+        description("Tests that cross-origin iframe storage access is granted if the iframe is sandboxed, has the allow token, and is nested.");
         jsTestIsAsync = true;
 
         const hostUnderTest = "localhost:8000";
         const statisticsUrl = "http://" + hostUnderTest + "/temp";
 
+        const partitionHost = "127.0.0.1:8000";
+        const thirdPartyOrigin = "http://localhost:8000";
+        const resourcePath = "/storageAccess/resources";
+        const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
+        const firstPartyCookieName = "firstPartyCookie";
+        const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
+        const returnUrl = "http://" + partitionHost + "/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html";
+        const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName;
+
         window.addEventListener("message", receiveMessage, false);
+
+        function openIframe(url, onLoadHandler) {
+            const element = document.createElement("iframe");
+            element.src = url;
+            if (onLoadHandler) {
+                element.onload = onLoadHandler;
+            }
+            document.body.appendChild(element);
+        }
 
         function receiveMessage(event) {
             if (event.origin === "http://localhost:8000") {
@@ -45,27 +63,39 @@
         }
 
         function runTest() {
-            setEnableFeature(true, function() {
-                testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
-                    if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-                        testFailed("Host did not get set as prevalent resource.");
+            switch (document.location.hash) {
+                case "":
+                    setEnableFeature(true, function() {
+                        testRunner.dumpChildFramesAsText();
+                        document.location.hash = "step1";
+                        testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest);
+                    });
+                    break;
+                case "#step1":
+                    // Set first-party cookie for localhost.
+                    document.location.href = thirdPartyBaseUrl + subPathToSetFirstPartyCookie + "#" + returnUrl + "#step2";
+                    break;
+                case "#step2":
+                    document.location.hash = "step3";
+                    // Check that the first-party cookie does not get sent for localhost under 127.0.0.1.
                     testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
                         if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                             testFailed("Host did not get logged for user interaction.");
-                        testRunner.statisticsUpdateCookieBlocking(function() {
-                            let iframeElement = document.createElement("iframe");
-                            iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
-                            iframeElement.onload = function() {
-                                activateElement("TheIframeThatRequestsStorageAccess");
-                            };
-                            iframeElement.id = "TheIframeThatRequestsStorageAccess";
-                            iframeElement.src = "resources/nesting-iframe.html";
-                            document.body.appendChild(iframeElement);
-
-                        });
+                        openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should not receive cookies.", runTest);
                     });
-                });
-            });
+                    break;
+                case "#step3":
+                    // Request and get granted storage access in a nested iframe.
+                    let iframeElement = document.createElement("iframe");
+                    iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
+                    iframeElement.onload = function() {
+                        activateElement("TheIframeThatRequestsStorageAccess");
+                    };
+                    iframeElement.id = "TheIframeThatRequestsStorageAccess";
+                    iframeElement.src = "resources/nesting-iframe.html";
+                    document.body.appendChild(iframeElement);
+                    break;
+            }
         }
     </script>
 </head>

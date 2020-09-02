@@ -1,3 +1,24 @@
+2020-09-02  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Allow requests for storage access from nested iframes
+        https://bugs.webkit.org/show_bug.cgi?id=216019
+        <rdar://problem/68109918>
+
+        Reviewed by Alex Christensen.
+
+        It was decided browsers should support requests for storage access from nested
+        iframes as part of the standardization of the Storage Access API. The issue is
+        discussed here: https://github.com/privacycg/storage-access/issues/10.
+
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe-database-expected.txt:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe-database.html:
+            Now sets a cookie for the third party so that the test checks granted access.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html:
+            Now sets a cookie for the third party so that the test checks granted access.
+        * http/tests/storageAccess/resources/nesting-iframe.html:
+            Changed to now expect to be granted storage access.
+
 2020-09-02  Devin Rousso  <drousso@apple.com>
 
         REGRESSION: [ macOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html is a flaky timeout
