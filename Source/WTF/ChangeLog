@@ -1,3 +1,17 @@
+2020-09-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] REGRESSION (Big Sur): A GIF image with a finite loopCount loops an extra cycle
+        https://bugs.webkit.org/show_bug.cgi?id=216018
+        <rdar://problem/66660579>
+
+        Reviewed by Tim Horton.
+
+        Add a new macro for the new accurate behavior of CGImageSource.
+
+        Unrelated change: Fix the conditions for enabling the WebP images.
+
+        * wtf/PlatformHave.h:
+
 2020-08-31  Mark Lam  <mark.lam@apple.com>
 
         Remove some PtrTag debugging code from release builds.
