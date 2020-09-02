@@ -1,3 +1,15 @@
+2020-09-02  Caio Lima  <ticaiolima@gmail.com>
+
+        [ARMv7] Skip stress/intl-segmenter.js
+        https://bugs.webkit.org/show_bug.cgi?id=216074
+
+        Unreviewed Gardening.
+
+        Skipping this test for ARMv7, since some boards we have are using ICU
+        60 and causes issues for this test.
+
+        * stress/intl-segmenter.js:
+
 2020-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] @defaultPromiseThen fast path should check species constructor
