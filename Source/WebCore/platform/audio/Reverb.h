@@ -53,7 +53,7 @@ public:
     size_t latencyFrames() const;
 
 private:
-    void initialize(AudioBus* impulseResponseBuffer, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads);
+    void initialize(AudioBus* impulseResponseBuffer, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads, float scale);
 
     size_t m_impulseResponseLength;
 

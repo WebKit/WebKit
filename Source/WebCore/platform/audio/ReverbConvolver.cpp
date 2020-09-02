@@ -54,7 +54,7 @@ const size_t RealtimeFrameLimit = 8192  + 4096; // ~278msec @ 44.1KHz
 const size_t MinFFTSize = 128;
 const size_t MaxRealtimeFFTSize = 2048;
 
-ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSliceSize, size_t maxFFTSize, size_t convolverRenderPhase, bool useBackgroundThreads)
+ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSliceSize, size_t maxFFTSize, size_t convolverRenderPhase, bool useBackgroundThreads, float scale)
     : m_impulseResponseLength(impulseResponse->length())
     , m_accumulationBuffer(impulseResponse->length() + renderSliceSize)
     , m_inputBuffer(InputBufferSize)
@@ -94,7 +94,7 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
 
         bool useDirectConvolver = !stageOffset;
 
-        auto stage = makeUnique<ReverbConvolverStage>(response, totalResponseLength, reverbTotalLatency, stageOffset, stageSize, fftSize, renderPhase, renderSliceSize, &m_accumulationBuffer, useDirectConvolver);
+        auto stage = makeUnique<ReverbConvolverStage>(response, totalResponseLength, reverbTotalLatency, stageOffset, stageSize, fftSize, renderPhase, renderSliceSize, &m_accumulationBuffer, scale, useDirectConvolver);
 
         bool isBackgroundStage = false;
 

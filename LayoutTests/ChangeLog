@@ -1,3 +1,15 @@
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Don't modify the response when creating a ConvolverNode
+        https://bugs.webkit.org/show_bug.cgi?id=216093
+
+        Reviewed by Eric Carlson.
+
+        Import layout test from Blink.
+
+        * webaudio/convolvernode-unmodified-buffer-expected.txt: Added.
+        * webaudio/convolvernode-unmodified-buffer.html: Added.
+
 2020-09-02  Karl Rackler  <rackler@apple.com>
 
         Rebaseline after macOS build progression.

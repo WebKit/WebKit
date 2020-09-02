@@ -1,5 +1,44 @@
 2020-09-02  Chris Dumez  <cdumez@apple.com>
 
+        Don't modify the response when creating a ConvolverNode
+        https://bugs.webkit.org/show_bug.cgi?id=216093
+
+        Reviewed by Eric Carlson.
+
+        When creating a ConvolverNode with normalization (the default), the
+        ConvolverNode was modifying the supplied AudioBuffer containing the
+        desired impulse response.  This happens because the normalization
+        factor was applied to the buffer, convolver stages were computed, and
+        then the normalization was undone. Due to floating-point roundoff,
+        this can (and does) modify the buffer.
+
+        Instead, compute the scale factor and pass it into the various
+        routines so that the scaling can be done there. For stages using an
+        FFT, the resulting FFT is scaled by the factor. For the direct
+        convolver, the response is modified there. (The direct convolver
+        makes a copy of the reponse, so this is safe.)
+
+        This is a cherry-pick of the following Blink change by Raymond Toy:
+        - https://chromium-review.googlesource.com/c/chromium/src/+/1623457
+
+        Test: webaudio/convolvernode-unmodified-buffer.html
+
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::scaleFFT):
+        * platform/audio/FFTFrame.h:
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::Reverb):
+        (WebCore::Reverb::initialize):
+        * platform/audio/Reverb.h:
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::ReverbConvolver):
+        * platform/audio/ReverbConvolver.h:
+        * platform/audio/ReverbConvolverStage.cpp:
+        (WebCore::ReverbConvolverStage::ReverbConvolverStage):
+        * platform/audio/ReverbConvolverStage.h:
+
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
         Fix rounding for DelayDSPKernel's buffer size calculation
         https://bugs.webkit.org/show_bug.cgi?id=216091
 

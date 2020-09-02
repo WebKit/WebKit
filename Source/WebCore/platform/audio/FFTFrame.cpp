@@ -172,6 +172,12 @@ void FFTFrame::interpolateFrequencyComponents(const FFTFrame& frame1, const FFTF
     }
 }
 
+void FFTFrame::scaleFFT(float factor)
+{
+    VectorMath::vsmul(realData(), 1, &factor, realData(), 1, fftSize());
+    VectorMath::vsmul(imagData(), 1, &factor, imagData(), 1, fftSize());
+}
+
 double FFTFrame::extractAverageGroupDelay()
 {
     float* realP = realData();

@@ -66,6 +66,7 @@ public:
     void doFFT(const float* data);
     void doInverseFFT(float* data);
     void multiply(const FFTFrame& frame); // multiplies ourself with frame : effectively operator*=()
+    void scaleFFT(float factor);
 
     float* realData() const;
     float* imagData() const;
