@@ -1,3 +1,17 @@
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
+        New AutoParam timeline events should have their startTime adjusted when they are in the past
+        https://bugs.webkit.org/show_bug.cgi?id=216080
+
+        Reviewed by Geoffrey Garen.
+
+        New AutoParam timeline events should have their startTime adjusted when they are in the past.
+        We adjust the time to be the current time when it is in the past.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioParam.cpp:
+
 2020-09-02  John Wilander  <wilander@apple.com>
 
         Storage Access API: Allow requests for storage access from nested iframes

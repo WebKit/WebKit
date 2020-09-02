@@ -1,5 +1,19 @@
 2020-09-02  Chris Dumez  <cdumez@apple.com>
 
+        New AutoParam timeline events should have their startTime adjusted when they are in the past
+        https://bugs.webkit.org/show_bug.cgi?id=216080
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-exponentialRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-linearRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueCurveAtTime-expected.txt:
+
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
         OfflineAudioContext incorrectly renders at beginning of output buffer after resuming
         https://bugs.webkit.org/show_bug.cgi?id=216078
 

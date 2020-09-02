@@ -143,6 +143,7 @@ ExceptionOr<AudioParam&> AudioParam::setValueAtTime(float value, double startTim
     if (startTime < 0)
         return Exception { RangeError, "startTime must be a positive value"_s };
 
+    startTime = std::max(startTime, context().currentTime());
     auto result = m_timeline.setValueAtTime(value, Seconds { startTime });
     if (result.hasException())
         return result.releaseException();
@@ -154,6 +155,7 @@ ExceptionOr<AudioParam&> AudioParam::linearRampToValueAtTime(float value, double
     if (endTime < 0)
         return Exception { RangeError, "endTime must be a positive value"_s };
 
+    endTime = std::max(endTime, context().currentTime());
     auto result = m_timeline.linearRampToValueAtTime(value, Seconds { endTime });
     if (result.hasException())
         return result.releaseException();
@@ -167,6 +169,7 @@ ExceptionOr<AudioParam&> AudioParam::exponentialRampToValueAtTime(float value, d
     if (endTime < 0)
         return Exception { RangeError, "endTime must be a positive value"_s };
 
+    endTime = std::max(endTime, context().currentTime());
     auto result = m_timeline.exponentialRampToValueAtTime(value, Seconds { endTime });
     if (result.hasException())
         return result.releaseException();
@@ -180,6 +183,7 @@ ExceptionOr<AudioParam&> AudioParam::setTargetAtTime(float target, double startT
     if (timeConstant < 0)
         return Exception { RangeError, "timeConstant must be a positive value"_s };
 
+    startTime = std::max(startTime, context().currentTime());
     auto result = m_timeline.setTargetAtTime(target, Seconds { startTime }, timeConstant);
     if (result.hasException())
         return result.releaseException();
@@ -195,6 +199,7 @@ ExceptionOr<AudioParam&> AudioParam::setValueCurveAtTime(Vector<float>&& curve, 
     if (duration <= 0)
         return Exception { RangeError, "duration must be a strictly positive value"_s };
 
+    startTime = std::max(startTime, context().currentTime());
     auto result = m_timeline.setValueCurveAtTime(WTFMove(curve), Seconds { startTime }, Seconds { duration });
     if (result.hasException())
         return result.releaseException();
