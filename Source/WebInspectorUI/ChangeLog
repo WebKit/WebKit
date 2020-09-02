@@ -1,3 +1,30 @@
+2020-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r243264): Web Inspector: Style pane doesn't update after toggling CSS class
+        https://bugs.webkit.org/show_bug.cgi?id=202065
+        <rdar://problem/55149141>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype.refresh.fetchedMatchedStyles):
+        (WI.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        (WI.DOMNodeStyles.prototype.refresh):
+        (WI.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        r243264 introduced this bug by never clearing `_styleMap` making it impossible to diff old
+        and new style declarations. Create and clear `_styleMap` at the same place as it was before r243264.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+        Layout now always re-layouts everything. Rules with modified selectors are now preserved by
+        exiting layout early.
+
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype._handleSectionSelectorWillChange):
+        Remove logic that tried to preserve indexes of CSS rules with modified selectors that
+        don't match (SectionIndexSymbol and everything related to it). Instead, avoid re-layout after
+        editing a selector.
+
 2020-09-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: WebSockets should be reported as type 'websocket' in Network Tab

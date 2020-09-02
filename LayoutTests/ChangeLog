@@ -1,3 +1,17 @@
+2020-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r243264): Web Inspector: Style pane doesn't update after toggling CSS class
+        https://bugs.webkit.org/show_bug.cgi?id=202065
+        <rdar://problem/55149141>
+
+        Reviewed by Brian Burg.
+
+        Added a test to verify that WI.DOMNodeStyles.Event.Refreshed fires with appropriate
+        `significantChange` flag.
+
+        * inspector/css/node-styles-refreshed-expected.txt: Added.
+        * inspector/css/node-styles-refreshed.html: Added.
+
 2020-09-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Skip fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html if Gigacage is not enabled
