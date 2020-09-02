@@ -1,3 +1,19 @@
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Fix rounding for DelayDSPKernel's buffer size calculation
+        https://bugs.webkit.org/show_bug.cgi?id=216091
+
+        Reviewed by Geoffrey Garen.
+
+        Fix rounding for DelayDSPKernel's buffer size calculation. The DelayNode needs to buffer
+        |maxDelayTime| sample frames, plus one frame for interpolation. If |maxDelayTime| isn't
+        an integer, we have to round it up or the buffer would end up one frame short.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::bufferLengthForDelay const):
+
 2020-09-02  Darin Adler  <darin@apple.com>
 
         Change Affinity into an enum class

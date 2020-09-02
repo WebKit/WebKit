@@ -81,7 +81,7 @@ size_t DelayDSPKernel::bufferLengthForDelay(double maxDelayTime, double sampleRa
 {
     // Compute the length of the buffer needed to handle a max delay of |maxDelayTime|. One is
     // added to handle the case where the actual delay equals the maximum delay.
-    return 1 + AudioUtilities::timeToSampleFrame(maxDelayTime, sampleRate);
+    return 1 + AudioUtilities::timeToSampleFrame(maxDelayTime, sampleRate, AudioUtilities::SampleFrameRounding::Up);
 }
 
 void DelayDSPKernel::process(const float* source, float* destination, size_t framesToProcess)
