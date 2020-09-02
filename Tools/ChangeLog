@@ -1,3 +1,11 @@
+2020-09-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed. Follow-up r266450, fix script due to missing variable.
+
+        * Scripts/clean-webkit:
+        (removeFiles): Add missing argument 'fs'.
+        (main):
+
 2020-09-02  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update to FDO 20.08

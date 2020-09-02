@@ -46,7 +46,7 @@ def listWebKitBuildFiles(fs):
             ret.append(build_path)
     return ret
 
-def removeFiles(l):
+def removeFiles(fs, l):
     for each in l:
         if fs.isdir(each):
             fs.rmtree(each)
@@ -67,7 +67,7 @@ def main(args):
             files = listWebKitBuildFiles(fs)
             keepDirs = usesFlatpak() and ["Toolchains", "UserFlatpak"] or ["DependenciesGTK", "DependenciesWPE"]
             files = filter(lambda path: path[len("WebKitBuild/"):] not in keepDirs, files)
-            removeFiles(files)
+            removeFiles(fs, files)
     else:
         scm.discard_untracked_files(discard_ignored_files=True)
 
