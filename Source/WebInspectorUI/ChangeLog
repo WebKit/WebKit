@@ -1,3 +1,16 @@
+2020-09-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: re-enabling the JavaScript Allocations timeline doesn't show previously captured heap snapshots in the table
+        https://bugs.webkit.org/show_bug.cgi?id=216057
+        <rdar://problem/68172848>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView):
+        Add a `WI.HeapAllocationsTimelineDataGridNode` for each `WI.HeapAllocationsTimelineRecord`
+        that already exists when the `WI.HeapAllocationsTimelineView` is created.
+
 2020-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r243264): Web Inspector: Style pane doesn't update after toggling CSS class
