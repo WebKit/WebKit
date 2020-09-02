@@ -1,4 +1,7 @@
-ALERT: windows-1252
-Test PASSED if the encoding of this document is the default encoding.
-Test FAILED if you see a U+FFFD character in a dumped render tree.
-
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,1) size 16x18
+        text run at (0,1) width 16: "\x{FFFD}"

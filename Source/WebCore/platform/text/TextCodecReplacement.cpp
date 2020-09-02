@@ -34,9 +34,6 @@ namespace WebCore {
 
 void TextCodecReplacement::registerEncodingNames(EncodingNameRegistrar registrar)
 {
-    // The string 'replacement' itself is not a valid label. It is the name of
-    // a group of legacy encoding labels. Hence, it cannot be used directly.
-    // The TextEncoding class implements the above rule; here we register it normally.
     registrar("replacement", "replacement");
 
     registrar("csiso2022kr", "replacement");

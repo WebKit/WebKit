@@ -1,5 +1,15 @@
 2020-09-02  Alex Christensen  <achristensen@webkit.org>
 
+        Allow direct creation of replacement codec
+        https://bugs.webkit.org/show_bug.cgi?id=216063
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/encoding/replacement-encodings.any-expected.txt:
+        * web-platform-tests/encoding/replacement-encodings.any.worker-expected.txt:
+
+2020-09-02  Alex Christensen  <achristensen@webkit.org>
+
         Align UTF-16 decoder with Chrome, Firefox, and specification
         https://bugs.webkit.org/show_bug.cgi?id=216058
 

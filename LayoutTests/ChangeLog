@@ -1,3 +1,13 @@
+2020-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Allow direct creation of replacement codec
+        https://bugs.webkit.org/show_bug.cgi?id=216063
+
+        Reviewed by Youenn Fablet.
+
+        * fast/encoding/charset-replacement-expected.txt:
+        * fast/encoding/charset-replacement.html:
+
 2020-09-02  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Update date picker when the inner control is edited

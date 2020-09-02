@@ -1,3 +1,18 @@
+2020-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Allow direct creation of replacement codec
+        https://bugs.webkit.org/show_bug.cgi?id=216063
+
+        Reviewed by Youenn Fablet.
+
+        Chrome and Firefox do.
+        Covered by a newly passing web platform test.
+
+        * platform/text/TextCodecReplacement.cpp:
+        (WebCore::TextCodecReplacement::registerEncodingNames):
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::TextEncoding):
+
 2020-09-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Start constructing InlineBoxes for inline runs
