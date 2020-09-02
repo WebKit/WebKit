@@ -1,3 +1,29 @@
+2020-09-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Update date picker when the inner control is edited
+        https://bugs.webkit.org/show_bug.cgi?id=216004
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/mac/WebDateTimePickerMac.mm:
+        (WebKit::WebDateTimePickerMac::showDateTimePicker):
+
+        If showDateTimePicker is called while a picker is already being
+        displayed, call updatePicker: rather than showPicker:.
+
+        (-[WKDateTimePicker initWithParams:inView:]):
+
+        The NSDatePicker and NSDateFormatter should use a UTC timezone.
+        This is necessary as all double values passed into WKDateTimePicker
+        are UTC timestamps. This has no effect on the value returned to
+        the WebProcess on user selection, as a timezone-agnostic format
+        string is used.
+
+        (-[WKDateTimePicker updatePicker:]):
+
+        Set the date value of the owned NSDatePicker to the value in the
+        DateTimeChooserParameters.
+
 2020-09-01  Hector Lopez  <hector_i_lopez@apple.com>
 
         Unreviewed, reverting r266408.

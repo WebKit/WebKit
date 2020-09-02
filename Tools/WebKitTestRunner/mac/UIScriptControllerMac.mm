@@ -106,6 +106,19 @@ bool UIScriptControllerMac::isShowingDateTimePicker() const
     return false;
 }
 
+double UIScriptControllerMac::dateTimePickerValue() const
+{
+    for (NSWindow *childWindow in webView().window.childWindows) {
+        if ([childWindow isKindOfClass:NSClassFromString(@"WKDateTimePickerWindow")]) {
+            for (NSView *subview in childWindow.contentView.subviews) {
+                if ([subview isKindOfClass:[NSDatePicker class]])
+                    return [[(NSDatePicker *)subview dateValue] timeIntervalSince1970] * 1000;
+            }
+        }
+    }
+    return 0;
+}
+
 bool UIScriptControllerMac::isShowingDataListSuggestions() const
 {
     return dataListSuggestionsTableView();

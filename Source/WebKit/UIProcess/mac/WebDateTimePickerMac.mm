@@ -36,11 +36,13 @@ constexpr CGFloat kCalendarHeight = 148;
 constexpr NSString * kDateFormatString = @"yyyy-MM-dd";
 constexpr NSString * kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm";
 constexpr NSString * kDefaultLocaleIdentifier = @"en_US_POSIX";
+constexpr NSString * kDefaultTimeZoneIdentifier = @"UTC";
 
 @interface WKDateTimePicker : NSObject
 
 - (id)initWithParams:(WebCore::DateTimeChooserParameters&&)params inView:(NSView *)view;
 - (void)showPicker:(WebKit::WebDateTimePickerMac&)picker;
+- (void)updatePicker:(WebCore::DateTimeChooserParameters&&)params;
 - (void)invalidate;
 
 @end
@@ -75,8 +77,10 @@ void WebDateTimePickerMac::endPicker()
 
 void WebDateTimePickerMac::showDateTimePicker(WebCore::DateTimeChooserParameters&& params)
 {
-    if (m_picker)
+    if (m_picker) {
+        [m_picker updatePicker:WTFMove(params)];
         return;
+    }
 
     m_picker = adoptNS([[WKDateTimePicker alloc] initWithParams:WTFMove(params) inView:m_view.get().get()]);
     [m_picker showPicker:*this];
@@ -163,12 +167,19 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     windowRect.size.width = kCalendarWidth;
     windowRect.size.height = kCalendarHeight;
 
+    // Use a UTC timezone as all incoming double values are UTC timestamps. This also ensures that
+    // the date value of the NSDatePicker matches the date value returned by JavaScript. The timezone
+    // has no effect on the value returned to the WebProcess, as a timezone-agnostic format string is
+    // used to return the date.
+    NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:kDefaultTimeZoneIdentifier];
+
     _enclosingWindow = adoptNS([[WKDateTimePickerWindow alloc] initWithContentRect:NSZeroRect styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
     [_enclosingWindow setFrame:windowRect display:YES];
 
     _datePicker = adoptNS([[NSDatePicker alloc] initWithFrame:[_enclosingWindow contentView].bounds]);
     [_datePicker setDatePickerStyle:NSDatePickerStyleClockAndCalendar];
     [_datePicker setDatePickerElements:NSDatePickerElementFlagYearMonthDay];
+    [_datePicker setTimeZone:timeZone];
     [_datePicker setTarget:self];
     [_datePicker setAction:@selector(didChooseDate:)];
 
@@ -176,6 +187,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     _dateFormatter = adoptNS([[NSDateFormatter alloc] init]);
     [_dateFormatter setDateFormat:[self dateFormatStringForType:_params.type]];
     [_dateFormatter setLocale:englishLocale.get()];
+    [_dateFormatter setTimeZone:timeZone];
 
     NSString *currentDateValueString = _params.currentValue;
     if (![currentDateValueString length])
@@ -195,6 +207,17 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     [[_enclosingWindow contentView] addSubview:_datePicker.get()];
     [[_presentingView window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];
+}
+
+- (void)updatePicker:(WebCore::DateTimeChooserParameters&&)params
+{
+    _params = WTFMove(params);
+
+    NSString *currentDateValueString = _params.currentValue;
+    if (![currentDateValueString length])
+        [_datePicker setDateValue:[NSDate date]];
+    else
+        [_datePicker setDateValue:[_dateFormatter dateFromString:currentDateValueString]];
 }
 
 - (void)invalidate

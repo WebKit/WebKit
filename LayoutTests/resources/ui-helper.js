@@ -856,6 +856,15 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static dateTimePickerValue()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(uiController.dateTimePickerValue);
+            })()`, valueAsString => resolve(parseFloat(valueAsString)));
+        });
+    }
+
     static zoomScale()
     {
         return new Promise(resolve => {

@@ -1,3 +1,21 @@
+2020-09-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Update date picker when the inner control is edited
+        https://bugs.webkit.org/show_bug.cgi?id=216004
+
+        Reviewed by Wenson Hsieh.
+
+        Added dateTimePickerValue testing hook in order to enable testing the
+        current value of the presented date picker. The returned value is a
+        UTC timestamp is milliseconds, matching the date input's valueAsNumber.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::dateTimePickerValue const):
+        * WebKitTestRunner/mac/UIScriptControllerMac.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::dateTimePickerValue const):
+
 2020-09-02  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The WPT server is not always starting when running layout tests

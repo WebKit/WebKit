@@ -43,6 +43,7 @@ public:
     double zoomScale() const override;
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     bool isShowingDateTimePicker() const override;
+    double dateTimePickerValue() const override;
     bool isShowingDataListSuggestions() const override;
     void activateDataListSuggestion(unsigned index, JSValueRef callback) override;
     void beginBackSwipe(JSValueRef) override;

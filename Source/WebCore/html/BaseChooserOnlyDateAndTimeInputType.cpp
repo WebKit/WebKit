@@ -311,6 +311,13 @@ void BaseChooserOnlyDateAndTimeInputType::didChangeValueFromControl()
 {
     String value = sanitizeValue(m_dateTimeEditElement->value());
     BaseDateAndTimeInputType::setValue(value, value != element()->value(), DispatchInputAndChangeEvent);
+
+    DateTimeChooserParameters parameters;
+    if (!element()->setupDateTimeChooserParameters(parameters))
+        return;
+
+    if (m_dateTimeChooser)
+        m_dateTimeChooser->showChooser(parameters);
 }
 
 AtomString BaseChooserOnlyDateAndTimeInputType::localeIdentifier() const

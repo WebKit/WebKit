@@ -1,3 +1,23 @@
+2020-09-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Update date picker when the inner control is edited
+        https://bugs.webkit.org/show_bug.cgi?id=216004
+
+        Reviewed by Wenson Hsieh.
+
+        The value of the attached date picker should match the value in the
+        inner control. In order to achieve this behavior, m_dateTimeChooser
+        is notified whenever didChangeValueFromControl is called.
+
+        Note that the attached date picker's value is not updated on a
+        programmatic edit (setting input.value), as a sudden change not
+        triggered by the user would result in a poor user experience.
+
+        Test: fast/forms/date/date-editable-components/date-picker-update-on-edit.html
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::didChangeValueFromControl):
+
 2020-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Align UTF-16 decoder with Chrome, Firefox, and specification

@@ -224,6 +224,7 @@ interface UIScriptController {
     readonly attribute double timePickerValueMinute;
 
     readonly attribute boolean isShowingDateTimePicker;
+    readonly attribute double dateTimePickerValue;
 
     // <datalist>
     readonly attribute boolean isShowingDataListSuggestions;
