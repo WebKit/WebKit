@@ -2071,6 +2071,10 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
             cache->remove(*this);
     }
 
+    auto* textManipulationController = oldDocument.textManipulationControllerIfExists();
+    if (UNLIKELY(textManipulationController))
+        textManipulationController->removeNode(this);
+
     if (auto* eventTargetData = this->eventTargetData()) {
         if (!eventTargetData->eventListenerMap.isEmpty()) {
             for (auto& type : eventTargetData->eventListenerMap.eventTypes())
