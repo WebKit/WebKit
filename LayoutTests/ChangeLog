@@ -13,6 +13,15 @@
 2020-09-02  Karl Rackler  <rackler@apple.com>
 
         Rebaseline after macOS build progression.
+        Rebaseline fast/block/margin-collapse/103 for Mojave
+
+        Unreviewed test gardening.
+
+        * platform/mac-mojave/fast/block/margin-collapse/103-expected.txt:
+
+2020-09-02  Karl Rackler  <rackler@apple.com>
+
+        Rebaseline after macOS build progression.
         Rebaseline fast/block/margin-collapse/103 for Catalina
 
         Unreviewed test gardening.
