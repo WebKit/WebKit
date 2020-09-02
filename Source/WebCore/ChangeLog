@@ -1,3 +1,61 @@
+2020-09-01  Dean Jackson  <dino@apple.com>
+
+        REGRESSION(r262366): MotionMark1.1 | macOS | Some devices | 1-3% overall regression
+        https://bugs.webkit.org/show_bug.cgi?id=215989
+        <rdar://problem/66845937>
+
+        Reviewed by Darin Adler.
+
+        The new approach to compositing WebGL caused a slowdown in some
+        canvas performance tests. They were notifying the Document
+        of all drawing commands, even on 2d canvases that didn't need
+        to prepare before compositing.
+
+        The solution is to only add the Document as an observer
+        when necessary. This recovers the performance hit - measured
+        using the Canvas Lines MotionMark test.
+
+        Tests: fast/canvas/webgl/move-canvas-in-document-while-clean.html
+               fast/canvas/webgl/move-canvas-in-document.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareCanvasesForDisplayIfNeeded): Leave a FIXME
+        indicating that we should try to avoid the copyToVector if we
+        can ensure that the prepareForDisplay call will not mutate the HashSet.
+
+        * html/CanvasBase.cpp: Remove some copyToVector calls. It should be
+        fine to iterate over the HashSet for these notification functions.
+        (WebCore::CanvasBase::notifyObserversCanvasChanged):
+        (WebCore::CanvasBase::notifyObserversCanvasResized):
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement): Don't add the Document as
+        a canvas observer. Wait until we know it is a context that needs observing.
+        (WebCore::HTMLCanvasElement::createContextWebGL): Now we can add it as an
+        observer.
+        (WebCore::HTMLCanvasElement::didMoveToNewDocument): Swap observation to the new
+        Document.
+        (WebCore::HTMLCanvasElement::insertedIntoAncestor): Ditto, but also be aware that
+        we might be in a "dirty" state, and thus need to immediately tell the new
+        document that the canvas needs preparation.
+        (WebCore::HTMLCanvasElement::removedFromAncestor): Remove the observer.
+        (WebCore::HTMLCanvasElement::needsPreparationForDisplay): Use a virtual function
+        on the context instead of checking the type.
+        (WebCore::HTMLCanvasElement::prepareForDisplay): Ditto.
+
+        * html/canvas/CanvasRenderingContext.h: New virtual functions to avoid type checking
+        in HTMLCanvasElement.
+        (WebCore::CanvasRenderingContext::compositingResultsNeedUpdating const):
+        (WebCore::CanvasRenderingContext::needsPreparationForDisplay const):
+        (WebCore::CanvasRenderingContext::prepareForDisplay):
+
+        * html/canvas/WebGLRenderingContextBase.cpp: Implementations of the virtual functions
+        that tell HTMLCanvasElement that it needs to prepareForDisplay.
+        (WebCore::WebGLRenderingContextBase::markContextChanged):
+        (WebCore::WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver):
+        (WebCore::WebGLRenderingContextBase::didComposite):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2020-09-01  Chris Dumez  <cdumez@apple.com>
 
         Make sure BiquadFilterNode tail is getting processed

@@ -8635,6 +8635,11 @@ void Document::prepareCanvasesForDisplayIfNeeded()
 {
     // Some canvas contexts need to do work when rendering has finished but
     // before their content is composited.
+
+    // FIXME: Calling prepareForDisplay should not call back into a method
+    // that would mutate our m_canvasesNeedingDisplayPreparation list. It
+    // would be nice if this could be enforced to remove the copyToVector.
+
     for (auto* canvas : copyToVector(m_canvasesNeedingDisplayPreparation)) {
         // However, if they are not in the document body, then they won't
         // be composited and thus don't need preparation. Unfortunately they

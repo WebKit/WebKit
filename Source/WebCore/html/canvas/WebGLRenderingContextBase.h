@@ -399,8 +399,6 @@ public:
     // Used for testing only, from Internals.
     WEBCORE_EXPORT void setFailNextGPUStatusCheck();
 
-    void prepareForDisplay();
-
     // GraphicsContextGL::Client
     void didComposite() override;
     void forceContextLost() override;
@@ -520,6 +518,10 @@ protected:
     void loseExtensions(LostContextMode);
 
     virtual void uncacheDeletedBuffer(const WTF::AbstractLocker&, WebGLBuffer*);
+
+    bool compositingResultsNeedUpdating() const final { return m_compositingResultsNeedUpdating; }
+    bool needsPreparationForDisplay() const final { return true; }
+    void prepareForDisplay() final;
 
     RefPtr<GraphicsContextGLOpenGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
@@ -657,6 +659,8 @@ protected:
     bool m_isPendingPolicyResolution { false };
     bool m_hasRequestedPolicyResolution { false };
     bool isContextLostOrPending();
+
+    bool m_compositingResultsNeedUpdating { false };
 
     // Enabled extension objects.
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2

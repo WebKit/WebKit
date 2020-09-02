@@ -1069,6 +1069,7 @@ void WebGLRenderingContextBase::markContextChanged()
     m_context->markContextChanged();
 
     m_layerCleared = false;
+    m_compositingResultsNeedUpdating = true;
 
     if (auto* canvas = htmlCanvas()) {
         RenderBox* renderBox = canvas->renderBox();
@@ -1100,9 +1101,7 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver()
     if (!canvas)
         return;
 
-    RenderBox* renderBox = canvas->renderBox();
-    if (renderBox && renderBox->hasAcceleratedCompositing())
-        canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+    canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
 }
 
 bool WebGLRenderingContextBase::clearIfComposited(GCGLbitfield mask)
@@ -7827,6 +7826,8 @@ void WebGLRenderingContextBase::setFailNextGPUStatusCheck()
 
 void WebGLRenderingContextBase::didComposite()
 {
+    m_compositingResultsNeedUpdating = false;
+
     if (UNLIKELY(callTracingActive()))
         InspectorInstrumentation::didFinishRecordingCanvasFrame(*this);
 }
