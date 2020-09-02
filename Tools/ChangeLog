@@ -1,3 +1,18 @@
+2020-09-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add NoAction class
+        https://bugs.webkit.org/show_bug.cgi?id=216079
+        <rdar://problem/68216301>
+
+        Reviewed by Dewei Zhu.
+
+        This is an argparse action we've duplicated in a few Internal scripts, it should
+        be in a shared library.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/arguments.py: Added.
+        (NoAction): argparse action supporting a binary flag.
+
 2020-09-02  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Update date picker when the inner control is edited
