@@ -1,3 +1,12 @@
+2020-09-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update baselines and expectations after r266452.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fetch/fetch-url-serialization-expected.txt: Update after r266399.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt: Update after r266398.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-tail-expected.txt: Update after r266417.
+
 2020-09-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r243264): Web Inspector: Style pane doesn't update after toggling CSS class

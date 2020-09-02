@@ -601,6 +601,8 @@ webkit.org/b/215725 fast/canvas/webgl/webgl-compressed-texture-astc.html [ Crash
 webkit.org/b/215725 webgl/1.0.3/conformance/extensions/get-extension.html [ Crash ]
 webkit.org/b/215725 webgl/1.0.3/conformance/context/context-lost-restored.html [ Failure ]
 
+webkit.org/b/216071 fast/canvas/webgl/move-canvas-in-document-while-clean.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
