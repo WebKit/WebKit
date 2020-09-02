@@ -271,7 +271,7 @@ accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]
 
 # TODO Investigate why these mouse scroll tests are failing.
-fast/events/platform-wheelevent-in-scrolling-div.html [ Failure ]
+fast/events/platform-wheelevent-in-scrolling-div.html [ Failure Timeout ]
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
@@ -3396,7 +3396,7 @@ svg/filters/feCompositeOpaque.html [ ImageOnlyFailure ]
 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 # Crashes tracked in webkit.org/b/160447.
 animations/animation-delay-changed.html [ Skip ]
-js/dom/create-lots-of-workers.html [ Crash ]
+js/dom/create-lots-of-workers.html [ Crash Timeout ]
 # Timeouts tracked in webkit.org/b/160447.
 accessibility/set-selected-text-range-contenteditable.html [ Skip ]
 accessibility/set-selected-text-range-after-newline.html [ Skip ]
@@ -3681,8 +3681,8 @@ fast/canvas/2d.setPath.html [ Failure ]
 fast/forms/file/entries-api/drag-folder-webkitEntries.html [ Failure ]
 fast/forms/file/entries-api/webkitdirectory-drag-folder-webkitEntries.html [ Failure ]
 fast/forms/file/entries-api/webkitdirectory-drag-folder.html [ Failure ]
-fast/forms/file/entries-api/image-no-transcode-drag-drop.html [ Failure ]
-fast/forms/file/entries-api/image-transcode-drag-drop.html [ Failure ]
+fast/forms/file/entries-api/image-no-transcode-drag-drop.html [ Failure Timeout ]
+fast/forms/file/entries-api/image-transcode-drag-drop.html [ Failure Timeout ]
 http/tests/multipart/multipart-async-image.html [ Failure ]
 http/tests/security/contentSecurityPolicy/allow-favicon.html [ Failure ]
 http/wpt/entries-api/interfaces.html [ Failure ]
@@ -4188,7 +4188,7 @@ http/wpt/mediarecorder [ Skip ]
 
 webkit.org/b/190472 fast/forms/fieldset/fieldset-elements-htmlcollection.html [ Failure ]
 
-webkit.org/b/190520 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
+webkit.org/b/190520 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash Failure ]
 
 # WebGPU is not supported on Windows
 webgpu [ Skip ]
@@ -4411,8 +4411,8 @@ webkit.org/b/202952 http/tests/security/navigate-when-restoring-cached-page.html
 
 webkit.org/b/202953 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Timeout ]
 
-webkit.org/b/204153 fast/scrolling/momentum-scroll-with-borders.html [ Failure ]
-webkit.org/b/204153 fast/scrolling/overflow-scroll-past-max.html [ Failure ]
+webkit.org/b/204153 fast/scrolling/momentum-scroll-with-borders.html [ Failure Timeout ]
+webkit.org/b/204153 fast/scrolling/overflow-scroll-past-max.html [ Failure Timeout ]
 webkit.org/b/204153 http/tests/navigation/page-cache-mediakeysession.html [ Failure ]
 webkit.org/b/204153 http/tests/xmlhttprequest/access-control-and-redirects-async.html [ Failure ]
 webkit.org/b/204153 ietestcenter/Javascript/15.4.4.14-3-28.html [ Failure ]
@@ -4521,7 +4521,7 @@ webanimations/accelerated-animation-single-keyframe.html [ Skip ]
 
 webkit.org/b/214088 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
 
-webkit.org/b/214428 imported/mozilla/svg/blend-saturation.svg [ Failure ]
+webkit.org/b/214428 imported/mozilla/svg/blend-saturation.svg [ Failure ImageOnlyFailure ]
 
 storage/indexeddb/structured-clone.html [ Skip ]
 
@@ -4556,3 +4556,6 @@ webkit.org/b/215930 webanimations/accelerated-css-transition-with-easing-y-axis-
 
 # This test requires the OS to have a font that supports the Ahom language.
 webkit.org/b/216024 fast/text/ahom.html [ ImageOnlyFailure ]
+
+webkit.org/b/216036 http/tests/navigation/page-cache-video.html [ Pass Crash ]
+webkit.org/b/216036 webanimations/animation-page-cache.html [ Pass Timeout ]

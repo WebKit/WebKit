@@ -1,3 +1,12 @@
+2020-09-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Update test expectations for failures only seen on one specific bot
+        https://bugs.webkit.org/show_bug.cgi?id=216036
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Align UTF-16 decoder with Chrome, Firefox, and specification
