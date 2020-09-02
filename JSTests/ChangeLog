@@ -1,3 +1,16 @@
+2020-09-02  Michael Saboff  <msaboff@apple.com>
+
+        ASSERTION FAILED: value.isCell() && value.asCell()->type() == CustomGetterSetterType ./bytecode/ObjectPropertyConditionSet.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=216103
+
+        Reviewed by Saam Barati.
+
+        New teset.
+
+        * stress/custom-get-set-override.js: Added.
+        (overrideFunction.o.customFunction):
+        (overrideFunction):
+
 2020-09-02  Caio Lima  <ticaiolima@gmail.com>
 
         [ARMv7] Skip stress/intl-segmenter.js

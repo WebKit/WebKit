@@ -1485,6 +1485,23 @@ static bool customSetValue(JSGlobalObject* globalObject, EncodedJSValue slotValu
     return true;
 }
 
+static bool customFunctionSetter(JSGlobalObject* globalObject, EncodedJSValue, EncodedJSValue encodedValue)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+
+    JSValue value = JSValue::decode(encodedValue);
+    JSFunction* function = jsDynamicCast<JSFunction*>(vm, value);
+    if (!function)
+        return false;
+
+    auto callData = getCallData(vm, function);
+    MarkedArgumentBuffer args;
+    call(globalObject, function, callData, jsUndefined(), args);
+
+    return true;
+}
+
 void JSTestCustomGetterSetter::finishCreation(VM& vm)
 {
     DollarVMAssertScope assertScope;
@@ -1498,6 +1515,9 @@ void JSTestCustomGetterSetter::finishCreation(VM& vm)
         CustomGetterSetter::create(vm, customGetValueGlobalObject, nullptr), 0);
     putDirectCustomAccessor(vm, Identifier::fromString(vm, "customAccessorGlobalObject"),
         CustomGetterSetter::create(vm, customGetAccessorGlobalObject, nullptr), static_cast<unsigned>(PropertyAttribute::CustomAccessor));
+
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customFunction"),
+        CustomGetterSetter::create(vm, customGetAccessor, customFunctionSetter), static_cast<unsigned>(PropertyAttribute::CustomAccessor));
 
 }
 

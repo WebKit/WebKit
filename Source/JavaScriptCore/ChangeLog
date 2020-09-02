@@ -1,3 +1,17 @@
+2020-09-02  Michael Saboff  <msaboff@apple.com>
+
+        ASSERTION FAILED: value.isCell() && value.asCell()->type() == CustomGetterSetterType ./bytecode/ObjectPropertyConditionSet.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=216103
+
+        Reviewed by Saam Barati.
+
+        Changed the ASSERT to an if statement.  This checks to see if, the likely newly changed,
+        property is still a custom getter setter before caching its access as such.
+
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::generateConditionsForPrototypePropertyHitCustom):
+        * tools/JSDollarVM.cpp: Added test helper function.
+
 2020-09-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Skip fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html if Gigacage is not enabled
