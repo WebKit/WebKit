@@ -1,6 +1,6 @@
 
 PASS iso-2022-jp encoder: very basic 
-FAIL iso-2022-jp encoder: basics assert_equals: expected "%1B(J\\~s%1B(B\\%1B$B%_PP%1B(B" but got "%1B(J\\~s\\%1B$B%_PP%1B(B"
-FAIL iso-2022-jp encoder: SO/SI ESC assert_equals: expected "%0E%0F%1Bx" but got "%U000E%U000F%U001Bx"
+PASS iso-2022-jp encoder: basics 
+PASS iso-2022-jp encoder: SO/SI ESC 
 PASS iso-2022-jp encoder: U+FFFD 
 

@@ -1046,8 +1046,8 @@ PASS punctuation, currency, symbols  U+200F ‏ %26%238207%3B
 PASS punctuation, currency, symbols  U+2011 ‑ %26%238209%3B 
 PASS punctuation, currency, symbols  U+2012 ‒ %26%238210%3B 
 PASS punctuation, currency, symbols  U+2013 – %26%238211%3B 
-FAIL punctuation, currency, symbols  U+2014 — %26%238212%3B assert_equals: expected "%26%238212%3B" but got "%1B$B!=%1B(B"
-FAIL punctuation, currency, symbols  U+2016 ‖ %26%238214%3B assert_equals: expected "%26%238214%3B" but got "%1B$B!B%1B(B"
+PASS punctuation, currency, symbols  U+2014 — %26%238212%3B 
+PASS punctuation, currency, symbols  U+2016 ‖ %26%238214%3B 
 PASS punctuation, currency, symbols  U+2017 ‗ %26%238215%3B 
 PASS punctuation, currency, symbols  U+201A ‚ %26%238218%3B 
 PASS punctuation, currency, symbols  U+201B ‛ %26%238219%3B 
@@ -2574,7 +2574,7 @@ PASS various asian  U+3018 〘 %26%2312312%3B
 PASS various asian  U+3019 〙 %26%2312313%3B 
 PASS various asian  U+301A 〚 %26%2312314%3B 
 PASS various asian  U+301B 〛 %26%2312315%3B 
-FAIL various asian  U+301C 〜 %26%2312316%3B assert_equals: expected "%26%2312316%3B" but got "%1B$B!A%1B(B"
+PASS various asian  U+301C 〜 %26%2312316%3B 
 PASS various asian  U+301E 〞 %26%2312318%3B 
 PASS various asian  U+3020 〠 %26%2312320%3B 
 PASS various asian  U+3021 〡 %26%2312321%3B 

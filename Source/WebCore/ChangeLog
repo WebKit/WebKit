@@ -1,3 +1,26 @@
+2020-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Align ISO-2022-JP and Shift_JIS encodings with Chrome, Firefox, and the specification
+        https://bugs.webkit.org/show_bug.cgi?id=216052
+
+        Reviewed by Darin Adler.
+
+        Covered by newly passing web platform tests.
+
+        * platform/text/TextCodecCJK.cpp:
+        (WebCore::TextCodecCJK::TextCodecCJK):
+        (WebCore::TextCodecCJK::registerEncodingNames):
+        (WebCore::TextCodecCJK::registerCodecs):
+        (WebCore::eucJPEncode):
+        (WebCore::TextCodecCJK::iso2022JPEncode):
+        (WebCore::shiftJISEncode):
+        (WebCore::big5Encode):
+        (WebCore::TextCodecCJK::big5Decode):
+        (WebCore::TextCodecCJK::decode):
+        (WebCore::TextCodecCJK::encode):
+        * platform/text/TextCodecCJK.h:
+        * platform/text/TextCodecICU.cpp:
+
 2020-09-01  Hector Lopez  <hector_i_lopez@apple.com>
 
         Unreviewed, reverting r266408.

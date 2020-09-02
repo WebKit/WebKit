@@ -37,8 +37,6 @@ namespace WebCore {
 TextCodecCJK::TextCodecCJK(Encoding encoding)
     : m_encoding(encoding)
 {
-    if (encoding == Encoding::EUC_JP)
-        m_icuCodec = makeUnique<TextCodecICU>("euc-jp-2007", "euc-jp-2007");
 }
 
 void TextCodecCJK::registerEncodingNames(EncodingNameRegistrar registrar)
@@ -61,15 +59,41 @@ void TextCodecCJK::registerEncodingNames(EncodingNameRegistrar registrar)
     };
     for (auto* alias : eucJPAliases)
         registrar(alias, "EUC-JP");
+
+    static const std::array<const char*, 8> shiftJISAliases {
+        "Shift_JIS",
+        "csshiftjis",
+        "ms932",
+        "ms_kanji",
+        "shift-jis",
+        "sjis",
+        "windows-31j",
+        "x-sjis"
+    };
+    for (auto* alias : shiftJISAliases)
+        registrar(alias, "Shift_JIS");
+
+    static const std::array<const char*, 2> iso2022JPAliases {
+        "ISO-2022-JP",
+        "csiso2022jp"
+    };
+    for (auto* alias : iso2022JPAliases)
+        registrar(alias, "ISO-2022-JP");
 }
 
 void TextCodecCJK::registerCodecs(TextCodecRegistrar registrar)
 {
-    registrar("euc-jp", [] {
+    registrar("EUC-JP", [] {
         return makeUnique<TextCodecCJK>(Encoding::EUC_JP);
     });
-    registrar("big5", [] {
+    registrar("Big5", [] {
         return makeUnique<TextCodecCJK>(Encoding::Big5);
+    });
+    registrar("Shift_JIS", [] {
+        return makeUnique<TextCodecCJK>(Encoding::Shift_JIS);
+    });
+    registrar("ISO-2022-JP", [] {
+        return makeUnique<TextCodecCJK>(Encoding::ISO2022JP);
     });
 }
 
@@ -107,16 +131,179 @@ static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar32, Vec
             continue;
         }
         
-        auto pointerRange = std::equal_range(std::begin(jis0208), std::end(jis0208), std::pair<UChar, UChar>(static_cast<UChar>(c), 0), [](const auto& a, const auto& b) {
+        auto pointerRange = std::equal_range(std::begin(jis0208), std::end(jis0208), std::pair<UChar, uint16_t>(static_cast<UChar>(c), 0), [](const auto& a, const auto& b) {
             return a.first < b.first;
         });
         if (pointerRange.first == pointerRange.second) {
             unencodableHandler(c, result);
             continue;
         }
-        UChar pointer = (pointerRange.second - 1)->second;
+        uint16_t pointer = (pointerRange.second - 1)->second;
         result.append(pointer / 94 + 0xA1);
         result.append(pointer % 94 + 0xA1);
+    }
+    return result;
+}
+
+// https://encoding.spec.whatwg.org/#iso-2022-jp-encoder
+Vector<uint8_t> TextCodecCJK::iso2022JPEncode(StringView string, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler)
+{
+    Vector<uint8_t> result;
+    result.reserveInitialCapacity(string.length());
+    
+    auto changeStateToASCII = [&] {
+        m_iso2022JPEncoderState = ISO2022JPEncoderState::ASCII;
+        result.append(0x1B);
+        result.append(0x28);
+        result.append(0x42);
+    };
+    
+    auto statefulUnencodableHandler = [&] (UChar32 codePoint, Vector<uint8_t>& result) {
+        if (m_iso2022JPEncoderState == ISO2022JPEncoderState::Jis0208)
+            changeStateToASCII();
+        unencodableHandler(codePoint, result);
+    };
+
+    auto parseCodePoint = [&] (UChar32 codePoint) {
+        if (m_iso2022JPEncoderState == ISO2022JPEncoderState::ASCII && isASCII(codePoint)) {
+            result.append(static_cast<uint8_t>(codePoint));
+            return;
+        }
+        if (m_iso2022JPEncoderState == ISO2022JPEncoderState::Roman) {
+            if (isASCII(codePoint) && codePoint != 0x005C && codePoint !=0x007E) {
+                result.append(static_cast<uint8_t>(codePoint));
+                return;
+            }
+            if (codePoint == 0x00A5) {
+                result.append(0x5C);
+                return;
+            }
+            if (codePoint == 0x203E) {
+                result.append(0x7E);
+                return;
+            }
+        }
+        if (isASCII(codePoint) && m_iso2022JPEncoderState != ISO2022JPEncoderState::ASCII) {
+            m_prependedCodePoint = codePoint;
+            if (m_iso2022JPEncoderState != ISO2022JPEncoderState::ASCII)
+                changeStateToASCII();
+            return;
+        }
+        if ((codePoint == 0x00A5 || codePoint == 0x203E) && m_iso2022JPEncoderState != ISO2022JPEncoderState::Roman) {
+            m_prependedCodePoint = codePoint;
+            m_iso2022JPEncoderState = ISO2022JPEncoderState::Roman;
+            result.append(0x1B);
+            result.append(0x28);
+            result.append(0x4A);
+            return;
+        }
+        if (codePoint == 0x2212)
+            codePoint = 0xFF0D;
+        if (codePoint >= 0xFF61 && codePoint <= 0xFF9F) {
+            // From https://encoding.spec.whatwg.org/index-iso-2022-jp-katakana.txt
+            static const UChar32 iso2022JPKatakana[63] {
+                0x3002, 0x300C, 0x300D, 0x3001, 0x30FB, 0x30F2, 0x30A1, 0x30A3, 0x30A5, 0x30A7, 0x30A9, 0x30E3, 0x30E5, 0x30E7, 0x30C3, 0x30FC,
+                0x30A2, 0x30A4, 0x30A6, 0x30A8, 0x30AA, 0x30AB, 0x30AD, 0x30AF, 0x30B1, 0x30B3, 0x30B5, 0x30B7, 0x30B9, 0x30BB, 0x30BD, 0x30BF,
+                0x30C1, 0x30C4, 0x30C6, 0x30C8, 0x30CA, 0x30CB, 0x30CC, 0x30CD, 0x30CE, 0x30CF, 0x30D2, 0x30D5, 0x30D8, 0x30DB, 0x30DE, 0x30DF,
+                0x30E0, 0x30E1, 0x30E2, 0x30E4, 0x30E6, 0x30E8, 0x30E9, 0x30EA, 0x30EB, 0x30EC, 0x30ED, 0x30EF, 0x30F3, 0x309B, 0x309C
+            };
+            codePoint = iso2022JPKatakana[codePoint - 0xFF61];
+        }
+        
+        auto codeUnit = static_cast<UChar>(codePoint);
+        if (codeUnit != codePoint) {
+            statefulUnencodableHandler(codePoint, result);
+            return;
+        }
+        
+        auto range = std::equal_range(std::begin(jis0208), std::end(jis0208), std::pair<UChar, uint16_t>(codeUnit, 0), [](const auto& a, const auto& b) {
+            return a.first < b.first;
+        });
+        if (range.first == range.second) {
+            statefulUnencodableHandler(codePoint, result);
+            return;
+        }
+        if (m_iso2022JPEncoderState != ISO2022JPEncoderState::Jis0208) {
+            m_prependedCodePoint = codePoint;
+            m_iso2022JPEncoderState = ISO2022JPEncoderState::Jis0208;
+            result.append(0x1B);
+            result.append(0x24);
+            result.append(0x42);
+            return;
+        }
+        uint16_t pointer = (range.second - 1)->second;
+        result.append(pointer / 94 + 0x21);
+        result.append(pointer % 94 + 0x21);
+    };
+    
+    auto characters = string.upconvertedCharacters();
+    for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
+        parseCodePoint(*iterator);
+        if (m_prependedCodePoint)
+            parseCodePoint(*std::exchange(m_prependedCodePoint, WTF::nullopt));
+    }
+
+    if (m_iso2022JPEncoderState != ISO2022JPEncoderState::ASCII)
+        changeStateToASCII();
+    
+    return result;
+}
+
+// https://encoding.spec.whatwg.org/#shift_jis-encoder
+static Vector<uint8_t> shiftJISEncode(StringView string, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler)
+{
+    Vector<uint8_t> result;
+    result.reserveInitialCapacity(string.length());
+
+    auto characters = string.upconvertedCharacters();
+    for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
+        auto codePoint = *iterator;
+        if (isASCII(codePoint) || codePoint == 0x0080) {
+            result.append(codePoint);
+            continue;
+        }
+        if (codePoint == 0x00A5) {
+            result.append(0x5C);
+            continue;
+        }
+        if (codePoint == 0x203E) {
+            result.append(0x7E);
+            continue;
+        }
+        if (codePoint >= 0xFF61 && codePoint <= 0xFF9F) {
+            result.append(codePoint - 0xFF61 + 0xA1);
+            continue;
+        }
+        if (codePoint == 0x2212)
+            codePoint = 0xFF0D;
+        
+        auto codeUnit = static_cast<UChar>(codePoint);
+        if (codeUnit != codePoint) {
+            unencodableHandler(codePoint, result);
+            continue;
+        }
+        
+        auto range = std::equal_range(std::begin(jis0208), std::end(jis0208), std::pair<UChar, uint16_t>(codeUnit, 0), [](const auto& a, const auto& b) {
+            return a.first < b.first;
+        });
+        if (range.first == range.second) {
+            unencodableHandler(codePoint, result);
+            continue;
+        }
+        
+        ASSERT(range.first + 3 >= range.second);
+        for (auto* pair = range.second - 1; pair >= range.first; pair--) {
+            uint16_t pointer = pair->second;
+            if (pointer >= 8272 && pointer <= 8835)
+                continue;
+            uint8_t lead = pointer / 188;
+            uint8_t leadOffset = lead < 0x1F ? 0x81 : 0xC1;
+            uint8_t trail = pointer % 188;
+            uint8_t offset = trail < 0x3F ? 0x40 : 0x41;
+            result.append(lead + leadOffset);
+            result.append(trail + offset);
+            break;
+        }
     }
     return result;
 }
@@ -135,7 +322,7 @@ static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vect
             continue;
         }
 
-        auto pointerRange = std::equal_range(std::begin(big5EncodingMap), std::end(big5EncodingMap), std::pair<UChar32, UChar>(c, 0), [](const auto& a, const auto& b) {
+        auto pointerRange = std::equal_range(std::begin(big5EncodingMap), std::end(big5EncodingMap), std::pair<UChar32, uint16_t>(c, 0), [](const auto& a, const auto& b) {
             return a.first < b.first;
         });
         
@@ -144,7 +331,7 @@ static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vect
             continue;
         }
 
-        UChar pointer = 0;
+        uint16_t pointer = 0;
         if (c == 0x2550 || c == 0x255E || c == 0x2561 || c == 0x256A || c == 0x5341 || c == 0x5345)
             pointer = (pointerRange.second - 1)->second;
         else
@@ -284,13 +471,13 @@ String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush,
     
     if (stopOnError) {
         for (size_t i = 0; i < length; i++) {
-            if (m_prependedByte)
-                parseByte(*std::exchange(m_prependedByte, WTF::nullopt));
+            parseByte(bytes[i]);
             if (sawError) {
                 m_lead = 0x00;
                 return result.toString();
             }
-            parseByte(bytes[i]);
+            if (m_prependedByte)
+                parseByte(*std::exchange(m_prependedByte, WTF::nullopt));
             if (sawError) {
                 m_lead = 0x00;
                 return result.toString();
@@ -298,9 +485,9 @@ String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush,
         }
     } else {
         for (size_t i = 0; i < length; i++) {
+            parseByte(bytes[i]);
             if (m_prependedByte)
                 parseByte(*std::exchange(m_prependedByte, WTF::nullopt));
-            parseByte(bytes[i]);
         }
     }
 
@@ -314,14 +501,24 @@ String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush,
 
 String TextCodecCJK::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
+    const char* icuName = nullptr;
     switch (m_encoding) {
     case Encoding::EUC_JP:
-        return m_icuCodec->decode(bytes, length, flush, stopOnError, sawError);
+        icuName = "euc-jp-2007";
+        break;
+    case Encoding::Shift_JIS:
+        icuName = "ibm-943_P15A-2003";
+        break;
+    case Encoding::ISO2022JP:
+        icuName = "ISO_2022,locale=ja,version=0";
+        break;
     case Encoding::Big5:
         return big5Decode(reinterpret_cast<const uint8_t*>(bytes), length, flush, stopOnError, sawError);
     }
-    ASSERT_NOT_REACHED();
-    return { };
+
+    if (!m_icuCodec)
+        m_icuCodec = makeUnique<TextCodecICU>(icuName, icuName);
+    return m_icuCodec->decode(bytes, length, flush, stopOnError, sawError);
 }
 
 Vector<uint8_t> TextCodecCJK::encode(StringView string, UnencodableHandling handling)
@@ -329,6 +526,10 @@ Vector<uint8_t> TextCodecCJK::encode(StringView string, UnencodableHandling hand
     switch (m_encoding) {
     case Encoding::EUC_JP:
         return eucJPEncode(string, unencodableHandler(handling));
+    case Encoding::Shift_JIS:
+        return shiftJISEncode(string, unencodableHandler(handling));
+    case Encoding::ISO2022JP:
+        return iso2022JPEncode(string, unencodableHandler(handling));
     case Encoding::Big5:
         return big5Encode(string, unencodableHandler(handling));
     }

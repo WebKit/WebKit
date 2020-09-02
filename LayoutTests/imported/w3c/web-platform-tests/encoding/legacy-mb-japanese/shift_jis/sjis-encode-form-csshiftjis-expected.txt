@@ -1,5 +1,5 @@
 
-FAIL U+80  %80 assert_equals: expected "%80" but got "%26%23%31%32%38%3B"
+PASS U+80  %80 
 PASS U+A5 ¥ %5C 
 PASS U+A7 § %81%98 
 PASS U+A8 ¨ %81%4E 

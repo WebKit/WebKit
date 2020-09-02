@@ -35,12 +35,12 @@ PASS latin, greek, cyrillic, etc U+A1 ¡ %26%23161%3B
 PASS latin, greek, cyrillic, etc U+A2 ¢ %26%23162%3B 
 PASS latin, greek, cyrillic, etc U+A3 £ %26%23163%3B 
 PASS latin, greek, cyrillic, etc U+A4 ¤ %26%23164%3B 
-FAIL latin, greek, cyrillic, etc U+A6 ¦ %26%23166%3B assert_equals: expected "%26%23166%3B" but got "%FAU"
+PASS latin, greek, cyrillic, etc U+A6 ¦ %26%23166%3B 
 PASS latin, greek, cyrillic, etc U+A9 © %26%23169%3B 
 PASS latin, greek, cyrillic, etc U+AA ª %26%23170%3B 
 PASS latin, greek, cyrillic, etc U+AB « %26%23171%3B 
 PASS latin, greek, cyrillic, etc U+AC ¬ %26%23172%3B 
-FAIL latin, greek, cyrillic, etc U+AD ­ %26%23173%3B assert_equals: expected "%26%23173%3B" but got ""
+PASS latin, greek, cyrillic, etc U+AD ­ %26%23173%3B 
 PASS latin, greek, cyrillic, etc U+AE ® %26%23174%3B 
 PASS latin, greek, cyrillic, etc U+AF ¯ %26%23175%3B 
 PASS latin, greek, cyrillic, etc U+B2 ² %26%23178%3B 
@@ -708,7 +708,7 @@ PASS latin, greek, cyrillic, etc U+34B ͋ %26%23843%3B
 PASS latin, greek, cyrillic, etc U+34C ͌ %26%23844%3B 
 PASS latin, greek, cyrillic, etc U+34D ͍ %26%23845%3B 
 PASS latin, greek, cyrillic, etc U+34E ͎ %26%23846%3B 
-FAIL latin, greek, cyrillic, etc U+34F ͏ %26%23847%3B assert_equals: expected "%26%23847%3B" but got ""
+PASS latin, greek, cyrillic, etc U+34F ͏ %26%23847%3B 
 PASS latin, greek, cyrillic, etc U+350 ͐ %26%23848%3B 
 PASS latin, greek, cyrillic, etc U+351 ͑ %26%23849%3B 
 PASS latin, greek, cyrillic, etc U+352 ͒ %26%23850%3B 
@@ -1037,16 +1037,16 @@ PASS punctuation, currency, symbols U+2007   %26%238199%3B
 PASS punctuation, currency, symbols U+2008   %26%238200%3B 
 PASS punctuation, currency, symbols U+2009   %26%238201%3B 
 PASS punctuation, currency, symbols U+200A   %26%238202%3B 
-FAIL punctuation, currency, symbols U+200B ​ %26%238203%3B assert_equals: expected "%26%238203%3B" but got ""
-FAIL punctuation, currency, symbols U+200C ‌ %26%238204%3B assert_equals: expected "%26%238204%3B" but got ""
-FAIL punctuation, currency, symbols U+200D ‍ %26%238205%3B assert_equals: expected "%26%238205%3B" but got ""
-FAIL punctuation, currency, symbols U+200E ‎ %26%238206%3B assert_equals: expected "%26%238206%3B" but got ""
-FAIL punctuation, currency, symbols U+200F ‏ %26%238207%3B assert_equals: expected "%26%238207%3B" but got ""
+PASS punctuation, currency, symbols U+200B ​ %26%238203%3B 
+PASS punctuation, currency, symbols U+200C ‌ %26%238204%3B 
+PASS punctuation, currency, symbols U+200D ‍ %26%238205%3B 
+PASS punctuation, currency, symbols U+200E ‎ %26%238206%3B 
+PASS punctuation, currency, symbols U+200F ‏ %26%238207%3B 
 PASS punctuation, currency, symbols U+2011 ‑ %26%238209%3B 
 PASS punctuation, currency, symbols U+2012 ‒ %26%238210%3B 
 PASS punctuation, currency, symbols U+2013 – %26%238211%3B 
-FAIL punctuation, currency, symbols U+2014 — %26%238212%3B assert_equals: expected "%26%238212%3B" but got "%81%5C"
-FAIL punctuation, currency, symbols U+2016 ‖ %26%238214%3B assert_equals: expected "%26%238214%3B" but got "%81a"
+PASS punctuation, currency, symbols U+2014 — %26%238212%3B 
+PASS punctuation, currency, symbols U+2016 ‖ %26%238214%3B 
 PASS punctuation, currency, symbols U+2017 ‗ %26%238215%3B 
 PASS punctuation, currency, symbols U+201A ‚ %26%238218%3B 
 PASS punctuation, currency, symbols U+201B ‛ %26%238219%3B 
@@ -1058,11 +1058,11 @@ PASS punctuation, currency, symbols U+2024 ․ %26%238228%3B
 PASS punctuation, currency, symbols U+2027 ‧ %26%238231%3B 
 PASS punctuation, currency, symbols U+2028   %26%238232%3B 
 PASS punctuation, currency, symbols U+2029   %26%238233%3B 
-FAIL punctuation, currency, symbols U+202A ‪ %26%238234%3B assert_equals: expected "%26%238234%3B" but got ""
-FAIL punctuation, currency, symbols U+202B ‫ %26%238235%3B assert_equals: expected "%26%238235%3B" but got ""
-FAIL punctuation, currency, symbols U+202C ‬ %26%238236%3B assert_equals: expected "%26%238236%3B" but got ""
-FAIL punctuation, currency, symbols U+202D ‭ %26%238237%3B assert_equals: expected "%26%238237%3B" but got ""
-FAIL punctuation, currency, symbols U+202E ‮ %26%238238%3B assert_equals: expected "%26%238238%3B" but got ""
+PASS punctuation, currency, symbols U+202A ‪ %26%238234%3B 
+PASS punctuation, currency, symbols U+202B ‫ %26%238235%3B 
+PASS punctuation, currency, symbols U+202C ‬ %26%238236%3B 
+PASS punctuation, currency, symbols U+202D ‭ %26%238237%3B 
+PASS punctuation, currency, symbols U+202E ‮ %26%238238%3B 
 PASS punctuation, currency, symbols U+202F   %26%238239%3B 
 PASS punctuation, currency, symbols U+2031 ‱ %26%238241%3B 
 PASS punctuation, currency, symbols U+2034 ‴ %26%238244%3B 
@@ -1107,22 +1107,22 @@ PASS punctuation, currency, symbols U+205C ⁜ %26%238284%3B
 PASS punctuation, currency, symbols U+205D ⁝ %26%238285%3B 
 PASS punctuation, currency, symbols U+205E ⁞ %26%238286%3B 
 PASS punctuation, currency, symbols U+205F   %26%238287%3B 
-FAIL punctuation, currency, symbols U+2060 ⁠ %26%238288%3B assert_equals: expected "%26%238288%3B" but got ""
-FAIL punctuation, currency, symbols U+2061 ⁡ %26%238289%3B assert_equals: expected "%26%238289%3B" but got ""
-FAIL punctuation, currency, symbols U+2062 ⁢ %26%238290%3B assert_equals: expected "%26%238290%3B" but got ""
-FAIL punctuation, currency, symbols U+2063 ⁣ %26%238291%3B assert_equals: expected "%26%238291%3B" but got ""
-FAIL punctuation, currency, symbols U+2064 ⁤ %26%238292%3B assert_equals: expected "%26%238292%3B" but got ""
-FAIL punctuation, currency, symbols U+2065 ⁥ %26%238293%3B assert_equals: expected "%26%238293%3B" but got ""
-FAIL punctuation, currency, symbols U+2066 ⁦ %26%238294%3B assert_equals: expected "%26%238294%3B" but got ""
-FAIL punctuation, currency, symbols U+2067 ⁧ %26%238295%3B assert_equals: expected "%26%238295%3B" but got ""
-FAIL punctuation, currency, symbols U+2068 ⁨ %26%238296%3B assert_equals: expected "%26%238296%3B" but got ""
-FAIL punctuation, currency, symbols U+2069 ⁩ %26%238297%3B assert_equals: expected "%26%238297%3B" but got ""
-FAIL punctuation, currency, symbols U+206A ⁪ %26%238298%3B assert_equals: expected "%26%238298%3B" but got ""
-FAIL punctuation, currency, symbols U+206B ⁫ %26%238299%3B assert_equals: expected "%26%238299%3B" but got ""
-FAIL punctuation, currency, symbols U+206C ⁬ %26%238300%3B assert_equals: expected "%26%238300%3B" but got ""
-FAIL punctuation, currency, symbols U+206D ⁭ %26%238301%3B assert_equals: expected "%26%238301%3B" but got ""
-FAIL punctuation, currency, symbols U+206E ⁮ %26%238302%3B assert_equals: expected "%26%238302%3B" but got ""
-FAIL punctuation, currency, symbols U+206F ⁯ %26%238303%3B assert_equals: expected "%26%238303%3B" but got ""
+PASS punctuation, currency, symbols U+2060 ⁠ %26%238288%3B 
+PASS punctuation, currency, symbols U+2061 ⁡ %26%238289%3B 
+PASS punctuation, currency, symbols U+2062 ⁢ %26%238290%3B 
+PASS punctuation, currency, symbols U+2063 ⁣ %26%238291%3B 
+PASS punctuation, currency, symbols U+2064 ⁤ %26%238292%3B 
+PASS punctuation, currency, symbols U+2065 ⁥ %26%238293%3B 
+PASS punctuation, currency, symbols U+2066 ⁦ %26%238294%3B 
+PASS punctuation, currency, symbols U+2067 ⁧ %26%238295%3B 
+PASS punctuation, currency, symbols U+2068 ⁨ %26%238296%3B 
+PASS punctuation, currency, symbols U+2069 ⁩ %26%238297%3B 
+PASS punctuation, currency, symbols U+206A ⁪ %26%238298%3B 
+PASS punctuation, currency, symbols U+206B ⁫ %26%238299%3B 
+PASS punctuation, currency, symbols U+206C ⁬ %26%238300%3B 
+PASS punctuation, currency, symbols U+206D ⁭ %26%238301%3B 
+PASS punctuation, currency, symbols U+206E ⁮ %26%238302%3B 
+PASS punctuation, currency, symbols U+206F ⁯ %26%238303%3B 
 PASS punctuation, currency, symbols U+2070 ⁰ %26%238304%3B 
 PASS punctuation, currency, symbols U+2071 ⁱ %26%238305%3B 
 PASS punctuation, currency, symbols U+2072 ⁲ %26%238306%3B 
@@ -2573,7 +2573,7 @@ PASS various asian U+3018 〘 %26%2312312%3B
 PASS various asian U+3019 〙 %26%2312313%3B 
 PASS various asian U+301A 〚 %26%2312314%3B 
 PASS various asian U+301B 〛 %26%2312315%3B 
-FAIL various asian U+301C 〜 %26%2312316%3B assert_equals: expected "%26%2312316%3B" but got "%81%60"
+PASS various asian U+301C 〜 %26%2312316%3B 
 PASS various asian U+301E 〞 %26%2312318%3B 
 PASS various asian U+3020 〠 %26%2312320%3B 
 PASS various asian U+3021 〡 %26%2312321%3B 
@@ -2722,7 +2722,7 @@ PASS various asian U+3160 ㅠ %26%2312640%3B
 PASS various asian U+3161 ㅡ %26%2312641%3B 
 PASS various asian U+3162 ㅢ %26%2312642%3B 
 PASS various asian U+3163 ㅣ %26%2312643%3B 
-FAIL various asian U+3164 ㅤ %26%2312644%3B assert_equals: expected "%26%2312644%3B" but got ""
+PASS various asian U+3164 ㅤ %26%2312644%3B 
 PASS various asian U+3165 ㅥ %26%2312645%3B 
 PASS various asian U+3166 ㅦ %26%2312646%3B 
 PASS various asian U+3167 ㅧ %26%2312647%3B 
@@ -3356,7 +3356,7 @@ PASS various asian U+33FE ㏾ %26%2313310%3B
 PASS half/full width U+FF00 ＀ %26%2365280%3B 
 PASS half/full width U+FF5F ｟ %26%2365375%3B 
 PASS half/full width U+FF60 ｠ %26%2365376%3B 
-FAIL half/full width U+FFA0 ﾠ %26%2365440%3B assert_equals: expected "%26%2365440%3B" but got ""
+PASS half/full width U+FFA0 ﾠ %26%2365440%3B 
 PASS half/full width U+FFA1 ﾡ %26%2365441%3B 
 PASS half/full width U+FFA2 ﾢ %26%2365442%3B 
 PASS half/full width U+FFA3 ﾣ %26%2365443%3B 

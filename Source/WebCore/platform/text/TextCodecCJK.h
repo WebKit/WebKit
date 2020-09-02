@@ -34,6 +34,8 @@ class TextCodecCJK : public TextCodec {
 public:
     enum class Encoding : uint8_t {
         EUC_JP,
+        ISO2022JP,
+        Shift_JIS,
         Big5
     };
     
@@ -47,12 +49,17 @@ private:
     Vector<uint8_t> encode(StringView, UnencodableHandling) final;
 
     String big5Decode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError);
+    Vector<uint8_t> iso2022JPEncode(StringView, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler);
 
-    Encoding m_encoding;
+    const Encoding m_encoding;
+
+    enum class ISO2022JPEncoderState : uint8_t { ASCII, Roman, Jis0208 };
+    ISO2022JPEncoderState m_iso2022JPEncoderState { ISO2022JPEncoderState::ASCII };
+    Optional<UChar32> m_prependedCodePoint;
 
     uint8_t m_lead { 0x00 };
     Optional<uint8_t> m_prependedByte;
-    
+
     std::unique_ptr<TextCodec> m_icuCodec;
 };
 

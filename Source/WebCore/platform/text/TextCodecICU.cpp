@@ -76,8 +76,6 @@ DECLARE_ALIASES(windows_1258, "winvietnamese", "cp1258", "x-cp1258");
 DECLARE_ALIASES(x_mac_cyrillic, "maccyrillic", "x-mac-ukrainian", "windows-10007", "mac-cyrillic", "maccy", "x-MacCyrillic", "x-MacUkraine");
 DECLARE_ALIASES(GBK, "cn-gb", "csgb231280", "x-euc-cn", "chinese", "csgb2312", "csiso58gb231280", "gb2312", "gb_2312", "gb_2312-80", "iso-ir-58", "x-gbk", "euc-cn", "cp936", "ms936", "gb2312-1980", "windows-936", "windows-936-2000");
 DECLARE_ALIASES(gb18030, "ibm-1392", "windows-54936");
-DECLARE_ALIASES(ISO_2022_JP, "jis7", "csiso2022jp");
-DECLARE_ALIASES(Shift_JIS, "shift-jis", "csshiftjis", "ms932", "ms_kanji", "sjis", "windows-31j", "x-sjis");
 // Encodings below are not in the standard.
 DECLARE_ALIASES(x_mac_greek, "windows-10006", "macgr", "x-MacGreek");
 DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029", "x-mac-ce", "macce", "maccentraleurope", "x-MacCentralEurope");
@@ -124,8 +122,6 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("x-mac-cyrillic", x_mac_cyrillic),
     DECLARE_ENCODING_NAME("GBK", GBK),
     DECLARE_ENCODING_NAME("gb18030", gb18030),
-    DECLARE_ENCODING_NAME("ISO-2022-JP", ISO_2022_JP),
-    DECLARE_ENCODING_NAME("Shift_JIS", Shift_JIS),
     // Encodings below are not in the standard.
     DECLARE_ENCODING_NAME("x-mac-greek", x_mac_greek),
     DECLARE_ENCODING_NAME("x-mac-centraleurroman", x_mac_centraleurroman),
