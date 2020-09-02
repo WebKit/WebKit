@@ -1,3 +1,10 @@
+2020-09-02  Timothy Horton  <timothy_horton@apple.com>
+
+        RWT's lint-test-files complains about nonexistent editing/images tests
+
+        * TestExpectations:
+        Remove a stale expectation for a directory that has been deleted.
+
 2020-09-02  Karl Rackler  <rackler@apple.com>
 
         rdar://67281310 ([ Rosetta Layout Tests ] REGRESSION (r265639): [ Big Sur ] 1 canvas layout test is a constant failure)
