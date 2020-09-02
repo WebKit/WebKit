@@ -1,3 +1,16 @@
+2020-09-01  David Kilzer  <ddkilzer@apple.com>
+
+        [ANGLE] InternalFormat::blendSupport is uninitialized by constructor
+        <https://webkit.org/b/216053>
+        <rdar://problem/68166032>
+
+        Reviewed by Kenneth Russell.
+
+        * changes.diff: Add this patch.
+        * src/libANGLE/formatutils.cpp:
+        (gl::InternalFormat::InternalFormat):
+        - Initialize blendSupport to NeverSupported.
+
 2020-08-31  James Darpinian  <jdarpinian@chromium.org>
 
         Implement WEBGL_compressed_texture_s3tc_srgb extension

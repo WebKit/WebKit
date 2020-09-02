@@ -121,6 +121,20 @@ index c3955f254..cf717e260 100644
  #include "libANGLE/State.h"
  
  #include <string.h>
+diff --git a/src/libANGLE/formatutils.cpp b/src/libANGLE/formatutils.cpp
+index 8314f8cfbeec..f2da2fb2ec20 100644
+--- a/src/libANGLE/formatutils.cpp
++++ b/src/libANGLE/formatutils.cpp
+@@ -354,7 +354,8 @@ InternalFormat::InternalFormat()
+       textureSupport(NeverSupported),
+       filterSupport(NeverSupported),
+       textureAttachmentSupport(NeverSupported),
+-      renderbufferSupport(NeverSupported)
++      renderbufferSupport(NeverSupported),
++      blendSupport(NeverSupported)
+ {}
+ 
+ InternalFormat::InternalFormat(const InternalFormat &other) = default;
 diff --git a/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp b/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp
 index af167090d..cf4da9c81 100644
 --- a/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp

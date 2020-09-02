@@ -354,7 +354,8 @@ InternalFormat::InternalFormat()
       textureSupport(NeverSupported),
       filterSupport(NeverSupported),
       textureAttachmentSupport(NeverSupported),
-      renderbufferSupport(NeverSupported)
+      renderbufferSupport(NeverSupported),
+      blendSupport(NeverSupported)
 {}
 
 InternalFormat::InternalFormat(const InternalFormat &other) = default;
