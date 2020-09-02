@@ -1,5 +1,31 @@
 2020-09-02  Chris Dumez  <cdumez@apple.com>
 
+        OfflineAudioContext incorrectly renders at beginning of output buffer after resuming
+        https://bugs.webkit.org/show_bug.cgi?id=216078
+
+        Reviewed by Geoff Garen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/adding-events-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-exponentialRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-linearRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setTargetAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueCurveAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-disconnect-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-copy-curve-expected.txt:
+
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
         Implement event convergence for AudioParam.setTargetAtTime()
         https://bugs.webkit.org/show_bug.cgi?id=216064
 

@@ -5,44 +5,22 @@ PASS Executing "Listener.positionX.setValue"
 PASS Executing "Listener.setPosition" 
 PASS Audit report 
 PASS > [Set Listener.positionX.value]  
-FAIL X listenr.positionX.value: output0[0:511] does not equal [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	-6.6275805234909058e-1	0.0000000000000000e+0	6.6275805234909058e-1	Infinity	9.9999999999999998e-17
-	[1]	-6.7584729194641113e-1	0.0000000000000000e+0	6.7584729194641113e-1	Infinity	9.9999999999999998e-17
-	[2]	-6.8669539690017700e-1	0.0000000000000000e+0	6.8669539690017700e-1	Infinity	9.9999999999999998e-17
-	[3]	-6.9526576995849609e-1	0.0000000000000000e+0	6.9526576995849609e-1	Infinity	9.9999999999999998e-17
-	[4]	-7.0153087377548218e-1	0.0000000000000000e+0	7.0153087377548218e-1	Infinity	9.9999999999999998e-17
-	...and 507 more errors.
-	Max AbsError of 7.0710676908493042e-1 at index of 388.
-	[388]	7.0710676908493042e-1	0.0000000000000000e+0	7.0710676908493042e-1	Infinity	9.9999999999999998e-17
-	Max RelError of Infinity at index of 0.
- assert_true: expected true got false
-PASS   listenr.positionX.value: output1[0:511] is not constantly 0 (contains 512 different values). 
-PASS   listenr.positionX.value: output0[512:] is not constantly 0 (contains 1024 different values). 
-PASS   listenr.positionX.value: output1[512:] equals [0.4620392918586731,0.43046051263809204,0.39745423197746277,0.36312979459762573,0.3276011645793915,0.2909860908985138,0.253405898809433,0.21498534083366394,0.17585192620754242,0.1361350566148758,0.09596699476242065,0.055480558425188065,0.014810215681791306,-0.0259094275534153,-0.06654296815395355,-0.1069558784365654...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [Set Listener.positionX.value] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS   listenr.positionX.value: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
+PASS   listenr.positionX.value: output1[0:511] is not constantly 0 (contains 511 different values). 
+PASS   listenr.positionX.value: output0[512:] is not constantly 0 (contains 1535 different values). 
+PASS   listenr.positionX.value: output1[512:] equals [-0.7071067690849304,-0.6970641016960144,-0.6672213077545166,-0.6184261441230774,-0.5520645976066589,-0.4700216054916382,-0.3746277987957001,-0.2685924768447876,-0.15492798388004303,-0.03686270862817764,0.08224964886903763,0.19902576506137848,0.3101485073566437,0.4124614894390106,0.5030585527420044,0.5793662071228027...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [Set Listener.positionX.value] All assertions passed. (total 4 assertions) 
 PASS > [Listener.positionX.setValue]  
 PASS   listener.positionX.setValueATTime: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
 PASS   listener.positionX.setValueATTime: output1[0:511] is not constantly 0 (contains 511 different values). 
-PASS   listener.positionX.setValueATTime: output0[512:] is not constantly 0 (contains 1536 different values). 
-PASS   listener.positionX.setValueATTime: output1[512:] equals [-0.6627580523490906,-0.6758472919464111,-0.686695396900177,-0.6952657699584961,-0.7015308737754822,-0.705469012260437,-0.7070678472518921,-0.706321656703949,-0.7032331228256226,-0.6978124976158142,-0.6900774240493774,-0.6800540089607239,-0.6677749752998352,-0.6532816886901855,-0.6366216540336609,-0.6178506016731262...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   listener.positionX.setValueATTime: output0[512:] is not constantly 0 (contains 1535 different values). 
+PASS   listener.positionX.setValueATTime: output1[512:] equals [-0.7071067690849304,-0.6970641016960144,-0.6672213077545166,-0.6184261441230774,-0.5520645976066589,-0.4700216054916382,-0.3746277987957001,-0.2685924768447876,-0.15492798388004303,-0.03686270862817764,0.08224964886903763,0.19902576506137848,0.3101485073566437,0.4124614894390106,0.5030585527420044,0.5793662071228027...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Listener.positionX.setValue] All assertions passed. (total 4 assertions) 
 PASS > [Listener.setPosition]  
-FAIL X listener.setPostion: output0[0:511] does not equal [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	-6.6275805234909058e-1	0.0000000000000000e+0	6.6275805234909058e-1	Infinity	9.9999999999999998e-17
-	[1]	-6.7584729194641113e-1	0.0000000000000000e+0	6.7584729194641113e-1	Infinity	9.9999999999999998e-17
-	[2]	-6.8669539690017700e-1	0.0000000000000000e+0	6.8669539690017700e-1	Infinity	9.9999999999999998e-17
-	[3]	-6.9526576995849609e-1	0.0000000000000000e+0	6.9526576995849609e-1	Infinity	9.9999999999999998e-17
-	[4]	-7.0153087377548218e-1	0.0000000000000000e+0	7.0153087377548218e-1	Infinity	9.9999999999999998e-17
-	...and 507 more errors.
-	Max AbsError of 7.0710676908493042e-1 at index of 388.
-	[388]	7.0710676908493042e-1	0.0000000000000000e+0	7.0710676908493042e-1	Infinity	9.9999999999999998e-17
-	Max RelError of Infinity at index of 0.
- assert_true: expected true got false
-PASS   listener.setPostion: output1[0:511] is not constantly 0 (contains 512 different values). 
-PASS   listener.setPostion: output0[512:] is not constantly 0 (contains 1024 different values). 
-PASS   listener.setPostion: output1[512:] equals [0.4620392918586731,0.43046051263809204,0.39745423197746277,0.36312979459762573,0.3276011645793915,0.2909860908985138,0.253405898809433,0.21498534083366394,0.17585192620754242,0.1361350566148758,0.09596699476242065,0.055480558425188065,0.014810215681791306,-0.0259094275534153,-0.06654296815395355,-0.1069558784365654...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [Listener.setPosition] 1 out of 4 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 3 tasks were failed. assert_true: expected true got false
+PASS   listener.setPostion: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
+PASS   listener.setPostion: output1[0:511] is not constantly 0 (contains 511 different values). 
+PASS   listener.setPostion: output0[512:] is not constantly 0 (contains 1535 different values). 
+PASS   listener.setPostion: output1[512:] equals [-0.7071067690849304,-0.6970641016960144,-0.6672213077545166,-0.6184261441230774,-0.5520645976066589,-0.4700216054916382,-0.3746277987957001,-0.2685924768447876,-0.15492798388004303,-0.03686270862817764,0.08224964886903763,0.19902576506137848,0.3101485073566437,0.4124614894390106,0.5030585527420044,0.5793662071228027...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [Listener.setPosition] All assertions passed. (total 4 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
 

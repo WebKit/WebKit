@@ -6,40 +6,16 @@ PASS Audit report
 PASS > [linearRamp] Insert linearRamp after running for some time 
 PASS   linearRamp: setValueAtTime(1, 0.0078125) did not throw an exception. 
 PASS   linearRamp: At time 0.0625 scheduling linearRampToValueAtTime(2, 0.1328125) did not throw an exception. 
-FAIL X linearRamp: output[0:511]: Expected 1 for all values but found 512 unexpected values: 
-	Index	Actual
-	[0]	1.4375
-	[1]	1.4384765625
-	[2]	1.439453125
-	[3]	1.4404296875
-	...and 508 more errors. assert_true: expected true got false
+PASS   linearRamp: output[0:511] contains only the constant 1. 
 PASS   linearRamp: output[512:576] equals [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL X linearRamp: output[1088:]: Expected 2 for all values but found 512 unexpected values: 
-	Index	Actual
-	[6592]	0
-	[6593]	0
-	[6594]	0
-	[6595]	0
-	...and 508 more errors. assert_true: expected true got false
-FAIL < [linearRamp] 2 out of 5 assertions were failed. assert_true: expected true got false
+PASS   linearRamp: output[1088:] contains only the constant 2. 
+PASS < [linearRamp] All assertions passed. (total 5 assertions) 
 PASS > [expoRamp] Insert expoRamp after running for some time 
 PASS   expoRamp: setValueAtTime(1, 0.0078125) did not throw an exception. 
 PASS   expoRamp: At time 0.0625 scheduling exponentialRampToValueAtTime(2, 0.1328125) did not throw an exception. 
-FAIL X expoRamp: output[0:511]: Expected 1 for all values but found 512 unexpected values: 
-	Index	Actual
-	[0]	1.3542555570602417
-	[1]	1.3551725149154663
-	[2]	1.3560900688171387
-	[3]	1.3570083379745483
-	...and 508 more errors. assert_true: expected true got false
+PASS   expoRamp: output[0:511] contains only the constant 1. 
 PASS   expoRamp: output[512:576] equals [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL X expoRamp: output[1088:]: Expected 2 for all values but found 512 unexpected values: 
-	Index	Actual
-	[6592]	0
-	[6593]	0
-	[6594]	0
-	[6595]	0
-	...and 508 more errors. assert_true: expected true got false
-FAIL < [expoRamp] 2 out of 5 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 2 tasks were failed. assert_true: expected true got false
+PASS   expoRamp: output[1088:] contains only the constant 2. 
+PASS < [expoRamp] All assertions passed. (total 5 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

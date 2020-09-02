@@ -7,70 +7,34 @@ PASS Executing "test stereo input setValue"
 PASS Executing "test mono input automation" 
 PASS Audit report 
 PASS > [test mono input] Test StereoPanner with mono input has no dezippering 
-FAIL X Mono: Left channel, pan = -1: : Expected 1 for all values but found 256 unexpected values: 
-	Index	Actual
-	[0]	6.123234262925839e-17
-	[1]	6.123234262925839e-17
-	[2]	6.123234262925839e-17
-	[3]	6.123234262925839e-17
-	...and 252 more errors. assert_true: expected true got false
-FAIL X Mono: Right channel, pan = -1:: Expected 0 for all values but found 256 unexpected values: 
-	Index	Actual
-	[0]	1
-	[1]	1
-	[2]	1
-	[3]	1
-	...and 252 more errors. assert_true: expected true got false
+PASS   Mono: Left channel, pan = -1:  contains only the constant 1. 
+PASS   Mono: Right channel, pan = -1: contains only the constant 0. 
 PASS   Mono: Left channel, pan = 1:  equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":6.1233e-17,"relativeThreshold":0}. 
-FAIL X Mono: Right channel, pan = 1:: Expected 1 for all values but found 256 unexpected values: 
-	Index	Actual
-	[15872]	0
-	[15873]	0
-	[15874]	0
-	[15875]	0
-	...and 252 more errors. assert_true: expected true got false
-FAIL < [test mono input] 3 out of 4 assertions were failed. assert_true: expected true got false
+PASS   Mono: Right channel, pan = 1: contains only the constant 1. 
+PASS < [test mono input] All assertions passed. (total 4 assertions) 
 PASS > [test stereo input] Test StereoPanner with stereo input has no dezippering 
-FAIL X Stereo: Left channel, pan = -1: : Expected 3 for all values but found 256 unexpected values: 
-	Index	Actual
-	[0]	6.123234262925839e-17
-	[1]	6.123234262925839e-17
-	[2]	6.123234262925839e-17
-	[3]	6.123234262925839e-17
-	...and 252 more errors. assert_true: expected true got false
-FAIL X Stereo: Right channel, pan = -1:: Expected 0 for all values but found 256 unexpected values: 
-	Index	Actual
-	[0]	3
-	[1]	3
-	[2]	3
-	[3]	3
-	...and 252 more errors. assert_true: expected true got false
+PASS   Stereo: Left channel, pan = -1:  contains only the constant 3. 
+PASS   Stereo: Right channel, pan = -1: contains only the constant 0. 
 PASS   Stereo: Left channel, pan = 1:  equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":6.1233e-17,"relativeThreshold":0}. 
-FAIL X Stereo: Right channel, pan = 1:: Expected 3 for all values but found 256 unexpected values: 
-	Index	Actual
-	[15872]	0
-	[15873]	0
-	[15874]	0
-	[15875]	0
-	...and 252 more errors. assert_true: expected true got false
-FAIL < [test stereo input] 3 out of 4 assertions were failed. assert_true: expected true got false
+PASS   Stereo: Right channel, pan = 1: contains only the constant 3. 
+PASS < [test stereo input] All assertions passed. (total 4 assertions) 
 PASS > [test mono input setValue] Test StereoPanner with mono input value setter vs setValueAtTime 
-PASS   Mono Left .value setter output is identical to the array [-0.028300216421484947,-0.04114878550171852,-0.053860947489738464,-0.06639444082975388,-0.07870785892009735,-0.09076013416051865,-0.10251147300004959,-0.11392276734113693,-0.12495630979537964,-0.13557545840740204,-0.14574496448040009,-0.15543124079704285,-0.1646018922328949,-0.1732267439365387,-0.1812770515680313,-0.18872623145580292...]. 
+PASS   Mono Left .value setter output is identical to the array [0,0.049081407487392426,0.09800004959106445,0.1465936303138733,0.19470110535621643,0.2421627938747406,0.2888215184211731,0.3345222473144531,0.37911364436149597,0.42244791984558105,0.4643808901309967,0.5047740936279297,0.5434930920600891,0.580409824848175,0.6154016256332397,0.6483526229858398...]. 
 PASS   Mono Left .value setter output matches setValueAtTime output is true. 
-PASS   Mono Right .value setter output is identical to the array [-0.122095488011837,-0.1775280088186264,-0.23237203061580658,-0.2864452004432678,-0.33956894278526306,-0.3915660083293915,-0.44226476550102234,-0.4914964437484741,-0.5390984416007996,-0.5849125385284424,-0.6287867426872253,-0.6705762147903442,-0.710141122341156,-0.747351348400116,-0.782082736492157,-0.814220666885376...]. 
+PASS   Mono Right .value setter output is identical to the array [0,0.030077125877141953,0.06005450710654259,0.08983268588781357,0.11931298673152924,0.1483975499868393,0.17699004709720612,0.20499549806118011,0.2323211282491684,0.25887641310691833,0.284572958946228,0.3093259632587433,0.33305299282073975,0.3556755781173706,0.3771185874938965,0.3973109722137451...]. 
 PASS   Mono Right .value setter output matches setValueAtTime output is true. 
 PASS < [test mono input setValue] All assertions passed. (total 4 assertions) 
 PASS > [test stereo input setValue] Test StereoPanner with mono input value setter  vs setValueAtTime 
-PASS   Stereo Left .value setter output is identical to the array [0.25859054923057556,0.2199704945087433,0.17894035577774048,0.13594961166381836,0.09146952629089355,0.04598725214600563,0.0000010709162552302587,-0.0459851436316967,-0.09146743267774582,-0.13594762980937958,-0.17893831431865692,-0.21996863186359406,-0.2585888206958771,-0.2943759262561798,-0.32693782448768616,-0.3559175431728363...]. 
+PASS   Stereo Left .value setter output is identical to the array [0,0.11938263475894928,0.237604022026062,0.3535158336162567,0.465994268655777,0.5739527940750122,0.676354169845581,0.7722209692001343,0.86064612865448,0.9408031702041626,1.0119554996490479,1.0734635591506958,1.124791145324707,1.1655123233795166,1.1953164339065552,1.2140096426010132...]. 
 PASS   Stereo Left .value setter output matches setValueAtTime output is true. 
-PASS   Stereo Right .value setter output is identical to the array [0.5278493165969849,0.48173511028289795,0.43066614866256714,0.3755251467227936,0.31723907589912415,0.25676751136779785,0.1950928419828415,0.13320933282375336,0.07211104035377502,0.01278146356344223,-0.043818745762109756,-0.09676152467727661,-0.14516164362430573,-0.18818864226341248,-0.2250741422176361,-0.2551209628582001...]. 
+PASS   Stereo Right .value setter output is identical to the array [0,0.029152963310480118,0.058274563401937485,0.08733388036489487,0.11629968136548996,0.14514093101024628,0.17382672429084778,0.2023264616727829,0.23060937225818634,0.25864559412002563,0.2864046096801758,0.31385698914527893,0.340973436832428,0.36772462725639343,0.3940820097923279,0.4200175404548645...]. 
 PASS   Stereo Right .value setter output matches setValueAtTime output is true. 
 PASS < [test stereo input setValue] All assertions passed. (total 4 assertions) 
 PASS > [test mono input automation] Test StereoPanner with mono input and automation 
-PASS   Modulated Stereo Left .value setter output is identical to the array [0.5877871513366699,0.511900007724762,0.43011096119880676,0.3434051275253296,0.2528183162212372,0.15942318737506866,0.06431935727596283,-0.03138017654418945,-0.1265600323677063,-0.22011728584766388,-0.31097108125686646,-0.3980771601200104,-0.4804368317127228,-0.5571109652519226,-0.6272279620170593,-0.6899943351745605...]. 
+PASS   Modulated Stereo Left .value setter output is identical to the array [0,0.11878011375665665,0.23518341779708862,0.3480488657951355,0.45624399185180664,0.5586780905723572,0.6543135643005371,0.7421775460243225,0.8213712573051453,0.8910811543464661,0.9505879878997803,0.9992733001708984,1.0366266965866089,1.0622519254684448,1.0758721828460693,1.0773311853408813...]. 
 PASS   Modulated Stereo Left .value setter output matches setValueAtTime output is true. 
-PASS   Modulated Stereo Right .value setter output is identical to the array [3.479795509520045e-7,0.030479563400149345,0.061084818094968796,0.09178794175386429,0.1225593239068985,0.1533685177564621,0.18418386578559875,0.21497322618961334,0.24570252001285553,0.27633801102638245,0.30684351921081543,0.3371830880641937,0.3673195540904999,0.39721453189849854,0.42682918906211853,0.45612409710884094...]. 
+PASS   Modulated Stereo Right .value setter output is identical to the array [0,0.02945219911634922,0.05944587662816048,0.08991032838821411,0.12077294290065765,0.1519598513841629,0.18339622020721436,0.21500645577907562,0.24671413004398346,0.27844321727752686,0.3101167678833008,0.3416588306427002,0.3729937672615051,0.4040463864803314,0.4347427487373352,0.46501049399375916...]. 
 PASS   Modulated Stereo Right .value setter output matches setValueAtTime output is true. 
 PASS < [test mono input automation] All assertions passed. (total 4 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 5 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

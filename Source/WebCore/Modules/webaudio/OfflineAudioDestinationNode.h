@@ -76,6 +76,7 @@ private:
     // Rendering thread.
     RefPtr<Thread> m_renderThread;
     size_t m_framesToProcess;
+    size_t m_destinationOffset { 0 };
     bool m_startedRendering { false };
 };
 

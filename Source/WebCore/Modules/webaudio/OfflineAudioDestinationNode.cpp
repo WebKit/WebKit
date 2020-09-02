@@ -142,7 +142,6 @@ auto OfflineAudioDestinationNode::offlineRender() -> OfflineRenderResult
     // Render until we're finished.
     unsigned numberOfChannels = m_renderTarget->numberOfChannels();
 
-    unsigned n = 0;
     while (m_framesToProcess > 0) {
         if (context().shouldSuspend())
             return OfflineRenderResult::Suspended;
@@ -155,10 +154,10 @@ auto OfflineAudioDestinationNode::offlineRender() -> OfflineRenderResult
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
             const float* source = m_renderBus->channel(channelIndex)->data();
             float* destination = m_renderTarget->channelData(channelIndex)->data();
-            memcpy(destination + n, source, sizeof(float) * framesAvailableToCopy);
+            memcpy(destination + m_destinationOffset, source, sizeof(float) * framesAvailableToCopy);
         }
         
-        n += framesAvailableToCopy;
+        m_destinationOffset += framesAvailableToCopy;
         m_framesToProcess -= framesAvailableToCopy;
     }
 

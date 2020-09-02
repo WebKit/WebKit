@@ -5,19 +5,19 @@ PASS Executing "disconnect(AudioParam, output)"
 PASS Executing "exceptions" 
 PASS Audit report 
 PASS > [disconnect(AudioParam)]  
-FAIL X Channel #0 expected to have the value sequence of [2.25,1.5] but got 3 values, [1.5,2.25,0], instead of 2. assert_true: expected true got false
-FAIL X The index of value change is not equal to 11136. Got 0. assert_true: expected true got false
-FAIL < [disconnect(AudioParam)] 2 out of 2 assertions were failed. assert_true: expected true got false
+PASS   Channel #0 contains all the expected values in the correct order: [2.25,1.5]. 
+PASS   The index of value change is equal to 11136. 
+PASS < [disconnect(AudioParam)] All assertions passed. (total 2 assertions) 
 PASS > [disconnect(AudioParam, output)]  
-FAIL X Channel #0 expected to have the value sequence of [3,1.5] but got 3 values, [1.5,3,0], instead of 2. assert_true: expected true got false
-FAIL X The index of value change in channel #0 is not equal to 11136. Got 0. assert_true: expected true got false
-FAIL X Channel #1 expected to have the value sequence of [6,3] but got 3 values, [3,6,0], instead of 2. assert_true: expected true got false
-FAIL X The index of value change in channel #1 is not equal to 11136. Got 0. assert_true: expected true got false
-FAIL < [disconnect(AudioParam, output)] 4 out of 4 assertions were failed. assert_true: expected true got false
+PASS   Channel #0 contains all the expected values in the correct order: [3,1.5]. 
+PASS   The index of value change in channel #0 is equal to 11136. 
+PASS   Channel #1 contains all the expected values in the correct order: [6,3]. 
+PASS   The index of value change in channel #1 is equal to 11136. 
+PASS < [disconnect(AudioParam, output)] All assertions passed. (total 4 assertions) 
 PASS > [exceptions]  
 PASS   gain1.disconnect(gain3.gain) threw InvalidAccessError: "The given destination is not connected". 
 PASS   splitter.disconnect(gain1.gain, 1) threw InvalidAccessError: "The given destination is not connected". 
 PASS   splitter.disconnect(gain1.gain, 2) threw IndexSizeError: "output index is out of bounds". 
 PASS < [exceptions] All assertions passed. (total 3 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 3 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
 
