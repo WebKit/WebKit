@@ -375,8 +375,8 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         if (previousPosition && adjacentCharacterPosition == previousPosition.value())
             return VisiblePosition();
     
-        // FIXME: Why force the use of Upstream affinity here instead of VisiblePosition::inlineBoxAndOffset, which will get affinity from adjacentCharacterPosition?
-        auto [box, offsetInBox] = adjacentCharacterPosition.deepEquivalent().inlineBoxAndOffset(Upstream);
+        // FIXME: Why force the use of upstream affinity here instead of VisiblePosition::inlineBoxAndOffset, which will get affinity from adjacentCharacterPosition?
+        auto [box, offsetInBox] = adjacentCharacterPosition.deepEquivalent().inlineBoxAndOffset(Affinity::Upstream);
     
         if (!box)
             break;
@@ -669,7 +669,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
         }
     }
 
-    return VisiblePosition(pos, Upstream);
+    return VisiblePosition(pos, Affinity::Upstream);
 }
 
 // ---------
@@ -896,7 +896,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     } else
         pos = positionAfterNode(endNode);
     
-    return VisiblePosition(pos, Upstream);
+    return VisiblePosition(pos, Affinity::Upstream);
 }
 
 static bool inSameLogicalLine(const VisiblePosition& a, const VisiblePosition& b)
@@ -1561,7 +1561,7 @@ bool atBoundaryOfGranularity(const VisiblePosition& vp, TextGranularity granular
 
     case TextGranularity::LineGranularity:
         boundary = vp;
-        boundary.setAffinity(useDownstream ? Upstream : Downstream);
+        boundary.setAffinity(useDownstream ? Affinity::Upstream : Affinity::Downstream);
         boundary = useDownstream ? endOfLine(boundary) : startOfLine(boundary);
         break;
 
@@ -1752,10 +1752,10 @@ static VisiblePosition nextLineBoundaryInDirection(const VisiblePosition& vp, Se
     VisiblePosition result = vp;
 
     if (useDownstream) {
-        result.setAffinity(DOWNSTREAM);
+        result.setAffinity(Affinity::Downstream);
         result = isEndOfLine(result) ? startOfLine(nextLinePosition(result, result.lineDirectionPointForBlockDirectionNavigation())) : endOfLine(result);
     } else {
-        result.setAffinity(Upstream);
+        result.setAffinity(Affinity::Upstream);
         result = isStartOfLine(result) ? endOfLine(previousLinePosition(result, result.lineDirectionPointForBlockDirectionNavigation())) : startOfLine(result);
     }
 

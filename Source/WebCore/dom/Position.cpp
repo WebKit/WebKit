@@ -1067,8 +1067,8 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (renderer == positionRenderer && thisRenderedOffset == positionRenderedOffset)
         return false;
 
-    auto b1 = inlineBoxAndOffset(Downstream).box;
-    auto b2 = position.inlineBoxAndOffset(Downstream).box;
+    auto b1 = inlineBoxAndOffset(Affinity::Downstream).box;
+    auto b2 = position.inlineBoxAndOffset(Affinity::Downstream).box;
 
     LOG(Editing, "renderer:               %p [%p]\n", renderer, b1);
     LOG(Editing, "thisRenderedOffset:         %d\n", thisRenderedOffset);
@@ -1257,7 +1257,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
                     return { nullptr, caretOffset };
             }
 
-            return equivalent.inlineBoxAndOffset(Upstream, primaryDirection);
+            return equivalent.inlineBoxAndOffset(Affinity::Upstream, primaryDirection);
         }
         if (is<RenderBox>(*renderer)) {
             inlineBox = downcast<RenderBox>(*renderer).inlineBoxWrapper();

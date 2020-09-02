@@ -150,7 +150,7 @@ using namespace WebCore;
 - (WebVisiblePosition *)positionByMovingInDirection:(WebTextAdjustmentDirection)direction amount:(UInt32)amount withAffinityDownstream:(BOOL)affinityDownstream
 {
     auto vp = [self _visiblePosition];
-    vp.setAffinity(affinityDownstream ? Downstream : Upstream);
+    vp.setAffinity(affinityDownstream ? Affinity::Downstream : Affinity::Upstream);
 
     switch (direction) {
         case WebTextAdjustmentForward: {

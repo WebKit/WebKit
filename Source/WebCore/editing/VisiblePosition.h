@@ -33,7 +33,7 @@ namespace WebCore {
 class VisiblePosition {
 public:
     // VisiblePosition default affinity is downstream for callers that do not really care because it is more efficient than upstream.
-    static constexpr auto defaultAffinity = Downstream;
+    static constexpr auto defaultAffinity = Affinity::Downstream;
 
     VisiblePosition() = default;
 

@@ -1,3 +1,35 @@
+2020-09-02  Darin Adler  <darin@apple.com>
+
+        Change Affinity into an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=216096
+
+        Reviewed by Wenson Hsieh.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::localCaretRectForCharacterOffset): Use prefix.
+        * dom/Position.cpp:
+        (WebCore::Position::rendersInDifferentPosition const): Ditto.
+        (WebCore::Position::inlineBoxAndOffset const): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected): Ditto.
+
+        * editing/TextAffinity.h: Use an enum class.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::VisiblePosition): Use prefix.
+        * editing/VisiblePosition.h: Ditto.
+        * editing/VisibleUnits.cpp:
+        (WebCore::visualWordPosition): Ditto.
+        (WebCore::nextBoundary): Ditto.
+        (WebCore::endPositionForLine): Ditto.
+        (WebCore::atBoundaryOfGranularity): Ditto.
+        (WebCore::nextLineBoundaryInDirection): Ditto.
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::createVisiblePositionForBox): Ditto.
+        (WebCore::RenderTextLineBoxes::positionForPoint const): Ditto.
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint): Ditto.
+
 2020-09-01  Darin Adler  <darin@apple.com>
 
         Remove comparePositions and make VisiblePosition improvements

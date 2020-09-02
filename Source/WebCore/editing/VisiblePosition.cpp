@@ -53,11 +53,11 @@ using namespace HTMLNames;
 VisiblePosition::VisiblePosition(const Position& position, EAffinity affinity)
     : m_deepPosition { canonicalPosition(position) }
 {
-    if (affinity == Upstream && !isNull()) {
+    if (affinity == Affinity::Upstream && !isNull()) {
         auto upstreamCopy = *this;
-        upstreamCopy.m_affinity = Upstream;
+        upstreamCopy.m_affinity = Affinity::Upstream;
         if (!inSameLine(*this, upstreamCopy))
-            m_affinity = Upstream;
+            m_affinity = Affinity::Upstream;
     }
 }
 

@@ -213,13 +213,13 @@ static VisiblePosition createVisiblePositionForBox(const InlineBox& box, int off
     auto affinity = VisiblePosition::defaultAffinity;
     switch (shouldAffinityBeDownstream) {
     case AlwaysDownstream:
-        affinity = Downstream;
+        affinity = Affinity::Downstream;
         break;
     case AlwaysUpstream:
-        affinity = Upstream;
+        affinity = Affinity::Upstream;
         break;
     case UpstreamIfPositionIsNotAtStart:
-        affinity = offset > box.caretMinOffset() ? Upstream : Downstream;
+        affinity = offset > box.caretMinOffset() ? Affinity::Upstream : Affinity::Downstream;
         break;
     }
     return box.renderer().createVisiblePosition(offset, affinity);
@@ -323,7 +323,7 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
 #if PLATFORM(IOS_FAMILY)
                 if (pointLineDirection != box->logicalLeft() && point.x() < box->x() + box->logicalWidth()) {
                     int half = box->x() + box->logicalWidth() / 2;
-                    auto affinity = point.x() < half ? Downstream : Upstream;
+                    auto affinity = point.x() < half ? Affinity::Downstream : Affinity::Upstream;
                     return renderer.createVisiblePosition(box->offsetForPosition(pointLineDirection) + box->start(), affinity);
                 }
 #endif

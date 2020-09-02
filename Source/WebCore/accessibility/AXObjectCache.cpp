@@ -2883,7 +2883,7 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     if (!range)
         return IntRect();
 
-    auto [inlineBox, caretOffset] = createLegacyEditingPosition(range->start).inlineBoxAndOffset(Downstream);
+    auto [inlineBox, caretOffset] = createLegacyEditingPosition(range->start).inlineBoxAndOffset(Affinity::Downstream);
     if (inlineBox)
         renderer = &inlineBox->renderer();
 

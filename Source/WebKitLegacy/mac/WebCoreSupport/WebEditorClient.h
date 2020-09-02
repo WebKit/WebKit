@@ -219,9 +219,9 @@ private:
 inline NSSelectionAffinity kit(WebCore::EAffinity affinity)
 {
     switch (affinity) {
-    case WebCore::Upstream:
+    case WebCore::Affinity::Upstream:
         return NSSelectionAffinityUpstream;
-    case WebCore::Downstream:
+    case WebCore::Affinity::Downstream:
         return NSSelectionAffinityDownstream;
     }
     ASSERT_NOT_REACHED();
@@ -232,12 +232,12 @@ inline WebCore::EAffinity core(NSSelectionAffinity affinity)
 {
     switch (affinity) {
     case NSSelectionAffinityUpstream:
-        return WebCore::Upstream;
+        return WebCore::Affinity::Upstream;
     case NSSelectionAffinityDownstream:
-        return WebCore::Downstream;
+        return WebCore::Affinity::Downstream;
     }
     ASSERT_NOT_REACHED();
-    return WebCore::Downstream;
+    return WebCore::Affinity::Downstream;
 }
 
 #if PLATFORM(IOS_FAMILY)
