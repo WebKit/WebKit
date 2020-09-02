@@ -3054,6 +3054,7 @@ static EncodedJSValue JSC_HOST_CALL functionGetConcurrently(JSGlobalObject* glob
 
 static EncodedJSValue JSC_HOST_CALL functionHasOwnLengthProperty(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
+    DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
 
     JSObject* target = asObject(callFrame->uncheckedArgument(0));
@@ -3063,6 +3064,7 @@ static EncodedJSValue JSC_HOST_CALL functionHasOwnLengthProperty(JSGlobalObject*
 
 static EncodedJSValue JSC_HOST_CALL functionRejectPromiseAsHandled(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
+    DollarVMAssertScope assertScope;
     JSPromise* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
     JSValue reason = callFrame->uncheckedArgument(1);
     promise->rejectAsHandled(globalObject, reason);
@@ -3071,6 +3073,7 @@ static EncodedJSValue JSC_HOST_CALL functionRejectPromiseAsHandled(JSGlobalObjec
 
 static EncodedJSValue JSC_HOST_CALL functionSetUserPreferredLanguages(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
+    DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -3092,21 +3095,25 @@ static EncodedJSValue JSC_HOST_CALL functionSetUserPreferredLanguages(JSGlobalOb
 
 static EncodedJSValue JSC_HOST_CALL functionICUVersion(JSGlobalObject*, CallFrame*)
 {
+    DollarVMAssertScope assertScope;
     return JSValue::encode(jsNumber(WTF::ICU::majorVersion()));
 }
 
 static EncodedJSValue JSC_HOST_CALL functionICUHeaderVersion(JSGlobalObject*, CallFrame*)
 {
+    DollarVMAssertScope assertScope;
     return JSValue::encode(jsNumber(U_ICU_VERSION_MAJOR_NUM));
 }
 
 static EncodedJSValue JSC_HOST_CALL functionAssertEnabled(JSGlobalObject*, CallFrame*)
 {
+    DollarVMAssertScope assertScope;
     return JSValue::encode(jsBoolean(ASSERT_ENABLED));
 }
 
 static EncodedJSValue JSC_HOST_CALL functionIsMemoryLimited(JSGlobalObject*, CallFrame*)
 {
+    DollarVMAssertScope assertScope;
 #if PLATFORM(IOS) || PLATFORM(APPLETV) || PLATFORM(WATCHOS)
     return JSValue::encode(jsBoolean(true));
 #else
@@ -3116,7 +3123,14 @@ static EncodedJSValue JSC_HOST_CALL functionIsMemoryLimited(JSGlobalObject*, Cal
 
 static EncodedJSValue JSC_HOST_CALL functionUseJIT(JSGlobalObject*, CallFrame*)
 {
+    DollarVMAssertScope assertScope;
     return JSValue::encode(jsBoolean(Options::useJIT()));
+}
+
+static EncodedJSValue JSC_HOST_CALL functionIsGigacageEnabled(JSGlobalObject*, CallFrame*)
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsBoolean(Gigacage::isEnabled()));
 }
 
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
@@ -3264,6 +3278,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "isMemoryLimited", functionIsMemoryLimited, 0);
     addFunction(vm, "useJIT", functionUseJIT, 0);
+    addFunction(vm, "isGigacageEnabled", functionIsGigacageEnabled, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

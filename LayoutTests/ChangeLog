@@ -1,3 +1,27 @@
+2020-09-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Skip fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html if Gigacage is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=216043
+        <rdar://problem/66394369>
+
+        Reviewed by Mark Lam.
+
+        The test is stressing Gigacage Exhaustion. So without Gigacage, this test is meaningless.
+        GuardMalloc behaves differently from usual Malloc / bmalloc: which crashes when exhausting memory.
+        As a result, we observe test crash when GuardMalloc is enabled. Since our test harness does not support
+        GuardMalloc annotation in TestExpectations, we needed a workaround to avoid this crash.
+
+        * TestExpectations:
+        * fast/css-custom-paint/out-of-memory-while-adding-worklet-module-expected.txt:
+        * fast/css-custom-paint/script-tests/out-of-memory-while-adding-worklet-module.js:
+        (vm.isGigacageEnabled.useAllMemory.try.get Object):
+        (vm.isGigacageEnabled.useAllMemory.try.foo):
+        (vm.isGigacageEnabled):
+        (useAllMemory.try.get Object): Deleted.
+        (useAllMemory.try.foo): Deleted.
+        (): Deleted.
+        (catch): Deleted.
+
 2020-09-01  Hector Lopez  <hector_i_lopez@apple.com>
 
         Unreviewed, reverting r266408.
