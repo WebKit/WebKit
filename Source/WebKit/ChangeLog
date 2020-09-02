@@ -1,3 +1,17 @@
+2020-09-02  John Wilander  <wilander@apple.com>
+
+        Remove custom domain from SameSite=strict jail protection
+        https://bugs.webkit.org/show_bug.cgi?id=216083
+        <rdar://problem/68220223>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. This was a site-specific opt-in rule. The feature
+        itself has tests.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::shouldEnforceSameSiteStrictForSpecificDomain const):
+
 2020-09-01  Darin Adler  <darin@apple.com>
 
         Remove comparePositions and make VisiblePosition improvements
