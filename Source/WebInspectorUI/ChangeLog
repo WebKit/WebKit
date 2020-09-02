@@ -1,5 +1,23 @@
 2020-09-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timelines: duplicate "Timeline Recording 1" on open
+        https://bugs.webkit.org/show_bug.cgi?id=216060
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager):
+        (WI.TimelineManager.prototype.get recordings): Deleted.
+        Don't `reset` in the `constructor` as this is already done in `enable` and `disable`, which
+        is called whenever the Timeline Tab is added/removed.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+        There should never be any existing recordings when adding the Timelines Tab, as they should
+        have been removed when the tab was last removed (via `WI.TimelineManager.prototype.disable`).
+
+2020-09-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(?): Timelines: Frames: clicking a record bar to select it when another record bar is already selected instead removes all selections
         https://bugs.webkit.org/show_bug.cgi?id=216045
         <rdar://problem/68156740>

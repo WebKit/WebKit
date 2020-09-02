@@ -59,8 +59,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._stopCapturingTimeout = undefined;
         this._deadTimeTimeout = undefined;
         this._lastDeadTimeTickle = 0;
-
-        this.reset();
     }
 
     // Agent
@@ -185,11 +183,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     {
         console.assert(this._activeRecording || !this.isCapturing());
         return this._activeRecording;
-    }
-
-    get recordings()
-    {
-        return this._recordings.slice();
     }
 
     get autoCaptureOnPageLoad()
