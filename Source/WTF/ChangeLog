@@ -1,3 +1,24 @@
+2020-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a variant of map which filters items to Vector.h
+        https://bugs.webkit.org/show_bug.cgi?id=215879
+
+        Reviewed by Darin Adler and Yusuke Suzuki.
+
+        This patch adds WTF::compactMap, which calls a function on each item in an iterable object like WTF::map
+        but also filters the returned value. The mapped function may return Optional<T> or RefPtr<T>. The value
+        is kept in the result if the returned value is not WTF::nullopt in the case of Optional<T> and not null
+        in the case of RefPtr<T>. The result will be either Vector<T> for Optional<T> or else Vector<Ref<T>>.
+
+        * wtf/Vector.h:
+        (WTF::CompactMapTraits:): Added. Traits to have a different behavior
+        (WTF::CompactMapTraits<Optional<T>>::hasValue): Added.
+        (WTF::CompactMapTraits<Optional<T>>::extractValue): Added.
+        (WTF::CompactMapTraits<RefPtr<T>>::hasValue): Added.
+        (WTF::CompactMapTraits<RefPtr<T>>::extractValue): Added.
+        (WTF::CompactMap): Added. The helper to use WTFMove on the argument to the mapped function if possible.
+        (WTF::compactMap): Added.
+
 2020-09-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, reverting r266449.

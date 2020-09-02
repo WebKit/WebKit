@@ -1,3 +1,36 @@
+2020-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a variant of map which filters items to Vector.h
+        https://bugs.webkit.org/show_bug.cgi?id=215879
+
+        Reviewed by Darin Adler and Yusuke Suzuki.
+
+        Added unit tests.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::evenMultipliedByFive):
+        (WTF_Vector.CompactMapStaticFunctionReturnOptional):
+        (TestWebKitAPI::RefCountedObject):
+        (TestWebKitAPI::RefCountedObject::create):
+        (TestWebKitAPI::RefCountedObject::ref):
+        (TestWebKitAPI::RefCountedObject::RefCountedObject):
+        (TestWebKitAPI::createRefCountedForOdd):
+        (WTF_Vector.CompactMapStaticFunctionReturnRefPtr):
+        (TestWebKitAPI::createRefCountedForEven):
+        (WTF_Vector.CompactMapStaticFunctionReturnOptionalRef):
+        (TestWebKitAPI::createRefCountedWhenDivisibleByThree):
+        (WTF_Vector.CompactMapStaticFunctionReturnOptionalRefPtr):
+        (WTF_Vector.CompactMapLambdaReturnOptional):
+        (TestWebKitAPI::CountedObject):
+        (TestWebKitAPI::CountedObject::CountedObject):
+        (TestWebKitAPI::CountedObject::value):
+        (TestWebKitAPI::CountedObject::count):
+        (WTF_Vector.CompactMapLambdaCopyVectorReturnOptionalCountedObject):
+        (WTF_Vector.CompactMapLambdaMoveVectorReturnOptionalCountedObject):
+        (WTF_Vector.CompactMapLambdaReturnRefPtr):
+        (WTF_Vector.CompactMapLambdaReturnRefPtrFromMovedRef):
+        (WTF_Vector.CompactMapLambdaReturnOptionalRefPtr):
+
 2020-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add NoAction class
