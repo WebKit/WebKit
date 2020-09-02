@@ -1,3 +1,15 @@
+2020-09-01  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Unreviewed, reverting r266408.
+
+        Revision caused constant crashes on iOS and macOS
+
+        Reverted changeset:
+
+        "Convert runtime flag to setting for lazy image loading"
+        https://bugs.webkit.org/show_bug.cgi?id=215610
+        https://trac.webkit.org/changeset/266408
+
 2020-09-01  Kate Cheney  <katherine_cheney@apple.com>
 
         Pass the correct data size for the SharedMemory::Handle in WebCompiledContentRuleListData::encode

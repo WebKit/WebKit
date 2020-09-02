@@ -1,4 +1,4 @@
  
 
-PASS loading='lazy' image with srcset 
+FAIL loading='lazy' image with srcset assert_equals: lazy-load images with srcset shouldn't be loaded yet expected 0 but got 2
 

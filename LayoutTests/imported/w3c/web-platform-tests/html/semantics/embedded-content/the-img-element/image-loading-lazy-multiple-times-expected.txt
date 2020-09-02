@@ -1,4 +1,4 @@
 
 
-FAIL Images with loading='lazy' can be lazy loaded multiple times assert_unreached: The loading=lazy below-viewport image should lazily load its second image, and not load it eagerly when the `src` attribute is changed Reached unreachable code
+FAIL Images with loading='lazy' can be lazy loaded multiple times assert_true: The loading=lazy below-viewport image should not block the window load event expected true got false
 
