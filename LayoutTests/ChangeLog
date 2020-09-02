@@ -1,3 +1,12 @@
+2020-09-02  Karl Rackler  <rackler@apple.com>
+
+        rdar://66802945 (REGRESSION (20A2323e-20A234b): [ Layout Test] 1 canvas layout tests are a constant failure)
+        Removing test expectations that now pass on Big Sur 20A2364
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-09-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow event breakpoints to be configured when they're added

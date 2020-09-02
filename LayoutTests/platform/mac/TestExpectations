@@ -2155,17 +2155,8 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 [ arm64 ] compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
 [ arm64 ] compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
 
-# rdar://66802945 (REGRESSION (20A2323e-20A234b): [ Layout Test] 12 canvas layout tests are a constant failure)
-[ arm64 ] canvas/philip/tests/2d.line.miter.obtuse.html [ Failure ]
-[ arm64 ] canvas/philip/tests/2d.path.arc.selfintersect.1.html [ Failure ]
-[ arm64 ] canvas/philip/tests/2d.path.arc.shape.3.html [ Failure ]
+# rdar://66802945 (REGRESSION (20A2323e-20A234b): [ Layout Test] 1 canvas layout tests are a constant failure)
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
-[ arm64 ] imported/w3c/canvas/2d.line.miter.obtuse.html [ Failure ]
-[ arm64 ] imported/w3c/canvas/2d.path.arc.selfintersect.1.html [ Failure ]
-[ arm64 ] imported/w3c/canvas/2d.path.arc.shape.3.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
 
 # rdar://66842535 ([AS Layout Tests] REGRESSION (r265488): fast/text/letter-spacing-shaping.html is a constant ImageOnlyFailure)
 [ arm64 ] fast/text/letter-spacing-shaping.html [ Pass ImageOnlyFailure ]
