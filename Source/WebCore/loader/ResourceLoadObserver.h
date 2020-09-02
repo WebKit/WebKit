@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ResourceLoadStatistics.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -58,7 +59,7 @@ public:
     virtual void logSubresourceLoadingForTesting(const RegistrableDomain& /* firstPartyDomain */, const RegistrableDomain& /* thirdPartyDomain */, bool /* shouldScheduleNotification */) { }
 
     virtual String statisticsForURL(const URL&) { return { }; }
-    virtual void updateCentralStatisticsStore() { }
+    virtual void updateCentralStatisticsStore(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void clearState() { }
     
     virtual bool hasStatistics() const { return false; }

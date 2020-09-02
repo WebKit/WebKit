@@ -1595,7 +1595,7 @@ void WebProcess::flushResourceLoadStatistics()
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
-        observer->updateCentralStatisticsStore();
+        observer->updateCentralStatisticsStore([] { });
 #endif
 }
 
@@ -1906,6 +1906,11 @@ void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode th
 void WebProcess::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains)
 {
     ResourceLoadObserver::shared().setDomainsWithUserInteraction(WTFMove(domains));
+}
+
+void WebProcess::sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&& completionHandler)
+{
+    ResourceLoadObserver::shared().updateCentralStatisticsStore(WTFMove(completionHandler));
 }
 #endif
 

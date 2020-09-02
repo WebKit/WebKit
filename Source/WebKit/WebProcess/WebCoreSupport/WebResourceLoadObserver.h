@@ -57,7 +57,7 @@ public:
 #endif
 
     String statisticsForURL(const URL&) final;
-    void updateCentralStatisticsStore() final;
+    void updateCentralStatisticsStore(CompletionHandler<void()>&&) final;
     void clearState() final;
     
     bool hasStatistics() const final { return !m_resourceStatisticsMap.isEmpty(); }
