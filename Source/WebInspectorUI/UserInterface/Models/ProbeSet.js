@@ -68,7 +68,7 @@ WI.ProbeSet = class ProbeSet extends WI.Object
 
     createProbe(expression)
     {
-        this.breakpoint.createAction(WI.BreakpointAction.Type.Probe, {data: expression});
+        this._breakpoint.addAction(new WI.BreakpointAction(WI.BreakpointAction.Type.Probe, {data: expression}));
     }
 
     addProbe(probe)

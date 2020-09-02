@@ -48,6 +48,25 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
 
     // Static
 
+    static displayNameForType(type)
+    {
+        console.assert(Object.values(WI.DOMBreakpoint.Type).includes(type), type);
+
+        switch (type) {
+        case WI.DOMBreakpoint.Type.SubtreeModified:
+            return WI.UIString("Subtree Modified", "Subtree Modified @ DOM Breakpoint", "A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified");
+
+        case WI.DOMBreakpoint.Type.AttributeModified:
+            return WI.UIString("Attribute Modified", "Attribute Modified @ DOM Breakpoint", "A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified");
+
+        case WI.DOMBreakpoint.Type.NodeRemoved:
+            return WI.UIString("Node Removed", "Node Removed @ DOM Breakpoint", "A submenu item of 'Break On' that breaks (pauses) before DOM node is removed");
+        }
+
+        console.error();
+        return WI.UIString("DOM");
+    }
+
     static fromJSON(json)
     {
         return new WI.DOMBreakpoint(json, json.type, {
@@ -60,6 +79,11 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
     get type() { return this._type; }
     get url() { return this._url; }
     get path() { return this._path; }
+
+    get displayName()
+    {
+        return WI.DOMBreakpoint.displayNameForType(this._type);
+    }
 
     get domNodeIdentifier()
     {
@@ -115,3 +139,5 @@ WI.DOMBreakpoint.Type = {
 WI.DOMBreakpoint.Event = {
     DOMNodeChanged: "dom-breakpoint-dom-node-changed",
 };
+
+WI.DOMBreakpoint.ReferencePage = WI.ReferencePage.DOMBreakpoints;

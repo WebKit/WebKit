@@ -24,12 +24,13 @@
  */
 
 .popover .edit-breakpoint-popover-content {
-    width: 420px;
+    position: relative;
+    max-width: 420px;
     padding: 5px 15px;
 }
 
 .popover .edit-breakpoint-popover-content.wide {
-    width: 460px;
+    max-width: 460px;
 }
 
 .popover .edit-breakpoint-popover-content > label.toggle {
@@ -55,31 +56,7 @@
     padding-left: 5px;
 }
 
-.popover .edit-breakpoint-popover-content > table > tr > td.options {
-    position: relative;
-}
-
-.popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container {
-    position: absolute;
-}
-
-body[dir=ltr] .popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container {
-    right: 0;
-}
-
-body[dir=rtl] .popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container {
-    left: 0;
-}
-
-body[dir=ltr] .popover .edit-breakpoint-popover-content .reference-page-link-container {
-    float: right;
-}
-
-body[dir=rtl] .popover .edit-breakpoint-popover-content .reference-page-link-container {
-    float: left;
-}
-
-.edit-breakpoint-popover-condition {
+.popover .edit-breakpoint-popover-content > table > tr.condition > td > .editor {
     width: 100%;
     padding: 4px 0 2px;
     -webkit-appearance: textfield;
@@ -87,23 +64,35 @@ body[dir=rtl] .popover .edit-breakpoint-popover-content .reference-page-link-con
     background: var(--background-color-content);
 }
 
-.edit-breakpoint-popover-condition > .CodeMirror {
+.popover .edit-breakpoint-popover-content > table > tr.condition > td > .editor > .CodeMirror {
     width: 320px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content width. */
     height: auto;
 }
 
-.wide .edit-breakpoint-popover-condition > .CodeMirror {
+.popover .edit-breakpoint-popover-content.wide .condition > .CodeMirror {
     width: 360px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content width. */
 }
 
-#edit-breakpoint-popover-ignore {
+.popover .edit-breakpoint-popover-content input#edit-breakpoint-popover-ignore-count {
     width: 40px;
 }
 
-#edit-breakpoint-popover-ignore,
-#edit-breakpoint-popover-auto-continue {
+.popover .edit-breakpoint-popover-content input:is(#edit-breakpoint-popover-ignore-count, #edit-breakpoint-popover-auto-continue) {
     -webkit-margin-start: 0;
     -webkit-margin-end: 4px;
+}
+
+.popover .edit-breakpoint-popover-content > .reference-page-link-container {
+    position: absolute;
+    bottom: 0.9em;
+}
+
+body[dir=ltr] .popover .edit-breakpoint-popover-content > .reference-page-link-container {
+    right: 1.5em;
+}
+
+body[dir=rtl] .popover .edit-breakpoint-popover-content > .reference-page-link-container {
+    left: 1.5em;
 }
 
 @media (prefers-color-scheme: dark) {

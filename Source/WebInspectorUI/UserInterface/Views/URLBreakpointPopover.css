@@ -23,43 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.popover .url-breakpoint-content {
-    padding: 5px;
-    margin: 2px;
-}
-
-.popover .url-breakpoint-content > .editor-wrapper {
-    margin-top: 4px;
-    display: flex;
-    flex-direction: row;
-}
-
-.popover .url-breakpoint-content > .editor-wrapper > .editor {
+.popover .edit-breakpoint-popover-content .url .editor {
     width: 180px;
-    -webkit-margin-start: 4px;
     padding: 4px 0 2px;
     -webkit-appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
     background: var(--background-color-content);
 }
 
-.popover .url-breakpoint-content > .editor-wrapper > .editor > .CodeMirror {
+.popover .edit-breakpoint-popover-content .url:last-child .editor {
+    margin-inline-end: calc(var(--reference-page-link-size) + 4px);
+}
+
+
+.popover .edit-breakpoint-popover-content .url .editor > .CodeMirror {
     width: calc(100% - 2px);
     height: auto;
 }
 
-.popover .url-breakpoint-content > .editor-wrapper > .editor > .CodeMirror-scroll {
+.popover .edit-breakpoint-popover-content .url .editor > .CodeMirror-scroll {
     width: calc(100% - 2px);
     overflow: hidden;
 }
 
-.popover .url-breakpoint-content .reference-page-link-container {
-    -webkit-margin-start: 0.5em;
-    vertical-align: -1px;
-}
-
 @media (prefers-color-scheme: dark) {
-    .popover .url-breakpoint-content > .editor-wrapper > .editor {
+    .popover .edit-breakpoint-popover-content .url .editor {
         -webkit-appearance: unset;
         border-color: var(--text-color-quaternary);
     }

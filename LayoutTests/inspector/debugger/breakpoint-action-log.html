@@ -28,7 +28,7 @@ function test()
                 breakpoint.autoContinue = true;
 
                 function addLogAction(data) {
-                    breakpoint.createAction(WI.BreakpointAction.Type.Log, {data});
+                    breakpoint.addAction(new WI.BreakpointAction(WI.BreakpointAction.Type.Log, {data}));
                 }
 
                 addLogAction("`${a}`");

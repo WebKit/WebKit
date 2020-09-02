@@ -30,7 +30,7 @@ function test()
         // Create the breakpoint and its actions before sending anything to the backend.
         var breakpoint = new WI.JavaScriptBreakpoint(location);
         breakpoint.autoContinue = true;
-        breakpoint.createAction(WI.BreakpointAction.Type.Evaluate, {data: "action(a, b)"});
+        breakpoint.addAction(new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: "action(a, b)"}));
 
         WI.debuggerManager.addBreakpoint(breakpoint);
 

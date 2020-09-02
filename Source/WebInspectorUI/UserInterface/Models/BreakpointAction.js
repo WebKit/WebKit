@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.BreakpointAction = class BreakpointAction
+WI.BreakpointAction = class BreakpointAction extends WI.Object
 {
-    constructor(breakpoint, type, data)
+    constructor(type, {data} = {})
     {
-        console.assert(breakpoint instanceof WI.Breakpoint, breakpoint);
         console.assert(Object.values(WI.BreakpointAction.Type).includes(type), type);
         console.assert(!data || typeof data === "string", data);
 
-        this._breakpoint = breakpoint;
+        super();
+
         this._type = type;
         this._data = data || null;
         this._id = WI.debuggerManager.nextBreakpointActionIdentifier();
@@ -39,9 +39,11 @@ WI.BreakpointAction = class BreakpointAction
 
     // Import / Export
 
-    static fromJSON(json, breakpoint)
+    static fromJSON(json)
     {
-        return new BreakpointAction(breakpoint, json.type, json.data);
+        return new WI.BreakpointAction(json.type, {
+            data: json.data,
+        });
     }
 
     toJSON()
@@ -56,9 +58,24 @@ WI.BreakpointAction = class BreakpointAction
 
     // Public
 
-    get breakpoint() { return this._breakpoint; }
     get id() { return this._id; }
-    get type() { return this._type; }
+
+    get type()
+    {
+        return this._type;
+    }
+
+    set type(type)
+    {
+        console.assert(Object.values(WI.BreakpointAction.Type).includes(type), type);
+
+        if (type === this._type)
+            return;
+
+        this._type = type;
+
+        this.dispatchEventToListeners(WI.BreakpointAction.Event.TypeChanged);
+    }
 
     get data()
     {
@@ -67,12 +84,14 @@ WI.BreakpointAction = class BreakpointAction
 
     set data(data)
     {
+        console.assert(!data || typeof data === "string", data);
+
         if (this._data === data)
             return;
 
         this._data = data;
 
-        this._breakpoint.breakpointActionDidChange(this);
+        this.dispatchEventToListeners(WI.BreakpointAction.Event.DataChanged);
     }
 
     toProtocol()
@@ -88,4 +107,9 @@ WI.BreakpointAction.Type = {
     Evaluate: "evaluate",
     Sound: "sound",
     Probe: "probe"
+};
+
+WI.BreakpointAction.Event = {
+    DataChanged: "breakpoint-action-data-changed",
+    TypeChanged: "breakpoint-action-type-changed",
 };

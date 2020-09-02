@@ -23,41 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.Popover
+WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.BreakpointPopover
 {
-    constructor(delegate)
+    constructor(delegate, breakpoint)
     {
-        super(delegate);
+        console.assert(!breakpoint || breakpoint instanceof WI.URLBreakpoint, breakpoint);
 
-        this._breakpoint = null;
+        super(delegate, breakpoint);
 
-        this._codeMirror = null;
-        this._targetElement = null;
-        this._preferredEdges = null;
-
-        this.windowResizeHandler = this._presentOverTargetElement.bind(this);
+        this._urlCodeMirror = null;
     }
 
-    // Public
+    // Static
 
-    get breakpoint() { return this._breakpoint; }
-
-    show(targetElement, preferredEdges)
+    static get supportsEditing()
     {
-        this._targetElement = targetElement;
-        this._preferredEdges = preferredEdges;
+        return false;
+    }
 
-        let contentElement = document.createElement("div");
-        contentElement.classList.add("url-breakpoint-content");
+    // Protected
 
-        let label = document.createElement("div");
-        label.classList.add("label");
-        label.textContent = WI.UIString("Break on request with URL:");
-
-        let editorWrapper = document.createElement("div");
-        editorWrapper.classList.add("editor-wrapper");
+    populateContent(contentElement)
+    {
+        let typeLabelElement = document.createElement("label");
+        typeLabelElement.textContent = WI.UIString("Type");
 
         this._typeSelectElement = document.createElement("select");
+        this._typeSelectElement.id = "edit-breakpoint-popover-content-type";
 
         let createOption = (text, value) => {
             let optionElement = this._typeSelectElement.appendChild(document.createElement("option"));
@@ -71,50 +63,60 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.Popover
         this._typeSelectElement.value = WI.URLBreakpoint.Type.Text;
         this._typeSelectElement.addEventListener("change", (event) => {
             this._updateEditor();
-            this._codeMirror.focus();
+            this._urlCodeMirror.focus();
         });
 
-        editorWrapper.append(this._typeSelectElement, this._createEditor(), WI.createReferencePageLink("url-breakpoints", "configuration"));
-        contentElement.append(label, editorWrapper);
+        typeLabelElement.setAttribute("for", this._typeSelectElement.id);
 
-        this.content = contentElement;
+        this.addRow("type", typeLabelElement, this._typeSelectElement);
 
-        this._presentOverTargetElement();
-    }
+        let urlLabelElement = document.createElement("label");
+        urlLabelElement.textContent = WI.UIString("URL");
 
-    dismiss()
-    {
-        let type = this._typeSelectElement.value;
-        let url = this._codeMirror.getValue();
-        if (type && url)
-            this._breakpoint = new WI.URLBreakpoint(type, url);
+        let urlEditorElement = document.createElement("div");
+        urlEditorElement.classList.add("editor");
 
-        super.dismiss();
-    }
-
-    // Private
-
-    _createEditor()
-    {
-        let editorElement = document.createElement("div");
-        editorElement.classList.add("editor");
-
-        this._codeMirror = WI.CodeMirrorEditor.create(editorElement, {
+        this._urlCodeMirror = WI.CodeMirrorEditor.create(urlEditorElement, {
             lineWrapping: false,
             matchBrackets: false,
             scrollbarStyle: null,
-            value: "",
         });
+        this._updateEditor();
 
-        this._codeMirror.addKeyMap({
+        this._urlCodeMirror.addKeyMap({
             "Enter": () => { this.dismiss(); },
             "Esc": () => { this.dismiss(); },
         });
 
-        this._updateEditor();
+        let urlCodeMirrorInputField = this._urlCodeMirror.getInputField();
+        urlCodeMirrorInputField.id = "edit-breakpoint-popover-content-url";
+        urlLabelElement.setAttribute("for", urlCodeMirrorInputField.id);
 
-        return editorElement;
+        this.addRow("url", urlLabelElement, urlEditorElement);
+
+        // CodeMirror needs to refresh after the popover is shown as otherwise it doesn't appear.
+        setTimeout(() => {
+            this._urlCodeMirror.refresh();
+            this._urlCodeMirror.focus();
+
+            this.update();
+        });
     }
+
+    createBreakpoint(options = {})
+    {
+        let type = this._typeSelectElement.value;
+        if (!type)
+            return null;
+
+        let url = this._urlCodeMirror.getValue();
+        if (!url)
+            return null;
+
+        return new WI.URLBreakpoint(type, url, options);
+    }
+
+    // Private
 
     _updateEditor()
     {
@@ -128,23 +130,9 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.Popover
             mimeType = "text/x-regex";
         }
 
-        this._codeMirror.setOption("mode", mimeType);
-        this._codeMirror.setOption("placeholder", placeholder);
-    }
-
-    _presentOverTargetElement()
-    {
-        if (!this._targetElement)
-            return;
-
-        let targetFrame = WI.Rect.rectFromClientRect(this._targetElement.getBoundingClientRect());
-        this.present(targetFrame.pad(2), this._preferredEdges);
-
-        // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
-        setTimeout(() => {
-            this._codeMirror.refresh();
-            this._codeMirror.focus();
-            this.update();
-        }, 0);
+        this._urlCodeMirror.setOption("mode", mimeType);
+        this._urlCodeMirror.setOption("placeholder", placeholder);
     }
 };
+
+WI.URLBreakpointPopover.ReferencePage = WI.ReferencePage.URLBreakpoints;

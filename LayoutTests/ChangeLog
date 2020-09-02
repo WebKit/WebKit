@@ -1,3 +1,20 @@
+2020-09-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow event breakpoints to be configured when they're added
+        https://bugs.webkit.org/show_bug.cgi?id=215747
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/breakpoint-action-eval.html:
+        * inspector/debugger/breakpoint-action-log.html:
+        * inspector/debugger/probe-manager-add-remove-actions.html:
+        * inspector/debugger/stepping/stepping-through-autoContinue-breakpoint.html:
+        * inspector/dom-debugger/resources/event-breakpoint-utilities.js:
+        (TestPage.registerInitializer.async suite):
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.addBreakpointOptionsTestCases):
+        * inspector/dom/breakpoint-for-event-listener.html:
+        Update to use newly named `WI.Breakpoint.prototype.addAction`.
+
 2020-09-02  John Wilander  <wilander@apple.com>
 
         Storage Access API: Allow requests for storage access from nested iframes

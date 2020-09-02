@@ -26,7 +26,7 @@ function test()
             var location = script.createSourceCodeLocation(8, 0);
             var breakpoint = new WI.JavaScriptBreakpoint(location);
             breakpoint.autoContinue = true;
-            breakpoint.createAction(WI.BreakpointAction.Type.Evaluate, {data: "alert(1.5);"});
+            breakpoint.addAction(new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: "alert(1.5);"}));
             WI.debuggerManager.addBreakpoint(breakpoint);
 
             // Step through the breakpoint.

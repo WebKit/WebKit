@@ -23,22 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.popover .event-breakpoint-content {
-    margin: 2px;
-    padding: 5px;
-}
-
-.popover .event-breakpoint-content > input {
-    margin-top: 4px;
+.popover .edit-breakpoint-popover-content .event input {
+    width: -webkit-fill-available;
+    margin: 0;
     font-family: Menlo, monospace;
-    text-align: left;
 }
 
-.popover .event-breakpoint-content > input::placeholder {
+.popover .edit-breakpoint-popover-content .event:last-child input {
+    margin-inline-end: calc(var(--reference-page-link-size) + 4px);
+}
+
+.popover .edit-breakpoint-popover-content .event input::placeholder {
     font-family: system-ui;
-}
-
-.popover .event-breakpoint-content .reference-page-link-container {
-    -webkit-margin-start: 0.5em;
-    vertical-align: -1px;
 }

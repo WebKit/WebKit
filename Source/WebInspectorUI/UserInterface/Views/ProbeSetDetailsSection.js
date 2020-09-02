@@ -30,19 +30,7 @@ WI.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WI.DetailsSecti
     {
         console.assert(probeSet instanceof WI.ProbeSet, "Invalid ProbeSet argument:", probeSet);
 
-        let title = "";
-        if (probeSet.breakpoint instanceof WI.EventBreakpoint) {
-            if (probeSet.breakpoint === WI.domDebuggerManager.allAnimationFramesBreakpoint)
-                title = WI.UIString("All Animation Frames");
-            else if (probeSet.breakpoint === WI.domDebuggerManager.allIntervalsBreakpoint)
-                title = WI.UIString("All Intervals");
-            else if (probeSet.breakpoint === WI.domDebuggerManager.allListenersBreakpoint)
-                title = WI.UIString("All Events");
-            else if (probeSet.breakpoint === WI.domDebuggerManager.allTimeoutsBreakpoint)
-                title = WI.UIString("All Timeouts");
-            else
-                title = probeSet.breakpoint.eventName;
-        }
+        let title = probeSet.breakpoint.displayName;
 
         var optionsElement = document.createElement("div");
         var dataGrid = new WI.ProbeSetDataGrid(probeSet);

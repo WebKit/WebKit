@@ -33,15 +33,9 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.Breakpoi
             classNames = [];
         classNames.push("url");
 
-        let subtitle;
-        if (!title) {
-            title = WI.UIString("URL");
-            if (breakpoint.type === WI.URLBreakpoint.Type.Text)
-                subtitle = doubleQuotedString(breakpoint.url);
-            else
-                subtitle = "/" + breakpoint.url + "/";
-        }
+        if (!title)
+            title = breakpoint.displayName;
 
-        super(breakpoint, {classNames, title, subtitle});
+        super(breakpoint, {classNames, title});
     }
 };

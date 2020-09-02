@@ -50,6 +50,23 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Breakpoint
     get type() { return this._type; }
     get url() { return this._url; }
 
+    get displayName()
+    {
+        if (this === WI.domDebuggerManager.allRequestsBreakpoint)
+            return WI.repeatedUIString.allRequests();
+
+        switch (this._type) {
+        case WI.URLBreakpoint.Type.Text:
+            return doubleQuotedString(this._url);
+
+        case WI.URLBreakpoint.Type.RegularExpression:
+            return "/" + this._url + "/";
+        }
+
+        console.assert();
+        return WI.UIString("URL");
+    }
+
     get special()
     {
         return this === WI.domDebuggerManager.allRequestsBreakpoint || super.special;
@@ -83,3 +100,5 @@ WI.URLBreakpoint.Type = {
     Text: "text",
     RegularExpression: "regex",
 };
+
+WI.URLBreakpoint.ReferencePage = WI.ReferencePage.URLBreakpoints;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.BreakpointTreeElement
-{
-    constructor(breakpoint, {classNames, title} = {})
-    {
-        console.assert(breakpoint instanceof WI.EventBreakpoint);
-
-        if (!Array.isArray(classNames))
-            classNames = [];
-        classNames.push("event", breakpoint.type);
-
-        if (!title)
-            title = breakpoint.displayName;
-
-        super(breakpoint, {classNames, title});
-    }
+WI.ReferencePage = {
+    DOMBreakpoints: "dom-breakpoints",
+    EventBreakpoints: "event-breakpoints",
+    JavaScriptBreakpoints: "javascript-breakpoints",
+    URLBreakpoints: "url-breakpoints",
 };

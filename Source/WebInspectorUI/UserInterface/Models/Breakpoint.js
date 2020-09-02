@@ -25,10 +25,11 @@
 
 WI.Breakpoint = class Breakpoint extends WI.Object
 {
-    constructor({disabled, condition, ignoreCount, autoContinue} = {})
+    constructor({disabled, condition, actions, ignoreCount, autoContinue} = {})
     {
         console.assert(!disabled || typeof disabled === "boolean", disabled);
         console.assert(!condition || typeof condition === "string", condition);
+        console.assert(!actions || Array.isArray(actions), actions);
         console.assert(!ignoreCount || !isNaN(ignoreCount), ignoreCount);
         console.assert(!autoContinue || typeof autoContinue === "boolean", autoContinue);
 
@@ -36,12 +37,18 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
         // This class should not be instantiated directly. Create a concrete subclass instead.
         console.assert(this.constructor !== WI.Breakpoint && this instanceof WI.Breakpoint);
+        console.assert(this.constructor.ReferencePage, "Should have a link to a reference page.");
 
         this._disabled = disabled || false;
         this._condition = condition || "";
         this._ignoreCount = ignoreCount || 0;
         this._autoContinue = autoContinue || false;
-        this._actions = [];
+        this._actions = actions || [];
+
+        for (let action of this._actions) {
+            action.addEventListener(WI.BreakpointAction.Event.DataChanged, this._handleBreakpointActionChanged, this);
+            action.addEventListener(WI.BreakpointAction.Event.TypeChanged, this._handleBreakpointActionChanged, this);
+        }
     }
 
     // Import / Export
@@ -65,6 +72,11 @@ WI.Breakpoint = class Breakpoint extends WI.Object
     }
 
     // Public
+
+    get displayName()
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
 
     get special()
     {
@@ -202,49 +214,32 @@ WI.Breakpoint = class Breakpoint extends WI.Object
         this.disabled = true;
     }
 
-    createAction(type, {data, precedingAction} = {})
+    addAction(action, {precedingAction} = {})
     {
         console.assert(this.editable, this);
+        console.assert(action instanceof WI.BreakpointAction, action);
 
-        var newAction = new WI.BreakpointAction(this, type, data || null);
+        action.addEventListener(WI.BreakpointAction.Event.DataChanged, this._handleBreakpointActionChanged, this);
+        action.addEventListener(WI.BreakpointAction.Event.TypeChanged, this._handleBreakpointActionChanged, this);
 
         if (!precedingAction)
-            this._actions.push(newAction);
+            this._actions.push(action);
         else {
             var index = this._actions.indexOf(precedingAction);
             console.assert(index !== -1);
             if (index === -1)
-                this._actions.push(newAction);
+                this._actions.push(action);
             else
-                this._actions.splice(index + 1, 0, newAction);
+                this._actions.splice(index + 1, 0, action);
         }
 
         this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
-
-        return newAction;
-    }
-
-    recreateAction(type, actionToReplace)
-    {
-        console.assert(this.editable, this);
-
-        let index = this._actions.indexOf(actionToReplace);
-        console.assert(index !== -1);
-        if (index === -1)
-            return null;
-
-        const data = null;
-        let action = new WI.BreakpointAction(this, type, data);
-        this._actions[index] = action;
-
-        this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
-
-        return action;
     }
 
     removeAction(action)
     {
         console.assert(this.editable, this);
+        console.assert(action instanceof WI.BreakpointAction, action);
 
         var index = this._actions.indexOf(action);
         console.assert(index !== -1);
@@ -252,6 +247,9 @@ WI.Breakpoint = class Breakpoint extends WI.Object
             return;
 
         this._actions.splice(index, 1);
+
+        action.removeEventListener(WI.BreakpointAction.Event.DataChanged, this._handleBreakpointActionChanged, this);
+        action.removeEventListener(WI.BreakpointAction.Event.TypeChanged, this._handleBreakpointActionChanged, this);
 
         if (!this._actions.length)
             this.autoContinue = false;
@@ -323,16 +321,11 @@ WI.Breakpoint = class Breakpoint extends WI.Object
         return !isEmptyObject(payload) ? payload : undefined;
     }
 
-    // Protected (Called by BreakpointAction)
+    // Private
 
-    breakpointActionDidChange(action)
+    _handleBreakpointActionChanged(event)
     {
         console.assert(this.editable, this);
-
-        var index = this._actions.indexOf(action);
-        console.assert(index !== -1);
-        if (index === -1)
-            return;
 
         this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
     }

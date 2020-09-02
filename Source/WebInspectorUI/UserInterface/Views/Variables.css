@@ -211,6 +211,8 @@
     --color-picker-width: 256px;
 
     --sorted-header-font-weight: 500;
+
+    --reference-page-link-size: 20px;
 }
 
 body.window-inactive {

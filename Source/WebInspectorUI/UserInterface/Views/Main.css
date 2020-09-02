@@ -463,8 +463,8 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 20px;
-    height: 20px;
+    width: var(--reference-page-link-size);
+    height: var(--reference-page-link-size);
     font-size: 14px;
     line-height: 18px;
     color: var(--text-color);

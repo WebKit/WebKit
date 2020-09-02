@@ -87,16 +87,40 @@ WI.repeatedUIString.timelineRecordComposite = function() {
     return WI.UIString("Composite", "Composite @ Timeline record", "Composite phase timeline records, where graphic layers are combined");
 };
 
+WI.repeatedUIString.debuggerStatements = function() {
+    return WI.UIString("Debugger Statements", "Debugger Statements @ JavaScript Breakpoint", "Break (pause) on debugger statements");
+};
+
 WI.repeatedUIString.allExceptions = function() {
-    return WI.UIString("All Exceptions", "Break (pause) on all exceptions");
+    return WI.UIString("All Exceptions", "All Exceptions @ JavaScript Breakpoint", "Break (pause) on all exceptions");
 };
 
 WI.repeatedUIString.uncaughtExceptions = function() {
-    return WI.UIString("Uncaught Exceptions", "Break (pause) on uncaught (unhandled) exceptions");
+    return WI.UIString("Uncaught Exceptions", "Uncaught Exceptions @ JavaScript Breakpoint", "Break (pause) on uncaught (unhandled) exceptions");
 };
 
 WI.repeatedUIString.assertionFailures = function() {
-    return WI.UIString("Assertion Failures", "Break (pause) when console.assert() fails");
+    return WI.UIString("Assertion Failures", "Assertion Failures @ JavaScript Breakpoint", "Break (pause) when console.assert() fails");
+};
+
+WI.repeatedUIString.allMicrotasks = function() {
+    return WI.UIString("All Microtasks", "All Microtasks @ JavaScript Breakpoint", "Break (pause) on all microtasks");
+};
+
+WI.repeatedUIString.allAnimationFrames = function() {
+    return WI.UIString("All Animation Frames", "All Animation Frames @ Event Breakpoint", "Break (pause) on All animation frames");
+};
+
+WI.repeatedUIString.allIntervals = function() {
+    return WI.UIString("All Intervals", "All Intervals @ Event Breakpoint", "Break (pause) on all intervals");
+};
+
+WI.repeatedUIString.allEvents = function() {
+    return WI.UIString("All Events", "All Events @ Event Breakpoint", "Break (pause) on all events");
+};
+
+WI.repeatedUIString.allTimeouts = function() {
+    return WI.UIString("All Timeouts", "All Timeouts @ Event Breakpoint", "Break (pause) on all timeouts");
 };
 
 WI.repeatedUIString.allRequests = function() {

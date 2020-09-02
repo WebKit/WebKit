@@ -124,7 +124,7 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     populateContextMenu(contextMenu, event)
     {
-        WI.breakpointPopoverController.appendContextMenuItems(contextMenu, this._breakpoint, this.status);
+        WI.BreakpointPopover.appendContextMenuItems(contextMenu, this._breakpoint, this.status);
 
         super.populateContextMenu(contextMenu, event);
     }

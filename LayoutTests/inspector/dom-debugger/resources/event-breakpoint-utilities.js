@@ -101,7 +101,8 @@ TestPage.registerInitializer(() => {
                 InspectorTest.newline();
 
                 InspectorTest.log("Adding log action...");
-                let action = breakpoint.createAction(WI.BreakpointAction.Type.Log, {data: "BREAKPOINT ACTION LOG 1"});
+                let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Log, {data: "BREAKPOINT ACTION LOG 1"});
+                breakpoint.addAction(action);
 
                 for (let i = 1; i <= 4; ++i) {
                     if (i > 1) {
@@ -152,7 +153,8 @@ TestPage.registerInitializer(() => {
                 InspectorTest.newline();
 
                 InspectorTest.log("Adding evaluate action...");
-                let action = breakpoint.createAction(WI.BreakpointAction.Type.Evaluate, {data: "window.BREAKPOINT_ACTION_EVALUATE = 1;"});
+                let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: "window.BREAKPOINT_ACTION_EVALUATE = 1;"});
+                breakpoint.addAction(action);
 
                 for (let i = 1; i <= 4; ++i) {
                     if (i > 1) {

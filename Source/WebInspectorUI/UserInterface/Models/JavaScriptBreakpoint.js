@@ -56,16 +56,15 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
     static fromJSON(json)
     {
         const sourceCode = null;
-        let breakpoint = new WI.JavaScriptBreakpoint(new WI.SourceCodeLocation(sourceCode, json.lineNumber || 0, json.columnNumber || 0), {
+        return new WI.JavaScriptBreakpoint(new WI.SourceCodeLocation(sourceCode, json.lineNumber || 0, json.columnNumber || 0), {
             // The 'url' fallback is for transitioning from older frontends and should be removed.
             contentIdentifier: json.contentIdentifier || json.url,
             disabled: json.disabled,
             condition: json.condition,
+            actions: json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON)) || [],
             ignoreCount: json.ignoreCount,
             autoContinue: json.autoContinue,
         });
-        breakpoint._actions = json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON, breakpoint)) || [];
-        return breakpoint;
     }
 
     toJSON(key)
@@ -86,6 +85,28 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
     get contentIdentifier() { return this._contentIdentifier; }
     get scriptIdentifier() { return this._scriptIdentifier; }
     get target() { return this._target; }
+
+    get displayName()
+    {
+        switch (this) {
+        case WI.debuggerManager.debuggerStatementsBreakpoint:
+            return WI.repeatedUIString.debuggerStatements();
+
+        case WI.debuggerManager.allExceptionsBreakpoint:
+            return WI.repeatedUIString.allExceptions();
+
+        case WI.debuggerManager.uncaughtExceptionsBreakpoint:
+            return WI.repeatedUIString.uncaughtExceptions();
+
+        case WI.debuggerManager.assertionFailuresBreakpoint:
+            return WI.repeatedUIString.assertionFailures();
+
+        case WI.debuggerManager.allMicrotasksBreakpoint:
+            return WI.repeatedUIString.allMicrotasks();
+        }
+
+        return this._sourceCodeLocation.displayLocationString()
+    }
 
     get special()
     {
@@ -193,3 +214,5 @@ WI.JavaScriptBreakpoint.Event = {
     LocationDidChange: "javascript-breakpoint-location-did-change",
     DisplayLocationDidChange: "javascript-breakpoint-display-location-did-change",
 };
+
+WI.JavaScriptBreakpoint.ReferencePage = WI.ReferencePage.JavaScriptBreakpoints;

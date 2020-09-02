@@ -53,17 +53,27 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 
     // Static
 
+    static get supportsEditing()
+    {
+        if (this._eventListener) {
+            // COMPATIBILITY (iOS 14): DOM.setBreakpointForEventListener did not have an "options" parameter yet.
+            return InspectorBackend.hasCommand("DOM.setBreakpointForEventListener", "options");
+        }
+
+        // COMPATIBILITY (iOS 14): DOMDebugger.setEventBreakpoint did not have an "options" parameter yet.
+        return InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint", "options");
+    }
+
     static fromJSON(json)
     {
-        let breakpoint = new WI.EventBreakpoint(json.type, {
+        return new WI.EventBreakpoint(json.type, {
             eventName: json.eventName,
             disabled: json.disabled,
             condition: json.condition,
+            actions: json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON)) || [],
             ignoreCount: json.ignoreCount,
             autoContinue: json.autoContinue,
         });
-        breakpoint._actions = json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON, breakpoint)) || [];
-        return breakpoint;
     }
 
     // Public
@@ -71,6 +81,25 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
     get type() { return this._type; }
     get eventName() { return this._eventName; }
     get eventListener() { return this._eventListener; }
+
+    get displayName()
+    {
+        switch (this) {
+        case WI.domDebuggerManager.allAnimationFramesBreakpoint:
+            return WI.repeatedUIString.allAnimationFrames();
+
+        case WI.domDebuggerManager.allIntervalsBreakpoint:
+            return WI.repeatedUIString.allIntervals();
+
+        case WI.domDebuggerManager.allListenersBreakpoint:
+            return WI.repeatedUIString.allEvents();
+
+        case WI.domDebuggerManager.allTimeoutsBreakpoint:
+            return WI.repeatedUIString.allTimeouts();
+        }
+
+        return this._eventName;
+    }
 
     get special()
     {
@@ -87,9 +116,7 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 
     get editable()
     {
-        // COMPATIBILITY (iOS 14): DOM.setBreakpointForEventListener did not have an "options" parameter yet.
-        // COMPATIBILITY (iOS 14): DOMDebugger.setEventBreakpoint did not have an "options" parameter yet.
-        return (this._eventListener ? InspectorBackend.hasCommand("DOM.setBreakpointForEventListener", "options") : InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint", "options")) || super.editable;
+        return WI.EventBreakpoint.editable || super.editable;
     }
 
     remove()
@@ -129,3 +156,5 @@ WI.EventBreakpoint.Type = {
     Listener: "listener",
     Timeout: "timeout",
 };
+
+WI.EventBreakpoint.ReferencePage = WI.ReferencePage.EventBreakpoints;

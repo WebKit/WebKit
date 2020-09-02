@@ -1,5 +1,207 @@
 2020-09-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: allow event breakpoints to be configured when they're added
+        https://bugs.webkit.org/show_bug.cgi?id=215747
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WI.Breakpoint):
+        (WI.Breakpoint.prototype.get displayName): Added.
+        (WI.Breakpoint.prototype.addAction): Added.
+        (WI.Breakpoint.prototype.removeAction):
+        (WI.Breakpoint.prototype._handleBreakpointActionChanged): Added.
+        (WI.Breakpoint.prototype.createAction): Deleted.
+        (WI.Breakpoint.prototype.recreateAction): Deleted.
+        (WI.Breakpoint.prototype.breakpointActionDidChange): Deleted.
+        * UserInterface/Models/DOMBreakpoint.js:
+        (WI.DOMBreakpoint.displayNameForType):
+        (WI.DOMBreakpoint.prototype.get displayName): Added.
+        * UserInterface/Models/EventBreakpoint.js:
+        (WI.EventBreakpoint.get editable): Added.
+        (WI.EventBreakpoint.fromJSON):
+        (WI.EventBreakpoint.prototype.get displayName): Added.
+        (WI.EventBreakpoint.prototype.get editable):
+        * UserInterface/Models/JavaScriptBreakpoint.js:
+        (WI.JavaScriptBreakpoint.fromJSON):
+        (WI.JavaScriptBreakpoint.prototype.get displayName): Added.
+        * UserInterface/Models/URLBreakpoint.js:
+        (WI.URLBreakpoint.prototype.get displayName): Added.
+        Add a `get displayName` "virtual" member function.
+
+        * UserInterface/Models/BreakpointAction.js:
+        (WI.BreakpointAction):
+        (WI.BreakpointAction.fromJSON):
+        (WI.BreakpointAction.prototype.get type):
+        (WI.BreakpointAction.prototype.set type): Added.
+        (WI.BreakpointAction.prototype.set data): Added.
+        (WI.BreakpointAction.prototype.get breakpoint): Deleted.
+        Remove the requirement that `WI.BreakpointAction` be passed a `WI.Breakpoint` when its
+        constructed. Instead, have `WI.BreakpointAction` dispatch events when its `type` or `data`
+        changes.
+
+        * UserInterface/Views/BreakpointActionView.js:
+        (WI.BreakpointActionView):
+        (WI.BreakpointActionView.prototype._pickerChanged):
+        (WI.BreakpointActionView.prototype._appendActionButtonClicked):
+        (WI.BreakpointActionView.prototype._removeAction):
+        (WI.BreakpointActionView.prototype._updateBody):
+        (WI.BreakpointActionView.prototype._handleLogInputInput): Added.
+        (WI.BreakpointActionView.prototype._handleJavaScriptCodeMirrorChange): Added.
+        (WI.BreakpointActionView.prototype._logInputChanged): Deleted.
+        (WI.BreakpointActionView.prototype._codeMirrorBlurred): Deleted.
+        Call functions on the `delegate` instead of directly manipulating a `WI.Breakpoint` as there
+        is no longer a `WI.Breakpoint` to manipulate since `WI.BreakpointAction` doesn't have one.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js: Removed.
+        * UserInterface/Views/BreakpointPopoverController.css: Removed.
+        * UserInterface/Views/BreakpointPopover.js: Renamed from Source/WebInspectorUI/UserInterface/Views/BreakpointPopoverController.css.
+        (WI.BreakpointPopover):
+        (WI.BreakpointPopover.appendContextMenuItems):
+        (WI.BreakpointPopover.prototype.get breakpoint):
+        (WI.BreakpointPopover.prototype.show):
+        (WI.BreakpointPopover.dismiss):
+        (WI.BreakpointPopover.prototype.completionControllerShouldAllowEscapeCompletion):
+        (WI.BreakpointPopover.prototype.breakpointActionViewAppendActionView):
+        (WI.BreakpointPopover.prototype.breakpointActionViewRemoveActionView):
+        (WI.BreakpointPopover.prototype.breakpointActionViewResized):
+        (WI.BreakpointPopover.prototype.populateContent):
+        (WI.BreakpointPopover.prototype.addRow):
+        (WI.BreakpointPopover.prototype.createBreakpoint):
+        (WI.BreakpointPopover.prototype._presentOverTargetElement):
+        (WI.BreakpointPopover.prototype._parseIgnoreCountNumber):
+        (WI.BreakpointPopover.prototype._updateIgnoreCountText):
+        (WI.BreakpointPopover.prototype._createAddActionButton):
+        (WI.BreakpointPopover.prototype._insertBreakpointActionView):
+        (WI.BreakpointPopover.prototype._handleEnabledCheckboxChange):
+        (WI.BreakpointPopover.prototype._handleConditionCodeMirrorBeforeChange):
+        (WI.BreakpointPopover.prototype._handleConditionCodeMirrorChange):
+        (WI.BreakpointPopover.prototype._handleIgnoreCountInputChange):
+        (WI.BreakpointPopover.prototype._handleAddActionButtonClick):
+        (WI.BreakpointPopover.prototype._handleAutoContinueCheckboxChange):
+        * UserInterface/Views/BreakpointPopover.css: Added.
+        (.popover .edit-breakpoint-popover-content):
+        (.popover .edit-breakpoint-popover-content.wide):
+        (.popover .edit-breakpoint-popover-content > label.toggle):
+        (.popover .edit-breakpoint-popover-content > table):
+        (.popover .edit-breakpoint-popover-content > table > tr > th):
+        (.popover .edit-breakpoint-popover-content > table > tr > td):
+        (.popover .edit-breakpoint-popover-content > table > tr.condition > td > .editor):
+        (.popover .edit-breakpoint-popover-content > table > tr.condition > td > .editor > .CodeMirror):
+        (.popover .edit-breakpoint-popover-content.wide .condition > .CodeMirror):
+        (.popover .edit-breakpoint-popover-content input#edit-breakpoint-popover-ignore-count):
+        (.popover .edit-breakpoint-popover-content input:is(#edit-breakpoint-popover-ignore-count, #edit-breakpoint-popover-auto-continue)):
+        (.popover .edit-breakpoint-popover-content > .reference-page-link-container):
+        (body[dir=ltr] .popover .edit-breakpoint-popover-content > .reference-page-link-container):
+        (body[dir=rtl] .popover .edit-breakpoint-popover-content > .reference-page-link-container):
+        (@media (prefers-color-scheme: dark) .popover .edit-breakpoint-popover-content > table > tr > th):
+        * UserInterface/Views/EventBreakpointPopover.js:
+        (WI.EventBreakpointPopover):
+        (WI.EventBreakpointPopover.get editable): Added.
+        (WI.EventBreakpointPopover.prototype.dismiss):
+        (WI.EventBreakpointPopover.prototype.populateContent): Added.
+        (WI.EventBreakpointPopover.prototype.createBreakpoint): Added.
+        (WI.EventBreakpointPopover.prototype._showSuggestionsView):
+        (WI.EventBreakpointPopover.prototype._handleDOMEventNameInputKeydown): Added.
+        (WI.EventBreakpointPopover.prototype._handleDOMEventNameInputInput): Added.
+        (WI.EventBreakpointPopover.prototype._handleDOMEventNameInputBlur): Added.
+        (WI.EventBreakpointPopover.prototype.get breakpoint): Deleted.
+        (WI.EventBreakpointPopover.prototype.show): Deleted.
+        (WI.EventBreakpointPopover.prototype._presentOverTargetElement): Deleted.
+        * UserInterface/Views/EventBreakpointPopover.css:
+        (.popover .edit-breakpoint-popover-content .event input): Added.
+        (.popover .edit-breakpoint-popover-content .event:last-child input): Added.
+        (.popover .edit-breakpoint-popover-content .event input::placeholder): Added.
+        (.popover .event-breakpoint-content): Deleted.
+        (.popover .event-breakpoint-content > input): Deleted.
+        (.popover .event-breakpoint-content > input::placeholder): Deleted.
+        (.popover .event-breakpoint-content .reference-page-link-container): Deleted.
+        * UserInterface/Views/URLBreakpointPopover.js:
+        (WI.URLBreakpointPopover):
+        (WI.URLBreakpointPopover.get editable): Added.
+        (WI.URLBreakpointPopover.prototype.populateContent): Added.
+        (WI.URLBreakpointPopover.prototype.createBreakpoint): Added.
+        (WI.URLBreakpointPopover.prototype._updateEditor):
+        (WI.URLBreakpointPopover.prototype.get breakpoint): Deleted.
+        (WI.URLBreakpointPopover.prototype.show): Deleted.
+        (WI.URLBreakpointPopover.prototype.dismiss): Deleted.
+        (WI.URLBreakpointPopover.prototype._createEditor): Deleted.
+        (WI.URLBreakpointPopover.prototype._presentOverTargetElement): Deleted.
+        * UserInterface/Views/URLBreakpointPopover.css:
+        (.popover .edit-breakpoint-popover-content .url .editor): Added.
+        (.popover .edit-breakpoint-popover-content .url:last-child .editor): Added.
+        (.popover .edit-breakpoint-popover-content .url .editor > .CodeMirror): Added.
+        (.popover .edit-breakpoint-popover-content .url .editor > .CodeMirror-scroll): Added.
+        (@media (prefers-color-scheme: dark) .popover .edit-breakpoint-popover-content .url .editor): Added.
+        (.popover .url-breakpoint-content): Deleted.
+        (.popover .url-breakpoint-content > .editor-wrapper): Deleted.
+        (.popover .url-breakpoint-content > .editor-wrapper > .editor): Deleted.
+        (.popover .url-breakpoint-content > .editor-wrapper > .editor > .CodeMirror): Deleted.
+        (.popover .url-breakpoint-content > .editor-wrapper > .editor > .CodeMirror-scroll): Deleted.
+        (.popover .url-breakpoint-content .reference-page-link-container): Deleted.
+        (@media (prefers-color-scheme: dark) .popover .url-breakpoint-content > .editor-wrapper > .editor): Deleted.
+        Make `WI.BreakpointPopoverController` into a subclass of `WI.Popover` with a `static` member
+        function for adding context menu items. This allows both `WI.EventBreakpointPopover` and
+        `WI.URLBreakpointPopover` to inherit from `WI.BreakpointPopover`, meaning that they can show
+        the configuration UI when adding the breakpoint instead of as a second step after creating
+        the breakpoint.
+
+        * UserInterface/Models/ProbeSet.js:
+        (WI.ProbeSet.prototype.createProbe):
+        Update to use newly named `WI.Breakpoint.prototype.addAction`.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement):
+        (WI.DOMBreakpointTreeElement.displayNameForType): Deleted.
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement):
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.js:
+        (WI.JavaScriptBreakpointTreeElement):
+        (WI.JavaScriptBreakpointTreeElement.prototype.updateTitles):
+        * UserInterface/Views/URLBreakpointTreeElement.js:
+        (WI.URLBreakpointTreeElement):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WI.ProbeSetDetailsSection):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu):
+        Use the new `WI.Breakpoint.prototype.get displayName`.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+        Replace `WI.breakpointPopoverController` with `WI.BreakpointPopover`.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        * UserInterface/Views/Main.css:
+        (.reference-page-link):
+        Create a variable for the size of the reference page (?) button so it can be use elsewhere.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/LoadLocalizedStrings.js:
+        (WI.repeatedUIString.debuggerStatements): Added.
+        (WI.repeatedUIString.allExceptions): Added.
+        (WI.repeatedUIString.uncaughtExceptions): Added.
+        (WI.repeatedUIString.assertionFailures): Added.
+        (WI.repeatedUIString.allMicrotasks): Added.
+        (WI.repeatedUIString.allAnimationFrames): Added.
+        (WI.repeatedUIString.allIntervals): Added.
+        (WI.repeatedUIString.allEvents): Added.
+        (WI.repeatedUIString.allTimeouts): Added.
+        Create repeated localized string helper functions for special breakpoints.
+
+        * UserInterface/Base/ReferencePage.js: Added.
+        Add an enum for reference page URLs.
+
+        * UserInterface/Main.html:
+
+2020-09-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: duplicate "Timeline Recording 1" on open
         https://bugs.webkit.org/show_bug.cgi?id=216060
 

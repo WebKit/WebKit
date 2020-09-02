@@ -277,7 +277,6 @@ WI.contentLoaded = function()
     WI._consoleRepresentedObject = new WI.LogObject;
     WI.consoleContentView = WI.consoleDrawer.contentViewForRepresentedObject(WI._consoleRepresentedObject);
     WI.consoleLogViewController = WI.consoleContentView.logViewController;
-    WI.breakpointPopoverController = new WI.BreakpointPopoverController;
 
     // FIXME: The sidebars should be flipped in RTL languages.
     WI.navigationSidebar = new WI.Sidebar(document.getElementById("navigation-sidebar"), WI.Sidebar.Sides.Left);

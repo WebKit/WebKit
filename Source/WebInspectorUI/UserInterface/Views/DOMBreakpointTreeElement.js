@@ -34,25 +34,8 @@ WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.Breakpoi
         classNames.push("dom", breakpoint.type);
 
         if (!title)
-            title = WI.DOMBreakpointTreeElement.displayNameForType(breakpoint.type);
+            title = breakpoint.displayName;
 
         super(breakpoint, {classNames, title});
-    }
-
-    // Static
-
-    static displayNameForType(type)
-    {
-        switch (type) {
-        case WI.DOMBreakpoint.Type.SubtreeModified:
-            return WI.UIString("Subtree Modified", "A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified");
-        case WI.DOMBreakpoint.Type.AttributeModified:
-            return WI.UIString("Attribute Modified", "A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified");
-        case WI.DOMBreakpoint.Type.NodeRemoved:
-            return WI.UIString("Node Removed", "A submenu item of 'Break On' that breaks (pauses) before DOM node is removed");
-        default:
-            console.error("Unexpected DOM breakpoint type: " + type);
-            return null;
-        }
     }
 };

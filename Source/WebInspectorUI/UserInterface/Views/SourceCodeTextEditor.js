@@ -1271,7 +1271,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         // Single breakpoint.
         if (breakpoints.length === 1) {
-            WI.breakpointPopoverController.appendContextMenuItems(contextMenu, breakpoints[0], event.target);
+            WI.BreakpointPopover.appendContextMenuItems(contextMenu, breakpoints[0], event.target);
 
             if (!WI.isShowingSourcesTab()) {
                 contextMenu.appendSeparator();

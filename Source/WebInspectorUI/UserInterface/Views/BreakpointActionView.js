@@ -25,7 +25,7 @@
 
 WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 {
-    constructor(action, delegate, omitFocus)
+    constructor(action, delegate, {omitFocus} = {})
     {
         super();
 
@@ -107,21 +107,18 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
     _pickerChanged(event)
     {
-        var newType = event.target.value;
-        this._action = this._action.breakpoint.recreateAction(newType, this._action);
+        this._action.type = event.target.value;
         this._updateBody();
         this._delegate.breakpointActionViewResized(this);
     }
 
     _appendActionButtonClicked(event)
     {
-        var newAction = this._action.breakpoint.createAction(this._action.type, {precedingAction: this._action});
-        this._delegate.breakpointActionViewAppendActionView(this, newAction);
+        this._delegate.breakpointActionViewAppendActionView(this, new WI.BreakpointAction(this._action.type));
     }
 
     _removeAction()
     {
-        this._action.breakpoint.removeAction(this._action);
         this._delegate.breakpointActionViewRemoveActionView(this);
     }
 
@@ -135,7 +132,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
             var input = this._bodyElement.appendChild(document.createElement("input"));
             input.placeholder = WI.UIString("Message");
-            input.addEventListener("change", this._logInputChanged.bind(this));
+            input.addEventListener("input", this._handleLogInputInput.bind(this));
             input.value = this._action.data || "";
             input.spellcheck = false;
             if (!omitFocus)
@@ -163,14 +160,14 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
             });
 
             this._codeMirror.on("viewportChange", this._codeMirrorViewportChanged.bind(this));
-            this._codeMirror.on("blur", this._codeMirrorBlurred.bind(this));
+            this._codeMirror.on("change", this._handleJavaScriptCodeMirrorChange.bind(this));
 
             this._codeMirrorViewport = {from: null, to: null};
 
             var completionController = new WI.CodeMirrorCompletionController(this._codeMirror);
             completionController.addExtendedCompletionProvider("javascript", WI.javaScriptRuntimeCompletionProvider);
 
-            // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
+            // CodeMirror needs a refresh after the popover displays to layout otherwise it doesn't appear.
             setTimeout(() => {
                 this._codeMirror.refresh();
                 if (!omitFocus)
@@ -190,15 +187,15 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
         }
     }
 
-    _logInputChanged(event)
+    _handleLogInputInput(event)
     {
         this._action.data = event.target.value;
     }
 
-    _codeMirrorBlurred(event)
+    _handleJavaScriptCodeMirrorChange(event)
     {
         // Throw away the expression if it's just whitespace.
-        this._action.data = (this._codeMirror.getValue() || "").trim();
+        this._action.data = this._codeMirror.getValue().trim();
     }
 
     _codeMirrorViewportChanged(event, from, to)

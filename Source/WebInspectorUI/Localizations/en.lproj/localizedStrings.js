@@ -118,18 +118,23 @@ localizedStrings["Add watch expression"] = "Add watch expression";
 localizedStrings["Additions"] = "Additions";
 localizedStrings["Address"] = "Address";
 localizedStrings["All"] = "All";
-localizedStrings["All Animation Frames"] = "All Animation Frames";
+/* Break (pause) on All animation frames */
+localizedStrings["All Animation Frames @ Event Breakpoint"] = "All Animation Frames";
 localizedStrings["All Changes"] = "All Changes";
-localizedStrings["All Events"] = "All Events";
+/* Break (pause) on all events */
+localizedStrings["All Events @ Event Breakpoint"] = "All Events";
 /* Break (pause) on all exceptions */
-localizedStrings["All Exceptions"] = "All Exceptions";
-localizedStrings["All Intervals"] = "All Intervals";
+localizedStrings["All Exceptions @ JavaScript Breakpoint"] = "All Exceptions";
+/* Break (pause) on all intervals */
+localizedStrings["All Intervals @ Event Breakpoint"] = "All Intervals";
 localizedStrings["All Layers"] = "All Layers";
-localizedStrings["All Microtasks"] = "All Microtasks";
+/* Break (pause) on all microtasks */
+localizedStrings["All Microtasks @ JavaScript Breakpoint"] = "All Microtasks";
 /* A submenu item of 'Break on' that breaks (pauses) before all network requests */
 localizedStrings["All Requests"] = "All Requests";
 localizedStrings["All Storage"] = "All Storage";
-localizedStrings["All Timeouts"] = "All Timeouts";
+/* Break (pause) on all timeouts */
+localizedStrings["All Timeouts @ Event Breakpoint"] = "All Timeouts";
 localizedStrings["All items in \u0022%s\u0022 must be error objects"] = "All items in \u0022%s\u0022 must be error objects";
 localizedStrings["All items in \u0022%s\u0022 must be non-empty strings"] = "All items in \u0022%s\u0022 must be non-empty strings";
 localizedStrings["All items in \u0022%s\u0022 must be valid DOM nodes"] = "All items in \u0022%s\u0022 must be valid DOM nodes";
@@ -161,14 +166,14 @@ localizedStrings["Assertion"] = "Assertion";
 localizedStrings["Assertion Failed"] = "Assertion Failed";
 localizedStrings["Assertion Failed: %s"] = "Assertion Failed: %s";
 /* Break (pause) when console.assert() fails */
-localizedStrings["Assertion Failures"] = "Assertion Failures";
+localizedStrings["Assertion Failures @ JavaScript Breakpoint"] = "Assertion Failures";
 localizedStrings["Assertion with message: %s"] = "Assertion with message: %s";
 localizedStrings["Assertive"] = "Assertive";
 localizedStrings["Associated Data"] = "Associated Data";
 localizedStrings["Async audits are not supported."] = "Async audits are not supported.";
 localizedStrings["Attribute"] = "Attribute";
 /* A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified */
-localizedStrings["Attribute Modified"] = "Attribute Modified";
+localizedStrings["Attribute Modified @ DOM Breakpoint"] = "Attribute Modified";
 localizedStrings["Attributes"] = "Attributes";
 localizedStrings["Audit Error: %s"] = "Audit Error: %s";
 /* Name of Audit Tab */
@@ -203,8 +208,6 @@ localizedStrings["Body:"] = "Body:";
 localizedStrings["Boundary"] = "Boundary";
 localizedStrings["Box Model"] = "Box Model";
 localizedStrings["Break on"] = "Break on";
-localizedStrings["Break on events with name:"] = "Break on events with name:";
-localizedStrings["Break on request with URL:"] = "Break on request with URL:";
 localizedStrings["Breakdown"] = "Breakdown";
 localizedStrings["Breakdown of each memory category at the end of the selected time range"] = "Breakdown of each memory category at the end of the selected time range";
 localizedStrings["Breakdown of time spent on the main thread"] = "Breakdown of time spent on the main thread";
@@ -384,7 +387,8 @@ localizedStrings["Databases"] = "Databases";
 localizedStrings["Date"] = "Date";
 localizedStrings["Debug: "] = "Debug: ";
 localizedStrings["Debugger Statement"] = "Debugger Statement";
-localizedStrings["Debugger Statements"] = "Debugger Statements";
+/* Break (pause) on debugger statements */
+localizedStrings["Debugger Statements @ JavaScript Breakpoint"] = "Debugger Statements";
 localizedStrings["Debugger disabled during Audit"] = "Debugger disabled during Audit";
 localizedStrings["Debugger disabled during Timeline recording"] = "Debugger disabled during Timeline recording";
 localizedStrings["Debugging:"] = "Debugging:";
@@ -555,7 +559,6 @@ localizedStrings["Event Handlers:"] = "Event Handlers:";
 localizedStrings["Event Listeners"] = "Event Listeners";
 localizedStrings["Events"] = "Events";
 localizedStrings["Events:"] = "Events:";
-localizedStrings["Example: \u201C%s\u201D"] = "Example: \u201C%s\u201D";
 localizedStrings["Exception with thrown value: %s"] = "Exception with thrown value: %s";
 localizedStrings["Execution context for %s"] = "Execution context for %s";
 localizedStrings["Expand All"] = "Expand All";
@@ -879,7 +882,7 @@ localizedStrings["No search results"] = "No search results";
 localizedStrings["No search string"] = "No search string";
 localizedStrings["Node"] = "Node";
 /* A submenu item of 'Break On' that breaks (pauses) before DOM node is removed */
-localizedStrings["Node Removed"] = "Node Removed";
+localizedStrings["Node Removed @ DOM Breakpoint"] = "Node Removed";
 localizedStrings["Nodes"] = "Nodes";
 localizedStrings["None"] = "None";
 localizedStrings["Not found"] = "Not found";
@@ -1255,7 +1258,7 @@ localizedStrings["Styles \u2014 Rules"] = "Styles \u2014 Rules";
 localizedStrings["Styles:"] = "Styles:";
 localizedStrings["Subject"] = "Subject";
 /* A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified */
-localizedStrings["Subtree Modified"] = "Subtree Modified";
+localizedStrings["Subtree Modified @ DOM Breakpoint"] = "Subtree Modified";
 localizedStrings["Summary"] = "Summary";
 /* Label of dropdown item used for forcing Web Inspector to be shown using the system's theme */
 localizedStrings["System @ Settings General Appearance"] = "System";
@@ -1377,7 +1380,7 @@ localizedStrings["Unable to show certificate for \u201C%s\u201D"] = "Unable to s
 localizedStrings["Unblackbox Script"] = "Unblackbox Script";
 localizedStrings["Unblackbox script to include it when debugging"] = "Unblackbox script to include it when debugging";
 /* Break (pause) on uncaught (unhandled) exceptions */
-localizedStrings["Uncaught Exceptions"] = "Uncaught Exceptions";
+localizedStrings["Uncaught Exceptions @ JavaScript Breakpoint"] = "Uncaught Exceptions";
 localizedStrings["Undefined custom element"] = "Undefined custom element";
 localizedStrings["Unique"] = "Unique";
 localizedStrings["Unknown Location"] = "Unknown Location";
