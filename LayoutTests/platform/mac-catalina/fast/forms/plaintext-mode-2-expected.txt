@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x23
+        RenderTextControl {INPUT} at (0,2) size 600x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (600,2) size 4x18
+          text run at (600,2) width 4: " "
+        RenderBR {BR} at (604,16) size 0x0
+      RenderBlock {DIV} at (0,23) size 784x18
+        RenderText {#text} at (0,0) size 33x18
+          text run at (0,0) width 33: "This "
+        RenderInline {B} at (0,0) size 69x18
+          RenderText {#text} at (32,0) size 45x18
+            text run at (32,0) width 45: "styled "
+          RenderInline {I} at (0,0) size 25x18
+            RenderText {#text} at (76,0) size 25x18
+              text run at (76,0) width 25: "text"
+        RenderText {#text} at (100,0) size 36x18
+          text run at (100,0) width 36: ", and "
+        RenderInline {A} at (0,0) size 26x18 [color=#0000EE]
+          RenderText {#text} at (135,0) size 26x18
+            text run at (135,0) width 26: "link"
+        RenderText {#text} at (160,0) size 413x18
+          text run at (160,0) width 211: " will be pasted into the textfield. "
+          text run at (370,0) width 203: "All richness should be stripped."
+      RenderBlock {OL} at (0,57) size 784x36
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (-20,0) size 16x18: "1"
+          RenderText {#text} at (0,0) size 332x18
+            text run at (0,0) width 332: "Success: document.execCommand(\"Copy\") == true"
+        RenderListItem {LI} at (40,18) size 744x18
+          RenderListMarker at (-20,0) size 16x18: "2"
+          RenderText {#text} at (0,0) size 331x18
+            text run at (0,0) width 331: "Success: document.execCommand(\"Paste\") == true"
+layer at (11,13) size 594x13
+  RenderBlock {DIV} at (3,3) size 594x13
+    RenderText {#text} at (0,0) size 465x13
+      text run at (0,0) width 465: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
+caret: position 94 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body
