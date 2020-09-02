@@ -1,3 +1,19 @@
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Implement event convergence for AudioParam.setTargetAtTime()
+        https://bugs.webkit.org/show_bug.cgi?id=216064
+
+        Reviewed by Geoffrey Garen.
+
+        Implement event convergence for AudioParam.setTargetAtTime(). This is to match Chromium's
+        behavior and pass the corresponding WPT test.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::hasSetTargetConverged):
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+
 2020-09-02  Youenn Fablet  <youenn@apple.com>
 
         Introduce a C++ chain of operations in RTCPeerConnection

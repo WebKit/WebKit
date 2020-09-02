@@ -37,6 +37,32 @@
 
 namespace WebCore {
 
+// Test that for a SetTarget event, the current value is close enough to the target value that
+// we can consider the event to have converged to the target.
+static bool hasSetTargetConverged(float value, float target, Seconds currentTime, Seconds startTime, double timeConstant)
+{
+    // For a SetTarget event, we want the event to terminate eventually so that we can stop using
+    // the timeline to compute the values.
+    constexpr float timeConstantsToConverge = 10;
+    constexpr float setTargetThreshold = 4.539992976248485e-05;
+
+    // Converged if enough time constants (|timeConstantsToConverge|) have passed since the start
+    // of the event.
+    if (currentTime.value() > startTime.value() + timeConstantsToConverge * timeConstant)
+        return true;
+
+    // If |target| is 0, converged if |value| is less than |setTargetThreshold|.
+    if (!target && std::abs(value) < setTargetThreshold)
+        return true;
+
+    // If |target| is not zero, converged if relative difference between |value|
+    // and |target| is small. That is |target - value| / |target| < |setTargetThreshold|.
+    if (target && std::abs(target - value) < setTargetThreshold * std::abs(value))
+        return true;
+
+    return false;
+}
+
 ExceptionOr<void> AudioParamTimeline::setValueAtTime(float value, Seconds time)
 {
     return insertEvent(ParamEvent(ParamEvent::SetValue, value, time, 0, { }, { }));
@@ -292,9 +318,18 @@ float AudioParamTimeline::valuesForTimeRangeImpl(Seconds startTime, Seconds endT
                     float timeConstant = event.timeConstant();
                     float discreteTimeConstant = static_cast<float>(AudioUtilities::discreteTimeConstantForSampleRate(timeConstant, controlRate));
 
-                    for (; writeIndex < fillToFrame; ++writeIndex) {
-                        values[writeIndex] = value;
-                        value += (target - value) * discreteTimeConstant;
+                    // If the value is close enough to the target, just fill in the data
+                    // with the target value.
+                    if (hasSetTargetConverged(value, target, currentTime, time1, timeConstant)) {
+                        for (; writeIndex < fillToFrame; ++writeIndex)
+                            values[writeIndex] = target;
+                        value = target;
+                    } else {
+                        // Serially process remaining values.
+                        for (; writeIndex < fillToFrame; ++writeIndex) {
+                            values[writeIndex] = value;
+                            value += (target - value) * discreteTimeConstant;
+                        }
                     }
 
                     break;

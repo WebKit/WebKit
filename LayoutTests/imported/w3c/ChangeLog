@@ -1,3 +1,14 @@
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Implement event convergence for AudioParam.setTargetAtTime()
+        https://bugs.webkit.org/show_bug.cgi?id=216064
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline test that is now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/set-target-conv-expected.txt:
+
 2020-09-02  Youenn Fablet  <youenn@apple.com>
 
         Introduce a C++ chain of operations in RTCPeerConnection

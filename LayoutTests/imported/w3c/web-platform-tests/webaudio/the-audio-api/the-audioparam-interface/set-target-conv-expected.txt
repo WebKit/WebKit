@@ -7,17 +7,7 @@ PASS   src = new ConstantSourceNode(context) did not throw an exception.
 PASS   src.offset.setTargetAtTime(0.5, 0.01, 0.01) did not throw an exception. 
 PASS   src.offset.setValueAtTime(0.5, 0.15) did not throw an exception. 
 PASS   src.offset.linearRampToValueAtTime(1, 0.151) did not throw an exception. 
-FAIL X output[1072:] does not equal [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000041724}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	5.0000238418579102e-1	5.0000000000000000e-1	2.3841857910156250e-6	4.7683715820312500e-6	2.0862000000000000e-6
-	[1]	5.0000238418579102e-1	5.0000000000000000e-1	2.3841857910156250e-6	4.7683715820312500e-6	2.0862000000000000e-6
-	[2]	5.0000238418579102e-1	5.0000000000000000e-1	2.3841857910156250e-6	4.7683715820312500e-6	2.0862000000000000e-6
-	[3]	5.0000238418579102e-1	5.0000000000000000e-1	2.3841857910156250e-6	4.7683715820312500e-6	2.0862000000000000e-6
-	[4]	5.0000238418579102e-1	5.0000000000000000e-1	2.3841857910156250e-6	4.7683715820312500e-6	2.0862000000000000e-6
-	...and 123 more errors.
-	Max AbsError of 2.3841857910156250e-6 at index of 0.
-	Max RelError of 4.7683715820312500e-6 at index of 0.
- assert_true: expected true got false
-FAIL < [convergence handled correctly] 1 out of 5 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   output[1072:] equals [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000041724}. 
+PASS < [convergence handled correctly] All assertions passed. (total 5 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 
