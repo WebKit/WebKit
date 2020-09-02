@@ -1,3 +1,9 @@
+2020-09-02  Dean Jackson  <dino@apple.com>
+
+        Update Kimmo's email.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a variant of map which filters items to Vector.h
