@@ -3668,8 +3668,17 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
 static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const WebCore::ContextMenu& defaultMenu)
 {
     const auto& hitTestResult = webView.page->contextMenuController().hitTestResult();
-    auto defaultMenuItems = createMenuItems(hitTestResult, defaultMenu.items());
-
+    bool isPopover = webView.window._childWindowOrderingPriority == NSWindowChildOrderingPriorityPopover;
+    bool isLookupDisabled = [NSUserDefaults.standardUserDefaults boolForKey:@"LULookupDisabled"];
+    auto filteredItems = defaultMenu.items();
+    
+    if (isLookupDisabled || isPopover) {
+        filteredItems.removeAllMatching([] (auto& item) {
+            return item.action() == WebCore::ContextMenuItemTagLookUpInDictionary;
+        });
+    }
+    auto defaultMenuItems = createMenuItems(hitTestResult, filteredItems);
+    
     id delegate = [webView UIDelegate];
     SEL selector = @selector(webView:contextMenuItemsForElement:defaultMenuItems:);
     if (![delegate respondsToSelector:selector])
