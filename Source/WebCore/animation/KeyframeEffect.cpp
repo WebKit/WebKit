@@ -69,7 +69,7 @@ using namespace JSC;
 static inline void invalidateElement(Element* element)
 {
     if (element)
-        element->invalidateStyle();
+        element->invalidateStyleInternal();
 }
 
 static inline String CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId)
