@@ -1662,8 +1662,6 @@ void KeyframeEffect::applyPendingAcceleratedActions()
 Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() const
 {
     auto effectAnimation = animation();
-    if (is<DeclarativeAnimation>(effectAnimation))
-        return downcast<DeclarativeAnimation>(effectAnimation)->backingAnimation();
 
     // FIXME: The iterationStart and endDelay AnimationEffectTiming properties do not have
     // corresponding Animation properties.
@@ -1704,6 +1702,12 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
         animation->setDirection(Animation::AnimationDirectionAlternateReverse);
         break;
     }
+
+    // In the case of CSS Animations, we must set the default timing function for keyframes to match
+    // the current value set for animation-timing-function on the target element which affects only
+    // keyframes and not the animation-wide timing.
+    if (is<CSSAnimation>(effectAnimation))
+        animation->setDefaultTimingFunctionForKeyframes(downcast<CSSAnimation>(effectAnimation)->backingAnimation().timingFunction());
 
     return animation;
 }
