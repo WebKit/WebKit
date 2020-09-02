@@ -40,7 +40,7 @@ ALLOW_UNUSED_PARAMETERS_END
 namespace WebCore {
 
 // LibWebRTCAudioModule is pulling streamed data to ensure audio data is passed to the audio track.
-class LibWebRTCAudioModule final : public webrtc::AudioDeviceModule {
+class LibWebRTCAudioModule : public webrtc::AudioDeviceModule {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCAudioModule();
@@ -51,9 +51,6 @@ private:
         ASSERT_NOT_REACHED();
         return value;
     }
-
-    void AddRef() const final { }
-    rtc::RefCountReleaseStatus Release() const final { return rtc::RefCountReleaseStatus::kOtherRefsRemained; }
 
     // webrtc::AudioDeviceModule API
     int32_t StartPlayout() final;
