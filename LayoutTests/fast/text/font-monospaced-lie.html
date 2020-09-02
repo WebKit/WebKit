@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Ahem-fixed-pitch.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<div style="font: 24px 'WebFont';"><span id="target"><span>Hello</span> <span>World</span></span></div>
+<script>
+window.jsTestIsAsync = true;
+document.fonts.values().next().value.load().then(function() {
+    shouldBeGreaterThanOrEqual("180", "document.getElementById('target').offsetWidth");
+    finishJSTest();
+}, function() {
+    finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

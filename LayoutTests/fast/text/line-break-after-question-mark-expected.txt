@@ -9,7 +9,6 @@ PASS allowsBreakBefore(35) is true
 PASS allowsBreakBefore(36) is true
 PASS allowsBreakBefore(37) is true
 PASS allowsBreakBefore(38) is true
-PASS allowsBreakBefore(39) is false
 PASS allowsBreakBefore(40) is true
 PASS allowsBreakBefore(41) is false
 PASS allowsBreakBefore(42) is true
@@ -97,7 +96,6 @@ PASS allowsBreakBefore(123) is true
 PASS allowsBreakBefore(124) is true
 PASS allowsBreakBefore(125) is false
 PASS allowsBreakBefore(126) is true
-PASS allowsBreakBefore(127) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
