@@ -224,6 +224,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         case WI.Resource.Type.Beacon:
             return WI.UIString("Beacon");
         case WI.Resource.Type.WebSocket:
+            return WI.UIString("Socket");
         case WI.Resource.Type.Other:
             return WI.UIString("Other");
         default:
