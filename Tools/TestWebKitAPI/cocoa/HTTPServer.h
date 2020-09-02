@@ -54,8 +54,9 @@ public:
     size_t totalRequests() const;
     void cancel();
 
+    static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);
-    
+
 private:
     static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&, RetainPtr<SecIdentityRef>&&, Optional<uint16_t> port);
     static void respondToRequests(Connection, Ref<RequestData>);

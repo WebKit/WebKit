@@ -1,3 +1,44 @@
+2020-09-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266100. rdar://problem/68160088
+
+    Make TLSVersion.DefaultBehavior more robust
+    https://bugs.webkit.org/show_bug.cgi?id=215791
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2020-08-24
+    Reviewed by Darin Adler.
+    
+    After r265573 sometimes it would assert, which is not a problem because it was failing the first connection
+    then succeeding the second connection as intended and as happens in the real internet.
+    Use HTTPServer which accepts a variable number of connections to keep the test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/cocoa/HTTPServer.h:
+    * TestWebKitAPI/cocoa/HTTPServer.mm:
+    (TestWebKitAPI::HTTPServer::respondWithChallengeThenOK):
+    (TestWebKitAPI::HTTPServer::respondWithOK):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266100 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-24  Alex Christensen  <achristensen@webkit.org>
+
+            Make TLSVersion.DefaultBehavior more robust
+            https://bugs.webkit.org/show_bug.cgi?id=215791
+
+            Reviewed by Darin Adler.
+
+            After r265573 sometimes it would assert, which is not a problem because it was failing the first connection
+            then succeeding the second connection as intended and as happens in the real internet.
+            Use HTTPServer which accepts a variable number of connections to keep the test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/cocoa/HTTPServer.h:
+            * TestWebKitAPI/cocoa/HTTPServer.mm:
+            (TestWebKitAPI::HTTPServer::respondWithChallengeThenOK):
+            (TestWebKitAPI::HTTPServer::respondWithOK):
+
 2020-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Unable to copy text from the function browser panel in Numbers
