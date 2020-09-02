@@ -32,7 +32,6 @@
 #include "NetworkSocketStreamMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include "WebSocketIdentifier.h"
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandleClient.h>
@@ -77,14 +76,14 @@ void WebSocketStream::networkProcessCrashed()
     globalWebSocketStreamMap().clear();
 }
 
-Ref<WebSocketStream> WebSocketStream::create(const URL& url, SocketStreamHandleClient& client, const String& credentialPartition)
+Ref<WebSocketStream> WebSocketStream::create(const URL& url, SocketStreamHandleClient& client, WebSocketIdentifier identifier, const String& credentialPartition)
 {
-    return adoptRef(*new WebSocketStream(url, client, credentialPartition));
+    return adoptRef(*new WebSocketStream(url, client, identifier, credentialPartition));
 }
 
-WebSocketStream::WebSocketStream(const URL& url, WebCore::SocketStreamHandleClient& client, const String& cachePartition)
+WebSocketStream::WebSocketStream(const URL& url, WebCore::SocketStreamHandleClient& client, WebSocketIdentifier identifier, const String& cachePartition)
     : SocketStreamHandle(url, client)
-    ,  m_identifier(WebSocketIdentifier::generate())
+    ,  m_identifier(identifier)
     , m_client(client)
 {
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::CreateSocketStream(url, cachePartition, m_identifier), 0);

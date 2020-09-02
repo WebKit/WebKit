@@ -50,7 +50,7 @@ public:
     void removeChannel(WebSocketChannel& channel) { m_channels.remove(channel.identifier() ); }
 
 private:
-    HashMap<WebSocketIdentifier, WeakPtr<WebSocketChannel>> m_channels;
+    HashMap<WebCore::WebSocketIdentifier, WeakPtr<WebSocketChannel>> m_channels;
 };
 
 } // namespace WebKit

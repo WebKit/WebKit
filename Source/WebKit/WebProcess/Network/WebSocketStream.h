@@ -27,8 +27,8 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "WebSocketIdentifier.h"
 #include <WebCore/SocketStreamHandle.h>
+#include <WebCore/WebSocketIdentifier.h>
 
 namespace IPC {
 class Connection;
@@ -44,9 +44,9 @@ namespace WebKit {
 
 class WebSocketStream : public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::SocketStreamHandle {
 public:
-    static Ref<WebSocketStream> create(const URL&, WebCore::SocketStreamHandleClient&, const String& credentialPartition);
+    static Ref<WebSocketStream> create(const URL&, WebCore::SocketStreamHandleClient&, WebCore::WebSocketIdentifier, const String& credentialPartition);
     static void networkProcessCrashed();
-    static WebSocketStream* streamWithIdentifier(WebSocketIdentifier);
+    static WebSocketStream* streamWithIdentifier(WebCore::WebSocketIdentifier);
     
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     
@@ -72,10 +72,10 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    WebSocketStream(const URL&, WebCore::SocketStreamHandleClient&, const String& credentialPartition);
+    WebSocketStream(const URL&, WebCore::SocketStreamHandleClient&, WebCore::WebSocketIdentifier, const String& credentialPartition);
     ~WebSocketStream();
 
-    WebSocketIdentifier m_identifier;
+    WebCore::WebSocketIdentifier m_identifier;
     size_t m_bufferedAmount { 0 };
     WebCore::SocketStreamHandleClient& m_client;
     HashMap<uint64_t, Function<void(bool)>> m_sendDataCallbacks;

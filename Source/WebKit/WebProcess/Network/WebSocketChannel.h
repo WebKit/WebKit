@@ -27,7 +27,6 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "WebSocketIdentifier.h"
 #include <WebCore/NetworkSendQueue.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -48,8 +47,6 @@ class WebSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver,
 public:
     static Ref<WebSocketChannel> create(WebCore::Document&, WebCore::WebSocketChannelClient&);
     ~WebSocketChannel();
-
-    WebSocketIdentifier identifier() const { return m_identifier; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -100,14 +97,12 @@ private:
     template<typename T> void sendMessage(T&&, size_t byteLength);
     void enqueueTask(Function<void()>&&);
 
-    unsigned channelIdentifier() const final { return m_identifier.toUInt64(); }
     bool hasCreatedHandshake() const final { return !m_url.isNull(); }
     bool isConnected() const final { return !m_handshakeResponse.isNull(); }
-    WebCore::ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&&) const final { return m_handshakeRequest; }
+    WebCore::ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }
     const WebCore::ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
 
     WeakPtr<WebCore::Document> m_document;
-    WebSocketIdentifier m_identifier;
     WeakPtr<WebCore::WebSocketChannelClient> m_client;
     URL m_url;
     String m_subprotocol;

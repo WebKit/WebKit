@@ -1,3 +1,31 @@
+2020-09-02  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a ThreadableWebSocketChannel identifier
+        https://bugs.webkit.org/show_bug.cgi?id=216034
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/NetworkSocketStream.h:
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::WebSocketChannel):
+        * WebProcess/Network/WebSocketChannel.h:
+        (WebKit::WebSocketChannel::identifier const): Deleted.
+        * WebProcess/Network/WebSocketChannelManager.h:
+        * WebProcess/Network/WebSocketIdentifier.h: Removed.
+        * WebProcess/Network/WebSocketProvider.cpp:
+        (WebKit::WebSocketProvider::createSocketStreamHandle):
+        * WebProcess/Network/WebSocketProvider.h:
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::create):
+        (WebKit::WebSocketStream::WebSocketStream):
+        * WebProcess/Network/WebSocketStream.h:
+
 2020-09-02  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Update date picker when the inner control is edited

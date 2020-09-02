@@ -79,6 +79,11 @@ Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecuti
     return create(downcast<Document>(context), client, provider);
 }
 
+ThreadableWebSocketChannel::ThreadableWebSocketChannel()
+    : m_identifier(WebSocketIdentifier::generateThreadSafe())
+{
+}
+
 Optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChannel::validateURL(Document& document, const URL& requestedURL)
 {
     ValidatedURL validatedURL { requestedURL, true };

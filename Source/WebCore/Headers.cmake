@@ -165,6 +165,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/websockets/WebSocketExtensionDispatcher.h
     Modules/websockets/WebSocketExtensionProcessor.h
     Modules/websockets/WebSocketFrame.h
+    Modules/websockets/WebSocketIdentifier.h
     Modules/websockets/WebSocketHandshake.h
 
     accessibility/AXLogger.h

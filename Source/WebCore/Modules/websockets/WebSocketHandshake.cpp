@@ -216,7 +216,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     return builder.toString().utf8();
 }
 
-ResourceRequest WebSocketHandshake::clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue) const
+ResourceRequest WebSocketHandshake::clientHandshakeRequest(const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const
 {
     // Keep the following consistent with clientHandshakeMessage().
     ResourceRequest request(m_url);

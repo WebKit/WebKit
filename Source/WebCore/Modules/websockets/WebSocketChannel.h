@@ -114,11 +114,9 @@ public:
     void didFinishLoading() override;
     void didFail(ExceptionCode errorCode) override;
 
-    unsigned identifier() const { return m_identifier; }
-    unsigned channelIdentifier() const final { return m_identifier; }
     bool hasCreatedHandshake() const final { return !!m_handshake; }
     bool isConnected() const final { return m_handshake->mode() == WebSocketHandshake::Mode::Connected; }
-    ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue) const final;
+    ResourceRequest clientHandshakeRequest(const CookieGetter&) const final;
     const ResourceResponse& serverHandshakeResponse() const final;
 
     using RefCounted<WebSocketChannel>::ref;

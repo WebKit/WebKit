@@ -819,7 +819,7 @@ void InspectorNetworkAgent::enable()
             auto& document = downcast<Document>(*webSocket->scriptExecutionContext());
             auto channel = webSocket->channel();
 
-            auto identifier = channel->channelIdentifier();
+            auto identifier = channel->identifier().toUInt64();
             didCreateWebSocket(identifier, webSocket->url());
 
             auto cookieRequestHeaderFieldValue = [document = makeWeakPtr(document)](const URL& url) -> String {
@@ -997,7 +997,7 @@ WebSocket* InspectorNetworkAgent::webSocketForRequestId(const String& requestId)
     LockHolder lock(WebSocket::allActiveWebSocketsMutex());
 
     for (auto* webSocket : activeWebSockets(lock)) {
-        if (IdentifiersFactory::requestId(webSocket->channel()->channelIdentifier()) == requestId)
+        if (IdentifiersFactory::requestId(webSocket->channel()->identifier().toUInt64()) == requestId)
             return webSocket;
     }
 

@@ -1,3 +1,39 @@
+2020-09-02  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a ThreadableWebSocketChannel identifier
+        https://bugs.webkit.org/show_bug.cgi?id=216034
+
+        Reviewed by Alex Christensen.
+
+        Clean-up code to have a single identifier for all WebSockets.
+        We use a WebSocketIdentifier that is now moved from WebKit to WebCore.
+        Introduce CookieGetter name following comments from https://bugs.webkit.org/show_bug.cgi?id=215928 review.
+        No change of behavior.
+
+        * Headers.cmake:
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::ThreadableWebSocketChannel):
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        (WebCore::ThreadableWebSocketChannel::ref):
+        (WebCore::ThreadableWebSocketChannel::deref):
+        (WebCore::ThreadableWebSocketChannel::identifier const):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        (WebCore::WebSocketChannel::clientHandshakeRequest const):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeRequest const):
+        * Modules/websockets/WebSocketHandshake.h:
+        * Modules/websockets/WebSocketIdentifier.h: Added.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::enable):
+        (WebCore::InspectorNetworkAgent::webSocketForRequestId):
+        * page/SocketProvider.cpp:
+        (WebCore::SocketProvider::createSocketStreamHandle):
+        * page/SocketProvider.h:
+
 2020-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Allow direct creation of replacement codec

@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "WebSocketIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/URL.h>
@@ -53,20 +54,23 @@ class ThreadableWebSocketChannel {
 public:
     static Ref<ThreadableWebSocketChannel> create(Document&, WebSocketChannelClient&, SocketProvider&);
     static Ref<ThreadableWebSocketChannel> create(ScriptExecutionContext&, WebSocketChannelClient&, SocketProvider&);
-    ThreadableWebSocketChannel() = default;
+    WEBCORE_EXPORT ThreadableWebSocketChannel();
 
-    enum SendResult {
-        SendSuccess,
-        SendFail
-    };
+    void ref() { refThreadableWebSocketChannel(); }
+    void deref() { derefThreadableWebSocketChannel(); }
+
+    WebSocketIdentifier identifier() const { return m_identifier; };
 
     enum class ConnectStatus { KO, OK };
     virtual ConnectStatus connect(const URL&, const String& protocol) = 0;
     virtual String subprotocol() = 0; // Will be available after didConnect() callback is invoked.
     virtual String extensions() = 0; // Will be available after didConnect() callback is invoked.
+
+    enum SendResult { SendSuccess, SendFail };
     virtual SendResult send(const String& message) = 0;
     virtual SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) = 0;
     virtual SendResult send(Blob&) = 0;
+
     virtual unsigned bufferedAmount() const = 0;
     virtual void close(int code, const String& reason) = 0;
     // Log the reason text and close the connection. Will call didClose().
@@ -76,14 +80,10 @@ public:
     virtual void suspend() = 0;
     virtual void resume() = 0;
 
-    void ref() { refThreadableWebSocketChannel(); }
-    void deref() { derefThreadableWebSocketChannel(); }
-
-    // FIXME: Merge channelIdentifier and identifier.
-    virtual unsigned channelIdentifier() const = 0;
     virtual bool hasCreatedHandshake() const = 0;
     virtual bool isConnected() const = 0;
-    virtual ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&&) const = 0;
+    using CookieGetter = Function<String(const URL&)>;
+    virtual ResourceRequest clientHandshakeRequest(const CookieGetter&) const = 0;
     virtual const ResourceResponse& serverHandshakeResponse() const = 0;
 
 protected:
@@ -97,6 +97,8 @@ protected:
     };
     static Optional<ValidatedURL> validateURL(Document&, const URL&);
     WEBCORE_EXPORT static Optional<ResourceRequest> webSocketConnectRequest(Document&, const URL&);
+
+    WebSocketIdentifier m_identifier;
 };
 
 } // namespace WebCore

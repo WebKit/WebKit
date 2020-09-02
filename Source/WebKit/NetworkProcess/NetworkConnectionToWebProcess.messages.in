@@ -58,8 +58,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
-    CreateSocketStream(URL url, String cachePartition, WebKit::WebSocketIdentifier identifier)
-    CreateSocketChannel(WebCore::ResourceRequest request, String protocol, WebKit::WebSocketIdentifier identifier)
+    CreateSocketStream(URL url, String cachePartition, WebCore::WebSocketIdentifier identifier)
+    CreateSocketChannel(WebCore::ResourceRequest request, String protocol, WebCore::WebSocketIdentifier identifier)
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);

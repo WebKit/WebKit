@@ -71,7 +71,6 @@ NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSoc
 
 WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client)
     : m_document(makeWeakPtr(document))
-    ,  m_identifier(WebSocketIdentifier::generate())
     , m_client(makeWeakPtr(client))
     , m_messageQueue(createMessageQueue(document, *this))
     , m_inspector(document)

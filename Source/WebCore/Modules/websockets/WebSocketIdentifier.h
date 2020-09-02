@@ -27,9 +27,9 @@
 
 #include <wtf/ObjectIdentifier.h>
 
-namespace WebKit {
+namespace WebCore {
 
 enum WebSocketIdentifierType { };
 using WebSocketIdentifier = ObjectIdentifier<WebSocketIdentifierType>;
 
-} // namespace WebKit
+} // namespace WebCore

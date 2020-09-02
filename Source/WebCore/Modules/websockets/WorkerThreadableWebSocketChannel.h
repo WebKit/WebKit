@@ -160,11 +160,10 @@ private:
 
     class WorkerGlobalScopeDidInitializeTask;
 
-    // Dummy implementation of inspector related APIs.
-    unsigned channelIdentifier() const final { return 1; }
+    // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
     bool hasCreatedHandshake() const final { return false; }
     bool isConnected() const final { return false; }
-    ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&&) const final { return m_handshakeRequest; }
+    ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }
     const ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
 
     Ref<WorkerGlobalScope> m_workerGlobalScope;

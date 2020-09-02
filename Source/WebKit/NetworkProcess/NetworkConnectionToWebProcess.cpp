@@ -60,7 +60,6 @@
 #include "WebSWServerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
 #include "WebSWServerToContextConnectionMessages.h"
-#include "WebSocketIdentifier.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>

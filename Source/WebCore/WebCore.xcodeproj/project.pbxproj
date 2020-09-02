@@ -1137,6 +1137,7 @@
 		41D41C672256874F00697942 /* ServiceWorkerInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41D41C652256859200697942 /* ServiceWorkerInternals.mm */; };
 		41DE7C7C222DA14300532B65 /* StorageQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DE7C7B222DA13E00532B65 /* StorageQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41DEFCB61E56C1BD000D9E5F /* JSDOMMapLike.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */; };
+		41E12E9F24FE74E20093FFB4 /* WebSocketIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E12E9D24FE74E20093FFB4 /* WebSocketIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
 		41E9DCE7231974BF00F35949 /* BlobLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9DCE4231973FE00F35949 /* BlobLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E9DCE92319CA7600F35949 /* NetworkSendQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9DCE82319CA7500F35949 /* NetworkSendQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7692,6 +7693,7 @@
 		41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMMapLike.h; sourceTree = "<group>"; };
 		41E0A7D923BB590100561060 /* RTCRtpCodecCapability.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpCodecCapability.idl; sourceTree = "<group>"; };
 		41E0A7DC23BB63DB00561060 /* RTCRtpCodecCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpCodecCapability.h; sourceTree = "<group>"; };
+		41E12E9D24FE74E20093FFB4 /* WebSocketIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketIdentifier.h; sourceTree = "<group>"; };
 		41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CB0FF5986900576B3B /* AbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWorker.h; sourceTree = "<group>"; };
 		41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AbstractWorker.idl; sourceTree = "<group>"; };
@@ -23359,6 +23361,7 @@
 				97AABD0914FA09D5007457AE /* WebSocketExtensionProcessor.h */,
 				AAF5B7B11524B4BD0004CB49 /* WebSocketFrame.cpp */,
 				97AABD0A14FA09D5007457AE /* WebSocketFrame.h */,
+				41E12E9D24FE74E20093FFB4 /* WebSocketIdentifier.h */,
 				97AABD0B14FA09D5007457AE /* WebSocketHandshake.cpp */,
 				97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */,
 				97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */,
@@ -33040,6 +33043,7 @@
 				1A58E8661D19D4F000C0EA73 /* PaymentCoordinatorClient.h in Headers */,
 				A1F76B371F44C60F0014C318 /* PaymentCurrencyAmount.h in Headers */,
 				A1F76B1F1F44C3FE0014C318 /* PaymentDetailsBase.h in Headers */,
+				41E12E9F24FE74E20093FFB4 /* WebSocketIdentifier.h in Headers */,
 				A1F76B251F44C4910014C318 /* PaymentDetailsInit.h in Headers */,
 				A1F76B4F1F44D2420014C318 /* PaymentDetailsModifier.h in Headers */,
 				A1F600491F47594E0077E83F /* PaymentDetailsUpdate.h in Headers */,

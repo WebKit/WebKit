@@ -64,7 +64,7 @@ public:
     String clientLocation() const;
 
     CString clientHandshakeMessage() const;
-    ResourceRequest clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue) const;
+    ResourceRequest clientHandshakeRequest(const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const;
 
     void reset();
 
