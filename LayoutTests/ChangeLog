@@ -1,3 +1,12 @@
+2020-09-02  Karl Rackler  <rackler@apple.com>
+
+        Rebaseline after macOS build progression.
+        Rebaseline fast/block/margin-collapse/103 for Catalina
+
+        Unreviewed test gardening.
+
+        * platform/mac-catalina/fast/block/margin-collapse/103-expected.txt:
+
 2020-09-02  Timothy Horton  <timothy_horton@apple.com>
 
         RWT's lint-test-files complains about nonexistent editing/images tests
