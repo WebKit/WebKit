@@ -1262,7 +1262,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         needsTraverseDescendants |= document().mayHaveElementsWithNonAutoTouchAction();
         LOG_WITH_STREAM(EventRegions, stream << "  may have touch-action elements: " << document().mayHaveElementsWithNonAutoTouchAction());
 #endif
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(WHEEL_EVENT_REGIONS)
         needsTraverseDescendants |= document().hasWheelEventHandlers();
         LOG_WITH_STREAM(EventRegions, stream << "  has wheel event handlers: " << document().hasWheelEventHandlers());
 #endif

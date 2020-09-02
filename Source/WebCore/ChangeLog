@@ -1,3 +1,38 @@
+2020-09-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266363. rdar://problem/68229370
+
+    Wheel event region code is not fully disabled
+    https://bugs.webkit.org/show_bug.cgi?id=216008
+    <rdar://problem/68086333>
+    
+    Reviewed by Simon Fraser.
+    
+    * rendering/RenderBlock.cpp:
+    (WebCore::RenderBlock::paintObject):
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::maintainsEventRegion const):
+    
+    Use the relevant ENABLE flag rather than !PLATFORM_IOS to compile out the code.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266363 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-31  Antti Koivisto  <antti@apple.com>
+
+            Wheel event region code is not fully disabled
+            https://bugs.webkit.org/show_bug.cgi?id=216008
+            <rdar://problem/68086333>
+
+            Reviewed by Simon Fraser.
+
+            * rendering/RenderBlock.cpp:
+            (WebCore::RenderBlock::paintObject):
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::maintainsEventRegion const):
+
+            Use the relevant ENABLE flag rather than !PLATFORM_IOS to compile out the code.
+
 2020-09-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r266280. rdar://problem/68177624
