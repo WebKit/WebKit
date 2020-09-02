@@ -235,7 +235,9 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
         this._canvasesTreeElement.removeChild(treeElement);
 
         let currentContentView = this.contentBrowser.currentContentView;
-        if (currentContentView instanceof WI.CanvasContentView)
+        if (currentContentView instanceof WI.CanvasContentView && canvas === currentContentView.representedObject)
+            WI.showRepresentedObject(WI.canvasManager.canvasCollection);
+        else if (currentContentView instanceof WI.ShaderProgramContentView && canvas === currentContentView.representedObject.canvas)
             WI.showRepresentedObject(WI.canvasManager.canvasCollection);
         else if (currentContentView instanceof WI.RecordingContentView && canvas.recordingCollection.has(currentContentView.representedObject))
             this.contentBrowser.updateHierarchicalPathForCurrentContentView();

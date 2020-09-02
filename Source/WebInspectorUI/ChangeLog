@@ -1,5 +1,16 @@
 2020-09-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Graphics: reloading the page doesn't automatically deselect shaders if they are shown
+        https://bugs.webkit.org/show_bug.cgi?id=216054
+        <rdar://problem/68167882>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/GraphicsTabContentView.js:
+        (WI.GraphicsTabContentView.prototype._removeCanvas):
+
+2020-09-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: re-enabling the JavaScript Allocations timeline doesn't show previously captured heap snapshots in the table
         https://bugs.webkit.org/show_bug.cgi?id=216057
         <rdar://problem/68172848>
