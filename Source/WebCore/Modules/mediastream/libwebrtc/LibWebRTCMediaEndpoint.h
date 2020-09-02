@@ -78,8 +78,8 @@ public:
     bool setConfiguration(LibWebRTCProvider&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     webrtc::PeerConnectionInterface& backend() const { ASSERT(m_backend); return *m_backend.get(); }
-    void doSetLocalDescription(RTCSessionDescription&);
-    void doSetRemoteDescription(RTCSessionDescription&);
+    void doSetLocalDescription(const RTCSessionDescription*);
+    void doSetRemoteDescription(const RTCSessionDescription&);
     void doCreateOffer(const RTCOfferOptions&);
     void doCreateAnswer();
     void getStats(Ref<DeferredPromise>&&);

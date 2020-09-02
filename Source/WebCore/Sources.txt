@@ -3245,6 +3245,7 @@ JSRTCDataChannelEvent.cpp
 JSRTCDegradationPreference.cpp
 JSRTCDtxStatus.cpp
 JSRTCIceCandidate.cpp
+JSRTCIceCandidateInit.cpp
 JSRTCIceConnectionState.cpp
 JSRTCIceGatheringState.cpp
 JSRTCIceServer.cpp
@@ -3271,7 +3272,9 @@ JSRTCRtpSender.cpp
 JSRTCRtpSynchronizationSource.cpp
 JSRTCRtpTransceiver.cpp
 JSRTCRtpTransceiverDirection.cpp
+JSRTCSdpType.cpp
 JSRTCSessionDescription.cpp
+JSRTCSessionDescriptionInit.cpp
 JSRTCSignalingState.cpp
 JSRTCStatsReport.cpp
 JSRTCTrackEvent.cpp

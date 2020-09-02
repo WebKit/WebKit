@@ -1,11 +1,18 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Creating first data channel should fire negotiationneeded event 
 PASS calling createDataChannel twice should fire negotiationneeded event once 
 PASS addTransceiver() should fire negotiationneeded event 
-FAIL Calling addTransceiver() twice should fire negotiationneeded event once assert_unreached: Pending promise should never be resolved. Instead it is fulfilled with: [object Object] Reached unreachable code
-FAIL Calling both addTransceiver() and createDataChannel() should fire negotiationneeded event once assert_unreached: Pending promise should never be resolved. Instead it is fulfilled with: [object Object] Reached unreachable code
-FAIL negotiationneeded event should not fire if signaling state is not stable assert_unreached: Pending promise should never be resolved. Instead it is rejected with: Error: assert_equals: expected "have-local-offer" but got "stable" Reached unreachable code
-TIMEOUT negotiationneeded event should fire only after signaling state go back to stable Test timed out
+PASS Calling addTransceiver() twice should fire negotiationneeded event once 
+PASS Calling both addTransceiver() and createDataChannel() should fire negotiationneeded event once 
+PASS negotiationneeded event should not fire if signaling state is not stable 
+PASS negotiationneeded event should fire only after signaling state goes back to stable after setRemoteDescription 
+PASS negotiationneeded event should fire only after signaling state goes back to stable after setLocalDescription 
+PASS negotiationneeded event should fire only after signalingstatechange event fires from setRemoteDescription 
+PASS negotiationneeded event should fire only after signalingstatechange event fires from setLocalDescription 
+PASS addTrack should cause negotiationneeded to fire 
+PASS removeTrack should cause negotiationneeded to fire on the caller 
+PASS removeTrack should cause negotiationneeded to fire on the callee 
+PASS Updating the direction of the transceiver should cause negotiationneeded to fire 
+FAIL Calling setStreams should cause negotiationneeded to fire promise_test: Unhandled rejection with value: object "TypeError: transceiver.sender.setStreams is not a function. (In 'transceiver.sender.setStreams(stream)', 'transceiver.sender.setStreams' is undefined)"
+PASS Adding two transceivers, one at a time, results in the expected number of negotiationneeded events 
 

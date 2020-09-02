@@ -35,6 +35,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCIceCandidateInit.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -49,10 +50,10 @@ inline RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& s
     ASSERT(!sdpMid.isNull() || sdpMLineIndex);
 }
 
-ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const Init& dictionary)
+ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const RTCIceCandidateInit& dictionary)
 {
     if (dictionary.sdpMid.isNull() && !dictionary.sdpMLineIndex)
-        return Exception { TypeError };
+        return Exception { TypeError, "Candidate must not have both null sdpMid and sdpMLineIndex" };
     return create(dictionary.candidate, dictionary.sdpMid, dictionary.sdpMLineIndex);
 }
 

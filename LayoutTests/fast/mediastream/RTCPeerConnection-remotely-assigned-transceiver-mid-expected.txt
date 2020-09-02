@@ -12,7 +12,7 @@ FAIL midAssignedByA !== null should be true. Was false.
 pcB.addTrack(stream.getAudioTracks()[0], stream)
 B's transceiver is not yet associated with a media description and should have a null mid
 PASS pcB.getTransceivers()[0].mid is null
-FAIL Error in promise chain: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+FAIL Error in promise chain: TypeError: Member RTCSessionDescriptionInit.type is required and must be an instance of RTCSdpType
 PASS successfullyParsed is true
 
 TEST COMPLETE

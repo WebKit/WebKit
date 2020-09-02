@@ -1,13 +1,13 @@
 
 FAIL Add ICE candidate before setting remote description should reject with InvalidStateError assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL addIceCandidate({"candidate":"","sdpMid":null,"sdpMLineIndex":null}) should work, and add a=end-of-candidates to both m-sections promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate"
+FAIL addIceCandidate({"candidate":"","sdpMid":null,"sdpMLineIndex":null}) should work, and add a=end-of-candidates to both m-sections assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
 FAIL addIceCandidate(undefined) should work, and add a=end-of-candidates to both m-sections assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
 FAIL addIceCandidate(null) should work, and add a=end-of-candidates to both m-sections assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
-FAIL addIceCandidate({}) should work, and add a=end-of-candidates to both m-sections promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate"
-FAIL addIceCandidate({}) in stable should work, and add a=end-of-candidates to both m-sections promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate"
-FAIL addIceCandidate({usernameFragment: usernameFragment1, sdpMid: sdpMid1}) should work, and add a=end-of-candidates to the first m-section promise_test: Unhandled rejection with value: object "OperationError: Expect line: candidate:<candidate-str>"
-FAIL addIceCandidate({usernameFragment: usernameFragment2, sdpMLineIndex: 1}) should work, and add a=end-of-candidates to the first m-section promise_test: Unhandled rejection with value: object "OperationError: Expect line: candidate:<candidate-str>"
-FAIL addIceCandidate({usernameFragment: "no such ufrag"}) should not work promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate" that is not a DOMException OperationError: property "code" is equal to undefined, expected 0
+FAIL addIceCandidate({}) should work, and add a=end-of-candidates to both m-sections assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
+FAIL addIceCandidate({}) in stable should work, and add a=end-of-candidates to both m-sections assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
+FAIL addIceCandidate({usernameFragment: usernameFragment1, sdpMid: sdpMid1}) should work, and add a=end-of-candidates to the first m-section assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
+FAIL addIceCandidate({usernameFragment: usernameFragment2, sdpMLineIndex: 1}) should work, and add a=end-of-candidates to the first m-section assert_true: expected true got false
+FAIL addIceCandidate({usernameFragment: "no such ufrag"}) should not work assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Add ICE candidate after setting remote description should succeed 
 PASS Add ICE candidate with RTCIceCandidate should succeed 
 PASS Add candidate with only valid sdpMid should succeed 
@@ -17,7 +17,7 @@ FAIL addIceCandidate with first sdpMid and sdpMLineIndex add candidate to first 
 FAIL addIceCandidate with second sdpMid and sdpMLineIndex should add candidate to second media stream assert_true: Expect candidate line to be found after media line m=video expected true got false
 FAIL Add candidate for first media stream with null usernameFragment should add candidate to first media stream assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
 FAIL Adding multiple candidates should add candidates to their corresponding media stream assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
-FAIL Add with empty candidate string (end of candidate) should succeed promise_test: Unhandled rejection with value: object "OperationError: Expect line: candidate:<candidate-str>"
+FAIL Add with empty candidate string (end of candidate) should succeed assert_true: Expect candidate line to be found between media lines m=audio and m=video expected true got false
 PASS Add candidate with both sdpMid and sdpMLineIndex manually set to null should reject with TypeError 
 PASS Add candidate with only valid candidate string should reject with TypeError 
 PASS Add candidate with invalid candidate string and both sdpMid and sdpMLineIndex null should reject with TypeError 

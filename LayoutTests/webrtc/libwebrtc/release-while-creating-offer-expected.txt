@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Candidate must not have both null sdpMid and sdpMLineIndex
 PASS successfullyParsed is true
 
 TEST COMPLETE

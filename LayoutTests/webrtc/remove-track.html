@@ -7,6 +7,7 @@
         <script src="../resources/testharnessreport.js"></script>
     </head>
     <body>
+        <video id="video" autoplay></video>
         <script src ="routines.js"></script>
         <script>
 let firstConnection, secondConnection;
@@ -17,7 +18,7 @@ promise_test(async (test) => {
         testRunner.setUserMediaPermission(true);
 
     stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    await new Promise((resolve, reject) => {
+    const remoteStream = await new Promise((resolve, reject) => {
         createConnections((connection) => {
             firstConnection = connection;
             firstConnection.addTrack(stream.getVideoTracks()[0], stream);
@@ -30,11 +31,14 @@ promise_test(async (test) => {
                     return;
                 }
                 remoteAudioTrack = trackEvent.track;
-                resolve();
+                resolve(trackEvent.streams[0]);
             };
         });
         setTimeout(() => reject("Test timed out"), 5000);
     });
+
+    video.srcObject = remoteStream;
+    await video.play();
 }, "Setup audio video exchange");
 
 async function renegotiate()
@@ -44,6 +48,7 @@ async function renegotiate()
     await secondConnection.setRemoteDescription(d);
     d = await secondConnection.createAnswer();
     await secondConnection.setLocalDescription(d);
+    await firstConnection.setRemoteDescription(d);
 }
 
 promise_test((test) => {

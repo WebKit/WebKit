@@ -28,7 +28,7 @@ PASS pcA.currentLocalDescription is null
 A: send offer to B
 A --- offer --> B
 B: got offer from A, set it as remote description
-FAIL Error in promise chain: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+FAIL Error in promise chain: TypeError: Member RTCSessionDescriptionInit.type is required and must be an instance of RTCSdpType
 PASS successfullyParsed is true
 
 TEST COMPLETE

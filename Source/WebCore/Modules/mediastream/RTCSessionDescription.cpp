@@ -35,6 +35,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCSessionDescriptionInit.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ inline RTCSessionDescription::RTCSessionDescription(RTCSdpType type, String&& sd
 {
 }
 
-Ref<RTCSessionDescription> RTCSessionDescription::create(Init&& dictionary)
+Ref<RTCSessionDescription> RTCSessionDescription::create(RTCSessionDescriptionInit&& dictionary)
 {
     return create(dictionary.type, WTFMove(dictionary.sdp));
 }

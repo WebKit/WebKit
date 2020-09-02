@@ -76,28 +76,23 @@ typedef (object or DOMString) AlgorithmIdentifier;
     EnabledAtRuntime=PeerConnection,
     ExportMacro=WEBCORE_EXPORT,
 ] interface RTCPeerConnection : EventTarget {
-    [JSBuiltin, CallWith=Document] constructor();
-
-    // JS built-in constructor handles the optional RTCConfiguration
-    [PrivateIdentifier, CallWith=Document, MayThrowException] undefined initializeWith(RTCConfiguration configuration);
-
+    [CallWith=Document, MayThrowException] constructor(optional RTCConfiguration configuration);
 
     // 4.3.2 Interface Definition
-    // JSBuiltins provide support for legacy signatures
-    [JSBuiltin] Promise<RTCSessionDescriptionInit> createOffer(optional RTCOfferOptions offerOptions);
-    [JSBuiltin] Promise<RTCSessionDescriptionInit> createAnswer(optional RTCAnswerOptions answerOptions);
+    Promise<RTCSessionDescriptionInit> createOffer(optional RTCOfferOptions offerOptions);
+    Promise<RTCSessionDescriptionInit> createAnswer(optional RTCAnswerOptions answerOptions);
 
-    [JSBuiltin] Promise<undefined> setLocalDescription(RTCSessionDescriptionInit description);
+    Promise<undefined> setLocalDescription(optional (RTCSessionDescriptionInit or RTCSessionDescription) description);
     readonly attribute RTCSessionDescription? localDescription;
     readonly attribute RTCSessionDescription? currentLocalDescription;
     readonly attribute RTCSessionDescription? pendingLocalDescription;
 
-    [JSBuiltin] Promise<undefined> setRemoteDescription(RTCSessionDescriptionInit description);
+    Promise<undefined> setRemoteDescription((RTCSessionDescriptionInit or RTCSessionDescription) description);
     readonly attribute RTCSessionDescription? remoteDescription;
     readonly attribute RTCSessionDescription? currentRemoteDescription;
     readonly attribute RTCSessionDescription? pendingRemoteDescription;
 
-    [JSBuiltin] Promise<undefined> addIceCandidate((RTCIceCandidateInit or RTCIceCandidate) candidate);
+    Promise<undefined> addIceCandidate((RTCIceCandidateInit or RTCIceCandidate) candidate);
 
     readonly attribute RTCSignalingState signalingState;
     readonly attribute RTCIceGatheringState iceGatheringState;
@@ -117,15 +112,6 @@ typedef (object or DOMString) AlgorithmIdentifier;
     attribute EventHandler onicegatheringstatechange;
     attribute EventHandler onconnectionstatechange;
     // FIXME 169644: missing onfingerprintfailure and onicecandidateerror
-
-    // Private API used to implement the overloaded operations above. Queued functions are called by runQueuedOperation().
-    // See RTCPeerConnectionInternals.js.
-    [PrivateIdentifier] Promise<RTCSessionDescriptionInit> queuedCreateOffer(optional RTCOfferOptions offerOptions);
-    [PrivateIdentifier] Promise<RTCSessionDescriptionInit> queuedCreateAnswer(optional RTCAnswerOptions answerOptions);
-    [PrivateIdentifier] Promise<undefined> queuedSetLocalDescription(RTCSessionDescription description);
-    [PrivateIdentifier] Promise<undefined> queuedSetRemoteDescription(RTCSessionDescription description);
-    [PrivateIdentifier] Promise<undefined> queuedAddIceCandidate(RTCIceCandidate? candidate);
-
 
     // 4.11 Certificate management
     [CallWith=GlobalObject] static Promise<RTCCertificate> generateCertificate(AlgorithmIdentifier keygenAlgorithm);

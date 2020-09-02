@@ -39,6 +39,7 @@
 #include "EventTarget.h"
 #include "MediaEndpointConfiguration.h"
 #include "MediaStream.h"
+#include "PeerConnectionBackend.h"
 #include "RTCConfiguration.h"
 #include "RTCDataChannel.h"
 #include "RTCIceConnectionState.h"
@@ -48,12 +49,13 @@
 #include "RTCSignalingState.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class DOMPromiseDeferredBase;
 class MediaStream;
 class MediaStreamTrack;
-class PeerConnectionBackend;
 class RTCController;
 class RTCIceCandidate;
 class RTCPeerConnectionErrorCallback;
@@ -63,6 +65,8 @@ class RTCStatsCallback;
 struct RTCAnswerOptions;
 struct RTCOfferOptions;
 struct RTCRtpParameters;
+struct RTCIceCandidateInit;
+struct RTCSessionDescriptionInit;
 
 struct RTCRtpTransceiverInit {
     RTCRtpTransceiverDirection direction { RTCRtpTransceiverDirection::Sendrecv };
@@ -73,18 +77,17 @@ class RTCPeerConnection final
     : public RefCounted<RTCPeerConnection>
     , public EventTargetWithInlineData
     , public ActiveDOMObject
+    , public CanMakeWeakPtr<RTCPeerConnection>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
 {
     WTF_MAKE_ISO_ALLOCATED(RTCPeerConnection);
 public:
-    static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
+    static ExceptionOr<Ref<RTCPeerConnection>> create(Document&, RTCConfiguration&&);
     virtual ~RTCPeerConnection();
 
     using DataChannelInit = RTCDataChannelInit;
-
-    ExceptionOr<void> initializeWith(Document&, RTCConfiguration&&);
 
     struct CertificateParameters {
         String name;
@@ -99,20 +102,22 @@ public:
     static void generateCertificate(JSC::JSGlobalObject&, AlgorithmIdentifier&&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
     // 4.3.2 RTCPeerConnection Interface
-    void queuedCreateOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
-    void queuedCreateAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
+    void createOffer(RTCOfferOptions&&, Ref<DeferredPromise>&&);
+    void createAnswer(RTCAnswerOptions&&, Ref<DeferredPromise>&&);
 
-    void queuedSetLocalDescription(RTCSessionDescription&, DOMPromiseDeferred<void>&&);
+    using Description = Variant<RTCSessionDescriptionInit, RefPtr<RTCSessionDescription>>;
+    void setLocalDescription(Optional<Description>&&, Ref<DeferredPromise>&&);
     RefPtr<RTCSessionDescription> localDescription() const;
     RefPtr<RTCSessionDescription> currentLocalDescription() const;
     RefPtr<RTCSessionDescription> pendingLocalDescription() const;
 
-    void queuedSetRemoteDescription(RTCSessionDescription&, DOMPromiseDeferred<void>&&);
+    void setRemoteDescription(Description&&, Ref<DeferredPromise>&&);
     RefPtr<RTCSessionDescription> remoteDescription() const;
     RefPtr<RTCSessionDescription> currentRemoteDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
-    void queuedAddIceCandidate(RTCIceCandidate*, DOMPromiseDeferred<void>&&);
+    using Candidate = Optional<Variant<RTCIceCandidateInit, RefPtr<RTCIceCandidate>>>;
+    void addIceCandidate(Candidate&&, Ref<DeferredPromise>&&);
 
     RTCSignalingState signalingState() const { return m_signalingState; }
     RTCIceGatheringState iceGatheringState() const { return m_iceGatheringState; }
@@ -184,11 +189,6 @@ public:
 #endif
 
 private:
-    template<typename PromiseType> void addPendingPromise(PromiseType& promise)
-    {
-        promise.whenSettled([pendingActivity = makePendingActivity(*this)] { });
-    }
-
     RTCPeerConnection(Document&);
 
     ExceptionOr<void> initializeConfiguration(RTCConfiguration&&);
@@ -215,7 +215,11 @@ private:
     bool doClose();
     void doStop();
 
+    void getStats(RTCRtpSender& sender, Ref<DeferredPromise>&& promise) { m_backend->getStats(sender, WTFMove(promise)); }
+
     ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> certificatesFromConfiguration(const RTCConfiguration&);
+    void chainOperation(Ref<DeferredPromise>&&, Function<void(Ref<DeferredPromise>&&)>&&);
+    friend class RTCRtpSender;
 
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };
@@ -237,6 +241,9 @@ private:
     Vector<RefPtr<RTCCertificate>> m_certificates;
     bool m_shouldDelayTasks { false };
     Vector<Function<void()>> m_pendingTasks;
+    Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
+    bool m_hasPendingOperation { false };
+    bool m_shouldFireNegotiationNeededOnceOperationChainIsEmpty { false };
 };
 
 } // namespace WebCore

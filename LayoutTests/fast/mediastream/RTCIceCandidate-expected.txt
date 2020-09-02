@@ -34,13 +34,13 @@ PASS candidate.sdpMLineIndex is 6
 Dictionary argument is mandatory.
 PASS new RTCIceCandidate(); threw exception TypeError: Not enough arguments.
 One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).
-PASS new RTCIceCandidate({candidate:"foo"}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({candidate:"foo", sdpMid: null}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({candidate:"foo", sdpMid: undefined}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex: null}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex: undefined}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: null}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: undefined}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo"}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: null}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: undefined}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
+PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex: null}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
+PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex: undefined}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: null}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: undefined}); threw exception TypeError: Candidate must not have both null sdpMid and sdpMLineIndex.
 
 Test that sdpMid or sdpMLineIndex explicitly set to null or undefined, results in a null value.
 PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: 1}); did not throw exception.

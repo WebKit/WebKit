@@ -41,7 +41,7 @@
     [CallWith=ScriptExecutionContext] static RTCRtpCapabilities? getCapabilities(DOMString kind);
     RTCRtpSendParameters getParameters();
     Promise<undefined> setParameters(RTCRtpSendParameters parameters);
-    [CallWith=ScriptExecutionContext] Promise<undefined> replaceTrack(MediaStreamTrack? withTrack);
+    Promise<undefined> replaceTrack(MediaStreamTrack? withTrack);
     Promise<RTCStatsReport> getStats();
 
     [Conditional=WEB_RTC, EnabledAtRuntime=WebRTCDTMF] readonly attribute RTCDTMFSender? dtmf;

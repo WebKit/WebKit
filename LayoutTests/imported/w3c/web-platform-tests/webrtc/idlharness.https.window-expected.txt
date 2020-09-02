@@ -24,7 +24,7 @@ PASS RTCPeerConnection interface: existence and properties of interface prototyp
 PASS RTCPeerConnection interface: existence and properties of interface prototype object's @@unscopables property 
 PASS RTCPeerConnection interface: operation createOffer(optional RTCOfferOptions) 
 PASS RTCPeerConnection interface: operation createAnswer(optional RTCAnswerOptions) 
-FAIL RTCPeerConnection interface: operation setLocalDescription(optional RTCLocalSessionDescriptionInit) assert_equals: property has wrong .length expected 0 but got 1
+PASS RTCPeerConnection interface: operation setLocalDescription(optional RTCLocalSessionDescriptionInit) 
 PASS RTCPeerConnection interface: attribute localDescription 
 PASS RTCPeerConnection interface: attribute currentLocalDescription 
 PASS RTCPeerConnection interface: attribute pendingLocalDescription 
@@ -50,7 +50,7 @@ PASS RTCPeerConnection interface: attribute oniceconnectionstatechange
 PASS RTCPeerConnection interface: attribute onicegatheringstatechange 
 PASS RTCPeerConnection interface: attribute onconnectionstatechange 
 PASS RTCPeerConnection interface: operation createOffer(RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback, optional RTCOfferOptions) 
-FAIL RTCPeerConnection interface: operation setLocalDescription(optional RTCLocalSessionDescriptionInit, VoidFunction, RTCPeerConnectionErrorCallback) assert_equals: property has wrong .length expected 0 but got 1
+PASS RTCPeerConnection interface: operation setLocalDescription(optional RTCLocalSessionDescriptionInit, VoidFunction, RTCPeerConnectionErrorCallback) 
 PASS RTCPeerConnection interface: operation createAnswer(RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback) 
 PASS RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescriptionInit, VoidFunction, RTCPeerConnectionErrorCallback) 
 FAIL RTCPeerConnection interface: operation addIceCandidate(RTCIceCandidateInit, VoidFunction, RTCPeerConnectionErrorCallback) assert_equals: property has wrong .length expected 0 but got 1

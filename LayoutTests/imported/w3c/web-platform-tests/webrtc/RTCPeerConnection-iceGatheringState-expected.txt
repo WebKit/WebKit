@@ -1,5 +1,14 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS Initial iceGatheringState should be new 
 PASS iceGatheringState should eventually become complete after setLocalDescription 
+TIMEOUT setLocalDescription(reoffer) with no new transports should not cause iceGatheringState to change Test timed out
+NOTRUN rolling back an ICE restart when gathering is complete should not result in iceGatheringState changes 
+NOTRUN setLocalDescription(reoffer) with a new transport should cause iceGatheringState to go to "checking" and then "complete" 
+NOTRUN sRD does not cause ICE gathering state changes 
+NOTRUN setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "complete" 
+NOTRUN setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "gathering" 
+NOTRUN renegotiation that closes all transports should result in ICE gathering state "new" 
 FAIL connection with one data channel should eventually have connected connection state undefined is not an object (evaluating 'pc2.sctp.transport')
 

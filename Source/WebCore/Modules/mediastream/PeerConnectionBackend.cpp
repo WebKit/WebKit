@@ -36,7 +36,7 @@
 
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSRTCSessionDescription.h"
+#include "JSRTCSessionDescriptionInit.h"
 #include "LibWebRTCCertificateGenerator.h"
 #include "Logging.h"
 #include "Page.h"
@@ -44,6 +44,7 @@
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionIceEvent.h"
 #include "RTCRtpCapabilities.h"
+#include "RTCSessionDescriptionInit.h"
 #include "RTCTrackEvent.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/UUID.h>
@@ -105,7 +106,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
         if (m_peerConnection.isClosed())
             return;
 
-        promise->resolve(RTCSessionDescription::Init { RTCSdpType::Offer, sdp });
+        promise->resolve(RTCSessionDescriptionInit { RTCSdpType::Offer, sdp });
     });
 }
 
@@ -142,7 +143,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
         if (m_peerConnection.isClosed())
             return;
 
-        promise->resolve(RTCSessionDescription::Init { RTCSdpType::Answer, sdp });
+        promise->resolve(RTCSessionDescriptionInit { RTCSdpType::Answer, sdp });
     });
 }
 
@@ -179,11 +180,11 @@ static inline bool isLocalDescriptionTypeValidForState(RTCSdpType type, RTCSigna
     return false;
 }
 
-void PeerConnectionBackend::setLocalDescription(RTCSessionDescription& sessionDescription, DOMPromiseDeferred<void>&& promise)
+void PeerConnectionBackend::setLocalDescription(const RTCSessionDescription* sessionDescription, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_peerConnection.isClosed());
 
-    if (!isLocalDescriptionTypeValidForState(sessionDescription.type(), m_peerConnection.signalingState())) {
+    if (sessionDescription && !isLocalDescriptionTypeValidForState(sessionDescription->type(), m_peerConnection.signalingState())) {
         promise.reject(InvalidStateError, "Description type incompatible with current signaling state");
         return;
     }
@@ -239,7 +240,7 @@ static inline bool isRemoteDescriptionTypeValidForState(RTCSdpType type, RTCSign
     return false;
 }
 
-void PeerConnectionBackend::setRemoteDescription(RTCSessionDescription& sessionDescription, DOMPromiseDeferred<void>&& promise)
+void PeerConnectionBackend::setRemoteDescription(const RTCSessionDescription& sessionDescription, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_peerConnection.isClosed());
 
@@ -616,15 +617,6 @@ void PeerConnectionBackend::generateCertificate(Document& document, const Certif
 ScriptExecutionContext* PeerConnectionBackend::context() const
 {
     return m_peerConnection.scriptExecutionContext();
-}
-
-RTCRtpTransceiver* PeerConnectionBackend::transceiverFromSender(const RTCRtpSender& sender)
-{
-    for (auto& transceiver : m_peerConnection.currentTransceivers()) {
-        if (&transceiver->sender() == &sender)
-            return transceiver.get();
-    }
-    return nullptr;
 }
 
 #if !RELEASE_LOG_DISABLED

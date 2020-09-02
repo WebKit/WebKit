@@ -56,13 +56,3 @@
     // FIXME 169662: add ufrag to the list
     serializer = {candidate, sdpMid, sdpMLineIndex};
 };
-
-[
-    Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection
-] dictionary RTCIceCandidateInit {
-    DOMString candidate = "";
-    DOMString? sdpMid = null;
-    unsigned short? sdpMLineIndex = null;
-    // FIXME 169662: missing ufrag
-};

@@ -22,7 +22,7 @@ PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', s
 *** Test bad candidate content with valid sdpMLineIndex
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMLineIndex: sdpMLineIndex})) rejected with OperationError: Expect line: candidate:<candidate-str>
 *** Test valid candidate with no mid and mlineindex
-PASS promise pc.addIceCandidate({candidate: validCandidate}) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+PASS promise pc.addIceCandidate({candidate: validCandidate}) rejected with TypeError: Candidate must not have both null sdpMid and sdpMLineIndex
 
 *** Test some OK input
 PASS promise pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid}) fulfilled with undefined

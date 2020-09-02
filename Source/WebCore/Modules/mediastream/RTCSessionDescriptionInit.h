@@ -33,34 +33,13 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "ExceptionOr.h"
 #include "RTCSdpType.h"
-#include "ScriptWrappable.h"
 
 namespace WebCore {
 
-struct RTCSessionDescriptionInit;
-
-class RTCSessionDescription final : public RefCounted<RTCSessionDescription>, public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(RTCSessionDescription);
-public:
-    struct Init {
-        RTCSdpType type;
-        String sdp;
-    };
-    static Ref<RTCSessionDescription> create(RTCSessionDescriptionInit&&);
-    static Ref<RTCSessionDescription> create(RTCSdpType, String&& sdp);
-
-    RTCSdpType type() const { return m_type; }
-
-    const String& sdp() const { return m_sdp; }
-    void setSdp(String&& sdp) { m_sdp = WTFMove(sdp); }
-
-private:
-    RTCSessionDescription(RTCSdpType, String&& sdp);
-
-    RTCSdpType m_type;
-    String m_sdp;
+struct RTCSessionDescriptionInit {
+    RTCSdpType type;
+    String sdp;
 };
 
 } // namespace WebCore

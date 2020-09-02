@@ -1428,6 +1428,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtxStatus.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtxStatus.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidate.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidate.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidateInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidateInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceConnectionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceConnectionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceGatheringState.cpp
@@ -1480,8 +1482,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransceiver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransceiverDirection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransceiverDirection.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSdpType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSdpType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSessionDescription.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSessionDescription.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSessionDescriptionInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSessionDescriptionInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSignalingState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSignalingState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCStatsReport.cpp

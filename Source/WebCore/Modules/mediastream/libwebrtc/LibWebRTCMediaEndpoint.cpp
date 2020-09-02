@@ -180,12 +180,17 @@ RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::remoteDescription() const
     return m_backend ? fromSessionDescription(m_backend->remote_description()) : nullptr;
 }
 
-void LibWebRTCMediaEndpoint::doSetLocalDescription(RTCSessionDescription& description)
+void LibWebRTCMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* description)
 {
     ASSERT(m_backend);
 
+    if (!description) {
+        m_backend->SetLocalDescription(&m_setLocalSessionDescriptionObserver);
+        return;
+    }
+
     webrtc::SdpParseError error;
-    std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription(webrtc::CreateSessionDescription(sessionDescriptionType(description.type()), description.sdp().utf8().data(), &error));
+    std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription(webrtc::CreateSessionDescription(sessionDescriptionType(description->type()), description->sdp().utf8().data(), &error));
 
     if (!sessionDescription) {
         m_peerConnectionBackend.setLocalDescriptionFailed(Exception { OperationError, fromStdString(error.description) });
@@ -193,7 +198,7 @@ void LibWebRTCMediaEndpoint::doSetLocalDescription(RTCSessionDescription& descri
     }
 
     // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=173783. Remove this test once fixed at LibWebRTC level.
-    if (description.type() == RTCSdpType::Answer && !m_backend->pending_remote_description()) {
+    if (description->type() == RTCSdpType::Answer && !m_backend->pending_remote_description()) {
         m_peerConnectionBackend.setLocalDescriptionFailed(Exception { InvalidStateError, "Failed to set local answer sdp: no pending remote description."_s });
         return;
     }
@@ -201,7 +206,7 @@ void LibWebRTCMediaEndpoint::doSetLocalDescription(RTCSessionDescription& descri
     m_backend->SetLocalDescription(&m_setLocalSessionDescriptionObserver, sessionDescription.release());
 }
 
-void LibWebRTCMediaEndpoint::doSetRemoteDescription(RTCSessionDescription& description)
+void LibWebRTCMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription& description)
 {
     ASSERT(m_backend);
 

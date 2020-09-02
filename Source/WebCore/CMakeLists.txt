@@ -362,6 +362,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCDegradationPreference.idl
     Modules/mediastream/RTCDtxStatus.idl
     Modules/mediastream/RTCIceCandidate.idl
+    Modules/mediastream/RTCIceCandidateInit.idl
     Modules/mediastream/RTCIceConnectionState.idl
     Modules/mediastream/RTCIceGatheringState.idl
     Modules/mediastream/RTCIceServer.idl
@@ -388,7 +389,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCRtpSynchronizationSource.idl
     Modules/mediastream/RTCRtpTransceiver.idl
     Modules/mediastream/RTCRtpTransceiverDirection.idl
+    Modules/mediastream/RTCSdpType.idl
     Modules/mediastream/RTCSessionDescription.idl
+    Modules/mediastream/RTCSessionDescriptionInit.idl
     Modules/mediastream/RTCSignalingState.idl
     Modules/mediastream/RTCStatsReport.idl
     Modules/mediastream/RTCTrackEvent.idl
@@ -1938,8 +1941,6 @@ add_dependencies(WebCoreTestSupportBindings WebCoreBindings)
 # WebCore JS Builtins
 
 set(WebCore_BUILTINS_SOURCES
-    ${WEBCORE_DIR}/Modules/mediastream/RTCPeerConnection.js
-    ${WEBCORE_DIR}/Modules/mediastream/RTCPeerConnectionInternals.js
     ${WEBCORE_DIR}/Modules/streams/ByteLengthQueuingStrategy.js
     ${WEBCORE_DIR}/Modules/streams/CountQueuingStrategy.js
     ${WEBCORE_DIR}/Modules/streams/ReadableByteStreamController.js

@@ -71,16 +71,14 @@ void LibWebRTCRtpSenderBackend::stopSource()
     m_source = nullptr;
 }
 
-void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
+bool LibWebRTCRtpSenderBackend::replaceTrack(RTCRtpSender& sender, MediaStreamTrack* track)
 {
-    if (!m_peerConnectionBackend) {
-        promise.reject(Exception { InvalidStateError, "No WebRTC backend"_s });
-        return;
+    if (!track) {
+        stopSource();
+        return true;
     }
 
-    if (!track)
-        stopSource();
-    else if (sender.track()) {
+    if (sender.track()) {
         switchOn(m_source, [&](Ref<RealtimeOutgoingAudioSource>& source) {
             ASSERT(track->source().type() == RealtimeMediaSource::Type::Audio);
             source->stop();
@@ -96,28 +94,8 @@ void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RT
         });
     }
 
-    // FIXME: Remove this postTask once this whole function is executed as part of the RTCPeerConnection operation queue.
-    context.postTask([protectedSender = makeRef(sender), promise = WTFMove(promise), track = WTFMove(track), this](ScriptExecutionContext&) mutable {
-        if (protectedSender->isStopped())
-            return;
-
-        if (!track) {
-            protectedSender->setTrackToNull();
-            promise.resolve();
-            return;
-        }
-
-        bool hasTrack = protectedSender->track();
-        protectedSender->setTrack(track.releaseNonNull());
-
-        if (hasTrack) {
-            promise.resolve();
-            return;
-        }
-
-        m_peerConnectionBackend->setSenderSourceFromTrack(*this, *protectedSender->track());
-        promise.resolve();
-    });
+    m_peerConnectionBackend->setSenderSourceFromTrack(*this, *track);
+    return true;
 }
 
 RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const

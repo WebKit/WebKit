@@ -1,3 +1,20 @@
+2020-09-02  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a C++ chain of operations in RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=216006
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt:
+        * fast/mediastream/RTCPeerConnection-media-setup-single-dialog-expected.txt:
+        * fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid-expected.txt:
+        * webrtc/libwebrtc/release-while-creating-offer-expected.txt:
+        * webrtc/remove-track-expected.txt:
+        * webrtc/remove-track.html:
+        Make sure we are in a stable state before going to removeTrack actual test.
+        Also make sure to call setRemoteDescription for second test.
+
 2020-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Allow direct creation of replacement codec

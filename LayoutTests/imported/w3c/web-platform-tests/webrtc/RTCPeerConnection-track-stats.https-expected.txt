@@ -7,10 +7,10 @@ FAIL addTrack(): Media stream stats references track stats assert_true: Has stat
 FAIL Media stream stats references track stats assert_true: Has stats for track and stream expected true got false
 PASS O/A exchange yields outbound RTP stream stats for sending track 
 PASS O/A exchange yields inbound RTP stream stats for receiving track 
-FAIL replaceTrack() before offer: new track attachment stats present assert_true: Has stats for replaced track expected true got false
-FAIL replaceTrack() after offer, before answer: new track attachment stats present assert_true: Has stats for replaced track expected true got false
-FAIL replaceTrack() after answer: new track attachment stats present assert_true: Has stats for replaced track expected true got false
-FAIL replaceTrack(): original track attachment stats present after replacing assert_true: expected true got undefined
+PASS replaceTrack() before offer: new track attachment stats present 
+PASS replaceTrack() after offer, before answer: new track attachment stats present 
+PASS replaceTrack() after answer: new track attachment stats present 
+FAIL replaceTrack(): original track attachment stats present after replacing assert_true: Has stats for original track expected true got false
 PASS RTCRtpSender.getStats() contains only outbound-rtp and related stats 
 PASS RTCRtpReceiver.getStats() contains only inbound-rtp and related stats 
 PASS RTCPeerConnection.getStats(sendingTrack) is the same as RTCRtpSender.getStats() 

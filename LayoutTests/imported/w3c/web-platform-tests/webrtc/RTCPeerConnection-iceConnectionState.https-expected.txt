@@ -3,5 +3,12 @@ PASS Initial iceConnectionState should be new
 PASS Closing the connection should set iceConnectionState to closed 
 PASS connection with one data channel should eventually have connected or completed connection state 
 FAIL connection with one data channel should eventually have connected connection state undefined is not an object (evaluating 'pc1.sctp.transport')
+PASS connection with audio track should eventually have connected connection state 
+PASS connection with audio and video tracks should eventually have connected connection state 
 PASS ICE can connect in a recvonly usecase 
+FAIL iceConnectionState changes at the right time, with bundle policy balanced promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller_transceiver1.receiver.transport.iceTransport')"
+FAIL iceConnectionState changes at the right time, with bundle policy max-bundle promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller_transceiver1.receiver.transport.iceTransport')"
+FAIL iceConnectionState changes at the right time, with bundle policy max-compat promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller_transceiver1.receiver.transport.iceTransport')"
+PASS Responder ICE connection state behaves as expected 
+PASS Closing a PeerConnection should not fire iceconnectionstatechange event 
 

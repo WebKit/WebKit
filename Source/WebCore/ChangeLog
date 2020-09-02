@@ -1,5 +1,87 @@
 2020-09-02  Youenn Fablet  <youenn@apple.com>
 
+        Introduce a C++ chain of operations in RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=216006
+
+        Reviewed by Eric Carlson.
+
+        Remove RTCPeerConnection JS built-ins and introduce a C++ version.
+        This allows to make replaceTrack part of the chain of operation.
+        Also update setLocalDescription to take no parameters.
+
+        Covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::createAnswerSucceeded):
+        (WebCore::PeerConnectionBackend::setLocalDescription):
+        (WebCore::PeerConnectionBackend::setRemoteDescription):
+        (WebCore::PeerConnectionBackend::transceiverFromSender): Deleted.
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        (WebCore::RTCIceCandidate::create):
+        * Modules/mediastream/RTCIceCandidate.h:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::removeTrack):
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        (WebCore::RTCPeerConnection::setLocalDescription):
+        (WebCore::RTCPeerConnection::setRemoteDescription):
+        (WebCore::RTCPeerConnection::addIceCandidate):
+        (WebCore::RTCPeerConnection::getStats):
+        (WebCore::RTCPeerConnection::doClose):
+        (WebCore::RTCPeerConnection::scheduleNegotiationNeededEvent):
+        (WebCore::RTCPeerConnection::chainOperation):
+        (WebCore::RTCPeerConnection::initializeWith): Deleted.
+        (WebCore::RTCPeerConnection::queuedCreateOffer): Deleted.
+        (WebCore::RTCPeerConnection::queuedCreateAnswer): Deleted.
+        (WebCore::RTCPeerConnection::queuedSetLocalDescription): Deleted.
+        (WebCore::RTCPeerConnection::queuedSetRemoteDescription): Deleted.
+        (WebCore::RTCPeerConnection::queuedAddIceCandidate): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCPeerConnection.js: Removed.
+        * Modules/mediastream/RTCPeerConnectionInternals.js: Removed.
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::create):
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        (WebCore::RTCRtpSender::replaceTrack):
+        (WebCore::RTCRtpSender::isCreatedBy const):
+        (WebCore::RTCRtpSender::dtmf):
+        (WebCore::RTCRtpSender::currentTransceiverDirection const):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        (WebCore::RTCSessionDescription::create):
+        * Modules/mediastream/RTCSessionDescription.h:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::doSetLocalDescription):
+        (WebCore::LibWebRTCMediaEndpoint::doSetRemoteDescription):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::doSetLocalDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::doSetRemoteDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTransceiverFromTrackOrKind):
+        (WebCore::LibWebRTCPeerConnectionBackend::newRemoteTransceiver):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::replaceTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2020-09-02  Youenn Fablet  <youenn@apple.com>
+
         Introduce a ThreadableWebSocketChannel identifier
         https://bugs.webkit.org/show_bug.cgi?id=216034
 

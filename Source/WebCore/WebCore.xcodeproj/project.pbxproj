@@ -1948,8 +1948,6 @@
 		5E2C43721BCF0D750001E2BD /* JSRTCRtpTransceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C436E1BCF0D690001E2BD /* JSRTCRtpTransceiver.h */; };
 		5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */; };
 		5E2C43741BCF0D750001E2BE /* JSRTCRtpParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BE /* JSRTCRtpParameters.h */; };
-		5E2C437B1BCF9A570001E2BC /* RTCPeerConnectionBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5E5E2B141CFC3E75000C0D85 /* RTCRtpTransceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5EA725D31ACABD4700EAD17B /* MediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA725CE1ACABCD900EAD17B /* MediaDevices.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA725CB1ACABCB500EAD17B /* NavigatorMediaDevices.h */; };
@@ -7421,6 +7419,11 @@
 		410A8EF924F8F47B004F9070 /* TextEncoderStreamEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextEncoderStreamEncoder.h; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
 		410E445F234373AD000173D4 /* LibWebRTCSocketIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCSocketIdentifier.h; path = libwebrtc/LibWebRTCSocketIdentifier.h; sourceTree = "<group>"; };
+		410F565524FCF70500A2E50C /* RTCSessionDescriptionInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCSessionDescriptionInit.idl; sourceTree = "<group>"; };
+		410F565724FCF7C700A2E50C /* RTCIceCandidateInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceCandidateInit.idl; sourceTree = "<group>"; };
+		410F565824FCF85400A2E50C /* RTCSdpType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCSdpType.idl; sourceTree = "<group>"; };
+		410F565924FCF95700A2E50C /* RTCIceCandidateInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceCandidateInit.h; sourceTree = "<group>"; };
+		410F565A24FCF9E600A2E50C /* RTCSessionDescriptionInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCSessionDescriptionInit.h; sourceTree = "<group>"; };
 		41100C7E23F73982001BC33B /* WebSocketChannelInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannelInspector.h; sourceTree = "<group>"; };
 		41100C7F23F73A56001BC33B /* WebSocketChannelInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketChannelInspector.cpp; sourceTree = "<group>"; };
 		41103AA71E39790A00769F03 /* RealtimeOutgoingAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeOutgoingAudioSource.cpp; sourceTree = "<group>"; };
@@ -9312,8 +9315,6 @@
 		5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformSourceLibxslt.cpp; sourceTree = "<group>"; };
 		5DFEBAB618592B6D00C75BEB /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
 		5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeerConnectionBackend.h; sourceTree = "<group>"; };
-		5E2C43541BCEE30D0001E2BC /* RTCPeerConnection.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = RTCPeerConnection.js; sourceTree = "<group>"; };
-		5E2C43551BCEE30D0001E2BC /* RTCPeerConnectionInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = RTCPeerConnectionInternals.js; sourceTree = "<group>"; };
 		5E2C43561BCEE30D0001E2BC /* RTCRtpReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCRtpReceiver.cpp; sourceTree = "<group>"; };
 		5E2C43571BCEE30D0001E2BC /* RTCRtpReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpReceiver.h; sourceTree = "<group>"; };
 		5E2C43581BCEE30D0001E2BC /* RTCRtpReceiver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpReceiver.idl; sourceTree = "<group>"; };
@@ -9333,10 +9334,6 @@
 		5E2C436F1BCF0D690001E2BE /* JSRTCRtpParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCRtpParameters.cpp; sourceTree = "<group>"; };
 		5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCRtpSender.h; sourceTree = "<group>"; };
 		5E2C43701BCF0D690001E2BE /* JSRTCRtpParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCRtpParameters.h; sourceTree = "<group>"; };
-		5E2C43751BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RTCPeerConnectionBuiltins.cpp; path = DerivedSources/WebCore/RTCPeerConnectionBuiltins.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
-		5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RTCPeerConnectionBuiltins.h; path = DerivedSources/WebCore/RTCPeerConnectionBuiltins.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		5E2C43781BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RTCPeerConnectionInternalsBuiltins.cpp; path = DerivedSources/WebCore/RTCPeerConnectionInternalsBuiltins.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
-		5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RTCPeerConnectionInternalsBuiltins.h; path = DerivedSources/WebCore/RTCPeerConnectionInternalsBuiltins.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCRtpTransceiver.cpp; sourceTree = "<group>"; };
 		5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpTransceiver.h; sourceTree = "<group>"; };
 		5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpTransceiver.idl; sourceTree = "<group>"; };
@@ -16739,6 +16736,8 @@
 				07221B7117CEC32700848E51 /* RTCIceCandidate.cpp */,
 				07221B7217CEC32700848E51 /* RTCIceCandidate.h */,
 				07221B7317CEC32700848E51 /* RTCIceCandidate.idl */,
+				410F565924FCF95700A2E50C /* RTCIceCandidateInit.h */,
+				410F565724FCF7C700A2E50C /* RTCIceCandidateInit.idl */,
 				316DCB3B1E790E2C001B5F87 /* RTCIceConnectionState.idl */,
 				316DCB351E790E1B001B5F87 /* RTCIceGatheringState.idl */,
 				07AB996718DA3C010018771E /* RTCIceServer.h */,
@@ -16754,11 +16753,9 @@
 				07221B7717CEC32700848E51 /* RTCPeerConnection.cpp */,
 				07221B7817CEC32700848E51 /* RTCPeerConnection.h */,
 				07221B7917CEC32700848E51 /* RTCPeerConnection.idl */,
-				5E2C43541BCEE30D0001E2BC /* RTCPeerConnection.js */,
 				07221B7417CEC32700848E51 /* RTCPeerConnectionIceEvent.cpp */,
 				07221B7517CEC32700848E51 /* RTCPeerConnectionIceEvent.h */,
 				07221B7617CEC32700848E51 /* RTCPeerConnectionIceEvent.idl */,
-				5E2C43551BCEE30D0001E2BC /* RTCPeerConnectionInternals.js */,
 				41A48A9C1E83129100D2AC2D /* RTCPeerConnectionState.idl */,
 				41FCB75C214866FE0038ADC6 /* RTCPriorityType.h */,
 				41E593FD214865A900D3CB61 /* RTCPriorityType.idl */,
@@ -16799,9 +16796,12 @@
 				5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */,
 				4186BD46214072B60001826F /* RTCRtpTransceiverBackend.h */,
 				316DCB171E78C330001B5F87 /* RTCRtpTransceiverDirection.idl */,
+				410F565824FCF85400A2E50C /* RTCSdpType.idl */,
 				07221B7A17CEC32700848E51 /* RTCSessionDescription.cpp */,
 				07221B7B17CEC32700848E51 /* RTCSessionDescription.h */,
 				07221B7C17CEC32700848E51 /* RTCSessionDescription.idl */,
+				410F565A24FCF9E600A2E50C /* RTCSessionDescriptionInit.h */,
+				410F565524FCF70500A2E50C /* RTCSessionDescriptionInit.idl */,
 				316DCB411E790E3C001B5F87 /* RTCSignalingState.idl */,
 				07221B8417CEC32700848E51 /* RTCStatsReport.h */,
 				07221B8517CEC32700848E51 /* RTCStatsReport.idl */,
@@ -21095,10 +21095,6 @@
 				9908B0FF1BCAD07D00ED0F65 /* ReadableStreamDefaultReaderBuiltins.h */,
 				9908B0FD1BCAD07D00ED0F65 /* ReadableStreamInternalsBuiltins.cpp */,
 				9B03D8061BB3110D00B764D9 /* ReadableStreamInternalsBuiltins.h */,
-				5E2C43751BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.cpp */,
-				5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */,
-				5E2C43781BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.cpp */,
-				5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */,
 				43B85ED218CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.cpp */,
 				43B85ED318CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.gperf */,
 				26AA0F9D18D2A18B00419381 /* SelectorPseudoElementTypeMap.cpp */,
@@ -33478,10 +33474,8 @@
 				073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */,
 				073794DE19EE2C5200E5A045 /* RTCOfferAnswerOptions.h in Headers */,
 				078E092517D14D1C00420AA1 /* RTCPeerConnection.h in Headers */,
-				5E2C437B1BCF9A570001E2BC /* RTCPeerConnectionBuiltins.h in Headers */,
 				078E094217D16E1C00420AA1 /* RTCPeerConnectionHandlerClient.h in Headers */,
 				078E092417D14D1C00420AA1 /* RTCPeerConnectionIceEvent.h in Headers */,
-				5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */,
 				412DE4B8219285C00075F3A7 /* RTCRtpCapabilities.h in Headers */,
 				5E2C43631BCEE32B0001E2BC /* RTCRtpReceiver.h in Headers */,
 				5E2C43611BCEE3230001E2BC /* RTCRtpSender.h in Headers */,

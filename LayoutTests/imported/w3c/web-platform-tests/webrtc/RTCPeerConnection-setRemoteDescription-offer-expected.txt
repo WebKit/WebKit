@@ -1,5 +1,5 @@
 
-Harness Error (FAIL), message = Unhandled rejection: Description type incompatible with current signaling state
+Harness Error (TIMEOUT), message = null
 
 PASS setRemoteDescription with valid offer should succeed 
 PASS setRemoteDescription multiple times should succeed 

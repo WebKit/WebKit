@@ -37,16 +37,12 @@
 
 namespace WebCore {
 
+struct RTCIceCandidateInit;
+
 class RTCIceCandidate final : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(RTCIceCandidate);
 public:
-    struct Init {
-        String candidate;
-        String sdpMid;
-        Optional<unsigned short> sdpMLineIndex;
-    };
-
-    static ExceptionOr<Ref<RTCIceCandidate>> create(const Init&);
+    static ExceptionOr<Ref<RTCIceCandidate>> create(const RTCIceCandidateInit&);
     static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex);
 
     const String& candidate() const { return m_candidate; }

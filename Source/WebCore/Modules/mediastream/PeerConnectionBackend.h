@@ -68,7 +68,7 @@ struct RTCRtpTransceiverInit;
 template<typename IDLType> class DOMPromiseDeferred;
 
 namespace PeerConnection {
-using SessionDescriptionPromise = DOMPromiseDeferred<IDLDictionary<RTCSessionDescription::Init>>;
+using SessionDescriptionPromise = DOMPromiseDeferred<IDLDictionary<RTCSessionDescriptionInit>>;
 using StatsPromise = DOMPromiseDeferred<IDLInterface<RTCStatsReport>>;
 }
 
@@ -91,8 +91,8 @@ public:
 
     void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
-    void setLocalDescription(RTCSessionDescription&, DOMPromiseDeferred<void>&&);
-    void setRemoteDescription(RTCSessionDescription&, DOMPromiseDeferred<void>&&);
+    void setLocalDescription(const RTCSessionDescription*, DOMPromiseDeferred<void>&&);
+    void setRemoteDescription(const RTCSessionDescription&, DOMPromiseDeferred<void>&&);
     void addIceCandidate(RTCIceCandidate*, DOMPromiseDeferred<void>&&);
 
     virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
@@ -176,7 +176,6 @@ public:
     virtual void collectTransceivers() { };
 
     ScriptExecutionContext* context() const;
-    RTCRtpTransceiver* transceiverFromSender(const RTCRtpSender&);
 
     virtual void suspend() { }
     virtual void resume() { }
@@ -215,8 +214,8 @@ protected:
 private:
     virtual void doCreateOffer(RTCOfferOptions&&) = 0;
     virtual void doCreateAnswer(RTCAnswerOptions&&) = 0;
-    virtual void doSetLocalDescription(RTCSessionDescription&) = 0;
-    virtual void doSetRemoteDescription(RTCSessionDescription&) = 0;
+    virtual void doSetLocalDescription(const RTCSessionDescription*) = 0;
+    virtual void doSetRemoteDescription(const RTCSessionDescription&) = 0;
     virtual void doAddIceCandidate(RTCIceCandidate&) = 0;
     virtual void endOfIceCandidates(DOMPromiseDeferred<void>&&);
     virtual void doStop() = 0;

@@ -26,11 +26,11 @@ PASS checkAddTrackExistingTransceiverThenRemove
 FAIL checkRemoveTrackNegotiation promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 FAIL checkMute assert_true: expected true got false
 FAIL checkStop assert_equals: expected "[{currentDirection:null,direction:\"sendrecv\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:{kind:\"audio\"}},stopped:true}]" but got "[{currentDirection:null,direction:\"sendrecv\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:null},stopped:true}]"
-TIMEOUT checkStopAfterCreateOffer Test timed out
-NOTRUN checkStopAfterSetLocalOffer 
-NOTRUN checkStopAfterSetRemoteOffer 
-NOTRUN checkStopAfterCreateAnswer 
-NOTRUN checkStopAfterSetLocalAnswer 
+FAIL checkStopAfterCreateOffer assert_equals: expected "[{mid:null,stopped:true}]" but got "[{mid:\"0\",stopped:true}]"
+FAIL checkStopAfterSetLocalOffer assert_equals: expected "[{mid:null,stopped:true}]" but got "[{mid:\"0\",stopped:true}]"
+FAIL checkStopAfterSetRemoteOffer assert_equals: expected "[]" but got "[{isTrusted:true}]"
+FAIL checkStopAfterCreateAnswer assert_equals: expected "[{mid:null,stopped:true}]" but got "[{mid:\"0\",stopped:true}]"
+TIMEOUT checkStopAfterSetLocalAnswer Test timed out
 NOTRUN checkStopAfterClose 
 NOTRUN checkLocalRollback 
 NOTRUN checkRollbackAndSetRemoteOfferWithDifferentType 
