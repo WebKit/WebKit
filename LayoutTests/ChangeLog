@@ -1,5 +1,14 @@
 2020-09-02  Karl Rackler  <rackler@apple.com>
 
+        rdar://67281310 ([ Rosetta Layout Tests ] REGRESSION (r265639): [ Big Sur ] 1 canvas layout test is a constant failure)
+        Removing test expectations that now pass on Big Sur Rosetta 20A2364
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectationsRosetta:
+
+2020-09-02  Karl Rackler  <rackler@apple.com>
+
         rdar://66802945 (REGRESSION (20A2323e-20A234b): [ Layout Test] 1 canvas layout tests are a constant failure)
         Removing test expectations that now pass on Big Sur 20A2364
 
