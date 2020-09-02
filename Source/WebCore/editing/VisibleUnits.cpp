@@ -375,9 +375,8 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         if (previousPosition && adjacentCharacterPosition == previousPosition.value())
             return VisiblePosition();
     
-        InlineBox* box;
-        int offsetInBox;
-        adjacentCharacterPosition.deepEquivalent().getInlineBoxAndOffset(UPSTREAM, box, offsetInBox);
+        // FIXME: Why force the use of Upstream affinity here instead of VisiblePosition::inlineBoxAndOffset, which will get affinity from adjacentCharacterPosition?
+        auto [box, offsetInBox] = adjacentCharacterPosition.deepEquivalent().inlineBoxAndOffset(Upstream);
     
         if (!box)
             break;
@@ -670,7 +669,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
         }
     }
 
-    return VisiblePosition(pos, VP_UPSTREAM_IF_POSSIBLE);
+    return VisiblePosition(pos, Upstream);
 }
 
 // ---------
@@ -897,7 +896,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     } else
         pos = positionAfterNode(endNode);
     
-    return VisiblePosition(pos, VP_UPSTREAM_IF_POSSIBLE);
+    return VisiblePosition(pos, Upstream);
 }
 
 static bool inSameLogicalLine(const VisiblePosition& a, const VisiblePosition& b)
@@ -975,7 +974,7 @@ bool isEndOfLine(const VisiblePosition& p)
     return p.isNotNull() && p == endOfLine(p);
 }
 
-bool isLogicalEndOfLine(const VisiblePosition &p)
+bool isLogicalEndOfLine(const VisiblePosition& p)
 {
     return p.isNotNull() && p == logicalEndOfLine(p);
 }
@@ -1013,10 +1012,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
         return VisiblePosition();
 
     RootInlineBox* root = nullptr;
-    InlineBox* box;
-    int ignoredCaretOffset;
-    visiblePosition.getInlineBoxAndOffset(box, ignoredCaretOffset);
-    if (box) {
+    if (auto box = visiblePosition.inlineBoxAndOffset().box) {
         root = box->root().prevRootBox();
         // We want to skip zero height boxes.
         // This could happen in case it is a TrailingFloatsRootInlineBox.
@@ -1057,21 +1053,16 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
 {
     Position p = visiblePosition.deepEquivalent();
     Node* node = p.deprecatedNode();
-
     if (!node)
         return VisiblePosition();
     
     node->document().updateLayoutIgnorePendingStylesheets();
 
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
+    if (!node->renderer())
         return VisiblePosition();
 
     RootInlineBox* root = nullptr;
-    InlineBox* box;
-    int ignoredCaretOffset;
-    visiblePosition.getInlineBoxAndOffset(box, ignoredCaretOffset);
-    if (box) {
+    if (auto box = visiblePosition.inlineBoxAndOffset().box) {
         root = box->root().nextRootBox();
         // We want to skip zero height boxes.
         // This could happen in case it is a TrailingFloatsRootInlineBox.
@@ -1569,9 +1560,8 @@ bool atBoundaryOfGranularity(const VisiblePosition& vp, TextGranularity granular
         break;
 
     case TextGranularity::LineGranularity:
-        // Affinity has to be set to get right boundary of the line.
         boundary = vp;
-        boundary.setAffinity(useDownstream ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
+        boundary.setAffinity(useDownstream ? Upstream : Downstream);
         boundary = useDownstream ? endOfLine(boundary) : startOfLine(boundary);
         break;
 
@@ -1765,7 +1755,7 @@ static VisiblePosition nextLineBoundaryInDirection(const VisiblePosition& vp, Se
         result.setAffinity(DOWNSTREAM);
         result = isEndOfLine(result) ? startOfLine(nextLinePosition(result, result.lineDirectionPointForBlockDirectionNavigation())) : endOfLine(result);
     } else {
-        result.setAffinity(VP_UPSTREAM_IF_POSSIBLE);
+        result.setAffinity(Upstream);
         result = isStartOfLine(result) ? endOfLine(previousLinePosition(result, result.lineDirectionPointForBlockDirectionNavigation())) : startOfLine(result);
     }
 

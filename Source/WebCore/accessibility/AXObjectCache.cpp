@@ -2874,27 +2874,22 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
         return IntRect();
     }
     
-    Node* node = characterOffset.node;
-    
-    renderer = node->renderer();
+    renderer = characterOffset.node->renderer();
     if (!renderer)
         return LayoutRect();
     
-    InlineBox* inlineBox = nullptr;
-    int caretOffset;
     // Use a collapsed range to get the position.
     auto range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
     if (!range)
         return IntRect();
-    
-    createLegacyEditingPosition(range->start).getInlineBoxAndOffset(DOWNSTREAM, inlineBox, caretOffset);
-    
+
+    auto [inlineBox, caretOffset] = createLegacyEditingPosition(range->start).inlineBoxAndOffset(Downstream);
     if (inlineBox)
         renderer = &inlineBox->renderer();
-    
+
     if (is<RenderLineBreak>(renderer) && downcast<RenderLineBreak>(renderer)->inlineBoxWrapper() != inlineBox)
         return IntRect();
-    
+
     return renderer->localCaretRect(inlineBox, caretOffset);
 }
 

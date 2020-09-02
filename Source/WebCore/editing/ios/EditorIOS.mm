@@ -363,17 +363,13 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
     }
 
     // set the selection to the end
-    VisibleSelection selection;
-
-    Position pos = createLegacyEditingPosition(&element, element.countChildNodes());
-
-    VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
+    VisiblePosition visiblePos(createLegacyEditingPosition(&element, element.countChildNodes()));
     if (visiblePos.isNull())
         return;
 
+    VisibleSelection selection;
     selection.setBase(visiblePos);
     selection.setExtent(visiblePos);
-
     m_document.selection().setSelection(selection);
 
     client()->respondToChangedContents();

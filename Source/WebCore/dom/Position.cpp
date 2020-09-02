@@ -1067,11 +1067,8 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (renderer == positionRenderer && thisRenderedOffset == positionRenderedOffset)
         return false;
 
-    int ignoredCaretOffset;
-    InlineBox* b1;
-    getInlineBoxAndOffset(DOWNSTREAM, b1, ignoredCaretOffset);
-    InlineBox* b2;
-    position.getInlineBoxAndOffset(DOWNSTREAM, b2, ignoredCaretOffset);
+    auto b1 = inlineBoxAndOffset(Downstream).box;
+    auto b2 = position.inlineBoxAndOffset(Downstream).box;
 
     LOG(Editing, "renderer:               %p [%p]\n", renderer, b1);
     LOG(Editing, "thisRenderedOffset:         %d\n", thisRenderedOffset);
@@ -1081,13 +1078,11 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     LOG(Editing, "pos node min/max:       %d:%d\n", caretMinOffset(*position.deprecatedNode()), caretMaxOffset(*position.deprecatedNode()));
     LOG(Editing, "----------------------------------------------------------------------\n");
 
-    if (!b1 || !b2) {
+    if (!b1 || !b2)
         return false;
-    }
 
-    if (&b1->root() != &b2->root()) {
+    if (&b1->root() != &b2->root())
         return true;
-    }
 
     if (nextRenderedEditable(deprecatedNode()) == position.deprecatedNode()
         && thisRenderedOffset == static_cast<unsigned>(caretMaxOffset(*deprecatedNode())) && !positionRenderedOffset) {
@@ -1141,9 +1136,9 @@ Position Position::trailingWhitespacePosition(EAffinity, bool considerNonCollaps
     return { };
 }
 
-void Position::getInlineBoxAndOffset(EAffinity affinity, InlineBox*& inlineBox, int& caretOffset) const
+InlineBoxAndOffset Position::inlineBoxAndOffset(EAffinity affinity) const
 {
-    getInlineBoxAndOffset(affinity, primaryDirection(), inlineBox, caretOffset);
+    return inlineBoxAndOffset(affinity, primaryDirection());
 }
 
 static bool isNonTextLeafChild(RenderObject& object)
@@ -1201,13 +1196,19 @@ static Position upstreamIgnoringEditingBoundaries(Position position)
     return position;
 }
 
-void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
+InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection primaryDirection) const
 {
-    caretOffset = deprecatedEditingOffset();
-    RenderObject* renderer = deprecatedNode()->renderer();
+    auto caretOffset = deprecatedEditingOffset();
+
+    auto node = deprecatedNode();
+    if (!node)
+        return { nullptr, caretOffset };
+    auto renderer = node->renderer();
     if (!renderer)
-        return;
-    
+        return { nullptr, caretOffset };
+
+    InlineBox* inlineBox = nullptr;
+
     if (renderer->isBR()) {
         auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
         lineBreakRenderer.ensureLineBoxes();
@@ -1227,8 +1228,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
                 continue;
 
             if (static_cast<unsigned>(caretOffset) > caretMinOffset && static_cast<unsigned>(caretOffset) < caretMaxOffset) {
-                inlineBox = box;
-                return;
+                return { box, caretOffset };
             }
 
             if (((static_cast<unsigned>(caretOffset) == caretMaxOffset) ^ (affinity == DOWNSTREAM))
@@ -1245,7 +1245,6 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
         }
         inlineBox = box ? box : candidate;
     } else {
-        inlineBox = nullptr;
         if (canHaveChildrenForEditing(*deprecatedNode()) && is<RenderBlockFlow>(*renderer) && hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderBlockFlow>(*renderer))) {
             // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
             // an editable block but surrounded by non-editable positions. It acts to negate the logic at the beginning
@@ -1253,22 +1252,22 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             Position equivalent = downstreamIgnoringEditingBoundaries(*this);
             if (equivalent == *this) {
                 equivalent = upstreamIgnoringEditingBoundaries(*this);
+                // FIXME: Can returning nullptr really be correct here?
                 if (equivalent == *this || downstreamIgnoringEditingBoundaries(equivalent) == *this)
-                    return;
+                    return { nullptr, caretOffset };
             }
 
-            equivalent.getInlineBoxAndOffset(UPSTREAM, primaryDirection, inlineBox, caretOffset);
-            return;
+            return equivalent.inlineBoxAndOffset(Upstream, primaryDirection);
         }
         if (is<RenderBox>(*renderer)) {
             inlineBox = downcast<RenderBox>(*renderer).inlineBoxWrapper();
             if (!inlineBox || (caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset()))
-                return;
+                return { inlineBox, caretOffset };
         }
     }
 
     if (!inlineBox)
-        return;
+        return { nullptr, caretOffset };
 
     unsigned char level = inlineBox->bidiLevel();
 
@@ -1276,7 +1275,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
         if (caretOffset == inlineBox->caretRightmostOffset()) {
             InlineBox* nextBox = inlineBox->nextLeafOnLine();
             if (!nextBox || nextBox->bidiLevel() >= level)
-                return;
+                return { inlineBox, caretOffset };
 
             level = nextBox->bidiLevel();
             InlineBox* prevBox = inlineBox;
@@ -1285,7 +1284,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             } while (prevBox && prevBox->bidiLevel() > level);
 
             if (prevBox && prevBox->bidiLevel() == level)   // For example, abc FED 123 ^ CBA
-                return;
+                return { inlineBox, caretOffset };
 
             // For example, abc 123 ^ CBA
             while (InlineBox* nextBox = inlineBox->nextLeafOnLine()) {
@@ -1297,7 +1296,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
         } else {
             InlineBox* prevBox = inlineBox->previousLeafOnLine();
             if (!prevBox || prevBox->bidiLevel() >= level)
-                return;
+                return { inlineBox, caretOffset };
 
             level = prevBox->bidiLevel();
             InlineBox* nextBox = inlineBox;
@@ -1306,7 +1305,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             } while (nextBox && nextBox->bidiLevel() > level);
 
             if (nextBox && nextBox->bidiLevel() == level)
-                return;
+                return { inlineBox, caretOffset };
 
             while (InlineBox* prevBox = inlineBox->previousLeafOnLine()) {
                 if (prevBox->bidiLevel() < level)
@@ -1315,7 +1314,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             }
             caretOffset = inlineBox->caretLeftmostOffset();
         }
-        return;
+        return { inlineBox, caretOffset };
     }
 
     if (caretOffset == inlineBox->caretLeftmostOffset()) {
@@ -1357,6 +1356,8 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             caretOffset = inlineBox->caretRightmostOffset();
         }
     }
+
+    return { inlineBox, caretOffset };
 }
 
 TextDirection Position::primaryDirection() const

@@ -1515,14 +1515,14 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
         result = frame.visiblePositionForPoint(pointInDocument).deepEquivalent();
     
     if (baseIsStart) {
-        if (comparePositions(result, selectionStart) <= 0)
+        if (result <= selectionStart)
             result = selectionStart.next();
         else if (&selectionStart.deepEquivalent().anchorNode()->treeScope() != &hitTest.targetNode()->treeScope())
             result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), selectionStart.deepEquivalent().containerNode());
 
         range = makeSimpleRange(selectionStart, result);
     } else {
-        if (comparePositions(selectionEnd, result) <= 0)
+        if (selectionEnd <= result)
             result = selectionEnd.previous();
         else if (&hitTest.targetNode()->treeScope() != &selectionEnd.deepEquivalent().anchorNode()->treeScope())
             result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), selectionEnd.deepEquivalent().containerNode());

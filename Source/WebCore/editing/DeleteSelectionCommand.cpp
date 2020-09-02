@@ -137,11 +137,11 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
             break;
 
         // If we're going to expand to include the startSpecialContainer, it must be fully selected.
-        if (startSpecialContainer && !endSpecialContainer && comparePositions(positionInParentAfterNode(startSpecialContainer), end) > -1)
+        if (startSpecialContainer && !endSpecialContainer && positionInParentAfterNode(startSpecialContainer) >= end)
             break;
 
         // If we're going to expand to include the endSpecialContainer, it must be fully selected.
-        if (endSpecialContainer && !startSpecialContainer && comparePositions(start, positionInParentBeforeNode(endSpecialContainer)) > -1)
+        if (endSpecialContainer && !startSpecialContainer && start >= positionInParentBeforeNode(endSpecialContainer))
             break;
 
         if (startSpecialContainer && startSpecialContainer->isDescendantOf(endSpecialContainer))
@@ -200,7 +200,7 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
             position = VisiblePosition(m_downstreamEnd).next().deepEquivalent();
         m_upstreamEnd = position.upstream();
         m_downstreamEnd = position.downstream();
-        m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
+        m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VisiblePosition::defaultAffinity);
         setStartingSelectionOnSmartDelete(m_upstreamStart, m_downstreamEnd);
     }
     if (startAndEndInSameUnsplittableElement && selectionEndIsEndOfContent && previousPositionIsBlankParagraph && selectionEndsInParagraphSeperator) {
@@ -275,20 +275,20 @@ bool DeleteSelectionCommand::initializePositionData()
 
     // Handle leading and trailing whitespace, as well as smart delete adjustments to the selection
     m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.affinity());
-    m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
+    m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VisiblePosition::defaultAffinity);
 
     if (m_smartDelete) {
     
         // skip smart delete if the selection to delete already starts or ends with whitespace
         Position pos = VisiblePosition(m_upstreamStart, m_selectionToDelete.affinity()).deepEquivalent();
-        bool skipSmartDelete = pos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNotNull();
+        bool skipSmartDelete = pos.trailingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull();
         if (!skipSmartDelete)
-            skipSmartDelete = m_downstreamEnd.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNotNull();
+            skipSmartDelete = m_downstreamEnd.leadingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull();
 
         // extend selection upstream if there is whitespace there
         bool hasLeadingWhitespaceBeforeAdjustment = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.affinity(), true).isNotNull();
         if (!skipSmartDelete && hasLeadingWhitespaceBeforeAdjustment) {
-            VisiblePosition visiblePos = VisiblePosition(m_upstreamStart, VP_DEFAULT_AFFINITY).previous();
+            auto visiblePos = VisiblePosition(m_upstreamStart).previous();
             pos = visiblePos.deepEquivalent();
             // Expand out one character upstream for smart delete and recalculate
             // positions based on this change.
@@ -301,13 +301,13 @@ bool DeleteSelectionCommand::initializePositionData()
         
         // trailing whitespace is only considered for smart delete if there is no leading
         // whitespace, as in the case where you double-click the first word of a paragraph.
-        if (!skipSmartDelete && !hasLeadingWhitespaceBeforeAdjustment && m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNotNull()) {
+        if (!skipSmartDelete && !hasLeadingWhitespaceBeforeAdjustment && m_downstreamEnd.trailingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull()) {
             // Expand out one character downstream for smart delete and recalculate
             // positions based on this change.
-            pos = VisiblePosition(m_downstreamEnd, VP_DEFAULT_AFFINITY).next().deepEquivalent();
+            pos = VisiblePosition(m_downstreamEnd).next().deepEquivalent();
             m_upstreamEnd = pos.upstream();
             m_downstreamEnd = pos.downstream();
-            m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
+            m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VisiblePosition::defaultAffinity);
 
             setStartingSelectionOnSmartDelete(m_downstreamStart, m_downstreamEnd);
         }
@@ -600,7 +600,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         
         // handle deleting all nodes that are completely selected
         while (node && node != m_downstreamEnd.deprecatedNode()) {
-            if (comparePositions(firstPositionInOrBeforeNode(node.get()), m_downstreamEnd) >= 0) {
+            if (firstPositionInOrBeforeNode(node.get()) >= m_downstreamEnd) {
                 // NodeTraversal::nextSkippingChildren just blew past the end position, so stop deleting
                 node = nullptr;
             } else if (!m_downstreamEnd.deprecatedNode()->isDescendantOf(*node)) {
@@ -691,17 +691,12 @@ void DeleteSelectionCommand::mergeParagraphs()
     ASSERT(!m_pruneStartBlockIfNecessary);
 
     // FIXME: Deletion should adjust selection endpoints as it removes nodes so that we never get into this state (4099839).
-    if (m_downstreamEnd.isNull() || m_upstreamStart.isNull() || !m_downstreamEnd.anchorNode()->isConnected() || !m_upstreamStart.anchorNode()->isConnected())
-         return;
+    if (m_downstreamEnd.isNull() || m_upstreamStart.isNull() || m_downstreamEnd.isOrphan() || m_upstreamStart.isOrphan())
+        return;
 
-    // FIXME: The deletion algorithm shouldn't let this happen.
-    if (comparePositions(m_upstreamStart, m_downstreamEnd) > 0)
+    if (m_upstreamStart >= m_downstreamEnd)
         return;
-        
-    // There's nothing to merge.
-    if (m_upstreamStart == m_downstreamEnd)
-        return;
-        
+
     VisiblePosition startOfParagraphToMove(m_downstreamEnd);
     VisiblePosition mergeDestination(m_upstreamStart);
     

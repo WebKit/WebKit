@@ -1515,12 +1515,20 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (unichar)characterBeforeCaretSelection
 {
-    return core(self)->selection().characterBeforeCaretSelection();
+    auto frame = core(self);
+    if (!frame)
+        return 0;
+    frame->document()->updateLayout();
+    return frame->selection().selection().visibleStart().characterBefore();
 }
 
 - (unichar)characterAfterCaretSelection
 {
-    return core(self)->selection().characterAfterCaretSelection();
+    auto frame = core(self);
+    if (!frame)
+        return 0;
+    frame->document()->updateLayout();
+    return frame->selection().selection().visibleEnd().characterAfter();
 }
 
 - (DOMRange *)wordRangeContainingCaretSelection
@@ -1560,14 +1568,11 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)selectionAtDocumentStart
 {
-    WebCore::Frame *frame = core(self);
-    
-    if (frame->selection().selection().isNone())
+    auto frame = core(self);
+    if (!frame)
         return NO;
-
     frame->document()->updateLayout();
-    
-    return frame->selection().selectionAtDocumentStart();
+    return isStartOfDocument(frame->selection().selection().visibleStart());
 }
 
 - (BOOL)selectionAtSentenceStart
@@ -1606,17 +1611,16 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)selectNSRange:(NSRange)range onElement:(DOMElement *)element
 {
-    WebCore::Frame *frame = core(self);
-
-    WebCore::Document* doc = frame->document();
-    if (!doc)
+    // FIXME: This method does not do a useful operation: treating NSRange offsets as child node offsets does not make logical sense. Also, it's highly unlikely anyone calls it. We should delete it.
+    if (!element)
         return;
-
-    auto* node = core(element);
-    if (!node->isConnected())
+    auto frame = core(self);
+    if (!frame)
         return;
-
-    frame->selection().selectRangeOnElement(range.location, range.length, *node);
+    auto& coreElement = *core(element);
+    unsigned startOffset = range.location;
+    unsigned endOffset = NSMaxRange(range);
+    frame->selection().setSelection(WebCore::VisibleSelection { WebCore::SimpleRange { { coreElement, startOffset }, { coreElement, endOffset } } }, { WebCore::FrameSelection::FireSelectEvent });
 }
 
 - (DOMRange *)markedTextDOMRange
@@ -1989,13 +1993,13 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     auto start = WebCore::VisiblePosition { makeContainerOffsetPosition(range->start) };
     auto end = WebCore::VisiblePosition { makeContainerOffsetPosition(range->end) };
 
-    bool addLeadingSpace = start.deepEquivalent().leadingWhitespacePosition(WebCore::VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(start);
+    bool addLeadingSpace = start.deepEquivalent().leadingWhitespacePosition(WebCore::VisiblePosition::defaultAffinity, true).isNull() && !isStartOfParagraph(start);
     if (addLeadingSpace) {
         if (UChar previousCharacter = start.previous().characterAfter())
             addLeadingSpace = !WebCore::isCharacterSmartReplaceExempt(previousCharacter, true);
     }
     
-    bool addTrailingSpace = end.deepEquivalent().trailingWhitespacePosition(WebCore::VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(end);
+    bool addTrailingSpace = end.deepEquivalent().trailingWhitespacePosition(WebCore::VisiblePosition::defaultAffinity, true).isNull() && !isEndOfParagraph(end);
     if (addTrailingSpace) {
         if (UChar followingCharacter = end.characterAfter())
             addTrailingSpace = !WebCore::isCharacterSmartReplaceExempt(followingCharacter, false);

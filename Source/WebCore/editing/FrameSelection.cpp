@@ -189,24 +189,24 @@ Element* FrameSelection::rootEditableElementOrDocumentElement() const
     return selectionRoot ? selectionRoot : m_document->documentElement();
 }
 
-void FrameSelection::moveTo(const VisiblePosition &pos, EUserTriggered userTriggered, CursorAlignOnScroll align)
+void FrameSelection::moveTo(const VisiblePosition& position, EUserTriggered userTriggered, CursorAlignOnScroll align)
 {
-    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity(), m_selection.isDirectional()),
+    setSelection(VisibleSelection(position.deepEquivalent(), position.deepEquivalent(), position.affinity(), m_selection.isDirectional()),
         defaultSetSelectionOptions(userTriggered), AXTextStateChangeIntent(), align);
 }
 
-void FrameSelection::moveTo(const VisiblePosition &base, const VisiblePosition &extent, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const VisiblePosition& base, const VisiblePosition& extent, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const Position& position, EAffinity affinity, EUserTriggered userTriggered)
 {
-    setSelection(VisibleSelection(pos, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(position, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Position &base, const Position &extent, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const Position& base, const Position& extent, EAffinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
@@ -308,7 +308,7 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     } else if (m_originalBase.isNotNull()) {
         if (m_selection.base() == newSelection.base())
             newSelection.setBase(m_originalBase);
-        m_originalBase.clear();
+        m_originalBase = { };
     }
 
     newSelection.setIsDirectional(isDirectional); // Adjusting base and extent will make newSelection always directional
@@ -633,20 +633,14 @@ TextDirection FrameSelection::directionOfEnclosingBlock()
 
 TextDirection FrameSelection::directionOfSelection()
 {
-    InlineBox* startBox = nullptr;
-    InlineBox* endBox = nullptr;
-    int unusedOffset;
-    // Cache the VisiblePositions because visibleStart() and visibleEnd()
+    // Get bot VisiblePositions first because visibleStart() and visibleEnd()
     // can cause layout, which has the potential to invalidate lineboxes.
-    VisiblePosition startPosition = m_selection.visibleStart();
-    VisiblePosition endPosition = m_selection.visibleEnd();
-    if (startPosition.isNotNull())
-        startPosition.getInlineBoxAndOffset(startBox, unusedOffset);
-    if (endPosition.isNotNull())
-        endPosition.getInlineBoxAndOffset(endBox, unusedOffset);
+    auto startPosition = m_selection.visibleStart();
+    auto endPosition = m_selection.visibleEnd();
+    auto startBox = startPosition.inlineBoxAndOffset().box;
+    auto endBox = endPosition.inlineBoxAndOffset().box;
     if (startBox && endBox && startBox->direction() == endBox->direction())
         return startBox->direction();
-
     return directionOfEnclosingBlock();
 }
 
@@ -721,7 +715,7 @@ VisiblePosition FrameSelection::endForPlatform() const
     return positionForPlatform(false);
 }
 
-VisiblePosition FrameSelection::nextWordPositionForPlatform(const VisiblePosition &originalPosition)
+VisiblePosition FrameSelection::nextWordPositionForPlatform(const VisiblePosition& originalPosition)
 {
     VisiblePosition positionAfterCurrentWord = nextWordPosition(originalPosition);
 
@@ -1434,7 +1428,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
 }
 
 // FIXME: Maybe baseline would be better?
-static bool absoluteCaretY(const VisiblePosition &c, int &y)
+static bool absoluteCaretY(const VisiblePosition& c, int& y)
 {
     IntRect rect = c.absoluteCaretBounds();
     if (rect.isEmpty())
@@ -1587,44 +1581,44 @@ void FrameSelection::willBeRemovedFromFrame()
     m_appearanceUpdateTimer.stop();
 }
 
-void FrameSelection::setStart(const VisiblePosition &pos, EUserTriggered trigger)
+void FrameSelection::setStart(const VisiblePosition& position, EUserTriggered trigger)
 {
     if (m_selection.isBaseFirst())
-        setBase(pos, trigger);
+        setBase(position, trigger);
     else
-        setExtent(pos, trigger);
+        setExtent(position, trigger);
 }
 
-void FrameSelection::setEnd(const VisiblePosition &pos, EUserTriggered trigger)
+void FrameSelection::setEnd(const VisiblePosition& position, EUserTriggered trigger)
 {
     if (m_selection.isBaseFirst())
-        setExtent(pos, trigger);
+        setExtent(position, trigger);
     else
-        setBase(pos, trigger);
+        setBase(position, trigger);
 }
 
-void FrameSelection::setBase(const VisiblePosition &pos, EUserTriggered userTriggered)
+void FrameSelection::setBase(const VisiblePosition& position, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(position.deepEquivalent(), m_selection.extent(), position.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::setExtent(const VisiblePosition &pos, EUserTriggered userTriggered)
+void FrameSelection::setExtent(const VisiblePosition& position, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(m_selection.base(), position.deepEquivalent(), position.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::setBase(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::setBase(const Position& position, EAffinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(pos, m_selection.extent(), affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(position, m_selection.extent(), affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::setExtent(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::setExtent(const Position& position, EAffinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(m_selection.base(), pos, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(m_selection.base(), position, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
 void CaretBase::clearCaretRect()
@@ -1897,28 +1891,21 @@ bool FrameSelection::contains(const LayoutPoint& point) const
     // Treat a collapsed selection like no selection.
     if (!isRange())
         return false;
-    
+
+    auto range = m_selection.firstRange();
+    if (!range)
+        return false;
+
     if (!m_document)
         return false;
-    
+
     HitTestResult result(point);
     m_document->hitTest(HitTestRequest(), result);
     Node* innerNode = result.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;
-    
-    VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(result.localPoint(), nullptr));
-    if (visiblePos.isNull())
-        return false;
-        
-    if (m_selection.visibleStart().isNull() || m_selection.visibleEnd().isNull())
-        return false;
-        
-    Position start(m_selection.visibleStart().deepEquivalent());
-    Position end(m_selection.visibleEnd().deepEquivalent());
-    Position p(visiblePos.deepEquivalent());
 
-    return comparePositions(start, p) <= 0 && comparePositions(p, end) <= 0;
+    return isPointInRange(*range, makeBoundaryPoint(innerNode->renderer()->positionForPoint(result.localPoint(), nullptr)));
 }
 
 // Workaround for the fact that it's hard to delete a frame.
@@ -1959,7 +1946,7 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
     // Create compute positions before and after the element.
     unsigned ownerElementNodeIndex = ownerElement->computeNodeIndex();
     VisiblePosition beforeOwnerElement(VisiblePosition(Position(ownerElementParent, ownerElementNodeIndex, Position::PositionIsOffsetInAnchor)));
-    VisiblePosition afterOwnerElement(VisiblePosition(Position(ownerElementParent, ownerElementNodeIndex + 1, Position::PositionIsOffsetInAnchor), VP_UPSTREAM_IF_POSSIBLE));
+    VisiblePosition afterOwnerElement(VisiblePosition(Position(ownerElementParent, ownerElementNodeIndex + 1, Position::PositionIsOffsetInAnchor), Upstream));
 
     // Focus on the parent frame, and then select from before this element to after.
     VisibleSelection newSelection(beforeOwnerElement, afterOwnerElement);
@@ -2523,12 +2510,12 @@ void FrameSelection::expandSelectionToElementContainingCaretSelection()
 
 Optional<SimpleRange> FrameSelection::elementRangeContainingCaretSelection() const
 {
-    auto element = deprecatedEnclosingBlockFlowElement(VisiblePosition(m_selection.start(), VP_DEFAULT_AFFINITY).deepEquivalent().deprecatedNode());
+    auto element = deprecatedEnclosingBlockFlowElement(m_selection.visibleStart().deepEquivalent().deprecatedNode());
     if (!element)
         return WTF::nullopt;
 
-    auto start = VisiblePosition(createLegacyEditingPosition(element, 0), VP_DEFAULT_AFFINITY);
-    auto end = VisiblePosition(createLegacyEditingPosition(element, element->countChildNodes()), VP_DEFAULT_AFFINITY);
+    auto start = VisiblePosition(createLegacyEditingPosition(element, 0));
+    auto end = VisiblePosition(createLegacyEditingPosition(element, element->countChildNodes()));
     if (start.isNull() || end.isNull())
         return WTF::nullopt;
 
@@ -2570,94 +2557,33 @@ void FrameSelection::expandSelectionToStartOfWordContainingCaretSelection()
 
 UChar FrameSelection::characterInRelationToCaretSelection(int amount) const
 {
-    if (m_selection.isNone())
-        return 0;
-
-    VisibleSelection selection = m_selection;
-    ASSERT(selection.isCaretOrRange());
-
-    VisiblePosition visiblePosition(selection.start(), VP_DEFAULT_AFFINITY);
-
+    auto position = m_selection.visibleStart();
     if (amount < 0) {
         int count = abs(amount);
         for (int i = 0; i < count; i++)
-            visiblePosition = visiblePosition.previous();    
-        return visiblePosition.characterBefore();
+            position = position.previous();
+        return position.characterBefore();
     }
     for (int i = 0; i < amount; i++)
-        visiblePosition = visiblePosition.next();    
-    return visiblePosition.characterAfter();
-}
-
-UChar FrameSelection::characterBeforeCaretSelection() const
-{
-    if (m_selection.isNone())
-        return 0;
-
-    VisibleSelection selection = m_selection;
-    ASSERT(selection.isCaretOrRange());
-
-    VisiblePosition visiblePosition(selection.start(), VP_DEFAULT_AFFINITY);
-    return visiblePosition.characterBefore();
-}
-
-UChar FrameSelection::characterAfterCaretSelection() const
-{
-    if (m_selection.isNone())
-        return 0;
-
-    VisibleSelection selection = m_selection;
-    ASSERT(selection.isCaretOrRange());
-
-    VisiblePosition visiblePosition(selection.end(), VP_DEFAULT_AFFINITY);
-    return visiblePosition.characterAfter();
-}
-
-bool FrameSelection::selectionAtDocumentStart() const
-{
-    VisibleSelection selection = m_selection;
-    if (selection.isNone())
-        return false;
-
-    Position startPos(selection.start());
-    VisiblePosition pos(createLegacyEditingPosition(startPos.deprecatedNode(), startPos.deprecatedEditingOffset()), VP_DEFAULT_AFFINITY);
-    if (pos.isNull())
-        return false;
-
-    return isStartOfDocument(pos);
+        position = position.next();
+    return position.characterAfter();
 }
 
 bool FrameSelection::selectionAtWordStart() const
 {
-    VisibleSelection selection = m_selection;
-    if (selection.isNone())
-        return false;
-
-    Position startPos(selection.start());
-    VisiblePosition pos(createLegacyEditingPosition(startPos.deprecatedNode(), startPos.deprecatedEditingOffset()), VP_DEFAULT_AFFINITY);
-    if (pos.isNull())
-        return false;
-
-    if (isStartOfParagraph(pos))
+    auto position = m_selection.visibleStart();
+    if (isStartOfParagraph(position))
         return true;
-        
-    bool result = true;
-    unsigned previousCount = 0;
-    for (pos = pos.previous(); !pos.isNull(); pos = pos.previous()) {
-        previousCount++;
-        if (isStartOfParagraph(pos)) {
-            if (previousCount == 1)
-                result = false;
-            break;
-        }
-        UChar c(pos.characterAfter());
-        if (c) {
-            result = isSpaceOrNewline(c) || c == noBreakSpace || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
-            break;
-        }
-    }
 
-    return result;
+    unsigned previousCount = 0;
+    for (position = position.previous(); !position.isNull(); position = position.previous()) {
+        previousCount++;
+        if (isStartOfParagraph(position))
+            return previousCount != 1;
+        if (UChar c = position.characterAfter())
+            return isSpaceOrNewline(c) || c == noBreakSpace || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
+    }
+    return true;
 }
 
 Optional<SimpleRange> FrameSelection::rangeByMovingCurrentSelection(int amount) const
@@ -2668,14 +2594,6 @@ Optional<SimpleRange> FrameSelection::rangeByMovingCurrentSelection(int amount) 
 Optional<SimpleRange> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
 {
     return rangeByAlteringCurrentSelection(AlterationExtend, amount);
-}
-
-void FrameSelection::selectRangeOnElement(unsigned location, unsigned length, Node& node)
-{
-    auto selection = VisibleSelection { SimpleRange { { node, location }, { node, location + length } } };
-
-    // FIXME: The second argument was "true" which implicitly converted to option "FireSelectEvent". Is this correct?
-    setSelection(selection, { FireSelectEvent });
 }
 
 VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const VisibleSelection& selection)
@@ -2689,8 +2607,8 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
 
     Position startPosBeforeExpansion(selection.start());
     Position endPosBeforeExpansion(selection.end());
-    VisiblePosition startVisiblePosBeforeExpansion(startPosBeforeExpansion, VP_DEFAULT_AFFINITY);
-    VisiblePosition endVisiblePosBeforeExpansion(endPosBeforeExpansion, VP_DEFAULT_AFFINITY);
+    VisiblePosition startVisiblePosBeforeExpansion(startPosBeforeExpansion);
+    VisiblePosition endVisiblePosBeforeExpansion(endPosBeforeExpansion);
     if (endVisiblePosBeforeExpansion.isNull())
         return VisibleSelection();
 
@@ -2724,8 +2642,8 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
     if (endPos < endPosBeforeExpansion)
         endPos = endPosBeforeExpansion;
 
-    VisiblePosition startVisiblePos(startPos, VP_DEFAULT_AFFINITY);
-    VisiblePosition endVisiblePos(endPos, VP_DEFAULT_AFFINITY);
+    VisiblePosition startVisiblePos(startPos);
+    VisiblePosition endVisiblePos(endPos);
 
     if (startVisiblePos.isNull() || endVisiblePos.isNull()) {
         // Start or end is nil
@@ -2762,8 +2680,8 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
         frameSelection.modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::WordGranularity);
         startPos = frameSelection.selection().start();
         endPos = frameSelection.selection().end();
-        startVisiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
-        endVisiblePos = VisiblePosition(endPos, VP_DEFAULT_AFFINITY);
+        startVisiblePos = VisiblePosition(startPos);
+        endVisiblePos = VisiblePosition(endPos);
         if (startVisiblePos.isNull() || endVisiblePos.isNull()) {
             // Start or end is nil
             return VisibleSelection();
@@ -2792,40 +2710,27 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
 
 bool FrameSelection::selectionAtSentenceStart() const
 {
-    if (m_selection.isNone())
+    auto position = m_selection.visibleStart();
+    if (position.isNull())
         return false;
 
-    Position startPos(m_selection.start());
-    VisiblePosition pos(createLegacyEditingPosition(startPos.deprecatedNode(), startPos.deprecatedEditingOffset()), VP_DEFAULT_AFFINITY);
-    if (pos.isNull())
-        return false;
-
-    if (isStartOfParagraph(pos))
+    if (isStartOfParagraph(position))
         return true;
  
-    bool result = true;
     bool sawSpace = false;
     unsigned previousCount = 0;
-    for (pos = pos.previous(); !pos.isNull(); pos = pos.previous()) {
+    for (position = position.previous(); !position.isNull(); position = position.previous()) {
         previousCount++;
-        if (isStartOfParagraph(pos)) {
-            if (previousCount == 1 || (previousCount == 2 && sawSpace))
-                result = false;
-            break;
-        }
-        UChar c(pos.characterAfter());
-        if (c) {
-            if (isSpaceOrNewline(c) || c == noBreakSpace) {
+        if (isStartOfParagraph(position))
+            return previousCount != 1 && (previousCount != 2 || !sawSpace);
+        if (auto c = position.characterAfter()) {
+            if (isSpaceOrNewline(c) || c == noBreakSpace)
                 sawSpace = true;
-            }
-            else {
-                result = (c == '.' || c == '!' || c == '?');
-                break;
-            }
+            else
+                return c == '.' || c == '!' || c == '?';
         }
     }
-    
-    return result;
+    return true;
 }
 
 Optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const

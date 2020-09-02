@@ -1,3 +1,205 @@
+2020-09-01  Darin Adler  <darin@apple.com>
+
+        Remove comparePositions and make VisiblePosition improvements
+        https://bugs.webkit.org/show_bug.cgi?id=215982
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::localCaretRectForCharacterOffset): Updated for
+        inlineBoxAndOffset.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getSelectionOffsetsForObject): Use std::max/min instead of comparePositions.
+        (isWhiteSpaceBetweenSentences): Use isPointInRange instead of comparePositions.
+
+        * dom/Position.cpp:
+        (WebCore::Position::rendersInDifferentPosition const): Updated for
+        inlineBoxAndOffset.
+        (WebCore::Position::inlineBoxAndOffset const): Renamed from
+        getInlineBoxAndOffset and changed to use a return value instead of out arguments.
+
+        * dom/Position.h: Added InlineBoxAndOffset structure for the inlineBoxAndOffset
+        function. Update for rename of EAffinity to Affinity. Changed getInlineBoxAndOffset
+        to inlineBoxAndOffset and use a return value instead of out arguments. Change
+        <, >, <=, and >= to call documentOrder.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::updateStartEnd): Use <= instead of comparePositions.
+        Use VisiblePosition::defaultAffinity instead of VP_DEFAULT_AFFINITY.
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Use < instead of comparePositions.
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Ditto. Also added
+        a missing null check.
+        (WebCore::ApplyStyleCommand::applyInlineStyle): Ditto.
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle): Use <= and < instead
+        of comparePositions.
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Use <= instead of comparePositions.
+        (WebCore::ApplyStyleCommand::nodeFullySelected const): Use >= and <= instead of
+        comparePositions.
+        (WebCore::ApplyStyleCommand::nodeFullyUnselected const): Use < and > instead of
+        comparePositions.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText): Use < instead of
+        comparePositions, in a way that handles the null case correctly.
+        (WebCore::CompositeEditCommand::deleteInsignificantTextDownstream): Removed
+        unnecessary explicit use of VP_DEFAULT_AFFINITY.
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        Ditto. Also use < instead of comparePositions.
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement): Use <=
+        instead of comparePositions.
+        (WebCore::CompositeEditCommand::moveParagraphs): Use <= and >= instead of
+        comparePositions.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): Use >= instead of
+        comparePositions
+        (WebCore::DeleteSelectionCommand::smartDeleteParagraphSpacers):
+        Use VisiblePosition::defaultAffinity instead of VP_DEFAULT_AFFINITY, and
+        in other cases removed unnecessary explicit use of VP_DEFAULT_AFFINITY.
+        (WebCore::DeleteSelectionCommand::initializePositionData): Ditto.
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): Use >= instead
+        of comparePositions.
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Use >= instead of
+        comparePositions, also use isOrphan and merge two checks into one.
+
+        * editing/Editing.cpp:
+        (WebCore::comparePositions): Deleted.
+        (WebCore::firstEditablePositionAfterPositionInRoot): Use < instead of
+        comparePositions.
+        (WebCore::lastEditablePositionBeforePositionInRoot): Use > instead of
+        comparePositions.
+        (WebCore::isNodeVisiblyContainedWithin): Use < instead of comparePositions.
+        (WebCore::localCaretRectInRendererForCaretPainting): Update for
+        localCaretRect function that no longer uses an out argument.
+
+        * editing/Editing.h: Deleted comparePositions.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::adjustedSelectionRange): Use >= instead of
+        comparePositions.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionByMouseIfDifferent): Assign
+        an empty value rather than using a clear function.
+        (WebCore::FrameSelection::directionOfSelection): Updated for
+        inlineBoxAndOffset.
+        (WebCore::FrameSelection::contains const): Use isPointInRange instead
+        of comparePositions.
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected):
+        Use Upstream instead of VP_UPSTREAM_IF_POSSIBLE.
+        (WebCore::FrameSelection::elementRangeContainingCaretSelection const):
+        Removed unnecessary explicit use of VP_DEFAULT_AFFINITY.
+        (WebCore::FrameSelection::characterInRelationToCaretSelection const): Ditto.
+        (WebCore::FrameSelection::characterBeforeCaretSelection const): Deleted.
+        There is only one caller, and we can move the algorithm, now a one-liner, there.
+        (WebCore::FrameSelection::characterAfterCaretSelection const): Deleted. Ditto.
+        (WebCore::FrameSelection::selectionAtDocumentStart const): Deleted. Ditto.
+        (WebCore::FrameSelection::selectionAtWordStart const): Use visibleStart
+        inatead of creating a new position with VP_DEFAULT_AFFINITY. Also streamlined
+        the function a bit.
+        (WebCore::FrameSelection::selectRangeOnElement): Deleted.
+        (WebCore::FrameSelection::wordSelectionContainingCaretSelection):
+        Removed unnecessary explicit use of VP_DEFAULT_AFFINITY.
+        (WebCore::FrameSelection::selectionAtSentenceStart const): Ditto.
+
+        * editing/FrameSelection.h: Updated for above.
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion):
+        Removed unnecessary explicit use of VP_DEFAULT_AFFINITY. Also tightened
+        up the code a bit including removing an unnecessary assertion.
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Use <= instead of
+        comparePositions.
+
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::RenderedPosition): Have the VisiblePosition
+        constructor call through to the Position/Affinity constructor instead
+        of repeating the logic twice. Update for inlineBoxAndOffset. Initialize
+        m_offset in the class definition so we don't have to do it here.
+
+        * editing/RenderedPosition.h: Initialize all data members. Sorted a
+        function member above the data members.
+
+        * editing/TextAffinity.h: Renamed for modern WebKit coding style,
+        eliminating the use of all caps and the "E" prefix on EAffinity.
+        For now, old names are also still supported.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::VisiblePosition): Use member construction
+        rather than assignment. Rewrote the code that stores upstream affinity
+        only when appropriate to be more straightforward. The old code would
+        set to upstream and then change back. The new code sets to upstream
+        only after testing that it worked. Should also be faster since it
+        saves one call to canonicalPosition.
+        (WebCore::VisiblePosition::init): Deleted. Rolled into the constructor.
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate const):
+        Update for inlineBoxAndOffset.
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate const): Ditto.
+        (WebCore::VisiblePosition::localCaretRect const): Return the renderer as
+        part of the return value rather than an out argument. Update for
+        inlineBoxAndOffset and streamline logic a bit.
+        (WebCore::VisiblePosition::absoluteSelectionBoundsForLine const):
+        Update for inlineBoxAndOffset and remove unneded special cases already
+        covered by that function.
+        (WebCore::VisiblePosition::lineDirectionPointForBlockDirectionNavigation const):
+        Updated for localCaretRect.
+        (WebCore::documentOrder): Added.
+
+        * editing/VisiblePosition.h: Added VisiblePosition::defaultAffinity
+        to replace VP_DEFAULT_AFFINITY. Deleted VP_UPSTREAM_IF_POSSIBLE; callers
+        will just use Upstream. Deleted the clear function. Renamed
+        getInlineBoxAndOffset to inlineBoxAndOffset and use a return value
+        instead of out arguments. Use a return value instead of out
+        arguments for localCaretRect. Made canonicalPosition a static member
+        function. Use documentOrder to implement <, >, <=, and >=.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::toNormalizedRange const): Use > instead
+        of comparePositions. Also do the comparison after calling
+        parentAnchoredEquivalent instead of before.
+        (WebCore::VisibleSelection::setBaseAndExtentToDeepEquivalents):
+        Use <= instead of comparePositions.
+        (WebCore::VisibleSelection::setWithoutValidation): Ditto.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::visualWordPosition): Update for inlineBoxAndOffset.
+        (WebCore::nextBoundary): Use Upstream instad of VP_UPSTREAM_IF_POSSIBLE.
+        (WebCore::endPositionForLine): Ditto.
+        (WebCore::previousLinePosition): Update for inlineBoxAndOffset.
+        (WebCore::nextLinePosition): Ditto.
+        (WebCore::atBoundaryOfGranularity): Use Upstream instead of
+        VP_UPSTREAM_IF_POSSIBLE. This is especially important here,
+        because setAffinity does not actually check if upstream is possible,
+        so it is setting to Upstream unconditionally. The old name was
+        misleading here.
+        (WebCore::nextLineBoundaryInDirection): Ditto. Same misleading use.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::convert): Use > instead of comparePositions.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAsChildOfElement): Removed unnecessary
+        explicit use of VP_DEFAULT_AFFINITY.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::serializeNodes): Use <=
+        instead of comparePositions.
+        (WebCore::serializePreservingVisualAppearanceInternal): Use ==
+        and < instead of comparePositions.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Use <
+        instead of comparePositions.
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Ditto.
+
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::createVisiblePositionForBox): Use VisiblePosition::defaultAffinity
+        instead of VP_DEFAULT_AFFINITY and Upstream instead of VP_UPSTREAM_IF_POSSIBLE.
+        (WebCore::RenderTextLineBoxes::positionForPoint const): DItto.
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint): Ditto.
+
 2020-09-02  Timothy Horton  <timothy_horton@apple.com>
 
         iPad + Trackpad: JW Library highlighting and edit menus don't appear

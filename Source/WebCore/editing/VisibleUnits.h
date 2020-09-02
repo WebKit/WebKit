@@ -38,31 +38,31 @@ class TextIterator;
 enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };
 
 // words
-WEBCORE_EXPORT VisiblePosition startOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBoundary);
-WEBCORE_EXPORT VisiblePosition endOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBoundary);
-WEBCORE_EXPORT VisiblePosition previousWordPosition(const VisiblePosition &);
-WEBCORE_EXPORT VisiblePosition nextWordPosition(const VisiblePosition &);
+WEBCORE_EXPORT VisiblePosition startOfWord(const VisiblePosition&, EWordSide = RightWordIfOnBoundary);
+WEBCORE_EXPORT VisiblePosition endOfWord(const VisiblePosition&, EWordSide = RightWordIfOnBoundary);
+WEBCORE_EXPORT VisiblePosition previousWordPosition(const VisiblePosition&);
+WEBCORE_EXPORT VisiblePosition nextWordPosition(const VisiblePosition&);
 VisiblePosition rightWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
 VisiblePosition leftWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
 bool isStartOfWord(const VisiblePosition&);
 
 // sentences
-WEBCORE_EXPORT VisiblePosition startOfSentence(const VisiblePosition &);
-WEBCORE_EXPORT VisiblePosition endOfSentence(const VisiblePosition &);
-WEBCORE_EXPORT VisiblePosition previousSentencePosition(const VisiblePosition &);
-WEBCORE_EXPORT VisiblePosition nextSentencePosition(const VisiblePosition &);
+WEBCORE_EXPORT VisiblePosition startOfSentence(const VisiblePosition&);
+WEBCORE_EXPORT VisiblePosition endOfSentence(const VisiblePosition&);
+WEBCORE_EXPORT VisiblePosition previousSentencePosition(const VisiblePosition&);
+WEBCORE_EXPORT VisiblePosition nextSentencePosition(const VisiblePosition&);
 
 // lines
-WEBCORE_EXPORT VisiblePosition startOfLine(const VisiblePosition &);
-WEBCORE_EXPORT VisiblePosition endOfLine(const VisiblePosition &);
+WEBCORE_EXPORT VisiblePosition startOfLine(const VisiblePosition&);
+WEBCORE_EXPORT VisiblePosition endOfLine(const VisiblePosition&);
 WEBCORE_EXPORT VisiblePosition previousLinePosition(const VisiblePosition&, int lineDirectionPoint, EditableType = ContentIsEditable);
 WEBCORE_EXPORT VisiblePosition nextLinePosition(const VisiblePosition&, int lineDirectionPoint, EditableType = ContentIsEditable);
-WEBCORE_EXPORT bool inSameLine(const VisiblePosition &, const VisiblePosition &);
-WEBCORE_EXPORT bool isStartOfLine(const VisiblePosition &);
-WEBCORE_EXPORT bool isEndOfLine(const VisiblePosition &);
-VisiblePosition logicalStartOfLine(const VisiblePosition &, bool* reachedBoundary = nullptr);
-VisiblePosition logicalEndOfLine(const VisiblePosition &, bool* reachedBoundary = nullptr);
-bool isLogicalEndOfLine(const VisiblePosition &);
+WEBCORE_EXPORT bool inSameLine(const VisiblePosition&, const VisiblePosition&);
+WEBCORE_EXPORT bool isStartOfLine(const VisiblePosition&);
+WEBCORE_EXPORT bool isEndOfLine(const VisiblePosition&);
+VisiblePosition logicalStartOfLine(const VisiblePosition&, bool* reachedBoundary = nullptr);
+VisiblePosition logicalEndOfLine(const VisiblePosition&, bool* reachedBoundary = nullptr);
+bool isLogicalEndOfLine(const VisiblePosition&);
 VisiblePosition leftBoundaryOfLine(const VisiblePosition&, TextDirection, bool* reachedBoundary);
 VisiblePosition rightBoundaryOfLine(const VisiblePosition&, TextDirection, bool* reachedBoundary);
 
@@ -70,28 +70,28 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition&, TextDirection, bool*
 WEBCORE_EXPORT VisiblePosition startOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 WEBCORE_EXPORT VisiblePosition endOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 VisiblePosition startOfNextParagraph(const VisiblePosition&);
-WEBCORE_EXPORT VisiblePosition previousParagraphPosition(const VisiblePosition &, int x);
-WEBCORE_EXPORT VisiblePosition nextParagraphPosition(const VisiblePosition &, int x);
-WEBCORE_EXPORT bool isStartOfParagraph(const VisiblePosition &, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-WEBCORE_EXPORT bool isEndOfParagraph(const VisiblePosition &, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-bool inSameParagraph(const VisiblePosition &, const VisiblePosition &, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-bool isBlankParagraph(const VisiblePosition &);
+WEBCORE_EXPORT VisiblePosition previousParagraphPosition(const VisiblePosition&, int x);
+WEBCORE_EXPORT VisiblePosition nextParagraphPosition(const VisiblePosition&, int x);
+WEBCORE_EXPORT bool isStartOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+WEBCORE_EXPORT bool isEndOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+bool inSameParagraph(const VisiblePosition&, const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+bool isBlankParagraph(const VisiblePosition&);
 
 // blocks (true paragraphs; line break elements don't break blocks)
-VisiblePosition startOfBlock(const VisiblePosition &, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-VisiblePosition endOfBlock(const VisiblePosition &, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-bool inSameBlock(const VisiblePosition &, const VisiblePosition &);
-bool isStartOfBlock(const VisiblePosition &);
-bool isEndOfBlock(const VisiblePosition &);
+VisiblePosition startOfBlock(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+VisiblePosition endOfBlock(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+bool inSameBlock(const VisiblePosition&, const VisiblePosition&);
+bool isStartOfBlock(const VisiblePosition&);
+bool isEndOfBlock(const VisiblePosition&);
 
 // document
 WEBCORE_EXPORT VisiblePosition startOfDocument(const Node*);
 WEBCORE_EXPORT VisiblePosition endOfDocument(const Node*);
-WEBCORE_EXPORT VisiblePosition startOfDocument(const VisiblePosition &);
-WEBCORE_EXPORT VisiblePosition endOfDocument(const VisiblePosition &);
-bool inSameDocument(const VisiblePosition &, const VisiblePosition &);
-WEBCORE_EXPORT bool isStartOfDocument(const VisiblePosition &);
-WEBCORE_EXPORT bool isEndOfDocument(const VisiblePosition &);
+WEBCORE_EXPORT VisiblePosition startOfDocument(const VisiblePosition&);
+WEBCORE_EXPORT VisiblePosition endOfDocument(const VisiblePosition&);
+bool inSameDocument(const VisiblePosition&, const VisiblePosition&);
+WEBCORE_EXPORT bool isStartOfDocument(const VisiblePosition&);
+WEBCORE_EXPORT bool isEndOfDocument(const VisiblePosition&);
 
 // editable content
 WEBCORE_EXPORT VisiblePosition startOfEditableContent(const VisiblePosition&);

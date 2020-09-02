@@ -219,7 +219,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
         return createVisiblePosition(0, DOWNSTREAM);
 
     int offset = closestDistanceBox->offsetForPositionInFragment(*closestDistanceFragment, absolutePoint.x() - closestDistancePosition, true);
-    return createVisiblePosition(offset + closestDistanceBox->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
+    return createVisiblePosition(offset + closestDistanceBox->start(), offset > 0 ? Upstream : Downstream);
 }
 
 void RenderSVGInlineText::updateScaledFont()

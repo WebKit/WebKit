@@ -584,7 +584,7 @@ void StyledMarkupAccumulator::appendEndTag(StringBuilder& out, const Element& el
 
 Node* StyledMarkupAccumulator::serializeNodes(const Position& start, const Position& end)
 {
-    ASSERT(comparePositions(start, end) <= 0);
+    ASSERT(start <= end);
     auto startNode = start.firstNode();
     Node* pastEnd = end.computeNodeAfterPosition();
     if (!pastEnd && end.containerNode())
@@ -839,7 +839,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 {
     static NeverDestroyed<const String> interchangeNewlineString(MAKE_STATIC_STRING_IMPL("<br class=\"" AppleInterchangeNewline "\">"));
 
-    if (!comparePositions(start, end))
+    if (start == end)
         return emptyString();
 
     auto commonAncestor = commonInclusiveAncestor(start, end);
@@ -871,7 +871,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
         accumulator.append(interchangeNewlineString.get());
         startAdjustedForInterchangeNewline = visibleStart.next().deepEquivalent();
 
-        if (comparePositions(startAdjustedForInterchangeNewline, end) >= 0)
+        if (!(startAdjustedForInterchangeNewline < end))
             return interchangeNewlineString;
     }
 

@@ -1,3 +1,18 @@
+2020-09-01  Darin Adler  <darin@apple.com>
+
+        Remove comparePositions and make VisiblePosition improvements
+        https://bugs.webkit.org/show_bug.cgi?id=215982
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition positionByMovingInDirection:amount:withAffinityDownstream:]):
+        Use Upstream instead of VP_UPSTREAM_IF_POSSIBLE. Since we were calling
+        setAffinity here, VP_UPSTREAM_IF_POSSIBLE was misleading since that function
+        does not check the validity of the affinity.
+        (-[DOMNode startPosition]): Removed unnecessary explicit VP_DEFAULT_AFFINITY.
+        (-[DOMNode endPosition]): Ditto.
+
 2020-08-17  Darin Adler  <darin@apple.com>
 
         Create documentOrder function, start refactoring to use it instead of Range::compare functions

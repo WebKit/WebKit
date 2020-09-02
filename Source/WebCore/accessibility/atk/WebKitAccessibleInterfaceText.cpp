@@ -399,13 +399,8 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     Position lastValidPosition = lastPositionInOrAfterNode(node->lastDescendant());
 
     // Find the proper range for the selection that falls inside the object.
-    Position nodeRangeStart = selection.start();
-    if (comparePositions(nodeRangeStart, firstValidPosition) < 0)
-        nodeRangeStart = firstValidPosition;
-
-    Position nodeRangeEnd = selection.end();
-    if (comparePositions(nodeRangeEnd, lastValidPosition) > 0)
-        nodeRangeEnd = lastValidPosition;
+    auto nodeRangeStart = std::max(selection.start(), firstValidPosition);
+    auto nodeRangeEnd = std::min(selection.end(), lastValidPosition);
 
     // Calculate position of the selected range inside the object.
     Position parentFirstPosition = firstPositionInOrBeforeNode(node);
@@ -703,12 +698,13 @@ static bool isWhiteSpaceBetweenSentences(const VisiblePosition& position)
     if (!deprecatedIsEditingWhitespace(position.characterAfter()))
         return false;
 
-    VisiblePosition startOfWhiteSpace = startOfWord(position, RightWordIfOnBoundary);
-    VisiblePosition endOfWhiteSpace = endOfWord(startOfWhiteSpace, RightWordIfOnBoundary);
-    if (!isSentenceBoundary(startOfWhiteSpace) && !isSentenceBoundary(endOfWhiteSpace))
+    auto start = startOfWord(position, RightWordIfOnBoundary);
+    auto end = endOfWord(start, RightWordIfOnBoundary);
+    if (!isSentenceBoundary(start) && !isSentenceBoundary(end))
         return false;
 
-    return comparePositions(startOfWhiteSpace, position) <= 0 && comparePositions(endOfWhiteSpace, position) >= 0;
+    auto range = makeSimpleRange(start, end);
+    return range && isPointInRange(*range, makeBoundaryPoint(position));
 }
 
 static VisibleSelection sentenceAtPositionForAtkBoundary(const AccessibilityObject*, const VisiblePosition& position, AtkTextBoundary boundaryType)

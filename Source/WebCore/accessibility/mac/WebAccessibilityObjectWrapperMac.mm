@@ -903,10 +903,10 @@ static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFType
     return backingObject ? characterOffsetForTextMarker(backingObject->axObjectCache(), (__bridge CFTypeRef)textMarker) : nil;
 }
 
-- (id)textMarkerForVisiblePosition:(const VisiblePosition &)visiblePos
+- (id)textMarkerForVisiblePosition:(const VisiblePosition&)position
 {
     auto *backingObject = self.axBackingObject;
-    return backingObject ? textMarkerForVisiblePosition(backingObject->axObjectCache(), visiblePos) : nil;
+    return backingObject ? textMarkerForVisiblePosition(backingObject->axObjectCache(), position) : nil;
 }
 
 - (id)textMarkerForFirstPositionInTextControl:(HTMLTextFormControlElement &)textControl

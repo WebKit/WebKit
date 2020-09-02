@@ -2452,7 +2452,7 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelecti
     markMisspellingsAndBadGrammar(movingSelection, isContinuousSpellCheckingEnabled() && isGrammarCheckingEnabled(), movingSelection);
 }
 
-void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement)
+void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement)
 {
     Ref<Document> protectedDocument(m_document);
 
@@ -4233,7 +4233,7 @@ Optional<SimpleRange> Editor::adjustedSelectionRange()
     auto range = selectedRange();
     if (range) {
         if (auto enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor(*range).get()), HTMLNames::aTag)) {
-            if (comparePositions(firstPositionInOrBeforeNode(range->start.container.ptr()), createLegacyEditingPosition(range->start)) >= 0)
+            if (firstPositionInOrBeforeNode(range->start.container.ptr()) >= createLegacyEditingPosition(range->start))
                 range->start = makeBoundaryPointBeforeNodeContents(*enclosingAnchor);
         }
     }

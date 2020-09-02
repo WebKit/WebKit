@@ -30,46 +30,31 @@
 
 namespace WebCore {
 
-class Range;
-
-struct SimpleRange;
-
-// VisiblePosition default affinity is downstream because
-// the callers do not really care (they just want the
-// deep position without regard to line position), and this
-// is cheaper than UPSTREAM
-#define VP_DEFAULT_AFFINITY DOWNSTREAM
-
-// Callers who do not know where on the line the position is,
-// but would like UPSTREAM if at a line break or DOWNSTREAM
-// otherwise, need a clear way to specify that.  The
-// constructors auto-correct UPSTREAM to DOWNSTREAM if the
-// position is not at a line break.
-#define VP_UPSTREAM_IF_POSSIBLE UPSTREAM
-
 class VisiblePosition {
 public:
-    // NOTE: UPSTREAM affinity will be used only if pos is at end of a wrapped line,
-    // otherwise it will be converted to DOWNSTREAM
-    VisiblePosition() : m_affinity(VP_DEFAULT_AFFINITY) { }
-    WEBCORE_EXPORT VisiblePosition(const Position&, EAffinity = VP_DEFAULT_AFFINITY);
+    // VisiblePosition default affinity is downstream for callers that do not really care because it is more efficient than upstream.
+    static constexpr auto defaultAffinity = Downstream;
 
-    // FIXME: Why doesn't this reset m_affinity?
-    void clear() { m_deepPosition = { }; }
+    VisiblePosition() = default;
+
+    // This constructor will ignore the passed-in affinity if the position is not at the end of a line.
+    WEBCORE_EXPORT VisiblePosition(const Position&, Affinity = defaultAffinity);
 
     bool isNull() const { return m_deepPosition.isNull(); }
     bool isNotNull() const { return m_deepPosition.isNotNull(); }
     bool isOrphan() const { return m_deepPosition.isOrphan(); }
 
     Position deepEquivalent() const { return m_deepPosition; }
-    EAffinity affinity() const { ASSERT(m_affinity == UPSTREAM || m_affinity == DOWNSTREAM); return m_affinity; }
-    void setAffinity(EAffinity affinity) { m_affinity = affinity; }
+    Affinity affinity() const { return m_affinity; }
+
+    void setAffinity(Affinity affinity) { m_affinity = affinity; }
 
     // FIXME: Change the following functions' parameter from a boolean to StayInEditableContent.
 
-    // next() and previous() will increment/decrement by a character cluster.
+    // next() and previous() increment/decrement by a character cluster.
     WEBCORE_EXPORT VisiblePosition next(EditingBoundaryCrossingRule = CanCrossEditingBoundary, bool* reachedBoundary = nullptr) const;
     WEBCORE_EXPORT VisiblePosition previous(EditingBoundaryCrossingRule = CanCrossEditingBoundary, bool* reachedBoundary = nullptr) const;
+
     VisiblePosition honorEditingBoundaryAtOrBefore(const VisiblePosition&, bool* reachedBoundary = nullptr) const;
     VisiblePosition honorEditingBoundaryAtOrAfter(const VisiblePosition&, bool* reachedBoundary = nullptr) const;
 
@@ -82,13 +67,16 @@ public:
     // FIXME: This does not handle [table, 0] correctly.
     Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.deprecatedNode()->rootEditableElement() : 0; }
 
-    void getInlineBoxAndOffset(InlineBox*&, int& caretOffset) const;
-    void getInlineBoxAndOffset(TextDirection primaryDirection, InlineBox*&, int& caretOffset) const;
+    InlineBoxAndOffset inlineBoxAndOffset() const;
+    InlineBoxAndOffset inlineBoxAndOffset(TextDirection primaryDirection) const;
 
-    // Rect is local to the returned renderer
-    WEBCORE_EXPORT LayoutRect localCaretRect(RenderObject*&) const;
+    struct LocalCaretRect {
+        LayoutRect rect;
+        RenderObject* renderer { nullptr };
+    };
+    WEBCORE_EXPORT LocalCaretRect localCaretRect() const;
 
-    // Bounds of (possibly transformed) caret in absolute coords
+    // Bounds of (possibly transformed) caret in absolute coords.
     WEBCORE_EXPORT IntRect absoluteCaretBounds(bool* insideFixed = nullptr) const;
 
     // Abs x/y position of the caret ignoring transforms.
@@ -108,20 +96,19 @@ public:
 #endif
 
 private:
-    void init(const Position&, EAffinity);
-    Position canonicalPosition(const Position&);
+    static Position canonicalPosition(const Position&);
 
     Position leftVisuallyDistinctCandidate() const;
     Position rightVisuallyDistinctCandidate() const;
 
     Position m_deepPosition;
-    EAffinity m_affinity;
+    Affinity m_affinity { defaultAffinity };
 };
 
 bool operator==(const VisiblePosition&, const VisiblePosition&);
 bool operator!=(const VisiblePosition&, const VisiblePosition&);
 
-PartialOrdering documentOrder(const VisiblePosition&, const VisiblePosition&);
+WEBCORE_EXPORT PartialOrdering documentOrder(const VisiblePosition&, const VisiblePosition&);
 bool operator<(const VisiblePosition&, const VisiblePosition&);
 bool operator>(const VisiblePosition&, const VisiblePosition&);
 bool operator<=(const VisiblePosition&, const VisiblePosition&);
@@ -136,7 +123,7 @@ bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);
 
 bool areVisiblePositionsInSameTreeScope(const VisiblePosition&, const VisiblePosition&);
 
-WTF::TextStream& operator<<(WTF::TextStream&, EAffinity);
+WTF::TextStream& operator<<(WTF::TextStream&, Affinity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisiblePosition&);
 
 struct VisiblePositionRange {
@@ -150,9 +137,9 @@ WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&
 
 // inlines
 
-// FIXME: Is it correct and helpful for this to be ignoring affinity?
 inline bool operator==(const VisiblePosition& a, const VisiblePosition& b)
 {
+    // FIXME: Is it correct and helpful for this to be ignoring differences in affinity?
     return a.deepEquivalent() == b.deepEquivalent();
 }
 
@@ -163,32 +150,32 @@ inline bool operator!=(const VisiblePosition& a, const VisiblePosition& b)
 
 inline bool operator<(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return a.deepEquivalent() < b.deepEquivalent();
+    return is_lt(documentOrder(a, b));
 }
 
 inline bool operator>(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return a.deepEquivalent() > b.deepEquivalent();
+    return is_gt(documentOrder(a, b));
 }
 
 inline bool operator<=(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return a.deepEquivalent() <= b.deepEquivalent();
+    return is_lteq(documentOrder(a, b));
 }
 
 inline bool operator>=(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return a.deepEquivalent() >= b.deepEquivalent();
+    return is_gteq(documentOrder(a, b));
 }
 
-inline void VisiblePosition::getInlineBoxAndOffset(InlineBox*& inlineBox, int& caretOffset) const
+inline auto VisiblePosition::inlineBoxAndOffset() const -> InlineBoxAndOffset
 {
-    m_deepPosition.getInlineBoxAndOffset(m_affinity, inlineBox, caretOffset);
+    return m_deepPosition.inlineBoxAndOffset(m_affinity);
 }
 
-inline void VisiblePosition::getInlineBoxAndOffset(TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
+inline auto VisiblePosition::inlineBoxAndOffset(TextDirection primaryDirection) const -> InlineBoxAndOffset
 {
-    m_deepPosition.getInlineBoxAndOffset(m_affinity, primaryDirection, inlineBox, caretOffset);
+    return m_deepPosition.inlineBoxAndOffset(m_affinity, primaryDirection);
 }
 
 } // namespace WebCore

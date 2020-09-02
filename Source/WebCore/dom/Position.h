@@ -49,6 +49,11 @@ enum PositionMoveType {
     BackwardDeletion // Subject to platform conventions.
 };
 
+struct InlineBoxAndOffset {
+    InlineBox* box { nullptr };
+    int offset { 0 };
+};
+
 class Position {
 public:
     enum AnchorType {
@@ -156,8 +161,8 @@ public:
 
     // FIXME: Make these non-member functions and put them somewhere in the editing directory.
     // These aren't really basic "position" operations. More high level editing helper functions.
-    WEBCORE_EXPORT Position leadingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
-    WEBCORE_EXPORT Position trailingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
+    WEBCORE_EXPORT Position leadingWhitespacePosition(Affinity, bool considerNonCollapsibleWhitespace = false) const;
+    WEBCORE_EXPORT Position trailingWhitespacePosition(Affinity, bool considerNonCollapsibleWhitespace = false) const;
     
     // These return useful visually equivalent positions.
     WEBCORE_EXPORT Position upstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
@@ -167,8 +172,8 @@ public:
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position&) const;
 
-    void getInlineBoxAndOffset(EAffinity, InlineBox*&, int& caretOffset) const;
-    void getInlineBoxAndOffset(EAffinity, TextDirection primaryDirection, InlineBox*&, int& caretOffset) const;
+    InlineBoxAndOffset inlineBoxAndOffset(Affinity) const;
+    InlineBoxAndOffset inlineBoxAndOffset(Affinity, TextDirection primaryDirection) const;
 
     TextDirection primaryDirection() const;
 
@@ -205,8 +210,8 @@ private:
 
     WEBCORE_EXPORT int offsetForPositionAfterAnchor() const;
     
-    Position previousCharacterPosition(EAffinity) const;
-    Position nextCharacterPosition(EAffinity) const;
+    Position previousCharacterPosition(Affinity) const;
+    Position nextCharacterPosition(Affinity) const;
 
     static AnchorType anchorTypeForLegacyEditingPosition(Node* anchorNode, unsigned offset);
 
@@ -287,26 +292,22 @@ inline bool operator!=(const Position& a, const Position& b)
 
 inline bool operator<(const Position& a, const Position& b)
 {
-    if (a.isNull() || b.isNull())
-        return false;
-    if (a.anchorNode() == b.anchorNode())
-        return a.deprecatedEditingOffset() < b.deprecatedEditingOffset();
-    return b.anchorNode()->compareDocumentPosition(*a.anchorNode()) == Node::DOCUMENT_POSITION_PRECEDING;
+    return is_lt(documentOrder(a, b));
 }
 
 inline bool operator>(const Position& a, const Position& b) 
 {
-    return !a.isNull() && !b.isNull() && a != b && b < a;
+    return is_gt(documentOrder(a, b));
 }
 
 inline bool operator>=(const Position& a, const Position& b) 
 {
-    return !a.isNull() && !b.isNull() && (a == b || a > b);
+    return is_gteq(documentOrder(a, b));
 }
 
 inline bool operator<=(const Position& a, const Position& b) 
 {
-    return !a.isNull() && !b.isNull() && (a == b || a < b);
+    return is_lteq(documentOrder(a, b));
 }
 
 // positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)

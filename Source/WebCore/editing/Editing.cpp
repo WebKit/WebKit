@@ -79,23 +79,6 @@ bool isAtomicNode(const Node* node)
     return node && (!node->hasChildNodes() || editingIgnoresContent(*node));
 }
 
-// FIXME: Change callers to use documentOrder and delete this.
-int comparePositions(const Position& a, const Position& b)
-{
-    auto ordering = documentOrder(a, b);
-    if (is_lt(ordering))
-        return -1;
-    if (is_gt(ordering))
-        return 1;
-    return 0;
-}
-
-// FIXME: Change callers to use documentOrder and delete this.
-int comparePositions(const VisiblePosition& a, const VisiblePosition& b)
-{
-    return comparePositions(a.deepEquivalent(), b.deepEquivalent());
-}
-
 ContainerNode* highestEditableRoot(const Position& position, EditableType editableType)
 {
     ContainerNode* highestEditableRoot = editableRootForPosition(position, editableType);
@@ -269,7 +252,7 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Cont
         return { };
 
     // position falls before highestRoot.
-    if (comparePositions(position, firstPositionInNode(highestRoot)) == -1 && highestRoot->hasEditableStyle())
+    if (position < firstPositionInNode(highestRoot) && highestRoot->hasEditableStyle())
         return firstPositionInNode(highestRoot);
 
     Position candidate = position;
@@ -297,7 +280,7 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
         return { };
 
     // When position falls after highestRoot, the result is easy to compute.
-    if (comparePositions(position, lastPositionInNode(highestRoot)) == 1)
+    if (position > lastPositionInNode(highestRoot))
         return lastPositionInNode(highestRoot);
 
     Position candidate = position;
@@ -1148,11 +1131,11 @@ bool isNodeVisiblyContainedWithin(Node& node, const SimpleRange& range)
     auto endPosition = createLegacyEditingPosition(range.end);
 
     bool startIsVisuallySame = visiblePositionBeforeNode(node) == startPosition;
-    if (startIsVisuallySame && comparePositions(positionInParentAfterNode(&node), endPosition) < 0)
+    if (startIsVisuallySame && positionInParentAfterNode(&node) < endPosition)
         return true;
 
     bool endIsVisuallySame = visiblePositionAfterNode(node) == endPosition;
-    if (endIsVisuallySame && comparePositions(startPosition, positionInParentBeforeNode(&node)) < 0)
+    if (endIsVisuallySame && startPosition < positionInParentBeforeNode(&node))
         return true;
 
     return startIsVisuallySame && endIsVisuallySame;
@@ -1260,13 +1243,8 @@ LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caret
 {
     if (caretPosition.isNull())
         return LayoutRect();
-
     ASSERT(caretPosition.deepEquivalent().deprecatedNode()->renderer());
-
-    // First compute a rect local to the renderer at the selection start.
-    RenderObject* renderer;
-    LayoutRect localRect = caretPosition.localCaretRect(renderer);
-
+    auto [localRect, renderer] = caretPosition.localCaretRect();
     return localCaretRectInRendererForRect(localRect, caretPosition.deepEquivalent().deprecatedNode(), renderer, caretPainter);
 }
 

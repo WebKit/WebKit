@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,13 @@
 #pragma once
 
 namespace WebCore {
-// UPSTREAM means before a line break DOWNSTREAM mean after a line break
-enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
+
+// Upstream means before a line break, downstream means after a line break.
+enum Affinity : bool { Upstream, Downstream };
+
+// FIXME: Remove these deprecated names after removing all uses of them.
+using EAffinity = Affinity;
+static constexpr auto UPSTREAM = Upstream;
+static constexpr auto DOWNSTREAM = Downstream;
 
 } // namespace WebCore

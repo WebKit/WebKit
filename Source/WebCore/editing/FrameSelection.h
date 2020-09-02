@@ -172,8 +172,8 @@ public:
 
     TextGranularity granularity() const { return m_granularity; }
 
-    void setStart(const VisiblePosition &, EUserTriggered = NotUserTriggered);
-    void setEnd(const VisiblePosition &, EUserTriggered = NotUserTriggered);
+    void setStart(const VisiblePosition&, EUserTriggered = NotUserTriggered);
+    void setEnd(const VisiblePosition&, EUserTriggered = NotUserTriggered);
     
     WEBCORE_EXPORT void setBase(const VisiblePosition&, EUserTriggered = NotUserTriggered);
     WEBCORE_EXPORT void setBase(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
@@ -228,14 +228,10 @@ public:
     WEBCORE_EXPORT Optional<SimpleRange> wordRangeContainingCaretSelection();
     WEBCORE_EXPORT void expandSelectionToStartOfWordContainingCaretSelection();
     WEBCORE_EXPORT UChar characterInRelationToCaretSelection(int amount) const;
-    WEBCORE_EXPORT UChar characterBeforeCaretSelection() const;
-    WEBCORE_EXPORT UChar characterAfterCaretSelection() const;
-    WEBCORE_EXPORT bool selectionAtDocumentStart() const;
     WEBCORE_EXPORT bool selectionAtSentenceStart() const;
     WEBCORE_EXPORT bool selectionAtWordStart() const;
     WEBCORE_EXPORT Optional<SimpleRange> rangeByMovingCurrentSelection(int amount) const;
     WEBCORE_EXPORT Optional<SimpleRange> rangeByExtendingCurrentSelection(int amount) const;
-    WEBCORE_EXPORT void selectRangeOnElement(unsigned location, unsigned length, Node&);
     WEBCORE_EXPORT void clearCurrentSelection();
     void setCaretBlinks(bool caretBlinks = true);
     WEBCORE_EXPORT void setCaretColor(const Color&);

@@ -127,8 +127,6 @@ Position lastPositionInOrAfterNode(Node*);
 Position firstEditablePositionAfterPositionInRoot(const Position&, ContainerNode* root);
 Position lastEditablePositionBeforePositionInRoot(const Position&, ContainerNode* root);
 
-WEBCORE_EXPORT int comparePositions(const Position&, const Position&);
-
 WEBCORE_EXPORT bool isEditablePosition(const Position&, EditableType = ContentIsEditable);
 bool isRichlyEditablePosition(const Position&);
 bool lineBreakExistsAtPosition(const Position&);
@@ -147,8 +145,6 @@ VisiblePosition visiblePositionBeforeNode(Node&);
 VisiblePosition visiblePositionAfterNode(Node&);
 
 bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
-
-WEBCORE_EXPORT int comparePositions(const VisiblePosition&, const VisiblePosition&);
 
 WEBCORE_EXPORT int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>& scope);
 int indexForVisiblePosition(Node&, const VisiblePosition&, bool forSelectionPreservation);

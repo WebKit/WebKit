@@ -170,15 +170,12 @@ Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
         //                       ^ selected
         //
         ASSERT(isRange());
-        s = m_start.downstream();
-        e = m_end.upstream();
-        if (comparePositions(s, e) > 0) {
-            // Make sure the start is before the end.
-            // The end can wind up before the start if collapsed whitespace is the only thing selected.
+        s = m_start.downstream().parentAnchoredEquivalent();
+        e = m_end.upstream().parentAnchoredEquivalent();
+        // Make sure the start is before the end.
+        // The end can wind up before the start if collapsed whitespace is the only thing selected.
+        if (s > e)
             std::swap(s, e);
-        }
-        s = s.parentAnchoredEquivalent();
-        e = e.parentAnchoredEquivalent();
     }
 
     return makeSimpleRange(s, e);
@@ -235,7 +232,7 @@ void VisibleSelection::setBaseAndExtentToDeepEquivalents()
         m_extent = m_base;
         m_baseIsFirst = true;
     } else
-        m_baseIsFirst = comparePositions(m_base, m_extent) <= 0;
+        m_baseIsFirst = m_base <= m_extent;
 }
 
 void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(TextGranularity granularity)
@@ -427,7 +424,7 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
     ASSERT(m_affinity == DOWNSTREAM);
     m_base = base;
     m_extent = extent;
-    m_baseIsFirst = comparePositions(base, extent) <= 0;
+    m_baseIsFirst = base <= extent;
     if (m_baseIsFirst) {
         m_start = base;
         m_end = extent;

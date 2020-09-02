@@ -1054,10 +1054,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
 
 void CompositeEditCommand::deleteInsignificantText(const Position& start, const Position& end)
 {
-    if (start.isNull() || end.isNull())
-        return;
-
-    if (comparePositions(start, end) >= 0)
+    if (!(start < end))
         return;
 
     Vector<Ref<Text>> nodes;
@@ -1075,10 +1072,9 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
     }
 }
 
-void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& pos)
+void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& position)
 {
-    Position end = VisiblePosition(pos, VP_DEFAULT_AFFINITY).next().deepEquivalent().downstream();
-    deleteInsignificantText(pos, end);
+    deleteInsignificantText(position, VisiblePosition(position).next().deepEquivalent().downstream());
 }
 
 Ref<Element> CompositeEditCommand::appendBlockPlaceholder(Ref<Element>&& container)
@@ -1158,7 +1154,7 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
     
     // It's strange that this function is responsible for verifying that pos has not been invalidated
     // by an earlier call to this function.  The caller, applyBlockStyle, should do this.
-    VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
+    VisiblePosition visiblePos(pos);
     VisiblePosition visibleParagraphStart(startOfParagraph(visiblePos));
     VisiblePosition visibleParagraphEnd = endOfParagraph(visiblePos);
     if (visibleParagraphStart.isNull() || visibleParagraphEnd.isNull())
@@ -1166,13 +1162,13 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
 
     VisiblePosition next = visibleParagraphEnd.next();
     VisiblePosition visibleEnd = next.isNotNull() ? next : visibleParagraphEnd;
-    
+
     Position upstreamStart = visibleParagraphStart.deepEquivalent().upstream();
     Position upstreamEnd = visibleEnd.deepEquivalent().upstream();
 
     // If there are no VisiblePositions in the same block as pos then 
     // upstreamStart will be outside the paragraph
-    if (comparePositions(pos, upstreamStart) < 0)
+    if (pos < upstreamStart)
         return nullptr;
 
     // Perform some checks to see if we need to perform work in this function.
@@ -1232,7 +1228,7 @@ void CompositeEditCommand::pushAnchorElementDown(Element& anchorElement)
 
 void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, const Position& end, Node* passedOuterNode, Element* blockElement)
 {
-    ASSERT(comparePositions(start, end) <= 0);
+    ASSERT(start <= end);
 
     // First we clone the outerNode
     RefPtr<Node> lastNode;
@@ -1402,45 +1398,36 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 {
     if (destination.isNull() || startOfParagraphToMove == destination)
         return;
-    
+
     Optional<uint64_t> startIndex;
     Optional<uint64_t> endIndex;
     bool originalIsDirectional = endingSelection().isDirectional();
     if (preserveSelection && !endingSelection().isNone()) {
-        VisiblePosition visibleStart = endingSelection().visibleStart();
-        VisiblePosition visibleEnd = endingSelection().visibleEnd();
-        
-        bool startAfterParagraph = comparePositions(visibleStart, endOfParagraphToMove) > 0;
-        bool endBeforeParagraph = comparePositions(visibleEnd, startOfParagraphToMove) < 0;
-        
-        if (!startAfterParagraph && !endBeforeParagraph) {
-            bool startInParagraph = comparePositions(visibleStart, startOfParagraphToMove) >= 0;
-            bool endInParagraph = comparePositions(visibleEnd, endOfParagraphToMove) <= 0;
-            
+        auto visibleStart = endingSelection().visibleStart();
+        auto visibleEnd = endingSelection().visibleEnd();
+        if (visibleStart <= endOfParagraphToMove && visibleEnd >= startOfParagraphToMove) {
             startIndex = 0;
-            if (startInParagraph) {
+            if (visibleStart >= startOfParagraphToMove) {
                 if (auto rangeToSelectionStart = makeSimpleRange(startOfParagraphToMove, visibleStart))
                     startIndex = characterCount(*rangeToSelectionStart, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
             }
-
             endIndex = 0;
-            if (endInParagraph) {
+            if (visibleEnd <= endOfParagraphToMove) {
                 if (auto rangeToSelectionEnd = makeSimpleRange(startOfParagraphToMove, visibleEnd))
                     endIndex = characterCount(*rangeToSelectionEnd, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
             }
         }
     }
 
-    VisiblePosition beforeParagraph = startOfParagraphToMove.previous(CannotCrossEditingBoundary);
-    VisiblePosition afterParagraph(endOfParagraphToMove.next(CannotCrossEditingBoundary));
+    auto beforeParagraph = startOfParagraphToMove.previous(CannotCrossEditingBoundary);
+    auto afterParagraph = endOfParagraphToMove.next(CannotCrossEditingBoundary);
 
     // We upstream() the end and downstream() the start so that we don't include collapsed whitespace in the move.
     // When we paste a fragment, spaces after the end and before the start are treated as though they were rendered.
-    Position start = startOfParagraphToMove.deepEquivalent().downstream();
-    Position end = endOfParagraphToMove.deepEquivalent().upstream();
-     
-    // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move. It
-    // shouldn't matter though, since moved paragraphs will usually be quite small.
+    auto start = startOfParagraphToMove.deepEquivalent().downstream();
+    auto end = endOfParagraphToMove.deepEquivalent().upstream();
+
+    // FIXME: Serializing and re-parsing is an inefficient way to preserve style.
     RefPtr<DocumentFragment> fragment;
     if (startOfParagraphToMove != endOfParagraphToMove)
         fragment = createFragmentFromMarkup(document(), serializePreservingVisualAppearance(*makeSimpleRange(start, end), nullptr, AnnotateForInterchange::No, ConvertBlocksToInlines::Yes), emptyString());

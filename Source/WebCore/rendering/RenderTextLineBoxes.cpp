@@ -210,16 +210,16 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineText
 
 static VisiblePosition createVisiblePositionForBox(const InlineBox& box, int offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
 {
-    EAffinity affinity = VP_DEFAULT_AFFINITY;
+    auto affinity = VisiblePosition::defaultAffinity;
     switch (shouldAffinityBeDownstream) {
     case AlwaysDownstream:
-        affinity = DOWNSTREAM;
+        affinity = Downstream;
         break;
     case AlwaysUpstream:
-        affinity = VP_UPSTREAM_IF_POSSIBLE;
+        affinity = Upstream;
         break;
     case UpstreamIfPositionIsNotAtStart:
-        affinity = offset > box.caretMinOffset() ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM;
+        affinity = offset > box.caretMinOffset() ? Upstream : Downstream;
         break;
     }
     return box.renderer().createVisiblePosition(offset, affinity);
@@ -323,7 +323,7 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
 #if PLATFORM(IOS_FAMILY)
                 if (pointLineDirection != box->logicalLeft() && point.x() < box->x() + box->logicalWidth()) {
                     int half = box->x() + box->logicalWidth() / 2;
-                    EAffinity affinity = point.x() < half ? DOWNSTREAM : VP_UPSTREAM_IF_POSSIBLE;
+                    auto affinity = point.x() < half ? Downstream : Upstream;
                     return renderer.createVisiblePosition(box->offsetForPosition(pointLineDirection) + box->start(), affinity);
                 }
 #endif

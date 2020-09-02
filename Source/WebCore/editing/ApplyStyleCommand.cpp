@@ -172,13 +172,13 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
 
 void ApplyStyleCommand::updateStartEnd(const Position& newStart, const Position& newEnd)
 {
-    ASSERT(comparePositions(newEnd, newStart) >= 0);
+    ASSERT(!(newStart > newEnd));
 
     if (!m_useEndingSelection && (newStart != m_start || newEnd != m_end))
         m_useEndingSelection = true;
 
     bool wasBaseFirst = startingSelection().isBaseFirst() || !startingSelection().isDirectional();
-    setEndingSelection(VisibleSelection(wasBaseFirst ? newStart : newEnd, wasBaseFirst ? newEnd : newStart, VP_DEFAULT_AFFINITY, endingSelection().isDirectional()));
+    setEndingSelection(VisibleSelection(wasBaseFirst ? newStart : newEnd, wasBaseFirst ? newEnd : newStart, VisiblePosition::defaultAffinity, endingSelection().isDirectional()));
     m_start = newStart;
     m_end = newEnd;
 }
@@ -227,9 +227,9 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
     // updating before each and every call to check a computed style.
     document().updateLayoutIgnorePendingStylesheets();
 
-    Position start = startPosition();
-    Position end = endPosition();
-    if (comparePositions(end, start) < 0)
+    auto start = startPosition();
+    auto end = endPosition();
+    if (end < start)
         std::swap(start, end);
 
     VisiblePosition visibleStart(start);
@@ -298,16 +298,13 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     if (!style || !style->hasFontSizeDelta())
         return;
 
-    Position start = startPosition();
-    Position end = endPosition();
-    if (comparePositions(end, start) < 0) {
-        Position swap = start;
-        start = end;
-        end = swap;
-    }
+    auto start = startPosition();
+    auto end = endPosition();
+    if (end < start)
+        std::swap(start, end);
 
     // Join up any adjacent text nodes.
-    if (is<Text>(*start.deprecatedNode())) {
+    if (is<Text>(start.deprecatedNode())) {
         joinChildTextNodes(start.deprecatedNode()->parentNode(), start, end);
         start = startPosition();
         end = endPosition();
@@ -558,17 +555,10 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     document().updateLayoutIgnorePendingStylesheets();
 
     // adjust to the positions we want to use for applying style
-    Position start = startPosition();
-    Position end = endPosition();
-
-    if (start.isNull() || end.isNull())
-        return;
-
-    if (comparePositions(end, start) < 0) {
-        Position swap = start;
-        start = end;
-        end = swap;
-    }
+    auto start = startPosition();
+    auto end = endPosition();
+    if (end < start)
+        std::swap(start, end);
 
     // split the start node and containing element if the selection starts inside of it
     bool splitStart = isValidCaretPositionInTextNode(start);
@@ -581,9 +571,6 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
         end = endPosition();
         startDummySpanAncestor = dummySpanAncestorForNode(start.deprecatedNode());
     }
-
-    if (start.isNull() || end.isNull())
-        return;
 
     // split the end node and containing element if the selection ends inside of it
     bool splitEnd = isValidCaretPositionInTextNode(end);
@@ -629,7 +616,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
             styleWithoutEmbedding = style.copy();
             embeddingStyle = styleWithoutEmbedding->extractAndRemoveTextDirection();
 
-            if (comparePositions(embeddingRemoveStart, embeddingRemoveEnd) <= 0)
+            if (embeddingRemoveStart <= embeddingRemoveEnd)
                 removeInlineStyle(*embeddingStyle, embeddingRemoveStart, embeddingRemoveEnd);
         }
     }
@@ -694,7 +681,7 @@ void ApplyStyleCommand::fixRangeAndApplyInlineStyle(EditingStyle& style, const P
 
     if (start.deprecatedEditingOffset() >= caretMaxOffset(*startNode)) {
         startNode = NodeTraversal::next(*startNode);
-        if (!startNode || comparePositions(end, firstPositionInOrBeforeNode(startNode)) < 0)
+        if (!startNode || end < firstPositionInOrBeforeNode(startNode))
             return;
     }
 
@@ -1079,7 +1066,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
     ASSERT(end.isNotNull());
     ASSERT(start.anchorNode()->isConnected());
     ASSERT(end.anchorNode()->isConnected());
-    ASSERT(comparePositions(start, end) <= 0);
+    ASSERT(start <= end);
     // FIXME: We should assert that start/end are not in the middle of a text node.
 
     Position pushDownStart = start.downstream();
@@ -1161,18 +1148,14 @@ bool ApplyStyleCommand::nodeFullySelected(Element& element, const Position& star
 {
     // The tree may have changed and Position::upstream() relies on an up-to-date layout.
     element.document().updateLayoutIgnorePendingStylesheets();
-
-    return comparePositions(firstPositionInOrBeforeNode(&element), start) >= 0
-        && comparePositions(lastPositionInOrAfterNode(&element).upstream(), end) <= 0;
+    return firstPositionInOrBeforeNode(&element) >= start && lastPositionInOrAfterNode(&element).upstream() <= end;
 }
 
 bool ApplyStyleCommand::nodeFullyUnselected(Element& element, const Position& start, const Position& end) const
 {
     // The tree may have changed and Position::upstream() relies on an up-to-date layout.
     element.document().updateLayoutIgnorePendingStylesheets();
-
-    return comparePositions(lastPositionInOrAfterNode(&element).upstream(), start) < 0
-        || comparePositions(firstPositionInOrBeforeNode(&element), end) > 0;
+    return lastPositionInOrAfterNode(&element).upstream() < start || firstPositionInOrBeforeNode(&element) > end;
 }
 
 void ApplyStyleCommand::splitTextAtStart(const Position& start, const Position& end)

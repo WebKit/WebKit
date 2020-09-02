@@ -755,7 +755,6 @@ HRESULT AccessibleText::initialCheck()
 
 bool AccessibleText::isInRange(VisiblePosition& current, VisiblePositionRange& wordRange)
 {
-    ASSERT(wordRange.start.isNotNull());
-    ASSERT(wordRange.end.isNotNull());
-    return comparePositions(current.deepEquivalent(), wordRange.start) >= 0 && comparePositions(current.deepEquivalent(), wordRange.end) <= 0;
+    auto range = makeSimpleRange(wordRange);
+    return range && isPointInRange(*range, makeBoundaryPoint(current));
 }

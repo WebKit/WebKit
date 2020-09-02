@@ -79,15 +79,15 @@ private:
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
 
-    RenderObject* m_renderer { nullptr };
-    InlineBox* m_inlineBox { nullptr };
-    int m_offset;
-
     static InlineBox* uncachedInlineBox() { return reinterpret_cast<InlineBox*>(1); }
     // Needs to be different form 0 so pick 1 because it's also on the null page.
 
-    mutable InlineBox* m_previousLeafOnLine;
-    mutable InlineBox* m_nextLeafOnLine;
+    RenderObject* m_renderer { nullptr };
+    InlineBox* m_inlineBox { nullptr };
+    int m_offset { 0 };
+
+    mutable InlineBox* m_previousLeafOnLine { nullptr };
+    mutable InlineBox* m_nextLeafOnLine { nullptr };
 };
 
 inline RenderedPosition::RenderedPosition()

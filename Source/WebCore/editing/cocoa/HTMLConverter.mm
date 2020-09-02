@@ -398,7 +398,7 @@ HTMLConverter::~HTMLConverter()
 
 AttributedString HTMLConverter::convert()
 {
-    if (comparePositions(m_start, m_end) > 0)
+    if (m_start > m_end)
         return { };
 
     Node* commonAncestorContainer = _caches->cacheAncestorsOfStartToBeConverted(m_start, m_end);
