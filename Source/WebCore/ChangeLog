@@ -1,3 +1,22 @@
+2020-09-02  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r264661): Crashes in WebCore::wrap<WebCore::Blob> in CloneDeserializer
+        https://bugs.webkit.org/show_bug.cgi?id=215835
+
+        Reviewed by Youenn Fablet.
+
+        Partially revert r264661 as there are cases, other than our previous IDB, where we may not use JSDOMGlobalObject
+        for serialization and deserialization, like the one showed in the crashlog. Therefore, we still need the check 
+        for JSDOMGlobalObject.
+
+        API Test: WebKit.EvaluateJavaScriptThatCreatesBlob
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readRTCCertificate):
+        (WebCore::CloneDeserializer::readTerminal):
+
 2020-09-02  Chris Dumez  <cdumez@apple.com>
 
         Implement event convergence for AudioParam.setTargetAtTime()
