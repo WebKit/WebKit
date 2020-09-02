@@ -1,5 +1,21 @@
 2020-09-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266238. rdar://problem/68161715
+
+    Unreviewed, add missing double quote in r266216.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266238 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-27  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, add missing double quote in r266216.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2020-09-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266216. rdar://problem/68161715
 
     [macOS] Stop logging sandbox violations of com.apple.CoreDisplay.Notification

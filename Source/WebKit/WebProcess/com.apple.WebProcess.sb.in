@@ -767,7 +767,7 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup (with no-log)
-    (global-name "com.apple.CoreDisplay.Notification))
+    (global-name "com.apple.CoreDisplay.Notification"))
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
