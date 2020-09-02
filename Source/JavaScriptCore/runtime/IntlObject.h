@@ -34,6 +34,8 @@ struct UFieldPositionIterator;
 
 namespace JSC {
 
+extern const uint8_t ducetWeights[128];
+
 enum class LocaleMatcher : uint8_t {
     Lookup,
     BestFit,
