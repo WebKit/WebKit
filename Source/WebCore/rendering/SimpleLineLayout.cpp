@@ -359,6 +359,30 @@ bool canUseFor(const RenderBlockFlow& flow)
     return canUseForWithReason(flow, IncludeReasons::First) == NoReason;
 }
 
+bool canUseForAfterStyleChange(const RenderBlockFlow& blockContainer, StyleDifference diff)
+{
+    switch (diff) {
+    case StyleDifference::Equal:
+    case StyleDifference::RecompositeLayer:
+        return true;
+    case StyleDifference::Repaint:
+    case StyleDifference::RepaintIfTextOrBorderOrOutline:
+    case StyleDifference::RepaintLayer:
+        // FIXME: We could do a more focused style check by matching RendererStyle::changeRequiresRepaint&co.
+        return canUseForStyle(blockContainer.style(), IncludeReasons::First) == NoReason;
+    case StyleDifference::LayoutPositionedMovementOnly:
+        return true;
+    case StyleDifference::SimplifiedLayout:
+    case StyleDifference::SimplifiedLayoutAndPositionedMovement:
+        return canUseForStyle(blockContainer.style(), IncludeReasons::First) == NoReason;
+    case StyleDifference::Layout:
+    case StyleDifference::NewStyle:
+        return canUseFor(blockContainer);
+    }
+    ASSERT_NOT_REACHED();
+    return canUseFor(blockContainer);
+}
+
 static void revertAllRunsOnCurrentLine(Layout::RunVector& runs)
 {
     while (!runs.isEmpty() && !runs.last().isEndOfLine)
