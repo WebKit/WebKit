@@ -29,11 +29,29 @@
 
 import sys
 import argparse
+import os
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 
+def usesFlatpak():
+    return not os.environ.get('WEBKIT_JHBUILD') or os.environ.get('WEBKIT_JHBUILD') == '0'
+
+def listWebKitBuildFiles(fs):
+    ret = []
+    if fs.isdir("WebKitBuild"):
+        for build_dir in fs.listdir("WebKitBuild"):
+            build_path = fs.join("WebKitBuild", build_dir)
+            ret.append(build_path)
+    return ret
+
+def removeFiles(l):
+    for each in l:
+        if fs.isdir(each):
+            fs.rmtree(each)
+        else:
+            fs.remove(each)
 
 def main(args):
     fs = FileSystem()
@@ -46,13 +64,10 @@ def main(args):
         # Clean everything inside WebKitBuild, except the JHBuild directories.
         scm.discard_untracked_files(discard_ignored_files=True, keep_webkitbuild_directory=True)
         if fs.isdir("WebKitBuild"):
-            for build_dir in fs.listdir("WebKitBuild"):
-                build_path = fs.join("WebKitBuild", build_dir)
-                if fs.isdir(build_path):
-                    if build_dir not in ["DependenciesGTK", "DependenciesWPE"]:
-                        fs.rmtree(build_path)
-                else:
-                    fs.remove(build_path)
+            files = listWebKitBuildFiles(fs)
+            keepDirs = usesFlatpak() and ["Toolchains", "UserFlatpak"] or ["DependenciesGTK", "DependenciesWPE"]
+            files = filter(lambda path: path[len("WebKitBuild/"):] not in keepDirs, files)
+            removeFiles(files)
     else:
         scm.discard_untracked_files(discard_ignored_files=True)
 
