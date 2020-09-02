@@ -48,18 +48,16 @@ class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct InlineBox {
-        InlineBox(const AscentAndDescent&);
-        InlineBox() = default;
+        InlineBox(const Display::InlineRect&, const AscentAndDescent&, const Box&);
 
+        Display::InlineRect rect;
         AscentAndDescent ascentAndDescent;
+        const Box& layoutBox;
     };
 
     enum class IsLastLineWithInlineContent { No, Yes };
     enum class IsLineVisuallyEmpty { No, Yes };
     LineBox(const InlineFormattingContext&, const Display::InlineRect&, const LineBuilder::RunList&, IsLineVisuallyEmpty, IsLastLineWithInlineContent);
-
-    using InlineRunRectList = Vector<Display::InlineRect, 10>;
-    const InlineRunRectList& inlineRectList() const { return m_runRectList; }
 
     InlineLayoutUnit logicalLeft() const { return m_rect.left(); }
     InlineLayoutUnit logicalRight() const { return m_rect.right(); }
@@ -90,6 +88,8 @@ public:
     // -------------------    line logical bottom  -------------------
     InlineLayoutUnit alignmentBaseline() const;
 
+    const Display::InlineRect& rectForRun(const LineBuilder::Run& run) const { return m_inlineBoxList[m_runToInlineBoxMap.get(&run)].rect; }
+
 private:
     const AscentAndDescent& ascentAndDescent() const { return m_rootInlineBox.ascentAndDescent; }
 
@@ -103,7 +103,6 @@ private:
     void alignHorizontally(InlineLayoutUnit availableWidth, IsLastLineWithInlineContent);
     void alignVertically();
     void adjustBaselineAndLineHeight();
-
     HangingContent collectHangingContent(IsLastLineWithInlineContent) const;
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
@@ -119,11 +118,15 @@ private:
     Display::InlineRect m_scrollableOverflow;
     InlineLayoutUnit m_alignmentBaseline { 0 };
     InlineBox m_rootInlineBox;
-    InlineRunRectList m_runRectList;
+    Vector<InlineBox> m_inlineBoxList;
+    // FIXME: This is temporary and will be replaced by an inline box map.
+    HashMap<const LineBuilder::Run*, size_t> m_runToInlineBoxMap;
 };
 
-inline LineBox::InlineBox::InlineBox(const AscentAndDescent& ascentAndDescent)
-    : ascentAndDescent(ascentAndDescent)
+inline LineBox::InlineBox::InlineBox(const Display::InlineRect& rect, const AscentAndDescent& ascentAndDescent, const Box& layoutBox)
+    : rect(rect)
+    , ascentAndDescent(ascentAndDescent)
+    , layoutBox(layoutBox)
 {
 }
 

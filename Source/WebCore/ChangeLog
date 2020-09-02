@@ -1,3 +1,25 @@
+2020-09-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Start constructing InlineBoxes for inline runs
+        https://bugs.webkit.org/show_bug.cgi?id=215168
+
+        Reviewed by Antti Koivisto.
+
+        In this transitional step we start constructing inline boxes. However at this point, each run gains a dedicated inline box.
+        While this is somewhat incorrect from the spec point of view, this is all internal and very tempoarary at this point.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::LineBox):
+        (WebCore::Layout::LineBox::rectForRun const):
+        (WebCore::Layout::LineBox::alignHorizontally):
+        (WebCore::Layout::LineBox::alignVertically):
+        (WebCore::Layout::LineBox::adjustBaselineAndLineHeight):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::InlineBox::InlineBox):
+        (WebCore::Layout::LineBox::inlineRectList const): Deleted.
+
 2020-09-02  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Update date picker when the inner control is edited

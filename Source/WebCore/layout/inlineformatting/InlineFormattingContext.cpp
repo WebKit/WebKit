@@ -511,11 +511,8 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     auto lineIndex = inlineContent.lineBoxes.size();
     auto lineInkOverflow = lineBox.scrollableOverflow();
     // Compute box final geometry.
-    auto& runRectList = lineBox.inlineRectList();
-    auto& lineRuns = lineContent.runs;
-    for (size_t index = 0; index < lineRuns.size(); ++index) {
-        auto& lineRun = lineRuns.at(index);
-        auto logicalRect = runRectList[index];
+    for (auto& lineRun : lineContent.runs) {
+        auto& logicalRect = lineBox.rectForRun(lineRun);
         auto& layoutBox = lineRun.layoutBox();
 
         // Add final display runs to state first.

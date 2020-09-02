@@ -57,6 +57,7 @@ LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, const D
     , m_runs(runs)
     , m_rect(lineRect)
     , m_scrollableOverflow(lineRect)
+    , m_rootInlineBox(InlineBox { lineRect, { }, inlineFormattingContext.root() })
 {
 #if ASSERT_ENABLED
     m_hasValidAlignmentBaseline = true;
@@ -64,8 +65,8 @@ LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, const D
     auto& rootStyle = inlineFormattingContext.root().style();
     auto halfLeadingMetrics = this->halfLeadingMetrics(rootStyle.fontMetrics(), lineRect.height());
 
+    m_rootInlineBox.ascentAndDescent = halfLeadingMetrics;
     m_alignmentBaseline = halfLeadingMetrics.ascent;
-    m_rootInlineBox = InlineBox { halfLeadingMetrics };
 
     auto contentLogicalWidth = InlineLayoutUnit { };
     for (auto& run : m_runs) {
@@ -85,7 +86,9 @@ LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, const D
             // Non-replaced inline box (e.g. inline-block). It looks a bit misleading but their margin box is considered the content height here.
             return boxGeometry.marginBoxHeight();
         };
-        m_runRectList.append({ 0, run.logicalLeft(), run.logicalWidth(), runHeight() });
+        // FIXME: This is temporary. Do not make an inline box for each run.
+        m_inlineBoxList.append(InlineBox { { 0, run.logicalLeft(), run.logicalWidth(), runHeight() }, halfLeadingMetrics, run.layoutBox() });
+        m_runToInlineBoxMap.set(&run, m_inlineBoxList.size() - 1);
         contentLogicalWidth += run.logicalWidth();
     }
     m_scrollableOverflow.setWidth(std::max(lineRect.width(), contentLogicalWidth));
@@ -120,10 +123,10 @@ void LineBox::alignHorizontally(InlineLayoutUnit availableWidth, IsLastLineWithI
     if (computedHorizontalAlignment == TextAlignMode::Justify) {
         auto accumulatedExpansion = InlineLayoutUnit { };
         for (size_t index = 0; index < m_runs.size(); ++index) {
-            m_runRectList[index].moveHorizontally(accumulatedExpansion);
+            m_inlineBoxList[index].rect.moveHorizontally(accumulatedExpansion);
 
             auto horizontalExpansion = m_runs[index].expansion().horizontalExpansion;
-            m_runRectList[index].expandHorizontally(horizontalExpansion);
+            m_inlineBoxList[index].rect.expandHorizontally(horizontalExpansion);
             accumulatedExpansion += horizontalExpansion;
         }
         return;
@@ -153,19 +156,21 @@ void LineBox::alignHorizontally(InlineLayoutUnit availableWidth, IsLastLineWithI
     if (auto adjustment = adjustmentForAlignment(availableWidth)) {
         // FIXME: line box should not need to be moved, only the runs.
         m_rect.moveHorizontally(*adjustment);
-        for (auto& runRect : m_runRectList)
-            runRect.moveHorizontally(*adjustment);
+        for (auto& inlineBox : m_inlineBoxList)
+            inlineBox.rect.moveHorizontally(*adjustment);
     }
 }
 
 void LineBox::alignVertically()
 {
     adjustBaselineAndLineHeight();
-    for (size_t index = 0; index < m_runs.size(); ++index) {
+    for (size_t index = 0; index < m_inlineBoxList.size(); ++index) {
+        auto& inlineBox = m_inlineBoxList[index];
         auto& run = m_runs[index];
-        auto& runRect = m_runRectList[index];
+        auto& layoutBox = inlineBox.layoutBox;
+        auto inlineBoxHeight = inlineBox.rect.height();
+
         auto logicalTop = InlineLayoutUnit { };
-        auto& layoutBox = run.layoutBox();
         auto verticalAlign = layoutBox.style().verticalAlign();
         auto ascent = layoutBox.style().fontMetrics().ascent();
 
@@ -197,25 +202,26 @@ void LineBox::alignVertically()
                 logicalTop = alignmentBaseline() - baselineFromMarginBox;
             } else {
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                logicalTop = alignmentBaseline() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu) + runRect.height() + boxGeometry.marginAfter());
+                logicalTop = alignmentBaseline() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu) + inlineBoxHeight + boxGeometry.marginAfter());
             }
             break;
         case VerticalAlign::Top:
             logicalTop = 0_lu;
             break;
         case VerticalAlign::Bottom:
-            logicalTop = logicalBottom() - runRect.height();
+            logicalTop = logicalBottom() - inlineBoxHeight;
             break;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
         }
-        runRect.setTop(logicalTop);
+        auto& inlineBoxRect = inlineBox.rect;
+        inlineBoxRect.setTop(logicalTop);
         // Adjust scrollable overflow if the run overflows the line.
-        m_scrollableOverflow.expandVerticallyToContain(runRect);
+        m_scrollableOverflow.expandVerticallyToContain(inlineBoxRect);
         // Convert runs from relative to the line top/left to the formatting root's border box top/left.
-        runRect.moveVertically(this->logicalTop());
-        runRect.moveHorizontally(logicalLeft());
+        inlineBoxRect.moveVertically(this->logicalTop());
+        inlineBoxRect.moveHorizontally(logicalLeft());
     }
 }
 
@@ -223,9 +229,11 @@ void LineBox::adjustBaselineAndLineHeight()
 {
     unsigned inlineContainerNestingLevel = 0;
     auto hasSeenDirectTextOrLineBreak = false;
-    for (auto& run : m_runs) {
-        auto& layoutBox = run.layoutBox();
+    for (size_t index = 0; index < m_inlineBoxList.size(); ++index) {
+        auto& inlineBox = m_inlineBoxList[index];
+        auto& layoutBox = inlineBox.layoutBox;
         auto& style = layoutBox.style();
+        auto& run = m_runs[index];
         if (run.isText() || run.isLineBreak()) {
             // For text content we set the baseline either through the initial strut (set by the formatting context root) or
             // through the inline container (start). Normally the text content itself does not stretch the line.
