@@ -1,0 +1,45 @@
+<body>
+<style>
+    
+    body {
+        background-color: red;
+    }
+    
+    div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 400px;
+        height: 400px;
+        background-color: green;
+        transform-origin: top left;
+        transform: scale(0.5);
+    }
+
+    div.scaled-up {
+        transform: scale(1);
+        transition: 2s transform cubic-bezier(0, 200, 1, 200);
+    }
+
+</style>
+<div></div>
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+(async function() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    await UIHelper.renderingUpdate();
+    document.querySelector("div").classList.add("scaled-up");
+
+    await Promise.all(document.getAnimations().map(animation => animation.ready));
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>
+</body>

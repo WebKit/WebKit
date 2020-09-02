@@ -3331,16 +3331,30 @@ void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const An
     propertyAnim->setAdditive(additive);
     propertyAnim->setFillMode(fillMode);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        propertyAnim->setTimingFunction(anim->timingFunction());
+    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215918
+        // A CSS Transition is the only scenario where Animation::property() will have
+        // its mode set to SingleProperty. In this case, we don't set the animation-wide
+        // timing function to work around a Core Animation limitation.
+        if (anim->property().mode != Animation::TransitionMode::SingleProperty)
+            propertyAnim->setTimingFunction(anim->timingFunction());
+    }
 }
 
 const TimingFunction& GraphicsLayerCA::timingFunctionForAnimationValue(const AnimationValue& animValue, const Animation& anim)
 {
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
+        if (anim.property().mode == Animation::TransitionMode::SingleProperty && anim.timingFunction()) {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215918
+            // A CSS Transition is the only scenario where Animation::property() will have
+            // its mode set to SingleProperty. In this case, we chose not to set set the
+            // animation-wide timing function, so we set it on the single keyframe interval
+            // to work around a Core Animation limitation.
+            return *anim.timingFunction();
+        }
         if (animValue.timingFunction())
             return *animValue.timingFunction();
-        else if (anim.defaultTimingFunctionForKeyframes())
+        if (anim.defaultTimingFunctionForKeyframes())
             return *anim.defaultTimingFunctionForKeyframes();
         return LinearTimingFunction::sharedLinearTimingFunction();
     }
