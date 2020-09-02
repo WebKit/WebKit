@@ -97,7 +97,13 @@ class HttpServerBase(object):
 
         self._pid = self._spawn_process()
 
-        if self._wait_for_action(self._is_server_running_on_all_ports):
+        if sys.platform == 'cygwin':
+            # Starting the server takes longer time on Cygwin
+            server_started = self._wait_for_action(self._is_server_running_on_all_ports, 60, 10)
+        else:
+            server_started = self._wait_for_action(self._is_server_running_on_all_ports)
+
+        if server_started:
             _log.debug("%s successfully started (pid = %d)" % (self._name, self._pid))
         else:
             self._stop_running_server()

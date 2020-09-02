@@ -1,3 +1,17 @@
+2020-09-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The WPT server is not always starting when running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=216035
+
+        Reviewed by Youenn Fablet.
+
+        The Web platform test server is not always starting when running layout tests using Cygwin. It seems that starting the WPT server
+        takes longer time on Windows. Currently, the timeout is set to 20 seconds with polling every second. This patch addresses this
+        issue by waiting up to 60 seconds with polling every 10th second.
+
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase.start):
+
 2020-09-02  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed. Follow-up r266450, fix script due to missing variable.
