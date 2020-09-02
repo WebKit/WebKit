@@ -2186,8 +2186,6 @@ webkit.org/b/215583 media/track/track-in-band-style.html [ Pass Failure Timeout 
 
 webkit.org/b/215587 media/modern-media-controls/volume-down-support/volume-down-support.html [ Pass Timeout ]
 
-webkit.org/b/215614 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html [ Pass Timeout ]
-
 webkit.org/b/215649 accessibility/mac/select-element-selection-with-optgroups.html [ Pass Failure ]
 
 webkit.org/b/215723 fast/repaint/list-item-equal-style-change-no-repaint.html [ Pass Failure ]

@@ -1,3 +1,16 @@
+2020-09-02  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION: [ macOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=215614
+        <rdar://problem/67333849>
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl-expected.txt:
+
+        * platform/mac/TestExpectations:
+
 2020-09-02  Youenn Fablet  <youenn@apple.com>
 
         Introduce a C++ chain of operations in RTCPeerConnection

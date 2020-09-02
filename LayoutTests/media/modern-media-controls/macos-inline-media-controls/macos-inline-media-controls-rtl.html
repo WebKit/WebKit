@@ -9,7 +9,6 @@ description("Testing that control bars and the mute button respect the user inte
 window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 250 });
-mediaControls.usesLTRUserInterfaceLayoutDirection = true;
 
 mediaControls.element.style.position = "relative";
 document.body.appendChild(mediaControls.element);
@@ -21,6 +20,7 @@ function step1()
     debug("width = 600");
     debug("muted = false");
     debug("usesLTRUserInterfaceLayoutDirection = true");
+    mediaControls.usesLTRUserInterfaceLayoutDirection = true;
     shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume", () => {
         shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).left", "6px", step2);
@@ -35,7 +35,7 @@ function step2()
     debug("muted = false");
     debug("usesLTRUserInterfaceLayoutDirection = false");
     mediaControls.usesLTRUserInterfaceLayoutDirection = false;
-    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume", () => {
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeRTL", () => {
         shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step3);
         });
