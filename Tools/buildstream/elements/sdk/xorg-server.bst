@@ -51,7 +51,5 @@ variables:
 
 sources:
 - kind: tar
-  url: https://www.x.org/releases/individual/xserver/xorg-server-1.19.6.tar.bz2
-  ref: a732502f1db000cf36a376cd0c010ffdbf32ecdd7f1fa08ba7f5bdf9601cc197
-- kind: patch
-  path: patches/xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch
+  url: https://www.x.org/releases/individual/xserver/xorg-server-1.20.8.tar.bz2
+  ref: d17b646bee4ba0fb7850c1cc55b18e3e8513ed5c02bdf38da7e107f84e2d0146

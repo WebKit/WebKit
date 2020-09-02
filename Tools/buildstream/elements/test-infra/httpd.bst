@@ -6,7 +6,6 @@ build-depends:
 
 depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
-- freedesktop-sdk.bst:components/pcre.bst
 - freedesktop-sdk.bst:components/expat.bst
 - test-infra/apr.bst
 - test-infra/apr-util.bst

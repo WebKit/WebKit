@@ -15,7 +15,7 @@ sources:
 - kind: git_tag
   url: github_com:KhronosGroup/OpenXR-SDK.git
   track: master
-  ref: release-1.0.9-0-g97cfe495bb7a3853266b646d1c79e169387f9c7a
+  ref: release-1.0.11-0-ge3a4e41d61544d8e2eba73f00da99b6818ec472b
 
 variables:
   cmake-local: >-

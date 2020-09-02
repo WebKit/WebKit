@@ -18,6 +18,7 @@ xcuserdata
 /Tools/buildstream/.venv
 /Tools/buildstream/cache
 /Tools/buildstream/flatpak-version.yml
+/Tools/buildstream/repo
 
 # Ignore auto-generated files by VS & VSCode.
 *.vcproj.*.user

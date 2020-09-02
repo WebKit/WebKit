@@ -2,7 +2,7 @@ kind: autotools
 
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-autotools.bst
-- freedesktop-sdk.bst:components/itstools.bst
+- freedesktop-sdk.bst:components/itstool.bst
 - sdk/intltool.bst
 - freedesktop-sdk.bst:components/perl-xml-parser.bst
 

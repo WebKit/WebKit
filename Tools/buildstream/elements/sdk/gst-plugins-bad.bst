@@ -14,7 +14,6 @@ depends:
 - sdk/openjpeg.bst
 - sdk/libkate.bst
 - sdk/libusrsctp.bst
-- sdk/libsrtp2.bst
 - sdk-build-depends/libusb.bst
 - filtered-openh264.bst
 - freedesktop-sdk.bst:components/aom.bst
@@ -25,12 +24,12 @@ depends:
 - freedesktop-sdk.bst:components/libfdk-aac.bst
 - freedesktop-sdk.bst:components/libglvnd.bst
 - freedesktop-sdk.bst:components/libnice.bst
+- freedesktop-sdk.bst:components/libsrtp2.bst
 - freedesktop-sdk.bst:components/libwebp.bst
 - freedesktop-sdk.bst:components/libgudev.bst
 - freedesktop-sdk.bst:components/openal.bst
 - freedesktop-sdk.bst:components/orc.bst
 - freedesktop-sdk.bst:components/sndfile.bst
-- freedesktop-sdk.bst:components/vulkan.bst
 - freedesktop-sdk.bst:components/wayland.bst
 - freedesktop-sdk.bst:components/webrtc-audio-processing.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
@@ -105,6 +104,7 @@ variables:
     -Dvdpau=disabled
     -Dvoaacenc=disabled
     -Dvoamrwbenc=disabled
+    -Dvulkan=disabled
     -Dwasapi=disabled
     -Dwebp=disabled
     -Dwebrtcdsp=disabled

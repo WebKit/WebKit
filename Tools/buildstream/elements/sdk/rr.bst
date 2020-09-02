@@ -16,4 +16,4 @@ sources:
 - kind: git_tag
   url: github_com:mozilla/rr
   track: master
-  ref: 5.3.0-174-gc302cfdcf5259ba5203ba08c1e4a3678e033955d
+  ref: 5.3.0-316-gcd61ba22ccc05b426691312784674c0eb8e654ef

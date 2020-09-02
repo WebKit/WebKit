@@ -1,3 +1,13 @@
+2020-09-02  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to FDO 20.08
+        https://bugs.webkit.org/show_bug.cgi?id=215763
+
+        Reviewed by Žan Doberšek.
+
+        * .gitignore: Ignore buildstream local Flatpak repository. This is created only when
+        manually building the SDK.
+
 2020-08-31  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Build fix for intermittent copy errors

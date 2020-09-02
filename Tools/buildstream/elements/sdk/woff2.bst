@@ -6,7 +6,7 @@ sources:
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
 depends:
-- sdk/brotli.bst
+- freedesktop-sdk.bst:components/brotli.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
 public:
   bst:

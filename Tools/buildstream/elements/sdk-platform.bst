@@ -9,10 +9,6 @@ depends:
 
 # replaced (patched) elements:
 - sdk/adwaita-icon-theme.bst
-- sdk/at-spi2-atk.bst
-- sdk/at-spi2-core.bst
-- sdk/atk.bst
-- sdk/brotli.bst
 - sdk/capnp.bst
 - sdk/ccls.bst
 - sdk/enchant-2.bst
@@ -33,6 +29,7 @@ depends:
 - sdk/krb5.bst
 - sdk/libavif.bst
 - sdk/libcap-ng.bst
+- sdk/libdrm.bst
 - sdk/libevent.bst
 - sdk/libgcrypt.bst
 - sdk/libkate.bst
@@ -40,11 +37,11 @@ depends:
 - sdk/libnotify.bst
 - sdk/libsecret.bst
 - sdk/libsoup.bst
-- sdk/libsrtp2.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
 - sdk/libzstd.bst
 - sdk/lzo2.bst
+- sdk/mesa.bst
 - sdk/openjpeg.bst
 - sdk/openxr.bst
 - sdk/os-release.bst
@@ -61,7 +58,6 @@ depends:
 - sdk/ruby-highline.bst
 - sdk/shared-mime-info.bst
 - sdk/subversion.bst
-- sdk/v4lutils.bst
 - sdk/woff2.bst
 - sdk/wpebackend-fdo.bst
 - sdk/x264.bst
@@ -72,6 +68,10 @@ depends:
 - freedesktop-sdk.bst:components/alsa-plugins.bst
 - freedesktop-sdk.bst:components/appstream-glib.bst
 - freedesktop-sdk.bst:components/aspell.bst
+- freedesktop-sdk.bst:components/at-spi2-atk.bst
+- freedesktop-sdk.bst:components/at-spi2-core.bst
+- freedesktop-sdk.bst:components/atk.bst
+- freedesktop-sdk.bst:components/brotli.bst
 - freedesktop-sdk.bst:components/ca-certificates.bst
 - freedesktop-sdk.bst:components/cairo.bst
 - freedesktop-sdk.bst:components/ccache.bst
@@ -125,7 +125,6 @@ depends:
 - freedesktop-sdk.bst:components/libcap.bst
 - freedesktop-sdk.bst:components/libclc.bst
 - freedesktop-sdk.bst:components/libdatrie.bst
-- freedesktop-sdk.bst:components/libdrm.bst
 - freedesktop-sdk.bst:components/libepoxy.bst
 - freedesktop-sdk.bst:components/liberation-fonts.bst
 - freedesktop-sdk.bst:components/libexif.bst
@@ -138,19 +137,20 @@ depends:
 - freedesktop-sdk.bst:components/libnice.bst
 - freedesktop-sdk.bst:components/libogg.bst
 - freedesktop-sdk.bst:components/libpng.bst
+- freedesktop-sdk.bst:components/libportal.bst
 - freedesktop-sdk.bst:components/libproxy.bst
 - freedesktop-sdk.bst:components/libpsl.bst
 - freedesktop-sdk.bst:components/libpulse.bst
 - freedesktop-sdk.bst:components/libsamplerate.bst
 - freedesktop-sdk.bst:components/libseccomp.bst
 - freedesktop-sdk.bst:components/libselinux.bst
+- freedesktop-sdk.bst:components/libsrtp2.bst
 - freedesktop-sdk.bst:components/libtasn1.bst
 - freedesktop-sdk.bst:components/libthai.bst
 - freedesktop-sdk.bst:components/libtheora.bst
 - freedesktop-sdk.bst:components/libtiff.bst
 - freedesktop-sdk.bst:components/libtool.bst
 - freedesktop-sdk.bst:components/libunistring.bst
-- freedesktop-sdk.bst:components/libva-vdpau-driver.bst
 - freedesktop-sdk.bst:components/libva.bst
 - freedesktop-sdk.bst:components/libvdpau.bst
 - freedesktop-sdk.bst:components/libvorbis.bst
@@ -176,12 +176,10 @@ depends:
 - freedesktop-sdk.bst:components/openssh.bst
 - freedesktop-sdk.bst:components/opus.bst
 - freedesktop-sdk.bst:components/orc.bst
-- freedesktop-sdk.bst:components/osmesa.bst
 - freedesktop-sdk.bst:components/p11-kit.bst
 - freedesktop-sdk.bst:components/pango.bst
 - freedesktop-sdk.bst:components/pciutils.bst
-- freedesktop-sdk.bst:components/pcre.bst
-- freedesktop-sdk.bst:components/pcre2.bst
+- freedesktop-sdk.bst:components/perf.bst
 - freedesktop-sdk.bst:components/pipewire.bst
 - freedesktop-sdk.bst:components/pixman.bst
 - freedesktop-sdk.bst:components/python3-pip.bst
@@ -204,6 +202,7 @@ depends:
 - freedesktop-sdk.bst:components/tzdata.bst
 - freedesktop-sdk.bst:components/unzip.bst
 - freedesktop-sdk.bst:components/util-linux.bst
+- freedesktop-sdk.bst:components/v4l-utils.bst
 - freedesktop-sdk.bst:components/vulkan.bst
 - freedesktop-sdk.bst:components/wayland.bst
 - freedesktop-sdk.bst:components/webrtc-audio-processing.bst
@@ -244,6 +243,5 @@ depends:
 - freedesktop-sdk.bst:components/xorg-lib-xtst.bst
 - freedesktop-sdk.bst:components/xorg-lib-xv.bst
 - freedesktop-sdk.bst:components/xorg-lib-xxf86vm.bst
-- freedesktop-sdk.bst:components/xz.bst
 - freedesktop-sdk.bst:components/zip.bst
 - freedesktop-sdk.bst:integration/mtab.bst

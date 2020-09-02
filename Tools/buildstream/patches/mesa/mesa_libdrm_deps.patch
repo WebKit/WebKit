@@ -1,0 +1,25 @@
+diff --git a/src/loader/meson.build b/src/loader/meson.build
+index e7dce88d443..b3aac7c1edf 100644
+--- a/src/loader/meson.build
++++ b/src/loader/meson.build
+@@ -49,6 +49,6 @@ libloader = static_library(
+   ['loader.c', 'pci_id_driver_map.c'],
+   c_args : loader_c_args,
+   include_directories : [inc_include, inc_src, inc_util],
+-  dependencies : [dep_libdrm, dep_thread, idep_xmlconfig_headers],
++  dependencies : [dep_libdrm, dep_thread, dep_libdrm_nouveau, idep_xmlconfig_headers],
+   build_by_default : false,
+ )
+diff --git a/src/mesa/drivers/dri/i965/meson.build b/src/mesa/drivers/dri/i965/meson.build
+index a0c497ba3ba..72b17dead23 100644
+--- a/src/mesa/drivers/dri/i965/meson.build
++++ b/src/mesa/drivers/dri/i965/meson.build
+@@ -141,7 +141,7 @@ foreach v : ['40', '45', '50', '60', '70', '75', '80', '90', '100', '110']
+       c_vis_args, no_override_init_args, c_sse2_args,
+       '-DGEN_VERSIONx10=@0@'.format(v),
+     ],
+-    dependencies : [dep_libdrm, idep_nir_headers],
++    dependencies : [dep_libdrm, dep_libdrm_intel, idep_nir_headers],
+   )
+ endforeach
+ 

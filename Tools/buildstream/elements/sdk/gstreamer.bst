@@ -5,7 +5,7 @@ sources:
   ref: e3f044246783fd685439647373fa13ba14f7ab0b346eadd06437092f8419e94e
 
 build-depends:
-- sdk/gobject-introspection.bst
+- freedesktop-sdk.bst:components/gobject-introspection.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 - freedesktop-sdk.bst:components/flex.bst
 - freedesktop-sdk.bst:components/bison.bst

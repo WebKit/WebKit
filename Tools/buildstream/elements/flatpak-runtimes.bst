@@ -1,7 +1,7 @@
 kind: flatpak_repo
 
 build-depends:
-- freedesktop-sdk.bst:deploy-tools/flatpak.bst
+- freedesktop-sdk.bst:components/flatpak.bst
 
 (?):
 # platform and sdk should not be built on i686
@@ -31,7 +31,7 @@ build-depends:
 
 config:
   environment:
-  - deploy-tools/flatpak.bst
+  - components/flatpak.bst
   arch: '%{gcc_arch}'
   branch: '%{sdk-branch}'
   repo-mode: bare-user-only

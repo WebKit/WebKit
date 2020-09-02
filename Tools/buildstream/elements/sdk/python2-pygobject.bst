@@ -4,7 +4,7 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 - sdk/python2.bst
 - sdk/glib.bst
-- sdk/gobject-introspection.bst
+- freedesktop-sdk.bst:components/gobject-introspection.bst
 - sdk/python2-pycairo.bst
 
 build-depends:

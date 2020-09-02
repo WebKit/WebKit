@@ -14,7 +14,7 @@ depends:
 - sdk/gst-plugins-base.bst
 - sdk/gtk+-3.bst
 - sdk/libsoup.bst
-- sdk/v4lutils.bst
+- freedesktop-sdk.bst:components/v4l-utils.bst
 - qt5/qtdeclarative.bst
 - qt5/qtquickcontrols2.bst
 - qt5/qtquickcontrols.bst

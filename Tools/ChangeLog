@@ -1,3 +1,68 @@
+2020-09-02  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to FDO 20.08
+        https://bugs.webkit.org/show_bug.cgi?id=215763
+
+        Reviewed by Žan Doberšek.
+
+        Highlights:
+
+        - ICU 67 (see bug 215327)
+        - gcc update from 9.3.0 to 10.0
+        - clang update from 8.0 to 10.0
+        - perf is now included
+        - usable pipewire (host needs a working daemon and recent enough xdg-desktop-portal though)
+        - Mesa is no longer loaded from the flathub GL extension, but included in our downstream SDK, with debug symbols
+
+        This patch only includes the build definitions updates, bumping the SDK branch to 0.3. The
+        actual migration will be landed in a follow-up patch.
+
+        * buildstream/elements/flatpak-platform-extensions.bst:
+        * buildstream/elements/flatpak-runtimes.bst:
+        * buildstream/elements/flatpak/platform.bst:
+        * buildstream/elements/flatpak/sdk.bst:
+        * buildstream/elements/freedesktop-sdk.bst:
+        * buildstream/elements/sdk-build-depends/swig.bst:
+        * buildstream/elements/sdk-platform.bst:
+        * buildstream/elements/sdk.bst:
+        * buildstream/elements/sdk/at-spi2-atk.bst: Removed.
+        * buildstream/elements/sdk/at-spi2-core.bst: Removed.
+        * buildstream/elements/sdk/atk.bst: Removed.
+        * buildstream/elements/sdk/brotli.bst: Removed.
+        * buildstream/elements/sdk/glib.bst:
+        * buildstream/elements/sdk/gobject-introspection.bst: Removed.
+        * buildstream/elements/sdk/graphene.bst:
+        * buildstream/elements/sdk/gst-plugins-bad.bst:
+        * buildstream/elements/sdk/gst-plugins-good.bst:
+        * buildstream/elements/sdk/gstreamer.bst:
+        * buildstream/elements/sdk/gtk+-3.bst:
+        * buildstream/elements/sdk/gtk.bst:
+        * buildstream/elements/sdk/libdrm.bst: Added.
+        * buildstream/elements/sdk/libgcrypt.bst:
+        * buildstream/elements/sdk/libsecret.bst:
+        * buildstream/elements/sdk/libsoup.bst:
+        * buildstream/elements/sdk/libsrtp2.bst: Removed.
+        * buildstream/elements/sdk/mesa.bst: Added.
+        * buildstream/elements/sdk/pygobject.bst:
+        * buildstream/elements/sdk/python2-pygobject.bst:
+        * buildstream/elements/sdk/rr.bst:
+        * buildstream/elements/sdk/shared-mime-info.bst:
+        * buildstream/elements/sdk/v4lutils.bst: Removed.
+        * buildstream/elements/sdk/woff2.bst:
+        * buildstream/elements/sdk/xorg-server.bst:
+        * buildstream/elements/test-infra/httpd.bst:
+        * buildstream/patches/fdo/0001-Pango-Bump-to-1.45-master.patch: Removed.
+        * buildstream/patches/fdo/0001-dav1d-Bump-to-0.7.0.patch: Removed.
+        * buildstream/patches/gtk-meson-Bump-to-latest-version-of-the-3.24-branch.patch: Removed.
+        * buildstream/patches/libsecret-b53e9876f4611525b7a8f69a3110fbec51dcede0.patch: Removed.
+        * buildstream/patches/mesa/mesa_libdrm_deps.patch: Added.
+        * buildstream/patches/xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch:
+        Removed because a variant was landed upstream 2 years ago:
+        https://gitlab.freedesktop.org/xorg/xserver/-/commit/319af6f471912160ab3eb6395ef50f9950063d43
+        * buildstream/project.conf:
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): White-list a few Mesa environment variables.
+
 2020-09-01  Diego Pino Garcia  <dpino@igalia.com>
 
         [Flatpak SDK] Adapt clean-webkit script to flatpak

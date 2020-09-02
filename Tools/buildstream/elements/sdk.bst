@@ -37,7 +37,7 @@ depends:
 - freedesktop-sdk.bst:components/texinfo.bst
 - freedesktop-sdk.bst:components/valgrind.bst
 - freedesktop-sdk.bst:components/desktop-file-utils.bst
-- freedesktop-sdk.bst:components/itstools.bst
+- freedesktop-sdk.bst:components/itstool.bst
 - freedesktop-sdk.bst:components/jq.bst
 - freedesktop-sdk.bst:components/wayland-protocols.bst
 - freedesktop-sdk.bst:components/xdg-portal-interfaces.bst

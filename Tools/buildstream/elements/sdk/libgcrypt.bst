@@ -11,7 +11,7 @@ depends:
 sources:
 - kind: git_tag
   url: https://dev.gnupg.org/source/libgcrypt.git
-  ref: libgcrypt-1.8.4
+  ref: libgcrypt-1.8.6
 - kind: patch
   path: patches/libgcrypt-0001-Use-pkg-config-to-detect-gpg-error.patch
 - kind: patch
