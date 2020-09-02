@@ -261,6 +261,9 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         if (newSelectedRecord[WI.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol])
             return;
 
+        // Ensure that the container "click" listener added by `WI.TimelineOverview` isn't called.
+        event.__timelineRecordClickEventHandled = true;
+
         if (this.selectedRecord === newSelectedRecord)
             return;
 

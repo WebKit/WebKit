@@ -1,5 +1,16 @@
 2020-09-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(?): Timelines: Frames: clicking a record bar to select it when another record bar is already selected instead removes all selections
+        https://bugs.webkit.org/show_bug.cgi?id=216045
+        <rdar://problem/68156740>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WI.RenderingFrameTimelineOverviewGraph.prototype._mouseClicked):
+
+2020-09-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Graphics: reloading the page doesn't automatically deselect shaders if they are shown
         https://bugs.webkit.org/show_bug.cgi?id=216054
         <rdar://problem/68167882>
