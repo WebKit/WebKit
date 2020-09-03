@@ -1580,9 +1580,14 @@ ExceptionOr<void> Node::setTextContent(const String& text)
     case PROCESSING_INSTRUCTION_NODE:
         return setNodeValue(text);
     case ELEMENT_NODE:
-    case DOCUMENT_FRAGMENT_NODE:
-        downcast<ContainerNode>(*this).replaceAllChildrenWithNewText(text);
+    case DOCUMENT_FRAGMENT_NODE: {
+        auto& container = downcast<ContainerNode>(*this);
+        if (text.isEmpty())
+            container.replaceAllChildren(nullptr);
+        else
+            container.replaceAllChildrenWithNewText(text);
         return { };
+    }
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:
         // Do nothing.

@@ -539,7 +539,10 @@ ExceptionOr<void> HTMLElement::setInnerText(const String& text)
     // FIXME: This doesn't take whitespace collapsing into account at all.
 
     if (!text.contains('\n') && !text.contains('\r')) {
-        replaceAllChildrenWithNewText(text);
+        if (text.isEmpty())
+            replaceAllChildren(nullptr);
+        else
+            replaceAllChildrenWithNewText(text);
         return { };
     }
 

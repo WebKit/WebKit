@@ -632,11 +632,6 @@ void ContainerNode::replaceAllChildren(std::nullptr_t)
 // https://dom.spec.whatwg.org/#concept-node-replace-all
 void ContainerNode::replaceAllChildrenWithNewText(const String& text)
 {
-    if (text.isEmpty()) {
-        replaceAllChildren(nullptr);
-        return;
-    }
-
     auto node = document().createTextNode(text);
     if (!hasChildNodes()) {
         // appendChildWithoutPreInsertionValidityCheck() can only throw when node has a parent and we already asserted it doesn't.

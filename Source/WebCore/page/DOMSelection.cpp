@@ -332,7 +332,7 @@ void DOMSelection::addRange(Range& liveRange)
 
 void DOMSelection::deleteFromDocument()
 {
-    auto frame = makeRefPtr(this->frame());
+    auto* frame = this->frame();
     if (!frame)
         return;
 
@@ -340,8 +340,11 @@ void DOMSelection::deleteFromDocument()
     if (!selectedRange || selectedRange->start.container->containingShadowRoot())
         return;
 
+    Ref<Frame> protector(*frame);
     createLiveRange(*selectedRange)->deleteContents();
-    frame->selection().setSelectedRange(makeSimpleRange(selectedRange->start), Affinity::Upstream, FrameSelection::ShouldCloseTyping::No);
+    auto container = selectedRange->start.container.ptr();
+    auto offset = selectedRange->start.offset;
+    setBaseAndExtent(container, offset, container, offset);
 }
 
 bool DOMSelection::containsNode(Node& node, bool allowPartial) const
