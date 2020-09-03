@@ -1,3 +1,41 @@
+2020-09-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Mark uniform samplers in an array unused per element
+        https://bugs.webkit.org/show_bug.cgi?id=215630
+
+        Reviewed by Dean Jackson.
+
+        Mark uniform samplers in an uniform sampler array unused per
+        element, if driver informs the element being unused.
+        Before, one element would mark the whole array as being
+        unused, and samplers that were in use would not be updated.
+
+        * src/libANGLE/Context.cpp:
+        (gl::StateCache::updateActiveImageUnitIndices):
+        * src/libANGLE/Program.cpp:
+        (gl::SamplerBinding::SamplerBinding):
+        (gl::ImageBinding::ImageBinding):
+        (gl::Program::getSamplerUniformBinding const):
+        (gl::Program::getImageUniformBinding const):
+        (gl::Program::linkSamplerAndImageBindings):
+        (gl::Program::updateSamplerUniform):
+        (gl::Program::serialize const):
+        (gl::Program::deserialize):
+        * src/libANGLE/ProgramExecutable.cpp:
+        (gl::ProgramExecutable::updateActiveSamplers):
+        (gl::ProgramExecutable::updateActiveImages):
+        (gl::ProgramExecutable::setSamplerUniformTextureTypeAndFormat):
+        * src/libANGLE/ProgramExecutable.h:
+        * src/libANGLE/renderer/gl/ProgramGL.cpp:
+        (rx::ProgramGL::markUnusedUniformLocations):
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        (rx::ProgramMtl::updateTextures):
+        * src/libANGLE/renderer/vulkan/ProgramExecutableVk.cpp:
+        (rx::ProgramExecutableVk::updateImagesDescriptorSet):
+        (rx::ProgramExecutableVk::updateTexturesDescriptorSet):
+        * src/tests/gl_tests/ComputeShaderTest.cpp:
+        * src/tests/gl_tests/UniformTest.cpp:
+
 2020-09-01  David Kilzer  <ddkilzer@apple.com>
 
         [ANGLE] InternalFormat::blendSupport is uninitialized by constructor
