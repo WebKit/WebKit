@@ -66,6 +66,7 @@ private:
     void doAddIceCandidate(RTCIceCandidate&) final;
     void doStop() final;
     std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
+    void restartIce() final;
     bool setConfiguration(MediaEndpointConfiguration&&) final;
     void getStats(Ref<DeferredPromise>&&) final;
     void getStats(RTCRtpSender&, Ref<DeferredPromise>&&) final;

@@ -81,6 +81,12 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
         webrtc::field_trial::InitFieldTrialsFromString("WebRTC-H264Simulcast/Enabled/");
 }
 
+void LibWebRTCMediaEndpoint::restartIce()
+{
+    if (m_backend)
+        m_backend->RestartIce();
+}
+
 bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
     configuration.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;

@@ -173,6 +173,11 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
     return rtcConfiguration;
 }
 
+void LibWebRTCPeerConnectionBackend::restartIce()
+{
+    m_endpoint->restartIce();
+}
+
 bool LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration&& configuration)
 {
     auto* page = downcast<Document>(*m_peerConnection.scriptExecutionContext()).page();

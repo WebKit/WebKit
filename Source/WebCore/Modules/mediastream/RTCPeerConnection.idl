@@ -101,6 +101,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     // FIXME 169644: missing canTrickleIceCandidates
     // FIXME 169644: missing defaultIceServers
 
+    undefined restartIce();
     RTCConfiguration getConfiguration();
     [MayThrowException] undefined setConfiguration(RTCConfiguration configuration);
     undefined close();

@@ -124,6 +124,7 @@ public:
     RTCIceConnectionState iceConnectionState() const { return m_iceConnectionState; }
     RTCPeerConnectionState connectionState() const { return m_connectionState; }
 
+    void restartIce() { m_backend->restartIce(); }
     const RTCConfiguration& getConfiguration() const { return m_configuration; }
     ExceptionOr<void> setConfiguration(RTCConfiguration&&);
     void close();

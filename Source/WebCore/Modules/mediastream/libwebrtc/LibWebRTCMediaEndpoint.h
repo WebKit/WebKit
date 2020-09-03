@@ -75,6 +75,7 @@ public:
     static Ref<LibWebRTCMediaEndpoint> create(LibWebRTCPeerConnectionBackend& peerConnection, LibWebRTCProvider& client) { return adoptRef(*new LibWebRTCMediaEndpoint(peerConnection, client)); }
     virtual ~LibWebRTCMediaEndpoint() = default;
 
+    void restartIce();
     bool setConfiguration(LibWebRTCProvider&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     webrtc::PeerConnectionInterface& backend() const { ASSERT(m_backend); return *m_backend.get(); }
