@@ -75,6 +75,22 @@ void DateTimeSymbolicFieldElement::setValueAsInteger(int newSelectedIndex, Event
     updateVisibleValue(eventBehavior);
 }
 
+void DateTimeSymbolicFieldElement::stepDown()
+{
+    int newValue = hasValue() ? m_selectedIndex - 1 : m_symbols.size() - 1;
+    if (newValue < 0)
+        newValue = m_symbols.size() - 1;
+    setValueAsInteger(newValue, DispatchInputAndChangeEvents);
+}
+
+void DateTimeSymbolicFieldElement::stepUp()
+{
+    int newValue = hasValue() ? m_selectedIndex + 1 : 0;
+    if (newValue >= static_cast<int>(m_symbols.size()))
+        newValue = 0;
+    setValueAsInteger(newValue, DispatchInputAndChangeEvents);
+}
+
 String DateTimeSymbolicFieldElement::value() const
 {
     return hasValue() ? m_symbols[m_selectedIndex] : emptyString();

@@ -35,6 +35,14 @@ PASS input.value is "0002-03-03"
 PASS changeEventsFired is 3
 PASS inputEventsFired is 3
 
+Up/Down arrow keys
+PASS input.value is "2020-01-20"
+PASS input.value is "2020-02-20"
+PASS input.value is "2020-01-20"
+PASS input.value is "2020-12-20"
+PASS changeEventsFired is 4
+PASS inputEventsFired is 4
+
 Tab key
 PASS input.value is "0002-02-02"
 PASS document.activeElement.id is "after"

@@ -130,6 +130,18 @@ addEventListener("load", async () => {
     shouldBe("changeEventsFired", "3");
     shouldBe("inputEventsFired", "3");
 
+    beginTest("Up/Down arrow keys", "2020-12-20");         // [12]/20/2020
+    UIHelper.keyDown("upArrow");                           // [01]/20/2020
+    shouldBeEqualToString("input.value", "2020-01-20");
+    UIHelper.keyDown("upArrow");                           // [02]/20/2020
+    shouldBeEqualToString("input.value", "2020-02-20");
+    UIHelper.keyDown("downArrow");                         // [01]/20/2020
+    shouldBeEqualToString("input.value", "2020-01-20");
+    UIHelper.keyDown("downArrow");                         // [12]/20/2020
+    shouldBeEqualToString("input.value", "2020-12-20");
+    shouldBe("changeEventsFired", "4");
+    shouldBe("inputEventsFired", "4");
+
     beginTest("Tab key");
     UIHelper.keyDown("2");                                 // -> [02]/dd/yyyy
     UIHelper.keyDown("\t");                                // -> 02/[dd]/yyyy

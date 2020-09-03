@@ -1,3 +1,15 @@
+2020-09-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Support stepping using keyboard in date inputs
+        https://bugs.webkit.org/show_bug.cgi?id=216090
+
+        Reviewed by Darin Adler.
+
+        Added a new test case to the existing set of keyboard testcases for editable date inputs.
+
+        * fast/forms/date/date-editable-components/date-editable-components-keyboard-events-expected.txt:
+        * fast/forms/date/date-editable-components/date-editable-components-keyboard-events.html:
+
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
         Rebase Windows test expectations after r266466

@@ -98,10 +98,22 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     if (isFieldOwnerReadOnly())
         return;
 
+    if (key == "Up") {
+        stepUp();
+        keyboardEvent.setDefaultHandled();
+        return;
+    }
+
+    if (key == "Down") {
+        stepDown();
+        keyboardEvent.setDefaultHandled();
+        return;
+    }
+
     // Clear value when pressing backspace or delete.
     if (key == "U+0008" || key == "U+007F") {
-        keyboardEvent.setDefaultHandled();
         setEmptyValue(DispatchInputAndChangeEvents);
+        keyboardEvent.setDefaultHandled();
         return;
     }
 }

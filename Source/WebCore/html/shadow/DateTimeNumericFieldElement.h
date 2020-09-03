@@ -55,6 +55,8 @@ protected:
     void initialize(const AtomString&);
     void setEmptyValue(EventBehavior = DispatchNoEvent) final;
     void setValueAsInteger(int, EventBehavior = DispatchNoEvent) final;
+    void stepDown() final;
+    void stepUp() final;
     int valueAsInteger() const final;
     String visibleValue() const final;
 
@@ -65,6 +67,7 @@ private:
     void didBlur() final;
 
     String formatValue(int) const;
+    void setValueAsIntegerByStepping(int);
 
     const Range m_range;
     const String m_placeholder;

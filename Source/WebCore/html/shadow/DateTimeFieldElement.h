@@ -63,6 +63,8 @@ public:
     virtual void setEmptyValue(EventBehavior = DispatchNoEvent) = 0;
     virtual void setValueAsDate(const DateComponents&) = 0;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) = 0;
+    virtual void stepDown() = 0;
+    virtual void stepUp() = 0;
     virtual String value() const = 0;
     virtual String visibleValue() const = 0;
 

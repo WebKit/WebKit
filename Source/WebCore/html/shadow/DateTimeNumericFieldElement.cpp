@@ -93,6 +93,28 @@ void DateTimeNumericFieldElement::setValueAsInteger(int value, EventBehavior eve
     updateVisibleValue(eventBehavior);
 }
 
+void DateTimeNumericFieldElement::setValueAsIntegerByStepping(int value)
+{
+    m_typeAheadBuffer.clear();
+    setValueAsInteger(value, DispatchInputAndChangeEvents);
+}
+
+void DateTimeNumericFieldElement::stepDown()
+{
+    int newValue = m_hasValue ? m_value - 1 : m_range.maximum;
+    if (!m_range.isInRange(newValue))
+        newValue = m_range.maximum;
+    setValueAsIntegerByStepping(newValue);
+}
+
+void DateTimeNumericFieldElement::stepUp()
+{
+    int newValue = m_hasValue ? m_value + 1 : m_range.minimum;
+    if (!m_range.isInRange(newValue))
+        newValue = m_range.minimum;
+    setValueAsIntegerByStepping(newValue);
+}
+
 String DateTimeNumericFieldElement::value() const
 {
     return m_hasValue ? formatValue(m_value) : emptyString();

@@ -1,3 +1,34 @@
+2020-09-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Support stepping using keyboard in date inputs
+        https://bugs.webkit.org/show_bug.cgi?id=216090
+
+        Reviewed by Darin Adler.
+
+        Users should be able to step through dates using the up and down arrow
+        keys, matching the functionality of NSDatePicker. To achieve this
+        functionality, stepUp and stepDown methods were added to
+        DateTimeFieldElement, incrementing and decrementing the value of the
+        focused field on an up arrow keypress and a down arrow keypress
+        respectively. If the currently focused field is empty during the
+        keypress, stepping up will start from the minimum value and stepping
+        down will start from the maximum value.
+
+        Covered by a new test case in an existing test file.
+
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::defaultKeyboardEventHandler):
+        * html/shadow/DateTimeFieldElement.h:
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::setValueAsIntegerByStepping):
+        (WebCore::DateTimeNumericFieldElement::stepDown):
+        (WebCore::DateTimeNumericFieldElement::stepUp):
+        * html/shadow/DateTimeNumericFieldElement.h:
+        * html/shadow/DateTimeSymbolicFieldElement.cpp:
+        (WebCore::DateTimeSymbolicFieldElement::stepDown):
+        (WebCore::DateTimeSymbolicFieldElement::stepUp):
+        * html/shadow/DateTimeSymbolicFieldElement.h:
+
 2020-09-03  Sam Weinig  <weinig@apple.com>
 
         Update WebIDL parser to more closely align with current WebIDL spec

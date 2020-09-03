@@ -49,6 +49,8 @@ private:
     String visibleEmptyValue() const;
 
     // DateTimeFieldElement functions:
+    void stepDown() final;
+    void stepUp() final;
     String value() const final;
     String visibleValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;
