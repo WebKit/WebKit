@@ -1,3 +1,15 @@
+2020-09-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix nested inline box sizing and positioning
+        https://bugs.webkit.org/show_bug.cgi?id=215748
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/vertical-align-middle-nested-expected.html:
+        * fast/layoutformattingcontext/vertical-align-middle-nested.html:
+        * fast/layoutformattingcontext/vertical-align-middle-simple-expected.html:
+        * fast/layoutformattingcontext/vertical-align-middle-simple.html:
+
 2020-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Rebase Windows test expectations after r266466

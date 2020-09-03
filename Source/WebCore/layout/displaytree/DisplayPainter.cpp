@@ -129,7 +129,7 @@ static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOff
             auto absoluteLeft = absoluteOffset.x() + run.left();
             // FIXME: Add non-baseline align painting
             auto& lineBox = displayInlineContent->lineBoxForRun(run);
-            auto baseline = absoluteOffset.y() + lineBox.top() + lineBox.baseline();
+            auto baseline = absoluteOffset.y() + run.top() + style.fontMetrics().ascent();
             auto expansion = run.expansion();
             auto textRun = TextRun { textContent->content(), run.left() - lineBox.left(), expansion.horizontalExpansion, expansion.behavior };
             textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());

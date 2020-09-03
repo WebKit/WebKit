@@ -1,0 +1,24 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container {
+  float: left;
+  background-color: green;
+  color: green;
+  font-size: 20px;
+  font-family: Ahem;
+}
+
+.divider {
+  clear: left;
+}
+
+span {
+  vertical-align: middle;
+}
+</style>
+
+<div class=container>XX<span>XX</span></div>
+<div class=divider></div>
+<div class=container>XX<span style="font-size: 10px;">XX</span></div>
+<div class=divider></div>
+<div class=container>XX<span style="font-size: 50px;">XX</span></div>

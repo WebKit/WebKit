@@ -1,5 +1,37 @@
 2020-09-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support nested inline box sizing and positioning
+        https://bugs.webkit.org/show_bug.cgi?id=215748
+
+        Reviewed by Antti Koivisto.
+
+        This patch splits the line box construction process into a few distinct steps.
+        1. Construct the inline boxes as needed. There's always a root inline box.
+        2. Size them by taking the vertical alignment into account
+           - child inline boxes stretch their parent inline boxes in most cases (depending on the vertical-align property value).
+        3. Position the inline boxes relative to the line box.
+
+        Test: fast/layoutformattingcontext/vertical-align-middle-nested.html
+              fast/layoutformattingcontext/vertical-align-middle-simple.html
+
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::m_inlineFormattingContext):
+        (WebCore::Layout::LineBox::inlineRectForTextRun const):
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+        (WebCore::Layout::LineBox::computeInlineBoxesLogicalHeight):
+        (WebCore::Layout::LineBox::alignInlineBoxesVerticallyAndComputeLineHeight):
+        (WebCore::Layout::LineBox::inlineBoxForLayoutBox const): Deleted.
+        (WebCore::Layout::LineBox::alignVertically): Deleted.
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::InlineBox::setLogicalTop):
+        (WebCore::Layout::LineBox::InlineBox::setLogicalWidth):
+        (WebCore::Layout::LineBox::InlineBox::setLogicalHeight):
+        (WebCore::Layout::LineBox::InlineBox::setBaseline):
+        (WebCore::Layout::LineBox::inlineBoxForLayoutBox const):
+        (WebCore::Layout::LineBox::inlineBoxForLayoutBox):
+
+2020-09-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Finalize InlineBox alignment in LineBox
         https://bugs.webkit.org/show_bug.cgi?id=215410
 

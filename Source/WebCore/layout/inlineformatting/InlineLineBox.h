@@ -31,6 +31,7 @@
 #include "DisplayInlineRect.h"
 #include "InlineLineBuilder.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace Layout {
@@ -44,8 +45,7 @@ public:
         WTF_MAKE_ISO_ALLOCATED_INLINE(InlineBox);
     public:
         enum class IsConsideredEmpty { Yes, No };
-        InlineBox(const Display::InlineRect&, InlineLayoutUnit syntheticBaseline);
-        InlineBox(const Display::InlineRect&, InlineLayoutUnit baseline, InlineLayoutUnit descent, IsConsideredEmpty);
+        InlineBox(const Box&, const Display::InlineRect&, InlineLayoutUnit baseline, InlineLayoutUnit descent, IsConsideredEmpty);
         InlineBox() = default;
 
         const Display::InlineRect& logicalRect() const { return m_logicalRect; }
@@ -58,19 +58,24 @@ public:
         InlineLayoutUnit baseline() const { return m_baseline; }
         Optional<InlineLayoutUnit> descent() const { return m_descent; }
 
-        void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
-        void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
-
         bool isEmpty() const { return m_isEmpty; }
         void setIsNonEmpty() { m_isEmpty = false; }
-        bool isAtomic() const { return m_isAtomic; }
+
+        const Box& layoutBox() const { return *m_layoutBox; }
 
     private:
+        friend class LineBox;
+
+        void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
+        void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
+        void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
+        void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
+
+        WeakPtr<const Box> m_layoutBox;
         Display::InlineRect m_logicalRect;
         InlineLayoutUnit m_baseline;
         Optional<InlineLayoutUnit> m_descent;
         bool m_isEmpty { true };
-        bool m_isAtomic { false };
     };
 
     enum class IsLastLineWithInlineContent { No, Yes };
@@ -87,7 +92,7 @@ public:
     const Display::InlineRect& logicalRect() const { return m_rect; }
     const Display::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
 
-    const InlineBox& inlineBoxForLayoutBox(const Box&) const;
+    const InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineBoxRectMap.get(&layoutBox); }
     Display::InlineRect inlineRectForTextRun(const LineBuilder::Run&) const;
 
     // _____________________________________________________ line box logical top
@@ -109,7 +114,10 @@ public:
 
 private:
     void constructInlineBoxes(const LineBuilder::RunList&, IsLineVisuallyEmpty);
-    void alignVertically(IsLineVisuallyEmpty);
+    void computeInlineBoxesLogicalHeight();
+    void alignInlineBoxesVerticallyAndComputeLineBoxHeight(IsLineVisuallyEmpty);
+
+    InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) { return *m_inlineBoxRectMap.get(&layoutBox); }
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
@@ -125,7 +133,8 @@ private:
     InlineBox m_rootInlineBox;
 
     Optional<InlineLayoutUnit> m_lineAlignmentOffset;
-    HashMap<const Box*, std::unique_ptr<InlineBox>> m_inlineBoxRectMap;
+    HashMap<const Box*, InlineBox*> m_inlineBoxRectMap;
+    Vector<std::unique_ptr<InlineBox>> m_inlineBoxList;
     const InlineFormattingContext& m_inlineFormattingContext;
 };
 
