@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "JSDOMConvertBufferSource.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -34,9 +35,15 @@ namespace WebCore {
 
 class TextEncoder : public RefCounted<TextEncoder> {
 public:
+    struct EncodeIntoResult {
+        uint64_t read { 0 };
+        uint64_t written { 0 };
+    };
+
     static Ref<TextEncoder> create() { return adoptRef(*new TextEncoder); }
     String encoding() const;
     RefPtr<Uint8Array> encode(String&&) const;
+    EncodeIntoResult encodeInto(String&&, Ref<Uint8Array>&& destination);
 private:
     TextEncoder() { };
 };

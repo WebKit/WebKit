@@ -25,12 +25,20 @@
 
 [
     Exposed=(Window,Worker),
+    JSGenerateToJSObject
+] dictionary TextEncoderEncodeIntoResult {
+  unsigned long long read;
+  unsigned long long written;
+};
+
+[
+    Exposed=(Window,Worker),
     ImplementationLacksVTable
 ] interface TextEncoder {
     constructor();
 
     readonly attribute DOMString encoding;
 
-    // FIXME: This should have [NewObject]
-    Uint8Array encode(optional USVString input = "");
+    [NewObject] Uint8Array encode(optional USVString input = "");
+    TextEncoderEncodeIntoResult encodeInto(USVString source, Uint8Array destination);
 };

@@ -1,5 +1,17 @@
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
+        Implement TextEncoder's encodeInto()
+        https://bugs.webkit.org/show_bug.cgi?id=193274
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/encodeInto.any-expected.txt:
+        * web-platform-tests/encoding/encodeInto.any.worker-expected.txt:
+        * web-platform-tests/encoding/idlharness-expected.txt: Removed.
+        * web-platform-tests/encoding/idlharness.any-expected.txt:
+
+2020-09-03  Alex Christensen  <achristensen@webkit.org>
+
         TextDecoder should ignore byte-order-mark like other browsers and spec
         https://bugs.webkit.org/show_bug.cgi?id=216108
 

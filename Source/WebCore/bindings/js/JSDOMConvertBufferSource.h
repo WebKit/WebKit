@@ -258,6 +258,12 @@ template<> struct JSConverter<IDLUint8Array> {
     {
         return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
     }
+
+    template<typename U>
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
+    {
+        return convert(lexicalGlobalObject, globalObject, std::forward<U>(value));
+    }
 };
 
 template<> struct Converter<IDLUint16Array> : DefaultConverter<IDLUint16Array> {
