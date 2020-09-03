@@ -1,3 +1,9 @@
+2020-09-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Mark more convolver related tests as flaky crash.
+
+        * platform/gtk/TestExpectations:
+
 2020-09-03  Youenn Fablet  <youenn@apple.com>
 
         Expose RTCPeerConnection.restartIce
