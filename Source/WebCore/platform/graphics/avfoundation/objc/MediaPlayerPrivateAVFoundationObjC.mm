@@ -1523,7 +1523,7 @@ long MediaPlayerPrivateAVFoundationObjC::assetErrorCode() const
 
 void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
-    if (!metaDataAvailable() || context.paintingDisabled())
+    if (!metaDataAvailable() || context.paintingDisabled() || isCurrentPlaybackTargetWireless())
         return;
 
     setDelayCallbacks(true);
