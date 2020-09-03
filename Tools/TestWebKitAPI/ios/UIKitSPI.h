@@ -29,6 +29,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <UIKit/NSTextAlternatives.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItemGroup_Private.h>
 #import <UIKit/UICalloutBar.h>
@@ -60,6 +61,12 @@ IGNORE_WARNINGS_END
 #endif // PLATFORM(IOS)
 
 #else // USE(APPLE_INTERNAL_SDK)
+
+@interface NSTextAlternatives : NSObject
+@property (readonly) NSString *primaryString;
+@property (readonly) NSArray<NSString *> *alternativeStrings;
+@property (readonly) BOOL isLowConfidence;
+@end
 
 WTF_EXTERN_C_BEGIN
 
@@ -237,6 +244,11 @@ IGNORE_WARNINGS_END
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
 #define UIWKDocumentRequestSpatialAndCurrentSelection (1 << 6)
+
+@protocol UIWKInteractionViewProtocol_Staging66646042 <UIWKInteractionViewProtocol>
+@optional
+- (NSArray<NSTextAlternatives *> *)alternativesForSelectedText;
+@end
 
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;

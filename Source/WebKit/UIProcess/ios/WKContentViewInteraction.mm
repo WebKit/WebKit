@@ -3118,6 +3118,14 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     return (NSString *)_page->editorState().postLayoutData().wordAtSelection;
 }
 
+- (NSArray<NSTextAlternatives *> *)alternativesForSelectedText
+{
+    auto& dictationContextsForSelection = _page->editorState().postLayoutData().dictationContextsForSelection;
+    return createNSArray(dictationContextsForSelection, [&] (auto& dictationContext) {
+        return _page->platformDictationAlternatives(dictationContext);
+    }).autorelease();
+}
+
 - (void)makeTextWritingDirectionNaturalForWebView:(id)sender
 {
     // Match platform behavior on iOS as well as legacy WebKit behavior by modifying the
