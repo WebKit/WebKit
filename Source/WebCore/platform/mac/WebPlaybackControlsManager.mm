@@ -288,22 +288,27 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
 
 - (void)setPlaying:(BOOL)playing
 {
-    if (!_playbackSessionInterfaceMac || !_playbackSessionInterfaceMac->playbackSessionModel())
+    if (playing != _playing) {
+        [self willChangeValueForKey:@"playing"];
+        _playing = playing;
+        [self didChangeValueForKey:@"playing"];
+    }
+
+    if (!_playbackSessionInterfaceMac)
         return;
 
-    BOOL isCurrentlyPlaying = self.playing;
-    if (!isCurrentlyPlaying && playing)
-        _playbackSessionInterfaceMac->playbackSessionModel()->play();
-    else if (isCurrentlyPlaying && !playing)
-        _playbackSessionInterfaceMac->playbackSessionModel()->pause();
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel()) {
+        BOOL isCurrentlyPlaying = model->isPlaying();
+        if (!isCurrentlyPlaying && _playing)
+            model->play();
+        else if (isCurrentlyPlaying && !_playing)
+            model->pause();
+    }
 }
 
 - (BOOL)isPlaying
 {
-    if (_playbackSessionInterfaceMac && _playbackSessionInterfaceMac->playbackSessionModel())
-        return _playbackSessionInterfaceMac->playbackSessionModel()->isPlaying();
-
-    return NO;
+    return _playing;
 }
 
 - (void)togglePictureInPicture
