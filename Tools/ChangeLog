@@ -1,3 +1,23 @@
+2020-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Static assert the return type of compactMap
+        https://bugs.webkit.org/show_bug.cgi?id=216119
+
+        Reviewed by Darin Adler.
+
+        Added static_assert for the return types of compactMap in varoius unit tests.
+
+        (WTF_Vector.CompactMapStaticFunctionReturnOptional):
+        (WTF_Vector.CompactMapStaticFunctionReturnRefPtr):
+        (WTF_Vector.CompactMapStaticFunctionReturnOptionalRef):
+        (WTF_Vector.CompactMapStaticFunctionReturnOptionalRefPtr):
+        (WTF_Vector.CompactMapLambdaReturnOptional):
+        (WTF_Vector.CompactMapLambdaCopyVectorReturnOptionalCountedObject):
+        (WTF_Vector.CompactMapLambdaMoveVectorReturnOptionalCountedObject):
+        (WTF_Vector.CompactMapLambdaReturnRefPtr):
+        (WTF_Vector.CompactMapLambdaReturnRefPtrFromMovedRef):
+        (WTF_Vector.CompactMapLambdaReturnOptionalRefPtr):
+
 2020-09-02  Dean Jackson  <dino@apple.com>
 
         Update Kimmo's email.
