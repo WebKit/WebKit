@@ -1,0 +1,111 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        height: 2000px;
+    }
+    select {
+        margin-top: 100px;
+        font-size: 12pt;
+    }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    let selectScrollCount = 0;
+    let pageScrollCount = 0; 
+
+    async function scrollTest()
+    {
+        let select = document.getElementsByTagName('select')[0];
+        select.addEventListener('scroll', () => {
+            ++selectScrollCount;
+        });
+        
+        window.addEventListener('scroll', () => {
+            ++pageScrollCount;
+        });
+
+        debug('Checking wheel event over the select');
+        await UIHelper.mouseWheelScrollAt(50, 200);
+        
+        shouldBeTrue('selectScrollCount > 0');
+        shouldBeTrue('pageScrollCount == 0');
+        
+        selectScrollCount = 0;
+
+        debug('Triggering main page latch; scrolling down');
+        await UIHelper.mouseWheelScrollAt(400, 200);
+
+        await UIHelper.animationFrame();
+
+        debug('Triggering main page latch; scrolling up');
+
+        eventSender.mouseMoveTo(400, 200);
+        eventSender.monitorWheelEvents({ resetLatching: false });
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 2, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 11, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        await UIHelper.waitForScrollCompletion();
+
+        shouldBeTrue('selectScrollCount == 0');
+        shouldBeTrue('pageScrollCount > 0');
+
+        shouldBeTrue('document.scrollingElement.scrollTop == 0');
+        
+        // Stupid hack to reset the select back to the top (webkit.org/b/215898).
+        pageScrollCount = 0;
+        select.style.display = 'none';
+        document.body.offsetWidth;
+        select.style.display = 'inline';
+
+        // Delay for longer than resetLatchedStateTimeout.
+        await UIHelper.delayFor(150);
+
+        debug('Checking wheel event over the select again');
+        eventSender.mouseMoveTo(50, 200);
+        eventSender.monitorWheelEvents({ resetLatching: false });
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        await UIHelper.waitForScrollCompletion();
+
+        shouldBeTrue('selectScrollCount > 0');
+        shouldBeTrue('pageScrollCount == 0');
+
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        description("Tests that scrolling doesn't get wrongly latched to the main page.");
+        setTimeout(scrollTest, 0);
+    }, false);
+</script>
+</head>
+<body>
+    <select size="10">
+        <option>first first first</option>
+        <option>two two two two</option>
+        <option>one one one one</option>
+        <option>two two two two</option>
+        <option>one one one one</option>
+        <option>two two two two</option>
+        <option>one one one one</option>
+        <option>two two two two</option>        
+        <option>one one one one</option>
+        <option>two two two two</option>
+        <option>one one one one</option>
+        <option>two two two two</option>
+        <option>one one one one</option>
+        <option>two two two two</option>
+        <option>one one one one</option>
+        <option>two two two two</option>        
+        <option>last last last</option>        
+    </select>
+    <div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

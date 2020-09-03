@@ -47,14 +47,9 @@ void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEven
         return;
 
     LockHolder locker(m_latchedNodeMutex);
-    if (wheelEvent.shouldConsiderLatching()) {
-        if (m_latchedNodeID) {
-            auto secondsSinceLastInteraction = MonotonicTime::now() - m_lastLatchedNodeInterationTime;
-            if (secondsSinceLastInteraction > resetLatchedStateTimeout) {
-                LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " receivedWheelEvent - " << secondsSinceLastInteraction.milliseconds() << "ms since last event, clearing latched node");
-                m_latchedNodeID.reset();
-            }
-        }
+    if (wheelEvent.shouldConsiderLatching() && m_latchedNodeID && !latchedNodeIsRelevant()) {
+        LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " receivedWheelEvent - " << (MonotonicTime::now() - m_lastLatchedNodeInterationTime).milliseconds() << "ms since last event, clearing latched node");
+        m_latchedNodeID.reset();
     }
 }
 
@@ -66,7 +61,7 @@ Optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeForEvent(c
     LockHolder locker(m_latchedNodeMutex);
 
     // If we have a latched node, use it.
-    if (wheelEvent.useLatchedEventElement() && m_latchedNodeID) {
+    if (wheelEvent.useLatchedEventElement() && m_latchedNodeID && latchedNodeIsRelevant()) {
         LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " latchedNodeForEvent: returning " << m_latchedNodeID);
         return m_latchedNodeID.value();
     }
@@ -114,6 +109,12 @@ void ScrollingTreeLatchingController::clearLatchedNode()
     m_latchedNodeID.reset();
 }
 
-};
+bool ScrollingTreeLatchingController::latchedNodeIsRelevant() const
+{
+    auto secondsSinceLastInteraction = MonotonicTime::now() - m_lastLatchedNodeInterationTime;
+    return secondsSinceLastInteraction < resetLatchedStateTimeout;
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
