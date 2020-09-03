@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncFrameScrollingEnabled=true ] -->
 <html>
 <head>
     <style>
@@ -30,23 +30,21 @@
             eventSender.monitorWheelEvents();
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
             await UIHelper.waitForScrollCompletion();
 
             debug('After scroll');
-            shouldBe('iframeTarget.contentWindow.pageYOffset', '500');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '400');
             shouldBe('window.pageYOffset', '200');
 
             await UIHelper.animationFrame();
 
             debug('After wait');
-            shouldBe('iframeTarget.contentWindow.pageYOffset', '500');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '400');
             shouldBe('window.pageYOffset', '200');
 
             eventSender.monitorWheelEvents({ resetLatching: false });
@@ -56,7 +54,7 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
 
             await UIHelper.waitForScrollCompletion();
-            shouldBe('iframeTarget.contentWindow.pageYOffset', '480');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '380');
             shouldBe('window.pageYOffset', '200');
 
             finishJSTest();

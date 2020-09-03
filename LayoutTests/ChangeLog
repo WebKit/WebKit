@@ -1,5 +1,84 @@
 2020-09-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266292. rdar://problem/67963525
+
+    Vertical scrolling gets stuck when a horizontal scroller is under the mouse (google search results)
+    https://bugs.webkit.org/show_bug.cgi?id=215641
+    <rdar://problem/67430532>
+    
+    Reviewed by Tim Horton.
+    Source/WebCore:
+    
+    There are two parts to this fix. First, findEnclosingScrollableContainer() needs
+    to use the same vertical-biasing delta fixup that we use in other places, to bias towards
+    vertical scrolling.
+    
+    Second, when we've determined that the main frame should perform the scroll and dispatch
+    the wheel event to the scrolling thread, we used to hit-test from scratch on the scrolling
+    thread and and try to send the event to a scroller which we already know should not handle
+    it. So pass along a target ScrollingNodeID, and start the scrolling thread handling from
+    that node.
+    
+    Test: fast/scrolling/mac/horizontal-overflow-trapping-small-deltas.html
+    
+    * page/FrameView.cpp:
+    (WebCore::FrameView::wheelEvent):
+    * page/mac/EventHandlerMac.mm:
+    (WebCore::findEnclosingScrollableContainer):
+    * page/scrolling/ScrollingCoordinator.h:
+    (WebCore::ScrollingCoordinator::handleWheelEvent):
+    * page/scrolling/ScrollingTree.cpp:
+    (WebCore::ScrollingTree::handleWheelEvent):
+    (WebCore::ScrollingTree::handleWheelEventWithNode):
+    * page/scrolling/ScrollingTree.h:
+    * page/scrolling/ThreadedScrollingTree.cpp:
+    (WebCore::ThreadedScrollingTree::handleWheelEventAfterMainThread):
+    * page/scrolling/ThreadedScrollingTree.h:
+    * page/scrolling/mac/ScrollingCoordinatorMac.h:
+    * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+    (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+    * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+    (WebCore::ScrollingCoordinatorNicosia::handleWheelEvent):
+    * page/scrolling/nicosia/ScrollingCoordinatorNicosia.h:
+    
+    LayoutTests:
+    
+    After this change iframe-latch-small-deltas.html would time-out because WheelEventTestMonitor
+    would get stuck with a "content scrolling" defer region, due to begin/end wheel
+    events not getting both sent to the iframe. But the test was actually broken; logging shows
+    that it reset latching state anyway, and it's not testing the shipping configuration of
+    async iframe scrolling. So fix the test to use async iframe scrolling, and to avoid
+    rubber-banding, so that latching is not cleared due to elapsed time.
+    
+    * fast/scrolling/latching/iframe-latch-small-deltas-expected.txt:
+    * fast/scrolling/latching/iframe-latch-small-deltas.html:
+    * fast/scrolling/mac/horizontal-overflow-trapping-small-deltas-expected.txt: Added.
+    * fast/scrolling/mac/horizontal-overflow-trapping-small-deltas.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266292 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+            Vertical scrolling gets stuck when a horizontal scroller is under the mouse (google search results)
+            https://bugs.webkit.org/show_bug.cgi?id=215641
+            <rdar://problem/67430532>
+
+            Reviewed by Tim Horton.
+
+            After this change iframe-latch-small-deltas.html would time-out because WheelEventTestMonitor
+            would get stuck with a "content scrolling" defer region, due to begin/end wheel
+            events not getting both sent to the iframe. But the test was actually broken; logging shows
+            that it reset latching state anyway, and it's not testing the shipping configuration of
+            async iframe scrolling. So fix the test to use async iframe scrolling, and to avoid
+            rubber-banding, so that latching is not cleared due to elapsed time.
+
+            * fast/scrolling/latching/iframe-latch-small-deltas-expected.txt:
+            * fast/scrolling/latching/iframe-latch-small-deltas.html:
+            * fast/scrolling/mac/horizontal-overflow-trapping-small-deltas-expected.txt: Added.
+            * fast/scrolling/mac/horizontal-overflow-trapping-small-deltas.html: Added.
+
+2020-09-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266262. rdar://problem/67963581
 
     Scrolling on select element doesn't work after scrolling the page

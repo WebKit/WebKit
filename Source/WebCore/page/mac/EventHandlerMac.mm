@@ -787,6 +787,8 @@ static ScrollableArea* scrollableAreaForBox(RenderBox& box)
     
 static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, const PlatformWheelEvent& wheelEvent)
 {
+    auto biasedDelta = ScrollController::wheelDeltaBiasingTowardsVertical(wheelEvent);
+
     // Find the first node with a valid scrollable area starting with the current
     // node and traversing its parents (or shadow hosts).
     for (ContainerNode* candidate = node; candidate; candidate = candidate->parentOrShadowHostNode()) {
@@ -807,11 +809,8 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
         if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
             return candidate;
 
-        // FIXME: This needs to have the same axis bias that we use in other latching code.
-        auto deltaX = wheelEvent.deltaX();
-        auto deltaY = wheelEvent.deltaY();
-        if ((deltaY > 0 && !scrollableArea->scrolledToTop()) || (deltaY < 0 && !scrollableArea->scrolledToBottom())
-            || (deltaX > 0 && !scrollableArea->scrolledToLeft()) || (deltaX < 0 && !scrollableArea->scrolledToRight()))
+        if ((biasedDelta.height() > 0 && !scrollableArea->scrolledToTop()) || (biasedDelta.height() < 0 && !scrollableArea->scrolledToBottom())
+            || (biasedDelta.width() > 0 && !scrollableArea->scrolledToLeft()) || (biasedDelta.width() < 0 && !scrollableArea->scrolledToRight()))
             return candidate;
     }
     
