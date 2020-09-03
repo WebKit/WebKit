@@ -167,8 +167,10 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutCon
             return false;
         }();
         line.close(isLastLineWithInlineContent);
-        auto lineRect = Display::InlineRect { lineConstraints.logicalTopLeft, line.lineLogicalWidth(), lineConstraints.lineHeight};
-        auto lineBox = LineBox { *this, lineRect, lineContent.runs, line.isVisuallyEmpty() ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No, isLastLineWithInlineContent ? LineBox::IsLastLineWithInlineContent::Yes : LineBox::IsLastLineWithInlineContent::No };
+
+        auto lineIsVisuallyEmpty = line.isVisuallyEmpty() ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No;
+        auto lastLine = isLastLineWithInlineContent ? LineBox::IsLastLineWithInlineContent::Yes : LineBox::IsLastLineWithInlineContent::No;
+        auto lineBox = LineBox { *this, lineConstraints.logicalTopLeft, line.lineLogicalWidth(), line.contentLogicalWidth(), lineContent.runs, lineIsVisuallyEmpty, lastLine};
         setDisplayBoxesForLine(lineContent, lineBox, constraints.horizontal);
 
         if (!lineContentRange.isEmpty()) {
@@ -417,14 +419,13 @@ InlineFormattingContext::LineConstraints InlineFormattingContext::constraintsFor
 {
     auto lineLogicalLeft = horizontalConstraints.logicalLeft;
     auto lineLogicalRight = lineLogicalLeft + horizontalConstraints.logicalWidth;
-    auto initialLineHeight = quirks().initialLineHeight(root());
     auto lineIsConstrainedByFloat = false;
 
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
     if (!floatingContext.isEmpty()) {
         // FIXME: Add support for variable line height, where the intrusive floats should be probed as the line height grows.
-        auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + initialLineHeight));
+        auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + quirks().initialLineHeight()));
         // Check if these constraints actually put limitation on the line.
         if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
             floatConstraints.left = { };
@@ -480,7 +481,7 @@ InlineFormattingContext::LineConstraints InlineFormattingContext::constraintsFor
         return geometry().computedTextIndent(root, horizontalConstraints).valueOr(InlineLayoutUnit { });
     };
     lineLogicalLeft += computedTextIndent();
-    return LineConstraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, initialLineHeight, lineIsConstrainedByFloat };
+    return LineConstraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat };
 }
 
 void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::LineContent& lineContent, const LineBox& lineBox, const HorizontalConstraints& horizontalConstraints)
@@ -510,16 +511,13 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
     auto lineIndex = inlineContent.lineBoxes.size();
     auto lineInkOverflow = lineBox.scrollableOverflow();
-    // Compute box final geometry.
+    // Compute final box geometry.
     for (auto& lineRun : lineContent.runs) {
-        auto& logicalRect = lineBox.rectForRun(lineRun);
         auto& layoutBox = lineRun.layoutBox();
-
-        // Add final display runs to state first.
         // Inline level containers (<span>) don't generate display runs and neither do completely collapsed runs.
-        auto initiatesInlineRun = !lineRun.isContainerStart() && !lineRun.isContainerEnd();
+        auto initiatesInlineRun = lineRun.isText() || lineRun.isLineBreak() || lineRun.isBox();
         if (initiatesInlineRun) {
-            auto computedInkOverflow = [&] {
+            auto computedInkOverflow = [&] (const auto& logicalRect) {
                 // FIXME: Add support for non-text ink overflow.
                 if (!lineRun.isText())
                     return logicalRect;
@@ -535,53 +533,33 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
                 }
                 return inkOverflow;
             };
-            auto inkOverflow = computedInkOverflow();
+            auto logicalRect = lineRun.isBox() ? lineBox.inlineBoxForLayoutBox(layoutBox).logicalRect() : lineBox.inlineRectForTextRun(lineRun);
+            // Inline boxes are relative to the line box while final Display::Runs need to be relative to the parent Display:Box
+            // FIXME: Shouldn't we just leave them be relative to the line box?
+            logicalRect.moveBy({ lineBox.logicalLeft(), lineBox.logicalTop() });
+            auto inkOverflow = computedInkOverflow(logicalRect);
             lineInkOverflow.expandToContain(inkOverflow);
-            inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), logicalRect, inkOverflow, lineRun.expansion(), lineRun.textContent() });
+            inlineContent.runs.append({ lineIndex, layoutBox, logicalRect, inkOverflow, lineRun.expansion(), lineRun.textContent() });
         }
 
-        if (lineRun.isText())
-            continue;
-
-        if (lineRun.isLineBreak()) {
-            // FIXME: Since <br> and <wbr> runs have associated DOM elements, we might need to construct a display box here. 
-            continue;
-        }
-
-        // Inline level box (replaced or inline-block)
-        if (lineRun.isBox()) {
-            auto topLeft = logicalRect.topLeft();
+        // Create display boxes.
+        // FIXME: Since <br> and <wbr> runs have associated DOM elements, we might need to construct a display box here. 
+        auto initiatesDisplayBox = lineRun.isBox() || lineRun.isContainerStart();
+        if (initiatesDisplayBox) {
+            auto& displayBox = formattingState.displayBox(layoutBox);
+            auto& inlineBox = lineBox.inlineBoxForLayoutBox(layoutBox);
+            auto topLeft = inlineBox.logicalRect().topLeft();
             if (layoutBox.isInFlowPositioned())
                 topLeft += geometry().inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
-            auto& displayBox = formattingState.displayBox(layoutBox);
             displayBox.setTopLeft(toLayoutPoint(topLeft));
-            continue;
-        }
-
-        // Inline level container start (<span>)
-        if (lineRun.isContainerStart()) {
-            auto& displayBox = formattingState.displayBox(layoutBox);
-            displayBox.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
-            continue;
-        }
-
-        // Inline level container end (</span>)
-        if (lineRun.isContainerEnd()) {
-            auto& displayBox = formattingState.displayBox(layoutBox);
-            if (layoutBox.isInFlowPositioned()) {
-                auto inflowOffset = geometry().inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
-                displayBox.moveHorizontally(inflowOffset.width());
-                displayBox.moveVertically(inflowOffset.height());
+            if (lineRun.isContainerStart()) {
+                auto marginBoxWidth = inlineBox.logicalWidth();
+                auto contentBoxWidth = marginBoxWidth - (displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0));
+                // FIXME: Fix it for multiline.
+                displayBox.setContentBoxWidth(toLayoutUnit(contentBoxWidth));
+                displayBox.setContentBoxHeight(toLayoutUnit(inlineBox.logicalHeight()));
             }
-            auto marginBoxWidth = logicalRect.left() - displayBox.left();
-            auto contentBoxWidth = marginBoxWidth - (displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0));
-            // FIXME fix it for multiline.
-            displayBox.setContentBoxWidth(toLayoutUnit(contentBoxWidth));
-            displayBox.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
-            continue;
         }
-
-        ASSERT_NOT_REACHED();
     }
     // FIXME: This is where the logical to physical translate should happen.
     inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, lineBox.alignmentBaseline() });

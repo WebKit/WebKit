@@ -77,6 +77,7 @@ public:
 
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
         InlineLayoutUnit logicalLeft() const { return m_logicalLeft; }
+        InlineLayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
         const Display::Run::Expansion& expansion() const { return m_expansion; }
         bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }

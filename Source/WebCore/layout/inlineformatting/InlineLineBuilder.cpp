@@ -110,10 +110,18 @@ void LineBuilder::close(bool isLastLineWithInlineContent)
         if (expansionOpportunityCount && availableWidth()) {
             // Distribute the extra space.
             auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
+            auto accumulatedExpansion = InlineLayoutUnit { };
             for (auto& run : m_runs) {
-                // Expand and moves runs by the accumulated expansion.
-                if (run.hasExpansionOpportunity())
-                    run.setHorizontalExpansion(expansionToDistribute * run.expansionOpportunityCount());
+                // Expand and move runs by the accumulated expansion.
+                run.moveHorizontally(accumulatedExpansion);
+                if (!run.hasExpansionOpportunity())
+                    continue;
+                ASSERT(run.expansionOpportunityCount());
+                auto computedExpansion = expansionToDistribute * run.expansionOpportunityCount();
+                // FIXME: Check why we need to set both.
+                run.setHorizontalExpansion(computedExpansion);
+                run.shrinkHorizontally(-computedExpansion);
+                accumulatedExpansion += computedExpansion;
             }
         }
     };

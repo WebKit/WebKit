@@ -58,6 +58,7 @@ public:
 
     void moveHorizontally(InlineLayoutUnit);
     void moveVertically(InlineLayoutUnit);
+    void moveBy(InlineLayoutPoint);
 
     void expand(Optional<InlineLayoutUnit>, Optional<InlineLayoutUnit>);
     void expandToContain(const InlineRect&);
@@ -236,6 +237,13 @@ inline void InlineRect::moveVertically(InlineLayoutUnit offset)
     m_rect.move(InlineLayoutSize { 0, offset });
 }
 
+inline void InlineRect::moveBy(InlineLayoutPoint offset)
+{
+    ASSERT(m_hasValidTop);
+    ASSERT(m_hasValidLeft);
+    m_rect.moveBy(offset);
+}
+
 inline void InlineRect::expand(Optional<InlineLayoutUnit> width, Optional<InlineLayoutUnit> height)
 {
     ASSERT(!width || m_hasValidWidth);
@@ -245,7 +253,13 @@ inline void InlineRect::expand(Optional<InlineLayoutUnit> width, Optional<Inline
 
 inline void InlineRect::expandToContain(const InlineRect& other)
 {
-    m_rect = unionRect(other, m_rect);
+#if ASSERT_ENABLED
+    m_hasValidTop = true;
+    m_hasValidLeft = true;
+    m_hasValidWidth = true;
+    m_hasValidHeight = true;
+#endif
+    m_rect.uniteEvenIfEmpty(other);
 }
 
 inline void InlineRect::expandVerticallyToContain(const InlineRect& other)

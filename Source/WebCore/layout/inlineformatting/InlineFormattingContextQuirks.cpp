@@ -70,13 +70,13 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LineBuild
     return true;
 }
 
-InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight(const ContainerBox& formattingRoot) const
+InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
 {
-    InlineLayoutUnit computedLineHeight = formattingRoot.style().computedLineHeight();
     // Negative lineHeight value means the line-height is not set
-    if (layoutState().inNoQuirksMode() || !formattingRoot.style().lineHeight().isNegative())
-        return computedLineHeight;
-    return LineBox::halfLeadingMetrics(formattingRoot.style().fontMetrics(), computedLineHeight).height();
+    auto& root = formattingContext().root();
+    if (layoutState().inNoQuirksMode() || !root.style().lineHeight().isNegative())
+        return root.style().computedLineHeight();
+    return root.style().fontMetrics().floatHeight();
 }
 
 }

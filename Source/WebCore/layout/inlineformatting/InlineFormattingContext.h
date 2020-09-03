@@ -46,13 +46,10 @@ public:
     InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&);
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
 
-private:
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-
     class Quirks : public FormattingContext::Quirks {
     public:
         bool lineDescentNeedsCollapsing(const LineBuilder::RunList&) const;
-        InlineLayoutUnit initialLineHeight(const ContainerBox& formattingRoot) const;
+        InlineLayoutUnit initialLineHeight() const;
 
     private:
         friend class InlineFormattingContext;
@@ -62,6 +59,9 @@ private:
 
     };
     InlineFormattingContext::Quirks quirks() const { return Quirks(*this); }
+
+private:
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
     class Geometry : public FormattingContext::Geometry {
     public:
@@ -91,7 +91,6 @@ private:
     struct LineConstraints {
         InlineLayoutPoint logicalTopLeft;
         InlineLayoutUnit availableLogicalWidth { 0 };
-        InlineLayoutUnit lineHeight { 0 };
         bool lineIsConstrainedByFloat { false };
     };
     LineConstraints constraintsForLine(const HorizontalConstraints&, InlineLayoutUnit lineLogicalTop);
