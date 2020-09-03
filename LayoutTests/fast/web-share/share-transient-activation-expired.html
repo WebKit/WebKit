@@ -23,7 +23,7 @@
                 fetch("../files/resources/abe.png").then(() => {
                     // Cause the transient activation to expire with a setTimeout.
                     setTimeout(() => {
-                        navigator.share({ title: "Example Page", url: "url", text: "text" }).then((result) => {
+                        navigator.share({ title: "Example Page", url: "http://webkit.org", text: "text" }).then((result) => {
                             write("FAIL: Share sheet invoked.");
                             testRunner.notifyDone();
                         }, (exception) => {
