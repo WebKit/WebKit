@@ -488,6 +488,8 @@ input::-webkit-date-and-time-value {
 #endif
 }
 
+/* FIXME: Styling inner elements of the date control should be specific to input[type="date"]. */
+
 input::-webkit-datetime-edit {
     display: inline-block;
     overflow: hidden;
@@ -515,6 +517,13 @@ input::-webkit-datetime-edit-day-field:focus {
     color: highlighttext;
 #endif
     outline: none;
+}
+
+input[disabled]::-webkit-datetime-edit-year-field,
+input[disabled]::-webkit-datetime-edit-month-field,
+input[disabled]::-webkit-datetime-edit-day-field,
+input[disabled]::-webkit-datetime-edit-text {
+    color: GrayText;
 }
 
 input::-webkit-datetime-edit-text {

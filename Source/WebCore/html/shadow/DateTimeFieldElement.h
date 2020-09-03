@@ -49,11 +49,14 @@ public:
         virtual void fieldValueChanged() = 0;
         virtual bool focusOnNextField(const DateTimeFieldElement&) = 0;
         virtual bool focusOnPreviousField(const DateTimeFieldElement&) = 0;
+        virtual bool isFieldOwnerDisabled() const = 0;
+        virtual bool isFieldOwnerReadOnly() const = 0;
         virtual AtomString localeIdentifier() const = 0;
     };
 
     void defaultEventHandler(Event&) override;
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
+    bool isFocusable() const final;
 
     virtual bool hasValue() const = 0;
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) = 0;
@@ -78,6 +81,8 @@ private:
     bool supportsFocus() const override;
 
     void defaultKeyboardEventHandler(KeyboardEvent&);
+    bool isFieldOwnerDisabled() const;
+    bool isFieldOwnerReadOnly() const;
 
     WeakPtr<FieldOwner> m_fieldOwner;
 };

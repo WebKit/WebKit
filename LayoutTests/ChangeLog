@@ -1,3 +1,19 @@
+2020-09-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add disabled and readonly behaviors to date inputs
+        https://bugs.webkit.org/show_bug.cgi?id=216005
+
+        Reviewed by Devin Rousso.
+
+        Added tests for disabled and readonly date inputs in existing test files.
+
+        * fast/forms/date/date-editable-components/date-editable-components-focus-and-blur-events-expected.txt:
+        * fast/forms/date/date-editable-components/date-editable-components-focus-and-blur-events.html:
+        * fast/forms/date/date-editable-components/date-editable-components-keyboard-events-expected.txt:
+        * fast/forms/date/date-editable-components/date-editable-components-keyboard-events.html:
+        * fast/forms/date/date-editable-components/date-editable-components-mouse-events-expected.txt:
+        * fast/forms/date/date-editable-components/date-editable-components-mouse-events.html:
+
 2020-09-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Mark more convolver related tests as flaky crash.

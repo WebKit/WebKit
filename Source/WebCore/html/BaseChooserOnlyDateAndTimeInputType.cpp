@@ -320,6 +320,18 @@ void BaseChooserOnlyDateAndTimeInputType::didChangeValueFromControl()
         m_dateTimeChooser->showChooser(parameters);
 }
 
+bool BaseChooserOnlyDateAndTimeInputType::isEditControlOwnerDisabled() const
+{
+    ASSERT(element());
+    return element()->isDisabledFormControl();
+}
+
+bool BaseChooserOnlyDateAndTimeInputType::isEditControlOwnerReadOnly() const
+{
+    ASSERT(element());
+    return element()->isReadOnly();
+}
+
 AtomString BaseChooserOnlyDateAndTimeInputType::localeIdentifier() const
 {
     ASSERT(element());

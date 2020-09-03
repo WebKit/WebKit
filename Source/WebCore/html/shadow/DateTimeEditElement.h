@@ -46,6 +46,8 @@ public:
         virtual void didBlurFromControl() = 0;
         virtual void didChangeValueFromControl() = 0;
         virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
+        virtual bool isEditControlOwnerDisabled() const = 0;
+        virtual bool isEditControlOwnerReadOnly() const = 0;
         virtual AtomString localeIdentifier() const = 0;
     };
 
@@ -96,6 +98,8 @@ private:
     void fieldValueChanged() final;
     bool focusOnNextField(const DateTimeFieldElement&) final;
     bool focusOnPreviousField(const DateTimeFieldElement&) final;
+    bool isFieldOwnerDisabled() const final;
+    bool isFieldOwnerReadOnly() const final;
     AtomString localeIdentifier() const final;
 
     Vector<Ref<DateTimeFieldElement>, maximumNumberOfFields> m_fields;

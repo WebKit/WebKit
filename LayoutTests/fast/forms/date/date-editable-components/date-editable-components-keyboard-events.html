@@ -164,6 +164,24 @@ addEventListener("load", async () => {
     shouldBe("changeEventsFired", "1");
     shouldBe("inputEventsFired", "1");
 
+    beginTest("Disabled/readonly", "2020-09-01");
+    input.disabled = true;
+    UIHelper.keyDown("1");
+    shouldBeEqualToString("input.value", "2020-09-01");
+    input.disabled = false;
+    input.focus();
+    UIHelper.keyDown("1");
+    shouldBeEqualToString("input.value", "2020-01-01");
+    input.readOnly = true;
+    UIHelper.keyDown("rightArrow");
+    UIHelper.keyDown("2");
+    shouldBeEqualToString("input.value", "2020-01-01");
+    input.readOnly = false;
+    UIHelper.keyDown("2");
+    shouldBeEqualToString("input.value", "2020-01-02");
+    shouldBe("changeEventsFired", "2");
+    shouldBe("inputEventsFired", "2");
+
     finishJSTest();
 });
 

@@ -61,9 +61,12 @@ void DateTimeFieldElement::defaultEventHandler(Event& event)
 {
     if (is<KeyboardEvent>(event)) {
         auto& keyboardEvent = downcast<KeyboardEvent>(event);
-        handleKeyboardEvent(keyboardEvent);
-        if (keyboardEvent.defaultHandled())
-            return;
+        if (!isFieldOwnerDisabled() && !isFieldOwnerReadOnly()) {
+            handleKeyboardEvent(keyboardEvent);
+            if (keyboardEvent.defaultHandled())
+                return;
+        }
+
         defaultKeyboardEventHandler(keyboardEvent);
         if (keyboardEvent.defaultHandled())
             return;
@@ -74,6 +77,9 @@ void DateTimeFieldElement::defaultEventHandler(Event& event)
 
 void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEvent)
 {
+    if (isFieldOwnerDisabled())
+        return;
+
     if (keyboardEvent.type() != eventNames().keydownEvent)
         return;
 
@@ -89,12 +95,32 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
         return;
     }
 
+    if (isFieldOwnerReadOnly())
+        return;
+
     // Clear value when pressing backspace or delete.
     if (key == "U+0008" || key == "U+007F") {
         keyboardEvent.setDefaultHandled();
         setEmptyValue(DispatchInputAndChangeEvents);
         return;
     }
+}
+
+bool DateTimeFieldElement::isFieldOwnerDisabled() const
+{
+    return m_fieldOwner && m_fieldOwner->isFieldOwnerDisabled();
+}
+
+bool DateTimeFieldElement::isFieldOwnerReadOnly() const
+{
+    return m_fieldOwner && m_fieldOwner->isFieldOwnerReadOnly();
+}
+
+bool DateTimeFieldElement::isFocusable() const
+{
+    if (isFieldOwnerDisabled())
+        return false;
+    return HTMLElement::isFocusable();
 }
 
 void DateTimeFieldElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)

@@ -256,6 +256,16 @@ bool DateTimeEditElement::focusOnPreviousField(const DateTimeFieldElement& field
     return false;
 }
 
+bool DateTimeEditElement::isFieldOwnerDisabled() const
+{
+    return m_editControlOwner && m_editControlOwner->isEditControlOwnerDisabled();
+}
+
+bool DateTimeEditElement::isFieldOwnerReadOnly() const
+{
+    return m_editControlOwner && m_editControlOwner->isEditControlOwnerReadOnly();
+}
+
 AtomString DateTimeEditElement::localeIdentifier() const
 {
     return m_editControlOwner ? m_editControlOwner->localeIdentifier() : nullAtom();

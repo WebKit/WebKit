@@ -114,6 +114,52 @@ assertFocusAndBlurCount(2, 1);
 // Focus out.
 UIHelper.keyDown("\t", ["shiftKey"]);
 assertFocusAndBlurCount(2, 2);
+resetFocusAndBlurCount();
+
+debug("\nFocus/blur on disabled input\n")
+
+input.disabled = true;
+
+UIHelper.activateElement(before);
+// Tab to focus should skip disabled input.
+UIHelper.keyDown("\t");
+assertFocusAndBlurCount(0, 0);
+shouldBeEqualToString("document.activeElement.id", "after");
+// Shift+Tab should skip disabled input.
+UIHelper.keyDown("\t", ["shiftKey"]);
+assertFocusAndBlurCount(0, 0);
+shouldBeEqualToString("document.activeElement.id", "before");
+// Clicking on any part of the control should not focus/blur events.
+mouseClickOn(20, center);
+mouseClickOn(60, center);
+mouseClickOn(120, center);
+mouseClickOn(250, center);
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+assertFocusAndBlurCount(0, 0);
+resetFocusAndBlurCount();
+
+debug("\nFocus/blur on readonly input\n")
+
+input.disabled = false;
+input.readOnly = true;
+
+UIHelper.activateElement(before);
+// Tab to focus should not skip readonly input.
+UIHelper.keyDown("\t");
+assertFocusAndBlurCount(1, 0);
+UIHelper.keyDown("\t");
+UIHelper.keyDown("\t");
+UIHelper.keyDown("\t");
+shouldBeEqualToString("document.activeElement.id", "after");
+assertFocusAndBlurCount(1, 1);
+// Clicking on any part of the control should fire the appropriate events.
+mouseClickOn(20, center);
+mouseClickOn(60, center);
+mouseClickOn(120, center);
+mouseClickOn(250, center);
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+assertFocusAndBlurCount(1, 1);
+resetFocusAndBlurCount();
 
 </script>
 

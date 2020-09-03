@@ -53,6 +53,14 @@ Delete key
 PASS input.value is ""
 PASS changeEventsFired is 1
 PASS inputEventsFired is 1
+
+Disabled/readonly
+PASS input.value is "2020-09-01"
+PASS input.value is "2020-01-01"
+PASS input.value is "2020-01-01"
+PASS input.value is "2020-01-02"
+PASS changeEventsFired is 2
+PASS inputEventsFired is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

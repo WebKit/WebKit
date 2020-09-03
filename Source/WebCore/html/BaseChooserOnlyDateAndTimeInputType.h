@@ -65,6 +65,8 @@ private:
     // DateTimeEditElement::EditControlOwner functions:
     void didBlurFromControl() final;
     void didChangeValueFromControl() final;
+    bool isEditControlOwnerDisabled() const final;
+    bool isEditControlOwnerReadOnly() const final;
     AtomString localeIdentifier() const final;
 
     // InputType functions:
