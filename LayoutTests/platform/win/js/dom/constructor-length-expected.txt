@@ -12,7 +12,7 @@ PASS CloseEvent.length is 1
 PASS CustomEvent.length is 1
 FAIL DOMFormData.length should be 0. Threw exception ReferenceError: Can't find variable: DOMFormData
 PASS DOMParser.length is 0
-PASS DataView.length is 3
+PASS DataView.length is 1
 PASS ErrorEvent.length is 1
 PASS Event.length is 1
 PASS EventSource.length is 1

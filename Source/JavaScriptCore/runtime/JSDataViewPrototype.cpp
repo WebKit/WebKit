@@ -137,10 +137,13 @@ EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
         littleEndian = callFrame->uncheckedArgument(1).toBoolean(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
-    
+
+    if (dataView->isNeutered())
+        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
+
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(globalObject, scope, createRangeError(globalObject, "Out of bounds access"_s));
+        return throwVMRangeError(globalObject, scope, "Out of bounds access"_s);
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);
     union {
@@ -189,10 +192,13 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
         littleEndian = callFrame->uncheckedArgument(2).toBoolean(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
-    
+
+    if (dataView->isNeutered())
+        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
+
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(globalObject, scope, createRangeError(globalObject, "Out of bounds access"_s));
+        return throwVMRangeError(globalObject, scope, "Out of bounds access"_s);
 
     uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
 
@@ -228,7 +234,9 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(JSGlobalObject* globa
 
     JSDataView* view = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!view)
-        return throwVMTypeError(globalObject, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(globalObject, scope, "DataView.prototype.byteLength expects |this| to be a DataView object");
+    if (view->isNeutered())
+        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
     return JSValue::encode(jsNumber(view->length()));
 }
@@ -240,7 +248,9 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(JSGlobalObject* globa
 
     JSDataView* view = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!view)
-        return throwVMTypeError(globalObject, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(globalObject, scope, "DataView.prototype.byteOffset expects |this| to be a DataView object");
+    if (view->isNeutered())
+        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
     return JSValue::encode(jsNumber(view->byteOffset()));
 }

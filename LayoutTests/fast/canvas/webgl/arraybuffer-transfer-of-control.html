@@ -86,15 +86,15 @@ function assertViewClosed(testName, view)
     if (isTypedArray(view) || isDataView(view)) {
         if (view.buffer !== null && !assertBufferClosed(testName, view.buffer))
             return false;
-        if (view.byteOffset !== 0 || !(view.byteOffset === 0)) {
-            testFailed(testName + ": view byteOffset !== 0");
-            return false;
-        }
-        if (view.byteLength !== 0 || !(view.byteLength === 0)) {
-            testFailed(testName + ": view byteLength !== 0");
-            return false;
-        }
         if (!isDataView(view)) {
+            if (view.byteOffset !== 0 || !(view.byteOffset === 0)) {
+                testFailed(testName + ": view byteOffset !== 0");
+                return false;
+            }
+            if (view.byteLength !== 0 || !(view.byteLength === 0)) {
+                testFailed(testName + ": view byteLength !== 0");
+                return false;
+            }
             if (view.length !== 0 || !(view.length === 0)) {
                 testFailed(testName + ": TypedArray length !== 0");
                 return false;
@@ -132,6 +132,16 @@ function assertViewClosed(testName, view)
                 }
             }
         } else {
+            try {
+                view.byteOffset;
+                testFailed(testName + ": view byteOffset did not throw");
+                return false;
+            } catch { }
+            try {
+                view.byteLength;
+                testFailed(testName + ": view byteLength did not throw");
+                return false;
+            } catch { }
             try {
                 view.getInt8(0);
                 testFailed(testName + ": get on a closed view succeeded");

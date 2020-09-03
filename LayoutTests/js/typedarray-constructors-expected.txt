@@ -32,7 +32,7 @@ PASS new Float64Array() did not throw exception.
 PASS Float64Array.length is 3
 PASS DataView(new ArrayBuffer()) threw exception TypeError: calling DataView constructor without new is invalid.
 PASS new DataView(new ArrayBuffer()) did not throw exception.
-PASS DataView.length is 3
+PASS DataView.length is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

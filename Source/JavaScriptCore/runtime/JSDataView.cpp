@@ -48,14 +48,19 @@ JSDataView* JSDataView::create(
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(buffer);
+    if (buffer->isNeutered()) {
+        throwTypeError(globalObject, scope, "Buffer is already detached"_s);
+        return nullptr;
+    }
     if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, byteLength, sizeof(uint8_t))) {
-        throwVMError(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"_s));
+        throwRangeError(globalObject, scope, "Length out of range of buffer"_s);
         return nullptr;
     }
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, sizeof(uint8_t))) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"_s));
+        throwRangeError(globalObject, scope, "Byte offset is not aligned"_s);
         return nullptr;
     }
+
     ConstructionContext context(
         structure, buffer.copyRef(), byteOffset, byteLength, ConstructionContext::DataView);
     ASSERT(context);
@@ -97,23 +102,6 @@ RefPtr<DataView> JSDataView::possiblySharedTypedImpl()
 RefPtr<DataView> JSDataView::unsharedTypedImpl()
 {
     return DataView::create(unsharedBuffer(), byteOffset(), length());
-}
-
-bool JSDataView::getOwnPropertySlot(
-    JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
-{
-    VM& vm = globalObject->vm();
-    JSDataView* thisObject = jsCast<JSDataView*>(object);
-    if (propertyName == vm.propertyNames->byteLength) {
-        slot.setValue(thisObject, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, jsNumber(thisObject->m_length));
-        return true;
-    }
-    if (propertyName == vm.propertyNames->byteOffset) {
-        slot.setValue(thisObject, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, jsNumber(thisObject->byteOffset()));
-        return true;
-    }
-
-    return Base::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
 }
 
 bool JSDataView::put(

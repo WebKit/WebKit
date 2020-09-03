@@ -1,3 +1,20 @@
+2020-09-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add missing detached buffer errors for DataView
+        https://bugs.webkit.org/show_bug.cgi?id=216062
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/detached-buffer-typeerror.js:
+        Add new test.
+
+        * stress/dataview-jit-neuter.js:
+        * stress/native-constructors-length.js:
+        Update existing tests.
+
+        * test262/expectations.yaml:
+        Mark 74 test cases as passing.
+
 2020-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update test262

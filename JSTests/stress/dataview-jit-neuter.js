@@ -48,7 +48,7 @@ function test() {
     } catch(err) {
         e = err;
     }
-    assert(e instanceof RangeError);
+    assert(e instanceof TypeError);
 }
 test();
 
@@ -75,6 +75,6 @@ function test2() {
     } catch(err) {
         e = err;
     }
-    assert(e instanceof RangeError);
+    assert(e instanceof TypeError);
 }
 test2();

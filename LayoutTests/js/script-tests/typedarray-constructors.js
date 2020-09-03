@@ -24,4 +24,4 @@ for (let arrayType of arrayTypes) {
 
 shouldThrow("DataView(new ArrayBuffer())");
 shouldNotThrow("new DataView(new ArrayBuffer())");
-shouldBe("DataView.length", "3");
+shouldBe("DataView.length", "1");

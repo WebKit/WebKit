@@ -1,3 +1,32 @@
+2020-09-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add missing detached buffer errors for DataView
+        https://bugs.webkit.org/show_bug.cgi?id=216062
+
+        Reviewed by Yusuke Suzuki.
+
+        DataView methods are often expected to throw a TypeError if the underlying ArrayBuffer is detached
+        (or neutered, in older terminology) -- this patch adds a slew of missing cases from the following spec section:
+          - https://tc39.es/ecma262/#sec-properties-of-the-dataview-prototype-object
+
+        At the same time:
+         - get rid of JSDataView::getOwnPropertySlot, which was turning dataViewProtoGetterByte{Length,Offset}
+           into mostly unreachable code and erroneously causing byte{Length,Offset} to have property descriptors
+         - perform some simple cleanup of neighboring error calls / messages
+         - fix value of DataView.length (our only other DataView spec bug)
+
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::create):
+        (JSC::JSDataView::getOwnPropertySlot): Deleted.
+        * runtime/JSDataView.h:
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        (JSC::dataViewProtoGetterByteLength):
+        (JSC::dataViewProtoGetterByteOffset):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation):
+
 2020-09-02  Michael Saboff  <msaboff@apple.com>
 
         ASSERTION FAILED: value.isCell() && value.asCell()->type() == CustomGetterSetterType ./bytecode/ObjectPropertyConditionSet.cpp

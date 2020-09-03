@@ -15,7 +15,7 @@ function assertLengthDescriptorAttributes(ctor, lengthValue) {
 assertLengthDescriptorAttributes(Array, 1);
 assertLengthDescriptorAttributes(ArrayBuffer, 1);
 assertLengthDescriptorAttributes(Boolean, 1);
-assertLengthDescriptorAttributes(DataView, 3);
+assertLengthDescriptorAttributes(DataView, 1);
 assertLengthDescriptorAttributes(Date, 7);
 assertLengthDescriptorAttributes(Error, 1);
 assertLengthDescriptorAttributes(Function, 1);

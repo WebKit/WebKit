@@ -1,3 +1,21 @@
+2020-09-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add missing detached buffer errors for DataView
+        https://bugs.webkit.org/show_bug.cgi?id=216062
+
+        Reviewed by Yusuke Suzuki.
+
+        * fast/canvas/webgl/arraybuffer-transfer-of-control.html:
+        * js/dom/constructor-length.html:
+        * js/script-tests/typedarray-constructors.js:
+        * js/typedarray-constructors-expected.txt:
+        * platform/glib/js/dom/constructor-length-expected.txt:
+        * platform/ios/js/dom/constructor-length-expected.txt:
+        * platform/mac/js/dom/constructor-length-expected.txt:
+        * platform/win/js/dom/constructor-length-expected.txt:
+        * platform/wincairo/js/dom/constructor-length-expected.txt:
+        Update tests and expectations.
+
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
         Align ISO-8859-{3,6,7,8,8-I} and windows-{874,1253,1255,1257} encodings with Chrome, Firefox, and the specification
