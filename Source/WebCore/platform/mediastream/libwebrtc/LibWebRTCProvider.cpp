@@ -399,8 +399,20 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
     RTCRtpCapabilities capabilities;
 
     capabilities.codecs.reserveInitialCapacity(rtpCapabilities.codecs.size());
-    for (auto& codec : rtpCapabilities.codecs)
-        capabilities.codecs.uncheckedAppend(RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), { } });
+    for (auto& codec : rtpCapabilities.codecs) {
+        StringBuilder sdpFmtpLine;
+        bool hasParameter = false;
+        for (auto& parameter : codec.parameters) {
+            if (hasParameter)
+                sdpFmtpLine.append(";");
+            else
+                hasParameter = true;
+            sdpFmtpLine.append(StringView(parameter.first.data(), parameter.first.length()));
+            sdpFmtpLine.append("=");
+            sdpFmtpLine.append(StringView(parameter.second.data(), parameter.second.length()));
+        }
+        capabilities.codecs.uncheckedAppend(RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), sdpFmtpLine.toString() });
+    }
 
     capabilities.headerExtensions.reserveInitialCapacity(rtpCapabilities.header_extensions.size());
     for (auto& header : rtpCapabilities.header_extensions)
