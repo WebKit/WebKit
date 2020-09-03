@@ -489,7 +489,7 @@ public:
     EditorParagraphSeparator defaultParagraphSeparator() const { return m_defaultParagraphSeparator; }
     void setDefaultParagraphSeparator(EditorParagraphSeparator separator) { m_defaultParagraphSeparator = separator; }
     Vector<String> dictationAlternativesForMarker(const DocumentMarker&);
-    void applyDictationAlternativelternative(const String& alternativeString);
+    void applyDictationAlternative(const String& alternativeString);
 
 #if USE(APPKIT)
     WEBCORE_EXPORT void uppercaseWord();

@@ -56,6 +56,18 @@ TEST(InsertTextAlternatives, Simple)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"internals.hasDictationAlternativesMarker(2, 3)"] boolValue]); // big
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"internals.hasDictationAlternativesMarker(0, 6)"] boolValue]); // "A big "
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"internals.hasDictationAlternativesMarker(6, 5)"] boolValue]); // hello
+
+    [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(document.body.firstChild, 8)"]; // in the middle of "hello"
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("hello", [[webView textInputContentView] selectedText]);
+
+    auto *alternatives = [(id<UIWKInteractionViewProtocol_Staging66646042>)[webView textInputContentView] alternativesForSelectedText];
+    EXPECT_EQ(1ul, alternatives.count);
+    EXPECT_WK_STREQ("hello", alternatives[0].primaryString);
+    EXPECT_EQ(1ul, alternatives[0].alternativeStrings.count);
+    EXPECT_WK_STREQ("yellow", alternatives[0].alternativeStrings[0]);
+    EXPECT_FALSE(alternatives[0].isLowConfidence);
 }
 
 TEST(InsertTextAlternatives, InsertLeadingSpace)

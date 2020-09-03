@@ -129,6 +129,7 @@
 #include "EndowmentStateTracker.h"
 #endif
 
+OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS NSView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
@@ -878,6 +879,10 @@ public:
 
     void insertTextAsync(const String&, const EditingRange& replacementRange, InsertTextOptions&&);
     void insertDictatedTextAsync(const String&, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>&, InsertTextOptions&&);
+
+#if USE(DICTATION_ALTERNATIVES)
+    NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext);
+#endif
 
     void hasMarkedText(CompletionHandler<void(bool)>&&);
     void getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);

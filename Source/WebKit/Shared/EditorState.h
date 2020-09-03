@@ -36,6 +36,10 @@
 #include <WebCore/SelectionRect.h>
 #endif
 
+#if USE(DICTATION_ALTERNATIVES)
+#include <WebCore/DictationContext.h>
+#endif
+
 namespace WTF {
 class TextStream;
 };
@@ -100,6 +104,9 @@ struct EditorState {
         UChar32 characterAfterSelection { 0 };
         UChar32 characterBeforeSelection { 0 };
         UChar32 twoCharacterBeforeSelection { 0 };
+#if USE(DICTATION_ALTERNATIVES)
+        Vector<WebCore::DictationContext> dictationContextsForSelection;
+#endif
         bool isReplaceAllowed { false };
         bool hasContent { false };
         bool isStableStateUpdate { false };

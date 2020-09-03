@@ -38,7 +38,7 @@ public:
     WEBCORE_EXPORT void removeAlternatives(DictationContext);
     WEBCORE_EXPORT void clear();
 
-    WEBCORE_EXPORT Vector<String> alternativesForContext(DictationContext);
+    WEBCORE_EXPORT NSTextAlternatives *alternativesForContext(DictationContext);
 
 #if USE(APPKIT)
     using AcceptanceHandler = void (^)(NSString *);

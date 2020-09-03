@@ -65,6 +65,7 @@ public:
     WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) final;
     void removeDictationAlternatives(WebCore::DictationContext) final;
     Vector<String> dictationAlternatives(WebCore::DictationContext) final;
+    NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) final;
 
 protected:
     WeakObjCPtr<WKWebView> m_webView;

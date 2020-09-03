@@ -1,5 +1,97 @@
 2020-09-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266265. rdar://problem/68168939
+
+    [iOS] provide a way to get previously inserted alternatives for the selected text
+    https://bugs.webkit.org/show_bug.cgi?id=215816
+    <rdar://problem/66646042>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    * editing/cocoa/AlternativeTextUIController.h:
+    * editing/cocoa/AlternativeTextUIController.mm:
+    (WebCore::AlternativeTextUIController::alternativesForContext):
+    Return the raw `NSTextAlternatives *` and let the caller create the `Vector<String>` if they
+    need to so that callers that don't can use the actual `NSTextAlternatives *`.
+    
+    * editing/Editor.h:
+    * editing/Editor.cpp:
+    (WebCore::Editor::applyDictationAlternative): Added.
+    (WebCore::Editor::applyDictationAlternativelternative): Deleted.
+    * page/ContextMenuController.cpp:
+    (WebCore::ContextMenuController::contextMenuItemSelected):
+    Drive-by: fix typo.
+    
+    Source/WebKit:
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView alternativesForSelectedText]):
+    
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+    (WebKit::WebPageProxy::platformDictationAlternatives): Added.
+    * UIProcess/PageClient.h:
+    * UIProcess/Cocoa/PageClientImplCocoa.h:
+    * UIProcess/Cocoa/PageClientImplCocoa.mm:
+    (WebKit::PageClientImplCocoa::dictationAlternatives):
+    (WebKit::PageClientImplCocoa::platformDictationAlternatives): Added.
+    Provide a way to get the raw `NSTextAlternatives *` for a given `WebCore::DictationContext`.
+    
+    * Shared/EditorState.h:
+    * Shared/EditorState.cpp:
+    (WebKit::EditorState::PostLayoutData::encode const):
+    (WebKit::EditorState::PostLayoutData::decode):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::getPlatformEditorState const):
+    Include a `Vector<WebCore::DictationContext>` as part of the `EditorState` that contains all
+    of the `WebCore::DictationContext` that exist in the currently selected range (or the range
+    of the word containing the cursor if nothing is selected).
+    
+    * Platform/spi/ios/UIKitSPI.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebView/WebView.mm:
+    (-[WebView _dictationAlternatives:]):
+    Create a `Vector<String>` from the returned `NSTextAlternatives *` now that the member
+    `WebCore::AlternativeTextUIController::alternativesForContext` returns it.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/InsertTextAlternatives.mm:
+    (InsertTextAlternatives.Simple):
+    
+    * TestWebKitAPI/ios/UIKitSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266265 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-27  Devin Rousso  <drousso@apple.com>
+
+            [iOS] provide a way to get previously inserted alternatives for the selected text
+            https://bugs.webkit.org/show_bug.cgi?id=215816
+            <rdar://problem/66646042>
+
+            Reviewed by Darin Adler.
+
+            * editing/cocoa/AlternativeTextUIController.h:
+            * editing/cocoa/AlternativeTextUIController.mm:
+            (WebCore::AlternativeTextUIController::alternativesForContext):
+            Return the raw `NSTextAlternatives *` and let the caller create the `Vector<String>` if they
+            need to so that callers that don't can use the actual `NSTextAlternatives *`.
+
+            * editing/Editor.h:
+            * editing/Editor.cpp:
+            (WebCore::Editor::applyDictationAlternative): Added.
+            (WebCore::Editor::applyDictationAlternativelternative): Deleted.
+            * page/ContextMenuController.cpp:
+            (WebCore::ContextMenuController::contextMenuItemSelected):
+            Drive-by: fix typo.
+
+2020-09-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266218. rdar://problem/68168930
 
     REGRESSION: touchbar controls don't reflect video state in fullscreen
