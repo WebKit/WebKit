@@ -1,5 +1,11 @@
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused test expectations file.
+
+        * web-platform-tests/encoding/textdecoder-labels-expected.txt: Removed.
+
+2020-09-03  Alex Christensen  <achristensen@webkit.org>
+
         Implement TextEncoder's encodeInto()
         https://bugs.webkit.org/show_bug.cgi?id=193274
 
