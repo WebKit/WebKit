@@ -1619,6 +1619,11 @@ article .meta .updated {
     text-transform: uppercase;
 }
 
+article .meta .icon {
+    float: left; 
+    margin-right: 1em;
+}
+
 article .two-columns {
     columns: 2;
     column-gap: 6rem;

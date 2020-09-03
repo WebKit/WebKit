@@ -1,4 +1,5 @@
 <?php get_header();
+$revision = get_post_meta(get_the_ID(), 'updated-for-stp', true);
 if (have_posts()) : while (have_posts()) : the_post(); ?>
     <article class="page<?php if ( has_table_of_contents() ) echo ' with-toc';?>" id="post-<?php the_ID(); ?>">
 
@@ -14,6 +15,10 @@ if (have_posts()) : while (have_posts()) : the_post(); ?>
         </div>
 
         <div class="meta">
+            <hr>
+            <p><img src="/wp-content/uploads/STP.png" width="51" height="51" class="icon">
+            Updated for <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a><?php echo empty($revision) ? '' : " $revision"; ?>. Try it out for the latest Web Inspector features, including all of the above and more.</p>
+            <hr>
             <p class="written">Written <?php the_date(); ?> by <?php the_author() ?></p>
             <p class="updated">Last updated <?php the_modified_date(); ?> by <?php the_modified_author(); ?></p>
         </div>
