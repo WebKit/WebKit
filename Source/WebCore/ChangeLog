@@ -1,3 +1,20 @@
+2020-09-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for vertical-align: text-top
+        https://bugs.webkit.org/show_bug.cgi?id=215545
+        <rdar://problem/67629969>
+
+        Reviewed by Antti Koivisto.
+
+        See https://www.w3.org/TR/css-inline-3/#propdef-alignment-baseline
+        (align with the baseline + ascent of the parent inline box)
+
+        Test: fast/layoutformattingcontext/vertical-align-top-nested.html
+
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::computeInlineBoxesLogicalHeight):
+        (WebCore::Layout::LineBox::alignInlineBoxesVerticallyAndComputeLineBoxHeight):
+
 2020-09-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Add disabled and readonly behaviors to date inputs

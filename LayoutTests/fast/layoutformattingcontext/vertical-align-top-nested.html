@@ -1,0 +1,16 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.container {
+  background-color: green;
+  color: green;
+  font-family: Ahem;
+}
+</style>
+
+<div class=container>
+  <img src="" style="width: 2px; height: 100px; vertical-align: bottom">
+  <span style="vertical-align: top; font-size: 40px;">
+    XXX
+    <span style="vertical-align: text-top; font-size: 20px;">XXX</span>
+  </span>
+</div>

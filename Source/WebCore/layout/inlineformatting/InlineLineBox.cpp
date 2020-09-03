@@ -255,6 +255,12 @@ void LineBox::computeInlineBoxesLogicalHeight()
         case VerticalAlign::Bottom:
             // top and bottom alignments only stretch the line box. They don't stretch any of the inline boxes, not even the root inline box.
             break;
+        case VerticalAlign::TextTop: {
+            auto& parentInlineBox = inlineBoxForLayoutBox(layoutBox.parent());
+            auto parentTextLogicalTop = parentInlineBox.baseline() - parentInlineBox.layoutBox().style().fontMetrics().ascent();
+            parentInlineBox.setLogicalHeight(std::max(parentInlineBox.logicalHeight(), parentTextLogicalTop + inlineBox->logicalHeight()));
+            break;
+        }
         case VerticalAlign::Baseline: {
             auto& parentInlineBox = inlineBoxForLayoutBox(layoutBox.parent());
             auto baselineOverflow = std::max(0.0f, inlineBox->baseline() - parentInlineBox.baseline());
@@ -325,6 +331,12 @@ void LineBox::alignInlineBoxesVerticallyAndComputeLineBoxHeight(IsLineVisuallyEm
         case VerticalAlign::Baseline: {
             auto& parentInlineBox = inlineBoxForLayoutBox(layoutBox.parent());
             inlineBoxLogicalTop = parentInlineBox.logicalTop() + parentInlineBox.baseline() - inlineBox->baseline();
+            break;
+        }
+        case VerticalAlign::TextTop: {
+            auto& parentLayoutBox = layoutBox.parent();
+            auto& parentInlineBox = inlineBoxForLayoutBox(parentLayoutBox);
+            inlineBoxLogicalTop = parentInlineBox.logicalTop() + parentInlineBox.baseline() - parentLayoutBox.style().fontMetrics().ascent();
             break;
         }
         case VerticalAlign::Top:
