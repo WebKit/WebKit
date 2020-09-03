@@ -1,3 +1,12 @@
+2020-09-03  Hector Lopez  <hector_i_lopez@apple.com>
+
+        REGRESSION(r266466): [ iOS wk2 ] fast/encoding/charset-replacement.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=216126
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-09-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Support stepping using keyboard in date inputs
