@@ -2,9 +2,12 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
 <script>
 function triggerDebuggerStatement() {
     debugger;
+
+    TestPage.dispatchEventToFrontend("TestPage-debugger-statement");
 }
 
 function test()
@@ -49,6 +52,19 @@ function test()
                 resolve();
             });
         }
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        createBreakpoint() {
+            WI.debuggerManager.debuggerStatementsBreakpoint.disabled = false;
+            return WI.debuggerManager.debuggerStatementsBreakpoint;
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.evaluateInPage(`triggerDebuggerStatement()`),
+                InspectorTest.awaitEvent("TestPage-debugger-statement"),
+            ]);
+        },
     });
 
     suite.runTestCasesAndFinish();

@@ -77,6 +77,34 @@ private:
     Debugger& m_debugger;
 };
 
+Debugger::TemporarilyDisableExceptionBreakpoints::TemporarilyDisableExceptionBreakpoints(Debugger& debugger)
+    : m_debugger(debugger)
+{
+}
+
+Debugger::TemporarilyDisableExceptionBreakpoints::~TemporarilyDisableExceptionBreakpoints()
+{
+    restore();
+}
+
+void Debugger::TemporarilyDisableExceptionBreakpoints::replace()
+{
+    if (m_debugger.m_pauseOnAllExceptionsBreakpoint)
+        m_pauseOnAllExceptionsBreakpoint = WTFMove(m_debugger.m_pauseOnAllExceptionsBreakpoint);
+
+    if (m_debugger.m_pauseOnUncaughtExceptionsBreakpoint)
+        m_pauseOnUncaughtExceptionsBreakpoint = WTFMove(m_debugger.m_pauseOnUncaughtExceptionsBreakpoint);
+}
+
+void Debugger::TemporarilyDisableExceptionBreakpoints::restore()
+{
+    if (m_pauseOnAllExceptionsBreakpoint)
+        m_debugger.m_pauseOnAllExceptionsBreakpoint = WTFMove(m_pauseOnAllExceptionsBreakpoint);
+
+    if (m_pauseOnUncaughtExceptionsBreakpoint)
+        m_debugger.m_pauseOnUncaughtExceptionsBreakpoint = WTFMove(m_pauseOnUncaughtExceptionsBreakpoint);
+}
+
 
 Debugger::ProfilingClient::~ProfilingClient()
 {
@@ -84,7 +112,6 @@ Debugger::ProfilingClient::~ProfilingClient()
 
 Debugger::Debugger(VM& vm)
     : m_vm(vm)
-    , m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pauseAtNextOpportunity(false)
     , m_pastFirstExpressionInStatement(false)
     , m_isPaused(false)
@@ -688,11 +715,6 @@ void Debugger::setBreakpointsActivated(bool activated)
     recompileAllJSFunctions();
 }
 
-void Debugger::setPauseOnExceptionsState(PauseOnExceptionsState pause)
-{
-    m_pauseOnExceptionsState = pause;
-}
-
 void Debugger::schedulePauseAtNextOpportunity()
 {
     m_pauseAtNextOpportunity = true;
@@ -724,7 +746,7 @@ bool Debugger::cancelPauseForSpecialBreakpoint(Breakpoint& breakpoint)
     return true;
 }
 
-void Debugger::breakProgram()
+void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
 {
     if (m_isPaused)
         return;
@@ -732,7 +754,12 @@ void Debugger::breakProgram()
     if (!m_vm.topCallFrame)
         return;
 
-    m_pauseAtNextOpportunity = true;
+    if (specialBreakpoint) {
+        ASSERT(!m_specialBreakpoint);
+        m_specialBreakpoint = WTFMove(specialBreakpoint);
+    } else
+        m_pauseAtNextOpportunity = true;
+
     setSteppingMode(SteppingModeEnabled);
     m_currentCallFrame = m_vm.topCallFrame;
     pauseIfNeeded(m_currentCallFrame->lexicalGlobalObject(m_vm));
@@ -980,8 +1007,8 @@ void Debugger::exception(JSGlobalObject* globalObject, CallFrame* callFrame, JSV
     }
 
     PauseReasonDeclaration reason(*this, PausedForException);
-    if (m_pauseOnExceptionsState == PauseOnAllExceptions || (m_pauseOnExceptionsState == PauseOnUncaughtExceptions && !hasCatchHandler)) {
-        m_pauseAtNextOpportunity = true;
+    if (m_pauseOnAllExceptionsBreakpoint || (m_pauseOnUncaughtExceptionsBreakpoint && !hasCatchHandler)) {
+        m_specialBreakpoint = m_pauseOnAllExceptionsBreakpoint ? m_pauseOnAllExceptionsBreakpoint.copyRef() : m_pauseOnUncaughtExceptionsBreakpoint.copyRef();
         setSteppingMode(SteppingModeEnabled);
     }
 
@@ -1132,11 +1159,11 @@ void Debugger::didReachDebuggerStatement(CallFrame* callFrame)
     if (m_isPaused)
         return;
 
-    if (!m_pauseOnDebuggerStatements)
+    if (!m_pauseOnDebuggerStatementsBreakpoint)
         return;
 
     PauseReasonDeclaration reason(*this, PausedForDebuggerStatement);
-    m_pauseAtNextOpportunity = true;
+    m_specialBreakpoint = m_pauseOnDebuggerStatementsBreakpoint.copyRef();
     setSteppingMode(SteppingModeEnabled);
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, AttemptPause);
 }

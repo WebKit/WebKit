@@ -1,3 +1,86 @@
+2020-09-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow special JavaScript breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215794
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WI.Breakpoint.prototype.reset): Added.
+        Provide a way to consistently clear the current configuration.
+
+        * UserInterface/Models/JavaScriptBreakpoint.js:
+        (WI.JavaScriptBreakpoint.supportsMicrotasks): Added.
+        (WI.JavaScriptBreakpoint.supportsDebuggerStatements): Added.
+        (WI.JavaScriptBreakpoint.fromJSON):
+        (WI.JavaScriptBreakpoint.prototype.toJSON):
+        (WI.JavaScriptBreakpoint.prototype.get editable):
+        (WI.JavaScriptBreakpoint.prototype._isSpecial):
+
+        * UserInterface/Models/SourceCodeLocation.js:
+        (WI.SourceCodeLocation.get specialBreakpointLocation): Added.
+        Add a helper for the special `null:Infinity:Infinity` breakpoint location for consistency.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype.async initializeTarget):
+        (WI.DebuggerManager.prototype.createAssertionFailuresBreakpoint): Added.
+        (WI.DebuggerManager.prototype.createAllMicrotasksBreakpoint): Added.
+        (WI.DebuggerManager.prototype.set breakpointsEnabled):
+        (WI.DebuggerManager.prototype.addBreakpoint):
+        (WI.DebuggerManager.prototype.removeBreakpoint):
+        (WI.DebuggerManager.prototype._setPauseOnExceptions): Added.
+        (WI.DebuggerManager.prototype._createSpecialBreakpoint): Added.
+        (WI.DebuggerManager.prototype._updateSpecialBreakpoint): Added.
+        (WI.DebuggerManager.prototype._breakpointDisabledStateDidChange):
+        (WI.DebuggerManager.prototype._breakpointEditablePropertyDidChange):
+        (WI.DebuggerManager.prototype._updateBreakOnExceptionsState): Deleted.
+        Maintain a `WI.Setting` for the configuration of each special `WI.JavaScriptBreakpoint`.
+        Have a common path for updating all special `WI.JavaScriptBreakpoint` to avoid duplicated
+        code.
+        Add methods for creating the Assertion Failures and All Microtasks `WI.JavaScriptBreakpoint`
+        since they can be removed (in addition to being disabled) and re-added.
+
+        * UserInterface/Views/BreakpointPopover.js:
+        (WI.BreakpointPopover.appendContextMenuItems):
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.ondelete):
+        If the `WI.Breakpoint` is not removable, make sure to `reset` it in addition to disabling
+        it so that no configuration persists if the `WI.Breakpoint` is later enabled.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointTreeOutlineElementRemoved): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved): Deleted.
+        Eliminate the need to listen for when breakpoints are added to the `WI.TreeOutline`, which
+        was previously used to update the `WI.Setting` for whether special `WI.JavaScriptBreakpoint`
+        are visible.
+        Don't assume that a `WI.Breakpoint` exists for each special `WI.JavaScriptBreakpoint`.
+
+        * UserInterface/Base/Setting.js:
+        (WI.Setting):
+        (WI.Setting.migrateValue):
+        (WI.Setting.reset):
+        (WI.Setting.prototype.get value):
+        (WI.Setting.prototype.save):
+        (WI.Setting._localStorageKeyPrefix): Added.
+        (WI.Setting._localStorageKey): Deleted.
+        Eagerly compute the key prefix as it shouldn't change through the lifetime of Web Inspector
+        and is used early on too.
+        Add a static member `isFirstLaunch` which can be used by other `WI.Setting` to adjust their
+        value when Web Inspector is in a clean state (e.g. show the Assertion Failures breakpoint by
+        default, but only for the first launch). This is needed because `WI.Setting` clears the key
+        from `localStorage` if the current `value` matches the `_defaultValue`.
+
+        * UserInterface/Models/ProbeSet.js:
+        (WI.ProbeSet):
+        (WI.ProbeSet.prototype.willRemove):
+        (WI.ProbeSet.prototype._sampleCollected):
+        (WI.ProbeSet.prototype._breakpointResolvedStateDidChange): Deleted.
+        Drive-by: remove an unused event.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-09-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r251254): Web Inspector: Text insertion point is invisible when editing DOM nodes

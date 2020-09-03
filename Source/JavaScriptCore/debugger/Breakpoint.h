@@ -59,7 +59,7 @@ public:
 
     using ActionsVector = Vector<Action>;
 
-    static Ref<Breakpoint> create(BreakpointID, const String& condition = nullString(), ActionsVector&& = { }, bool autoContinue = false, size_t ignoreCount = 0);
+    JS_EXPORT_PRIVATE static Ref<Breakpoint> create(BreakpointID, const String& condition = nullString(), ActionsVector&& = { }, bool autoContinue = false, size_t ignoreCount = 0);
 
     BreakpointID id() const { return m_id; }
 

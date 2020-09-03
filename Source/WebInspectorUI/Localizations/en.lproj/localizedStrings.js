@@ -1038,6 +1038,8 @@ localizedStrings["Request Data"] = "Request Data";
 localizedStrings["Request Headers"] = "Request Headers";
 localizedStrings["Requesting: %s"] = "Requesting: %s";
 localizedStrings["Required"] = "Required";
+/* Context menu action for resetting the breakpoint to its initial configuration. */
+localizedStrings["Reset Breakpoint @ Breakpoint Context Menu"] = "Reset Breakpoint";
 localizedStrings["Resource"] = "Resource";
 localizedStrings["Resource Size"] = "Resource Size";
 localizedStrings["Resource Type"] = "Resource Type";

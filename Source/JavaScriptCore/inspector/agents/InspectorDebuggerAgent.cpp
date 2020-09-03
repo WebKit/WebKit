@@ -271,8 +271,8 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
 
     clearAsyncStackTraceData();
 
-    m_pauseOnAssertionFailures = false;
-    m_pauseOnMicrotasks = false;
+    m_pauseOnAssertionsBreakpoint = nullptr;
+    m_pauseOnMicrotasksBreakpoint = nullptr;
 
     m_enabled = false;
 }
@@ -394,8 +394,10 @@ void InspectorDebuggerAgent::handleConsoleAssert(const String& message)
     if (!breakpointsActive())
         return;
 
-    if (m_pauseOnAssertionFailures)
-        breakProgram(DebuggerFrontendDispatcher::Reason::Assert, buildAssertPauseReason(message));
+    if (!m_pauseOnAssertionsBreakpoint)
+        return;
+
+    breakProgram(DebuggerFrontendDispatcher::Reason::Assert, buildAssertPauseReason(message), m_pauseOnAssertionsBreakpoint.copyRef());
 }
 
 InspectorDebuggerAgent::AsyncCallIdentifier InspectorDebuggerAgent::asyncCallIdentifier(AsyncCallType asyncCallType, int callbackId)
@@ -881,38 +883,68 @@ void InspectorDebuggerAgent::didBecomeIdle()
     }
 }
 
-void InspectorDebuggerAgent::setPauseOnDebuggerStatements(ErrorString&, bool enabled)
+void InspectorDebuggerAgent::setPauseOnDebuggerStatements(ErrorString& errorString, bool enabled, const JSON::Object* optionsPayload)
 {
-    m_debugger.setPauseOnDebuggerStatements(enabled);
-}
-
-void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString& errorString, const String& stringPauseState)
-{
-    JSC::Debugger::PauseOnExceptionsState pauseState;
-    if (stringPauseState == "none")
-        pauseState = JSC::Debugger::DontPauseOnExceptions;
-    else if (stringPauseState == "all")
-        pauseState = JSC::Debugger::PauseOnAllExceptions;
-    else if (stringPauseState == "uncaught")
-        pauseState = JSC::Debugger::PauseOnUncaughtExceptions;
-    else {
-        errorString = makeString("Unknown state: "_s, stringPauseState);
+    if (!enabled) {
+        m_debugger.setPauseOnDebuggerStatementsBreakpoint(nullptr);
         return;
     }
 
-    m_debugger.setPauseOnExceptionsState(static_cast<JSC::Debugger::PauseOnExceptionsState>(pauseState));
-    if (m_debugger.pauseOnExceptionsState() != pauseState)
-        errorString = "Internal error. Could not change pause on exceptions state"_s;
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, optionsPayload);
+    if (!breakpoint)
+        return;
+
+    m_debugger.setPauseOnDebuggerStatementsBreakpoint(WTFMove(breakpoint));
 }
 
-void InspectorDebuggerAgent::setPauseOnAssertions(ErrorString&, bool enabled)
+void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString& errorString, const String& stateString, const JSON::Object* optionsPayload)
 {
-    m_pauseOnAssertionFailures = enabled;
+    RefPtr<JSC::Breakpoint> allExceptionsBreakpoint;
+    RefPtr<JSC::Breakpoint> uncaughtExceptionsBreakpoint;
+
+    if (stateString == "all") {
+        allExceptionsBreakpoint = debuggerBreakpointFromPayload(errorString, optionsPayload);
+        if (!allExceptionsBreakpoint)
+            return;
+    } else if (stateString == "uncaught") {
+        uncaughtExceptionsBreakpoint = debuggerBreakpointFromPayload(errorString, optionsPayload);
+        if (!uncaughtExceptionsBreakpoint)
+            return;
+    } else if (stateString != "none") {
+        errorString = makeString("Unknown state: "_s, stateString);
+        return;
+    }
+
+    m_debugger.setPauseOnAllExceptionsBreakpoint(WTFMove(allExceptionsBreakpoint));
+    m_debugger.setPauseOnUncaughtExceptionsBreakpoint(WTFMove(uncaughtExceptionsBreakpoint));
 }
 
-void InspectorDebuggerAgent::setPauseOnMicrotasks(ErrorString&, bool enabled)
+void InspectorDebuggerAgent::setPauseOnAssertions(ErrorString& errorString, bool enabled, const JSON::Object* optionsPayload)
 {
-    m_pauseOnMicrotasks = enabled;
+    if (!enabled) {
+        m_pauseOnAssertionsBreakpoint = nullptr;
+        return;
+    }
+
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, optionsPayload);
+    if (!breakpoint)
+        return;
+
+    m_pauseOnAssertionsBreakpoint = WTFMove(breakpoint);
+}
+
+void InspectorDebuggerAgent::setPauseOnMicrotasks(ErrorString& errorString, bool enabled, const JSON::Object* optionsPayload)
+{
+    if (!enabled) {
+        m_pauseOnMicrotasksBreakpoint = nullptr;
+        return;
+    }
+
+    auto breakpoint = debuggerBreakpointFromPayload(errorString, optionsPayload);
+    if (!breakpoint)
+        return;
+
+    m_pauseOnMicrotasksBreakpoint = WTFMove(breakpoint);
 }
 
 void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* /* emulateUserGesture */, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
@@ -926,11 +958,11 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
         return;
     }
 
-    auto pauseState = m_debugger.pauseOnExceptionsState();
+    JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
+
     bool pauseAndMute = doNotPauseOnExceptionsAndMuteConsole && *doNotPauseOnExceptionsAndMuteConsole;
     if (pauseAndMute) {
-        if (pauseState != JSC::Debugger::DontPauseOnExceptions)
-            m_debugger.setPauseOnExceptionsState(JSC::Debugger::DontPauseOnExceptions);
+        temporarilyDisableExceptionBreakpoints.replace();
         muteConsole();
     }
 
@@ -938,10 +970,8 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
         objectGroup ? *objectGroup : emptyString(), includeCommandLineAPI && *includeCommandLineAPI, returnByValue && *returnByValue, generatePreview && *generatePreview, saveResult && *saveResult,
         result, wasThrown, savedResultIndex);
 
-    if (pauseAndMute) {
+    if (pauseAndMute)
         unmuteConsole();
-        m_debugger.setPauseOnExceptionsState(pauseState);
-    }
 }
 
 void InspectorDebuggerAgent::setShouldBlackboxURL(ErrorString& errorString, const String& url, bool shouldBlackbox, const bool* optionalCaseSensitive, const bool* optionalIsRegex)
@@ -991,7 +1021,7 @@ bool InspectorDebuggerAgent::shouldBlackboxURL(const String& url) const
 
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)
 {
-    if (m_debugger.pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
+    if (m_debugger.needsExceptionCallbacks())
         breakProgram(DebuggerFrontendDispatcher::Reason::CSPViolation, buildCSPViolationPauseReason(directiveText));
 }
 
@@ -1078,8 +1108,10 @@ void InspectorDebuggerAgent::willRunMicrotask()
     if (!breakpointsActive())
         return;
 
-    if (m_pauseOnMicrotasks)
-        schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason::Microtask);
+    if (!m_pauseOnMicrotasksBreakpoint)
+        return;
+
+    schedulePauseForSpecialBreakpoint(*m_pauseOnMicrotasksBreakpoint, DebuggerFrontendDispatcher::Reason::Microtask);
 }
 
 void InspectorDebuggerAgent::didRunMicrotask()
@@ -1087,8 +1119,10 @@ void InspectorDebuggerAgent::didRunMicrotask()
     if (!breakpointsActive())
         return;
 
-    if (m_pauseOnMicrotasks)
-        cancelPauseAtNextOpportunity();
+    if (!m_pauseOnMicrotasksBreakpoint)
+        return;
+
+    cancelPauseForSpecialBreakpoint(*m_pauseOnMicrotasksBreakpoint);
 }
 
 void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::DebuggerCallFrame& debuggerCallFrame, JSC::JSValue exceptionOrCaughtValue)
@@ -1224,11 +1258,11 @@ void InspectorDebuggerAgent::didContinue()
         m_frontendDispatcher->resumed();
 }
 
-void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
+void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data, RefPtr<JSC::Breakpoint>&& specialBreakpoint)
 {
     updatePauseReasonAndData(reason, WTFMove(data));
 
-    m_debugger.breakProgram();
+    m_debugger.breakProgram(WTFMove(specialBreakpoint));
 }
 
 void InspectorDebuggerAgent::clearInspectorBreakpointState()

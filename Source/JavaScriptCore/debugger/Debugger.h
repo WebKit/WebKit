@@ -46,7 +46,7 @@ public:
 
     VM& vm() { return m_vm; }
 
-    bool needsExceptionCallbacks() const { return m_breakpointsActivated && m_pauseOnExceptionsState != DontPauseOnExceptions; }
+    bool needsExceptionCallbacks() const { return m_breakpointsActivated && (m_pauseOnAllExceptionsBreakpoint || m_pauseOnUncaughtExceptionsBreakpoint); }
     bool isInteractivelyDebugging() const { return m_breakpointsActivated; }
 
     enum ReasonForDetach {
@@ -70,15 +70,23 @@ public:
     bool evaluateBreakpointCondition(Breakpoint&, JSGlobalObject*);
     void evaluateBreakpointActions(Breakpoint&, JSGlobalObject*);
 
-    enum PauseOnExceptionsState {
-        DontPauseOnExceptions,
-        PauseOnAllExceptions,
-        PauseOnUncaughtExceptions
-    };
-    PauseOnExceptionsState pauseOnExceptionsState() const { return m_pauseOnExceptionsState; }
-    JS_EXPORT_PRIVATE void setPauseOnExceptionsState(PauseOnExceptionsState);
+    void setPauseOnDebuggerStatementsBreakpoint(RefPtr<Breakpoint>&& breakpoint) { m_pauseOnDebuggerStatementsBreakpoint = WTFMove(breakpoint); }
 
-    void setPauseOnDebuggerStatements(bool enabled) { m_pauseOnDebuggerStatements = enabled; }
+    class TemporarilyDisableExceptionBreakpoints {
+    public:
+        TemporarilyDisableExceptionBreakpoints(Debugger&);
+        ~TemporarilyDisableExceptionBreakpoints();
+
+        void replace();
+        void restore();
+
+    private:
+        Debugger& m_debugger;
+        RefPtr<Breakpoint> m_pauseOnAllExceptionsBreakpoint;
+        RefPtr<Breakpoint> m_pauseOnUncaughtExceptionsBreakpoint;
+    };
+    void setPauseOnAllExceptionsBreakpoint(RefPtr<Breakpoint>&& breakpoint) { m_pauseOnAllExceptionsBreakpoint = WTFMove(breakpoint); }
+    void setPauseOnUncaughtExceptionsBreakpoint(RefPtr<Breakpoint>&& breakpoint) { m_pauseOnUncaughtExceptionsBreakpoint = WTFMove(breakpoint); }
 
     enum ReasonForPause {
         NotPaused,
@@ -98,7 +106,7 @@ public:
     void cancelPauseAtNextOpportunity();
     bool schedulePauseForSpecialBreakpoint(Breakpoint&);
     bool cancelPauseForSpecialBreakpoint(Breakpoint&);
-    void breakProgram();
+    void breakProgram(RefPtr<Breakpoint>&& specialBreakpoint = nullptr);
     void continueProgram();
     void stepNextExpression();
     void stepIntoStatement();
@@ -281,8 +289,6 @@ private:
     HashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
     HashMap<SourceID, BlackboxType, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxedScripts;
 
-    PauseOnExceptionsState m_pauseOnExceptionsState;
-    bool m_pauseOnDebuggerStatements : 1;
     bool m_pauseAtNextOpportunity : 1;
     bool m_pauseOnStepNext : 1;
     bool m_pauseOnStepOut : 1;
@@ -306,6 +312,10 @@ private:
     HashSet<Ref<Breakpoint>> m_breakpoints;
     RefPtr<Breakpoint> m_specialBreakpoint;
     BreakpointID m_pausingBreakpointID;
+
+    RefPtr<Breakpoint> m_pauseOnAllExceptionsBreakpoint;
+    RefPtr<Breakpoint> m_pauseOnUncaughtExceptionsBreakpoint;
+    RefPtr<Breakpoint> m_pauseOnDebuggerStatementsBreakpoint;
 
     unsigned m_nextProbeSampleId { 1 };
     unsigned m_currentProbeBatchId { 0 };

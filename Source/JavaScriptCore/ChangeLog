@@ -1,3 +1,78 @@
+2020-09-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow special JavaScript breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215794
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Debugger.json:
+        Add an `options` parameter to the following commands for configuring the related breakpoint:
+         - `Debugger.setPauseOnDebuggerStatements`
+         - `Debugger.setPauseOnExceptions`
+         - `Debugger.setPauseOnAssertions`
+         - `Debugger.setPauseOnMicrotasks`
+
+        * debugger/Debugger.h:
+        (JSC::Debugger::needsExceptionCallbacks const):
+        (JSC::Debugger::pauseOnAllExceptionsBreakpoint const): Added.
+        (JSC::Debugger::setPauseOnAllExceptionsBreakpoint): Added.
+        (JSC::Debugger::pauseOnUncaughtExceptionsBreakpoint const): Added.
+        (JSC::Debugger::setPauseOnUncaughtExceptionsBreakpoint): Added.
+        (JSC::Debugger::setPauseOnDebuggerStatementsBreakpoint): Added.
+        (JSC::Debugger::pauseOnExceptionsState const): Deleted.
+        (JSC::Debugger::setPauseOnDebuggerStatements): Deleted.
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::TemporarilyDisableExceptionBreakpoints::TemporarilyDisableExceptionBreakpoints): Added.
+        (JSC::Debugger::TemporarilyDisableExceptionBreakpoints::~TemporarilyDisableExceptionBreakpoints): Added.
+        (JSC::Debugger::TemporarilyDisableExceptionBreakpoints::replace): Added.
+        (JSC::Debugger::TemporarilyDisableExceptionBreakpoints::restore): Added.
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::breakProgram):
+        (JSC::Debugger::exception):
+        (JSC::Debugger::didReachDebuggerStatement):
+        (JSC::Debugger::setPauseOnExceptionsState): Deleted.
+        Add `JSC::Breakpoint` member variables for the Debugger Statements and Exceptions
+        breakpoints. Split the Exceptions breakpoint into two `JSC::Breakpoint` now that
+        All Exceptions and Uncaught Exceptions can be independently configured (the All
+        Exceptions breakpoint still takes precedence).
+
+        * debugger/DebuggerCallFrame.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        If there is no `CallFrame`, climb the backtrace until the first valid `CallFrame` is reached.
+        This is needed when pausing in native code, such as for assertions/exceptions.
+
+        * debugger/Breakpoint.h:
+        Export `JSC::Breakpoint::create` so that other parts of WebKit can create breakpoints.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::disable):
+        (Inspector::InspectorDebuggerAgent::handleConsoleAssert):
+        (Inspector::InspectorDebuggerAgent::setPauseOnDebuggerStatements):
+        (Inspector::InspectorDebuggerAgent::setPauseOnExceptions):
+        (Inspector::InspectorDebuggerAgent::setPauseOnAssertions):
+        (Inspector::InspectorDebuggerAgent::setPauseOnMicrotasks):
+        (Inspector::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (Inspector::InspectorDebuggerAgent::scriptExecutionBlockedByCSP):
+        (Inspector::InspectorDebuggerAgent::willRunMicrotask):
+        (Inspector::InspectorDebuggerAgent::didRunMicrotask):
+        (Inspector::InspectorDebuggerAgent::breakProgram):
+        Add `JSC::Breakpoint` member variables for the Assertion Failures and All Microtasks
+        breakpoints. Pass them to the `JSC::Debugger` when they are hit.
+
+        * inspector/agents/InspectorAuditAgent.cpp:
+        (Inspector::InspectorAuditAgent::run):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::evaluate):
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        (Inspector::InspectorRuntimeAgent::getPreview):
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        (Inspector::InspectorRuntimeAgent::getDisplayableProperties):
+        (Inspector::setPauseOnExceptionsState): Deleted.
+        Use `TemporarilyDisableExceptionBreakpoints` to save, override, and restore the exceptions
+        breakpoints now that they've been separated into two `JSC::Breakpoint` instead of an `enum`.
+
 2020-09-03  Keith Miller  <keith_miller@apple.com>
 
         Finish comment describing the various *Stack SSA nodes in DFG

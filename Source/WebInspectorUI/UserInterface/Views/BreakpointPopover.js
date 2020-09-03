@@ -86,6 +86,10 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
                 breakpoint.remove();
             });
+        } else {
+            contextMenu.appendItem(WI.UIString("Reset Breakpoint", "Reset Breakpoint @ Breakpoint Context Menu", "Context menu action for resetting the breakpoint to its initial configuration."), () => {
+                breakpoint.reset();
+            });
         }
 
         if (breakpoint instanceof WI.JavaScriptBreakpoint && breakpoint.sourceCodeLocation.hasMappedLocation()) {

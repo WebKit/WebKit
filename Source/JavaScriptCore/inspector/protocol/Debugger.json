@@ -257,28 +257,32 @@
             "name": "setPauseOnDebuggerStatements",
             "description": "Control whether the debugger pauses execution before `debugger` statements.",
             "parameters": [
-                { "name": "enabled", "type": "boolean" }
+                { "name": "enabled", "type": "boolean" },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
             ]
         },
         {
             "name": "setPauseOnExceptions",
             "description": "Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions. Initial pause on exceptions state is <code>none</code>.",
             "parameters": [
-                { "name": "state", "type": "string", "enum": ["none", "uncaught", "all"], "description": "Pause on exceptions mode." }
+                { "name": "state", "type": "string", "enum": ["none", "uncaught", "all"], "description": "Pause on exceptions mode." },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
             ]
         },
         {
             "name": "setPauseOnAssertions",
             "description": "Set pause on assertions state. Assertions are console.assert assertions.",
             "parameters": [
-                { "name": "enabled", "type": "boolean" }
+                { "name": "enabled", "type": "boolean" },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
             ]
         },
         {
             "name": "setPauseOnMicrotasks",
             "description": "Pause when running the next JavaScript microtask.",
             "parameters": [
-                { "name": "enabled", "type": "boolean" }
+                { "name": "enabled", "type": "boolean" },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
             ]
         },
         {

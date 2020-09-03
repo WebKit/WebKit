@@ -84,8 +84,10 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
         if (this._breakpoint.disabled)
             InspectorFrontendHost.beep();
-        else
+        else {
             this._breakpoint.disabled = true;
+            this._breakpoint.reset();
+        }
         return false;
     }
 

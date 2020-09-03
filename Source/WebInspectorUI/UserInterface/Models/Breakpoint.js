@@ -269,6 +269,16 @@ WI.Breakpoint = class Breakpoint extends WI.Object
         this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
     }
 
+    reset()
+    {
+        console.assert(this.editable, this);
+
+        this.condition = "";
+        this.ignoreCount = 0;
+        this.autoContinue = false;
+        this.clearActions();
+    }
+
     remove()
     {
         console.assert(this.removable, this);

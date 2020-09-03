@@ -47,6 +47,13 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
         this._resetMappedLocation();
     }
 
+    // Static
+
+    static get specialBreakpointLocation()
+    {
+        return new WI.SourceCodeLocation(null, Infinity, Infinity);
+    }
+
     // Public
 
     isEqual(other)

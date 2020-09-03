@@ -2,10 +2,13 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
 <script>
 function triggerAssertions() {
     console.assert(true, "Passing assertion");
     console.assert(false, "Failing assertion");
+
+    TestPage.dispatchEventToFrontend("TestPage-assertions");
 }
 
 function test()
@@ -19,7 +22,8 @@ function test()
         name: "Debugger.setPauseOnAssertions.Disabled",
         description: "Do not pause on assertions when disabled.",
         test(resolve, reject) {
-            WI.debuggerManager.assertionFailuresBreakpoint.disabled = true;
+            InspectorTest.assert(WI.debuggerManager.assertionFailuresBreakpoint, "Should already have assertion failures breakpoint.");
+            InspectorTest.assert(WI.debuggerManager.assertionFailuresBreakpoint.disabled, "Assertion failures breakpoint should be disabled.");
 
             let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 InspectorTest.fail("Should not have paused.");
@@ -29,6 +33,10 @@ function test()
             InspectorTest.evaluateInPage("triggerAssertions()", () => {
                 InspectorTest.pass("Should not pause.");
                 WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                WI.debuggerManager.assertionFailuresBreakpoint.remove();
+                InspectorTest.assert(!WI.debuggerManager.assertionFailuresBreakpoint, "Should have destroyed assertion failures breakpoint.");
+
                 resolve();
             });
         }
@@ -38,7 +46,9 @@ function test()
         name: "Debugger.setPauseOnAssertions.Enabled",
         description: "Pause on assertions when enabled.",
         test(resolve, reject) {
-            WI.debuggerManager.assertionFailuresBreakpoint.disabled = false;
+            WI.debuggerManager.createAssertionFailuresBreakpoint();
+            InspectorTest.assert(WI.debuggerManager.assertionFailuresBreakpoint, "Should have created assertion failures breakpoint.");
+            InspectorTest.assert(!WI.debuggerManager.assertionFailuresBreakpoint.disabled, "Assertion failures breakpoint should be enabled.");
 
             let didPause = false;
             let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
@@ -50,9 +60,26 @@ function test()
             InspectorTest.evaluateInPage("triggerAssertions()", () => {
                 if (!didPause)
                     InspectorTest.fail("Should have paused.");
+
+                WI.debuggerManager.assertionFailuresBreakpoint.remove();
+                InspectorTest.assert(!WI.debuggerManager.assertionFailuresBreakpoint, "Should have destroyed assertion failures breakpoint.");
+
                 resolve();
             });
         }
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        createBreakpoint() {
+            WI.debuggerManager.createAssertionFailuresBreakpoint();
+            return WI.debuggerManager.assertionFailuresBreakpoint;
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.awaitEvent("TestPage-assertions"),
+                InspectorTest.evaluateInPage(`triggerAssertions()`),
+            ]);
+        },
     });
 
     suite.runTestCasesAndFinish();

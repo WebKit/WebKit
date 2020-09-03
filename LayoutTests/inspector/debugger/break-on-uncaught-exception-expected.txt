@@ -11,6 +11,10 @@ CONSOLE MESSAGE: testCatch
 CONSOLE MESSAGE: throwing TestError
 CONSOLE MESSAGE: catch TestError
 CONSOLE MESSAGE: DONE
+CONSOLE MESSAGE: BREAKPOINT ACTION LOG 1
+CONSOLE MESSAGE: BREAKPOINT ACTION LOG 2
+CONSOLE MESSAGE: BREAKPOINT ACTION LOG 3
+CONSOLE MESSAGE: BREAKPOINT ACTION LOG 4
 Checking pause locations when pausing on uncaught exceptions.
 
 
@@ -32,4 +36,92 @@ Uncaught exception in test page: TestError [break-on-exception-tests.js:8]
 
 -- Running test case: BreakOnUncaughtException.CaughtException
 PASS: Should not pause, exception was caught.
+
+-- Running test case: BreakOnUncaughtException.Options.Condition
+
+Setting condition to 'false'...
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Setting condition to 'true'...
+
+Triggering breakpoint...
+PASS: Should pause.
+
+Triggering breakpoint...
+PASS: Should pause.
+
+-- Running test case: BreakOnUncaughtException.Options.IgnoreCount
+
+Setting ignoreCount to '2'...
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should pause.
+
+Triggering breakpoint...
+PASS: Should pause.
+
+-- Running test case: BreakOnUncaughtException.Options.Action.Log
+
+Adding log action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Editing log action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Editing log action...
+Enabling auto-continue...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+
+Editing log action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+
+-- Running test case: BreakOnUncaughtException.Options.Actions.Evaluate
+
+Adding evaluate action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Editing evaluate action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Editing evaluate action...
+Enabling auto-continue...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+
+Editing evaluate action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
 

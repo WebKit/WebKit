@@ -73,14 +73,6 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-static JSC::Debugger::PauseOnExceptionsState setPauseOnExceptionsState(JSC::Debugger& debugger, JSC::Debugger::PauseOnExceptionsState newState)
-{
-    auto presentState = debugger.pauseOnExceptionsState();
-    if (presentState != newState)
-        debugger.setPauseOnExceptionsState(newState);
-    return presentState;
-}
-
 static Ref<Protocol::Runtime::ErrorRange> buildErrorRangeObject(const JSTokenLocation& tokenLocation)
 {
     return Protocol::Runtime::ErrorRange::create()
@@ -123,18 +115,18 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
     if (injectedScript.hasNoValue())
         return;
 
-    auto previousPauseOnExceptionsState = JSC::Debugger::DontPauseOnExceptions;
-    if (asBool(doNotPauseOnExceptionsAndMuteConsole))
-        previousPauseOnExceptionsState = setPauseOnExceptionsState(m_debugger, JSC::Debugger::DontPauseOnExceptions);
-    if (asBool(doNotPauseOnExceptionsAndMuteConsole))
+    JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
+
+    bool pauseAndMute = asBool(doNotPauseOnExceptionsAndMuteConsole);
+    if (pauseAndMute) {
+        temporarilyDisableExceptionBreakpoints.replace();
         muteConsole();
+    }
 
     injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : String(), asBool(includeCommandLineAPI), asBool(returnByValue), asBool(generatePreview), asBool(saveResult), result, wasThrown, savedResultIndex);
 
-    if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
+    if (pauseAndMute)
         unmuteConsole();
-        setPauseOnExceptionsState(m_debugger, previousPauseOnExceptionsState);
-    }
 }
 
 void InspectorRuntimeAgent::awaitPromise(const String& promiseObjectId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, Ref<AwaitPromiseCallback>&& callback)
@@ -165,18 +157,18 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
     if (optionalArguments)
         arguments = optionalArguments->toJSONString();
 
-    auto previousPauseOnExceptionsState = JSC::Debugger::DontPauseOnExceptions;
-    if (asBool(doNotPauseOnExceptionsAndMuteConsole))
-        previousPauseOnExceptionsState = setPauseOnExceptionsState(m_debugger, JSC::Debugger::DontPauseOnExceptions);
-    if (asBool(doNotPauseOnExceptionsAndMuteConsole))
+    JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
+
+    bool pauseAndMute = asBool(doNotPauseOnExceptionsAndMuteConsole);
+    if (pauseAndMute) {
+        temporarilyDisableExceptionBreakpoints.replace();
         muteConsole();
+    }
 
     injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), asBool(generatePreview), result, wasThrown);
 
-    if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
+    if (pauseAndMute)
         unmuteConsole();
-        setPauseOnExceptionsState(m_debugger, previousPauseOnExceptionsState);
-    }
 }
 
 void InspectorRuntimeAgent::getPreview(ErrorString& errorString, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>& preview)
@@ -187,13 +179,14 @@ void InspectorRuntimeAgent::getPreview(ErrorString& errorString, const String& o
         return;
     }
 
-    auto previousPauseOnExceptionsState = setPauseOnExceptionsState(m_debugger, JSC::Debugger::DontPauseOnExceptions);
+    JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
+    temporarilyDisableExceptionBreakpoints.replace();
+
     muteConsole();
 
     injectedScript.getPreview(errorString, objectId, preview);
 
     unmuteConsole();
-    setPauseOnExceptionsState(m_debugger, previousPauseOnExceptionsState);
 }
 
 void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String& objectId, const bool* ownProperties, const int* fetchStart, const int* fetchCount, const bool* generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
@@ -216,7 +209,9 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
         return;
     }
 
-    auto previousPauseOnExceptionsState = setPauseOnExceptionsState(m_debugger, JSC::Debugger::DontPauseOnExceptions);
+    JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
+    temporarilyDisableExceptionBreakpoints.replace();
+
     muteConsole();
 
     injectedScript.getProperties(errorString, objectId, asBool(ownProperties), start, count, asBool(generatePreview), properties);
@@ -226,7 +221,6 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
         injectedScript.getInternalProperties(errorString, objectId, asBool(generatePreview), internalProperties);
 
     unmuteConsole();
-    setPauseOnExceptionsState(m_debugger, previousPauseOnExceptionsState);
 }
 
 void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, const String& objectId, const int* fetchStart, const int* fetchCount, const bool* generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
@@ -249,7 +243,9 @@ void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, c
         return;
     }
 
-    auto previousPauseOnExceptionsState = setPauseOnExceptionsState(m_debugger, JSC::Debugger::DontPauseOnExceptions);
+    JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
+    temporarilyDisableExceptionBreakpoints.replace();
+
     muteConsole();
 
     injectedScript.getDisplayableProperties(errorString, objectId, start, count, asBool(generatePreview), properties);
@@ -259,7 +255,6 @@ void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, c
         injectedScript.getInternalProperties(errorString, objectId, asBool(generatePreview), internalProperties);
 
     unmuteConsole();
-    setPauseOnExceptionsState(m_debugger, previousPauseOnExceptionsState);
 }
 
 void InspectorRuntimeAgent::getCollectionEntries(ErrorString& errorString, const String& objectId, const String* objectGroup, const int* fetchStart, const int* fetchCount, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>& entries)

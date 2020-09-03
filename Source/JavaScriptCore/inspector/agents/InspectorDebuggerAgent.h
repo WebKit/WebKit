@@ -84,10 +84,10 @@ public:
     void searchInContent(ErrorString&, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>&) final;
     void getScriptSource(ErrorString&, const String& scriptID, String* scriptSource) final;
     void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>&) final;
-    void setPauseOnDebuggerStatements(ErrorString&, bool enabled) final;
-    void setPauseOnExceptions(ErrorString&, const String& pauseState) final;
-    void setPauseOnAssertions(ErrorString&, bool enabled) final;
-    void setPauseOnMicrotasks(ErrorString&, bool enabled) final;
+    void setPauseOnDebuggerStatements(ErrorString&, bool enabled, const JSON::Object* options) final;
+    void setPauseOnExceptions(ErrorString&, const String& pauseState, const JSON::Object* options) final;
+    void setPauseOnAssertions(ErrorString&, bool enabled, const JSON::Object* options) final;
+    void setPauseOnMicrotasks(ErrorString&, bool enabled, const JSON::Object* options) final;
     void setPauseForInternalScripts(ErrorString&, bool shouldPause) final;
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) override;
     void setShouldBlackboxURL(ErrorString&, const String& url, bool shouldBlackbox, const bool* caseSensitive, const bool* isRegex) final;
@@ -128,7 +128,7 @@ public:
     bool schedulePauseForSpecialBreakpoint(JSC::Breakpoint&, DebuggerFrontendDispatcher::Reason, RefPtr<JSON::Object>&& data = nullptr);
     bool cancelPauseForSpecialBreakpoint(JSC::Breakpoint&);
 
-    void breakProgram(DebuggerFrontendDispatcher::Reason, RefPtr<JSON::Object>&& data);
+    void breakProgram(DebuggerFrontendDispatcher::Reason, RefPtr<JSON::Object>&& data = nullptr, RefPtr<JSC::Breakpoint>&& specialBreakpoint = nullptr);
     void scriptExecutionBlockedByCSP(const String& directiveText);
 
     class Listener {
@@ -266,10 +266,11 @@ private:
     Optional<AsyncCallIdentifier> m_currentAsyncCallIdentifier;
     int m_asyncStackTraceDepth { 0 };
 
+    RefPtr<JSC::Breakpoint> m_pauseOnAssertionsBreakpoint;
+    RefPtr<JSC::Breakpoint> m_pauseOnMicrotasksBreakpoint;
+
     bool m_enabled { false };
     bool m_enablePauseWhenIdle { false };
-    bool m_pauseOnAssertionFailures { false };
-    bool m_pauseOnMicrotasks { false };
     bool m_pauseForInternalScripts { false };
     bool m_javaScriptPauseScheduled { false };
     bool m_didPauseStopwatch { false };

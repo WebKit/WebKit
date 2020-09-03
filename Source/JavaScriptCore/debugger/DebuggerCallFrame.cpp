@@ -218,22 +218,33 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
 // Evaluate some JavaScript code in the scope of this frame.
 JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
 {
-    ASSERT(isValid());
-    CallFrame* callFrame = m_validMachineFrame;
-    if (!callFrame)
+    CallFrame* callFrame = nullptr;
+    CodeBlock* codeBlock = nullptr;
+
+    auto* debuggerCallFrame = this;
+    while (debuggerCallFrame) {
+        ASSERT(debuggerCallFrame->isValid());
+
+        callFrame = debuggerCallFrame->m_validMachineFrame;
+        if (callFrame) {
+            if (debuggerCallFrame->isTailDeleted())
+                codeBlock = debuggerCallFrame->m_shadowChickenFrame.codeBlock;
+            else
+                codeBlock = callFrame->codeBlock();
+        }
+
+        if (callFrame && codeBlock)
+            break;
+
+        debuggerCallFrame = debuggerCallFrame->m_caller.get();
+    }
+
+    if (!callFrame || !codeBlock)
         return jsUndefined();
 
     VM& vm = callFrame->deprecatedVM();
     JSLockHolder lock(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
-
-    CodeBlock* codeBlock = nullptr;
-    if (isTailDeleted())
-        codeBlock = m_shadowChickenFrame.codeBlock;
-    else
-        codeBlock = callFrame->codeBlock();
-    if (!codeBlock)
-        return jsUndefined();
     
     JSGlobalObject* globalObject = codeBlock->globalObject();
     DebuggerEvalEnabler evalEnabler(globalObject, DebuggerEvalEnabler::Mode::EvalOnGlobalObjectAtDebuggerEntry);
@@ -263,8 +274,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
-    JSValue thisValue = this->thisValue(vm);
-    JSValue result = vm.interpreter->execute(eval, globalObject, thisValue, scope()->jsScope());
+    JSValue result = vm.interpreter->execute(eval, globalObject, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope()->jsScope());
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();

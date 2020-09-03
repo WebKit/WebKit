@@ -163,13 +163,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         // Prevent the breakpoints list from being used as the source of selection restoration (e.g. on reload or navigation).
         this._breakpointsTreeOutline = this.createContentTreeOutline({ignoreCookieRestoration: true});
-        this._breakpointsTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._handleBreakpointElementAddedOrRemoved, this);
-        this._breakpointsTreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._handleBreakpointElementAddedOrRemoved, this);
+        this._breakpointsTreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._handleBreakpointTreeOutlineElementRemoved, this);
         this._breakpointsTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
         this._breakpointsTreeOutline.ondelete = (selectedTreeElement) => {
             console.assert(selectedTreeElement.selected);
 
-            if (!selectedTreeElement.representedObject.removable) {
+            if (selectedTreeElement.representedObject instanceof WI.Breakpoint && !selectedTreeElement.representedObject.removable) {
                 let treeElementToSelect = selectedTreeElement.nextSelectableSibling;
                 if (treeElementToSelect) {
                     const omitFocus = true;
@@ -355,19 +354,20 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }, this);
         }
 
-        // COMPATIBILITY (iOS 13.1): Debugger.setPauseOnDebuggerStatements did not exist yet.
-        if (InspectorBackend.hasCommand("Debugger.setPauseOnDebuggerStatements"))
-            WI.debuggerManager.addBreakpoint(WI.debuggerManager.debuggerStatementsBreakpoint);
+        if (WI.debuggerManager.debuggerStatementsBreakpoint)
+            this._addBreakpoint(WI.debuggerManager.debuggerStatementsBreakpoint);
 
-        WI.debuggerManager.addBreakpoint(WI.debuggerManager.allExceptionsBreakpoint);
-        WI.debuggerManager.addBreakpoint(WI.debuggerManager.uncaughtExceptionsBreakpoint);
+        if (WI.debuggerManager.allExceptionsBreakpoint)
+            this._addBreakpoint(WI.debuggerManager.allExceptionsBreakpoint);
 
-        if (WI.settings.showAssertionFailuresBreakpoint.value)
-            WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
+        if (WI.debuggerManager.uncaughtExceptionsBreakpoint)
+            this._addBreakpoint(WI.debuggerManager.uncaughtExceptionsBreakpoint);
 
-        // COMPATIBILITY (iOS 13): Debugger.setPauseOnMicrotasks did not exist yet.
-        if (InspectorBackend.hasCommand("Debugger.setPauseOnMicrotasks") && WI.settings.showAllMicrotasksBreakpoint.value)
-            WI.debuggerManager.addBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
+        if (WI.debuggerManager.assertionFailuresBreakpoint)
+            this._addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
+
+        if (WI.debuggerManager.allMicrotasksBreakpoint)
+            this._addBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
 
         for (let target of WI.targets)
             this._addTarget(target);
@@ -1952,72 +1952,44 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         console.error("Unknown tree element", treeElement);
     }
 
-    _handleBreakpointElementAddedOrRemoved(event)
+    _handleBreakpointTreeOutlineElementRemoved(event)
     {
-        let treeElement = event.data.element;
+        let selectedTreeElement = this._breakpointsTreeOutline.selectedTreeElement;
+        if (!selectedTreeElement)
+            return;
 
-        let setting = null;
-        switch (treeElement.representedObject) {
-        case WI.debuggerManager.assertionFailuresBreakpoint:
-            setting = WI.settings.showAssertionFailuresBreakpoint;
-            break;
-
-        case WI.debuggerManager.allMicrotasksBreakpoint:
-            setting = WI.settings.showAllMicrotasksBreakpoint;
-            break;
-
-        case WI.domDebuggerManager.allRequestsBreakpoint:
-            setting = WI.settings.showAllRequestsBreakpoint;
-            break;
-        }
-
-        if (setting)
-            setting.value = !!treeElement.parent;
-
-        if (event.type === WI.TreeOutline.Event.ElementRemoved) {
-            let selectedTreeElement = this._breakpointsTreeOutline.selectedTreeElement;
-            if (selectedTreeElement) {
-                if (selectedTreeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint || !selectedTreeElement.representedObject.removable) {
-                    const skipUnrevealed = true;
-                    const dontPopulate = true;
-                    let treeElementToSelect = selectedTreeElement.traverseNextTreeElement(skipUnrevealed, dontPopulate);
-                    if (treeElementToSelect) {
-                        const omitFocus = true;
-                        const selectedByUser = true;
-                        treeElementToSelect.select(omitFocus, selectedByUser);
-                    }
-                }
+        // Select the next removable breakpoint instead of a non-removable breakpoint.
+        if (selectedTreeElement.representedObject instanceof WI.Breakpoint && !selectedTreeElement.representedObject.removable) {
+            const skipUnrevealed = true;
+            const stayWithin = null;
+            const dontPopulate = true;
+            let treeElementToSelect = selectedTreeElement.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate);
+            if (treeElementToSelect) {
+                const omitFocus = true;
+                const selectedByUser = true;
+                treeElementToSelect.select(omitFocus, selectedByUser);
             }
         }
     }
 
     _populateCreateBreakpointContextMenu(contextMenu)
     {
-        let assertionFailuresBreakpointShown = WI.settings.showAssertionFailuresBreakpoint.value;
-
         contextMenu.appendCheckboxItem(WI.repeatedUIString.assertionFailures(), () => {
-            if (assertionFailuresBreakpointShown)
-                WI.debuggerManager.removeBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
-            else {
-                WI.debuggerManager.assertionFailuresBreakpoint.disabled = false;
-                WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
-            }
-        }, assertionFailuresBreakpointShown);
+            if (WI.debuggerManager.assertionFailuresBreakpoint)
+                WI.debuggerManager.assertionFailuresBreakpoint.remove();
+            else
+                WI.debuggerManager.createAssertionFailuresBreakpoint();
+        }, WI.debuggerManager.assertionFailuresBreakpoint);
 
         contextMenu.appendSeparator();
 
-        // COMPATIBILITY (iOS 13): Debugger.setPauseOnMicrotasks did not exist yet.
-        if (InspectorBackend.hasCommand("Debugger.setPauseOnMicrotasks")) {
-            let allMicrotasksBreakpointShown = WI.settings.showAllMicrotasksBreakpoint.value;
-
+        if (WI.JavaScriptBreakpoint.supportsMicrotasks()) {
             contextMenu.appendCheckboxItem(WI.repeatedUIString.allMicrotasks(), () => {
-                if (allMicrotasksBreakpointShown)
-                    WI.debuggerManager.removeBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
-                else {
-                    WI.debuggerManager.allMicrotasksBreakpoint.disabled = false;
-                    WI.debuggerManager.addBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
-                }
-            }, allMicrotasksBreakpointShown);
+                if (WI.debuggerManager.allMicrotasksBreakpoint)
+                    WI.debuggerManager.allMicrotasksBreakpoint.remove();
+                else
+                    WI.debuggerManager.createAllMicrotasksBreakpoint();
+            }, WI.debuggerManager.allMicrotasksBreakpoint);
         }
 
         if (WI.DOMDebuggerManager.supportsEventBreakpoints() || WI.DOMDebuggerManager.supportsEventListenerBreakpoints()) {

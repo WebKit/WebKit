@@ -61,6 +61,7 @@ public:
     JS_EXPORT_PRIVATE String functionName() const;
     JS_EXPORT_PRIVATE Type type() const;
     JS_EXPORT_PRIVATE JSValue thisValue(VM&) const;
+
     JSValue evaluateWithScopeExtension(const String&, JSObject* scopeExtensionObject, NakedPtr<Exception>&);
 
     bool isValid() const { return !!m_validMachineFrame || isTailDeleted(); }

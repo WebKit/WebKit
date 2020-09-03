@@ -3,8 +3,17 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="resources/break-on-exception-tests.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
 <script>
 TestPage.allowUncaughtExceptions = true;
+
+function triggerException() {
+    try {
+        throw "TestError";
+    } catch { }
+
+    TestPage.dispatchEventToFrontend("TestPage-exception");
+}
 
 function test()
 {
@@ -54,6 +63,19 @@ function test()
         name: "BreakOnAnyException.CaughtException",
         description: "Break on a caught exception.",
         expression: `setTimeout(() => { testCatch(); })`,
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        createBreakpoint() {
+            WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
+            return WI.debuggerManager.allExceptionsBreakpoint;
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.evaluateInPage(`triggerException()`),
+                InspectorTest.awaitEvent("TestPage-exception"),
+            ]);
+        },
     });
 
     suite.runTestCasesAndFinish();

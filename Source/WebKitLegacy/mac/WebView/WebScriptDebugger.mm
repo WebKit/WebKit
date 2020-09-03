@@ -32,6 +32,7 @@
 #import "WebFrameInternal.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/Breakpoint.h>
 #import <JavaScriptCore/DebuggerCallFrame.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/SourceProvider.h>
@@ -65,7 +66,7 @@ WebScriptDebugger::WebScriptDebugger(JSC::JSGlobalObject* globalObject)
     , m_callingDelegate(false)
     , m_globalObject(globalObject->vm(), globalObject)
 {
-    setPauseOnExceptionsState(PauseOnAllExceptions);
+    setPauseOnAllExceptionsBreakpoint(JSC::Breakpoint::create(JSC::noBreakpointID));
     deactivateBreakpoints();
     attach(globalObject);
 }

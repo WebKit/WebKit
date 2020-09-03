@@ -3,8 +3,17 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="resources/break-on-exception-tests.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
 <script>
 TestPage.allowUncaughtExceptions = true;
+
+function triggerException() {
+    queueMicrotask(() => {
+        TestPage.dispatchEventToFrontend("TestPage-exception");
+    });
+
+    throw "TestError";
+}
 
 function test()
 {
@@ -71,6 +80,19 @@ function test()
                 resolve();
             });
         }
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        createBreakpoint() {
+            WI.debuggerManager.uncaughtExceptionsBreakpoint.disabled = false;
+            return WI.debuggerManager.uncaughtExceptionsBreakpoint;
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.evaluateInPage(`queueMicrotask(triggerException)`),
+                InspectorTest.awaitEvent("TestPage-exception"),
+            ]);
+        },
     });
 
     suite.runTestCasesAndFinish();

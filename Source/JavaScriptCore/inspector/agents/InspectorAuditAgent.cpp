@@ -105,15 +105,14 @@ void InspectorAuditAgent::run(ErrorString& errorString, const String& test, cons
 
     Optional<int> savedResultIndex;
 
-    auto previousPauseOnExceptionsState = m_debugger.pauseOnExceptionsState();
+    JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
+    temporarilyDisableExceptionBreakpoints.replace();
 
-    m_debugger.setPauseOnExceptionsState(Debugger::DontPauseOnExceptions);
     muteConsole();
 
     injectedScript.execute(errorString, functionString.toString(), WTFMove(options), result, wasThrown, savedResultIndex);
 
     unmuteConsole();
-    m_debugger.setPauseOnExceptionsState(previousPauseOnExceptionsState);
 }
 
 void InspectorAuditAgent::teardown(ErrorString& errorString)

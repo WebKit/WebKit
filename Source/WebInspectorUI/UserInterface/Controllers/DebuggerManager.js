@@ -53,45 +53,27 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._breakpointsEnabledSetting = new WI.Setting("breakpoints-enabled", true);
         this._asyncStackTraceDepthSetting = new WI.Setting("async-stack-trace-depth", 200);
 
-        const specialBreakpointLocation = new WI.SourceCodeLocation(null, Infinity, Infinity);
+        this._debuggerStatementsBreakpointSetting = new WI.Setting("debugger-statements-breakpoint", {});
+        this._debuggerStatementsBreakpoint = null;
 
-        this._debuggerStatementsBreakpointEnabledSetting = new WI.Setting("break-on-debugger-statements", true);
-        this._debuggerStatementsBreakpoint = new WI.JavaScriptBreakpoint(specialBreakpointLocation, {
-            disabled: !this._debuggerStatementsBreakpointEnabledSetting.value,
-        });
-        this._debuggerStatementsBreakpoint.resolved = true;
+        this._allExceptionsBreakpointSetting = new WI.Setting("all-exceptions-breakpoint", {disabled: true});
+        this._allExceptionsBreakpoint = null;
 
-        this._allExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-all-exceptions", false);
-        this._allExceptionsBreakpoint = new WI.JavaScriptBreakpoint(specialBreakpointLocation, {
-            disabled: !this._allExceptionsBreakpointEnabledSetting.value,
-        });
-        this._allExceptionsBreakpoint.resolved = true;
+        this._uncaughtExceptionsBreakpointSetting = new WI.Setting("uncaught-exceptions-breakpoint", {disabled: true});
+        this._uncaughtExceptionsBreakpoint = null;
 
-        this._uncaughtExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-uncaught-exceptions", false);
-        this._uncaughtExceptionsBreakpoint = new WI.JavaScriptBreakpoint(specialBreakpointLocation, {
-            disabled: !this._uncaughtExceptionsBreakpointEnabledSetting.value,
-        });
-        this._uncaughtExceptionsBreakpoint.resolved = true;
+        this._assertionFailuresBreakpointSetting = new WI.Setting("assertion-failures-breakpoint", null);
+        if (WI.Setting.isFirstLaunch)
+            this._assertionFailuresBreakpointSetting.value = {disabled: true};
+        this._assertionFailuresBreakpoint = null;
 
-        this._assertionFailuresBreakpointEnabledSetting = new WI.Setting("break-on-assertion-failures", false);
-        this._assertionFailuresBreakpoint = new WI.JavaScriptBreakpoint(specialBreakpointLocation, {
-            disabled: !this._assertionFailuresBreakpointEnabledSetting.value,
-        });
-        this._assertionFailuresBreakpoint.resolved = true;
-
-        this._allMicrotasksBreakpointEnabledSetting = new WI.Setting("break-on-all-microtasks", false);
-        this._allMicrotasksBreakpoint = new WI.JavaScriptBreakpoint(specialBreakpointLocation, {
-            disabled: !this._allMicrotasksBreakpointEnabledSetting.value,
-        });
-        this._allMicrotasksBreakpoint.resolved = true;
+        this._allMicrotasksBreakpointSetting = new WI.Setting("all-microtasks-breakpoint", null);
+        this._allMicrotasksBreakpoint = null;
 
         this._breakpoints = [];
         this._breakpointContentIdentifierMap = new Multimap;
         this._breakpointScriptIdentifierMap = new Multimap;
         this._breakpointIdMap = new Map;
-
-        this._breakOnExceptionsState = "none";
-        this._updateBreakOnExceptionsState();
 
         this._nextBreakpointActionIdentifier = 1;
 
@@ -142,6 +124,60 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             }
             this._restoringBreakpoints = false;
         })());
+
+        WI.Target.registerInitializationPromise((async () => {
+            // Wait one microtask so that `WI.debuggerManager` can be initialized.
+            await new Promise((resolve, reject) => queueMicrotask(resolve));
+
+            let loadSpecialBreakpoint = (setting, enabledSettingsKey, shownSettingsKey) => {
+                let serializedBreakpoint = setting.value;
+
+                if (!serializedBreakpoint && (!shownSettingsKey || WI.Setting.migrateValue(shownSettingsKey))) {
+                    serializedBreakpoint = setting.value = {};
+                    setting.save();
+                }
+
+                if (WI.Setting.migrateValue(enabledSettingsKey)) {
+                    if (!serializedBreakpoint)
+                        serializedBreakpoint = setting.value = {};
+                    serializedBreakpoint.disabled = false;
+                    setting.save();
+                }
+
+                if (!serializedBreakpoint)
+                    return null;
+
+                return this._createSpecialBreakpoint(serializedBreakpoint);
+            };
+
+            this._restoringBreakpoints = true;
+
+            if (WI.JavaScriptBreakpoint.supportsDebuggerStatements()) {
+                this._debuggerStatementsBreakpoint = loadSpecialBreakpoint(this._debuggerStatementsBreakpointSetting, "break-on-debugger-statements");
+                if (this._debuggerStatementsBreakpoint)
+                    this.addBreakpoint(this._debuggerStatementsBreakpoint);
+            }
+
+            this._allExceptionsBreakpoint = loadSpecialBreakpoint(this._allExceptionsBreakpointSetting, "break-on-all-exceptions");
+            if (this._allExceptionsBreakpoint)
+                this.addBreakpoint(this._allExceptionsBreakpoint);
+
+            this._uncaughtExceptionsBreakpoint = loadSpecialBreakpoint(this._uncaughtExceptionsBreakpointSetting, "break-on-uncaught-exceptions");
+            if (this._uncaughtExceptionsBreakpoint)
+                this.addBreakpoint(this._uncaughtExceptionsBreakpoint);
+
+            this._assertionFailuresBreakpoint = loadSpecialBreakpoint(this._assertionFailuresBreakpointSetting, "break-on-assertion-failures", "show-assertion-failures-breakpoint");
+            if (this._assertionFailuresBreakpoint)
+                this.addBreakpoint(this._assertionFailuresBreakpoint);
+
+            if (WI.JavaScriptBreakpoint.supportsMicrotasks()) {
+                this._allMicrotasksBreakpoint = loadSpecialBreakpoint(this._allMicrotasksBreakpointSetting, "break-on-all-microtasks", "show-all-microtasks-breakpoint");
+                if (this._allMicrotasksBreakpoint)
+                    this.addBreakpoint(this._allMicrotasksBreakpoint);
+            }
+
+            this._restoringBreakpoints = false;
+        })());
     }
 
     // Target
@@ -154,16 +190,16 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         target.DebuggerAgent.enable();
         target.DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
 
-        // COMPATIBILITY (iOS 13.1): Debugger.setPauseOnDebuggerStatements did not exist yet.
-        if (target.hasCommand("Debugger.setPauseOnDebuggerStatements"))
-            target.DebuggerAgent.setPauseOnDebuggerStatements(!this._debuggerStatementsBreakpoint.disabled);
+        if (this._debuggerStatementsBreakpoint)
+            this._updateSpecialBreakpoint(this._debuggerStatementsBreakpoint, target);
 
-        target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
-        target.DebuggerAgent.setPauseOnAssertions(!this._assertionFailuresBreakpoint.disabled);
+        this._setPauseOnExceptions(target);
 
-        // COMPATIBILITY (iOS 13): DebuggerAgent.setPauseOnMicrotasks did not exist yet.
-        if (target.hasCommand("Debugger.setPauseOnMicrotasks"))
-            target.DebuggerAgent.setPauseOnMicrotasks(!this._allMicrotasksBreakpoint.disabled);
+        if (this._assertionFailuresBreakpoint)
+            this._updateSpecialBreakpoint(this._assertionFailuresBreakpoint, target);
+
+        if (this._allMicrotasksBreakpoint)
+            this._updateSpecialBreakpoint(this._allMicrotasksBreakpoint, target);
 
         target.DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
 
@@ -301,6 +337,22 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     get allMicrotasksBreakpoint() { return this._allMicrotasksBreakpoint; }
     get breakpoints() { return this._breakpoints; }
 
+    createAssertionFailuresBreakpoint(options = {})
+    {
+        console.assert(!this._assertionFailuresBreakpoint);
+
+        this._assertionFailuresBreakpoint = this._createSpecialBreakpoint(options);
+        this.addBreakpoint(this._assertionFailuresBreakpoint);
+    }
+
+    createAllMicrotasksBreakpoint(options = {})
+    {
+        console.assert(!this._allMicrotasksBreakpoint);
+
+        this._allMicrotasksBreakpoint = this._createSpecialBreakpoint(options);
+        this.addBreakpoint(this._allMicrotasksBreakpoint);
+    }
+
     breakpointForIdentifier(id)
     {
         return this._breakpointIdMap.get(id) || null;
@@ -358,11 +410,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._breakpointsEnabledSetting.value = enabled;
 
-        this._updateBreakOnExceptionsState();
-
         for (let target of WI.targets) {
             target.DebuggerAgent.setBreakpointsActive(enabled);
-            target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
+            this._setPauseOnExceptions(target);
         }
 
         this.dispatchEventToListeners(WI.DebuggerManager.Event.BreakpointsEnabledDidChange);
@@ -640,28 +690,27 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     addBreakpoint(breakpoint)
     {
-        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint);
+        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint, breakpoint);
         if (!breakpoint)
             return;
 
-        if (breakpoint.special) {
-            this.dispatchEventToListeners(WI.DebuggerManager.Event.BreakpointAdded, {breakpoint});
-            return;
+        if (breakpoint.special)
+            this._updateSpecialBreakpoint(breakpoint);
+        else {
+            if (breakpoint.contentIdentifier)
+                this._breakpointContentIdentifierMap.add(breakpoint.contentIdentifier, breakpoint);
+
+            if (breakpoint.scriptIdentifier)
+                this._breakpointScriptIdentifierMap.add(breakpoint.scriptIdentifier, breakpoint);
+
+            this._breakpoints.push(breakpoint);
+
+            if (!breakpoint.disabled)
+                this._setBreakpoint(breakpoint);
+
+            if (!this._restoringBreakpoints)
+                WI.objectStores.breakpoints.putObject(breakpoint);
         }
-
-        if (breakpoint.contentIdentifier)
-            this._breakpointContentIdentifierMap.add(breakpoint.contentIdentifier, breakpoint);
-
-        if (breakpoint.scriptIdentifier)
-            this._breakpointScriptIdentifierMap.add(breakpoint.scriptIdentifier, breakpoint);
-
-        this._breakpoints.push(breakpoint);
-
-        if (!breakpoint.disabled)
-            this._setBreakpoint(breakpoint);
-
-        if (!this._restoringBreakpoints)
-            WI.objectStores.breakpoints.putObject(breakpoint);
 
         this.addProbesForBreakpoint(breakpoint);
 
@@ -670,36 +719,46 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     removeBreakpoint(breakpoint)
     {
-        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint);
+        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint, breakpoint);
         if (!breakpoint)
             return;
 
-        console.assert(breakpoint.removable);
+        console.assert(breakpoint.removable, breakpoint);
         if (!breakpoint.removable)
             return;
 
-        if (breakpoint.special) {
-            breakpoint.disabled = true;
-            this.dispatchEventToListeners(WI.DebuggerManager.Event.BreakpointRemoved, {breakpoint});
-            return;
+        let special = breakpoint.special;
+
+        if (!special) {
+            this._breakpoints.remove(breakpoint);
+
+            if (breakpoint.identifier)
+                this._removeBreakpoint(breakpoint);
+
+            if (breakpoint.contentIdentifier)
+                this._breakpointContentIdentifierMap.delete(breakpoint.contentIdentifier, breakpoint);
+
+            if (breakpoint.scriptIdentifier)
+                this._breakpointScriptIdentifierMap.delete(breakpoint.scriptIdentifier, breakpoint);
         }
-
-        this._breakpoints.remove(breakpoint);
-
-        if (breakpoint.identifier)
-            this._removeBreakpoint(breakpoint);
-
-        if (breakpoint.contentIdentifier)
-            this._breakpointContentIdentifierMap.delete(breakpoint.contentIdentifier, breakpoint);
-
-        if (breakpoint.scriptIdentifier)
-            this._breakpointScriptIdentifierMap.delete(breakpoint.scriptIdentifier, breakpoint);
 
         // Disable the breakpoint first, so removing actions doesn't re-add the breakpoint.
         breakpoint.disabled = true;
         breakpoint.clearActions();
 
-        if (!this._restoringBreakpoints)
+        if (special) {
+            switch (breakpoint) {
+            case this._assertionFailuresBreakpoint:
+                this._assertionFailuresBreakpointSetting.reset();
+                this._assertionFailuresBreakpoint = null;
+                break;
+
+            case this._allMicrotasksBreakpoint:
+                this._allMicrotasksBreakpointSetting.reset();
+                this._allMicrotasksBreakpoint = null;
+                break;
+            }
+        } else if (!this._restoringBreakpoints)
             WI.objectStores.breakpoints.deleteObject(breakpoint);
 
         this.removeProbesForBreakpoint(breakpoint);
@@ -1139,6 +1198,97 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
     }
 
+    _setPauseOnExceptions(target)
+    {
+        let commandArguments = {
+            state: "none",
+        };
+
+        if (this._breakpointsEnabledSetting.value) {
+            if (this._allExceptionsBreakpoint && !this._allExceptionsBreakpoint.disabled) {
+                commandArguments.state = "all";
+                commandArguments.options = this._allExceptionsBreakpoint.optionsToProtocol();
+            } else if (this._uncaughtExceptionsBreakpoint && !this._uncaughtExceptionsBreakpoint.disabled) {
+                commandArguments.state = "uncaught";
+                commandArguments.options = this._uncaughtExceptionsBreakpoint.optionsToProtocol();
+            }
+
+            // Mark the uncaught breakpoint as unresolved if "all" as it includes "uncaught".
+            // That way it is clear in the user interface that the breakpoint is ignored.
+            if (this._uncaughtExceptionsBreakpoint)
+                this._uncaughtExceptionsBreakpoint.resolved = commandArguments.state !== "all";
+        }
+
+        target.DebuggerAgent.setPauseOnExceptions.invoke(commandArguments);
+    }
+
+    _createSpecialBreakpoint(serializedBreakpoint = {})
+    {
+        let location = WI.SourceCodeLocation.specialBreakpointLocation;
+        serializedBreakpoint.lineNumber = location.lineNumber;
+        serializedBreakpoint.columnNumber = location.columnNumber;
+
+        serializedBreakpoint.resolved = true;
+
+        return WI.JavaScriptBreakpoint.fromJSON(serializedBreakpoint);
+    }
+
+    _updateSpecialBreakpoint(breakpoint, specificTarget)
+    {
+        console.assert(breakpoint.special, breakpoint);
+
+        if (!breakpoint.disabled && !this._restoringBreakpoints && !this.breakpointsDisabledTemporarily)
+            this.breakpointsEnabled = true;
+
+        let targets = specificTarget ? [specificTarget] : WI.targets;
+
+        let setting = null;
+        let command = null;
+        switch (breakpoint) {
+        case this._debuggerStatementsBreakpoint:
+            setting = this._debuggerStatementsBreakpointSetting;
+            command = "setPauseOnDebuggerStatements";
+            break;
+
+        case this._allExceptionsBreakpoint:
+            setting = this._allExceptionsBreakpointSetting;
+            break;
+
+        case this._uncaughtExceptionsBreakpoint:
+            setting = this._uncaughtExceptionsBreakpointSetting;
+            break;
+
+        case this._assertionFailuresBreakpoint:
+            setting = this._assertionFailuresBreakpointSetting;
+            command = "setPauseOnAssertions";
+            break;
+
+        case this._allMicrotasksBreakpoint:
+            setting = this._allMicrotasksBreakpointSetting;
+            command = "setPauseOnMicrotasks";
+            break;
+        }
+        console.assert(setting);
+
+        if (!specificTarget)
+            setting.value = breakpoint.toJSON();
+
+        if (command) {
+            let commandArguments = {
+                enabled: !breakpoint.disabled,
+            };
+            if (!breakpoint.disabled)
+                commandArguments.options = breakpoint.optionsToProtocol();
+
+            for (let target of targets)
+                target.DebuggerAgent[command].invoke(commandArguments);
+        } else {
+            console.assert(breakpoint === this._allExceptionsBreakpoint || breakpoint === this._uncaughtExceptionsBreakpoint, breakpoint);
+            for (let target of targets)
+                this._setPauseOnExceptions(target);
+        }
+    }
+
     _breakpointDisplayLocationDidChange(event)
     {
         if (this._ignoreBreakpointDisplayLocationDidChangeEvent)
@@ -1162,47 +1312,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     _breakpointDisabledStateDidChange(event)
     {
         let breakpoint = event.target;
-        switch (breakpoint) {
-        case this._debuggerStatementsBreakpoint:
-            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
-                this.breakpointsEnabled = true;
-            this._debuggerStatementsBreakpointEnabledSetting.value = !breakpoint.disabled;
-            for (let target of WI.targets)
-                target.DebuggerAgent.setPauseOnDebuggerStatements(!breakpoint.disabled);
-            return;
 
-        case this._allExceptionsBreakpoint:
-            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
-                this.breakpointsEnabled = true;
-            this._allExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
-            this._updateBreakOnExceptionsState();
-            for (let target of WI.targets)
-                target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
-            return;
-
-        case this._uncaughtExceptionsBreakpoint:
-            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
-                this.breakpointsEnabled = true;
-            this._uncaughtExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
-            this._updateBreakOnExceptionsState();
-            for (let target of WI.targets)
-                target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
-            return;
-
-        case this._assertionFailuresBreakpoint:
-            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
-                this.breakpointsEnabled = true;
-            this._assertionFailuresBreakpointEnabledSetting.value = !breakpoint.disabled;
-            for (let target of WI.targets)
-                target.DebuggerAgent.setPauseOnAssertions(!breakpoint.disabled);
-            return;
-
-        case this._allMicrotasksBreakpoint:
-            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
-                this.breakpointsEnabled = true;
-            this._allMicrotasksBreakpointEnabledSetting.value = !breakpoint.disabled;
-            for (let target of WI.targets)
-                target.DebuggerAgent.setPauseOnMicrotasks(!breakpoint.disabled);
+        if (breakpoint.special) {
+            this._updateSpecialBreakpoint(breakpoint);
             return;
         }
 
@@ -1218,6 +1330,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     _breakpointEditablePropertyDidChange(event)
     {
         let breakpoint = event.target;
+
+        if (breakpoint.special) {
+            this._restoringBreakpoints = true;
+            this._updateSpecialBreakpoint(breakpoint);
+            this._restoringBreakpoints = false;
+            return;
+        }
 
         if (!this._restoringBreakpoints)
             WI.objectStores.breakpoints.putObject(breakpoint);
@@ -1362,33 +1481,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if (activeCallFrameDidChange)
             this.dispatchEventToListeners(WI.DebuggerManager.Event.ActiveCallFrameDidChange);
-    }
-
-    _updateBreakOnExceptionsState()
-    {
-        let state = "none";
-
-        if (this._breakpointsEnabledSetting.value) {
-            if (!this._allExceptionsBreakpoint.disabled)
-                state = "all";
-            else if (!this._uncaughtExceptionsBreakpoint.disabled)
-                state = "uncaught";
-        }
-
-        this._breakOnExceptionsState = state;
-
-        switch (state) {
-        case "all":
-            // Mark the uncaught breakpoint as unresolved since "all" includes "uncaught".
-            // That way it is clear in the user interface that the breakpoint is ignored.
-            this._uncaughtExceptionsBreakpoint.resolved = false;
-            break;
-        case "uncaught":
-        case "none":
-            // Mark the uncaught breakpoint as resolved again.
-            this._uncaughtExceptionsBreakpoint.resolved = true;
-            break;
-        }
     }
 
     _associateBreakpointsWithSourceCode(breakpoints, sourceCode)

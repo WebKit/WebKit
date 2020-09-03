@@ -25,10 +25,11 @@
 
 WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
 {
-    constructor(sourceCodeLocation, {contentIdentifier, disabled, condition, actions, ignoreCount, autoContinue} = {})
+    constructor(sourceCodeLocation, {contentIdentifier, resolved, disabled, condition, actions, ignoreCount, autoContinue} = {})
     {
-        console.assert(sourceCodeLocation instanceof WI.SourceCodeLocation);
-        console.assert(!contentIdentifier || typeof contentIdentifier === "string");
+        console.assert(sourceCodeLocation instanceof WI.SourceCodeLocation, sourceCodeLocation);
+        console.assert(!contentIdentifier || typeof contentIdentifier === "string", contentIdentifier);
+        console.assert(resolved === undefined || typeof resolved === "boolean", resolved);
 
         super({disabled, condition, actions, ignoreCount, autoContinue});
 
@@ -45,10 +46,24 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
 
         this._scriptIdentifier = sourceCode instanceof WI.Script ? sourceCode.id : null;
         this._target = sourceCode instanceof WI.Script ? sourceCode.target : null;
-        this._resolved = false;
+        this._resolved = !!resolved;
 
         this._sourceCodeLocation.addEventListener(WI.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationLocationChanged, this);
         this._sourceCodeLocation.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
+    }
+
+    // Static
+
+    static supportsMicrotasks(parameter)
+    {
+        // COMPATIBILITY (iOS 13): Debugger.setPauseOnMicrotasks did not exist yet.
+        return InspectorBackend.hasCommand("Debugger.setPauseOnMicrotasks", parameter);
+    }
+
+    static supportsDebuggerStatements(parameter)
+    {
+        // COMPATIBILITY (iOS 13.1): Debugger.setPauseOnDebuggerStatements did not exist yet.
+        return InspectorBackend.hasCommand("Debugger.setPauseOnDebuggerStatements", parameter);
     }
 
     // Import / Export
@@ -59,6 +74,7 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
         return new WI.JavaScriptBreakpoint(new WI.SourceCodeLocation(sourceCode, json.lineNumber || 0, json.columnNumber || 0), {
             // The 'url' fallback is for transitioning from older frontends and should be removed.
             contentIdentifier: json.contentIdentifier || json.url,
+            resolved: json.resolved,
             disabled: json.disabled,
             condition: json.condition,
             actions: json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON)) || [],
@@ -71,9 +87,12 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
     {
         // The id, scriptIdentifier, target, and resolved state are tied to the current session, so don't include them for serialization.
         let json = super.toJSON(key);
-        json.contentIdentifier = this._contentIdentifier;
-        json.lineNumber = this._sourceCodeLocation.lineNumber;
-        json.columnNumber = this._sourceCodeLocation.columnNumber;
+        if (this._contentIdentifier)
+            json.contentIdentifier = this._contentIdentifier;
+        if (isFinite(this._sourceCodeLocation.lineNumber))
+            json.lineNumber = this._sourceCodeLocation.lineNumber;
+        if (isFinite(this._sourceCodeLocation.columnNumber))
+            json.columnNumber = this._sourceCodeLocation.columnNumber;
         if (key === WI.ObjectStore.toJSONSymbol)
             json[WI.objectStores.breakpoints.keyPath] = this._contentIdentifier + ":" + this._sourceCodeLocation.lineNumber + ":" + this._sourceCodeLocation.columnNumber;
         return json;
@@ -138,11 +157,21 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
     {
         switch (this) {
         case WI.debuggerManager.debuggerStatementsBreakpoint:
+            // COMPATIBILITY (iOS 14): Debugger.setPauseOnDebuggerStatements did not have an "options" parameter yet.
+            return WI.JavaScriptBreakpoint.supportsDebuggerStatements("options");
+
         case WI.debuggerManager.allExceptionsBreakpoint:
         case WI.debuggerManager.uncaughtExceptionsBreakpoint:
+            // COMPATIBILITY (iOS 14): Debugger.setPauseOnExceptions did not have an "options" parameter yet.
+            return InspectorBackend.hasCommand("Debugger.setPauseOnExceptions", "options");
+
         case WI.debuggerManager.assertionFailuresBreakpoint:
+            // COMPATIBILITY (iOS 14): Debugger.setPauseOnAssertions did not have an "options" parameter yet.
+            return InspectorBackend.hasCommand("Debugger.setPauseOnAssertions", "options");
+
         case WI.debuggerManager.allMicrotasksBreakpoint:
-            return false;
+            // COMPATIBILITY (iOS 14): Debugger.setPauseOnMicrotasks did not have an "options" parameter yet.
+            return WI.JavaScriptBreakpoint.supportsMicrotasks("options");
         }
 
         return true;
@@ -193,7 +222,7 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
 
     _isSpecial()
     {
-        return this._sourceCodeLocation.isEqual(new WI.SourceCodeLocation(null, Infinity, Infinity));
+        return this._sourceCodeLocation.isEqual(WI.SourceCodeLocation.specialBreakpointLocation);
     }
 
     _sourceCodeLocationLocationChanged(event)

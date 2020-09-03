@@ -37,7 +37,6 @@ WI.Setting = class Setting extends WI.Object
 
         this._name = name;
 
-        this._localStorageKey = WI.Setting._localStorageKey(this._name);
         this._defaultValue = defaultValue;
     }
 
@@ -45,22 +44,25 @@ WI.Setting = class Setting extends WI.Object
 
     static migrateValue(key)
     {
-        let localStorageKey = WI.Setting._localStorageKey(key);
+        let localStorageKey = WI.Setting._localStorageKeyPrefix + key;
 
         let value = undefined;
-        if (!window.InspectorTest && window.localStorage && localStorageKey in window.localStorage) {
-            try {
-                value = JSON.parse(window.localStorage[localStorageKey]);
-            } catch { }
+        if (!window.InspectorTest && window.localStorage) {
+            let item = window.localStorage.getItem(localStorageKey);
+            if (item !== null) {
+                try {
+                    value = JSON.parse(item);
+                } catch { }
 
-            window.localStorage.removeItem(localStorageKey);
+                window.localStorage.removeItem(localStorageKey);
+            }
         }
         return value;
     }
 
     static reset()
     {
-        let prefix = Setting._localStorageKey("");
+        let prefix = WI.Setting._localStorageKeyPrefix;
 
         let keysToRemove = [];
         for (let i = 0; i < window.localStorage.length; ++i) {
@@ -71,13 +73,6 @@ WI.Setting = class Setting extends WI.Object
 
         for (let key of keysToRemove)
             window.localStorage.removeItem(key);
-    }
-
-    static _localStorageKey(name)
-    {
-        let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel : 1;
-        let levelString = inspectionLevel > 1 ? "-" + inspectionLevel : "";
-        return `com.apple.WebInspector${levelString}.${name}`;
     }
 
     // Public
@@ -93,11 +88,15 @@ WI.Setting = class Setting extends WI.Object
         // Make a copy of the default value so changes to object values don't modify the default value.
         this._value = JSON.parse(JSON.stringify(this._defaultValue));
 
-        if (!window.InspectorTest && window.localStorage && this._localStorageKey in window.localStorage) {
-            try {
-                this._value = JSON.parse(window.localStorage[this._localStorageKey]);
-            } catch {
-                delete window.localStorage[this._localStorageKey];
+        if (!window.InspectorTest && window.localStorage) {
+            let key = WI.Setting._localStorageKeyPrefix + this._name;
+            let item = window.localStorage.getItem(key);
+            if (item !== null) {
+                try {
+                    this._value = JSON.parse(item);
+                } catch {
+                    window.localStorage.removeItem(key);
+                }
             }
         }
 
@@ -117,11 +116,12 @@ WI.Setting = class Setting extends WI.Object
     save()
     {
         if (!window.InspectorTest && window.localStorage) {
+            let key = WI.Setting._localStorageKeyPrefix + this._name;
             try {
                 if (Object.shallowEqual(this._value, this._defaultValue))
-                    delete window.localStorage[this._localStorageKey];
+                    window.localStorage.removeItem(key);
                 else
-                    window.localStorage[this._localStorageKey] = JSON.stringify(this._value);
+                    window.localStorage.setItem(key, JSON.stringify(this._value));
             } catch {
                 console.error("Error saving setting with name: " + this._name);
             }
@@ -136,6 +136,14 @@ WI.Setting = class Setting extends WI.Object
         this.value = JSON.parse(JSON.stringify(this._defaultValue));
     }
 };
+
+WI.Setting._localStorageKeyPrefix = (function() {
+    let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel : 1;
+    let levelString = inspectionLevel > 1 ? "-" + inspectionLevel : "";
+    return `com.apple.WebInspector${levelString}.`;
+})();
+
+WI.Setting.isFirstLaunch = !!window.InspectorTest || (window.localStorage && Object.keys(window.localStorage).every((key) => !key.startsWith(WI.Setting._localStorageKeyPrefix)));
 
 WI.Setting.Event = {
     Changed: "setting-changed"
@@ -197,9 +205,7 @@ WI.settings = {
     searchRegularExpression: new WI.Setting("search-regular-expression", false),
     selectedNetworkDetailContentViewIdentifier: new WI.Setting("network-detail-content-view-identifier", "preview"),
     sourceMapsEnabled: new WI.Setting("source-maps-enabled", true),
-    showAllMicrotasksBreakpoint: new WI.Setting("show-all-microtasks-breakpoint", false),
     showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", false),
-    showAssertionFailuresBreakpoint: new WI.Setting("show-assertion-failures-breakpoint", true),
     showCanvasPath: new WI.Setting("show-canvas-path", false),
     showImageGrid: new WI.Setting("show-image-grid", true),
     showInvisibleCharacters: new WI.Setting("show-invisible-characters", !!WI.Setting.migrateValue("show-invalid-characters")),
