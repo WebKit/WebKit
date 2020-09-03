@@ -1,3 +1,26 @@
+2020-09-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        kill-old-processes: Remove stale Apache2 shm segments
+        https://bugs.webkit.org/show_bug.cgi?id=216068
+
+        Reviewed by Alexey Proskuryakov.
+
+        When Apache2 terminates abruptely, it may not free up allocated shared
+        memory segments.  When later Apache2 is started again, if its pid
+        matches the pid of orphan shm segments it fails believing there's
+        already an Apache2 instance running.  To avoid this situation, after
+        killing Apache2 we check for potential conflicting shm segments and
+        remove them.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (listAllWebKitPrograms):
+        (removeOrphanShmSegmentsOf):
+        (removeShmSegments):
+        (removeShmSegment):
+        (cmd):
+        (allShmSegments):
+        (main):
+
 2020-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Static assert the return type of compactMap
