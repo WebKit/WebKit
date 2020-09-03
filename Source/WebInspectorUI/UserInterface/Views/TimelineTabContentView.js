@@ -46,11 +46,11 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         let toolTip = WI.UIString("Start recording (%s)\nCreate new recording (%s)").format(this._toggleRecordingShortcut.displayName, this._toggleNewRecordingShortcut.displayName);
         let altToolTip = WI.UIString("Stop recording (%s)").format(this._toggleRecordingShortcut.displayName);
         this._recordButton = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
-        this._recordButton.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._recordButton.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._recordButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._recordButtonClicked, this);
 
         this._continueButton = new WI.ButtonNavigationItem("record-continue", WI.UIString("Continue without automatically stopping"), "Images/Resume.svg", 13, 13);
-        this._continueButton.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._continueButton.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._continueButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._continueButtonClicked, this);
         this._continueButton.hidden = true;
 

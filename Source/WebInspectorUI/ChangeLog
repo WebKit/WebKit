@@ -1,3 +1,16 @@
+2020-09-03  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Timelines: record button disappears when UI is narrow
+        https://bugs.webkit.org/show_bug.cgi?id=216133
+
+        Reviewed by Devin Rousso.
+
+        The record button is one of the most important items on Timelines toolbar.
+        It should always be visible.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+
 2020-09-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow special JavaScript breakpoints to be configured
