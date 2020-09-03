@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ experimental:WebShareFileAPIEnabled=false ] -->
+<html>
+<body>
+<pre id="output"></pre>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    const textFile = new File(['This is a text file'], 'TextFile.txt', { type: 'text/plain' });
+    if (navigator.canShare({ files: [ textFile ] }))
+        output.innerText = "FAIL: Allowed to share file with Web Share Level 2 disabled.";
+    else
+        output.innerText = "PASS: Not allowed to share file with Web Share Level 2 disabled.";
+</script>
+</body>
+</html>
