@@ -1251,9 +1251,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] inspector/canvas/memory.html [ Failure ]
 [ arm64 ] media/video-canvas-createPattern.html [ Failure ]
 
-# rdar://66798751 (REGRESSION (20A2321a-20A2327a): imported/w3c/web-platform-tests/css/css-animations/event-dispatch.tentative.html is a flaky failure)
-[ arm64 ] imported/w3c/web-platform-tests/css/css-animations/event-dispatch.tentative.html [ Pass Failure ]
-
 # rdar://66806059 (REGRESSION (20A2321a-20A2348b): 4 fast hidpi tests are a flaky image failure)
 [ arm64 ] fast/flexbox/hidpi-simple-line-layout-with-flexbox-and-transition.html [ ImageOnlyFailure ]
 [ arm64 ] fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html [ ImageOnlyFailure ]
@@ -1262,9 +1259,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 
 # rdar://66807554
 [ arm64 ] imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html  [ Failure ]
-
-# rdar://66808228 (REGRESSION (20A2321a-20A2348b): imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html is a flaky failure)
-[ arm64 ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html [ Failure ]
 
 webkit.org/b/215581 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html [ Pass Failure ]
 

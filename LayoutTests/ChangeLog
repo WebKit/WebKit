@@ -1,3 +1,20 @@
+2020-09-03  Antoine Quint  <graouts@webkit.org>
+
+        Consecutive requestAnimationFrame callbacks may be passed the same timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=216122
+        <rdar://problem/68269445>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that two subsequent animation frames as identified via requestAnimationFrame() callbacks
+        are provided increasing timestamps.
+
+        Also removing flaky expectation for two WPT animations tests which pass reliably after this fix. 
+
+        * fast/animation/request-animation-frame-unique-timestamp-expected.txt: Added.
+        * fast/animation/request-animation-frame-unique-timestamp.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-03  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION(r266466): [ iOS wk2 ] fast/encoding/charset-replacement.html is a constant failure

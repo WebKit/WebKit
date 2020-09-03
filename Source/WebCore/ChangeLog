@@ -1,3 +1,18 @@
+2020-09-03  Antoine Quint  <graouts@webkit.org>
+
+        Consecutive requestAnimationFrame callbacks may be passed the same timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=216122
+        <rdar://problem/68269445>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/animation/request-animation-frame-unique-timestamp.html
+
+        Ensure that the page only sees increasing timestamps in requestAnimationFrame() callbacks.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::shouldRescheduleRequestAnimationFrame const):
+
 2020-09-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Support stepping using keyboard in date inputs
