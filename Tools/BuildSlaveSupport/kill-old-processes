@@ -24,8 +24,6 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os, sys
-import subprocess
-import re
 
 def listAllWebKitPrograms(builddir_bin):
     foundWebKitPrograms = []
@@ -35,44 +33,6 @@ def listAllWebKitPrograms(builddir_bin):
                 foundWebKitPrograms.append(file)
     return foundWebKitPrograms
 
-def removeOrphanShmSegmentsOf(task):
-    pid = futurePidOf(task)
-    segments = filter(lambda s: s['owner'] == os.environ.get("USER"), allShmSegments())
-    segments = filter(lambda s: s['cpid'] == pid, segments)
-    removeShmSegments(segments)
-
-def removeShmSegments(l):
-    for each in l:
-        removeShmSegment(each)
-
-def removeShmSegment(s):
-    subprocess.check_call(cmd("ipcrm -m {}".format(s['shmid'])))
-
-def cmd(string):
-    return re.split(r'\s+', string)
-    
-def futurePidOf(task):
-    devnull = open(os.devnull, 'w')
-    ps = subprocess.Popen(task, stderr=subprocess.STDOUT, stdout=devnull)
-    pid = ps.pid
-    ps.wait()
-    try:
-        ps.terminate()
-    except OSError:
-        pass
-    return pid
-
-def allShmSegments():
-    ret = []
-    output = subprocess.check_output(cmd("ipcs -m -p"))
-    if len(output) > 0:
-        lines = output.split("\n")
-        for line in lines[3:]:
-            line = line.strip()
-            if len(line) == 0: continue
-            shmid, owner, cpid, lpid = re.split(r'\s+', line)
-            ret.append({'shmid': int(shmid), 'owner': owner, 'cpid': int(cpid), 'lpid': int(lpid)})
-    return ret
 
 def main(user=None):
     tasksToKillWin = [
@@ -181,7 +141,6 @@ def main(user=None):
         for task in tasksToKill + taskToKillUnix + listAllWebKitPrograms(builddir_bin):
             os.system("killall -9 -v " + task)
         os.system("ps aux | grep -P '.+/python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
-        removeOrphanShmSegmentsOf("apache2")
     else:
         sys.exit()
         # FIXME: Should we return an exit code based on how the kills went?
