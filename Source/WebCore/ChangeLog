@@ -1,3 +1,14 @@
+2020-09-03  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r237835): WebCore::TextDecorationThickness constructor fails to initialize m_length
+        <https://webkit.org/b/216092>
+
+        Reviewed by Tim Horton.
+
+        * rendering/style/TextDecorationThickness.h:
+        (WebCore::TextDecorationThickness):
+        - Add default initializer for m_length.
+
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
         TextDecoder should ignore byte-order-mark like other browsers and spec
