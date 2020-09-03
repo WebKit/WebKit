@@ -1,3 +1,15 @@
+2020-09-03  David Kilzer  <ddkilzer@apple.com>
+
+        AbstractMacroAssembler::Jump class has uninitialized instance variables
+        <https://webkit.org/b/216082>
+
+        Reviewed by Michael Saboff.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Jump):
+        - Switch to default constructor syntax.
+        - Provide defaults for instance variables.
+
 2020-09-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add missing detached buffer errors for DataView
