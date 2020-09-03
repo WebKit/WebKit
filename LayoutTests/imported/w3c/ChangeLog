@@ -1,3 +1,16 @@
+2020-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Make our implementation of ChannelMergerNode standards compliant
+        https://bugs.webkit.org/show_bug.cgi?id=216113
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that they are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-disconnect-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-input-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-input-non-default-expected.txt:
+
 2020-09-03  Youenn Fablet  <youenn@apple.com>
 
         Expose RTCPeerConnection.restartIce

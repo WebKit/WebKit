@@ -84,6 +84,8 @@ public:
     void disable();
     void enable();
 
+    bool isEnabled() const { return m_isEnabled; }
+
     // updateRenderingState() is called in the audio thread at the start or end of the render quantum to handle any recent changes to the graph state.
     // It must be called with the context's graph lock.
     void updateRenderingState();

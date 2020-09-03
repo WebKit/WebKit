@@ -43,16 +43,11 @@ public:
     // AudioNode
     void process(size_t framesToProcess) override;
     void reset() override;
-
-    // Called in the audio thread (pre-rendering task) when the number of channels for an input may have changed.
-    void checkNumberOfChannelsForInput(AudioNodeInput*) override;
     
     ExceptionOr<void> setChannelCount(unsigned) final;
     ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
     
 private:
-    unsigned m_desiredNumberOfOutputChannels;
-
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }
     bool requiresTailProcessing() const final { return false; }

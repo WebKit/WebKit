@@ -187,6 +187,7 @@ public:
 
     void enableOutputsIfNecessary();
     void disableOutputsIfNecessary();
+    void disableOutputs();
 
     unsigned channelCount() const { return m_channelCount; }
     virtual ExceptionOr<void> setChannelCount(unsigned);

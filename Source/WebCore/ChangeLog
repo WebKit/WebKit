@@ -1,3 +1,45 @@
+2020-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Make our implementation of ChannelMergerNode standards compliant
+        https://bugs.webkit.org/show_bug.cgi?id=216113
+
+        Reviewed by Darin Adler.
+
+        This aligns our implementation of ChannelMergerNode with Chromium's, allowing us
+        to pass more web platform tests.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::disableOutputsIfNecessary):
+        (WebCore::AudioNode::disableOutputs):
+        * Modules/webaudio/AudioNode.h:
+        Split disableOutputs() out of disableOutputsIfNecessary() so that it can be called
+        directly.
+
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::connect):
+        * Modules/webaudio/AudioNodeOutput.h:
+        (WebCore::AudioNodeOutput::isEnabled const):
+        When connected to an output, AudioNodeInput keeps the output either in m_outputs when
+        the output is enabled, m_disabledOutputs when it is disabled. AudioNodeInput's enable()
+        & disable() take care of moving the output from one map to another. However, connect()
+        would assume that the output we're connecting to is enabled and add it to m_outputs
+        unconditionally. This was causing an assertion to get hit in enable() later on because
+        the output we're trying to enable was not in m_disabledOutputs (because it was already
+        in m_outputs). This change is needed because the ChannelMergerNode now disables its
+        output right away, before it is connected.
+
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::ChannelMergerNode):
+        Make sure that the output has a number of channels equal to the number of inputs.
+        Initially disable outputs so that we output a single silent channel until something
+        is connected.
+
+        (WebCore::ChannelMergerNode::process):
+        * Modules/webaudio/ChannelMergerNode.h:
+        Simplify code now that the number of inputs is equal to output's number of channels.
+
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
         Use unicode macros instead of manual range checks in TextCodecUTF16

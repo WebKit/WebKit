@@ -551,12 +551,16 @@ void AudioNode::disableOutputsIfNecessary()
         // If a node requires tail processing, we defer the disabling of
         // the outputs so that the tail for the node can be output.
         // Otherwise, we can disable the outputs right away.
-        if (!requiresTailProcessing()) {
-            m_isDisabled = true;
-            for (auto& output : m_outputs)
-                output->disable();
-        }
+        if (!requiresTailProcessing())
+            disableOutputs();
     }
+}
+
+void AudioNode::disableOutputs()
+{
+    m_isDisabled = true;
+    for (auto& output : m_outputs)
+        output->disable();
 }
 
 void AudioNode::ref(RefType refType)

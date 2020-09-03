@@ -52,10 +52,11 @@ void AudioNodeInput::connect(AudioNodeOutput* output)
     if (!output || !node())
         return;
 
+    auto& outputsMap = output->isEnabled() ? m_outputs : m_disabledOutputs;
     // Check if we're already connected to this output.
-    if (!m_outputs.add(output).isNewEntry)
+    if (!outputsMap.add(output).isNewEntry)
         return;
-        
+
     output->addInput(this);
     changedOutputs();
 

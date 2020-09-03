@@ -37,8 +37,6 @@
 #include "AudioNodeOutput.h"
 #include <wtf/IsoMallocInlines.h>
 
-const unsigned DefaultNumberOfOutputChannels = 1;
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ChannelMergerNode);
@@ -64,7 +62,6 @@ ExceptionOr<Ref<ChannelMergerNode>> ChannelMergerNode::create(BaseAudioContext& 
 
 ChannelMergerNode::ChannelMergerNode(BaseAudioContext& context, unsigned numberOfInputs)
     : AudioNode(context)
-    , m_desiredNumberOfOutputChannels(DefaultNumberOfOutputChannels)
 {
     setNodeType(NodeTypeChannelMerger);
 
@@ -72,9 +69,12 @@ ChannelMergerNode::ChannelMergerNode(BaseAudioContext& context, unsigned numberO
     for (unsigned i = 0; i < numberOfInputs; ++i)
         addInput(makeUnique<AudioNodeInput>(this));
 
-    addOutput(makeUnique<AudioNodeOutput>(this, 1));
+    addOutput(makeUnique<AudioNodeOutput>(this, numberOfInputs));
     
     initialize();
+
+    BaseAudioContext::AutoLocker contextLocker(context);
+    disableOutputs();
 }
 
 void ChannelMergerNode::process(size_t framesToProcess)
@@ -82,62 +82,32 @@ void ChannelMergerNode::process(size_t framesToProcess)
     AudioNodeOutput* output = this->output(0);
     ASSERT(output);
     ASSERT_UNUSED(framesToProcess, framesToProcess == output->bus()->length());
-
-    // Output bus not updated yet, so just output silence.
-    if (m_desiredNumberOfOutputChannels != output->numberOfChannels()) {
-        output->bus()->zero();
-        return;
-    }
+    ASSERT(numberOfInputs() == output->numberOfChannels());
     
     // Merge all the channels from all the inputs into one output.
-    unsigned outputChannelIndex = 0;
     for (unsigned i = 0; i < numberOfInputs(); ++i) {
         AudioNodeInput* input = this->input(i);
+        ASSERT(input->numberOfChannels() == 1u);
+        auto* outputChannel = output->bus()->channel(i);
         if (input->isConnected()) {
-            unsigned numberOfInputChannels = input->bus()->numberOfChannels();
-            
-            // Merge channels from this particular input.
-            for (unsigned j = 0; j < numberOfInputChannels; ++j) {
-                AudioChannel* inputChannel = input->bus()->channel(j);
-                AudioChannel* outputChannel = output->bus()->channel(outputChannelIndex);
-                outputChannel->copyFrom(inputChannel);
-                
-                ++outputChannelIndex;
-            }
+            // The mixing rules will be applied so multiple channels are down-
+            // mixed to mono (when the mixing rule is defined). Note that only
+            // the first channel will be taken for the undefined input channel
+            // layout.
+            //
+            // See:
+            // http://webaudio.github.io/web-audio-api/#channel-up-mixing-and-down-mixing
+            auto* inputChannel = input->bus()->channel(0);
+            outputChannel->copyFrom(inputChannel);
+        } else {
+            // If input is unconnected, fill zeros in the channel.
+            outputChannel->zero();
         }
     }
-    
-    ASSERT(outputChannelIndex == output->numberOfChannels());
 }
 
 void ChannelMergerNode::reset()
 {
-}
-
-// Any time a connection or disconnection happens on any of our inputs, we potentially need to change the
-// number of channels of our output.
-void ChannelMergerNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
-{
-    ASSERT(context().isAudioThread() && context().isGraphOwner());
-
-    // Count how many channels we have all together from all of the inputs.
-    unsigned numberOfOutputChannels = 0;
-    for (unsigned i = 0; i < numberOfInputs(); ++i) {
-        AudioNodeInput* input = this->input(i);
-        if (input->isConnected())
-            numberOfOutputChannels += input->numberOfChannels();
-    }
-
-    // Set the correct number of channels on the output
-    AudioNodeOutput* output = this->output(0);
-    ASSERT(output);
-    output->setNumberOfChannels(numberOfOutputChannels);
-    // There can in rare cases be a slight delay before the output bus is updated to the new number of
-    // channels because of tryLocks() in the context's updating system. So record the new number of
-    // output channels here.
-    m_desiredNumberOfOutputChannels = numberOfOutputChannels;
-
-    AudioNode::checkNumberOfChannelsForInput(input);
 }
 
 ExceptionOr<void> ChannelMergerNode::setChannelCount(unsigned channelCount)
