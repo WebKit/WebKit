@@ -228,7 +228,7 @@ static const InlineBox* logicallyPreviousBox(const VisiblePosition& visiblePosit
         if (position.isNull())
             break;
 
-        RenderedPosition renderedPosition(position, DOWNSTREAM);
+        RenderedPosition renderedPosition(position, Affinity::Downstream);
         RootInlineBox* previousRoot = renderedPosition.rootBox();
         if (!previousRoot)
             break;
@@ -269,7 +269,7 @@ static const InlineBox* logicallyNextBox(const VisiblePosition& visiblePosition,
         if (position.isNull())
             break;
 
-        RenderedPosition renderedPosition(position, DOWNSTREAM);
+        RenderedPosition renderedPosition(position, Affinity::Downstream);
         RootInlineBox* nextRoot = renderedPosition.rootBox();
         if (!nextRoot)
             break;
@@ -1046,7 +1046,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     Element* rootElement = rootEditableOrDocumentElement(*node, editableType);
     if (!rootElement)
         return VisiblePosition();
-    return VisiblePosition(firstPositionInNode(rootElement), DOWNSTREAM);
+    return firstPositionInNode(rootElement);
 }
 
 VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lineDirectionPoint, EditableType editableType)
@@ -1099,7 +1099,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     Element* rootElement = rootEditableOrDocumentElement(*node, editableType);
     if (!rootElement)
         return VisiblePosition();
-    return VisiblePosition(lastPositionInNode(rootElement), DOWNSTREAM);
+    return lastPositionInNode(rootElement);
 }
 
 // ---------
@@ -1292,14 +1292,14 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
     auto* node = findStartOfParagraph(startNode, highestRoot, startBlock, offset, type, boundaryCrossingRule);
     
     if (is<Text>(node))
-        return VisiblePosition(Position(downcast<Text>(node), offset), DOWNSTREAM);
+        return Position(downcast<Text>(node), offset);
     
     if (type == Position::PositionIsOffsetInAnchor) {
         ASSERT(type == Position::PositionIsOffsetInAnchor || !offset);
-        return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
+        return Position(node, offset, type);
     }
     
-    return VisiblePosition(Position(node, type), DOWNSTREAM);
+    return Position(node, type);
 }
 
 VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
@@ -1323,12 +1323,12 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
     auto* node = findEndOfParagraph(startNode, highestRoot, stayInsideBlock, offset, type, boundaryCrossingRule);
     
     if (is<Text>(node))
-        return VisiblePosition(Position(downcast<Text>(node), offset), DOWNSTREAM);
+        return Position(downcast<Text>(node), offset);
     
     if (type == Position::PositionIsOffsetInAnchor)
-        return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
+        return Position(node, offset, type);
 
-    return VisiblePosition(Position(node, type), DOWNSTREAM);
+    return Position(node, type);
 }
 
 // FIXME: isStartOfParagraph(startOfNextParagraph(pos)) is not always true
@@ -1614,7 +1614,7 @@ bool withinTextUnitOfGranularity(const VisiblePosition& vp, TextGranularity gran
 
         if (prevBoundary == nextBoundary) {
             nextBoundary = nextLinePosition(nextBoundary, 0);
-            nextBoundary.setAffinity(UPSTREAM);
+            nextBoundary.setAffinity(Affinity::Upstream);
             if (!inSameLine(prevBoundary, nextBoundary))
                 nextBoundary = vp.next();
         }
@@ -1836,7 +1836,7 @@ Optional<SimpleRange> enclosingTextUnitOfGranularity(const VisiblePosition& vp, 
 
             if (prevBoundary == nextBoundary) {
                 nextBoundary = nextLinePosition(nextBoundary, 0);
-                nextBoundary.setAffinity(UPSTREAM);
+                nextBoundary.setAffinity(Affinity::Upstream);
                 if (!inSameLine(prevBoundary, nextBoundary))
                     nextBoundary = vp.next();
             }

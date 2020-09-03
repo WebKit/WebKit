@@ -91,7 +91,7 @@ bool InjectedBundlePageEditorClient::shouldDeleteRange(WebPage& page, const Opti
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldChangeSelectedRange(WebPage& page, const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, EAffinity affinity, bool stillSelecting)
+bool InjectedBundlePageEditorClient::shouldChangeSelectedRange(WebPage& page, const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, Affinity affinity, bool stillSelecting)
 {
     if (m_client.shouldChangeSelectedRange)
         return m_client.shouldChangeSelectedRange(toAPI(&page), toAPI(createHandle(fromRange).get()), toAPI(createHandle(toRange).get()), toAPI(affinity), stillSelecting, m_client.base.clientInfo);

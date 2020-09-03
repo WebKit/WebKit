@@ -1,3 +1,42 @@
+2020-09-02  Darin Adler  <darin@apple.com>
+
+        Remove EAffinity, UPSTREAM, DOWNSTREAM, SEL_DEFAULT_AFFINITY, and VisibleSelection::selectionType
+        https://bugs.webkit.org/show_bug.cgi?id=216102
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundleEditorClient.h:
+        (API::InjectedBundle::EditorClient::shouldChangeSelectedRange): Use Affinity.
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (WebKit::toAPI): Dito.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]): Ditto.
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::shouldChangeSelectedRange): Ditto.
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldChangeSelectedRange): Ditto.
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Ditto.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::insertDictatedTextAsync): Rely on default affinity.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertTextAsync): Ditto.
+        (WebKit::WebPage::setCompositionAsync): Ditto.
+        (WebKit::WebPage::deleteSurrounding): Ditto.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didConcludeEditDrag): Use Affinity.
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection): Ditto.
+        (WebKit::WebPage::moveSelectionAtBoundaryWithDirection): Ditto.
+        (WebKit::WebPage::selectTextWithGranularityAtPoint): Ditto.
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary): Ditto.
+        (WebKit::WebPage::updateSelectionWithExtentPoint): Ditto.
+        (WebKit::WebPage::replaceSelectedText): Ditto.
+        (WebKit::WebPage::replaceDictatedText): Ditto.
+        (WebKit::WebPage::applyAutocorrectionInternal): Ditto.
+        (WebKit::WebPage::updateSelectionWithDelta): Ditto.
+
 2020-09-02  John Wilander  <wilander@apple.com>
 
         Remove custom domain from SameSite=strict jail protection

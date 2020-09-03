@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,53 +31,46 @@
 
 namespace WebCore {
 
-class Position;
-
-struct SimpleRange;
-
-const EAffinity SEL_DEFAULT_AFFINITY = DOWNSTREAM;
 enum class SelectionDirection : uint8_t { Forward, Backward, Right, Left };
 
 class VisibleSelection {
 public:
-    enum SelectionType { NoSelection, CaretSelection, RangeSelection };
-
     WEBCORE_EXPORT VisibleSelection();
 
-    VisibleSelection(const Position&, EAffinity, bool isDirectional = false);
-    VisibleSelection(const Position&, const Position&, EAffinity = SEL_DEFAULT_AFFINITY, bool isDirectional = false);
-    WEBCORE_EXPORT VisibleSelection(const SimpleRange&, EAffinity = SEL_DEFAULT_AFFINITY, bool isDirectional = false);
+    static constexpr auto defaultAffinity = VisiblePosition::defaultAffinity;
+
+    VisibleSelection(const Position&, Affinity, bool isDirectional = false);
+    VisibleSelection(const Position&, const Position&, Affinity = defaultAffinity, bool isDirectional = false);
+    WEBCORE_EXPORT VisibleSelection(const SimpleRange&, Affinity = defaultAffinity, bool isDirectional = false);
     WEBCORE_EXPORT VisibleSelection(const VisiblePosition&, bool isDirectional = false);
     WEBCORE_EXPORT VisibleSelection(const VisiblePosition&, const VisiblePosition&, bool isDirectional = false);
 
     WEBCORE_EXPORT static VisibleSelection selectionFromContentsOfNode(Node*);
 
-    SelectionType selectionType() const { return m_selectionType; }
-
-    void setAffinity(EAffinity affinity) { m_affinity = affinity; }
-    EAffinity affinity() const { return m_affinity; }
+    void setAffinity(Affinity affinity) { m_affinity = affinity; }
+    Affinity affinity() const { return m_affinity; }
 
     void setBase(const Position&);
     void setBase(const VisiblePosition&);
     void setExtent(const Position&);
     void setExtent(const VisiblePosition&);
-    
+
     Position base() const { return m_base; }
     Position extent() const { return m_extent; }
     Position start() const { return m_start; }
     Position end() const { return m_end; }
     
-    VisiblePosition visibleStart() const { return VisiblePosition(m_start, isRange() ? DOWNSTREAM : affinity()); }
-    VisiblePosition visibleEnd() const { return VisiblePosition(m_end, isRange() ? UPSTREAM : affinity()); }
-    VisiblePosition visibleBase() const { return VisiblePosition(m_base, isRange() ? (isBaseFirst() ? UPSTREAM : DOWNSTREAM) : affinity()); }
-    VisiblePosition visibleExtent() const { return VisiblePosition(m_extent, isRange() ? (isBaseFirst() ? DOWNSTREAM : UPSTREAM) : affinity()); }
+    VisiblePosition visibleStart() const { return VisiblePosition(m_start, isRange() ? Affinity::Downstream : affinity()); }
+    VisiblePosition visibleEnd() const { return VisiblePosition(m_end, isRange() ? Affinity::Upstream : affinity()); }
+    VisiblePosition visibleBase() const { return VisiblePosition(m_base, isRange() ? (isBaseFirst() ? Affinity::Upstream : Affinity::Downstream) : affinity()); }
+    VisiblePosition visibleExtent() const { return VisiblePosition(m_extent, isRange() ? (isBaseFirst() ? Affinity::Downstream : Affinity::Upstream) : affinity()); }
 
     operator VisiblePositionRange() const { return { visibleStart(), visibleEnd() }; }
 
-    bool isNone() const { return selectionType() == NoSelection; }
-    bool isCaret() const { return selectionType() == CaretSelection; }
-    bool isRange() const { return selectionType() == RangeSelection; }
-    bool isCaretOrRange() const { return selectionType() != NoSelection; }
+    bool isNone() const { return m_type == Type::None; }
+    bool isCaret() const { return m_type == Type::Caret; }
+    bool isRange() const { return m_type == Type::Range; }
+    bool isCaretOrRange() const { return !isNone(); }
     bool isNonOrphanedRange() const { return isRange() && !start().isOrphan() && !end().isOrphan(); }
     bool isNoneOrOrphaned() const { return isNone() || start().isOrphan() || end().isOrphan(); }
 
@@ -129,35 +122,35 @@ private:
     void adjustSelectionToAvoidCrossingEditingBoundaries();
     void updateSelectionType();
 
-    // We need to store these as Positions because VisibleSelection is
-    // used to store values in editing commands for use when
-    // undoing the command. We need to be able to create a selection that, while currently
-    // invalid, will be valid once the changes are undone.
+    // We store these as Positions because VisibleSelection is used to store values in
+    // editing commands for use when undoing the command. We need to be able to store
+    // a selection that, while currently invalid, will be valid once the changes are undone.
 
-    Position m_base;   // Where the first click happened
-    Position m_extent; // Where the end click happened
-    Position m_start;  // Leftmost position when expanded to respect granularity
-    Position m_end;    // Rightmost position when expanded to respect granularity
+    Position m_base; // Where the first click happened.
+    Position m_extent; // Where the end click happened.
 
-    EAffinity m_affinity;           // the upstream/downstream affinity of the caret
+    Position m_start; // Leftmost position when expanded to respect granularity.
+    Position m_end; // Rightmost position when expanded to respect granularity.
 
-    // these are cached, can be recalculated by validate()
-    SelectionType m_selectionType; // None, Caret, Range
-    bool m_baseIsFirst : 1; // True if base is before the extent
+    Affinity m_affinity { defaultAffinity };
+
+    // These are cached, can be recalculated by validate()
+    enum class Type : uint8_t { None, Caret, Range };
+    Type m_type { Type::None };
+    bool m_baseIsFirst : 1; // True if base is before the extent.
     bool m_isDirectional : 1; // Non-directional ignores m_baseIsFirst and selection always extends on shift + arrow key.
 };
 
 inline bool operator==(const VisibleSelection& a, const VisibleSelection& b)
 {
-    return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() && a.isBaseFirst() == b.isBaseFirst()
-        && a.isDirectional() == b.isDirectional();
+    return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() && a.isBaseFirst() == b.isBaseFirst() && a.isDirectional() == b.isDirectional();
 }
 
 inline bool operator!=(const VisibleSelection& a, const VisibleSelection& b)
 {
     return !(a == b);
 }
-    
+
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisibleSelection&);
 
 } // namespace WebCore

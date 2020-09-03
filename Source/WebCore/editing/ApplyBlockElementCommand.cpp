@@ -117,7 +117,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         insertNodeAt(blockquote.copyRef(), start);
         auto placeholder = HTMLBRElement::create(document());
         appendNode(placeholder.copyRef(), WTFMove(blockquote));
-        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.ptr()), Affinity::Downstream, endingSelection().isDirectional()));
         return;
     }
 

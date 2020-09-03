@@ -1,3 +1,26 @@
+2020-09-02  Darin Adler  <darin@apple.com>
+
+        Remove EAffinity, UPSTREAM, DOWNSTREAM, SEL_DEFAULT_AFFINITY, and VisibleSelection::selectionType
+        https://bugs.webkit.org/show_bug.cgi?id=216102
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMNode rangeOfContainingParagraph]): Rely on default affinity.
+
+        * WebCoreSupport/WebEditorClient.h:
+        (kit): Use Affinity.
+        (core): Ditto.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldChangeSelectedRange): Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _caretRectAtPosition:affinity:]): Ditto.
+        (-[WebFrame _selectNSRange:]): Rely on default affinity.
+        (-[WebFrame getDictationResultRanges:andMetadatas:]): Use isNone.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView insertText:]): Rely on default affinity.
+
 2020-09-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow special JavaScript breakpoints to be configured

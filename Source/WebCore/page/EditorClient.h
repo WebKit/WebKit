@@ -69,7 +69,7 @@ public:
     virtual bool shouldEndEditing(const SimpleRange&) = 0;
     virtual bool shouldInsertNode(Node&, const Optional<SimpleRange>&, EditorInsertAction) = 0;
     virtual bool shouldInsertText(const String&, const Optional<SimpleRange>&, EditorInsertAction) = 0;
-    virtual bool shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, EAffinity, bool stillSelecting) = 0;
+    virtual bool shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, Affinity, bool stillSelecting) = 0;
     virtual bool shouldRevealCurrentSelectionAfterInsertion() const { return true; };
     virtual bool shouldSuppressPasswordEcho() const { return false; };
     

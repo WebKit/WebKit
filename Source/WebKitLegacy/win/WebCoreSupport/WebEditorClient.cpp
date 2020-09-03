@@ -338,7 +338,14 @@ bool WebEditorClient::shouldInsertText(const String& str, const Optional<WebCore
     return shouldInsert;
 }
 
-bool WebEditorClient::shouldChangeSelectedRange(const Optional<WebCore::SimpleRange>& currentRange, const Optional<WebCore::SimpleRange>& proposedRange, WebCore::EAffinity selectionAffinity, bool flag)
+static WebSelectionAffinity toWebSelectionAffinity(WebCore::Affinity affinity)
+{
+    if (affinity == WebCore::Affinity::Upstream)
+        return WebSelectionAffinityUpstream;
+    return WebSelectionAffinityDownstream;
+}
+
+bool WebEditorClient::shouldChangeSelectedRange(const Optional<WebCore::SimpleRange>& currentRange, const Optional<WebCore::SimpleRange>& proposedRange, WebCore::Affinity selectionAffinity, bool flag)
 {
     COMPtr<IWebEditingDelegate> ed;
     if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
@@ -348,7 +355,7 @@ bool WebEditorClient::shouldChangeSelectedRange(const Optional<WebCore::SimpleRa
     COMPtr<IDOMRange> proposedIDOMRange(AdoptCOM, DOMRange::createInstance(proposedRange));
 
     BOOL shouldChange = FALSE;
-    if (FAILED(ed->shouldChangeSelectedDOMRange(m_webView, currentIDOMRange.get(), proposedIDOMRange.get(), static_cast<WebSelectionAffinity>(selectionAffinity), flag, &shouldChange)))
+    if (FAILED(ed->shouldChangeSelectedDOMRange(m_webView, currentIDOMRange.get(), proposedIDOMRange.get(), toWebSelectionAffinity(selectionAffinity), flag, &shouldChange)))
         return true;
 
     return shouldChange;

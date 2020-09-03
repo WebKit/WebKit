@@ -56,7 +56,7 @@ public:
     virtual bool shouldInsertNode(WebKit::WebPage&, WebCore::Node&, const Optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) { return true; }
     virtual bool shouldInsertText(WebKit::WebPage&, const WTF::String&, const Optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) { return true; }
     virtual bool shouldDeleteRange(WebKit::WebPage&, const Optional<WebCore::SimpleRange>&) { return true; }
-    virtual bool shouldChangeSelectedRange(WebKit::WebPage&, const Optional<WebCore::SimpleRange>&, const Optional<WebCore::SimpleRange>&, WebCore::EAffinity, bool) { return true; }
+    virtual bool shouldChangeSelectedRange(WebKit::WebPage&, const Optional<WebCore::SimpleRange>&, const Optional<WebCore::SimpleRange>&, WebCore::Affinity, bool) { return true; }
     virtual bool shouldApplyStyle(WebKit::WebPage&, const WebCore::StyleProperties&, const Optional<WebCore::SimpleRange>&) { return true; }
     virtual void didBeginEditing(WebKit::WebPage&, const WTF::String&) { }
     virtual void didEndEditing(WebKit::WebPage&, const WTF::String&) { }

@@ -51,7 +51,7 @@ void CreateLinkCommand::doApply()
     else {
         insertNodeAt(anchorElement.copyRef(), endingSelection().start());
         appendNode(Text::create(document(), m_url), anchorElement.copyRef());
-        setEndingSelection(VisibleSelection(positionInParentBeforeNode(anchorElement.ptr()), positionInParentAfterNode(anchorElement.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(positionInParentBeforeNode(anchorElement.ptr()), positionInParentAfterNode(anchorElement.ptr()), Affinity::Downstream, endingSelection().isDirectional()));
     }
 }
 

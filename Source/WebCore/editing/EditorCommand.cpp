@@ -350,7 +350,7 @@ static bool executeDeleteToMark(Frame& frame, Event*, EditorCommandSource, const
     auto markRange = editor.mark().toNormalizedRange();
     auto selectionRange = selection.selection().toNormalizedRange();
     if (markRange && selectionRange) {
-        if (!selection.setSelectedRange(unionRange(*markRange, *selectionRange), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes))
+        if (!selection.setSelectedRange(unionRange(*markRange, *selectionRange), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
             return false;
     }
     editor.performDelete();
@@ -1045,7 +1045,7 @@ static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const
         PAL::systemBeep();
         return false;
     }
-    selection.setSelectedRange(unionRange(*markRange, *selectionRange), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+    selection.setSelectedRange(unionRange(*markRange, *selectionRange), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes);
     // FIXME: Why do we ignore the return value from setSelectedRange here?
     return true;
 }

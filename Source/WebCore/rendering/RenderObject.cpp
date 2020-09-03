@@ -1516,7 +1516,7 @@ Position RenderObject::positionForPoint(const LayoutPoint& point)
 
 VisiblePosition RenderObject::positionForPoint(const LayoutPoint&, const RenderFragmentContainer*)
 {
-    return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
+    return createVisiblePosition(caretMinOffset(), Affinity::Downstream);
 }
 
 bool RenderObject::isComposited() const
@@ -1665,7 +1665,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     return is<RenderBoxModelObject>(current) ? downcast<RenderBoxModelObject>(current) : nullptr;
 }
 
-VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity) const
+VisiblePosition RenderObject::createVisiblePosition(int offset, Affinity affinity) const
 {
     // If this is a non-anonymous renderer in an editable area, then it's simple.
     if (Node* node = nonPseudoNode()) {
@@ -1695,7 +1695,7 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
         const RenderObject* renderer = child;
         while ((renderer = renderer->nextInPreOrder(parent))) {
             if (Node* node = renderer->nonPseudoNode())
-                return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
+                return firstPositionInOrBeforeNode(node);
         }
 
         // Find non-anonymous content before.
@@ -1704,12 +1704,12 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
             if (renderer == parent)
                 break;
             if (Node* node = renderer->nonPseudoNode())
-                return VisiblePosition(lastPositionInOrAfterNode(node), DOWNSTREAM);
+                return lastPositionInOrAfterNode(node);
         }
 
         // Use the parent itself unless it too is anonymous.
         if (Element* element = parent->nonPseudoElement())
-            return VisiblePosition(firstPositionInOrBeforeNode(element), DOWNSTREAM);
+            return firstPositionInOrBeforeNode(element);
 
         // Repeat at the next level up.
         child = parent;
@@ -1725,7 +1725,7 @@ VisiblePosition RenderObject::createVisiblePosition(const Position& position) co
         return VisiblePosition(position);
 
     ASSERT(!node());
-    return createVisiblePosition(0, DOWNSTREAM);
+    return createVisiblePosition(0, Affinity::Downstream);
 }
 
 CursorDirective RenderObject::getCursor(const LayoutPoint&, Cursor&) const

@@ -201,12 +201,12 @@ void FrameSelection::moveTo(const VisiblePosition& base, const VisiblePosition& 
     setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Position& position, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const Position& position, Affinity affinity, EUserTriggered userTriggered)
 {
     setSelection(VisibleSelection(position, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Position& base, const Position& extent, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const Position& base, const Position& extent, Affinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
@@ -1460,12 +1460,12 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     case AlterationMove:
         pos = VisiblePosition(direction == DirectionUp ? m_selection.start() : m_selection.end(), m_selection.affinity());
         xPos = lineDirectionPointForBlockDirectionNavigation(direction == DirectionUp ? START : END);
-        m_selection.setAffinity(direction == DirectionUp ? UPSTREAM : DOWNSTREAM);
+        m_selection.setAffinity(direction == DirectionUp ? Affinity::Upstream : Affinity::Downstream);
         break;
     case AlterationExtend:
         pos = VisiblePosition(m_selection.extent(), m_selection.affinity());
         xPos = lineDirectionPointForBlockDirectionNavigation(EXTENT);
-        m_selection.setAffinity(DOWNSTREAM);
+        m_selection.setAffinity(Affinity::Downstream);
         break;
     }
 
@@ -1609,13 +1609,13 @@ void FrameSelection::setExtent(const VisiblePosition& position, EUserTriggered u
     setSelection(VisibleSelection(m_selection.base(), position.deepEquivalent(), position.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::setBase(const Position& position, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::setBase(const Position& position, Affinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(position, m_selection.extent(), affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::setExtent(const Position& position, EAffinity affinity, EUserTriggered userTriggered)
+void FrameSelection::setExtent(const Position& position, Affinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(m_selection.base(), position, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
@@ -2010,7 +2010,7 @@ void FrameSelection::selectAll()
     }
 }
 
-bool FrameSelection::setSelectedRange(const Optional<SimpleRange>& range, EAffinity affinity, ShouldCloseTyping closeTyping, EUserTriggered userTriggered)
+bool FrameSelection::setSelectedRange(const Optional<SimpleRange>& range, Affinity affinity, ShouldCloseTyping closeTyping, EUserTriggered userTriggered)
 {
     if (!range)
         return false;
@@ -2378,18 +2378,15 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
     if (revealMode == SelectionRevealMode::DoNotReveal)
         return;
 
+    if (isNone())
+        return;
+
     LayoutRect rect;
     bool insideFixed = false;
-    switch (m_selection.selectionType()) {
-    case VisibleSelection::NoSelection:
-        return;
-    case VisibleSelection::CaretSelection:
+    if (isCaret())
         rect = absoluteCaretBounds(&insideFixed);
-        break;
-    case VisibleSelection::RangeSelection:
+    else
         rect = revealExtentOption == RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(selectionBounds(ClipToVisibleContent::No));
-        break;
-    }
 
     Position start = m_selection.start();
     ASSERT(start.deprecatedNode());
@@ -2425,7 +2422,7 @@ void FrameSelection::setSelectionFromNone()
         return;
 
     if (auto* body = m_document->body())
-        setSelection(VisibleSelection(firstPositionInOrBeforeNode(body), DOWNSTREAM));
+        setSelection(VisibleSelection(firstPositionInOrBeforeNode(body)));
 }
 
 bool FrameSelection::shouldChangeSelection(const VisibleSelection& newSelection) const
@@ -2505,7 +2502,7 @@ void FrameSelection::expandSelectionToElementContainingCaretSelection()
     auto range = elementRangeContainingCaretSelection();
     if (!range)
         return;
-    setSelection(VisibleSelection(*range, DOWNSTREAM));
+    setSelection(VisibleSelection(*range));
 }
 
 Optional<SimpleRange> FrameSelection::elementRangeContainingCaretSelection() const

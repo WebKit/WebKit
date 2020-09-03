@@ -1857,7 +1857,7 @@ CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(TextMarkerData& 
     CharacterOffset result = CharacterOffset(textMarkerData.node, textMarkerData.characterStartIndex, textMarkerData.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
-    if (textMarkerData.affinity == UPSTREAM)
+    if (textMarkerData.affinity == Affinity::Upstream)
         return previousCharacterOffset(result, false);
     return result;
 }

@@ -213,7 +213,7 @@ void IndentOutdentCommand::outdentRegion(const VisiblePosition& startOfSelection
     while (endOfCurrentParagraph != endAfterSelection) {
         VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
         if (endOfCurrentParagraph == endOfLastParagraph)
-            setEndingSelection(VisibleSelection(originalSelectionEnd, DOWNSTREAM));
+            setEndingSelection(VisibleSelection(originalSelectionEnd));
         else
             setEndingSelection(endOfCurrentParagraph);
 

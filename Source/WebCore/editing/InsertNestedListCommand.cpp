@@ -52,7 +52,7 @@ void InsertNestedListCommand::doApply()
     if (auto enclosingItem = makeRefPtr(enclosingElementWithTag(endingSelection().visibleStart().deepEquivalent(), HTMLNames::liTag))) {
         auto newListItem = HTMLLIElement::create(document());
         insertNodeAfter(newListItem.copyRef(), *enclosingItem);
-        setEndingSelection({ Position { newListItem.ptr(), Position::PositionIsBeforeChildren }, DOWNSTREAM });
+        setEndingSelection({ Position { newListItem.ptr(), Position::PositionIsBeforeChildren }, Affinity::Downstream });
 
         auto commandType = m_type == Type::OrderedList ? IncreaseSelectionListLevelCommand::Type::OrderedList : IncreaseSelectionListLevelCommand::Type::UnorderedList;
         applyCommandToComposite(IncreaseSelectionListLevelCommand::create(document(), commandType));

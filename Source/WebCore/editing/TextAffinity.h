@@ -30,9 +30,4 @@ namespace WebCore {
 // Upstream means before a line break, downstream means after a line break.
 enum class Affinity : bool { Upstream, Downstream };
 
-// FIXME: Remove these deprecated names after removing all uses of them.
-using EAffinity = Affinity;
-static constexpr auto UPSTREAM = Affinity::Upstream;
-static constexpr auto DOWNSTREAM = Affinity::Downstream;
-
 } // namespace WebCore

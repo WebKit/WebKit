@@ -460,14 +460,14 @@ VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInConten
 {
     RootInlineBox* rootBox = firstRootBox();
     if (!rootBox)
-        return createVisiblePosition(0, DOWNSTREAM);
+        return createVisiblePosition(0, Affinity::Downstream);
 
     ASSERT(!rootBox->nextRootBox());
     ASSERT(childrenInline());
 
     InlineBox* closestBox = downcast<SVGRootInlineBox>(*rootBox).closestLeafChildForPosition(pointInContents);
     if (!closestBox)
-        return createVisiblePosition(0, DOWNSTREAM);
+        return createVisiblePosition(0, Affinity::Downstream);
 
     return closestBox->renderer().positionForPoint({ pointInContents.x(), LayoutUnit(closestBox->y()) }, fragment);
 }

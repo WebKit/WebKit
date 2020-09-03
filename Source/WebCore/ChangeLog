@@ -1,3 +1,217 @@
+2020-09-02  Darin Adler  <darin@apple.com>
+
+        Remove EAffinity, UPSTREAM, DOWNSTREAM, SEL_DEFAULT_AFFINITY, and VisibleSelection::selectionType
+        https://bugs.webkit.org/show_bug.cgi?id=216102
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::characterOffsetForTextMarkerData): Use Affinity.
+        * accessibility/AXObjectCache.h: Ditto.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::performTextOperation): Ditto.
+        (WebCore::AccessibilityObject::visiblePositionRangeForUnorderedPositions const): Ditto.
+        (WebCore::AccessibilityObject::visiblePositionRangeForRange const): Ditto.
+        (WebCore::AccessibilityObject::replaceTextInRange): Ditto.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine const): Removed unneeded
+        call to Position::equal, simplified code.
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange const): Use Affinity.
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex const): Ditto.
+        (WebCore::AccessibilityRenderObject::doAXRangeForLine const): Ditto.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getSelectionOffsetsForObject): Use Affinity.
+        (wordAtPositionForAtkBoundary): Ditto.
+        (sentenceAtPositionForAtkBoundary): Ditto.
+        (lineAtPositionForAtkBoundary): Ditto.
+
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (objectFocusedAndCaretOffsetUnignored): Rely on default affinity.
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance): Rely on default affinity.
+
+        * dom/Position.cpp:
+        (WebCore::Position::previousCharacterPosition const): Use Affinity.
+        (WebCore::Position::nextCharacterPosition const): Ditto.
+        (WebCore::Position::leadingWhitespacePosition const): Ditto.
+        (WebCore::Position::trailingWhitespacePosition const): Ditto.
+        (WebCore::Position::inlineBoxAndOffset const): Ditto.
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::formatSelection): Ditto.
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Ditto.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphWithClones): Rely on default affinity.
+        (WebCore::CompositeEditCommand::moveParagraphs): Ditto.
+
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply): Use Affinity.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::smartDeleteParagraphSpacers): Ditto.
+        (WebCore::DeleteSelectionCommand::doApply): Ditto.
+
+        * editing/Editing.cpp:
+        (WebCore::firstInSpecialElement): Rely on default affinity.
+        (WebCore::lastInSpecialElement): Ditto.
+        (WebCore::visiblePositionBeforeNode): Ditto.
+        (WebCore::visiblePositionAfterNode): Ditto.
+        (WebCore::visiblePositionForIndexUsingCharacterIterator): Use Affinity.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand): Use Affinity.
+        (WebCore::Editor::canDeleteRange const): Rely on default affinity.
+        (WebCore::Editor::applyStyle): Use isNone and isCaret.
+        (WebCore::Editor::applyParagraphStyle): Ditto.
+        (WebCore::Editor::setComposition): Use Affinity.
+        (WebCore::Editor::advanceToNextMisspelling): Rely on default affinity.
+        (WebCore::Editor::markMisspellingsAfterTypingToWord): Ditto.
+        (WebCore::Editor::markAndReplaceFor): Ditto. Use isCaret.
+        (WebCore::Editor::transpose): Rely on default affinity.
+        (WebCore::Editor::insertTextPlaceholder): Ditto.
+        (WebCore::Editor::removeTextPlaceholder): Ditto.
+        (WebCore::Editor::firstRectForRange const): Ditto. Also simplify
+        rectangle calculation at the end of the function.
+        (WebCore::Editor::shouldChangeSelection const): Use Affinity.
+        (WebCore::Editor::findString): Rely on default affinity.
+
+        * editing/Editor.h: Use Affinity.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDeleteToMark): Ditto.
+        (WebCore::executeSelectToMark): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveTo): Ditto.
+        (WebCore::FrameSelection::modify): Ditto.
+        (WebCore::FrameSelection::setBase): Ditto.
+        (WebCore::FrameSelection::setExtent): Ditto.
+        (WebCore::FrameSelection::setSelectedRange): Ditto.
+        (WebCore::FrameSelection::revealSelection): Use isNone and isCaret.
+        (WebCore::FrameSelection::setSelectionFromNone): Rely on default affinity.
+        (WebCore::FrameSelection::expandSelectionToElementContainingCaretSelection): Ditto.
+
+        * editing/FrameSelection.h: Use Affinity.
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentRegion): Rely on default affinity.
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Use Affinity.
+        * editing/InsertNestedListCommand.cpp:
+        (WebCore::InsertNestedListCommand::doApply): Ditto.
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Use Affinity.
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::insertTab): Rely on default affinity.
+
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::RenderedPosition): Use Affinity.
+        * editing/RenderedPosition.h: Ditto.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Rely on default affinity.
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement):
+        Use VisibleSelection::defaultAffinity.
+
+        * editing/TextAffinity.h: Removed EAffinity, UPSTREAM, DOWNSTREAM.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero): Rely on
+        default affinity.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::makeEditableRootEmpty): Use Affinity.
+        (WebCore::TypingCommand::deleteKeyPressed): Use isCaretOrRange and isRange.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::VisiblePosition): Use Affinity.
+        (WebCore::VisiblePosition::previous const): Rely on default affinity.
+        (WebCore::VisiblePosition::left const): Ditto.
+        (WebCore::VisiblePosition::right const): Ditto.
+        (WebCore::operator<<): Use Affinity.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::VisibleSelection): Use Affinity. Also use
+        initialize in the class definition.
+        (WebCore::VisibleSelection::selectionFromContentsOfNode): Rely on
+        default affinity.
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+        Rename from "pos" to "position".
+        (WebCore::VisibleSelection::updateSelectionType): Update from
+        m_selectionType to m_type and use Affinity.
+        (WebCore::VisibleSelection::validate): Use isRange.
+        (WebCore::VisibleSelection::setWithoutValidation): Use Affinity and
+        m_type.
+
+        * editing/VisibleSelection.h: Removed SEL_DEFAULT_AFFINITY, replacing
+        it with VisibleSelection::defaultAffinity. Removed both
+        VisibleSelection::SelectionType and VisibleSelection::selectionType,
+        replacing with private VisibleSelection::Type. Also renamed
+        m_selectionType to m_type.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::logicallyPreviousBox): Use Affinity.
+        (WebCore::logicallyNextBox): Ditto.
+        (WebCore::previousLinePosition): Rely on default affinity.
+        (WebCore::nextLinePosition): Ditto.
+        (WebCore::startOfParagraph): Ditto.
+        (WebCore::endOfParagraph): Ditto.
+        (WebCore::withinTextUnitOfGranularity): Use Affinity.
+        (WebCore::enclosingTextUnitOfGranularity): Ditto.
+
+        * editing/cocoa/DictionaryLookup.mm:
+        (WebCore::DictionaryLookup::rangeAtHitTestResult): Use isRange.
+
+        * loader/EmptyClients.cpp: Use Affinity.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::collapse): Ditto.
+        (WebCore::DOMSelection::collapseToEnd): Ditto.
+        (WebCore::DOMSelection::collapseToStart): Ditto.
+        (WebCore::DOMSelection::setBaseAndExtent): Ditto.
+        (WebCore::DOMSelection::setPosition): Ditto.
+        (WebCore::DOMSelection::extend): Ditto.
+        * page/EditorClient.h: Ditto.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        Rely on default affinity.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        Use constructor that takes a single Position and Affinity.
+
+        * page/Page.cpp:
+        (WebCore::replaceRanges): Use Affinity.
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot const): Use isNone.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::positionForPointRespectingEditingBoundaries): Use Affinity.
+        (WebCore::RenderBlock::positionForPoint): Ditto.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren): Ditto.
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::positionForPoint): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::positionForPoint): Ditto.
+        (WebCore::RenderObject::createVisiblePosition const): Ditto.
+        * rendering/RenderObject.h: Ditto.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint): Ditto.
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::positionForPoint const): Ditto.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeSelection): Ditto.
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint): Ditto.
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::positionForPoint): Ditto.
+
 2020-09-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r266498.

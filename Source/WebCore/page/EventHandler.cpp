@@ -697,7 +697,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
 
     VisiblePosition visiblePosition(targetNode->renderer()->positionForPoint(event.localPoint(), nullptr));
     if (visiblePosition.isNull())
-        visiblePosition = VisiblePosition(firstPositionInOrBeforeNode(targetNode), DOWNSTREAM);
+        visiblePosition = VisiblePosition(firstPositionInOrBeforeNode(targetNode));
     Position pos = visiblePosition.deepEquivalent();
 
     VisibleSelection newSelection = m_frame.selection().selection();

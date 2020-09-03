@@ -2004,27 +2004,21 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
         return VisiblePositionRange();
     
     // iterate over the lines
-    // FIXME: this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
-    // last offset of the last line
-    VisiblePosition visiblePos = m_renderer->view().positionForPoint(IntPoint(), nullptr);
-    VisiblePosition savedVisiblePos;
+    // FIXME: This is wrong when lineNumber is lineCount+1, because nextLinePosition takes you to the last offset of the last line.
+    VisiblePosition position = m_renderer->view().positionForPoint(IntPoint(), nullptr);
     while (--lineCount) {
-        savedVisiblePos = visiblePos;
-        visiblePos = nextLinePosition(visiblePos, 0);
-        if (visiblePos.isNull()
-            || visiblePos == savedVisiblePos
-            || visiblePos.equals(savedVisiblePos))
+        auto previousLinePosition = position;
+        position = nextLinePosition(position, 0);
+        if (position.isNull() || position == previousLinePosition)
             return VisiblePositionRange();
     }
-    
+
     // make a caret selection for the marker position, then extend it to the line
-    // NOTE: ignores results of sel.modify because it returns false when
-    // starting at an empty line.  The resulting selection in that case
-    // will be a caret at visiblePos.
+    // NOTE: Ignores results of sel.modify because it returns false when starting at an empty line.
+    // The resulting selection in that case will be a caret at position.
     FrameSelection selection;
-    selection.setSelection(VisibleSelection(visiblePos));
+    selection.setSelection(position);
     selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Right, TextGranularity::LineBoundary);
-    
     return selection.selection();
 }
     
@@ -2134,11 +2128,11 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
     if (rect2.y() != rect1.y()) {
         VisiblePosition endOfFirstLine = endOfLine(range.start);
         if (range.start == endOfFirstLine) {
-            range.start.setAffinity(DOWNSTREAM);
+            range.start.setAffinity(Affinity::Downstream);
             rect1 = range.start.absoluteCaretBounds();
         }
         if (range.end == endOfFirstLine) {
-            range.end.setAffinity(UPSTREAM);
+            range.end.setAffinity(Affinity::Upstream);
             rect2 = range.end.absoluteCaretBounds();
         }
     }
@@ -2292,7 +2286,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(unsigned inde
             return VisiblePosition();
     }
     VisiblePosition position = visiblePositionForIndex(indexValue);
-    position.setAffinity(DOWNSTREAM);
+    position.setAffinity(Affinity::Downstream);
     return position;
 }
 
@@ -2347,7 +2341,7 @@ PlainTextRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) 
     int index2 = indexForVisiblePosition(endPosition);
     
     // add one to the end index for a line break not caused by soft line wrap (to match AppKit)
-    if (endPosition.affinity() == DOWNSTREAM && endPosition.next().isNotNull())
+    if (endPosition.affinity() == Affinity::Downstream && endPosition.next().isNotNull())
         index2 += 1;
     
     // return nil rather than an zero-length range (to match AppKit)

@@ -234,7 +234,7 @@ void InsertTextCommand::doApply()
 
 Position InsertTextCommand::insertTab(const Position& pos)
 {
-    Position insertPos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent();
+    Position insertPos = VisiblePosition(pos).deepEquivalent();
     if (insertPos.isNull())
         return pos;
 

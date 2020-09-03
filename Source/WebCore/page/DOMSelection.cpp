@@ -172,7 +172,7 @@ void DOMSelection::collapse(Node* node, unsigned offset)
         return;
 
     Ref<Frame> protectedFrame(*frame());
-    protectedFrame->selection().moveTo(createLegacyEditingPosition(node, offset), DOWNSTREAM);
+    protectedFrame->selection().moveTo(createLegacyEditingPosition(node, offset), Affinity::Downstream);
 }
 
 ExceptionOr<void> DOMSelection::collapseToEnd()
@@ -185,7 +185,7 @@ ExceptionOr<void> DOMSelection::collapseToEnd()
         return Exception { InvalidStateError };
 
     Ref<Frame> protector(*frame);
-    selection.moveTo(selection.selection().end(), DOWNSTREAM);
+    selection.moveTo(selection.selection().end(), Affinity::Downstream);
     return { };
 }
 
@@ -199,7 +199,7 @@ ExceptionOr<void> DOMSelection::collapseToStart()
         return Exception { InvalidStateError };
 
     Ref<Frame> protector(*frame);
-    selection.moveTo(selection.selection().start(), DOWNSTREAM);
+    selection.moveTo(selection.selection().start(), Affinity::Downstream);
     return { };
 }
 
@@ -217,7 +217,7 @@ void DOMSelection::setBaseAndExtent(Node* baseNode, unsigned baseOffset, Node* e
         return;
 
     Ref<Frame> protectedFrame(*frame());
-    protectedFrame->selection().moveTo(createLegacyEditingPosition(baseNode, baseOffset), createLegacyEditingPosition(extentNode, extentOffset), DOWNSTREAM);
+    protectedFrame->selection().moveTo(createLegacyEditingPosition(baseNode, baseOffset), createLegacyEditingPosition(extentNode, extentOffset), Affinity::Downstream);
 }
 
 void DOMSelection::setPosition(Node* node, unsigned offset)
@@ -226,7 +226,7 @@ void DOMSelection::setPosition(Node* node, unsigned offset)
         return;
 
     Ref<Frame> protectedFrame(*frame());
-    protectedFrame->selection().moveTo(createLegacyEditingPosition(node, offset), DOWNSTREAM);
+    protectedFrame->selection().moveTo(createLegacyEditingPosition(node, offset), Affinity::Downstream);
 }
 
 void DOMSelection::modify(const String& alterString, const String& directionString, const String& granularityString)
@@ -290,7 +290,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
         return Exception { IndexSizeError };
     if (!isValidForPosition(&node))
         return { };
-    frame->selection().setExtent(createLegacyEditingPosition(&node, offset), DOWNSTREAM);
+    frame->selection().setExtent(createLegacyEditingPosition(&node, offset), Affinity::Downstream);
     return { };
 }
 

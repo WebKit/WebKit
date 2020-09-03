@@ -44,7 +44,7 @@ class RenderedPosition {
 public:
     RenderedPosition();
     explicit RenderedPosition(const VisiblePosition&);
-    explicit RenderedPosition(const Position&, EAffinity);
+    explicit RenderedPosition(const Position&, Affinity);
     bool isEquivalent(const RenderedPosition&) const;
 
     bool isNull() const { return !m_renderer; }

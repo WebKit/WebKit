@@ -433,8 +433,8 @@ static HTMLElement* firstInSpecialElement(const Position& position)
     for (Node* node = position.deprecatedNode(); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
         if (!isSpecialHTMLElement(node))
             continue;
-        VisiblePosition vPos(position, DOWNSTREAM);
-        VisiblePosition firstInElement(firstPositionInOrBeforeNode(node), DOWNSTREAM);
+        VisiblePosition vPos(position);
+        VisiblePosition firstInElement(firstPositionInOrBeforeNode(node));
         if ((isRenderedTable(node) && vPos == firstInElement.next()) || vPos == firstInElement)
             return &downcast<HTMLElement>(*node);
     }
@@ -447,8 +447,8 @@ static HTMLElement* lastInSpecialElement(const Position& position)
     for (Node* node = position.deprecatedNode(); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
         if (!isSpecialHTMLElement(node))
             continue;
-        VisiblePosition vPos(position, DOWNSTREAM);
-        VisiblePosition lastInElement(lastPositionInOrAfterNode(node), DOWNSTREAM);
+        VisiblePosition vPos(position);
+        VisiblePosition lastInElement(lastPositionInOrAfterNode(node));
         if ((isRenderedTable(node) && vPos == lastInElement.previous()) || vPos == lastInElement)
             return &downcast<HTMLElement>(*node);
     }
@@ -509,7 +509,7 @@ Element* isLastPositionBeforeTable(const VisiblePosition& position)
 VisiblePosition visiblePositionBeforeNode(Node& node)
 {
     if (node.hasChildNodes())
-        return VisiblePosition(firstPositionInOrBeforeNode(&node), DOWNSTREAM);
+        return VisiblePosition(firstPositionInOrBeforeNode(&node));
     ASSERT(node.parentNode());
     ASSERT(!node.parentNode()->isShadowRoot());
     return positionInParentBeforeNode(&node);
@@ -519,7 +519,7 @@ VisiblePosition visiblePositionBeforeNode(Node& node)
 VisiblePosition visiblePositionAfterNode(Node& node)
 {
     if (node.hasChildNodes())
-        return VisiblePosition(lastPositionInOrAfterNode(&node), DOWNSTREAM);
+        return VisiblePosition(lastPositionInOrAfterNode(&node));
     ASSERT(node.parentNode());
     ASSERT(!node.parentNode()->isShadowRoot());
     return positionInParentAfterNode(&node);
@@ -1097,7 +1097,7 @@ VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope)
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int index)
 {
     if (index <= 0)
-        return { firstPositionInOrBeforeNode(&node), DOWNSTREAM };
+        return { firstPositionInOrBeforeNode(&node) };
 
     auto range = makeRangeSelectingNodeContents(node);
     CharacterIterator it(range);
@@ -1110,7 +1110,7 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
             return { createLegacyEditingPosition(it.range().start) };
     }
 
-    return { createLegacyEditingPosition((it.atEnd() ? range : it.range()).end), UPSTREAM };
+    return { createLegacyEditingPosition((it.atEnd() ? range : it.range()).end), Affinity::Upstream };
 }
 
 // Determines whether two positions are visibly next to each other (first then second)

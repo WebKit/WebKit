@@ -1,5 +1,20 @@
 2020-09-02  Darin Adler  <darin@apple.com>
 
+        Remove EAffinity, UPSTREAM, DOWNSTREAM, SEL_DEFAULT_AFFINITY, and VisibleSelection::selectionType
+        https://bugs.webkit.org/show_bug.cgi?id=216102
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame closestCaretRectInMarkedTextRangeForPoint:]): Use Affinity.
+        (-[WebFrame smartExtendRangedSelection:]): Use visibleStart/End/Extent so we don't
+        need to write explicit code to handle affinity.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition setAffinity:]): Use Affinity.
+
+2020-09-02  Darin Adler  <darin@apple.com>
+
         Change Affinity into an enum class
         https://bugs.webkit.org/show_bug.cgi?id=216096
 

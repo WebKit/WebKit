@@ -82,12 +82,12 @@ inline WKInsertActionType toAPI(WebCore::EditorInsertAction action)
     return kWKInsertActionTyped;
 }
 
-inline WKAffinityType toAPI(WebCore::EAffinity affinity)
+inline WKAffinityType toAPI(WebCore::Affinity affinity)
 {
     switch (affinity) {
-    case WebCore::UPSTREAM:
+    case WebCore::Affinity::Upstream:
         return kWKAffinityUpstream;
-    case WebCore::DOWNSTREAM:
+    case WebCore::Affinity::Downstream:
         return kWKAffinityDownstream;
     }
     ASSERT_NOT_REACHED();

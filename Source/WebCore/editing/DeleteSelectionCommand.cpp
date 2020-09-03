@@ -213,7 +213,7 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
         auto position = endOfParagraphBeforeStart.deepEquivalent();
         m_upstreamStart = position.upstream();
         m_downstreamStart = position.downstream();
-        m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(DOWNSTREAM);
+        m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(Affinity::Downstream);
         setStartingSelectionOnSmartDelete(m_upstreamStart, m_upstreamEnd);
     }
 }
@@ -900,8 +900,8 @@ void DeleteSelectionCommand::doApply()
     }
 
     // save this to later make the selection with
-    EAffinity affinity = m_selectionToDelete.affinity();
-    
+    auto affinity = m_selectionToDelete.affinity();
+
     Position downstreamEnd = m_selectionToDelete.end().downstream();
     m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart(), CanCrossEditingBoundary)
             && isEndOfParagraph(m_selectionToDelete.visibleEnd(), CanCrossEditingBoundary)

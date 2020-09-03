@@ -3486,7 +3486,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     ensureLineBoxes();
 
     if (!firstRootBox())
-        return createVisiblePosition(0, DOWNSTREAM);
+        return createVisiblePosition(0, Affinity::Downstream);
 
     bool linesAreFlipped = style().isFlippedLinesWritingMode();
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
@@ -3545,7 +3545,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
                         box = newBox;
                 }
                 // y coordinate is above first root line box, so return the start of the first
-                return VisiblePosition(positionForBox(box, true), DOWNSTREAM);
+                return positionForBox(box, true);
             }
         }
 
@@ -3563,13 +3563,13 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         ASSERT(moveCaretToBoundary);
         InlineBox* logicallyLastBox;
         if (lastRootBoxWithChildren->getLogicalEndBoxWithNode(logicallyLastBox))
-            return VisiblePosition(positionForBox(logicallyLastBox, false), DOWNSTREAM);
+            return positionForBox(logicallyLastBox, false);
     }
 
     // Can't reach this. We have a root line box, but it has no kids.
     // FIXME: This should ASSERT_NOT_REACHED(), but clicking on placeholder text
     // seems to hit this code path.
-    return createVisiblePosition(0, DOWNSTREAM);
+    return createVisiblePosition(0, Affinity::Downstream);
 }
 
 Position RenderBlockFlow::positionForPoint(const LayoutPoint& point)

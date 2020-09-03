@@ -632,15 +632,15 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const
     LayoutUnit lineDirectionPosition = isHorizontalWritingMode() ? point.x() + x() : point.y() + y();
     
     if (blockDirectionPosition < top)
-        return createVisiblePosition(caretMinOffset(), DOWNSTREAM); // coordinates are above
+        return createVisiblePosition(caretMinOffset(), Affinity::Downstream); // coordinates are above
     
     if (blockDirectionPosition >= bottom)
-        return createVisiblePosition(caretMaxOffset(), DOWNSTREAM); // coordinates are below
+        return createVisiblePosition(caretMaxOffset(), Affinity::Downstream); // coordinates are below
     
     if (element()) {
         if (lineDirectionPosition <= logicalLeft() + (logicalWidth() / 2))
-            return createVisiblePosition(0, DOWNSTREAM);
-        return createVisiblePosition(1, DOWNSTREAM);
+            return createVisiblePosition(0, Affinity::Downstream);
+        return createVisiblePosition(1, Affinity::Downstream);
     }
 
     return RenderBox::positionForPoint(point, fragment);

@@ -44,23 +44,21 @@
 namespace WebCore {
 
 VisibleSelection::VisibleSelection()
-    : m_affinity(DOWNSTREAM)
-    , m_selectionType(NoSelection)
-    , m_baseIsFirst(true)
+    : m_baseIsFirst(true)
     , m_isDirectional(false)
 {
 }
 
-VisibleSelection::VisibleSelection(const Position& pos, EAffinity affinity, bool isDirectional)
-    : m_base(pos)
-    , m_extent(pos)
+VisibleSelection::VisibleSelection(const Position& position, Affinity affinity, bool isDirectional)
+    : m_base(position)
+    , m_extent(position)
     , m_affinity(affinity)
     , m_isDirectional(isDirectional)
 {
     validate();
 }
 
-VisibleSelection::VisibleSelection(const Position& base, const Position& extent, EAffinity affinity, bool isDirectional)
+VisibleSelection::VisibleSelection(const Position& base, const Position& extent, Affinity affinity, bool isDirectional)
     : m_base(base)
     , m_extent(extent)
     , m_affinity(affinity)
@@ -69,10 +67,10 @@ VisibleSelection::VisibleSelection(const Position& base, const Position& extent,
     validate();
 }
 
-VisibleSelection::VisibleSelection(const VisiblePosition& pos, bool isDirectional)
-    : m_base(pos.deepEquivalent())
-    , m_extent(pos.deepEquivalent())
-    , m_affinity(pos.affinity())
+VisibleSelection::VisibleSelection(const VisiblePosition& position, bool isDirectional)
+    : m_base(position.deepEquivalent())
+    , m_extent(position.deepEquivalent())
+    , m_affinity(position.affinity())
     , m_isDirectional(isDirectional)
 {
     validate();
@@ -87,7 +85,7 @@ VisibleSelection::VisibleSelection(const VisiblePosition& base, const VisiblePos
     validate();
 }
 
-VisibleSelection::VisibleSelection(const SimpleRange& range, EAffinity affinity, bool isDirectional)
+VisibleSelection::VisibleSelection(const SimpleRange& range, Affinity affinity, bool isDirectional)
     : m_base(createLegacyEditingPosition(&range.startContainer(), range.startOffset()))
     , m_extent(createLegacyEditingPosition(&range.endContainer(), range.endOffset()))
     , m_affinity(affinity)
@@ -100,7 +98,7 @@ VisibleSelection::VisibleSelection(const SimpleRange& range, EAffinity affinity,
 VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
 {
     ASSERT(!editingIgnoresContent(*node));
-    return VisibleSelection(firstPositionInNode(node), lastPositionInNode(node), DOWNSTREAM);
+    return VisibleSelection(firstPositionInNode(node), lastPositionInNode(node));
 }
 
 void VisibleSelection::setBase(const Position& position)
@@ -319,10 +317,10 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             m_end = endOfLine(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
         case TextGranularity::ParagraphGranularity: {
-            VisiblePosition pos(m_start, m_affinity);
-            if (isStartOfLine(pos) && isEndOfEditableOrNonEditableContent(pos))
-                pos = pos.previous();
-            m_start = startOfParagraph(pos).deepEquivalent();
+            VisiblePosition position(m_start, m_affinity);
+            if (isStartOfLine(position) && isEndOfEditableOrNonEditableContent(position))
+                position = position.previous();
+            m_start = startOfParagraph(position).deepEquivalent();
             VisiblePosition visibleParagraphEnd = endOfParagraph(VisiblePosition(m_end, m_affinity));
             
             // Include the "paragraph break" (the space from the end of this paragraph to the start
@@ -373,15 +371,14 @@ void VisibleSelection::updateSelectionType()
 {
     if (m_start.isNull()) {
         ASSERT(m_end.isNull());
-        m_selectionType = NoSelection;
-    } else if (m_start == m_end || m_start.upstream() == m_end.upstream()) {
-        m_selectionType = CaretSelection;
-    } else
-        m_selectionType = RangeSelection;
-
-    // Affinity only makes sense for a caret
-    if (m_selectionType != CaretSelection)
-        m_affinity = DOWNSTREAM;
+        m_type = Type::None;
+        m_affinity = Affinity::Downstream;
+    } else if (m_start == m_end || m_start.upstream() == m_end.upstream())
+        m_type = Type::Caret;
+    else {
+        m_type = Type::Range;
+        m_affinity = Affinity::Downstream;
+    }
 }
 
 void VisibleSelection::validate(TextGranularity granularity)
@@ -392,7 +389,7 @@ void VisibleSelection::validate(TextGranularity granularity)
     adjustSelectionToAvoidCrossingEditingBoundaries();
     updateSelectionType();
 
-    if (selectionType() == RangeSelection) {
+    if (isRange()) {
         // "Constrain" the selection to be the smallest equivalent range of nodes.
         // This is a somewhat arbitrary choice, but experience shows that it is
         // useful to make to make the selection "canonical" (if only for
@@ -421,7 +418,7 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
 {
     ASSERT(!base.isNull());
     ASSERT(!extent.isNull());
-    ASSERT(m_affinity == DOWNSTREAM);
+    ASSERT(m_affinity == Affinity::Downstream);
     m_base = base;
     m_extent = extent;
     m_baseIsFirst = base <= extent;
@@ -432,7 +429,7 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
         m_start = extent;
         m_end = base;
     }
-    m_selectionType = base == extent ? CaretSelection : RangeSelection;
+    m_type = base == extent ? Type::Caret : Type::Range;
 }
 
 Position VisibleSelection::adjustPositionForEnd(const Position& currentPosition, Node* startContainerNode)

@@ -144,7 +144,7 @@ bool RenderLineBreak::canBeSelectionLeaf() const
 VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const RenderFragmentContainer*)
 {
     ensureLineBoxes();
-    return createVisiblePosition(0, DOWNSTREAM);
+    return createVisiblePosition(0, Affinity::Downstream);
 }
 
 void RenderLineBreak::setSelectionState(HighlightState state)

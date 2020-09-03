@@ -444,7 +444,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
 - (void)setAffinity:(NSSelectionAffinity)affinity
 {
-    reinterpret_cast<VisiblePosition *>(_internal)->setAffinity((WebCore::EAffinity)affinity);
+    reinterpret_cast<VisiblePosition *>(_internal)->setAffinity((WebCore::Affinity)affinity);
 }
 
 @end

@@ -223,7 +223,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (DOMRange *)rangeOfContainingParagraph
 {
-    VisiblePosition position(createLegacyEditingPosition(core(self), 0), WebCore::DOWNSTREAM);
+    VisiblePosition position(createLegacyEditingPosition(core(self), 0));
     return kit(makeSimpleRange(startOfParagraph(position), endOfParagraph(position)));
 }
 

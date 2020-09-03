@@ -68,7 +68,7 @@ RenderedPosition::RenderedPosition(const VisiblePosition& position)
 {
 }
 
-RenderedPosition::RenderedPosition(const Position& position, EAffinity affinity)
+RenderedPosition::RenderedPosition(const Position& position, Affinity affinity)
     : m_previousLeafOnLine(uncachedInlineBox())
     , m_nextLeafOnLine(uncachedInlineBox())
 {

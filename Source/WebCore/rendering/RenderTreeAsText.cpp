@@ -795,7 +795,7 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
     VisibleSelection selection = frame->selection().selection();
     if (selection.isCaret()) {
         ts << "caret: position " << selection.start().deprecatedEditingOffset() << " of " << nodePosition(selection.start().deprecatedNode());
-        if (selection.affinity() == UPSTREAM)
+        if (selection.affinity() == Affinity::Upstream)
             ts << " (upstream affinity)";
         ts << "\n";
     } else if (selection.isRange())

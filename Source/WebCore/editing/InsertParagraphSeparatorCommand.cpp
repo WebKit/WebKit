@@ -150,10 +150,9 @@ void InsertParagraphSeparatorCommand::doApply()
     if (endingSelection().isNoneOrOrphaned())
         return;
     
-    Position insertionPosition = endingSelection().start();
-        
-    EAffinity affinity = endingSelection().affinity();
-        
+    auto insertionPosition = endingSelection().start();
+    auto affinity = endingSelection().affinity();
+
     // Delete the current selection.
     if (endingSelection().isRange()) {
         calculateStyleBeforeInsertion(insertionPosition);
@@ -249,7 +248,7 @@ void InsertParagraphSeparatorCommand::doApply()
         
         appendBlockPlaceholder(WTFMove(parent));
 
-        setEndingSelection(VisibleSelection(firstPositionInNode(parentPtr), DOWNSTREAM, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(firstPositionInNode(parentPtr), Affinity::Downstream, endingSelection().isDirectional()));
         return;
     }
     
@@ -287,7 +286,7 @@ void InsertParagraphSeparatorCommand::doApply()
         appendBlockPlaceholder(cloneHierarchyUnderNewBlock(ancestors, *blockToInsert));
         
         // In this case, we need to set the new ending selection.
-        setEndingSelection(VisibleSelection(insertionPosition, DOWNSTREAM, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(insertionPosition, Affinity::Downstream, endingSelection().isDirectional()));
         return;
     }
 
@@ -310,7 +309,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // If the insertion point is a break element, there is nothing else
         // we need to do.
         if (visiblePos.deepEquivalent().anchorNode()->renderer()->isBR()) {
-            setEndingSelection(VisibleSelection(insertionPosition, DOWNSTREAM, endingSelection().isDirectional()));
+            setEndingSelection(VisibleSelection(insertionPosition, Affinity::Downstream, endingSelection().isDirectional()));
             return;
         }
     }
@@ -410,7 +409,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(VisibleSelection(firstPositionInNode(blockToInsert.get()), DOWNSTREAM, endingSelection().isDirectional()));
+    setEndingSelection(VisibleSelection(firstPositionInNode(blockToInsert.get()), Affinity::Downstream, endingSelection().isDirectional()));
     applyStyleAfterInsertion(startBlock.get());
 }
 

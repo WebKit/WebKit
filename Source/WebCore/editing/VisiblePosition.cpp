@@ -50,7 +50,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-VisiblePosition::VisiblePosition(const Position& position, EAffinity affinity)
+VisiblePosition::VisiblePosition(const Position& position, Affinity affinity)
     : m_deepPosition { canonicalPosition(position) }
 {
     if (affinity == Affinity::Upstream && !isNull()) {
@@ -91,16 +91,16 @@ VisiblePosition VisiblePosition::previous(EditingBoundaryCrossingRule rule, bool
         return VisiblePosition();
     }
 
-    VisiblePosition prev = VisiblePosition(pos, DOWNSTREAM);
+    VisiblePosition prev = pos;
     ASSERT(prev != *this);
 
-#ifndef NDEBUG
-    // we should always be able to make the affinity DOWNSTREAM, because going previous from an
-    // UPSTREAM position can never yield another UPSTREAM position (unless line wrap length is 0!).
-    if (prev.isNotNull() && m_affinity == UPSTREAM) {
-        VisiblePosition temp = prev;
-        temp.setAffinity(UPSTREAM);
-        ASSERT(inSameLine(temp, prev));
+#if ASSERT_ENABLED
+    // We should always be able to make the affinity downstream, because going previous from an
+    // upstream position can never yield another upstream position unless line wrap length is 0.
+    if (prev.isNotNull() && m_affinity == Affinity::Upstream) {
+        auto upstreamCopy = prev;
+        upstreamCopy.setAffinity(Affinity::Upstream);
+        ASSERT(inSameLine(upstreamCopy, prev));
     }
 #endif
 
@@ -263,7 +263,7 @@ VisiblePosition VisiblePosition::left(bool stayInEditableContent, bool* reachedB
         return VisiblePosition();
     }
 
-    VisiblePosition left = VisiblePosition(pos, DOWNSTREAM);
+    VisiblePosition left = pos;
     ASSERT(left != *this);
 
     if (!stayInEditableContent)
@@ -429,7 +429,7 @@ VisiblePosition VisiblePosition::right(bool stayInEditableContent, bool* reached
         return VisiblePosition();
     }
 
-    VisiblePosition right = VisiblePosition(pos, DOWNSTREAM);
+    VisiblePosition right = pos;
     ASSERT(right != *this);
 
     if (!stayInEditableContent)
@@ -741,13 +741,13 @@ Optional<BoundaryPoint> makeBoundaryPoint(const VisiblePosition& position)
     return makeBoundaryPoint(position.deepEquivalent());
 }
 
-TextStream& operator<<(TextStream& stream, EAffinity affinity)
+TextStream& operator<<(TextStream& stream, Affinity affinity)
 {
     switch (affinity) {
-    case UPSTREAM:
+    case Affinity::Upstream:
         stream << "upstream";
         break;
-    case DOWNSTREAM:
+    case Affinity::Downstream:
         stream << "downstream";
         break;
     }

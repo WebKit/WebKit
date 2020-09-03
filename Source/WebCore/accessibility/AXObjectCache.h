@@ -65,7 +65,7 @@ struct TextMarkerData {
     int characterStartIndex { 0 };
     int characterOffset { 0 };
     bool ignored { false };
-    EAffinity affinity { DOWNSTREAM };
+    Affinity affinity { Affinity::Downstream };
 };
 
 struct CharacterOffset {

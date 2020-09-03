@@ -136,7 +136,7 @@ bool WebEditorClient::shouldInsertText(const String& text, const Optional<Simple
     return m_page->injectedBundleEditorClient().shouldInsertText(*m_page, text, rangeToReplace, action);
 }
 
-bool WebEditorClient::shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, EAffinity affinity, bool stillSelecting)
+bool WebEditorClient::shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, Affinity affinity, bool stillSelecting)
 {
     return m_page->injectedBundleEditorClient().shouldChangeSelectedRange(*m_page, fromRange, toRange, affinity, stillSelecting);
 }

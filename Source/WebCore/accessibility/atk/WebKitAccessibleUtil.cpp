@@ -223,7 +223,7 @@ AXCoreObject* objectFocusedAndCaretOffsetUnignored(AXCoreObject* referenceObject
     if (!startNode)
         return nullptr;
 
-    VisiblePosition startPosition = VisiblePosition(positionBeforeNode(startNode), DOWNSTREAM);
+    VisiblePosition startPosition = VisiblePosition(positionBeforeNode(startNode));
     VisiblePosition endPosition = firstUnignoredParent->selection().visibleEnd();
 
     if (startPosition == endPosition)

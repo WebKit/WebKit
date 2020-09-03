@@ -413,9 +413,9 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     int rangeLength = characterCount(nodeRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 
     // Special cases that are only relevant when working with *_END boundaries.
-    if (selection.affinity() == UPSTREAM) {
-        VisiblePosition visibleStart(nodeRangeStart, UPSTREAM);
-        VisiblePosition visibleEnd(nodeRangeEnd, UPSTREAM);
+    if (selection.affinity() == Affinity::Upstream) {
+        VisiblePosition visibleStart(nodeRangeStart, Affinity::Upstream);
+        VisiblePosition visibleEnd(nodeRangeEnd, Affinity::Upstream);
 
         // We need to adjust offsets when finding wrapped lines so the position at the end
         // of the line is properly taking into account when calculating the offsets.
@@ -596,7 +596,7 @@ static VisibleSelection wordAtPositionForAtkBoundary(const AccessibilityObject* 
     // We mark the selection as 'upstream' so we can use that information later,
     // when finding the actual offsets in getSelectionOffsetsForObject().
     if (boundaryType == ATK_TEXT_BOUNDARY_WORD_END)
-        selectedWord.setAffinity(UPSTREAM);
+        selectedWord.setAffinity(Affinity::Upstream);
 
     return selectedWord;
 }
@@ -752,7 +752,7 @@ static VisibleSelection sentenceAtPositionForAtkBoundary(const AccessibilityObje
     // We mark the selection as 'upstream' so we can use that information later,
     // when finding the actual offsets in getSelectionOffsetsForObject().
     if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_END)
-        selectedSentence.setAffinity(UPSTREAM);
+        selectedSentence.setAffinity(Affinity::Upstream);
 
     return selectedSentence;
 }
@@ -824,7 +824,7 @@ static VisibleSelection lineAtPositionForAtkBoundary(const AccessibilityObject* 
         // In addition to checking that we are not at the end of a block, we need
         // to check that endPosition has not UPSTREAM affinity, since that would
         // cause trouble inside of text controls (we would be advancing too much).
-        if (!isEndOfBlock(endPosition) && endPosition.affinity() != UPSTREAM)
+        if (!isEndOfBlock(endPosition) && endPosition.affinity() != Affinity::Upstream)
             endPosition = endPosition.next();
         break;
 
@@ -844,7 +844,7 @@ static VisibleSelection lineAtPositionForAtkBoundary(const AccessibilityObject* 
     // We mark the selection as 'upstream' so we can use that information later,
     // when finding the actual offsets in getSelectionOffsetsForObject().
     if (boundaryType == ATK_TEXT_BOUNDARY_LINE_END)
-        selectedLine.setAffinity(UPSTREAM);
+        selectedLine.setAffinity(Affinity::Upstream);
 
     return selectedLine;
 }

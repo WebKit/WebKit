@@ -323,7 +323,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
     NSUInteger hitIndex;
     Optional<SimpleRange> fullCharacterRange;
     
-    if (selection.selectionType() == VisibleSelection::RangeSelection) {
+    if (selection.isRange()) {
         auto selectionStart = selection.visibleStart();
         auto selectionEnd = selection.visibleEnd();
 

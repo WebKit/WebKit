@@ -57,7 +57,7 @@ private:
     bool shouldInsertNode(WebPage&, WebCore::Node&, const Optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction) final;
     bool shouldInsertText(WebPage&, const String&, const Optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction) final;
     bool shouldDeleteRange(WebPage&, const Optional<WebCore::SimpleRange>&) final;
-    bool shouldChangeSelectedRange(WebPage&, const Optional<WebCore::SimpleRange>& fromRange, const Optional<WebCore::SimpleRange>& toRange, WebCore::EAffinity, bool stillSelecting) final;
+    bool shouldChangeSelectedRange(WebPage&, const Optional<WebCore::SimpleRange>& fromRange, const Optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
     bool shouldApplyStyle(WebPage&, const WebCore::StyleProperties&, const Optional<WebCore::SimpleRange>&) final;
     void didBeginEditing(WebPage&, const String& notificationName) final;
     void didEndEditing(WebPage&, const String& notificationName) final;

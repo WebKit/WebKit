@@ -557,7 +557,7 @@ bool Position::atEndOfTree() const
 }
 
 // return first preceding DOM position rendered at a different location, or "this"
-Position Position::previousCharacterPosition(EAffinity affinity) const
+Position Position::previousCharacterPosition(Affinity affinity) const
 {
     if (isNull())
         return { };
@@ -585,7 +585,7 @@ Position Position::previousCharacterPosition(EAffinity affinity) const
 }
 
 // return first following position rendered at a different location, or "this"
-Position Position::nextCharacterPosition(EAffinity affinity) const
+Position Position::nextCharacterPosition(Affinity affinity) const
 {
     if (isNull())
         return { };
@@ -1098,7 +1098,7 @@ bool Position::rendersInDifferentPosition(const Position& position) const
 }
 
 // This assumes that it starts in editable content.
-Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNonCollapsibleWhitespace) const
+Position Position::leadingWhitespacePosition(Affinity affinity, bool considerNonCollapsibleWhitespace) const
 {
     ASSERT(isEditablePosition(*this));
     if (isNull())
@@ -1120,7 +1120,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
 }
 
 // This assumes that it starts in editable content.
-Position Position::trailingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace) const
+Position Position::trailingWhitespacePosition(Affinity, bool considerNonCollapsibleWhitespace) const
 {
     ASSERT(isEditablePosition(*this));
     if (isNull())
@@ -1136,7 +1136,7 @@ Position Position::trailingWhitespacePosition(EAffinity, bool considerNonCollaps
     return { };
 }
 
-InlineBoxAndOffset Position::inlineBoxAndOffset(EAffinity affinity) const
+InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity) const
 {
     return inlineBoxAndOffset(affinity, primaryDirection());
 }
@@ -1231,14 +1231,14 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
                 return { box, caretOffset };
             }
 
-            if (((static_cast<unsigned>(caretOffset) == caretMaxOffset) ^ (affinity == DOWNSTREAM))
-                || ((static_cast<unsigned>(caretOffset) == caretMinOffset) ^ (affinity == UPSTREAM))
+            if (((static_cast<unsigned>(caretOffset) == caretMaxOffset) ^ (affinity == Affinity::Downstream))
+                || ((static_cast<unsigned>(caretOffset) == caretMinOffset) ^ (affinity == Affinity::Upstream))
                 || (static_cast<unsigned>(caretOffset) == caretMaxOffset && box->nextLeafOnLine() && box->nextLeafOnLine()->isLineBreak()))
                 break;
 
             candidate = box;
         }
-        if (candidate && candidate == textRenderer.lastTextBox() && affinity == DOWNSTREAM) {
+        if (candidate && candidate == textRenderer.lastTextBox() && affinity == Affinity::Downstream) {
             box = searchAheadForBetterMatch(&textRenderer);
             if (box)
                 caretOffset = box->caretMinOffset();
