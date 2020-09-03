@@ -27,7 +27,9 @@
 
 #if USE(CORE_IMAGE)
 
+#import "FEColorMatrix.h"
 #import "FilterEffectRenderer.h"
+#import "SourceGraphic.h"
 #import <wtf/HashMap.h>
 #import <wtf/Vector.h>
 
@@ -42,25 +44,25 @@ class FilterEffectRendererCoreImage : public FilterEffectRenderer {
     
 public:
     static std::unique_ptr<FilterEffectRendererCoreImage> tryCreate(FilterEffect&);
-    
+    RetainPtr<CIContext> sharedCIContext();
     void applyEffects(FilterEffect&) final;
     bool hasResult() const final { return m_outputImage; }
     ImageBuffer* output() const final;
     FloatRect destRect(const FilterEffect&) const final;
     void clearResult() final;
-    
     FilterEffectRendererCoreImage();
     
 private:
-    CIImage* connectCIFilters(FilterEffect&);
+    RetainPtr<CIImage> connectCIFilters(FilterEffect&);
     void renderToImageBuffer(FilterEffect&) final;
     static bool supportsCoreImageRendering(FilterEffect&);
     static bool canRenderUsingCIFilters(FilterEffect&);
     
+    RetainPtr<CIImage> imageForSourceGraphic(SourceGraphic&);
+    RetainPtr<CIImage> imageForFEColorMatrix(const FEColorMatrix&, const Vector<RetainPtr<CIImage>>&);
+    
     std::unique_ptr<ImageBuffer> m_outputImageBuffer;
-    HashMap<Ref<FilterEffect>, Vector<RetainPtr<CIFilter>>> m_ciFilterStorageMap;
     RetainPtr<CIImage> m_outputImage;
-    RetainPtr<CIContext> m_context;
 };
 
 } // namespace WebCore

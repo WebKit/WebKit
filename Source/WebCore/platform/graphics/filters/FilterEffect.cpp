@@ -79,7 +79,6 @@ FloatPoint FilterEffect::mapPointFromUserSpaceToBuffer(FloatPoint userSpacePoint
 
 IntRect FilterEffect::requestedRegionOfInputImageData(const IntRect& effectRect) const
 {
-    ASSERT(hasResult());
     IntPoint location = m_absolutePaintRect.location();
     location.moveBy(-effectRect.location());
     return IntRect(location, m_absolutePaintRect.size());

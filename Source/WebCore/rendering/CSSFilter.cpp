@@ -304,7 +304,8 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
 
     setMaxEffectRects(m_sourceDrawingRegion);
 #if USE(CORE_IMAGE)
-    m_filterRenderer = FilterEffectRenderer::tryCreate(renderer.settings().coreImageAcceleratedFilterRenderEnabled(), m_effects.last().get());
+    if (!m_filterRenderer)
+        m_filterRenderer = FilterEffectRenderer::tryCreate(renderer.settings().coreImageAcceleratedFilterRenderEnabled(), m_effects.last().get());
 #endif
     return true;
 }
@@ -336,7 +337,8 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
         setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale()));
 #else
         UNUSED_PARAM(targetContext);
-        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), filterScale()));
+        RenderingMode mode = m_filterRenderer ? RenderingMode::Accelerated : renderingMode();
+        setSourceImage(ImageBuffer::create(logicalSize, mode, filterScale()));
 #endif
     }
     m_graphicsBufferAttached = true;

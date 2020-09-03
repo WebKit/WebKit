@@ -2,6 +2,10 @@
 <html>
 <head>
 <title>This tests that background images with filters scale properly.</title>
+<script>
+	if (window.internals)
+    	internals.settings.setCoreImageAcceleratedFilterRenderEnabled(false);
+</script>
 <style>
   img {
     width: 100px;

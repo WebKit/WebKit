@@ -1,3 +1,68 @@
+2020-09-03  Frank Yang  <guowei_yang@apple.com>
+
+        CoreImage Implementation of SourceGraphic and saturate(), hue-rotate(), grayscale() and sepia()
+        https://bugs.webkit.org/show_bug.cgi?id=213673
+
+        Reviewed by Darin Adler, Simon Fraser.
+
+        Tests: css3/filters/effect-grayscale-square.html
+               css3/filters/effect-hue-rotate-square.html
+               css3/filters/effect-saturate-square.html
+               css3/filters/effect-sepia-square.html
+
+        Added CoreImage implementation of SourceGraphic and partial of FEColorMatrix, 
+        which is used to implement sepia(), grayscale() hue-rotate() and saturate().
+        Also added CIFilter caching, by storing CIFilters in a hash map, where the key 
+        is the level of traversal (an integer).
+
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.h:
+            Imported FEColorMatrix.h and SourceGraphic.h; added function getCIContext()
+            that returns a static copy of CIContext.
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.mm:
+        (WebCore::FilterEffectRendererCoreImage::getCIContext): Creating a 
+            CIContext is expensive. Instead of creating a CIContext on each frame
+            update, we just use a static singleton on every draw
+        (WebCore::FilterEffectRendererCoreImage::supportsCoreImageRendering):
+            the function now returns true if the filter chain contains SourceGraphic
+            and FEColorMatrix of TYPE_MATRIX, TYPE_SATURATE and TYPE_HUEROTATE
+        (WebCore::FilterEffectRendererCoreImage::connectCIFilters):
+            Made slight changes to wrap Obj-C pointers in RetainPtr
+        (WebCore::FilterEffectRendererCoreImage::imageForSourceGraphic):
+            Use the source image to create a CIImage and return it. If the source image 
+            is backed by IOSurface, we create a CIImage directly from the IOSurface; otherwise
+            we create a CIImage by getting the NativeImagePtr from source image.
+        (WebCore::FilterEffectRendererCoreImage::imageForFEColorMatrix):
+            Based on the type of the matrix and input parameter, 
+            create different types of CIColorMatrix filers that are used to implement 
+            sepia, grayscale, hue-rotate, saturate
+        (WebCore::FilterEffectRendererCoreImage::output const):
+            Added a logging line
+        (WebCore::FilterEffectRendererCoreImage::renderToImageBuffer):
+            Minor refactors 
+        (WebCore::FilterEffectRendererCoreImage::clearResult):
+        (WebCore::FilterEffectRendererCoreImage::FilterEffectRendererCoreImage):
+        * platform/graphics/filters/FEColorMatrix.h:
+        (isType): added SPECIALIZE_TYPE_TRAITS so that we can downcast to FEColorMatrix
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::requestedRegionOfInputImageData const): removed 
+            ASSERT(hasResult()); from the function, because CoreImage path wouldn't create 
+            image buffers inside FilterEffect, but CI path still needs to consult this function
+            to obtain geometry info
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::filterEffectClassType const): Made the function a const
+        (WebCore::FilterEffect::normalizedFloats): Changed this function to public since it is 
+            consulted in FilterEffectCoreImageRenderer. 
+        (WebCore::FilterEffect::filterEffectClassType): Deleted.
+        * platform/graphics/filters/SourceGraphic.h:
+        (isType): added SPECIALIZE_TYPE_TRAITS so that we can downcast to SourceGraphic
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::build): 
+            Checks whether m_filterRenderer is already created, no need to re-create if the pointer 
+            is non-null
+        (WebCore::CSSFilter::allocateBackingStoreIfNeeded): 
+            If we are using m_filterRenderer, which is currently using CoreImage and relies on 
+            IOSurfaces, we ask source image to use IOSurface for performance concerns.
+
 2020-09-03  Chris Dumez  <cdumez@apple.com>
 
         BiquadFilterNode.getFrequencyResponse() should return NaN for out-of-bounds frequencies

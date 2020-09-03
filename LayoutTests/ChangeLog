@@ -1,3 +1,27 @@
+2020-09-03  Frank Yang  <guowei_yang@apple.com>
+
+        CoreImage Implementation of SourceGraphic and saturate(), hue-rotate(), grayscale() and sepia()
+        https://bugs.webkit.org/show_bug.cgi?id=213673
+
+        Reviewed by Darin Adler, Simon Fraser.
+
+        * css3/filters/effect-grayscale-square-expected.html: Added.
+        * css3/filters/effect-grayscale-square.html: Added.
+        * css3/filters/effect-hue-rotate-square-expected.html: Added.
+        * css3/filters/effect-hue-rotate-square.html: Added.
+        * css3/filters/effect-saturate-square-expected.html: Added.
+        * css3/filters/effect-saturate-square.html: Added.
+        * css3/filters/effect-sepia-square-expected.html: Added.
+        * css3/filters/effect-sepia-square.html: Added.
+        * fast/filter-image/background-filter-image-expected.html:
+            This is the expected result for the background image filter. The background image
+            is not upsampled for retina screens due to a bug, so the test runner is comparing 
+            an unscaled image with an upscaled-then-downscaled image. CoreImage handles upscaling 
+            and downscaling differently, so the pixel diff will fail. Thus, turning off CI for this 
+            particular test case until the background image filter not upsampling bug is fixed.
+        * fast/filter-image/background-filter-image.html:
+            ditto
+
 2020-09-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Mark uniform samplers in an array unused per element

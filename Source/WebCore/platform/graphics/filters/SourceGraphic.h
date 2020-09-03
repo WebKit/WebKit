@@ -50,4 +50,9 @@ private:
 
 } //namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SourceGraphic)
+    static bool isType(const WebCore::FilterEffect& effect) { return effect.filterEffectClassType() == WebCore::FilterEffect::Type::SourceGraphic; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+
 #endif // SourceGraphic_h
