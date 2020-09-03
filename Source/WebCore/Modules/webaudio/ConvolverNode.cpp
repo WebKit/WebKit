@@ -47,6 +47,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ConvolverNode);
 
+static unsigned computeNumberOfOutputChannels(unsigned inputChannels, unsigned responseChannels)
+{
+    // The number of output channels for a Convolver must be one or two. And can only be one if
+    // there's a mono source and a mono response buffer.
+    return (inputChannels == 1 && responseChannels == 1) ? 1u : 2u;
+}
+
 ExceptionOr<Ref<ConvolverNode>> ConvolverNode::create(BaseAudioContext& context, ConvolverOptions&& options)
 {
     if (context.isStopped())
@@ -60,11 +67,11 @@ ExceptionOr<Ref<ConvolverNode>> ConvolverNode::create(BaseAudioContext& context,
     if (result.hasException())
         return result.releaseException();
 
+    node->setNormalize(!options.disableNormalization);
+
     result = node->setBuffer(WTFMove(options.buffer));
     if (result.hasException())
         return result.releaseException();
-
-    node->setNormalize(!options.disableNormalization);
 
     return node;
 }
@@ -75,7 +82,7 @@ ConvolverNode::ConvolverNode(BaseAudioContext& context)
     setNodeType(NodeTypeConvolver);
 
     addInput(makeUnique<AudioNodeInput>(this));
-    addOutput(makeUnique<AudioNodeOutput>(this, 2));
+    addOutput(makeUnique<AudioNodeOutput>(this, 1));
     
     initialize();
 }
@@ -163,13 +170,21 @@ ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 
     // Create the reverb with the given impulse response.
     bool useBackgroundThreads = !context().isOfflineContext();
-    auto reverb = makeUnique<Reverb>(bufferBus.get(), AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, useBackgroundThreads, m_normalize);
+    auto reverb = makeUnique<Reverb>(bufferBus.get(), AudioNode::ProcessingSizeInFrames, MaxFFTSize, useBackgroundThreads, m_normalize);
 
     {
+        // The context must be locked since changing the buffer can re-configure the number of channels that are output.
+        BaseAudioContext::AutoLocker contextLocker(context());
+
         // Synchronize with process().
         auto locker = holdLock(m_processMutex);
+
         m_reverb = WTFMove(reverb);
         m_buffer = WTFMove(buffer);
+        if (m_buffer) {
+            // This will propagate the channel count to any nodes connected further downstream in the graph.
+            output(0)->setNumberOfChannels(computeNumberOfOutputChannels(input(0)->numberOfChannels(), m_buffer->numberOfChannels()));
+        }
     }
 
     return { };
@@ -209,6 +224,30 @@ ExceptionOr<void> ConvolverNode::setChannelCountMode(ChannelCountMode mode)
     if (mode == ChannelCountMode::Max)
         return Exception { NotSupportedError, "ConvolverNode's channel count mode cannot be 'max'"_s };
     return AudioNode::setChannelCountMode(mode);
+}
+
+void ConvolverNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
+{
+    ASSERT(context().isAudioThread() && context().isGraphOwner());
+
+    if (m_buffer) {
+        unsigned numberOfOutputChannels = computeNumberOfOutputChannels(input->numberOfChannels(), m_buffer->numberOfChannels());
+
+        if (isInitialized() && numberOfOutputChannels != output(0)->numberOfChannels()) {
+            // We're already initialized but the channel count has changed.
+            uninitialize();
+        }
+
+        if (!isInitialized()) {
+            // This will propagate the channel count to any nodes connected further
+            // downstream in the graph.
+            output(0)->setNumberOfChannels(numberOfOutputChannels);
+            initialize();
+        }
+    }
+
+    // Update the input's internal bus if needed.
+    AudioNode::checkNumberOfChannelsForInput(input);
 }
 
 } // namespace WebCore

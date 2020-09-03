@@ -1,3 +1,35 @@
+2020-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Choose adequate number of channels for ConvolverNode's output
+        https://bugs.webkit.org/show_bug.cgi?id=216099
+
+        Reviewed by Eric Carlson.
+
+        Choose adequate number of channels for ConvolverNode's output. We were using 2 channels for
+        the output no matter what but we're supposed to use a single channel if both the input
+        and the response buffer are mono.
+
+        This is based on the following Blink change by Raymond Toy:
+        - https://codereview.chromium.org/2732523003
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::computeNumberOfOutputChannels):
+        (WebCore::ConvolverNode::create):
+        Set the shouldNormalize flag *before* we set the buffer since setBuffer() relies on
+        the flag. This gives us a few more test passes.
+
+        (WebCore::ConvolverNode::ConvolverNode):
+        (WebCore::ConvolverNode::setBuffer):
+        (WebCore::ConvolverNode::checkNumberOfChannelsForInput):
+        * Modules/webaudio/ConvolverNode.h:
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::Reverb):
+        (WebCore::Reverb::initialize):
+        (WebCore::Reverb::process):
+        * platform/audio/Reverb.h:
+
 2020-09-02  Darin Adler  <darin@apple.com>
 
         Simplify some editing code

@@ -3,7 +3,7 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "cascade-mono" 
 PASS Audit report 
 PASS > [cascade-mono] Cascaded mono convolvers 
-FAIL X Output of cascaded mono convolvers should have contain at least one value different from 0. assert_true: expected true got false
-FAIL < [cascade-mono] 1 out of 1 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   Output of cascaded mono convolvers is not constantly 0 (contains 1996 different values). 
+PASS < [cascade-mono] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

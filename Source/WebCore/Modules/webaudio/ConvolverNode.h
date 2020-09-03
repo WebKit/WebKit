@@ -61,6 +61,7 @@ private:
     void reset() final;
     void initialize() final;
     void uninitialize() final;
+    void checkNumberOfChannelsForInput(AudioNodeInput*) final;
 
     std::unique_ptr<Reverb> m_reverb;
     RefPtr<AudioBuffer> m_buffer;

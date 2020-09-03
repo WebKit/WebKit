@@ -1,5 +1,5 @@
 
-FAIL speakers, initially mono assert_approx_equals: output at 191 in channel 0 expected -0.019168466329574585 +/- 7.152557373046875e-7 but got 0
-FAIL discrete assert_approx_equals: output at 191 in channel 0 expected -0.019168466329574585 +/- 7.152557373046875e-7 but got 0
-FAIL speakers, initially stereo assert_approx_equals: output at 191 in channel 0 expected -0.019168466329574585 +/- 7.152557373046875e-7 but got 0
+FAIL speakers, initially mono assert_approx_equals: output at 191 in channel 0 expected -0.4999929368495941 +/- 7.152557373046875e-7 but got 0
+FAIL discrete assert_approx_equals: output at 191 in channel 0 expected -0.4999929368495941 +/- 7.152557373046875e-7 but got 0
+FAIL speakers, initially stereo assert_approx_equals: output at 191 in channel 0 expected -0.4999929368495941 +/- 7.152557373046875e-7 but got 0
 
