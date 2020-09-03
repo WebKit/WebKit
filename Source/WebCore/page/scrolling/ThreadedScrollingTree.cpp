@@ -61,10 +61,12 @@ WheelEventHandlingResult ThreadedScrollingTree::handleWheelEvent(const PlatformW
     return ScrollingTree::handleWheelEvent(wheelEvent);
 }
 
-bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent)
+bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID)
 {
     SetForScope<bool> disallowLatchingScope(m_allowLatching, false);
-    auto result = handleWheelEvent(wheelEvent);
+
+    RefPtr<ScrollingTreeNode> targetNode = nodeForID(targetNodeID);
+    auto result = handleWheelEventWithNode(wheelEvent, targetNode.get());
     return result.wasHandled;
 }
 

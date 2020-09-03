@@ -47,7 +47,7 @@ public:
 
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&) override;
 
-    bool handleWheelEventAfterMainThread(const PlatformWheelEvent&);
+    bool handleWheelEventAfterMainThread(const PlatformWheelEvent&, ScrollingNodeID);
 
     void invalidate() override;
 
