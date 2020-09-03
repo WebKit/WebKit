@@ -275,6 +275,17 @@ void LineBox::computeInlineBoxesLogicalHeight()
                 parentInlineBox.setLogicalHeight(parentInlineBox.logicalHeight() + belowBaselineOverflow);
             break;
         }
+        case VerticalAlign::TextBottom: {
+            auto& parentInlineBox = inlineBoxForLayoutBox(layoutBox.parent());
+            auto parentTextLogicalBottom = parentInlineBox.baseline() + parentInlineBox.descent().valueOr(InlineLayoutUnit { });
+            auto overflow = std::max(0.0f, inlineBox->logicalHeight() - parentTextLogicalBottom);
+            if (overflow) {
+                // TextBottom pushes the baseline downward the same way 'bottom' does.
+                parentInlineBox.setLogicalHeight(parentInlineBox.logicalHeight() + overflow);
+                parentInlineBox.setBaseline(parentInlineBox.baseline() + overflow);
+            }
+            break;
+        }
         case VerticalAlign::Middle: {
             auto& parentLayoutBox = layoutBox.parent();
             auto& parentInlineBox = inlineBoxForLayoutBox(parentLayoutBox);
@@ -337,6 +348,13 @@ void LineBox::alignInlineBoxesVerticallyAndComputeLineBoxHeight(IsLineVisuallyEm
             auto& parentLayoutBox = layoutBox.parent();
             auto& parentInlineBox = inlineBoxForLayoutBox(parentLayoutBox);
             inlineBoxLogicalTop = parentInlineBox.logicalTop() + parentInlineBox.baseline() - parentLayoutBox.style().fontMetrics().ascent();
+            break;
+        }
+        case VerticalAlign::TextBottom: {
+            auto& parentLayoutBox = layoutBox.parent();
+            auto& parentInlineBox = inlineBoxForLayoutBox(parentLayoutBox);
+            auto parentTextLogicalBottom = parentInlineBox.logicalTop() + parentInlineBox.baseline() + parentLayoutBox.style().fontMetrics().descent();
+            inlineBoxLogicalTop = parentTextLogicalBottom - inlineBox->logicalHeight();
             break;
         }
         case VerticalAlign::Top:
