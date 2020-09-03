@@ -1,6 +1,6 @@
 
-FAIL BOM is ignored if ignoreBOM option is specified: utf-8 assert_equals: utf-8: BOM should be present in decoded string if ignored by a reused decoder expected "﻿abc" but got "abc"
-FAIL BOM is ignored if ignoreBOM option is specified: utf-16le assert_equals: utf-16le: BOM should be present in decoded string if ignored by a reused decoder expected "﻿abc" but got "abc"
-FAIL BOM is ignored if ignoreBOM option is specified: utf-16be assert_equals: utf-16be: BOM should be present in decoded string if ignored by a reused decoder expected "﻿abc" but got "abc"
+PASS BOM is ignored if ignoreBOM option is specified: utf-8 
+PASS BOM is ignored if ignoreBOM option is specified: utf-16le 
+PASS BOM is ignored if ignoreBOM option is specified: utf-16be 
 PASS The ignoreBOM attribute of TextDecoder 
 

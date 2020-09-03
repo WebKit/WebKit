@@ -1,14 +1,14 @@
 
 PASS ignoreBOM should work for encoding utf-8, split at character 0 
-FAIL ignoreBOM should work for encoding utf-8, split at character 1 assert_equals: BOM should be stripped expected "abc" but got "﻿abc"
-FAIL ignoreBOM should work for encoding utf-8, split at character 2 assert_equals: BOM should be stripped expected "abc" but got "﻿abc"
+PASS ignoreBOM should work for encoding utf-8, split at character 1 
+PASS ignoreBOM should work for encoding utf-8, split at character 2 
 PASS ignoreBOM should work for encoding utf-8, split at character 3 
 PASS ignoreBOM should work for encoding utf-16le, split at character 0 
-FAIL ignoreBOM should work for encoding utf-16le, split at character 1 assert_equals: BOM should be stripped expected "abc" but got "﻿abc"
+PASS ignoreBOM should work for encoding utf-16le, split at character 1 
 PASS ignoreBOM should work for encoding utf-16le, split at character 2 
-FAIL ignoreBOM should work for encoding utf-16le, split at character 3 assert_equals: BOM should be preserved expected "﻿abc" but got "abc"
+PASS ignoreBOM should work for encoding utf-16le, split at character 3 
 PASS ignoreBOM should work for encoding utf-16be, split at character 0 
-FAIL ignoreBOM should work for encoding utf-16be, split at character 1 assert_equals: BOM should be stripped expected "abc" but got "﻿abc"
+PASS ignoreBOM should work for encoding utf-16be, split at character 1 
 PASS ignoreBOM should work for encoding utf-16be, split at character 2 
-FAIL ignoreBOM should work for encoding utf-16be, split at character 3 assert_equals: BOM should be preserved expected "﻿abc" but got "abc"
+PASS ignoreBOM should work for encoding utf-16be, split at character 3 
 

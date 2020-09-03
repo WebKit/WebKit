@@ -50,13 +50,17 @@ public:
     ExceptionOr<String> decode(Optional<BufferSource::VariantType>, DecodeOptions);
 
 private:
-    String prependBOMIfNecessary(const String&);
-    void ignoreBOMIfNecessary(const uint8_t*& data, size_t& length);
     TextDecoder(const char*, Options);
+
+    enum class WaitForMoreBOMBytes : bool { No, Yes };
+    WaitForMoreBOMBytes ignoreBOMIfNecessary(const uint8_t*& data, size_t& length, bool stream);
+    size_t bytesNeededForFullBOMIgnoreCheck() const;
+    bool isBeginningOfIncompleteBOM(const uint8_t*, size_t) const;
+
     TextEncoding m_textEncoding;
     Options m_options;
-    bool m_hasDecoded { false };
     Vector<uint8_t> m_buffer;
+    bool m_bomIgnoredIfNecessary { false };
 };
 
 }

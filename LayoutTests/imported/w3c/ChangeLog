@@ -1,5 +1,15 @@
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
+        TextDecoder should ignore byte-order-mark like other browsers and spec
+        https://bugs.webkit.org/show_bug.cgi?id=216108
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/streams/decode-ignore-bom.any-expected.txt:
+        * web-platform-tests/encoding/textdecoder-ignorebom.any-expected.txt:
+
+2020-09-03  Alex Christensen  <achristensen@webkit.org>
+
         Align ISO-8859-{3,6,7,8,8-I} and windows-{874,1253,1255,1257} encodings with Chrome, Firefox, and the specification
         https://bugs.webkit.org/show_bug.cgi?id=216094
 
