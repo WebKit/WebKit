@@ -63,7 +63,6 @@ PASS: Should pause.
 
 Triggering breakpoint...
 PASS: Should pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Timer.Options.IgnoreCount
 Creating "timeout" Event Breakpoint...
@@ -82,7 +81,6 @@ PASS: Should pause.
 
 Triggering breakpoint...
 PASS: Should pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Timer.Options.Action.Log
 Creating "timeout" Event Breakpoint...
@@ -112,7 +110,6 @@ Editing log action...
 Triggering breakpoint...
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Timer.Options.Actions.Evaluate
 Creating "timeout" Event Breakpoint...
@@ -142,5 +139,4 @@ Editing evaluate action...
 Triggering breakpoint...
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
--- Running test teardown.
 

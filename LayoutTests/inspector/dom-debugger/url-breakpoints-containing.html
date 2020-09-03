@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="../worker/resources/resource-utilities.js"></script>
+<script src="resources/url-breakpoint-utilities.js"></script>
+<script>
+function test()
+{
+    const type = WI.URLBreakpoint.Type.Text;
+    const url = "data";
+
+    let suite = InspectorTest.createAsyncSuite("URLBreakpoint.BreakOnContainingText");
+
+    for (let api of ["Fetch", "XHR"]) {
+        suite.addTestCase({
+            name: "URLBreakpoint.BreakOnContainingText." + api,
+            description: "Check that debugger pauses on a URL containing text.",
+            async test() {
+                let breakpoint = await InspectorTest.URLBreakpoint.createBreakpoint(type, url);
+
+                InspectorTest.URLBreakpoint.request(api);
+                await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                InspectorTest.log("PAUSED:");
+                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason[api], `Pause reason should be ${api}.`);
+                InspectorTest.expectEqual(targetData.pauseData.breakpointURL, breakpoint.url, "Pause data URL should match breakpoint URL.");
+
+                logActiveStackTrace();
+
+                await WI.debuggerManager.resume();
+            },
+            teardown: InspectorTest.URLBreakpoint.teardown,
+        });
+
+        InspectorTest.BreakpointOptions.addTestCases(suite, {
+            testCaseNamePrefix: api + ".",
+            createBreakpoint() {
+                return InspectorTest.URLBreakpoint.createBreakpoint(type, url);
+            },
+            triggerBreakpoint() {
+                return InspectorTest.URLBreakpoint.request(api);
+            },
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for text URL breakpoints.</p>
+</body>
+</html>

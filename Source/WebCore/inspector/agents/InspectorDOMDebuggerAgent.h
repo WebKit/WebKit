@@ -65,8 +65,8 @@ public:
     virtual bool enabled() const;
 
     // DOMDebuggerBackendDispatcherHandler
-    void setURLBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex) final;
-    void removeURLBreakpoint(ErrorString&, const String& url) final;
+    void setURLBreakpoint(ErrorString&, const String& url, const bool* isRegex, const JSON::Object* options) final;
+    void removeURLBreakpoint(ErrorString&, const String& url, const bool* isRegex) final;
     void setEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName, const JSON::Object* options) final;
     void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
 
@@ -104,9 +104,9 @@ private:
     RefPtr<JSC::Breakpoint> m_pauseOnAllListenersBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllTimeoutsBreakpoint;
 
-    enum class URLBreakpointType { RegularExpression, Text };
-    HashMap<String, URLBreakpointType> m_urlBreakpoints;
-    bool m_pauseOnAllURLsEnabled { false };
+    HashMap<String, Ref<JSC::Breakpoint>> m_urlTextBreakpoints;
+    HashMap<String, Ref<JSC::Breakpoint>> m_urlRegexBreakpoints;
+    RefPtr<JSC::Breakpoint> m_pauseOnAllURLsBreakpoint;
 };
 
 } // namespace WebCore

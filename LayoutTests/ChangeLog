@@ -1,5 +1,42 @@
 2020-09-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: allow url breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215793
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/resources/breakpoint-options-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.BreakpointOptions.addTestCases):
+
+        * inspector/dom-debugger/resources/url-breakpoint-utilities.js: Added.
+        (TestPage.registerInitializer.InspectorTest.URLBreakpoint.teardown):
+        (TestPage.registerInitializer.InspectorTest.URLBreakpoint.createBreakpoint):
+        (TestPage.registerInitializer.InspectorTest.URLBreakpoint.addBreakpoint):
+        (TestPage.registerInitializer.InspectorTest.URLBreakpoint.request):
+        * inspector/dom-debugger/url-breakpoints.html:
+        * inspector/dom-debugger/url-breakpoints-expected.txt:
+        * inspector/dom-debugger/url-breakpoints-all-requests.html: Added.
+        * inspector/dom-debugger/url-breakpoints-all-requests-expected.txt: Added.
+        * inspector/dom-debugger/url-breakpoints-containing.html: Added.
+        * inspector/dom-debugger/url-breakpoints-containing-expected.txt: Added.
+        * inspector/dom-debugger/url-breakpoints-matching.html: Added.
+        * inspector/dom-debugger/url-breakpoints-matching-expected.txt: Added.
+        Split the one URL breakpoint test into four so they run quicker.
+
+        * inspector/dom-debugger/resources/event-breakpoint-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.addBreakpointOptionsTestCases): Deleted.
+        * inspector/dom-debugger/event-animation-frame-breakpoints.html:
+        * inspector/dom-debugger/event-animation-frame-breakpoints-expected.txt:
+        * inspector/dom-debugger/event-interval-breakpoints.html:
+        * inspector/dom-debugger/event-interval-breakpoints-expected.txt:
+        * inspector/dom-debugger/event-listener-breakpoints.html:
+        * inspector/dom-debugger/event-listener-breakpoints-expected.txt:
+        * inspector/dom-debugger/event-timeout-breakpoints.html:
+        * inspector/dom-debugger/event-timeout-breakpoints-expected.txt:
+        Use `InspectorTest.BreakpointOptions.addTestCases` instead of duplicating the logic.
+
+2020-09-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: allow special JavaScript breakpoints to be configured
         https://bugs.webkit.org/show_bug.cgi?id=215794
 

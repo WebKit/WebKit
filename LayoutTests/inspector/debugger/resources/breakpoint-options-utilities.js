@@ -1,7 +1,9 @@
 TestPage.registerInitializer(() => {
     InspectorTest.BreakpointOptions = {};
 
-    InspectorTest.BreakpointOptions.addTestCases = function(suite, {createBreakpoint, triggerBreakpoint}) {
+    InspectorTest.BreakpointOptions.addTestCases = function(suite, {testCaseNamePrefix, createBreakpoint, triggerBreakpoint}) {
+        testCaseNamePrefix ??= "";
+
         function removeBreakpoint(breakpoint) {
             if (breakpoint.removable)
                 breakpoint.remove();
@@ -12,7 +14,7 @@ TestPage.registerInitializer(() => {
         }
 
         suite.addTestCase({
-            name: suite.name + ".Options.Condition",
+            name: suite.name + "." + testCaseNamePrefix + "Options.Condition",
             description: "Check that the debugger will not pause unless the breakpoint has a truthy breakpoint condition.",
             async test() {
                 let pauseCount = 0;
@@ -55,7 +57,7 @@ TestPage.registerInitializer(() => {
         });
 
         suite.addTestCase({
-            name: suite.name + ".Options.IgnoreCount",
+            name: suite.name + "." + testCaseNamePrefix + "Options.IgnoreCount",
             description: "Check that the debugger will not pause unless the breakpoint is hit at least as many times as it's `ignoreCount`.",
             async test() {
                 let pauseCount = 0;
@@ -91,7 +93,7 @@ TestPage.registerInitializer(() => {
         });
 
         suite.addTestCase({
-            name: suite.name + ".Options.Action.Log",
+            name: suite.name + "." + testCaseNamePrefix + "Options.Action.Log",
             description: "Check that log breakpoint actions execute when the breakpoint is hit.",
             async test() {
                 let pauseCount = 0;
@@ -150,7 +152,7 @@ TestPage.registerInitializer(() => {
         });
 
         suite.addTestCase({
-            name: suite.name + ".Options.Actions.Evaluate",
+            name: suite.name + "." + testCaseNamePrefix + "Options.Actions.Evaluate",
             description: "Check that evaluate breakpoint actions execute when the breakpoint is hit.",
             async test() {
                 let pauseCount = 0;

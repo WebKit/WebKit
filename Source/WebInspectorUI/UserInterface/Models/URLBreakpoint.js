@@ -25,12 +25,12 @@
 
 WI.URLBreakpoint = class URLBreakpoint extends WI.Breakpoint
 {
-    constructor(type, url, {disabled} = {})
+    constructor(type, url, {disabled, actions, condition, ignoreCount, autoContinue} = {})
     {
         console.assert(Object.values(WI.URLBreakpoint.Type).includes(type), type);
         console.assert(typeof url === "string", url);
 
-        super({disabled});
+        super({disabled, actions, condition, ignoreCount, autoContinue});
 
         this._type = type;
         this._url = url;
@@ -38,10 +38,20 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Breakpoint
 
     // Static
 
+    static get editable()
+    {
+        // COMPATIBILITY (iOS 14): DOMDebugger.setURLBreakpoint did not have an "options" parameter yet.
+        return InspectorBackend.hasCommand("DOMDebugger.setURLBreakpoint", "options");
+    }
+
     static fromJSON(json)
     {
         return new WI.URLBreakpoint(json.type, json.url, {
             disabled: json.disabled,
+            condition: json.condition,
+            actions: json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON)) || [],
+            ignoreCount: json.ignoreCount,
+            autoContinue: json.autoContinue,
         });
     }
 
@@ -70,6 +80,11 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Breakpoint
     get special()
     {
         return this === WI.domDebuggerManager.allRequestsBreakpoint || super.special;
+    }
+
+    get editable()
+    {
+        return WI.URLBreakpoint.editable || super.editable;
     }
 
     remove()

@@ -145,7 +145,6 @@ PASS: Should pause.
 
 Triggering breakpoint...
 PASS: Should pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Listener.Options.IgnoreCount
 Creating "click" Event Breakpoint...
@@ -164,7 +163,6 @@ PASS: Should pause.
 
 Triggering breakpoint...
 PASS: Should pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Listener.Options.Action.Log
 Creating "click" Event Breakpoint...
@@ -194,7 +192,6 @@ Editing log action...
 Triggering breakpoint...
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Listener.Options.Actions.Evaluate
 Creating "click" Event Breakpoint...
@@ -224,5 +221,4 @@ Editing evaluate action...
 Triggering breakpoint...
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
--- Running test teardown.
 

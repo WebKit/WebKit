@@ -2,136 +2,58 @@ Tests for URL breakpoints.
 
 
 == Running test suite: URLBreakpoint
--- Running test case: URLBreakpoint.BreakOnAll.Fetch
-Set pause on all requests.
-Request Fetch "resources/dataFetch.json"...
-PAUSED:
-PASS: Pause reason should be Fetch.
-PASS: Pause data URL should be empty.
-CALL STACK:
-0: [F] loadResourceFetch
-1: [P] Global Code
--- Running test teardown.
-
--- Running test case: URLBreakpoint.BreakOnContainingText.Fetch
-PASS: Added breakpoint for URL: data
-PASS: Breakpoint should not be disabled initially.
-Request Fetch "resources/dataFetch.json"...
-PAUSED:
-PASS: Pause reason should be Fetch.
-PASS: Pause data URL should match breakpoint URL.
-CALL STACK:
-0: [F] loadResourceFetch
-1: [P] Global Code
--- Running test teardown.
-
--- Running test case: URLBreakpoint.BreakOnMatchingRegularExpression.Fetch
-PASS: Added breakpoint for URL: data[A-Z]*.(json|txt|png)
-PASS: Breakpoint should not be disabled initially.
-Request Fetch "resources/dataFetch.json"...
-PAUSED:
-PASS: Pause reason should be Fetch.
-PASS: Pause data URL should match breakpoint URL.
-CALL STACK:
-0: [F] loadResourceFetch
-1: [P] Global Code
--- Running test teardown.
-
 -- Running test case: URLBreakpoint.ShouldNotPauseOnDisabledBreakpoint.Fetch
-PASS: Added breakpoint for URL: data
-PASS: Breakpoint should not be disabled initially.
-Breakpoint disabled.
+Adding "text:data" URL Breakpoint...
+Disabling breakpoint...
 Request Fetch "resources/dataFetch.json"...
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
 -- Running test case: URLBreakpoint.ShouldNotPauseOnNotContainingURL.Fetch
-PASS: Added breakpoint for URL: nonexistant-url
-PASS: Breakpoint should not be disabled initially.
+Adding "text:nonexistant-url" URL Breakpoint...
 Request Fetch "resources/dataFetch.json"...
 PASS: Should not pause for breakpoint with different URL.
 -- Running test teardown.
 
 -- Running test case: URLBreakpoint.RemoveBreakpoint.Fetch
-PASS: Added breakpoint for URL: data
-PASS: Breakpoint should not be disabled initially.
-Breakpoint removed.
+Adding "text:data" URL Breakpoint...
+Removing breakpoint...
 Request Fetch "resources/dataFetch.json"...
 PASS: Should not pause for removed breakpoint.
 -- Running test teardown.
 
 -- Running test case: URLBreakpoint.RemoveDisabledBreakpoint.Fetch
-PASS: Added breakpoint for URL: data
-PASS: Breakpoint should not be disabled initially.
-Breakpoint disabled.
-Breakpoint removed.
+Adding "text:data" URL Breakpoint...
+Disabling breakpoint...
+Removing breakpoint...
 Request Fetch "resources/dataFetch.json"...
 PASS: Should not pause for removed disabled breakpoint.
 -- Running test teardown.
 
--- Running test case: URLBreakpoint.BreakOnAll.XHR
-Set pause on all requests.
-Request XHR "resources/dataXHR.json"...
-PAUSED:
-PASS: Pause reason should be XHR.
-PASS: Pause data URL should be empty.
-CALL STACK:
-0: [F] loadResourceXHR
-1: [P] Global Code
--- Running test teardown.
-
--- Running test case: URLBreakpoint.BreakOnContainingText.XHR
-PASS: Added breakpoint for URL: data
-PASS: Breakpoint should not be disabled initially.
-Request XHR "resources/dataXHR.json"...
-PAUSED:
-PASS: Pause reason should be XHR.
-PASS: Pause data URL should match breakpoint URL.
-CALL STACK:
-0: [F] loadResourceXHR
-1: [P] Global Code
--- Running test teardown.
-
--- Running test case: URLBreakpoint.BreakOnMatchingRegularExpression.XHR
-PASS: Added breakpoint for URL: data[A-Z]*.(json|txt|png)
-PASS: Breakpoint should not be disabled initially.
-Request XHR "resources/dataXHR.json"...
-PAUSED:
-PASS: Pause reason should be XHR.
-PASS: Pause data URL should match breakpoint URL.
-CALL STACK:
-0: [F] loadResourceXHR
-1: [P] Global Code
--- Running test teardown.
-
 -- Running test case: URLBreakpoint.ShouldNotPauseOnDisabledBreakpoint.XHR
-PASS: Added breakpoint for URL: data
-PASS: Breakpoint should not be disabled initially.
-Breakpoint disabled.
+Adding "text:data" URL Breakpoint...
+Disabling breakpoint...
 Request XHR "resources/dataXHR.json"...
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
 -- Running test case: URLBreakpoint.ShouldNotPauseOnNotContainingURL.XHR
-PASS: Added breakpoint for URL: nonexistant-url
-PASS: Breakpoint should not be disabled initially.
+Adding "text:nonexistant-url" URL Breakpoint...
 Request XHR "resources/dataXHR.json"...
 PASS: Should not pause for breakpoint with different URL.
 -- Running test teardown.
 
 -- Running test case: URLBreakpoint.RemoveBreakpoint.XHR
-PASS: Added breakpoint for URL: data
-PASS: Breakpoint should not be disabled initially.
-Breakpoint removed.
+Adding "text:data" URL Breakpoint...
+Removing breakpoint...
 Request XHR "resources/dataXHR.json"...
 PASS: Should not pause for removed breakpoint.
 -- Running test teardown.
 
 -- Running test case: URLBreakpoint.RemoveDisabledBreakpoint.XHR
-PASS: Added breakpoint for URL: data
-PASS: Breakpoint should not be disabled initially.
-Breakpoint disabled.
-Breakpoint removed.
+Adding "text:data" URL Breakpoint...
+Disabling breakpoint...
+Removing breakpoint...
 Request XHR "resources/dataXHR.json"...
 PASS: Should not pause for removed disabled breakpoint.
 -- Running test teardown.

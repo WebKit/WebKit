@@ -38,7 +38,7 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.BreakpointPopove
 
     static get supportsEditing()
     {
-        return false;
+        return WI.URLBreakpoint.editable;
     }
 
     // Protected

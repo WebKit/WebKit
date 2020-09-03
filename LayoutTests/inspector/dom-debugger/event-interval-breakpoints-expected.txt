@@ -83,7 +83,6 @@ PASS: Should pause.
 
 Triggering breakpoint...
 PASS: Should pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Interval.Options.IgnoreCount
 Creating "interval" Event Breakpoint...
@@ -102,7 +101,6 @@ PASS: Should pause.
 
 Triggering breakpoint...
 PASS: Should pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Interval.Options.Action.Log
 Creating "interval" Event Breakpoint...
@@ -132,7 +130,6 @@ Editing log action...
 Triggering breakpoint...
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
--- Running test teardown.
 
 -- Running test case: DOMDebugger.Event.Interval.Options.Actions.Evaluate
 Creating "interval" Event Breakpoint...
@@ -162,5 +159,4 @@ Editing evaluate action...
 Triggering breakpoint...
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
--- Running test teardown.
 

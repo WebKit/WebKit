@@ -56,14 +56,16 @@
             "description": "Sets breakpoint on network activity for the given URL.",
             "parameters": [
                 { "name": "url", "type": "string", "description": "Resource URL substring or regular expression. All requests having this substring in the URL will get stopped upon. An empty string will pause on all requests." },
-                { "name": "isRegex", "type": "boolean", "optional": true, "description": "Whether the URL string is a regular expression." }
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "Whether the URL string is a regular expression." },
+                { "name": "options", "$ref": "Debugger.BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
             ]
         },
         {
             "name": "removeURLBreakpoint",
             "description": "Removes breakpoint from network activity for the given URL.",
             "parameters": [
-                { "name": "url", "type": "string", "description": "Resource URL substring. An empty string will stop pausing on all requests." }
+                { "name": "url", "type": "string", "description": "Resource URL substring. An empty string will stop pausing on all requests." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "Whether the URL string is a regular expression." }
             ]
         }
     ]

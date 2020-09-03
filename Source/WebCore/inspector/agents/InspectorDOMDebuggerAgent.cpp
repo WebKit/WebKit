@@ -80,8 +80,9 @@ void InspectorDOMDebuggerAgent::disable()
     m_pauseOnAllListenersBreakpoint = nullptr;
     m_pauseOnAllTimeoutsBreakpoint = nullptr;
 
-    m_urlBreakpoints.clear();
-    m_pauseOnAllURLsEnabled = false;
+    m_urlTextBreakpoints.clear();
+    m_urlRegexBreakpoints.clear();
+    m_pauseOnAllURLsBreakpoint = nullptr;
 }
 
 // Browser debugger agent enabled only when JS debugger is enabled.
@@ -328,33 +329,45 @@ void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
     m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
-void InspectorDOMDebuggerAgent::setURLBreakpoint(ErrorString& errorString, const String& url, const bool* optionalIsRegex)
+void InspectorDOMDebuggerAgent::setURLBreakpoint(ErrorString& errorString, const String& url, const bool* optionalIsRegex, const JSON::Object* optionsPayload)
 {
+    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, optionsPayload);
+    if (!breakpoint)
+        return;
+
     if (url.isEmpty()) {
-        if (m_pauseOnAllURLsEnabled)
+        if (!m_pauseOnAllURLsBreakpoint)
+            m_pauseOnAllURLsBreakpoint = WTFMove(breakpoint);
+        else
             errorString = "Breakpoint for all URLs already exists"_s;
-        m_pauseOnAllURLsEnabled = true;
         return;
     }
 
-    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
-    auto result = m_urlBreakpoints.set(url, isRegex ? URLBreakpointType::RegularExpression : URLBreakpointType::Text);
-    if (!result.isNewEntry)
-        errorString = "Breakpoint for given url already exists"_s;
+    if (optionalIsRegex && *optionalIsRegex) {
+        if (!m_urlRegexBreakpoints.add(url, breakpoint.releaseNonNull()))
+            errorString = "Breakpoint for given regex already exists"_s;
+    } else {
+        if (!m_urlTextBreakpoints.add(url, breakpoint.releaseNonNull()))
+            errorString = "Breakpoint for given URL already exists"_s;
+    }
 }
 
-void InspectorDOMDebuggerAgent::removeURLBreakpoint(ErrorString& errorString, const String& url)
+void InspectorDOMDebuggerAgent::removeURLBreakpoint(ErrorString& errorString, const String& url, const bool* optionalIsRegex)
 {
     if (url.isEmpty()) {
-        if (!m_pauseOnAllURLsEnabled)
+        if (!m_pauseOnAllURLsBreakpoint)
             errorString = "Breakpoint for all URLs missing"_s;
-        m_pauseOnAllURLsEnabled = false;
+        m_pauseOnAllURLsBreakpoint = nullptr;
         return;
     }
 
-    auto result = m_urlBreakpoints.remove(url);
-    if (!result)
-        errorString = "Breakpoint for given url missing"_s;
+    if (optionalIsRegex && *optionalIsRegex) {
+        if (!m_urlRegexBreakpoints.remove(url))
+            errorString = "Missing breakpoint for given regex"_s;
+    } else {
+        if (!m_urlTextBreakpoints.remove(url))
+            errorString = "Missing breakpoint for given URL"_s;
+    }
 }
 
 void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url, URLBreakpointSource source)
@@ -362,38 +375,48 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url, URLBreakpo
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    String breakpointURL;
-    if (m_pauseOnAllURLsEnabled)
-        breakpointURL = emptyString();
-    else {
-        for (auto& [query, type] : m_urlBreakpoints) {
-            bool isRegex = type == URLBreakpointType::RegularExpression;
-            auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
-            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(query, false, searchStringType);
+    constexpr bool caseSensitive = false;
+
+    auto breakpointURL = emptyString();
+    auto breakpoint = m_pauseOnAllURLsBreakpoint.copyRef();
+    if (!breakpoint) {
+        for (auto& [query, textBreakpoint] : m_urlTextBreakpoints) {
+            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(query, caseSensitive, ContentSearchUtilities::SearchStringType::ContainsString);
             if (regex.match(url) != -1) {
+                breakpoint = textBreakpoint.copyRef();
                 breakpointURL = query;
                 break;
             }
         }
     }
-
-    if (breakpointURL.isNull())
+    if (!breakpoint) {
+        for (auto& [query, regexBreakpoint] : m_urlRegexBreakpoints) {
+            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(query, caseSensitive, ContentSearchUtilities::SearchStringType::Regex);
+            if (regex.match(url) != -1) {
+                breakpoint = regexBreakpoint.copyRef();
+                breakpointURL = query;
+                break;
+            }
+        }
+    }
+    if (!breakpoint)
         return;
 
-    Inspector::DebuggerFrontendDispatcher::Reason breakReason;
-    if (source == URLBreakpointSource::Fetch)
+    auto breakReason = Inspector::DebuggerFrontendDispatcher::Reason::Other;
+    switch (source) {
+    case URLBreakpointSource::Fetch:
         breakReason = Inspector::DebuggerFrontendDispatcher::Reason::Fetch;
-    else if (source == URLBreakpointSource::XHR)
+        break;
+
+    case URLBreakpointSource::XHR:
         breakReason = Inspector::DebuggerFrontendDispatcher::Reason::XHR;
-    else {
-        ASSERT_NOT_REACHED();
-        breakReason = Inspector::DebuggerFrontendDispatcher::Reason::Other;
+        break;
     }
 
     Ref<JSON::Object> eventData = JSON::Object::create();
     eventData->setString("breakpointURL", breakpointURL);
     eventData->setString("url", url);
-    m_debuggerAgent->breakProgram(breakReason, WTFMove(eventData));
+    m_debuggerAgent->breakProgram(breakReason, WTFMove(eventData), WTFMove(breakpoint));
 }
 
 void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)

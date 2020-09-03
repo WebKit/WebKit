@@ -409,8 +409,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             for (let domBreakpoint of WI.domDebuggerManager.domBreakpoints)
                 this._addBreakpoint(domBreakpoint);
 
-            if (WI.settings.showAllRequestsBreakpoint.value)
-                WI.domDebuggerManager.addURLBreakpoint(WI.domDebuggerManager.allRequestsBreakpoint);
+            if (WI.domDebuggerManager.allRequestsBreakpoint)
+                this._addBreakpoint(WI.domDebuggerManager.allRequestsBreakpoint);
 
             for (let urlBreakpoints of WI.domDebuggerManager.urlBreakpoints)
                 this._addBreakpoint(urlBreakpoints);
@@ -1974,42 +1974,44 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _populateCreateBreakpointContextMenu(contextMenu)
     {
-        contextMenu.appendCheckboxItem(WI.repeatedUIString.assertionFailures(), () => {
-            if (WI.debuggerManager.assertionFailuresBreakpoint)
-                WI.debuggerManager.assertionFailuresBreakpoint.remove();
-            else
-                WI.debuggerManager.createAssertionFailuresBreakpoint();
-        }, WI.debuggerManager.assertionFailuresBreakpoint);
+        function addToggleForSpecialBreakpoint(label, breakpoint, callback) {
+            contextMenu.appendCheckboxItem(label, () => {
+                if (breakpoint)
+                    breakpoint.remove();
+                else
+                    callback();
+            }, !!breakpoint);
+        }
+
+        addToggleForSpecialBreakpoint(WI.repeatedUIString.assertionFailures(), WI.debuggerManager.assertionFailuresBreakpoint, () => {
+            WI.debuggerManager.createAssertionFailuresBreakpoint();
+        });
 
         contextMenu.appendSeparator();
 
         if (WI.JavaScriptBreakpoint.supportsMicrotasks()) {
-            contextMenu.appendCheckboxItem(WI.repeatedUIString.allMicrotasks(), () => {
-                if (WI.debuggerManager.allMicrotasksBreakpoint)
-                    WI.debuggerManager.allMicrotasksBreakpoint.remove();
-                else
-                    WI.debuggerManager.createAllMicrotasksBreakpoint();
-            }, WI.debuggerManager.allMicrotasksBreakpoint);
+            addToggleForSpecialBreakpoint(WI.repeatedUIString.allMicrotasks(), WI.debuggerManager.allMicrotasksBreakpoint, () => {
+                WI.debuggerManager.createAllMicrotasksBreakpoint();
+            });
         }
 
         if (WI.DOMDebuggerManager.supportsEventBreakpoints() || WI.DOMDebuggerManager.supportsEventListenerBreakpoints()) {
-            function addToggleForSpecialEventBreakpoint(label, breakpoint, type) {
-                contextMenu.appendCheckboxItem(label, () => {
-                    if (breakpoint)
-                        WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
-                    else
-                        WI.domDebuggerManager.addEventBreakpoint(new WI.EventBreakpoint(type));
-                }, !!breakpoint);
-            }
-
-            addToggleForSpecialEventBreakpoint(WI.repeatedUIString.allAnimationFrames(), WI.domDebuggerManager.allAnimationFramesBreakpoint, WI.EventBreakpoint.Type.AnimationFrame);
-            addToggleForSpecialEventBreakpoint(WI.repeatedUIString.allTimeouts(), WI.domDebuggerManager.allTimeoutsBreakpoint, WI.EventBreakpoint.Type.Timeout);
-            addToggleForSpecialEventBreakpoint(WI.repeatedUIString.allIntervals(), WI.domDebuggerManager.allIntervalsBreakpoint, WI.EventBreakpoint.Type.Interval);
+            addToggleForSpecialBreakpoint(WI.repeatedUIString.allAnimationFrames(), WI.domDebuggerManager.allAnimationFramesBreakpoint, () => {
+                WI.domDebuggerManager.addEventBreakpoint(new WI.EventBreakpoint(WI.EventBreakpoint.Type.AnimationFrame));
+            });
+            addToggleForSpecialBreakpoint(WI.repeatedUIString.allTimeouts(), WI.domDebuggerManager.allTimeoutsBreakpoint, () => {
+                WI.domDebuggerManager.addEventBreakpoint(new WI.EventBreakpoint(WI.EventBreakpoint.Type.Timeout));
+            });
+            addToggleForSpecialBreakpoint(WI.repeatedUIString.allIntervals(), WI.domDebuggerManager.allIntervalsBreakpoint, () => {
+                WI.domDebuggerManager.addEventBreakpoint(new WI.EventBreakpoint(WI.EventBreakpoint.Type.Interval));
+            });
 
             contextMenu.appendSeparator();
 
             if (WI.DOMDebuggerManager.supportsAllListenersBreakpoint())
-                addToggleForSpecialEventBreakpoint(WI.repeatedUIString.allEvents(), WI.domDebuggerManager.allListenersBreakpoint, WI.EventBreakpoint.Type.Listener);
+                addToggleForSpecialBreakpoint(WI.repeatedUIString.allEvents(), WI.domDebuggerManager.allListenersBreakpoint, () => {
+                    WI.domDebuggerManager.addEventBreakpoint(new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener));
+                });
 
             contextMenu.appendItem(WI.UIString("Event Breakpoint\u2026"), () => {
                 let popover = new WI.EventBreakpointPopover(this);
@@ -2020,15 +2022,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (WI.DOMDebuggerManager.supportsURLBreakpoints() || WI.DOMDebuggerManager.supportsXHRBreakpoints()) {
             contextMenu.appendSeparator();
 
-            let allRequestsBreakpointShown = WI.settings.showAllRequestsBreakpoint.value;
-            contextMenu.appendCheckboxItem(WI.repeatedUIString.allRequests(), () => {
-                if (allRequestsBreakpointShown)
-                    WI.domDebuggerManager.removeURLBreakpoint(WI.domDebuggerManager.allRequestsBreakpoint);
-                else {
-                    WI.domDebuggerManager.allRequestsBreakpoint.disabled = false;
-                    WI.domDebuggerManager.addURLBreakpoint(WI.domDebuggerManager.allRequestsBreakpoint);
-                }
-            }, allRequestsBreakpointShown);
+            addToggleForSpecialBreakpoint(WI.repeatedUIString.allRequests(), WI.domDebuggerManager.allRequestsBreakpoint, () => {
+                const url = "";
+                WI.domDebuggerManager.addURLBreakpoint(new WI.URLBreakpoint(WI.URLBreakpoint.Type.Text, url));
+            });
 
             contextMenu.appendItem(WI.DOMDebuggerManager.supportsURLBreakpoints() ? WI.UIString("URL Breakpoint\u2026") : WI.UIString("XHR Breakpoint\u2026"), () => {
                 let popover = new WI.URLBreakpointPopover(this);

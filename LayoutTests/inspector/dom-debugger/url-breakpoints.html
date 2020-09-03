@@ -2,234 +2,106 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
 <script src="../debugger/resources/log-active-stack-trace.js"></script>
 <script src="../worker/resources/resource-utilities.js"></script>
+<script src="resources/url-breakpoint-utilities.js"></script>
 <script>
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("URLBreakpoint");
 
-    function request(type) {
-        let url = `resources/data${type}.json`;
-        InspectorTest.log(`Request ${type} "${url}"...`);
-        return InspectorTest.evaluateInPage(`loadResource${type}("${url}")`);
-    }
-
-    function teardown(resolve) {
-        let breakpoints = WI.domDebuggerManager.urlBreakpoints;
-        for (let breakpoint of breakpoints)
-            WI.domDebuggerManager.removeURLBreakpoint(breakpoint);
-
-        WI.domDebuggerManager.allRequestsBreakpoint.disabled = true;
-        resolve();
-    }
-
-    function addBreakpoint(type, url) {
-        return new Promise((resolve, reject) => {
-            let mainFrame = WI.networkManager.mainFrame;
-            InspectorTest.assert(mainFrame, "Missing main frame.");
-            if (!mainFrame)
-                reject();
-
-            let breakpoint = new WI.URLBreakpoint(type, url);
-            WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.URLBreakpointAdded)
-            .then(() => {
-                InspectorTest.pass("Added breakpoint for URL: " + url);
-                InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled initially.");
-                resolve(breakpoint);
-            });
-
-            WI.domDebuggerManager.addURLBreakpoint(breakpoint);
-        });
-    }
-
-    for (let type of ["Fetch", "XHR"]) {
+    for (let api of ["Fetch", "XHR"]) {
         suite.addTestCase({
-            name: "URLBreakpoint.BreakOnAll." + type,
-            description: "Check that debugger pauses for all requests.",
-            teardown,
-            test(resolve, reject) {
-                InspectorTest.log("Set pause on all requests.");
-                WI.domDebuggerManager.allRequestsBreakpoint.disabled = false;
-
-                request(type);
-
-                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused)
-                .then(() => {
-                    let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-                    InspectorTest.log("PAUSED:");
-                    InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason[type], `Pause reason should be ${type}.`);
-                    InspectorTest.expectFalse(targetData.pauseData.breakpointURL, "Pause data URL should be empty.");
-
-                    logActiveStackTrace();
-
-                    return WI.debuggerManager.resume();
-                })
-                .then(resolve, reject);
-            }
-        });
-
-        suite.addTestCase({
-            name: "URLBreakpoint.BreakOnContainingText." + type,
-            description: "Check that debugger pauses on a URL containing text.",
-            teardown,
-            test(resolve, reject) {
-                let expectedBreakpointURL;
-
-                addBreakpoint(WI.URLBreakpoint.Type.Text, "data")
-                .then((breakpoint) => {
-                    expectedBreakpointURL = breakpoint.url;
-
-                    request(type);
-                    return WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
-                })
-                .then(() => {
-                    let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-                    InspectorTest.log("PAUSED:");
-                    InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason[type], `Pause reason should be ${type}.`);
-                    InspectorTest.expectEqual(targetData.pauseData.breakpointURL, expectedBreakpointURL, "Pause data URL should match breakpoint URL.");
-
-                    logActiveStackTrace();
-
-                    return WI.debuggerManager.resume();
-                })
-                .then(resolve, reject);
-            }
-        });
-
-        suite.addTestCase({
-            name: "URLBreakpoint.BreakOnMatchingRegularExpression." + type,
-            description: "Check that debugger pauses based on a URL matching a regex pattern.",
-            teardown,
-            test(resolve, reject) {
-                let expectedBreakpointURL;
-                addBreakpoint(WI.URLBreakpoint.Type.RegularExpression, "data[A-Z]*\.(json|txt|png)")
-                .then((breakpoint) => {
-                    expectedBreakpointURL = breakpoint.url;
-
-                    request(type);
-                    return WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
-                })
-                .then(() => {
-                    let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-                    InspectorTest.log("PAUSED:");
-                    InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason[type], `Pause reason should be ${type}.`);
-                    InspectorTest.expectEqual(targetData.pauseData.breakpointURL, expectedBreakpointURL, "Pause data URL should match breakpoint URL.");
-
-                    logActiveStackTrace();
-
-                    return WI.debuggerManager.resume();
-                })
-                .then(resolve, reject);
-            }
-        });
-
-        suite.addTestCase({
-            name: "URLBreakpoint.ShouldNotPauseOnDisabledBreakpoint." + type,
+            name: "URLBreakpoint.ShouldNotPauseOnDisabledBreakpoint." + api,
             description: "Check that debugger does not pause for disabled breakpoint.",
-            teardown,
-            test(resolve, reject) {
+            async test() {
                 let paused = false;
                 let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                     paused = true;
                     WI.debuggerManager.resume();
                 });
 
-                addBreakpoint(WI.URLBreakpoint.Type.Text, "data")
-                .then((breakpoint) => {
-                    breakpoint.disabled = true;
-                    InspectorTest.log("Breakpoint disabled.");
+                let breakpoint = await InspectorTest.URLBreakpoint.createBreakpoint(WI.URLBreakpoint.Type.Text, "data")
 
-                    return request(type);
-                })
-                .then(() => {
-                    InspectorTest.expectFalse(paused, "Should not pause for disabled breakpoint.");
-                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
-                    resolve();
-                })
-                .catch(reject);
-            }
+                InspectorTest.log("Disabling breakpoint...");
+                breakpoint.disabled = true;
+
+                await InspectorTest.URLBreakpoint.request(api);
+
+                InspectorTest.expectFalse(paused, "Should not pause for disabled breakpoint.");
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+            teardown: InspectorTest.URLBreakpoint.teardown,
         });
 
         suite.addTestCase({
-            name: "URLBreakpoint.ShouldNotPauseOnNotContainingURL." + type,
+            name: "URLBreakpoint.ShouldNotPauseOnNotContainingURL." + api,
             description: "Check that debugger does not pause for breakpoint with different URL.",
-            teardown,
-            test(resolve, reject) {
+            async test() {
                 let paused = false;
                 let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                     paused = true;
                     WI.debuggerManager.resume();
                 });
 
-                addBreakpoint(WI.URLBreakpoint.Type.Text, "nonexistant-url")
-                .then((breakpoint) => {
-                    return request(type);
-                })
-                .then(() => {
-                    InspectorTest.expectFalse(paused, "Should not pause for breakpoint with different URL.");
-                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
-                    resolve();
-                })
-                .catch(reject);
-            }
+                let breakpoint = await InspectorTest.URLBreakpoint.createBreakpoint(WI.URLBreakpoint.Type.Text, "nonexistant-url")
+
+                await InspectorTest.URLBreakpoint.request(api);
+
+                InspectorTest.expectFalse(paused, "Should not pause for breakpoint with different URL.");
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+            teardown: InspectorTest.URLBreakpoint.teardown,
         });
 
         suite.addTestCase({
-            name: "URLBreakpoint.RemoveBreakpoint." + type,
+            name: "URLBreakpoint.RemoveBreakpoint." + api,
             description: "Check that debugger does not pause for removed breakpoint.",
-            teardown,
-            test(resolve, reject) {
+            async test() {
                 let paused = false;
                 let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                     paused = true;
                     WI.debuggerManager.resume();
                 });
 
-                addBreakpoint(WI.URLBreakpoint.Type.Text, "data")
-                .then((breakpoint) => {
-                    WI.domDebuggerManager.removeURLBreakpoint(breakpoint);
-                    InspectorTest.log("Breakpoint removed.");
+                let breakpoint = await InspectorTest.URLBreakpoint.createBreakpoint(WI.URLBreakpoint.Type.Text, "data")
 
-                    return request(type);
-                })
-                .then(() => {
-                    InspectorTest.expectFalse(paused, "Should not pause for removed breakpoint.");
-                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
-                    resolve();
-                })
-                .catch(reject);
-            }
+                InspectorTest.log("Removing breakpoint...");
+                breakpoint.remove();
+
+                await InspectorTest.URLBreakpoint.request(api);
+
+                InspectorTest.expectFalse(paused, "Should not pause for removed breakpoint.");
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+            teardown: InspectorTest.URLBreakpoint.teardown,
         });
 
         suite.addTestCase({
-            name: "URLBreakpoint.RemoveDisabledBreakpoint." + type,
+            name: "URLBreakpoint.RemoveDisabledBreakpoint." + api,
             description: "Check that a disabled breakpoint can be removed.",
-            teardown,
-            test(resolve, reject) {
+            async test() {
                 let paused = false;
                 let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                     paused = true;
                     WI.debuggerManager.resume();
                 });
 
-                addBreakpoint(WI.URLBreakpoint.Type.Text, "data")
-                .then((breakpoint) => {
-                    breakpoint.disabled = true;
-                    InspectorTest.log("Breakpoint disabled.");
+                let breakpoint = await InspectorTest.URLBreakpoint.createBreakpoint(WI.URLBreakpoint.Type.Text, "data")
 
-                    WI.domDebuggerManager.removeURLBreakpoint(breakpoint);
-                    InspectorTest.log("Breakpoint removed.");
+                InspectorTest.log("Disabling breakpoint...");
+                breakpoint.disabled = true;
 
-                    return request(type);
-                })
-                .then(() => {
-                    InspectorTest.expectFalse(paused, "Should not pause for removed disabled breakpoint.");
-                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
-                    resolve();
-                })
-                .catch(reject);
-            }
+                InspectorTest.log("Removing breakpoint...");
+                breakpoint.remove();
+
+                await InspectorTest.URLBreakpoint.request(api);
+
+                InspectorTest.expectFalse(paused, "Should not pause for removed disabled breakpoint.");
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+            teardown: InspectorTest.URLBreakpoint.teardown,
         });
     }
 

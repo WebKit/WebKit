@@ -205,7 +205,6 @@ WI.settings = {
     searchRegularExpression: new WI.Setting("search-regular-expression", false),
     selectedNetworkDetailContentViewIdentifier: new WI.Setting("network-detail-content-view-identifier", "preview"),
     sourceMapsEnabled: new WI.Setting("source-maps-enabled", true),
-    showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", false),
     showCanvasPath: new WI.Setting("show-canvas-path", false),
     showImageGrid: new WI.Setting("show-image-grid", true),
     showInvisibleCharacters: new WI.Setting("show-invisible-characters", !!WI.Setting.migrateValue("show-invalid-characters")),

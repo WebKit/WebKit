@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
 <script src="../debugger/resources/log-active-stack-trace.js"></script>
 <script src="resources/event-breakpoint-utilities.js"></script>
 <script>
@@ -221,7 +222,17 @@ function test() {
         teardown: InspectorTest.EventBreakpoint.teardown,
     });
 
-    InspectorTest.EventBreakpoint.addBreakpointOptionsTestCases(suite, WI.EventBreakpoint.Type.Listener, "click");
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        createBreakpoint() {
+            return InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"});
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.awaitEvent("TestPage-click"),
+                InspectorTest.evaluateInPage(`trigger_click()`),
+            ]);
+        },
+    });
 
     suite.runTestCasesAndFinish();
 }
