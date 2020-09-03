@@ -576,13 +576,19 @@ void Biquad::getFrequencyResponse(unsigned nFrequencies, const float* frequency,
     double a2 = m_a2[0];
     
     for (unsigned k = 0; k < nFrequencies; ++k) {
-        double omega = -piDouble * frequency[k];
-        std::complex<double> z = std::complex<double>(cos(omega), sin(omega));
-        std::complex<double> numerator = b0 + (b1 + b2 * z) * z;
-        std::complex<double> denominator = std::complex<double>(1, 0) + (a1 + a2 * z) * z;
-        std::complex<double> response = numerator / denominator;
-        magResponse[k] = static_cast<float>(abs(response));
-        phaseResponse[k] = static_cast<float>(atan2(imag(response), real(response)));
+        if (frequency[k] < 0 || frequency[k] > 1) {
+            // Out-of-bounds frequencies should return NaN.
+            magResponse[k] = std::nanf("");
+            phaseResponse[k] = std::nanf("");
+        } else {
+            double omega = -piDouble * frequency[k];
+            std::complex<double> z = std::complex<double>(cos(omega), sin(omega));
+            std::complex<double> numerator = b0 + (b1 + b2 * z) * z;
+            std::complex<double> denominator = std::complex<double>(1, 0) + (a1 + a2 * z) * z;
+            std::complex<double> response = numerator / denominator;
+            magResponse[k] = static_cast<float>(abs(response));
+            phaseResponse[k] = static_cast<float>(atan2(imag(response), real(response)));
+        }
     }
 }
 

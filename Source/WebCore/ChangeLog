@@ -1,3 +1,17 @@
+2020-09-03  Chris Dumez  <cdumez@apple.com>
+
+        BiquadFilterNode.getFrequencyResponse() should return NaN for out-of-bounds frequencies
+        https://bugs.webkit.org/show_bug.cgi?id=216130
+
+        Reviewed by Eric Carlson.
+
+        BiquadFilterNode.getFrequencyResponse() should return NaN for out-of-bounds frequencies.
+
+        No new tests, rebaselined existing test.
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::getFrequencyResponse):
+
 2020-09-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow url breakpoints to be configured

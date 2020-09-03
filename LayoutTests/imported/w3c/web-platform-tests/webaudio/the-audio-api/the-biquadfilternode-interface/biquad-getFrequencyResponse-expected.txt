@@ -83,10 +83,10 @@ PASS   allpass: Max error (-266.8735521058153 dB) of magnitude response at frequ
 PASS   allpass: Max error (0.000013259871597205388 deg) in phase response at frequency 1080 Hz is less than or equal to 0.0007597420363434716. 
 PASS < [allpass] All assertions passed. (total 7 assertions) 
 PASS > [getFrequencyResponse] Test out-of-bounds frequency values 
-FAIL X Magnitude response at frequency -1 is not NaN but should be. Got 1.0000048875808716. assert_true: expected true got false
-FAIL X Magnitude response at frequency 16385 is not NaN but should be. Got 1.0357666981042346e-11. assert_true: expected true got false
-FAIL X Phase response at frequency -1 is not NaN but should be. Got 0.0025454906281083822. assert_true: expected true got false
-FAIL X Phase response at frequency 16385 is not NaN but should be. Got 3.141589879989624. assert_true: expected true got false
-FAIL < [getFrequencyResponse] 4 out of 4 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 9 tasks were failed. assert_true: expected true got false
+PASS   Magnitude response at frequency -1 is NaN. 
+PASS   Magnitude response at frequency 16385 is NaN. 
+PASS   Phase response at frequency -1 is NaN. 
+PASS   Phase response at frequency 16385 is NaN. 
+PASS < [getFrequencyResponse] All assertions passed. (total 4 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 9 tasks ran successfully. 
 
