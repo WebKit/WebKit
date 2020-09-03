@@ -1,3 +1,43 @@
+2020-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make TransformationMatrix::inverse() faster in the case of affine transformation matrices
+        https://bugs.webkit.org/show_bug.cgi?id=216101
+
+        Reviewed by Tim Horton.
+
+        The Multiply subtest of MotionMark places a large number of elements that are all rotated by some angle; when
+        painting these, we currently spend about 7% of the time under `RenderLayer::paintLayerByApplyingTransform` just
+        inverting the transformation matrix (underneath `TransformationMatrix::inverse()`) so that we can map the bounds
+        of the dirty rect through this inverse.
+
+        `TransformationMatrix::inverse()` currently has a fast path for identity and translation matrices that avoids
+        having to fall back to the generalized 4-by-4 matrix inverse equation; this generalized algorithm works by
+        dividing the entire adjoint matrix by the determinant, a process that involves nearly 1000 floating point
+        additions and multiplications.
+
+        However, in this case, all of the matrices are a combination of translations and rotations, which all result in
+        affine transformations. As such, there's no need to fall back to the generalized algorithm for computing the
+        inverse; instead, we can bail early with simpler strategy that only requires 15 floating point additions and
+        multiplications.
+
+        We can also take advantange of the fact that we currently go through most of the entries in the 4x4 matrix to
+        determine whether the matrix is an identity or translation matrix, by introducing a new helper method that
+        returns not only whether the matrix is the identity matrix or translation, but also whether the matrix is affine
+        (by the definition of `TransformationMatrix::isAffine()`). Since most of the entries that need to be 1 or 0 in
+        order for a matrix to be a translation matrix vs. just an affine transformation matrix are the same, this helps
+        avoid some redundant checks in `TransformationMatrix::inverse()`.
+
+        We also apply a similar optimization to `TransformationMatrix::isInvertible()`, reducing the multiplications and
+        additions from roughly 200 to just 3.
+
+        I measured this locally to be a (statistically significant) 2% improvement on Multiply.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::isInvertible const):
+        (WebCore::TransformationMatrix::inverse const):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::type const):
+
 2020-09-03  Youenn Fablet  <youenn@apple.com>
 
         Expose RTCPeerConnection.restartIce

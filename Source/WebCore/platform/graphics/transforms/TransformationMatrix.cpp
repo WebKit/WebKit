@@ -1459,20 +1459,17 @@ void TransformationMatrix::multVecMatrix(double x, double y, double z, double& r
 
 bool TransformationMatrix::isInvertible() const
 {
-    if (isIdentityOrTranslation())
+    auto type = this->type();
+    if (type == Type::IdentityOrTranslation)
         return true;
 
-    double det = WebCore::determinant4x4(m_matrix);
-
-    if (fabs(det) < SMALL_NUMBER)
-        return false;
-
-    return true;
+    return fabs(type == Type::Affine ? (m11() * m22() - m12() * m21()) : WebCore::determinant4x4(m_matrix)) >= SMALL_NUMBER;
 }
 
 Optional<TransformationMatrix> TransformationMatrix::inverse() const
 {
-    if (isIdentityOrTranslation()) {
+    auto type = this->type();
+    if (type == Type::IdentityOrTranslation) {
         // identity matrix
         if (m_matrix[3][0] == 0 && m_matrix[3][1] == 0 && m_matrix[3][2] == 0)
             return TransformationMatrix();
@@ -1482,6 +1479,28 @@ Optional<TransformationMatrix> TransformationMatrix::inverse() const
                                     0, 1, 0, 0,
                                     0, 0, 1, 0,
                                     -m_matrix[3][0], -m_matrix[3][1], -m_matrix[3][2], 1);
+    }
+
+    if (type == Type::Affine) {
+        double a = m11();
+        double b = m12();
+        double c = m21();
+        double d = m22();
+        double e = m41();
+        double f = m42();
+        double determinant = a * d - b * c;
+        if (fabs(determinant) < SMALL_NUMBER)
+            return WTF::nullopt;
+
+        double inverseDeterminant = 1 / determinant;
+        return {{
+            d * inverseDeterminant,
+            -b * inverseDeterminant,
+            -c * inverseDeterminant,
+            a * inverseDeterminant,
+            (c * f - d * e) * inverseDeterminant,
+            (b * e - a * f) * inverseDeterminant
+        }};
     }
 
     TransformationMatrix invMat;
