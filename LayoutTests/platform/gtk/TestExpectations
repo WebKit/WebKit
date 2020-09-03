@@ -64,6 +64,11 @@ webkit.org/b/201270 [ Debug ] http/tests/security/showModalDialog-sync-cross-ori
 ## Also timeouts sometimes in Wayland
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash Slow ]
 
+# WebAudio
+webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Crash Pass ]
+webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response.html [ Crash Pass Failure ]
+webkit.org/b/216118 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Crash Pass Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 # Legacy Expectations sections below

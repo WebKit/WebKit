@@ -39,6 +39,9 @@ webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing
 # Scrolling coordinator
 webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.html [ Pass Timeout ]
 
+# Subpixel
+webkit.org/b/216037 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ Pass ImageOnlyFailure ]
+
 # Workers
 webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
 

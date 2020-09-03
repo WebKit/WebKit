@@ -18,132 +18,132 @@ PASS Executing "forward setter"
 PASS Executing "up setter" 
 PASS Audit report 
 PASS > [Stereo panner.positionX]  
-PASS   Stereo panner.positionX.value frame [0, 128) channel 0 contains only the constant 6.123233968888981e-21. 
-PASS   Stereo panner.positionX.value frame [0, 128) channel 1 contains only the constant 0.00029999998514540493. 
-PASS   Stereo panner.positionX.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Stereo panner.positionX.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Stereo panner.positionX: Output at frame 128 channel 0 is not equal to 6.123233968888981e-21. 
-PASS   Stereo panner.positionX: Output at frame 128 channel 1 is not equal to 0.00029999998514540493. 
+PASS   Stereo panner.positionX.value frame [0, 128) channel 0 contains only the constant 6.123234262925839e-17. 
+PASS   Stereo panner.positionX.value frame [0, 128) channel 1 contains only the constant 3. 
+PASS   Stereo panner.positionX.value frame [128, 256) channel 0 contains only the constant 6.123233968888981e-21. 
+PASS   Stereo panner.positionX.value frame [128, 256) channel 1 contains only the constant 0.00029999998514540493. 
+PASS   Stereo panner.positionX: Output at frame 128 channel 0 is not equal to 6.123234262925839e-17. 
+PASS   Stereo panner.positionX: Output at frame 128 channel 1 is not equal to 3. 
 PASS < [Stereo panner.positionX] All assertions passed. (total 6 assertions) 
 PASS > [Mono panner.positionX]  
-PASS   Mono panner.positionX.value frame [0, 128) channel 0 contains only the constant 6.123233968888981e-21. 
-PASS   Mono panner.positionX.value frame [0, 128) channel 1 contains only the constant 0.00009999999747378752. 
-PASS   Mono panner.positionX.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Mono panner.positionX.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Mono panner.positionX: Output at frame 128 channel 0 is not equal to 6.123233968888981e-21. 
-PASS   Mono panner.positionX: Output at frame 128 channel 1 is not equal to 0.00009999999747378752. 
+PASS   Mono panner.positionX.value frame [0, 128) channel 0 contains only the constant 6.123234262925839e-17. 
+PASS   Mono panner.positionX.value frame [0, 128) channel 1 contains only the constant 1. 
+PASS   Mono panner.positionX.value frame [128, 256) channel 0 contains only the constant 6.123233968888981e-21. 
+PASS   Mono panner.positionX.value frame [128, 256) channel 1 contains only the constant 0.00009999999747378752. 
+PASS   Mono panner.positionX: Output at frame 128 channel 0 is not equal to 6.123234262925839e-17. 
+PASS   Mono panner.positionX: Output at frame 128 channel 1 is not equal to 1. 
 PASS < [Mono panner.positionX] All assertions passed. (total 6 assertions) 
 PASS > [Stereo panner.positionY]  
-PASS   Stereo panner.positionY.value frame [0, 128) channel 0 contains only the constant 0.00009999999747378752. 
-PASS   Stereo panner.positionY.value frame [0, 128) channel 1 contains only the constant 0.00019999999494757503. 
-PASS   Stereo panner.positionY.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Stereo panner.positionY.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Stereo panner.positionY: Output at frame 128 channel 0 is not equal to 0.00009999999747378752. 
-PASS   Stereo panner.positionY: Output at frame 128 channel 1 is not equal to 0.00019999999494757503. 
+PASS   Stereo panner.positionY.value frame [0, 128) channel 0 contains only the constant 1. 
+PASS   Stereo panner.positionY.value frame [0, 128) channel 1 contains only the constant 2. 
+PASS   Stereo panner.positionY.value frame [128, 256) channel 0 contains only the constant 0.00009999999747378752. 
+PASS   Stereo panner.positionY.value frame [128, 256) channel 1 contains only the constant 0.00019999999494757503. 
+PASS   Stereo panner.positionY: Output at frame 128 channel 0 is not equal to 1. 
+PASS   Stereo panner.positionY: Output at frame 128 channel 1 is not equal to 2. 
 PASS < [Stereo panner.positionY] All assertions passed. (total 6 assertions) 
 PASS > [Mono panner.positionY]  
-PASS   Mono panner.positionY.value frame [0, 128) channel 0 contains only the constant 0.00007071067375363782. 
-PASS   Mono panner.positionY.value frame [0, 128) channel 1 contains only the constant 0.00007071067375363782. 
-PASS   Mono panner.positionY.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Mono panner.positionY.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Mono panner.positionY: Output at frame 128 channel 0 is not equal to 0.00007071067375363782. 
-PASS   Mono panner.positionY: Output at frame 128 channel 1 is not equal to 0.00007071067375363782. 
+PASS   Mono panner.positionY.value frame [0, 128) channel 0 contains only the constant 0.7071067690849304. 
+PASS   Mono panner.positionY.value frame [0, 128) channel 1 contains only the constant 0.7071067690849304. 
+PASS   Mono panner.positionY.value frame [128, 256) channel 0 contains only the constant 0.00007071067375363782. 
+PASS   Mono panner.positionY.value frame [128, 256) channel 1 contains only the constant 0.00007071067375363782. 
+PASS   Mono panner.positionY: Output at frame 128 channel 0 is not equal to 0.7071067690849304. 
+PASS   Mono panner.positionY: Output at frame 128 channel 1 is not equal to 0.7071067690849304. 
 PASS < [Mono panner.positionY] All assertions passed. (total 6 assertions) 
 PASS > [Stereo panner.positionZ]  
-PASS   Stereo panner.positionZ.value frame [0, 128) channel 0 contains only the constant 0.00009999999747378752. 
-PASS   Stereo panner.positionZ.value frame [0, 128) channel 1 contains only the constant 0.00019999999494757503. 
-PASS   Stereo panner.positionZ.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Stereo panner.positionZ.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Stereo panner.positionZ: Output at frame 128 channel 0 is not equal to 0.00009999999747378752. 
-PASS   Stereo panner.positionZ: Output at frame 128 channel 1 is not equal to 0.00019999999494757503. 
+PASS   Stereo panner.positionZ.value frame [0, 128) channel 0 contains only the constant 1. 
+PASS   Stereo panner.positionZ.value frame [0, 128) channel 1 contains only the constant 2. 
+PASS   Stereo panner.positionZ.value frame [128, 256) channel 0 contains only the constant 0.00009999999747378752. 
+PASS   Stereo panner.positionZ.value frame [128, 256) channel 1 contains only the constant 0.00019999999494757503. 
+PASS   Stereo panner.positionZ: Output at frame 128 channel 0 is not equal to 1. 
+PASS   Stereo panner.positionZ: Output at frame 128 channel 1 is not equal to 2. 
 PASS < [Stereo panner.positionZ] All assertions passed. (total 6 assertions) 
 PASS > [Mono panner.positionZ]  
-PASS   Mono panner.positionZ.value frame [0, 128) channel 0 contains only the constant 0.00007071067375363782. 
-PASS   Mono panner.positionZ.value frame [0, 128) channel 1 contains only the constant 0.00007071067375363782. 
-PASS   Mono panner.positionZ.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Mono panner.positionZ.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Mono panner.positionZ: Output at frame 128 channel 0 is not equal to 0.00007071067375363782. 
-PASS   Mono panner.positionZ: Output at frame 128 channel 1 is not equal to 0.00007071067375363782. 
+PASS   Mono panner.positionZ.value frame [0, 128) channel 0 contains only the constant 0.7071067690849304. 
+PASS   Mono panner.positionZ.value frame [0, 128) channel 1 contains only the constant 0.7071067690849304. 
+PASS   Mono panner.positionZ.value frame [128, 256) channel 0 contains only the constant 0.00007071067375363782. 
+PASS   Mono panner.positionZ.value frame [128, 256) channel 1 contains only the constant 0.00007071067375363782. 
+PASS   Mono panner.positionZ: Output at frame 128 channel 0 is not equal to 0.7071067690849304. 
+PASS   Mono panner.positionZ: Output at frame 128 channel 1 is not equal to 0.7071067690849304. 
 PASS < [Mono panner.positionZ] All assertions passed. (total 6 assertions) 
 PASS > [Stereo listener.positionX]  
-PASS   Stereo listener.positionX.value frame [0, 128) channel 0 contains only the constant 0.00030002999119460583. 
-PASS   Stereo listener.positionX.value frame [0, 128) channel 1 contains only the constant 0. 
-PASS   Stereo listener.positionX.value frame [128, 256) channel 0 contains only the constant 0. 
+PASS   Stereo listener.positionX.value frame [0, 128) channel 0 contains only the constant 1. 
+PASS   Stereo listener.positionX.value frame [0, 128) channel 1 contains only the constant 2. 
+PASS   Stereo listener.positionX.value frame [128, 256) channel 0 contains only the constant 0.00030002999119460583. 
 PASS   Stereo listener.positionX.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Stereo listener.positionX: Output at frame 128 channel 0 is not equal to 0.00030002999119460583. 
-FAIL X Stereo listener.positionX: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
-FAIL < [Stereo listener.positionX] 1 out of 6 assertions were failed. assert_true: expected true got false
+PASS   Stereo listener.positionX: Output at frame 128 channel 0 is not equal to 1. 
+PASS   Stereo listener.positionX: Output at frame 128 channel 1 is not equal to 2. 
+PASS < [Stereo listener.positionX] All assertions passed. (total 6 assertions) 
 PASS > [Mono listener.positionX]  
-PASS   Mono listener.positionX.value frame [0, 128) channel 0 contains only the constant 0.00010001000191550702. 
-PASS   Mono listener.positionX.value frame [0, 128) channel 1 contains only the constant 0. 
-PASS   Mono listener.positionX.value frame [128, 256) channel 0 contains only the constant 0. 
+PASS   Mono listener.positionX.value frame [0, 128) channel 0 contains only the constant 0.7071067690849304. 
+PASS   Mono listener.positionX.value frame [0, 128) channel 1 contains only the constant 0.7071067690849304. 
+PASS   Mono listener.positionX.value frame [128, 256) channel 0 contains only the constant 0.00010001000191550702. 
 PASS   Mono listener.positionX.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Mono listener.positionX: Output at frame 128 channel 0 is not equal to 0.00010001000191550702. 
-FAIL X Mono listener.positionX: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
-FAIL < [Mono listener.positionX] 1 out of 6 assertions were failed. assert_true: expected true got false
+PASS   Mono listener.positionX: Output at frame 128 channel 0 is not equal to 0.7071067690849304. 
+PASS   Mono listener.positionX: Output at frame 128 channel 1 is not equal to 0.7071067690849304. 
+PASS < [Mono listener.positionX] All assertions passed. (total 6 assertions) 
 PASS > [Stereo listener.positionY]  
-PASS   Stereo listener.positionY.value frame [0, 128) channel 0 contains only the constant 0.0000707106664776802. 
-PASS   Stereo listener.positionY.value frame [0, 128) channel 1 contains only the constant 0.00027071067597717047. 
-PASS   Stereo listener.positionY.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Stereo listener.positionY.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Stereo listener.positionY: Output at frame 128 channel 0 is not equal to 0.0000707106664776802. 
-PASS   Stereo listener.positionY: Output at frame 128 channel 1 is not equal to 0.00027071067597717047. 
+PASS   Stereo listener.positionY.value frame [0, 128) channel 0 contains only the constant 0.40824827551841736. 
+PASS   Stereo listener.positionY.value frame [0, 128) channel 1 contains only the constant 1.5629488229751587. 
+PASS   Stereo listener.positionY.value frame [128, 256) channel 0 contains only the constant 0.0000707106664776802. 
+PASS   Stereo listener.positionY.value frame [128, 256) channel 1 contains only the constant 0.00027071067597717047. 
+PASS   Stereo listener.positionY: Output at frame 128 channel 0 is not equal to 0.40824827551841736. 
+PASS   Stereo listener.positionY: Output at frame 128 channel 1 is not equal to 1.5629488229751587. 
 PASS < [Stereo listener.positionY] All assertions passed. (total 6 assertions) 
 PASS > [Mono listener.positionY]  
-PASS   Mono listener.positionY.value frame [0, 128) channel 0 contains only the constant 0.00003826833926723339. 
-PASS   Mono listener.positionY.value frame [0, 128) channel 1 contains only the constant 0.00009238795610144734. 
-PASS   Mono listener.positionY.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Mono listener.positionY.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Mono listener.positionY: Output at frame 128 channel 0 is not equal to 0.00003826833926723339. 
-PASS   Mono listener.positionY: Output at frame 128 channel 1 is not equal to 0.00009238795610144734. 
+PASS   Mono listener.positionY.value frame [0, 128) channel 0 contains only the constant 0.22094237804412842. 
+PASS   Mono listener.positionY.value frame [0, 128) channel 1 contains only the constant 0.5334020853042603. 
+PASS   Mono listener.positionY.value frame [128, 256) channel 0 contains only the constant 0.00003826833926723339. 
+PASS   Mono listener.positionY.value frame [128, 256) channel 1 contains only the constant 0.00009238795610144734. 
+PASS   Mono listener.positionY: Output at frame 128 channel 0 is not equal to 0.22094237804412842. 
+PASS   Mono listener.positionY: Output at frame 128 channel 1 is not equal to 0.5334020853042603. 
 PASS < [Mono listener.positionY] All assertions passed. (total 6 assertions) 
 PASS > [Stereo listener.positionZ]  
-PASS   Stereo listener.positionZ.value frame [0, 128) channel 0 contains only the constant 0.00010001000191550702. 
-PASS   Stereo listener.positionZ.value frame [0, 128) channel 1 contains only the constant 0.00020003000099677593. 
-PASS   Stereo listener.positionZ.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Stereo listener.positionZ.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Stereo listener.positionZ: Output at frame 128 channel 0 is not equal to 0.00010001000191550702. 
-PASS   Stereo listener.positionZ: Output at frame 128 channel 1 is not equal to 0.00020003000099677593. 
+PASS   Stereo listener.positionZ.value frame [0, 128) channel 0 contains only the constant 6.123234262925839e-17. 
+PASS   Stereo listener.positionZ.value frame [0, 128) channel 1 contains only the constant 3. 
+PASS   Stereo listener.positionZ.value frame [128, 256) channel 0 contains only the constant 0.00010001000191550702. 
+PASS   Stereo listener.positionZ.value frame [128, 256) channel 1 contains only the constant 0.00020003000099677593. 
+PASS   Stereo listener.positionZ: Output at frame 128 channel 0 is not equal to 6.123234262925839e-17. 
+PASS   Stereo listener.positionZ: Output at frame 128 channel 1 is not equal to 3. 
 PASS < [Stereo listener.positionZ] All assertions passed. (total 6 assertions) 
 PASS > [Mono listener.positionZ]  
-PASS   Mono listener.positionZ.value frame [0, 128) channel 0 contains only the constant 0.00007071421714499593. 
-PASS   Mono listener.positionZ.value frame [0, 128) channel 1 contains only the constant 0.0000707212820998393. 
-PASS   Mono listener.positionZ.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   Mono listener.positionZ.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   Mono listener.positionZ: Output at frame 128 channel 0 is not equal to 0.00007071421714499593. 
-PASS   Mono listener.positionZ: Output at frame 128 channel 1 is not equal to 0.0000707212820998393. 
+PASS   Mono listener.positionZ.value frame [0, 128) channel 0 contains only the constant 6.123234262925839e-17. 
+PASS   Mono listener.positionZ.value frame [0, 128) channel 1 contains only the constant 1. 
+PASS   Mono listener.positionZ.value frame [128, 256) channel 0 contains only the constant 0.00007071421714499593. 
+PASS   Mono listener.positionZ.value frame [128, 256) channel 1 contains only the constant 0.0000707212820998393. 
+PASS   Mono listener.positionZ: Output at frame 128 channel 0 is not equal to 6.123234262925839e-17. 
+PASS   Mono listener.positionZ: Output at frame 128 channel 1 is not equal to 1. 
 PASS < [Mono listener.positionZ] All assertions passed. (total 6 assertions) 
 PASS > [setPosition]  
-PASS   setPosition.value frame [0, 128) channel 0 contains only the constant 0.000124290119856596. 
-PASS   setPosition.value frame [0, 128) channel 1 contains only the constant 0.0002424988488201052. 
-PASS   setPosition.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   setPosition.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   setPosition: Output at frame 128 channel 0 is not equal to 0.000124290119856596. 
-PASS   setPosition: Output at frame 128 channel 1 is not equal to 0.0002424988488201052. 
+PASS   setPosition.value frame [0, 128) channel 0 contains only the constant 0.40824827551841736. 
+PASS   setPosition.value frame [0, 128) channel 1 contains only the constant 1.5629488229751587. 
+PASS   setPosition.value frame [128, 256) channel 0 contains only the constant 0.000124290119856596. 
+PASS   setPosition.value frame [128, 256) channel 1 contains only the constant 0.0002424988488201052. 
+PASS   setPosition: Output at frame 128 channel 0 is not equal to 0.40824827551841736. 
+PASS   setPosition: Output at frame 128 channel 1 is not equal to 1.5629488229751587. 
 PASS < [setPosition] All assertions passed. (total 6 assertions) 
 PASS > [orientation setter]  
-PASS   panner.orientation{XYZ}.value frame [0, 128) channel 0 contains only the constant 0.07899458706378937. 
-PASS   panner.orientation{XYZ}.value frame [0, 128) channel 1 contains only the constant 0.15798917412757874. 
-PASS   panner.orientation{XYZ}.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   panner.orientation{XYZ}.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   panner.orientation{XYZ}: Output at frame 128 channel 0 is not equal to 0.07899458706378937. 
-PASS   panner.orientation{XYZ}: Output at frame 128 channel 1 is not equal to 0.15798917412757874. 
+PASS   panner.orientation{XYZ}.value frame [0, 128) channel 0 contains only the constant 0.5005000233650208. 
+PASS   panner.orientation{XYZ}.value frame [0, 128) channel 1 contains only the constant 1.0010000467300415. 
+PASS   panner.orientation{XYZ}.value frame [128, 256) channel 0 contains only the constant 0.07899458706378937. 
+PASS   panner.orientation{XYZ}.value frame [128, 256) channel 1 contains only the constant 0.15798917412757874. 
+PASS   panner.orientation{XYZ}: Output at frame 128 channel 0 is not equal to 0.5005000233650208. 
+PASS   panner.orientation{XYZ}: Output at frame 128 channel 1 is not equal to 1.0010000467300415. 
 PASS < [orientation setter] All assertions passed. (total 6 assertions) 
 PASS > [forward setter]  
-PASS   listener.forward{XYZ}.value frame [0, 128) channel 0 contains only the constant 0.5133963823318481. 
-PASS   listener.forward{XYZ}.value frame [0, 128) channel 1 contains only the constant 1.0009169578552246. 
-PASS   listener.forward{XYZ}.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   listener.forward{XYZ}.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   listener.forward{XYZ}: Output at frame 128 channel 0 is not equal to 0.5133963823318481. 
-PASS   listener.forward{XYZ}: Output at frame 128 channel 1 is not equal to 1.0009169578552246. 
+PASS   listener.forward{XYZ}.value frame [0, 128) channel 0 contains only the constant 0.5005000233650208. 
+PASS   listener.forward{XYZ}.value frame [0, 128) channel 1 contains only the constant 1.0010000467300415. 
+PASS   listener.forward{XYZ}.value frame [128, 256) channel 0 contains only the constant 0.5133963823318481. 
+PASS   listener.forward{XYZ}.value frame [128, 256) channel 1 contains only the constant 1.0009169578552246. 
+PASS   listener.forward{XYZ}: Output at frame 128 channel 0 is not equal to 0.5005000233650208. 
+PASS   listener.forward{XYZ}: Output at frame 128 channel 1 is not equal to 1.0010000467300415. 
 PASS < [forward setter] All assertions passed. (total 6 assertions) 
 PASS > [up setter]  
-PASS   listener.up{XYZ}.value frame [0, 128) channel 0 contains only the constant 0.14477059245109558. 
-PASS   listener.up{XYZ}.value frame [0, 128) channel 1 contains only the constant 0.4569823145866394. 
-PASS   listener.up{XYZ}.value frame [128, 256) channel 0 contains only the constant 0. 
-PASS   listener.up{XYZ}.value frame [128, 256) channel 1 contains only the constant 0. 
-PASS   listener.up{XYZ}: Output at frame 128 channel 0 is not equal to 0.14477059245109558. 
-PASS   listener.up{XYZ}: Output at frame 128 channel 1 is not equal to 0.4569823145866394. 
+PASS   listener.up{XYZ}.value frame [0, 128) channel 0 contains only the constant 0.12537500262260437. 
+PASS   listener.up{XYZ}.value frame [0, 128) channel 1 contains only the constant 0.47998911142349243. 
+PASS   listener.up{XYZ}.value frame [128, 256) channel 0 contains only the constant 0.14477059245109558. 
+PASS   listener.up{XYZ}.value frame [128, 256) channel 1 contains only the constant 0.4569823145866394. 
+PASS   listener.up{XYZ}: Output at frame 128 channel 0 is not equal to 0.12537500262260437. 
+PASS   listener.up{XYZ}: Output at frame 128 channel 1 is not equal to 0.47998911142349243. 
 PASS < [up setter] All assertions passed. (total 6 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 16 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 16 tasks ran successfully. 
 

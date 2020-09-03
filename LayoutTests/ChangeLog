@@ -1,3 +1,14 @@
+2020-09-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Rebaseline and garden some tests
+
+        Unreviewed test gardening.
+
+        * platform/glib/fast/encoding/charset-replacement-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-09-02  Hector Lopez  <hector_i_lopez@apple.com>
 
         Rebaseline after macOS build progression.
