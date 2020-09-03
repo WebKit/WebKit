@@ -1,5 +1,63 @@
 2020-09-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266158. rdar://problem/67812825
+
+    Web Share API Level 2 functions even when its experimental feature flag is disabled
+    https://bugs.webkit.org/show_bug.cgi?id=215831
+    <rdar://problem/67760687>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Tests: fast/web-share/canShare-with-files-feature-disabled.html
+           fast/web-share/share-with-files-feature-disabled.html
+    
+    We had a feature flag for Web Share API Level 2, but it isn't actually
+    consulted anywhere in the implementation.
+    
+    * page/Navigator.cpp:
+    (WebCore::Navigator::canShare):
+    Rewrite canShare to be a bit more readable, and also to consult the Level 2 feature flag.
+    
+    (WebCore::Navigator::share):
+    Since canShare (per the spec) will return true if we have files and other content,
+    even if files are not shareable, check the feature flag again before loading the files.
+    
+    Source/WebKit:
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::showShareSheet):
+    If the Web Content process sends us files, but the Level 2 feature flag is disabled,
+    something fishy is happening, so fire a MESSAGE_CHECK.
+    
+    LayoutTests:
+    
+    * fast/web-share/canShare-with-files-feature-disabled-expected.txt: Added.
+    * fast/web-share/canShare-with-files-feature-disabled.html: Added.
+    * fast/web-share/share-with-files-feature-disabled-expected.txt: Added.
+    * fast/web-share/share-with-files-feature-disabled.html: Added.
+    Add some tests that ensure that disabling the feature actually works.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266158 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-25  Tim Horton  <timothy_horton@apple.com>
+
+            Web Share API Level 2 functions even when its experimental feature flag is disabled
+            https://bugs.webkit.org/show_bug.cgi?id=215831
+            <rdar://problem/67760687>
+
+            Reviewed by Darin Adler.
+
+            * fast/web-share/canShare-with-files-feature-disabled-expected.txt: Added.
+            * fast/web-share/canShare-with-files-feature-disabled.html: Added.
+            * fast/web-share/share-with-files-feature-disabled-expected.txt: Added.
+            * fast/web-share/share-with-files-feature-disabled.html: Added.
+            Add some tests that ensure that disabling the feature actually works.
+
+2020-09-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266151. rdar://problem/67812825
 
     Web Share API can share non-HTTP(S) URLs
