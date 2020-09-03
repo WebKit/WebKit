@@ -147,13 +147,29 @@ ExceptionOr<void> AudioParamTimeline::insertEvent(const ParamEvent& event)
     return { };
 }
 
-void AudioParamTimeline::cancelScheduledValues(Seconds startTime)
+void AudioParamTimeline::cancelScheduledValues(Seconds cancelTime)
 {
     auto locker = holdLock(m_eventsMutex);
 
-    // Remove all events starting at startTime.
+    // Remove all events whose start time is greater than or equal to the cancel time.
+    // Also handle the special case where the cancel time lies in the middle of a
+    // SetValueCurve event.
+    //
+    // This critically depends on the fact that no event can be scheduled in the middle
+    // of the curve or at the same start time. Then removing the SetValueCurve doesn't
+    // remove any events that shouldn't have been.
+    auto isAfter = [](const ParamEvent& event, Seconds cancelTime) {
+        auto eventTime = event.time();
+        if (eventTime >= cancelTime)
+            return true;
+        return event.type() == ParamEvent::SetValueCurve
+            && eventTime <= cancelTime
+            && (eventTime + event.duration() > cancelTime);
+    };
+
+    // Remove all events starting at cancelTime.
     for (unsigned i = 0; i < m_events.size(); ++i) {
-        if (m_events[i].time() >= startTime) {
+        if (isAfter(m_events[i], cancelTime)) {
             m_events.remove(i, m_events.size() - i);
             break;
         }
