@@ -552,7 +552,8 @@ class BundleUploader(object):
             # SFTP upload instructions file
             uploadinstructionsfile.write('progress\n')
             uploadinstructionsfile.write('put %s %s\n' % (self._bundle_file_path, remote_file_bundle_path))
-            uploadinstructionsfile.write('put %s %s\n' % (hashcheckfile.name, remote_file_bundle_path + '.sha256sum'))
+            remote_file_bundle_path_no_ext, _ = os.path.splitext(remote_file_bundle_path)
+            uploadinstructionsfile.write('put %s %s\n' % (hashcheckfile.name, remote_file_bundle_path_no_ext + '.sha256sum'))
             uploadinstructionsfile.write('put %s %s\n' % (lastisfile.name, os.path.join(os.path.dirname(remote_file_bundle_path), 'LAST-IS')))
             uploadinstructionsfile.write('quit\n')
             uploadinstructionsfile.flush()
