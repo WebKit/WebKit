@@ -76,8 +76,8 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
     processBytesShared = [&] (UChar codeUnit) {
         if (m_leadSurrogate) {
             auto leadSurrogate = *std::exchange(m_leadSurrogate, WTF::nullopt);
-            if (codeUnit >= 0xDC00 && codeUnit <= 0xDFFF) {
-                result.appendCharacter(0x10000 + ((leadSurrogate - 0xD800) << 10) + codeUnit - 0xDC00);
+            if (U16_IS_TRAIL(codeUnit)) {
+                result.appendCharacter(U16_GET_SUPPLEMENTARY(leadSurrogate, codeUnit));
                 return;
             }
             sawError = true;
@@ -85,11 +85,11 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
             processBytesShared(codeUnit);
             return;
         }
-        if (codeUnit >= 0xD800 && codeUnit <= 0xDBFF) {
+        if (U16_IS_LEAD(codeUnit)) {
             m_leadSurrogate = codeUnit;
             return;
         }
-        if (codeUnit >= 0xDC00 && codeUnit <=0xDFFF) {
+        if (U16_IS_TRAIL(codeUnit)) {
             sawError = true;
             result.append(replacementCharacter);
             return;

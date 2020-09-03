@@ -1,3 +1,24 @@
+2020-09-03  Alex Christensen  <achristensen@webkit.org>
+
+        Use unicode macros instead of manual range checks in TextCodecUTF16
+        https://bugs.webkit.org/show_bug.cgi?id=216098
+
+        Reviewed by Darin Adler.
+
+        No change in behavior.  Just responding to feedback from bug 216058.
+
+        * platform/text/TextCodecSingleByte.cpp: Added.
+        (WebCore::tableForDecoding):
+        (WebCore::tableForEncoding):
+        (WebCore::TextCodecSingleByte::encode):
+        (WebCore::TextCodecSingleByte::decode):
+        (WebCore::TextCodecSingleByte::TextCodecSingleByte):
+        (WebCore::TextCodecSingleByte::registerEncodingNames):
+        (WebCore::TextCodecSingleByte::registerCodecs):
+        * platform/text/TextCodecSingleByte.h: Added.
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::decode):
+
 2020-09-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for vertical-align: text-bottom
