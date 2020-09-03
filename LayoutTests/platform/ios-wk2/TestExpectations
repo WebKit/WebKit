@@ -1868,3 +1868,5 @@ webkit.org/b/215783 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scr
 webkit.org/b/209461 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html [ Failure ]
 
 webkit.org/b/215929 compositing/video/poster.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/216124 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Failure ]
