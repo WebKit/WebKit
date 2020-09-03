@@ -32,4 +32,4 @@ interface HTMLAreaElement : HTMLElement {
     [PutForwards=value] readonly attribute DOMTokenList relList;
 };
 
-HTMLAreaElement implements HTMLHyperlinkElementUtils;
+HTMLAreaElement includes HTMLHyperlinkElementUtils;

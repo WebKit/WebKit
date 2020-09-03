@@ -59,4 +59,4 @@ typedef (Blob or BufferSource or DOMFormData or URLSearchParams or ReadableStrea
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchRequest clone();
 };
 
-FetchRequest implements FetchBody;
+FetchRequest includes FetchBody;

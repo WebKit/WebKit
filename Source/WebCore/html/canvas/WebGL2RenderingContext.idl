@@ -500,4 +500,4 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
     undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView dstData, GLuint dstOffset);
 };
 
-WebGL2RenderingContext implements WebGLRenderingContextBase;
+WebGL2RenderingContext includes WebGLRenderingContextBase;

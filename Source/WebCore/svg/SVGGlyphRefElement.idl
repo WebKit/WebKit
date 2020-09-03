@@ -28,4 +28,4 @@
     attribute unrestricted float dy;
 };
 
-SVGGlyphRefElement implements SVGURIReference;
+SVGGlyphRefElement includes SVGURIReference;

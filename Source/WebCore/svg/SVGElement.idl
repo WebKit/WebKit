@@ -30,6 +30,6 @@
     readonly attribute SVGElement? viewportElement;
 };
 
-SVGElement implements ElementCSSInlineStyle;
-SVGElement implements GlobalEventHandlers;
-SVGElement implements HTMLOrForeignElement;
+SVGElement includes ElementCSSInlineStyle;
+SVGElement includes GlobalEventHandlers;
+SVGElement includes HTMLOrForeignElement;

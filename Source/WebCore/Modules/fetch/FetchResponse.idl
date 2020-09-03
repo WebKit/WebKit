@@ -63,4 +63,4 @@ dictionary FetchResponseInit {
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchResponse clone();
 };
 
-FetchResponse implements FetchBody;
+FetchResponse includes FetchBody;

@@ -30,4 +30,4 @@ interface SVGUseElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength height;
 };
 
-SVGUseElement implements SVGURIReference;
+SVGUseElement includes SVGURIReference;

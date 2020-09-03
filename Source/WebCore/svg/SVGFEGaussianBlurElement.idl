@@ -41,4 +41,4 @@
                          optional unrestricted float stdDeviationY = NaN);
 };
 
-SVGFEGaussianBlurElement implements SVGFilterPrimitiveStandardAttributes;
+SVGFEGaussianBlurElement includes SVGFilterPrimitiveStandardAttributes;

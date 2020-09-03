@@ -30,4 +30,4 @@
     attribute DOMString format;
 };
 
-SVGAltGlyphElement implements SVGURIReference;
+SVGAltGlyphElement includes SVGURIReference;

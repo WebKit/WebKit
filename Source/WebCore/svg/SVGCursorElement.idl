@@ -28,5 +28,5 @@ interface SVGCursorElement : SVGElement {
     readonly attribute SVGAnimatedLength y;
 };
 
-SVGCursorElement implements SVGTests;
-SVGCursorElement implements SVGURIReference;
+SVGCursorElement includes SVGTests;
+SVGCursorElement includes SVGURIReference;

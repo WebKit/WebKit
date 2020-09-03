@@ -73,16 +73,16 @@ using namespace JSC;
 // Functions
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod1(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod2(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod3(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionIncludesMethod4(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionTakeNodes(JSC::JSGlobalObject*, JSC::CallFrame*);
@@ -110,26 +110,26 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionForEach(JSC::J
 JSC::EncodedJSValue jsTestInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestInterfaceConstructorIncludesStaticReadOnlyAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceConstructorImplementsStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceConstructorIncludesStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceConstructorIncludesStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceImplementsStr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestInterfaceIncludesStr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceImplementsStr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceImplementsStr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceIncludesStr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceIncludesStr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceImplementsStr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceImplementsStr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceIncludesStr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceIncludesStr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceImplementsNode(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceImplementsNode(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceIncludesNode(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceIncludesNode(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -197,12 +197,12 @@ using JSTestInterfaceConstructor = JSDOMConstructor<JSTestInterface>;
 static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT1", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
+    { "INCLUDES_CONSTANT1", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT2", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
+    { "INCLUDES_CONSTANT2", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -217,12 +217,12 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStaticReadOnlyAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorImplementsStaticReadOnlyAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "includesStaticReadOnlyAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorIncludesStaticReadOnlyAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStaticAttr", static_cast<unsigned>(0), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorImplementsStaticAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructorImplementsStaticAttr) } },
+    { "includesStaticAttr", static_cast<unsigned>(0), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorIncludesStaticAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructorIncludesStaticAttr) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -237,7 +237,7 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsMethod4", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfaceConstructorFunctionImplementsMethod4), (intptr_t) (0) } },
+    { "includesMethod4", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfaceConstructorFunctionIncludesMethod4), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -249,7 +249,7 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 };
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static_assert(TestInterface::IMPLEMENTSCONSTANT1 == 1, "IMPLEMENTSCONSTANT1 in TestInterface does not match value from IDL");
+static_assert(TestInterface::INCLUDES_CONSTANT1 == 1, "INCLUDES_CONSTANT1 in TestInterface does not match value from IDL");
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static_assert(TestInterface::CONST_IMPL == 2, "CONST_IMPL in TestInterface does not match value from IDL");
@@ -310,22 +310,22 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructor) } },
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr1", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "includesStr1", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIncludesStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr2", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr2) } },
+    { "includesStr2", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIncludesStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceIncludesStr2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr3", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) } },
+    { "includesStr3", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIncludesStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceIncludesStr3) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsNode", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsNode) } },
+    { "includesNode", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIncludesNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceIncludesNode) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -360,17 +360,17 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsMethod1", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionImplementsMethod1), (intptr_t) (0) } },
+    { "includesMethod1", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionIncludesMethod1), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsMethod2", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionImplementsMethod2), (intptr_t) (2) } },
+    { "includesMethod2", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionIncludesMethod2), (intptr_t) (2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsMethod3", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionImplementsMethod3), (intptr_t) (0) } },
+    { "includesMethod3", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionIncludesMethod3), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -404,12 +404,12 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
     { "values", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionValues), (intptr_t) (0) } },
     { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionForEach), (intptr_t) (1) } },
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT1", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
+    { "INCLUDES_CONSTANT1", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT2", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
+    { "INCLUDES_CONSTANT2", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -506,89 +506,89 @@ bool setJSTestInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJ
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(JSGlobalObject& lexicalGlobalObject)
+static inline JSValue jsTestInterfaceConstructorIncludesStaticReadOnlyAttrGetter(JSGlobalObject& lexicalGlobalObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, TestInterface::implementsStaticReadOnlyAttr())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, TestInterface::includesStaticReadOnlyAttr())));
 }
 
-EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorIncludesStaticReadOnlyAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter>(*lexicalGlobalObject, thisValue, "implementsStaticReadOnlyAttr");
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorIncludesStaticReadOnlyAttrGetter>(*lexicalGlobalObject, thisValue, "includesStaticReadOnlyAttr");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(JSGlobalObject& lexicalGlobalObject)
+static inline JSValue jsTestInterfaceConstructorIncludesStaticAttrGetter(JSGlobalObject& lexicalGlobalObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, TestInterface::implementsStaticAttr())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, TestInterface::includesStaticAttr())));
 }
 
-EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorIncludesStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorImplementsStaticAttrGetter>(*lexicalGlobalObject, thisValue, "implementsStaticAttr");
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorIncludesStaticAttrGetter>(*lexicalGlobalObject, thisValue, "includesStaticAttr");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceConstructorImplementsStaticAttrSetter(JSGlobalObject& lexicalGlobalObject, JSValue value)
+static inline bool setJSTestInterfaceConstructorIncludesStaticAttrSetter(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
-        return TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
+        return TestInterface::setIncludesStaticAttr(WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestInterfaceConstructorImplementsStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceConstructorIncludesStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorImplementsStaticAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "implementsStaticAttr");
+    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorIncludesStaticAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "includesStaticAttr");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceImplementsStr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
+static inline JSValue jsTestInterfaceIncludesStr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.implementsStr1())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.includesStr1())));
 }
 
-EncodedJSValue jsTestInterfaceImplementsStr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceIncludesStr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementsStr1");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceIncludesStr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "includesStr1");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceImplementsStr2Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
+static inline JSValue jsTestInterfaceIncludesStr2Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.implementsStr2())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.includesStr2())));
 }
 
-EncodedJSValue jsTestInterfaceImplementsStr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceIncludesStr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementsStr2");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceIncludesStr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "includesStr2");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceImplementsStr2Setter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value)
+static inline bool setJSTestInterfaceIncludesStr2Setter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -596,80 +596,80 @@ static inline bool setJSTestInterfaceImplementsStr2Setter(JSGlobalObject& lexica
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
-        return impl.setImplementsStr2(WTFMove(nativeValue));
+        return impl.setIncludesStr2(WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestInterfaceImplementsStr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceIncludesStr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsStr2Setter>(*lexicalGlobalObject, thisValue, encodedValue, "implementsStr2");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceIncludesStr2Setter>(*lexicalGlobalObject, thisValue, encodedValue, "includesStr2");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceImplementsStr3Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
+static inline JSValue jsTestInterfaceIncludesStr3Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return thisObject.implementsStr3(lexicalGlobalObject);
+    return thisObject.includesStr3(lexicalGlobalObject);
 }
 
-EncodedJSValue jsTestInterfaceImplementsStr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceIncludesStr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementsStr3");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceIncludesStr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "includesStr3");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceImplementsStr3Setter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value)
+static inline bool setJSTestInterfaceIncludesStr3Setter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    thisObject.setImplementsStr3(lexicalGlobalObject, value);
+    thisObject.setIncludesStr3(lexicalGlobalObject, value);
     return true;
 }
 
-bool setJSTestInterfaceImplementsStr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceIncludesStr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsStr3Setter>(*lexicalGlobalObject, thisValue, encodedValue, "implementsStr3");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceIncludesStr3Setter>(*lexicalGlobalObject, thisValue, encodedValue, "includesStr3");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceImplementsNodeGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
+static inline JSValue jsTestInterfaceIncludesNodeGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.implementsNode())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.includesNode())));
 }
 
-EncodedJSValue jsTestInterfaceImplementsNode(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceIncludesNode(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsNodeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementsNode");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceIncludesNodeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "includesNode");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceImplementsNodeSetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value)
+static inline bool setJSTestInterfaceIncludesNodeSetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestInterface", "implementsNode", "Node"); });
+    auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestInterface", "includesNode", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
-        return impl.setImplementsNode(*nativeValue);
+        return impl.setIncludesNode(*nativeValue);
     });
     return true;
 }
 
-bool setJSTestInterfaceImplementsNode(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceIncludesNode(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsNodeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "implementsNode");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceIncludesNodeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "includesNode");
 }
 
 #endif
@@ -881,7 +881,7 @@ bool setJSTestInterfaceReflectAttribute(JSGlobalObject* lexicalGlobalObject, Enc
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionIncludesMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -889,19 +889,19 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     throwScope.release();
-    impl.implementsMethod1();
+    impl.includesMethod1();
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod1(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod1Body>(*lexicalGlobalObject, *callFrame, "implementsMethod1");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionIncludesMethod1Body>(*lexicalGlobalObject, *callFrame, "includesMethod1");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionIncludesMethod2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -917,50 +917,50 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
     auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
-    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj"); });
+    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestInterface", "includesMethod2", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.implementsMethod2(*context, WTFMove(strArg), *objArg))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.includesMethod2(*context, WTFMove(strArg), *objArg))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod2(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod2Body>(*lexicalGlobalObject, *callFrame, "implementsMethod2");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionIncludesMethod2Body>(*lexicalGlobalObject, *callFrame, "includesMethod2");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod3Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionIncludesMethod3Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    RELEASE_AND_RETURN(throwScope, (JSValue::encode(castedThis->implementsMethod3(*lexicalGlobalObject, *callFrame))));
+    RELEASE_AND_RETURN(throwScope, (JSValue::encode(castedThis->includesMethod3(*lexicalGlobalObject, *callFrame))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod3(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod3Body>(*lexicalGlobalObject, *callFrame, "implementsMethod3");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionIncludesMethod3Body>(*lexicalGlobalObject, *callFrame, "includesMethod3");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionImplementsMethod4Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionIncludesMethod4Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     throwScope.release();
-    TestInterface::implementsMethod4();
+    TestInterface::includesMethod4();
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionIncludesMethod4(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionImplementsMethod4Body>(*lexicalGlobalObject, *callFrame, "implementsMethod4");
+    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionIncludesMethod4Body>(*lexicalGlobalObject, *callFrame, "includesMethod4");
 }
 
 #endif

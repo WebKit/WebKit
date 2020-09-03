@@ -37,4 +37,4 @@ interface SVGGraphicsElement : SVGElement {
     [MayThrowException, NewObject] SVGMatrix getTransformToElement(optional SVGElement? element = null);
 };
 
-SVGGraphicsElement implements SVGTests;
+SVGGraphicsElement includes SVGTests;

@@ -58,4 +58,4 @@
     double? gamma;
 };
 
-DeviceMotionEvent implements DeviceOrientationOrMotionEvent;
+DeviceMotionEvent includes DeviceOrientationOrMotionEvent;

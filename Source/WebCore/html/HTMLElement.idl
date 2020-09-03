@@ -69,6 +69,6 @@
     [EnabledBySetting=EnterKeyHint] attribute DOMString enterKeyHint;
 };
 
-HTMLElement implements ElementCSSInlineStyle;
-HTMLElement implements GlobalEventHandlers;
-HTMLElement implements HTMLOrForeignElement;
+HTMLElement includes ElementCSSInlineStyle;
+HTMLElement includes GlobalEventHandlers;
+HTMLElement includes HTMLOrForeignElement;

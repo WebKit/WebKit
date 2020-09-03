@@ -26,4 +26,4 @@
     readonly attribute DOMString wholeText;
 };
 
-Text implements Slotable;
+Text includes Slotable;

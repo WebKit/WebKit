@@ -33,4 +33,4 @@ interface SVGFilterElement : SVGElement {
     readonly attribute SVGAnimatedLength      height;
 };
 
-SVGFilterElement implements SVGURIReference;
+SVGFilterElement includes SVGURIReference;

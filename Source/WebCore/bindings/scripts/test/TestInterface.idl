@@ -40,4 +40,4 @@
     iterable<TestNode, TestObj>;
 };
 
-TestInterface implements TestImplements;
+TestInterface includes TestIncludes;

@@ -36,4 +36,4 @@ interface HTMLFrameSetElement : HTMLElement {
     getter WindowProxy (DOMString name);
 };
 
-HTMLFrameSetElement implements WindowEventHandlers;
+HTMLFrameSetElement includes WindowEventHandlers;

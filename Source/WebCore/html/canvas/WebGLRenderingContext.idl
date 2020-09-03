@@ -46,4 +46,4 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
 ] interface WebGLRenderingContext {
 };
 
-WebGLRenderingContext implements WebGLRenderingContextBase;
+WebGLRenderingContext includes WebGLRenderingContextBase;

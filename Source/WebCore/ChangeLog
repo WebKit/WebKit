@@ -1,3 +1,191 @@
+2020-09-03  Sam Weinig  <weinig@apple.com>
+
+        Update WebIDL parser to more closely align with current WebIDL spec
+        https://bugs.webkit.org/show_bug.cgi?id=216089
+
+        Reviewed by Chris Dumez.
+
+        Major changes are:
+        - 'implements' keyword is now called 'includes' (this is the only observable change).
+        - Added support for parsing namespaces, async iterable, partial mixins and ObservableArray, 
+          though the code generators don't support them yet, so they just clearly error out.
+        - Update list of keywords that can be used as argument names.
+        - Update parser to use the current terminology from WebIDL.
+        - Added more comments to be clear what next steps to take such as removing legacy constructs
+          like serializer, exception, legacycaller and moving synthetic operation additions from the
+          parser to the code generators. 
+
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * bindings/scripts/IDLParser.pm:
+        (Parse):
+        (applyTypedefs):
+        (parseDefinition):
+        (parseCallbackOrInterfaceOrMixin):
+        (parseCallbackRestOrInterface):
+        (parseInterfaceOrMixin):
+        (parseInterface):
+        (parseNamespace):
+        (parseNamespaceMembers):
+        (parseNamespaceMember):
+        (parsePartialDefinition):
+        (parsePartialInterfaceOrPartialMixin):
+        (parsePartialInterface):
+        (parsePartialInterfaceMembers):
+        (parsePartialInterfaceMember):
+        (parseInterfaceMember):
+        (parsePartialDictionary):
+        (parseIncludesStatement):
+        (parseInheritAttribute):
+        (parseOperation):
+        (parseRegularOperation):
+        (parseSpecial):
+        (parseAsyncIterable):
+        (parseOptionalIterableInterface):
+        (parseArgumentNameKeyword):
+        (parseDistinguishableType):
+        (parseConstType):
+        (parsePrimitiveType):
+        (applyMemberList):
+        (parseCallbackOrInterface): Deleted.
+        (parseImplementsStatement): Deleted.
+        (parseOperationOrReadWriteAttributeOrMaplike): Deleted.
+        (parseReadWriteAttribute): Deleted.
+        (parseInherit): Deleted.
+        * bindings/scripts/preprocess-idls.pl:
+        (getIncludedInterfacesFromIDL):
+        (getImplementedInterfacesFromIDL): Deleted.
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        (WebCore::jsTestInterfaceConstructorIncludesStaticReadOnlyAttrGetter):
+        (WebCore::jsTestInterfaceConstructorIncludesStaticReadOnlyAttr):
+        (WebCore::jsTestInterfaceConstructorIncludesStaticAttrGetter):
+        (WebCore::jsTestInterfaceConstructorIncludesStaticAttr):
+        (WebCore::setJSTestInterfaceConstructorIncludesStaticAttrSetter):
+        (WebCore::setJSTestInterfaceConstructorIncludesStaticAttr):
+        (WebCore::jsTestInterfaceIncludesStr1Getter):
+        (WebCore::jsTestInterfaceIncludesStr1):
+        (WebCore::jsTestInterfaceIncludesStr2Getter):
+        (WebCore::jsTestInterfaceIncludesStr2):
+        (WebCore::setJSTestInterfaceIncludesStr2Setter):
+        (WebCore::setJSTestInterfaceIncludesStr2):
+        (WebCore::jsTestInterfaceIncludesStr3Getter):
+        (WebCore::jsTestInterfaceIncludesStr3):
+        (WebCore::setJSTestInterfaceIncludesStr3Setter):
+        (WebCore::setJSTestInterfaceIncludesStr3):
+        (WebCore::jsTestInterfaceIncludesNodeGetter):
+        (WebCore::jsTestInterfaceIncludesNode):
+        (WebCore::setJSTestInterfaceIncludesNodeSetter):
+        (WebCore::setJSTestInterfaceIncludesNode):
+        (WebCore::jsTestInterfacePrototypeFunctionIncludesMethod1Body):
+        (WebCore::jsTestInterfacePrototypeFunctionIncludesMethod1):
+        (WebCore::jsTestInterfacePrototypeFunctionIncludesMethod2Body):
+        (WebCore::jsTestInterfacePrototypeFunctionIncludesMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionIncludesMethod3Body):
+        (WebCore::jsTestInterfacePrototypeFunctionIncludesMethod3):
+        (WebCore::jsTestInterfaceConstructorFunctionIncludesMethod4Body):
+        (WebCore::jsTestInterfaceConstructorFunctionIncludesMethod4):
+        (WebCore::jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter): Deleted.
+        (WebCore::jsTestInterfaceConstructorImplementsStaticReadOnlyAttr): Deleted.
+        (WebCore::jsTestInterfaceConstructorImplementsStaticAttrGetter): Deleted.
+        (WebCore::jsTestInterfaceConstructorImplementsStaticAttr): Deleted.
+        (WebCore::setJSTestInterfaceConstructorImplementsStaticAttrSetter): Deleted.
+        (WebCore::setJSTestInterfaceConstructorImplementsStaticAttr): Deleted.
+        (WebCore::jsTestInterfaceImplementsStr1Getter): Deleted.
+        (WebCore::jsTestInterfaceImplementsStr1): Deleted.
+        (WebCore::jsTestInterfaceImplementsStr2Getter): Deleted.
+        (WebCore::jsTestInterfaceImplementsStr2): Deleted.
+        (WebCore::setJSTestInterfaceImplementsStr2Setter): Deleted.
+        (WebCore::setJSTestInterfaceImplementsStr2): Deleted.
+        (WebCore::jsTestInterfaceImplementsStr3Getter): Deleted.
+        (WebCore::jsTestInterfaceImplementsStr3): Deleted.
+        (WebCore::setJSTestInterfaceImplementsStr3Setter): Deleted.
+        (WebCore::setJSTestInterfaceImplementsStr3): Deleted.
+        (WebCore::jsTestInterfaceImplementsNodeGetter): Deleted.
+        (WebCore::jsTestInterfaceImplementsNode): Deleted.
+        (WebCore::setJSTestInterfaceImplementsNodeSetter): Deleted.
+        (WebCore::setJSTestInterfaceImplementsNode): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod1Body): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod1): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2Body): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod3Body): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod3): Deleted.
+        (WebCore::jsTestInterfaceConstructorFunctionImplementsMethod4Body): Deleted.
+        (WebCore::jsTestInterfaceConstructorFunctionImplementsMethod4): Deleted.
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestImplements.idl: Removed.
+        * bindings/scripts/test/TestIncludes.idl: Copied from Source/WebCore/bindings/scripts/test/TestImplements.idl.
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestOperationConditional.idl:
+        * dom/CharacterData.idl:
+        * dom/DeviceMotionEvent.idl:
+        * dom/DeviceOrientationEvent.idl:
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/ShadowRoot.idl:
+        * dom/Text.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/OffscreenCanvasRenderingContext2D.idl:
+        * html/canvas/PaintRenderingContext2D.idl:
+        * html/canvas/Path2D.idl:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * page/DOMWindow.idl:
+        * page/Navigator.idl:
+        * page/WorkerNavigator.idl:
+        * svg/SVGAElement.idl:
+        * svg/SVGAltGlyphElement.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGCursorElement.idl:
+        * svg/SVGElement.idl:
+        * svg/SVGFEBlendElement.idl:
+        * svg/SVGFEColorMatrixElement.idl:
+        * svg/SVGFEComponentTransferElement.idl:
+        * svg/SVGFECompositeElement.idl:
+        * svg/SVGFEConvolveMatrixElement.idl:
+        * svg/SVGFEDiffuseLightingElement.idl:
+        * svg/SVGFEDisplacementMapElement.idl:
+        * svg/SVGFEDropShadowElement.idl:
+        * svg/SVGFEFloodElement.idl:
+        * svg/SVGFEGaussianBlurElement.idl:
+        * svg/SVGFEImageElement.idl:
+        * svg/SVGFEMergeElement.idl:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGFEOffsetElement.idl:
+        * svg/SVGFESpecularLightingElement.idl:
+        * svg/SVGFETileElement.idl:
+        * svg/SVGFETurbulenceElement.idl:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGGlyphRefElement.idl:
+        * svg/SVGGradientElement.idl:
+        * svg/SVGGraphicsElement.idl:
+        * svg/SVGImageElement.idl:
+        * svg/SVGMPathElement.idl:
+        * svg/SVGMarkerElement.idl:
+        * svg/SVGMaskElement.idl:
+        * svg/SVGPatternElement.idl:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGScriptElement.idl:
+        * svg/SVGSymbolElement.idl:
+        * svg/SVGTRefElement.idl:
+        * svg/SVGTextPathElement.idl:
+        * svg/SVGUseElement.idl:
+        * svg/SVGViewElement.idl:
+        * svg/SVGViewSpec.idl:
+        * workers/Worker.idl:
+        * workers/WorkerGlobalScope.idl:
+        * workers/service/ServiceWorker.idl:
+
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
         Align EUC-KR encoding with Chrome, Firefox, and specification

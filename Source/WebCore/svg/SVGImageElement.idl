@@ -31,4 +31,4 @@ interface SVGImageElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };
 
-SVGImageElement implements SVGURIReference;
+SVGImageElement includes SVGURIReference;

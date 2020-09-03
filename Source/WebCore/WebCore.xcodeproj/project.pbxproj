@@ -10150,6 +10150,7 @@
 		7C514E0024AF80580050710F /* ColorConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorConversion.h; sourceTree = "<group>"; };
 		7C514E0224AF80580050710F /* ColorConversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorConversion.cpp; sourceTree = "<group>"; };
 		7C516AD21F3525200034B6BF /* DOMPromiseProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMPromiseProxy.h; sourceTree = "<group>"; };
+		7C51FCCE25002BFB00BA0F2F /* MathMLElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MathMLElement.idl; sourceTree = "<group>"; };
 		7C5222951E1DADF8002CB8F7 /* IDLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDLTypes.h; sourceTree = "<group>"; };
 		7C5222971E1DAE16002CB8F7 /* ActiveDOMCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMCallback.cpp; sourceTree = "<group>"; };
 		7C5222981E1DAE16002CB8F7 /* ActiveDOMCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDOMCallback.h; sourceTree = "<group>"; };
@@ -29587,6 +29588,7 @@
 				FABE72EE1059C1EB00D888CC /* MathMLAnnotationElement.h */,
 				FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */,
 				FABE72EE1059C1EB00D999DD /* MathMLElement.h */,
+				7C51FCCE25002BFB00BA0F2F /* MathMLElement.idl */,
 				0BCF83EF1059C1EB00D999DD /* MathMLFractionElement.cpp */,
 				0BCF83F01059C1EB00D999DD /* MathMLFractionElement.h */,
 				FABE72F11059C1EB00D999DD /* MathMLMathElement.cpp */,

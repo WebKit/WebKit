@@ -28,10 +28,10 @@
     undefined getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
 };
 
-Navigator implements NavigatorID;
-Navigator implements NavigatorLanguage;
-Navigator implements NavigatorMaxTouchPoints;
-Navigator implements NavigatorOnLine;
-Navigator implements NavigatorPlugins;
-Navigator implements NavigatorServiceWorker;
-Navigator implements NavigatorShare;
+Navigator includes NavigatorID;
+Navigator includes NavigatorLanguage;
+Navigator includes NavigatorMaxTouchPoints;
+Navigator includes NavigatorOnLine;
+Navigator includes NavigatorPlugins;
+Navigator includes NavigatorServiceWorker;
+Navigator includes NavigatorShare;

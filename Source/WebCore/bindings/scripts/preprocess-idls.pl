@@ -143,15 +143,15 @@ foreach my $idlFile (sort keys %idlFileHash) {
     next unless containsInterfaceOrExceptionFromIDL($idlFileContents);
 
     my $interfaceName = fileparse(basename($idlFile), ".idl");
-    # Handle implements statements.
-    my $implementedInterfaces = getImplementedInterfacesFromIDL($idlFileContents, $interfaceName);
-    foreach my $implementedInterface (@{$implementedInterfaces}) {
-        my $implementedIdlFile = $interfaceNameToIdlFile{$implementedInterface};
-        die "Could not find a the IDL file where the following implemented interface is defined: $implementedInterface" unless $implementedIdlFile;
-        if ($supplementalDependencies{$implementedIdlFile}) {
-            push(@{$supplementalDependencies{$implementedIdlFile}}, $interfaceName);
+    # Handle include statements.
+    my $includedInterfaces = getIncludedInterfacesFromIDL($idlFileContents, $interfaceName);
+    foreach my $includedInterface (@{$includedInterfaces}) {
+        my $includedIdlFile = $interfaceNameToIdlFile{$includedInterface};
+        die "Could not find a the IDL file where the following included interface is defined: $includedInterface" unless $includedIdlFile;
+        if ($supplementalDependencies{$includedIdlFile}) {
+            push(@{$supplementalDependencies{$includedIdlFile}}, $interfaceName);
         } else {
-            $supplementalDependencies{$implementedIdlFile} = [$interfaceName];
+            $supplementalDependencies{$includedIdlFile} = [$interfaceName];
         }
     }
 
@@ -207,7 +207,7 @@ GeneratePartialInterface("WorkletGlobalScope", $workletGlobalScopeConstructorsCo
 GeneratePartialInterface("PaintWorkletGlobalScope", $paintWorkletGlobalScopeConstructorsCode, $paintWorkletGlobalScopeConstructorsFile);
 GeneratePartialInterface($testGlobalContextName, $testGlobalScopeConstructorsCode, $testGlobalScopeConstructorsFile) if defined($testGlobalContextName);
 
-# Resolves partial interfaces and implements dependencies.
+# Resolves partial interfaces and include dependencies.
 foreach my $idlFile (sort keys %supplementalDependencies) {
     my $baseFiles = $supplementalDependencies{$idlFile};
     foreach my $baseFile (@{$baseFiles}) {
@@ -371,19 +371,19 @@ sub getPartialNamesFromIDL
     return \@partialNames;
 }
 
-# identifier-A implements identifier-B;
-# http://www.w3.org/TR/WebIDL/#idl-implements-statements
-sub getImplementedInterfacesFromIDL
+# identifier-A includes identifier-B;
+# https://heycam.github.io/webidl/#includes-statement
+sub getIncludedInterfacesFromIDL
 {
     my $fileContents = shift;
     my $interfaceName = shift;
 
-    my @implementedInterfaces = ();
-    while ($fileContents =~ /^\s*(\w+)\s+implements\s+(\w+)\s*;/mg) {
-        die "Identifier on the left of the 'implements' statement should be $interfaceName in $interfaceName.idl, but found $1" if $1 ne $interfaceName;
-        push(@implementedInterfaces, $2);
+    my @includedInterfaces = ();
+    while ($fileContents =~ /^\s*(\w+)\s+includes\s+(\w+)\s*;/mg) {
+        die "Identifier on the left of the 'includes' statement should be $interfaceName in $interfaceName.idl, but found $1" if $1 ne $interfaceName;
+        push(@includedInterfaces, $2);
     }
-    return \@implementedInterfaces
+    return \@includedInterfaces
 }
 
 sub isCallbackInterfaceFromIDL

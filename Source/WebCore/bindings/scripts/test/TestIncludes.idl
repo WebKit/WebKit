@@ -32,21 +32,21 @@
 [
     Conditional=Condition22|Condition23,
     NoInterfaceObject
-] interface TestImplements {
-    static readonly attribute long implementsStaticReadOnlyAttr;
-    static attribute DOMString implementsStaticAttr;
-    readonly attribute DOMString implementsStr1;
-    attribute DOMString implementsStr2;
-    [CustomGetter, CustomSetter] attribute DOMString implementsStr3;
-    attribute Node implementsNode;
+] interface TestIncludes {
+    static readonly attribute long includesStaticReadOnlyAttr;
+    static attribute DOMString includesStaticAttr;
+    readonly attribute DOMString includesStr1;
+    attribute DOMString includesStr2;
+    [CustomGetter, CustomSetter] attribute DOMString includesStr3;
+    attribute Node includesNode;
 
-    undefined implementsMethod1();
-    [CallWith=ScriptExecutionContext, MayThrowException] TestObj implementsMethod2(DOMString strArg, TestObj objArg);
-    [Custom] undefined implementsMethod3();
-    static undefined implementsMethod4();
+    undefined includesMethod1();
+    [CallWith=ScriptExecutionContext, MayThrowException] TestObj includesMethod2(DOMString strArg, TestObj objArg);
+    [Custom] undefined includesMethod3();
+    static undefined includesMethod4();
 
-    const unsigned short IMPLEMENTSCONSTANT1 = 1;
-    [Reflect=CONST_IMPL] const unsigned short IMPLEMENTSCONSTANT2 = 2;
+    const unsigned short INCLUDES_CONSTANT1 = 1;
+    [Reflect=CONST_IMPL] const unsigned short INCLUDES_CONSTANT2 = 2;
 
     [ResultField=nodes] sequence<Node> takeNodes();
 };

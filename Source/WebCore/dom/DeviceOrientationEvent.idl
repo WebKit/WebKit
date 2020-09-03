@@ -55,4 +55,4 @@
 #endif
 };
 
-DeviceOrientationEvent implements DeviceOrientationOrMotionEvent;
+DeviceOrientationEvent includes DeviceOrientationOrMotionEvent;

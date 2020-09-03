@@ -34,4 +34,4 @@
 ] interface TestOperationConditional {
 };
 
-TestOperationConditional implements TestOperationBase;
+TestOperationConditional includes TestOperationBase;

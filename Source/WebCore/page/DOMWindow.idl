@@ -212,8 +212,8 @@ typedef USVString CSSOMString;
   USVString targetOrigin = "/";
 };
 
-DOMWindow implements GlobalCrypto;
-DOMWindow implements GlobalEventHandlers;
-DOMWindow implements GlobalPerformance;
-DOMWindow implements WindowEventHandlers;
-DOMWindow implements WindowOrWorkerGlobalScope;
+DOMWindow includes GlobalCrypto;
+DOMWindow includes GlobalEventHandlers;
+DOMWindow includes GlobalPerformance;
+DOMWindow includes WindowEventHandlers;
+DOMWindow includes WindowOrWorkerGlobalScope;

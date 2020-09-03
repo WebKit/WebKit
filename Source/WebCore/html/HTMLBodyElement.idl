@@ -44,4 +44,4 @@ interface HTMLBodyElement : HTMLElement {
     [NotEnumerable, DocumentEventHandler] attribute EventHandler onselectionchange;
 };
 
-HTMLBodyElement implements WindowEventHandlers;
+HTMLBodyElement includes WindowEventHandlers;

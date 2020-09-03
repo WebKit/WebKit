@@ -148,11 +148,11 @@ dictionary ShadowRootInit {
     boolean delegatesFocus = false;
 };
 
-Element implements AccessibilityRole;
-Element implements AriaAttributes;
-Element implements Animatable;
-Element implements ChildNode;
-Element implements DocumentAndElementEventHandlers;
-Element implements NonDocumentTypeChildNode;
-Element implements ParentNode;
-Element implements Slotable;
+Element includes AccessibilityRole;
+Element includes AriaAttributes;
+Element includes Animatable;
+Element includes ChildNode;
+Element includes DocumentAndElementEventHandlers;
+Element includes NonDocumentTypeChildNode;
+Element includes ParentNode;
+Element includes Slotable;

@@ -77,10 +77,10 @@ TestSupplemental.idl:
 JSTestInheritedDictionary2.h: 
 DOMTestInheritedDictionary2.h: 
 WebDOMTestInheritedDictionary2.h: 
-JSTestInterface.h: TestImplements.idl TestSupplemental.idl
-DOMTestInterface.h: TestImplements.idl TestSupplemental.idl
-WebDOMTestInterface.h: TestImplements.idl TestSupplemental.idl
-TestImplements.idl:
+JSTestInterface.h: TestIncludes.idl TestSupplemental.idl
+DOMTestInterface.h: TestIncludes.idl TestSupplemental.idl
+WebDOMTestInterface.h: TestIncludes.idl TestSupplemental.idl
+TestIncludes.idl:
 TestSupplemental.idl:
 JSTestInterfaceLeadingUnderscore.h: 
 DOMTestInterfaceLeadingUnderscore.h: 

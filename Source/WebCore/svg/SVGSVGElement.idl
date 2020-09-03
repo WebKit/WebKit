@@ -72,5 +72,5 @@
     undefined forceRedraw();
 };
 
-SVGSVGElement implements SVGFitToViewBox;
-SVGSVGElement implements SVGZoomAndPan;
+SVGSVGElement includes SVGFitToViewBox;
+SVGSVGElement includes SVGZoomAndPan;

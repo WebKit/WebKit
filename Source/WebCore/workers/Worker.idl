@@ -40,4 +40,4 @@ dictionary WorkerOptions {
     DOMString name = "";
 };
 
-Worker implements AbstractWorker;
+Worker includes AbstractWorker;

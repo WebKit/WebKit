@@ -34,4 +34,4 @@
     [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerHTML;
 };
 
-ShadowRoot implements DocumentOrShadowRoot;
+ShadowRoot includes DocumentOrShadowRoot;

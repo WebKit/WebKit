@@ -199,8 +199,8 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 
 enum DocumentReadyState { "loading", "interactive", "complete" };
 
-Document implements DocumentAndElementEventHandlers;
-Document implements ParentNode;
-Document implements NonElementParentNode;
-Document implements DocumentOrShadowRoot;
-Document implements GlobalEventHandlers;
+Document includes DocumentAndElementEventHandlers;
+Document includes ParentNode;
+Document includes NonElementParentNode;
+Document includes DocumentOrShadowRoot;
+Document includes GlobalEventHandlers;

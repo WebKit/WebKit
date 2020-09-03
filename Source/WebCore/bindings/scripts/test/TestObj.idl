@@ -463,7 +463,7 @@ enum TestConfidence { "high", "kinda-low" };
 };
 
 // The following comment should not generate any code.
-// TestObj implements TestImplements;
+// TestObj includes TestIncludes;
 
 typedef any AnyTypedef;
 

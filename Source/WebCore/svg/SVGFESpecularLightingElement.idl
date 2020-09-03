@@ -30,4 +30,4 @@ interface SVGFESpecularLightingElement : SVGElement {
     readonly attribute SVGAnimatedNumber specularExponent;
 };
 
-SVGFESpecularLightingElement implements SVGFilterPrimitiveStandardAttributes;
+SVGFESpecularLightingElement includes SVGFilterPrimitiveStandardAttributes;

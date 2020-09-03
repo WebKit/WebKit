@@ -30,4 +30,4 @@ interface SVGAElement : SVGGraphicsElement {
     [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
 };
 
-SVGAElement implements SVGURIReference;
+SVGAElement includes SVGURIReference;

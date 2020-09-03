@@ -40,4 +40,4 @@
                    optional unrestricted float radiusY = NaN);
 };
 
-SVGFEMorphologyElement implements SVGFilterPrimitiveStandardAttributes;
+SVGFEMorphologyElement includes SVGFilterPrimitiveStandardAttributes;

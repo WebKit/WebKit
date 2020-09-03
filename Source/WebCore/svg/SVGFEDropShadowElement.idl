@@ -28,4 +28,4 @@ interface SVGFEDropShadowElement : SVGElement {
                          optional unrestricted float stdDeviationY = NaN);
 };
 
-SVGFEDropShadowElement implements SVGFilterPrimitiveStandardAttributes;
+SVGFEDropShadowElement includes SVGFilterPrimitiveStandardAttributes;

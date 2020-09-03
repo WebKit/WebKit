@@ -39,5 +39,5 @@
     readonly attribute DOMString viewTargetString;
 };
 
-SVGViewSpec implements SVGFitToViewBox;
-SVGViewSpec implements SVGZoomAndPan;
+SVGViewSpec includes SVGFitToViewBox;
+SVGViewSpec includes SVGZoomAndPan;

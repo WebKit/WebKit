@@ -42,7 +42,7 @@
     // event
     attribute EventHandler onstatechange;
 };
-ServiceWorker implements AbstractWorker;
+ServiceWorker includes AbstractWorker;
 
 enum ServiceWorkerState {
     "installing",

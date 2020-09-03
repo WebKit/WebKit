@@ -37,4 +37,4 @@ interface SVGAnimationElement : SVGElement {
     undefined endElementAt(optional unrestricted float offset = NaN);
 };
 
-SVGAnimationElement implements SVGTests;
+SVGAnimationElement includes SVGTests;

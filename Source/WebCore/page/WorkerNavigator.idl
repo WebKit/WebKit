@@ -33,7 +33,7 @@
 ] interface WorkerNavigator {
 };
 
-WorkerNavigator implements NavigatorID;
-WorkerNavigator implements NavigatorLanguage;
-WorkerNavigator implements NavigatorOnLine;
-WorkerNavigator implements NavigatorServiceWorker;
+WorkerNavigator includes NavigatorID;
+WorkerNavigator includes NavigatorLanguage;
+WorkerNavigator includes NavigatorOnLine;
+WorkerNavigator includes NavigatorServiceWorker;

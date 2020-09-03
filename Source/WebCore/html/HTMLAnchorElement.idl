@@ -40,4 +40,4 @@ interface HTMLAnchorElement : HTMLElement {
     [EnabledBySetting=ReferrerPolicyAttribute, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
 };
 
-HTMLAnchorElement implements HTMLHyperlinkElementUtils;
+HTMLAnchorElement includes HTMLHyperlinkElementUtils;
