@@ -1,3 +1,10 @@
+2020-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove some unused old expectations files
+
+        * web-platform-tests/encoding/textdecoder-fatal-single-byte-expected.txt: Removed.
+        * web-platform-tests/encoding/textdecoder-utf16-surrogates-expected.txt: Removed.
+
 2020-09-02  Chris Dumez  <cdumez@apple.com>
 
         Choose adequate number of channels for ConvolverNode's output
