@@ -1,3 +1,38 @@
+2020-09-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266240. rdar://problem/67963550
+
+    REGRESSION(r264710): Initializing the AVPlayer Obj-C class at process start up causes a regression in power-use tests
+    https://bugs.webkit.org/show_bug.cgi?id=215861
+    
+    Reviewed by Eric Carlson.
+    
+    Calling +instancesRespondToSelector: will cause the underyling Obj-C class to be initialized, which in the case of
+    AVPlayer does a bunch of work which shows up on power-use tests. Because the API being checked for will always exist
+    in macOS 11, and that code is already protected by a HAVE(AVPLAYER_VIDEORANGEOVERRIDE) pragma, just return early
+    here without running the +instancesRespondToSelector: check.
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::updatePageScreenProperties):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266240 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-27  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION(r264710): Initializing the AVPlayer Obj-C class at process start up causes a regression in power-use tests
+            https://bugs.webkit.org/show_bug.cgi?id=215861
+
+            Reviewed by Eric Carlson.
+
+            Calling +instancesRespondToSelector: will cause the underyling Obj-C class to be initialized, which in the case of
+            AVPlayer does a bunch of work which shows up on power-use tests. Because the API being checked for will always exist
+            in macOS 11, and that code is already protected by a HAVE(AVPLAYER_VIDEORANGEOVERRIDE) pragma, just return early
+            here without running the +instancesRespondToSelector: check.
+
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::updatePageScreenProperties):
+
 2020-09-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r266301. rdar://problem/68177648
