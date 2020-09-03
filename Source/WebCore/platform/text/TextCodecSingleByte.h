@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,30 +20,43 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #include "TextCodec.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
-class TextCodecUTF16 : public TextCodec {
+class TextCodecSingleByte : public TextCodec {
 public:
+    enum class Encoding : uint8_t {
+        Iso_8859_3,
+        Iso_8859_6,
+        Iso_8859_7,
+        Iso_8859_8,
+        Windows_874,
+        Windows_1253,
+        Windows_1255,
+        Windows_1257
+    };
+
+    explicit TextCodecSingleByte(Encoding);
+
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
-
-    explicit TextCodecUTF16(bool littleEndian);
 
 private:
     String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) final;
 
-    bool m_littleEndian;
-    Optional<uint8_t> m_leadByte;
-    Optional<UChar> m_leadSurrogate;
+    using EncodeTable = std::pair<const std::pair<UChar, uint8_t>*, size_t>;
+    Vector<uint8_t> encode(const EncodeTable&, StringView, Function<void(UChar32, Vector<uint8_t>&)>&&);
+    String decode(const UChar* table, const uint8_t*, size_t length, bool flush, bool stopOnError, bool& sawError);
+    
+    const Encoding m_encoding;
 };
 
 } // namespace WebCore
+

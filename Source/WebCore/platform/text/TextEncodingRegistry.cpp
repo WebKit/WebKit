@@ -31,6 +31,7 @@
 #include "TextCodecICU.h"
 #include "TextCodecLatin1.h"
 #include "TextCodecReplacement.h"
+#include "TextCodecSingleByte.h"
 #include "TextCodecUTF16.h"
 #include "TextCodecUTF8.h"
 #include "TextCodecUserDefined.h"
@@ -240,6 +241,9 @@ static void extendTextCodecMaps()
     
     TextCodecCJK::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecCJK::registerCodecs(addToTextCodecMap);
+
+    TextCodecSingleByte::registerEncodingNames(addToTextEncodingNameMap);
+    TextCodecSingleByte::registerCodecs(addToTextCodecMap);
 
     pruneBlocklistedCodecs();
     buildQuirksSets();

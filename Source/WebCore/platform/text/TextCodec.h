@@ -54,6 +54,8 @@ public:
     static int getUnencodableReplacement(UChar32, UnencodableHandling, UnencodableReplacementArray&);
 };
 
+Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling);
+
 using EncodingNameRegistrar = void (*)(const char* alias, const char* name);
 
 using NewTextCodecFunction = WTF::Function<std::unique_ptr<TextCodec>()>;

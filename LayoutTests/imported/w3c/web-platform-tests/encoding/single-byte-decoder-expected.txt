@@ -329,23 +329,23 @@ PASS macintosh: macintosh (document.characterSet and document.inputEncoding)
 PASS macintosh: x-mac-roman (XMLHttpRequest) 
 PASS macintosh: x-mac-roman (TextDecoder) 
 PASS macintosh: x-mac-roman (document.characterSet and document.inputEncoding) 
-FAIL windows-874: dos-874 (XMLHttpRequest) assert_equals: windows-874:219 expected 65533 but got 63681
-FAIL windows-874: dos-874 (TextDecoder) assert_equals: windows-874:219 expected 65533 but got 63681
+PASS windows-874: dos-874 (XMLHttpRequest) 
+PASS windows-874: dos-874 (TextDecoder) 
 PASS windows-874: dos-874 (document.characterSet and document.inputEncoding) 
-FAIL windows-874: iso-8859-11 (XMLHttpRequest) assert_equals: windows-874:219 expected 65533 but got 63681
-FAIL windows-874: iso-8859-11 (TextDecoder) assert_equals: windows-874:219 expected 65533 but got 63681
+PASS windows-874: iso-8859-11 (XMLHttpRequest) 
+PASS windows-874: iso-8859-11 (TextDecoder) 
 PASS windows-874: iso-8859-11 (document.characterSet and document.inputEncoding) 
-FAIL windows-874: iso8859-11 (XMLHttpRequest) assert_equals: windows-874:219 expected 65533 but got 63681
-FAIL windows-874: iso8859-11 (TextDecoder) assert_equals: windows-874:219 expected 65533 but got 63681
+PASS windows-874: iso8859-11 (XMLHttpRequest) 
+PASS windows-874: iso8859-11 (TextDecoder) 
 PASS windows-874: iso8859-11 (document.characterSet and document.inputEncoding) 
-FAIL windows-874: iso885911 (XMLHttpRequest) assert_equals: windows-874:219 expected 65533 but got 63681
-FAIL windows-874: iso885911 (TextDecoder) assert_equals: windows-874:219 expected 65533 but got 63681
+PASS windows-874: iso885911 (XMLHttpRequest) 
+PASS windows-874: iso885911 (TextDecoder) 
 PASS windows-874: iso885911 (document.characterSet and document.inputEncoding) 
-FAIL windows-874: tis-620 (XMLHttpRequest) assert_equals: windows-874:219 expected 65533 but got 63681
-FAIL windows-874: tis-620 (TextDecoder) assert_equals: windows-874:219 expected 65533 but got 63681
+PASS windows-874: tis-620 (XMLHttpRequest) 
+PASS windows-874: tis-620 (TextDecoder) 
 PASS windows-874: tis-620 (document.characterSet and document.inputEncoding) 
-FAIL windows-874: windows-874 (XMLHttpRequest) assert_equals: windows-874:219 expected 65533 but got 63681
-FAIL windows-874: windows-874 (TextDecoder) assert_equals: windows-874:219 expected 65533 but got 63681
+PASS windows-874: windows-874 (XMLHttpRequest) 
+PASS windows-874: windows-874 (TextDecoder) 
 PASS windows-874: windows-874 (document.characterSet and document.inputEncoding) 
 PASS windows-1250: cp1250 (XMLHttpRequest) 
 PASS windows-1250: cp1250 (TextDecoder) 
@@ -416,14 +416,14 @@ PASS windows-1252: windows-1252 (document.characterSet and document.inputEncodin
 PASS windows-1252: x-cp1252 (XMLHttpRequest) 
 PASS windows-1252: x-cp1252 (TextDecoder) 
 PASS windows-1252: x-cp1252 (document.characterSet and document.inputEncoding) 
-FAIL windows-1253: cp1253 (XMLHttpRequest) assert_equals: windows-1253:170 expected 65533 but got 170
-FAIL windows-1253: cp1253 (TextDecoder) assert_equals: windows-1253:170 expected 65533 but got 170
+PASS windows-1253: cp1253 (XMLHttpRequest) 
+PASS windows-1253: cp1253 (TextDecoder) 
 PASS windows-1253: cp1253 (document.characterSet and document.inputEncoding) 
-FAIL windows-1253: windows-1253 (XMLHttpRequest) assert_equals: windows-1253:170 expected 65533 but got 170
-FAIL windows-1253: windows-1253 (TextDecoder) assert_equals: windows-1253:170 expected 65533 but got 170
+PASS windows-1253: windows-1253 (XMLHttpRequest) 
+PASS windows-1253: windows-1253 (TextDecoder) 
 PASS windows-1253: windows-1253 (document.characterSet and document.inputEncoding) 
-FAIL windows-1253: x-cp1253 (XMLHttpRequest) assert_equals: windows-1253:170 expected 65533 but got 170
-FAIL windows-1253: x-cp1253 (TextDecoder) assert_equals: windows-1253:170 expected 65533 but got 170
+PASS windows-1253: x-cp1253 (XMLHttpRequest) 
+PASS windows-1253: x-cp1253 (TextDecoder) 
 PASS windows-1253: x-cp1253 (document.characterSet and document.inputEncoding) 
 PASS windows-1254: cp1254 (XMLHttpRequest) 
 PASS windows-1254: cp1254 (TextDecoder) 

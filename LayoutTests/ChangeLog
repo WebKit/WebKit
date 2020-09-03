@@ -1,3 +1,15 @@
+2020-09-03  Alex Christensen  <achristensen@webkit.org>
+
+        Align ISO-8859-{3,6,7,8,8-I} and windows-{874,1253,1255,1257} encodings with Chrome, Firefox, and the specification
+        https://bugs.webkit.org/show_bug.cgi?id=216094
+
+        Reviewed by Darin Adler.
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-09-03  Antoine Quint  <graouts@webkit.org>
 
         Consecutive requestAnimationFrame callbacks may be passed the same timestamp

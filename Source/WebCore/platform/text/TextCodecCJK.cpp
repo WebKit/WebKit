@@ -515,7 +515,7 @@ static void questionMarkUnencodableHandler(UChar32, Vector<uint8_t>& result)
     result.append('?');
 }
 
-static Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling handling)
+Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling handling)
 {
     switch (handling) {
     case UnencodableHandling::QuestionMarks:

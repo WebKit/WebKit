@@ -9228,6 +9228,8 @@
 		5B30695A18B3D3450099D5E8 /* WebGLDrawBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLDrawBuffers.cpp; sourceTree = "<group>"; };
 		5B30695B18B3D3450099D5E8 /* WebGLDrawBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLDrawBuffers.h; sourceTree = "<group>"; };
 		5B30695C18B3D3450099D5E8 /* WebGLDrawBuffers.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLDrawBuffers.idl; sourceTree = "<group>"; };
+		5C001521250011000094AA93 /* TextCodecSingleByte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecSingleByte.cpp; sourceTree = "<group>"; };
+		5C001523250011010094AA93 /* TextCodecSingleByte.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecSingleByte.h; sourceTree = "<group>"; };
 		5C39305D1AA0F6A90029C816 /* DFABytecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFABytecode.h; sourceTree = "<group>"; };
 		5C39305E1AA0F6A90029C816 /* DFABytecodeCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFABytecodeCompiler.cpp; sourceTree = "<group>"; };
 		5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFABytecodeCompiler.h; sourceTree = "<group>"; };
@@ -26110,6 +26112,8 @@
 				B2C3DA0E0D006C1D00EF6F26 /* TextCodecLatin1.h */,
 				57EF5E611D20D28700171E60 /* TextCodecReplacement.cpp */,
 				57EF5E5F1D20C83900171E60 /* TextCodecReplacement.h */,
+				5C001521250011000094AA93 /* TextCodecSingleByte.cpp */,
+				5C001523250011010094AA93 /* TextCodecSingleByte.h */,
 				B2C3DA0F0D006C1D00EF6F26 /* TextCodecUserDefined.cpp */,
 				B2C3DA100D006C1D00EF6F26 /* TextCodecUserDefined.h */,
 				B2C3DA110D006C1D00EF6F26 /* TextCodecUTF16.cpp */,

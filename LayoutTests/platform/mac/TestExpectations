@@ -1885,9 +1885,6 @@ webkit.org/b/212226 imported/w3c/web-platform-tests/css/css-grid/alignment/self-
 
 webkit.org/b/212488 [ Catalina ] media/video-play-audio-require-user-gesture.html [ Pass Timeout ]
 
-# This test requires an update to system decoders
-webkit.org/b/212565 [ Catalina Mojave ] imported/w3c/web-platform-tests/encoding/single-byte-decoder.html [ Failure ]
-
 fast/text/text-styles/-apple-system [ Pass ]
 
 webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Failure ]

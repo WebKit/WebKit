@@ -48,13 +48,8 @@ const size_t ConversionBufferSize = 16384;
 // From https://encoding.spec.whatwg.org. Plus a few extra aliases that macOS had historically from TEC.
 DECLARE_ALIASES(IBM866, "866", "cp866", "csibm866");
 DECLARE_ALIASES(ISO_8859_2, "csisolatin2", "iso-ir-101", "iso8859-2", "iso88592", "iso_8859-2", "iso_8859-2:1987", "l2", "latin2");
-DECLARE_ALIASES(ISO_8859_3, "csisolatin3", "iso-ir-109", "iso8859-3", "iso88593", "iso_8859-3", "iso_8859-3:1988", "l3", "latin3");
 DECLARE_ALIASES(ISO_8859_4, "csisolatin4", "iso-ir-110", "iso8859-4", "iso88594", "iso_8859-4", "iso_8859-4:1988", "l4", "latin4");
 DECLARE_ALIASES(ISO_8859_5, "csisolatincyrillic", "cyrillic", "iso-ir-144", "iso8859-5", "iso88595", "iso_8859-5", "iso_8859-5:1988");
-DECLARE_ALIASES(ISO_8859_6, "arabic", "asmo-708", "csiso88596e", "csiso88596i", "csisolatinarabic", "ecma-114", "iso-8859-6-e", "iso-8859-6-i", "iso-ir-127", "iso8859-6", "iso88596", "iso_8859-6", "iso_8859-6:1987");
-DECLARE_ALIASES(ISO_8859_7, "csisolatingreek", "ecma-118", "elot_928", "greek", "greek8", "iso-ir-126", "iso8859-7", "iso88597", "iso_8859-7", "iso_8859-7:1987", "sun_eu_greek");
-DECLARE_ALIASES(ISO_8859_8, "csiso88598e", "csisolatinhebrew", "hebrew", "iso-8859-8-e", "iso-ir-138", "iso8859-8", "iso88598", "iso_8859-8", "iso_8859-8:1988", "visual");
-DECLARE_ALIASES(ISO_8859_8_I, "csiso88598i", "logical");
 DECLARE_ALIASES(ISO_8859_10, "csisolatin6", "iso-ir-157", "iso8859-10", "iso885910", "l6", "latin6", "iso8859101992", "isoir157");
 DECLARE_ALIASES(ISO_8859_13, "iso8859-13", "iso885913");
 DECLARE_ALIASES(ISO_8859_14, "iso8859-14", "iso885914", "isoceltic", "iso8859141998", "isoir199", "latin8", "l8");
@@ -63,14 +58,10 @@ DECLARE_ALIASES(ISO_8859_16, "isoir226", "iso8859162001", "l10", "latin10");
 DECLARE_ALIASES(KOI8_R, "cskoi8r", "koi", "koi8", "koi8_r");
 DECLARE_ALIASES(KOI8_U, "koi8-ru");
 DECLARE_ALIASES(macintosh, "csmacintosh", "mac", "x-mac-roman", "macroman", "x-macroman");
-DECLARE_ALIASES(windows_874, "dos-874", "iso-8859-11", "iso8859-11", "iso885911", "tis-620");
 DECLARE_ALIASES(windows_1250, "cp1250", "x-cp1250", "winlatin2");
 DECLARE_ALIASES(windows_1251, "cp1251", "wincyrillic", "x-cp1251");
-DECLARE_ALIASES(windows_1253, "wingreek", "cp1253", "x-cp1253");
 DECLARE_ALIASES(windows_1254, "winturkish", "cp1254", "csisolatin5", "iso-8859-9", "iso-ir-148", "iso8859-9", "iso88599", "iso_8859-9", "iso_8859-9:1989", "l5", "latin5", "x-cp1254");
-DECLARE_ALIASES(windows_1255, "winhebrew", "cp1255", "x-cp1255");
 DECLARE_ALIASES(windows_1256, "winarabic", "cp1256", "x-cp1256");
-DECLARE_ALIASES(windows_1257, "winbaltic", "cp1257", "x-cp1257");
 DECLARE_ALIASES(windows_1258, "winvietnamese", "cp1258", "x-cp1258");
 DECLARE_ALIASES(x_mac_cyrillic, "maccyrillic", "x-mac-ukrainian", "windows-10007", "mac-cyrillic", "maccy", "x-MacCyrillic", "x-MacUkraine");
 DECLARE_ALIASES(GBK, "cn-gb", "csgb231280", "x-euc-cn", "chinese", "csgb2312", "csiso58gb231280", "gb2312", "gb_2312", "gb_2312-80", "iso-ir-58", "x-gbk", "euc-cn", "cp936", "ms936", "gb2312-1980", "windows-936", "windows-936-2000");
@@ -93,13 +84,8 @@ static const struct EncodingName {
 } encodingNames[] = {
     DECLARE_ENCODING_NAME("IBM866", IBM866),
     DECLARE_ENCODING_NAME("ISO-8859-2", ISO_8859_2),
-    DECLARE_ENCODING_NAME("ISO-8859-3", ISO_8859_3),
     DECLARE_ENCODING_NAME("ISO-8859-4", ISO_8859_4),
     DECLARE_ENCODING_NAME("ISO-8859-5", ISO_8859_5),
-    DECLARE_ENCODING_NAME("ISO-8859-6", ISO_8859_6),
-    DECLARE_ENCODING_NAME("ISO-8859-7", ISO_8859_7),
-    DECLARE_ENCODING_NAME("ISO-8859-8", ISO_8859_8),
-    DECLARE_ENCODING_NAME("ISO-8859-8-I", ISO_8859_8_I),
     DECLARE_ENCODING_NAME("ISO-8859-10", ISO_8859_10),
     DECLARE_ENCODING_NAME("ISO-8859-13", ISO_8859_13),
     DECLARE_ENCODING_NAME("ISO-8859-14", ISO_8859_14),
@@ -108,14 +94,10 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("KOI8-R", KOI8_R),
     DECLARE_ENCODING_NAME("KOI8-U", KOI8_U),
     DECLARE_ENCODING_NAME("macintosh", macintosh),
-    DECLARE_ENCODING_NAME("windows-874", windows_874),
     DECLARE_ENCODING_NAME("windows-1250", windows_1250),
     DECLARE_ENCODING_NAME("windows-1251", windows_1251),
-    DECLARE_ENCODING_NAME("windows-1253", windows_1253),
     DECLARE_ENCODING_NAME("windows-1254", windows_1254),
-    DECLARE_ENCODING_NAME("windows-1255", windows_1255),
     DECLARE_ENCODING_NAME("windows-1256", windows_1256),
-    DECLARE_ENCODING_NAME("windows-1257", windows_1257),
     DECLARE_ENCODING_NAME("windows-1258", windows_1258),
     DECLARE_ENCODING_NAME("x-mac-cyrillic", x_mac_cyrillic),
     DECLARE_ENCODING_NAME("GBK", GBK),
@@ -143,12 +125,6 @@ void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
 
         // These encodings currently don't have standard names, so we need to register encoders manually.
         // http://demo.icu-project.org/icu-bin/convexp
-        if (!strcmp(name, "windows-874")) {
-            registrar(name, [name] {
-                return makeUnique<TextCodecICU>(name, "windows-874-2000");
-            });
-            continue;
-        }
         if (!strcmp(name, "windows-949")) {
             registrar(name, [name] {
                 return makeUnique<TextCodecICU>(name, "windows-949-2000");
