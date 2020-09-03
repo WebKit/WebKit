@@ -1,3 +1,32 @@
+2020-09-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r251254): Web Inspector: Text insertion point is invisible when editing DOM nodes
+        https://bugs.webkit.org/show_bug.cgi?id=210197
+        <rdar://problem/61485409>
+
+        Reviewed by Devin Rousso.
+
+        r251254 promoted the selection area into a layer on top the the tree outline item.
+        Combined with the existing WebKit bug (https://webkit.org/b/213501), it introduced the regression.
+
+        This patch is largely a workaround for the WebKit bug.
+
+        Revert r251254 and instead change the background color of the shadow DOM items from
+        the semi-transparent gray to black (white in the dark mode) with 5% transparency, which
+        produced the same gray color overlayed on top of the white background of the DOM tree outline.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom):
+        (.tree-outline.dom li .selection-area):
+
+        (.tree-outline.dom li > :not(.selection-area)): Deleted.
+        Don't introduce a layer for every DOM node.
+
+        (.tree-outline.dom li.parent.shadow::after):
+        (.tree-outline.dom li.parent.shadow + ol.children.expanded):
+        (@media (prefers-color-scheme: dark) .tree-outline.dom):
+        (@media (prefers-color-scheme: dark) .tree-outline.dom .shadow):
+
 2020-09-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow event breakpoints to be configured when they're added
