@@ -1,3 +1,30 @@
+2020-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=216116
+
+        Reviewed by Ross Kirsling.
+
+        Rebaseline test262.
+
+        * test262/expectations.yaml:
+        * test262/harness/compareArray.js:
+        (assert.compareArray):
+        * test262/harness/testIntl.js:
+        (regExpPropertiesDefaultValues):
+        * test262/latest-changes-summary.txt:
+        * test262/test/annexB/language/expressions/object/__proto__-poisoned-object-prototype.js: Added.
+        * test262/test/built-ins/Array/prototype/push/length-near-integer-limit-set-failure.js: Added.
+        * test262/test/built-ins/Object/defineProperty/redefine-length-with-various-values-and-configurable-true.js: Added.
+        * test262/test/harness/compare-array-falsy-arguments.js: Added.
+        (assertThrows):
+        * test262/test/intl402/DateTimeFormat/constructor-options-order-fractionalSecondDigits.js:
+        * test262/test/language/expressions/object/__proto__-permitted-dup-shorthand.js: Copied from JSTests/test262/test/language/expressions/object/__proto__-permitted-dup.js.
+        * test262/test/language/expressions/object/__proto__-permitted-dup.js:
+        (obj.__proto__):
+        (obj.async __proto__):
+        * test262/test262-Revision.txt:
+
 2020-09-02  Michael Saboff  <msaboff@apple.com>
 
         ASSERTION FAILED: value.isCell() && value.asCell()->type() == CustomGetterSetterType ./bytecode/ObjectPropertyConditionSet.cpp

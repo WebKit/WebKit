@@ -1,4 +1,5 @@
 // Copyright 2019 Googe Inc. All rights reserved.
+// Copyright 2020 Apple Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
@@ -31,9 +32,8 @@ const expected = [
   "localeMatcher",
   // InitializeDateTimeFormat step 22.
   "second",
-  "timeZoneName",
-  // InitializeDateTimeFormat step 23.
   "fractionalSecondDigits",
+  "timeZoneName",
   // InitializeDateTimeFormat step 26.
   "formatMatcher",
 ];

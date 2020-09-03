@@ -603,6 +603,9 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
+test/built-ins/Array/prototype/push/length-near-integer-limit-set-failure.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/ArrayBuffer/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1542,9 +1545,6 @@ test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
   strict mode: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
-test/intl402/DateTimeFormat/constructor-options-order-fractionalSecondDigits.js:
-  default: 'Test262Error: Expected [second, fractionalSecondDigits, localeMatcher, second, fractionalSecondDigits, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. '
-  strict mode: 'Test262Error: Expected [second, fractionalSecondDigits, localeMatcher, second, fractionalSecondDigits, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. '
 test/intl402/DateTimeFormat/prototype/format/timedatestyle-en.js:
   default: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
   strict mode: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'

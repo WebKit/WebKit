@@ -30,10 +30,12 @@ compareArray.format = function(array) {
   return `[${array.map(String).join(', ')}]`;
 };
 
-assert.compareArray = function(actual, expected, message) {
+assert.compareArray = function(actual, expected, message = '') {
+  assert(actual != null, `First argument shouldn't be nullish. ${message}`);
+  assert(expected != null, `Second argument shouldn't be nullish. ${message}`);
   var format = compareArray.format;
   assert(
     compareArray(actual, expected),
-    `Expected ${format(actual)} and ${format(expected)} to have the same contents. ${(message || '')}`
+    `Expected ${format(actual)} and ${format(expected)} to have the same contents. ${message}`
   );
 };
