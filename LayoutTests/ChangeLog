@@ -1,5 +1,13 @@
 2020-09-03  Alex Christensen  <achristensen@webkit.org>
 
+        Rebase Windows test expectations after r266466
+​       https://bugs.webkit.org/show_bug.cgi?id=216063
+
+        * platform/ios/fast/encoding/charset-replacement-expected.txt: Copied from fast/encoding/charset-replacement-expected.txt.
+        Everyone seems to render a document with just one replacement character just a little different.
+
+2020-09-03  Alex Christensen  <achristensen@webkit.org>
+
         Rebase iOS test results after r266399
         https://bugs.webkit.org/show_bug.cgi?id=216022
 
