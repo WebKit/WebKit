@@ -1,0 +1,16 @@
+<html>
+<head>
+</head>
+<body>
+<pre id="output"></pre>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (navigator.canShare({ url: "file:///bin/sh" }))
+        output.innerText = "FAIL: Allowed to share file URL.";
+    else
+        output.innerText = "PASS: Not allowed to share file URL.";
+</script>
+</body>
+</html>

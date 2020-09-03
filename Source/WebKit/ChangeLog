@@ -1,5 +1,57 @@
 2020-09-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266151. rdar://problem/67812825
+
+    Web Share API can share non-HTTP(S) URLs
+    https://bugs.webkit.org/show_bug.cgi?id=215823
+    <rdar://problem/62083130>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    Test: fast/web-share/share-disallows-file-urls.html
+    
+    * page/Navigator.cpp:
+    (WebCore::shareableURLForShareData):
+    (WebCore::Navigator::canShare):
+    (WebCore::Navigator::share):
+    Factor out the code to complete and check the scheme of the URL.
+    Make canShare() return NO and share() fail for non-HTTP(S) or data: URLs.
+    
+    Source/WebKit:
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::showShareSheet):
+    Ensure that only HTTP family or data: URLs are shared.
+    
+    LayoutTests:
+    
+    * fast/web-share/share-disallows-file-urls-expected.txt: Added.
+    * fast/web-share/share-disallows-file-urls.html: Added.
+    * fast/web-share/share-transient-activation-expired.html:
+    * fast/web-share/share-transient-activation.html:
+    * fast/web-share/share.html:
+    Add a test that ensures that sharing a non-HTTP-family URL fails,
+    and fix the existing tests to share HTTP-family URLs.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266151 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-25  Tim Horton  <timothy_horton@apple.com>
+
+            Web Share API can share non-HTTP(S) URLs
+            https://bugs.webkit.org/show_bug.cgi?id=215823
+            <rdar://problem/62083130>
+
+            Reviewed by Wenson Hsieh.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::showShareSheet):
+            Ensure that only HTTP family or data: URLs are shared.
+
+2020-09-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266240. rdar://problem/67963550
 
     REGRESSION(r264710): Initializing the AVPlayer Obj-C class at process start up causes a regression in power-use tests
