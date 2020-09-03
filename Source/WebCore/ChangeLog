@@ -1,3 +1,26 @@
+2020-09-03  Alex Christensen  <achristensen@webkit.org>
+
+        Align EUC-KR encoding with Chrome, Firefox, and specification
+        https://bugs.webkit.org/show_bug.cgi?id=216081
+
+        Reviewed by Darin Adler.
+
+        Covered by web platform tests.
+
+        * platform/text/EncodingTables.cpp:
+        * platform/text/EncodingTables.h:
+        * platform/text/TextCodecCJK.cpp:
+        (WebCore::TextCodecCJK::registerEncodingNames):
+        (WebCore::TextCodecCJK::registerCodecs):
+        (WebCore::eucKREncodingIndex):
+        (WebCore::eucKREncode):
+        (WebCore::TextCodecCJK::eucKRDecode):
+        (WebCore::TextCodecCJK::decode):
+        (WebCore::TextCodecCJK::encode):
+        * platform/text/TextCodecCJK.h:
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerCodecs):
+
 2020-09-03  Chris Dumez  <cdumez@apple.com>
 
         Make our implementation of ChannelMergerNode standards compliant

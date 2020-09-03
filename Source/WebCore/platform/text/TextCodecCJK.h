@@ -36,6 +36,7 @@ public:
         EUC_JP,
         ISO2022JP,
         Shift_JIS,
+        EUC_KR,
         Big5
     };
     
@@ -48,6 +49,7 @@ private:
     String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) final;
 
+    String eucKRDecode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError);
     String big5Decode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError);
     Vector<uint8_t> iso2022JPEncode(StringView, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler);
 

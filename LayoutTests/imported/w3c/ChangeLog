@@ -1,3 +1,16 @@
+2020-09-03  Alex Christensen  <achristensen@webkit.org>
+
+        Align EUC-KR encoding with Chrome, Firefox, and specification
+        https://bugs.webkit.org/show_bug.cgi?id=216081
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-errors-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-misc-expected.txt:
+
 2020-09-03  Chris Dumez  <cdumez@apple.com>
 
         Make our implementation of ChannelMergerNode standards compliant

@@ -16301,40 +16301,40 @@ PASS cjk U+9FB6 龶 %26%2340886%3B
 PASS cjk U+9FB7 龷 %26%2340887%3B 
 PASS cjk U+9FB8 龸 %26%2340888%3B 
 PASS cjk U+9FB9 龹 %26%2340889%3B 
-FAIL compatibility U+FA0C 兀 %26%2364012%3B assert_equals: expected "%26%23%36%34%30%31%32%3B" but got "%E8%B4"
+PASS compatibility U+FA0C 兀 %26%2364012%3B 
 PASS compatibility U+FA0D 嗀 %26%2364013%3B 
 PASS compatibility U+FA0E 﨎 %26%2364014%3B 
 PASS compatibility U+FA0F 﨏 %26%2364015%3B 
-FAIL compatibility U+FA10 塚 %26%2364016%3B assert_equals: expected "%26%23%36%34%30%31%36%3B" but got "%F5%C0"
+PASS compatibility U+FA10 塚 %26%2364016%3B 
 PASS compatibility U+FA11 﨑 %26%2364017%3B 
-FAIL compatibility U+FA12 晴 %26%2364018%3B assert_equals: expected "%26%23%36%34%30%31%38%3B" but got "%F4%E7"
+PASS compatibility U+FA12 晴 %26%2364018%3B 
 PASS compatibility U+FA13 﨓 %26%2364019%3B 
 PASS compatibility U+FA14 﨔 %26%2364020%3B 
-FAIL compatibility U+FA15 凞 %26%2364021%3B assert_equals: expected "%26%23%36%34%30%32%31%3B" but got "%FD%EB"
+PASS compatibility U+FA15 凞 %26%2364021%3B 
 PASS compatibility U+FA16 猪 %26%2364022%3B 
-FAIL compatibility U+FA17 益 %26%2364023%3B assert_equals: expected "%26%23%36%34%30%32%33%3B" but got "%EC%CC"
+PASS compatibility U+FA17 益 %26%2364023%3B 
 PASS compatibility U+FA18 礼 %26%2364024%3B 
-FAIL compatibility U+FA19 神 %26%2364025%3B assert_equals: expected "%26%23%36%34%30%32%35%3B" but got "%E3%EA"
-FAIL compatibility U+FA1A 祥 %26%2364026%3B assert_equals: expected "%26%23%36%34%30%32%36%3B" but got "%DF%D4"
-FAIL compatibility U+FA1B 福 %26%2364027%3B assert_equals: expected "%26%23%36%34%30%32%37%3B" but got "%DC%D8"
-FAIL compatibility U+FA1C 靖 %26%2364028%3B assert_equals: expected "%26%23%36%34%30%32%38%3B" but got "%EF%FE"
-FAIL compatibility U+FA1D 精 %26%2364029%3B assert_equals: expected "%26%23%36%34%30%32%39%3B" but got "%EF%F1"
-FAIL compatibility U+FA1E 羽 %26%2364030%3B assert_equals: expected "%26%23%36%34%30%33%30%3B" but got "%E9%E2"
+PASS compatibility U+FA19 神 %26%2364025%3B 
+PASS compatibility U+FA1A 祥 %26%2364026%3B 
+PASS compatibility U+FA1B 福 %26%2364027%3B 
+PASS compatibility U+FA1C 靖 %26%2364028%3B 
+PASS compatibility U+FA1D 精 %26%2364029%3B 
+PASS compatibility U+FA1E 羽 %26%2364030%3B 
 PASS compatibility U+FA1F 﨟 %26%2364031%3B 
 PASS compatibility U+FA20 蘒 %26%2364032%3B 
 PASS compatibility U+FA21 﨡 %26%2364033%3B 
-FAIL compatibility U+FA22 諸 %26%2364034%3B assert_equals: expected "%26%23%36%34%30%33%34%3B" but got "%F0%B3"
+PASS compatibility U+FA22 諸 %26%2364034%3B 
 PASS compatibility U+FA23 﨣 %26%2364035%3B 
 PASS compatibility U+FA24 﨤 %26%2364036%3B 
-FAIL compatibility U+FA25 逸 %26%2364037%3B assert_equals: expected "%26%23%36%34%30%33%37%3B" but got "%EC%EF"
-FAIL compatibility U+FA26 都 %26%2364038%3B assert_equals: expected "%26%23%36%34%30%33%38%3B" but got "%D4%B4"
+PASS compatibility U+FA25 逸 %26%2364037%3B 
+PASS compatibility U+FA26 都 %26%2364038%3B 
 PASS compatibility U+FA27 﨧 %26%2364039%3B 
 PASS compatibility U+FA28 﨨 %26%2364040%3B 
 PASS compatibility U+FA29 﨩 %26%2364041%3B 
-FAIL compatibility U+FA2A 飯 %26%2364042%3B assert_equals: expected "%26%23%36%34%30%34%32%3B" but got "%DA%F9"
-FAIL compatibility U+FA2B 飼 %26%2364043%3B assert_equals: expected "%26%23%36%34%30%34%33%3B" but got "%DE%F8"
-FAIL compatibility U+FA2C 館 %26%2364044%3B assert_equals: expected "%26%23%36%34%30%34%34%3B" but got "%CE%BD"
-FAIL compatibility U+FA2D 鶴 %26%2364045%3B assert_equals: expected "%26%23%36%34%30%34%35%3B" but got "%F9%CD"
+PASS compatibility U+FA2A 飯 %26%2364042%3B 
+PASS compatibility U+FA2B 飼 %26%2364043%3B 
+PASS compatibility U+FA2C 館 %26%2364044%3B 
+PASS compatibility U+FA2D 鶴 %26%2364045%3B 
 PASS compatibility U+FA2E 郞 %26%2364046%3B 
 PASS compatibility U+FA2F 隷 %26%2364047%3B 
 PASS compatibility U+FA30 侮 %26%2364048%3B 
