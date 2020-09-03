@@ -47,8 +47,7 @@ std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& call
     if (numberOfInputChannels)
         WTFLogAlways("AudioDestination::create(%u, %u, %f) - unhandled input channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
 
-    // FIXME: Add support for multi-channel (> stereo) output.
-    if (numberOfOutputChannels != 2)
+    if (numberOfOutputChannels > AudioSession::sharedSession().maximumNumberOfOutputChannels())
         WTFLogAlways("AudioDestination::create(%u, %u, %f) - unhandled output channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
 
     if (AudioDestinationCocoa::createOverride)
@@ -66,10 +65,7 @@ float AudioDestination::hardwareSampleRate()
 
 unsigned long AudioDestination::maxChannelCount()
 {
-    // FIXME: query the default audio hardware device to return the actual number
-    // of channels of the device. Also see corresponding FIXME in create().
-    // There is a small amount of code which assumes stereo which can be upgraded.
-    return 0;
+    return AudioSession::sharedSession().maximumNumberOfOutputChannels();
 }
 
 AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, float sampleRate)

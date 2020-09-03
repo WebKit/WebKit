@@ -28,8 +28,8 @@ PASS < [default constructor] All assertions passed. (total 9 assertions)
 PASS > [test AudioNodeOptions]  
 PASS   new OscillatorNode(c, {channelCount: 17}) did not throw an exception. 
 PASS   node.channelCount is equal to 17. 
-PASS   new OscillatorNode(c, {channelCount: 0}) threw InvalidStateError: "The object is in an invalid state.". 
-PASS   new OscillatorNode(c, {channelCount: 99}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new OscillatorNode(c, {channelCount: 0}) threw NotSupportedError: "Channel count cannot be 0". 
+PASS   new OscillatorNode(c, {channelCount: 99}) threw IndexSizeError: "Channel count exceeds maximum limit". 
 PASS   new OscillatorNode(c, {channelCountMode: "max"} did not throw an exception. 
 PASS   node.channelCountMode is equal to max. 
 PASS   new OscillatorNode(c, {channelCountMode: "max"}) did not throw an exception. 

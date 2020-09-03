@@ -254,6 +254,11 @@ size_t AudioSession::numberOfOutputChannels() const
     return [[PAL::getAVAudioSessionClass() sharedInstance] outputNumberOfChannels];
 }
 
+size_t AudioSession::maximumNumberOfOutputChannels() const
+{
+    return [[PAL::getAVAudioSessionClass() sharedInstance] maximumOutputNumberOfChannels];
+}
+
 bool AudioSession::tryToSetActiveInternal(bool active)
 {
     __block NSError* error = nil;

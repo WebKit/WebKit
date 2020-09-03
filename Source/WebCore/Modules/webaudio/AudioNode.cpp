@@ -387,9 +387,12 @@ ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
     BaseAudioContext::AutoLocker locker(context());
 
     ALWAYS_LOG(LOGIDENTIFIER, channelCount);
+
+    if (!channelCount)
+        return Exception { NotSupportedError, "Channel count cannot be 0"_s };
     
-    if (!(channelCount > 0 && channelCount <= AudioContext::maxNumberOfChannels()))
-        return Exception { InvalidStateError };
+    if (channelCount > AudioContext::maxNumberOfChannels())
+        return Exception { IndexSizeError, "Channel count exceeds maximum limit"_s };
 
     if (m_channelCount == channelCount)
         return { };

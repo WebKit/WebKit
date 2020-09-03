@@ -32,7 +32,7 @@ PASS   new ConvolverNode(c, {"channelCount":1}) did not throw an exception.
 PASS   node.channelCount is equal to 1. 
 PASS   new ConvolverNode(c, {"channelCount":2}) did not throw an exception. 
 PASS   node.channelCount is equal to 2. 
-PASS   new ConvolverNode(c, {"channelCount":0}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new ConvolverNode(c, {"channelCount":0}) threw NotSupportedError: "Channel count cannot be 0". 
 PASS   new ConvolverNode(c, {"channelCount":3}) threw NotSupportedError: "ConvolverNode's channel count cannot be greater than 2". 
 PASS   new ConvolverNode(c, {"channelCount":99}) threw NotSupportedError: "ConvolverNode's channel count cannot be greater than 2". 
 PASS   new ConvolverNode(c, {"channelCountMode":"clamped-max"}) did not throw an exception. 

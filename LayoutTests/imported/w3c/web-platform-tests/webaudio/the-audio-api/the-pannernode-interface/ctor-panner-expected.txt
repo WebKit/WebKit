@@ -51,8 +51,8 @@ PASS   node1 = new PannerNode(c, {"channelCount":1}) did not throw an exception.
 PASS   node1.channelCount is equal to 1. 
 PASS   node2 = new PannerNode(c, {"channelCount":2}) did not throw an exception. 
 PASS   node2.channelCount is equal to 2. 
-PASS   new PannerNode(c, {"channelCount":0}) threw InvalidStateError: "The object is in an invalid state.". 
-PASS   node.channelCount = 0 threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new PannerNode(c, {"channelCount":0}) threw NotSupportedError: "Channel count cannot be 0". 
+PASS   node.channelCount = 0 threw NotSupportedError: "Channel count cannot be 0". 
 PASS   node.channelCount after setting to 0 is equal to 2. 
 PASS   new PannerNode(c, {"channelCount":3}) threw NotSupportedError: "PannerNode's channelCount cannot be greater than 2". 
 PASS   node.channelCount = 3 threw NotSupportedError: "PannerNode's channelCount cannot be greater than 2". 

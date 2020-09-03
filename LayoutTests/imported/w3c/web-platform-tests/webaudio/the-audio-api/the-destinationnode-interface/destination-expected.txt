@@ -1,5 +1,5 @@
 
-FAIL 
+PASS 
       AudioDestinationNode
-     assert_greater_than_equal: maxChannelCount should be >= 2 expected a number greater than or equal to 2 but got 0
+     
 

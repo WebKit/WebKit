@@ -33,6 +33,7 @@
 #import "NotImplemented.h"
 #import <CoreAudio/AudioHardware.h>
 #import <wtf/MainThread.h>
+#import <wtf/UniqueArray.h>
 #import <wtf/text/WTFString.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -220,6 +221,32 @@ size_t AudioSession::numberOfOutputChannels() const
 {
     notImplemented();
     return 0;
+}
+
+size_t AudioSession::maximumNumberOfOutputChannels() const
+{
+    AudioObjectPropertyAddress sizeAddress = {
+        kAudioDevicePropertyStreamConfiguration,
+        kAudioObjectPropertyScopeOutput,
+        kAudioObjectPropertyElementMaster
+    };
+
+    UInt32 size = 0;
+    OSStatus result = AudioObjectGetPropertyDataSize(defaultDevice(), &sizeAddress, 0, 0, &size);
+    if (result || !size)
+        return 0;
+
+    auto listMemory = makeUniqueArray<uint8_t>(size);
+    auto* audioBufferList = reinterpret_cast<AudioBufferList*>(listMemory.get());
+
+    result = AudioObjectGetPropertyData(defaultDevice(), &sizeAddress, 0, 0, &size, audioBufferList);
+    if (result)
+        return 0;
+
+    size_t channels = 0;
+    for (UInt32 i = 0; i < audioBufferList->mNumberBuffers; ++i)
+        channels += audioBufferList->mBuffers[i].mNumberChannels;
+    return channels;
 }
 
 bool AudioSession::tryToSetActiveInternal(bool)

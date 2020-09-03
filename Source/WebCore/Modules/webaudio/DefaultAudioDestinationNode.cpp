@@ -153,8 +153,8 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, channelCount);
 
-    if (!maxChannelCount() || channelCount > maxChannelCount())
-        return Exception { InvalidStateError };
+    if (channelCount > maxChannelCount())
+        return Exception { IndexSizeError, "Channel count exceeds maximum limit"_s };
 
     auto oldChannelCount = this->channelCount();
     auto result = AudioNode::setChannelCount(channelCount);

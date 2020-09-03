@@ -81,6 +81,7 @@ public:
     virtual float sampleRate() const;
     virtual size_t bufferSize() const;
     virtual size_t numberOfOutputChannels() const;
+    virtual size_t maximumNumberOfOutputChannels() const;
 
     bool tryToSetActive(bool);
 

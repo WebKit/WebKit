@@ -134,6 +134,12 @@ size_t AudioSession::numberOfOutputChannels() const
     return 0;
 }
 
+size_t AudioSession::maximumNumberOfOutputChannels() const
+{
+    notImplemented();
+    return 0;
+}
+
 bool AudioSession::tryToSetActiveInternal(bool)
 {
     notImplemented();

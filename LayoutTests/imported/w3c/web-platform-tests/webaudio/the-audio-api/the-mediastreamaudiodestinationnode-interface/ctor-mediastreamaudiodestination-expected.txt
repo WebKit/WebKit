@@ -25,8 +25,8 @@ PASS < [default constructor] All assertions passed. (total 7 assertions)
 PASS > [test AudioNodeOptions]  
 PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 7}) did not throw an exception. 
 PASS   node.channelCount is equal to 7. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 0}) threw InvalidStateError: "The object is in an invalid state.". 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 99}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 0}) threw NotSupportedError: "Channel count cannot be 0". 
+PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 99}) threw IndexSizeError: "Channel count exceeds maximum limit". 
 PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "max"} did not throw an exception. 
 PASS   node.channelCountMode is equal to max. 
 PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "max"}) did not throw an exception. 

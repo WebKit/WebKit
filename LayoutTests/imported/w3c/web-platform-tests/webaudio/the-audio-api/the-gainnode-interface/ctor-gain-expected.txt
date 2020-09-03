@@ -27,8 +27,8 @@ PASS < [default constructor] All assertions passed. (total 8 assertions)
 PASS > [test AudioNodeOptions]  
 PASS   new GainNode(c, {channelCount: 17}) did not throw an exception. 
 PASS   node.channelCount is equal to 17. 
-PASS   new GainNode(c, {channelCount: 0}) threw InvalidStateError: "The object is in an invalid state.". 
-PASS   new GainNode(c, {channelCount: 99}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new GainNode(c, {channelCount: 0}) threw NotSupportedError: "Channel count cannot be 0". 
+PASS   new GainNode(c, {channelCount: 99}) threw IndexSizeError: "Channel count exceeds maximum limit". 
 PASS   new GainNode(c, {channelCountMode: "max"} did not throw an exception. 
 PASS   node.channelCountMode is equal to max. 
 PASS   new GainNode(c, {channelCountMode: "max"}) did not throw an exception. 
