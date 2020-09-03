@@ -74,7 +74,9 @@ namespace JSC { namespace DFG {
     macro(GetLocal, NodeResultJS | NodeMustGenerate) \
     macro(SetLocal, 0) \
     \
-    /* These are used in SSA form to represent to track */\
+    /* These are used in SSA form to represent OSR availability on the stack. As long as a local is */\
+    /* available on the stack from all paths into a merge point we don't need to have a Phi. Since OSR */\
+    /* exits are rare this is preferable to representing availability directly in SSA. */\
     macro(PutStack, NodeMustGenerate) \
     macro(KillStack, NodeMustGenerate) \
     macro(GetStack, NodeResultJS) \
