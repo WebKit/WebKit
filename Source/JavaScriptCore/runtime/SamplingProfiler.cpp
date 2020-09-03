@@ -1030,7 +1030,14 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
             continue;
 
         StackFrame& frame = stackTrace.frames.first();
-        String frameDescription = makeString(frame.displayName(m_vm), ':', frame.sourceID());
+        String hash = ""_s;
+        if (frame.semanticLocation.hasCodeBlockHash()) {
+            StringPrintStream stream;
+            frame.semanticLocation.codeBlockHash.dump(stream);
+            hash = stream.toString();
+        } else
+            hash = "<nil>"_s;
+        String frameDescription = makeString(frame.displayName(m_vm), '#', hash, ':', frame.sourceID());
         functionCounts.add(frameDescription, 0).iterator->value++;
     }
 
@@ -1050,7 +1057,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
 
     if (Options::samplingProfilerTopFunctionsCount()) {
         out.print("\n\nSampling rate: ", m_timingInterval.microseconds(), " microseconds\n");
-        out.print("Top functions as <numSamples  'functionName:sourceID'>\n");
+        out.print("Top functions as <numSamples  'functionName#hash:sourceID'>\n");
         for (size_t i = 0; i < Options::samplingProfilerTopFunctionsCount(); i++) {
             auto pair = takeMax();
             if (pair.first.isEmpty())
