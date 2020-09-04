@@ -1,3 +1,12 @@
+2020-09-03  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS wk2 Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=216162
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-09-03  Patrick Angle  <pangle@apple.com>
 
         Web Inspector fails to preview response from XHR requests
