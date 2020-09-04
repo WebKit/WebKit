@@ -1258,7 +1258,7 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] fast/inline/hidpi-inline-block-is-subpixel-while-line-is-not.html [ ImageOnlyFailure ]
 
 # rdar://66807554
-[ arm64 ] imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html  [ Failure ]
+webkit.org/b/216155 [ Mojave+ Debug ] imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
 
 webkit.org/b/215581 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html [ Pass Failure ]
 
