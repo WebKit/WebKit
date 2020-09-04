@@ -1,5 +1,11 @@
 2020-09-04  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Update test expectations after r266559.
+
+        * platform/glib/TestExpectations:
+
+2020-09-04  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Update baselines after r266528.
 
         * platform/glib/imported/w3c/web-platform-tests/encoding/single-byte-decoder-expected.txt: Removed.
