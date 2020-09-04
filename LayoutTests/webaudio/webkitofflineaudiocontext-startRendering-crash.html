@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Checks that starting rendering on a webkitOfflineAudioContext that has no nodes does not crash.");
+jsTestIsAsync = true;
+
+let context = new webkitOfflineAudioContext(1, 128, 44100);
+context.oncomplete = () => {
+    testPassed("Finished rendering");
+    finishJSTest();
+};
+context.startRendering();
+</script>
+</body>
+</html>

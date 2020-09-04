@@ -1,3 +1,16 @@
+2020-09-04  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(macOS Big Sur) https://magenta.github.io/lofi-player/ is broken
+        https://bugs.webkit.org/show_bug.cgi?id=216163
+        <rdar://problem/68198173>
+
+        Reviewed by Eric Carlson.
+
+        Add layout test that was reproducing the crash on https://magenta.github.io/lofi-player/.
+
+        * webaudio/webkitofflineaudiocontext-startRendering-crash-expected.txt: Added.
+        * webaudio/webkitofflineaudiocontext-startRendering-crash.html: Added.
+
 2020-09-04  Youenn Fablet  <youenn@apple.com>
 
         Fix Internals::supportsVCPEncoder on BigSur

@@ -213,7 +213,7 @@ void BaseAudioContext::lazyInitialize()
     if (m_destinationNode) {
         m_destinationNode->initialize();
 
-        if (!isOfflineContext()) {
+        if (!isOfflineContext() && state() != State::Running) {
             // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
             // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
             // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
@@ -1069,8 +1069,10 @@ void BaseAudioContext::startRendering()
 
     makePendingActivity();
 
-    destination()->startRendering();
     setState(State::Running);
+
+    lazyInitialize();
+    destination()->startRendering();
 }
 
 void BaseAudioContext::mediaCanStart(Document& document)
