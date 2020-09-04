@@ -1,5 +1,52 @@
 2020-09-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Rename LineLayoutContext to LineBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=216166
+
+        Reviewed by Antti Koivisto.
+
+        LineLayoutContext builds the line.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp: Renamed from Source/WebCore/layout/inlineformatting/LineLayoutContext.cpp.
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+        (WebCore::Layout::isAtSoftWrapOpportunity):
+        (WebCore::Layout::nextWrapOpportunity):
+        (WebCore::Layout::LineCandidate::InlineContent::runs const):
+        (WebCore::Layout::LineCandidate::InlineContent::logicalWidth const):
+        (WebCore::Layout::LineCandidate::InlineContent::trailingLineBreak const):
+        (WebCore::Layout::LineCandidate::InlineContent::appendLineBreak):
+        (WebCore::Layout::LineCandidate::InlineContent::setTrailingLineBreak):
+        (WebCore::Layout::LineCandidate::FloatContent::list const):
+        (WebCore::Layout::LineCandidate::FloatContent::intrusiveWidth const):
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem):
+        (WebCore::Layout::LineCandidate::InlineContent::reset):
+        (WebCore::Layout::LineCandidate::FloatContent::append):
+        (WebCore::Layout::LineCandidate::FloatContent::reset):
+        (WebCore::Layout::LineCandidate::reset):
+        (WebCore::Layout::LineBuilder::inlineItemWidth const):
+        (WebCore::Layout::LineBuilder::LineBuilder):
+        (WebCore::Layout::LineBuilder::layoutInlineContent):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::nextContentForLine):
+        (WebCore::Layout::LineBuilder::commitFloats):
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+        (WebCore::Layout::LineBuilder::commitPartialContent):
+        (WebCore::Layout::LineBuilder::rebuildLine):
+        * layout/inlineformatting/InlineLineBuilder.h: Renamed from Source/WebCore/layout/inlineformatting/LineLayoutContext.h.
+        (WebCore::Layout::LineBuilder::InlineItemRange::isEmpty const):
+        (WebCore::Layout::LineBuilder::InlineItemRange::size const):
+        (WebCore::Layout::LineBuilder::formattingContext const):
+        (WebCore::Layout::LineBuilder::root const):
+
+2020-09-04  Zalan Bujtas  <zalan@apple.com>
+
         Rename LineBuilder to Line
         https://bugs.webkit.org/show_bug.cgi?id=216165
 

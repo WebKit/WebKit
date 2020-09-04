@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LineLayoutContext.h"
+#include "InlineLineBuilder.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -106,7 +106,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const Inli
     return true;
 }
 
-static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, size_t startIndex, const LineLayoutContext::InlineItemRange layoutRange)
+static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, size_t startIndex, const LineBuilder::InlineItemRange layoutRange)
 {
     // 1. Find the start candidate by skipping leading non-content items e.g <span><span>start : skip "<span><span>"
     // 2. Find the end candidate by skipping non-content items inbetween e.g. <span><span>start</span>end: skip "</span>"
@@ -248,7 +248,7 @@ inline void LineCandidate::reset()
     inlineContent.reset();
 }
 
-InlineLayoutUnit LineLayoutContext::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft) const
+InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft) const
 {
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
@@ -280,14 +280,14 @@ InlineLayoutUnit LineLayoutContext::inlineItemWidth(const InlineItem& inlineItem
     return boxGeometry.width();
 }
 
-LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormattingContext, const ContainerBox& formattingContextRoot, const InlineItems& inlineItems)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const ContainerBox& formattingContextRoot, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_formattingContextRoot(formattingContextRoot)
     , m_inlineItems(inlineItems)
 {
 }
 
-LineLayoutContext::LineContent LineLayoutContext::layoutInlineContent(Line& line, const InlineItemRange& layoutRange, Optional<unsigned> partialLeadingContentLength)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(Line& line, const InlineItemRange& layoutRange, Optional<unsigned> partialLeadingContentLength)
 {
     ASSERT(m_floats.isEmpty());
     m_partialLeadingTextItem = { };
@@ -326,7 +326,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutInlineContent(Line& line
     return close(line, layoutRange, committedInlineItemCount, { });
 }
 
-LineLayoutContext::LineContent LineLayoutContext::close(const Line& line, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent> partialContent)
+LineBuilder::LineContent LineBuilder::close(const Line& line, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent> partialContent)
 {
     ASSERT_UNUSED(line, committedInlineItemCount || !m_floats.isEmpty() || line.hasIntrusiveFloat());
     auto numberOfCommittedItems = committedInlineItemCount + m_floats.size();
@@ -338,7 +338,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(const Line& line, const 
     return LineContent { partialContent, lineRange, WTFMove(m_floats), line.runs() };
 }
 
-void LineLayoutContext::nextContentForLine(LineCandidate& lineCandidate, unsigned currentInlineItemIndex, const InlineItemRange& layoutRange, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight)
+void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, unsigned currentInlineItemIndex, const InlineItemRange& layoutRange, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight)
 {
     ASSERT(currentInlineItemIndex < layoutRange.end);
     lineCandidate.reset();
@@ -384,7 +384,7 @@ void LineLayoutContext::nextContentForLine(LineCandidate& lineCandidate, unsigne
     }
 }
 
-void LineLayoutContext::commitFloats(Line& line, const LineCandidate& lineCandidate, CommitIntrusiveFloatsOnly commitIntrusiveOnly)
+void LineBuilder::commitFloats(Line& line, const LineCandidate& lineCandidate, CommitIntrusiveFloatsOnly commitIntrusiveOnly)
 {
     auto& floatContent = lineCandidate.floatContent;
     auto leftIntrusiveFloatsWidth = InlineLayoutUnit { };
@@ -414,7 +414,7 @@ void LineLayoutContext::commitFloats(Line& line, const LineCandidate& lineCandid
     }
 }
 
-LineLayoutContext::Result LineLayoutContext::handleFloatsAndInlineContent(LineBreaker& lineBreaker, Line& line, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
+LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineBreaker, Line& line, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
 {
     auto& inlineContent = lineCandidate.inlineContent;
     auto& candidateRuns = inlineContent.runs();
@@ -480,7 +480,7 @@ LineLayoutContext::Result LineLayoutContext::handleFloatsAndInlineContent(LineBr
     return { LineBreaker::IsEndOfLine::No };
 }
 
-void LineLayoutContext::commitPartialContent(Line& line, const LineBreaker::RunList& runs, const LineBreaker::Result::PartialTrailingContent& partialTrailingContent)
+void LineBuilder::commitPartialContent(Line& line, const LineBreaker::RunList& runs, const LineBreaker::Result::PartialTrailingContent& partialTrailingContent)
 {
     for (size_t index = 0; index < runs.size(); ++index) {
         auto& run = runs[index];
@@ -501,7 +501,7 @@ void LineLayoutContext::commitPartialContent(Line& line, const LineBreaker::RunL
     }
 }
 
-size_t LineLayoutContext::rebuildLine(Line& line, const InlineItemRange& layoutRange)
+size_t LineBuilder::rebuildLine(Line& line, const InlineItemRange& layoutRange)
 {
     // Clear the line and start appending the inline items closing with the last wrap opportunity run.
     line.clearContent();

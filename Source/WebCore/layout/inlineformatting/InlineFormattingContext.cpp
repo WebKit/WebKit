@@ -132,16 +132,16 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutContext::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
+void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
     auto lineLogicalTop = constraints.vertical.logicalTop;
     struct PreviousLine {
-        LineLayoutContext::InlineItemRange range;
+        LineBuilder::InlineItemRange range;
         Optional<unsigned> overflowContentLength;
     };
     Optional<PreviousLine> previousLine;
     auto line = Line { *this };
-    auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
+    auto lineBuilder = LineBuilder { *this, root(), inlineItems };
 
     while (!needsLayoutRange.isEmpty()) {
         auto lineConstraints = constraintsForLine(constraints.horizontal, lineLogicalTop);
@@ -150,7 +150,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutCon
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
         auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : WTF::nullopt;
-        auto lineContent = lineLayoutContext.layoutInlineContent(line, needsLayoutRange, partialLeadingContentLength);
+        auto lineContent = lineBuilder.layoutInlineContent(line, needsLayoutRange, partialLeadingContentLength);
         auto lineContentRange = lineContent.inlineItemRange;
         auto isLastLineWithInlineContent = [&] {
             if (lineContent.partialContent)
@@ -271,12 +271,12 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
     auto& inlineItems = formattingState().inlineItems();
     auto maximumLineWidth = InlineLayoutUnit { };
     auto line = Line { *this };
-    auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
-    auto layoutRange = LineLayoutContext::InlineItemRange { 0 , inlineItems.size() };
+    auto lineBuilder = LineBuilder { *this, root(), inlineItems };
+    auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
     while (!layoutRange.isEmpty()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
         line.open(availableWidth);
-        auto lineContent = lineLayoutContext.layoutInlineContent(line, layoutRange, { });
+        auto lineContent = lineBuilder.layoutInlineContent(line, layoutRange, { });
         // FIXME: Find out if min/max needs to set the isLastLine bit.
         line.close(false);
         layoutRange.start = lineContent.inlineItemRange.end;
@@ -484,7 +484,7 @@ InlineFormattingContext::LineConstraints InlineFormattingContext::constraintsFor
     return LineConstraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat };
 }
 
-void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::LineContent& lineContent, const LineBox& lineBox, const HorizontalConstraints& horizontalConstraints)
+void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
     if (!lineContent.floats.isEmpty()) {

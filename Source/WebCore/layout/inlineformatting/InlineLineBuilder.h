@@ -35,9 +35,9 @@ namespace Layout {
 
 struct LineCandidate;
 
-class LineLayoutContext {
+class LineBuilder {
 public:
-    LineLayoutContext(const InlineFormattingContext&, const ContainerBox& formattingContextRoot, const InlineItems&);
+    LineBuilder(const InlineFormattingContext&, const ContainerBox& formattingContextRoot, const InlineItems&);
 
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }

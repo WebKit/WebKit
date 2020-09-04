@@ -28,7 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
-#include "LineLayoutContext.h"
+#include "InlineLineBuilder.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -78,7 +78,7 @@ private:
     };
     InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
-    void lineLayout(InlineItems&, LineLayoutContext::InlineItemRange, const ConstraintsForInFlowContent&);
+    void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
     InlineLayoutUnit computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const;
@@ -94,7 +94,7 @@ private:
         bool lineIsConstrainedByFloat { false };
     };
     LineConstraints constraintsForLine(const HorizontalConstraints&, InlineLayoutUnit lineLogicalTop);
-    void setDisplayBoxesForLine(const LineLayoutContext::LineContent&, const LineBox&, const HorizontalConstraints&);
+    void setDisplayBoxesForLine(const LineBuilder::LineContent&, const LineBox&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
