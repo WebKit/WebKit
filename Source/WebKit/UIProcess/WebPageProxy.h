@@ -898,6 +898,8 @@ public:
     void setScrollPerformanceDataCollectionEnabled(bool);
     bool scrollPerformanceDataCollectionEnabled() const { return m_scrollPerformanceDataCollectionEnabled; }
     RemoteLayerTreeScrollingPerformanceData* scrollingPerformanceData() { return m_scrollingPerformanceData.get(); }
+
+    void scheduleActivityStateUpdate();
 #endif // PLATFORM(COCOA)
 
     void changeFontAttributes(WebCore::FontAttributeChanges&&);
@@ -2720,6 +2722,8 @@ private:
 
     std::unique_ptr<RemoteLayerTreeScrollingPerformanceData> m_scrollingPerformanceData;
     bool m_scrollPerformanceDataCollectionEnabled { false };
+
+    bool m_hasScheduledActivityStateUpdate { false };
 #endif
     UserObservablePageCounter::Token m_pageIsUserObservableCount;
     ProcessSuppressionDisabledToken m_preventProcessSuppressionCount;

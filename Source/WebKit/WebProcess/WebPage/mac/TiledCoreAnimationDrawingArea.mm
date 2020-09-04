@@ -73,7 +73,6 @@ using namespace WebCore;
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
-    , m_sendDidUpdateActivityStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
 {
     m_webPage.corePage()->settings().setForceCompositingMode(true);
@@ -492,8 +491,51 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
         }
 
         sendDidFirstLayerFlushIfNeeded();
+        handleActivityStateChangeCallbacksIfNeeded();
         invalidateRenderingUpdateRunLoopObserver();
     }
+}
+
+void TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacks()
+{
+    if (!m_shouldHandleActivityStateChangeCallbacks)
+        return;
+    m_shouldHandleActivityStateChangeCallbacks = false;
+
+    if (m_activityStateChangeID != ActivityStateChangeAsynchronous)
+        m_webPage.send(Messages::WebPageProxy::DidUpdateActivityState());
+
+    for (auto& callbackID : m_nextActivityStateChangeCallbackIDs)
+        m_webPage.send(Messages::WebPageProxy::VoidCallback(callbackID));
+    m_nextActivityStateChangeCallbackIDs.clear();
+
+    m_activityStateChangeID = ActivityStateChangeAsynchronous;
+}
+
+void TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded()
+{
+    if (!m_shouldHandleActivityStateChangeCallbacks)
+        return;
+
+    // If there is no active transaction, likely there is no layer change or change is committed,
+    // perform the callbacks immediately, which may unblock UI process.
+    if (![CATransaction currentState]) {
+        handleActivityStateChangeCallbacks();
+        return;
+    }
+
+    [CATransaction addCommitHandler:[weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+
+        auto protectedPage = makeRef(weakThis->m_webPage);
+        auto* drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(protectedPage->drawingArea());
+        ASSERT(weakThis.get() == drawingArea);
+        if (drawingArea != weakThis.get())
+            return;
+
+        drawingArea->handleActivityStateChangeCallbacks();
+    } forPhase:kCATransactionPhasePostCommit];
 }
 
 void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& nextActivityStateChangeCallbackIDs)
@@ -509,21 +551,9 @@ void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivitySta
     }
 
     if (m_activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbackIDs.isEmpty())
-        m_sendDidUpdateActivityStateTimer.startOneShot(0_s);
-}
+        m_shouldHandleActivityStateChangeCallbacks = true;
 
-void TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired()
-{
-    [CATransaction flush];
-
-    if (m_activityStateChangeID != ActivityStateChangeAsynchronous)
-        m_webPage.send(Messages::WebPageProxy::DidUpdateActivityState());
-
-    for (const auto& callbackID : m_nextActivityStateChangeCallbackIDs)
-        m_webPage.send(Messages::WebPageProxy::VoidCallback(callbackID));
-
-    m_nextActivityStateChangeCallbackIDs.clear();
-    m_activityStateChangeID = ActivityStateChangeAsynchronous;
+    scheduleRenderingUpdate();
 }
 
 void TiledCoreAnimationDrawingArea::suspendPainting()

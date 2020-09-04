@@ -1,3 +1,39 @@
+2020-09-04  Sihui Liu  <sihui_liu@apple.com>
+
+        Webpages flash when switching between windows
+        https://bugs.webkit.org/show_bug.cgi?id=216012
+
+        Reviewed by Tim Horton.
+
+        Based on patches from Tim Horton. To avoid flash, we need to make sure view to be selected updates its content 
+        before UI process commits its transaction. We did this by making UI process block until receiving a reply 
+        DidUpdateActivityState from web process. However, web process did not make sure the reply would be sent after 
+        normal rendering update and corresponding transasction commit. Instead, it flushed transactions in progress and 
+        replied. To fix this, now we make web process reply in transaction commit handler after rendering update, if
+        there is an active transaction.
+
+        In the switching case, view to be unselected will detach from root layer in its web process, which makes its 
+        content empty. This change is independent from the UI process commit, so we want this to happen after UI process
+        commits (which submits the view hierachy change). Otherwise, empty content(white flash) on the unselected view 
+        will be displayed. To fix this, we let UI process send the activity state change message in transaction commit 
+        handler, if there is an active transaction.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::scheduleActivityStateUpdate):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setSuppressVisibilityUpdates):
+        (WebKit::WebPageProxy::activityStateDidChange):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        (WebKit::TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacks):
+        (WebKit::TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+        (WebKit::TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired): Deleted.
+
 2020-09-04  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add client decoder entitlement

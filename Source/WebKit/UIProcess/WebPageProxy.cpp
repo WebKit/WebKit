@@ -1856,7 +1856,7 @@ void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
 
     if (!m_suppressVisibilityUpdates) {
 #if PLATFORM(COCOA)
-        m_activityStateChangeDispatcher->schedule();
+        scheduleActivityStateUpdate();
 #else
         dispatchActivityStateChange();
 #endif
@@ -1908,7 +1908,7 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState::Flag> mayHave
         dispatchActivityStateChange();
         return;
     }
-    m_activityStateChangeDispatcher->schedule();
+    scheduleActivityStateUpdate();
 #else
     UNUSED_PARAM(dispatchMode);
     dispatchActivityStateChange();
@@ -1937,7 +1937,9 @@ void WebPageProxy::viewDidEnterWindow()
 void WebPageProxy::dispatchActivityStateChange()
 {
 #if PLATFORM(COCOA)
-    m_activityStateChangeDispatcher->invalidate();
+    if (m_activityStateChangeDispatcher->isScheduled())
+        m_activityStateChangeDispatcher->invalidate();
+    m_hasScheduledActivityStateUpdate = false;
 #endif
 
     if (!hasRunningProcess())

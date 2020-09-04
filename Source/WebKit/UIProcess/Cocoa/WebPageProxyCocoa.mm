@@ -45,10 +45,12 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/RunLoopObserver.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -486,6 +488,39 @@ void WebPageProxy::requestThumbnailWithPath(const String& identifier, const Stri
 }
 
 #endif // HAVE(QUICKLOOK_THUMBNAILING)
+
+void WebPageProxy::scheduleActivityStateUpdate()
+{
+    bool hasScheduledObserver = m_activityStateChangeDispatcher->isScheduled();
+    bool hasActiveCATransaction = [CATransaction currentState];
+
+    if (hasScheduledObserver && hasActiveCATransaction) {
+        ASSERT(m_hasScheduledActivityStateUpdate);
+        m_hasScheduledActivityStateUpdate = false;
+        m_activityStateChangeDispatcher->invalidate();
+    }
+
+    if (m_hasScheduledActivityStateUpdate)
+        return;
+    m_hasScheduledActivityStateUpdate = true;
+
+    // If there is an active transaction, we need to dispatch the update after the transaction is committed,
+    // to avoid flash caused by web process setting root layer too early.
+    // If there is no active transaction, likely there is no root layer change or change is committed,
+    // then schedule dispatch on runloop observer to collect changes in the same runloop cycle before dispatching.
+    if (hasActiveCATransaction) {
+        [CATransaction addCommitHandler:[weakThis = makeWeakPtr(*this)] {
+            auto protectedThis = makeRefPtr(weakThis.get());
+            if (!protectedThis)
+                return;
+
+            protectedThis->dispatchActivityStateChange();
+        } forPhase:kCATransactionPhasePostCommit];
+        return;
+    }
+
+    m_activityStateChangeDispatcher->schedule();
+}
 
 } // namespace WebKit
 

@@ -84,7 +84,6 @@ private:
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>&) override;
-    void didUpdateActivityStateTimerFired();
 
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
@@ -108,6 +107,8 @@ private:
 
     void sendEnterAcceleratedCompositingModeIfNeeded() override;
     void sendDidFirstLayerFlushIfNeeded();
+    void handleActivityStateChangeCallbacksIfNeeded();
+    void handleActivityStateChangeCallbacks();
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
@@ -151,7 +152,6 @@ private:
     double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;
 
-    RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateActivityStateTimer;
     Vector<CallbackID> m_nextActivityStateChangeCallbackIDs;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
@@ -169,6 +169,7 @@ private:
     bool m_isScalingViewToFitDocument { false };
     bool m_needsSendEnterAcceleratedCompositingMode { true };
     bool m_needsSendDidFirstLayerFlush { true };
+    bool m_shouldHandleActivityStateChangeCallbacks { false };
 };
 
 inline bool TiledCoreAnimationDrawingArea::addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones)
