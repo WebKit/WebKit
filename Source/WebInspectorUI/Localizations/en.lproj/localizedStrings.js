@@ -681,7 +681,10 @@ localizedStrings["Hide the navigation sidebar (%s)"] = "Hide the navigation side
 localizedStrings["Hide transparency grid"] = "Hide transparency grid";
 localizedStrings["Hide type information"] = "Hide type information";
 localizedStrings["Hierarchy Level"] = "Hierarchy Level";
-localizedStrings["High"] = "High";
+/* High network request priority */
+localizedStrings["High @ Network Priority"] = "High";
+/* Energy Impact: High */
+localizedStrings["High @ Timeline Energy Impact"] = "High";
 localizedStrings["Highest: %s"] = "Highest: %s";
 localizedStrings["Host"] = "Host";
 localizedStrings["ICO"] = "ICO";
@@ -792,7 +795,10 @@ localizedStrings["Log Value"] = "Log Value";
 localizedStrings["Log WebSocket"] = "Log WebSocket";
 localizedStrings["Log: "] = "Log: ";
 localizedStrings["Logs"] = "Logs";
-localizedStrings["Low"] = "Low";
+/* Low network request priority */
+localizedStrings["Low @ Network Priority"] = "Low";
+/* Energy Impact: Low */
+localizedStrings["Low @ Timeline Energy Impact"] = "Low";
 localizedStrings["Lowest: %s"] = "Lowest: %s";
 localizedStrings["MIME Type"] = "MIME Type";
 localizedStrings["MIME Type:"] = "MIME Type:";
@@ -813,7 +819,10 @@ localizedStrings["Media Element"] = "Media Element";
 localizedStrings["Media Event"] = "Media Event";
 localizedStrings["Media Logging:"] = "Media Logging:";
 localizedStrings["MediaSource"] = "MediaSource";
-localizedStrings["Medium"] = "Medium";
+/* Medium network request priority */
+localizedStrings["Medium @ Network Priority"] = "Medium";
+/* Energy Impact: Medium */
+localizedStrings["Medium @ Timeline Energy Impact"] = "Medium";
 localizedStrings["Memory"] = "Memory";
 localizedStrings["Memory Cache"] = "Memory Cache";
 localizedStrings["Memory usage of this canvas"] = "Memory usage of this canvas";
@@ -1416,7 +1425,8 @@ localizedStrings["Version"] = "Version";
 localizedStrings["Vertex"] = "Vertex";
 localizedStrings["Vertex Shader"] = "Vertex Shader";
 localizedStrings["Vertex/Fragment Shader"] = "Vertex/Fragment Shader";
-localizedStrings["Very High"] = "Very High";
+/* Energy Impact: Very High */
+localizedStrings["Very High @ Timeline Energy Impact"] = "Very High";
 localizedStrings["View Image"] = "View Image";
 localizedStrings["View Recording"] = "View Recording";
 localizedStrings["View Shader"] = "View Shader";
