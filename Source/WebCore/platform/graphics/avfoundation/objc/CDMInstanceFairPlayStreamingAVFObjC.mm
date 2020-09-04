@@ -168,6 +168,26 @@ static const NSInteger SecurityLevelError = -42811;
 
 @end
 
+namespace WTF {
+
+template<typename>
+struct LogArgument;
+
+template<>
+struct LogArgument<WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys> {
+    static String toString(const WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys& keys)
+    {
+        StringBuilder builder;
+        builder.append("[");
+        for (auto key : keys)
+            builder.append(key->toHexString());
+        builder.append("]");
+        return builder.toString();
+    }
+};
+
+}
+
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
@@ -1351,7 +1371,12 @@ CDMInstanceSession::KeyStatusVector CDMInstanceSessionFairPlayStreamingAVFObjC::
         for (auto& oneRequest : request.requests) {
             auto keyIDs = keyIDsForRequest(oneRequest.get());
             auto status = requestStatusToCDMStatus(oneRequest.get().status);
-            if (m_outputObscured || oneRequest.get().error.code == SecurityLevelError)
+            if (oneRequest.get().error.code == SecurityLevelError)
+                status = CDMKeyStatus::OutputRestricted;
+
+            // Only use the non-request-specific "outputObscuredDueToInsufficientExternalProtection" status if
+            // AVContentKeyRequests do not support the finer grained "-willOutputBeObscured..." API.
+            if (m_outputObscured && ![oneRequest respondsToSelector:@selector(willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:)])
                 status = CDMKeyStatus::OutputRestricted;
 
             if (displayID && keyRequestHasInsufficientProtectionForDisplayID(oneRequest.get(), *displayID))
@@ -1370,6 +1395,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficient
     if (obscured == m_outputObscured)
         return;
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, obscured);
     m_outputObscured = obscured;
 
     if (m_client)
@@ -1402,7 +1428,7 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtec
     UNUSED_PARAM(displayID);
     if ([request respondsToSelector:@selector(willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:)]) {
         auto obscured = [request willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:@[ ]];
-        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "request willOutputBeObscured...forDisplays:[ nil ] = ", obscured ? "true" : "false");
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "request { ", keyIDsForRequest(request), " } willOutputBeObscured...forDisplays:[ nil ] = ", obscured ? "true" : "false");
         return obscured;
     }
     return false;

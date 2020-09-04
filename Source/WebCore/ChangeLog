@@ -1,3 +1,27 @@
+2020-09-04  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa,EME] -outputObscuredDueToInsufficientExternalProtection KVO will set OutputObscured for all attached MediaKeySessions.
+        https://bugs.webkit.org/show_bug.cgi?id=216185
+
+        Reviewed by Eric Carlson.
+
+        When EME clients add licenses that have, for instance, different HDCP level requirements, the keyStatus for
+        each key in the Session (and indeed all attached MediaKeySessions) will be marked as OutputRestricted, since
+        it is impossible to tell from that KVO which key or session was responsible for creating the violation.
+
+        On platforms where the more granular -willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays: query
+        is available, ignore the KVO from AVSampleBufferDisplayLayer, and rely entirely on the per-request query to
+        determine key status.
+
+        Drive-by fix: add logging when we receive the -outputObscuredDueToInsufficientExternalProtection KVO notification, and
+        include keyIDs in the keyStatus logging.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WTF::LogArgument<WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys>::toString):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtectionForDisplayID const):
+
 2020-09-04  Chris Dumez  <cdumez@apple.com>
 
         Improve interpolation algorithm in OscillatorNode
