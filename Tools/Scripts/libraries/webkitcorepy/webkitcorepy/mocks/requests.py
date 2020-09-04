@@ -20,8 +20,43 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitcorepy.mocks.context_stack import ContextStack
-from webkitcorepy.mocks.time_ import Time
-from webkitcorepy.mocks.subprocess import ProcessCompletion, Subprocess
+import json
 
-from webkitcorepy.mocks.requests import Response
+
+class Response(object):
+    @staticmethod
+    def fromText(data, url=None):
+        assert isinstance(data, str)
+        return Response(text=data, url=url)
+
+    @staticmethod
+    def fromJson(data, url=None):
+        assert isinstance(data, list) or isinstance(data, dict)
+        return Response(text=json.dumps(data), url=url)
+
+    @staticmethod
+    def create404(url=None):
+        return Response(status_code=404, url=url)
+
+    def __init__(self, status_code=None, text=None, url=None):
+        if status_code is not None:
+            self.status_code = status_code
+        elif text is not None:
+            self.status_code = 200
+        else:
+            self.status_code = 204  # No content
+        self.text = text
+        self.url = url
+
+    def json(self):
+        return json.loads(self.text)
+
+    def iter_content(self, chunk_size=4096):
+        for i in range(0, len(self.text), chunk_size):
+            yield self.text[i:i + chunk_size]
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        pass
