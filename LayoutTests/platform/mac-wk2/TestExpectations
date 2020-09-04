@@ -926,7 +926,7 @@ webkit.org/b/207222 webgpu/whlsl/zero-initialize-values-2.html [ Pass ImageOnlyF
 
 webkit.org/b/206627 storage/websql [ Skip ]
 
-webkit.org/b/207267 webgpu/whlsl/ensure-proper-variable-lifetime.html [ Pass Failure ]
+webkit.org/b/207267 webgpu/whlsl/ensure-proper-variable-lifetime.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207269 [ Debug ] http/tests/websocket/tests/hybi/server-close.html [ Pass Crash ]
 
