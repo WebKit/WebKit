@@ -1,3 +1,23 @@
+2020-09-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Horizontal alignment should move the inline boxes and not the line box
+        https://bugs.webkit.org/show_bug.cgi?id=216153
+
+        Reviewed by Antti Koivisto.
+
+        When the "text-align" property triggers horizontal alignment, the line content (inline boxes and runs) should
+        be moved horizontally while the line box should stay at the initial top/left position.
+        This patch is also a preparation for making the LineBox more aligned with the spec.  
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::m_inlineFormattingContext):
+        (WebCore::Layout::LineBox::inlineRectForTextRun const):
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::horizontalAlignmentOffset const):
+
 2020-09-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Stop using firefox user agent quirk for google docs

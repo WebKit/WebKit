@@ -562,7 +562,16 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
     }
     // FIXME: This is where the logical to physical translate should happen.
-    inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, lineBox.alignmentBaseline() });
+    auto constructDisplayLine = [&] {
+        // FIXME: Layout::LineBox should contain all inline boxes and it should not have neither top/left geometry nor overflow. 
+        auto lineRect = lineBox.logicalRect();
+        if (auto horizontalAlignmentOffset = lineBox.horizontalAlignmentOffset()) {
+            // Painting code (specifically TextRun's xPos) needs the aligned offset to be able to compute tab positions.
+            lineRect.moveHorizontally(*horizontalAlignmentOffset);
+        }
+        inlineContent.lineBoxes.append({ lineRect, lineBox.scrollableOverflow(), lineInkOverflow, lineBox.alignmentBaseline() });
+    };
+    constructDisplayLine();
 }
 
 void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)

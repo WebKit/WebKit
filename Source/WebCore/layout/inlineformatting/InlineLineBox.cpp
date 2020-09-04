@@ -148,11 +148,7 @@ LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, const I
     , m_contentLogicalWidth(contentLogicalWidth)
     , m_inlineFormattingContext(inlineFormattingContext)
 {
-    m_lineAlignmentOffset = horizontalAlignmentOffset(runs, root().style().textAlign(), logicalWidth, contentLogicalWidth, isLastLineWithInlineContent);
-    if (m_lineAlignmentOffset) {
-        // FIXME: line box should not need to be moved, only the inline boxes.
-        m_rect.moveHorizontally(*m_lineAlignmentOffset);
-    }
+    m_horizontalAlignmentOffset = Layout::horizontalAlignmentOffset(runs, root().style().textAlign(), logicalWidth, contentLogicalWidth, isLastLineWithInlineContent);
     constructInlineBoxes(runs, isLineVisuallyEmpty);
     computeInlineBoxesLogicalHeight();
     alignInlineBoxesVerticallyAndComputeLineBoxHeight(isLineVisuallyEmpty);
@@ -169,7 +165,7 @@ Display::InlineRect LineBox::inlineRectForTextRun(const LineBuilder::Run& run) c
     ASSERT(run.isText() || run.isLineBreak());
     auto& parentInlineBox = inlineBoxForLayoutBox(run.layoutBox().parent());
     auto inlineBoxRect = parentInlineBox.logicalRect();
-    return { inlineBoxRect.top(), run.logicalLeft(), run.logicalWidth(), inlineBoxRect.height() };
+    return { inlineBoxRect.top(), m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft(), run.logicalWidth(), inlineBoxRect.height() };
 }
 
 void LineBox::constructInlineBoxes(const LineBuilder::RunList& runs, IsLineVisuallyEmpty isLineVisuallyEmpty)
@@ -177,7 +173,7 @@ void LineBox::constructInlineBoxes(const LineBuilder::RunList& runs, IsLineVisua
     auto constructRootInlineBox = [&] {
         auto& fontMetrics = root().style().fontMetrics();
         InlineLayoutUnit rootInlineBoxHeight = fontMetrics.height();
-        auto rootInlineBoxRect = Display::InlineRect { { }, { }, contentLogicalWidth(), rootInlineBoxHeight };
+        auto rootInlineBoxRect = Display::InlineRect { { }, m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }), contentLogicalWidth(), rootInlineBoxHeight };
         InlineLayoutUnit rootInlineBoxBaseline = fontMetrics.ascent();
         auto rootInlineBoxDescent = rootInlineBoxHeight - rootInlineBoxBaseline;
         auto lineHasImaginaryStrut = !layoutState().inQuirksMode();
@@ -192,6 +188,7 @@ void LineBox::constructInlineBoxes(const LineBuilder::RunList& runs, IsLineVisua
         auto& layoutBox = run.layoutBox();
         if (run.isBox()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+            auto inlineBoxLogicalLeft = m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft();
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
                 // Spec makes us generate at least one line -even if it is empty.
@@ -210,24 +207,25 @@ void LineBox::constructInlineBoxes(const LineBuilder::RunList& runs, IsLineVisua
                 //     -----|-|-|---------- <- baseline
                 //
                 auto adjustedBaseline = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
-                auto inlineBoxRect = Display::InlineRect { { }, run.logicalLeft(), run.logicalWidth(), boxGeometry.marginBoxHeight() };
+                auto inlineBoxRect = Display::InlineRect { { }, inlineBoxLogicalLeft, run.logicalWidth(), boxGeometry.marginBoxHeight() };
                 auto inlineBox = makeUnique<InlineBox>(layoutBox, inlineBoxRect, adjustedBaseline, InlineLayoutUnit { }, InlineBox::IsConsideredEmpty::No);
                 m_inlineBoxRectMap.set(&layoutBox, inlineBox.get());
                 m_inlineBoxList.append(WTFMove(inlineBox));
             } else {
                 auto runHeight = boxGeometry.marginBoxHeight();
-                auto inlineBoxRect = Display::InlineRect { { }, run.logicalLeft(), run.logicalWidth(), runHeight };
+                auto inlineBoxRect = Display::InlineRect { { }, inlineBoxLogicalLeft, run.logicalWidth(), runHeight };
                 auto inlineBox = makeUnique<InlineBox>(layoutBox, inlineBoxRect, runHeight, InlineLayoutUnit { }, InlineBox::IsConsideredEmpty::No);
                 m_inlineBoxRectMap.set(&layoutBox, inlineBox.get());
                 m_inlineBoxList.append(WTFMove(inlineBox));
             }
         } else if (run.isContainerStart()) {
             auto initialWidth = contentLogicalWidth() - run.logicalLeft();
+            auto inlineBoxLogicalLeft = m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft();
             ASSERT(initialWidth >= 0);
             auto& fontMetrics = layoutBox.style().fontMetrics();
             InlineLayoutUnit logicalHeight = fontMetrics.height();
             InlineLayoutUnit baseline = fontMetrics.ascent();
-            auto inlineBoxRect = Display::InlineRect { { }, run.logicalLeft(), initialWidth, logicalHeight };
+            auto inlineBoxRect = Display::InlineRect { { }, inlineBoxLogicalLeft, initialWidth, logicalHeight };
             auto inlineBox = makeUnique<InlineBox>(layoutBox, inlineBoxRect, baseline, logicalHeight - baseline, InlineBox::IsConsideredEmpty::Yes);
             m_inlineBoxRectMap.set(&layoutBox, inlineBox.get());
             m_inlineBoxList.append(WTFMove(inlineBox));

@@ -92,6 +92,8 @@ public:
     const Display::InlineRect& logicalRect() const { return m_rect; }
     const Display::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
 
+    Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
+
     const InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineBoxRectMap.get(&layoutBox); }
     Display::InlineRect inlineRectForTextRun(const LineBuilder::Run&) const;
 
@@ -132,7 +134,7 @@ private:
 
     InlineBox m_rootInlineBox;
 
-    Optional<InlineLayoutUnit> m_lineAlignmentOffset;
+    Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     HashMap<const Box*, InlineBox*> m_inlineBoxRectMap;
     Vector<std::unique_ptr<InlineBox>> m_inlineBoxList;
     const InlineFormattingContext& m_inlineFormattingContext;
