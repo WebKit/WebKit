@@ -1,3 +1,12 @@
+2020-09-04  Truitt Savell  <tsavell@apple.com>
+
+        imported/blink/fast/text/international/text-shaping-arabic.html is Passing on Big Sur
+        rdar://41103260
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-09-04  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(266399?): [ iOS wk2 ] imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html is a constant failure
