@@ -1,3 +1,15 @@
+2020-09-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add client decoder entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=216175
+        <rdar://problem/67532128>
+
+        Reviewed by Brent Fulgham.
+
+        Add client decoder entitlement in the WebContent process on macOS.
+
+        * Scripts/process-entitlements.sh:
+
 2020-09-04  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder timeslice parameter causing internal error on longer videos
