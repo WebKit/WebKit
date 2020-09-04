@@ -322,10 +322,11 @@ void WebSocketChannel::didClose(unsigned short code, String&& reason)
 
     m_inspector.didCloseWebSocket(m_document.get());
 
-    if (code == WebCore::WebSocketChannel::CloseEventCodeNormalClosure)
+    bool receivedClosingHandshake = code != WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure;
+    if (receivedClosingHandshake)
         m_client->didStartClosingHandshake();
 
-    m_client->didClose(m_bufferedAmount, (m_isClosing || code == WebCore::WebSocketChannel::CloseEventCodeNormalClosure) ? WebCore::WebSocketChannelClient::ClosingHandshakeComplete : WebCore::WebSocketChannelClient::ClosingHandshakeIncomplete, code, reason);
+    m_client->didClose(m_bufferedAmount, (m_isClosing || receivedClosingHandshake) ? WebCore::WebSocketChannelClient::ClosingHandshakeComplete : WebCore::WebSocketChannelClient::ClosingHandshakeIncomplete, code, reason);
 }
 
 void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
