@@ -95,8 +95,6 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasChromeBrowserQuirk("http://auth.mayohr.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://bankofamerica.com/");
 
-    assertUserAgentForURLHasFirefoxBrowserQuirk("http://accounts.youtube.com/");
-    assertUserAgentForURLHasFirefoxBrowserQuirk("http://docs.google.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://drive.google.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://bugzilla.redhat.com/");
 
@@ -106,6 +104,8 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasLinuxPlatformQuirk("http://plus.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://drive.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://fonts.googleapis.com/");
+    assertUserAgentForURLHasLinuxPlatformQuirk("http://accounts.youtube.com/");
+    assertUserAgentForURLHasLinuxPlatformQuirk("http://docs.google.com/");
 
     assertUserAgentForURLHasMacPlatformQuirk("http://www.yahoo.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://finance.yahoo.com/");
@@ -113,7 +113,6 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasMacPlatformQuirk("http://www.whatsapp.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://web.whatsapp.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://www.chase.com/");
-    assertUserAgentForURLHasMacPlatformQuirk("http://drive.google.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://paypal.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://outlook.live.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://mail.ntu.edu.tw/");

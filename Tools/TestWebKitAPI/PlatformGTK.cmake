@@ -32,6 +32,7 @@ list(APPEND TestWTF_LIBRARIES
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 
+    Tests/WebCore/UserAgentQuirks.cpp
     Tests/WebCore/gstreamer/GStreamerTest.cpp
     Tests/WebCore/gstreamer/GstMappedBuffer.cpp
 
