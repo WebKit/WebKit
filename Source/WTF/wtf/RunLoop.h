@@ -32,9 +32,11 @@
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
+#include <wtf/Observer.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)
@@ -96,6 +98,9 @@ public:
 
 #if USE(GLIB_EVENT_LOOP)
     WTF_EXPORT_PRIVATE GMainContext* mainContext() const { return m_mainContext.get(); }
+    enum class Event { WillDispatch, DidDispatch };
+    using Observer = WTF::Observer<void(Event)>;
+    WTF_EXPORT_PRIVATE void observe(const Observer&);
 #endif
 
 #if USE(GENERIC_EVENT_LOOP) || USE(WINDOWS_EVENT_LOOP)
@@ -221,9 +226,13 @@ private:
     RetainPtr<CFRunLoopRef> m_runLoop;
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
 #elif USE(GLIB_EVENT_LOOP)
+    void notify(Event);
+
+    static GSourceFuncs s_runLoopSourceFunctions;
     GRefPtr<GMainContext> m_mainContext;
     Vector<GRefPtr<GMainLoop>> m_mainLoops;
     GRefPtr<GSource> m_source;
+    WeakHashSet<Observer> m_observers;
 #elif USE(GENERIC_EVENT_LOOP)
     void schedule(Ref<TimerBase::ScheduledTask>&&);
     void schedule(const AbstractLocker&, Ref<TimerBase::ScheduledTask>&&);
