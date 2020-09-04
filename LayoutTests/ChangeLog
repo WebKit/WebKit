@@ -1,6 +1,6 @@
 2020-09-03  Hector Lopez  <hector_i_lopez@apple.com>
 
-        RERESSION(r266509): [ iOS wk2 ] css2.1/t0905-c5525-fltwidth-00-c-g.html is a constant failure
+        REGRESSION(r266509): [ iOS wk2 ] css2.1/t0905-c5525-fltwidth-00-c-g.html is a constant failure
         https://bugs.webkit.org/show_bug.cgi?id=216160
 
         Unreviewed test gardening.
