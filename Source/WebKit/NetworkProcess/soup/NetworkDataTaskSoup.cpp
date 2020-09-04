@@ -671,6 +671,10 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         redirectedURL.setFragmentIdentifier(request.url().fragmentIdentifier());
     request.setURL(redirectedURL);
 
+    // Clear the user agent to ensure a new one is computed.
+    auto userAgent = request.httpUserAgent();
+    request.clearHTTPUserAgent();
+
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
         request.clearHTTPReferrer();
@@ -723,7 +727,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
     clearRequest();
 
     auto response = ResourceResponse(m_response);
-    m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = makeRef(*this), isCrossOrigin, wasBlockingCookies](const ResourceRequest& newRequest) {
+    m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = makeRef(*this), isCrossOrigin, wasBlockingCookies, userAgent = WTFMove(userAgent)](const ResourceRequest& newRequest) {
         if (newRequest.isNull() || m_state == State::Canceling)
             return;
 
@@ -735,6 +739,9 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
             }
 
             applyAuthenticationToRequest(request);
+
+            if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
+                request.setHTTPUserAgent(userAgent);
         }
         createRequest(WTFMove(request), wasBlockingCookies);
         if (m_soupRequest && m_state != State::Suspended) {

@@ -379,6 +379,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
 
 static WebKitTestServer* kServer;
 static const char* kServerSuggestedFilename = "webkit-downloaded-file";
+static HashMap<CString, CString> s_userAgentMap;
 
 static void addContentDispositionHTTPHeaderToResponse(SoupMessage* message)
 {
@@ -408,6 +409,9 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
     soup_message_set_status(message, SOUP_STATUS_OK);
 
+    if (g_str_has_prefix(path, "/ua-"))
+        s_userAgentMap.add(path, soup_message_headers_get_one(message->request_headers, "User-Agent"));
+
     if (g_str_equal(path, "/cancel-after-destination")) {
         // Use an infinite message to make sure it's cancelled before it finishes.
         soup_message_headers_set_encoding(message->response_headers, SOUP_ENCODING_CHUNKED);
@@ -417,7 +421,13 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         return;
     }
 
-    if (g_str_equal(path, "/unknown"))
+    if (g_str_equal(path, "/ua-test-redirect")) {
+        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+        soup_message_headers_append(message->response_headers, "Location", "/ua-test");
+        return;
+    }
+
+    if (g_str_equal(path, "/unknown") || g_str_equal(path, "/ua-test"))
         path = "/test.pdf";
 
     GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), path, nullptr));
@@ -721,6 +731,43 @@ static void testDownloadMIMEType(DownloadTest* test, gconstpointer)
     test->checkDestinationAndDeleteFile(download.get(), expectedFilename.get());
 }
 
+static void testDownloadUserAgent(DownloadTest* test, gconstpointer)
+{
+    s_userAgentMap.clear();
+    GRefPtr<WebKitDownload> download = test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/ua-test"));
+    g_assert_null(webkit_download_get_web_view(download.get()));
+    WebKitURIRequest* request = webkit_download_get_request(download.get());
+    g_assert_true(WEBKIT_IS_URI_REQUEST(request));
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/ua-test"));
+
+    const char* userAgent = soup_message_headers_get_one(webkit_uri_request_get_http_headers(request), "User-Agent");
+    g_assert_nonnull(userAgent);
+    g_assert_cmpuint(s_userAgentMap.size(), ==, 1);
+    g_assert_true(s_userAgentMap.contains("/ua-test"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-test"));
+    s_userAgentMap.clear();
+
+    GUniquePtr<char> expectedFilename(g_strdup_printf("%s.pdf", kServerSuggestedFilename));
+    test->checkDestinationAndDeleteFile(download.get(), expectedFilename.get());
+
+    download = test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/ua-test-redirect"));
+    g_assert_null(webkit_download_get_web_view(download.get()));
+    request = webkit_download_get_request(download.get());
+    g_assert_true(WEBKIT_IS_URI_REQUEST(request));
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/ua-test-redirect"));
+
+    userAgent = soup_message_headers_get_one(webkit_uri_request_get_http_headers(request), "User-Agent");
+    g_assert_nonnull(userAgent);
+    g_assert_cmpuint(s_userAgentMap.size(), ==, 2);
+    g_assert_true(s_userAgentMap.contains("/ua-test-redirect"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-test-redirect"));
+    g_assert_true(s_userAgentMap.contains("/ua-test"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-test"));
+    s_userAgentMap.clear();
+
+    test->checkDestinationAndDeleteFile(download.get(), expectedFilename.get());
+}
+
 #if PLATFORM(GTK)
 static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpointer)
 {
@@ -805,6 +852,7 @@ void beforeAll()
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download", testPolicyResponseDownload);
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download-cancel", testPolicyResponseDownloadCancel);
     DownloadTest::add("Downloads", "mime-type", testDownloadMIMEType);
+    DownloadTest::add("Downloads", "user-agent", testDownloadUserAgent);
     // FIXME: Implement keyStroke in WPE.
 #if PLATFORM(GTK)
 #if !USE(GTK4)
