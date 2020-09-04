@@ -138,6 +138,10 @@ void Thread::initializeInThread()
         m_currentAtomStringTable = &sharedStringTable.get();
     }
 #endif
+
+#if OS(LINUX)
+    m_id = currentID();
+#endif
 }
 
 void Thread::entryPoint(NewThreadContext* newThreadContext)
