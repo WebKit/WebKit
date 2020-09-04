@@ -1045,7 +1045,9 @@ localizedStrings["Resource Size"] = "Resource Size";
 localizedStrings["Resource Type"] = "Resource Type";
 localizedStrings["Resource does not have timing data"] = "Resource does not have timing data";
 localizedStrings["Resource failed to load."] = "Resource failed to load.";
-localizedStrings["Resource has no content"] = "Resource has no content";
+/* An error message shown when there is no cached content for a HTTP 304 Not Modified resource response. */
+localizedStrings["Resource has no cached content. @ Resource Preview"] = "Resource has no cached content.";
+localizedStrings["Resource has no content."] = "Resource has no content.";
 localizedStrings["Resource has no timing data"] = "Resource has no timing data";
 localizedStrings["Resource was loaded with the \u201Cdata\u201D scheme."] = "Resource was loaded with the \u201Cdata\u201D scheme.";
 localizedStrings["Resource was served from the cache."] = "Resource was served from the cache.";

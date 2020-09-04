@@ -1,3 +1,32 @@
+2020-09-03  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector fails to preview response from XHR requests
+        https://bugs.webkit.org/show_bug.cgi?id=215852
+
+        Reviewed by Devin Rousso.
+
+        Test: http/tests/inspector/network/fetch-response-body.html
+
+        Added workaround for 304 XHR/Fetch requests so that the mimeType and content are correctly set, otherwise the
+        frontend does not have the information it needs to preview the response.
+
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::responseReceived): Storing new ResourceData members
+        (WebCore::NetworkResourcesData::dataForURL): Support for finding a previous non-304 response for a URL.
+        * inspector/NetworkResourcesData.h:
+        (WebCore::NetworkResourcesData::ResourceData::httpStatusText const):
+        (WebCore::NetworkResourcesData::ResourceData::setHTTPStatusText):
+        (WebCore::NetworkResourcesData::ResourceData::mimeType const):
+        (WebCore::NetworkResourcesData::ResourceData::setMIMEType):
+        (WebCore::NetworkResourcesData::ResourceData::responseTimestamp const):
+        (WebCore::NetworkResourcesData::ResourceData::setResponseTimestamp):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::willSendRequest): Fixed issue where it was possible that we would inform the
+            frontend that a request was of type `Other` even though we had request information indicating it was `XHR`
+            or `Fetch`.
+        (WebCore::InspectorNetworkAgent::didReceiveResponse): Added code path to work around underlying issue where
+            XHR/Fetch 304s are not cached, and end up not passing necessary information to the frontend as a result.
+
 2020-09-03  Chris Dumez  <cdumez@apple.com>
 
         AudioDestinationNode.maxChannelCount always returns 0

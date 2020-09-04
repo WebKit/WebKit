@@ -1027,16 +1027,16 @@ WI.Resource = class Resource extends WI.SourceCode
     requestContent()
     {
         if (this._finished)
-            return super.requestContent();
+            return super.requestContent().catch(this._requestContentFailure.bind(this));
 
         if (this._failed)
-            return Promise.resolve({error: WI.UIString("An error occurred trying to load the resource.")});
+            return this._requestContentFailure();
 
         if (!this._finishThenRequestContentPromise) {
             this._finishThenRequestContentPromise = new Promise((resolve, reject) => {
                 this.addEventListener(WI.Resource.Event.LoadingDidFinish, resolve);
                 this.addEventListener(WI.Resource.Event.LoadingDidFail, reject);
-            }).then(WI.SourceCode.prototype.requestContent.bind(this));
+            }).then(this.requestContent.bind(this));
         }
 
         return this._finishThenRequestContentPromise;
@@ -1184,6 +1184,17 @@ WI.Resource = class Resource extends WI.SourceCode
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
 
         throw errorString;
+    }
+    
+    // Private
+    
+    _requestContentFailure(error)
+    {
+        return Promise.resolve({
+            error: WI.UIString("An error occurred trying to load the resource."),
+            reason: error.message || this._failureReasonText,
+            sourceCode: this,
+        });
     }
 };
 

@@ -407,6 +407,7 @@ compositing/visibility/visibility-change-in-subframe.html [ Failure ]
 http/tests/cache/disk-cache
 http/tests/inspector/network/resource-response-source-disk-cache.html
 http/tests/inspector/network/resource-sizes-disk-cache.html
+http/tests/inspector/network/fetch-response-body-304.html [ Skip ]
 
 # Async image decoding is WK2 only
 fast/images/async-image-background-change.html

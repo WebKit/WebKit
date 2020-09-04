@@ -435,8 +435,10 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     String targetId = request.initiatorIdentifier();
 
     if (type == InspectorPageAgent::OtherResource) {
-        if (m_loadingXHRSynchronously)
+        if (m_loadingXHRSynchronously || request.requester() == ResourceRequest::Requester::XHR)
             type = InspectorPageAgent::XHRResource;
+        else if (request.requester() == ResourceRequest::Requester::Fetch)
+            type = InspectorPageAgent::FetchResource;
         else if (loader && equalIgnoringFragmentIdentifier(request.url(), loader->url()) && !loader->isCommitted())
             type = InspectorPageAgent::DocumentResource;
         else if (loader) {
@@ -536,6 +538,25 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
     // RawResource is used for loading worker scripts, and those should stay as ScriptResource and not change to XHRResource.
     if (type != newType && newType != InspectorPageAgent::XHRResource && newType != InspectorPageAgent::OtherResource)
         type = newType;
+    
+    // FIXME: <webkit.org/b/216125> 304 Not Modified responses for XHR/Fetch do not have all their information from the cache.
+    if (isNotModified && (type == InspectorPageAgent::XHRResource || type == InspectorPageAgent::FetchResource) && (!cachedResource || !cachedResource->encodedSize())) {
+        if (auto previousResourceData = m_resourcesData->dataForURL(response.url().string())) {
+            if (previousResourceData->hasContent())
+                m_resourcesData->setResourceContent(requestId, previousResourceData->content(), previousResourceData->base64Encoded());
+            else if (previousResourceData->hasBufferedData()) {
+                auto previousBuffer = previousResourceData->buffer();
+                m_resourcesData->maybeAddResourceData(requestId, previousBuffer->data(), previousBuffer->size());
+            }
+            
+            resourceResponse->setString("mimeType"_s, previousResourceData->mimeType());
+            
+            resourceResponse->setInteger("status"_s, previousResourceData->httpStatusCode());
+            resourceResponse->setString("statusText"_s, previousResourceData->httpStatusText());
+            
+            resourceResponse->setString("source"_s, Inspector::Protocol::InspectorHelpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
+        }
+    }
 
     String frameId = frameIdentifier(loader);
     String loaderId = loaderIdentifier(loader);

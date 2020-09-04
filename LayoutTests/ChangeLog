@@ -1,3 +1,21 @@
+2020-09-03  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector fails to preview response from XHR requests
+        https://bugs.webkit.org/show_bug.cgi?id=215852
+
+        Reviewed by Devin Rousso.
+
+        Added new test cases and associated resources to test handling of `304 Not Modified` responses to XHR requests.
+        We test both XHR for a PHP page as well as for a text file, as they behaved differently (incorrectly) before
+        this patch.
+
+        * http/tests/inspector/network/fetch-response-body-304-expected.txt:
+        * http/tests/inspector/network/fetch-response-body-304.html:
+        * http/tests/inspector/network/resources/.htaccess: Cache-Control header for fetch-cachable.txt
+        * http/tests/inspector/network/resources/fetch-cachable.php:
+        * http/tests/inspector/network/resources/fetch-cachable.txt:
+        * platform/mac-wk1/TestExpectations: Tests rely on disk-cache which is not present in WK1
+
 2020-09-03  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION(r266509): [ iOS wk2 ] css2.1/t0905-c5525-fltwidth-00-c-g.html is a constant failure

@@ -152,8 +152,11 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
     resourceData->setFrameId(frameId);
     resourceData->setURL(response.url().string());
     resourceData->setHTTPStatusCode(response.httpStatusCode());
+    resourceData->setHTTPStatusText(response.httpStatusText());
     resourceData->setType(type);
     resourceData->setForceBufferData(forceBufferData);
+    resourceData->setMIMEType(response.mimeType());
+    resourceData->setResponseTimestamp(WallTime::now());
 
     if (InspectorNetworkAgent::shouldTreatAsText(response.mimeType()))
         resourceData->setDecoder(InspectorNetworkAgent::createTextDecoder(response.mimeType(), response.textEncodingName()));
@@ -276,6 +279,22 @@ void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, RefP
 NetworkResourcesData::ResourceData const* NetworkResourcesData::data(const String& requestId)
 {
     return resourceDataForRequestId(requestId);
+}
+
+NetworkResourcesData::ResourceData const* NetworkResourcesData::dataForURL(const String& url)
+{
+    if (url.isNull())
+        return nullptr;
+    
+    NetworkResourcesData::ResourceData* mostRecentResourceData = nullptr;
+    
+    for (auto* resourceData : resources()) {
+        // responseTimestamp is checked so that we only grab the most recent response for the URL, instead of potentionally getting a more stale response.
+        if (resourceData->url() == url && resourceData->httpStatusCode() != 304 && (!mostRecentResourceData || (resourceData->responseTimestamp() > mostRecentResourceData->responseTimestamp())))
+            mostRecentResourceData = resourceData;
+    }
+    
+    return mostRecentResourceData;
 }
 
 Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cachedResource)

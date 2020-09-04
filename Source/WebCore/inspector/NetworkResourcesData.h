@@ -32,6 +32,7 @@
 #include "InspectorPageAgent.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -74,9 +75,15 @@ public:
 
         int httpStatusCode() const { return m_httpStatusCode; }
         void setHTTPStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
+        
+        const String& httpStatusText() const { return m_httpStatusText; }
+        void setHTTPStatusText(const String& httpStatusText) { m_httpStatusText = httpStatusText; }
 
         const String& textEncodingName() const { return m_textEncodingName; }
         void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
+        
+        const String& mimeType() const { return m_mimeType; }
+        void setMIMEType(const String& mimeType) { m_mimeType = mimeType; }
 
         RefPtr<TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
         void setDecoder(RefPtr<TextResourceDecoder>&& decoder) { m_decoder = WTFMove(decoder); }
@@ -92,6 +99,9 @@ public:
 
         bool forceBufferData() const { return m_forceBufferData; }
         void setForceBufferData(bool force) { m_forceBufferData = force; }
+        
+        WallTime responseTimestamp() const { return m_responseTimestamp; }
+        void setResponseTimestamp(WallTime time) { m_responseTimestamp = time; }
 
         bool hasBufferedData() const { return m_dataBuffer; }
 
@@ -107,6 +117,7 @@ public:
         String m_url;
         String m_content;
         String m_textEncodingName;
+        String m_mimeType;
         RefPtr<TextResourceDecoder> m_decoder;
         RefPtr<SharedBuffer> m_dataBuffer;
         RefPtr<SharedBuffer> m_buffer;
@@ -114,9 +125,11 @@ public:
         CachedResource* m_cachedResource { nullptr };
         InspectorPageAgent::ResourceType m_type { InspectorPageAgent::OtherResource };
         int m_httpStatusCode { 0 };
+        String m_httpStatusText;
         bool m_isContentEvicted { false };
         bool m_base64Encoded { false };
         bool m_forceBufferData { false };
+        WallTime m_responseTimestamp;
     };
 
     NetworkResourcesData();
@@ -133,6 +146,7 @@ public:
     void addCachedResource(const String& requestId, CachedResource*);
     void addResourceSharedBuffer(const String& requestId, RefPtr<SharedBuffer>&&, const String& textEncodingName);
     ResourceData const* data(const String& requestId);
+    ResourceData const* dataForURL(const String& url);
     Vector<String> removeCachedResource(CachedResource*);
     void clear(Optional<String> preservedLoaderId = WTF::nullopt);
     Vector<ResourceData*> resources();

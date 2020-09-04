@@ -1,3 +1,24 @@
+2020-09-03  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector fails to preview response from XHR requests
+        https://bugs.webkit.org/show_bug.cgi?id=215852
+
+        Reviewed by Devin Rousso.
+
+        Responses with a no content error and a status code of 304 now show a `Resource has no cached content` message instead
+            of a generic error. Also responses with empty content and no mime type now show a `Resource has no content`
+            message.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/Resource.js: More consistant error handling model - previously some paths rejected on
+            failure and some resolved with an error property.
+        (WI.Resource.prototype.requestContent):
+        (WI.Resource.prototype._requestContentFailure):
+        * UserInterface/Views/ResourceContentView.js: Error messages
+        (WI.ResourceContentView.prototype.async showGenericNoContentMessage): Text now consistent with other messages.
+        (WI.ResourceContentView.prototype.showNoCachedContentMessage):
+        (WI.ResourceContentView.prototype._contentAvailable):
+
 2020-09-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow url breakpoints to be configured
