@@ -1,3 +1,9 @@
+2020-09-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Bump version numbers
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2020-09-02  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update to FDO 20.08
