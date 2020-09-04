@@ -26,8 +26,8 @@
 [
     JSGenerateToJSObject
 ] dictionary TextEncoderEncodeIntoResult {
-  unsigned long long read;
-  unsigned long long written;
+    unsigned long long read;
+    unsigned long long written;
 };
 
 [

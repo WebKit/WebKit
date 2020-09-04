@@ -58,8 +58,8 @@ auto TextEncoder::encodeInto(String&& input, Ref<Uint8Array>&& array) -> EncodeI
         }
         UBool sawError = false;
         U8_APPEND(destinationBytes, written, capacity, token, sawError);
-            if (sawError)
-                break;
+        if (sawError)
+            break;
         if (U_IS_BMP(token))
             read++;
         else

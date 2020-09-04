@@ -1,5 +1,14 @@
 2020-09-04  Alex Christensen  <achristensen@webkit.org>
 
+        Fix indentation after r266533
+        https://bugs.webkit.org/show_bug.cgi?id=193274
+
+        * dom/TextEncoder.cpp:
+        (WebCore::TextEncoder::encodeInto):
+        * dom/TextEncoder.idl:
+
+2020-09-04  Alex Christensen  <achristensen@webkit.org>
+
         Align EUC-JP, ISO-2022-JP, and Shift_JIS decoding with Chrome, Firefox, and the specification
         https://bugs.webkit.org/show_bug.cgi?id=216168
 
