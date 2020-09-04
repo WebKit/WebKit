@@ -245,7 +245,8 @@ if ($supplementalMakefileDeps) {
     foreach my $idlFile (sort keys %supplementals) {
         my $basename = $idlFileToInterfaceName{$idlFile};
 
-        my @dependencies = map { basename($_) } @{$supplementals{$idlFile}};
+        my @dependencyList = map { basename($_) } @{$supplementals{$idlFile}};
+        my @dependencies = sort(keys %{{ map{$_=>1}@dependencyList}});
 
         $makefileDeps .= "JS${basename}.h: @{dependencies}\n";
         $makefileDeps .= "DOM${basename}.h: @{dependencies}\n";
@@ -427,7 +428,13 @@ sub getInterfaceExtendedAttributesFromIDL
     $fileContents =~ s/(?:(?:(?:\/\/)(?:[^\n]*)(?:\n))|(?:(?:\/\*)(?:(?:[^\*]+|\*(?!\/))*)(?:\*\/)))//g;
 
     if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface|exception)\s+(\w+)/gs) {
-        my @parts = split(m/,(?![^()]*\))/, $1);
+        my $parameters = $1;
+        if (index($parameters, '}') != -1) {
+            # In case we have a declaration like a dictionary with extended attributes defined before the interface.
+            $parameters = (split '}', $1)[-1];
+            $parameters = substr($parameters, index($parameters, '[') + 1);
+        }
+        my @parts = split(m/,(?![^()]*\))/, $parameters);
         foreach my $part (@parts) {
             my @keyValue = split('=', $part);
             my $key = trim($keyValue[0]);

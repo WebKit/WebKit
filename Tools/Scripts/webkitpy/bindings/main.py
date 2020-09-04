@@ -78,6 +78,8 @@ class BindingsTests:
             (name, extension) = os.path.splitext(input_file)
             if extension != '.idl':
                 continue
+            if name.endswith('Constructors'):
+                continue
             os.write(idl_files_list[0], string_utils.encode(os.path.join(input_directory, input_file) + "\n"))
         os.close(idl_files_list[0])
 
@@ -191,18 +193,25 @@ class BindingsTests:
 
         supplemental_dependency_filename = 'SupplementalDependencies.txt'
         supplemental_makefile_dependency_filename = 'SupplementalDependencies.dep'
+        dom_window_constructors_filename = 'DOMWindowConstructors.idl'
+        workerglobalscope_constructors_filename = 'WorkerGlobalScopeConstructors.idl'
+        dedicatedworkerglobalscope_constructors_filename = 'DedicatedWorkerGlobalScopeConstructors.idl'
+        serviceworkerglobalscope_constructors_filename = 'ServiceWorkerGlobalScopeConstructors.idl'
+        workletglobalscope_constructors_filename = 'WorkletGlobalScopeConstructors.idl'
+        paintworkletglobalscope_constructors_filename = 'PaintWorkletGlobalScopeConstructors.idl'
+        testglobalscope_constructors_filename = 'BindingTestGlobalConstructors.idl'
 
         work_directory = tempfile.mkdtemp()
         input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
         supplemental_dependency_file = os.path.join(work_directory, supplemental_dependency_filename)
         supplemental_makefile_dependency_file = os.path.join(work_directory if not self.reset_results else input_directory, supplemental_makefile_dependency_filename)
-        window_constructors_file = os.path.join(work_directory, 'DOMWindowConstructors.idl')
-        workerglobalscope_constructors_file = os.path.join(work_directory, 'WorkerGlobalScopeConstructors.idl')
-        dedicatedworkerglobalscope_constructors_file = os.path.join(work_directory, 'DedicatedWorkerGlobalScopeConstructors.idl')
-        serviceworkerglobalscope_constructors_file = os.path.join(work_directory, 'ServiceWorkerGlobalScopeConstructors.idl')
-        workletglobalscope_constructors_file = os.path.join(work_directory, 'WorkletGlobalScopeConstructors.idl')
-        paintworkletglobalscope_constructors_file = os.path.join(work_directory, 'PaintWorkletGlobalScopeConstructors.idl')
-        testglobalscope_constructors_file = os.path.join(work_directory, 'BindingTestGlobalConstructors.idl')
+        window_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, dom_window_constructors_filename)
+        workerglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, workerglobalscope_constructors_filename)
+        dedicatedworkerglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, dedicatedworkerglobalscope_constructors_filename)
+        serviceworkerglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, serviceworkerglobalscope_constructors_filename)
+        workletglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, workletglobalscope_constructors_filename)
+        paintworkletglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, paintworkletglobalscope_constructors_filename)
+        testglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, testglobalscope_constructors_filename)
 
         if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, testglobalscope_constructors_file):
             print('Failed to generate a supplemental dependency file.')
@@ -211,6 +220,20 @@ class BindingsTests:
 
         if not self.reset_results:
             if self.detect_file_changes('dependencies', work_directory, input_directory, supplemental_makefile_dependency_filename):
+                all_tests_passed = False
+            if self.detect_file_changes('globalscope', work_directory, input_directory, dom_window_constructors_filename):
+                all_tests_passed = False
+            if self.detect_file_changes('globalscope', work_directory, input_directory, workerglobalscope_constructors_filename):
+                all_tests_passed = False
+            if self.detect_file_changes('globalscope', work_directory, input_directory, dedicatedworkerglobalscope_constructors_filename):
+                all_tests_passed = False
+            if self.detect_file_changes('globalscope', work_directory, input_directory, serviceworkerglobalscope_constructors_filename):
+                all_tests_passed = False
+            if self.detect_file_changes('globalscope', work_directory, input_directory, workletglobalscope_constructors_filename):
+                all_tests_passed = False
+            if self.detect_file_changes('globalscope', work_directory, input_directory, paintworkletglobalscope_constructors_filename):
+                all_tests_passed = False
+            if self.detect_file_changes('globalscope', work_directory, input_directory, testglobalscope_constructors_filename):
                 all_tests_passed = False
 
         for generator in self.generators:

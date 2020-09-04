@@ -1,5 +1,259 @@
 2020-09-04  Youenn Fablet  <youenn@apple.com>
 
+        Binding generator is not always computing the right interface attributes
+        https://bugs.webkit.org/show_bug.cgi?id=216173
+
+        Reviewed by Alex Christensen.
+
+        Update the regular expression to make sure preprocess-idls.pl computes the right attributes for interfaces.
+        Previously, it was causing issues if a dictionary defined before an interface in the same file had some extended attributes.
+        Add some global objects IDL files to enable binding test coverage.
+        Covered by binding tests and existing layout tests.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (getInterfaceExtendedAttributesFromIDL):
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl: Added.
+        * bindings/scripts/test/DOMWindow.idl: Added.
+        * bindings/scripts/test/DOMWindowConstructors.idl: Added.
+        * bindings/scripts/test/DedicatedWorkerGlobalScope.idl: Added.
+        * bindings/scripts/test/DedicatedWorkerGlobalScopeConstructors.idl: Added.
+        * bindings/scripts/test/ExposedToWorkerAndWindow.idl: Added.
+        * bindings/scripts/test/JS/JSBindingTestGlobalConstructors.cpp: Added.
+        * bindings/scripts/test/JS/JSBindingTestGlobalConstructors.h: Added.
+        * bindings/scripts/test/JS/JSDOMWindow.cpp: Added.
+        (WebCore::JSDOMWindowConstructor::prototypeForStructure):
+        (WebCore::JSDOMWindowConstructor::initializeProperties):
+        (WebCore::JSDOMWindowPrototype::finishCreation):
+        (WebCore::JSDOMWindow::JSDOMWindow):
+        (WebCore::JSDOMWindow::finishCreation):
+        (WebCore::JSDOMWindow::getConstructor):
+        (WebCore::IDLAttribute<JSDOMWindow>::cast):
+        (WebCore::jsDOMWindowConstructor):
+        (WebCore::setJSDOMWindowConstructor):
+        (WebCore::jsDOMWindowExposedToWorkerAndWindowConstructorGetter):
+        (WebCore::jsDOMWindowExposedToWorkerAndWindowConstructor):
+        (WebCore::setJSDOMWindowExposedToWorkerAndWindowConstructorSetter):
+        (WebCore::setJSDOMWindowExposedToWorkerAndWindowConstructor):
+        (WebCore::jsDOMWindowTestNodeConstructorGetter):
+        (WebCore::jsDOMWindowTestNodeConstructor):
+        (WebCore::setJSDOMWindowTestNodeConstructorSetter):
+        (WebCore::setJSDOMWindowTestNodeConstructor):
+        (WebCore::jsDOMWindowTestObjectConstructorGetter):
+        (WebCore::jsDOMWindowTestObjectConstructor):
+        (WebCore::setJSDOMWindowTestObjectConstructorSetter):
+        (WebCore::setJSDOMWindowTestObjectConstructor):
+        (WebCore::jsDOMWindowTestPromiseRejectionEventConstructorGetter):
+        (WebCore::jsDOMWindowTestPromiseRejectionEventConstructor):
+        (WebCore::setJSDOMWindowTestPromiseRejectionEventConstructorSetter):
+        (WebCore::setJSDOMWindowTestPromiseRejectionEventConstructor):
+        (WebCore::JSDOMWindow::subspaceForImpl):
+        (WebCore::JSDOMWindow::analyzeHeap):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSDOMWindow::toWrapped):
+        * bindings/scripts/test/JS/JSDOMWindow.h: Added.
+        (WebCore::JSDOMWindow::create):
+        (WebCore::JSDOMWindow::createStructure):
+        (WebCore::JSDOMWindow::subspaceFor):
+        (WebCore::JSDOMWindow::wrapped const):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSDOMWindowConstructors.cpp: Added.
+        * bindings/scripts/test/JS/JSDOMWindowConstructors.h: Added.
+        * bindings/scripts/test/JS/JSDedicatedWorkerGlobalScope.cpp: Added.
+        (WebCore::JSDedicatedWorkerGlobalScopeConstructor::prototypeForStructure):
+        (WebCore::JSDedicatedWorkerGlobalScopeConstructor::initializeProperties):
+        (WebCore::JSDedicatedWorkerGlobalScopePrototype::finishCreation):
+        (WebCore::JSDedicatedWorkerGlobalScope::JSDedicatedWorkerGlobalScope):
+        (WebCore::JSDedicatedWorkerGlobalScope::finishCreation):
+        (WebCore::JSDedicatedWorkerGlobalScope::getConstructor):
+        (WebCore::jsDedicatedWorkerGlobalScopeConstructor):
+        (WebCore::setJSDedicatedWorkerGlobalScopeConstructor):
+        (WebCore::JSDedicatedWorkerGlobalScope::subspaceForImpl):
+        (WebCore::JSDedicatedWorkerGlobalScope::analyzeHeap):
+        * bindings/scripts/test/JS/JSDedicatedWorkerGlobalScope.h: Added.
+        (WebCore::JSDedicatedWorkerGlobalScope::create):
+        (WebCore::JSDedicatedWorkerGlobalScope::createStructure):
+        (WebCore::JSDedicatedWorkerGlobalScope::subspaceFor):
+        (WebCore::JSDedicatedWorkerGlobalScope::wrapped const):
+        * bindings/scripts/test/JS/JSDedicatedWorkerGlobalScopeConstructors.cpp: Added.
+        * bindings/scripts/test/JS/JSDedicatedWorkerGlobalScopeConstructors.h: Added.
+        * bindings/scripts/test/JS/JSExposedToWorkerAndWindow.cpp: Added.
+        (WebCore::convertDictionary<ExposedToWorkerAndWindow::Dict>):
+        (WebCore::convertDictionaryToJS):
+        (WebCore::JSExposedToWorkerAndWindowConstructor::construct):
+        (WebCore::JSExposedToWorkerAndWindowConstructor::prototypeForStructure):
+        (WebCore::JSExposedToWorkerAndWindowConstructor::initializeProperties):
+        (WebCore::JSExposedToWorkerAndWindowPrototype::finishCreation):
+        (WebCore::JSExposedToWorkerAndWindow::JSExposedToWorkerAndWindow):
+        (WebCore::JSExposedToWorkerAndWindow::finishCreation):
+        (WebCore::JSExposedToWorkerAndWindow::createPrototype):
+        (WebCore::JSExposedToWorkerAndWindow::prototype):
+        (WebCore::JSExposedToWorkerAndWindow::getConstructor):
+        (WebCore::JSExposedToWorkerAndWindow::destroy):
+        (WebCore::IDLOperation<JSExposedToWorkerAndWindow>::cast):
+        (WebCore::jsExposedToWorkerAndWindowConstructor):
+        (WebCore::setJSExposedToWorkerAndWindowConstructor):
+        (WebCore::jsExposedToWorkerAndWindowPrototypeFunctionDoSomethingBody):
+        (WebCore::jsExposedToWorkerAndWindowPrototypeFunctionDoSomething):
+        (WebCore::JSExposedToWorkerAndWindow::subspaceForImpl):
+        (WebCore::JSExposedToWorkerAndWindow::analyzeHeap):
+        (WebCore::JSExposedToWorkerAndWindowOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSExposedToWorkerAndWindowOwner::finalize):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSExposedToWorkerAndWindow::toWrapped):
+        * bindings/scripts/test/JS/JSExposedToWorkerAndWindow.h: Copied from Source/WebCore/bindings/scripts/test/JS/JSTestOverloadedConstructors.h.
+        (WebCore::JSExposedToWorkerAndWindow::create):
+        (WebCore::JSExposedToWorkerAndWindow::createStructure):
+        (WebCore::JSExposedToWorkerAndWindow::subspaceFor):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperKey):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSPaintWorkletGlobalScope.cpp: Added.
+        (WebCore::JSPaintWorkletGlobalScopeConstructor::prototypeForStructure):
+        (WebCore::JSPaintWorkletGlobalScopeConstructor::initializeProperties):
+        (WebCore::JSPaintWorkletGlobalScopePrototype::finishCreation):
+        (WebCore::JSPaintWorkletGlobalScope::JSPaintWorkletGlobalScope):
+        (WebCore::JSPaintWorkletGlobalScope::finishCreation):
+        (WebCore::JSPaintWorkletGlobalScope::getConstructor):
+        (WebCore::jsPaintWorkletGlobalScopeConstructor):
+        (WebCore::setJSPaintWorkletGlobalScopeConstructor):
+        (WebCore::JSPaintWorkletGlobalScope::subspaceForImpl):
+        (WebCore::JSPaintWorkletGlobalScope::analyzeHeap):
+        * bindings/scripts/test/JS/JSPaintWorkletGlobalScope.h: Added.
+        (WebCore::JSPaintWorkletGlobalScope::create):
+        (WebCore::JSPaintWorkletGlobalScope::createStructure):
+        (WebCore::JSPaintWorkletGlobalScope::subspaceFor):
+        (WebCore::JSPaintWorkletGlobalScope::wrapped const):
+        * bindings/scripts/test/JS/JSPaintWorkletGlobalScopeConstructors.cpp: Added.
+        * bindings/scripts/test/JS/JSPaintWorkletGlobalScopeConstructors.h: Added.
+        * bindings/scripts/test/JS/JSServiceWorkerGlobalScope.cpp: Added.
+        (WebCore::JSServiceWorkerGlobalScopeConstructor::prototypeForStructure):
+        (WebCore::JSServiceWorkerGlobalScopeConstructor::initializeProperties):
+        (WebCore::JSServiceWorkerGlobalScopePrototype::finishCreation):
+        (WebCore::JSServiceWorkerGlobalScope::JSServiceWorkerGlobalScope):
+        (WebCore::JSServiceWorkerGlobalScope::finishCreation):
+        (WebCore::JSServiceWorkerGlobalScope::getConstructor):
+        (WebCore::jsServiceWorkerGlobalScopeConstructor):
+        (WebCore::setJSServiceWorkerGlobalScopeConstructor):
+        (WebCore::JSServiceWorkerGlobalScope::subspaceForImpl):
+        (WebCore::JSServiceWorkerGlobalScope::analyzeHeap):
+        * bindings/scripts/test/JS/JSServiceWorkerGlobalScope.h: Added.
+        (WebCore::JSServiceWorkerGlobalScope::create):
+        (WebCore::JSServiceWorkerGlobalScope::createStructure):
+        (WebCore::JSServiceWorkerGlobalScope::subspaceFor):
+        (WebCore::JSServiceWorkerGlobalScope::wrapped const):
+        * bindings/scripts/test/JS/JSServiceWorkerGlobalScopeConstructors.cpp: Added.
+        * bindings/scripts/test/JS/JSServiceWorkerGlobalScopeConstructors.h: Added.
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObjectDOMWindowConstructorGetter):
+        (WebCore::jsTestGlobalObjectDOMWindowConstructor):
+        (WebCore::setJSTestGlobalObjectDOMWindowConstructorSetter):
+        (WebCore::setJSTestGlobalObjectDOMWindowConstructor):
+        (WebCore::jsTestGlobalObjectDedicatedWorkerGlobalScopeConstructorGetter):
+        (WebCore::jsTestGlobalObjectDedicatedWorkerGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectDedicatedWorkerGlobalScopeConstructorSetter):
+        (WebCore::setJSTestGlobalObjectDedicatedWorkerGlobalScopeConstructor):
+        (WebCore::jsTestGlobalObjectPaintWorkletGlobalScopeConstructorGetter):
+        (WebCore::jsTestGlobalObjectPaintWorkletGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectPaintWorkletGlobalScopeConstructorSetter):
+        (WebCore::setJSTestGlobalObjectPaintWorkletGlobalScopeConstructor):
+        (WebCore::jsTestGlobalObjectServiceWorkerGlobalScopeConstructorGetter):
+        (WebCore::jsTestGlobalObjectServiceWorkerGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectServiceWorkerGlobalScopeConstructorSetter):
+        (WebCore::setJSTestGlobalObjectServiceWorkerGlobalScopeConstructor):
+        (WebCore::jsTestGlobalObjectWorkerGlobalScopeConstructorGetter):
+        (WebCore::jsTestGlobalObjectWorkerGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectWorkerGlobalScopeConstructorSetter):
+        (WebCore::setJSTestGlobalObjectWorkerGlobalScopeConstructor):
+        (WebCore::jsTestGlobalObjectWorkletGlobalScopeConstructorGetter):
+        (WebCore::jsTestGlobalObjectWorkletGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectWorkletGlobalScopeConstructorSetter):
+        (WebCore::setJSTestGlobalObjectWorkletGlobalScopeConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSWorkerGlobalScope.cpp: Added.
+        (WebCore::JSWorkerGlobalScopeConstructor::prototypeForStructure):
+        (WebCore::JSWorkerGlobalScopeConstructor::initializeProperties):
+        (WebCore::JSWorkerGlobalScopePrototype::finishCreation):
+        (WebCore::JSWorkerGlobalScope::JSWorkerGlobalScope):
+        (WebCore::JSWorkerGlobalScope::finishCreation):
+        (WebCore::JSWorkerGlobalScope::createPrototype):
+        (WebCore::JSWorkerGlobalScope::prototype):
+        (WebCore::JSWorkerGlobalScope::getConstructor):
+        (WebCore::IDLAttribute<JSWorkerGlobalScope>::cast):
+        (WebCore::jsWorkerGlobalScopeConstructor):
+        (WebCore::setJSWorkerGlobalScopeConstructor):
+        (WebCore::jsWorkerGlobalScopeExposedToWorkerAndWindowConstructorGetter):
+        (WebCore::jsWorkerGlobalScopeExposedToWorkerAndWindowConstructor):
+        (WebCore::setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructorSetter):
+        (WebCore::setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructor):
+        (WebCore::jsWorkerGlobalScopeTestNodeConstructorGetter):
+        (WebCore::jsWorkerGlobalScopeTestNodeConstructor):
+        (WebCore::setJSWorkerGlobalScopeTestNodeConstructorSetter):
+        (WebCore::setJSWorkerGlobalScopeTestNodeConstructor):
+        (WebCore::jsWorkerGlobalScopeTestObjectConstructorGetter):
+        (WebCore::jsWorkerGlobalScopeTestObjectConstructor):
+        (WebCore::setJSWorkerGlobalScopeTestObjectConstructorSetter):
+        (WebCore::setJSWorkerGlobalScopeTestObjectConstructor):
+        (WebCore::jsWorkerGlobalScopeTestPromiseRejectionEventConstructorGetter):
+        (WebCore::jsWorkerGlobalScopeTestPromiseRejectionEventConstructor):
+        (WebCore::setJSWorkerGlobalScopeTestPromiseRejectionEventConstructorSetter):
+        (WebCore::setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor):
+        (WebCore::JSWorkerGlobalScope::subspaceForImpl):
+        (WebCore::JSWorkerGlobalScope::analyzeHeap):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSWorkerGlobalScope::toWrapped):
+        * bindings/scripts/test/JS/JSWorkerGlobalScope.h: Added.
+        (WebCore::JSWorkerGlobalScope::create):
+        (WebCore::JSWorkerGlobalScope::createStructure):
+        (WebCore::JSWorkerGlobalScope::subspaceFor):
+        (WebCore::JSWorkerGlobalScope::wrapped const):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSWorkerGlobalScopeConstructors.cpp: Added.
+        * bindings/scripts/test/JS/JSWorkerGlobalScopeConstructors.h: Added.
+        * bindings/scripts/test/JS/JSWorkletGlobalScope.cpp: Added.
+        (WebCore::JSWorkletGlobalScopeConstructor::prototypeForStructure):
+        (WebCore::JSWorkletGlobalScopeConstructor::initializeProperties):
+        (WebCore::JSWorkletGlobalScopePrototype::finishCreation):
+        (WebCore::JSWorkletGlobalScope::JSWorkletGlobalScope):
+        (WebCore::JSWorkletGlobalScope::finishCreation):
+        (WebCore::JSWorkletGlobalScope::createPrototype):
+        (WebCore::JSWorkletGlobalScope::prototype):
+        (WebCore::JSWorkletGlobalScope::getConstructor):
+        (WebCore::jsWorkletGlobalScopeConstructor):
+        (WebCore::setJSWorkletGlobalScopeConstructor):
+        (WebCore::JSWorkletGlobalScope::subspaceForImpl):
+        (WebCore::JSWorkletGlobalScope::analyzeHeap):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSWorkletGlobalScope::toWrapped):
+        * bindings/scripts/test/JS/JSWorkletGlobalScope.h: Added.
+        (WebCore::JSWorkletGlobalScope::create):
+        (WebCore::JSWorkletGlobalScope::createStructure):
+        (WebCore::JSWorkletGlobalScope::subspaceFor):
+        (WebCore::JSWorkletGlobalScope::wrapped const):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSWorkletGlobalScopeConstructors.cpp: Added.
+        * bindings/scripts/test/JS/JSWorkletGlobalScopeConstructors.h: Added.
+        * bindings/scripts/test/PaintWorkletGlobalScope.idl: Added.
+        * bindings/scripts/test/PaintWorkletGlobalScopeConstructors.idl: Added.
+        * bindings/scripts/test/ServiceWorkerGlobalScope.idl: Added.
+        * bindings/scripts/test/ServiceWorkerGlobalScopeConstructors.idl: Added.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/WorkerGlobalScope.idl: Added.
+        * bindings/scripts/test/WorkerGlobalScopeConstructors.idl: Added.
+        * bindings/scripts/test/WorkletGlobalScope.idl: Added.
+        * bindings/scripts/test/WorkletGlobalScopeConstructors.idl: Added.
+        * dom/TextEncoder.idl:
+
+2020-09-04  Youenn Fablet  <youenn@apple.com>
+
         Fix Internals::supportsVCPEncoder on BigSur
         https://bugs.webkit.org/show_bug.cgi?id=216174
 

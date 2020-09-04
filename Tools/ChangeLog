@@ -1,3 +1,17 @@
+2020-09-04  Youenn Fablet  <youenn@apple.com>
+
+        Binding generator is not always computing the right interface attributes
+        https://bugs.webkit.org/show_bug.cgi?id=216173
+
+        Reviewed by Alex Christensen.
+
+        Add support to validate global constructor idl file generator.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_from_idl):
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.main):
+
 2020-09-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Share bots between JSC builder and tester queues

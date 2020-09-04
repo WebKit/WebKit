@@ -1,4 +1,23 @@
 # Supplemental dependencies
+JSDOMWindow.h: DOMWindowConstructors.idl
+DOMDOMWindow.h: DOMWindowConstructors.idl
+WebDOMDOMWindow.h: DOMWindowConstructors.idl
+DOMWindowConstructors.idl:
+JSDedicatedWorkerGlobalScope.h: DedicatedWorkerGlobalScopeConstructors.idl
+DOMDedicatedWorkerGlobalScope.h: DedicatedWorkerGlobalScopeConstructors.idl
+WebDOMDedicatedWorkerGlobalScope.h: DedicatedWorkerGlobalScopeConstructors.idl
+DedicatedWorkerGlobalScopeConstructors.idl:
+JSExposedToWorkerAndWindow.h: 
+DOMExposedToWorkerAndWindow.h: 
+WebDOMExposedToWorkerAndWindow.h: 
+JSPaintWorkletGlobalScope.h: PaintWorkletGlobalScopeConstructors.idl
+DOMPaintWorkletGlobalScope.h: PaintWorkletGlobalScopeConstructors.idl
+WebDOMPaintWorkletGlobalScope.h: PaintWorkletGlobalScopeConstructors.idl
+PaintWorkletGlobalScopeConstructors.idl:
+JSServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
+DOMServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
+WebDOMServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
+ServiceWorkerGlobalScopeConstructors.idl:
 JSTestCEReactions.h: 
 DOMTestCEReactions.h: 
 WebDOMTestCEReactions.h: 
@@ -161,9 +180,6 @@ JSTestOperationConditional.h: TestOperationBase.idl
 DOMTestOperationConditional.h: TestOperationBase.idl
 WebDOMTestOperationConditional.h: TestOperationBase.idl
 TestOperationBase.idl:
-JSTestOverloadedConstructors.h: 
-DOMTestOverloadedConstructors.h: 
-WebDOMTestOverloadedConstructors.h: 
 JSTestOverloadedConstructorsWithSequence.h: 
 DOMTestOverloadedConstructorsWithSequence.h: 
 WebDOMTestOverloadedConstructorsWithSequence.h: 
@@ -237,6 +253,14 @@ WebDOMTestTypedefs.h:
 JSTestVoidCallbackFunction.h: 
 DOMTestVoidCallbackFunction.h: 
 WebDOMTestVoidCallbackFunction.h: 
+JSWorkerGlobalScope.h: WorkerGlobalScopeConstructors.idl
+DOMWorkerGlobalScope.h: WorkerGlobalScopeConstructors.idl
+WebDOMWorkerGlobalScope.h: WorkerGlobalScopeConstructors.idl
+WorkerGlobalScopeConstructors.idl:
+JSWorkletGlobalScope.h: WorkletGlobalScopeConstructors.idl
+DOMWorkletGlobalScope.h: WorkletGlobalScopeConstructors.idl
+WebDOMWorkletGlobalScope.h: WorkletGlobalScopeConstructors.idl
+WorkletGlobalScopeConstructors.idl:
 # Dictionaries dependencies
 JSTestDerivedDictionary.cpp: TestInheritedDictionary.idl
 JSTestDerivedDictionary2.cpp: TestInheritedDictionary.idl TestInheritedDictionary2.idl

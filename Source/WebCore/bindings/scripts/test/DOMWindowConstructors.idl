@@ -1,0 +1,6 @@
+partial interface DOMWindow {
+    attribute ExposedToWorkerAndWindowConstructor ExposedToWorkerAndWindow;
+    attribute TestNodeConstructor TestNode;
+    attribute TestObjConstructor TestObject;
+    attribute TestPromiseRejectionEventConstructor TestPromiseRejectionEvent;
+};
