@@ -1,3 +1,16 @@
+2020-09-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Notify bot watchers about pre-existing and flaky test failures for API tests
+        https://bugs.webkit.org/show_bug.cgi?id=215949
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeAPITestsResults.analyzeResults):
+        (AnalyzeAPITestsResults.send_email_for_flaky_failure):
+        (AnalyzeAPITestsResults):
+        (AnalyzeAPITestsResults.send_email_for_pre_existing_failure):
+
 2020-09-04  Youenn Fablet  <youenn@apple.com>
 
         Binding generator is not always computing the right interface attributes
