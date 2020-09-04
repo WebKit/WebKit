@@ -5,6 +5,15 @@
 
         Unreviewed test gardening.
 
+        * platform/ios-wk2/TestExpectations:
+
+2020-09-04  Hector Lopez  <hector_i_lopez@apple.com>
+
+        REGRESSION (r265603): ASSERTION FAILED: m_suspended in WebCore::SuspendableTimerBase::resume() seen with http/tests/security/no-indexeddb-from-sandbox.html
+        https://bugs.webkit.org/show_bug.cgi?id=215465
+
+        Unreviewed test gardening.
+
         * platform/mac-wk2/TestExpectations:
 
 2020-09-04  Karl Rackler  <rackler@apple.com>

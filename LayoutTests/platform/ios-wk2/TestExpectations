@@ -1849,8 +1849,6 @@ webkit.org/b/215398 [ Release ] imported/w3c/web-platform-tests/css/css-images/i
 
 webkit.org/b/215403 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001.html [ Pass Timeout ]
 
-webkit.org/b/215465 [ Debug ] http/tests/security/no-indexeddb-from-sandbox.html [ Crash ]
-
 webkit.org/b/215476 [ Release ] imported/w3c/web-platform-tests/css/css-grid/abspos/empty-grid-001.html [ Pass Timeout ]
 
 webkit.org/b/215476 [ Release ] imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-long-crash.html [ Pass Timeout ]
