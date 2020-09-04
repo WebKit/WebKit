@@ -1,3 +1,32 @@
+2020-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a fast path in TransformationMatrix::mapRect(const FloatRect&) for affine transformations
+        https://bugs.webkit.org/show_bug.cgi?id=216139
+
+        Reviewed by Tim Horton.
+
+        Add a fast path when mapping 2D points through affine transformation matrices that takes advantage of both:
+        1.  The predetermined 0 and 1 values in affine transformation matrices.
+        2.  The fact that points in the FloatRect are aligned with x and y axes (as opposed to a FloatQuad of 4 arbitrary
+            points), which allows us to avoid mapping all 4 corners of the rect through the matrix.
+
+        The current implementation of this method maps each of the 4 corners through the transformation matrix, creates
+        a FloatQuad using these 4 transformed points, and then asks the FloatQuad for its bounding box. This requires
+        a total of 26 floating point additions, 24 multiplications and 20 comparisons, as well as a small (but
+        measurable) amount of overhead when creating the FloatPoints and FloatQuad and asking for the bounding rect.
+
+        We can pare this down to just 8 additions, 8 multiplications, and 4 comparisons by using a different strategy
+        that instead branches on the 4 relevant matrix coefficients `a, b, c, d` (rather than the each of the final x
+        and y coordinates) to determine which of the min or max x and y values to multiply in order to compute the min
+        and max x and y coordinates in the final bounding rect.
+
+        In a quick microbenchmark that maps FloatRects through an affine TransformationMatrix, this roughly halves the
+        time spent in `TransformationMatrix::mapRect`; on the Multiply subtest of MotionMark (which invokes this method
+        ~17 million times, almost entirely with affine transformation matrices), I measured a ~1% improvement.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::mapRect const):
+
 2020-09-03  Darin Adler  <darin@apple.com>
 
         Simplify some editing code
