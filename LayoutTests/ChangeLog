@@ -1,3 +1,12 @@
+2020-09-04  Karl Rackler  <rackler@apple.com>
+
+        [ Big Sur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html is a flaky failure/timeout)
+        rdar://68364365
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-09-04  Chris Dumez  <cdumez@apple.com>
 
         Improve interpolation algorithm in OscillatorNode

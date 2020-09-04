@@ -2231,3 +2231,6 @@ webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rec
 
 # This test requires the OS to have a font that supports the Ahom language.
 webkit.org/b/216024 [ Mojave Catalina ] fast/text/ahom.html [ ImageOnlyFailure ]
+
+# rdar://68364365 [ Big Sur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html is a flaky failure/timeout)
+[ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure Timeout ]
