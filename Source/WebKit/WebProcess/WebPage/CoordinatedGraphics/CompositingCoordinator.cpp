@@ -72,7 +72,7 @@ CompositingCoordinator::~CompositingCoordinator()
     ASSERT(!m_rootLayer);
 
     for (auto& registeredLayer : m_registeredLayers.values())
-        registeredLayer->setCoordinator(nullptr);
+        registeredLayer->invalidateCoordinator();
 }
 
 void CompositingCoordinator::invalidate()
@@ -231,7 +231,7 @@ float CompositingCoordinator::pageScaleFactor() const
 Ref<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
 {
     auto layer = adoptRef(*new CoordinatedGraphicsLayer(layerType, client));
-    attachLayer(layer.ptr());
+    layer->setCoordinatorIncludingSubLayersIfNeeded(this);
     return layer;
 }
 
@@ -279,7 +279,6 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
 
 void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
 {
-    layer->setCoordinator(this);
     {
         auto& compositionLayer = layer->compositionLayer();
         m_nicosia.state.layers.add(compositionLayer);
