@@ -1,3 +1,9 @@
+2020-09-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. [WPE] Bump version numbers
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2020-09-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. [GTK] Bump version numbers
