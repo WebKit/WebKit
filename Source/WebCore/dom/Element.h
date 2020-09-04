@@ -353,31 +353,32 @@ public:
     bool isVisibleWithoutResolvingFullStyle() const;
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
-    bool styleAffectedByEmpty() const { return hasStyleFlag(ElementStyleFlag::StyleAffectedByEmpty); }
-    bool descendantsAffectedByPreviousSibling() const { return getFlag(DescendantsAffectedByPreviousSiblingFlag); }
-    bool childrenAffectedByFirstChildRules() const { return getFlag(ChildrenAffectedByFirstChildRulesFlag); }
-    bool childrenAffectedByLastChildRules() const { return getFlag(ChildrenAffectedByLastChildRulesFlag); }
-    bool childrenAffectedByForwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::ChildrenAffectedByForwardPositionalRules); }
-    bool descendantsAffectedByForwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::DescendantsAffectedByForwardPositionalRules); }
-    bool childrenAffectedByBackwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::ChildrenAffectedByBackwardPositionalRules); }
-    bool descendantsAffectedByBackwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::DescendantsAffectedByBackwardPositionalRules); }
-    bool childrenAffectedByPropertyBasedBackwardPositionalRules() const { return hasStyleFlag(ElementStyleFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules); }
-    bool affectsNextSiblingElementStyle() const { return getFlag(AffectsNextSiblingElementStyle); }
+    bool styleAffectedByEmpty() const { return hasDynamicStyleRelationFlag(DynamicStyleRelationFlag::StyleAffectedByEmpty); }
+    bool descendantsAffectedByPreviousSibling() const { return hasStyleFlag(NodeStyleFlag::DescendantsAffectedByPreviousSibling); }
+    bool childrenAffectedByFirstChildRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByFirstChildRules); }
+    bool childrenAffectedByLastChildRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByLastChildRules); }
+    bool childrenAffectedByForwardPositionalRules() const { return hasDynamicStyleRelationFlag(DynamicStyleRelationFlag::ChildrenAffectedByForwardPositionalRules); }
+    bool descendantsAffectedByForwardPositionalRules() const { return hasDynamicStyleRelationFlag(DynamicStyleRelationFlag::DescendantsAffectedByForwardPositionalRules); }
+    bool childrenAffectedByBackwardPositionalRules() const { return hasDynamicStyleRelationFlag(DynamicStyleRelationFlag::ChildrenAffectedByBackwardPositionalRules); }
+    bool descendantsAffectedByBackwardPositionalRules() const { return hasDynamicStyleRelationFlag(DynamicStyleRelationFlag::DescendantsAffectedByBackwardPositionalRules); }
+    bool childrenAffectedByPropertyBasedBackwardPositionalRules() const { return hasDynamicStyleRelationFlag(DynamicStyleRelationFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules); }
+    bool affectsNextSiblingElementStyle() const { return hasStyleFlag(NodeStyleFlag::AffectsNextSiblingElementStyle); }
+    bool styleIsAffectedByPreviousSibling() const { return hasStyleFlag(NodeStyleFlag::StyleIsAffectedByPreviousSibling); }
     unsigned childIndex() const { return hasRareData() ? rareDataChildIndex() : 0; }
 
     bool hasFlagsSetDuringStylingOfChildren() const;
 
-    void setStyleAffectedByEmpty() { setStyleFlag(ElementStyleFlag::StyleAffectedByEmpty); }
-    void setDescendantsAffectedByPreviousSibling() { setFlag(DescendantsAffectedByPreviousSiblingFlag); }
-    void setChildrenAffectedByFirstChildRules() { setFlag(ChildrenAffectedByFirstChildRulesFlag); }
-    void setChildrenAffectedByLastChildRules() { setFlag(ChildrenAffectedByLastChildRulesFlag); }
-    void setChildrenAffectedByForwardPositionalRules() { setStyleFlag(ElementStyleFlag::ChildrenAffectedByForwardPositionalRules); }
-    void setDescendantsAffectedByForwardPositionalRules() { setStyleFlag(ElementStyleFlag::DescendantsAffectedByForwardPositionalRules); }
-    void setChildrenAffectedByBackwardPositionalRules() { setStyleFlag(ElementStyleFlag::ChildrenAffectedByBackwardPositionalRules); }
-    void setDescendantsAffectedByBackwardPositionalRules() { setStyleFlag(ElementStyleFlag::DescendantsAffectedByBackwardPositionalRules); }
-    void setChildrenAffectedByPropertyBasedBackwardPositionalRules() { setStyleFlag(ElementStyleFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules); }
-    void setAffectsNextSiblingElementStyle() { setFlag(AffectsNextSiblingElementStyle); }
-    void setStyleIsAffectedByPreviousSibling() { setFlag(StyleIsAffectedByPreviousSibling); }
+    void setStyleAffectedByEmpty() { setDynamicStyleRelationFlag(DynamicStyleRelationFlag::StyleAffectedByEmpty); }
+    void setDescendantsAffectedByPreviousSibling() { setStyleFlag(NodeStyleFlag::DescendantsAffectedByPreviousSibling); }
+    void setChildrenAffectedByFirstChildRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByFirstChildRules); }
+    void setChildrenAffectedByLastChildRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByLastChildRules); }
+    void setChildrenAffectedByForwardPositionalRules() { setDynamicStyleRelationFlag(DynamicStyleRelationFlag::ChildrenAffectedByForwardPositionalRules); }
+    void setDescendantsAffectedByForwardPositionalRules() { setDynamicStyleRelationFlag(DynamicStyleRelationFlag::DescendantsAffectedByForwardPositionalRules); }
+    void setChildrenAffectedByBackwardPositionalRules() { setDynamicStyleRelationFlag(DynamicStyleRelationFlag::ChildrenAffectedByBackwardPositionalRules); }
+    void setDescendantsAffectedByBackwardPositionalRules() { setDynamicStyleRelationFlag(DynamicStyleRelationFlag::DescendantsAffectedByBackwardPositionalRules); }
+    void setChildrenAffectedByPropertyBasedBackwardPositionalRules() { setDynamicStyleRelationFlag(DynamicStyleRelationFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules); }
+    void setAffectsNextSiblingElementStyle() { setStyleFlag(NodeStyleFlag::AffectsNextSiblingElementStyle); }
+    void setStyleIsAffectedByPreviousSibling() { setStyleFlag(NodeStyleFlag::StyleIsAffectedByPreviousSibling); }
     void setChildIndex(unsigned);
 
     WEBCORE_EXPORT AtomString computeInheritedLanguage() const;

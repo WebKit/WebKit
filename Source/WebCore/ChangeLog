@@ -1,3 +1,83 @@
+2020-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Store all styling flags in m_rendererWithStyleFlags
+        https://bugs.webkit.org/show_bug.cgi?id=216069
+
+        Reviewed by Darin Adler.
+
+        This patch moves all remaining styling flags and Style::Validity from m_nodeFlags
+        to m_rendererWithStyleFlags since CSS JIT no longer rely on these flags directly
+        and CompactPointerTuple has been expanded to store up to 16 bits of data as opposed
+        to just 8 bits.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::directChildNeedsStyleRecalc const):
+        (WebCore::ContainerNode::setDirectChildNeedsStyleRecalc):
+        * dom/Element.cpp:
+        (WebCore::Element::resetStyleRelations):
+        * dom/Element.h:
+        (WebCore::Element::styleAffectedByEmpty const):
+        (WebCore::Element::descendantsAffectedByPreviousSibling const):
+        (WebCore::Element::childrenAffectedByFirstChildRules const):
+        (WebCore::Element::childrenAffectedByLastChildRules const):
+        (WebCore::Element::childrenAffectedByForwardPositionalRules const):
+        (WebCore::Element::descendantsAffectedByForwardPositionalRules const):
+        (WebCore::Element::childrenAffectedByBackwardPositionalRules const):
+        (WebCore::Element::descendantsAffectedByBackwardPositionalRules const):
+        (WebCore::Element::childrenAffectedByPropertyBasedBackwardPositionalRules const):
+        (WebCore::Element::affectsNextSiblingElementStyle const):
+        (WebCore::Element::styleIsAffectedByPreviousSibling const): Moved here from Node.
+        (WebCore::Element::setStyleAffectedByEmpty):
+        (WebCore::Element::setDescendantsAffectedByPreviousSibling):
+        (WebCore::Element::setChildrenAffectedByFirstChildRules):
+        (WebCore::Element::setChildrenAffectedByLastChildRules):
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules):
+        (WebCore::Element::setDescendantsAffectedByForwardPositionalRules):
+        (WebCore::Element::setChildrenAffectedByBackwardPositionalRules):
+        (WebCore::Element::setDescendantsAffectedByBackwardPositionalRules):
+        (WebCore::Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules):
+        (WebCore::Element::setAffectsNextSiblingElementStyle):
+        (WebCore::Element::setStyleIsAffectedByPreviousSibling):
+        * dom/Node.cpp:
+        (WebCore::Node::adjustStyleValidity):
+        * dom/Node.h:
+        (WebCore::Node::styleValidity const):
+        (WebCore::Node::styleResolutionShouldRecompositeLayer const):
+        (WebCore::Node::childNeedsStyleRecalc const):
+        (WebCore::Node::styleIsAffectedByPreviousSibling const): Moved to Element.
+        (WebCore::Node::setChildNeedsStyleRecalc):
+        (WebCore::Node::flagChildrenAffectedByFirstChildRulesFlag): Deleted.
+        (WebCore::Node::flagChildrenAffectedByLastChildRulesFlag): Deleted.
+        (WebCore::Node::flagAffectsNextSiblingElementStyle): Deleted.
+        (WebCore::Node::flagStyleIsAffectedByPreviousSibling): Deleted.
+        (WebCore::Node::NodeStyleFlag): Added. Moved most of flags from m_nodeFlags here.
+        (WebCore::Node::DynamicStyleRelationFlag): Renamed from ElementStyleFlag.
+        (WebCore::Node::StyleBitfields): Added. A helper struct to read and manipulate
+        bit-fields stored in m_rendererWithStyleFlags.
+        (WebCore::Node::StyleBitfields::fromRaw): Added.
+        (WebCore::Node::StyleBitfields::toRaw): Added.
+        (WebCore::Node::StyleBitfields::styleValidity const): Added.
+        (WebCore::Node::StyleBitfields::setStyleValidity): Added.
+        (WebCore::Node::StyleBitfields::dynamicStyleRelations const): Added.
+        (WebCore::Node::StyleBitfields::setDynamicStyleRelation): Added.
+        (WebCore::Node::StyleBitfields::clearDynamicStyleRelations): Added.
+        (WebCore::Node::StyleBitfields::flags const): Added.
+        (WebCore::Node::StyleBitfields::setFlag): Added.
+        (WebCore::Node::StyleBitfields::clearFlag): Added.
+        (WebCore::Node::StyleBitfields::clearDescendantsNeedStyleResolution): Added.
+        (WebCore::Node::styleBitfields const): Added.
+        (WebCore::Node::setStyleBitfields): Added.
+        (WebCore::Node::hasStyleFlag const):
+        (WebCore::Node::setStyleFlag):
+        (WebCore::Node::clearStyleFlags): Deleted.
+        (WebCore::Node::hasDynamicStyleRelationFlag const): Added.
+        (WebCore::Node::setHasValidStyle): Moved here from the class declaration.
+        (WebCore::Node::setDynamicStyleRelationFlag): Added.
+        (WebCore::Node::clearChildNeedsStyleRecalc): Added.
+        (WebCore::Node::setHasValidStyle):
+
 2020-09-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix debug build after r266570.

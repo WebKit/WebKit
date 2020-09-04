@@ -4249,7 +4249,9 @@ void Element::resetComputedStyle()
 void Element::resetStyleRelations()
 {
     // FIXME: Make this code more consistent.
-    clearStyleFlags();
+    auto bitfields = styleBitfields();
+    bitfields.clearDynamicStyleRelations();
+    setStyleBitfields(bitfields);
     if (!hasRareData())
         return;
     elementRareData()->resetStyleRelations();

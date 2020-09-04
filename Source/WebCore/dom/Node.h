@@ -36,6 +36,7 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/MainThread.h>
+#include <wtf/OptionSet.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
@@ -295,14 +296,13 @@ public:
 
     bool inRenderedDocument() const;
     bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid; }
-    Style::Validity styleValidity() const;
-    bool styleResolutionShouldRecompositeLayer() const;
-    bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
-    bool styleIsAffectedByPreviousSibling() const { return getFlag(StyleIsAffectedByPreviousSibling); }
+    Style::Validity styleValidity() const { return styleBitfields().styleValidity(); }
+    bool styleResolutionShouldRecompositeLayer() const { return hasStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer); }
+    bool childNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     bool isEditingText() const { return getFlag(IsTextFlag) && getFlag(IsEditingTextOrUndefinedCustomElementFlag); }
 
-    void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
-    void clearChildNeedsStyleRecalc() { m_nodeFlags &= ~(ChildNeedsStyleRecalcFlag | DirectChildNeedsStyleRecalcFlag); }
+    void setChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
+    void clearChildNeedsStyleRecalc();
 
     void setHasValidStyle();
 
@@ -511,11 +511,6 @@ public:
     static int32_t flagIsLink() { return IsLinkFlag; }
     static int32_t flagHasFocusWithin() { return HasFocusWithin; }
     static int32_t flagIsParsingChildrenFinished() { return IsParsingChildrenFinishedFlag; }
-    static int32_t flagChildrenAffectedByFirstChildRulesFlag() { return ChildrenAffectedByFirstChildRulesFlag; }
-    static int32_t flagChildrenAffectedByLastChildRulesFlag() { return ChildrenAffectedByLastChildRulesFlag; }
-
-    static int32_t flagAffectsNextSiblingElementStyle() { return AffectsNextSiblingElementStyle; }
-    static int32_t flagStyleIsAffectedByPreviousSibling() { return StyleIsAffectedByPreviousSibling; }
 #endif // ENABLE(JIT)
 
 protected:
@@ -532,12 +527,11 @@ protected:
         IsInShadowTreeFlag = 1 << 9,
         // UnusedFlag = 1 << 10,
         HasEventTargetDataFlag = 1 << 11,
+        // UnusedFlag = 1 << 12,
+        // UnusedFlag = 1 << 13,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
-        ChildNeedsStyleRecalcFlag = 1 << 12, // ContainerNode
-        DirectChildNeedsStyleRecalcFlag = 1 << 13,
-
         IsEditingTextOrUndefinedCustomElementFlag = 1 << 14, // Text and Element
         IsCustomElement = 1 << 15, // Element
         HasFocusWithin = 1 << 16,
@@ -547,20 +541,9 @@ protected:
         HasSyntheticAttrChildNodesFlag = 1 << 20,
         SelfOrAncestorHasDirAutoFlag = 1 << 21,
 
-        // The following flags are used in style invalidation.
-        StyleValidityShift = 22,
-        StyleValidityMask = 3 << StyleValidityShift,
-        StyleResolutionShouldRecompositeLayerFlag = 1 << 24,
+        HasCustomStyleResolveCallbacksFlag = 1 << 22,
 
-        ChildrenAffectedByFirstChildRulesFlag = 1 << 25,
-        ChildrenAffectedByLastChildRulesFlag = 1 << 26,
-        // UnusedFlag = 1 << 27,
-
-        AffectsNextSiblingElementStyle = 1 << 28,
-        StyleIsAffectedByPreviousSibling = 1 << 29,
-        DescendantsAffectedByPreviousSiblingFlag = 1 << 30,
-
-        HasCustomStyleResolveCallbacksFlag = 1 << 31,
+        // Bits 23-31 are free.
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
@@ -593,9 +576,20 @@ protected:
     static constexpr uint32_t s_refCountIncrement = 2;
     static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(1);
 
-    enum class ElementStyleFlag : uint8_t {
+    enum class NodeStyleFlag : uint8_t {
+        DescendantNeedsStyleResolution = 1 << 0,
+        DirectChildNeedsStyleResolution = 1 << 1,
+        StyleResolutionShouldRecompositeLayer = 1 << 2,
+
+        ChildrenAffectedByFirstChildRules = 1 << 3,
+        ChildrenAffectedByLastChildRules = 1 << 4,
+        AffectsNextSiblingElementStyle = 1 << 5,
+        StyleIsAffectedByPreviousSibling = 1 << 6,
+        DescendantsAffectedByPreviousSibling = 1 << 7,
+    };
+
+    enum class DynamicStyleRelationFlag : uint8_t {
         StyleAffectedByEmpty                                    = 1 << 0,
-        // Bits for dynamic child matching.
         // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
         // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
         ChildrenAffectedByForwardPositionalRules                = 1 << 1,
@@ -605,9 +599,35 @@ protected:
         ChildrenAffectedByPropertyBasedBackwardPositionalRules  = 1 << 5,
     };
 
-    bool hasStyleFlag(ElementStyleFlag state) const { return m_rendererWithStyleFlags.type() & static_cast<uint8_t>(state); }
-    void setStyleFlag(ElementStyleFlag state) { m_rendererWithStyleFlags.setType(m_rendererWithStyleFlags.type() | static_cast<uint8_t>(state)); }
-    void clearStyleFlags() { m_rendererWithStyleFlags.setType(0); }
+    struct StyleBitfields {
+    public:
+        static StyleBitfields fromRaw(uint16_t packed) { return bitwise_cast<StyleBitfields>(packed); }
+        uint16_t toRaw() const { return bitwise_cast<uint16_t>(*this); }
+
+        Style::Validity styleValidity() const { return static_cast<Style::Validity>(m_styleValidity); }
+        void setStyleValidity(Style::Validity validity) { m_styleValidity = static_cast<uint8_t>(validity); }
+
+        OptionSet<DynamicStyleRelationFlag> dynamicStyleRelations() const { return OptionSet<DynamicStyleRelationFlag>::fromRaw(m_dynamicStyleRelation); }
+        void setDynamicStyleRelation(DynamicStyleRelationFlag flag) { m_dynamicStyleRelation = (dynamicStyleRelations() | flag).toRaw(); }
+        void clearDynamicStyleRelations() { m_dynamicStyleRelation = 0; }
+
+        OptionSet<NodeStyleFlag> flags() const { return OptionSet<NodeStyleFlag>::fromRaw(m_flags); }
+        void setFlag(NodeStyleFlag flag) { m_flags = (flags() | flag).toRaw(); }
+        void clearFlag(NodeStyleFlag flag) { m_flags = (flags() - flag).toRaw(); }
+        void clearDescendantsNeedStyleResolution() { m_flags = (flags() - NodeStyleFlag::DescendantNeedsStyleResolution - NodeStyleFlag::DirectChildNeedsStyleResolution).toRaw(); }
+
+    private:
+        uint8_t m_styleValidity : 2;
+        uint8_t m_dynamicStyleRelation : 6;
+        uint8_t m_flags : 8;
+    };
+
+    StyleBitfields styleBitfields() const { return StyleBitfields::fromRaw(m_rendererWithStyleFlags.type()); }
+    void setStyleBitfields(StyleBitfields bitfields) { m_rendererWithStyleFlags.setType(bitfields.toRaw()); }
+    ALWAYS_INLINE bool hasStyleFlag(NodeStyleFlag flag) const { return styleBitfields().flags().contains(flag); }
+    ALWAYS_INLINE void setStyleFlag(NodeStyleFlag);
+    ALWAYS_INLINE bool hasDynamicStyleRelationFlag(DynamicStyleRelationFlag flag) const { return styleBitfields().dynamicStyleRelations().contains(flag); }
+    ALWAYS_INLINE void setDynamicStyleRelationFlag(DynamicStyleRelationFlag);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 
@@ -667,7 +687,7 @@ private:
     TreeScope* m_treeScope { nullptr };
     Node* m_previous { nullptr };
     Node* m_next { nullptr };
-    CompactPointerTuple<RenderObject*, uint8_t> m_rendererWithStyleFlags;
+    CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
     std::unique_ptr<NodeRareData, NodeRareDataDeleter> m_rareData;
 };
 
@@ -791,20 +811,33 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     return parentNode();
 }
 
-inline Style::Validity Node::styleValidity() const
+ALWAYS_INLINE void Node::setStyleFlag(NodeStyleFlag flag)
 {
-    return static_cast<Style::Validity>((m_nodeFlags & StyleValidityMask) >> StyleValidityShift);
+    auto bitfields = styleBitfields();
+    bitfields.setFlag(flag);
+    setStyleBitfields(bitfields);
 }
 
-inline bool Node::styleResolutionShouldRecompositeLayer() const
+ALWAYS_INLINE void Node::setDynamicStyleRelationFlag(DynamicStyleRelationFlag flag)
 {
-    return getFlag(StyleResolutionShouldRecompositeLayerFlag);
+    auto bitfields = styleBitfields();
+    bitfields.setDynamicStyleRelation(flag);
+    setStyleBitfields(bitfields);
+}
+
+inline void Node::clearChildNeedsStyleRecalc()
+{
+    auto bitfields = styleBitfields();
+    bitfields.clearDescendantsNeedStyleResolution();
+    setStyleBitfields(bitfields);
 }
 
 inline void Node::setHasValidStyle()
 {
-    m_nodeFlags &= ~StyleValidityMask;
-    clearFlag(StyleResolutionShouldRecompositeLayerFlag);
+    auto bitfields = styleBitfields();
+    bitfields.setStyleValidity(Style::Validity::Valid);
+    bitfields.clearFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
+    setStyleBitfields(bitfields);
 }
 
 inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)

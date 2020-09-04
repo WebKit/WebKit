@@ -837,11 +837,12 @@ void Node::derefEventTarget()
 void Node::adjustStyleValidity(Style::Validity validity, Style::InvalidationMode mode)
 {
     if (validity > styleValidity()) {
-        m_nodeFlags &= ~StyleValidityMask;
-        m_nodeFlags |= static_cast<unsigned>(validity) << StyleValidityShift;
+        auto bitfields = styleBitfields();
+        bitfields.setStyleValidity(validity);
+        setStyleBitfields(bitfields);
     }
     if (mode == Style::InvalidationMode::RecompositeLayer)
-        setFlag(StyleResolutionShouldRecompositeLayerFlag);
+        setStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
 }
 
 inline void Node::updateAncestorsForStyleRecalc()
