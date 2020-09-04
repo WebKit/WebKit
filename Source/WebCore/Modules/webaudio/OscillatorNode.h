@@ -65,6 +65,9 @@ private:
     // Returns true if there are sample-accurate timeline parameter changes.
     bool calculateSampleAccuratePhaseIncrements(size_t framesToProcess);
 
+    double processARate(int, float* destP, double virtualReadIndex, float* phaseIncrements);
+    double processKRate(int, float* destP, double virtualReadIndex);
+
     bool propagatesSilence() const final;
 
     // One of the waveform types defined in the enum.

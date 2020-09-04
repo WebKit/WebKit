@@ -1,3 +1,14 @@
+2020-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Improve interpolation algorithm in OscillatorNode
+        https://bugs.webkit.org/show_bug.cgi?id=216183
+
+        Reviewed by Geoffrey Garen.
+
+        Unskip test that should no longer be flaky now that it is passing.
+
+        * TestExpectations:
+
 2020-09-04  Alex Christensen  <achristensen@webkit.org>
 
         Align EUC-JP, ISO-2022-JP, and Shift_JIS decoding with Chrome, Firefox, and the specification

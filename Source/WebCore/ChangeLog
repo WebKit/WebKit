@@ -1,3 +1,31 @@
+2020-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Improve interpolation algorithm in OscillatorNode
+        https://bugs.webkit.org/show_bug.cgi?id=216183
+
+        Reviewed by Geoffrey Garen.
+
+        Align our OscillatorNode implementation with Chromium to get us a few more
+        passes on WPT tests. In particular, the following changes were made:
+        - Align detune AudioParam nominal range values with Chromium's.
+        - We now clamp the frequency value to lie within Nyquist frequency.
+        - Use different interpolation algorithms based on frequency.
+        - Split A-Rate / K-Rate processing code into separate functions for
+          clarity.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::detuneToFrequencyMultiplier):
+        (WebCore::clampFrequency):
+        (WebCore::OscillatorNode::OscillatorNode):
+        (WebCore::OscillatorNode::calculateSampleAccuratePhaseIncrements):
+        (WebCore::doInterpolation):
+        (WebCore::OscillatorNode::processARate):
+        (WebCore::OscillatorNode::processKRate):
+        (WebCore::OscillatorNode::process):
+        * Modules/webaudio/OscillatorNode.h:
+
 2020-09-04  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Remove support for exception interfaces from WebIDL parser and code generators
