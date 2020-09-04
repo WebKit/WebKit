@@ -1315,7 +1315,7 @@ PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
         return *m_cachedPeriodicWaveTriangle;
     case OscillatorType::Custom:
         ASSERT_NOT_REACHED();
-#if NDEBUG
+#ifdef NDEBUG
         FALLTHROUGH;
 #endif
     case OscillatorType::Sine:

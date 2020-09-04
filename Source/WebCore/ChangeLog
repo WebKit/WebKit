@@ -1,5 +1,12 @@
 2020-09-03  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix debug build after r266570.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::periodicWave):
+
+2020-09-03  Chris Dumez  <cdumez@apple.com>
+
         Tests using OscillatorNode are flaky
         https://bugs.webkit.org/show_bug.cgi?id=216152
 
