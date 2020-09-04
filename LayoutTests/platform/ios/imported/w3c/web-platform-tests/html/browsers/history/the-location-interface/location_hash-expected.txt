@@ -5,3 +5,4 @@ PASS Setting hash should automatically include hash character
 PASS Setting hash should encode incompatible characters 
 PASS Setting hash to an already encoded value should not double encode it 
 PASS Setting hash which is partially encoded should only encode incompatible characters 
+
