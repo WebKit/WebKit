@@ -1,3 +1,34 @@
+2020-09-03  Darin Adler  <darin@apple.com>
+
+        Simplify some editing code
+        https://bugs.webkit.org/show_bug.cgi?id=216097
+
+        Reviewed by Sam Weinig.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceAllChildrenWithNewText):
+        If string is empty, don't add a text node. Turns out all callers wanted
+        this behavior.
+
+        * dom/Node.cpp:
+        (WebCore::Node::setTextContent): Simplify by relying on new behavior
+        of replaceAllChildrenWithNewText when passed an empty string.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAsChildOfElement): Use
+        replaceAllChildrenWithNewText instead of the unnecessarily complicated
+        code that was here. Also simplify the VisibeSelection manipulation at
+        the end of the function.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText): Simplify by relying on new
+        behavior of replaceAllChildrenWithNewText when passed an empty string.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::deleteFromDocument): Simplify by using the
+        selection function that takes a SimpleRange rather than the one that
+        takes two containers and offsets.
+
 2020-09-04  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Remove support for the legacycaller special operation type in favor of an extended attribute

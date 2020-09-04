@@ -329,48 +329,20 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
     clearUndoRedoOperations();
 
     // If the element is empty already and we're not adding text, we can early return and avoid clearing/setting
-    // a selection at [0, 0] and the expense involved in creation VisiblePositions.
+    // a selection at [0, 0] and the expense involved in creating VisiblePositions.
     if (!element.firstChild() && text.isEmpty())
         return;
 
-    // As a side effect this function sets a caret selection after the inserted content. Much of what
-    // follows is more expensive if there is a selection, so clear it since it's going to change anyway.
+    // As a side effect this function sets a caret selection after the inserted content.
+    // What follows is more expensive if there is a selection, so clear it since it's going to change anyway.
     m_document.selection().clear();
 
-    // clear out all current children of element
-    element.removeChildren();
+    element.replaceAllChildrenWithNewText(text);
 
-    if (text.length()) {
-        // insert new text
-        // remove element from tree while doing it
-        // FIXME: The element we're inserting into is often the body element. It seems strange to be removing it
-        // (even if it is only temporary). ReplaceSelectionCommand doesn't bother doing this when it inserts
-        // content, why should we here?
-        RefPtr<Node> parent = element.parentNode();
-        RefPtr<Node> siblingAfter = element.nextSibling();
-        if (parent)
-            element.remove();
-
-        element.appendChild(createFragmentFromText(makeRangeSelectingNodeContents(element), text));
-
-        // restore element to document
-        if (parent) {
-            if (siblingAfter)
-                parent->insertBefore(element, siblingAfter.get());
-            else
-                parent->appendChild(element);
-        }
-    }
-
-    // set the selection to the end
-    VisiblePosition visiblePos(createLegacyEditingPosition(&element, element.countChildNodes()));
-    if (visiblePos.isNull())
+    VisiblePosition afterContents = createLegacyEditingPosition(&element, element.countChildNodes());
+    if (afterContents.isNull())
         return;
-
-    VisibleSelection selection;
-    selection.setBase(visiblePos);
-    selection.setExtent(visiblePos);
-    m_document.selection().setSelection(selection);
+    m_document.selection().setSelection(afterContents);
 
     client()->respondToChangedContents();
 }
