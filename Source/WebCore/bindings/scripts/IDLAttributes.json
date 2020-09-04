@@ -208,6 +208,9 @@
                 "url": "https://heycam.github.io/webidl/#EnforceRange"
             }
         },
+        "Exception": {
+            "contextsAllowed": ["interface"]
+        },
         "ResultField": {
             "contextsAllowed": ["operation"]
         },

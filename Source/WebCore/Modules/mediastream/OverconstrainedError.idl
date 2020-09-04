@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016, 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// OverconstrainedError is not actually defined using IDL, so it's
+// a bit odd to be using it here. The Exception extended attribute
+// is really only intended to be used for interfaces that want exactly
+// the same custom bindings as DOMException as defined in WebIDL
+// (see https://heycam.github.io/webidl/#es-DOMException-specialness)
+// and it is not clear if OverconstrainedError wants the same semantics.
+// [https://w3c.github.io/mediacapture-main/#dfn-overconstrainederror]
+
 [
     ImplementationLacksVTable,
     Conditional=MEDIA_STREAM,
-] exception OverconstrainedError {
+    Exception
+] interface OverconstrainedError {
     constructor(optional DOMString constraint = "", optional DOMString message = "");
 
     readonly attribute DOMString message;

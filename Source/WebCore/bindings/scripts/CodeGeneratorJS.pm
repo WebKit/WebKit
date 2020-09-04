@@ -2563,7 +2563,7 @@ sub GenerateHeader
         $headerIncludes{"$parentClassName.h"} = 1;
     } else {
         $headerIncludes{"JSDOMWrapper.h"} = 1;
-        if ($interface->isException) {
+        if ($interface->extendedAttributes->{Exception}) {
             $headerIncludes{"<JavaScriptCore/ErrorPrototype.h>"} = 1;
         }
     }
@@ -4532,7 +4532,7 @@ sub GenerateImplementation
             my $parentClassNameForPrototype = "JS" . $interface->parentType->name;
             push(@implContent, "    return ${className}Prototype::create(vm, &globalObject, ${className}Prototype::createStructure(vm, &globalObject, ${parentClassNameForPrototype}::prototype(vm, globalObject)));\n");
         } else {
-            my $prototype = $interface->isException ? "errorPrototype" : "objectPrototype";
+            my $prototype = $interface->extendedAttributes->{Exception} ? "errorPrototype" : "objectPrototype";
             push(@implContent, "    return ${className}Prototype::create(vm, &globalObject, ${className}Prototype::createStructure(vm, &globalObject, globalObject.${prototype}()));\n");
         }
         push(@implContent, "}\n\n");

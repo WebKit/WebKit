@@ -1,3 +1,47 @@
+2020-09-04  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Remove support for exception interfaces from WebIDL parser and code generators
+        https://bugs.webkit.org/show_bug.cgi?id=216129
+
+        Reviewed by Chris Dumez.
+
+        Replace exception interfaces, only used by DOMException.idl, OverconstrainedError.idl
+        and the tests, with a new "Exception" extended attribute on the interface.
+
+        The way WebIDL specifies things, the extended attribute should not really be necessary,
+        as the DOMException interface is specifically called out as having special EcmaScript
+        bindings (https://heycam.github.io/webidl/#es-DOMException-specialness), but since 
+        OverconstrainedError is currently relying on those semantics, using an extended attribute
+        was a useful tool to maintain parity.
+
+        * Modules/mediastream/OverconstrainedError.idl:
+        * bindings/scripts/test/TestException.idl:
+        * dom/DOMException.idl:
+        Replace use of special "exception" style interface with Exception extended attribute.
+ 
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        Replace $interface->isException with $interface->extendedAttributes->{Exception}
+
+        * bindings/scripts/IDLAttributes.json:
+        Add new Exception attribute.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseDefinition):
+        (parseDictionaryMembers):
+        (parseDictionaryMember):
+        (parseArgument):
+        (parseArgumentsRest):
+        (parseException): Deleted.
+        (parseExceptionMembers): Deleted.
+        (parseOptionalOrRequiredArgument): Deleted.
+        (parseExceptionMember): Deleted.
+        (parseExceptionField): Deleted.
+        Remove custom exception parsing. Update places using the $nextExceptionField_1 and $nextExceptionMembers_1
+        to use more clearly named constants.
+
+
 2020-09-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix indentation after r266533

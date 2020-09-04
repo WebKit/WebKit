@@ -65,7 +65,6 @@ struct( IDLInterface => {
     anonymousOperations => '@', # List of 'IDLOperation'
     attributes => '@',    # List of 'IDLAttribute'
     constructors => '@', # Constructors, list of 'IDLOperation'
-    isException => '$', # Used for exception interfaces
     isCallback => '$', # Used for callback interfaces
     isPartial => '$', # Used for partial interfaces
     iterable => '$', # Used for iterable interfaces, of type 'IDLIterable'
@@ -646,11 +645,10 @@ my $nextInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|b
 my $nextOperation_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|deleter|double|float|getter|long|object|octet|sequence|setter|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextUnrestrictedFloatType_1 = '^(double|float)$';
 my $nextExtendedAttributeRest3_1 = '^(\,|\])$';
-my $nextExceptionField_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextType_1 = '^(ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextSpecials_1 = '^(deleter|getter|setter)$';
-my $nextDefinitions_1 = '^(callback|dictionary|enum|exception|interface|namespace|partial|typedef)$';
-my $nextExceptionMembers_1 = '^(\(|ByteString|DOMString|USVString|\[|any|boolean|byte|const|double|float|long|object|octet|optional|sequence|short|symbol|undefined|unrestricted|unsigned)$';
+my $nextDefinitions_1 = '^(callback|dictionary|enum|interface|namespace|partial|typedef)$';
+my $nextDictionaryMember_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|required|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextNamespaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|readonly|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextPartialInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
@@ -840,12 +838,6 @@ sub parseDefinition
     if ($next->value() eq "typedef") {
         return $self->parseTypedef($extendedAttributeList);
     }
-
-    # FIXME: Remove support for exception, it is not part of WebIDL anymore.
-    if ($next->value() eq "exception") {
-        return $self->parseException($extendedAttributeList);
-    }
-
     if ($next->type() == IdentifierToken) {
         return $self->parseIncludesStatement($extendedAttributeList);
     }
@@ -1287,7 +1279,7 @@ sub parseDictionaryMembers
     while (1) {
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
         my $next = $self->nextToken();
-        if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
+        if ($next->type() == IdentifierToken || $next->value() =~ /$nextDictionaryMember_1/) {
             push(@members, $self->parseDictionaryMember($extendedAttributeList));
         } else {
             last;
@@ -1303,7 +1295,7 @@ sub parseDictionaryMember
     my $extendedAttributeList = shift;
 
     my $next = $self->nextToken();
-    if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
+    if ($next->type() == IdentifierToken || $next->value() =~ /$nextDictionaryMember_1/) {
         my $member = IDLDictionaryMember->new();
 
         if ($next->value eq "required") {
@@ -1361,63 +1353,6 @@ sub parseDefaultValue
         return "[]";
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseException
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-
-    my $next = $self->nextToken();
-    if ($next->value() eq "exception") {
-        my $interface = IDLInterface->new();
-        $self->assertTokenValue($self->getToken(), "exception", __LINE__);
-        my $exceptionNameToken = $self->getToken();
-        $self->assertTokenType($exceptionNameToken, IdentifierToken);
-
-        my $name = identifierRemoveNullablePrefix($exceptionNameToken->value());
-        $interface->type(makeSimpleType($name));
-        $interface->isException(1);
-
-        $next = $self->nextToken();
-        if ($next->value() eq ":") {
-            my $parent = $self->parseInheritance();
-            $interface->parentType(makeSimpleType($parent));
-        }
-        
-        $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        my $exceptionMembers = $self->parseExceptionMembers();
-        $self->assertTokenValue($self->getToken(), "}", __LINE__);
-        $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        applyMemberList($interface, $exceptionMembers);
-        
-        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "interface");
-        applyExtendedAttributeList($interface, $extendedAttributeList);
-
-        return $interface;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseExceptionMembers
-{
-    my $self = shift;
-    my @members = ();
-
-    while (1) {
-        my $next = $self->nextToken();
-        if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionMembers_1/) {
-            my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
-            #my $member = $self->parseExceptionMember($extendedAttributeList);
-            my $member = $self->parseInterfaceMember($extendedAttributeList);
-            if (defined ($member)) {
-                push(@members, $member);
-            }
-        } else {
-            last;
-        }
-    }
-    return \@members;
 }
 
 sub parseInheritance
@@ -2556,22 +2491,22 @@ sub parseArgument
     my $next = $self->nextToken();
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextArgumentList_1/) {
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
-        my $argument = $self->parseOptionalOrRequiredArgument($extendedAttributeList);
+        my $argument = $self->parseArgumentsRest($extendedAttributeList);
         return $argument;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 
-sub parseOptionalOrRequiredArgument
+sub parseArgumentsRest
 {
     my $self = shift;
     my $extendedAttributeList = shift;
 
-    my $argument = IDLArgument->new();
-
     my $next = $self->nextToken();
     if ($next->value() eq "optional") {
         $self->assertTokenValue($self->getToken(), "optional", __LINE__);
+
+        my $argument = IDLArgument->new();
 
         my $type = $self->parseTypeWithExtendedAttributes();
         $argument->type($type);
@@ -2583,8 +2518,9 @@ sub parseOptionalOrRequiredArgument
         $argument->extendedAttributes($extendedAttributeList);
 
         return $argument;
-    }
-    if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
+    } else {
+        my $argument = IDLArgument->new();
+    
         my $type = $self->parseType();
         $self->moveExtendedAttributesApplicableToTypes($type, $extendedAttributeList);
 
@@ -2623,44 +2559,6 @@ sub parseEllipsis
         return 1;
     }
     return 0;
-}
-
-sub parseExceptionMember
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-
-    my $next = $self->nextToken();
-    if ($next->value() eq "const") {
-        return $self->parseConst($extendedAttributeList);
-    }
-    if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
-        return $self->parseExceptionField($extendedAttributeList);
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseExceptionField
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-
-    my $next = $self->nextToken();
-    if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
-        my $newDataNode = IDLAttribute->new();
-        $newDataNode->isReadOnly(1);
-
-        my $type = $self->parseType();
-        $newDataNode->type($type);
-        
-        my $token = $self->getToken();
-        $self->assertTokenType($token, IdentifierToken);
-        $newDataNode->name(identifierRemoveNullablePrefix($token->value()));
-        $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        $newDataNode->extendedAttributes($extendedAttributeList);
-        return $newDataNode;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 
 sub parseExtendedAttributeListAllowEmpty
