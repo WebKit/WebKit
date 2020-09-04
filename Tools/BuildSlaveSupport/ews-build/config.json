@@ -550,7 +550,7 @@
       "configuration": "release",
       "architectures": ["mipsel"],
       "triggers": ["jsc-tests-mipsel-tests-ews"],
-      "workernames": ["igalia-jsc32-mipsel-ews-03"]
+      "workernames": ["igalia-jsc32-mipsel-ews", "igalia-jsc32-mipsel-ews-03"]
     },
 	{
       "name": "JSC-MIPSEL-32bits-Tests-EWS",
@@ -572,7 +572,7 @@
       "configuration": "release",
       "architectures": ["armv7"],
       "triggers": ["jsc-tests-armv7-tests-ews"],
-      "workernames": ["igalia-jsc32-armv7-ews-03"]
+      "workernames": ["igalia-jsc32-armv7-ews", "igalia-jsc32-armv7-ews-03"]
     },
     {
       "name": "JSC-ARMv7-32bits-Tests-EWS",
