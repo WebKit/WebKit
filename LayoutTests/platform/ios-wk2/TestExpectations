@@ -1872,3 +1872,5 @@ webkit.org/b/215929 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 webkit.org/b/216124 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Failure ]
 
 webkit.org/b/216126 fast/encoding/charset-replacement.html [ Failure ]
+
+webkit.org/b/216156 http/tests/misc/script-async.html [ Pass Failure ]
