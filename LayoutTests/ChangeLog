@@ -1,5 +1,14 @@
 2020-09-04  Truitt Savell  <tsavell@apple.com>
 
+        fast/text/international/generic-font-family-language-traditional.html is passing, remove expectation.
+        rdar://60227623
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-09-04  Truitt Savell  <tsavell@apple.com>
+
         Correct typo in expectation for imported/blink/fast/text/international/text-shaping-arabic.html
         rdar://41103260
 

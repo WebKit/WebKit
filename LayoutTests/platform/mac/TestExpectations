@@ -1944,9 +1944,6 @@ inspector/unit-tests/test-harness-expect-functions.html [ Pass Crash ]
 # <rdar://problem/60790658> editing/selection/select-bidi-run.html is flaky timing out.
 editing/selection/select-bidi-run.html [ Pass Timeout ]
 
-# <rdar://problem/60227623> fast/text/international/generic-font-family-language-traditional.html is failing.
-[ BigSur+ ] fast/text/international/generic-font-family-language-traditional.html [ ImageOnlyFailure ]
-
 # <rdar://problem/60873976> [ Mac Guard Malloc ] imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.worker.html is flaky crashing.
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.worker.html [ Pass Crash ]
 
