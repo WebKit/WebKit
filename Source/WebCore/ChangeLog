@@ -1,5 +1,17 @@
 2020-09-04  Youenn Fablet  <youenn@apple.com>
 
+        Fix Internals::supportsVCPEncoder on BigSur
+        https://bugs.webkit.org/show_bug.cgi?id=216174
+
+        Reviewed by Eric Carlson.
+
+        Fixed by unflaked test.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::supportsVCPEncoder):
+
+2020-09-04  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder timeslice parameter causing internal error on longer videos
         https://bugs.webkit.org/show_bug.cgi?id=216076
         <rdar://problem/68209422>

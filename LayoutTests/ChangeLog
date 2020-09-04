@@ -1,5 +1,17 @@
 2020-09-04  Youenn Fablet  <youenn@apple.com>
 
+        Fix Internals::supportsVCPEncoder on BigSur
+        https://bugs.webkit.org/show_bug.cgi?id=216174
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder-expected.txt:
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html:
+        Slight modification to make the test run faster and output more comprehensive error message if error happens.
+
+2020-09-04  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder timeslice parameter causing internal error on longer videos
         https://bugs.webkit.org/show_bug.cgi?id=216076
         <rdar://problem/68209422>

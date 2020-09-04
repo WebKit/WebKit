@@ -5681,9 +5681,7 @@ bool Internals::capsLockIsOn()
 bool Internals::supportsVCPEncoder()
 {
 #if defined(ENABLE_VCP_ENCODER)
-    return ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER;
-#elif defined(HAVE_VTB_REQUIREDLOWLATENCY)
-    return true;
+    return ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER || HAVE_VTB_REQUIREDLOWLATENCY;
 #else
     return false;
 #endif
