@@ -2057,7 +2057,7 @@
 		6ED8C37A183BFF8C009E53BD /* BoxShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED8C378183BFF8C009E53BD /* BoxShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		6F0B98B523F268EC00EEC2F2 /* LayoutInlineTextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F0B98B323F268EB00EEC2F2 /* LayoutInlineTextBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6F0CD695229ED32700C5994E /* InlineLineBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F0CD694229ED32700C5994E /* InlineLineBuilder.h */; };
+		6F0CD695229ED32700C5994E /* InlineLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F0CD694229ED32700C5994E /* InlineLine.h */; };
 		6F17264F2470C60B00518C96 /* TableWrapperBlockFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F17264E2470C60A00518C96 /* TableWrapperBlockFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F1CC1DE225F8B4900720AD2 /* InlineTextItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F1CC1DD225F8B4200720AD2 /* InlineTextItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F26BB6C23343E6F002F2BEA /* LayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F26BB6B23343E5B002F2BEA /* LayoutContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9555,8 +9555,8 @@
 		6F0830DF20B46951008A945B /* BlockFormattingContextGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockFormattingContextGeometry.cpp; sourceTree = "<group>"; };
 		6F0B98B323F268EB00EEC2F2 /* LayoutInlineTextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutInlineTextBox.h; sourceTree = "<group>"; };
 		6F0B98B623F2690600EEC2F2 /* LayoutInlineTextBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutInlineTextBox.cpp; sourceTree = "<group>"; };
-		6F0CD692229ED31900C5994E /* InlineLineBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineLineBuilder.cpp; sourceTree = "<group>"; };
-		6F0CD694229ED32700C5994E /* InlineLineBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBuilder.h; sourceTree = "<group>"; };
+		6F0CD692229ED31900C5994E /* InlineLine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineLine.cpp; sourceTree = "<group>"; };
+		6F0CD694229ED32700C5994E /* InlineLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLine.h; sourceTree = "<group>"; };
 		6F10B08622B8568D0090E69C /* InlineFormattingContextQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContextQuirks.cpp; sourceTree = "<group>"; };
 		6F17264C2470C5F700518C96 /* TableWrapperBlockFormattingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableWrapperBlockFormattingContext.cpp; sourceTree = "<group>"; };
 		6F17264E2470C60A00518C96 /* TableWrapperBlockFormattingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableWrapperBlockFormattingContext.h; sourceTree = "<group>"; };
@@ -17461,12 +17461,12 @@
 				115CFA7C208B8E10001E6991 /* InlineFormattingState.h */,
 				6F7B8CEC23626E6600C9FF15 /* InlineItem.cpp */,
 				6FE7CFA02177EEF1005B1573 /* InlineItem.h */,
+				6F0CD692229ED31900C5994E /* InlineLine.cpp */,
+				6F0CD694229ED32700C5994E /* InlineLine.h */,
 				6F69A79924D6FAB800E6B85D /* InlineLineBox.cpp */,
 				6FB2400323DFF12700796458 /* InlineLineBox.h */,
 				6FE198132178397B00446F08 /* InlineLineBreaker.cpp */,
 				6FE198152178397C00446F08 /* InlineLineBreaker.h */,
-				6F0CD692229ED31900C5994E /* InlineLineBuilder.cpp */,
-				6F0CD694229ED32700C5994E /* InlineLineBuilder.h */,
 				6F360E4E23999420001512A7 /* InlineSoftLineBreakItem.h */,
 				6F1CC1DC225F8B4100720AD2 /* InlineTextItem.cpp */,
 				6F1CC1DD225F8B4200720AD2 /* InlineTextItem.h */,
@@ -23360,9 +23360,9 @@
 				97AABD0914FA09D5007457AE /* WebSocketExtensionProcessor.h */,
 				AAF5B7B11524B4BD0004CB49 /* WebSocketFrame.cpp */,
 				97AABD0A14FA09D5007457AE /* WebSocketFrame.h */,
-				41E12E9D24FE74E20093FFB4 /* WebSocketIdentifier.h */,
 				97AABD0B14FA09D5007457AE /* WebSocketHandshake.cpp */,
 				97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */,
+				41E12E9D24FE74E20093FFB4 /* WebSocketIdentifier.h */,
 				97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */,
 				97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */,
 			);
@@ -31650,9 +31650,9 @@
 				115CFA7E208B8E10001E6991 /* InlineFormattingState.h in Headers */,
 				6FE7CFA22177EEF2005B1573 /* InlineItem.h in Headers */,
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
+				6F0CD695229ED32700C5994E /* InlineLine.h in Headers */,
 				6FB2400523DFF12800796458 /* InlineLineBox.h in Headers */,
 				6FE198172178397C00446F08 /* InlineLineBreaker.h in Headers */,
-				6F0CD695229ED32700C5994E /* InlineLineBuilder.h in Headers */,
 				F45775CE241437D5002DF1A0 /* InlinePathData.h in Headers */,
 				6F360E5023999421001512A7 /* InlineSoftLineBreakItem.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* InlineStyleSheetOwner.h in Headers */,
@@ -33045,7 +33045,6 @@
 				1A58E8661D19D4F000C0EA73 /* PaymentCoordinatorClient.h in Headers */,
 				A1F76B371F44C60F0014C318 /* PaymentCurrencyAmount.h in Headers */,
 				A1F76B1F1F44C3FE0014C318 /* PaymentDetailsBase.h in Headers */,
-				41E12E9F24FE74E20093FFB4 /* WebSocketIdentifier.h in Headers */,
 				A1F76B251F44C4910014C318 /* PaymentDetailsInit.h in Headers */,
 				A1F76B4F1F44D2420014C318 /* PaymentDetailsModifier.h in Headers */,
 				A1F600491F47594E0077E83F /* PaymentDetailsUpdate.h in Headers */,
@@ -34396,6 +34395,7 @@
 				97AABD2414FA09D5007457AE /* WebSocketExtensionProcessor.h in Headers */,
 				97AABD2514FA09D5007457AE /* WebSocketFrame.h in Headers */,
 				97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */,
+				41E12E9F24FE74E20093FFB4 /* WebSocketIdentifier.h in Headers */,
 				1F8756B21E22C3350042C40D /* WebSQLiteDatabaseTrackerClient.h in Headers */,
 				31DEA4561B39F4D900F77178 /* WebSystemBackdropLayer.h in Headers */,
 				0F580FA31496939100FB5BD8 /* WebTiledBackingLayer.h in Headers */,

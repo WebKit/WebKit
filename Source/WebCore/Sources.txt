@@ -1445,7 +1445,7 @@ layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineItem.cpp
 layout/inlineformatting/InlineLineBox.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
-layout/inlineformatting/InlineLineBuilder.cpp
+layout/inlineformatting/InlineLine.cpp
 layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/LineLayoutContext.cpp
 layout/inlineformatting/text/TextUtil.cpp

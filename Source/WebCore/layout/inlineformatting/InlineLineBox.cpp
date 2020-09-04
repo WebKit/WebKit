@@ -59,7 +59,7 @@ void HangingContent::reset()
     m_width =  0;
 }
 
-static HangingContent collectHangingContent(const LineBuilder::RunList& runs, LineBox::IsLastLineWithInlineContent isLastLineWithInlineContent)
+static HangingContent collectHangingContent(const Line::RunList& runs, LineBox::IsLastLineWithInlineContent isLastLineWithInlineContent)
 {
     auto hangingContent = HangingContent { };
     if (isLastLineWithInlineContent == LineBox::IsLastLineWithInlineContent::Yes)
@@ -82,7 +82,7 @@ static HangingContent collectHangingContent(const LineBuilder::RunList& runs, Li
     return hangingContent;
 }
 
-static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const LineBuilder::RunList& runs, TextAlignMode textAlign, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, LineBox::IsLastLineWithInlineContent isLastLine)
+static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList& runs, TextAlignMode textAlign, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, LineBox::IsLastLineWithInlineContent isLastLine)
 {
     auto availableWidth = lineLogicalWidth - contentLogicalWidth;
     auto hangingContent = collectHangingContent(runs, isLastLine);
@@ -143,7 +143,7 @@ LineBox::InlineBox::InlineBox(const Box& layoutBox, const Display::InlineRect& r
 {
 }
 
-LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutPoint& topLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit contentLogicalWidth, const LineBuilder::RunList& runs, IsLineVisuallyEmpty isLineVisuallyEmpty, IsLastLineWithInlineContent isLastLineWithInlineContent)
+LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutPoint& topLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit contentLogicalWidth, const Line::RunList& runs, IsLineVisuallyEmpty isLineVisuallyEmpty, IsLastLineWithInlineContent isLastLineWithInlineContent)
     : m_rect(topLeft, logicalWidth, { })
     , m_contentLogicalWidth(contentLogicalWidth)
     , m_inlineFormattingContext(inlineFormattingContext)
@@ -160,7 +160,7 @@ LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, const I
     m_scrollableOverflow.expandVertically(logicalBottom);
 }
 
-Display::InlineRect LineBox::inlineRectForTextRun(const LineBuilder::Run& run) const
+Display::InlineRect LineBox::inlineRectForTextRun(const Line::Run& run) const
 {
     ASSERT(run.isText() || run.isLineBreak());
     auto& parentInlineBox = inlineBoxForLayoutBox(run.layoutBox().parent());
@@ -168,7 +168,7 @@ Display::InlineRect LineBox::inlineRectForTextRun(const LineBuilder::Run& run) c
     return { inlineBoxRect.top(), m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft(), run.logicalWidth(), inlineBoxRect.height() };
 }
 
-void LineBox::constructInlineBoxes(const LineBuilder::RunList& runs, IsLineVisuallyEmpty isLineVisuallyEmpty)
+void LineBox::constructInlineBoxes(const Line::RunList& runs, IsLineVisuallyEmpty isLineVisuallyEmpty)
 {
     auto constructRootInlineBox = [&] {
         auto& fontMetrics = root().style().fontMetrics();

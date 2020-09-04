@@ -27,8 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineLine.h"
 #include "InlineLineBreaker.h"
-#include "InlineLineBuilder.h"
 
 namespace WebCore {
 namespace Layout {
@@ -58,9 +58,9 @@ public:
         };
         using FloatList = Vector<Float>;
         FloatList floats;
-        const LineBuilder::RunList& runs;
+        const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(LineBuilder&, const InlineItemRange&, Optional<unsigned> partialLeadingContentLength);
+    LineContent layoutInlineContent(Line&, const InlineItemRange&, Optional<unsigned> partialLeadingContentLength);
 
 private:
     void nextContentForLine(LineCandidate&, unsigned inlineItemIndex, const InlineItemRange& layoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
@@ -74,11 +74,11 @@ private:
         Optional <LineContent::PartialContent> partialContent { };
     };
     enum class CommitIntrusiveFloatsOnly { No, Yes };
-    void commitFloats(LineBuilder&, const LineCandidate&, CommitIntrusiveFloatsOnly = CommitIntrusiveFloatsOnly::No);
-    Result handleFloatsAndInlineContent(LineBreaker&, LineBuilder&, const InlineItemRange& layoutRange, const LineCandidate&);
-    size_t rebuildLine(LineBuilder&, const InlineItemRange& layoutRange);
-    void commitPartialContent(LineBuilder&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
-    LineContent close(const LineBuilder&, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
+    void commitFloats(Line&, const LineCandidate&, CommitIntrusiveFloatsOnly = CommitIntrusiveFloatsOnly::No);
+    Result handleFloatsAndInlineContent(LineBreaker&, Line&, const InlineItemRange& layoutRange, const LineCandidate&);
+    size_t rebuildLine(Line&, const InlineItemRange& layoutRange);
+    void commitPartialContent(Line&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
+    LineContent close(const Line&, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
 

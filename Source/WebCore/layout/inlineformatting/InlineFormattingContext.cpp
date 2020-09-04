@@ -140,7 +140,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutCon
         Optional<unsigned> overflowContentLength;
     };
     Optional<PreviousLine> previousLine;
-    auto line = LineBuilder { *this };
+    auto line = Line { *this };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
 
     while (!needsLayoutRange.isEmpty()) {
@@ -270,7 +270,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
 {
     auto& inlineItems = formattingState().inlineItems();
     auto maximumLineWidth = InlineLayoutUnit { };
-    auto line = LineBuilder { *this };
+    auto line = Line { *this };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
     auto layoutRange = LineLayoutContext::InlineItemRange { 0 , inlineItems.size() };
     while (!layoutRange.isEmpty()) {

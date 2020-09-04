@@ -29,7 +29,7 @@
 
 #include "DisplayBox.h"
 #include "DisplayInlineRect.h"
-#include "InlineLineBuilder.h"
+#include "InlineLine.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
@@ -80,7 +80,7 @@ public:
 
     enum class IsLastLineWithInlineContent { No, Yes };
     enum class IsLineVisuallyEmpty { No, Yes };
-    LineBox(const InlineFormattingContext&, const InlineLayoutPoint& topLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit contentLogicalWidth, const LineBuilder::RunList&, IsLineVisuallyEmpty, IsLastLineWithInlineContent);
+    LineBox(const InlineFormattingContext&, const InlineLayoutPoint& topLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit contentLogicalWidth, const Line::RunList&, IsLineVisuallyEmpty, IsLastLineWithInlineContent);
 
     InlineLayoutUnit logicalLeft() const { return m_rect.left(); }
     InlineLayoutUnit logicalRight() const { return m_rect.right(); }
@@ -95,7 +95,7 @@ public:
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
 
     const InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineBoxRectMap.get(&layoutBox); }
-    Display::InlineRect inlineRectForTextRun(const LineBuilder::Run&) const;
+    Display::InlineRect inlineRectForTextRun(const Line::Run&) const;
 
     // _____________________________________________________ line box logical top
     //                      ^
@@ -115,7 +115,7 @@ public:
     InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox.logicalTop() + m_rootInlineBox.baseline(); }
 
 private:
-    void constructInlineBoxes(const LineBuilder::RunList&, IsLineVisuallyEmpty);
+    void constructInlineBoxes(const Line::RunList&, IsLineVisuallyEmpty);
     void computeInlineBoxesLogicalHeight();
     void alignInlineBoxesVerticallyAndComputeLineBoxHeight(IsLineVisuallyEmpty);
 

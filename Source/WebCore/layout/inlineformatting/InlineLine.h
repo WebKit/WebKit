@@ -37,10 +37,10 @@ namespace Layout {
 class InlineFormattingContext;
 class InlineSoftLineBreakItem;
 
-class LineBuilder {
+class Line {
 public:
-    LineBuilder(const InlineFormattingContext&);
-    ~LineBuilder();
+    Line(const InlineFormattingContext&);
+    ~Line();
 
     void open(InlineLayoutUnit availableLogicalWidth);
     void close(bool isLastLineWithInlineContent);
@@ -88,7 +88,7 @@ public:
         InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
 
     private:
-        friend class LineBuilder;
+        friend class Line;
 
         Run(const InlineTextItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool needsHypen);
         Run(const InlineSoftLineBreakItem&, InlineLayoutUnit logicalLeft);
@@ -190,7 +190,7 @@ private:
 #endif
 };
 
-inline void LineBuilder::TrimmableTrailingContent::reset()
+inline void Line::TrimmableTrailingContent::reset()
 {
     m_hasFullyTrimmableContent = false;
     m_firstRunIndex = { };
@@ -198,7 +198,7 @@ inline void LineBuilder::TrimmableTrailingContent::reset()
     m_partiallyTrimmableWidth = { };
 }
 
-inline LineBuilder::Run::TrailingWhitespace LineBuilder::Run::trailingWhitespaceType(const InlineTextItem& inlineTextItem) const
+inline Line::Run::TrailingWhitespace Line::Run::trailingWhitespaceType(const InlineTextItem& inlineTextItem) const
 {
     if (!inlineTextItem.isWhitespace())
         return TrailingWhitespace::None;

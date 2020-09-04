@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "InlineLineBuilder.h"
+#include "InlineLine.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -44,18 +44,18 @@ static inline bool isWhitespacePreserved(const RenderStyle& style)
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext)
+Line::Line(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_trimmableTrailingContent(m_runs)
     , m_shouldIgnoreTrailingLetterSpacing(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
 {
 }
 
-LineBuilder::~LineBuilder()
+Line::~Line()
 {
 }
 
-void LineBuilder::open(InlineLayoutUnit availableWidth)
+void Line::open(InlineLayoutUnit availableWidth)
 {
     m_lineLogicalWidth = availableWidth;
     clearContent();
@@ -64,7 +64,7 @@ void LineBuilder::open(InlineLayoutUnit availableWidth)
 #endif
 }
 
-void LineBuilder::clearContent()
+void Line::clearContent()
 {
     m_contentLogicalWidth = { };
     m_isVisuallyEmpty = true;
@@ -73,7 +73,7 @@ void LineBuilder::clearContent()
     m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
 }
 
-void LineBuilder::close(bool isLastLineWithInlineContent)
+void Line::close(bool isLastLineWithInlineContent)
 {
 #if ASSERT_ENABLED
     m_isClosed = true;
@@ -128,7 +128,7 @@ void LineBuilder::close(bool isLastLineWithInlineContent)
     computeExpansionForRunsIfNeeded();
 }
 
-void LineBuilder::removeTrailingTrimmableContent()
+void Line::removeTrailingTrimmableContent()
 {
     if (m_trimmableTrailingContent.isEmpty() || m_runs.isEmpty())
         return;
@@ -166,7 +166,7 @@ void LineBuilder::removeTrailingTrimmableContent()
     }
 }
 
-void LineBuilder::visuallyCollapsePreWrapOverflowContent()
+void Line::visuallyCollapsePreWrapOverflowContent()
 {
     ASSERT(m_trimmableTrailingContent.isEmpty());
     // If white-space is set to pre-wrap, the UA must
@@ -205,7 +205,7 @@ void LineBuilder::visuallyCollapsePreWrapOverflowContent()
     m_contentLogicalWidth -= trimmedContentWidth;
 }
 
-void LineBuilder::moveLogicalLeft(InlineLayoutUnit delta)
+void Line::moveLogicalLeft(InlineLayoutUnit delta)
 {
     if (!delta)
         return;
@@ -214,24 +214,24 @@ void LineBuilder::moveLogicalLeft(InlineLayoutUnit delta)
     m_lineLogicalWidth -= delta;
 }
 
-void LineBuilder::moveLogicalRight(InlineLayoutUnit delta)
+void Line::moveLogicalRight(InlineLayoutUnit delta)
 {
     ASSERT(delta > 0);
     m_lineLogicalWidth -= delta;
 }
 
-void LineBuilder::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     ASSERT(!m_isClosed);
     appendWith(inlineItem, { logicalWidth, false });
 }
 
-void LineBuilder::appendPartialTrailingTextItem(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth, bool needsHyphen)
+void Line::appendPartialTrailingTextItem(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth, bool needsHyphen)
 {
     appendWith(inlineTextItem, { logicalWidth, needsHyphen });
 }
 
-void LineBuilder::appendWith(const InlineItem& inlineItem, const InlineRunDetails& inlineRunDetails)
+void Line::appendWith(const InlineItem& inlineItem, const InlineRunDetails& inlineRunDetails)
 {
     if (inlineItem.isText())
         appendTextContent(downcast<InlineTextItem>(inlineItem), inlineRunDetails.logicalWidth, inlineRunDetails.needsHyphen);
@@ -253,19 +253,19 @@ void LineBuilder::appendWith(const InlineItem& inlineItem, const InlineRunDetail
         m_isVisuallyEmpty = false;
 }
 
-void LineBuilder::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+void Line::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
     m_runs.append({ inlineItem, logicalLeft, logicalWidth });
     m_contentLogicalWidth += logicalWidth;
 }
 
-void LineBuilder::appendInlineContainerStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendInlineContainerStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the start of the inline level container <span>.
     appendNonBreakableSpace(inlineItem, contentLogicalWidth(), logicalWidth);
 }
 
-void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendInlineContainerEnd(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the end of the inline level container </span>.
     auto removeTrailingLetterSpacing = [&] {
@@ -279,7 +279,7 @@ void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, InlineL
     appendNonBreakableSpace(inlineItem, contentLogicalRight(), logicalWidth);
 }
 
-void LineBuilder::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth, bool needsHyphen)
+void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth, bool needsHyphen)
 {
     auto willCollapseCompletely = [&] {
         if (!inlineTextItem.isCollapsible())
@@ -335,7 +335,7 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineTextItem, Inline
         m_trimmableTrailingContent.addPartiallyTrimmableContent(m_runs.size() - 1, logicalWidth);
 }
 
-void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     auto& layoutBox = inlineItem.layoutBox();
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
@@ -345,14 +345,14 @@ void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, Inlin
     m_trimmableTrailingContent.reset();
 }
 
-void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     ASSERT(inlineItem.layoutBox().isReplacedBox());
     // FIXME: Surely replaced boxes behave differently.
     appendNonReplacedInlineBox(inlineItem, logicalWidth);
 }
 
-void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
+void Line::appendLineBreak(const InlineItem& inlineItem)
 {
     if (inlineItem.isHardLineBreak())
         return m_runs.append({ inlineItem, contentLogicalWidth(), 0_lu });
@@ -361,7 +361,7 @@ void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
     m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalWidth() });
 }
 
-bool LineBuilder::isRunVisuallyNonEmpty(const Run& run) const
+bool Line::isRunVisuallyNonEmpty(const Run& run) const
 {
     if (run.isText())
         return true;
@@ -391,17 +391,17 @@ bool LineBuilder::isRunVisuallyNonEmpty(const Run& run) const
     return false;
 }
 
-const InlineFormattingContext& LineBuilder::formattingContext() const
+const InlineFormattingContext& Line::formattingContext() const
 {
     return m_inlineFormattingContext;
 }
 
-LineBuilder::TrimmableTrailingContent::TrimmableTrailingContent(RunList& runs)
+Line::TrimmableTrailingContent::TrimmableTrailingContent(RunList& runs)
     : m_runs(runs)
 {
 }
 
-void LineBuilder::TrimmableTrailingContent::addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth)
+void Line::TrimmableTrailingContent::addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth)
 {
     // Any subsequent trimmable whitespace should collapse to zero advanced width and ignored at ::appendTextContent().
     ASSERT(!m_hasFullyTrimmableContent);
@@ -411,7 +411,7 @@ void LineBuilder::TrimmableTrailingContent::addFullyTrimmableContent(size_t runI
     m_firstRunIndex = m_firstRunIndex.valueOr(runIndex);
 }
 
-void LineBuilder::TrimmableTrailingContent::addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth)
+void Line::TrimmableTrailingContent::addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth)
 {
     // Do not add trimmable letter spacing after a fully trimmable whitespace.
     ASSERT(!m_firstRunIndex);
@@ -422,7 +422,7 @@ void LineBuilder::TrimmableTrailingContent::addPartiallyTrimmableContent(size_t 
     m_firstRunIndex = runIndex;
 }
 
-InlineLayoutUnit LineBuilder::TrimmableTrailingContent::remove()
+InlineLayoutUnit Line::TrimmableTrailingContent::remove()
 {
     // Remove trimmable trailing content and move all the subsequent trailing runs.
     // <span> </span><span></span>
@@ -447,7 +447,7 @@ InlineLayoutUnit LineBuilder::TrimmableTrailingContent::remove()
     return trimmableWidth;
 }
 
-InlineLayoutUnit LineBuilder::TrimmableTrailingContent::removePartiallyTrimmableContent()
+InlineLayoutUnit Line::TrimmableTrailingContent::removePartiallyTrimmableContent()
 {
     // Partially trimmable content is always gated by a fully trimmable content.
     // We can't just trim spacing in the middle.
@@ -455,7 +455,7 @@ InlineLayoutUnit LineBuilder::TrimmableTrailingContent::removePartiallyTrimmable
     return remove();
 }
 
-LineBuilder::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+Line::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
     : m_type(inlineItem.type())
     , m_layoutBox(&inlineItem.layoutBox())
     , m_logicalLeft(logicalLeft)
@@ -463,7 +463,7 @@ LineBuilder::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft
 {
 }
 
-LineBuilder::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLayoutUnit logicalLeft)
+Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLayoutUnit logicalLeft)
     : m_type(softLineBreakItem.type())
     , m_layoutBox(&softLineBreakItem.layoutBox())
     , m_logicalLeft(logicalLeft)
@@ -471,7 +471,7 @@ LineBuilder::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLa
 {
 }
 
-LineBuilder::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool needsHyphen)
+Line::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool needsHyphen)
     : m_type(InlineItem::Type::Text)
     , m_layoutBox(&inlineTextItem.layoutBox())
     , m_logicalLeft(logicalLeft)
@@ -486,7 +486,7 @@ LineBuilder::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit log
     }
 }
 
-void LineBuilder::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth)
+void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth)
 {
     // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount.
     ASSERT(!hasCollapsedTrailingWhitespace());
@@ -509,7 +509,7 @@ void LineBuilder::Run::expand(const InlineTextItem& inlineTextItem, InlineLayout
     m_textContent->expand(m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length());
 }
 
-bool LineBuilder::Run::hasTrailingLetterSpacing() const
+bool Line::Run::hasTrailingLetterSpacing() const
 {
     // Complex line layout does not keep track of trailing letter spacing.
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
@@ -517,21 +517,21 @@ bool LineBuilder::Run::hasTrailingLetterSpacing() const
     return !hasTrailingWhitespace() && style().letterSpacing() > 0;
 }
 
-InlineLayoutUnit LineBuilder::Run::trailingLetterSpacing() const
+InlineLayoutUnit Line::Run::trailingLetterSpacing() const
 {
     if (!hasTrailingLetterSpacing())
         return 0_lu;
     return InlineLayoutUnit { style().letterSpacing() };
 }
 
-void LineBuilder::Run::removeTrailingLetterSpacing()
+void Line::Run::removeTrailingLetterSpacing()
 {
     ASSERT(hasTrailingLetterSpacing());
     shrinkHorizontally(trailingLetterSpacing());
     ASSERT(logicalWidth() > 0 || (!logicalWidth() && style().letterSpacing() >= intMaxForLayoutUnit));
 }
 
-void LineBuilder::Run::removeTrailingWhitespace()
+void Line::Run::removeTrailingWhitespace()
 {
     // According to https://www.w3.org/TR/css-text-3/#white-space-property matrix
     // Trimmable whitespace is always collapsible so the length of the trailing trimmable whitespace is always 1 (or non-existent).
@@ -541,7 +541,7 @@ void LineBuilder::Run::removeTrailingWhitespace()
     visuallyCollapseTrailingWhitespace();
 }
 
-void LineBuilder::Run::visuallyCollapseTrailingWhitespace()
+void Line::Run::visuallyCollapseTrailingWhitespace()
 {
     // This is just a visual adjustment, the text length should remain the same.
     shrinkHorizontally(m_trailingWhitespaceWidth);
@@ -555,19 +555,19 @@ void LineBuilder::Run::visuallyCollapseTrailingWhitespace()
     setExpansionBehavior(AllowLeftExpansion | AllowRightExpansion);
 }
 
-void LineBuilder::Run::setExpansionBehavior(ExpansionBehavior expansionBehavior)
+void Line::Run::setExpansionBehavior(ExpansionBehavior expansionBehavior)
 {
     ASSERT(isText());
     m_expansion.behavior = expansionBehavior;
 }
 
-ExpansionBehavior LineBuilder::Run::expansionBehavior() const
+ExpansionBehavior Line::Run::expansionBehavior() const
 {
     ASSERT(isText());
     return m_expansion.behavior;
 }
 
-void LineBuilder::Run::setHorizontalExpansion(InlineLayoutUnit logicalExpansion)
+void Line::Run::setHorizontalExpansion(InlineLayoutUnit logicalExpansion)
 {
     ASSERT(isText());
     ASSERT(hasExpansionOpportunity());

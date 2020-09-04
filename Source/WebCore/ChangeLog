@@ -1,5 +1,114 @@
 2020-09-04  Zalan Bujtas  <zalan@apple.com>
 
+        Rename LineBuilder to Line
+        https://bugs.webkit.org/show_bug.cgi?id=216165
+
+        Reviewed by Antti Koivisto.
+
+        This class evolved to the actual line and LineLayoutContext became the LineBuilder.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineLine.cpp: Renamed from Source/WebCore/layout/inlineformatting/InlineLineBuilder.cpp.
+        (WebCore::Layout::isWhitespacePreserved):
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::~Line):
+        (WebCore::Layout::Line::open):
+        (WebCore::Layout::Line::clearContent):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::removeTrailingTrimmableContent):
+        (WebCore::Layout::Line::visuallyCollapsePreWrapOverflowContent):
+        (WebCore::Layout::Line::moveLogicalLeft):
+        (WebCore::Layout::Line::moveLogicalRight):
+        (WebCore::Layout::Line::append):
+        (WebCore::Layout::Line::appendPartialTrailingTextItem):
+        (WebCore::Layout::Line::appendWith):
+        (WebCore::Layout::Line::appendNonBreakableSpace):
+        (WebCore::Layout::Line::appendInlineContainerStart):
+        (WebCore::Layout::Line::appendInlineContainerEnd):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendReplacedInlineBox):
+        (WebCore::Layout::Line::appendLineBreak):
+        (WebCore::Layout::Line::isRunVisuallyNonEmpty const):
+        (WebCore::Layout::Line::formattingContext const):
+        (WebCore::Layout::Line::TrimmableTrailingContent::TrimmableTrailingContent):
+        (WebCore::Layout::Line::TrimmableTrailingContent::addFullyTrimmableContent):
+        (WebCore::Layout::Line::TrimmableTrailingContent::addPartiallyTrimmableContent):
+        (WebCore::Layout::Line::TrimmableTrailingContent::remove):
+        (WebCore::Layout::Line::TrimmableTrailingContent::removePartiallyTrimmableContent):
+        (WebCore::Layout::Line::Run::Run):
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::Run::hasTrailingLetterSpacing const):
+        (WebCore::Layout::Line::Run::trailingLetterSpacing const):
+        (WebCore::Layout::Line::Run::removeTrailingLetterSpacing):
+        (WebCore::Layout::Line::Run::removeTrailingWhitespace):
+        (WebCore::Layout::Line::Run::visuallyCollapseTrailingWhitespace):
+        (WebCore::Layout::Line::Run::setExpansionBehavior):
+        (WebCore::Layout::Line::Run::expansionBehavior const):
+        (WebCore::Layout::Line::Run::setHorizontalExpansion):
+        * layout/inlineformatting/InlineLine.h: Renamed from Source/WebCore/layout/inlineformatting/InlineLineBuilder.h.
+        (WebCore::Layout::Line::setHasIntrusiveFloat):
+        (WebCore::Layout::Line::hasIntrusiveFloat const):
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::lineLogicalWidth const):
+        (WebCore::Layout::Line::contentLogicalWidth const):
+        (WebCore::Layout::Line::availableWidth const):
+        (WebCore::Layout::Line::trimmableTrailingWidth const):
+        (WebCore::Layout::Line::isTrailingRunFullyTrimmable const):
+        (WebCore::Layout::Line::Run::isText const):
+        (WebCore::Layout::Line::Run::isBox const):
+        (WebCore::Layout::Line::Run::isLineBreak const):
+        (WebCore::Layout::Line::Run::isContainerStart const):
+        (WebCore::Layout::Line::Run::isContainerEnd const):
+        (WebCore::Layout::Line::Run::layoutBox const):
+        (WebCore::Layout::Line::Run::style const):
+        (WebCore::Layout::Line::Run::textContent const):
+        (WebCore::Layout::Line::Run::logicalWidth const):
+        (WebCore::Layout::Line::Run::logicalLeft const):
+        (WebCore::Layout::Line::Run::logicalRight const):
+        (WebCore::Layout::Line::Run::expansion const):
+        (WebCore::Layout::Line::Run::hasExpansionOpportunity const):
+        (WebCore::Layout::Line::Run::expansionOpportunityCount const):
+        (WebCore::Layout::Line::Run::hasTrailingWhitespace const):
+        (WebCore::Layout::Line::Run::trailingWhitespaceWidth const):
+        (WebCore::Layout::Line::Run::moveHorizontally):
+        (WebCore::Layout::Line::Run::shrinkHorizontally):
+        (WebCore::Layout::Line::Run::setNeedsHyphen):
+        (WebCore::Layout::Line::Run::hasCollapsibleTrailingWhitespace const):
+        (WebCore::Layout::Line::Run::hasCollapsedTrailingWhitespace const):
+        (WebCore::Layout::Line::runs const):
+        (WebCore::Layout::Line::contentLogicalRight const):
+        (WebCore::Layout::Line::TrimmableTrailingContent::width const):
+        (WebCore::Layout::Line::TrimmableTrailingContent::isEmpty const):
+        (WebCore::Layout::Line::TrimmableTrailingContent::isTrailingRunFullyTrimmable const):
+        (WebCore::Layout::Line::TrimmableTrailingContent::isTrailingRunPartiallyTrimmable const):
+        (WebCore::Layout::Line::TrimmableTrailingContent::reset):
+        (WebCore::Layout::Line::Run::trailingWhitespaceType const):
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::collectHangingContent):
+        (WebCore::Layout::horizontalAlignmentOffset):
+        (WebCore::Layout::LineBox::LineBox):
+        (WebCore::Layout::LineBox::inlineRectForTextRun const):
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+        * layout/inlineformatting/InlineLineBox.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::layoutInlineContent):
+        (WebCore::Layout::LineLayoutContext::close):
+        (WebCore::Layout::LineLayoutContext::commitFloats):
+        (WebCore::Layout::LineLayoutContext::handleFloatsAndInlineContent):
+        (WebCore::Layout::LineLayoutContext::commitPartialContent):
+        (WebCore::Layout::LineLayoutContext::rebuildLine):
+        * layout/inlineformatting/LineLayoutContext.h:
+
+2020-09-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Horizontal alignment should move the inline boxes and not the line box
         https://bugs.webkit.org/show_bug.cgi?id=216153
 
