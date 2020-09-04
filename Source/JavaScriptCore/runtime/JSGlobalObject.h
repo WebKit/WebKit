@@ -313,6 +313,7 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_parseIntFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_parseFloatFunction;
 
+    LazyProperty<JSGlobalObject, JSFunction> m_objectProtoToStringFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoToStringFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoValuesFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_evalFunction;
@@ -633,6 +634,7 @@ public:
 
     JSFunction* evalFunction() const { return m_evalFunction.get(this); }
     JSFunction* throwTypeErrorFunction() const;
+    JSFunction* objectProtoToStringFunction() const { return m_objectProtoToStringFunction.get(this); }
     JSFunction* arrayProtoToStringFunction() const { return m_arrayProtoToStringFunction.get(this); }
     JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(this); }
     JSFunction* arrayProtoValuesFunctionConcurrently() const { return m_arrayProtoValuesFunction.getConcurrently(); }

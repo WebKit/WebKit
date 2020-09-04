@@ -53,7 +53,7 @@ void ObjectPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, objectProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
+    putDirectWithoutTransition(vm, vm.propertyNames->toString, globalObject->objectProtoToStringFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, objectProtoFuncToLocaleString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->valueOf, objectProtoFuncValueOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->hasOwnProperty, objectProtoFuncHasOwnProperty, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, HasOwnPropertyIntrinsic);
@@ -325,7 +325,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObjec
         return JSValue::encode(jsUndefined());
 
     Integrity::auditStructureID(vm, thisObject->structureID());
-    auto result = thisObject->structure(vm)->objectToStringValue();
+    auto result = thisObject->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag);
     if (result)
         return JSValue::encode(result);
 
@@ -350,7 +350,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObjec
 
     JSString* jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
     RETURN_IF_EXCEPTION(scope, { });
-    thisObject->structure(vm)->setObjectToStringValue(globalObject, vm, jsResult, slot);
+    thisObject->structure(vm)->cacheSpecialProperty(globalObject, vm, jsResult, CachedSpecialPropertyKey::ToStringTag, slot);
     return JSValue::encode(jsResult);
 }
 

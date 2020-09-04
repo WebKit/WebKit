@@ -740,6 +740,7 @@ runtime/CachePayload.cpp
 runtime/CacheUpdate.cpp
 runtime/CacheableIdentifier.cpp
 runtime/CachedBytecode.cpp
+runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp
 runtime/CachedTypes.cpp
 runtime/CatchScope.cpp
 runtime/ClassInfo.cpp
@@ -939,7 +940,6 @@ runtime/NumberPrototype.cpp
 runtime/ObjectConstructor.cpp
 runtime/ObjectInitializationScope.cpp
 runtime/ObjectPrototype.cpp
-runtime/ObjectToStringAdaptiveStructureWatchpoint.cpp
 runtime/Operations.cpp
 runtime/Options.cpp
 runtime/PredictionFileCreatingFuzzerAgent.cpp

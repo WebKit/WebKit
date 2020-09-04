@@ -1,3 +1,39 @@
+2020-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Cache toString / valueOf / @@toPrimitive for major cases
+        https://bugs.webkit.org/show_bug.cgi?id=216061
+
+        Reviewed by Saam Barati.
+
+        * stress/delete-cached-to-primitive-property.js: Added.
+        (shouldBe):
+        (object.__proto__.Symbol.toPrimitive):
+        * stress/delete-cached-to-string-property.js: Added.
+        (shouldBe):
+        (object.__proto__.toString):
+        * stress/delete-cached-value-of-property.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (object.__proto__.valueOf):
+        * stress/hide-cached-to-primitive-property.js: Added.
+        (shouldBe):
+        (object.__proto__.Symbol.toPrimitive):
+        * stress/hide-cached-to-string-property.js: Added.
+        (shouldBe):
+        (object.__proto__.toString):
+        * stress/hide-cached-value-of-property.js: Added.
+        (shouldBe):
+        (object.__proto__.valueOf):
+        * stress/replace-cached-to-primitive-property.js: Added.
+        (shouldBe):
+        (object.__proto__.Symbol.toPrimitive):
+        * stress/replace-cached-to-string-property.js: Added.
+        (shouldBe):
+        (object.__proto__.toString):
+        * stress/replace-cached-value-of-property.js: Added.
+        (shouldBe):
+        (object.__proto__.valueOf):
+
 2020-09-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add missing detached buffer errors for DataView

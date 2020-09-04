@@ -1,3 +1,67 @@
+2020-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Cache toString / valueOf / @@toPrimitive for major cases
+        https://bugs.webkit.org/show_bug.cgi?id=216061
+
+        Reviewed by Saam Barati.
+
+        When toPrimitive is called, we need to look-up three properties at most to perform operation. And these special properties do not have caching mechanism at all.
+        We found that Speedometer2/EmberJS-Debug-TodoMVC is using very much time for this property look-up. We should have caching mechanism in StructureRareData, which
+        should be similar to @@toStringTag & Object#toString caching mechanism.
+
+        This patch generalizes @@toStringTag & Object#toString caching mechanism as SpecialPropertyCache. And we accelerate toString / valueOf / @@toPrimitive look-ups in
+        toPrimitive with this caching mechanism.
+
+        This patch improved Speedometer2/EmberJS-Debug-TodoMVC by 10%.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/Watchpoint.cpp:
+        * bytecode/Watchpoint.h:
+        * runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp: Renamed from Source/JavaScriptCore/runtime/ObjectToStringAdaptiveStructureWatchpoint.cpp.
+        (JSC::CachedSpecialPropertyAdaptiveStructureWatchpoint::CachedSpecialPropertyAdaptiveStructureWatchpoint):
+        (JSC::CachedSpecialPropertyAdaptiveStructureWatchpoint::install):
+        (JSC::CachedSpecialPropertyAdaptiveStructureWatchpoint::fireInternal):
+        * runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.h: Renamed from Source/JavaScriptCore/runtime/ObjectToStringAdaptiveStructureWatchpoint.h.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::objectProtoToStringFunction const):
+        * runtime/JSObject.cpp:
+        (JSC::callToPrimitiveFunction):
+        (JSC::JSObject::ordinaryToPrimitive const):
+        (JSC::JSObject::toPrimitive const):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        (JSC::objectProtoFuncToString):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::cacheSpecialProperty):
+        (JSC::Structure::setObjectToStringValue): Deleted.
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren):
+        (JSC::StructureRareData::ensureSpecialPropertyCacheSlow):
+        (JSC::StructureRareData::giveUpOnSpecialPropertyCache):
+        (JSC::StructureRareData::cacheSpecialPropertySlow):
+        (JSC::StructureRareData::clearCachedSpecialProperty):
+        (JSC::StructureRareData::finalizeUnconditionally):
+        (JSC::CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint):
+        (JSC::CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::isValid const):
+        (JSC::CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire):
+        (JSC::StructureRareData::setObjectToStringValue): Deleted.
+        (JSC::StructureRareData::clearObjectToStringValue): Deleted.
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::ObjectToStringAdaptiveInferredPropertyValueWatchpoint): Deleted.
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::isValid const): Deleted.
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire): Deleted.
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::cachedSpecialProperty const):
+        (JSC::StructureRareData::canCacheSpecialProperty):
+        (JSC::StructureRareData::ensureSpecialPropertyCache):
+        (JSC::StructureRareData::cacheSpecialProperty):
+        (JSC::StructureRareData::objectToStringValue const): Deleted.
+
 2020-09-03  Saam Barati  <sbarati@apple.com>
 
         Sampling profiler should dump hash as part of the top function key to prevent incorrectly grouping nameless functions together

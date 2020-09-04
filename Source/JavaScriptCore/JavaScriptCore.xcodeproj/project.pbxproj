@@ -1862,7 +1862,7 @@
 		E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D9D841D39000600667282 /* InterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39D8B2E23021E2600265852 /* WasmOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D8B2D23021E1E00265852 /* WasmOperations.h */; };
 		E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E39EEAF322812450008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E39EEAF22281244C008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.h */; };
+		E39EEAF322812450008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E39EEAF22281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h */; };
 		E39FEBE32339C5D900B40AB0 /* JSAsyncGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E39FEBE22339C5D400B40AB0 /* JSAsyncGenerator.h */; };
 		E3A0531A21342B680022EC14 /* WasmStreamingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A0531621342B660022EC14 /* WasmStreamingParser.h */; };
 		E3A0531C21342B680022EC14 /* WasmSectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A0531821342B670022EC14 /* WasmSectionParser.h */; };
@@ -5075,8 +5075,8 @@
 		E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleRecord.cpp; sourceTree = "<group>"; };
 		E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleRecord.h; sourceTree = "<group>"; };
 		E39E030D22D9EA3E00408C18 /* WebAssembly.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = WebAssembly.js; sourceTree = "<group>"; };
-		E39EEAF12281244C008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectToStringAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
-		E39EEAF22281244C008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectToStringAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
+		E39EEAF12281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
+		E39EEAF22281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CachedSpecialPropertyAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
 		E39FEBE12339C5D400B40AB0 /* JSAsyncGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAsyncGenerator.cpp; sourceTree = "<group>"; };
 		E39FEBE22339C5D400B40AB0 /* JSAsyncGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSAsyncGenerator.h; sourceTree = "<group>"; };
 		E3A0531621342B660022EC14 /* WasmStreamingParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmStreamingParser.h; sourceTree = "<group>"; };
@@ -7128,6 +7128,8 @@
 				FE8DE54C23AC1E86005C9142 /* CacheableIdentifierInlines.h */,
 				148B1419225DD1E900D6E998 /* CachedBytecode.cpp */,
 				144CA34F221F037900817789 /* CachedBytecode.h */,
+				E39EEAF12281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp */,
+				E39EEAF22281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h */,
 				14DAFA4521E3B871004B68F7 /* CachedTypes.cpp */,
 				143BE26521C857770020CD17 /* CachedTypes.h */,
 				148B141B225DD1EA00D6E998 /* CachePayload.cpp */,
@@ -7612,8 +7614,6 @@
 				E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */,
 				BC2680C80E16D4E900A06E92 /* ObjectPrototype.cpp */,
 				BC2680C90E16D4E900A06E92 /* ObjectPrototype.h */,
-				E39EEAF12281244C008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.cpp */,
-				E39EEAF22281244C008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.h */,
 				F692A8770255597D01FF60F7 /* Operations.cpp */,
 				F692A8780255597D01FF60F7 /* Operations.h */,
 				0FE228EA1436AB2300196C48 /* Options.cpp */,
@@ -9266,6 +9266,7 @@
 				FE8DE54D23AC1E86005C9142 /* CacheableIdentifierInlines.h in Headers */,
 				144CA3502224180100817789 /* CachedBytecode.h in Headers */,
 				65B8392E1BACAD360044E824 /* CachedRecovery.h in Headers */,
+				E39EEAF322812450008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h in Headers */,
 				14F09C2A2231923100CF88EB /* CachedTypes.h in Headers */,
 				1409ECC1225E178C00BEDD54 /* CachePayload.h in Headers */,
 				1409ECC0225E178100BEDD54 /* CacheUpdate.h in Headers */,
@@ -10199,7 +10200,6 @@
 				0FD3E40A1B618B6600C80E1E /* ObjectPropertyCondition.h in Headers */,
 				0FD3E40C1B618B6600C80E1E /* ObjectPropertyConditionSet.h in Headers */,
 				BC18C4460E16F5CD00B34460 /* ObjectPrototype.h in Headers */,
-				E39EEAF322812450008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.h in Headers */,
 				E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */,
 				14F79F70216EAFD200046D39 /* Opcode.h in Headers */,
 				FE64872E2141D04800AB0D3E /* OpcodeInlines.h in Headers */,

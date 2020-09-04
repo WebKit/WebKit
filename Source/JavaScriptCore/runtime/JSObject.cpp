@@ -2144,33 +2144,46 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject,
     }
 }
 
-enum class TypeHintMode { TakesHint, DoesNotTakeHint };
-
-template<TypeHintMode mode = TypeHintMode::DoesNotTakeHint>
+template<CachedSpecialPropertyKey key>
 static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObject, const JSObject* object, PropertyName propertyName, PreferredPrimitiveType hint)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
-    // FIXME: Remove this when we have fixed: rdar://problem/33451840
-    // https://bugs.webkit.org/show_bug.cgi?id=187109.
-    constexpr bool debugNullStructure = mode == TypeHintMode::TakesHint;
-    bool hasProperty = const_cast<JSObject*>(object)->getPropertySlot<debugNullStructure>(globalObject, propertyName, slot);
-    RETURN_IF_EXCEPTION(scope, scope.exception());
-    JSValue function = hasProperty ? slot.getValue(globalObject, propertyName) : jsUndefined();
-    RETURN_IF_EXCEPTION(scope, scope.exception());
-    if (function.isUndefinedOrNull() && mode == TypeHintMode::TakesHint)
+    JSValue function = object->structure(vm)->cachedSpecialProperty(key);
+    if (!function) {
+        PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
+        // FIXME: Remove this when we have fixed: rdar://problem/33451840
+        // https://bugs.webkit.org/show_bug.cgi?id=187109.
+        constexpr bool debugNullStructure = key == CachedSpecialPropertyKey::ToPrimitive;
+        bool hasProperty = const_cast<JSObject*>(object)->getPropertySlot<debugNullStructure>(globalObject, propertyName, slot);
+        RETURN_IF_EXCEPTION(scope, scope.exception());
+        function = hasProperty ? slot.getValue(globalObject, propertyName) : jsUndefined();
+        RETURN_IF_EXCEPTION(scope, scope.exception());
+        object->structure(vm)->cacheSpecialProperty(globalObject, vm, function, key, slot);
+        RETURN_IF_EXCEPTION(scope, scope.exception());
+    }
+    if (function.isUndefinedOrNull())
         return JSValue();
+
+    // Add optimizations for frequently called functions.
+    // https://bugs.webkit.org/show_bug.cgi?id=216084
+    if constexpr (key == CachedSpecialPropertyKey::ToString) {
+        if (function == globalObject->objectProtoToStringFunction()) {
+            if (auto result = object->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag))
+                return result;
+        }
+    }
+
     auto callData = getCallData(vm, function);
     if (callData.type == CallData::Type::None) {
-        if (mode == TypeHintMode::TakesHint)
+        if constexpr (key == CachedSpecialPropertyKey::ToPrimitive)
             throwTypeError(globalObject, scope, "Symbol.toPrimitive is not a function, undefined, or null"_s);
         return scope.exception();
     }
 
     MarkedArgumentBuffer callArgs;
-    if (mode == TypeHintMode::TakesHint) {
+    if constexpr (key == CachedSpecialPropertyKey::ToPrimitive) {
         JSString* hintString = nullptr;
         switch (hint) {
         case NoPreference:
@@ -2190,8 +2203,11 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
     JSValue result = call(globalObject, function, callData, const_cast<JSObject*>(object), callArgs);
     RETURN_IF_EXCEPTION(scope, scope.exception());
     ASSERT(!result.isGetterSetter());
-    if (result.isObject())
-        return mode == TypeHintMode::DoesNotTakeHint ? JSValue() : throwTypeError(globalObject, scope, "Symbol.toPrimitive returned an object"_s);
+    if (result.isObject()) {
+        if constexpr (key == CachedSpecialPropertyKey::ToPrimitive)
+            return throwTypeError(globalObject, scope, "Symbol.toPrimitive returned an object"_s);
+        return JSValue();
+    }
     return result;
 }
 
@@ -2203,25 +2219,27 @@ JSValue JSObject::ordinaryToPrimitive(JSGlobalObject* globalObject, PreferredPri
 
     // Make sure that whatever default value methods there are on object's prototype chain are
     // being watched.
+    // FIXME: Remove this hack for DFG.
+    // https://bugs.webkit.org/show_bug.cgi?id=216117
     for (const JSObject* object = this; object; object = object->structure(vm)->storedPrototypeObject(object))
         object->structure(vm)->startWatchingInternalPropertiesIfNecessary(vm);
 
     JSValue value;
     if (hint == PreferString) {
-        value = callToPrimitiveFunction(globalObject, this, vm.propertyNames->toString, hint);
+        value = callToPrimitiveFunction<CachedSpecialPropertyKey::ToString>(globalObject, this, vm.propertyNames->toString, hint);
         EXCEPTION_ASSERT(!scope.exception() || scope.exception() == value.asCell());
         if (value)
             return value;
-        value = callToPrimitiveFunction(globalObject, this, vm.propertyNames->valueOf, hint);
+        value = callToPrimitiveFunction<CachedSpecialPropertyKey::ValueOf>(globalObject, this, vm.propertyNames->valueOf, hint);
         EXCEPTION_ASSERT(!scope.exception() || scope.exception() == value.asCell());
         if (value)
             return value;
     } else {
-        value = callToPrimitiveFunction(globalObject, this, vm.propertyNames->valueOf, hint);
+        value = callToPrimitiveFunction<CachedSpecialPropertyKey::ValueOf>(globalObject, this, vm.propertyNames->valueOf, hint);
         EXCEPTION_ASSERT(!scope.exception() || scope.exception() == value.asCell());
         if (value)
             return value;
-        value = callToPrimitiveFunction(globalObject, this, vm.propertyNames->toString, hint);
+        value = callToPrimitiveFunction<CachedSpecialPropertyKey::ToString>(globalObject, this, vm.propertyNames->toString, hint);
         EXCEPTION_ASSERT(!scope.exception() || scope.exception() == value.asCell());
         if (value)
             return value;
@@ -2242,7 +2260,7 @@ JSValue JSObject::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveTy
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue value = callToPrimitiveFunction<TypeHintMode::TakesHint>(globalObject, this, vm.propertyNames->toPrimitiveSymbol, preferredType);
+    JSValue value = callToPrimitiveFunction<CachedSpecialPropertyKey::ToPrimitive>(globalObject, this, vm.propertyNames->toPrimitiveSymbol, preferredType);
     RETURN_IF_EXCEPTION(scope, { });
     if (value)
         return value;

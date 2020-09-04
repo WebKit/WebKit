@@ -114,7 +114,7 @@ class WatchpointSet;
     macro(CodeBlockJettisoning, CodeBlockJettisoningWatchpoint) \
     macro(LLIntPrototypeLoadAdaptiveStructure, LLIntPrototypeLoadAdaptiveStructureWatchpoint) \
     macro(FunctionRareDataAllocationProfileClearing, FunctionRareData::AllocationProfileClearingWatchpoint) \
-    macro(ObjectToStringAdaptiveStructure, ObjectToStringAdaptiveStructureWatchpoint)
+    macro(CachedSpecialPropertyAdaptiveStructure, CachedSpecialPropertyAdaptiveStructureWatchpoint)
 
 #if ENABLE(JIT)
 #define JSC_WATCHPOINT_TYPES_WITHOUT_DFG(macro) \

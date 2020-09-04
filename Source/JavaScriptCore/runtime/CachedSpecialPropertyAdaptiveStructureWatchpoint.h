@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ObjectToStringAdaptiveStructureWatchpoint.h"
+#pragma once
 
-#include "JSCellInlines.h"
+#include "ObjectPropertyCondition.h"
+#include "PackedCellPtr.h"
 #include "StructureRareData.h"
+#include "Watchpoint.h"
 
 namespace JSC {
 
-ObjectToStringAdaptiveStructureWatchpoint::ObjectToStringAdaptiveStructureWatchpoint(const ObjectPropertyCondition& key, StructureRareData* structureRareData)
-    : Watchpoint(Watchpoint::Type::ObjectToStringAdaptiveStructure)
-    , m_structureRareData(structureRareData)
-    , m_key(key)
-{
-    RELEASE_ASSERT(key.watchingRequiresStructureTransitionWatchpoint());
-    RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
+class StructureRareData;
+
+class CachedSpecialPropertyAdaptiveStructureWatchpoint final : public Watchpoint {
+public:
+    CachedSpecialPropertyAdaptiveStructureWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
+
+    void install(VM&);
+
+    const ObjectPropertyCondition& key() const { return m_key; }
+
+    void fireInternal(VM&, const FireDetail&);
+    
+private:
+    // Own destructor may not be called. Keep members trivially destructible.
+    JSC_WATCHPOINT_FIELD(PackedCellPtr<StructureRareData>, m_structureRareData);
+    JSC_WATCHPOINT_FIELD(ObjectPropertyCondition, m_key);
+};
+
 }
-
-void ObjectToStringAdaptiveStructureWatchpoint::install(VM& vm)
-{
-    RELEASE_ASSERT(m_key.isWatchable());
-
-    m_key.object()->structure(vm)->addTransitionWatchpoint(this);
-}
-
-void ObjectToStringAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
-{
-    if (!m_structureRareData->isLive())
-        return;
-
-    if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
-        install(vm);
-        return;
-    }
-
-    m_structureRareData->clearObjectToStringValue();
-}
-
-} // namespace JSC

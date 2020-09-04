@@ -35,13 +35,22 @@ namespace JSC {
 
 class JSPropertyNameEnumerator;
 class Structure;
-class ObjectToStringAdaptiveInferredPropertyValueWatchpoint;
-class ObjectToStringAdaptiveStructureWatchpoint;
+class CachedSpecialPropertyAdaptiveStructureWatchpoint;
+class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint;
+struct SpecialPropertyCache;
 enum class CachedPropertyNamesKind : uint8_t {
     Keys = 0,
     GetOwnPropertyNames,
 };
 static constexpr unsigned numberOfCachedPropertyNames = 2;
+
+enum class CachedSpecialPropertyKey : uint8_t {
+    ToStringTag = 0,
+    ToString,
+    ValueOf,
+    ToPrimitive,
+};
+static constexpr unsigned numberOfCachedSpecialPropertyKeys = 4;
 
 class StructureRareData final : public JSCell {
 public:
@@ -70,11 +79,8 @@ public:
     void setPreviousID(VM&, Structure*);
     void clearPreviousID();
 
-    JSString* objectToStringValue() const;
-    void setObjectToStringValue(JSGlobalObject*, VM&, Structure* baseStructure, JSString* value, const PropertySlot& toStringTagSymbolSlot);
-    void giveUpOnObjectToStringValueCache() { m_objectToStringValue.setWithoutWriteBarrier(objectToStringCacheGiveUpMarker()); }
-    bool canCacheObjectToStringValue() { return m_objectToStringValue.unvalidatedGet() == objectToStringCacheGiveUpMarker(); }
-    static JSString* objectToStringCacheGiveUpMarker() { return bitwise_cast<JSString*>(static_cast<uintptr_t>(1)); }
+    JSValue cachedSpecialProperty(CachedSpecialPropertyKey) const;
+    void cacheSpecialProperty(JSGlobalObject*, VM&, Structure* baseStructure, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
@@ -102,15 +108,20 @@ public:
 
 private:
     friend class Structure;
-    friend class ObjectToStringAdaptiveStructureWatchpoint;
-    friend class ObjectToStringAdaptiveInferredPropertyValueWatchpoint;
-
-    void clearObjectToStringValue();
+    friend class CachedSpecialPropertyAdaptiveStructureWatchpoint;
+    friend class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint;
 
     StructureRareData(VM&, Structure*);
 
+    void clearCachedSpecialProperty(CachedSpecialPropertyKey);
+    void cacheSpecialPropertySlow(JSGlobalObject*, VM&, Structure* baseStructure, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
+
+    SpecialPropertyCache& ensureSpecialPropertyCache();
+    SpecialPropertyCache& ensureSpecialPropertyCacheSlow();
+    bool canCacheSpecialProperty(CachedSpecialPropertyKey);
+    void giveUpOnSpecialPropertyCache(CachedSpecialPropertyKey);
+
     WriteBarrier<Structure> m_previous;
-    WriteBarrier<JSString> m_objectToStringValue;
     // FIXME: We should have some story for clearing these property names caches in GC.
     // https://bugs.webkit.org/show_bug.cgi?id=192659
     WriteBarrier<JSPropertyNameEnumerator> m_cachedPropertyNameEnumerator;
@@ -118,8 +129,7 @@ private:
 
     typedef HashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
     std::unique_ptr<PropertyWatchpointMap> m_replacementWatchpointSets;
-    Bag<ObjectToStringAdaptiveStructureWatchpoint> m_objectToStringAdaptiveWatchpointSet;
-    std::unique_ptr<ObjectToStringAdaptiveInferredPropertyValueWatchpoint> m_objectToStringAdaptiveInferredValueWatchpoint;
+    std::unique_ptr<SpecialPropertyCache> m_specialPropertyCache;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
 
     PropertyOffset m_maxOffset;
