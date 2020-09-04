@@ -222,8 +222,7 @@ sub AddLegacyCallerOperationIfNeeded
     my $interface = shift;
 
     foreach my $operation (@{$interface->operations}, @{$interface->anonymousOperations}) {
-        my $isLegacyCaller = grep { $_ eq "legacycaller" } @{$operation->specials};
-        if ($isLegacyCaller) {
+        if ($operation->extendedAttributes->{LegacyCaller}) {
             $interface->{LegacyCallers} = [] if !exists $interface->{LegacyCallers};
 
             my $clonedOperation = IDLParser::cloneOperation($operation);

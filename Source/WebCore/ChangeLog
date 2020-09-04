@@ -1,3 +1,28 @@
+2020-09-04  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Remove support for the legacycaller special operation type in favor of an extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=216157
+
+        Reviewed by Anders Carlsson.
+
+        WebIDL no longer specifies the legacycaller special operation type, so to make our
+        parser more closely match the spec, this change removes support for it. Since we still
+        need something for HTMLAllCollection's override of [[Call]], it is replaced with a
+        new extended attribute [LegacyCaller], which has the same semantics as the old special.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddLegacyCallerOperationIfNeeded):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/IDLParser.pm:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObjectTestDefaultToJSONConstructorGetter):
+        (WebCore::jsTestGlobalObjectTestDefaultToJSONConstructor):
+        (WebCore::setJSTestGlobalObjectTestDefaultToJSONConstructorSetter):
+        (WebCore::setJSTestGlobalObjectTestDefaultToJSONConstructor):
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestObj.idl:
+        * html/HTMLAllCollection.idl:
+
 2020-09-04  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(macOS Big Sur) https://magenta.github.io/lofi-player/ is broken

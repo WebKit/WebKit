@@ -642,18 +642,18 @@ my $nextFloatType_1 = '^(double|float|unrestricted)$';
 my $nextArgumentList_1 = '^(\(|ByteString|DOMString|USVString|\[|any|boolean|byte|double|float|in|long|object|octet|optional|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextPrimitiveType_1 = '^(boolean|byte|double|float|long|octet|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextStringType_1 = '^(ByteString|DOMString|USVString)$';
-my $nextInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|setter|short|symbol|undefined|unrestricted|unsigned)$';
-my $nextOperation_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|deleter|double|float|getter|legacycaller|long|object|octet|sequence|setter|short|symbol|undefined|unrestricted|unsigned)$';
+my $nextInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|setter|short|symbol|undefined|unrestricted|unsigned)$';
+my $nextOperation_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|deleter|double|float|getter|long|object|octet|sequence|setter|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextUnrestrictedFloatType_1 = '^(double|float)$';
 my $nextExtendedAttributeRest3_1 = '^(\,|\])$';
 my $nextExceptionField_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextType_1 = '^(ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
-my $nextSpecials_1 = '^(deleter|getter|legacycaller|setter)$';
+my $nextSpecials_1 = '^(deleter|getter|setter)$';
 my $nextDefinitions_1 = '^(callback|dictionary|enum|exception|interface|namespace|partial|typedef)$';
 my $nextExceptionMembers_1 = '^(\(|ByteString|DOMString|USVString|\[|any|boolean|byte|const|double|float|long|object|octet|optional|sequence|short|symbol|undefined|unrestricted|unsigned)$';
-my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
+my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextNamespaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|readonly|sequence|short|symbol|undefined|unrestricted|unsigned)$';
-my $nextPartialInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
+my $nextPartialInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextSingleType_1 = '^(ByteString|DOMString|USVString|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextArgumentName_1 = '^(async|attribute|callback|const|constructor|deleter|dictionary|enum|getter|includes|inherit|interface|iterable|maplike|mixin|namespace|partial|readonly|required|setlike|setter|static|stringifier|typedef|unrestricted)$';
 my $nextConstValue_1 = '^(false|true)$';
@@ -2077,13 +2077,6 @@ sub parseSpecial
     if ($next->value() eq "deleter") {
         $self->assertTokenValue($self->getToken(), "deleter", __LINE__);
         return "deleter";
-    }
-
-    # FIXME: legacycaller is no longer specified by WebIDL and is only used by HTMLAllCollection. We should
-    # switch to using an extended attribute syntax.
-    if ($next->value() eq "legacycaller") {
-        $self->assertTokenValue($self->getToken(), "legacycaller", __LINE__);
-        return "legacycaller";
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

@@ -439,9 +439,9 @@ enum TestConfidence { "high", "kinda-low" };
 
     undefined bufferSourceParameter(BufferSource data);
 
-    legacycaller undefined legacyCallerNamed(long param);
-    legacycaller long (DOMString param);
-    legacycaller undefined ();
+    [LegacyCaller] undefined legacyCallerNamed(long param);
+    [LegacyCaller] long (DOMString param);
+    [LegacyCaller] undefined ();
 
     Node testReturnValueOptimization([ReturnValue] Node a, Node b);
     [MayThrowException] Node testReturnValueOptimizationWithException([ReturnValue] Node a, Node b);

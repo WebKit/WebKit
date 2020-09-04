@@ -290,12 +290,8 @@
             "contextsAllowed": ["interface"],
             "values": ["*"]
         },
-        "LegacyArrayClass": {
-            "contextsAllowed": ["interface"],
-            "standard": {
-                "url": "https://heycam.github.io/webidl/#LegacyArrayClass"
-            },
-            "unsupported": true
+        "LegacyCaller": {
+            "contextsAllowed": ["operation"]
         },
         "LegacyUnenumerableNamedProperties": {
             "contextsAllowed": ["interface"],
