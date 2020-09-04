@@ -26,13 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.headlessdriver import HeadlessDriver
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
-import os
+
+from webkitcorepy import decorators
+
 
 class WPEPort(Port):
     port_name = "wpe"
@@ -106,6 +110,7 @@ class WPEPort(Port):
     def _path_to_driver(self):
         return self._built_executables_path(self.driver_name())
 
+    @decorators.Memoize()
     def _path_to_image_diff(self):
         return self._built_executables_path('ImageDiff')
 

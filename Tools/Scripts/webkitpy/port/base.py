@@ -41,7 +41,7 @@ import sys
 
 from collections import OrderedDict
 from functools import partial
-from webkitcorepy import string_utils
+from webkitcorepy import string_utils, decorators
 
 from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png
@@ -275,7 +275,7 @@ class Port(object):
 
     def check_image_diff(self, override_step=None, logging=True):
         """This routine is used to check whether image_diff binary exists."""
-        image_diff_path = self._path_to_default_image_diff()
+        image_diff_path = self._path_to_image_diff()
         if not self._filesystem.exists(image_diff_path):
             if logging:
                 _log.error("ImageDiff was not found at %s" % image_diff_path)
@@ -1379,7 +1379,7 @@ class Port(object):
         args.append("--%s" % self.get_option('platform'))
         return self._executive.run_command([miniBrowser] + args, stdout=None, cwd=self.webkit_base(), return_stderr=False, decode_output=False, ignore_errors=True)
 
-    @memoized
+    @decorators.Memoize()
     def _path_to_image_diff(self):
         """Returns the full path to the image_diff binary, or None if it is not available.
 
@@ -1529,6 +1529,7 @@ class Port(object):
         env = environment.to_dictionary()
         try:
             self._run_script("build-imagediff", env=env)
+            self._path_to_image_diff.clear()
         except ScriptError as e:
             _log.error(e.message_with_output(output_limit=None))
             return False

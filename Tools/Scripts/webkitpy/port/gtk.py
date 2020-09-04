@@ -29,7 +29,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import subprocess
 import uuid
 import logging
 
@@ -44,6 +43,8 @@ from webkitpy.port.xorgdriver import XorgDriver
 from webkitpy.port.waylanddriver import WaylandDriver
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
+
+from webkitcorepy import decorators
 
 _log = logging.getLogger(__name__)
 
@@ -185,6 +186,7 @@ class GtkPort(Port):
     def _path_to_driver(self):
         return self._built_executables_path(self.driver_name())
 
+    @decorators.Memoize()
     def _path_to_image_diff(self):
         return self._built_executables_path('ImageDiff')
 

@@ -1,3 +1,22 @@
+2020-09-04  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests rebuilds ImageDiff every time
+        https://bugs.webkit.org/show_bug.cgi?id=204420
+        <rdar://problem/68232690>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.check_image_diff): Check the version of ImageDiff we actually intend to use.
+        (Port): Use webkitcorepy's Memoize in _path_to_image_diff.
+        (Port._build_image_diff): Clear the memoized cache after building ImageDiff.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort): Memoize _path_to_image_diff.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort): Memoize _path_to_image_diff.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort): Memoize _path_to_image_diff.
+
 2020-09-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Mark several GTK API tests as flaky.

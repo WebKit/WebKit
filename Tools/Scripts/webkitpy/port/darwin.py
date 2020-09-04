@@ -30,6 +30,8 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.port.apple import ApplePort
 from webkitpy.port.leakdetector import LeakDetector
 
+from webkitcorepy import decorators
+
 
 _log = logging.getLogger(__name__)
 
@@ -224,6 +226,7 @@ class DarwinPort(ApplePort):
                     sample_files[test_name] = tailspin_file
         return sample_files
 
+    @decorators.Memoize()
     def _path_to_image_diff(self):
         # ImageDiff for DarwinPorts is a little complicated. It will either be in
         # a directory named ../mac relative to the port build directory, in a directory
