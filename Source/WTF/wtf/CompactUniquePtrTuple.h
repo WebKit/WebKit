@@ -80,7 +80,7 @@ public:
         return std::unique_ptr<T, Deleter>(pointer);
     }
 
-    void setPointer(nullptr_t)
+    void setPointer(std::nullptr_t)
     {
         deletePointer();
         m_data.setPointer(nullptr);
