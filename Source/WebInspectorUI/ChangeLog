@@ -1,3 +1,17 @@
+2020-09-04  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Localization: typo in WAI-ARIA string ("[the] element have")
+        https://bugs.webkit.org/show_bug.cgi?id=216176
+
+        Reviewed by Devin Rousso.
+
+        Resolved element not being pluralized in some audit test descriptions.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype._addDefaultTests):
+        (WI.AuditManager):
+
 2020-09-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Localization: "Low/Medium/High" strings need separate keys for different uses in the UI

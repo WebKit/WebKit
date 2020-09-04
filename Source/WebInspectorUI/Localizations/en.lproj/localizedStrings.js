@@ -532,8 +532,7 @@ localizedStrings["Ensure aria-hidden=\u0022%s\u0022 is not used."] = "Ensure ari
 localizedStrings["Ensure that \u0022%s\u0022 is spelled correctly."] = "Ensure that \u0022%s\u0022 is spelled correctly.";
 localizedStrings["Ensure that buttons have accessible labels for assistive technology."] = "Ensure that buttons have accessible labels for assistive technology.";
 localizedStrings["Ensure that dialogs have accessible labels for assistive technology."] = "Ensure that dialogs have accessible labels for assistive technology.";
-localizedStrings["Ensure that element of role \u0022%s\u0022 and \u0022%s\u0022 has required owned elements in accordance with WAI-ARIA."] = "Ensure that element of role \u0022%s\u0022 and \u0022%s\u0022 has required owned elements in accordance with WAI-ARIA.";
-localizedStrings["Ensure that element of role \u0022%s\u0022 has required owned elements in accordance with WAI-ARIA."] = "Ensure that element of role \u0022%s\u0022 has required owned elements in accordance with WAI-ARIA.";
+localizedStrings["Ensure that elements of role \u0022%s\u0022 and \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA."] = "Ensure that elements of role \u0022%s\u0022 and \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.";
 localizedStrings["Ensure that elements of role \u0022%s\u0022 have accessible labels for assistive technology."] = "Ensure that elements of role \u0022%s\u0022 have accessible labels for assistive technology.";
 localizedStrings["Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA."] = "Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.";
 localizedStrings["Ensure that links have accessible labels for assistive technology."] = "Ensure that links have accessible labels for assistive technology.";
