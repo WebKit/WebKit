@@ -1,5 +1,18 @@
 2020-09-04  Youenn Fablet  <youenn@apple.com>
 
+        MediaRecorder timeslice parameter causing internal error on longer videos
+        https://bugs.webkit.org/show_bug.cgi?id=216076
+        <rdar://problem/68209422>
+
+        Reviewed by Eric Carlson.
+
+        Test: http/wpt/fetch/blob-range.html
+
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::readDataAsync):
+
+2020-09-04  Youenn Fablet  <youenn@apple.com>
+
         TextDecoderStreamDecoder.@encoding is broken
         https://bugs.webkit.org/show_bug.cgi?id=216169
 

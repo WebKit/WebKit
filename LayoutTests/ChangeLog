@@ -1,3 +1,14 @@
+2020-09-04  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder timeslice parameter causing internal error on longer videos
+        https://bugs.webkit.org/show_bug.cgi?id=216076
+        <rdar://problem/68209422>
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/fetch/blob-range-expected.txt: Added.
+        * http/wpt/fetch/blob-range.html: Added.
+
 2020-09-04  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r241734): [iOS] Changing the value of a select element and tapping on another results in two changes
