@@ -1,3 +1,32 @@
+2020-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Unexpected User-Agent on redirect
+        https://bugs.webkit.org/show_bug.cgi?id=191858
+
+        Reviewed by Youenn Fablet.
+
+        Clear the user agent on new request after a redirect to ensure a new one is computed taking into account the
+        quirks if needed. Also ensure quirks are applied for downloads started in the UI process.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection): Clear the user agent on new request.
+        * UIProcess/API/glib/WebKitDownloadClient.cpp:
+        * UIProcess/WebPageProxy.h: Add userAgentForURL().
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download): Use userAgentForURL() instead of userAgent().
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::userAgentForURL): Implement it to apply quirks if needed.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::userAgentForURL): Just return the web page user agent.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::userAgentForURL): Ditto.
+        * UIProcess/playstation/WebPageProxyPlayStation.cpp:
+        (WebKit::WebPageProxy::userAgentForURL): Ditto.
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::userAgentForURL): Ditto.
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::userAgentForURL): Ditto.
+
 2020-09-02  Darin Adler  <darin@apple.com>
 
         Remove EAffinity, UPSTREAM, DOWNSTREAM, SEL_DEFAULT_AFFINITY, and VisibleSelection::selectionType

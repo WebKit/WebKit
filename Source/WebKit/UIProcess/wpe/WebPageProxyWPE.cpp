@@ -49,6 +49,11 @@ struct wpe_view_backend* WebPageProxy::viewBackend()
     return static_cast<PageClientImpl&>(pageClient()).viewBackend();
 }
 
+String WebPageProxy::userAgentForURL(const URL&)
+{
+    return userAgent();
+}
+
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
     return WebCore::standardUserAgent(applicationNameForUserAgent);

@@ -52,6 +52,15 @@ GtkWidget* WebPageProxy::viewWidget()
     return static_cast<PageClientImpl&>(pageClient()).viewWidget();
 }
 
+String WebPageProxy::userAgentForURL(const URL& url)
+{
+    if (url.isNull() || !preferences().needsSiteSpecificQuirks())
+        return this->userAgent();
+
+    auto userAgent = WebCore::standardUserAgentForURL(url);
+    return userAgent.isNull() ? this->userAgent() : userAgent;
+}
+
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
     return WebCore::standardUserAgent(applicationNameForUserAgent);

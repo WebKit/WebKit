@@ -1,3 +1,22 @@
+2020-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Unexpected User-Agent on redirect
+        https://bugs.webkit.org/show_bug.cgi?id=191858
+
+        Reviewed by Youenn Fablet.
+
+        Add unit tests to check the user agent is sent in headers and preserved after a redirect for both main resource
+        and subresources.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (serverCallback):
+        (testDownloadUserAgent):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        (testUserAgent):
+        (serverCallback):
+        (beforeAll):
+
 2020-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add CompactUniquePtrTuple

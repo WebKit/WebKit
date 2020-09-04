@@ -129,6 +129,11 @@ void WebPageProxy::platformInitialize()
     setShouldUseImplicitRubberBandControl(clientExpectsLegacyImplicitRubberBandControl);
 }
 
+String WebPageProxy::userAgentForURL(const URL&)
+{
+    return userAgent();
+}
+
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
     return standardUserAgentWithApplicationName(applicationNameForUserAgent);

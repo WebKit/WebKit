@@ -26,6 +26,7 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/UserAgent.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -45,6 +46,17 @@ private:
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadStarted(download.get());
         webkitWebContextDownloadStarted(m_webContext, download.get());
+    }
+
+    void willSendRequest(DownloadProxy& downloadProxy, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) override
+    {
+        if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent)) {
+            GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
+            auto* webView = webkit_download_get_web_view(download.get());
+            request.setHTTPUserAgent(webView ? webkitWebViewGetPage(webView).userAgentForURL(request.url()) : WebPageProxy::standardUserAgent());
+        }
+
+        completionHandler(WTFMove(request));
     }
 
     void didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge) override

@@ -1426,7 +1426,7 @@ DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProx
             updatedRequest.setFirstPartyForCookies(initiatingPageURL);
             updatedRequest.setIsSameSite(areRegistrableDomainsEqual(initiatingPageURL, request.url()));
             if (!updatedRequest.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
-                updatedRequest.setHTTPUserAgent(initiatingPage->userAgent());
+                updatedRequest.setHTTPUserAgent(initiatingPage->userAgentForURL(request.url()));
         } else {
             updatedRequest.setFirstPartyForCookies(URL());
             updatedRequest.setIsSameSite(false);

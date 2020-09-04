@@ -90,6 +90,11 @@ void WebPageProxy::platformInitialize()
 {
 }
 
+String WebPageProxy::userAgentForURL(const URL&)
+{
+    return userAgent();
+}
+
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
     return standardUserAgentWithApplicationName(applicationNameForUserAgent);

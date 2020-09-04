@@ -975,6 +975,7 @@ public:
     const String& toolTip() const { return m_toolTip; }
 
     const String& userAgent() const { return m_userAgent; }
+    String userAgentForURL(const URL&);
     void setApplicationNameForUserAgent(const String&);
     const String& applicationNameForUserAgent() const { return m_applicationNameForUserAgent; }
     void setApplicationNameForDesktopUserAgent(const String& applicationName) { m_applicationNameForDesktopUserAgent = applicationName; }

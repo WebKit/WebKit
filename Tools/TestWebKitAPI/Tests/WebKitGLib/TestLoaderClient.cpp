@@ -693,6 +693,50 @@ static void testRedirectToDataURI(WebViewTest* test, gconstpointer)
     g_assert_cmpint(strncmp(mainResourceData, expectedData, mainResourceDataSize), ==, 0);
 }
 
+static HashMap<CString, CString> s_userAgentMap;
+
+static void testUserAgent(WebViewTest* test, gconstpointer)
+{
+    const char* userAgent = webkit_settings_get_user_agent(webkit_web_view_get_settings(test->m_webView));
+
+    s_userAgentMap.clear();
+    test->loadURI(kServer->getURIForPath("/ua-main").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpuint(s_userAgentMap.size(), ==, 1);
+    g_assert_true(s_userAgentMap.contains("/ua-main"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-main"));
+    s_userAgentMap.clear();
+
+    test->loadURI(kServer->getURIForPath("/ua-main-redirect").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpuint(s_userAgentMap.size(), ==, 2);
+    g_assert_true(s_userAgentMap.contains("/ua-main-redirect"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-main-redirect"));
+    g_assert_true(s_userAgentMap.contains("/ua-main"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-main"));
+    s_userAgentMap.clear();
+
+    test->loadURI(kServer->getURIForPath("/ua-css").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpuint(s_userAgentMap.size(), ==, 2);
+    g_assert_true(s_userAgentMap.contains("/ua-css"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-css"));
+    g_assert_true(s_userAgentMap.contains("/ua-style.css"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-style.css"));
+    s_userAgentMap.clear();
+
+    test->loadURI(kServer->getURIForPath("/ua-redirected-css").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpuint(s_userAgentMap.size(), ==, 3);
+    g_assert_true(s_userAgentMap.contains("/ua-redirected-css"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-redirected-css"));
+    g_assert_true(s_userAgentMap.contains("/ua-redirected-style.css"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-redirected-style.css"));
+    g_assert_true(s_userAgentMap.contains("/ua-style.css"));
+    ASSERT_CMP_CSTRING(userAgent, ==, s_userAgentMap.get("/ua-style.css"));
+    s_userAgentMap.clear();
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     static const char* responseString = "<html><body>Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
@@ -710,6 +754,9 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     }
 
     soup_message_set_status(message, SOUP_STATUS_OK);
+
+    if (g_str_has_prefix(path, "/ua-"))
+        s_userAgentMap.add(path, soup_message_headers_get_one(message->request_headers, "User-Agent"));
 
     if (g_str_has_prefix(path, "/normal") || g_str_has_prefix(path, "/http-get-method"))
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
@@ -754,6 +801,23 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
             "</script>"
             "</body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, unfinishedSubresourceLoadResponseString, strlen(unfinishedSubresourceLoadResponseString));
+    } else if (g_str_equal(path, "/ua-main"))
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+    else if (g_str_equal(path, "/ua-main-redirect")) {
+        soup_message_headers_append(message->response_headers, "Location", "/ua-main");
+        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+    } else if (g_str_equal(path, "/ua-style.css")) {
+        static const char* style = "body { margin: 0px; padding: 0px; }";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, style, strlen(style));
+    } else if (g_str_equal(path, "/ua-redirected-style.css")) {
+        soup_message_headers_append(message->response_headers, "Location", "/ua-style.css");
+        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+    } else if (g_str_equal(path, "/ua-css")) {
+        static const char* cssHtml = "<html><head><link rel='stylesheet' href='/ua-style.css' type='text/css'></head><body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, cssHtml, strlen(cssHtml));
+    } else if (g_str_equal(path, "/ua-redirected-css")) {
+        static const char* redirectedCSSHtml = "<html><head><link rel='stylesheet' href='/ua-redirected-style.css' type='text/css'></head><body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, redirectedCSSHtml, strlen(redirectedCSSHtml));
     } else if (g_str_equal(path, "/stall")) {
         // This request is never unpaused and stalls forever.
         soup_server_pause_message(server, message);
@@ -796,6 +860,7 @@ void beforeAll()
     WebViewTest::add("WebKitURIRequest", "http-method", testURIRequestHTTPMethod);
     WebViewTest::add("WebKitURIResponse", "http-headers", testURIResponseHTTPHeaders);
     WebViewTest::add("WebKitWebPage", "redirect-to-data-uri", testRedirectToDataURI);
+    WebViewTest::add("WebKitWebView", "user-agent", testUserAgent);
 }
 
 void afterAll()
