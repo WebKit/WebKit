@@ -1,3 +1,30 @@
+2020-09-04  Alex Christensen  <achristensen@webkit.org>
+
+        Align EUC-JP, ISO-2022-JP, and Shift_JIS decoding with Chrome, Firefox, and the specification
+        https://bugs.webkit.org/show_bug.cgi?id=216168
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/encoding/iso-2022-jp-decoder-expected.txt: Removed.
+        * web-platform-tests/encoding/iso-2022-jp-decoder.any-expected.txt:
+        * web-platform-tests/encoding/iso-2022-jp-decoder.any.worker-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-errors-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode-csiso2022jp-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-decode-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp_chars-csiso2022jp.html:
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp_chars.html:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-csshiftjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-errors-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms932-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms_kanji-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-shift-jis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-sjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-windows-31j-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-x-sjis-expected.txt:
+        * web-platform-tests/encoding/streams/decode-non-utf8.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-non-utf8.any.worker-expected.txt:
+
 2020-09-04  Youenn Fablet  <youenn@apple.com>
 
         TextDecoderStreamDecoder.@encoding is broken

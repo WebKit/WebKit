@@ -1,12 +1,12 @@
 
-FAIL lead not 0x00 and no more bytes: B0 assert_equals: expected "\ufffd" but got "\x1a"
-FAIL lead not 0x00 and no more bytes: B0 B5 B0 assert_equals: expected "圧\ufffd" but got "圧\x1a"
-FAIL lead not 0x00 and no more bytes: B0 B0 B0 assert_equals: expected "旭\ufffd" but got "旭\x1a"
-FAIL lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: FF assert_equals: expected "\ufffd" but got "\x1a"
-FAIL lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: B0 B5 FF assert_equals: expected "圧\ufffd" but got "圧\x1a"
-FAIL lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: 91 assert_equals: expected "\ufffd" but got ""
-FAIL lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: B0 B5 91 assert_equals: expected "圧\ufffd" but got "圧"
-FAIL trail byte outside 0xA1-0xFE: B0 31 assert_equals: expected "\ufffd1" but got "\x1a1"
+PASS lead not 0x00 and no more bytes: B0 
+PASS lead not 0x00 and no more bytes: B0 B5 B0 
+PASS lead not 0x00 and no more bytes: B0 B0 B0 
+PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: FF 
+PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: B0 B5 FF 
+PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: 91 
+PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: B0 B5 91 
+PASS trail byte outside 0xA1-0xFE: B0 31 
 PASS trail byte outside 0xA1-0xFE: B0 FF 
 PASS trail byte outside 0xA1-0xFE: B0 A0 
 PASS pointer is null: A2 B9 

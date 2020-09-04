@@ -1,3 +1,28 @@
+2020-09-04  Alex Christensen  <achristensen@webkit.org>
+
+        Align EUC-JP, ISO-2022-JP, and Shift_JIS decoding with Chrome, Firefox, and the specification
+        https://bugs.webkit.org/show_bug.cgi?id=216168
+
+        Reviewed by Youenn Fablet.
+
+        Covered by newly passing web platform tests.
+
+        * platform/text/EncodingTables.cpp:
+        * platform/text/EncodingTables.h:
+        * platform/text/TextCodecCJK.cpp:
+        (WebCore::WTF_ARRAY_LENGTH):
+        (WebCore::TextCodecCJK::decodeCommon):
+        (WebCore::codePointJIS0208):
+        (WebCore::codePointJIS0212):
+        (WebCore::TextCodecCJK::eucJPDecode):
+        (WebCore::TextCodecCJK::iso2022JPDecode):
+        (WebCore::TextCodecCJK::iso2022JPEncode):
+        (WebCore::TextCodecCJK::shiftJISDecode):
+        (WebCore::TextCodecCJK::eucKRDecode):
+        (WebCore::TextCodecCJK::big5Decode):
+        (WebCore::TextCodecCJK::decode):
+        * platform/text/TextCodecCJK.h:
+
 2020-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a fast path in TransformationMatrix::mapRect(const FloatRect&) for affine transformations
