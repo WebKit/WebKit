@@ -38,6 +38,11 @@ namespace WebCore {
 static bool isGoogle(const URL& url)
 {
     String domain = url.host().toString();
+
+    // Google uses accounts.youtube.com for its login service.
+    if (domain == "accounts.youtube.com")
+        return true;
+
     String baseDomain = topPrivatelyControlledDomain(domain);
 
     // Our Google UA is *very* complicated to get right. Read
@@ -92,14 +97,6 @@ static bool urlRequiresChromeBrowser(const URL& url)
 static bool urlRequiresFirefoxBrowser(const URL& url)
 {
     String domain = url.host().toString();
-
-    // This quirk actually has nothing to do with YouTube. It's needed to avoid
-    // unsupported browser warnings on Google Docs. After removing this quirk,
-    // to reproduce the warnings you will need to sign out of Google, then click
-    // on a link to a non-public document that requires signing in. The
-    // unsupported browser warning will be displayed after signing in.
-    if (domain == "accounts.youtube.com" || domain == "docs.google.com")
-        return true;
 
     // Google Drive shows an unsupported browser warning with WebKitGTK's
     // standard user agent.

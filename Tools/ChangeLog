@@ -1,3 +1,17 @@
+2020-09-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Stop using firefox user agent quirk for google docs
+        https://bugs.webkit.org/show_bug.cgi?id=215845
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update API tests. Bring back UserAgentQuirks.cpp to the build that was removed in r244857.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-09-03  James Darpinian  <jdarpinian@chromium.org>
 
         Update James Darpinian's status to committer

@@ -28,6 +28,7 @@ list(APPEND TestWTF_SYSTEM_INCLUDE_DIRECTORIES
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 
+    Tests/WebCore/UserAgentQuirks.cpp
     Tests/WebCore/gstreamer/GStreamerTest.cpp
     Tests/WebCore/gstreamer/GstMappedBuffer.cpp
 

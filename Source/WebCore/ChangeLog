@@ -1,3 +1,17 @@
+2020-09-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Stop using firefox user agent quirk for google docs
+        https://bugs.webkit.org/show_bug.cgi?id=215845
+
+        Reviewed by Adrian Perez de Castro.
+
+        It causes problems with the CSP headers when accounts.youtube.com is used by google login and it no longer works
+        for google docs in any case.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::isGoogle):
+        (WebCore::urlRequiresFirefoxBrowser):
+
 2020-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Store all styling flags in m_rendererWithStyleFlags
