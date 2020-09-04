@@ -1874,3 +1874,5 @@ webkit.org/b/216124 imported/w3c/web-platform-tests/html/browsers/history/the-lo
 webkit.org/b/216126 fast/encoding/charset-replacement.html [ Failure ]
 
 webkit.org/b/216156 http/tests/misc/script-async.html [ Pass Failure ]
+
+webkit.org/b/216159 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure ]

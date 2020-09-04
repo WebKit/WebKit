@@ -1280,3 +1280,6 @@ webkit.org/b/215809 [ Debug ] media/W3C/video/events/event_order_canplay_canplay
 webkit.org/b/215875 [ Debug ] fast/layoutformattingcontext/line-heigt-when-text-is-inside-inline-container.html [ Skip ]
 
 webkit.org/b/216059 fast/scrolling/latching/latched-scroll-remove-iframe.html [ Pass Failure ]
+
+webkit.org/b/216159 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure ]
+
