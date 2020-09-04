@@ -252,5 +252,35 @@
                 "expected": {"all": {"slow": true}}
             }
         }
-    }
+    },
+	"TestContextMenu": {
+		"subtests": {
+			"/webkit/WebKitWebView/default-menu": {
+				"expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216189"}}
+			},
+			"/webkit/WebKitWebView/live-stream": {
+				"expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216189"}}
+			},
+			"/webkit/WebKitWebView/popup-event-signal": {
+				"expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216189"}}
+			},
+			"/webkit/WebKitWebView/context-menu-key": {
+				"expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216189"}}
+			}
+		}
+	},
+    "TestWebKitPolicyClient": {
+		"subtests": {
+        	"/webkit/WebKitPolicyClient/autoplay-policy": {
+				"expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216189"}}
+			}
+		}
+	},
+   "TestWebKit": {
+		"subtests": {
+			"WebKit.ForceRepaint": {
+				"expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/216189"}}
+			}
+		}
+	}
 }

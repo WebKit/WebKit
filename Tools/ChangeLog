@@ -1,3 +1,12 @@
+2020-09-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Mark several GTK API tests as flaky.
+
+        These tests were failing in EWS GTK-API tests bots, but I didn't
+        manage to reproduce the failures in tip of master.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-09-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Notify bot watchers about pre-existing and flaky test failures for JSC tests
