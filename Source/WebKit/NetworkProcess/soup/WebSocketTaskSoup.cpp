@@ -179,7 +179,7 @@ void WebSocketTask::didFail(const String& errorMessage)
     }
 
     if (soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN)
-        didClose(0, { });
+        didClose(WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure, { });
 }
 
 void WebSocketTask::didCloseCallback(WebSocketTask* task)
