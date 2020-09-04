@@ -1759,10 +1759,14 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
             message = ''
             if clean_tree_failures:
                 message = 'Found {} pre-existing JSC test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
+                for clean_tree_failure in clean_tree_failures:
+                    self.send_email_for_pre_existing_failure(clean_tree_failure)
             if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
             if flaky_failures:
                 message += ' Found flaky tests: {}'.format(flaky_failures_string)
+                for flaky_failure in flaky_failures:
+                    self.send_email_for_flaky_failure(flaky_failure)
             self.build.buildFinished([message], SUCCESS)
         return defer.succeed(None)
 
@@ -1773,6 +1777,33 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
         except KeyError:
             log = yield self.addLog(logName)
         log.addStdout(message)
+
+    def send_email_for_flaky_failure(self, test_name):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            history_url = '{}?suite=javascriptcore-tests&test={}'.format(RESULTS_DB_URL, test_name)
+
+            email_subject = u'Flaky test: {}'.format(test_name)
+            email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
+            send_email_to_bot_watchers(email_subject, email_text, 'flaky-{}'.format(test_name))
+        except Exception as e:
+            print('Error in sending email for flaky failure: {}'.format(e))
+
+    def send_email_for_pre_existing_failure(self, test_name):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            history_url = '{}?suite=javascriptcore-tests&test={}'.format(RESULTS_DB_URL, test_name)
+
+            email_subject = u'Pre-existing test failure: {}'.format(test_name)
+            email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
+            send_email_to_bot_watchers(email_subject, email_text, 'preexisting-{}'.format(test_name))
+        except Exception as e:
+            print('Error in sending email for pre-existing failure: {}'.format(e))
+
 
 
 class CleanBuild(shell.Compile):

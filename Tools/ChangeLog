@@ -1,3 +1,16 @@
+2020-09-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Notify bot watchers about pre-existing and flaky test failures for JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=215948
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeJSCTestsResults.start):
+        (AnalyzeJSCTestsResults.send_email_for_flaky_failure):
+        (AnalyzeJSCTestsResults):
+        (AnalyzeJSCTestsResults.send_email_for_pre_existing_failure):
+
 2020-09-04  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add root, branch and remote for local SCM repositories
