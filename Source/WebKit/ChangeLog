@@ -1,3 +1,50 @@
+2020-09-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r241734): [iOS] Changing the value of a select element and tapping on another results in two changes
+        https://bugs.webkit.org/show_bug.cgi?id=216077
+
+        Reviewed by Darin Adler.
+
+        r241734 added a call to [self _endEditing] in
+        [WKContentView _elementDidBlur] to ensure that any open form controls
+        are dismissed when using the keyboard to change focus.
+        [self _endEditing] calls [_inputPeripheral endEditing], which
+        eventually calls [WKFormControl controlEndEditing].
+
+        However, if the focus is changed by tapping on another form control, a
+        a gesture recognizer calls [_inputPeripheral endEditing]. Consequently,
+        changing the focused element by tapping results in two calls to
+        [WKFormControl controlEndEditing]. First from the gesture recognizer,
+        and then from [WKContentView _elementDidBlur].
+
+        For certain form controls on iPhone, such as the select element,
+        controlEndEditing is responsible for updating the element's value in
+        the WebProcess. Note that the same is not true on iPad, as
+        controlEndEditing simply dismisses a popover. Now, the first call to
+        [WKSelectSinglePicker controlEndEditing] correctly updates the expected
+        select element. However, when tapping on another select element, the
+        second call to [WKSelectSinglePicker controlEndEditing] also attempts
+        to update the value of the focused element. By this time, the focused
+        element in the WebProcess is the second select element. Consequently,
+        changing the value in one select element and then tapping another
+        results in updates to both elements.
+
+        To fix this issue, while preserving the intent of r241734, we should
+        prevent callers from being able to end editing in a control twice. Note
+        that WKFormPeripheralBase already keeps track of the editing state of a
+        control in a boolean variable _editing. If the control has finished
+        being edited, _editing is set to false. This patch adds an early return
+        to [WKFormPeripheralBase endEditing] if _editing is false, ensuring
+        controlEndEditing is never called twice. For parity, also ensure that
+        controlBeginEditing can only be called if the control is not already
+        being edited.
+
+        Test: fast/forms/ios/select-picker-change-and-focus-another-select.html
+
+        * UIProcess/ios/forms/WKFormPeripheralBase.mm:
+        (-[WKFormPeripheralBase beginEditing]): Early return if control is already being edited.
+        (-[WKFormPeripheralBase endEditing]): Early return if control is not being edited.
+
 2020-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] UI process sometimes crashes under -[WKSharingServicePickerDelegate sharingService:didShareItems:]
