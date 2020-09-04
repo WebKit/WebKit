@@ -1,3 +1,62 @@
+2020-09-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add root, branch and remote for local SCM repositories
+        https://bugs.webkit.org/show_bug.cgi?id=215960
+        <rdar://problem/67968919>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/decorators.py: Added.
+        (Memoize): Add a memoize call that can cache a response for a set amount of time
+        Or be explicitly cleared.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/decorators_unittest.py: Added.
+        (TestMemoize):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/__init__.py: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py: Added.
+        (Git): Object representing a local git checkout.
+        (Git.is_checkout): Check if a given path is a git checkout.
+        (Git.__init__): Initialize a Git checkout.
+        (Git.root_path): Return the path for the root of the local repository.
+        (Git.branch): Return the current branch.
+        (Git.remote): Return the url of the remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py: Added.
+        (Scm): Base class for all local SCM checkouts.
+        (Scm.Exception):
+        (Scm.from_path): Given a path, return an instantiated SVN object from that
+        path, if possible.
+        (Scm.__init__):
+        (Scm.root_path): Virtual function implemented by children.
+        (Scm.branch): Ditto.
+        (Scm.remote): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py: Added.
+        (Svn): Object representing a local Svn checkout.
+        (Svn.is_checkout): Check if a given path is a svn checkout.
+        (Svn.__init__): Initialize a Svn checkout.
+        (Svn.info): Return the contents of svn info as a dictionary.
+        (Svn.root_path): Return the path for the root of the local repository.
+        (Svn.branch): Return the current branch.
+        (Svn.remote): Return the url of the remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/__init__.py: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/__init__.py: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Added.
+        (Git): Mock a local Git repository.
+        (Git.__init__):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py: Added.
+        (Svn): Mock a local SVN repository.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/__init__.py: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py: Added.
+        (TestGit):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/scm_unittest.py: Added.
+        (TestScm):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py: Added.
+        (TestSvn):
+
 2020-09-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Notify bot watchers about pre-existing and flaky test failures for API tests

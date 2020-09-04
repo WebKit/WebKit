@@ -20,35 +20,45 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-import os
-import sys
 
-log = logging.getLogger('webkitscmpy')
+from webkitcorepy import run, decorators
+from webkitscmpy.local.scm import Scm
 
 
-def _maybe_add_webkitcorepy_path():
-    # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
-    libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
-    if os.path.isdir(webkitcorepy_path) and os.path.isdir(os.path.join(webkitcorepy_path, 'webkitcorepy')) and webkitcorepy_path not in sys.path:
-        sys.path.insert(0, webkitcorepy_path)
+class Svn(Scm):
+    executable = '/usr/local/bin/svn'
 
+    @classmethod
+    def is_checkout(cls, path):
+        return run([cls.executable, 'info'], cwd=path, capture_output=True).returncode == 0
 
-_maybe_add_webkitcorepy_path()
+    def __init__(self, path):
+        super(Svn, self).__init__(path)
+        if not self.root_path:
+            raise OSError('Provided path {} is not a svn repository'.format(path))
 
-try:
-    from webkitcorepy.version import Version
-except ImportError:
-    raise ImportError(
-        "'webkitcorepy' could not be found on your Python path.\n" +
-        "You are not running from a WebKit checkout.\n" +
-        "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
-    )
+    @decorators.Memoize(cached=False)
+    def info(self):
+        info_result = run([self.executable, 'info'], cwd=self.path, capture_output=True, encoding='utf-8')
+        if info_result.returncode:
+            return {}
 
-version = Version(0, 0, 2)
+        result = {}
+        for line in info_result.stdout.splitlines():
+            split = line.split(': ')
+            result[split[0]] = ': '.join(split[1:])
+        return result
 
-from webkitscmpy import local
-from webkitscmpy import mocks
+    @property
+    def root_path(self):
+        return self.info(cached=True).get('Working Copy Root Path')
 
-name = 'webkitscmpy'
+    @property
+    def branch(self):
+        local_path = self.path[len(self.root_path):]
+        if local_path:
+            return self.info()['Relative URL'][2:-len(local_path)]
+        return self.info()['Relative URL'][2:]
+
+    def remote(self, name=None):
+        return self.info()['Repository Root']

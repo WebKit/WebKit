@@ -20,35 +20,27 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-import os
-import sys
 
-log = logging.getLogger('webkitscmpy')
+import unittest
+from webkitscmpy import local, mocks
 
 
-def _maybe_add_webkitcorepy_path():
-    # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
-    libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
-    if os.path.isdir(webkitcorepy_path) and os.path.isdir(os.path.join(webkitcorepy_path, 'webkitcorepy')) and webkitcorepy_path not in sys.path:
-        sys.path.insert(0, webkitcorepy_path)
+class TestScm(unittest.TestCase):
+    path = '/mock/directory'
 
+    def test_detection(self):
+        with mocks.local.Git(), mocks.local.Svn():
+            with self.assertRaises(OSError):
+                local.Scm.from_path(self.path)
 
-_maybe_add_webkitcorepy_path()
+    def test_root(self):
+        with self.assertRaises(NotImplementedError):
+            local.Scm(self.path).root_path
 
-try:
-    from webkitcorepy.version import Version
-except ImportError:
-    raise ImportError(
-        "'webkitcorepy' could not be found on your Python path.\n" +
-        "You are not running from a WebKit checkout.\n" +
-        "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
-    )
+    def test_branch(self):
+        with self.assertRaises(NotImplementedError):
+            local.Scm(self.path).branch
 
-version = Version(0, 0, 2)
-
-from webkitscmpy import local
-from webkitscmpy import mocks
-
-name = 'webkitscmpy'
+    def test_remote(self):
+        with self.assertRaises(NotImplementedError):
+            local.Scm(self.path).remote()

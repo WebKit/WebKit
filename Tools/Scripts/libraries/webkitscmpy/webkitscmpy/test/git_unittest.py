@@ -20,35 +20,34 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
 import os
-import sys
+import unittest
 
-log = logging.getLogger('webkitscmpy')
-
-
-def _maybe_add_webkitcorepy_path():
-    # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
-    libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
-    if os.path.isdir(webkitcorepy_path) and os.path.isdir(os.path.join(webkitcorepy_path, 'webkitcorepy')) and webkitcorepy_path not in sys.path:
-        sys.path.insert(0, webkitcorepy_path)
+from webkitscmpy import local, mocks
 
 
-_maybe_add_webkitcorepy_path()
+class TestGit(unittest.TestCase):
+    path = '/mock/repository'
 
-try:
-    from webkitcorepy.version import Version
-except ImportError:
-    raise ImportError(
-        "'webkitcorepy' could not be found on your Python path.\n" +
-        "You are not running from a WebKit checkout.\n" +
-        "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
-    )
+    def test_detection(self):
+        with mocks.local.Git(self.path), mocks.local.Svn():
+            detect = local.Scm.from_path(self.path)
+            self.assertEqual(detect.executable, local.Git.executable)
 
-version = Version(0, 0, 2)
+    def test_root(self):
+        with mocks.local.Git(self.path):
+            self.assertEqual(local.Git(self.path).root_path, self.path)
 
-from webkitscmpy import local
-from webkitscmpy import mocks
+            with self.assertRaises(OSError):
+                local.Git(os.path.dirname(self.path)).root_path
 
-name = 'webkitscmpy'
+    def test_branch(self):
+        with mocks.local.Git(self.path):
+            self.assertEqual(local.Git(self.path).branch, 'master')
+
+        with mocks.local.Git(self.path, detached=True):
+            self.assertEqual(local.Git(self.path).branch, None)
+
+    def test_remote(self):
+        with mocks.local.Git(self.path) as repo:
+            self.assertEqual(local.Git(self.path).remote(), repo.remote)
