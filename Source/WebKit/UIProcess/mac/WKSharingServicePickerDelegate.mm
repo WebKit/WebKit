@@ -102,6 +102,9 @@
     if (!_handleEditingReplacement)
         return;
 
+    if (!items.count)
+        return;
+
     Vector<String> types;
     IPC::DataReference dataReference;
 

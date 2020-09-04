@@ -1,3 +1,17 @@
+2020-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] UI process sometimes crashes under -[WKSharingServicePickerDelegate sharingService:didShareItems:]
+        https://bugs.webkit.org/show_bug.cgi?id=216167
+        <rdar://problem/68287449>
+
+        Reviewed by Anders Carlsson.
+
+        It's not clear what causes the array of items in this delegate method to be empty, but we should at least be
+        robust against this scenario and avoid crashing the application process.
+
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+
 2020-09-04  Kate Cheney  <katherine_cheney@apple.com>
 
         WebProcessProxy::checkURLReceivedFromWebProcess() does not always need to check the back/forward list
