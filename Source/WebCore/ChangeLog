@@ -1,3 +1,15 @@
+2020-09-04  David Kilzer  <ddkilzer@apple.com>
+
+        WebCore::DOMTimerFireState constructor fails to initialize m_initialDOMTreeVersion, m_previous on worker threads
+        <https://webkit.org/b/216085>
+
+        Reviewed by Darin Adler.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimerFireState):
+        - Reorder instance variables so more logic can be moved into the
+          initializer list.
+
 2020-09-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Rename LineLayoutContext to LineBuilder

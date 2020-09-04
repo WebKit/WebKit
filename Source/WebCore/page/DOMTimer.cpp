@@ -56,15 +56,11 @@ public:
     DOMTimerFireState(ScriptExecutionContext& context, int nestingLevel)
         : m_context(context)
         , m_contextIsDocument(is<Document>(m_context))
-    {
         // For worker threads, don't update the current DOMTimerFireState.
         // Setting this from workers would not be thread-safe, and its not relevant to current uses.
-        if (m_contextIsDocument) {
-            m_initialDOMTreeVersion = downcast<Document>(context).domTreeVersion();
-            m_previous = current;
-            current = this;
-        }
-
+        , m_initialDOMTreeVersion(m_contextIsDocument ? downcast<Document>(m_context).domTreeVersion() : 0)
+        , m_previous(m_contextIsDocument ? std::exchange(current, this) : nullptr)
+    {
         m_context.setTimerNestingLevel(nestingLevel);
     }
 
@@ -95,11 +91,11 @@ public:
 
 private:
     ScriptExecutionContext& m_context;
-    uint64_t m_initialDOMTreeVersion;
-    DOMTimerFireState* m_previous;
     bool m_contextIsDocument;
     bool m_scriptMadeNonUserObservableChanges { false };
     bool m_scriptMadeUserObservableChanges { false };
+    uint64_t m_initialDOMTreeVersion;
+    DOMTimerFireState* m_previous;
 };
 
 DOMTimerFireState* DOMTimerFireState::current = nullptr;
