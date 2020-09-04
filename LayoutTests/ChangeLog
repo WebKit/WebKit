@@ -1,3 +1,12 @@
+2020-09-03  Karl Rackler  <rackler@apple.com>
+
+        [ Catalina debug wk2 ] html5lib/generated/run-template-data.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=216164
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-03  Hector Lopez  <hector_i_lopez@apple.com>
 
         Correction for Rebasline at changeset https://trac.webkit.org/changeset/266500/webkit 
