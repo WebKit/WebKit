@@ -1,5 +1,18 @@
 2020-09-03  Chris Dumez  <cdumez@apple.com>
 
+        Tests using OscillatorNode are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=216152
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:
+
+2020-09-03  Chris Dumez  <cdumez@apple.com>
+
         AudioDestinationNode.maxChannelCount always returns 0
         https://bugs.webkit.org/show_bug.cgi?id=216127
 

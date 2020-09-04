@@ -90,12 +90,6 @@ private:
     AudioFloatArray m_detuneValues { AudioNode::ProcessingSizeInFrames };
     
     RefPtr<PeriodicWave> m_periodicWave;
-
-    // Cache the wave tables for different waveform types, except CUSTOM.
-    static PeriodicWave* s_periodicWaveSine;
-    static PeriodicWave* s_periodicWaveSquare;
-    static PeriodicWave* s_periodicWaveSawtooth;
-    static PeriodicWave* s_periodicWaveTriangle;
 };
 
 String convertEnumerationToString(OscillatorType); // In JSOscillatorNode.cpp

@@ -40,11 +40,6 @@ using namespace VectorMath;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OscillatorNode);
 
-PeriodicWave* OscillatorNode::s_periodicWaveSine = nullptr;
-PeriodicWave* OscillatorNode::s_periodicWaveSquare = nullptr;
-PeriodicWave* OscillatorNode::s_periodicWaveSawtooth = nullptr;
-PeriodicWave* OscillatorNode::s_periodicWaveTriangle = nullptr;
-
 ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& context, const OscillatorOptions& options)
 {
     if (context.isStopped())
@@ -95,38 +90,15 @@ OscillatorNode::~OscillatorNode()
 
 ExceptionOr<void> OscillatorNode::setType(OscillatorType type)
 {
-    PeriodicWave* periodicWave = nullptr;
-
     ALWAYS_LOG(LOGIDENTIFIER, type);
 
-    switch (type) {
-    case OscillatorType::Sine:
-        if (!s_periodicWaveSine)
-            s_periodicWaveSine = &PeriodicWave::createSine(sampleRate()).leakRef();
-        periodicWave = s_periodicWaveSine;
-        break;
-    case OscillatorType::Square:
-        if (!s_periodicWaveSquare)
-            s_periodicWaveSquare = &PeriodicWave::createSquare(sampleRate()).leakRef();
-        periodicWave = s_periodicWaveSquare;
-        break;
-    case OscillatorType::Sawtooth:
-        if (!s_periodicWaveSawtooth)
-            s_periodicWaveSawtooth = &PeriodicWave::createSawtooth(sampleRate()).leakRef();
-        periodicWave = s_periodicWaveSawtooth;
-        break;
-    case OscillatorType::Triangle:
-        if (!s_periodicWaveTriangle)
-            s_periodicWaveTriangle = &PeriodicWave::createTriangle(sampleRate()).leakRef();
-        periodicWave = s_periodicWaveTriangle;
-        break;
-    case OscillatorType::Custom:
+    if (type == OscillatorType::Custom) {
         if (m_type != OscillatorType::Custom)
-            return Exception { InvalidStateError };
+            return Exception { InvalidStateError, "OscillatorNode.type cannot be changed to 'custom'"_s };
         return { };
     }
 
-    setPeriodicWave(*periodicWave);
+    setPeriodicWave(context().periodicWave(type));
     m_type = type;
 
     return { };

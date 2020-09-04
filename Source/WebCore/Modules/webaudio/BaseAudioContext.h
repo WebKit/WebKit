@@ -35,6 +35,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
+#include "OscillatorType.h"
 #include "PeriodicWaveConstraints.h"
 #include "PlatformMediaSession.h"
 #include "ScriptExecutionContext.h"
@@ -311,6 +312,8 @@ public:
 
     static bool isSupportedSampleRate(float sampleRate);
 
+    PeriodicWave& periodicWave(OscillatorType);
+
 protected:
     explicit BaseAudioContext(Document&, const AudioContextOptions& = { });
     BaseAudioContext(Document&, AudioBuffer* renderTarget);
@@ -459,6 +462,13 @@ private:
     RefPtr<PendingActivity<BaseAudioContext>> m_pendingActivity;
 
     AudioIOPosition m_outputPosition;
+
+    // These are cached per audio context for performance reasons. They cannot be
+    // static because they rely on the sample rate.
+    RefPtr<PeriodicWave> m_cachedPeriodicWaveSine;
+    RefPtr<PeriodicWave> m_cachedPeriodicWaveSquare;
+    RefPtr<PeriodicWave> m_cachedPeriodicWaveSawtooth;
+    RefPtr<PeriodicWave> m_cachedPeriodicWaveTriangle;
 };
 
 } // WebCore

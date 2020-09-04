@@ -1298,6 +1298,33 @@ void BaseAudioContext::makePendingActivity()
     ref();
 }
 
+PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
+{
+    switch (type) {
+    case OscillatorType::Square:
+        if (!m_cachedPeriodicWaveSquare)
+            m_cachedPeriodicWaveSquare = PeriodicWave::createSquare(sampleRate());
+        return *m_cachedPeriodicWaveSquare;
+    case OscillatorType::Sawtooth:
+        if (!m_cachedPeriodicWaveSawtooth)
+            m_cachedPeriodicWaveSawtooth = PeriodicWave::createSawtooth(sampleRate());
+        return *m_cachedPeriodicWaveSawtooth;
+    case OscillatorType::Triangle:
+        if (!m_cachedPeriodicWaveTriangle)
+            m_cachedPeriodicWaveTriangle = PeriodicWave::createTriangle(sampleRate());
+        return *m_cachedPeriodicWaveTriangle;
+    case OscillatorType::Custom:
+        ASSERT_NOT_REACHED();
+#if NDEBUG
+        FALLTHROUGH;
+#endif
+    case OscillatorType::Sine:
+        if (!m_cachedPeriodicWaveSine)
+            m_cachedPeriodicWaveSine = PeriodicWave::createSine(sampleRate());
+        return *m_cachedPeriodicWaveSine;
+    }
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& BaseAudioContext::logChannel() const
 {
