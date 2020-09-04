@@ -676,9 +676,7 @@ PASS Not throw: ISO-8859-3 has a pointer 161
 PASS Not throw: ISO-8859-3 has a pointer 162 
 PASS Not throw: ISO-8859-3 has a pointer 163 
 PASS Not throw: ISO-8859-3 has a pointer 164 
-FAIL Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 165 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 165 
 PASS Not throw: ISO-8859-3 has a pointer 166 
 PASS Not throw: ISO-8859-3 has a pointer 167 
 PASS Not throw: ISO-8859-3 has a pointer 168 
@@ -687,9 +685,7 @@ PASS Not throw: ISO-8859-3 has a pointer 170
 PASS Not throw: ISO-8859-3 has a pointer 171 
 PASS Not throw: ISO-8859-3 has a pointer 172 
 PASS Not throw: ISO-8859-3 has a pointer 173 
-FAIL Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 174 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 174 
 PASS Not throw: ISO-8859-3 has a pointer 175 
 PASS Not throw: ISO-8859-3 has a pointer 176 
 PASS Not throw: ISO-8859-3 has a pointer 177 
@@ -705,16 +701,12 @@ PASS Not throw: ISO-8859-3 has a pointer 186
 PASS Not throw: ISO-8859-3 has a pointer 187 
 PASS Not throw: ISO-8859-3 has a pointer 188 
 PASS Not throw: ISO-8859-3 has a pointer 189 
-FAIL Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 190 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 190 
 PASS Not throw: ISO-8859-3 has a pointer 191 
 PASS Not throw: ISO-8859-3 has a pointer 192 
 PASS Not throw: ISO-8859-3 has a pointer 193 
 PASS Not throw: ISO-8859-3 has a pointer 194 
-FAIL Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 195 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 195 
 PASS Not throw: ISO-8859-3 has a pointer 196 
 PASS Not throw: ISO-8859-3 has a pointer 197 
 PASS Not throw: ISO-8859-3 has a pointer 198 
@@ -727,9 +719,7 @@ PASS Not throw: ISO-8859-3 has a pointer 204
 PASS Not throw: ISO-8859-3 has a pointer 205 
 PASS Not throw: ISO-8859-3 has a pointer 206 
 PASS Not throw: ISO-8859-3 has a pointer 207 
-FAIL Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 208 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 208 
 PASS Not throw: ISO-8859-3 has a pointer 209 
 PASS Not throw: ISO-8859-3 has a pointer 210 
 PASS Not throw: ISO-8859-3 has a pointer 211 
@@ -748,9 +738,7 @@ PASS Not throw: ISO-8859-3 has a pointer 223
 PASS Not throw: ISO-8859-3 has a pointer 224 
 PASS Not throw: ISO-8859-3 has a pointer 225 
 PASS Not throw: ISO-8859-3 has a pointer 226 
-FAIL Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 227 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 227 
 PASS Not throw: ISO-8859-3 has a pointer 228 
 PASS Not throw: ISO-8859-3 has a pointer 229 
 PASS Not throw: ISO-8859-3 has a pointer 230 
@@ -763,9 +751,7 @@ PASS Not throw: ISO-8859-3 has a pointer 236
 PASS Not throw: ISO-8859-3 has a pointer 237 
 PASS Not throw: ISO-8859-3 has a pointer 238 
 PASS Not throw: ISO-8859-3 has a pointer 239 
-FAIL Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 240 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-3 doesn't have a pointer 240 
 PASS Not throw: ISO-8859-3 has a pointer 241 
 PASS Not throw: ISO-8859-3 has a pointer 242 
 PASS Not throw: ISO-8859-3 has a pointer 243 
@@ -1454,92 +1440,38 @@ PASS Not throw: ISO-8859-6 has a pointer 157
 PASS Not throw: ISO-8859-6 has a pointer 158 
 PASS Not throw: ISO-8859-6 has a pointer 159 
 PASS Not throw: ISO-8859-6 has a pointer 160 
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 161 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 162 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 163 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 161 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 162 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 163 
 PASS Not throw: ISO-8859-6 has a pointer 164 
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 165 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 166 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 167 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 168 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 169 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 170 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 171 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 165 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 166 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 167 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 168 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 169 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 170 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 171 
 PASS Not throw: ISO-8859-6 has a pointer 172 
 PASS Not throw: ISO-8859-6 has a pointer 173 
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 174 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 175 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 176 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 177 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 178 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 179 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 180 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 181 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 182 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 183 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 184 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 185 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 186 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 174 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 175 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 176 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 177 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 178 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 179 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 180 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 181 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 182 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 183 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 184 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 185 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 186 
 PASS Not throw: ISO-8859-6 has a pointer 187 
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 188 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 189 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 190 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 188 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 189 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 190 
 PASS Not throw: ISO-8859-6 has a pointer 191 
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 192 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 192 
 PASS Not throw: ISO-8859-6 has a pointer 193 
 PASS Not throw: ISO-8859-6 has a pointer 194 
 PASS Not throw: ISO-8859-6 has a pointer 195 
@@ -1566,21 +1498,11 @@ PASS Not throw: ISO-8859-6 has a pointer 215
 PASS Not throw: ISO-8859-6 has a pointer 216 
 PASS Not throw: ISO-8859-6 has a pointer 217 
 PASS Not throw: ISO-8859-6 has a pointer 218 
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 219 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 220 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 221 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 222 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 223 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 219 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 220 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 221 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 222 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 223 
 PASS Not throw: ISO-8859-6 has a pointer 224 
 PASS Not throw: ISO-8859-6 has a pointer 225 
 PASS Not throw: ISO-8859-6 has a pointer 226 
@@ -1600,45 +1522,19 @@ PASS Not throw: ISO-8859-6 has a pointer 239
 PASS Not throw: ISO-8859-6 has a pointer 240 
 PASS Not throw: ISO-8859-6 has a pointer 241 
 PASS Not throw: ISO-8859-6 has a pointer 242 
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 243 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 244 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 245 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 246 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 247 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 248 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 249 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 250 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 251 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 252 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 253 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 254 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 255 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 243 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 244 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 245 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 246 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 247 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 248 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 249 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 250 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 251 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 252 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 253 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 254 
+PASS Throw due to fatal flag: ISO-8859-6 doesn't have a pointer 255 
 PASS Not throw: ISO-8859-7 has a pointer 0 
 PASS Not throw: ISO-8859-7 has a pointer 1 
 PASS Not throw: ISO-8859-7 has a pointer 2 
@@ -1813,9 +1709,7 @@ PASS Not throw: ISO-8859-7 has a pointer 170
 PASS Not throw: ISO-8859-7 has a pointer 171 
 PASS Not throw: ISO-8859-7 has a pointer 172 
 PASS Not throw: ISO-8859-7 has a pointer 173 
-FAIL Throw due to fatal flag: ISO-8859-7 doesn't have a pointer 174 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-7 doesn't have a pointer 174 
 PASS Not throw: ISO-8859-7 has a pointer 175 
 PASS Not throw: ISO-8859-7 has a pointer 176 
 PASS Not throw: ISO-8859-7 has a pointer 177 
@@ -1851,9 +1745,7 @@ PASS Not throw: ISO-8859-7 has a pointer 206
 PASS Not throw: ISO-8859-7 has a pointer 207 
 PASS Not throw: ISO-8859-7 has a pointer 208 
 PASS Not throw: ISO-8859-7 has a pointer 209 
-FAIL Throw due to fatal flag: ISO-8859-7 doesn't have a pointer 210 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-7 doesn't have a pointer 210 
 PASS Not throw: ISO-8859-7 has a pointer 211 
 PASS Not throw: ISO-8859-7 has a pointer 212 
 PASS Not throw: ISO-8859-7 has a pointer 213 
@@ -1898,9 +1790,7 @@ PASS Not throw: ISO-8859-7 has a pointer 251
 PASS Not throw: ISO-8859-7 has a pointer 252 
 PASS Not throw: ISO-8859-7 has a pointer 253 
 PASS Not throw: ISO-8859-7 has a pointer 254 
-FAIL Throw due to fatal flag: ISO-8859-7 doesn't have a pointer 255 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-7 doesn't have a pointer 255 
 PASS Not throw: ISO-8859-8 has a pointer 0 
 PASS Not throw: ISO-8859-8 has a pointer 1 
 PASS Not throw: ISO-8859-8 has a pointer 2 
@@ -2062,9 +1952,7 @@ PASS Not throw: ISO-8859-8 has a pointer 157
 PASS Not throw: ISO-8859-8 has a pointer 158 
 PASS Not throw: ISO-8859-8 has a pointer 159 
 PASS Not throw: ISO-8859-8 has a pointer 160 
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 161 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 161 
 PASS Not throw: ISO-8859-8 has a pointer 162 
 PASS Not throw: ISO-8859-8 has a pointer 163 
 PASS Not throw: ISO-8859-8 has a pointer 164 
@@ -2094,102 +1982,38 @@ PASS Not throw: ISO-8859-8 has a pointer 187
 PASS Not throw: ISO-8859-8 has a pointer 188 
 PASS Not throw: ISO-8859-8 has a pointer 189 
 PASS Not throw: ISO-8859-8 has a pointer 190 
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 191 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 192 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 193 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 194 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 195 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 196 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 197 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 198 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 199 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 200 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 201 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 202 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 203 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 204 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 205 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 206 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 207 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 208 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 209 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 210 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 211 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 212 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 213 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 214 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 215 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 216 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 217 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 218 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 219 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 220 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 221 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 222 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 191 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 192 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 193 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 194 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 195 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 196 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 197 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 198 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 199 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 200 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 201 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 202 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 203 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 204 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 205 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 206 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 207 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 208 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 209 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 210 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 211 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 212 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 213 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 214 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 215 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 216 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 217 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 218 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 219 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 220 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 221 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 222 
 PASS Not throw: ISO-8859-8 has a pointer 223 
 PASS Not throw: ISO-8859-8 has a pointer 224 
 PASS Not throw: ISO-8859-8 has a pointer 225 
@@ -2218,17 +2042,11 @@ PASS Not throw: ISO-8859-8 has a pointer 247
 PASS Not throw: ISO-8859-8 has a pointer 248 
 PASS Not throw: ISO-8859-8 has a pointer 249 
 PASS Not throw: ISO-8859-8 has a pointer 250 
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 251 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 252 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 251 
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 252 
 PASS Not throw: ISO-8859-8 has a pointer 253 
 PASS Not throw: ISO-8859-8 has a pointer 254 
-FAIL Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 255 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-8 doesn't have a pointer 255 
 PASS Not throw: ISO-8859-8-I has a pointer 0 
 PASS Not throw: ISO-8859-8-I has a pointer 1 
 PASS Not throw: ISO-8859-8-I has a pointer 2 
@@ -2390,9 +2208,7 @@ PASS Not throw: ISO-8859-8-I has a pointer 157
 PASS Not throw: ISO-8859-8-I has a pointer 158 
 PASS Not throw: ISO-8859-8-I has a pointer 159 
 PASS Not throw: ISO-8859-8-I has a pointer 160 
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 161 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 161 
 PASS Not throw: ISO-8859-8-I has a pointer 162 
 PASS Not throw: ISO-8859-8-I has a pointer 163 
 PASS Not throw: ISO-8859-8-I has a pointer 164 
@@ -2422,102 +2238,38 @@ PASS Not throw: ISO-8859-8-I has a pointer 187
 PASS Not throw: ISO-8859-8-I has a pointer 188 
 PASS Not throw: ISO-8859-8-I has a pointer 189 
 PASS Not throw: ISO-8859-8-I has a pointer 190 
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 191 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 192 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 193 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 194 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 195 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 196 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 197 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 198 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 199 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 200 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 201 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 202 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 203 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 204 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 205 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 206 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 207 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 208 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 209 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 210 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 211 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 212 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 213 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 214 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 215 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 216 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 217 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 218 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 219 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 220 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 221 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 222 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 191 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 192 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 193 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 194 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 195 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 196 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 197 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 198 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 199 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 200 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 201 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 202 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 203 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 204 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 205 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 206 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 207 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 208 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 209 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 210 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 211 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 212 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 213 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 214 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 215 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 216 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 217 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 218 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 219 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 220 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 221 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 222 
 PASS Not throw: ISO-8859-8-I has a pointer 223 
 PASS Not throw: ISO-8859-8-I has a pointer 224 
 PASS Not throw: ISO-8859-8-I has a pointer 225 
@@ -2546,17 +2298,11 @@ PASS Not throw: ISO-8859-8-I has a pointer 247
 PASS Not throw: ISO-8859-8-I has a pointer 248 
 PASS Not throw: ISO-8859-8-I has a pointer 249 
 PASS Not throw: ISO-8859-8-I has a pointer 250 
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 251 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 252 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 251 
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 252 
 PASS Not throw: ISO-8859-8-I has a pointer 253 
 PASS Not throw: ISO-8859-8-I has a pointer 254 
-FAIL Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 255 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: ISO-8859-8-I doesn't have a pointer 255 
 PASS Not throw: ISO-8859-10 has a pointer 0 
 PASS Not throw: ISO-8859-10 has a pointer 1 
 PASS Not throw: ISO-8859-10 has a pointer 2 
@@ -4824,18 +4570,10 @@ PASS Not throw: windows-874 has a pointer 215
 PASS Not throw: windows-874 has a pointer 216 
 PASS Not throw: windows-874 has a pointer 217 
 PASS Not throw: windows-874 has a pointer 218 
-FAIL Throw due to fatal flag: windows-874 doesn't have a pointer 219 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-874 doesn't have a pointer 220 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-874 doesn't have a pointer 221 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-874 doesn't have a pointer 222 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-874 doesn't have a pointer 219 
+PASS Throw due to fatal flag: windows-874 doesn't have a pointer 220 
+PASS Throw due to fatal flag: windows-874 doesn't have a pointer 221 
+PASS Throw due to fatal flag: windows-874 doesn't have a pointer 222 
 PASS Not throw: windows-874 has a pointer 223 
 PASS Not throw: windows-874 has a pointer 224 
 PASS Not throw: windows-874 has a pointer 225 
@@ -4865,18 +4603,10 @@ PASS Not throw: windows-874 has a pointer 248
 PASS Not throw: windows-874 has a pointer 249 
 PASS Not throw: windows-874 has a pointer 250 
 PASS Not throw: windows-874 has a pointer 251 
-FAIL Throw due to fatal flag: windows-874 doesn't have a pointer 252 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-874 doesn't have a pointer 253 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-874 doesn't have a pointer 254 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-874 doesn't have a pointer 255 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-874 doesn't have a pointer 252 
+PASS Throw due to fatal flag: windows-874 doesn't have a pointer 253 
+PASS Throw due to fatal flag: windows-874 doesn't have a pointer 254 
+PASS Throw due to fatal flag: windows-874 doesn't have a pointer 255 
 PASS Not throw: windows-1250 has a pointer 0 
 PASS Not throw: windows-1250 has a pointer 1 
 PASS Not throw: windows-1250 has a pointer 2 
@@ -5815,9 +5545,7 @@ PASS Not throw: windows-1253 has a pointer 166
 PASS Not throw: windows-1253 has a pointer 167 
 PASS Not throw: windows-1253 has a pointer 168 
 PASS Not throw: windows-1253 has a pointer 169 
-FAIL Throw due to fatal flag: windows-1253 doesn't have a pointer 170 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-1253 doesn't have a pointer 170 
 PASS Not throw: windows-1253 has a pointer 171 
 PASS Not throw: windows-1253 has a pointer 172 
 PASS Not throw: windows-1253 has a pointer 173 
@@ -5857,9 +5585,7 @@ PASS Not throw: windows-1253 has a pointer 206
 PASS Not throw: windows-1253 has a pointer 207 
 PASS Not throw: windows-1253 has a pointer 208 
 PASS Not throw: windows-1253 has a pointer 209 
-FAIL Throw due to fatal flag: windows-1253 doesn't have a pointer 210 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-1253 doesn't have a pointer 210 
 PASS Not throw: windows-1253 has a pointer 211 
 PASS Not throw: windows-1253 has a pointer 212 
 PASS Not throw: windows-1253 has a pointer 213 
@@ -5904,9 +5630,7 @@ PASS Not throw: windows-1253 has a pointer 251
 PASS Not throw: windows-1253 has a pointer 252 
 PASS Not throw: windows-1253 has a pointer 253 
 PASS Not throw: windows-1253 has a pointer 254 
-FAIL Throw due to fatal flag: windows-1253 doesn't have a pointer 255 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-1253 doesn't have a pointer 255 
 PASS Not throw: windows-1254 has a pointer 0 
 PASS Not throw: windows-1254 has a pointer 1 
 PASS Not throw: windows-1254 has a pointer 2 
@@ -6380,27 +6104,13 @@ PASS Not throw: windows-1255 has a pointer 213
 PASS Not throw: windows-1255 has a pointer 214 
 PASS Not throw: windows-1255 has a pointer 215 
 PASS Not throw: windows-1255 has a pointer 216 
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 217 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 218 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 219 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 220 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 221 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 222 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 223 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 217 
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 218 
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 219 
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 220 
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 221 
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 222 
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 223 
 PASS Not throw: windows-1255 has a pointer 224 
 PASS Not throw: windows-1255 has a pointer 225 
 PASS Not throw: windows-1255 has a pointer 226 
@@ -6428,17 +6138,11 @@ PASS Not throw: windows-1255 has a pointer 247
 PASS Not throw: windows-1255 has a pointer 248 
 PASS Not throw: windows-1255 has a pointer 249 
 PASS Not throw: windows-1255 has a pointer 250 
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 251 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 252 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 251 
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 252 
 PASS Not throw: windows-1255 has a pointer 253 
 PASS Not throw: windows-1255 has a pointer 254 
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 255 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-1255 doesn't have a pointer 255 
 PASS Not throw: windows-1256 has a pointer 0 
 PASS Not throw: windows-1256 has a pointer 1 
 PASS Not throw: windows-1256 has a pointer 2 
@@ -6856,15 +6560,11 @@ PASS Not throw: windows-1257 has a pointer 157
 PASS Not throw: windows-1257 has a pointer 158 
 PASS Not throw: windows-1257 has a pointer 159 
 PASS Not throw: windows-1257 has a pointer 160 
-FAIL Throw due to fatal flag: windows-1257 doesn't have a pointer 161 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-1257 doesn't have a pointer 161 
 PASS Not throw: windows-1257 has a pointer 162 
 PASS Not throw: windows-1257 has a pointer 163 
 PASS Not throw: windows-1257 has a pointer 164 
-FAIL Throw due to fatal flag: windows-1257 doesn't have a pointer 165 assert_throws_js: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Throw due to fatal flag: windows-1257 doesn't have a pointer 165 
 PASS Not throw: windows-1257 has a pointer 166 
 PASS Not throw: windows-1257 has a pointer 167 
 PASS Not throw: windows-1257 has a pointer 168 
