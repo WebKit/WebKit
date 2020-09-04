@@ -1,4 +1,17 @@
 =================
+WebKitGTK 2.29.92
+=================
+
+What's new in WebKitGTK 2.29.92?
+
+  - Fix user agent header after a redirect when a new quirk is required.
+  - Stop using firefox user agent quirk for google docs.
+  - Fix rendering frames timeline panel in web inspector.
+  - Fix per-thread cpu usage in web inspector.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish
+
+=================
 WebKitGTK 2.29.91
 =================
 
