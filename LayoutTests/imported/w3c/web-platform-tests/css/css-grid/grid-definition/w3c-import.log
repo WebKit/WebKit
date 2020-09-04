@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/fr-unit.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-add-item-with-positioned-items-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-add-positioned-block-item-after-inline-item-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-explicit-rows-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-columns-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-rows-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001.html

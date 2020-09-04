@@ -1,0 +1,8 @@
+
+PASS "grid-template-areas: 'a';" should be valid. 
+PASS "grid-template-areas: '.';" should be valid. 
+PASS "grid-template-areas: '';" should be invalid. 
+PASS "grid-template-areas: '' '';" should be invalid. 
+PASS "grid-template-areas: '$';" should be invalid. 
+PASS "grid-template-areas: '  ';" should be invalid. 
+

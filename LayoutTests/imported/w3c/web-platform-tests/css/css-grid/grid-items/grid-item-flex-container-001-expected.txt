@@ -1,0 +1,20 @@
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+PASS .grid 7 
+PASS .grid 8 
+PASS .grid 9 
+grid-template-rows: minmax(auto, auto);
+grid-template-rows: minmax(min-content, auto);
+grid-template-rows: minmax(max-content, auto);
+grid-template-rows: minmax(auto, min-content);
+grid-template-rows: minmax(min-content, min-content);
+grid-template-rows: minmax(max-content, min-content);
+grid-template-rows: minmax(auto, max-content);
+grid-template-rows: minmax(min-content, max-content);
+grid-template-rows: minmax(max-content, max-content);
+

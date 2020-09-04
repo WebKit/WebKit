@@ -23,6 +23,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-columns-min-max-width-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-min-max-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-001-expected.xht

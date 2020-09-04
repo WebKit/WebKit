@@ -1,3 +1,14 @@
+2020-09-04  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Import grid tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=216147
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Mark some new tests as failing.
+
+        * TestExpectations:
+
 2020-09-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update test expectations after r266559.

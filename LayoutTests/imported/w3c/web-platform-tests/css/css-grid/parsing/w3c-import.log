@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-areas-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-areas-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-areas-one-cell.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-areas-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-implicit-track.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid.html

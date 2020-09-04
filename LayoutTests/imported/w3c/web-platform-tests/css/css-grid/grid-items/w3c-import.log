@@ -78,6 +78,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-flex-container-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-auto-size-001.html

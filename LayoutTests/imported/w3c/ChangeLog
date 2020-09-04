@@ -1,3 +1,69 @@
+2020-09-04  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Import grid tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=216147
+
+        Import grid tests from WPT.
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-align-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-align-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-justify-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-justify-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-014-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-014.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-1-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-1.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-2-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-2.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-3-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-3.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-7-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-7.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9.html: Added.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-explicit-rows-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-explicit-rows-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-columns-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-columns-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-rows-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-rows-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-rows-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-rows-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-fit-content-001-expected.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-fit-content-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001-expected.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/support/testing-utils.js:
+        (testGridTemplateColumnsRows):
+        * web-platform-tests/css/css-grid/grid-definition/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-items/grid-item-flex-container-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-flex-container-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/grid-gutters-and-tracks-001.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-002.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-003-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-003.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-invalid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-invalid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-one-cell-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-areas-one-cell.html: Added.
+        * web-platform-tests/css/css-grid/parsing/w3c-import.log:
+
 2020-09-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline flaky Web Audio tests.
