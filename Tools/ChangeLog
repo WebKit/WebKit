@@ -1,3 +1,12 @@
+2020-09-03  James Darpinian  <jdarpinian@chromium.org>
+
+        Update James Darpinian's status to committer
+        https://bugs.webkit.org/show_bug.cgi?id=216154
+
+        Reviewed by Kenneth Russell.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Unexpected User-Agent on redirect

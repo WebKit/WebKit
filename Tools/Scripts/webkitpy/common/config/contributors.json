@@ -2635,8 +2635,9 @@
       ],
       "expertise" : "WebGL (Chromium and Safari ports)",
       "nicks" : [
-         "darpinian"
-      ]
+         "jdarpinian"
+      ],
+      "status" : "committer"
    },
    "James Hawkins" : {
       "emails" : [
