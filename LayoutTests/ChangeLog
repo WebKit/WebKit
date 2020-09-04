@@ -1,5 +1,14 @@
 2020-09-04  Truitt Savell  <tsavell@apple.com>
 
+        Correct typo in expectation for imported/blink/fast/text/international/text-shaping-arabic.html
+        rdar://41103260
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-09-04  Truitt Savell  <tsavell@apple.com>
+
         imported/blink/fast/text/international/text-shaping-arabic.html is Passing on Big Sur
         rdar://41103260
 

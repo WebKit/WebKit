@@ -1514,7 +1514,7 @@ fast/dom/HTMLMeterElement/meter-styles.html [ Failure ]
 
 # <rdar://problem/41103260> REGRESSION (Mojave): Three text tests failing with small antialiasing(?) diffs
 [ Mojave ] fast/inline/break-between-nobr.html [ ImageOnlyFailure ]
-[ Majave Catalina ] imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
+[ Mojave Catalina ] imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
 
 # < Mojave doesn't support the CG needed for Conic Gradients
