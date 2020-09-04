@@ -916,7 +916,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(JSGlobalObject* globalObject, Ca
         return throwVMTypeError(globalObject, scope, "push cannot produce an array of length larger than (2 ** 53) - 1"_s);
 
     for (unsigned n = 0; n < argCount; n++) {
-        thisObj->putByIndexInline(globalObject, static_cast<uint64_t>(length + n), callFrame->uncheckedArgument(n), true);
+        thisObj->putByIndexInline(globalObject, length + n, callFrame->uncheckedArgument(n), true);
         RETURN_IF_EXCEPTION(scope, { });
     }
     

@@ -3,6 +3,16 @@
         Array.prototype.push should always perform [[Set]] in strict mode
         https://bugs.webkit.org/show_bug.cgi?id=216121
 
+        Unreviewed, address Darin's feedback on r266581.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPush): Remove unnecessary static_cast<uint64_t>.
+
+2020-09-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array.prototype.push should always perform [[Set]] in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=216121
+
         Reviewed by Darin Adler.
 
         This patch fixes arrayProtoFuncPush() to throw a TypeError if putting an
