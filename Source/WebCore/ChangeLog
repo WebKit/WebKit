@@ -1,3 +1,18 @@
+2020-09-04  Youenn Fablet  <youenn@apple.com>
+
+        TextDecoderStreamDecoder.@encoding is broken
+        https://bugs.webkit.org/show_bug.cgi?id=216169
+
+        Reviewed by Alex Christensen.
+
+        Binding generator does not support private attributes.
+        Use a private method instead.
+        Covered by rebased tests.
+
+        * dom/TextDecoderStream.js:
+        (initializeTextDecoderStream):
+        * dom/TextDecoderStreamDecoder.idl:
+
 2020-09-04  David Kilzer  <ddkilzer@apple.com>
 
         WebCore::DOMTimerFireState constructor fails to initialize m_initialDOMTreeVersion, m_previous on worker threads

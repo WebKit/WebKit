@@ -31,7 +31,7 @@
 ] interface TextDecoderStreamDecoder {
     [MayThrowException] constructor(DOMString label, boolean fatal, boolean ignoreBOM);
 
-    [PrivateIdentifier] readonly attribute DOMString encoding;
+    [PrivateIdentifier] DOMString encoding();
     [PrivateIdentifier, MayThrowException] DOMString decode(BufferSource source);
     [PrivateIdentifier, MayThrowException] DOMString flush();
 };

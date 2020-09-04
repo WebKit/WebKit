@@ -1,8 +1,8 @@
 
-FAIL encoding attribute should have correct value for 'unicode-1-1-utf-8' assert_equals: encoding should match expected (string) "utf-8" but got (undefined) undefined
-FAIL encoding attribute should have correct value for 'iso-8859-2' assert_equals: encoding should match expected (string) "iso-8859-2" but got (undefined) undefined
-FAIL encoding attribute should have correct value for 'ascii' assert_equals: encoding should match expected (string) "windows-1252" but got (undefined) undefined
-FAIL encoding attribute should have correct value for 'utf-16' assert_equals: encoding should match expected (string) "utf-16le" but got (undefined) undefined
+PASS encoding attribute should have correct value for 'unicode-1-1-utf-8' 
+PASS encoding attribute should have correct value for 'iso-8859-2' 
+PASS encoding attribute should have correct value for 'ascii' 
+PASS encoding attribute should have correct value for 'utf-16' 
 PASS setting fatal to 'false' should set the attribute to false 
 PASS setting ignoreBOM to 'false' should set the attribute to false 
 PASS setting fatal to '0' should set the attribute to false 

@@ -1,3 +1,13 @@
+2020-09-04  Youenn Fablet  <youenn@apple.com>
+
+        TextDecoderStreamDecoder.@encoding is broken
+        https://bugs.webkit.org/show_bug.cgi?id=216169
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/encoding/streams/decode-attributes.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-attributes.any.worker-expected.txt:
+
 2020-09-04  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Import grid tests from WPT

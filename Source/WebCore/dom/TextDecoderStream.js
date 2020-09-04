@@ -73,7 +73,7 @@ function initializeTextDecoderStream()
 
     @putByIdDirectPrivate(this, "fatal", fatal);
     @putByIdDirectPrivate(this, "ignoreBOM", ignoreBOM);
-    @putByIdDirectPrivate(this, "encoding", decoder.@encoding);
+    @putByIdDirectPrivate(this, "encoding", decoder.@encoding());
     @putByIdDirectPrivate(this, "textDecoderStreamDecoder", decoder);
 
     return this;
