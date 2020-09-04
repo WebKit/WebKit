@@ -1,3 +1,20 @@
+2020-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CompactUniquePtrTuple
+        https://bugs.webkit.org/show_bug.cgi?id=215936
+
+        Reviewed by Darin Adler.
+
+        Added basic unit tests for CompactUniquePtrTuple.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CompactUniquePtrTuple.cpp: Added.
+        (TestWebKitAPI::A): Adde.
+        (TestWebKitAPI::A::A):
+        (TestWebKitAPI::A::~A):
+        (WTF_CompactUniquePtrTuple.Basic):
+
 2020-09-03  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] generate-bundle: Remove the zip extension from the uploaded checksum filename

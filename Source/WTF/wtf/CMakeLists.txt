@@ -32,6 +32,7 @@ set(WTF_PUBLIC_HEADERS
     CommaPrinter.h
     CompactPointerTuple.h
     CompactRefPtrTuple.h
+    CompactUniquePtrTuple.h
     CompilationThread.h
     Compiler.h
     CompletionHandler.h

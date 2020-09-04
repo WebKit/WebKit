@@ -1,5 +1,33 @@
 2020-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add CompactUniquePtrTuple
+        https://bugs.webkit.org/show_bug.cgi?id=215936
+
+        Reviewed by Darin Adler.
+
+        Added a new template class, CompactUniquePtrTuple, which stores a pointer and up to 16-bits of
+        a POD type using CompactPointerTuple.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CompactUniquePtrTuple.h: Added.
+        (WTF::makeCompactUniquePtr): Added. Like makeUnique, creates an object of the specified type
+        and returns CompactUniquePtrTuple.
+        (WTF::CompactUniquePtrTuple): Added.
+        (WTF::CompactUniquePtrTuple::CompactUniquePtrTuple): Move constructor.
+        (WTF::CompactUniquePtrTuple::~CompactUniquePtrTuple):
+        (WTF::CompactUniquePtrTuple::operator=):
+        (WTF::CompactUniquePtrTuple::pointer):
+        (WTF::CompactUniquePtrTuple::moveToUniquePtr): Clears this pointer and returns unique_ptr.
+        (WTF::CompactUniquePtrTuple::setPointer): Like CompactPointerTuple sets the pointer component
+        of this tuple, freeing the old object if there is already one stored.
+        (WTF::CompactUniquePtrTuple::type):
+        (WTF::CompactUniquePtrTuple::setType):
+        (WTF::CompactUniquePtrTuple::CompactUniquePtrTuple): Constructor which takes unique_ptr&&.
+        (WTF::CompactUniquePtrTuple::deletePointer):
+
+2020-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a variant of map which filters items to Vector.h
         https://bugs.webkit.org/show_bug.cgi?id=215879
 
