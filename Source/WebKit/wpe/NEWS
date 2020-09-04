@@ -1,4 +1,17 @@
 ==================
+WPE WebKit 2.29.91
+==================
+
+What's new in WPE WebKit 2.29.91?
+
+  - Enable support for the Notification Web API.
+  - Stop using the Firefox User-Agent quirk for Google Docs.
+  - Fix User-Agent header after a redirect when a new quirk is required.
+  - Fix rendering of the frames timeline panel in the Web Inspector.
+  - Fix display of per-thread CPU usage in the Web Inspector.
+  - Fix several crashes and rendering issues.
+
+==================
 WPE WebKit 2.29.90
 ==================
 
