@@ -1,3 +1,27 @@
+2020-09-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        WebProcessProxy::checkURLReceivedFromWebProcess() does not always need to check the back/forward list
+        https://bugs.webkit.org/show_bug.cgi?id=216109
+        <rdar://problem/59867349>
+
+        Reviewed by Brady Eidson.
+
+        We should not need to check the back/forward list when setting a
+        pasteboard URL because any valid pasteboard URL will be handled
+        by one of the other if-statements in
+        WebProcessProxy::checkURLReceivedFromWebProcess(), therefore checking
+        again is a waste of time.
+
+        This also hardens the process against potential abuse by preventing
+        the possibility of an invalid URL in the back/forward list being
+        saved in the pasteboard property list.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::setPasteboardURL):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess):
+        * UIProcess/WebProcessProxy.h:
+
 2020-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Unexpected User-Agent on redirect
