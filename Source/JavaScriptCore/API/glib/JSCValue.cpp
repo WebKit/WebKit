@@ -1010,7 +1010,7 @@ JSCValue* jsc_value_object_invoke_methodv(JSCValue* value, const char* name, uns
 
     auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Method, object, arguments, &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
-        jsc_value_new_undefined(priv->context.get());
+        return jsc_value_new_undefined(priv->context.get());
 
     return jscContextGetOrCreateValue(priv->context.get(), result).leakRef();
 }
