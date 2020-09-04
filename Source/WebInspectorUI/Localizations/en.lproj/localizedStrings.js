@@ -602,6 +602,7 @@ localizedStrings["Forward (%s)"] = "Forward (%s)";
 localizedStrings["Fragment"] = "Fragment";
 localizedStrings["Fragment Shader"] = "Fragment Shader";
 localizedStrings["Frame %d"] = "Frame %d";
+localizedStrings["Frame %d \u2014 %s"] = "Frame %d \u2014 %s";
 localizedStrings["Frame URL"] = "Frame URL";
 localizedStrings["Frames"] = "Frames";
 localizedStrings["Frames %d \u2013 %d"] = "Frames %d \u2013 %d";

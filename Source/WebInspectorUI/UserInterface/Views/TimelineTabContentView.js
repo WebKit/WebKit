@@ -288,6 +288,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         case WI.TimelineRecord.Type.Script:
             return WI.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeDetailsInMainTitle);
         case WI.TimelineRecord.Type.RenderingFrame:
+            if (timelineRecord.name)
+                return WI.UIString("Frame %d \u2014 %s").format(timelineRecord.frameNumber, timelineRecord.name);
             return WI.UIString("Frame %d").format(timelineRecord.frameNumber);
         case WI.TimelineRecord.Type.HeapAllocations:
             if (timelineRecord.heapSnapshot.imported)

@@ -47,10 +47,11 @@ GSourceFuncs RunLoop::s_runLoopSourceFunctions = {
         if (g_source_get_ready_time(source) == -1)
             return G_SOURCE_CONTINUE;
         g_source_set_ready_time(source, -1);
+        const char* name = g_source_get_name(source);
         auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(source);
-        runLoopSource.runLoop->notify(RunLoop::Event::WillDispatch);
+        runLoopSource.runLoop->notify(RunLoop::Event::WillDispatch, name);
         auto returnValue = callback(userData);
-        runLoopSource.runLoop->notify(RunLoop::Event::DidDispatch);
+        runLoopSource.runLoop->notify(RunLoop::Event::DidDispatch, name);
         return returnValue;
     },
     nullptr, // finalize
@@ -146,13 +147,13 @@ void RunLoop::observe(const RunLoop::Observer& observer)
     m_observers.add(observer);
 }
 
-void RunLoop::notify(RunLoop::Event event)
+void RunLoop::notify(RunLoop::Event event, const char* name)
 {
     if (m_observers.computesEmpty())
         return;
 
-    m_observers.forEach([event](auto& observer) {
-        observer(event);
+    m_observers.forEach([event, name = String::fromUTF8(name)](auto& observer) {
+        observer(event, name);
     });
 }
 
