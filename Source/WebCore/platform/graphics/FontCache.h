@@ -264,9 +264,6 @@ private:
     FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomString& family, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
 
     // These methods are implemented by each platform.
-#if PLATFORM(COCOA)
-    FontPlatformData* getCustomFallbackFont(const UInt32, const FontDescription&);
-#endif
     WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities);
     
     static const AtomString& alternateFamilyName(const AtomString&);

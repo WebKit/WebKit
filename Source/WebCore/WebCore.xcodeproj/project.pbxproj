@@ -7342,7 +7342,6 @@
 		371F51A00D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSegmentedFontFace.cpp; sourceTree = "<group>"; };
 		371F53E70D2704F900ECE0D5 /* CSSUnicodeRangeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSUnicodeRangeValue.h; sourceTree = "<group>"; };
 		371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSUnicodeRangeValue.cpp; sourceTree = "<group>"; };
-		3727DFD4142AAE4500D449CB /* FontCacheIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontCacheIOS.mm; sourceTree = "<group>"; };
 		372ADA37197F47B900FC501E /* ProtectionSpaceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpaceCocoa.h; sourceTree = "<group>"; };
 		372ADA39197F687600FC501E /* ProtectionSpaceCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProtectionSpaceCocoa.mm; sourceTree = "<group>"; };
 		372C00C3129611F1005C9575 /* TextBoundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBoundaries.cpp; sourceTree = "<group>"; };
@@ -17466,11 +17465,11 @@
 				6FB2400323DFF12700796458 /* InlineLineBox.h */,
 				6FE198132178397B00446F08 /* InlineLineBreaker.cpp */,
 				6FE198152178397C00446F08 /* InlineLineBreaker.h */,
+				6F25B200220A85AB0000011B /* InlineLineBuilder.cpp */,
+				6F26EB46234004A5006906E2 /* InlineLineBuilder.h */,
 				6F360E4E23999420001512A7 /* InlineSoftLineBreakItem.h */,
 				6F1CC1DC225F8B4100720AD2 /* InlineTextItem.cpp */,
 				6F1CC1DD225F8B4200720AD2 /* InlineTextItem.h */,
-				6F25B200220A85AB0000011B /* InlineLineBuilder.cpp */,
-				6F26EB46234004A5006906E2 /* InlineLineBuilder.h */,
 			);
 			path = inlineformatting;
 			sourceTree = "<group>";
@@ -19170,7 +19169,6 @@
 				2D29ECC9192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h */,
 				0F97A657155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm */,
 				1AC2D89C1B1E291F00D52E87 /* FontAntialiasingStateSaver.h */,
-				3727DFD4142AAE4500D449CB /* FontCacheIOS.mm */,
 				31AB4FFF122878A2001A7DB0 /* GraphicsContextGLOpenGLESIOS.h */,
 				FED13D3F0CEA939400D89466 /* IconIOS.mm */,
 			);
@@ -31651,6 +31649,7 @@
 				6F0CD695229ED32700C5994E /* InlineLine.h in Headers */,
 				6FB2400523DFF12800796458 /* InlineLineBox.h in Headers */,
 				6FE198172178397C00446F08 /* InlineLineBreaker.h in Headers */,
+				6F26EB48234004A5006906E2 /* InlineLineBuilder.h in Headers */,
 				F45775CE241437D5002DF1A0 /* InlinePathData.h in Headers */,
 				6F360E5023999421001512A7 /* InlineSoftLineBreakItem.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* InlineStyleSheetOwner.h in Headers */,
@@ -32662,7 +32661,6 @@
 				84730D911248F0B300D3A9C9 /* LightSource.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
-				6F26EB48234004A5006906E2 /* InlineLineBuilder.h in Headers */,
 				FFEFAB2A18380DA000514534 /* LineLayoutState.h in Headers */,
 				E484A33E23055325009ADE6A /* LineLayoutTraversal.h in Headers */,
 				E4343D252392779000EBBB66 /* LineLayoutTraversalComplexPath.h in Headers */,

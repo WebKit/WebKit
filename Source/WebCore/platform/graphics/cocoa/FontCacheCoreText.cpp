@@ -1479,15 +1479,6 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
 
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, IsForPlatformFont isForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length)
 {
-#if PLATFORM(IOS_FAMILY)
-    if (length && requiresCustomFallbackFont(*characters)) {
-        auto* fallback = getCustomFallbackFont(*characters, description);
-        if (!fallback)
-            return nullptr;
-        return fontForPlatformData(*fallback);
-    }
-#endif
-
     const FontPlatformData& platformData = originalFontData->platformData();
 
     auto fullName = String(adoptCF(CTFontCopyFullName(platformData.font())).get());

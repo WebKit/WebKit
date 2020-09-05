@@ -395,7 +395,6 @@ platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm
 platform/graphics/gpu/cocoa/GPUTextureMetal.mm
 platform/graphics/gpu/cocoa/GPUUtilsMetal.mm
 platform/graphics/ios/DisplayRefreshMonitorIOS.mm
-platform/graphics/ios/FontCacheIOS.mm
 platform/graphics/ios/IconIOS.mm
 platform/graphics/mac/ColorMac.mm
 platform/graphics/mac/ComplexTextControllerCoreText.mm

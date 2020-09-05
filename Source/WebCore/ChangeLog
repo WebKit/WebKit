@@ -1,5 +1,24 @@
 2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS Family] Remove the concept of custom fallback fonts
+        https://bugs.webkit.org/show_bug.cgi?id=215690
+
+        Reviewed by Sam Weinig.
+
+        They're no longer necessary for iOS, and macOS doesn't
+        even have the concept of custom fallback fonts, so we
+        can just remove the entire concept.
+
+        * platform/graphics/FontCache.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::requiresCustomFallbackFont): Deleted.
+        (WebCore::FontCache::getCustomFallbackFont): Deleted.
+
+2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] USE(PLATFORM_SYSTEM_FALLBACK_LIST) is true on all Cocoa platforms, so there's no need to consult it in Cocoa-specific files
         https://bugs.webkit.org/show_bug.cgi?id=215684
 
