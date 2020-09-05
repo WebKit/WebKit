@@ -1,5 +1,18 @@
 2020-09-05  Darin Adler  <darin@apple.com>
 
+        CSS revert should serialize as "revert", not "Revert"
+        https://bugs.webkit.org/show_bug.cgi?id=216187
+
+        Reviewed by Anders Carlsson.
+
+        * web-platform-tests/css/css-color-adjust/parsing/color-scheme-valid-expected.txt: Expect
+        one additional test to pass instead of fail.
+
+        * web-platform-tests/css/css-values/unset-value-storage-expected.txt: Expect pass instead of fail.
+        * web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt: Ditto.
+
+2020-09-05  Darin Adler  <darin@apple.com>
+
         Implement serialization of CSSPropertyGap
         https://bugs.webkit.org/show_bug.cgi?id=216210
 

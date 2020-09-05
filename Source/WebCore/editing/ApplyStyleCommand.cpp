@@ -1340,21 +1340,20 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     // VisibleSelection::validate().
 }
 
+static String joinWithSpace(const String& a, const String& b)
+{
+    if (a.isEmpty())
+        return b;
+    if (b.isEmpty())
+        return a;
+    return makeString(a, ' ', b);
+}
+
 void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElement& block)
 {
+    // Do not check for legacy styles here. Those styles, like <B> and <I>, only apply for inline content.
     ASSERT(styleChange.cssStyle());
-    // Do not check for legacy styles here. Those styles, like <B> and <I>, only apply for
-    // inline content.
-        
-    String cssStyle = styleChange.cssStyle()->asText();
-    StringBuilder cssText;
-    cssText.append(cssStyle);
-    if (const StyleProperties* decl = block.inlineStyle()) {
-        if (!cssStyle.isEmpty())
-            cssText.append(' ');
-        cssText.append(decl->asText());
-    }
-    setNodeAttribute(block, styleAttr, cssText.toString());
+    setNodeAttribute(block, styleAttr, joinWithSpace(styleChange.cssStyle()->asText(), block.getAttribute(styleAttr)));
 }
 
 void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, Node& start, Node& end, EAddStyledElement addStyledElement)
