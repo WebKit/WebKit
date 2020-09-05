@@ -1,3 +1,31 @@
+2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Unify implementation of custom font name aliases between all Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=215689
+
+        Reviewed by Darin Adler.
+
+        The existing code is duplicated almost verbatim. There's no point in having two copies of the same thing.
+
+        No new tests because there is no behavior change.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontWithFamilySpecialCase):
+        (WebCore::fontWithFamily):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::baseSystemFontDescriptor): Deleted.
+        (WebCore::systemFontModificationAttributes): Deleted.
+        (WebCore::systemFontDescriptor): Deleted.
+        (WebCore::platformFontWithFamilySpecialCase): Deleted.
+        * platform/graphics/mac/FontCacheMac.mm: Removed.
+
 2020-09-05  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Realign our IDL extended attribute names with those specified in WebIDL

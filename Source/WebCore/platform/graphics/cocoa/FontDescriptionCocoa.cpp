@@ -95,7 +95,7 @@ static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const
 
 unsigned FontCascadeDescription::effectiveFamilyCount() const
 {
-    // FIXME: Move all the other system font keywords from platformFontWithFamilySpecialCase() to here.
+    // FIXME: Move all the other system font keywords from fontWithFamilySpecialCase() to here.
     unsigned result = 0;
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);
@@ -109,7 +109,7 @@ unsigned FontCascadeDescription::effectiveFamilyCount() const
 
 FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index) const
 {
-    // The special cases in this function need to match the behavior in FontCacheIOS.mm and FontCacheMac.mm. On systems
+    // The special cases in this function need to match the behavior in FontCacheCoreText.cpp. On systems
     // where USE(PLATFORM_SYSTEM_FALLBACK_LIST) is set to true, this code is used for regular (element style) lookups,
     // and the code in FontDescriptionCocoa.cpp is used when src:local(special-cased-name) is specified inside an
     // @font-face block.

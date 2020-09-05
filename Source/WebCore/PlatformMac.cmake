@@ -334,7 +334,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/DisplayRefreshMonitorMac.cpp
     platform/graphics/mac/FloatPointMac.mm
     platform/graphics/mac/FloatSizeMac.mm
-    platform/graphics/mac/FontCacheMac.mm
     platform/graphics/mac/FontCustomPlatformData.cpp
     platform/graphics/mac/GlyphPageMac.cpp
     platform/graphics/mac/IconMac.mm
