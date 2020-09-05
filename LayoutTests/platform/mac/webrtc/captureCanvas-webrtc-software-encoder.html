@@ -41,9 +41,9 @@ function testCanvas(testName, canvas, isSame, count)
         return;
 
     if (count === 40)
-        return Promise.reject(testName + " failed: tried " + count + " to get " + isSame + " but got " + isEqual);
+        return Promise.reject(testName + " failed");
 
-    return waitFor(50).then(() => {
+    return waitFor(100).then(() => {
         return testCanvas(testName, canvas, isSame, ++count);
     });
 }

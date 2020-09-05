@@ -1,3 +1,20 @@
+2020-09-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r266614 and r266657.
+        https://bugs.webkit.org/show_bug.cgi?id=216213
+
+        Broke builds
+
+        Reverted changesets:
+
+        "Fix Internals::supportsVCPEncoder on BigSur"
+        https://bugs.webkit.org/show_bug.cgi?id=216174
+        https://trac.webkit.org/changeset/266614
+
+        "Fix the build after r266614"
+        https://bugs.webkit.org/show_bug.cgi?id=216174
+        https://trac.webkit.org/changeset/266657
+
 2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the build after r266614
