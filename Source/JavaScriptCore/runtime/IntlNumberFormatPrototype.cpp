@@ -114,19 +114,10 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObjec
 
     // 11.3.3 Intl.NumberFormat.prototype.format (ECMA-402 2.0)
     // 1. Let nf be this NumberFormat object.
-    IntlNumberFormat* nf = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
-
-    // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
-    // https://bugs.webkit.org/show_bug.cgi?id=153679
-    if (!nf) {
-        JSValue value = callFrame->thisValue().get(globalObject, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        nf = jsDynamicCast<IntlNumberFormat*>(vm, value);
-    }
-
-    if (!nf)
+    auto* nf = IntlNumberFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
+    if (UNLIKELY(!nf))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s));
-    
+
     JSBoundFunction* boundFormat = nf->boundFormat();
     // 2. If nf.[[boundFormat]] is undefined,
     if (!boundFormat) {
@@ -152,8 +143,9 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(JSGlobal
     // Intl.NumberFormat.prototype.formatToParts (ECMA-402)
     // https://tc39.github.io/ecma402/#sec-intl.numberformat.prototype.formattoparts
 
-    IntlNumberFormat* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
-    if (!numberFormat)
+    // Do not use unwrapForOldFunctions.
+    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
+    if (UNLIKELY(!numberFormat))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s));
 
     double value = callFrame->argument(0).toNumber(globalObject);
@@ -168,17 +160,9 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(JSGlob
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 11.3.5 Intl.NumberFormat.prototype.resolvedOptions() (ECMA-402 2.0)
-    IntlNumberFormat* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
 
-    // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
-    // https://bugs.webkit.org/show_bug.cgi?id=153679
-    if (!numberFormat) {
-        JSValue value = callFrame->thisValue().get(globalObject, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, value);
-    }
-
-    if (!numberFormat)
+    auto* numberFormat = IntlNumberFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
+    if (UNLIKELY(!numberFormat))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat"_s));
 
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->resolvedOptions(globalObject)));

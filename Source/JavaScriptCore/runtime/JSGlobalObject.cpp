@@ -74,12 +74,14 @@
 #include "IntlCollator.h"
 #include "IntlCollatorPrototype.h"
 #include "IntlDateTimeFormat.h"
+#include "IntlDateTimeFormatConstructor.h"
 #include "IntlDateTimeFormatPrototype.h"
 #include "IntlDisplayNames.h"
 #include "IntlDisplayNamesPrototype.h"
 #include "IntlLocale.h"
 #include "IntlLocalePrototype.h"
 #include "IntlNumberFormat.h"
+#include "IntlNumberFormatConstructor.h"
 #include "IntlNumberFormatPrototype.h"
 #include "IntlObject.h"
 #include "IntlPluralRules.h"
@@ -998,12 +1000,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             IntlCollatorPrototype* collatorPrototype = IntlCollatorPrototype::create(init.vm, globalObject, IntlCollatorPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlCollator::createStructure(init.vm, globalObject, collatorPrototype));
         });
-    m_dateTimeFormatStructure.initLater(
-        [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
-            IntlDateTimeFormatPrototype* dateTimeFormatPrototype = IntlDateTimeFormatPrototype::create(init.vm, globalObject, IntlDateTimeFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-            init.set(IntlDateTimeFormat::createStructure(init.vm, globalObject, dateTimeFormatPrototype));
-        });
     m_displayNamesStructure.initLater(
         [] (const Initializer<Structure>& init) {
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
@@ -1015,12 +1011,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
             IntlLocalePrototype* localePrototype = IntlLocalePrototype::create(init.vm, IntlLocalePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlLocale::createStructure(init.vm, globalObject, localePrototype));
-        });
-    m_numberFormatStructure.initLater(
-        [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
-            IntlNumberFormatPrototype* numberFormatPrototype = IntlNumberFormatPrototype::create(init.vm, globalObject, IntlNumberFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-            init.set(IntlNumberFormat::createStructure(init.vm, globalObject, numberFormatPrototype));
         });
     m_pluralRulesStructure.initLater(
         [] (const Initializer<Structure>& init) {
@@ -1052,6 +1042,20 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             IntlSegmentsPrototype* segmentsPrototype = IntlSegmentsPrototype::create(init.vm, globalObject, IntlSegmentsPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlSegments::createStructure(init.vm, globalObject, segmentsPrototype));
         });
+
+    m_dateTimeFormatStructure.initLater(
+        [] (LazyClassStructure::Initializer& init) {
+            init.setPrototype(IntlDateTimeFormatPrototype::create(init.vm, init.global, IntlDateTimeFormatPrototype::createStructure(init.vm, init.global, init.global->objectPrototype())));
+            init.setStructure(IntlDateTimeFormat::createStructure(init.vm, init.global, init.prototype));
+            init.setConstructor(IntlDateTimeFormatConstructor::create(init.vm, IntlDateTimeFormatConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), jsCast<IntlDateTimeFormatPrototype*>(init.prototype)));
+        });
+    m_numberFormatStructure.initLater(
+        [] (LazyClassStructure::Initializer& init) {
+            init.setPrototype(IntlNumberFormatPrototype::create(init.vm, init.global, IntlNumberFormatPrototype::createStructure(init.vm, init.global, init.global->objectPrototype())));
+            init.setStructure(IntlNumberFormat::createStructure(init.vm, init.global, init.prototype));
+            init.setConstructor(IntlNumberFormatConstructor::create(init.vm, IntlNumberFormatConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), jsCast<IntlNumberFormatPrototype*>(init.prototype)));
+        });
+
     m_defaultCollator.initLater(
         [] (const Initializer<IntlCollator>& init) {
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
@@ -1883,15 +1887,15 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     thisObject->m_defaultCollator.visit(visitor);
     thisObject->m_collatorStructure.visit(visitor);
-    thisObject->m_dateTimeFormatStructure.visit(visitor);
     thisObject->m_displayNamesStructure.visit(visitor);
-    thisObject->m_numberFormatStructure.visit(visitor);
     thisObject->m_localeStructure.visit(visitor);
     thisObject->m_pluralRulesStructure.visit(visitor);
     thisObject->m_relativeTimeFormatStructure.visit(visitor);
     thisObject->m_segmentIteratorStructure.visit(visitor);
     thisObject->m_segmenterStructure.visit(visitor);
     thisObject->m_segmentsStructure.visit(visitor);
+    thisObject->m_dateTimeFormatStructure.visit(visitor);
+    thisObject->m_numberFormatStructure.visit(visitor);
 
     visitor.append(thisObject->m_nullGetterFunction);
     visitor.append(thisObject->m_nullSetterFunction);

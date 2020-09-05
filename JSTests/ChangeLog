@@ -1,3 +1,17 @@
+2020-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Align legacy Intl constructor behavior to spec
+        https://bugs.webkit.org/show_bug.cgi?id=216193
+
+        Reviewed by Darin Adler.
+
+        * stress/intl-datetimeformat.js:
+        * stress/intl-legacy-constructors.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (testLegacyConstructor):
+        * stress/intl-numberformat.js:
+
 2020-09-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Array.prototype.push should always perform [[Set]] in strict mode

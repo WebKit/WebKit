@@ -296,15 +296,15 @@ public:
 
     LazyProperty<JSGlobalObject, IntlCollator> m_defaultCollator;
     LazyProperty<JSGlobalObject, Structure> m_collatorStructure;
-    LazyProperty<JSGlobalObject, Structure> m_dateTimeFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_displayNamesStructure;
     LazyProperty<JSGlobalObject, Structure> m_localeStructure;
-    LazyProperty<JSGlobalObject, Structure> m_numberFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_pluralRulesStructure;
     LazyProperty<JSGlobalObject, Structure> m_relativeTimeFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_segmentIteratorStructure;
     LazyProperty<JSGlobalObject, Structure> m_segmenterStructure;
     LazyProperty<JSGlobalObject, Structure> m_segmentsStructure;
+    LazyClassStructure m_dateTimeFormatStructure;
+    LazyClassStructure m_numberFormatStructure;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -817,6 +817,11 @@ public:
     Structure* segmentIteratorStructure() { return m_segmentIteratorStructure.get(this); }
     Structure* segmenterStructure() { return m_segmenterStructure.get(this); }
     Structure* segmentsStructure() { return m_segmentsStructure.get(this); }
+
+    JSObject* dateTimeFormatConstructor() { return m_dateTimeFormatStructure.constructor(this); }
+    JSObject* dateTimeFormatPrototype() { return m_dateTimeFormatStructure.prototype(this); }
+    JSObject* numberFormatConstructor() { return m_numberFormatStructure.constructor(this); }
+    JSObject* numberFormatPrototype() { return m_numberFormatStructure.prototype(this); }
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;

@@ -91,6 +91,8 @@ public:
 
     static ASCIILiteral notationString(IntlNotation);
 
+    static IntlNumberFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
+
 private:
     IntlNumberFormat(VM&, Structure*);
     void finishCreation(VM&);

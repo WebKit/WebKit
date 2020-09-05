@@ -77,7 +77,6 @@ void IntlDateTimeFormatConstructor::finishCreation(VM& vm, IntlDateTimeFormatPro
     Base::finishCreation(vm, "DateTimeFormat"_s, NameAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, dateTimeFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
-    dateTimeFormatPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -111,7 +110,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(JSGlobalObject* globa
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
-    return JSValue::encode(constructIntlInstanceWithWorkaroundForLegacyIntlConstructor<IntlDateTimeFormat>(globalObject, callFrame->thisValue(), callFrame->jsCallee(), [&] (VM& vm) {
+    return JSValue::encode(constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(globalObject, callFrame->thisValue(), callFrame->jsCallee(), [&] (VM& vm) {
         // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
         // 3. ReturnIfAbrupt(dateTimeFormat).
         IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());

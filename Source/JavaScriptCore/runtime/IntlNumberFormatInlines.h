@@ -25,8 +25,9 @@
 
 #pragma once
 
+#include "BuiltinNames.h"
 #include "IntlNumberFormat.h"
-#include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "JSGlobalObject.h"
 
 namespace JSC  {
@@ -104,5 +105,11 @@ public:
 private:
     UFieldPositionIterator& m_iterator;
 };
+
+// https://tc39.es/ecma402/#sec-unwrapnumberformat
+inline IntlNumberFormat* IntlNumberFormat::unwrapForOldFunctions(JSGlobalObject* globalObject, JSValue thisValue)
+{
+    return unwrapForLegacyIntlConstructor<IntlNumberFormat>(globalObject, thisValue, globalObject->numberFormatConstructor());
+}
 
 } // namespace JSC

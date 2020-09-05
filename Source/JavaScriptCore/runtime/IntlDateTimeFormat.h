@@ -67,6 +67,8 @@ public:
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
 
+    static IntlDateTimeFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
+
 private:
     IntlDateTimeFormat(VM&, Structure*);
     void finishCreation(VM&);

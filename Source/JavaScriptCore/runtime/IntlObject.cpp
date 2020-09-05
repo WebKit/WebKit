@@ -83,7 +83,7 @@ static JSValue createDateTimeFormatConstructor(VM& vm, JSObject* object)
 {
     IntlObject* intlObject = jsCast<IntlObject*>(object);
     JSGlobalObject* globalObject = intlObject->globalObject(vm);
-    return IntlDateTimeFormatConstructor::create(vm, IntlDateTimeFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlDateTimeFormatPrototype*>(globalObject->dateTimeFormatStructure()->storedPrototypeObject()));
+    return globalObject->dateTimeFormatConstructor();
 }
 
 static JSValue createDisplayNamesConstructor(VM& vm, JSObject* object)
@@ -104,7 +104,7 @@ static JSValue createNumberFormatConstructor(VM& vm, JSObject* object)
 {
     IntlObject* intlObject = jsCast<IntlObject*>(object);
     JSGlobalObject* globalObject = intlObject->globalObject(vm);
-    return IntlNumberFormatConstructor::create(vm, IntlNumberFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlNumberFormatPrototype*>(globalObject->numberFormatStructure()->storedPrototypeObject()));
+    return globalObject->numberFormatConstructor();
 }
 
 static JSValue createPluralRulesConstructor(VM& vm, JSObject* object)

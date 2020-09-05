@@ -560,8 +560,14 @@ for (let locale of localesSample) {
     let legacy = Object.create(Intl.DateTimeFormat.prototype);
     let incompat = {};
     shouldBe(Intl.DateTimeFormat.apply(legacy), legacy);
+    legacy = Object.create(Intl.DateTimeFormat.prototype);
     shouldBe(Intl.DateTimeFormat.call(legacy, 'en-u-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '١٢/٢٥/٢٠١٥');
     shouldBe(Intl.DateTimeFormat.apply(incompat) !== incompat, true);
+    shouldThrow(() => {
+        let legacy = Object.create(Intl.DateTimeFormat.prototype);
+        Intl.DateTimeFormat.call(legacy);
+        Intl.DateTimeFormat.call(legacy, 'en-u-nu-arab');
+    }, TypeError);
 }
 
 // ECMA-402 4th edition 15.4 Intl.DateTimeFormat.prototype.formatToParts

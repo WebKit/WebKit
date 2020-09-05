@@ -443,8 +443,14 @@ shouldThrow(() => Intl.NumberFormat.prototype.resolvedOptions.call(5), TypeError
     let legacy = Object.create(Intl.NumberFormat.prototype);
     let incompat = {};
     shouldBe(Intl.NumberFormat.apply(legacy), legacy);
+    legacy = Object.create(Intl.NumberFormat.prototype);
     shouldBe(Intl.NumberFormat.call(legacy, 'en-u-nu-arab').format(1.2345), '١٫٢٣٥');
     shouldBe(Intl.NumberFormat.apply(incompat) !== incompat, true);
+    shouldThrow(() => {
+        let legacy = Object.create(Intl.NumberFormat.prototype);
+        Intl.NumberFormat.call(legacy);
+        Intl.NumberFormat.call(legacy, 'en-u-nu-arab');
+    }, TypeError);
 }
 
 // BigInt tests

@@ -1,3 +1,59 @@
+2020-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Align legacy Intl constructor behavior to spec
+        https://bugs.webkit.org/show_bug.cgi?id=216193
+
+        Reviewed by Darin Adler.
+
+        Legacy Intl constructors (Intl.DateTimeFormat and Intl.NumberFormat) have special handling when it is called via `Intl.DateTimeFormat()` form.
+        This allowed legacy Intl constructors to be used with prototype-based inheritance without using class syntax. This legacy behavior is later specified
+        explicitly in the spec. So we should align our implementation to the spec's one.
+
+            1. When defining fallback formats, we need to put them into the property which is visible via Symbol("IntlLegacyConstructedSymbol").
+            2. Even if the provided thisValue is IntlDateTimeFormat* / IntlNumberFormat*, we should create another instance and put it to Symbol("IntlLegacyConstructedSymbol") field.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.cpp:
+        (JSC::BuiltinNames::BuiltinNames):
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::intlLegacyConstructedSymbol const):
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::finishCreation):
+        (JSC::callIntlDateTimeFormat):
+        * runtime/IntlDateTimeFormatInlines.h: Added.
+        (JSC::IntlDateTimeFormat::unwrapForOldFunctions):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatToParts):
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatRange):
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::finishCreation):
+        (JSC::callIntlNumberFormat):
+        * runtime/IntlNumberFormatInlines.h:
+        (JSC::IntlNumberFormat::unwrapForOldFunctions):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        (JSC::IntlNumberFormatPrototypeFuncFormatToParts):
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::createDateTimeFormatConstructor):
+        (JSC::createNumberFormatConstructor):
+        * runtime/IntlObjectInlines.h:
+        (JSC::constructIntlInstanceWithWorkaroundForLegacyIntlConstructor):
+        (JSC::unwrapForLegacyIntlConstructor):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::dateTimeFormatConstructor):
+        (JSC::JSGlobalObject::dateTimeFormatPrototype):
+        (JSC::JSGlobalObject::numberFormatConstructor):
+        (JSC::JSGlobalObject::numberFormatPrototype):
+
 2020-09-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Array.prototype.push should always perform [[Set]] in strict mode
