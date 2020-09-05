@@ -1316,15 +1316,13 @@ PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
             m_cachedPeriodicWaveTriangle = PeriodicWave::createTriangle(sampleRate());
         return *m_cachedPeriodicWaveTriangle;
     case OscillatorType::Custom:
-        ASSERT_NOT_REACHED();
-#ifdef NDEBUG
-        FALLTHROUGH;
-#endif
+        RELEASE_ASSERT_NOT_REACHED();
     case OscillatorType::Sine:
         if (!m_cachedPeriodicWaveSine)
             m_cachedPeriodicWaveSine = PeriodicWave::createSine(sampleRate());
         return *m_cachedPeriodicWaveSine;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 #if !RELEASE_LOG_DISABLED

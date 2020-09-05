@@ -1,3 +1,13 @@
+2020-09-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wreturn-type warning in BaseAudioContext.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=216215
+
+        Reviewed by Darin Adler.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::periodicWave):
+
 2020-09-05  Darin Adler  <darin@apple.com>
 
         CSS revert should serialize as "revert", not "Revert"
