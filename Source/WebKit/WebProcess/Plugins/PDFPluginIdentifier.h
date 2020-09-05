@@ -23,20 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUIDelegatePrivate.h>
+#pragma once
 
-@interface TestUIDelegate : NSObject <WKUIDelegate>
+#include <wtf/ObjectIdentifier.h>
 
-@property (nonatomic, copy) void (^runJavaScriptAlertPanelWithMessage)(WKWebView *, NSString *, WKFrameInfo *, void (^)(void));
-#if PLATFORM(MAC)
-@property (nonatomic, copy) void (^getContextMenuFromProposedMenu)(NSMenu *, _WKContextMenuElementInfo *, id <NSSecureCoding>, void (^)(NSMenu *));
+namespace WebKit {
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+enum PDFPluginIdentifierType { };
+using PDFPluginIdentifier = ObjectIdentifier<PDFPluginIdentifierType>;
 #endif
-@property (nonatomic, copy) void (^saveDataToFile)(WKWebView *, NSData *, NSString *, NSString *, NSURL *);
 
-- (NSString *)waitForAlert;
-
-@end
-
-@interface WKWebView (TestUIDelegateExtras)
-- (NSString *)_test_waitForAlert;
-@end
+}

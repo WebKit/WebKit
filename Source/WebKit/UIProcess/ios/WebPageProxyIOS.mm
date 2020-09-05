@@ -1088,16 +1088,6 @@ void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& diction
     pageClient().didPerformDictionaryLookup(dictionaryPopupInfo);
 }
 
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)
-{
-    notImplemented();
-}
-
-void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(FrameInfoData&&, const String&)
-{
-    notImplemented();
-}
-
 void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 {
     pageClient().setRemoteLayerTreeRootNode(rootNode);

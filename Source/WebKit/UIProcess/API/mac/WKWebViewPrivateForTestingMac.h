@@ -50,6 +50,7 @@
 
 - (void)_setHeaderBannerHeight:(int)height;
 - (void)_setFooterBannerHeight:(int)height;
+- (NSSet<NSView *> *)_pdfHUDs;
 
 @end
 

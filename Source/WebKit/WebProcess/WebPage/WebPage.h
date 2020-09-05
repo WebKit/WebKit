@@ -45,6 +45,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "OptionalCallbackID.h"
+#include "PDFPluginIdentifier.h"
 #include "Plugin.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
@@ -344,6 +345,16 @@ public:
     bool scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity);
 
     void centerSelectionInVisibleArea();
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    void createPDFHUD(PDFPlugin&, const WebCore::IntRect&);
+    void updatePDFHUDLocation(PDFPlugin&, const WebCore::IntRect&);
+    void removePDFHUD(PDFPlugin&);
+    void zoomPDFIn(PDFPluginIdentifier);
+    void zoomPDFOut(PDFPluginIdentifier);
+    void savePDF(PDFPluginIdentifier, CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&);
+    void openPDFWithPreview(PDFPluginIdentifier, CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&);
+#endif
 
 #if PLATFORM(COCOA)
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
@@ -1073,9 +1084,8 @@ public:
     NSDictionary *dataDetectionContext() const { return m_dataDetectionContext.get(); }
 #endif
 
+#if ENABLE(PDFKIT_PLUGIN) && !ENABLE(UI_PROCESS_PDF_HUD)
     void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const URL& originatingURL, const uint8_t* data, unsigned long size);
-
-#if PLATFORM(COCOA)
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&&, const uint8_t* data, unsigned long size, const String& pdfUUID);
 #endif
 
@@ -1789,6 +1799,10 @@ private:
     bool m_useFixedLayout { false };
 
     WebCore::Color m_underlayColor;
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    HashMap<PDFPluginIdentifier, WeakPtr<PDFPlugin>> m_pdfPlugInsWithHUD;
+#endif
 
     bool m_isInRedo { false };
     bool m_isClosed { false };

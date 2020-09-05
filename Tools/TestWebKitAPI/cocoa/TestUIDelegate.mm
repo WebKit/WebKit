@@ -50,6 +50,12 @@
 }
 #endif // PLATFORM(MAC)
 
+- (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url
+{
+    if (_saveDataToFile)
+        _saveDataToFile(webView, data, suggestedFilename, mimeType, url);
+}
+
 - (NSString *)waitForAlert
 {
     EXPECT_FALSE(self.runJavaScriptAlertPanelWithMessage);

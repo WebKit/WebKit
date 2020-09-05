@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebViewPrivate.h"
-
+#import "PDFPluginIdentifier.h"
 #import "SameDocumentNavigationType.h"
 #import "WKShareSheet.h"
 #import "WKWebViewConfiguration.h"
+#import "WKWebViewPrivate.h"
 #import "_WKAttachmentInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <wtf/CompletionHandler.h>
@@ -133,7 +133,7 @@ class ViewGestureController;
     // Only used with UI-side compositing.
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
-#endif
+#endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<WKScrollView> _scrollView;

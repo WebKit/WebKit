@@ -28,6 +28,7 @@
 #if ENABLE(PDFKIT_PLUGIN)
 
 #include "PDFKitImports.h"
+#include "PDFPluginIdentifier.h"
 #include "Plugin.h"
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"
@@ -50,6 +51,7 @@ typedef const struct OpaqueJSValue* JSValueRef;
 OBJC_CLASS NSArray;
 OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSData;
+OBJC_CLASS NSEvent;
 OBJC_CLASS NSString;
 OBJC_CLASS PDFAnnotation;
 OBJC_CLASS PDFLayerController;
@@ -77,8 +79,9 @@ class PDFPluginAnnotation;
 class PDFPluginPasswordField;
 class PluginView;
 class WebFrame;
+struct FrameInfoData;
 
-class PDFPlugin final : public Plugin, private WebCore::ScrollableArea
+class PDFPlugin final : public Plugin, public WebCore::ScrollableArea
 #if HAVE(INCREMENTAL_PDF_APIS)
     , private WebCore::NetscapePlugInStreamLoaderClient
 #endif
@@ -103,9 +106,19 @@ public:
     void notifySelectionChanged(PDFSelection *);
     void notifyCursorChanged(uint64_t /* PDFLayerControllerCursorType */);
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    void zoomIn();
+    void zoomOut();
+    void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&);
+    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&);
+    PDFPluginIdentifier identifier() const { return m_identifier; }
+#endif
+
     void clickedLink(NSURL *);
+#if !ENABLE(UI_PROCESS_PDF_HUD)
     void saveToPDF();
     void openWithNativeApplication();
+#endif
     void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
     void performWebSearch(NSString *);
@@ -118,7 +131,10 @@ public:
 
     WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
     WebCore::IntPoint convertFromRootViewToPDFView(const WebCore::IntPoint&) const;
+    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
+    WebCore::IntRect convertFromPDFViewToRootView(const WebCore::IntRect&) const;
     WebCore::IntRect boundsOnScreen() const;
+    WebCore::IntRect frameForHUD() const;
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
 
@@ -159,7 +175,7 @@ private:
     bool wantsWheelEvents() final { return true; }
     void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) final;
     void contentsScaleFactorChanged(float) final;
-    void visibilityDidChange(bool) final { }
+    void visibilityDidChange(bool) final;
     void frameDidFinishLoading(uint64_t requestID) final;
     void frameDidFail(uint64_t requestID, bool wasCancelled) final;
     void didEvaluateJavaScript(uint64_t requestID, const String& result) final;
@@ -263,7 +279,6 @@ private:
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
     WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
     
     bool supportsForms();
     bool isFullFramePlugin() const;
@@ -403,6 +418,9 @@ private:
 #endif
 
 #endif // HAVE(INCREMENTAL_PDF_APIS)
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    PDFPluginIdentifier m_identifier;
+#endif
 };
 
 } // namespace WebKit

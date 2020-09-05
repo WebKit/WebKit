@@ -40,6 +40,7 @@
 #include "LayerTreeContext.h"
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
+#include "PDFPluginIdentifier.h"
 #include "PageLoadState.h"
 #include "PluginProcessAttributes.h"
 #include "PolicyDecision.h"
@@ -1317,9 +1318,11 @@ public:
 
     void saveDataToFileInDownloadsFolder(String&& suggestedFilename, String&& mimeType, URL&& originatingURL, API::Data&);
     void savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, const IPC::DataReference&);
-#if PLATFORM(COCOA)
+#if ENABLE(PDFKIT_PLUGIN)
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&&, const IPC::DataReference&, const String& pdfUUID);
+#if !ENABLE(UI_PROCESS_PDF_HUD)
     void openPDFFromTemporaryFolderWithNativeApplication(FrameInfoData&&, const String& pdfUUID);
+#endif
 #endif
 
 #if ENABLE(PDFKIT_PLUGIN)
@@ -1807,6 +1810,16 @@ public:
 
     bool canUseCredentialStorage() { return m_canUseCredentialStorage; }
     void setCanUseCredentialStorage(bool);
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&);
+    void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&);
+    void removePDFHUD(PDFPluginIdentifier);
+    void pdfZoomIn(PDFPluginIdentifier);
+    void pdfZoomOut(PDFPluginIdentifier);
+    void pdfSaveToPDF(PDFPluginIdentifier);
+    void pdfOpenWithPreview(PDFPluginIdentifier);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

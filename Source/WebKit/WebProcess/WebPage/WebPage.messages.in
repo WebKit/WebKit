@@ -575,6 +575,13 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetDefersLoading(bool defersLoading)
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    ZoomPDFIn(WebKit::PDFPluginIdentifier identifier)
+    ZoomPDFOut(WebKit::PDFPluginIdentifier identifier)
+    SavePDF(WebKit::PDFPluginIdentifier identifier) -> (String filename, URL url, IPC::DataReference data) Async
+    OpenPDFWithPreview(WebKit::PDFPluginIdentifier identifier) -> (String filename, struct WebKit::FrameInfoData frameInfo, IPC::DataReference data, String uuid) Async
+#endif
+
     UpdateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
     SimulateDeviceOrientationChange(double alpha, double beta, double gamma)
 

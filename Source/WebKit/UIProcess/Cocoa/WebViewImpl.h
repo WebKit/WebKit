@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#include "PDFPluginIdentifier.h"
 #include "PluginComplexTextInputState.h"
 #include "ShareableBitmap.h"
 #include "WKLayoutMode.h"
@@ -75,6 +76,10 @@ OBJC_CLASS NSPopoverTouchBarItem;
 OBJC_CLASS WKTextTouchBarItemController;
 OBJC_CLASS WebPlaybackControlsManager;
 #endif // HAVE(TOUCH_BAR)
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+OBJC_CLASS WKPDFHUDView;
+#endif
 
 namespace API {
 class HitTestResult;
@@ -189,6 +194,14 @@ public:
 
     void viewWillStartLiveResize();
     void viewDidEndLiveResize();
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&);
+    void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&);
+    void removePDFHUD(PDFPluginIdentifier);
+    void removeAllPDFHUDs();
+    NSSet *pdfHUDs();
+#endif
 
     void renewGState();
     void setFrameSize(CGSize);
@@ -729,7 +742,11 @@ private:
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
 #endif
-    
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    HashMap<WebKit::PDFPluginIdentifier, RetainPtr<WKPDFHUDView>> _pdfHUDViews;
+#endif
+
     RetainPtr<WKShareSheet> _shareSheet;
 
     RetainPtr<WKWindowVisibilityObserver> m_windowVisibilityObserver;

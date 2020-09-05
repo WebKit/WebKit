@@ -1,3 +1,96 @@
+2020-09-04  Alex Christensen  <achristensen@webkit.org>
+
+        Move PDF heads-up display to UI process on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=215780
+        <rdar://problem/58715847>
+
+        Reviewed by Tim Horton.
+
+        This has many benefits including the one in the radar, testability, and moving WebKit-specific code from PDFKit to WebKit.
+
+        Now that the HUD is displayed in the UI process instead of in the web content, zooming in keeps the HUD the same size.
+        A 3d-transformed iframe with a PDF in it now shows the HUD in the place you can click on it, instead of in the transformed PDF.
+        Also, moving the mouse to the HUD within the first 3 seconds prevents it from hiding, which it does when the mouse leaves the HUD.
+        The rest of the behavior I think should be the same.  Most users should not notice any difference.
+
+        Functionality covered by API tests, the first tests for PDF content interaction!
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _createPDFHUD:rect:]):
+        (-[WKView _pdfHUD:changedLocation:]):
+        (-[WKView _removePDFHUD:]):
+        (-[WKView _removeAllPDFHUDs]):
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView mouseMoved:]):
+        (-[WKWebView mouseDown:]):
+        (-[WKWebView mouseUp:]):
+        (-[WKWebView _createPDFHUD:rect:]):
+        (-[WKWebView _pdfHUD:changedLocation:]):
+        (-[WKWebView _removePDFHUD:]):
+        (-[WKWebView _removeAllPDFHUDs]):
+        * UIProcess/API/mac/WKWebViewPrivateForTestingMac.h:
+        * UIProcess/API/mac/WKWebViewTestingMac.mm:
+        (-[WKWebView pdfHUDs]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::createPDFHUD):
+        (WebKit::WebViewImpl::updatePDFHUDLocation):
+        (WebKit::WebViewImpl::removePDFHUD):
+        (WebKit::WebViewImpl::removeAllPDFHUDs):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::processDidTerminate):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication): Deleted.
+        (WebKit::WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication): Deleted.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::createPDFHUD):
+        (WebKit::PageClientImpl::updatePDFHUDLocation):
+        (WebKit::PageClientImpl::removePDFHUD):
+        (WebKit::PageClientImpl::removeAllPDFHUDs):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication):
+        (WebKit::WebPageProxy::createPDFHUD):
+        (WebKit::WebPageProxy::removePDFHUD):
+        (WebKit::WebPageProxy::updatePDFHUDLocation):
+        (WebKit::WebPageProxy::pdfZoomIn):
+        (WebKit::WebPageProxy::pdfZoomOut):
+        (WebKit::WebPageProxy::pdfSaveToPDF):
+        (WebKit::WebPageProxy::pdfOpenWithPreview):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate openWithNativeApplication]):
+        (-[WKPDFLayerControllerDelegate saveToPDF]):
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::~PDFPlugin):
+        (WebKit::PDFPlugin::frameForHUD const):
+        (WebKit::PDFPlugin::calculateSizes):
+        (WebKit::PDFPlugin::convertFromPDFViewToRootView const):
+        (WebKit::PDFPlugin::visibilityDidChange):
+        (WebKit::PDFPlugin::zoomIn):
+        (WebKit::PDFPlugin::zoomOut):
+        (WebKit::PDFPlugin::save):
+        (WebKit::PDFPlugin::openWithPreview):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::zoomPDFIn):
+        (WebKit::WebPage::zoomPDFOut):
+        (WebKit::WebPage::savePDF):
+        (WebKit::WebPage::openPDFWithPreview):
+        (WebKit::WebPage::createPDFHUD):
+        (WebKit::WebPage::updatePDFHUDLocation):
+        (WebKit::WebPage::removePDFHUD):
+
 2020-09-04  Chris Dumez  <cdumez@apple.com>
 
         handleXPCEndpointMessages does not check XPC object is an xpc_endpoint_t

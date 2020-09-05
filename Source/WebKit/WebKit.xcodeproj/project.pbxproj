@@ -1786,6 +1786,7 @@
 		D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */; };
 		DF462E0F23F22F5500EFF35F /* WKHTTPCookieStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF462E0E23F22F5300EFF35F /* WKHTTPCookieStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF462E1223F338BE00EFF35F /* WKContentWorldPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF462E1123F338AD00EFF35F /* WKContentWorldPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF84CEE4249AA24D009096F6 /* WKPDFHUDView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF84CEE2249AA21F009096F6 /* WKPDFHUDView.mm */; };
 		E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E105FE5318D7B9DE008F57A8 /* EditingRange.h */; };
 		E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
 		E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */; };
@@ -5264,6 +5265,9 @@
 		DF462E1123F338AD00EFF35F /* WKContentWorldPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentWorldPrivate.h; sourceTree = "<group>"; };
 		DF58C6311371AC5800F9A37C /* NativeWebWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebWheelEvent.h; sourceTree = "<group>"; };
 		DF58C6351371ACA000F9A37C /* NativeWebWheelEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebWheelEventMac.mm; sourceTree = "<group>"; };
+		DF74275C24F4955000F8ABE9 /* PDFPluginIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPluginIdentifier.h; sourceTree = "<group>"; };
+		DF84CEE2249AA21F009096F6 /* WKPDFHUDView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFHUDView.mm; path = PDF/WKPDFHUDView.mm; sourceTree = "<group>"; };
+		DF84CEE3249AA21F009096F6 /* WKPDFHUDView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFHUDView.h; path = PDF/WKPDFHUDView.h; sourceTree = "<group>"; };
 		E105FE5318D7B9DE008F57A8 /* EditingRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingRange.h; sourceTree = "<group>"; };
 		E115C715190F8A2500ECC516 /* com.apple.WebKit.Storage.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebKit.Storage.sb; path = DerivedSources/WebKit2/com.apple.WebKit.Storage.sb; sourceTree = BUILT_PRODUCTS_DIR; };
 		E133FD891423DD7F00FC7BFB /* WebKit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = WebKit.icns; path = Resources/WebKit.icns; sourceTree = "<group>"; };
@@ -5885,6 +5889,7 @@
 			children = (
 				1A6FB90811E66FB100DB1371 /* Netscape */,
 				E199875B142BF9CF00BB2DE7 /* PDF */,
+				DF74275C24F4955000F8ABE9 /* PDFPluginIdentifier.h */,
 				1A6FB7D011E651E200DB1371 /* Plugin.cpp */,
 				1A6FB7D111E651E200DB1371 /* Plugin.h */,
 				1AA56F2811E92BC80061B882 /* PluginController.h */,
@@ -8938,6 +8943,7 @@
 				CD4570D82444CA1700A3DCEB /* Media */,
 				510CC7E716138E7200D03ED3 /* Network */,
 				31A2EC401489973700810D71 /* Notifications */,
+				DF84CEE1249AA200009096F6 /* PDF */,
 				1AEFCC0511D01F34008219D3 /* Plugins */,
 				2D1551A91F5A9B420006E3FE /* RemoteLayerTree */,
 				1AAF089E192681AC00B6390C /* UserContent */,
@@ -10423,6 +10429,15 @@
 				CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		DF84CEE1249AA200009096F6 /* PDF */ = {
+			isa = PBXGroup;
+			children = (
+				DF84CEE3249AA21F009096F6 /* WKPDFHUDView.h */,
+				DF84CEE2249AA21F009096F6 /* WKPDFHUDView.mm */,
+			);
+			name = PDF;
 			sourceTree = "<group>";
 		};
 		E170876D16D6CA7200F99226 /* FileAPI */ = {
@@ -13112,6 +13127,7 @@
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
 				4657D88A22664A2F005DE823 /* WKOrientationAccessAlert.mm in Sources */,
+				DF84CEE4249AA24D009096F6 /* WKPDFHUDView.mm in Sources */,
 				5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,

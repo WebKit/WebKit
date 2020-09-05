@@ -87,6 +87,12 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 
 - (void)snapshotInContext:(CGContextRef)context;
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+- (void)setDisplaysPDFHUDController:(BOOL)displaysController;
+- (void)zoomIn:(id)atPoint;
+- (void)zoomOut:(id)atPoint;
+#endif
+
 - (void)magnifyWithMagnification:(CGFloat)magnification atPoint:(CGPoint)point immediately:(BOOL)immediately;
 
 - (CGPoint)scrollPosition;

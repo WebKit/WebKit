@@ -4765,15 +4765,14 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
             m_pluginScaleFactor = 1;
             m_mainFramePluginHandlesPageScaleGesture = false;
         }
-    }
-
 #if ENABLE(POINTER_LOCK)
-    if (frame->isMainFrame())
         requestPointerUnlock();
 #endif
-
-    if (frame->isMainFrame())
         pageClient().setMouseEventPolicy(mouseEventPolicy);
+#if ENABLE(UI_PROCESS_PDF_HUD)
+        pageClient().removeAllPDFHUDs();
+#endif
+    }
 
     m_pageLoadState.commitChanges();
     if (m_loaderClient)
@@ -7446,6 +7445,9 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
 
     resetStateAfterProcessExited(reason);
     stopAllURLSchemeTasks(m_process.ptr());
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    pageClient().removeAllPDFHUDs();
+#endif
 
     // For bringup of process swapping, NavigationSwap termination will not go out to clients.
     // If it does *during* process swapping, and the client triggers a reload, that causes bizarre WebKit re-entry.

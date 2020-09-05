@@ -33,6 +33,7 @@
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "FontInfo.h"
+#import "FrameInfoData.h"
 #import "InjectedBundleHitTestResult.h"
 #import "PDFKitImports.h"
 #import "PDFPlugin.h"
@@ -1051,7 +1052,62 @@ void WebPage::setAccentColor(WebCore::Color color)
     [NSApp _setAccentColor:color.isValid() ? WebCore::nsColor(color) : nil];
 }
 
-#endif
+#endif // HAVE(APP_ACCENT_COLORS)
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+
+void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)
+{
+    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    if (!pdfPlugin)
+        return;
+    pdfPlugin->zoomIn();
+}
+
+void WebPage::zoomPDFOut(PDFPluginIdentifier identifier)
+{
+    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    if (!pdfPlugin)
+        return;
+    pdfPlugin->zoomOut();
+}
+
+void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&& completionHandler)
+{
+    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    if (!pdfPlugin)
+        return completionHandler({ }, { }, { });
+    pdfPlugin->save(WTFMove(completionHandler));
+}
+
+void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&& completionHandler)
+{
+    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    if (!pdfPlugin)
+        return completionHandler({ }, { }, { }, { });
+    pdfPlugin->openWithPreview(WTFMove(completionHandler));
+}
+
+void WebPage::createPDFHUD(PDFPlugin& plugin, const IntRect& boundingBox)
+{
+    auto addResult = m_pdfPlugInsWithHUD.add(plugin.identifier(), makeWeakPtr(plugin));
+    if (addResult.isNewEntry)
+        send(Messages::WebPageProxy::CreatePDFHUD(plugin.identifier(), boundingBox));
+}
+
+void WebPage::updatePDFHUDLocation(PDFPlugin& plugin, const IntRect& boundingBox)
+{
+    if (m_pdfPlugInsWithHUD.contains(plugin.identifier()))
+        send(Messages::WebPageProxy::UpdatePDFHUDLocation(plugin.identifier(), boundingBox));
+}
+
+void WebPage::removePDFHUD(PDFPlugin& plugin)
+{
+    if (m_pdfPlugInsWithHUD.remove(plugin.identifier()))
+        send(Messages::WebPageProxy::RemovePDFHUD(plugin.identifier()));
+}
+
+#endif // ENABLE(UI_PROCESS_PDF_HUD)
 
 } // namespace WebKit
 

@@ -103,6 +103,15 @@
     _page->setFooterBannerHeightForTesting(height);
 }
 
+- (NSSet<NSView *> *)_pdfHUDs
+{
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    return _impl->pdfHUDs();
+#else
+    return nil;
+#endif
+}
+
 - (NSMenu *)_activeMenu
 {
     // FIXME: Only the DOM paste access menu is supported for now. In the future, it could be

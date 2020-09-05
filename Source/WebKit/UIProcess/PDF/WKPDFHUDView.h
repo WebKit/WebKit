@@ -23,20 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUIDelegatePrivate.h>
+#if ENABLE(UI_PROCESS_PDF_HUD)
 
-@interface TestUIDelegate : NSObject <WKUIDelegate>
+#import "PDFPluginIdentifier.h"
 
-@property (nonatomic, copy) void (^runJavaScriptAlertPanelWithMessage)(WKWebView *, NSString *, WKFrameInfo *, void (^)(void));
-#if PLATFORM(MAC)
-@property (nonatomic, copy) void (^getContextMenuFromProposedMenu)(NSMenu *, _WKContextMenuElementInfo *, id <NSSecureCoding>, void (^)(NSMenu *));
-#endif
-@property (nonatomic, copy) void (^saveDataToFile)(WKWebView *, NSData *, NSString *, NSString *, NSURL *);
+namespace WebKit {
+class WebPageProxy;
+}
 
-- (NSString *)waitForAlert;
+@interface WKPDFHUDView : NSView
+
+- (instancetype)initWithFrame:(NSRect)frame pluginIdentifier:(WebKit::PDFPluginIdentifier)pluginIdentifier page:(WebKit::WebPageProxy&)page;
+- (void)setFrame:(NSRect)frame;
+- (void)mouseMoved:(NSEvent *)event;
+- (void)mouseDown:(NSEvent *)event;
+- (void)mouseUp:(NSEvent *)event;
+- (void)setDeviceScaleFactor:(CGFloat)deviceScaleFactor;
 
 @end
 
-@interface WKWebView (TestUIDelegateExtras)
-- (NSString *)_test_waitForAlert;
-@end
+#endif // ENABLE(UI_PROCESS_PDF_HUD)

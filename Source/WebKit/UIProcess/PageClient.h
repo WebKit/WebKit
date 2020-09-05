@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayerTreeContext.h"
+#include "PDFPluginIdentifier.h"
 #include "SameDocumentNavigationType.h"
 #include "ShareableBitmap.h"
 #include "WebColorPicker.h"
@@ -241,6 +242,13 @@ public:
     virtual void didFailProvisionalLoadForMainFrame() { };
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) = 0;
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    virtual void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&) = 0;
+    virtual void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&) = 0;
+    virtual void removePDFHUD(PDFPluginIdentifier) = 0;
+    virtual void removeAllPDFHUDs() = 0;
+#endif
+    
     virtual void handleDownloadRequest(DownloadProxy&) = 0;
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }

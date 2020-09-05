@@ -349,6 +349,30 @@ void PageClientImpl::registerInsertionUndoGrouping()
     registerInsertionUndoGroupingWithUndoManager([m_view undoManager]);
 }
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+
+void PageClientImpl::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
+{
+    m_impl->createPDFHUD(identifier, rect);
+}
+
+void PageClientImpl::updatePDFHUDLocation(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
+{
+    m_impl->updatePDFHUDLocation(identifier, rect);
+}
+
+void PageClientImpl::removePDFHUD(PDFPluginIdentifier identifier)
+{
+    m_impl->removePDFHUD(identifier);
+}
+
+void PageClientImpl::removeAllPDFHUDs()
+{
+    m_impl->removeAllPDFHUDs();
+}
+
+#endif // ENABLE(UI_PROCESS_PDF_HUD)
+
 void PageClientImpl::clearAllEditCommands()
 {
     m_impl->clearAllEditCommands();

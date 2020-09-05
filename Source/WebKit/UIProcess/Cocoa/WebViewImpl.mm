@@ -62,6 +62,7 @@
 #import "WKErrorInternal.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
+#import "WKPDFHUDView.h"
 #import "WKPrintingView.h"
 #import "WKSafeBrowsingWarning.h"
 #import "WKShareSheet.h"
@@ -1718,6 +1719,45 @@ void WebViewImpl::viewDidEndLiveResize()
     [m_layoutStrategy didEndLiveResize];
 }
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+
+void WebViewImpl::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
+{
+    removePDFHUD(identifier);
+    auto hud = adoptNS([[WKPDFHUDView alloc] initWithFrame:rect pluginIdentifier:identifier page:m_page.get()]);
+    [m_view addSubview:hud.get()];
+    _pdfHUDViews.add(identifier, WTFMove(hud));
+}
+
+void WebViewImpl::updatePDFHUDLocation(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
+{
+    if (auto hud = _pdfHUDViews.get(identifier))
+        [hud setFrame:rect];
+}
+
+void WebViewImpl::removePDFHUD(PDFPluginIdentifier identifier)
+{
+    if (auto hud = _pdfHUDViews.take(identifier))
+        [hud removeFromSuperview];
+}
+
+void WebViewImpl::removeAllPDFHUDs()
+{
+    for (auto& hud : _pdfHUDViews.values())
+        [hud removeFromSuperview];
+    _pdfHUDViews.clear();
+}
+
+NSSet *WebViewImpl::pdfHUDs()
+{
+    NSMutableSet<NSView *> *set = [NSMutableSet setWithCapacity:_pdfHUDViews.size()];
+    for (auto& hud : _pdfHUDViews.values())
+        [set addObject:hud.get()];
+    return set;
+}
+
+#endif // ENABLE(UI_PROCESS_PDF_HUD)
+
 void WebViewImpl::renewGState()
 {
     if (m_textIndicatorWindow)
@@ -2149,6 +2189,10 @@ void WebViewImpl::windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor
         return;
 
     m_page->setIntrinsicDeviceScaleFactor(newBackingScaleFactor);
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    for (auto& hud : _pdfHUDViews.values())
+        [hud setDeviceScaleFactor:newBackingScaleFactor];
+#endif
 }
 
 void WebViewImpl::windowDidChangeScreen()
@@ -5391,6 +5435,11 @@ void WebViewImpl::mouseMoved(NSEvent *event)
     if (m_ignoresNonWheelEvents)
         return;
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    for (auto& hud : _pdfHUDViews.values())
+        [hud mouseMoved:event];
+#endif
+
     // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
     if (m_view.getAutoreleased() == [m_view window].firstResponder && !NSPointInRect([m_view convertPoint:[event locationInWindow] fromView:nil], [m_view visibleRect]))
         return;
@@ -5439,6 +5488,11 @@ void WebViewImpl::mouseDown(NSEvent *event)
     if (m_ignoresNonWheelEvents)
         return;
 
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    for (auto& hud : _pdfHUDViews.values())
+        [hud mouseDown:event];
+#endif
+
     setLastMouseDownEvent(event);
     setIgnoresMouseDraggedEvents(false);
 
@@ -5449,6 +5503,11 @@ void WebViewImpl::mouseUp(NSEvent *event)
 {
     if (m_ignoresNonWheelEvents)
         return;
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    for (auto& hud : _pdfHUDViews.values())
+        [hud mouseUp:event];
+#endif
 
     setLastMouseDownEvent(nil);
     mouseUpInternal(event);
