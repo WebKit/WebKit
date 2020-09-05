@@ -24,9 +24,10 @@
  */
 
 [
-    Conditional=TOUCH_EVENTS,
-    Constructor(DOMString type, optional TouchEventInit eventInitDict),
+    Conditional=TOUCH_EVENTS
 ] interface TouchEvent : UIEvent {
+    constructor(DOMString type, optional TouchEventInit eventInitDict);
+
     readonly attribute TouchList touches;
     readonly attribute TouchList targetTouches;
     readonly attribute TouchList changedTouches;

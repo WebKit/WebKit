@@ -110,6 +110,9 @@ WebDOMTestIterable.h:
 JSTestJSBuiltinConstructor.h: 
 DOMTestJSBuiltinConstructor.h: 
 WebDOMTestJSBuiltinConstructor.h: 
+JSTestLegacyFactoryFunction.h: 
+DOMTestLegacyFactoryFunction.h: 
+WebDOMTestLegacyFactoryFunction.h: 
 JSTestMapLike.h: 
 DOMTestMapLike.h: 
 WebDOMTestMapLike.h: 
@@ -122,9 +125,6 @@ WebDOMTestNamedAndIndexedSetterThrowingException.h:
 JSTestNamedAndIndexedSetterWithIdentifier.h: 
 DOMTestNamedAndIndexedSetterWithIdentifier.h: 
 WebDOMTestNamedAndIndexedSetterWithIdentifier.h: 
-JSTestNamedConstructor.h: 
-DOMTestNamedConstructor.h: 
-WebDOMTestNamedConstructor.h: 
 JSTestNamedDeleterNoIdentifier.h: 
 DOMTestNamedDeleterNoIdentifier.h: 
 WebDOMTestNamedDeleterNoIdentifier.h: 

@@ -30,7 +30,7 @@
     CustomToJSObject,
     JSCustomMarkFunction,
     SkipVTableValidation,
-    ConstructorEnabledBySetting=GenericCueAPI
+    LegacyFactoryFunctionEnabledBySetting=GenericCueAPI
 ] interface TextTrackCue : EventTarget {
     [CallWith=Document, MayThrowException] constructor(double startTime, double endTime, DocumentFragment cueNode);
 

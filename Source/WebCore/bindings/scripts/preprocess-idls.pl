@@ -312,7 +312,7 @@ sub GenerateConstructorAttributes
       next unless ($attributeName eq "Conditional" || $attributeName eq "EnabledAtRuntime" || $attributeName eq "EnabledForWorld"
         || $attributeName eq "EnabledBySetting" || $attributeName eq "SecureContext" || $attributeName eq "PrivateIdentifier"
         || $attributeName eq "PublicIdentifier" || $attributeName eq "DisabledByQuirk" || $attributeName eq "EnabledByQuirk"
-        || $attributeName eq "EnabledForContext" || $attributeName eq "CustomEnabled") || $attributeName eq "ConstructorEnabledBySetting";
+        || $attributeName eq "EnabledForContext" || $attributeName eq "CustomEnabled") || $attributeName eq "LegacyFactoryFunctionEnabledBySetting";
       my $extendedAttribute = $attributeName;
       $extendedAttribute .= "=" . $extendedAttributes->{$attributeName} unless $extendedAttributes->{$attributeName} eq "VALUE_IS_MISSING";
       push(@extendedAttributesList, $extendedAttribute);
@@ -323,14 +323,14 @@ sub GenerateConstructorAttributes
     $interfaceName = $extendedAttributes->{"InterfaceName"} if $extendedAttributes->{"InterfaceName"};
     $code .= "attribute " . $originalInterfaceName . "Constructor $interfaceName;\n";
 
-    # In addition to the regular property, for every [NamedConstructor] extended attribute on an interface,
+    # In addition to the regular property, for every [LegacyFactoryFunction] extended attribute on an interface,
     # a corresponding property MUST exist on the ECMAScript global object.
-    if ($extendedAttributes->{"NamedConstructor"}) {
-        my $constructorName = $extendedAttributes->{"NamedConstructor"};
+    if ($extendedAttributes->{"LegacyFactoryFunction"}) {
+        my $constructorName = $extendedAttributes->{"LegacyFactoryFunction"};
         $constructorName =~ s/\(.*//g; # Extract function name.
         $code .= "    ";
         $code .= "[" . join(', ', @extendedAttributesList) . "] " if @extendedAttributesList;
-        $code .= "attribute " . $originalInterfaceName . "NamedConstructor $constructorName;\n";
+        $code .= "attribute " . $originalInterfaceName . "LegacyFactoryFunctionConstructor $constructorName;\n";
     }
     
     my $windowAliasesCode;

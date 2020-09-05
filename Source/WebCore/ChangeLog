@@ -1,3 +1,62 @@
+2020-09-04  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Adopt LegacyFactoryFunction extended attribute in lieu of NamedConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=213316
+
+        Reviewed by Darin Adler.
+
+        Rename the following the extended attributes to more closely align with WebIDL:
+            NamedConstructor -> LegacyFactoryFunction
+            ConstructorCallWith -> LegacyFactoryFunctionCallWith
+            ConstructorEnabledBySetting -> LegacyFactoryFunctionEnabledBySetting
+            ConstructorMayThrowException -> LegacyFactoryFunctionMayThrowException
+
+        Note, ConstructorCallWith, ConstructorEnabledBySetting and ConstructorMayThrowException
+        were only used with NamedConstructors previously as normal constructors don't require
+        interface level extended attributes for these as the extended attribute can be directly
+        on the constructor itself. Ideally, we would do the same with LegacyFactoryFunction by
+        allowing extended attributes on the operator itself like:
+        
+        [
+            ...
+            LegacyFactoryFunction=[CallWith=Document] Audio(optional [AtomString] DOMString src)
+        ]
+
+        but this requires changes to the IDLParser (which are straightforward) and creates a lot of
+        additional complexity inside the very hacky preprocess-idls.pl reproducing those parser changes.
+        I will leave that additional cleanup for a subsequent change. 
+
+        * html/HTMLAudioElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/track/TextTrackCue.idl:
+        Update to use new names.
+
+        * bindings/js/JSDOMLegacyFactoryFunction.h: Copied from bindings/js/JSDOMNamedConstructor.h.
+        * bindings/js/JSDOMNamedConstructor.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        Update for rename of JSDOMNamedConstructor.h to JSDOMLegacyFactoryFunction.h
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/IDLParser.pm:
+        (applyExtendedAttributeList):
+        * bindings/scripts/preprocess-idls.pl:
+        (GenerateConstructorAttributes):
+        Update IDL processing to handle new names.
+        
+        * bindings/scripts/IDLAttributes.json:
+        Update extended attribute definitions for new names. Removed unused Constructor extended attribute.
+
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestLegacyFactoryFunction.cpp: Copied from bindings/scripts/test/JS/JSTestNamedConstructor.cpp.
+        * bindings/scripts/test/JS/JSTestLegacyFactoryFunction.h: Copied from bindings/scripts/test/JS/JSTestNamedConstructor.h.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h: Removed.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestLegacyFactoryFunction.idl: Copied from bindings/scripts/test/TestNamedConstructor.idl.
+        * bindings/scripts/test/TestNamedConstructor.idl: Removed.
+        Update tests for new names.
+
 2020-09-04  Chris Dumez  <cdumez@apple.com>
 
         Move lazy DisplayLink tear down logic from the WebProcess to the UIProcess

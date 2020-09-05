@@ -21,24 +21,24 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include "TestNamedConstructor.h"
+#include "TestLegacyFactoryFunction.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class JSTestNamedConstructor : public JSDOMWrapper<TestNamedConstructor> {
+class JSTestLegacyFactoryFunction : public JSDOMWrapper<TestLegacyFactoryFunction> {
 public:
-    using Base = JSDOMWrapper<TestNamedConstructor>;
-    static JSTestNamedConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedConstructor>&& impl)
+    using Base = JSDOMWrapper<TestLegacyFactoryFunction>;
+    static JSTestLegacyFactoryFunction* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyFactoryFunction>&& impl)
     {
-        JSTestNamedConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestNamedConstructor>(globalObject->vm().heap)) JSTestNamedConstructor(structure, *globalObject, WTFMove(impl));
+        JSTestLegacyFactoryFunction* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyFactoryFunction>(globalObject->vm().heap)) JSTestLegacyFactoryFunction(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
-    static TestNamedConstructor* toWrapped(JSC::VM&, JSC::JSValue);
+    static TestLegacyFactoryFunction* toWrapped(JSC::VM&, JSC::JSValue);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -49,7 +49,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSC::JSValue getNamedConstructor(JSC::VM&, JSC::JSGlobalObject*);
+    static JSC::JSValue getLegacyFactoryFunction(JSC::VM&, JSC::JSGlobalObject*);
     template<typename, JSC::SubspaceAccess mode> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
@@ -59,36 +59,36 @@ public:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestNamedConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedConstructor>&&);
+    JSTestLegacyFactoryFunction(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyFactoryFunction>&&);
 
     void finishCreation(JSC::VM&);
 };
 
-class JSTestNamedConstructorOwner : public JSC::WeakHandleOwner {
+class JSTestLegacyFactoryFunctionOwner : public JSC::WeakHandleOwner {
 public:
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedConstructor*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestLegacyFactoryFunction*)
 {
-    static NeverDestroyed<JSTestNamedConstructorOwner> owner;
+    static NeverDestroyed<JSTestLegacyFactoryFunctionOwner> owner;
     return &owner.get();
 }
 
-inline void* wrapperKey(TestNamedConstructor* wrappableObject)
+inline void* wrapperKey(TestLegacyFactoryFunction* wrappableObject)
 {
     return wrappableObject;
 }
 
-JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNamedConstructor&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedConstructor* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestNamedConstructor>&&);
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestNamedConstructor>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestLegacyFactoryFunction&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestLegacyFactoryFunction* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestLegacyFactoryFunction>&&);
+inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestLegacyFactoryFunction>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
-template<> struct JSDOMWrapperConverterTraits<TestNamedConstructor> {
-    using WrapperClass = JSTestNamedConstructor;
-    using ToWrappedReturnType = TestNamedConstructor*;
+template<> struct JSDOMWrapperConverterTraits<TestLegacyFactoryFunction> {
+    using WrapperClass = JSTestLegacyFactoryFunction;
+    using ToWrappedReturnType = TestLegacyFactoryFunction*;
 };
 
 } // namespace WebCore

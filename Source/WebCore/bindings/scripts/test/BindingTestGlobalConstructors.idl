@@ -24,12 +24,12 @@ partial interface TestGlobalObject {
     attribute TestInterfaceLeadingUnderscoreConstructor TestInterfaceLeadingUnderscore;
     attribute TestIterableConstructor TestIterable;
     attribute TestJSBuiltinConstructorConstructor TestJSBuiltinConstructor;
+    attribute TestLegacyFactoryFunctionConstructor TestLegacyFactoryFunction;
+    attribute TestLegacyFactoryFunctionLegacyFactoryFunctionConstructor Audio;
     attribute TestMapLikeConstructor TestMapLike;
     attribute TestNamedAndIndexedSetterNoIdentifierConstructor TestNamedAndIndexedSetterNoIdentifier;
     attribute TestNamedAndIndexedSetterThrowingExceptionConstructor TestNamedAndIndexedSetterThrowingException;
     attribute TestNamedAndIndexedSetterWithIdentifierConstructor TestNamedAndIndexedSetterWithIdentifier;
-    attribute TestNamedConstructorConstructor TestNamedConstructor;
-    attribute TestNamedConstructorNamedConstructor Audio;
     attribute TestNamedDeleterNoIdentifierConstructor TestNamedDeleterNoIdentifier;
     attribute TestNamedDeleterThrowingExceptionConstructor TestNamedDeleterThrowingException;
     attribute TestNamedDeleterWithIdentifierConstructor TestNamedDeleterWithIdentifier;

@@ -38,6 +38,7 @@
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSServiceWorkerGlobalScope.h"
+#include "JSTest.h"
 #include "JSTestCEReactions.h"
 #include "JSTestCEReactionsStringifier.h"
 #include "JSTestCallTracer.h"
@@ -57,12 +58,11 @@
 #include "JSTestInterfaceLeadingUnderscore.h"
 #include "JSTestIterable.h"
 #include "JSTestJSBuiltinConstructor.h"
+#include "JSTestLegacyFactoryFunction.h"
 #include "JSTestMapLike.h"
 #include "JSTestNamedAndIndexedSetterNoIdentifier.h"
 #include "JSTestNamedAndIndexedSetterThrowingException.h"
 #include "JSTestNamedAndIndexedSetterWithIdentifier.h"
-#include "JSTestNamedConstructor.h"
-#include "JSTestNamedConstructorNamed.h"
 #include "JSTestNamedDeleterNoIdentifier.h"
 #include "JSTestNamedDeleterThrowingException.h"
 #include "JSTestNamedDeleterWithIdentifier.h"
@@ -223,6 +223,10 @@ JSC::EncodedJSValue jsTestGlobalObjectTestIterableConstructor(JSC::JSGlobalObjec
 bool setJSTestGlobalObjectTestIterableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestGlobalObjectTestLegacyFactoryFunctionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestGlobalObjectTestLegacyFactoryFunctionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestGlobalObjectAudioConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestGlobalObjectAudioConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -231,10 +235,6 @@ JSC::EncodedJSValue jsTestGlobalObjectTestNamedAndIndexedSetterThrowingException
 bool setJSTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestGlobalObjectTestNamedConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestGlobalObjectTestNamedConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestGlobalObjectAudioConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestGlobalObjectAudioConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestNamedDeleterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestNamedDeleterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestNamedDeleterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -320,12 +320,12 @@ using JSTestGlobalObjectConstructor = JSDOMConstructorNotConstructable<JSTestGlo
 
 /* Hash table */
 
-static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
+static const struct CompactHashIndex JSTestGlobalObjectTableIndex[269] = {
     { -1, -1 },
     { 40, -1 },
     { -1, -1 },
     { 0, -1 },
-    { 8, 263 },
+    { 8, 264 },
     { 44, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -363,7 +363,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { 71, -1 },
-    { 13, 258 },
+    { 13, 259 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -372,7 +372,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { 38, -1 },
-    { 20, 264 },
+    { 20, 256 },
     { 10, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -391,7 +391,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 22, 265 },
+    { 22, 266 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -413,7 +413,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 24, 256 },
+    { 24, 257 },
     { -1, -1 },
     { 61, -1 },
     { 19, -1 },
@@ -435,7 +435,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 50, -1 },
     { 25, -1 },
     { -1, -1 },
-    { 2, 267 },
+    { 2, 268 },
     { 37, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -452,7 +452,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 31, -1 },
+    { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { 42, -1 },
@@ -483,8 +483,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 32, -1 },
-    { 29, 262 },
+    { 28, -1 },
+    { 31, 263 },
     { -1, -1 },
     { 5, -1 },
     { -1, -1 },
@@ -494,7 +494,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 16, 257 },
+    { 16, 258 },
     { -1, -1 },
     { 62, -1 },
     { -1, -1 },
@@ -505,7 +505,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 33, 266 },
+    { 33, 267 },
     { -1, -1 },
     { 17, -1 },
     { -1, -1 },
@@ -550,8 +550,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 48, 261 },
-    { 11, 260 },
+    { 48, 262 },
+    { 11, 261 },
     { -1, -1 },
     { 63, -1 },
     { -1, -1 },
@@ -565,7 +565,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 26, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 28, -1 },
+    { 30, -1 },
     { -1, -1 },
     { -1, -1 },
     { 45, -1 },
@@ -577,8 +577,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 27, 259 },
-    { 30, -1 },
+    { 27, 265 },
+    { 29, 260 },
+    { 32, -1 },
     { 39, -1 },
     { 41, -1 },
     { 43, -1 },
@@ -633,12 +634,12 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "TestInterfaceLeadingUnderscore", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestInterfaceLeadingUnderscoreConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestInterfaceLeadingUnderscoreConstructor) } },
     { "TestIterable", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestIterableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestIterableConstructor) } },
     { "TestJSBuiltinConstructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestJSBuiltinConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestJSBuiltinConstructorConstructor) } },
+    { "TestLegacyFactoryFunction", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestLegacyFactoryFunctionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestLegacyFactoryFunctionConstructor) } },
+    { "Audio", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectAudioConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectAudioConstructor) } },
     { "TestMapLike", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestMapLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestMapLikeConstructor) } },
     { "TestNamedAndIndexedSetterNoIdentifier", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor) } },
     { "TestNamedAndIndexedSetterThrowingException", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor) } },
     { "TestNamedAndIndexedSetterWithIdentifier", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor) } },
-    { "TestNamedConstructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedConstructorConstructor) } },
-    { "Audio", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectAudioConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectAudioConstructor) } },
     { "TestNamedDeleterNoIdentifier", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedDeleterNoIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedDeleterNoIdentifierConstructor) } },
     { "TestNamedDeleterThrowingException", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedDeleterThrowingExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedDeleterThrowingExceptionConstructor) } },
     { "TestNamedDeleterWithIdentifier", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedDeleterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedDeleterWithIdentifierConstructor) } },
@@ -1561,6 +1562,52 @@ bool setJSTestGlobalObjectTestJSBuiltinConstructorConstructor(JSGlobalObject* le
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestJSBuiltinConstructorConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestJSBuiltinConstructor");
 }
 
+static inline JSValue jsTestGlobalObjectTestLegacyFactoryFunctionConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTest::getLegacyFactoryFunction(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+EncodedJSValue jsTestGlobalObjectTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObjectTestLegacyFactoryFunctionConstructorGetter>(*lexicalGlobalObject, thisValue, "TestLegacyFactoryFunction");
+}
+
+static inline bool setJSTestGlobalObjectTestLegacyFactoryFunctionConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestLegacyFactoryFunction"), strlen("TestLegacyFactoryFunction")), value);
+}
+
+bool setJSTestGlobalObjectTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestLegacyFactoryFunctionConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestLegacyFactoryFunction");
+}
+
+static inline JSValue jsTestGlobalObjectAudioConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestLegacyFactoryFunction::getLegacyFactoryFunction(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+EncodedJSValue jsTestGlobalObjectAudioConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObjectAudioConstructorGetter>(*lexicalGlobalObject, thisValue, "Audio");
+}
+
+static inline bool setJSTestGlobalObjectAudioConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("Audio"), strlen("Audio")), value);
+}
+
+bool setJSTestGlobalObjectAudioConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectAudioConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "Audio");
+}
+
 static inline JSValue jsTestGlobalObjectTestMapLikeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
@@ -1651,52 +1698,6 @@ static inline bool setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierC
 bool setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestNamedAndIndexedSetterWithIdentifier");
-}
-
-static inline JSValue jsTestGlobalObjectTestNamedConstructorConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
-{
-    UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedConstructor::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
-}
-
-EncodedJSValue jsTestGlobalObjectTestNamedConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObjectTestNamedConstructorConstructorGetter>(*lexicalGlobalObject, thisValue, "TestNamedConstructor");
-}
-
-static inline bool setJSTestGlobalObjectTestNamedConstructorConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    // Shadowing a built-in constructor.
-    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNamedConstructor"), strlen("TestNamedConstructor")), value);
-}
-
-bool setJSTestGlobalObjectTestNamedConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestNamedConstructorConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestNamedConstructor");
-}
-
-static inline JSValue jsTestGlobalObjectAudioConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
-{
-    UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestNamedConstructorNamed::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
-}
-
-EncodedJSValue jsTestGlobalObjectAudioConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObjectAudioConstructorGetter>(*lexicalGlobalObject, thisValue, "Audio");
-}
-
-static inline bool setJSTestGlobalObjectAudioConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    // Shadowing a built-in constructor.
-    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("Audio"), strlen("Audio")), value);
-}
-
-bool setJSTestGlobalObjectAudioConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectAudioConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "Audio");
 }
 
 static inline JSValue jsTestGlobalObjectTestNamedDeleterNoIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)

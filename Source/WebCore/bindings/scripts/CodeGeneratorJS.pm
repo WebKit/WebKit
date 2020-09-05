@@ -2777,7 +2777,7 @@ sub GenerateHeader
     # Constructor object getter
     unless ($interface->extendedAttributes->{NoInterfaceObject}) {
         push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n");
-        push(@headerContent, "    static JSC::JSValue getNamedConstructor(JSC::VM&, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{NamedConstructor};
+        push(@headerContent, "    static JSC::JSValue getLegacyFactoryFunction(JSC::VM&, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{LegacyFactoryFunction};
     }
 
     # Serializer function.
@@ -3862,10 +3862,10 @@ sub GenerateRuntimeEnableConditionalString
         push(@conjuncts,  "${name}::enabledForContext(" . $contextRef . ")");
     }
 
-    if ($context->extendedAttributes->{ConstructorEnabledBySetting}) {
-        assert("Must specify value for ConstructorEnabledBySetting.") if $context->extendedAttributes->{ConstructorEnabledBySetting} eq "VALUE_IS_MISSING";
+    if ($context->extendedAttributes->{LegacyFactoryFunctionEnabledBySetting}) {
+        assert("Must specify value for LegacyFactoryFunctionEnabledBySetting.") if $context->extendedAttributes->{LegacyFactoryFunctionEnabledBySetting} eq "VALUE_IS_MISSING";
 
-        my @settings = split(/&/, $context->extendedAttributes->{ConstructorEnabledBySetting});
+        my @settings = split(/&/, $context->extendedAttributes->{LegacyFactoryFunctionEnabledBySetting});
         foreach my $setting (@settings) {
             push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settings()." . ToMethodName($setting) . "Enabled()");
         }
@@ -4256,8 +4256,8 @@ sub GenerateImplementation
         my $protoClassName = "${className}Prototype";
         GenerateConstructorDefinitions(\@implContent, $className, $protoClassName, $visibleInterfaceName, $interface);
 
-        my $namedConstructor = $interface->extendedAttributes->{NamedConstructor};
-        GenerateConstructorDefinitions(\@implContent, $className, $protoClassName, $namedConstructor, $interface, "GeneratingNamedConstructor") if $namedConstructor;
+        my $legacyFactoryFunction = $interface->extendedAttributes->{LegacyFactoryFunction};
+        GenerateConstructorDefinitions(\@implContent, $className, $protoClassName, $legacyFactoryFunction, $interface, "GeneratingLegacyFactoryFunction") if $legacyFactoryFunction;
     }
 
     # - Add functions and constants to a hashtable definition
@@ -4549,10 +4549,10 @@ sub GenerateImplementation
         push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
 
-        if ($interface->extendedAttributes->{NamedConstructor}) {
-            push(@implContent, "JSValue ${className}::getNamedConstructor(VM& vm, JSGlobalObject* globalObject)\n");
+        if ($interface->extendedAttributes->{LegacyFactoryFunction}) {
+            push(@implContent, "JSValue ${className}::getLegacyFactoryFunction(VM& vm, JSGlobalObject* globalObject)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    return getDOMConstructor<${className}NamedConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
+            push(@implContent, "    return getDOMConstructor<${className}LegacyFactoryFunction>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
             push(@implContent, "}\n\n");
         }
     }
@@ -5022,17 +5022,21 @@ sub GenerateAttributeGetterBodyDefinition
         my $eventName = EventHandlerAttributeEventName($attribute);
         push(@$outputArray, "    return $getter(thisObject.wrapped(), $eventName, worldForDOMObject(thisObject));\n");
     } elsif ($isConstructor) {
+        # FIXME: This should be switched to using an extended attribute rather than infering this information from name.
         my $constructorType = $attribute->type->name;
+        my $constructorGetter = ($constructorType =~ /LegacyFactoryFunctionConstructor$/) ? "getLegacyFactoryFunction" : "getConstructor";
+
+        # Strip off any trailing "Constructor" or "LegacyFactoryFunctionConstructor" to get the real type.
         $constructorType =~ s/Constructor$//;
+        $constructorType =~ s/LegacyFactoryFunction$//;
+
         # When Constructor attribute is used by DOMWindow.idl, it's correct to pass thisObject as the global object
         # When JSDOMWrappers have a back-pointer to the globalObject we can pass thisObject->globalObject()
         if ($interface->type->name eq "DOMWindow") {
-            my $named = ($constructorType =~ /Named$/) ? "Named" : "";
-            $constructorType =~ s/Named$//;
-            push(@$outputArray, "    return JS" . $constructorType . "::get${named}Constructor(JSC::getVM(&lexicalGlobalObject), &thisObject);\n");
+            push(@$outputArray, "    return JS" . $constructorType . "::${constructorGetter}(JSC::getVM(&lexicalGlobalObject), &thisObject);\n");
         } else {
             AddToImplIncludes("JS" . $constructorType . ".h", $conditional);
-            push(@$outputArray, "    return JS" . $constructorType . "::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());\n");
+            push(@$outputArray, "    return JS" . $constructorType . "::${constructorGetter}(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());\n");
         }
     } else {
         if ($attribute->extendedAttributes->{CachedAttribute}) {
@@ -5181,10 +5185,10 @@ sub GenerateAttributeSetterBodyDefinition
     } elsif ($isConstructor) {
         my $constructorType = $attribute->type->name;
         $constructorType =~ s/Constructor$//;
-        # $constructorType ~= /Constructor$/ indicates that it is NamedConstructor.
-        # We do not generate the header file for NamedConstructor of class XXXX,
-        # since we generate the NamedConstructor declaration into the header file of class XXXX.
-        if ($constructorType ne "any" and $constructorType !~ /Named$/) {
+        # $constructorType ~= /LegacyFactoryFunction$/ indicates that it is LegacyFactoryFunction.
+        # We do not generate the header file for LegacyFactoryFunction of class XXXX,
+        # since we generate the LegacyFactoryFunction declaration into the header file of class XXXX.
+        if ($constructorType ne "any" and $constructorType !~ /LegacyFactoryFunction$/) {
             AddToImplIncludes("JS" . $constructorType . ".h", $conditional);
         }
         my $id = $attribute->name;
@@ -5932,7 +5936,7 @@ sub GenerateParametersCheck
     } else {
         $quotedFunctionName = "nullptr";
         unless ($callWith) {
-            $callWith = $operation->extendedAttributes->{ConstructorCallWith};
+            $callWith = $operation->extendedAttributes->{LegacyFactoryFunctionCallWith};
         }
         push(@arguments, GenerateConstructorCallWithUsingPointers($callWith, \@$outputArray, $visibleInterfaceName, "*castedThis"));
     }
@@ -7413,7 +7417,7 @@ sub GetConstructorTemplateClassName
 {
     my $interface = shift;
     return "JSDOMBuiltinConstructor" if HasJSBuiltinConstructor($interface);
-    return "JSDOMConstructorNotConstructable" if $interface->extendedAttributes->{NamedConstructor};
+    return "JSDOMConstructorNotConstructable" if $interface->extendedAttributes->{LegacyFactoryFunction};
     return "JSDOMConstructorNotConstructable" unless IsConstructable($interface);
     return "JSDOMConstructor";
 }
@@ -7427,22 +7431,22 @@ sub GenerateConstructorDeclaration
     my $templateClassName = GetConstructorTemplateClassName($interface);
 
     AddToImplIncludes("${templateClassName}.h");
-    AddToImplIncludes("JSDOMNamedConstructor.h") if $interface->extendedAttributes->{NamedConstructor};
+    AddToImplIncludes("JSDOMLegacyFactoryFunction.h") if $interface->extendedAttributes->{LegacyFactoryFunction};
 
     push(@$outputArray, "using $constructorClassName = $templateClassName<$className>;\n");
-    push(@$outputArray, "using JS${interfaceName}NamedConstructor = JSDOMNamedConstructor<$className>;\n") if $interface->extendedAttributes->{NamedConstructor};
+    push(@$outputArray, "using JS${interfaceName}LegacyFactoryFunction = JSDOMLegacyFactoryFunction<$className>;\n") if $interface->extendedAttributes->{LegacyFactoryFunction};
     push(@$outputArray, "\n");
 }
 
 sub GenerateConstructorDefinitions
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor) = @_;
+    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
 
     if (IsConstructable($interface)) {
         my @constructors = @{$interface->constructors};
         if (@constructors > 1) {
             foreach my $constructor (@constructors) {
-                GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $constructor);
+                GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructor);
             }
 
             my $overloadFunctionPrefix = "construct${className}";
@@ -7457,23 +7461,23 @@ sub GenerateConstructorDefinitions
 
             push(@implContent, "}\n\n");
         } elsif (@constructors == 1) {
-            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $constructors[0]);
+            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructors[0]);
         } else {
-            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor);
+            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
         }
     }
 
-    GenerateConstructorHelperMethods($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor);
+    GenerateConstructorHelperMethods($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
 }
 
 sub GenerateConstructorDefinition
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $operation) = @_;
+    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $operation) = @_;
 
     return if HasJSBuiltinConstructor($interface);
 
     my $interfaceName = $interface->type->name;
-    my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
+    my $constructorClassName = $generatingLegacyFactoryFunction ? "${className}LegacyFactoryFunction" : "${className}Constructor";
 
     if (IsConstructable($interface)) {
         if (HasCustomConstructor($interface)) {
@@ -7482,7 +7486,7 @@ sub GenerateConstructorDefinition
             push(@$outputArray, "    ASSERT(callFrame);\n");
             push(@$outputArray, "    return construct${className}(lexicalGlobalObject, *callFrame);\n");
             push(@$outputArray, "}\n\n");
-         } elsif (!HasCustomConstructor($interface) && (!$interface->extendedAttributes->{NamedConstructor} || $generatingNamedConstructor)) {
+         } elsif (!HasCustomConstructor($interface) && (!$interface->extendedAttributes->{LegacyFactoryFunction} || $generatingLegacyFactoryFunction)) {
             my $isOverloaded = $operation->{overloads} && @{$operation->{overloads}} > 1;
             if ($isOverloaded) {
                 push(@$outputArray, "static inline EncodedJSValue construct${className}$operation->{overloadIndex}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
@@ -7506,12 +7510,12 @@ sub GenerateConstructorDefinition
 
             GenerateArgumentsCountCheck($outputArray, $operation, $interface, "    ");
 
-            my $functionImplementationName = $generatingNamedConstructor ? "createForJSConstructor" : "create";
+            my $functionImplementationName = $generatingLegacyFactoryFunction ? "createForJSConstructor" : "create";
             my $functionString = GenerateParametersCheck($outputArray, $operation, $interface, $functionImplementationName, "    ");
 
             push(@$outputArray, "    auto object = ${functionString};\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{CallWith}, "ExecState");
-            if ($interface->extendedAttributes->{ConstructorMayThrowException} || $operation->extendedAttributes->{MayThrowException}) {
+            if ($interface->extendedAttributes->{LegacyFactoryFunctionMayThrowException} || $operation->extendedAttributes->{MayThrowException}) {
                 push(@$outputArray, "    static_assert(IsExceptionOr<decltype(object)>::value);\n");
                 push(@$outputArray, "    static_assert(decltype(object)::ReturnType::isRef);\n");
             } else {
@@ -7526,12 +7530,12 @@ sub GenerateConstructorDefinition
             my @constructionConversionArguments = ();
             push(@constructionConversionArguments, "*lexicalGlobalObject");
             push(@constructionConversionArguments, "*castedThis->globalObject()");
-            push(@constructionConversionArguments, "throwScope") if $interface->extendedAttributes->{ConstructorMayThrowException} || $operation->extendedAttributes->{MayThrowException};
+            push(@constructionConversionArguments, "throwScope") if $interface->extendedAttributes->{LegacyFactoryFunctionMayThrowException} || $operation->extendedAttributes->{MayThrowException};
             push(@constructionConversionArguments, "WTFMove(object)");
 
             # FIXME: toJSNewlyCreated should return JSObject* instead of JSValue.
             push(@$outputArray, "    auto jsValue = toJSNewlyCreated<${IDLType}>(" . join(", ", @constructionConversionArguments) . ");\n");
-            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n") if $interface->extendedAttributes->{ConstructorMayThrowException} || $operation->extendedAttributes->{MayThrowException};
+            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n") if $interface->extendedAttributes->{LegacyFactoryFunctionMayThrowException} || $operation->extendedAttributes->{MayThrowException};
             push(@$outputArray, "    setSubclassStructureIfNeeded<${implType}>(lexicalGlobalObject, callFrame, asObject(jsValue));\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n");
             push(@$outputArray, "    return JSValue::encode(jsValue);\n");
@@ -7602,9 +7606,9 @@ sub GetRuntimeEnabledStaticProperties
 
 sub GenerateConstructorHelperMethods
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingNamedConstructor) = @_;
+    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
 
-    my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
+    my $constructorClassName = $generatingLegacyFactoryFunction ? "${className}LegacyFactoryFunction" : "${className}Constructor";
     my $leastConstructorLength = 0;
     if (@{$interface->constructors} > 0) {
         $leastConstructorLength = 255;
@@ -7623,7 +7627,7 @@ sub GenerateConstructorHelperMethods
 
     assert("An interface cannot inherit from another interface that is marked as [NoInterfaceObject]") if $interface->parentType && $codeGenerator->GetInterfaceExtendedAttributesFromName($interface->parentType->name)->{NoInterfaceObject};
 
-    if (!$generatingNamedConstructor and $interface->parentType) {
+    if (!$generatingLegacyFactoryFunction and $interface->parentType) {
         my $parentClassName = "JS" . $interface->parentType->name;
         push(@$outputArray, "    return ${parentClassName}::getConstructor(vm, &globalObject);\n");
     } else {
@@ -7651,7 +7655,7 @@ sub GenerateConstructorHelperMethods
     assert("jsNontrivialString() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, \"$visibleInterfaceName\"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
 
-    if ($interface->extendedAttributes->{ConstructorEnabledBySetting}) {
+    if ($interface->extendedAttributes->{LegacyFactoryFunctionEnabledBySetting}) {
         my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $interface, "&globalObject");
         push(@$outputArray, "    int constructorLength = ${leastConstructorLength};\n");
         push(@$outputArray, "    if (!${runtimeEnableConditionalString})\n");

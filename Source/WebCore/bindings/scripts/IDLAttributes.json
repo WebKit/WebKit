@@ -72,25 +72,6 @@
             "contextsAllowed": ["interface"],
             "values": ["*"]
         },
-        "Constructor": {
-            "contextsAllowed": ["interface"],
-            "standard": {
-                "url": "https://heycam.github.io/webidl/#Constructor"
-            }
-        },
-        "ConstructorCallWith": {
-            "contextsAllowed": ["interface"],
-            "values": ["Document", "ExecState", "RuntimeFlags", "ScriptExecutionContext"],
-            "supportsConjunction": true
-        },
-        "ConstructorEnabledBySetting": {
-            "contextsAllowed": ["attribute", "interface"],
-            "values": ["*"],
-            "supportsConjunction": true
-        },
-        "ConstructorMayThrowException": {
-            "contextsAllowed": ["interface"]
-        },
         "ContextAllowsMediaDevices": {
             "contextsAllowed": ["attribute"]
         },
@@ -296,6 +277,26 @@
         "LegacyCaller": {
             "contextsAllowed": ["operation"]
         },
+        "LegacyFactoryFunction": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyFactoryFunction"
+            }
+        },
+        "LegacyFactoryFunctionCallWith": {
+            "contextsAllowed": ["interface"],
+            "values": ["Document", "ExecState", "RuntimeFlags", "ScriptExecutionContext"],
+            "supportsConjunction": true
+        },
+        "LegacyFactoryFunctionEnabledBySetting": {
+            "contextsAllowed": ["attribute", "interface"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "LegacyFactoryFunctionMayThrowException": {
+            "contextsAllowed": ["interface"]
+        },
         "LegacyUnenumerableNamedProperties": {
             "contextsAllowed": ["interface"],
             "standard": {
@@ -327,13 +328,6 @@
         },
         "MayThrowException": {
             "contextsAllowed": ["attribute", "operation"]
-        },
-        "NamedConstructor": {
-            "contextsAllowed": ["interface"],
-            "values": ["*"],
-            "standard": {
-                "url": "https://heycam.github.io/webidl/#NamedConstructor"
-            }
         },
         "NewImpurePropertyFiresWatchpoints": {
             "contextsAllowed": ["interface"]

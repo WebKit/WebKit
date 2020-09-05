@@ -3278,16 +3278,16 @@ sub applyExtendedAttributeList
     my $interface = shift;
     my $extendedAttributeList = shift;
 
-    if (defined $extendedAttributeList->{"NamedConstructor"}) {
+    if (defined $extendedAttributeList->{"LegacyFactoryFunction"}) {
         my $newDataNode = IDLOperation->new();
         $newDataNode->isConstructor(1);
-        $newDataNode->name("NamedConstructor");
+        $newDataNode->name("LegacyFactoryFunction");
         $newDataNode->extendedAttributes($extendedAttributeList);
-        my %attributes = %{$extendedAttributeList->{"NamedConstructor"}};
+        my %attributes = %{$extendedAttributeList->{"LegacyFactoryFunction"}};
         my @attributeKeys = keys (%attributes);
         my $constructorName = $attributeKeys[0];
         push(@{$newDataNode->arguments}, @{$attributes{$constructorName}});
-        $extendedAttributeList->{"NamedConstructor"} = $constructorName;
+        $extendedAttributeList->{"LegacyFactoryFunction"} = $constructorName;
         push(@{$interface->constructors}, $newDataNode);
     }
     

@@ -25,7 +25,7 @@
 
 [
     Conditional=VIDEO,
-    ConstructorCallWith=Document,
-    NamedConstructor=Audio(optional [AtomString] DOMString src)
+    LegacyFactoryFunctionCallWith=Document,
+    LegacyFactoryFunction=Audio(optional [AtomString] DOMString src)
 ] interface HTMLAudioElement : HTMLMediaElement {
 };

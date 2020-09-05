@@ -10043,7 +10043,7 @@
 		7C0CEF291E4A54D3008DEB80 /* JSDOMConstructorWithDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructorWithDocument.h; sourceTree = "<group>"; };
 		7C0CEF2A1E4A556C008DEB80 /* JSDOMBuiltinConstructorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBuiltinConstructorBase.h; sourceTree = "<group>"; };
 		7C0CEF2B1E4A55C3008DEB80 /* JSDOMConstructorNotConstructable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructorNotConstructable.h; sourceTree = "<group>"; };
-		7C0CEF2C1E4A564D008DEB80 /* JSDOMNamedConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMNamedConstructor.h; sourceTree = "<group>"; };
+		7C0CEF2C1E4A564D008DEB80 /* JSDOMLegacyFactoryFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMLegacyFactoryFunction.h; sourceTree = "<group>"; };
 		7C0CEF2D1E4A56C5008DEB80 /* JSDOMBuiltinConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBuiltinConstructor.h; sourceTree = "<group>"; };
 		7C0CEF2E1E4A5832008DEB80 /* JSDOMBuiltinConstructorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMBuiltinConstructorBase.cpp; sourceTree = "<group>"; };
 		7C0CEF2F1E4A58AD008DEB80 /* JSDOMConstructorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConstructorBase.cpp; sourceTree = "<group>"; };
@@ -26744,7 +26744,7 @@
 				7C0CEF2B1E4A55C3008DEB80 /* JSDOMConstructorNotConstructable.h */,
 				7C0CEF301E4A58F1008DEB80 /* JSDOMConstructorWithDocument.cpp */,
 				7C0CEF291E4A54D3008DEB80 /* JSDOMConstructorWithDocument.h */,
-				7C0CEF2C1E4A564D008DEB80 /* JSDOMNamedConstructor.h */,
+				7C0CEF2C1E4A564D008DEB80 /* JSDOMLegacyFactoryFunction.h */,
 			);
 			name = Constructors;
 			sourceTree = "<group>";

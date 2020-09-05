@@ -21,8 +21,8 @@
 [
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
-    ConstructorCallWith=Document,
-    NamedConstructor=Image(optional unsigned long width, optional unsigned long height)
+    LegacyFactoryFunctionCallWith=Document,
+    LegacyFactoryFunction=Image(optional unsigned long width, optional unsigned long height)
 ] interface HTMLImageElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;

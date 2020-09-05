@@ -23,12 +23,12 @@
 
 namespace WebCore {
 
-// FIMXE: Why can't named constructors be used with workers?
-template<typename JSClass> class JSDOMNamedConstructor final : public JSDOMConstructorWithDocument {
+// FIMXE: Why can't LegacyFactoryFunctions be used with workers?
+template<typename JSClass> class JSDOMLegacyFactoryFunction final : public JSDOMConstructorWithDocument {
 public:
     using Base = JSDOMConstructorWithDocument;
 
-    static JSDOMNamedConstructor* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
+    static JSDOMLegacyFactoryFunction* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
@@ -37,7 +37,7 @@ public:
     static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
 
 private:
-    JSDOMNamedConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+    JSDOMLegacyFactoryFunction(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
         : Base(structure, globalObject)
     { 
     }
@@ -51,26 +51,26 @@ private:
     static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 };
 
-template<typename JSClass> inline JSDOMNamedConstructor<JSClass>* JSDOMNamedConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+template<typename JSClass> inline JSDOMLegacyFactoryFunction<JSClass>* JSDOMLegacyFactoryFunction<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMNamedConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMNamedConstructor>(vm.heap)) JSDOMNamedConstructor(structure, globalObject);
+    JSDOMLegacyFactoryFunction* constructor = new (NotNull, JSC::allocateCell<JSDOMLegacyFactoryFunction>(vm.heap)) JSDOMLegacyFactoryFunction(structure, globalObject);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }
 
-template<typename JSClass> inline JSC::Structure* JSDOMNamedConstructor<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
+template<typename JSClass> inline JSC::Structure* JSDOMLegacyFactoryFunction<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
     return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
 }
 
-template<typename JSClass> inline void JSDOMNamedConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
+template<typename JSClass> inline void JSDOMLegacyFactoryFunction<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(globalObject);
     ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
 }
 
-template<typename JSClass> inline JSC::CallData JSDOMNamedConstructor<JSClass>::getConstructData(JSC::JSCell*)
+template<typename JSClass> inline JSC::CallData JSDOMLegacyFactoryFunction<JSClass>::getConstructData(JSC::JSCell*)
 {
     JSC::CallData constructData;
     constructData.type = JSC::CallData::Type::Native;
