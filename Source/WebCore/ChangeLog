@@ -1,3 +1,16 @@
+2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the build after r266614
+        https://bugs.webkit.org/show_bug.cgi?id=216174
+
+        Unreviewed.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::supportsVCPEncoder): These parentheses really should be in
+        Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h,
+        but I don't know the process for updating that third-party library. This is a
+        short-term build fix.
+
 2020-09-04  Tyler Wilcock  <twilco.o@protonmail.com>
 
         CSS :visited color taken on non-visited link when using CSS variables
