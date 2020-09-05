@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,92) size 784x42
         RenderText {#text} at (0,18) size 140x18
           text run at (0,18) width 140: "Another black circle: "
-        RenderInline {SPAN} at (0,0) size 34x37
-          RenderText {#text} at (139,3) size 34x37
-            text run at (139,3) width 34: "\x{26AB}"
+        RenderInline {SPAN} at (0,0) size 33x37
+          RenderText {#text} at (139,3) size 33x37
+            text run at (139,3) width 33: "\x{26AB}"
         RenderText {#text} at (0,0) size 0x0

@@ -814,10 +814,8 @@ static CTFontSymbolicTraits computeTraits(const FontDescription& fontDescription
 
 SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& fontDescription, bool isPlatformFont)
 {
-#if PLATFORM(IOS_FAMILY)
     if (CTFontIsAppleColorEmoji(font))
         return SynthesisPair(false, false);
-#endif
 
     if (isPlatformFont)
         return SynthesisPair(false, false);

@@ -4559,3 +4559,6 @@ webkit.org/b/216024 fast/text/ahom.html [ ImageOnlyFailure ]
 
 webkit.org/b/216036 http/tests/navigation/page-cache-video.html [ Pass Crash ]
 webkit.org/b/216036 webanimations/animation-page-cache.html [ Pass Timeout ]
+
+# Emoji synthesis is only currently disabled on Cocoa platforms
+fast/text/emoji-synthesis.html [ ImageOnlyFailure ]

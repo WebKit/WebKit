@@ -1,3 +1,15 @@
+2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] Don't apply synthetic bold or italics to emoji
+        https://bugs.webkit.org/show_bug.cgi?id=215686
+
+        Reviewed by Darin Adler.
+
+        * fast/text/emoji-synthesis-expected.html: Added.
+        * fast/text/emoji-synthesis.html: Added.
+        * platform/win/TestExpectations:
+        * platform/mac/fast/text/fallback-traits-fixup-expected.txt:
+
 2020-09-05  Darin Adler  <darin@apple.com>
 
         CSS revert should serialize as "revert", not "Revert"
