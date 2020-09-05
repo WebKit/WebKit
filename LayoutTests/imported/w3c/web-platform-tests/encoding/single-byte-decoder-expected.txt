@@ -1,15 +1,15 @@
 
-FAIL IBM866: 866 (XMLHttpRequest) assert_equals: IBM866:26 expected 26 but got 28
-FAIL IBM866: 866 (TextDecoder) assert_equals: IBM866:26 expected 26 but got 28
+PASS IBM866: 866 (XMLHttpRequest) 
+PASS IBM866: 866 (TextDecoder) 
 PASS IBM866: 866 (document.characterSet and document.inputEncoding) 
-FAIL IBM866: cp866 (XMLHttpRequest) assert_equals: IBM866:26 expected 26 but got 28
-FAIL IBM866: cp866 (TextDecoder) assert_equals: IBM866:26 expected 26 but got 28
+PASS IBM866: cp866 (XMLHttpRequest) 
+PASS IBM866: cp866 (TextDecoder) 
 PASS IBM866: cp866 (document.characterSet and document.inputEncoding) 
-FAIL IBM866: csibm866 (XMLHttpRequest) assert_equals: IBM866:26 expected 26 but got 28
-FAIL IBM866: csibm866 (TextDecoder) assert_equals: IBM866:26 expected 26 but got 28
+PASS IBM866: csibm866 (XMLHttpRequest) 
+PASS IBM866: csibm866 (TextDecoder) 
 PASS IBM866: csibm866 (document.characterSet and document.inputEncoding) 
-FAIL IBM866: ibm866 (XMLHttpRequest) assert_equals: IBM866:26 expected 26 but got 28
-FAIL IBM866: ibm866 (TextDecoder) assert_equals: IBM866:26 expected 26 but got 28
+PASS IBM866: ibm866 (XMLHttpRequest) 
+PASS IBM866: ibm866 (TextDecoder) 
 PASS IBM866: ibm866 (document.characterSet and document.inputEncoding) 
 PASS ISO-8859-2: csisolatin2 (XMLHttpRequest) 
 PASS ISO-8859-2: csisolatin2 (TextDecoder) 
@@ -311,11 +311,11 @@ PASS KOI8-R: koi8-r (document.characterSet and document.inputEncoding)
 PASS KOI8-R: koi8_r (XMLHttpRequest) 
 PASS KOI8-R: koi8_r (TextDecoder) 
 PASS KOI8-R: koi8_r (document.characterSet and document.inputEncoding) 
-FAIL KOI8-U: koi8-ru (XMLHttpRequest) assert_equals: KOI8-U:174 expected 1118 but got 9565
-FAIL KOI8-U: koi8-ru (TextDecoder) assert_equals: KOI8-U:174 expected 1118 but got 9565
+PASS KOI8-U: koi8-ru (XMLHttpRequest) 
+PASS KOI8-U: koi8-ru (TextDecoder) 
 PASS KOI8-U: koi8-ru (document.characterSet and document.inputEncoding) 
-FAIL KOI8-U: koi8-u (XMLHttpRequest) assert_equals: KOI8-U:174 expected 1118 but got 9565
-FAIL KOI8-U: koi8-u (TextDecoder) assert_equals: KOI8-U:174 expected 1118 but got 9565
+PASS KOI8-U: koi8-u (XMLHttpRequest) 
+PASS KOI8-U: koi8-u (TextDecoder) 
 PASS KOI8-U: koi8-u (document.characterSet and document.inputEncoding) 
 PASS macintosh: csmacintosh (XMLHttpRequest) 
 PASS macintosh: csmacintosh (TextDecoder) 

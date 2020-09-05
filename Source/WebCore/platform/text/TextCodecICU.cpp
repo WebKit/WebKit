@@ -46,7 +46,6 @@ const size_t ConversionBufferSize = 16384;
     static const char* const encoding##_aliases[] { __VA_ARGS__ }
 
 // From https://encoding.spec.whatwg.org. Plus a few extra aliases that macOS had historically from TEC.
-DECLARE_ALIASES(IBM866, "866", "cp866", "csibm866");
 DECLARE_ALIASES(ISO_8859_2, "csisolatin2", "iso-ir-101", "iso8859-2", "iso88592", "iso_8859-2", "iso_8859-2:1987", "l2", "latin2");
 DECLARE_ALIASES(ISO_8859_4, "csisolatin4", "iso-ir-110", "iso8859-4", "iso88594", "iso_8859-4", "iso_8859-4:1988", "l4", "latin4");
 DECLARE_ALIASES(ISO_8859_5, "csisolatincyrillic", "cyrillic", "iso-ir-144", "iso8859-5", "iso88595", "iso_8859-5", "iso_8859-5:1988");
@@ -56,7 +55,6 @@ DECLARE_ALIASES(ISO_8859_14, "iso8859-14", "iso885914", "isoceltic", "iso8859141
 DECLARE_ALIASES(ISO_8859_15, "csisolatin9", "iso8859-15", "iso885915", "iso_8859-15", "l9");
 DECLARE_ALIASES(ISO_8859_16, "isoir226", "iso8859162001", "l10", "latin10");
 DECLARE_ALIASES(KOI8_R, "cskoi8r", "koi", "koi8", "koi8_r");
-DECLARE_ALIASES(KOI8_U, "koi8-ru");
 DECLARE_ALIASES(macintosh, "csmacintosh", "mac", "x-mac-roman", "macroman", "x-macroman");
 DECLARE_ALIASES(windows_1250, "cp1250", "x-cp1250", "winlatin2");
 DECLARE_ALIASES(windows_1251, "cp1251", "wincyrillic", "x-cp1251");
@@ -82,7 +80,6 @@ static const struct EncodingName {
     unsigned aliasCount;
     const char* const * aliases;
 } encodingNames[] = {
-    DECLARE_ENCODING_NAME("IBM866", IBM866),
     DECLARE_ENCODING_NAME("ISO-8859-2", ISO_8859_2),
     DECLARE_ENCODING_NAME("ISO-8859-4", ISO_8859_4),
     DECLARE_ENCODING_NAME("ISO-8859-5", ISO_8859_5),
@@ -92,7 +89,6 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("ISO-8859-15", ISO_8859_15),
     DECLARE_ENCODING_NAME("ISO-8859-16", ISO_8859_16),
     DECLARE_ENCODING_NAME("KOI8-R", KOI8_R),
-    DECLARE_ENCODING_NAME("KOI8-U", KOI8_U),
     DECLARE_ENCODING_NAME("macintosh", macintosh),
     DECLARE_ENCODING_NAME("windows-1250", windows_1250),
     DECLARE_ENCODING_NAME("windows-1251", windows_1251),

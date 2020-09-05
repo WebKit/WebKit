@@ -39,7 +39,9 @@ public:
         Windows_874,
         Windows_1253,
         Windows_1255,
-        Windows_1257
+        Windows_1257,
+        IBM866,
+        KOI8U,
     };
 
     explicit TextCodecSingleByte(Encoding);
