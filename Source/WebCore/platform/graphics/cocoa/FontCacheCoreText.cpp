@@ -425,7 +425,7 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
 
 static inline bool fontIsSystemFont(CTFontRef font)
 {
-    if (CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
+    if (isSystemFont(font))
         return true;
 
     auto name = adoptCF(CTFontCopyPostScriptName(font));

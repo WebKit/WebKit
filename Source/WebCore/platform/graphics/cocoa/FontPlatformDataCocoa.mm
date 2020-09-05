@@ -35,6 +35,15 @@
 
 namespace WebCore {
 
+bool isSystemFont(CTFontRef font)
+{
+#if HAVE(CTFONTISSYSTEMUIFONT)
+    return CTFontIsSystemUIFont(font);
+#else
+    return CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get());
+#endif
+}
+
 // These CoreText Text Spacing feature selectors are not defined in CoreText.
 enum TextSpacingCTFeatureSelector { TextSpacingProportional, TextSpacingFullWidth, TextSpacingHalfWidth, TextSpacingThirdWidth, TextSpacingQuarterWidth };
 
@@ -44,7 +53,7 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
     ASSERT_ARG(font, font);
     m_font = font;
     m_isColorBitmapFont = CTFontGetSymbolicTraits(font) & kCTFontTraitColorGlyphs;
-    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_font.get())).get());
+    m_isSystemFont = WebCore::isSystemFont(m_font.get());
     auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font, kCTFontVariationAttribute)));
     m_hasVariations = variations && CFDictionaryGetCount(variations.get());
 

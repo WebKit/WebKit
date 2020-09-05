@@ -1,5 +1,25 @@
 2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] CTFontIsSystemUIFont() is faster than CTFontDescriptorIsSystemUIFont()/CTFontCopyFontDescriptor()
+        https://bugs.webkit.org/show_bug.cgi?id=215687
+
+        Reviewed by Darin Adler.
+
+        Instead of making the two calls, we can make a single call that has the same effect.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontIsSystemFont):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::primaryFontIsSystemFont const):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::isSystemFont):
+
+2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Migrate off SPI in Font::platformWidthForGlyph()
         https://bugs.webkit.org/show_bug.cgi?id=215670
 

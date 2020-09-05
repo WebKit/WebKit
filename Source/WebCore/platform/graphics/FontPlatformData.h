@@ -276,6 +276,10 @@ private:
 #endif
 };
 
+#if PLATFORM(COCOA)
+bool isSystemFont(CTFontRef);
+#endif
+
 #if USE(APPKIT) && defined(__OBJC__)
 
 // NSFonts and CTFontRefs are toll-free-bridged.
