@@ -1,3 +1,12 @@
+2020-09-04  Karl Rackler  <rackler@apple.com>
+
+        (REGRESSION (r266045): [ Big Sur ] 6 forms and 3 tables tests are a constant failure with approximately 1px difference)
+        rdar://68372418
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-09-04  Truitt Savell  <tsavell@apple.com>
 
         fast/text/international/generic-font-family-language-traditional.html is passing, remove expectation.
