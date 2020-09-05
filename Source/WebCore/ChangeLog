@@ -1,3 +1,262 @@
+2020-09-05  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Realign our IDL extended attribute names with those specified in WebIDL
+        https://bugs.webkit.org/show_bug.cgi?id=216194
+
+        Reviewed by Darin Adler.
+
+        Over time, the WebIDL and HTML specifications have added / renamed extended attributes and we have
+        not stayed up to date. This updates the names everywhere and URLs in IDLAttributes.json.
+    
+             [AllowShared] -> new, marked as unsupported
+             [HTMLConstructor] - > new, marked as unsupported
+             [LegacyLenientSetter] -> renamed from [LenientSetter], still unsupported
+             [LegacyLenientThis] -> renamed from [LenientThis]
+             [LegacyNamespace] -> new, marked as unsupported
+             [LegacyNoInterfaceObject] -> renamed from [NoInterfaceObject]
+             [LegacyNullToEmptyString] -> renamed from [TreatNullAs=EmptyString]
+             [LegacyOverrideBuiltIns] -> renamed from OverrideBuiltins
+             [LegacyTreatNonObjectAsNull] -> renamed from [TreatNonObjectAsNull], still unsupported
+             [LegacyUnforgeable] -> renamed from [Unforgeable]
+             [Serializable] -> new, marked as unsupported
+             [Transferable] -> new, marked as unsupported
+
+        * Modules/applepay/ApplePayCancelEvent.idl:
+        * Modules/applepay/ApplePayPaymentAuthorizedEvent.idl:
+        * Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl:
+        * Modules/applepay/ApplePayShippingContactSelectedEvent.idl:
+        * Modules/applepay/ApplePayShippingMethodSelectedEvent.idl:
+        * Modules/applepay/ApplePayValidateMerchantEvent.idl:
+        * Modules/fetch/FetchBody.idl:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/mediasource/VideoPlaybackQuality.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/plugins/QuickTimePluginReplacement.idl:
+        * Modules/quota/StorageInfo.idl:
+        * Modules/quota/StorageQuota.idl:
+        * Modules/speech/SpeechSynthesis.idl:
+        * Modules/speech/SpeechSynthesisVoice.idl:
+        * Modules/streams/ReadableStreamSink.idl:
+        * Modules/streams/ReadableStreamSource.idl:
+        * Modules/webaudio/WebKitAudioBufferSourceNode.idl:
+        * Modules/webaudio/WebKitAudioListener.idl:
+        * Modules/webaudio/WebKitDynamicsCompressorNode.idl:
+        * Modules/webaudio/WebKitOscillatorNode.idl:
+        * Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb:
+        * accessibility/AccessibilityRole.idl:
+        * accessibility/AriaAttributes.idl:
+        * animation/Animatable.idl:
+        * bindings/IDLTypes.h:
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::disableLegacyOverrideBuiltInsBehavior):
+        (WebCore::DOMWrapperWorld::shouldDisableLegacyOverrideBuiltInsBehavior const):
+        (WebCore::DOMWrapperWorld::disableOverrideBuiltinsBehavior): Deleted.
+        (WebCore::DOMWrapperWorld::shouldDisableOverrideBuiltinsBehavior const): Deleted.
+        * bindings/js/JSDOMAbstractOperations.h:
+        (WebCore::isVisibleNamedProperty):
+        (WebCore::accessVisibleNamedProperty):
+        * bindings/js/JSDOMConvertNullable.h:
+        * bindings/js/JSDOMConvertStrings.h:
+        (WebCore::Converter<IDLTreatNullAsEmptyAdaptor<T>>::convert): Deleted.
+        (WebCore::JSConverter<IDLTreatNullAsEmptyAdaptor<T>>::convert): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlot):
+        (GenerateGetOwnPropertySlotByIndex):
+        (GeneratePut):
+        (GeneratePutByIndex):
+        (GenerateIsLegacyUnforgeablePropertyName):
+        (GenerateDefineOwnProperty):
+        (GenerateDeletePropertyCommon):
+        (AttributeShouldBeOnInstance):
+        (OperationShouldBeOnInstance):
+        (IsAcceleratedDOMAttribute):
+        (GetJSCAttributesForAttribute):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateAttributeGetterTrampolineDefinition):
+        (GenerateAttributeSetterTrampolineDefinition):
+        (IsAnnotatedType):
+        (GetAnnotatedIDLType):
+        (GenerateConstructorHelperMethods):
+        (NeedsConstructorProperty):
+        (IsLegacyUnforgeable):
+        (ComputeFunctionSpecial):
+        (GenerateIsUnforgeablePropertyName): Deleted.
+        (IsUnforgeable): Deleted.
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/preprocess-idls.pl:
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestLegacyOverrideBuiltIns.cpp: Added.
+        * bindings/scripts/test/JS/JSTestLegacyOverrideBuiltIns.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.h: Removed.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.h: Removed.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.h: Removed.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h: Removed.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestIncludes.idl:
+        * bindings/scripts/test/TestLegacyOverrideBuiltIns.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithLegacyOverrideBuiltIns.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithLegacyUnforgeableProperties.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithOverrideBuiltins.idl: Removed.
+        * bindings/scripts/test/TestNamedSetterWithUnforgableProperties.idl: Removed.
+        * bindings/scripts/test/TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.idl: Removed.
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestOperationBase.idl:
+        * bindings/scripts/test/TestOverrideBuiltins.idl: Removed.
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSUnknownRule.idl:
+        * css/ElementCSSInlineStyle.idl:
+        * css/MediaList.idl:
+        * css/StyleMedia.idl:
+        * dom/CharacterData.idl:
+        * dom/ChildNode.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DOMStringMap.idl:
+        * dom/DeviceOrientationOrMotionEvent.idl:
+        * dom/Document.idl:
+        * dom/DocumentAndElementEventHandlers.idl:
+        * dom/DocumentOrShadowRoot.idl:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/EventListener.idl:
+        * dom/GlobalEventHandlers.idl:
+        * dom/NavigatorMaxTouchPoints.idl:
+        * dom/NonDocumentTypeChildNode.idl:
+        * dom/NonElementParentNode.idl:
+        * dom/ParentNode.idl:
+        * dom/ShadowRoot.idl:
+        * dom/Slotable.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLFontElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLHyperlinkElementUtils.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOrForeignElement.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLTableCellElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/canvas/ANGLEInstancedArrays.idl:
+        * html/canvas/CanvasCompositing.idl:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasDrawPath.idl:
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasFilters.idl:
+        * html/canvas/CanvasImageData.idl:
+        * html/canvas/CanvasImageSmoothing.idl:
+        * html/canvas/CanvasPath.idl:
+        * html/canvas/CanvasPathDrawingStyles.idl:
+        * html/canvas/CanvasRect.idl:
+        * html/canvas/CanvasShadowStyles.idl:
+        * html/canvas/CanvasState.idl:
+        * html/canvas/CanvasText.idl:
+        * html/canvas/CanvasTextDrawingStyles.idl:
+        * html/canvas/CanvasTransform.idl:
+        * html/canvas/CanvasUserInterface.idl:
+        * html/canvas/EXTBlendMinMax.idl:
+        * html/canvas/EXTColorBufferFloat.idl:
+        * html/canvas/EXTColorBufferHalfFloat.idl:
+        * html/canvas/EXTFragDepth.idl:
+        * html/canvas/EXTShaderTextureLOD.idl:
+        * html/canvas/EXTTextureFilterAnisotropic.idl:
+        * html/canvas/EXTsRGB.idl:
+        * html/canvas/OESElementIndexUint.idl:
+        * html/canvas/OESStandardDerivatives.idl:
+        * html/canvas/OESTextureFloat.idl:
+        * html/canvas/OESTextureFloatLinear.idl:
+        * html/canvas/OESTextureHalfFloat.idl:
+        * html/canvas/OESTextureHalfFloatLinear.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLColorBufferFloat.idl:
+        * html/canvas/WebGLCompressedTextureASTC.idl:
+        * html/canvas/WebGLCompressedTextureATC.idl:
+        * html/canvas/WebGLCompressedTextureETC.idl:
+        * html/canvas/WebGLCompressedTextureETC1.idl:
+        * html/canvas/WebGLCompressedTexturePVRTC.idl:
+        * html/canvas/WebGLCompressedTextureS3TC.idl:
+        * html/canvas/WebGLCompressedTextureS3TCsRGB.idl:
+        * html/canvas/WebGLDebugRendererInfo.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLDepthTexture.idl:
+        * html/canvas/WebGLDrawBuffers.idl:
+        * html/canvas/WebGLLoseContext.idl:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * html/canvas/WebGLVertexArrayObjectOES.idl:
+        * html/track/TextTrackCueGeneric.idl:
+        * html/track/VTTRegionList.idl:
+        * inspector/CommandLineAPIHost.idl:
+        * inspector/InspectorFrontendHost.idl:
+        * page/DOMWindow.idl:
+        * page/GlobalCrypto.idl:
+        * page/GlobalPerformance.idl:
+        * page/Location.idl:
+        * page/NavigatorID.idl:
+        * page/NavigatorLanguage.idl:
+        * page/NavigatorOnLine.idl:
+        * page/NavigatorPlugins.idl:
+        * page/NavigatorServiceWorker.idl:
+        * page/NavigatorShare.idl:
+        * page/RemoteDOMWindow.idl:
+        * page/WindowEventHandlers.idl:
+        * page/WindowOrWorkerGlobalScope.idl:
+        * svg/SVGFilterPrimitiveStandardAttributes.idl:
+        * svg/SVGFitToViewBox.idl:
+        * svg/SVGTests.idl:
+        * svg/SVGURIReference.idl:
+        * svg/SVGZoomAndPan.idl:
+        * testing/GCObservation.idl:
+        * testing/InternalSettings.idl:
+        * testing/Internals.idl:
+        * testing/InternalsMapLike.idl:
+        * testing/InternalsSetLike.idl:
+        * testing/MallocStatistics.idl:
+        * testing/MemoryInfo.idl:
+        * testing/MockCDMFactory.idl:
+        * testing/MockContentFilterSettings.idl:
+        * testing/MockPageOverlay.idl:
+        * testing/MockPaymentCoordinator.idl:
+        * testing/ServiceWorkerInternals.idl:
+        * testing/TypeConversions.idl:
+        * testing/WebFakeXRDevice.idl:
+        * testing/WebFakeXRInputController.idl:
+        * testing/WebXRTest.idl:
+        * workers/AbstractWorker.idl:
+        * xml/XPathNSResolver.idl:
+
 2020-09-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wreturn-type warning in BaseAudioContext.cpp

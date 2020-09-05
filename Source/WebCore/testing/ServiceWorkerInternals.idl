@@ -27,7 +27,7 @@
     Conditional=SERVICE_WORKER,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     ImplementationLacksVTable,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface ServiceWorkerInternals {
     undefined setOnline(boolean isOnline);
     Promise<Response> waitForFetchEventToFinish(FetchEvent event);

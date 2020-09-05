@@ -27,7 +27,7 @@
     Conditional=WEB_AUDIO,
     EnabledBySetting=PrefixedWebAudio,
     JSGenerateToJSObject,
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface WebKitDynamicsCompressorNode : AudioNode {
     readonly attribute AudioParam threshold; // in Decibels
     readonly attribute AudioParam knee; // in Decibels

@@ -25,7 +25,7 @@
 
 [
     Conditional=DEVICE_ORIENTATION,
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface DeviceOrientationOrMotionEvent {
     [CallWith=Document, EnabledBySetting=DeviceOrientationPermissionAPI] static Promise<DeviceOrientationOrMotionPermissionState> requestPermission();
 };

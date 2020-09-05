@@ -133,7 +133,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     // 6.1 Peer-to-peer data API
     // FIXME 169644: missing sctp
 
-    [MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] USVString label, optional RTCDataChannelInit options);
+    [MayThrowException] RTCDataChannel createDataChannel([LegacyNullToEmptyString] USVString label, optional RTCDataChannelInit options);
     attribute EventHandler ondatachannel;
 
 

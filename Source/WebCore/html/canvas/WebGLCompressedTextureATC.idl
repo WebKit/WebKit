@@ -27,7 +27,7 @@
     Conditional=WEBGL,
     DoNotCheckConstants,
     GenerateIsReachable=ImplWebGLRenderingContext,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface WebGLCompressedTextureATC {
     const unsigned long COMPRESSED_RGB_ATC_WEBGL = 0x8C92;
     const unsigned long COMPRESSED_RGBA_ATC_EXPLICIT_ALPHA_WEBGL = 0x8C93;

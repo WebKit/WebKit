@@ -41,7 +41,7 @@
     [CEReactions] attribute boolean spellcheck;
     // undefined forceSpellCheck(); // FIXME: Not supported.
 
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerText;
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString innerText;
 
     // FIXME: Should be in a separate ElementContentEditable interface.
     // https://html.spec.whatwg.org/#elementcontenteditable
@@ -56,11 +56,11 @@
     readonly attribute double offsetHeight; // FIXME: Should be of type long.
 
     // Non Standard but may get added to the specification (https://github.com/whatwg/html/issues/668).
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString outerText;
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerText;
 
     // iOS autocorrect / autocapitalization extensions.
     [Conditional=AUTOCORRECT, CEReactions] attribute boolean autocorrect;
-    [Conditional=AUTOCAPITALIZE, CEReactions] attribute [TreatNullAs=EmptyString] DOMString autocapitalize;
+    [Conditional=AUTOCAPITALIZE, CEReactions] attribute [LegacyNullToEmptyString] DOMString autocapitalize;
 
     // FIXME: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
     [CEReactions, Reflect] attribute DOMString webkitdropzone;

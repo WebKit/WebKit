@@ -60,8 +60,8 @@ template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNull
     
     // 1. If Type(V) is not Object, and the conversion to an IDL value is being performed
     // due to V being assigned to an attribute whose type is a nullable callback function
-    // that is annotated with [TreatNonObjectAsNull], then return the IDL nullable type T?
-    // value null.
+    // that is annotated with [LegacyTreatNonObjectAsNull], then return the IDL nullable
+    // type T? value null.
     //
     // NOTE: Handled elsewhere.
     //

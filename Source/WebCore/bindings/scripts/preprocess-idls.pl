@@ -164,7 +164,7 @@ foreach my $idlFile (sort keys %idlFileHash) {
 
     # For every interface that is exposed in a given ECMAScript global environment and:
     # - is a callback interface that has constants declared on it, or
-    # - is a non-callback interface that is not declared with the [NoInterfaceObject] extended attribute, a corresponding
+    # - is a non-callback interface that is not declared with the [LegacyNoInterfaceObject] extended attribute, a corresponding
     #   property must exist on the ECMAScript environment's global object.
     # See https://heycam.github.io/webidl/#es-interfaces
     my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
@@ -459,7 +459,7 @@ sub shouldExposeInterface
 {
     my $extendedAttributes = shift;
 
-    return !$extendedAttributes->{"NoInterfaceObject"};
+    return !$extendedAttributes->{"LegacyNoInterfaceObject"};
 }
 
 sub updateDictionaryDependencies

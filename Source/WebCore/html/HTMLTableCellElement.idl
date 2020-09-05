@@ -22,7 +22,7 @@ interface HTMLTableCellElement : HTMLElement {
     readonly attribute long cellIndex;
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString axis;
-    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
+    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString bgColor;
     [CEReactions=NotNeeded, Reflect=char] attribute DOMString ch;
     [CEReactions=NotNeeded, Reflect=charoff] attribute DOMString chOff;
 

@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     JSGenerateToJSObject,
 ] interface QuickTimePluginReplacement {
     readonly attribute unsigned long long movieSize;

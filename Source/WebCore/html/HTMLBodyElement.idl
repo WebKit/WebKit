@@ -19,12 +19,12 @@
  */
 
 interface HTMLBodyElement : HTMLElement {
-    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString aLink;
+    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString aLink;
     [CEReactions=NotNeeded, Reflect] attribute DOMString background;
-    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
-    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString link;
-    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString text;
-    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString vLink;
+    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString bgColor;
+    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString link;
+    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString text;
+    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString vLink;
 
     [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;

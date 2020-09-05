@@ -25,7 +25,7 @@
 
 [
     EnabledAtRuntime=WebAnimations,
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface Animatable {
     [MayThrowException, CallWith=GlobalObject] WebAnimation animate(object? keyframes, optional (unrestricted double or KeyframeAnimationOptions) options);
     sequence<WebAnimation> getAnimations(optional GetAnimationsOptions options);

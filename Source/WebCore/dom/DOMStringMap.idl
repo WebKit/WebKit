@@ -25,7 +25,7 @@
 
 [
     GenerateIsReachable=ImplElementRoot,
-    OverrideBuiltins,
+    LegacyOverrideBuiltIns,
     SkipVTableValidation,
 ] interface DOMStringMap {
     getter DOMString (DOMString name);

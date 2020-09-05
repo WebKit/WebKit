@@ -1,6 +1,0 @@
-[
-    OverrideBuiltins
-] interface TestOverrideBuiltins
-{
-    getter Node namedItem(DOMString name);
-};

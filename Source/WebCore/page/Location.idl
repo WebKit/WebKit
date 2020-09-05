@@ -42,7 +42,7 @@
     GenerateIsReachable=ReachableFromDOMWindow,
     IsImmutablePrototypeExoticObject,
     ImplementationLacksVTable,
-    Unforgeable
+    LegacyUnforgeable
 ] interface Location {
     [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 
@@ -62,5 +62,5 @@
     readonly attribute USVString origin;
 
     // FIXME: Add support for SameObject.
-    [Unforgeable, CachedAttribute] readonly attribute DOMStringList ancestorOrigins;
+    [LegacyUnforgeable, CachedAttribute] readonly attribute DOMStringList ancestorOrigins;
 };

@@ -40,20 +40,20 @@
     JSCustomToNativeObject,
     JSLegacyParent=JSRemoteDOMWindowBase,
     LegacyUnenumerableNamedProperties,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     Global=Window,
     Exposed=Window,
 ] interface RemoteDOMWindow {
-    [Unforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
+    [LegacyUnforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
     [Replaceable] readonly attribute WindowProxy self;
-    [PutForwards=href, Unforgeable] readonly attribute Location? location; // FIXME: Should not be nullable.
+    [PutForwards=href, LegacyUnforgeable] readonly attribute Location? location; // FIXME: Should not be nullable.
     [CallWith=IncumbentDocument, ForwardDeclareInHeader] undefined close();
     [ForwardDeclareInHeader] readonly attribute boolean closed;
     [CallWith=IncumbentWindow, ForwardDeclareInHeader] undefined focus();
     [ForwardDeclareInHeader] undefined blur();
     [Replaceable, ImplementedAs=self] readonly attribute WindowProxy frames;
     [Replaceable] readonly attribute unsigned long length;
-    [Unforgeable] readonly attribute WindowProxy? top;
+    [LegacyUnforgeable] readonly attribute WindowProxy? top;
     readonly attribute WindowProxy? opener;
     [Replaceable] readonly attribute WindowProxy? parent;
     [CallWith=GlobalObject&IncumbentWindow, ForwardDeclareInHeader] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);

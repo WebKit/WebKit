@@ -29,7 +29,7 @@
 [
     Conditional=WEB_AUDIO,
     EnabledBySetting=PrefixedWebAudio,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface WebKitAudioListener {
     attribute unrestricted float dopplerFactor;  // same as OpenAL (default 1.0)
     attribute unrestricted float speedOfSound;   // in meters / second (default 343.3)

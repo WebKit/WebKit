@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     Exposed=Window
 ] interface CanvasTextDrawingStyles {
     // text

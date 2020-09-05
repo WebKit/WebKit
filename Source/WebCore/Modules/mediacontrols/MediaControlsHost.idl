@@ -32,7 +32,7 @@ enum DeviceType {
 [
     Conditional=MEDIA_CONTROLS_SCRIPT,
     ImplementationLacksVTable,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface MediaControlsHost {
     sequence<TextTrack> sortedTrackListForMenu(TextTrackList trackList);
     sequence<AudioTrack> sortedTrackListForMenu(AudioTrackList trackList);

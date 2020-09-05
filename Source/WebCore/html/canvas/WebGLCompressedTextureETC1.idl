@@ -29,7 +29,7 @@
     Conditional=WEBGL,
     DoNotCheckConstants,
     GenerateIsReachable=ImplWebGLRenderingContext,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface WebGLCompressedTextureETC1 {
     /* Compressed Texture Formats */
     const unsigned long COMPRESSED_RGB_ETC1_WEBGL = 0x8D64;

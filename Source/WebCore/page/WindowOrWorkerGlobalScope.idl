@@ -43,7 +43,7 @@ typedef (HTMLImageElement
 typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface WindowOrWorkerGlobalScope {
     [Replaceable] readonly attribute USVString origin;
 

@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     Exposed=(Window,Worker)
 ] interface CanvasImageData {
     // FIXME: All the float arguments below should be longs.

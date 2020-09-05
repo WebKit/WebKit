@@ -27,7 +27,7 @@
  */
 
 [
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface NavigatorOnLine {
     readonly attribute boolean onLine;
 };

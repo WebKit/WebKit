@@ -32,7 +32,7 @@
 
 [
     ImplementationLacksVTable,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface InspectorFrontendHost {
     undefined loaded();
     undefined closeWindow();

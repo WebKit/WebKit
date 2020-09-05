@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     Exposed=(Window,Worker)
 ] interface CanvasTransform {
     // FIXME: All the unrestricted float parameters below should be unrestricted doubles.

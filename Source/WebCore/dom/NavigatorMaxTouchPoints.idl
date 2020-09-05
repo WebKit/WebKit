@@ -27,7 +27,7 @@
 */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface MaxTouchPoints {
     readonly attribute long maxTouchPoints;
 };

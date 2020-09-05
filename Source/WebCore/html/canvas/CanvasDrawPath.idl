@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     Exposed=(Window,Worker)
 ] interface CanvasDrawPath {
     // path API (see also CanvasPath)

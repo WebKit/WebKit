@@ -27,7 +27,7 @@
 // FIXME: update above link when this change has been implemented:
 // https://github.com/whatwg/html/issues/4702
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface HTMLOrForeignElement {
     readonly attribute DOMStringMap dataset; // FIXME: Should be [SameObject].
     [CEReactions, ImplementedAs=tabIndexForBindings] attribute long tabIndex;

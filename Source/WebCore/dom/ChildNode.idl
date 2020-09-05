@@ -20,7 +20,7 @@
 
 // https://dom.spec.whatwg.org/#childnode
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface ChildNode {
     [CEReactions, Unscopable, MayThrowException] undefined before((Node or DOMString)... nodes);
     [CEReactions, Unscopable, MayThrowException] undefined after((Node or DOMString)... nodes);

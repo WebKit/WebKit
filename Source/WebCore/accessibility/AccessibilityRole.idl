@@ -25,7 +25,7 @@
 
 [
     EnabledAtRuntime=AriaReflection,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface AccessibilityRole {
     [Reflect] attribute DOMString? role;
 };

@@ -21,24 +21,24 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include "TestNamedSetterWithUnforgableProperties.h"
+#include "TestNamedSetterWithLegacyOverrideBuiltIns.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class JSTestNamedSetterWithUnforgableProperties : public JSDOMWrapper<TestNamedSetterWithUnforgableProperties> {
+class JSTestNamedSetterWithLegacyOverrideBuiltIns : public JSDOMWrapper<TestNamedSetterWithLegacyOverrideBuiltIns> {
 public:
-    using Base = JSDOMWrapper<TestNamedSetterWithUnforgableProperties>;
-    static JSTestNamedSetterWithUnforgableProperties* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithUnforgableProperties>&& impl)
+    using Base = JSDOMWrapper<TestNamedSetterWithLegacyOverrideBuiltIns>;
+    static JSTestNamedSetterWithLegacyOverrideBuiltIns* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithLegacyOverrideBuiltIns>&& impl)
     {
-        JSTestNamedSetterWithUnforgableProperties* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithUnforgableProperties>(globalObject->vm().heap)) JSTestNamedSetterWithUnforgableProperties(structure, *globalObject, WTFMove(impl));
+        JSTestNamedSetterWithLegacyOverrideBuiltIns* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyOverrideBuiltIns>(globalObject->vm().heap)) JSTestNamedSetterWithLegacyOverrideBuiltIns(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
-    static TestNamedSetterWithUnforgableProperties* toWrapped(JSC::VM&, JSC::JSValue);
+    static TestNamedSetterWithLegacyOverrideBuiltIns* toWrapped(JSC::VM&, JSC::JSValue);
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::JSGlobalObject*, unsigned propertyName, JSC::PropertySlot&);
     static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());
@@ -64,38 +64,38 @@ public:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpureForPropertyAbsence | JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesAnyFormOfGetPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::ProhibitsPropertyCaching;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesAnyFormOfGetPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::ProhibitsPropertyCaching;
 protected:
-    JSTestNamedSetterWithUnforgableProperties(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithUnforgableProperties>&&);
+    JSTestNamedSetterWithLegacyOverrideBuiltIns(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithLegacyOverrideBuiltIns>&&);
 
     void finishCreation(JSC::VM&);
 };
 
-class JSTestNamedSetterWithUnforgablePropertiesOwner : public JSC::WeakHandleOwner {
+class JSTestNamedSetterWithLegacyOverrideBuiltInsOwner : public JSC::WeakHandleOwner {
 public:
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedSetterWithUnforgableProperties*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedSetterWithLegacyOverrideBuiltIns*)
 {
-    static NeverDestroyed<JSTestNamedSetterWithUnforgablePropertiesOwner> owner;
+    static NeverDestroyed<JSTestNamedSetterWithLegacyOverrideBuiltInsOwner> owner;
     return &owner.get();
 }
 
-inline void* wrapperKey(TestNamedSetterWithUnforgableProperties* wrappableObject)
+inline void* wrapperKey(TestNamedSetterWithLegacyOverrideBuiltIns* wrappableObject)
 {
     return wrappableObject;
 }
 
-JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNamedSetterWithUnforgableProperties&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedSetterWithUnforgableProperties* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestNamedSetterWithUnforgableProperties>&&);
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestNamedSetterWithUnforgableProperties>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNamedSetterWithLegacyOverrideBuiltIns&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedSetterWithLegacyOverrideBuiltIns* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestNamedSetterWithLegacyOverrideBuiltIns>&&);
+inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestNamedSetterWithLegacyOverrideBuiltIns>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
-template<> struct JSDOMWrapperConverterTraits<TestNamedSetterWithUnforgableProperties> {
-    using WrapperClass = JSTestNamedSetterWithUnforgableProperties;
-    using ToWrappedReturnType = TestNamedSetterWithUnforgableProperties*;
+template<> struct JSDOMWrapperConverterTraits<TestNamedSetterWithLegacyOverrideBuiltIns> {
+    using WrapperClass = JSTestNamedSetterWithLegacyOverrideBuiltIns;
+    using ToWrappedReturnType = TestNamedSetterWithLegacyOverrideBuiltIns*;
 };
 
 } // namespace WebCore

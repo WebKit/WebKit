@@ -53,7 +53,7 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     CustomToJSObject,
     DoNotCheckConstants,
     JSCustomMarkFunction,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     ExportMacro=WEBCORE_EXPORT,
 ] interface WebGLRenderingContextBase {
 

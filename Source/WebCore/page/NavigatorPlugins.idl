@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface NavigatorPlugins {
     [SameObject] readonly attribute DOMPluginArray plugins;
     [SameObject] readonly attribute DOMMimeTypeArray mimeTypes;

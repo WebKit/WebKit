@@ -30,7 +30,7 @@
     EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),
     InterfaceName=Body,
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface FetchBody {
     [ImplementedAs=readableStream, CallWith=GlobalObject] readonly attribute ReadableStream? body;
     readonly attribute boolean bodyUsed;

@@ -25,7 +25,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString code;
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString archive;
-    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString border;
+    [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString codeBase;
     [CEReactions=NotNeeded, Reflect] attribute DOMString codeType;
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString data;

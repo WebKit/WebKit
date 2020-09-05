@@ -25,7 +25,7 @@
 
 // https://html.spec.whatwg.org/#documentandelementeventhandlers
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface DocumentAndElementEventHandlers {
     attribute EventHandler oncopy;
     attribute EventHandler oncut;

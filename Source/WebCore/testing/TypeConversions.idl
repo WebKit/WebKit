@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface TypeConversions {
@@ -64,7 +64,7 @@
     attribute DOMString testString;
     attribute ByteString testByteString;
     attribute USVString testUSVString;
-    attribute [TreatNullAs=EmptyString] DOMString testTreatNullAsEmptyString;
+    attribute [LegacyNullToEmptyString] DOMString testTreatNullAsEmptyString;
 
     undefined setTestLongRecord(record<DOMString, long> record);
     record<DOMString, long> testLongRecord();
@@ -81,7 +81,7 @@
 
     attribute (DOMString or [Clamp] long or sequence<[Clamp] long>) testClampUnion;
     attribute (DOMString or [EnforceRange] long or sequence<[EnforceRange] long>) testEnforceRangeUnion;
-    attribute ([TreatNullAs=EmptyString] DOMString or long or sequence<[TreatNullAs=EmptyString] DOMString>) testTreatNullAsEmptyStringUnion;
+    attribute ([LegacyNullToEmptyString] DOMString or long or sequence<[LegacyNullToEmptyString] DOMString>) testTreatNullAsEmptyStringUnion;
 };
 
 [
@@ -96,7 +96,7 @@
 ] dictionary TypeConversionsDictionary {
     long longValue = 0;
     DOMString stringValue = "";
-    [TreatNullAs=EmptyString] DOMString treatNullAsEmptyStringValue = "";
+    [LegacyNullToEmptyString] DOMString treatNullAsEmptyStringValue = "";
     sequence<DOMString> sequenceValue = [];
     (Node or sequence<DOMString> or TypeConversionsOtherDictionary) unionValue = null;
     [Clamp] long clampLongValue = 0;

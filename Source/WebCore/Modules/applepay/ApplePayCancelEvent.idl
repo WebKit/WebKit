@@ -25,7 +25,7 @@
 
 [
     Conditional=APPLE_PAY,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface ApplePayCancelEvent : Event {
     [CachedAttribute] readonly attribute ApplePaySessionError sessionError;
 };

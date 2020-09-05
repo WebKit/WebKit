@@ -19,7 +19,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     SkipVTableValidation,
 ] interface XPathNSResolver {
     DOMString? lookupNamespaceURI(DOMString? prefix);

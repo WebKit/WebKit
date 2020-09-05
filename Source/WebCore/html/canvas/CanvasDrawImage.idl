@@ -37,7 +37,7 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
 ) CanvasImageSource;
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     Exposed=(Window,Worker)
 ] interface CanvasDrawImage {
     // FIXME: All the unrestricted float arguments below should be unrestricted doubles.

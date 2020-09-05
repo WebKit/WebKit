@@ -25,7 +25,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     SuppressToJSObject,
 ] interface SVGTests {
     [SameObject] readonly attribute SVGStringList requiredFeatures;

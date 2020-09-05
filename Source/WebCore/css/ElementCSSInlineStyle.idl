@@ -26,7 +26,7 @@
 // CSSOM extensions to HTMLElement / SVGElement:
 // https://drafts.csswg.org/cssom/#the-elementcssinlinestyle-interface
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface ElementCSSInlineStyle {
     [ImplementedAs=cssomStyle, PutForwards=cssText] readonly attribute CSSStyleDeclaration style; // FIXME: Should be [SameObject].
     [ImplementedAs=ensureAttributeStyleMap, CachedAttribute, EnabledAtRuntime=CSSTypedOM, Conditional=CSS_TYPED_OM] readonly attribute StylePropertyMap attributeStyleMap; // FIXME: Should be [SameObject].

@@ -24,7 +24,7 @@
 */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface GlobalCrypto {
     readonly attribute Crypto crypto;
 };

@@ -25,7 +25,7 @@
 
 [
     Conditional=VIDEO,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     ImplementationLacksVTable,
 ] interface VideoPlaybackQuality {
     readonly attribute unrestricted double creationTime;

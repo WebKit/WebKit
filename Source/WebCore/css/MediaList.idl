@@ -29,7 +29,7 @@
     ImplementationLacksVTable,
     JSCustomHeader,
 ] interface MediaList {
-    attribute [TreatNullAs=EmptyString] DOMString mediaText;
+    attribute [LegacyNullToEmptyString] DOMString mediaText;
     readonly attribute unsigned long length;
 
     getter DOMString? item(unsigned long index);

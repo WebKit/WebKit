@@ -27,7 +27,7 @@
  */
 
 [
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface NavigatorID {
     readonly attribute DOMString appCodeName;
     readonly attribute DOMString appName;

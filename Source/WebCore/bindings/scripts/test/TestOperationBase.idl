@@ -31,7 +31,7 @@
 
 [
     Conditional=ConditionBase,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface TestOperationBase {
     undefined nonConditionalOperation();
     [Conditional=ConditionOperation] undefined conditionalOperation();

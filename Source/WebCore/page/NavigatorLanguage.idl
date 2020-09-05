@@ -27,7 +27,7 @@
  */
 
 [
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface NavigatorLanguage {
     readonly attribute DOMString language;
     readonly attribute FrozenArray<DOMString> languages;

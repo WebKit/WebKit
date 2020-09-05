@@ -30,7 +30,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface AbstractWorker {
     attribute EventHandler onerror;
 };

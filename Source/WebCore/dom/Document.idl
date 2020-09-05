@@ -83,7 +83,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     [NewObject] TreeWalker createTreeWalker(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
 
     // Extensions from HTML specification (https://html.spec.whatwg.org/#the-document-object).
-    [PutForwards=href, Unforgeable] readonly attribute Location? location;
+    [PutForwards=href, LegacyUnforgeable] readonly attribute Location? location;
     attribute USVString domain;
     readonly attribute USVString referrer;
     attribute USVString cookie;
@@ -130,7 +130,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     [EnabledBySetting=UndoManagerAPI] readonly attribute UndoManager undoManager;
 
     // Special event handler IDL attributes that only apply to Document objects.
-    [LenientThis] attribute EventHandler onreadystatechange;
+    [LegacyLenientThis] attribute EventHandler onreadystatechange;
 
     // Extensions from the CSSOM-View specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-document-interface).
     [ImplementedAs=scrollingElementForAPI] readonly attribute Element? scrollingElement;
@@ -179,11 +179,11 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 
     // Obsolete features from https://html.spec.whatwg.org/multipage/obsolete.html
 
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString fgColor;
-    [CEReactions, ImplementedAs=linkColorForBindings] attribute [TreatNullAs=EmptyString] DOMString linkColor;
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString vlinkColor;
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString alinkColor;
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString bgColor;
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString fgColor;
+    [CEReactions, ImplementedAs=linkColorForBindings] attribute [LegacyNullToEmptyString] DOMString linkColor;
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString vlinkColor;
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString alinkColor;
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString bgColor;
 
     readonly attribute HTMLCollection anchors; /* [SameObject] */
     readonly attribute HTMLCollection applets; /* [SameObject] */

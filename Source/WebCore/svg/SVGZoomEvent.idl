@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGZoomEvent : UIEvent { 
+interface SVGZoomEvent : UIEvent {
     [NewObject] readonly attribute SVGRect zoomRectScreen;
     readonly attribute unrestricted float previousScale;
     readonly attribute SVGPoint previousTranslate;

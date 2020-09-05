@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     SkipVTableValidation,
 ] interface InternalsMapLike

@@ -28,7 +28,7 @@
     Conditional=WEBXR,
     ImplementationLacksVTable,
     InterfaceName=FakeXRInputController,
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface WebFakeXRInputController {
     // Indicates that the handedness of the device has changed.
     undefined setHandedness(XRHandedness handedness);

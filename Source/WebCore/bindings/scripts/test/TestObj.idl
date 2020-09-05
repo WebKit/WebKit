@@ -73,11 +73,11 @@ enum TestConfidence { "high", "kinda-low" };
     attribute USVString usvstringAttr;
     attribute TestObj testObjAttr;
     attribute TestObj? testNullableObjAttr;
-    [LenientThis] attribute TestObj lenientTestObjAttr;
-    [Unforgeable] readonly attribute DOMString unforgeableAttr;
-    attribute [TreatNullAs=EmptyString] DOMString stringAttrTreatingNullAsEmptyString;
-    attribute [TreatNullAs=EmptyString] USVString usvstringAttrTreatingNullAsEmptyString;
-    attribute [TreatNullAs=EmptyString] ByteString byteStringAttrTreatingNullAsEmptyString;
+    [LegacyLenientThis] attribute TestObj lenientTestObjAttr;
+    [LegacyUnforgeable] readonly attribute DOMString unforgeableAttr;
+    attribute [LegacyNullToEmptyString] DOMString stringAttrTreatingNullAsEmptyString;
+    attribute [LegacyNullToEmptyString] USVString usvstringAttrTreatingNullAsEmptyString;
+    attribute [LegacyNullToEmptyString] ByteString byteStringAttrTreatingNullAsEmptyString;
     attribute record<DOMString, long> stringLongRecordAttr;
     attribute record<USVString, long> usvstringLongRecordAttr;
     attribute record<ByteString, long> usvstringLongRecordAttr;
@@ -142,8 +142,8 @@ enum TestConfidence { "high", "kinda-low" };
     long longMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     TestObj objMethod();
     TestObj objMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
-    [Unforgeable] long unforgeableMethod();
-    undefined methodWithArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] DOMString arg);
+    [LegacyUnforgeable] long unforgeableMethod();
+    undefined methodWithArgTreatingNullAsEmptyString([LegacyNullToEmptyString] DOMString arg);
     undefined methodWithXPathNSResolverParameter(XPathNSResolver resolver);
 
     // Nullable String return values.
@@ -159,11 +159,11 @@ enum TestConfidence { "high", "kinda-low" };
 
     undefined methodWithUSVStringArg(USVString str);
     undefined methodWithNullableUSVStringArg(USVString? str);
-    undefined methodWithUSVStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] USVString str);
+    undefined methodWithUSVStringArgTreatingNullAsEmptyString([LegacyNullToEmptyString] USVString str);
 
     undefined methodWithByteStringArg(ByteString str);
     undefined methodWithNullableByteStringArg(ByteString? str);
-    undefined methodWithByteStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] ByteString str);
+    undefined methodWithByteStringArgTreatingNullAsEmptyString([LegacyNullToEmptyString] ByteString str);
 
     undefined serializedValue(SerializedScriptValue serializedArg);
 
@@ -450,8 +450,8 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=CONDITION2, ConditionallyReadWrite=CONDITION] attribute Node conditionalAndConditionallyReadWriteAttribute;
 
     [RuntimeConditionallyReadWrite=TestFeature] attribute Node runtimeConditionallyReadWriteAttribute;
-    [RuntimeConditionallyReadWrite=TestFeature, Unforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeable;
-    [RuntimeConditionallyReadWrite=TestFeature, PrivateIdentifier, Unforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeablePrivate;
+    [RuntimeConditionallyReadWrite=TestFeature, LegacyUnforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeable;
+    [RuntimeConditionallyReadWrite=TestFeature, PrivateIdentifier, LegacyUnforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeablePrivate;
     [RuntimeConditionallyReadWrite=TestFeature] attribute Promise<double> runtimeConditionallyReadWriteAttributePromise;
 
     [Exposed=Window] attribute long conditionallyExposedToWindowAttribute;
@@ -476,7 +476,7 @@ typedef any AnyTypedef;
     DOMString stringWithDefault = "defaultString";
     DOMString stringWithoutDefault;
     DOMString? nullableStringWithDefault = null;
-    [TreatNullAs=EmptyString] DOMString stringTreatNullAsEmptyString;
+    [LegacyNullToEmptyString] DOMString stringTreatNullAsEmptyString;
     boolean booleanWithDefault = false;
     boolean booleanWithoutDefault;
     sequence<DOMString> sequenceOfStrings;

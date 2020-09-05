@@ -29,8 +29,8 @@ interface HTMLOutputElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
 
     readonly attribute DOMString type;
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString defaultValue;
-    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString value;
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString defaultValue;
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString value;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;

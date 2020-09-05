@@ -24,7 +24,7 @@
  */
  
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     Conditional=SPEECH_SYNTHESIS
 ] interface SpeechSynthesisVoice {
     readonly attribute DOMString voiceURI;

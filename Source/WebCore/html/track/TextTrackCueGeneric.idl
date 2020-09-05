@@ -27,7 +27,7 @@
     Conditional=VIDEO,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     ExportMacro=WEBCORE_EXPORT,
 ] interface TextTrackCueGeneric : VTTCue {
 };

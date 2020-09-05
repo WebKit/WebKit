@@ -19,7 +19,7 @@
  */
 
 [
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface EventListener {
     undefined handleEvent(Event event);
 };

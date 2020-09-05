@@ -28,7 +28,7 @@
     Conditional=WEB_AUDIO,
     EnabledBySetting=PrefixedWebAudio,
     JSGenerateToJSObject,
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface WebKitAudioBufferSourceNode : AudioScheduledSourceNode {
     attribute AudioBuffer? buffer;
 

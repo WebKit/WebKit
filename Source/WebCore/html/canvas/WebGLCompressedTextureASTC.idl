@@ -27,7 +27,7 @@
     Conditional=WEBGL,
     DoNotCheckConstants,
     GenerateIsReachable=ImplWebGLRenderingContext,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface WebGLCompressedTextureASTC {
     /* Compressed Texture Format */
     const GLenum COMPRESSED_RGBA_ASTC_4x4_KHR = 0x93B0;

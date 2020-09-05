@@ -246,7 +246,7 @@ enum ContentSizeCategory {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
     boolean nodeNeedsStyleRecalc(Node node);

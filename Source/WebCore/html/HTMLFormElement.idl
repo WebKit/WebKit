@@ -20,7 +20,7 @@
 
 [
     LegacyUnenumerableNamedProperties,
-    OverrideBuiltins,
+    LegacyOverrideBuiltIns,
     JSGenerateToNativeObject,
 ] interface HTMLFormElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect=accept_charset] attribute DOMString acceptCharset;

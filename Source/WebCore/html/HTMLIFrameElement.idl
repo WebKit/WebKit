@@ -23,8 +23,8 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect, CEReactions=NotNeeded] attribute DOMString frameBorder;
     [Reflect, CEReactions=NotNeeded] attribute DOMString height;
     [Reflect, URL, CEReactions=NotNeeded] attribute USVString longDesc;
-    [Reflect, CEReactions=NotNeeded] attribute [TreatNullAs=EmptyString] DOMString marginHeight;
-    [Reflect, CEReactions=NotNeeded] attribute [TreatNullAs=EmptyString] DOMString marginWidth;
+    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginHeight;
+    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginWidth;
     [Reflect, CEReactions=NotNeeded] attribute DOMString name;
 
     [PutForwards=value] readonly attribute DOMTokenList sandbox;

@@ -26,6 +26,7 @@ partial interface TestGlobalObject {
     attribute TestJSBuiltinConstructorConstructor TestJSBuiltinConstructor;
     attribute TestLegacyFactoryFunctionConstructor TestLegacyFactoryFunction;
     attribute TestLegacyFactoryFunctionLegacyFactoryFunctionConstructor Audio;
+    attribute TestLegacyOverrideBuiltInsConstructor TestLegacyOverrideBuiltIns;
     attribute TestMapLikeConstructor TestMapLike;
     attribute TestNamedAndIndexedSetterNoIdentifierConstructor TestNamedAndIndexedSetterNoIdentifier;
     attribute TestNamedAndIndexedSetterThrowingExceptionConstructor TestNamedAndIndexedSetterThrowingException;
@@ -42,12 +43,11 @@ partial interface TestGlobalObject {
     attribute TestNamedSetterWithIdentifierConstructor TestNamedSetterWithIdentifier;
     attribute TestNamedSetterWithIndexedGetterConstructor TestNamedSetterWithIndexedGetter;
     attribute TestNamedSetterWithIndexedGetterAndSetterConstructor TestNamedSetterWithIndexedGetterAndSetter;
-    attribute TestNamedSetterWithOverrideBuiltinsConstructor TestNamedSetterWithOverrideBuiltins;
-    attribute TestNamedSetterWithUnforgablePropertiesConstructor TestNamedSetterWithUnforgableProperties;
-    attribute TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins;
+    attribute TestNamedSetterWithLegacyOverrideBuiltInsConstructor TestNamedSetterWithLegacyOverrideBuiltIns;
+    attribute TestNamedSetterWithLegacyUnforgeablePropertiesConstructor TestNamedSetterWithLegacyUnforgeableProperties;
+    attribute TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns;
     [Conditional=ConditionDerived] attribute TestOperationConditionalConstructor TestOperationConditional;
     attribute TestOverloadedConstructorsWithSequenceConstructor TestOverloadedConstructorsWithSequence;
-    attribute TestOverrideBuiltinsConstructor TestOverrideBuiltins;
     attribute TestPluginInterfaceConstructor TestPluginInterface;
     attribute TestReadOnlyMapLikeConstructor TestReadOnlyMapLike;
     attribute TestReadOnlySetLikeConstructor TestReadOnlySetLike;

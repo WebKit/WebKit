@@ -25,7 +25,7 @@
 
 [
     EnabledAtRuntime=AriaReflection,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface AriaAttributes {
     [Reflect=aria_atomic]           attribute DOMString? ariaAtomic;
     [Reflect=aria_autocomplete]     attribute DOMString? ariaAutoComplete;

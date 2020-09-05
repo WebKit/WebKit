@@ -686,7 +686,7 @@ sub GenerateGetOwnPropertySlot
         
         GenerateNamedGetterLambda($outputArray, $interface, $namedGetterOperation, $namedGetterFunctionName, "GetterIDLType");
         
-        my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins") ? "OverrideBuiltins::Yes" : "OverrideBuiltins::No";
+        my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns") ? "LegacyOverrideBuiltIns::Yes" : "LegacyOverrideBuiltIns::No";
         push(@$outputArray, "    if (auto namedProperty = accessVisibleNamedProperty<${overrideBuiltin}>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {\n");
         
         # NOTE: GenerateNamedGetter implements steps 2.1 - 2.10.
@@ -800,7 +800,7 @@ sub GenerateGetOwnPropertySlotByIndex
         
         GenerateNamedGetterLambda($outputArray, $interface, $namedGetterOperation, $namedGetterFunctionName, "GetterIDLType");
         
-        my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins") ? "OverrideBuiltins::Yes" : "OverrideBuiltins::No";
+        my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns") ? "LegacyOverrideBuiltIns::Yes" : "LegacyOverrideBuiltIns::No";
         push(@$outputArray, "    if (auto namedProperty = accessVisibleNamedProperty<${overrideBuiltin}>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {\n");
         
         # NOTE: GenerateNamedGetter implements steps 2.1 - 2.10.
@@ -968,8 +968,8 @@ sub GeneratePut
         
         my $additionalIndent = "";
         
-        my $overrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins");
-        if (!$overrideBuiltins) {
+        my $legacyOverrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns");
+        if (!$legacyOverrideBuiltins) {
             push(@$outputArray, "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };\n");
             push(@$outputArray, "        JSValue prototype = thisObject->getPrototypeDirect(JSC::getVM(lexicalGlobalObject));\n");
             push(@$outputArray, "        bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
@@ -985,7 +985,7 @@ sub GeneratePut
         }
         push(@$outputArray, $additionalIndent . "        return true;\n");
 
-        if (!$overrideBuiltins) {
+        if (!$legacyOverrideBuiltins) {
             push(@$outputArray, "        }\n");
         }
         
@@ -1014,8 +1014,8 @@ sub GeneratePutByIndex
     my $namedSetterOperation = GetNamedSetterOperation($interface);
     my $indexedSetterOperation = GetIndexedSetterOperation($interface);
     
-    my $overrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins");
-    my $ellidesCallsToBase = ($namedSetterOperation && $overrideBuiltins) && !$interface->extendedAttributes->{Plugin} && !$namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
+    my $legacyOverrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns");
+    my $ellidesCallsToBase = ($namedSetterOperation && $legacyOverrideBuiltins) && !$interface->extendedAttributes->{Plugin} && !$namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
     
     push(@$outputArray, "bool ${className}::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool" . (!$ellidesCallsToBase ? " shouldThrow" : "") . ")\n");
     push(@$outputArray, "{\n");
@@ -1047,7 +1047,7 @@ sub GeneratePutByIndex
         push(@$outputArray, "    auto propertyName = Identifier::from(vm, index);\n");
                 
         my $additionalIndent = "";
-        if (!$overrideBuiltins) {
+        if (!$legacyOverrideBuiltins) {
             push(@$outputArray, "    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm };\n");
             push(@$outputArray, "    JSValue prototype = thisObject->getPrototypeDirect(vm);\n");
             push(@$outputArray, "    bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
@@ -1063,7 +1063,7 @@ sub GeneratePutByIndex
         }
         push(@$outputArray, $additionalIndent . "    return true;\n");
         
-        if (!$overrideBuiltins) {
+        if (!$legacyOverrideBuiltins) {
             push(@$outputArray, "    }\n\n");
         }
     }
@@ -1085,7 +1085,7 @@ sub GeneratePutByIndex
     push(@$outputArray, "}\n\n");
 }
 
-sub GenerateIsUnforgeablePropertyName
+sub GenerateIsLegacyUnforgeablePropertyName
 {
     my ($outputArray, $interface) = @_;
     
@@ -1093,7 +1093,7 @@ sub GenerateIsUnforgeablePropertyName
     foreach my $property (@{$interface->attributes}, @{$interface->operations}) {
         next if $property->isStatic;
         
-        if (IsUnforgeable($interface, $property)) {
+        if (IsLegacyUnforgeable($interface, $property)) {
             push(@unforgeablePropertyNames, $property->name);
         }
     }
@@ -1102,7 +1102,7 @@ sub GenerateIsUnforgeablePropertyName
     
     my $condition = join(" || ", map { "propertyName == \"" . $_ . "\"" } @unforgeablePropertyNames);
     
-    push(@$outputArray, "static bool isUnforgeablePropertyName(PropertyName propertyName)\n");
+    push(@$outputArray, "static bool isLegacyUnforgeablePropertyName(PropertyName propertyName)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    return ${condition};\n");
     push(@$outputArray, "}\n\n");
@@ -1169,19 +1169,19 @@ sub GenerateDefineOwnProperty
         
         my $additionalIndent = "";
         
-        my $hasUnforgableProperties = GenerateIsUnforgeablePropertyName($outputArray, $interface);
+        my $hasUnforgableProperties = GenerateIsLegacyUnforgeablePropertyName($outputArray, $interface);
         if ($hasUnforgableProperties) {
-            push(@$outputArray, "        if (!isUnforgeablePropertyName(propertyName)) {\n");
+            push(@$outputArray, "        if (!isLegacyUnforgeablePropertyName(propertyName)) {\n");
             $additionalIndent .= "    ";
         }
         
         # 1. Let creating be true if P is not a supported property name, and false otherwise.
         # NOTE: This step is strength reduced into the only use of 'creating' in step 2.2.1
         
-        # 2. If O implements an interface with the [OverrideBuiltins] extended attribute or O
+        # 2. If O implements an interface with the [LegacyOverrideBuiltIns] extended attribute or O
         #    does not have an own property named P, then:
-        my $overrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins");
-        if (!$overrideBuiltins) {
+        my $legacyOverrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns");
+        if (!$legacyOverrideBuiltins) {
             # FIXME: Is JSObject::getOwnPropertySlot the right function to call? Is there a function that will
             #        only look at the actual properties, and not call into our implementation of the
             #        [[GetOwnProperty]] hook?
@@ -1212,7 +1212,7 @@ sub GenerateDefineOwnProperty
             push(@$outputArray, $additionalIndent . "        return true;\n");
         }
         
-        if (!$overrideBuiltins) {
+        if (!$legacyOverrideBuiltins) {
             push(@$outputArray, $additionalIndent . "    }\n");
         }
         
@@ -1252,7 +1252,7 @@ sub GenerateDeletePropertyCommon
     assert("Named property deleters are not allowed on global object interfaces.") if IsGlobalInterface($interface);
 
     AddToImplIncludes("JSDOMAbstractOperations.h", $conditional);
-    my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins") ? "OverrideBuiltins::Yes" : "OverrideBuiltins::No";
+    my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns") ? "LegacyOverrideBuiltIns::Yes" : "LegacyOverrideBuiltIns::No";
     push(@$outputArray, "    if (isVisibleNamedProperty<${overrideBuiltin}>(*lexicalGlobalObject, thisObject, propertyName)) {\n");
 
     GenerateCustomElementReactionsStackIfNeeded($outputArray, $operation, "*lexicalGlobalObject");
@@ -1686,9 +1686,9 @@ sub AttributeShouldBeOnInstance
     return 1 if IsGlobalInterface($interface);
     return 1 if $codeGenerator->IsConstructorType($attribute->type);
 
-    # [Unforgeable] attributes should be on the instance.
-    # https://heycam.github.io/webidl/#Unforgeable
-    return 1 if IsUnforgeable($interface, $attribute);
+    # [LegacyUnforgeable] attributes should be on the instance.
+    # https://heycam.github.io/webidl/#LegacyUnforgeable
+    return 1 if IsLegacyUnforgeable($interface, $attribute);
 
     if ($interface->extendedAttributes->{CheckSecurity}) {
         return 0 if $attribute->extendedAttributes->{DoNotCheckSecurity};
@@ -1749,8 +1749,8 @@ sub OperationShouldBeOnInstance
 
     return 1 if IsGlobalInterface($interface);
 
-    # [Unforgeable] operations should be on the instance. https://heycam.github.io/webidl/#Unforgeable
-    if (IsUnforgeable($interface, $operation)) {
+    # [LegacyUnforgeable] operations should be on the instance. https://heycam.github.io/webidl/#LegacyUnforgeable
+    if (IsLegacyUnforgeable($interface, $operation)) {
         assert("The bindings generator does not support putting runtime-enabled operations on the instance yet (except for global objects):[" . $interface->type->name . "::" . $operation->name . "]") if NeedsRuntimeCheck($interface, $operation);
         return 1;
     }
@@ -1788,7 +1788,7 @@ sub IsAcceleratedDOMAttribute
     return 0 if $attribute->isSetLike;
     return 0 if $codeGenerator->IsConstructorType($attribute->type);
     return 0 if IsJSBuiltin($interface, $attribute);
-    return 0 if $attribute->extendedAttributes->{LenientThis};
+    return 0 if $attribute->extendedAttributes->{LegacyLenientThis};
     return 0 if $codeGenerator->IsPromiseType($attribute->type);
     return 0 if $attribute->extendedAttributes->{DOMJIT};
     return 1;
@@ -1800,7 +1800,7 @@ sub GetJSCAttributesForAttribute
     my $attribute = shift;
 
     my @specials = ();
-    push(@specials, "JSC::PropertyAttribute::DontDelete") if IsUnforgeable($interface, $attribute);
+    push(@specials, "JSC::PropertyAttribute::DontDelete") if IsLegacyUnforgeable($interface, $attribute);
 
     # As per Web IDL specification, constructor properties on the ECMAScript global object should not be enumerable.
     my $isGlobalConstructor = $codeGenerator->IsConstructorType($attribute->type);
@@ -2670,7 +2670,7 @@ sub GenerateHeader
 
     # FIXME: Why doesn't this also include Indexed Getters and [CustomGetOwnPropertySlot]
     if ($namedGetterOperation) {
-        if ($codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins")) {
+        if ($codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns")) {
             $structureFlags{"JSC::GetOwnPropertySlotIsImpure"} = 1;
         } else {
             $structureFlags{"JSC::GetOwnPropertySlotIsImpureForPropertyAbsence"} = 1;
@@ -2775,7 +2775,7 @@ sub GenerateHeader
     }
     
     # Constructor object getter
-    unless ($interface->extendedAttributes->{NoInterfaceObject}) {
+    unless ($interface->extendedAttributes->{LegacyNoInterfaceObject}) {
         push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n");
         push(@headerContent, "    static JSC::JSValue getLegacyFactoryFunction(JSC::VM&, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{LegacyFactoryFunction};
     }
@@ -4195,7 +4195,7 @@ sub GenerateImplementation
             push(@hashKeys, $name);
 
             my @specials = ();
-            push(@specials, "JSC::PropertyAttribute::DontDelete") if IsUnforgeable($interface, $attribute);
+            push(@specials, "JSC::PropertyAttribute::DontDelete") if IsLegacyUnforgeable($interface, $attribute);
             push(@specials, "JSC::PropertyAttribute::ReadOnly") if IsReadonly($attribute);
             push(@specials, "JSC::PropertyAttribute::DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
             push(@specials, "JSC::PropertyAttribute::DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
@@ -4543,7 +4543,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (!$interface->extendedAttributes->{NoInterfaceObject}) {
+    if (!$interface->extendedAttributes->{LegacyNoInterfaceObject}) {
         push(@implContent, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
@@ -4636,7 +4636,7 @@ sub GenerateImplementation
         push(@implContent, "    if (UNLIKELY(!prototype))\n");
         push(@implContent, "        return throwVMTypeError(lexicalGlobalObject, throwScope);\n");
 
-        if (!$interface->extendedAttributes->{NoInterfaceObject}) {
+        if (!$interface->extendedAttributes->{LegacyNoInterfaceObject}) {
             push(@implContent, "    return JSValue::encode(${className}::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));\n");
         } else {
             push(@implContent, "    JSValue constructor = ${className}Constructor::create(JSC::getVM(lexicalGlobalObject), ${className}Constructor::createStructure(JSC::getVM(lexicalGlobalObject), *prototype->globalObject(), prototype->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(prototype->globalObject()));\n");
@@ -5089,7 +5089,7 @@ sub GenerateAttributeGetterTrampolineDefinition
     
     my @templateParameters = ();
     push(@templateParameters, $attributeGetterBodyName);
-    if ($attribute->extendedAttributes->{LenientThis}) {
+    if ($attribute->extendedAttributes->{LegacyLenientThis}) {
         push(@templateParameters, "CastedThisErrorBehavior::ReturnEarly")
     } elsif ($codeGenerator->IsPromiseType($attribute->type)) {
         push(@templateParameters, "CastedThisErrorBehavior::RejectPromise")
@@ -5284,7 +5284,7 @@ sub GenerateAttributeSetterTrampolineDefinition
     
     my @templateParameters = ();
     push(@templateParameters, $attributeSetterBodyName);
-    push(@templateParameters, "CastedThisErrorBehavior::ReturnEarly") if $attribute->extendedAttributes->{LenientThis};
+    push(@templateParameters, "CastedThisErrorBehavior::ReturnEarly") if $attribute->extendedAttributes->{LegacyLenientThis};
     
     push(@$outputArray, "bool ${attributeSetterName}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
     push(@$outputArray, "{\n");
@@ -6725,7 +6725,7 @@ sub IsAnnotatedType
 
     return 1 if $type->extendedAttributes->{Clamp};
     return 1 if $type->extendedAttributes->{EnforceRange};
-    return 1 if $type->extendedAttributes->{TreatNullAs} && $type->extendedAttributes->{TreatNullAs} eq "EmptyString";
+    return 1 if $type->extendedAttributes->{LegacyNullToEmptyString};
     return 1 if $type->extendedAttributes->{AtomString};
     return 1 if $type->extendedAttributes->{RequiresExistingAtomString};
 }
@@ -6736,7 +6736,7 @@ sub GetAnnotatedIDLType
 
     return "IDLClampAdaptor" if $type->extendedAttributes->{Clamp};
     return "IDLEnforceRangeAdaptor" if $type->extendedAttributes->{EnforceRange};
-    return "IDLTreatNullAsEmptyAdaptor" if $type->extendedAttributes->{TreatNullAs} && $type->extendedAttributes->{TreatNullAs} eq "EmptyString";
+    return "IDLLegacyNullToEmptyStringAdaptor" if $type->extendedAttributes->{LegacyNullToEmptyString};
     return "IDLAtomStringAdaptor" if $type->extendedAttributes->{AtomString};
     return "IDLRequiresExistingAtomStringAdaptor" if $type->extendedAttributes->{RequiresExistingAtomString};
 }
@@ -7620,12 +7620,12 @@ sub GenerateConstructorHelperMethods
         $leastConstructorLength = 0;
     }
 
-    # If the interface has a parent interface which does not have [NoInterfaceObject], then use its interface object as prototype,
+    # If the interface has a parent interface which does not have [LegacyNoInterfaceObject], then use its interface object as prototype,
     # otherwise use FunctionPrototype: http://heycam.github.io/webidl/#interface-object
     push(@$outputArray, "template<> JSValue ${constructorClassName}::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)\n");
     push(@$outputArray, "{\n");
 
-    assert("An interface cannot inherit from another interface that is marked as [NoInterfaceObject]") if $interface->parentType && $codeGenerator->GetInterfaceExtendedAttributesFromName($interface->parentType->name)->{NoInterfaceObject};
+    assert("An interface cannot inherit from another interface that is marked as [LegacyNoInterfaceObject]") if $interface->parentType && $codeGenerator->GetInterfaceExtendedAttributesFromName($interface->parentType->name)->{LegacyNoInterfaceObject};
 
     if (!$generatingLegacyFactoryFunction and $interface->parentType) {
         my $parentClassName = "JS" . $interface->parentType->name;
@@ -7642,7 +7642,7 @@ sub GenerateConstructorHelperMethods
     push(@$outputArray, "{\n");
 
     # There must exist an interface prototype object for every non-callback interface defined, regardless
-    # of whether the interface was declared with the [NoInterfaceObject] extended attribute.
+    # of whether the interface was declared with the [LegacyNoInterfaceObject] extended attribute.
     # https://heycam.github.io/webidl/#interface-prototype-object
     if (ShouldUseGlobalObjectPrototype($interface)) {
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
@@ -7741,7 +7741,7 @@ sub NeedsConstructorProperty
 {
     my $interface = shift;
     
-    return !$interface->extendedAttributes->{NoInterfaceObject};
+    return !$interface->extendedAttributes->{LegacyNoInterfaceObject};
 }
 
 sub IsConstructable
@@ -7764,11 +7764,11 @@ sub HeaderNeedsPrototypeDeclaration
         || $interface->extendedAttributes->{CustomDefineOwnPropertyOnPrototype};
 }
 
-sub IsUnforgeable
+sub IsLegacyUnforgeable
 {
     my ($interface, $property) = @_;
 
-    return $property->extendedAttributes->{Unforgeable} || $interface->extendedAttributes->{Unforgeable};
+    return $property->extendedAttributes->{LegacyUnforgeable} || $interface->extendedAttributes->{LegacyUnforgeable};
 }
 
 sub ComputeFunctionSpecial
@@ -7776,7 +7776,7 @@ sub ComputeFunctionSpecial
     my ($interface, $operation) = @_;
 
     my @specials = ();
-    push(@specials, ("JSC::PropertyAttribute::DontDelete", "JSC::PropertyAttribute::ReadOnly")) if IsUnforgeable($interface, $operation);
+    push(@specials, ("JSC::PropertyAttribute::DontDelete", "JSC::PropertyAttribute::ReadOnly")) if IsLegacyUnforgeable($interface, $operation);
     push(@specials, "JSC::PropertyAttribute::DontEnum") if $operation->extendedAttributes->{NotEnumerable};
     if (IsJSBuiltin($interface, $operation)) {
         push(@specials, "JSC::PropertyAttribute::Builtin");

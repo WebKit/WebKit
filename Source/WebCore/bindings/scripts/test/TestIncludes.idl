@@ -31,7 +31,7 @@
 // changes in its output.
 [
     Conditional=Condition22|Condition23,
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface TestIncludes {
     static readonly attribute long includesStaticReadOnlyAttr;
     static attribute DOMString includesStaticAttr;

@@ -37,7 +37,7 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
 ) CanvasImageSource;
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     Exposed=(Window,Worker)
 ] interface CanvasFillStrokeStyles {
     // colors and styles (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)
@@ -47,5 +47,5 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
     // FIXME: All the float parameters below should be doubles.
     [MayThrowException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
     [MayThrowException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
-    [MayThrowException] CanvasPattern? createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);
+    [MayThrowException] CanvasPattern? createPattern(CanvasImageSource image, [LegacyNullToEmptyString] DOMString repetition);
 };

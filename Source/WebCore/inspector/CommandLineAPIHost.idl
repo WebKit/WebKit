@@ -31,7 +31,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     ImplementationLacksVTable
 ] interface CommandLineAPIHost {
     undefined clearConsoleMessages();

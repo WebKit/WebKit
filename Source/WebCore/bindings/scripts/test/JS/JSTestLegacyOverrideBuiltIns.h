@@ -21,30 +21,27 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include "TestNamedSetterWithOverrideBuiltins.h"
+#include "TestLegacyOverrideBuiltIns.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class JSTestNamedSetterWithOverrideBuiltins : public JSDOMWrapper<TestNamedSetterWithOverrideBuiltins> {
+class JSTestLegacyOverrideBuiltIns : public JSDOMWrapper<TestLegacyOverrideBuiltIns> {
 public:
-    using Base = JSDOMWrapper<TestNamedSetterWithOverrideBuiltins>;
-    static JSTestNamedSetterWithOverrideBuiltins* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithOverrideBuiltins>&& impl)
+    using Base = JSDOMWrapper<TestLegacyOverrideBuiltIns>;
+    static JSTestLegacyOverrideBuiltIns* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyOverrideBuiltIns>&& impl)
     {
-        JSTestNamedSetterWithOverrideBuiltins* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithOverrideBuiltins>(globalObject->vm().heap)) JSTestNamedSetterWithOverrideBuiltins(structure, *globalObject, WTFMove(impl));
+        JSTestLegacyOverrideBuiltIns* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyOverrideBuiltIns>(globalObject->vm().heap)) JSTestLegacyOverrideBuiltIns(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
-    static TestNamedSetterWithOverrideBuiltins* toWrapped(JSC::VM&, JSC::JSValue);
+    static TestLegacyOverrideBuiltIns* toWrapped(JSC::VM&, JSC::JSValue);
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::JSGlobalObject*, unsigned propertyName, JSC::PropertySlot&);
     static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());
-    static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
-    static bool putByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName, JSC::JSValue, bool shouldThrow);
-    static bool defineOwnProperty(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -64,38 +61,38 @@ public:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesAnyFormOfGetPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::ProhibitsPropertyCaching;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesAnyFormOfGetPropertyNames | JSC::OverridesGetOwnPropertySlot;
 protected:
-    JSTestNamedSetterWithOverrideBuiltins(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithOverrideBuiltins>&&);
+    JSTestLegacyOverrideBuiltIns(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyOverrideBuiltIns>&&);
 
     void finishCreation(JSC::VM&);
 };
 
-class JSTestNamedSetterWithOverrideBuiltinsOwner : public JSC::WeakHandleOwner {
+class JSTestLegacyOverrideBuiltInsOwner : public JSC::WeakHandleOwner {
 public:
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedSetterWithOverrideBuiltins*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestLegacyOverrideBuiltIns*)
 {
-    static NeverDestroyed<JSTestNamedSetterWithOverrideBuiltinsOwner> owner;
+    static NeverDestroyed<JSTestLegacyOverrideBuiltInsOwner> owner;
     return &owner.get();
 }
 
-inline void* wrapperKey(TestNamedSetterWithOverrideBuiltins* wrappableObject)
+inline void* wrapperKey(TestLegacyOverrideBuiltIns* wrappableObject)
 {
     return wrappableObject;
 }
 
-JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNamedSetterWithOverrideBuiltins&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNamedSetterWithOverrideBuiltins* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestNamedSetterWithOverrideBuiltins>&&);
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestNamedSetterWithOverrideBuiltins>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestLegacyOverrideBuiltIns&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestLegacyOverrideBuiltIns* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestLegacyOverrideBuiltIns>&&);
+inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestLegacyOverrideBuiltIns>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
-template<> struct JSDOMWrapperConverterTraits<TestNamedSetterWithOverrideBuiltins> {
-    using WrapperClass = JSTestNamedSetterWithOverrideBuiltins;
-    using ToWrappedReturnType = TestNamedSetterWithOverrideBuiltins*;
+template<> struct JSDOMWrapperConverterTraits<TestLegacyOverrideBuiltIns> {
+    using WrapperClass = JSTestLegacyOverrideBuiltIns;
+    using ToWrappedReturnType = TestLegacyOverrideBuiltIns*;
 };
 
 } // namespace WebCore

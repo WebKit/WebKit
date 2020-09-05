@@ -24,7 +24,7 @@
  */
 
 [
-    NoInterfaceObject
+    LegacyNoInterfaceObject
 ] interface HTMLHyperlinkElementUtils {
     [CEReactions=NotNeeded, Reflect, URL] stringifier attribute USVString href;
     readonly attribute USVString origin;

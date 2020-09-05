@@ -51,11 +51,11 @@ typedef USVString CSSOMString;
     Exposed=Window,
 ] interface DOMWindow : EventTarget {
     // The current browsing context.
-    [DoNotCheckSecurity, Unforgeable, CustomGetter] readonly attribute WindowProxy window;
+    [DoNotCheckSecurity, LegacyUnforgeable, CustomGetter] readonly attribute WindowProxy window;
     [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy self;
-    [Unforgeable] readonly attribute Document document;
+    [LegacyUnforgeable] readonly attribute Document document;
     attribute DOMString name;
-    [DoNotCheckSecurity, PutForwards=href, Unforgeable] readonly attribute Location location;
+    [DoNotCheckSecurity, PutForwards=href, LegacyUnforgeable] readonly attribute Location location;
     readonly attribute History history;
     [EnabledBySetting=CustomElements, ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
     [Replaceable] readonly attribute BarProp locationbar;
@@ -74,11 +74,11 @@ typedef USVString CSSOMString;
     // Other browsing contexts.
     [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy frames;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
-    [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute WindowProxy? top;
+    [DoNotCheckSecurityOnGetter, LegacyUnforgeable] readonly attribute WindowProxy? top;
     [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
-    [CallWith=ActiveWindow&FirstWindow, MayThrowException] WindowProxy? open(optional USVString url = "", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
+    [CallWith=ActiveWindow&FirstWindow, MayThrowException] WindowProxy? open(optional USVString url = "", optional DOMString target = "_blank", optional [LegacyNullToEmptyString] DOMString features = "");
 
     // The user agent.
     readonly attribute Navigator navigator;

@@ -20,7 +20,7 @@
 
 // Introduced in DOM Level 2:
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface CSSUnknownRule : CSSRule {
 };
 

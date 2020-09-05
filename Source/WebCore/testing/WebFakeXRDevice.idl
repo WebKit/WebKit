@@ -28,7 +28,7 @@
     Conditional=WEBXR,
     InterfaceName=FakeXRDevice,
     ImplementationLacksVTable,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface WebFakeXRDevice {
   // Sets the values to be used for subsequent
   // requestAnimationFrame() callbacks.

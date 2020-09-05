@@ -148,7 +148,7 @@ template<> struct JSConverter<IDLUSVString> {
 // MARK: -
 // MARK: String type adaptors
 
-template<typename T> struct Converter<IDLTreatNullAsEmptyAdaptor<T>> : DefaultConverter<IDLTreatNullAsEmptyAdaptor<T>> {
+template<typename T> struct Converter<IDLLegacyNullToEmptyStringAdaptor<T>> : DefaultConverter<IDLLegacyNullToEmptyStringAdaptor<T>> {
     static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         if (value.isNull())
@@ -157,7 +157,7 @@ template<typename T> struct Converter<IDLTreatNullAsEmptyAdaptor<T>> : DefaultCo
     }
 };
 
-template<typename T>  struct JSConverter<IDLTreatNullAsEmptyAdaptor<T>> {
+template<typename T>  struct JSConverter<IDLLegacyNullToEmptyStringAdaptor<T>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 

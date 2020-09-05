@@ -59,7 +59,7 @@
     [CEReactions=NotNeeded] attribute DOMString type; // readonly dropped as part of DOM level 2
     [CEReactions=NotNeeded] attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
-    [CEReactions=NotNeeded] attribute [TreatNullAs=EmptyString] DOMString value;
+    [CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString value;
     attribute Date? valueAsDate;
     attribute unrestricted double valueAsNumber;
 

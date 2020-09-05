@@ -27,7 +27,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     SkipVTableValidation
 ] interface ReadableStreamSource {
     [Custom] Promise<undefined> start(ReadableStreamDefaultController controller);

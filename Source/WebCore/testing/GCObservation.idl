@@ -30,7 +30,7 @@
  */
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface GCObservation {

@@ -25,7 +25,7 @@
  
 [
     Conditional=SPEECH_SYNTHESIS,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface SpeechSynthesis  {
     readonly attribute boolean pending;
     readonly attribute boolean speaking;

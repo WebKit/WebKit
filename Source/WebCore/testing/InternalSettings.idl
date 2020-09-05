@@ -29,7 +29,7 @@ enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "Fully
 enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
 
 [
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
     JSGenerateToJSObject,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface InternalSettings : InternalSettingsGenerated {

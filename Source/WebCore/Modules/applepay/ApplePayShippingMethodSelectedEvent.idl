@@ -25,7 +25,7 @@
 
 [
     Conditional=APPLE_PAY,
-    NoInterfaceObject,
+    LegacyNoInterfaceObject,
 ] interface ApplePayShippingMethodSelectedEvent : Event {
     [CachedAttribute] readonly attribute ApplePayShippingMethod shippingMethod;
 };
