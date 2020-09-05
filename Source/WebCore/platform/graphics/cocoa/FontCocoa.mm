@@ -670,16 +670,19 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 float Font::platformWidthForGlyph(Glyph glyph) const
 {
     CGSize advance = CGSizeZero;
-    bool horizontal = platformData().orientation() == FontOrientation::Horizontal;
-    CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
 
     if (platformData().size()) {
+        bool horizontal = platformData().orientation() == FontOrientation::Horizontal;
         CTFontOrientation orientation = horizontal || m_isBrokenIdeographFallback ? kCTFontOrientationHorizontal : kCTFontOrientationVertical;
-        // FIXME: Remove this special-casing when <rdar://problem/28197291> and <rdar://problem/28662086> are fixed.
-        if (CTFontIsAppleColorEmoji(m_platformData.ctFont()) || m_platformData.hasVariations())
-            CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), orientation, &glyph, &advance, 1);
-        else
+#if USE(CTFONTGETADVANCES_WORKAROUND)
+        CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
+        if (!CTFontIsAppleColorEmoji(m_platformData.ctFont()) && !m_platformData.hasVariations())
             CTFontGetUnsummedAdvancesForGlyphsAndStyle(m_platformData.ctFont(), orientation, style, &glyph, &advance, 1);
+        else
+#endif
+        {
+            CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), orientation, &glyph, &advance, 1);
+        }
     }
     return advance.width + m_syntheticBoldOffset;
 }

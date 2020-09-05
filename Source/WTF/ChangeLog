@@ -1,3 +1,12 @@
+2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate off SPI in Font::platformWidthForGlyph()
+        https://bugs.webkit.org/show_bug.cgi?id=215670
+
+        Reviewed by Zalan Bujtas.
+
+        * wtf/PlatformUse.h:
+
 2020-09-04  Alex Christensen  <achristensen@webkit.org>
 
         Move PDF heads-up display to UI process on macOS
