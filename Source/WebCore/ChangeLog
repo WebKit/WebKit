@@ -1,3 +1,23 @@
+2020-09-05  Alex Christensen  <achristensen@webkit.org>
+
+        TextDecoder should properly handle streams
+        https://bugs.webkit.org/show_bug.cgi?id=216202
+
+        Reviewed by Darin Adler.
+
+        A TextCodec keeps state when it decodes part of valid input, such as the first byte of a multibyte sequence.
+        TextEncoding::decode makes a new TextCodec and throws away that state.
+        In order to properly handle streaming, we need to keep the TextCodec and call TextCodec::decode directly.
+
+        Covered by newly passing web platform tests.  I also added a test that failed in my first implementation attempt
+        but passes now in WebKit as well as Chromium.  Firefox hasn't implemented TextDecoderStream yet, but this test will
+        hopefully help them not make the same mistake I did.
+
+        * dom/TextDecoder.cpp:
+        (WebCore::TextDecoder::decode):
+        (WebCore::codeUnitByteSize): Deleted.
+        * dom/TextDecoder.h:
+
 2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] CTFontIsSystemUIFont() is faster than CTFontDescriptorIsSystemUIFont()/CTFontCopyFontDescriptor()

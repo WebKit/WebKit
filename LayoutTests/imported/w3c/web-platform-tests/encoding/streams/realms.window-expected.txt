@@ -10,6 +10,6 @@ PASS TextDecoderStream's readable and writable attributes should come from the s
 PASS the result object when read is called after write should come from the same realm as the constructor of TextDecoderStream 
 PASS the result object when write is called with a pending read should come from the same realm as the constructor of TextDecoderStream 
 PASS TypeError for chunk with the wrong type should come from constructor realm of TextDecoderStream 
-FAIL TypeError for invalid chunk should come from constructor realm of TextDecoderStream assert_unreached: Should have rejected: write TypeError should come from constructor realm Reached unreachable code
+PASS TypeError for invalid chunk should come from constructor realm of TextDecoderStream 
 PASS TypeError for incomplete input should come from constructor realm of TextDecoderStream 
 

@@ -26,9 +26,13 @@
 #include "TextDecoder.h"
 
 #include "HTMLParserIdioms.h"
+#include "TextCodec.h"
+#include "TextEncodingRegistry.h"
 #include <wtf/Optional.h>
 
 namespace WebCore {
+
+TextDecoder::~TextDecoder() = default;
 
 ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options options)
 {
@@ -117,11 +121,6 @@ auto TextDecoder::ignoreBOMIfNecessary(const uint8_t*& data, size_t& length, boo
     return WaitForMoreBOMBytes::No;
 }
 
-static size_t codeUnitByteSize(const TextEncoding& encoding)
-{
-    return encoding.isByteBasedEncoding() ? 1 : 2;
-}
-
 ExceptionOr<String> TextDecoder::decode(Optional<BufferSource::VariantType> input, DecodeOptions options)
 {
     Optional<BufferSource> inputBuffer;
@@ -151,28 +150,15 @@ ExceptionOr<String> TextDecoder::decode(Optional<BufferSource::VariantType> inpu
         return String();
     }
 
-    const bool stopOnError = true;
+    auto oldBuffer = std::exchange(m_buffer, { });
+
+    if (!m_codec)
+        m_codec = newTextCodec(m_textEncoding);
+
     bool sawError = false;
-    if (length % codeUnitByteSize(m_textEncoding))
-        sawError = true;
-    const char* charData = reinterpret_cast<const char*>(data);
-    String result;
-    if (!sawError)
-        result = m_textEncoding.decode(charData, length, stopOnError, sawError);
-
-    if (sawError) {
-        if (options.stream) {
-            result = String();
-            if (!m_buffer.size())
-                m_buffer.append(data, length);
-        } else {
-            if (m_options.fatal)
-                return Exception { TypeError };
-            result = m_textEncoding.decode(charData, length);
-        }
-    } else
-        m_buffer.clear();
-
+    String result = m_codec->decode(reinterpret_cast<const char*>(data), length, !options.stream, false, sawError);
+    if (sawError && m_options.fatal)
+        return Exception { TypeError };
     return result;
 }
 

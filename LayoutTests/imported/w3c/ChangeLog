@@ -1,3 +1,20 @@
+2020-09-05  Alex Christensen  <achristensen@webkit.org>
+
+        TextDecoder should properly handle streams
+        https://bugs.webkit.org/show_bug.cgi?id=216202
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/streams/decode-non-utf8.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-non-utf8.any.js:
+        * web-platform-tests/encoding/streams/decode-non-utf8.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/decode-split-character.any-expected.txt:
+        * web-platform-tests/encoding/streams/decode-split-character.any.worker-expected.txt:
+        * web-platform-tests/encoding/streams/realms.window-expected.txt:
+        * web-platform-tests/encoding/textdecoder-fatal-streaming-expected.txt: Removed.
+        * web-platform-tests/encoding/textdecoder-fatal-streaming.any-expected.txt:
+        * web-platform-tests/encoding/textdecoder-fatal-streaming.any.worker-expected.txt:
+
 2020-09-05  Darin Adler  <darin@apple.com>
 
         CSS revert should serialize as "revert", not "Revert"

@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class TextCodec;
+
 class TextDecoder : public RefCounted<TextDecoder> {
 public:
     struct Options {
@@ -43,6 +45,7 @@ public:
     };
     
     static ExceptionOr<Ref<TextDecoder>> create(const String& label, Options);
+    ~TextDecoder();
 
     String encoding() const;
     bool fatal() const { return m_options.fatal; }
@@ -57,7 +60,8 @@ private:
     size_t bytesNeededForFullBOMIgnoreCheck() const;
     bool isBeginningOfIncompleteBOM(const uint8_t*, size_t) const;
 
-    TextEncoding m_textEncoding;
+    const TextEncoding m_textEncoding;
+    std::unique_ptr<TextCodec> m_codec;
     Options m_options;
     Vector<uint8_t> m_buffer;
     bool m_bomIgnoredIfNecessary { false };

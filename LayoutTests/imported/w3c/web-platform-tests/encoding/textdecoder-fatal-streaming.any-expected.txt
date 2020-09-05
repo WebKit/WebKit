@@ -1,4 +1,4 @@
 
 PASS Fatal flag, non-streaming cases 
-FAIL Fatal flag, streaming cases assert_equals: expected "\0" but got ""
+PASS Fatal flag, streaming cases 
 

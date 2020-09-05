@@ -1,13 +1,13 @@
 
 PASS a code point split between chunks should not be emitted until all bytes are available; split point = 2 
-FAIL a code point split between chunks should not be emitted until all bytes are available; split point = 3 assert_array_equals: the split code point should be in the second chunk of the output lengths differ, expected array ["I ", "💙 streams"] length 2, got ["I 💙 streams"] length 1
-FAIL a code point split between chunks should not be emitted until all bytes are available; split point = 4 assert_array_equals: the split code point should be in the second chunk of the output lengths differ, expected array ["I ", "💙 streams"] length 2, got ["I 💙 streams"] length 1
-FAIL a code point split between chunks should not be emitted until all bytes are available; split point = 5 assert_array_equals: the split code point should be in the second chunk of the output lengths differ, expected array ["I ", "💙 streams"] length 2, got ["I 💙 streams"] length 1
+PASS a code point split between chunks should not be emitted until all bytes are available; split point = 3 
+PASS a code point split between chunks should not be emitted until all bytes are available; split point = 4 
+PASS a code point split between chunks should not be emitted until all bytes are available; split point = 5 
 PASS a code point should be emitted as soon as all bytes are available 
 PASS an empty chunk inside a code point split between chunks should not change the output; split point = 1 
 PASS an empty chunk inside a code point split between chunks should not change the output; split point = 2 
-FAIL an empty chunk inside a code point split between chunks should not change the output; split point = 3 assert_equals: two chunks should be output expected 2 but got 1
-FAIL an empty chunk inside a code point split between chunks should not change the output; split point = 4 assert_equals: two chunks should be output expected 2 but got 1
-FAIL an empty chunk inside a code point split between chunks should not change the output; split point = 5 assert_equals: two chunks should be output expected 2 but got 1
+PASS an empty chunk inside a code point split between chunks should not change the output; split point = 3 
+PASS an empty chunk inside a code point split between chunks should not change the output; split point = 4 
+PASS an empty chunk inside a code point split between chunks should not change the output; split point = 5 
 PASS an empty chunk inside a code point split between chunks should not change the output; split point = 6 
 
