@@ -1,3 +1,12 @@
+2020-09-05  Darin Adler  <darin@apple.com>
+
+        Implement serialization of CSSPropertyGap
+        https://bugs.webkit.org/show_bug.cgi?id=216210
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/css/css-align/parsing/gap-valid-expected.txt: Expect pass.
+
 2020-09-04  Alex Christensen  <achristensen@webkit.org>
 
         Align KOI8-U and ibm866 encodings with Chrome, Firefox, and the specification

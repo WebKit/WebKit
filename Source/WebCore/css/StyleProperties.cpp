@@ -149,8 +149,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
             return String();
     }
 
-    // FIXME: If all longhands are initial or inherit, the shorthand should be serialized as that keyword.
-
     // Shorthand and 4-values properties
     switch (propertyID) {
     case CSSPropertyAll:
@@ -285,6 +283,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return String();
     case CSSPropertyBorderRadius:
         return get4Values(borderRadiusShorthand());
+    case CSSPropertyGap:
+        return get2Values(gapShorthand());
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyScrollSnapMargin:
         return get4Values(scrollSnapMarginShorthand());
