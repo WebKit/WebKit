@@ -1,5 +1,12 @@
 2020-09-04  Alex Christensen  <achristensen@webkit.org>
 
+        Fix build when using non-standard unified sources.
+
+        * Modules/applepay/ApplePayPaymentMethod.h:
+        There was a missing include.
+
+2020-09-04  Alex Christensen  <achristensen@webkit.org>
+
         Align KOI8-U and ibm866 encodings with Chrome, Firefox, and the specification
         https://bugs.webkit.org/show_bug.cgi?id=216184
 

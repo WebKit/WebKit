@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayPaymentContact.h"
 #include "ApplePayPaymentPass.h"
 #include <wtf/Optional.h>
 
