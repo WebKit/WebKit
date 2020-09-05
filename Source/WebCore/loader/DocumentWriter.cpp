@@ -55,6 +55,8 @@ namespace WebCore {
 
 static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame* parentFrame) 
 {
+    if (is<XMLDocument>(frame->document()))
+        return false;
     return parentFrame && parentFrame->document()->securityOrigin().canAccess(frame->document()->securityOrigin());
 }
     
