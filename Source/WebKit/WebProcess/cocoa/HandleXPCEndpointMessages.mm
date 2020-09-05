@@ -45,8 +45,10 @@ void handleXPCEndpointMessages(xpc_object_t event)
         return;
 
     if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
-        auto endpoint = xpc_dictionary_get_value(event, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
-        LaunchServicesDatabaseManager::singleton().setEndpoint(endpoint);
+        auto xpcEndPoint = xpc_dictionary_get_value(event, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
+        if (!xpcEndPoint || xpc_get_type(xpcEndPoint) != XPC_TYPE_ENDPOINT)
+            return;
+        LaunchServicesDatabaseManager::singleton().setEndpoint(xpcEndPoint);
         return;
     }
 #endif

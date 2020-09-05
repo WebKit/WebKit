@@ -1,5 +1,19 @@
 2020-09-04  Chris Dumez  <cdumez@apple.com>
 
+        handleXPCEndpointMessages does not check XPC object is an xpc_endpoint_t
+        https://bugs.webkit.org/show_bug.cgi?id=216196
+        <rdar://problem/68198293>
+
+        Reviewed by Per Arne Vollan.
+
+        Add a check to have sure the XPC object is indeed an xpc_endpoint_t before
+        using it.
+
+        * WebProcess/cocoa/HandleXPCEndpointMessages.mm:
+        (WebKit::handleXPCEndpointMessages):
+
+2020-09-04  Chris Dumez  <cdumez@apple.com>
+
         Move lazy DisplayLink tear down logic from the WebProcess to the UIProcess
         https://bugs.webkit.org/show_bug.cgi?id=216195
 
