@@ -40,6 +40,8 @@
 #include "StyleFontSizeFunctions.h"
 #include "StylePropertyShorthand.h"
 
+#include <wtf/SetForScope.h>
+
 namespace WebCore {
 namespace Style {
 
@@ -215,12 +217,11 @@ void Builder::applyCustomProperty(const String& name)
         }
 
         if (m_state.m_inProgressPropertiesCustom.contains(name)) {
-            m_state.m_linkMatch = index;
+            SetForScope<SelectorChecker::LinkMatchMask> scopedLinkMatchMutation(m_state.m_linkMatch, index);
             applyProperty(CSSPropertyCustom, valueToApply.get(), index);
         }
     }
 
-    m_state.m_linkMatch = SelectorChecker::MatchDefault;
     m_state.m_inProgressPropertiesCustom.remove(name);
     m_state.m_appliedCustomProperties.add(name);
 
@@ -246,7 +247,7 @@ inline void Builder::applyCascadeProperty(const PropertyCascade::Property& prope
 
     auto applyWithLinkMatch = [&](SelectorChecker::LinkMatchMask linkMatch) {
         if (property.cssValue[linkMatch]) {
-            m_state.m_linkMatch = linkMatch;
+            SetForScope<SelectorChecker::LinkMatchMask> scopedLinkMatchMutation(m_state.m_linkMatch, linkMatch);
             applyProperty(property.id, *property.cssValue[linkMatch], linkMatch);
         }
     };

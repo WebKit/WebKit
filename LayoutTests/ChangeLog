@@ -1,3 +1,16 @@
+2020-09-04  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        CSS :visited color taken on non-visited link when using CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=210525
+
+        Add reftest ensuring :visited link styles don't override regular styles
+        for links that have not yet been visited.
+
+        Reviewed by Darin Adler.
+
+        * fast/css/link-with-variable-styling-expected.html: Added.
+        * fast/css/link-with-variable-styling.html: Added.
+
 2020-09-04  Karl Rackler  <rackler@apple.com>
 
         (REGRESSION (r266045): [ Big Sur ] 6 forms and 3 tables tests are a constant failure with approximately 1px difference)

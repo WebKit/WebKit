@@ -1,3 +1,22 @@
+2020-09-04  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        CSS :visited color taken on non-visited link when using CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=210525
+
+        Reviewed by Darin Adler.
+
+        This patch fixes a bug in which :visited styles with variables (custom properties)
+        were being applied to non-visited links, as the builder link match state was
+        unconditionally changed from MatchVisited to MatchDefault when resolving said variables.
+        Now all link state mutations are limited to the smallest scope possible, meaning the
+        erroneous reset to MatchDefault is no longer necessary.
+
+        Test: fast/css/link-with-variable-styling.html
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyCustomProperty): Limit m_linkState mutations with SetForScope to prevent said
+        mutations from leaking out and causing unintended side effects.
+
 2020-09-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix build when using non-standard unified sources.
