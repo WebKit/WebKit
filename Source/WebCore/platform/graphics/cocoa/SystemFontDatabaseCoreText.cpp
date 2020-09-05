@@ -44,8 +44,6 @@ SystemFontDatabaseCoreText::SystemFontDatabaseCoreText()
 {
 }
 
-#if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
-
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemUIFont(const CascadeListParameters& parameters, CFStringRef locale)
 {
     // Work around a quirk of the platform API.
@@ -236,8 +234,6 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(c
 {
     return cascadeList(systemFontParameters(description, cssFamily, systemFontKind, allowUserInstalledFonts), systemFontKind);
 }
-
-#endif // USE(PLATFORM_SYSTEM_FALLBACK_LIST)
 
 static String genericFamily(const String& locale, HashMap<String, String>& map, CFStringRef ctKey)
 {

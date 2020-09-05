@@ -46,9 +46,7 @@ namespace WebCore {
 
 void platformReleaseMemory(Critical)
 {
-#if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
     SystemFontDatabaseCoreText::singleton().clear();
-#endif
     clearFontFamilySpecificationCoreTextCache();
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)

@@ -57,6 +57,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FloatRectDirect2D.cpp
     platform/graphics/win/FloatSizeDirect2D.cpp
     platform/graphics/win/FontCacheWin.cpp
+    platform/graphics/win/FontDescriptionWin.cpp
     platform/graphics/win/FontPlatformDataWin.cpp
     platform/graphics/win/FontWin.cpp
     platform/graphics/win/FullScreenController.cpp

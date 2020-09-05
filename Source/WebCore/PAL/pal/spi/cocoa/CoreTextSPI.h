@@ -179,7 +179,6 @@ extern const CFStringRef kCTUIFontTextStyleTitle3;
 extern const CFStringRef kCTUIFontTextStyleTitle4;
 CTFontDescriptorRef CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
 
-__attribute__((availability(macosx, obsoleted = 10.13))) __attribute__((availability(ios, obsoleted = 11.0))) CTFontRef CTFontCreatePhysicalFontForCharactersWithLanguage(CTFontRef, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
 bool CTFontIsAppleColorEmoji(CTFontRef);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
 

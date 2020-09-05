@@ -74,6 +74,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FontCacheWin.cpp
     platform/graphics/win/FontCascadeDirect2D.cpp
     platform/graphics/win/FontCustomPlatformData.cpp
+    platform/graphics/win/FontDescriptionWin.cpp
     platform/graphics/win/FontPlatformDataDirect2D.cpp
     platform/graphics/win/FontPlatformDataWin.cpp
     platform/graphics/win/FontWin.cpp

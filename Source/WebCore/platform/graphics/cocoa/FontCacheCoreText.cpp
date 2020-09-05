@@ -1242,9 +1242,7 @@ static void invalidateFontCache()
         return;
     }
 
-#if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
     SystemFontDatabaseCoreText::singleton().clear();
-#endif
     clearFontFamilySpecificationCoreTextCache();
 
     FontDatabase::singletonAllowingUserInstalledFonts().clear();
@@ -1426,14 +1424,7 @@ static bool isUserInstalledFont(CTFontRef font)
 }
 #endif
 
-// FIXME: Why not do this on watchOS and tvOS?
-#if !USE(PLATFORM_SYSTEM_FALLBACK_LIST) && (PLATFORM(MAC) || PLATFORM(IOS))
-static RetainPtr<CTFontRef> createFontForCharacters(CTFontRef font, CFStringRef localeString, AllowUserInstalledFonts, const UChar* characters, unsigned length)
-{
-    CFIndex coveredLength = 0;
-    return adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, characters, length, localeString, &coveredLength));
-}
-#elif HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
+#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
 static RetainPtr<CTFontRef> createFontForCharacters(CTFontRef font, CFStringRef localeString, AllowUserInstalledFonts allowUserInstalledFonts, const UChar* characters, unsigned length)
 {
     CFIndex coveredLength = 0;

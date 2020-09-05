@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-#if USE(PLATFORM_SYSTEM_FALLBACK_LIST)
-
 template<typename T, typename U, std::size_t size, std::size_t... indices> std::array<T, size> convertArray(U (&array)[size], std::index_sequence<indices...>)
 {
     return { { array[indices]... } };
@@ -109,10 +107,9 @@ unsigned FontCascadeDescription::effectiveFamilyCount() const
 
 FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index) const
 {
-    // The special cases in this function need to match the behavior in FontCacheCoreText.cpp. On systems
-    // where USE(PLATFORM_SYSTEM_FALLBACK_LIST) is set to true, this code is used for regular (element style) lookups,
-    // and the code in FontDescriptionCocoa.cpp is used when src:local(special-cased-name) is specified inside an
-    // @font-face block.
+    // The special cases in this function need to match the behavior in FontCacheCoreText.cpp. This code
+    // is used for regular (element style) lookups, and the code in FontDescriptionCocoa.cpp is used when
+    // src:local(special-cased-name) is specified inside an @font-face block.
     // FIXME: Currently, an @font-face block corresponds to a single item in the font-family: fallback list, which
     // means that "src:local(system-ui)" can't follow the Core Text cascade list (the way it does for regular lookups).
     // These two behaviors should be unified, which would hopefully allow us to delete this duplicate code.
@@ -132,8 +129,6 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
     ASSERT_NOT_REACHED();
     return nullAtom();
 }
-
-#endif // USE(PLATFORM_SYSTEM_FALLBACK_LIST)
 
 AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, const AtomString& locale, const AtomString& familyName)
 {

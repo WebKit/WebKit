@@ -63,20 +63,6 @@ FontCascadeDescription::FontCascadeDescription()
 {
 }
 
-#if !USE(PLATFORM_SYSTEM_FALLBACK_LIST)
-
-unsigned FontCascadeDescription::effectiveFamilyCount() const
-{
-    return familyCount();
-}
-
-FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned i) const
-{
-    return familyAt(i);
-}
-
-#endif
-
 FontSelectionValue FontCascadeDescription::lighterWeight(FontSelectionValue weight)
 {
     if (weight < FontSelectionValue(100))

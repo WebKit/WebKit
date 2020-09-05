@@ -1,3 +1,39 @@
+2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] USE(PLATFORM_SYSTEM_FALLBACK_LIST) is true on all Cocoa platforms, so there's no need to consult it in Cocoa-specific files
+        https://bugs.webkit.org/show_bug.cgi?id=215684
+
+        Reviewed by Darin Adler.
+
+        Removes dead code.
+
+        No new tests because there is no behavior change.
+
+        * Configurations/WebCore.xcconfig:
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        * platform/FreeType.cmake:
+        * platform/graphics/FontCascadeDescription.cpp:
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const): Deleted.
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::invalidateFontCache):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        (WebCore::FontFamilySpecificationCoreText::fontRanges const):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        * platform/graphics/harfbuzz/FontDescriptionHarfBuzz.cpp: Added. Moved port-specific
+        implementations into port-specific files.
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+        * platform/graphics/win/FontDescriptionWin.cpp: Added. Moved port-specific
+        implementations into port-specific files.
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+
 2020-09-05  Alex Christensen  <achristensen@webkit.org>
 
         XML documents in iframes should not inherit encoding from parent frame
