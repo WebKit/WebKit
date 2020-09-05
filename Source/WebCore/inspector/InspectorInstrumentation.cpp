@@ -160,8 +160,6 @@ void InspectorInstrumentation::didInsertDOMNodeImpl(InstrumentingAgents& instrum
 {
     if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didInsertDOMNode(node);
-    if (auto* pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
-        pageDOMDebuggerAgent->didInsertDOMNode(node);
 }
 
 void InspectorInstrumentation::willRemoveDOMNodeImpl(InstrumentingAgents& instrumentingAgents, Node& node)

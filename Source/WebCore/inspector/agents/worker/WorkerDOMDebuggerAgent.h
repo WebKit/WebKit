@@ -39,7 +39,7 @@ public:
     ~WorkerDOMDebuggerAgent() override;
 
     // DOMDebuggerBackendDispatcherHandler
-    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
+    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type, const JSON::Object* options) override;
     void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
 
 private:

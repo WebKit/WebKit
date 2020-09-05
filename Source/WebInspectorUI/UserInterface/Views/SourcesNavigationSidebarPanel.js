@@ -328,7 +328,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.JavaScriptBreakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.DisplayLocationDidChange, this._handleDebuggerObjectDisplayLocationDidChange, this);
         WI.IssueMessage.addEventListener(WI.IssueMessage.Event.DisplayLocationDidChange, this._handleDebuggerObjectDisplayLocationDidChange, this);
 
-        WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DOMNodeChanged, this._handleDOMBreakpointDOMNodeChanged, this);
+        WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DOMNodeWillChange, this._handleDOMBreakpointDOMNodeWillChange, this);
+        WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DOMNodeDidChange, this._handleDOMBreakpointDOMNodeDidChange, this);
 
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.IssueAdded, this._handleConsoleIssueAdded, this);
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, this._handleConsoleCleared, this);
@@ -1257,10 +1258,6 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let parentTreeElement = this._breakpointsTreeOutline;
 
         let getDOMNodeTreeElement = (domNode) => {
-            console.assert(domNode, "Missing DOMNode for identifier", breakpoint.domNodeIdentifier);
-            if (!domNode)
-                return null;
-
             let domNodeTreeElement = this._breakpointsTreeOutline.findTreeElement(domNode);
             if (!domNodeTreeElement) {
                 domNodeTreeElement = new WI.DOMNodeTreeElement(domNode);
@@ -1280,13 +1277,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         else if (breakpoint === WI.debuggerManager.allMicrotasksBreakpoint)
             options.classNames = ["microtask"];
         else if (breakpoint instanceof WI.DOMBreakpoint) {
-            if (!breakpoint.domNodeIdentifier)
+            if (!breakpoint.domNode)
                 return null;
 
             constructor = WI.DOMBreakpointTreeElement;
 
-            let domNode = WI.domManager.nodeForId(breakpoint.domNodeIdentifier);
-            parentTreeElement = getDOMNodeTreeElement(domNode);
+            parentTreeElement = getDOMNodeTreeElement(breakpoint.domNode);
         } else if (breakpoint instanceof WI.EventBreakpoint) {
             constructor = WI.EventBreakpointTreeElement;
 
@@ -1671,6 +1667,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
             if (pauseData.targetNodeId) {
                 console.assert(domBreakpoint.type === WI.DOMBreakpoint.Type.SubtreeModified || domBreakpoint.type === WI.DOMBreakpoint.Type.NodeRemoved);
+                console.assert(pauseData.targetNodeId !== domBreakpoint.domNode.id, pauseData.targetNodeId, domBreakpoint);
                 updateTargetDescription(pauseData.targetNodeId);
             } else if (pauseData.targetNode) { // COMPATIBILITY (iOS 13): `targetNode` was renamed to `targetNodeId` and was changed from a `Runtime.RemoteObject` to a `DOM.NodeId`.
                 console.assert(domBreakpoint.type === WI.DOMBreakpoint.Type.SubtreeModified);
@@ -2381,13 +2378,16 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             newDebuggerTreeElement.revealAndSelect(true, false, true);
     }
 
-    _handleDOMBreakpointDOMNodeChanged(event)
+    _handleDOMBreakpointDOMNodeWillChange(event)
     {
         let breakpoint = event.target;
-        if (breakpoint.domNodeIdentifier)
-            this._addBreakpoint(breakpoint);
-        else
-            this._removeBreakpoint(breakpoint);
+        this._removeBreakpoint(breakpoint);
+    }
+
+    _handleDOMBreakpointDOMNodeDidChange(event)
+    {
+        let breakpoint = event.target;
+        this._addBreakpoint(breakpoint);
     }
 
     _handleConsoleIssueAdded(event)

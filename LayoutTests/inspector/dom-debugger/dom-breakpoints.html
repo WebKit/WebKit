@@ -3,378 +3,92 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/dom-breakpoint-utilities.js"></script>
 <script>
-function subtreeModifiedTest() {
-    document.getElementById("subtree-modified-test").append(document.createElement("p"));
-}
-
-function attributeModifiedTest() {
-    document.getElementById("attribute-modified-test").setAttribute("display", "none");
-}
-
-function nodeRemovedDirectTest() {
-    let node = document.getElementById("node-removed-direct-test");
-    let parent = node.parentNode;
-    node.remove();
-    parent.append(node);
-}
-
-function nodeRemovedAncestorTest() {
-    let node = document.getElementById("node-removed-ancestor-test");
-    let parent = node.parentNode;
-    let grandparent = parent.parentNode;
-    parent.remove(node);
-    grandparent.append(parent);
-}
-
 function test()
 {
-    const subtreeModifiedTestId = "subtree-modified-test";
-    const attributeModifiedTestId = "attribute-modified-test";
-    const nodeRemovedDirectTestId = "node-removed-direct-test";
-    const nodeRemovedAncestorTestId = "node-removed-ancestor-test";
-    const multipleBreakpointsTestId = "multiple-breakpoints-test";
-
-    let debuggerPausedListener = null;
-
-    let suite = InspectorTest.createAsyncSuite("DOMBreakpoints");
-
-    function teardown(resolve) {
-        let breakpoints = WI.domDebuggerManager.domBreakpoints;
-        for (let breakpoint of breakpoints)
-            WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
-        InspectorTest.assert(!WI.domDebuggerManager.domBreakpoints.length);
-
-        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, debuggerPausedListener);
-        debuggerPausedListener = null;
-
-        resolve();
-    }
-
-    function rejectOnPause() {
-        return new Promise((resolve, reject) => {
-            InspectorTest.assert(!debuggerPausedListener);
-            debuggerPausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
-                WI.debuggerManager.resume();
-                InspectorTest.fail("Should not pause.");
-                reject();
-            });
-        });
-    }
-
-    function awaitEvaluateInPage(expression) {
-        return new Promise((resolve, reject) => {
-            InspectorTest.log("Wait for evaluate in page to return.");
-            InspectorTest.evaluateInPage(expression, (error) => {
-                if (error)
-                    reject(error);
-
-                resolve();
-            });
-        });
-    }
-
-    function awaitQuerySelector(selector) {
-        return new Promise((resolve, reject) => {
-            WI.domManager.requestDocument((documentNode) => {
-                if (!documentNode) {
-                    reject();
-                    return;
-                }
-
-                documentNode.querySelector(selector, (nodeId) => {
-                    if (!nodeId) {
-                        InspectorTest.fail("Selector returned no nodes.", selector);
-                        reject();
-                        return;
-                    }
-
-                    let node = WI.domManager.nodeForId(nodeId);
-                    InspectorTest.assert(node, "Missing node for id.", nodeId);
-                    if (!node) {
-                        reject();
-                        return;
-                    }
-
-                    resolve(node);
-                });
-            });
-        });
-    }
-
-    function addBreakpointForElementIdentifier(elementIdentifier, type, disabled) {
-        return new Promise((resolve, reject) => {
-            awaitQuerySelector("#" + elementIdentifier)
-            .then((node) => {
-                WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.DOMBreakpointAdded)
-                .then((event) => {
-                    let breakpoint = event.data.breakpoint;
-                    InspectorTest.pass(`Added '${type}' breakpoint.`);
-                    resolve(event);
-                });
-
-                WI.domDebuggerManager.addDOMBreakpoint(new WI.DOMBreakpoint(node, type, {disabled}));
-            });
-        });
-    }
-
-    function addTestsForBreakpointType({name, elementIdentifier, type, expression, insertion, shouldMatch}) {
-        suite.addTestCase({
-            name: `DOMBreakpoints.${name}.BreakpointEnabled`,
-            description: "Check that debugger pauses for breakpoint type.",
-            teardown,
-            test(resolve, reject) {
-                addBreakpointForElementIdentifier(elementIdentifier, type)
-                .then((event) => {
-                    let breakpoint = event.data.breakpoint;
-                    InspectorTest.expectEqual(breakpoint.type, type, "Breakpoint should have expected type.");
-
-                    InspectorTest.log("Call DOM operation.");
-                    InspectorTest.evaluateInPage(expression);
-                    return WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
-                })
-                .then(() => {
-                    let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
-                    InspectorTest.log("PAUSED:");
-                    InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.DOM, "Pause reason should be DOM.");
-
-                    let pauseData = targetData.pauseData;
-                    InspectorTest.expectEqual(pauseData.type, type, `Pause type should be '${type}'.`);
-                    InspectorTest.expectEqual(pauseData.nodeId, domNodeIdentifier, `Pause nodeId should be expected value.`);
-
-                    if (insertion !== undefined)
-                        InspectorTest.expectEqual(insertion, target.pauseData.insertion, `Pause insertion should be '${insertion}'.`);
-
-                    if (pauseData.targetNodeId) {
-                        if (shouldMatch)
-                            InspectorTest.expectEqual(pauseData.targetNodeId, pauseData.nodeId, "Pause targetNodeId should match nodeId.");
-                        else
-                            InspectorTest.expectNotEqual(pauseData.targetNodeId, pauseData.nodeId, "Pause targetNodeId should not match nodeId.");
-                    }
-
-                    logActiveStackTrace();
-                    return WI.debuggerManager.resume();
-                })
-                .then(resolve, reject);
-            }
-        });
-
-        suite.addTestCase({
-            name: `DOMBreakpoints.${name}.BreakpointDisabled`,
-            description: "Check that debugger does not pause for disabled breakpoint.",
-            teardown,
-            test(resolve, reject) {
-                const disabled = true;
-                addBreakpointForElementIdentifier(elementIdentifier, type, disabled)
-                .then(() => Promise.race([awaitEvaluateInPage(expression), rejectOnPause()]))
-                .then(() => {
-                    InspectorTest.pass("Should not pause for disabled breakpoint.");
-                    resolve();
-                })
-                .catch(reject);
-            }
-        });
-
-        suite.addTestCase({
-            name: `DOMBreakpoints.${name}.DebuggerDisabled`,
-            description: "Check that debugger does not pause when the debugger is disabled.",
-            teardown,
-            test(resolve, reject) {
-                addBreakpointForElementIdentifier(elementIdentifier, type)
-                .then(() => DebuggerAgent.setBreakpointsActive(false))
-                .then(() => Promise.race([awaitEvaluateInPage(expression), rejectOnPause()]))
-                .then(() => DebuggerAgent.setBreakpointsActive(true))
-                .then(() => {
-                    InspectorTest.pass("Should not pause for disabled breakpoint.");
-                    resolve();
-                })
-                .catch(reject);
-            }
-        });
-
-        suite.addTestCase({
-            name: `DOMBreakpoints.${name}.RemoveBreakpoint`,
-            description: "Check that debugger does not pause for removed breakpoint.",
-            teardown,
-            test(resolve, reject) {
-                addBreakpointForElementIdentifier(elementIdentifier, type)
-                .then((event) => {
-                    let promise = WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved);
-                    let breakpoint = event.data.breakpoint;
-
-                    InspectorTest.log("Remove breakpoint.");
-                    WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
-                    return promise;
-                })
-                .then(() => Promise.race([awaitEvaluateInPage(expression), rejectOnPause()]))
-                .then(() => {
-                    InspectorTest.pass("Should not pause for removed breakpoint.");
-                    resolve();
-                })
-                .catch(reject);
-            }
-        });
-    }
+    let suite = InspectorTest.createAsyncSuite("DOMBreakpoint");
 
     suite.addTestCase({
-        name: "BasicBreakpoint",
+        name: "DOMBreakpoint.Basic",
         description: "Check that breakpoint is in a valid initial state.",
-        teardown,
-        test(resolve, reject) {
-            addBreakpointForElementIdentifier(subtreeModifiedTestId, WI.DOMBreakpoint.Type.SubtreeModified)
-            .then((event) => {
-                let breakpoint = event.data.breakpoint;
-                InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled.");
-                InspectorTest.expectThat(breakpoint.domNodeIdentifier, "Breakpoint should have node identifier.");
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#basic-test");
 
-                InspectorTest.assert(WI.networkManager.mainFrame, "Missing main frame.");
-                let documentURL = WI.networkManager.mainFrame.url;
-                InspectorTest.expectEqual(breakpoint.url, documentURL, "Breakpoint URL should match document URL.");
-            })
-            .then(resolve, reject);
-        }
-    });
-
-    addTestsForBreakpointType({
-        name: "SubtreeModified",
-        elementIdentifier: subtreeModifiedTestId,
-        type: WI.DOMBreakpoint.Type.SubtreeModified,
-        expression: "subtreeModifiedTest()",
-        insertion: true,
-        shouldMatch: true,
-    });
-
-    addTestsForBreakpointType({
-        name: "AttributeModified",
-        elementIdentifier: attributeModifiedTestId,
-        type: WI.DOMBreakpoint.Type.AttributeModified,
-        expression: "attributeModifiedTest()",
-    });
-
-    addTestsForBreakpointType({
-        name: "NodeRemovedSelf",
-        elementIdentifier: nodeRemovedDirectTestId,
-        type: WI.DOMBreakpoint.Type.NodeRemoved,
-        expression: "nodeRemovedDirectTest()",
-    });
-
-    addTestsForBreakpointType({
-        name: "NodeRemovedAncestor",
-        elementIdentifier: nodeRemovedAncestorTestId,
-        type: WI.DOMBreakpoint.Type.NodeRemoved,
-        expression: "nodeRemovedAncestorTest()",
-        shouldMatch: true,
+            let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.SubtreeModified);
+            InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled.");
+            InspectorTest.expectEqual(breakpoint.domNode, node, "Breakpoint should have node identifier.");
+            InspectorTest.expectEqual(breakpoint.url, WI.networkManager.mainFrame.url, "Breakpoint URL should match document URL.");
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
     });
 
     suite.addTestCase({
-        name: "RemoveAllBreakpointsForNode",
+        name: "DOMBreakpoint.RemoveAllBreakpointsForNode",
         description: "Check that debugger does not pause for removed breakpoints on node.",
-        teardown,
-        test(resolve, reject) {
-            let breakpointTypes = Object.values(WI.DOMBreakpoint.Type);
-            let breakpointPromises = breakpointTypes.map(type => addBreakpointForElementIdentifier(multipleBreakpointsTestId, type));
+        async test() {
+            const types = Object.values(WI.DOMBreakpoint.Type);
 
-            Promise.all(breakpointPromises)
-            .then((values) => {
-                let breakpoints = values.map(event => event.data.breakpoint);
-                if (!breakpoints.length) {
-                    InspectorTest.fail("No breakpoints added.");
-                    reject();
-                    return;
-                }
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#remove-all-breakpoints-for-node-test");
 
-                let node = WI.domManager.nodeForId(breakpoints[0].domNodeIdentifier);
-                if (!node) {
-                    InspectorTest.fail("No DOM node associated with breakpoint.");
-                    reject();
-                    return;
-                }
+            let breakpointsBefore = await Promise.all(types.map((type) => InspectorTest.DOMBreakpoint.createBreakpoint(node, type)));
+            InspectorTest.expectEqual(breakpointsBefore.length, types.length, `Should have ${types.length} breakpoints.`);
 
-                let breakpointsRemoved = 0;
+            InspectorTest.log("Removing all breakpoints for #multiple-breakpoints-test...");
+            WI.domDebuggerManager.removeDOMBreakpointsForNode(node);
 
-                function breakpointRemoved() {
-                    if (++breakpointsRemoved === breakpoints.length) {
-                        InspectorTest.pass(`Removed ${breakpointsRemoved} breakpoints.`);
-
-                        let nodeBreakpoints = WI.domDebuggerManager.domBreakpointsForNode(node);
-                        InspectorTest.expectThat(!nodeBreakpoints.length, "DOM node should have no breakpoints.");
-
-                        WI.domDebuggerManager.removeEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, breakpointRemoved);
-                        resolve();
-                    }
-                }
-
-                WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, breakpointRemoved);
-                WI.domDebuggerManager.removeDOMBreakpointsForNode(node);
-            })
-            .then(resolve, reject);
-        }
+            let breakpointsAfter = WI.domDebuggerManager.domBreakpointsForNode(node);
+            InspectorTest.expectEqual(breakpointsAfter.length, 0, "Should remove all breakpoints.");
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
     });
 
     suite.addTestCase({
-        name: "SetBreakpointWithInvalidNodeId",
+        name: "DOMBreakpoint.SetBreakpointWithInvalidNodeId",
         description: "Check that setting a breakpoint for a nonexistant node returns an error.",
-        teardown,
-        test(resolve, reject) {
-            InspectorTest.log("Attempting to set breakpoint.");
-
-            DOMDebuggerAgent.setDOMBreakpoint(0, WI.DOMBreakpoint.Type.SubtreeModified, (error) => {
-                InspectorTest.log("Protocol result: " + error);
-                InspectorTest.expectThat(error, "Protocol should return an error.")
-                resolve();
+        async test() {
+            InspectorTest.log("Setting breakpoint...");
+            await InspectorTest.expectException(async () => {
+                await DOMDebuggerAgent.setDOMBreakpoint(0, WI.DOMBreakpoint.Type.SubtreeModified);
             });
-        }
+        },
     });
 
     suite.addTestCase({
-        name: "SetBreakpointWithInvalidType",
+        name: "DOMBreakpoint.SetBreakpointWithInvalidType",
         description: "Check that setting a breakpoint with an invalid type returns an error.",
-        teardown,
-        test(resolve, reject) {
-            awaitQuerySelector("body")
-            .then((node) => {
-                InspectorTest.log("Attempting to set breakpoint.");
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("body");
 
-                DOMDebuggerAgent.setDOMBreakpoint(node.id, "custom-breakpoint-type", (error) => {
-                    InspectorTest.log("Protocol result: " + error);
-                    InspectorTest.expectThat(error, "Protocol should return an error.")
-                    resolve();
-                });
+            InspectorTest.log("Setting breakpoint...");
+            await InspectorTest.expectException(async () => {
+                await DOMDebuggerAgent.setDOMBreakpoint(node.id, "custom-breakpoint-type");
             });
-        }
+        },
     });
 
     suite.addTestCase({
-        name: "RemoveBreakpointWithInvalidNodeId",
+        name: "DOMBreakpoint.RemoveBreakpointWithInvalidNodeId",
         description: "Check that removing a breakpoint for a nonexistant node returns an error.",
-        teardown,
-        test(resolve, reject) {
-            InspectorTest.log("Attempting to remove breakpoint.");
-
-            DOMDebuggerAgent.removeDOMBreakpoint(0, WI.DOMBreakpoint.Type.SubtreeModified, (error) => {
-                InspectorTest.log("Protocol result: " + error);
-                InspectorTest.expectThat(error, "Protocol should return an error.")
-                resolve();
+        async test() {
+            InspectorTest.log("Removing breakpoint...");
+            await InspectorTest.expectException(async () => {
+                await DOMDebuggerAgent.removeDOMBreakpoint(0, WI.DOMBreakpoint.Type.SubtreeModified);
             });
-        }
+        },
     });
 
     suite.addTestCase({
-        name: "RemoveBreakpointWithInvalidType",
+        name: "DOMBreakpoint.RemoveBreakpointWithInvalidType",
         description: "Check that removing a breakpoint with an invalid type returns an error.",
-        teardown,
-        test(resolve, reject) {
-            awaitQuerySelector("body")
-            .then((node) => {
-                InspectorTest.log("Attempting to remove breakpoint.");
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("body");
 
-                DOMDebuggerAgent.removeDOMBreakpoint(node.id, "custom-breakpoint-type", (error) => {
-                    InspectorTest.log("Protocol result: " + error);
-                    InspectorTest.expectThat(error, "Protocol should return an error.")
-                    resolve();
-                });
+            InspectorTest.log("Removing breakpoint...");
+            await InspectorTest.expectException(async () => {
+                await DOMDebuggerAgent.removeDOMBreakpoint(node.id, "custom-breakpoint-type");
             });
-        }
+        },
     });
 
     suite.runTestCasesAndFinish();
@@ -384,11 +98,8 @@ function test()
 <body onload="runTest()">
 <p>Tests for DOM breakpoints.</p>
 <div id="test-container" style="display: none">
-    <div id="subtree-modified-test"></div>
-    <div id="attribute-modified-test"></div>
-    <div id="node-removed-direct-test"></div>
-    <div><div id="node-removed-ancestor-test"></div></div>
-    <div id="multiple-breakpoints-test"></div>
+    <div id="basic-test"></div>
+    <div id="remove-all-breakpoints-for-node-test"></div>
 </div>
 </body>
 </html>

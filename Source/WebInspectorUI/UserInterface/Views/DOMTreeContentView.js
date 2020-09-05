@@ -85,7 +85,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._numberOfSearchResults = null;
 
         this._breakpointGutterEnabled = false;
-        this._pendingBreakpointNodeIdentifiers = new Set;
+        this._pendingBreakpointNodes = new Set;
 
         this._defaultAppearanceDidChange();
 
@@ -96,7 +96,8 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._domBreakpointAddedOrRemoved, this);
 
             WI.DOMBreakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleDOMBreakpointDisabledStateChanged, this);
-            WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DOMNodeChanged, this._handleDOMBreakpointDOMNodeChanged, this);
+            WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DOMNodeWillChange, this._handleDOMBreakpointDOMNodeWillChange, this);
+            WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DOMNodeDidChange, this._handleDOMBreakpointDOMNodeDidChange, this);
 
             this._breakpointsEnabledDidChange();
         }
@@ -170,7 +171,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.DOMBreakpoint.removeEventListener(null, null, this);
 
         this._domTreeOutline.close();
-        this._pendingBreakpointNodeIdentifiers.clear();
+        this._pendingBreakpointNodes.clear();
     }
 
     get selectionPathComponents()
@@ -487,7 +488,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _domTreeElementAdded(event)
     {
-        if (!this._pendingBreakpointNodeIdentifiers.size)
+        if (!this._pendingBreakpointNodes.size)
             return;
 
         let treeElement = event.data.element;
@@ -496,7 +497,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         if (!(node instanceof WI.DOMNode))
             return;
 
-        if (!this._pendingBreakpointNodeIdentifiers.delete(node.id))
+        if (!this._pendingBreakpointNodes.delete(node))
             return;
 
         this._updateBreakpointStatus(node.id);
@@ -753,31 +754,35 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     _domBreakpointAddedOrRemoved(event)
     {
         let breakpoint = event.data.breakpoint;
-        this._updateBreakpointStatus(breakpoint.domNodeIdentifier);
+        this._updateBreakpointStatus(breakpoint.domNode);
     }
 
     _handleDOMBreakpointDisabledStateChanged(event)
     {
         let breakpoint = event.target;
-        this._updateBreakpointStatus(breakpoint.domNodeIdentifier);
+        this._updateBreakpointStatus(breakpoint.domNode);
     }
 
-    _handleDOMBreakpointDOMNodeChanged(event)
+    _handleDOMBreakpointDOMNodeWillChange(event)
     {
         let breakpoint = event.target;
-        let nodeIdentifier = breakpoint.domNodeIdentifier || event.data.oldNodeIdentifier;
-        this._updateBreakpointStatus(nodeIdentifier);
+        this._updateBreakpointStatus(breakpoint.domNode);
     }
 
-    _updateBreakpointStatus(nodeIdentifier)
+    _handleDOMBreakpointDOMNodeDidChange(event)
     {
-        let domNode = WI.domManager.nodeForId(nodeIdentifier);
+        let breakpoint = event.target;
+        this._updateBreakpointStatus(breakpoint.domNode);
+    }
+
+    _updateBreakpointStatus(domNode)
+    {
         if (!domNode)
             return;
 
         let treeElement = this._domTreeOutline.findTreeElement(domNode);
         if (!treeElement) {
-            this._pendingBreakpointNodeIdentifiers.add(nodeIdentifier);
+            this._pendingBreakpointNodes.add(domNode);
             return;
         }
 
@@ -795,16 +800,16 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     _restoreBreakpointsAfterUpdate()
     {
-        this._pendingBreakpointNodeIdentifiers.clear();
+        this._pendingBreakpointNodes.clear();
 
         this.breakpointGutterEnabled = false;
 
         let updatedNodes = new Set;
         for (let breakpoint of WI.domDebuggerManager.domBreakpoints) {
-            if (updatedNodes.has(breakpoint.domNodeIdentifier))
+            if (updatedNodes.has(breakpoint.domNode))
                 continue;
 
-            this._updateBreakpointStatus(breakpoint.domNodeIdentifier);
+            this._updateBreakpointStatus(breakpoint.domNode);
         }
     }
 

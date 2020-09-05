@@ -1,7 +1,7 @@
 TestPage.registerInitializer(() => {
     InspectorTest.BreakpointOptions = {};
 
-    InspectorTest.BreakpointOptions.addTestCases = function(suite, {testCaseNamePrefix, createBreakpoint, triggerBreakpoint}) {
+    InspectorTest.BreakpointOptions.addTestCases = function(suite, {testCaseNamePrefix, createBreakpoint, triggerBreakpoint, skip}) {
         testCaseNamePrefix ??= "";
 
         function removeBreakpoint(breakpoint) {
@@ -42,7 +42,7 @@ TestPage.registerInitializer(() => {
                     InspectorTest.newline();
 
                     InspectorTest.log("Triggering breakpoint...");
-                    await triggerBreakpoint();
+                    await triggerBreakpoint(breakpoint);
 
                     if (i <= 2)
                         InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
@@ -56,41 +56,43 @@ TestPage.registerInitializer(() => {
             },
         });
 
-        suite.addTestCase({
-            name: suite.name + "." + testCaseNamePrefix + "Options.IgnoreCount",
-            description: "Check that the debugger will not pause unless the breakpoint is hit at least as many times as it's `ignoreCount`.",
-            async test() {
-                let pauseCount = 0;
+        if (!skip?.ignoreCount) {
+            suite.addTestCase({
+                name: suite.name + "." + testCaseNamePrefix + "Options.IgnoreCount",
+                description: "Check that the debugger will not pause unless the breakpoint is hit at least as many times as it's `ignoreCount`.",
+                async test() {
+                    let pauseCount = 0;
 
-                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
-                    ++pauseCount;
-                    WI.debuggerManager.resume();
-                });
+                    let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                        ++pauseCount;
+                        WI.debuggerManager.resume();
+                    });
 
-                let breakpoint = await createBreakpoint();
+                    let breakpoint = await createBreakpoint();
 
-                InspectorTest.newline();
-
-                InspectorTest.log("Setting ignoreCount to '2'...");
-                breakpoint.ignoreCount = 2;
-
-                for (let i = 1; i <=4; ++i) {
                     InspectorTest.newline();
 
-                    InspectorTest.log("Triggering breakpoint...");
-                    await triggerBreakpoint();
+                    InspectorTest.log("Setting ignoreCount to '2'...");
+                    breakpoint.ignoreCount = 2;
 
-                    if (i <= 2)
-                        InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
-                    else
-                        InspectorTest.expectEqual(pauseCount, i - 2, "Should pause.");
-                }
+                    for (let i = 1; i <=4; ++i) {
+                        InspectorTest.newline();
 
-                removeBreakpoint(breakpoint);
+                        InspectorTest.log("Triggering breakpoint...");
+                        await triggerBreakpoint(breakpoint);
 
-                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
-            },
-        });
+                        if (i <= 2)
+                            InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+                        else
+                            InspectorTest.expectEqual(pauseCount, i - 2, "Should pause.");
+                    }
+
+                    removeBreakpoint(breakpoint);
+
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+                },
+            });
+        }
 
         suite.addTestCase({
             name: suite.name + "." + testCaseNamePrefix + "Options.Action.Log",
@@ -133,7 +135,7 @@ TestPage.registerInitializer(() => {
                     });
 
                     InspectorTest.log("Triggering breakpoint...");
-                    await triggerBreakpoint();
+                    await triggerBreakpoint(breakpoint);
 
                     WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, messageAddedListener);
 
@@ -186,7 +188,7 @@ TestPage.registerInitializer(() => {
                     InspectorTest.newline();
 
                     InspectorTest.log("Triggering breakpoint...");
-                    await triggerBreakpoint();
+                    await triggerBreakpoint(breakpoint);
 
                     let breakpointActionEvaluateResult = await InspectorTest.evaluateInPage(`window.BREAKPOINT_ACTION_EVALUATE`);
                     InspectorTest.expectEqual(breakpointActionEvaluateResult, i, "Should execute breakpoint action.");

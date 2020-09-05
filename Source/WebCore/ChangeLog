@@ -1,3 +1,52 @@
+2020-09-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow DOM breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215795
+
+        Reviewed by Brian Burg.
+
+        Tests: inspector/dom-debugger/attribute-modified-style.html
+               inspector/dom-debugger/dom-breakpoints.html
+               inspector/dom-debugger/dom-breakpoint-attribute-modified.html
+               inspector/dom-debugger/dom-breakpoint-node-removed-ancestor.html
+               inspector/dom-debugger/dom-breakpoint-node-removed-direct.html
+               inspector/dom-debugger/dom-breakpoint-subtree-modified-add.html
+               inspector/dom-debugger/dom-breakpoint-subtree-modified-remove.html
+
+        * inspector/agents/page/PageDOMDebuggerAgent.h:
+        * inspector/agents/page/PageDOMDebuggerAgent.cpp:
+        (WebCore::PageDOMDebuggerAgent::disable):
+        (WebCore::PageDOMDebuggerAgent::setDOMBreakpoint):
+        (WebCore::PageDOMDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::PageDOMDebuggerAgent::frameDocumentUpdated):
+        (WebCore::calculateDistance): Added.
+        (WebCore::PageDOMDebuggerAgent::willInsertDOMNode):
+        (WebCore::PageDOMDebuggerAgent::willRemoveDOMNode):
+        (WebCore::PageDOMDebuggerAgent::didRemoveDOMNode):
+        (WebCore::PageDOMDebuggerAgent::willModifyDOMAttr):
+        (WebCore::PageDOMDebuggerAgent::willInvalidateStyleAttr):
+        (WebCore::PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint): Added.
+        (WebCore::domTypeForName): Deleted.
+        (WebCore::domTypeName): Deleted.
+        (WebCore::PageDOMDebuggerAgent::didInsertDOMNode): Deleted.
+        (WebCore::PageDOMDebuggerAgent::descriptionForDOMEvent): Deleted.
+        (WebCore::PageDOMDebuggerAgent::updateSubtreeBreakpoints): Deleted.
+        (WebCore::PageDOMDebuggerAgent::hasBreakpoint): Deleted.
+        Replace the bitmask with separate `HashMap` for each type of DOM breakpoint. Instead of
+        propagating the `SubtreeModified` bit to the entire subtree when new nodes are added (which
+        means there's an entry in the `HashMap` for every descendant) and removing them all when
+        that node is removed, only keep nodes in each `HashMap` if it directly has a DOM breakpoint.
+        Walk up the ancestor chain when nodes are added/removed to determine if there is a nearby
+        breakpoint to pause. When a node is removed, remove any existing DOM breakpoint if it's
+        owner is part of the removed subtree.
+
+        * inspector/agents/worker/WorkerDOMDebuggerAgent.h:
+        * inspector/agents/worker/WorkerDOMDebuggerAgent.cpp:
+        (WebCore::WorkerDOMDebuggerAgent::setDOMBreakpoint):
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+
 2020-09-05  Alex Christensen  <achristensen@webkit.org>
 
         TextDecoder should properly handle streams

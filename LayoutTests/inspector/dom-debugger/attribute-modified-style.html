@@ -2,7 +2,9 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
 <script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/dom-breakpoint-utilities.js"></script>
 <script>
 
 function getProperty(name) {
@@ -20,9 +22,7 @@ function setProperty(name, value) {
 
 function test()
 {
-    InspectorTest.debug();
-
-    let suite = InspectorTest.createAsyncSuite("DOMBreakpoints.AttributeModified.Style");
+    let suite = InspectorTest.createAsyncSuite("DOMBreakpoint.AttributeModified");
 
     async function checkPropertyValue(name, expectedValue) {
         InspectorTest.log(`Getting '${name}'...`);
@@ -34,6 +34,9 @@ function test()
         suite.addTestCase({
             name,
             async test() {
+                let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#test");
+                await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+
                 await checkPropertyValue(propertyName, propertyValueBefore);
 
                 let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
@@ -56,37 +59,41 @@ function test()
 
                 await checkPropertyValue(propertyName, propertyValueAfter);
             },
+            teardown: InspectorTest.DOMBreakpoint.teardown,
         });
     }
 
     addTestCase({
-        name: "DOMBreakpoints.AttributeModified.Style.Add",
+        name: "DOMBreakpoint.AttributeModified.Style.Add",
         propertyName: "display",
         propertyValueBefore: "",
         propertyValueAfter: "none",
     });
     addTestCase({
-        name: "DOMBreakpoints.AttributeModified.Style.ReplaceSame",
+        name: "DOMBreakpoint.AttributeModified.Style.ReplaceSame",
         propertyName: "display",
         propertyValueBefore: "none",
         propertyValueAfter: "none",
     });
     addTestCase({
-        name: "DOMBreakpoints.AttributeModified.Style.ReplaceDifferent",
+        name: "DOMBreakpoint.AttributeModified.Style.ReplaceDifferent",
         propertyName: "display",
         propertyValueBefore: "none",
         propertyValueAfter: "block",
     });
     addTestCase({
-        name: "DOMBreakpoints.AttributeModified.Style.Remove",
+        name: "DOMBreakpoint.AttributeModified.Style.Remove",
         propertyName: "display",
         propertyValueBefore: "block",
         propertyValueAfter: "",
     });
 
     suite.addTestCase({
-        name: "DOMBreakpoints.AttributeModified.Style.Text",
+        name: "DOMBreakpoint.AttributeModified.Style.Text",
         async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#test");
+            await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+
             await checkPropertyValue("display", "");
 
             let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
@@ -106,37 +113,21 @@ function test()
 
             await checkPropertyValue("display", "none");
         },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
     });
 
-    WI.domManager.requestDocument((documentNode) => {
-        if (!documentNode) {
-            InspectorTest.fail("Missing document node");
-            InspectorTest.completeTest();
-            return;
-        }
-
-        documentNode.querySelector("#test", async (nodeId) => {
-            let testNode = WI.domManager.nodeForId(nodeId);
-            if (!testNode) {
-                InspectorTest.fail("Missing #test node");
-                InspectorTest.completeTest();
-                return;
-            }
-
-            let promise = WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.DOMBreakpointAdded)
-            .then((event) => {
-                InspectorTest.pass("Added attribute modified breakpoint to #test.");
-            });
-
-            InspectorTest.log("Adding attribute modified breakpoint to #test...");
-            WI.domDebuggerManager.addDOMBreakpoint(new WI.DOMBreakpoint(testNode, WI.DOMBreakpoint.Type.AttributeModified));
-            await promise;
-
-            InspectorTest.assert(!WI.debuggerManager.paused, "Should not be paused.");
-
-            suite.runTestCasesAndFinish();
-        });
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        testCaseNamePrefix: "Style.",
+        async createBreakpoint() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#test");
+            return InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+        },
+        async triggerBreakpoint(breakpoint) {
+            return InspectorTest.evaluateInPage(`setProperty("--test", Math.random())`);
+        },
     });
+
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>

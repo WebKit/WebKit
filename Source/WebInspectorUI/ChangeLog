@@ -1,3 +1,70 @@
+2020-09-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow DOM breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215795
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype._setChildNodes):
+        Dispatch events for each new child node added and each existing child node removed so that
+        any listeners can also know when new nodes are added via a full children payload update.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+        (WI.DOMDebuggerManager.prototype.addDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._detachDOMBreakpointsForFrame): Added.
+        (WI.DOMDebuggerManager.prototype._speculativelyResolveDOMBreakpointsForURL):
+        (WI.DOMDebuggerManager.prototype._speculativelyResolveDOMBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._resolveDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._setDOMBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._removeDOMBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._handleDOMBreakpointDisabledStateChanged):
+        (WI.DOMDebuggerManager.prototype._handleDOMBreakpointEditablePropertyChanged): Added.
+        (WI.DOMDebuggerManager.prototype._handleDOMBreakpointActionsChanged): Added.
+        (WI.DOMDebuggerManager.prototype._handleDOMBreakpointDOMNodeWillChange): Added.
+        (WI.DOMDebuggerManager.prototype._handleDOMBreakpointDOMNodeDidChange): Added.
+        (WI.DOMDebuggerManager.prototype._childFrameWasRemoved):
+        (WI.DOMDebuggerManager.prototype._mainResourceDidChange):
+        (WI.DOMDebuggerManager.prototype._nodeInserted):
+        (WI.DOMDebuggerManager.prototype._nodeRemoved):
+        (WI.DOMDebuggerManager.prototype._detachDOMBreakpoint): Deleted.
+        (WI.DOMDebuggerManager.prototype._detachBreakpointsForFrame): Deleted.
+        (WI.DOMDebuggerManager.prototype._updateDOMBreakpoint): Deleted.
+        Recursively walk any added node's subtree to resolve and set any matching DOM breakpoints.
+        Iterate all existing DOM breakpoints to see if the owner node is part of the subtree of any
+        removed nodes and remove ot if so.
+
+        * UserInterface/Models/DOMBreakpoint.js:
+        (WI.DOMBreakpoint):
+        (WI.DOMBreakpoint.displayNameForType):
+        (WI.DOMBreakpoint.fromJSON):
+        (WI.DOMBreakpoint.prototype.get editable): Added.
+        (WI.DOMBreakpoint.prototype.get domNode): Added.
+        (WI.DOMBreakpoint.prototype.set domNode): Added.
+        (WI.DOMBreakpoint.prototype.get domNodeIdentifier): Deleted.
+        (WI.DOMBreakpoint.prototype.set domNodeIdentifier): Deleted.
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype.closed):
+        (WI.DOMTreeContentView.prototype._domTreeElementAdded):
+        (WI.DOMTreeContentView.prototype._domBreakpointAddedOrRemoved):
+        (WI.DOMTreeContentView.prototype._handleDOMBreakpointDisabledStateChanged):
+        (WI.DOMTreeContentView.prototype._handleDOMBreakpointDOMNodeWillChange): Added.
+        (WI.DOMTreeContentView.prototype._handleDOMBreakpointDOMNodeDidChange): Added.
+        (WI.DOMTreeContentView.prototype._updateBreakpointStatus):
+        (WI.DOMTreeContentView.prototype._restoreBreakpointsAfterUpdate):
+        (WI.DOMTreeContentView.prototype._handleDOMBreakpointDOMNodeChanged): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDOMBreakpointDOMNodeWillChange): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDOMBreakpointDOMNodeDidChange): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDOMBreakpointDOMNodeChanged): Deleted.
+        Use a `WI.DOMNode` instead of an identifier instead of fetching the node for the identifier
+        each time and checking if is valid.
+
 2020-09-04  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Localization: typo in WAI-ARIA string ("[the] element have")

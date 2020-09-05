@@ -1,3 +1,34 @@
+2020-09-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow DOM breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215795
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/resources/breakpoint-options-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.BreakpointOptions.addTestCases):
+
+        * inspector/dom-debugger/resources/dom-breakpoint-utilities.js: Added.
+        (TestPage.registerInitializer.InspectorTest.DOMBreakpoint.teardown):
+        (TestPage.registerInitializer.InspectorTest.DOMBreakpoint.createBreakpoint):
+        (TestPage.registerInitializer.InspectorTest.DOMBreakpoint.addBreakpoint):
+        (TestPage.registerInitializer.InspectorTest.DOMBreakpoint.awaitQuerySelector):
+
+        * inspector/dom-debugger/attribute-modified-style.html:
+        * inspector/dom-debugger/attribute-modified-style-expected.txt:
+        * inspector/dom-debugger/dom-breakpoints.html:
+        * inspector/dom-debugger/dom-breakpoints-expected.txt:
+        * inspector/dom-debugger/dom-breakpoint-attribute-modified.html: Added.
+        * inspector/dom-debugger/dom-breakpoint-attribute-modified-expected.txt: Added.
+        * inspector/dom-debugger/dom-breakpoint-node-removed-ancestor.html: Added.
+        * inspector/dom-debugger/dom-breakpoint-node-removed-ancestor-expected.txt: Added.
+        * inspector/dom-debugger/dom-breakpoint-node-removed-direct.html: Added.
+        * inspector/dom-debugger/dom-breakpoint-node-removed-direct-expected.txt: Added.
+        * inspector/dom-debugger/dom-breakpoint-subtree-modified-add.html: Added.
+        * inspector/dom-debugger/dom-breakpoint-subtree-modified-remove-expected.txt: Added.
+        * inspector/dom-debugger/dom-breakpoint-subtree-modified-remove.html: Added.
+        * inspector/dom-debugger/dom-breakpoint-subtree-modified-add-expected.txt: Added.
+
 2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] Don't apply synthetic bold or italics to emoji

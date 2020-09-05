@@ -25,20 +25,20 @@
 
 WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
 {
-    constructor(domNodeOrInfo, type, {disabled} = {})
+    constructor(domNodeOrInfo, type, {disabled, actions, condition, ignoreCount, autoContinue} = {})
     {
         console.assert(domNodeOrInfo instanceof WI.DOMNode || typeof domNodeOrInfo === "object", domNodeOrInfo);
         console.assert(Object.values(WI.DOMBreakpoint.Type).includes(type), type);
 
-        super({disabled});
+        super({disabled, actions, condition, ignoreCount, autoContinue});
 
         if (domNodeOrInfo instanceof WI.DOMNode) {
-            this._domNodeIdentifier = domNodeOrInfo.id;
+            this._domNode = domNodeOrInfo;
             this._path = domNodeOrInfo.path();
             console.assert(WI.networkManager.mainFrame);
             this._url = WI.networkManager.mainFrame.url;
         } else if (domNodeOrInfo && typeof domNodeOrInfo === "object") {
-            this._domNodeIdentifier = null;
+            this._domNode = null;
             this._path = domNodeOrInfo.path;
             this._url = domNodeOrInfo.url;
         }
@@ -63,7 +63,7 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
             return WI.UIString("Node Removed", "Node Removed @ DOM Breakpoint", "A submenu item of 'Break On' that breaks (pauses) before DOM node is removed");
         }
 
-        console.error();
+        console.assert(false, "Unknown DOM breakpoint type", type);
         return WI.UIString("DOM");
     }
 
@@ -71,6 +71,10 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
     {
         return new WI.DOMBreakpoint(json, json.type, {
             disabled: json.disabled,
+            condition: json.condition,
+            actions: json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON)) || [],
+            ignoreCount: json.ignoreCount,
+            autoContinue: json.autoContinue,
         });
     }
 
@@ -85,23 +89,27 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
         return WI.DOMBreakpoint.displayNameForType(this._type);
     }
 
-    get domNodeIdentifier()
+    get editable()
     {
-        return this._domNodeIdentifier;
+        // COMPATIBILITY (iOS 14): DOMDebugger.setDOMBreakpoint did not have an "options" parameter yet.
+        return InspectorBackend.hasCommand("DOMDebugger.setDOMBreakpoint", "options");
     }
 
-    set domNodeIdentifier(nodeIdentifier)
+    get domNode()
     {
-        if (this._domNodeIdentifier === nodeIdentifier)
+        return this._domNode;
+    }
+
+    set domNode(domNode)
+    {
+        console.assert(domNode instanceof WI.DOMNode, domNode);
+        console.assert(!this._domNode !== !domNode, "domNode should not change once set");
+        if (!this._domNode === !domNode)
             return;
 
-        let data = {};
-        if (!nodeIdentifier)
-            data.oldNodeIdentifier = this._domNodeIdentifier;
-
-        this._domNodeIdentifier = nodeIdentifier;
-
-        this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DOMNodeChanged, data);
+        this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DOMNodeWillChange);
+        this._domNode = domNode;
+        this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DOMNodeDidChange);
     }
 
     remove()
@@ -137,7 +145,8 @@ WI.DOMBreakpoint.Type = {
 };
 
 WI.DOMBreakpoint.Event = {
-    DOMNodeChanged: "dom-breakpoint-dom-node-changed",
+    DOMNodeDidChange: "dom-breakpoint-dom-node-did-change",
+    DOMNodeWillChange: "dom-breakpoint-dom-node-will-change",
 };
 
 WI.DOMBreakpoint.ReferencePage = WI.ReferencePage.DOMBreakpoints;

@@ -23,7 +23,8 @@
             "description": "Sets breakpoint on particular operation with DOM.",
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to set breakpoint on." },
-                { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the operation to stop upon." }
+                { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the operation to stop upon." },
+                { "name": "options", "$ref": "Debugger.BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
             ]
         },
         {

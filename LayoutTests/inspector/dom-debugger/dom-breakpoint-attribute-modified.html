@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/dom-breakpoint-utilities.js"></script>
+<script>
+function testAttributeModified() {
+    let node = document.getElementById("attribute-modified-test");
+    node.dataset.count = (node.dataset.count || 0) + 1;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMBreakpoint.AttributeModified");
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.AttributeModified.BreakpointEnabled`,
+        description: "Check that debugger pauses for breakpoint type.",
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#attribute-modified-test");
+
+            let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                InspectorTest.log("PAUSED:");
+                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.DOM, "Pause reason should be DOM.");
+
+                let pauseData = targetData.pauseData;
+                InspectorTest.expectEqual(pauseData.type, breakpoint.type, `Pause type should be '${breakpoint.type}'.`);
+                InspectorTest.expectEqual(pauseData.nodeId, breakpoint.domNode.id, "Pause nodeId should be expected value.");
+                InspectorTest.assert(!("targetNodeId" in pauseData), "Should not have 'targetNodeId'.");
+                InspectorTest.assert(!("insertion" in pauseData), "Should not have 'insertion'.");
+
+                logActiveStackTrace();
+                WI.debuggerManager.resume();
+            });
+
+            await InspectorTest.evaluateInPage(`testAttributeModified()`);
+
+            InspectorTest.assert(paused, "Should pause.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.AttributeModified.BreakpointDisabled`,
+        description: "Check that debugger does not pause for disabled breakpoint.",
+        async test() {
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#attribute-modified-test");
+
+            let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+
+            InspectorTest.log("Disabling breakpoint...");
+            breakpoint.disabled = true;
+
+            InspectorTest.log("Triggering breakpoint...");
+            await InspectorTest.evaluateInPage(`testAttributeModified()`);
+
+            InspectorTest.expectFalse(paused, "Should not pause for disabled breakpoint.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.AttributeModified.DebuggerDisabled`,
+        description: "Check that debugger does not pause when the debugger is disabled.",
+        async test() {
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#attribute-modified-test");
+
+            await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+
+            InspectorTest.log("Disabling all breakpoints...");
+            await DebuggerAgent.setBreakpointsActive(false);
+
+            InspectorTest.log("Triggering breakpoint...");
+            await InspectorTest.evaluateInPage(`testAttributeModified()`);
+
+            InspectorTest.log("Enabling all breakpoints...");
+            await DebuggerAgent.setBreakpointsActive(true);
+
+            InspectorTest.expectFalse(paused, "Should not pause when all breakpoints disabled.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.AttributeModified.RemoveBreakpoint`,
+        description: "Check that debugger does not pause for removed breakpoint.",
+        async test() {
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#attribute-modified-test");
+
+            let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+
+            InspectorTest.log("Removing breakpoint...");
+            WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+
+            InspectorTest.log("Triggering breakpoint...");
+            await InspectorTest.evaluateInPage(`testAttributeModified()`);
+
+            InspectorTest.expectFalse(paused, "Should not pause for removed breakpoint.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        async createBreakpoint() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#attribute-modified-test");
+            return InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+        },
+        async triggerBreakpoint(breakpoint) {
+            return InspectorTest.evaluateInPage(`testAttributeModified()`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for DOM breakpoints.</p>
+<div id="test-container" style="display: none">
+    <div id="attribute-modified-test"></div>
+</div>
+</body>
+</html>

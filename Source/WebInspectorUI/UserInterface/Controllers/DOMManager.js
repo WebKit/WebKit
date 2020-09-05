@@ -380,7 +380,16 @@ WI.DOMManager = class DOMManager extends WI.Object
         }
 
         var parent = this._idToDOMNode[parentId];
+
+        if (parent.children) {
+            for (let node of parent.children)
+                this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node, parent});
+        }
+
         parent._setChildrenPayload(payloads);
+
+        for (let node of parent.children)
+            this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
     }
 
     _childNodeCountUpdated(nodeId, newValue)

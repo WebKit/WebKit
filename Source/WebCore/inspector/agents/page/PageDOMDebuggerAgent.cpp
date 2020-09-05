@@ -31,44 +31,11 @@
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "Node.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
 using namespace Inspector;
-
-enum DOMBreakpointType {
-    SubtreeModified,
-    AttributeModified,
-    NodeRemoved,
-};
-
-const uint32_t inheritableDOMBreakpointTypesMask = (1 << SubtreeModified);
-const int domBreakpointDerivedTypeShift = 16;
-
-static int domTypeForName(ErrorString& errorString, const String& typeString)
-{
-    if (typeString == "subtree-modified")
-        return SubtreeModified;
-    if (typeString == "attribute-modified")
-        return AttributeModified;
-    if (typeString == "node-removed")
-        return NodeRemoved;
-    errorString = makeString("Unknown DOM breakpoint type: ", typeString);
-    return -1;
-}
-
-static String domTypeName(int type)
-{
-    switch (type) {
-    case SubtreeModified:
-        return "subtree-modified"_s;
-    case AttributeModified:
-        return "attribute-modified"_s;
-    case NodeRemoved:
-        return "node-removed"_s;
-    }
-    return emptyString();
-}
 
 PageDOMDebuggerAgent::PageDOMDebuggerAgent(PageAgentContext& context, InspectorDebuggerAgent* debuggerAgent)
     : InspectorDOMDebuggerAgent(context, debuggerAgent)
@@ -93,14 +60,16 @@ void PageDOMDebuggerAgent::disable()
 {
     m_instrumentingAgents.setEnabledPageDOMDebuggerAgent(nullptr);
 
-    m_domBreakpoints.clear();
+    m_domSubtreeModifiedBreakpoints.clear();
+    m_domAttributeModifiedBreakpoints.clear();
+    m_domNodeRemovedBreakpoints.clear();
 
     m_pauseOnAllAnimationFramesBreakpoint = nullptr;
 
     InspectorDOMDebuggerAgent::disable();
 }
 
-void PageDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
+void PageDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString, const JSON::Object* optionsPayload)
 {
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
@@ -112,16 +81,34 @@ void PageDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int nodeId
     if (!node)
         return;
 
-    int type = domTypeForName(errorString, typeString);
-    if (type == -1)
+    auto type = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::DOMDebugger::DOMBreakpointType>(typeString);
+    if (!type) {
+        errorString = makeString("Unknown type: "_s, typeString);
+        return;
+    }
+
+    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, optionsPayload);
+    if (!breakpoint)
         return;
 
-    uint32_t rootBit = 1 << type;
-    m_domBreakpoints.set(node, m_domBreakpoints.get(node) | rootBit);
-    if (rootBit & inheritableDOMBreakpointTypesMask) {
-        for (Node* child = InspectorDOMAgent::innerFirstChild(node); child; child = InspectorDOMAgent::innerNextSibling(child))
-            updateSubtreeBreakpoints(child, rootBit, true);
+    switch (*type) {
+    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified:
+        if (!m_domSubtreeModifiedBreakpoints.add(node, breakpoint.releaseNonNull()))
+            errorString = "Breakpoint for given node and given type already exists"_s;
+        return;
+
+    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified:
+        if (!m_domAttributeModifiedBreakpoints.add(node, breakpoint.releaseNonNull()))
+            errorString = "Breakpoint for given node and given type already exists"_s;
+        return;
+
+    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved:
+        if (!m_domNodeRemovedBreakpoints.add(node, breakpoint.releaseNonNull()))
+            errorString = "Breakpoint for given node and given type already exists"_s;
+        return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 void PageDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
@@ -136,21 +123,30 @@ void PageDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int nod
     if (!node)
         return;
 
-    int type = domTypeForName(errorString, typeString);
-    if (type == -1)
+    auto type = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::DOMDebugger::DOMBreakpointType>(typeString);
+    if (!type) {
+        errorString = makeString("Unknown type: "_s, typeString);
+        return;
+    }
+
+    switch (*type) {
+    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified:
+        if (!m_domSubtreeModifiedBreakpoints.remove(node))
+            errorString = "Breakpoint for given node and given type missing"_s;
         return;
 
-    uint32_t rootBit = 1 << type;
-    uint32_t mask = m_domBreakpoints.get(node) & ~rootBit;
-    if (mask)
-        m_domBreakpoints.set(node, mask);
-    else
-        m_domBreakpoints.remove(node);
+    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified:
+        if (!m_domAttributeModifiedBreakpoints.remove(node))
+            errorString = "Breakpoint for given node and given type missing"_s;
+        return;
 
-    if ((rootBit & inheritableDOMBreakpointTypesMask) && !(mask & (rootBit << domBreakpointDerivedTypeShift))) {
-        for (Node* child = InspectorDOMAgent::innerFirstChild(node); child; child = InspectorDOMAgent::innerNextSibling(child))
-            updateSubtreeBreakpoints(child, rootBit, false);
+    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved:
+        if (!m_domNodeRemovedBreakpoints.remove(node))
+            errorString = "Breakpoint for given node and given type missing"_s;
+        return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 void PageDOMDebuggerAgent::mainFrameNavigated()
@@ -166,7 +162,26 @@ void PageDOMDebuggerAgent::frameDocumentUpdated(Frame& frame)
     if (!frame.isMainFrame())
         return;
 
-    m_domBreakpoints.clear();
+    m_domSubtreeModifiedBreakpoints.clear();
+    m_domAttributeModifiedBreakpoints.clear();
+    m_domNodeRemovedBreakpoints.clear();
+}
+
+
+static Optional<size_t> calculateDistance(Node& child, Node& ancestor)
+{
+    size_t distance = 0;
+
+    auto* current = &child;
+    while (current != &ancestor) {
+        ++distance;
+
+        current = InspectorDOMAgent::innerParentNode(current);
+        if (!current)
+            return WTF::nullopt;
+    }
+
+    return distance;
 }
 
 void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
@@ -174,21 +189,35 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    if (hasBreakpoint(&parent, SubtreeModified)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
-        descriptionForDOMEvent(parent, SubtreeModified, true, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
-    }
-}
+    if (m_domSubtreeModifiedBreakpoints.isEmpty())
+        return;
 
-void PageDOMDebuggerAgent::didInsertDOMNode(Node& node)
-{
-    if (m_domBreakpoints.size()) {
-        uint32_t mask = m_domBreakpoints.get(InspectorDOMAgent::innerParentNode(&node));
-        uint32_t inheritableTypesMask = (mask | (mask >> domBreakpointDerivedTypeShift)) & inheritableDOMBreakpointTypesMask;
-        if (inheritableTypesMask)
-            updateSubtreeBreakpoints(&node, inheritableTypesMask, true);
+    Optional<size_t> closestDistance;
+    RefPtr<JSC::Breakpoint> closestBreakpoint;
+    Node* closestBreakpointOwner = nullptr;
+
+    for (auto [breakpointOwner, breakpoint] : m_domSubtreeModifiedBreakpoints) {
+        auto distance = calculateDistance(parent, *breakpointOwner);
+        if (!distance)
+            continue;
+
+        if (!closestDistance || distance < closestDistance) {
+            closestDistance = distance;
+            closestBreakpoint = breakpoint.copyRef();
+            closestBreakpointOwner = breakpointOwner;
+        }
     }
+
+    if (!closestBreakpoint)
+        return;
+
+    ASSERT(closestBreakpointOwner);
+
+    auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified, *closestBreakpointOwner);
+    pauseData->setBoolean("insertion", true);
+    // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
+    // Include the new child node ID so the frontend can show the node that's about to be inserted.
+    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), WTFMove(closestBreakpoint));
 }
 
 void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
@@ -196,52 +225,66 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    if (hasBreakpoint(&node, NodeRemoved)) {
-        auto eventData = JSON::Object::create();
-        descriptionForDOMEvent(node, NodeRemoved, false, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
+    if (m_domNodeRemovedBreakpoints.isEmpty() && m_domSubtreeModifiedBreakpoints.isEmpty())
         return;
-    }
 
-    uint32_t rootBit = 1 << NodeRemoved;
-    uint32_t derivedBit = rootBit << domBreakpointDerivedTypeShift;
-    uint32_t matchBit = rootBit | derivedBit;
-    for (auto& [nodeWithBreakpoint, breakpointTypes] : m_domBreakpoints) {
-        if (node.contains(nodeWithBreakpoint) && (breakpointTypes & matchBit)) {
-            auto eventData = JSON::Object::create();
-            descriptionForDOMEvent(*nodeWithBreakpoint, NodeRemoved, false, eventData.get());
-            if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent())
-                eventData->setInteger("targetNodeId"_s, domAgent->pushNodeToFrontend(&node));
-            m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
-            return;
+    Optional<size_t> closestDistance;
+    RefPtr<JSC::Breakpoint> closestBreakpoint;
+    Optional<Inspector::Protocol::DOMDebugger::DOMBreakpointType> closestBreakpointType;
+    Node* closestBreakpointOwner = nullptr;
+
+    for (auto [breakpointOwner, breakpoint] : m_domNodeRemovedBreakpoints) {
+        auto distance = calculateDistance(*breakpointOwner, node);
+        if (!distance)
+            continue;
+
+        if (!closestDistance || distance < closestDistance) {
+            closestDistance = distance;
+            closestBreakpoint = breakpoint.copyRef();
+            closestBreakpointType = Inspector::Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved;
+            closestBreakpointOwner = breakpointOwner;
         }
     }
 
-    auto* parentNode = InspectorDOMAgent::innerParentNode(&node);
-    if (parentNode && hasBreakpoint(parentNode, SubtreeModified)) {
-        auto eventData = JSON::Object::create();
-        descriptionForDOMEvent(node, SubtreeModified, false, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
-        return;
+    if (!closestBreakpoint) {
+        for (auto [breakpointOwner, breakpoint] : m_domSubtreeModifiedBreakpoints) {
+            auto distance = calculateDistance(node, *breakpointOwner);
+            if (!distance)
+                continue;
+
+            if (!closestDistance || distance < closestDistance) {
+                closestDistance = distance;
+                closestBreakpoint = breakpoint.copyRef();
+                closestBreakpointType = Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified;
+                closestBreakpointOwner = breakpointOwner;
+            }
+        }
     }
+
+    if (!closestBreakpoint)
+        return;
+
+    ASSERT(closestBreakpointType);
+    ASSERT(closestBreakpointOwner);
+
+    auto pauseData = buildPauseDataForDOMBreakpoint(*closestBreakpointType, *closestBreakpointOwner);
+    if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
+        if (&node != closestBreakpointOwner) {
+            if (auto targetNodeId = domAgent->pushNodeToFrontend(&node))
+                pauseData->setInteger("targetNodeId", targetNodeId);
+        }
+    }
+    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), WTFMove(closestBreakpoint));
 }
 
 void PageDOMDebuggerAgent::didRemoveDOMNode(Node& node)
 {
-    if (m_domBreakpoints.size()) {
-        // Remove subtree breakpoints.
-        m_domBreakpoints.remove(&node);
-        Vector<Node*> stack(1, InspectorDOMAgent::innerFirstChild(&node));
-        do {
-            Node* node = stack.last();
-            stack.removeLast();
-            if (!node)
-                continue;
-            m_domBreakpoints.remove(node);
-            stack.append(InspectorDOMAgent::innerFirstChild(node));
-            stack.append(InspectorDOMAgent::innerNextSibling(node));
-        } while (!stack.isEmpty());
-    }
+    auto nodeContainsBreakpointOwner = [&] (auto& entry) {
+        return node.contains(entry.key);
+    };
+    m_domSubtreeModifiedBreakpoints.removeIf(nodeContainsBreakpointOwner);
+    m_domAttributeModifiedBreakpoints.removeIf(nodeContainsBreakpointOwner);
+    m_domNodeRemovedBreakpoints.removeIf(nodeContainsBreakpointOwner);
 }
 
 void PageDOMDebuggerAgent::willModifyDOMAttr(Element& element)
@@ -249,11 +292,12 @@ void PageDOMDebuggerAgent::willModifyDOMAttr(Element& element)
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    if (hasBreakpoint(&element, AttributeModified)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
-        descriptionForDOMEvent(element, AttributeModified, false, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
-    }
+    auto it = m_domAttributeModifiedBreakpoints.find(&element);
+    if (it == m_domAttributeModifiedBreakpoints.end())
+        return;
+
+    auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified, element);
+    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), it->value.copyRef());
 }
 
 void PageDOMDebuggerAgent::willFireAnimationFrame()
@@ -285,11 +329,12 @@ void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    if (hasBreakpoint(&element, AttributeModified)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
-        descriptionForDOMEvent(element, AttributeModified, false, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
-    }
+    auto it = m_domAttributeModifiedBreakpoints.find(&element);
+    if (it == m_domAttributeModifiedBreakpoints.end())
+        return;
+
+    auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified, element);
+    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), it->value.copyRef());
 }
 
 void PageDOMDebuggerAgent::setAnimationFrameBreakpoint(ErrorString& errorString, RefPtr<JSC::Breakpoint>&& breakpoint)
@@ -302,68 +347,18 @@ void PageDOMDebuggerAgent::setAnimationFrameBreakpoint(ErrorString& errorString,
     m_pauseOnAllAnimationFramesBreakpoint = WTFMove(breakpoint);
 }
 
-void PageDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, JSON::Object& description)
+Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType breakpointType, Node& breakpointOwner)
 {
     ASSERT(m_debuggerAgent->breakpointsActive());
-    ASSERT(hasBreakpoint(&target, breakpointType));
+    ASSERT(m_domSubtreeModifiedBreakpoints.contains(&breakpointOwner) || m_domAttributeModifiedBreakpoints.contains(&breakpointOwner) || m_domNodeRemovedBreakpoints.contains(&breakpointOwner));
 
-    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
-
-    Node* breakpointOwner = &target;
-    if ((1 << breakpointType) & inheritableDOMBreakpointTypesMask) {
-        if (domAgent) {
-            // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
-            // Target node may be unknown to frontend, so we need to push it first.
-            description.setInteger("targetNodeId"_s, domAgent->pushNodeToFrontend(&target));
-        }
-
-        // Find breakpoint owner node.
-        if (!insertion)
-            breakpointOwner = InspectorDOMAgent::innerParentNode(&target);
-        ASSERT(breakpointOwner);
-        while (!(m_domBreakpoints.get(breakpointOwner) & (1 << breakpointType))) {
-            Node* parentNode = InspectorDOMAgent::innerParentNode(breakpointOwner);
-            if (!parentNode)
-                break;
-            breakpointOwner = parentNode;
-        }
-
-        if (breakpointType == SubtreeModified)
-            description.setBoolean("insertion", insertion);
+    auto pauseData = JSON::Object::create();
+    pauseData->setString("type", Inspector::Protocol::InspectorHelpers::getEnumConstantValue(breakpointType));
+    if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
+        if (auto breakpointOwnerNodeId = domAgent->pushNodeToFrontend(&breakpointOwner))
+            pauseData->setInteger("nodeId", breakpointOwnerNodeId);
     }
-
-    if (domAgent) {
-        int breakpointOwnerNodeId = domAgent->boundNodeId(breakpointOwner);
-        ASSERT(breakpointOwnerNodeId);
-        description.setInteger("nodeId", breakpointOwnerNodeId);
-    }
-
-    description.setString("type", domTypeName(breakpointType));
-}
-
-void PageDOMDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_t rootMask, bool set)
-{
-    uint32_t oldMask = m_domBreakpoints.get(node);
-    uint32_t derivedMask = rootMask << domBreakpointDerivedTypeShift;
-    uint32_t newMask = set ? oldMask | derivedMask : oldMask & ~derivedMask;
-    if (newMask)
-        m_domBreakpoints.set(node, newMask);
-    else
-        m_domBreakpoints.remove(node);
-
-    uint32_t newRootMask = rootMask & ~newMask;
-    if (!newRootMask)
-        return;
-
-    for (Node* child = InspectorDOMAgent::innerFirstChild(node); child; child = InspectorDOMAgent::innerNextSibling(child))
-        updateSubtreeBreakpoints(child, newRootMask, set);
-}
-
-bool PageDOMDebuggerAgent::hasBreakpoint(Node* node, int type)
-{
-    uint32_t rootBit = 1 << type;
-    uint32_t derivedBit = rootBit << domBreakpointDerivedTypeShift;
-    return m_domBreakpoints.get(node) & (rootBit | derivedBit);
+    return pauseData;
 }
 
 } // namespace WebCore

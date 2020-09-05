@@ -37,7 +37,7 @@ WorkerDOMDebuggerAgent::WorkerDOMDebuggerAgent(WorkerAgentContext& context, Insp
 
 WorkerDOMDebuggerAgent::~WorkerDOMDebuggerAgent() = default;
 
-void WorkerDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int /* nodeId */, const String& /* typeString */)
+void WorkerDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int /* nodeId */, const String& /* typeString */, const JSON::Object* /* optionsPayload */)
 {
     errorString = "Not supported"_s;
 }

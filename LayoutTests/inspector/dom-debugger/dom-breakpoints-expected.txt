@@ -1,174 +1,40 @@
 Tests for DOM breakpoints.
 
 
-== Running test suite: DOMBreakpoints
--- Running test case: BasicBreakpoint
-PASS: Added 'subtree-modified' breakpoint.
+== Running test suite: DOMBreakpoint
+-- Running test case: DOMBreakpoint.Basic
+Adding "subtree-modified:1,HTML,1,BODY,1,DIV,0,DIV" DOM Breakpoint...
 PASS: Breakpoint should not be disabled.
 PASS: Breakpoint should have node identifier.
 PASS: Breakpoint URL should match document URL.
 -- Running test teardown.
 
--- Running test case: DOMBreakpoints.SubtreeModified.BreakpointEnabled
-PASS: Added 'subtree-modified' breakpoint.
-PASS: Breakpoint should have expected type.
-Call DOM operation.
-PAUSED:
-PASS: Pause reason should be DOM.
-PASS: Pause type should be 'subtree-modified'.
-PASS: Pause nodeId should be expected value.
-PASS: Pause insertion should be 'true'.
-PASS: Pause targetNodeId should match nodeId.
-CALL STACK:
-0: [F] subtreeModifiedTest
-1: [P] Global Code
+-- Running test case: DOMBreakpoint.RemoveAllBreakpointsForNode
+Adding "subtree-modified:1,HTML,1,BODY,1,DIV,1,DIV" DOM Breakpoint...
+Adding "attribute-modified:1,HTML,1,BODY,1,DIV,1,DIV" DOM Breakpoint...
+Adding "node-removed:1,HTML,1,BODY,1,DIV,1,DIV" DOM Breakpoint...
+PASS: Should have 3 breakpoints.
+Removing all breakpoints for #multiple-breakpoints-test...
+PASS: Should remove all breakpoints.
 -- Running test teardown.
 
--- Running test case: DOMBreakpoints.SubtreeModified.BreakpointDisabled
-PASS: Added 'subtree-modified' breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for disabled breakpoint.
--- Running test teardown.
+-- Running test case: DOMBreakpoint.SetBreakpointWithInvalidNodeId
+Setting breakpoint...
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
 
--- Running test case: DOMBreakpoints.SubtreeModified.DebuggerDisabled
-PASS: Added 'subtree-modified' breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for disabled breakpoint.
--- Running test teardown.
+-- Running test case: DOMBreakpoint.SetBreakpointWithInvalidType
+Setting breakpoint...
+PASS: Should produce an exception.
+Error: Unknown type: custom-breakpoint-type
 
--- Running test case: DOMBreakpoints.SubtreeModified.RemoveBreakpoint
-PASS: Added 'subtree-modified' breakpoint.
-Remove breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for removed breakpoint.
--- Running test teardown.
+-- Running test case: DOMBreakpoint.RemoveBreakpointWithInvalidNodeId
+Removing breakpoint...
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
 
--- Running test case: DOMBreakpoints.AttributeModified.BreakpointEnabled
-PASS: Added 'attribute-modified' breakpoint.
-PASS: Breakpoint should have expected type.
-Call DOM operation.
-PAUSED:
-PASS: Pause reason should be DOM.
-PASS: Pause type should be 'attribute-modified'.
-PASS: Pause nodeId should be expected value.
-CALL STACK:
-0: [F] attributeModifiedTest
-1: [P] Global Code
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.AttributeModified.BreakpointDisabled
-PASS: Added 'attribute-modified' breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for disabled breakpoint.
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.AttributeModified.DebuggerDisabled
-PASS: Added 'attribute-modified' breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for disabled breakpoint.
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.AttributeModified.RemoveBreakpoint
-PASS: Added 'attribute-modified' breakpoint.
-Remove breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for removed breakpoint.
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.NodeRemovedSelf.BreakpointEnabled
-PASS: Added 'node-removed' breakpoint.
-PASS: Breakpoint should have expected type.
-Call DOM operation.
-PAUSED:
-PASS: Pause reason should be DOM.
-PASS: Pause type should be 'node-removed'.
-PASS: Pause nodeId should be expected value.
-CALL STACK:
-0: [F] nodeRemovedDirectTest
-1: [P] Global Code
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.NodeRemovedSelf.BreakpointDisabled
-PASS: Added 'node-removed' breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for disabled breakpoint.
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.NodeRemovedSelf.DebuggerDisabled
-PASS: Added 'node-removed' breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for disabled breakpoint.
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.NodeRemovedSelf.RemoveBreakpoint
-PASS: Added 'node-removed' breakpoint.
-Remove breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for removed breakpoint.
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.NodeRemovedAncestor.BreakpointEnabled
-PASS: Added 'node-removed' breakpoint.
-PASS: Breakpoint should have expected type.
-Call DOM operation.
-PAUSED:
-PASS: Pause reason should be DOM.
-PASS: Pause type should be 'node-removed'.
-PASS: Pause nodeId should be expected value.
-PASS: Pause targetNodeId should not match nodeId.
-CALL STACK:
-0: [F] nodeRemovedAncestorTest
-1: [P] Global Code
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.NodeRemovedAncestor.BreakpointDisabled
-PASS: Added 'node-removed' breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for disabled breakpoint.
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.NodeRemovedAncestor.DebuggerDisabled
-PASS: Added 'node-removed' breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for disabled breakpoint.
--- Running test teardown.
-
--- Running test case: DOMBreakpoints.NodeRemovedAncestor.RemoveBreakpoint
-PASS: Added 'node-removed' breakpoint.
-Remove breakpoint.
-Wait for evaluate in page to return.
-PASS: Should not pause for removed breakpoint.
--- Running test teardown.
-
--- Running test case: RemoveAllBreakpointsForNode
-PASS: Added 'subtree-modified' breakpoint.
-PASS: Added 'attribute-modified' breakpoint.
-PASS: Added 'node-removed' breakpoint.
-PASS: Removed 3 breakpoints.
-PASS: DOM node should have no breakpoints.
--- Running test teardown.
-
--- Running test case: SetBreakpointWithInvalidNodeId
-Attempting to set breakpoint.
-Protocol result: Missing node for given nodeId
-PASS: Protocol should return an error.
--- Running test teardown.
-
--- Running test case: SetBreakpointWithInvalidType
-Attempting to set breakpoint.
-Protocol result: Unknown DOM breakpoint type: custom-breakpoint-type
-PASS: Protocol should return an error.
--- Running test teardown.
-
--- Running test case: RemoveBreakpointWithInvalidNodeId
-Attempting to remove breakpoint.
-Protocol result: Missing node for given nodeId
-PASS: Protocol should return an error.
--- Running test teardown.
-
--- Running test case: RemoveBreakpointWithInvalidType
-Attempting to remove breakpoint.
-Protocol result: Unknown DOM breakpoint type: custom-breakpoint-type
-PASS: Protocol should return an error.
--- Running test teardown.
+-- Running test case: DOMBreakpoint.RemoveBreakpointWithInvalidType
+Removing breakpoint...
+PASS: Should produce an exception.
+Error: Unknown type: custom-breakpoint-type
 

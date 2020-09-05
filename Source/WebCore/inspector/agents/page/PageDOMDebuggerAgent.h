@@ -27,6 +27,7 @@
 
 #include "InspectorDOMDebuggerAgent.h"
 #include <JavaScriptCore/Breakpoint.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -45,14 +46,13 @@ public:
     bool enabled() const override;
 
     // DOMDebuggerBackendDispatcherHandler
-    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
+    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type, const JSON::Object* options) override;
     void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
 
     // InspectorInstrumentation
     void mainFrameNavigated() final;
     void frameDocumentUpdated(Frame&);
     void willInsertDOMNode(Node& parent);
-    void didInsertDOMNode(Node&);
     void willRemoveDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willModifyDOMAttr(Element&);
@@ -66,12 +66,11 @@ private:
 
     void setAnimationFrameBreakpoint(ErrorString&, RefPtr<JSC::Breakpoint>&&) override;
 
-    void descriptionForDOMEvent(Node&, int breakpointType, bool insertion, JSON::Object& description);
-    void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
-    bool checkSubtreeForNodeRemoved(Node*);
-    bool hasBreakpoint(Node*, int type);
+    Ref<JSON::Object> buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType, Node& breakpointOwner);
 
-    HashMap<Node*, uint32_t> m_domBreakpoints;
+    HashMap<Node*, Ref<JSC::Breakpoint>> m_domSubtreeModifiedBreakpoints;
+    HashMap<Node*, Ref<JSC::Breakpoint>> m_domAttributeModifiedBreakpoints;
+    HashMap<Node*, Ref<JSC::Breakpoint>> m_domNodeRemovedBreakpoints;
 
     RefPtr<JSC::Breakpoint> m_pauseOnAllAnimationFramesBreakpoint;
 };
