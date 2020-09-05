@@ -116,6 +116,12 @@ void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<S
     }
 }
 
+bool ThreadedScrollingTree::canUpdateLayersOnScrollingThread() const
+{
+    auto* rootNode = this->rootNode();
+    return !(rootNode && rootNode->hasSynchronousScrollingReasons());
+}
+
 void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction scrollingLayerPositionAction)
 {
     if (!m_scrollingCoordinator)
@@ -258,7 +264,8 @@ void ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout()
         m_state = SynchronizationState::Desynchronized;
         // At this point we know the main thread is taking too long in the rendering update,
         // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
-        applyLayerPositionsInternal();
+        if (canUpdateLayersOnScrollingThread())
+            applyLayerPositionsInternal();
         tracePoint(ScrollingThreadRenderUpdateSyncEnd, 1);
     } else
         tracePoint(ScrollingThreadRenderUpdateSyncEnd);
@@ -291,7 +298,8 @@ void ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired()
     ASSERT(ScrollingThread::isCurrentThread());
 
     LockHolder treeLocker(m_treeMutex);
-    applyLayerPositionsInternal();
+    if (canUpdateLayersOnScrollingThread())
+        applyLayerPositionsInternal();
     m_state = SynchronizationState::Desynchronized;
 }
 
@@ -302,7 +310,7 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
     LockHolder treeLocker(m_treeMutex);
 
-    if (m_state != SynchronizationState::Idle)
+    if (m_state != SynchronizationState::Idle && canUpdateLayersOnScrollingThread())
         applyLayerPositionsInternal();
 
     switch (m_state) {
