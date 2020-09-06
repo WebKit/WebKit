@@ -156,8 +156,8 @@ void LineLayout::prepareFloatingState()
 
 LayoutUnit LineLayout::contentLogicalHeight() const
 {
-    auto& lineBoxes = displayInlineContent()->lineBoxes;
-    return LayoutUnit { lineBoxes.last().bottom() - lineBoxes.first().top() };
+    auto& lines = displayInlineContent()->lines;
+    return LayoutUnit { lines.last().bottom() - lines.first().top() };
 }
 
 size_t LineLayout::lineCount() const
@@ -167,7 +167,7 @@ size_t LineLayout::lineCount() const
         return 0;
     if (inlineContent->runs.isEmpty())
         return 0;
-    return inlineContent->lineBoxes.size();
+    return inlineContent->lines.size();
 }
 
 LayoutUnit LineLayout::firstLineBaseline() const
@@ -178,8 +178,8 @@ LayoutUnit LineLayout::firstLineBaseline() const
         return 0_lu;
     }
 
-    auto& firstLineBox = inlineContent->lineBoxes.first();
-    return Layout::toLayoutUnit(firstLineBox.top() + firstLineBox.baseline());
+    auto& firstLine = inlineContent->lines.first();
+    return Layout::toLayoutUnit(firstLine.top() + firstLine.baseline());
 }
 
 LayoutUnit LineLayout::lastLineBaseline() const
@@ -190,8 +190,8 @@ LayoutUnit LineLayout::lastLineBaseline() const
         return 0_lu;
     }
 
-    auto& lastLineBox = inlineContent->lineBoxes.last();
-    return Layout::toLayoutUnit(lastLineBox.top() + lastLineBox.baseline());
+    auto& lastLine = inlineContent->lines.last();
+    return Layout::toLayoutUnit(lastLine.top() + lastLine.baseline());
 }
 
 void LineLayout::collectOverflow(RenderBlockFlow& flow)
@@ -199,9 +199,9 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
     ASSERT(&flow == &m_flow);
     ASSERT(!flow.hasOverflowClip());
 
-    for (auto& lineBox : displayInlineContent()->lineBoxes) {
-        flow.addLayoutOverflow(Layout::toLayoutRect(lineBox.scrollableOverflow()));
-        flow.addVisualOverflow(Layout::toLayoutRect(lineBox.inkOverflow()));
+    for (auto& line : displayInlineContent()->lines) {
+        flow.addLayoutOverflow(Layout::toLayoutRect(line.scrollableOverflow()));
+        flow.addVisualOverflow(Layout::toLayoutRect(line.inkOverflow()));
     }
 }
 
@@ -299,14 +299,14 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             continue;
         }
 
-        auto& lineBox = inlineContent.lineBoxForRun(run);
-        auto baseline = paintOffset.y() + lineBox.top() + lineBox.baseline();
+        auto& line = inlineContent.lineForRun(run);
+        auto baseline = paintOffset.y() + line.top() + line.baseline();
         auto expansion = run.expansion();
 
         String textWithHyphen;
         if (textContent.needsHyphen())
             textWithHyphen = makeString(textContent.content(), style.hyphenString());
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), run.left() - lineBox.left(), expansion.horizontalExpansion, expansion.behavior };
+        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), run.left() - line.left(), expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };
 

@@ -2082,7 +2082,7 @@
 		6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */; };
 		6FB11B5C21783FD000E2A574 /* TextUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB11B5921783FCF00E2A574 /* TextUtil.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FB2400523DFF12800796458 /* InlineLineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB2400323DFF12700796458 /* InlineLineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6FB47E632277425A00C7BCB0 /* DisplayLineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB47E612277425A00C7BCB0 /* DisplayLineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6FB47E632277425A00C7BCB0 /* DisplayLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB47E612277425A00C7BCB0 /* DisplayLine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FB5E214221F2453003989CF /* ContentChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB5E212221F2447003989CF /* ContentChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FCE1A1A22618ABD004F0343 /* DisplayRun.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FCE1A1822618AB3004F0343 /* DisplayRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FD9CD54227E21C800E53957 /* DisplayRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FD9CD52227E21C800E53957 /* DisplayRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9616,7 +9616,7 @@
 		6FB11B5B21783FCF00E2A574 /* TextUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextUtil.cpp; sourceTree = "<group>"; };
 		6FB22E30230097E300C20866 /* TableGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableGrid.h; sourceTree = "<group>"; };
 		6FB2400323DFF12700796458 /* InlineLineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBox.h; sourceTree = "<group>"; };
-		6FB47E612277425A00C7BCB0 /* DisplayLineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayLineBox.h; sourceTree = "<group>"; };
+		6FB47E612277425A00C7BCB0 /* DisplayLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayLine.h; sourceTree = "<group>"; };
 		6FB5E212221F2447003989CF /* ContentChangeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentChangeObserver.h; sourceTree = "<group>"; };
 		6FBB860520B464B600DAD938 /* FormattingContextGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingContextGeometry.cpp; sourceTree = "<group>"; };
 		6FC53AEB24AF7A8E006059FE /* TableFormattingContextQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableFormattingContextQuirks.cpp; sourceTree = "<group>"; };
@@ -17481,7 +17481,7 @@
 				E4FB4B35239BEB10003C336A /* DisplayInlineContent.cpp */,
 				E451C6332394058E00993190 /* DisplayInlineContent.h */,
 				112FB350239C23C40087054A /* DisplayInlineRect.h */,
-				6FB47E612277425A00C7BCB0 /* DisplayLineBox.h */,
+				6FB47E612277425A00C7BCB0 /* DisplayLine.h */,
 				6F77868523491AC6004D9636 /* DisplayPainter.cpp */,
 				6F77868723491AD7004D9636 /* DisplayPainter.h */,
 				6FD9CD52227E21C800E53957 /* DisplayRect.h */,
@@ -30951,7 +30951,7 @@
 				1199FA5B208E3C7F002358CC /* DisplayBox.h in Headers */,
 				E451C6342394058F00993190 /* DisplayInlineContent.h in Headers */,
 				112FB352239C23C40087054A /* DisplayInlineRect.h in Headers */,
-				6FB47E632277425A00C7BCB0 /* DisplayLineBox.h in Headers */,
+				6FB47E632277425A00C7BCB0 /* DisplayLine.h in Headers */,
 				0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */,
 				55AD09402408964000DE4D2F /* DisplayListDrawingContext.h in Headers */,
 				55AD093E2408963500DE4D2F /* DisplayListImageBuffer.h in Headers */,

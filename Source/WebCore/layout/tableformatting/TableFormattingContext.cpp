@@ -132,8 +132,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                     auto& displayContent = layoutState().establishedInlineFormattingState(cellBox).ensureDisplayInlineContent();
                     for (auto& run : displayContent.runs)
                         run.moveVertically(intrinsicPaddingTop);
-                    for (auto& lineBox : displayContent.lineBoxes)
-                        lineBox.moveVertically(intrinsicPaddingTop);
+                    for (auto& line : displayContent.lines)
+                        line.moveVertically(intrinsicPaddingTop);
                 }
             };
             adjustCellContentWithInstrinsicPaddingBefore();

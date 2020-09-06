@@ -52,7 +52,7 @@ public:
 
     FloatRect rect() const;
 
-    float baseline() const { return lineBox().baseline(); }
+    float baseline() const { return line().baseline(); }
 
     bool isLeftToRightDirection() const { return true; }
     bool isHorizontal() const { return true; }
@@ -98,7 +98,7 @@ public:
 private:
     const Display::InlineContent::Runs& runs() const { return m_inlineContent->runs; }
     const Display::Run& run() const { return runs()[m_runIndex]; }
-    const Display::LineBox& lineBox() const { return m_inlineContent->lineBoxForRun(run()); }
+    const Display::Line& line() const { return m_inlineContent->lineForRun(run()); }
 
     RefPtr<const Display::InlineContent> m_inlineContent;
     size_t m_endIndex { 0 };

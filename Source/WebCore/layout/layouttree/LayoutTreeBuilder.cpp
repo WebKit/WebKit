@@ -390,7 +390,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
         return;
 
     auto& displayRuns = displayInlineContent->runs;
-    auto& lineBoxes = displayInlineContent->lineBoxes;
+    auto& lines = displayInlineContent->lines;
 
     unsigned printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
@@ -398,8 +398,8 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
     stream << "  ";
 
     stream << "lines are -> ";
-    for (auto& lineBox : lineBoxes)
-        stream << "[" << lineBox.left() << "," << lineBox.top() << " " << lineBox.width() << "x" << lineBox.height() << "] ";
+    for (auto& line : lines)
+        stream << "[" << line.left() << "," << line.top() << " " << line.width() << "x" << line.height() << "] ";
     stream.nextLine();
 
     for (auto& displayRun : displayRuns) {

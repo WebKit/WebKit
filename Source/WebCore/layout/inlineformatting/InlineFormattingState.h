@@ -73,7 +73,7 @@ inline void InlineFormattingState::shrinkDisplayInlineContent()
     if (!m_displayInlineContent)
         return;
     m_displayInlineContent->runs.shrinkToFit();
-    m_displayInlineContent->lineBoxes.shrinkToFit();
+    m_displayInlineContent->lines.shrinkToFit();
 }
 
 }

@@ -1,3 +1,64 @@
+2020-09-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Rename Display::LineBox to Display::Line
+        https://bugs.webkit.org/show_bug.cgi?id=216232
+
+        Reviewed by Sam Weinig.
+
+        Display::LineBox represent a line and not to be confused with Layout::LineBox which represents a collection of inline boxes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const):
+        * layout/displaytree/DisplayInlineContent.h:
+        (WebCore::Display::InlineContent::lineForRun const):
+        (WebCore::Display::InlineContent::lineBoxForRun const): Deleted.
+        * layout/displaytree/DisplayLine.h: Renamed from Source/WebCore/layout/displaytree/DisplayLineBox.h.
+        (WebCore::Display::Line::rect const):
+        (WebCore::Display::Line::scrollableOverflow const):
+        (WebCore::Display::Line::inkOverflow const):
+        (WebCore::Display::Line::left const):
+        (WebCore::Display::Line::right const):
+        (WebCore::Display::Line::top const):
+        (WebCore::Display::Line::bottom const):
+        (WebCore::Display::Line::width const):
+        (WebCore::Display::Line::height const):
+        (WebCore::Display::Line::baseline const):
+        (WebCore::Display::Line::Line):
+        (WebCore::Display::Line::moveVertically):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::createDisplayBoxesForLineContent):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::shrinkDisplayInlineContent):
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::contentLogicalHeight const):
+        (WebCore::LayoutIntegration::LineLayout::lineCount const):
+        (WebCore::LayoutIntegration::LineLayout::firstLineBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::lastLineBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::collectOverflow):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::usedBaselineForCell):
+        * rendering/line/LineLayoutTraversalDisplayRunPath.h:
+        (WebCore::LineLayoutTraversal::DisplayRunPath::baseline const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::line const):
+        (WebCore::LineLayoutTraversal::DisplayRunPath::lineBox const): Deleted.
+
 2020-09-06  Chris Dumez  <cdumez@apple.com>
 
         ConvolverNode incorrectly outputs silence because m_reverb is null

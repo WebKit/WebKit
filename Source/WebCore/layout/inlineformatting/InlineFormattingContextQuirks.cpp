@@ -59,8 +59,8 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Run
         if (run.isBox()) {
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = layoutState.establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
-                auto lastLineBox = formattingState.displayInlineContent()->lineBoxes.last();
-                if (lastLineBox.height() > lastLineBox.baseline())
+                auto lastLine = formattingState.displayInlineContent()->lines.last();
+                if (lastLine.height() > lastLine.baseline())
                     return false;
             }
             continue;

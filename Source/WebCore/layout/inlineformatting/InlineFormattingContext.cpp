@@ -141,7 +141,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     };
     Optional<PreviousLine> previousLine;
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
-    auto isFirstLine = !formattingState().displayInlineContent() || formattingState().displayInlineContent()->lineBoxes.isEmpty();
+    auto isFirstLine = !formattingState().displayInlineContent() || formattingState().displayInlineContent()->lines.isEmpty();
 
     auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
     while (!needsLayoutRange.isEmpty()) {
@@ -461,7 +461,7 @@ Display::InlineRect InlineFormattingContext::createDisplayBoxesForLineContent(co
     } else
         initialContaingBlockSize = geometryForBox(root().initialContainingBlock(), EscapeReason::StrokeOverflowNeedsViewportGeometry).contentBox().size();
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
-    auto lineIndex = inlineContent.lineBoxes.size();
+    auto lineIndex = inlineContent.lines.size();
     auto lineInkOverflow = scrollableOverflow;
     // Compute final box geometry.
     for (auto& lineRun : lineContent.runs) {
@@ -520,8 +520,7 @@ Display::InlineRect InlineFormattingContext::createDisplayBoxesForLineContent(co
             // Painting code (specifically TextRun's xPos) needs the aligned offset to be able to compute tab positions.
             lineLogicalRect.moveHorizontally(*horizontalAlignmentOffset);
         }
-        // FIXME: Display::LineBox should really be named Display::Line
-        inlineContent.lineBoxes.append({ lineLogicalRect, scrollableOverflow, lineInkOverflow, lineBoxVerticalOffset + lineBox.alignmentBaseline() });
+        inlineContent.lines.append({ lineLogicalRect, scrollableOverflow, lineInkOverflow, lineBoxVerticalOffset + lineBox.alignmentBaseline() });
     };
     constructDisplayLine();
     return lineLogicalRect;

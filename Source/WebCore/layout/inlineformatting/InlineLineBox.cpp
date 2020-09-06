@@ -168,8 +168,8 @@ void LineBox::constructInlineBoxes(const Line::RunList& runs)
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
                 // Spec makes us generate at least one line -even if it is empty.
-                auto& lastLineBox = formattingState.displayInlineContent()->lineBoxes.last();
-                auto inlineBlockBaseline = lastLineBox.top() + lastLineBox.baseline();
+                auto& lastLine = formattingState.displayInlineContent()->lines.last();
+                auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
                 // The inline-block's baseline offset is relative to its content box. Let's convert it relative to the margin box.
                 //           _______________ <- margin box
                 //          |

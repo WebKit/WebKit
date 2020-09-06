@@ -32,10 +32,10 @@
 namespace WebCore {
 namespace Display {
 
-class LineBox {
+class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LineBox(const InlineRect&, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, InlineLayoutUnit baseline);
+    Line(const InlineRect&, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, InlineLayoutUnit baseline);
 
     const InlineRect& rect() const { return m_rect; }
     const InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
@@ -60,7 +60,7 @@ private:
     InlineLayoutUnit m_baseline { 0 };
 };
 
-inline LineBox::LineBox(const InlineRect& rect, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, InlineLayoutUnit baseline)
+inline Line::Line(const InlineRect& rect, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, InlineLayoutUnit baseline)
     : m_rect(rect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_inkOverflow(inkOverflow)
@@ -68,7 +68,7 @@ inline LineBox::LineBox(const InlineRect& rect, const InlineRect& scrollableOver
 {
 }
 
-inline void LineBox::moveVertically(InlineLayoutUnit offset)
+inline void Line::moveVertically(InlineLayoutUnit offset)
 {
     m_rect.moveVertically(offset);
     m_inkOverflow.moveVertically(offset);

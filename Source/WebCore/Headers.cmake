@@ -696,7 +696,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/displaytree/DisplayBox.h
     layout/displaytree/DisplayInlineContent.h
     layout/displaytree/DisplayInlineRect.h
-    layout/displaytree/DisplayLineBox.h
+    layout/displaytree/DisplayLine.h
     layout/displaytree/DisplayRect.h
     layout/displaytree/DisplayRun.h
 
