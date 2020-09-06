@@ -1,5 +1,18 @@
 2020-09-05  Oriol Brufau  <obrufau@igalia.com>
 
+        [css-grid] Use min-content size for intrinsic maximums resolution
+        https://bugs.webkit.org/show_bug.cgi?id=216142
+
+        Reviewed by Darin Adler.
+
+        Import WPT test.
+
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-track-sizes-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-track-sizes-001.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+
+2020-09-05  Oriol Brufau  <obrufau@igalia.com>
+
         [css-logical] Ship flow-relative shorthand and offset properties
         https://bugs.webkit.org/show_bug.cgi?id=216178
 

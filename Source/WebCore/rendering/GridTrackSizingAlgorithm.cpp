@@ -308,9 +308,9 @@ LayoutUnit GridTrackSizingAlgorithm::itemSizeForTrackSizeComputationPhase(TrackS
 {
     switch (phase) {
     case ResolveIntrinsicMinimums:
-    case ResolveIntrinsicMaximums:
         return m_strategy->minSizeForChild(gridItem);
     case ResolveContentBasedMinimums:
+    case ResolveIntrinsicMaximums:
         return m_strategy->minContentForChild(gridItem);
     case ResolveMaxContentMinimums:
     case ResolveMaxContentMaximums:

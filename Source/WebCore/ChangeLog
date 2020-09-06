@@ -1,5 +1,39 @@
 2020-09-05  Oriol Brufau  <obrufau@igalia.com>
 
+        [css-grid] Use min-content size for intrinsic maximums resolution
+        https://bugs.webkit.org/show_bug.cgi?id=216142
+
+        Reviewed by Darin Adler.
+
+        By mistake the specification used to say that, for items spanning
+        multiple tracks, the growth limits of the tracks with an intrinsic max
+        track sizing function should grow to accommodate the minimum
+        contribution of the item.
+
+        But this was a mistake, because an intrinsic max track sizing function
+        can only be min-content or max-content. So instead of distributing the
+        minimum contribution, it should be the min-content contribution.
+
+        The spec has been fixed and there is a CSSWG resolution in
+        https://github.com/w3c/csswg-drafts/issues/4790
+
+        This patch fixes the problem by reverting r207290. The change is likely
+        web compatible, since it only affects a rare edge case with 'minmax()'
+        where the min sizing function is 'auto' or a fixed value smaller than
+        the min-content contribution, the max sizing function is 'min-content',
+        and an item whose minimum contribution is forced to be different than
+        the min-content contribution, and spans multiple tracks.
+
+        This is a port of https://crrev.com/803871 from Chromium.
+
+        Tests: fast/css-grid-layout/grid-intrinsic-maximums.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-track-sizes-001.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::itemSizeForTrackSizeComputationPhase const):
+
+2020-09-05  Oriol Brufau  <obrufau@igalia.com>
+
         [css-logical] Ship flow-relative shorthand and offset properties
         https://bugs.webkit.org/show_bug.cgi?id=216178
 
