@@ -1,3 +1,23 @@
+2020-09-06  Chris Dumez  <cdumez@apple.com>
+
+        ConvolverNode incorrectly outputs silence because m_reverb is null
+        https://bugs.webkit.org/show_bug.cgi?id=216230
+
+        Reviewed by Darin Adler.
+
+        ConvolverNode relies on m_reverb to to audio processing. m_reverb would get initialized
+        when calling ConvolverNode::setBuffer(). However, setting the buffer would cause
+        ConvolverNode::checkNumberOfChannelsForInput(), which could cause unitialize() and then
+        initialize() to get called. The issue was that unitialize() would null out m_reverb
+        and nothing would re-initialize it.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::initialize): Deleted.
+        (WebCore::ConvolverNode::uninitialize): Deleted.
+        * Modules/webaudio/ConvolverNode.h:
+
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Letter-spacing should disable ligatures

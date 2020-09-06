@@ -324,9 +324,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-rolloff-clamping.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-copy-curve.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay.html [ Pass Failure ]
@@ -336,9 +333,10 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iirfilter.html [ Pass Failure ]
 
 # These tests pass but print different values almost every time.
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/ctor-iirfilter.html [ Pass Failure ]
-
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html [ Pass Failure ]
 
 # Some of the subchecks are failing and print out a different value every time.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting.html [ Pass Failure ]

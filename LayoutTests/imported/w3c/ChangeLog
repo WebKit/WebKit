@@ -1,3 +1,18 @@
+2020-09-06  Chris Dumez  <cdumez@apple.com>
+
+        ConvolverNode incorrectly outputs silence because m_reverb is null
+        https://bugs.webkit.org/show_bug.cgi?id=216230
+
+        Reviewed by Darin Adler.
+
+        Unreviewed, rebaseline tests that are now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:
+
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Letter-spacing should disable ligatures

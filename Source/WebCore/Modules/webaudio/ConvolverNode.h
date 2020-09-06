@@ -59,8 +59,6 @@ private:
 
     void process(size_t framesToProcess) final;
     void reset() final;
-    void initialize() final;
-    void uninitialize() final;
     void checkNumberOfChannelsForInput(AudioNodeInput*) final;
 
     std::unique_ptr<Reverb> m_reverb;

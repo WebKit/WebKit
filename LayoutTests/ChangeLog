@@ -1,3 +1,15 @@
+2020-09-06  Chris Dumez  <cdumez@apple.com>
+
+        ConvolverNode incorrectly outputs silence because m_reverb is null
+        https://bugs.webkit.org/show_bug.cgi?id=216230
+
+        Reviewed by Darin Adler.
+
+        Unreviewed, unskip tests that should hopefully not be flaky anymore, not that they
+        are passing.
+
+        * TestExpectations:
+
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Letter-spacing should disable ligatures

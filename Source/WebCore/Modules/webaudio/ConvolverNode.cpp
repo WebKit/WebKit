@@ -123,23 +123,6 @@ void ConvolverNode::reset()
         m_reverb->reset();
 }
 
-void ConvolverNode::initialize()
-{
-    if (isInitialized())
-        return;
-
-    AudioNode::initialize();
-}
-
-void ConvolverNode::uninitialize()
-{
-    if (!isInitialized())
-        return;
-
-    m_reverb = nullptr;
-    AudioNode::uninitialize();
-}
-
 ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());
