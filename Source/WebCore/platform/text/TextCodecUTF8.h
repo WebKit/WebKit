@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,14 +31,17 @@
 
 namespace WebCore {
 
-class TextCodecUTF8 : public TextCodec {
+class TextCodecUTF8 final : public TextCodec {
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
 
+    static Vector<uint8_t> encodeUTF8(StringView, UnencodableHandling);
+
 private:
-    String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) override;
-    Vector<uint8_t> encode(StringView, UnencodableHandling) final;
+    void stripByteOrderMark() final { m_shouldStripByteOrderMark = true; }
+    String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
     bool handlePartialSequence(LChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush);
     void handlePartialSequence(UChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError);
@@ -46,8 +49,7 @@ private:
 
     int m_partialSequenceSize { 0 };
     uint8_t m_partialSequence[U8_MAX_LENGTH];
-    
+    bool m_shouldStripByteOrderMark { false };
 };
 
 } // namespace WebCore
-

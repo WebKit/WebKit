@@ -225,7 +225,7 @@ static Vector<uint8_t> encodeComplexWindowsLatin1(StringView string, Unencodable
     return result;
 }
 
-Vector<uint8_t> TextCodecLatin1::encode(StringView string, UnencodableHandling handling)
+Vector<uint8_t> TextCodecLatin1::encode(StringView string, UnencodableHandling handling) const
 {
     {
         Vector<uint8_t> result(string.length());

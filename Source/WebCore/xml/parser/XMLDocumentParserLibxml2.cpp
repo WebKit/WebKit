@@ -59,6 +59,7 @@
 #include "XMLNSNames.h"
 #include "XMLDocumentParserScope.h"
 #include <libxml/parserInternals.h>
+#include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
 #if ENABLE(XSLT)
@@ -410,8 +411,7 @@ static void switchToUTF16(xmlParserCtxtPtr ctxt)
 
     // FIXME: Can we just use XML_PARSE_IGNORE_ENC now?
 
-    const UChar BOM = 0xFEFF;
-    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&byteOrderMark);
     xmlSwitchEncoding(ctxt, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
 }
 
@@ -1351,8 +1351,7 @@ void XMLDocumentParser::doEnd()
 #if ENABLE(XSLT)
 static inline const char* nativeEndianUTF16Encoding()
 {
-    const UChar BOM = 0xFEFF;
-    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&byteOrderMark);
     return BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE";
 }
 

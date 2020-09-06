@@ -29,36 +29,19 @@
 
 namespace WebCore {
 
-class TextCodecSingleByte : public TextCodec {
+class TextCodecSingleByte final : public TextCodec {
 public:
-    enum class Encoding : uint8_t {
-        Iso_8859_3,
-        Iso_8859_6,
-        Iso_8859_7,
-        Iso_8859_8,
-        Windows_874,
-        Windows_1253,
-        Windows_1255,
-        Windows_1257,
-        IBM866,
-        KOI8U,
-    };
-
-    explicit TextCodecSingleByte(Encoding);
-
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
 
+    enum class Encoding : uint8_t;
+    explicit TextCodecSingleByte(Encoding);
+
 private:
     String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
-    Vector<uint8_t> encode(StringView, UnencodableHandling) final;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
-    using EncodeTable = std::pair<const std::pair<UChar, uint8_t>*, size_t>;
-    Vector<uint8_t> encode(const EncodeTable&, StringView, Function<void(UChar32, Vector<uint8_t>&)>&&);
-    String decode(const UChar* table, const uint8_t*, size_t length, bool flush, bool stopOnError, bool& sawError);
-    
     const Encoding m_encoding;
 };
 
 } // namespace WebCore
-

@@ -29,14 +29,14 @@
 
 namespace WebCore {
 
-class TextCodecUserDefined : public TextCodec {
+class TextCodecUserDefined final : public TextCodec {
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
 
 private:
     String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
-    Vector<uint8_t> encode(StringView, UnencodableHandling) final;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 };
 
 } // namespace WebCore

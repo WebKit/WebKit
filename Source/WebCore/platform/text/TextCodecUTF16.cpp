@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,8 +73,9 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
     StringBuilder result;
     result.reserveCapacity(length / 2);
 
-    Function<void(UChar)> processBytesShared;
-    processBytesShared = [&] (UChar codeUnit) {
+    auto processCodeUnit = [&] (UChar codeUnit) {
+        if (std::exchange(m_shouldStripByteOrderMark, false) && codeUnit == byteOrderMark)
+            return;
         if (m_leadSurrogate) {
             auto leadSurrogate = *std::exchange(m_leadSurrogate, WTF::nullopt);
             if (U16_IS_TRAIL(codeUnit)) {
@@ -83,8 +84,6 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
             }
             sawError = true;
             result.append(replacementCharacter);
-            processBytesShared(codeUnit);
-            return;
         }
         if (U16_IS_LEAD(codeUnit)) {
             m_leadSurrogate = codeUnit;
@@ -98,10 +97,10 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
         result.append(codeUnit);
     };
     auto processBytesLE = [&] (uint8_t first, uint8_t second) {
-        processBytesShared(first | (second << 8));
+        processCodeUnit(first | (second << 8));
     };
     auto processBytesBE = [&] (uint8_t first, uint8_t second) {
-        processBytesShared((first << 8) | second);
+        processCodeUnit((first << 8) | second);
     };
 
     if (m_leadByte && p < end) {
@@ -130,18 +129,21 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
         m_leadByte = p[0];
     } else
         ASSERT(!p || p == end);
-    
-    if (flush && (m_leadByte || m_leadSurrogate)) {
-        m_leadByte = WTF::nullopt;
-        m_leadSurrogate = WTF::nullopt;
-        sawError = true;
-        result.append(replacementCharacter);
+
+    if (flush) {
+        m_shouldStripByteOrderMark = false;
+        if (m_leadByte || m_leadSurrogate) {
+            m_leadByte = WTF::nullopt;
+            m_leadSurrogate = WTF::nullopt;
+            sawError = true;
+            result.append(replacementCharacter);
+        }
     }
 
     return result.toString();
 }
 
-Vector<uint8_t> TextCodecUTF16::encode(StringView string, UnencodableHandling)
+Vector<uint8_t> TextCodecUTF16::encode(StringView string, UnencodableHandling) const
 {
     Vector<uint8_t> result(WTF::checkedProduct<size_t>(string.length(), 2).unsafeGet());
     auto* bytes = result.data();

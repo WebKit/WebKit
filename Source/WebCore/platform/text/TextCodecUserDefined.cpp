@@ -75,7 +75,7 @@ static Vector<uint8_t> encodeComplexUserDefined(StringView string, UnencodableHa
     return result;
 }
 
-Vector<uint8_t> TextCodecUserDefined::encode(StringView string, UnencodableHandling handling)
+Vector<uint8_t> TextCodecUserDefined::encode(StringView string, UnencodableHandling handling) const
 {
     {
         Vector<uint8_t> result(string.length());

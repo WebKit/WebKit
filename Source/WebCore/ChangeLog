@@ -1,3 +1,137 @@
+2020-09-06  Darin Adler  <darin@apple.com>
+
+        TextCodec refinements
+        https://bugs.webkit.org/show_bug.cgi?id=216219
+
+        Reviewed by Sam Weinig.
+
+        * dom/TextDecoder.cpp:
+        (WebCore::TextDecoder::bytesNeededForFullBOMIgnoreCheck const): Deleted.
+        (WebCore::TextDecoder::isBeginningOfIncompleteBOM const): Deleted.
+        (WebCore::TextDecoder::ignoreBOMIfNecessary): Deleted.
+        (WebCore::TextDecoder::decode): Call stripByteOrderMark on the TextCodec
+        to tell it to ignore the BOM, once when creating the codec, and also after
+        each non-streaming invocation. Removed the rest of the BOM handling.
+
+        * dom/TextDecoder.h: Removed WaitForMoreBOMBytes, ignoreBOMIfNecessary,
+        bytesNeededForFullBOMIgnoreCheck, isBeginningOfIncompleteBOM, m_buffer,
+        m_bomIgnoredIfNecessary, and made m_options const.
+
+        * platform/text/TextCodec.h: Added a virtual stripByteOrderMark function
+        to be used before decoding; does nothing by default. Changed the encode
+        function to be a const member function to help implementers remember to
+        not have it save any state, unlike the decode function which should.
+
+        * platform/text/TextCodecCJK.cpp: Moved the TextCodecCJK::Encoding
+        enumeration in here.
+        (WebCore::jis0208DecodeIndex): Use a named type and use std::size
+        instead of WTF_ARRAY_LENGTH.
+        (WebCore::codePointJIS0212): Ditto.
+        (WebCore::iso2022JPEncode): Made this a non-member function and moved
+        the encoding state in here since each call to encode is separate and
+        we don't want to leave any state behind in the TextCodec between calls.
+        (WebCore::eucKREncodingIndex): Use a refernece instead of a pointer
+        and std::size instead of WTF_ARRAY_LENGTH.
+        (WebCore::big5DecodeIndex): Ditto.
+        (WebCore::TextCodecCJK::encode const): Made const.
+
+        * platform/text/TextCodecCJK.h: Marked the class final, moved
+        the enumeration values for Encoding, ISO2022JPEncoderState, and
+        m_iso2022JPEncoderState out of the class definition. Made encode const.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::encode const): Made const.
+        * platform/text/TextCodecICU.h: Marked the class final, and
+        rearranged the class members to match other TextCodec classes,
+        with register functions before the constructor and destructor.
+        Made encode const.
+
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::encode const): Made const.
+        * platform/text/TextCodecLatin1.h: Removed a stray blank line
+        and made encode const.
+
+        * platform/text/TextCodecReplacement.cpp:
+        (WebCore::TextCodecReplacement::encode const): Added.
+        * platform/text/TextCodecReplacement.h: Marked the class final,
+        changed it to no longer derive from TextCodecUTF8, and added
+        an encode function.
+
+        * platform/text/TextCodecSingleByte.cpp: Moved the
+        TextCodecSingleByte::Encoding enumeration in here and changed
+        from Iso to ISO. Added SingleByteDecodeTable type and
+        moved TextCodecSingleByte::EncodeTable in here and renamed
+        it to SingleByteEncodeTable so it's not a class member any more.
+        Marked all the decode tables static since we don't get internal
+        linkage from just marking them constexpr, while moving to use
+        the SingleByteDecodeTable type.
+        (WebCore::tableForEncoding): Use SingleByteDecodeTable and
+        SingleByteEncodeTable type names. Use std::count to count the
+        replacement characters instead of writing our own loop.
+        Use std::size(decodeTable) instead of defining a tableSize.
+        Update for ISO name change. Use RELEASE_ASSERT_NOT_REACHED so
+        we don't have to write a dead code return statement.
+        (WebCore::tableForDecoding): Use SingleByteDecideTable type
+        for return value. Update for ISO name change. Use
+        RELEASE_ASSERT_NOT_REACHED so we don't have to write a dead
+        code return statement. Also make this constexpr since it's
+        just selecting a global based on an enumeration value.
+        (WebCore::encode): Made this a non-member function since it
+        does not need access to TextCodec members. This helps us keep
+        implementation details out of the header.
+        (WebCore::decode): Ditto.
+        (WebCore::TextCodecSingleByte::encode const): Made this const
+        and updated to call the non-member function.
+        (WebCore::TextCodecSingleByte::decode): Ditto.
+        (WebCore::TextCodecSingleByte::registerCodecs): Update for
+        the ISO name change.
+
+        * platform/text/TextCodecSingleByte.h: Marked the class
+        final, and moved the enumeration values for Encoding, EncodeTable,
+        and the encode and decode functions that take table arguments
+        all out of the class definition. Made encode const.
+
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::decode): Added logic to drop the first
+        byte order mark after m_shouldStripByteOrderMark is set to true.
+        Changed code to call through rather than recursively calling self
+        in the case of an unpaired lead surrogate, removing the need to
+        put the processBytesShared lambda into a Function. Renamed the
+        processBytesShared lambda to processCodeUnit.
+        (WebCore::TextCodecUTF16::encode const): Made const.
+
+        * platform/text/TextCodecUTF16.h: Marked the class final, added
+        a stripByteOrderMark member function and a m_shouldStripByteOrderMark
+        data member, and made encode const.
+
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::handlePartialSequence): Added logic to
+        drop the first byte order mark after m_shouldStripByteOrderMark is
+        set to true, making sure to keep it out of the hot ASCII decode loop.
+        (WebCore::TextCodecUTF8::decode): Ditto. Also added code to make sure
+        the partial sequence is cleared out as part of a flush even when
+        stopOnError is true.
+        (WebCore::TextCodecUTF8::encodeUTF8): Renamed this so it can be
+        a static member function, so it can be called by TextCodecReplacement.
+        (WebCore::TextCodecUTF8::encode const): Made this const and have it
+        call encodeUTF8.
+
+        * platform/text/TextCodecUTF8.h: Marked the class final, added
+        a stripByteOrderMark member function and a m_shouldStripByteOrderMark
+        data member, added static member function encodeUTF8, and made the
+        encode function const.
+
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::TextCodecUserDefined::encode const): Made const.
+        * platform/text/TextCodecUserDefined.h: Marked the class final and
+        made encode const.
+
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString): Use byteOrderMark.
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::switchToUTF16): Ditto.
+        (WebCore::nativeEndianUTF16Encoding): Ditto.
+
 2020-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move Line handing to LineBuilder

@@ -36,8 +36,7 @@ public:
 
 private:
     String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
-    Vector<uint8_t> encode(StringView, UnencodableHandling) final;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 };
 
 } // namespace WebCore
-

@@ -59,4 +59,9 @@ String TextCodecReplacement::decode(const char*, size_t, bool, bool, bool& sawEr
     return String { &replacementCharacter, 1 };
 }
 
+Vector<uint8_t> TextCodecReplacement::encode(StringView string, UnencodableHandling unencodableHandling) const
+{
+    return TextCodecUTF8::encodeUTF8(string, unencodableHandling);
+}
+
 } // namespace WebCore

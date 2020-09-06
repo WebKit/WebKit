@@ -357,7 +357,7 @@ static void gbkCallbackSubstitute(const void* context, UConverterFromUnicodeArgs
     UCNV_FROM_U_CALLBACK_SUBSTITUTE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
 }
 
-Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling handling)
+Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling handling) const
 {
     if (string.isEmpty())
         return { };

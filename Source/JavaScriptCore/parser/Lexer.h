@@ -29,16 +29,17 @@
 #include "SourceCode.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace JSC {
+
+struct ParsedUnicodeEscapeValue;
 
 enum class LexerFlags : uint8_t {
     IgnoreReservedWords = 1 << 0, 
     DontBuildStrings = 1 << 1,
     DontBuildKeywords = 1 << 2
 };
-
-struct ParsedUnicodeEscapeValue;
 
 bool isLexerKeyword(const Identifier&);
 
@@ -240,7 +241,7 @@ ALWAYS_INLINE bool Lexer<LChar>::isWhiteSpace(LChar ch)
 template <>
 ALWAYS_INLINE bool Lexer<UChar>::isWhiteSpace(UChar ch)
 {
-    return isLatin1(ch) ? Lexer<LChar>::isWhiteSpace(static_cast<LChar>(ch)) : (u_charType(ch) == U_SPACE_SEPARATOR || ch == 0xFEFF);
+    return isLatin1(ch) ? Lexer<LChar>::isWhiteSpace(static_cast<LChar>(ch)) : (u_charType(ch) == U_SPACE_SEPARATOR || ch == byteOrderMark);
 }
 
 template <>

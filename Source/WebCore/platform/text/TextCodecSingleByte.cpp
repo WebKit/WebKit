@@ -32,8 +32,24 @@
 
 namespace WebCore {
 
+enum class TextCodecSingleByte::Encoding : uint8_t {
+    ISO_8859_3,
+    ISO_8859_6,
+    ISO_8859_7,
+    ISO_8859_8,
+    Windows_874,
+    Windows_1253,
+    Windows_1255,
+    Windows_1257,
+    IBM866,
+    KOI8U,
+};
+
+using SingleByteDecodeTable = std::array<UChar, 128>;
+using SingleByteEncodeTable = std::pair<const std::pair<UChar, uint8_t>*, size_t>;
+
 // From https://encoding.spec.whatwg.org/index-iso-8859-3.txt with 0xFFFD filling the gaps
-constexpr UChar iso88593[128] {
+static constexpr SingleByteDecodeTable iso88593 {
     0x0080, 0x0081, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087, 0x0088, 0x0089, 0x008A, 0x008B, 0x008C, 0x008D, 0x008E, 0x008F,
     0x0090, 0x0091, 0x0092, 0x0093, 0x0094, 0x0095, 0x0096, 0x0097, 0x0098, 0x0099, 0x009A, 0x009B, 0x009C, 0x009D, 0x009E, 0x009F,
     0x00A0, 0x0126, 0x02D8, 0x00A3, 0x00A4, 0xFFFD, 0x0124, 0x00A7, 0x00A8, 0x0130, 0x015E, 0x011E, 0x0134, 0x00AD, 0xFFFD, 0x017B,
@@ -45,7 +61,7 @@ constexpr UChar iso88593[128] {
 };
 
 // From https://encoding.spec.whatwg.org/index-iso-8859-6.txt with 0xFFFD filling the gaps
-constexpr UChar iso88596[128] {
+static constexpr SingleByteDecodeTable iso88596 {
     0x0080, 0x0081, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087, 0x0088, 0x0089, 0x008A, 0x008B, 0x008C, 0x008D, 0x008E, 0x008F,
     0x0090, 0x0091, 0x0092, 0x0093, 0x0094, 0x0095, 0x0096, 0x0097, 0x0098, 0x0099, 0x009A, 0x009B, 0x009C, 0x009D, 0x009E, 0x009F,
     0x00A0, 0xFFFD, 0xFFFD, 0xFFFD, 0x00A4, 0xFFFD, 0xFFFD, 0xFFFD, 0xFFFD, 0xFFFD, 0xFFFD, 0xFFFD, 0x060C, 0x00AD, 0xFFFD, 0xFFFD,
@@ -57,7 +73,7 @@ constexpr UChar iso88596[128] {
 };
 
 // From https://encoding.spec.whatwg.org/index-iso-8859-7.txt with 0xFFFD filling the gaps
-constexpr UChar iso88597[128] {
+static constexpr SingleByteDecodeTable iso88597 {
     0x0080, 0x0081, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087, 0x0088, 0x0089, 0x008A, 0x008B, 0x008C, 0x008D, 0x008E, 0x008F,
     0x0090, 0x0091, 0x0092, 0x0093, 0x0094, 0x0095, 0x0096, 0x0097, 0x0098, 0x0099, 0x009A, 0x009B, 0x009C, 0x009D, 0x009E, 0x009F,
     0x00A0, 0x2018, 0x2019, 0x00A3, 0x20AC, 0x20AF, 0x00A6, 0x00A7, 0x00A8, 0x00A9, 0x037A, 0x00AB, 0x00AC, 0x00AD, 0xFFFD, 0x2015,
@@ -69,7 +85,7 @@ constexpr UChar iso88597[128] {
 };
 
 // From https://encoding.spec.whatwg.org/index-iso-8859-8.txt with 0xFFFD filling the gaps
-constexpr UChar iso88598[128] {
+static constexpr SingleByteDecodeTable iso88598 {
     0x0080, 0x0081, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087, 0x0088, 0x0089, 0x008A, 0x008B, 0x008C, 0x008D, 0x008E, 0x008F,
     0x0090, 0x0091, 0x0092, 0x0093, 0x0094, 0x0095, 0x0096, 0x0097, 0x0098, 0x0099, 0x009A, 0x009B, 0x009C, 0x009D, 0x009E, 0x009F,
     0x00A0, 0xFFFD, 0x00A2, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7, 0x00A8, 0x00A9, 0x00D7, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00AF,
@@ -81,7 +97,7 @@ constexpr UChar iso88598[128] {
 };
 
 // From https://encoding.spec.whatwg.org/index-windows-874.txt with 0xFFFD filling the gaps
-constexpr UChar windows874[128] {
+static constexpr SingleByteDecodeTable windows874 {
     0x20AC, 0x0081, 0x0082, 0x0083, 0x0084, 0x2026, 0x0086, 0x0087, 0x0088, 0x0089, 0x008A, 0x008B, 0x008C, 0x008D, 0x008E, 0x008F,
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0098, 0x0099, 0x009A, 0x009B, 0x009C, 0x009D, 0x009E, 0x009F,
     0x00A0, 0x0E01, 0x0E02, 0x0E03, 0x0E04, 0x0E05, 0x0E06, 0x0E07, 0x0E08, 0x0E09, 0x0E0A, 0x0E0B, 0x0E0C, 0x0E0D, 0x0E0E, 0x0E0F,
@@ -93,7 +109,7 @@ constexpr UChar windows874[128] {
 };
 
 // From https://encoding.spec.whatwg.org/index-windows-1253.txt with 0xFFFD filling the gaps
-constexpr UChar windows1253[128] {
+static constexpr SingleByteDecodeTable windows1253 {
     0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x0088, 0x2030, 0x008A, 0x2039, 0x008C, 0x008D, 0x008E, 0x008F,
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0098, 0x2122, 0x009A, 0x203A, 0x009C, 0x009D, 0x009E, 0x009F,
     0x00A0, 0x0385, 0x0386, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7, 0x00A8, 0x00A9, 0xFFFD, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x2015,
@@ -104,7 +120,7 @@ constexpr UChar windows1253[128] {
     0x03C0, 0x03C1, 0x03C2, 0x03C3, 0x03C4, 0x03C5, 0x03C6, 0x03C7, 0x03C8, 0x03C9, 0x03CA, 0x03CB, 0x03CC, 0x03CD, 0x03CE, 0xFFFD
 };
 
-constexpr UChar windows1255[128] {
+static constexpr SingleByteDecodeTable windows1255 {
     0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6, 0x2030, 0x008A, 0x2039, 0x008C, 0x008D, 0x008E, 0x008F,
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x02DC, 0x2122, 0x009A, 0x203A, 0x009C, 0x009D, 0x009E, 0x009F,
     0x00A0, 0x00A1, 0x00A2, 0x00A3, 0x20AA, 0x00A5, 0x00A6, 0x00A7, 0x00A8, 0x00A9, 0x00D7, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00AF,
@@ -116,7 +132,7 @@ constexpr UChar windows1255[128] {
 };
 
 // From https://encoding.spec.whatwg.org/index-windows-1257.txt with 0xFFFD filling the gaps
-constexpr UChar windows1257[128] {
+static constexpr SingleByteDecodeTable windows1257 {
     0x20AC, 0x0081, 0x201A, 0x0083, 0x201E, 0x2026, 0x2020, 0x2021, 0x0088, 0x2030, 0x008A, 0x2039, 0x008C, 0x00A8, 0x02C7, 0x00B8,
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0098, 0x2122, 0x009A, 0x203A, 0x009C, 0x00AF, 0x02DB, 0x009F,
     0x00A0, 0xFFFD, 0x00A2, 0x00A3, 0x00A4, 0xFFFD, 0x00A6, 0x00A7, 0x00D8, 0x00A9, 0x0156, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00C6,
@@ -128,7 +144,7 @@ constexpr UChar windows1257[128] {
 };
 
 // From https://encoding.spec.whatwg.org/index-koi8-u.txt
-constexpr UChar koi8u[128] {
+static constexpr SingleByteDecodeTable koi8u {
     0x2500, 0x2502, 0x250C, 0x2510, 0x2514, 0x2518, 0x251C, 0x2524, 0x252C, 0x2534, 0x253C, 0x2580, 0x2584, 0x2588, 0x258C, 0x2590,
     0x2591, 0x2592, 0x2593, 0x2320, 0x25A0, 0x2219, 0x221A, 0x2248, 0x2264, 0x2265, 0x00A0, 0x2321, 0x00B0, 0x00B2, 0x00B7, 0x00F7,
     0x2550, 0x2551, 0x2552, 0x0451, 0x0454, 0x2554, 0x0456, 0x0457, 0x2557, 0x2558, 0x2559, 0x255A, 0x255B, 0x0491, 0x045E, 0x255E,
@@ -140,7 +156,7 @@ constexpr UChar koi8u[128] {
 };
 
 // From https://encoding.spec.whatwg.org/index-ibm866.txt
-constexpr UChar ibm866[128] {
+static constexpr SingleByteDecodeTable ibm866 {
     0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415, 0x0416, 0x0417, 0x0418, 0x0419, 0x041A, 0x041B, 0x041C, 0x041D, 0x041E, 0x041F,
     0x0420, 0x0421, 0x0422, 0x0423, 0x0424, 0x0425, 0x0426, 0x0427, 0x0428, 0x0429, 0x042A, 0x042B, 0x042C, 0x042D, 0x042E, 0x042F,
     0x0430, 0x0431, 0x0432, 0x0433, 0x0434, 0x0435, 0x0436, 0x0437, 0x0438, 0x0439, 0x043A, 0x043B, 0x043C, 0x043D, 0x043E, 0x043F,
@@ -151,22 +167,14 @@ constexpr UChar ibm866[128] {
     0x0401, 0x0451, 0x0404, 0x0454, 0x0407, 0x0457, 0x040E, 0x045E, 0x00B0, 0x2219, 0x00B7, 0x221A, 0x2116, 0x00A4, 0x25A0, 0x00A0
 };
 
-template<const UChar* decodeTable>
-std::pair<const std::pair<UChar, uint8_t>*, size_t> tableForEncoding()
+template<const SingleByteDecodeTable& decodeTable> SingleByteEncodeTable tableForEncoding()
 {
-    constexpr auto tableSize = 128;
-    static size_t size = [&] {
-        size_t size = 0;
-        for (uint8_t i = 0; i < tableSize; i++) {
-            if (decodeTable[i] != replacementCharacter)
-                size++;
-        }
-        return size;
-    }();
-    static auto* table = [&] {
-        static auto* table = new std::pair<UChar, uint8_t>[size];
+    // FIXME: With the C++20 version of std::count, we should be able to change this from const to constexpr and get it computed at compile time.
+    static const size_t size = std::size(decodeTable) - std::count(std::begin(decodeTable), std::end(decodeTable), replacementCharacter);
+    static const auto table = [&] {
+        auto table = new std::pair<UChar, uint8_t>[size];
         size_t j = 0;
-        for (uint8_t i = 0; i < tableSize; i++) {
+        for (uint8_t i = 0; i < std::size(decodeTable); i++) {
             if (decodeTable[i] != replacementCharacter)
                 table[j++] = { decodeTable[i], i };
         }
@@ -175,16 +183,16 @@ std::pair<const std::pair<UChar, uint8_t>*, size_t> tableForEncoding()
     return { table, size };
 }
 
-static std::pair<const std::pair<UChar, uint8_t>*, size_t> tableForEncoding(TextCodecSingleByte::Encoding encoding)
+static SingleByteEncodeTable tableForEncoding(TextCodecSingleByte::Encoding encoding)
 {
     switch (encoding) {
-    case TextCodecSingleByte::Encoding::Iso_8859_3:
+    case TextCodecSingleByte::Encoding::ISO_8859_3:
         return tableForEncoding<iso88593>();
-    case TextCodecSingleByte::Encoding::Iso_8859_6:
+    case TextCodecSingleByte::Encoding::ISO_8859_6:
         return tableForEncoding<iso88596>();
-    case TextCodecSingleByte::Encoding::Iso_8859_7:
+    case TextCodecSingleByte::Encoding::ISO_8859_7:
         return tableForEncoding<iso88597>();
-    case TextCodecSingleByte::Encoding::Iso_8859_8:
+    case TextCodecSingleByte::Encoding::ISO_8859_8:
         return tableForEncoding<iso88598>();
     case TextCodecSingleByte::Encoding::Windows_874:
         return tableForEncoding<windows874>();
@@ -199,20 +207,19 @@ static std::pair<const std::pair<UChar, uint8_t>*, size_t> tableForEncoding(Text
     case TextCodecSingleByte::Encoding::KOI8U:
         return tableForEncoding<koi8u>();
     }
-    ASSERT_NOT_REACHED();
-    return { nullptr, 0 };
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-static const UChar* tableForDecoding(TextCodecSingleByte::Encoding encoding)
+static constexpr const SingleByteDecodeTable& tableForDecoding(TextCodecSingleByte::Encoding encoding)
 {
     switch (encoding) {
-    case TextCodecSingleByte::Encoding::Iso_8859_3:
+    case TextCodecSingleByte::Encoding::ISO_8859_3:
         return iso88593;
-    case TextCodecSingleByte::Encoding::Iso_8859_6:
+    case TextCodecSingleByte::Encoding::ISO_8859_6:
         return iso88596;
-    case TextCodecSingleByte::Encoding::Iso_8859_7:
+    case TextCodecSingleByte::Encoding::ISO_8859_7:
         return iso88597;
-    case TextCodecSingleByte::Encoding::Iso_8859_8:
+    case TextCodecSingleByte::Encoding::ISO_8859_8:
         return iso88598;
     case TextCodecSingleByte::Encoding::Windows_874:
         return windows874;
@@ -227,12 +234,11 @@ static const UChar* tableForDecoding(TextCodecSingleByte::Encoding encoding)
     case TextCodecSingleByte::Encoding::KOI8U:
         return koi8u;
     }
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 // https://encoding.spec.whatwg.org/#single-byte-encoder
-Vector<uint8_t> TextCodecSingleByte::encode(const EncodeTable& table, StringView string, Function<void(UChar32, Vector<uint8_t>&)>&& unencodableHandler)
+static Vector<uint8_t> encode(const SingleByteEncodeTable& table, StringView string, Function<void(UChar32, Vector<uint8_t>&)>&& unencodableHandler)
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
@@ -264,7 +270,7 @@ Vector<uint8_t> TextCodecSingleByte::encode(const EncodeTable& table, StringView
 }
 
 // https://encoding.spec.whatwg.org/#single-byte-decoder
-String TextCodecSingleByte::decode(const UChar* table, const uint8_t* bytes, size_t length, bool, bool stopOnError, bool& sawError)
+static String decode(const SingleByteDecodeTable& table, const uint8_t* bytes, size_t length, bool, bool stopOnError, bool& sawError)
 {
     StringBuilder result;
     result.reserveCapacity(length);
@@ -293,18 +299,20 @@ String TextCodecSingleByte::decode(const UChar* table, const uint8_t* bytes, siz
     return result.toString();
 }
 
-Vector<uint8_t> TextCodecSingleByte::encode(StringView string, UnencodableHandling handling)
+Vector<uint8_t> TextCodecSingleByte::encode(StringView string, UnencodableHandling handling) const
 {
-    return encode(tableForEncoding(m_encoding), string, unencodableHandler(handling));
+    return WebCore::encode(tableForEncoding(m_encoding), string, unencodableHandler(handling));
 }
 
 String TextCodecSingleByte::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
-    return decode(tableForDecoding(m_encoding), reinterpret_cast<const uint8_t*>(bytes), length, flush, stopOnError, sawError);
+    return WebCore::decode(tableForDecoding(m_encoding), reinterpret_cast<const uint8_t*>(bytes), length, flush, stopOnError, sawError);
 }
 
 TextCodecSingleByte::TextCodecSingleByte(Encoding encoding)
-    : m_encoding(encoding) { }
+    : m_encoding(encoding)
+{
+}
 
 void TextCodecSingleByte::registerEncodingNames(EncodingNameRegistrar registrar)
 {
@@ -420,19 +428,19 @@ void TextCodecSingleByte::registerEncodingNames(EncodingNameRegistrar registrar)
 void TextCodecSingleByte::registerCodecs(TextCodecRegistrar registrar)
 {
     registrar("ISO-8859-3", [] {
-        return makeUnique<TextCodecSingleByte>(Encoding::Iso_8859_3);
+        return makeUnique<TextCodecSingleByte>(Encoding::ISO_8859_3);
     });
     registrar("ISO-8859-6", [] {
-        return makeUnique<TextCodecSingleByte>(Encoding::Iso_8859_6);
+        return makeUnique<TextCodecSingleByte>(Encoding::ISO_8859_6);
     });
     registrar("ISO-8859-7", [] {
-        return makeUnique<TextCodecSingleByte>(Encoding::Iso_8859_7);
+        return makeUnique<TextCodecSingleByte>(Encoding::ISO_8859_7);
     });
     registrar("ISO-8859-8", [] {
-        return makeUnique<TextCodecSingleByte>(Encoding::Iso_8859_8);
+        return makeUnique<TextCodecSingleByte>(Encoding::ISO_8859_8);
     });
     registrar("ISO-8859-8-I", [] {
-        return makeUnique<TextCodecSingleByte>(Encoding::Iso_8859_8);
+        return makeUnique<TextCodecSingleByte>(Encoding::ISO_8859_8);
     });
     registrar("windows-874", [] {
         return makeUnique<TextCodecSingleByte>(Encoding::Windows_874);

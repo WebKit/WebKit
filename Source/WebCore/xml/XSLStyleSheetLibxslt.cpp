@@ -36,6 +36,7 @@
 #include <libxml/uri.h>
 #include <libxslt/xsltutils.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include "SoftLinkLibxslt.h"
@@ -130,8 +131,7 @@ CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
 bool XSLStyleSheet::parseString(const String& string)
 {
     // Parse in a single chunk into an xmlDocPtr
-    const UChar BOM = 0xFEFF;
-    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&byteOrderMark);
     clearXSLStylesheetDocument();
 
     PageConsoleClient* console = nullptr;

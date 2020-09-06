@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,16 @@
 
 namespace WebCore {
 
-class TextCodecReplacement : public TextCodecUTF8 {
+class TextCodecReplacement final : public TextCodec {
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
 
 private:
     String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
     bool m_sentEOF { false };
-
 };
 
 } // namespace WebCore

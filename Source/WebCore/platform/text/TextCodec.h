@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,8 +45,10 @@ public:
     TextCodec() = default;
     virtual ~TextCodec() = default;
 
+    virtual void stripByteOrderMark() { }
     virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) = 0;
-    virtual Vector<uint8_t> encode(StringView, UnencodableHandling) = 0;
+
+    virtual Vector<uint8_t> encode(StringView, UnencodableHandling) const = 0;
 
     // Fills a null-terminated string representation of the given
     // unencodable character into the given replacement buffer.
@@ -62,4 +64,3 @@ using NewTextCodecFunction = WTF::Function<std::unique_ptr<TextCodec>()>;
 using TextCodecRegistrar = void (*)(const char* name, NewTextCodecFunction&&);
 
 } // namespace WebCore
-

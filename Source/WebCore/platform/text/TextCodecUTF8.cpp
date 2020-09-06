@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -270,10 +270,12 @@ void TextCodecUTF8::handlePartialSequence(UChar*& destination, const uint8_t*& s
         }
 
         m_partialSequenceSize -= count;
+        if (std::exchange(m_shouldStripByteOrderMark, false) && character == byteOrderMark)
+            continue;
         destination = appendCharacter(destination, character);
     } while (m_partialSequenceSize);
 }
-    
+
 String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
     // Each input byte might turn into a character.
@@ -354,7 +356,10 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
     } while (flush && m_partialSequenceSize);
 
     buffer.shrink(destination - buffer.characters());
-
+    if (flush)
+        m_partialSequenceSize = 0;
+    if (flush || buffer.length())
+        m_shouldStripByteOrderMark = false;
     return String::adopt(WTFMove(buffer));
 
 upConvertTo16Bit:
@@ -379,7 +384,7 @@ upConvertTo16Bit:
             if (m_partialSequenceSize)
                 break;
         }
-        
+
         while (source < end) {
             if (isASCII(*source)) {
                 // Fast path for ASCII. Most UTF-8 text will be ASCII.
@@ -424,16 +429,21 @@ upConvertTo16Bit:
                 continue;
             }
             source += count;
+            if (character == byteOrderMark && destination16 == buffer16.characters() && std::exchange(m_shouldStripByteOrderMark, false))
+                continue;
             destination16 = appendCharacter(destination16, character);
         }
     } while (flush && m_partialSequenceSize);
-    
+
     buffer16.shrink(destination16 - buffer16.characters());
-    
+    if (flush)
+        m_partialSequenceSize = 0;
+    if (flush || buffer16.length())
+        m_shouldStripByteOrderMark = false;
     return String::adopt(WTFMove(buffer16));
 }
 
-Vector<uint8_t> TextCodecUTF8::encode(StringView string, UnencodableHandling)
+Vector<uint8_t> TextCodecUTF8::encodeUTF8(StringView string, UnencodableHandling)
 {
     // The maximum number of UTF-8 bytes needed per UTF-16 code unit is 3.
     // BMP characters take only one UTF-16 code unit and can take up to 3 bytes (3x).
@@ -444,6 +454,11 @@ Vector<uint8_t> TextCodecUTF8::encode(StringView string, UnencodableHandling)
         U8_APPEND_UNSAFE(bytes.data(), bytesWritten, character);
     bytes.shrink(bytesWritten);
     return bytes;
+}
+
+Vector<uint8_t> TextCodecUTF8::encode(StringView string, UnencodableHandling unencodableHandling) const
+{
+    return encodeUTF8(string, unencodableHandling);
 }
 
 } // namespace WebCore

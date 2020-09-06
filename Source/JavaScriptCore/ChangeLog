@@ -1,3 +1,13 @@
+2020-09-06  Darin Adler  <darin@apple.com>
+
+        TextCodec refinements
+        https://bugs.webkit.org/show_bug.cgi?id=216219
+
+        Reviewed by Sam Weinig.
+
+        * parser/Lexer.h:
+        (JSC::Lexer<UChar>::isWhiteSpace): Use byteOrderMark constant.
+
 2020-09-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, suppress exception checking after unwrapForOldFunctions
