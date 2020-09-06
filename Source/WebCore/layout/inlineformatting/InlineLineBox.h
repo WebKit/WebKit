@@ -123,9 +123,9 @@ private:
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    const Box& root() const { return formattingContext().root(); }
-    LayoutState& layoutState() const { return formattingContext().layoutState(); }
+    const InlineFormattingContext& formattingContext() const;
+    const Box& root() const;
+    LayoutState& layoutState() const;
 
 private:
     Display::InlineRect m_rect;

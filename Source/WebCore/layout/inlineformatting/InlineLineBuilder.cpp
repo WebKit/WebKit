@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "FloatingContext.h"
 #include "InlineFormattingContext.h"
 #include "LayoutBox.h"
 #include "TextUtil.h"
@@ -280,30 +281,65 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.width();
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const ContainerBox& formattingContextRoot, const InlineItems& inlineItems)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const FloatingContext& floatingContext, const ContainerBox& formattingContextRoot, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
+    , m_floatingContext(floatingContext)
     , m_formattingContextRoot(formattingContextRoot)
+    , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(Line& line, const InlineItemRange& layoutRange, Optional<unsigned> partialLeadingContentLength)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, Optional<unsigned> partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialConstraints, bool isFirstLine)
 {
-    ASSERT(m_floats.isEmpty());
+    auto usedConstraints = constraintsForLine(initialConstraints, isFirstLine);
+    initialize(usedConstraints);
+
+    auto committedContent = placeInlineContent(needsLayoutRange, partialLeadingContentLength);
+    auto committedRange = close(needsLayoutRange, committedContent);
+
+    auto lineLogicalTopLeft = InlineLayoutPoint { usedConstraints.logicalLeft, initialConstraints.vertical.logicalTop };
+    auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContent.hasValue());
+    auto lineIsVisuallyEmpty = m_line.isVisuallyEmpty() ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No;
+    return LineContent { committedContent.partialTrailingContent, committedRange, m_floats, m_line.hasIntrusiveFloat()
+        , LineBox { formattingContext(), lineLogicalTopLeft, m_line.lineLogicalWidth(), m_line.contentLogicalWidth(), m_line.runs(), lineIsVisuallyEmpty
+        , isLastLine ? LineBox::IsLastLineWithInlineContent::Yes : LineBox::IsLastLineWithInlineContent::No }
+        , m_line.runs() };
+}
+
+LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth)
+{
+    initialize({ { }, availableWidth, false });
+    auto committedContent = placeInlineContent(needsLayoutRange, { });
+    auto committedRange = close(needsLayoutRange, committedContent);
+    return { committedRange, m_line.contentLogicalWidth() };
+}
+
+void LineBuilder::initialize(const UsedConstraints& lineConstraints)
+{
+    m_floats.clear();
     m_partialLeadingTextItem = { };
     m_lastWrapOpportunityItem = { };
-    auto lineBreaker = LineBreaker { };
-    auto currentItemIndex = layoutRange.start;
-    unsigned committedInlineItemCount = 0;
+
+    m_line.open(lineConstraints.availableLogicalWidth);
+    m_line.setHasIntrusiveFloat(lineConstraints.isConstrainedByFloat);
+}
+
+LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, Optional<unsigned> partialLeadingContentLength)
+{
     auto lineCandidate = LineCandidate { };
-    while (currentItemIndex < layoutRange.end) {
+    auto lineBreaker = LineBreaker { };
+
+    auto currentItemIndex = needsLayoutRange.start;
+    size_t committedInlineItemCount = 0;
+    while (currentItemIndex < needsLayoutRange.end) {
         // 1. Collect the set of runs that we can commit to the line as one entity e.g. <span>text_and_span_start_span_end</span>.
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        nextContentForLine(lineCandidate, currentItemIndex, layoutRange, partialLeadingContentLength, line.availableWidth() + line.trimmableTrailingWidth(), line.contentLogicalWidth());
+        nextContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, m_line.availableWidth() + m_line.trimmableTrailingWidth(), m_line.contentLogicalWidth());
         // Now check if we can put this content on the current line.
-        auto result = handleFloatsAndInlineContent(lineBreaker, line, layoutRange, lineCandidate);
+        auto result = handleFloatsAndInlineContent(lineBreaker, needsLayoutRange, lineCandidate);
         committedInlineItemCount = result.committedCount.isRevert ? result.committedCount.value : committedInlineItemCount + result.committedCount.value;
         auto& inlineContent = lineCandidate.inlineContent;
         auto inlineContentIsFullyCommitted = inlineContent.runs().size() == result.committedCount.value && !result.partialContent;
@@ -311,31 +347,104 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(Line& line, const Inli
 
         if (inlineContentIsFullyCommitted && inlineContent.trailingLineBreak()) {
             // Fully commited (or empty) content followed by a line break means "end of line".
-            line.append(*inlineContent.trailingLineBreak(), { });
+            m_line.append(*inlineContent.trailingLineBreak(), { });
             ++committedInlineItemCount;
             isEndOfLine = true;
         }
         if (isEndOfLine) {
             // We can't place any more items on the current line.
-            return close(line, layoutRange, committedInlineItemCount, result.partialContent);
+            return { committedInlineItemCount, result.partialContent };
         }
-        currentItemIndex = layoutRange.start + committedInlineItemCount + m_floats.size();
+        currentItemIndex = needsLayoutRange.start + committedInlineItemCount + m_floats.size();
         partialLeadingContentLength = { };
     }
     // Looks like we've run out of runs.
-    return close(line, layoutRange, committedInlineItemCount, { });
+    return { committedInlineItemCount, { } };
 }
 
-LineBuilder::LineContent LineBuilder::close(const Line& line, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent> partialContent)
+LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
 {
-    ASSERT_UNUSED(line, committedInlineItemCount || !m_floats.isEmpty() || line.hasIntrusiveFloat());
-    auto numberOfCommittedItems = committedInlineItemCount + m_floats.size();
-    auto trailingInlineItemIndex = layoutRange.start + numberOfCommittedItems - 1;
-    auto lineRange = InlineItemRange { layoutRange.start, trailingInlineItemIndex + 1 };
-    ASSERT(lineRange.end <= layoutRange.end);
+    ASSERT(committedContent.inlineItemCount || !m_floats.isEmpty() || m_line.hasIntrusiveFloat());
+    auto numberOfCommittedItems = committedContent.inlineItemCount + m_floats.size();
+    auto trailingInlineItemIndex = needsLayoutRange.start + numberOfCommittedItems - 1;
+    auto lineRange = InlineItemRange { needsLayoutRange.start, trailingInlineItemIndex + 1 };
+    ASSERT(lineRange.end <= needsLayoutRange.end);
     // Adjust hyphenated line count.
-    m_successiveHyphenatedLineCount = partialContent && partialContent->trailingContentHasHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
-    return LineContent { partialContent, lineRange, WTFMove(m_floats), line.runs() };
+    m_successiveHyphenatedLineCount = committedContent.partialTrailingContent && committedContent.partialTrailingContent->trailingContentHasHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
+    m_line.close(isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContent.hasValue()));
+    return lineRange;
+}
+
+LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingContext::ConstraintsForInFlowContent& initialConstraints, bool isFirstLine)
+{
+    auto lineLogicalLeft = initialConstraints.horizontal.logicalLeft;
+    auto lineLogicalTop = initialConstraints.vertical.logicalTop;
+    auto lineLogicalRight = lineLogicalLeft + initialConstraints.horizontal.logicalWidth;
+    auto lineIsConstrainedByFloat = false;
+
+    // Check for intruding floats and adjust logical left/available width for this line accordingly.
+    if (!m_floatingContext.isEmpty()) {
+        // FIXME: Add support for variable line height, where the intrusive floats should be probed as the line height grows.
+        auto floatConstraints = m_floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + *initialConstraints.vertical.logicalHeight));
+        // Check if these constraints actually put limitation on the line.
+        if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
+            floatConstraints.left = { };
+
+        if (floatConstraints.right && floatConstraints.right->x >= lineLogicalRight)
+            floatConstraints.right = { };
+
+        lineIsConstrainedByFloat = floatConstraints.left || floatConstraints.right;
+
+        if (floatConstraints.left && floatConstraints.right) {
+            ASSERT(floatConstraints.left->x <= floatConstraints.right->x);
+            lineLogicalRight = floatConstraints.right->x;
+            lineLogicalLeft = floatConstraints.left->x;
+        } else if (floatConstraints.left) {
+            ASSERT(floatConstraints.left->x >= lineLogicalLeft);
+            lineLogicalLeft = floatConstraints.left->x;
+        } else if (floatConstraints.right) {
+            ASSERT(floatConstraints.right->x >= lineLogicalLeft);
+            lineLogicalRight = floatConstraints.right->x;
+        }
+    }
+
+    auto computedTextIndent = [&]() -> InlineLayoutUnit {
+        // text-indent property specifies the indentation applied to lines of inline content in a block.
+        // The indent is treated as a margin applied to the start edge of the line box.
+        // Unless otherwise specified, only lines that are the first formatted line of an element are affected.
+        // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
+        // FIXME: Add support for each-line.
+        // [Integration] root()->parent() would normally produce a valid layout box.
+        auto& root = this->root();
+        auto isFormattingContextRootCandidateToTextIndent = !root.isAnonymous();
+        if (root.isAnonymous()) {
+            // Unless otherwise specified by the each-line and/or hanging keywords, only lines that are the first formatted line
+            // of an element are affected.
+            // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
+            isFormattingContextRootCandidateToTextIndent = RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()
+                ? layoutState().isIntegratedRootBoxFirstChild()
+                : root.parent().firstInFlowChild() == &root;
+        }
+        if (!isFormattingContextRootCandidateToTextIndent)
+            return { };
+        auto invertLineRange = false;
+#if ENABLE(CSS3_TEXT)
+        invertLineRange = root.style().textIndentType() == TextIndentType::Hanging;
+#endif
+        // text-indent: hanging inverts which lines are affected.
+        // inverted line range -> all the lines except the first one.
+        // !inverted line range -> first line gets the indent.
+        auto shouldIndent = invertLineRange != isFirstLine;
+        if (!shouldIndent)
+            return { };
+
+        auto textIndent = root.style().textIndent();
+        if (textIndent == RenderStyle::initialTextIndent())
+            return { };
+        return { minimumValueForLength(textIndent, initialConstraints.horizontal.logicalWidth) };
+    };
+    lineLogicalLeft += computedTextIndent();
+    return UsedConstraints { lineLogicalLeft, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat };
 }
 
 void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, unsigned currentInlineItemIndex, const InlineItemRange& layoutRange, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight)
@@ -384,7 +493,7 @@ void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, unsigned curr
     }
 }
 
-void LineBuilder::commitFloats(Line& line, const LineCandidate& lineCandidate, CommitIntrusiveFloatsOnly commitIntrusiveOnly)
+void LineBuilder::commitFloats(const LineCandidate& lineCandidate, CommitIntrusiveFloatsOnly commitIntrusiveOnly)
 {
     auto& floatContent = lineCandidate.floatContent;
     auto leftIntrusiveFloatsWidth = InlineLayoutUnit { };
@@ -405,21 +514,21 @@ void LineBuilder::commitFloats(Line& line, const LineCandidate& lineCandidate, C
                 rightIntrusiveFloatsWidth += floatCandidate.logicalWidth;
         }
     }
-    line.setHasIntrusiveFloat(hasIntrusiveFloat);
+    m_line.setHasIntrusiveFloat(hasIntrusiveFloat);
     if (leftIntrusiveFloatsWidth || rightIntrusiveFloatsWidth) {
         if (leftIntrusiveFloatsWidth)
-            line.moveLogicalLeft(leftIntrusiveFloatsWidth);
+            m_line.moveLogicalLeft(leftIntrusiveFloatsWidth);
         if (rightIntrusiveFloatsWidth)
-            line.moveLogicalRight(rightIntrusiveFloatsWidth);
+            m_line.moveLogicalRight(rightIntrusiveFloatsWidth);
     }
 }
 
-LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineBreaker, Line& line, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
+LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineBreaker, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
 {
     auto& inlineContent = lineCandidate.inlineContent;
     auto& candidateRuns = inlineContent.runs();
     if (candidateRuns.isEmpty()) {
-        commitFloats(line, lineCandidate);
+        commitFloats(lineCandidate);
         return { LineBreaker::IsEndOfLine::No };
     }
 
@@ -433,17 +542,17 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
 
     auto& floatContent = lineCandidate.floatContent;
     // Check if this new content fits.
-    auto availableWidth = line.availableWidth() - floatContent.intrusiveWidth();
-    auto isLineConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
-    auto lineStatus = LineBreaker::LineStatus { availableWidth, line.trimmableTrailingWidth(), line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
+    auto availableWidth = m_line.availableWidth() - floatContent.intrusiveWidth();
+    auto isLineConsideredEmpty = m_line.isVisuallyEmpty() && !m_line.hasIntrusiveFloat();
+    auto lineStatus = LineBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = lineBreaker.shouldWrapInlineContent(candidateRuns, inlineContent.logicalWidth(), lineStatus);
     if (result.lastWrapOpportunityItem)
         m_lastWrapOpportunityItem = result.lastWrapOpportunityItem;
     if (result.action == LineBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line including non-intrusive floats.
         for (auto& run : candidateRuns)
-            line.append(run.inlineItem, run.logicalWidth);
-        commitFloats(line, lineCandidate);
+            m_line.append(run.inlineItem, run.logicalWidth);
+        commitFloats(lineCandidate);
         return { result.isEndOfLine, { candidateRuns.size(), false } };
     }
     if (result.action == LineBreaker::Result::Action::Push) {
@@ -455,14 +564,14 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
         ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
         // Not only this content can't be placed on the current line, but we even need to revert the line back to an earlier position.
         ASSERT(m_lastWrapOpportunityItem);
-        return { LineBreaker::IsEndOfLine::Yes, { rebuildLine(line, layoutRange), true } };
+        return { LineBreaker::IsEndOfLine::Yes, { rebuildLine(layoutRange), true } };
     }
     if (result.action == LineBreaker::Result::Action::Split) {
         ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
         // Commit the combination of full and partial content on the current line.
-        commitFloats(line, lineCandidate, CommitIntrusiveFloatsOnly::Yes);
+        commitFloats(lineCandidate, CommitIntrusiveFloatsOnly::Yes);
         ASSERT(result.partialTrailingContent);
-        commitPartialContent(line, candidateRuns, *result.partialTrailingContent);
+        commitPartialContent(candidateRuns, *result.partialTrailingContent);
         // When splitting multiple runs <span style="word-break: break-all">text</span><span>content</span>, we might end up splitting them at run boundary.
         // It simply means we don't really have a partial run. Partial content yes, but not partial run.
         auto trailingRunIndex = result.partialTrailingContent->trailingRunIndex;
@@ -480,7 +589,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
     return { LineBreaker::IsEndOfLine::No };
 }
 
-void LineBuilder::commitPartialContent(Line& line, const LineBreaker::RunList& runs, const LineBreaker::Result::PartialTrailingContent& partialTrailingContent)
+void LineBuilder::commitPartialContent(const LineBreaker::RunList& runs, const LineBreaker::Result::PartialTrailingContent& partialTrailingContent)
 {
     for (size_t index = 0; index < runs.size(); ++index) {
         auto& run = runs[index];
@@ -490,26 +599,26 @@ void LineBuilder::commitPartialContent(Line& line, const LineBreaker::RunList& r
             if (auto partialRun = partialTrailingContent.partialRun) {
                 auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent.trailingRunIndex].inlineItem);
                 auto partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);
-                line.appendPartialTrailingTextItem(partialTrailingTextItem, partialRun->logicalWidth, partialRun->needsHyphen);
+                m_line.appendPartialTrailingTextItem(partialTrailingTextItem, partialRun->logicalWidth, partialRun->needsHyphen);
                 return;
             }
             // The partial run is the last content to commit.
-            line.append(run.inlineItem, run.logicalWidth);
+            m_line.append(run.inlineItem, run.logicalWidth);
             return;
         }
-        line.append(run.inlineItem, run.logicalWidth);
+        m_line.append(run.inlineItem, run.logicalWidth);
     }
 }
 
-size_t LineBuilder::rebuildLine(Line& line, const InlineItemRange& layoutRange)
+size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange)
 {
     // Clear the line and start appending the inline items closing with the last wrap opportunity run.
-    line.clearContent();
+    m_line.clearContent();
     auto currentItemIndex = layoutRange.start;
     auto logicalRight = InlineLayoutUnit { };
     if (m_partialLeadingTextItem) {
         auto logicalWidth = inlineItemWidth(*m_partialLeadingTextItem, logicalRight);
-        line.append(*m_partialLeadingTextItem, logicalWidth);
+        m_line.append(*m_partialLeadingTextItem, logicalWidth);
         logicalRight += logicalWidth;
         if (&m_partialLeadingTextItem.value() == m_lastWrapOpportunityItem)
             return 1;
@@ -518,12 +627,33 @@ size_t LineBuilder::rebuildLine(Line& line, const InlineItemRange& layoutRange)
     for (; currentItemIndex < layoutRange.end; ++currentItemIndex) {
         auto& inlineItem = m_inlineItems[currentItemIndex];
         auto logicalWidth = inlineItemWidth(inlineItem, logicalRight);
-        line.append(inlineItem, logicalWidth);
+        m_line.append(inlineItem, logicalWidth);
         logicalRight += logicalWidth;
         if (&inlineItem == m_lastWrapOpportunityItem)
             return currentItemIndex - layoutRange.start + 1;
     }
     return layoutRange.size();
+}
+
+bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const
+{
+    if (hasPartialTrailingContent)
+        return false;
+    if (lineRange.end == lastInlineItemIndex)
+        return true;
+    // Omit floats to see if this is the last line with inline content.
+    for (auto i = lastInlineItemIndex; i--;) {
+        if (!m_inlineItems[i].isFloat())
+            return i == lineRange.end - 1;
+    }
+    // There has to be at least one non-float item.
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+const LayoutState& LineBuilder::layoutState() const
+{
+    return formattingContext().layoutState();
 }
 
 }

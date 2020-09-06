@@ -75,14 +75,6 @@ ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMa
     return complicatedCases(layoutBox, horizontalConstraints, overrideVerticalValues);
 }
 
-Optional<InlineLayoutUnit> InlineFormattingContext::Geometry::computedTextIndent(const ContainerBox& formattingContextRoot, const HorizontalConstraints& horizontalConstraints) const
-{
-    auto textIndent = formattingContextRoot.style().textIndent();
-    if (textIndent == RenderStyle::initialTextIndent())
-        return { };
-    return InlineLayoutUnit { minimumValueForLength(textIndent, horizontalConstraints.logicalWidth) };
-}
-
 }
 }
 

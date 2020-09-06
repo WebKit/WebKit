@@ -67,7 +67,6 @@ private:
     public:
         ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
         ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
-        Optional<InlineLayoutUnit> computedTextIndent(const ContainerBox& formattingContextRoot, const HorizontalConstraints&) const;
 
     private:
         friend class InlineFormattingContext;
@@ -88,13 +87,7 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectInlineContentIfNeeded();
-    struct LineConstraints {
-        InlineLayoutPoint logicalTopLeft;
-        InlineLayoutUnit availableLogicalWidth { 0 };
-        bool lineIsConstrainedByFloat { false };
-    };
-    LineConstraints constraintsForLine(const HorizontalConstraints&, InlineLayoutUnit lineLogicalTop);
-    void setDisplayBoxesForLine(const LineBuilder::LineContent&, const LineBox&, const HorizontalConstraints&);
+    void setDisplayBoxesForLine(const LineBuilder::LineContent&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }

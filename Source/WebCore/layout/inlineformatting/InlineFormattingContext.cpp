@@ -140,42 +140,22 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         Optional<unsigned> overflowContentLength;
     };
     Optional<PreviousLine> previousLine;
-    auto line = Line { *this };
-    auto lineBuilder = LineBuilder { *this, root(), inlineItems };
+    auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
+    auto isFirstLine = !formattingState().displayInlineContent() || formattingState().displayInlineContent()->lineBoxes.isEmpty();
 
+    auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
     while (!needsLayoutRange.isEmpty()) {
-        auto lineConstraints = constraintsForLine(constraints.horizontal, lineLogicalTop);
-        line.open(lineConstraints.availableLogicalWidth);
-        line.setHasIntrusiveFloat(lineConstraints.lineIsConstrainedByFloat);
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
         auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : WTF::nullopt;
-        auto lineContent = lineBuilder.layoutInlineContent(line, needsLayoutRange, partialLeadingContentLength);
+        auto initialLineConstraints = ConstraintsForInFlowContent { constraints.horizontal, { lineLogicalTop, makeOptional(toLayoutUnit(quirks().initialLineHeight())) } };
+        auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, initialLineConstraints, isFirstLine);
+        setDisplayBoxesForLine(lineContent, constraints.horizontal);
         auto lineContentRange = lineContent.inlineItemRange;
-        auto isLastLineWithInlineContent = [&] {
-            if (lineContent.partialContent)
-                return false;
-            if (lineContentRange.end == needsLayoutRange.end)
-                return true;
-            // Omit floats to see if this is the last line with inline content.
-            for (auto i = needsLayoutRange.end; i--;) {
-                if (!inlineItems[i].isFloat())
-                    return i == lineContentRange.end - 1;
-            }
-            // There has to be at least one non-float item.
-            ASSERT_NOT_REACHED();
-            return false;
-        }();
-        line.close(isLastLineWithInlineContent);
-
-        auto lineIsVisuallyEmpty = line.isVisuallyEmpty() ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No;
-        auto lastLine = isLastLineWithInlineContent ? LineBox::IsLastLineWithInlineContent::Yes : LineBox::IsLastLineWithInlineContent::No;
-        auto lineBox = LineBox { *this, lineConstraints.logicalTopLeft, line.lineLogicalWidth(), line.contentLogicalWidth(), lineContent.runs, lineIsVisuallyEmpty, lastLine};
-        setDisplayBoxesForLine(lineContent, lineBox, constraints.horizontal);
-
         if (!lineContentRange.isEmpty()) {
             ASSERT(needsLayoutRange.start < lineContentRange.end);
-            lineLogicalTop = lineBox.logicalBottom();
+            isFirstLine = false;
+            lineLogicalTop = lineContent.lineBox.logicalBottom();
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
             auto lastInlineItemNeedsPartialLayout = lineContent.partialContent.hasValue();
             if (lastInlineItemNeedsPartialLayout) {
@@ -196,10 +176,9 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         }
         // Floats prevented us placing any content on the line.
         ASSERT(lineContent.runs.isEmpty());
-        ASSERT(line.hasIntrusiveFloat());
+        ASSERT(lineContent.hasIntrusiveFloat);
         // Move the next line below the intrusive float.
-        auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
-        auto floatConstraints = floatingContext.constraints(lineLogicalTop, toLayoutUnit(lineBox.logicalBottom()));
+        auto floatConstraints = floatingContext.constraints(lineLogicalTop, toLayoutUnit(lineContent.lineBox.logicalBottom()));
         ASSERT(floatConstraints.left || floatConstraints.right);
         static auto inifitePoint = PointInContextRoot::max();
         // In case of left and right constraints, we need to pick the one that's closer to the current line.
@@ -270,18 +249,14 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
 {
     auto& inlineItems = formattingState().inlineItems();
     auto maximumLineWidth = InlineLayoutUnit { };
-    auto line = Line { *this };
-    auto lineBuilder = LineBuilder { *this, root(), inlineItems };
+    auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
+    auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
     auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
     while (!layoutRange.isEmpty()) {
-        // Only the horiztonal available width is constrained when computing intrinsic width.
-        line.open(availableWidth);
-        auto lineContent = lineBuilder.layoutInlineContent(line, layoutRange, { });
-        // FIXME: Find out if min/max needs to set the isLastLine bit.
-        line.close(false);
-        layoutRange.start = lineContent.inlineItemRange.end;
+        auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, availableWidth);
+        layoutRange.start = intrinsicContent.inlineItemRange.end;
         // FIXME: Use line logical left and right to take floats into account.
-        maximumLineWidth = std::max(maximumLineWidth, line.contentLogicalWidth());
+        maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.logicalWidth);
     }
     return maximumLineWidth;
 }
@@ -415,78 +390,10 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     }
 }
 
-InlineFormattingContext::LineConstraints InlineFormattingContext::constraintsForLine(const HorizontalConstraints& horizontalConstraints, InlineLayoutUnit lineLogicalTop)
-{
-    auto lineLogicalLeft = horizontalConstraints.logicalLeft;
-    auto lineLogicalRight = lineLogicalLeft + horizontalConstraints.logicalWidth;
-    auto lineIsConstrainedByFloat = false;
-
-    auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
-    // Check for intruding floats and adjust logical left/available width for this line accordingly.
-    if (!floatingContext.isEmpty()) {
-        // FIXME: Add support for variable line height, where the intrusive floats should be probed as the line height grows.
-        auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + quirks().initialLineHeight()));
-        // Check if these constraints actually put limitation on the line.
-        if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
-            floatConstraints.left = { };
-
-        if (floatConstraints.right && floatConstraints.right->x >= lineLogicalRight)
-            floatConstraints.right = { };
-
-        lineIsConstrainedByFloat = floatConstraints.left || floatConstraints.right;
-
-        if (floatConstraints.left && floatConstraints.right) {
-            ASSERT(floatConstraints.left->x <= floatConstraints.right->x);
-            lineLogicalRight = floatConstraints.right->x;
-            lineLogicalLeft = floatConstraints.left->x;
-        } else if (floatConstraints.left) {
-            ASSERT(floatConstraints.left->x >= lineLogicalLeft);
-            lineLogicalLeft = floatConstraints.left->x;
-        } else if (floatConstraints.right) {
-            ASSERT(floatConstraints.right->x >= lineLogicalLeft);
-            lineLogicalRight = floatConstraints.right->x;
-        }
-    }
-
-    auto computedTextIndent = [&] {
-        // text-indent property specifies the indentation applied to lines of inline content in a block.
-        // The indent is treated as a margin applied to the start edge of the line box.
-        // Unless otherwise specified, only lines that are the first formatted line of an element are affected.
-        // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
-        // FIXME: Add support for each-line.
-        // [Integration] root()->parent() would normally produce a valid layout box.
-        auto& root = this->root();
-        auto isFormattingContextRootCandidateToTextIndent = !root.isAnonymous();
-        if (root.isAnonymous()) {
-            // Unless otherwise specified by the each-line and/or hanging keywords, only lines that are the first formatted line
-            // of an element are affected.
-            // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
-            isFormattingContextRootCandidateToTextIndent = RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()
-                ? layoutState().isIntegratedRootBoxFirstChild()
-                : root.parent().firstInFlowChild() == &root;
-        }
-        if (!isFormattingContextRootCandidateToTextIndent)
-            return InlineLayoutUnit { };
-        auto invertLineRange = false;
-#if ENABLE(CSS3_TEXT)
-        invertLineRange = root.style().textIndentType() == TextIndentType::Hanging;
-#endif
-        auto isFirstLine = formattingState().ensureDisplayInlineContent().lineBoxes.isEmpty();
-        // text-indent: hanging inverts which lines are affected.
-        // inverted line range -> all the lines except the first one.
-        // !inverted line range -> first line gets the indent.
-        auto shouldIndent = invertLineRange != isFirstLine;
-        if (!shouldIndent)
-            return InlineLayoutUnit { };
-        return geometry().computedTextIndent(root, horizontalConstraints).valueOr(InlineLayoutUnit { });
-    };
-    lineLogicalLeft += computedTextIndent();
-    return LineConstraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat };
-}
-
-void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const HorizontalConstraints& horizontalConstraints)
+void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
+    auto& lineBox = lineContent.lineBox;
     if (!lineContent.floats.isEmpty()) {
         auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };
         // Move floats to their final position.

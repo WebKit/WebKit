@@ -409,6 +409,21 @@ void LineBox::alignInlineBoxesVerticallyAndComputeLineBoxHeight(IsLineVisuallyEm
     }
 }
 
+const InlineFormattingContext& LineBox::formattingContext() const
+{
+    return m_inlineFormattingContext;
+}
+
+const Box& LineBox::root() const
+{
+    return formattingContext().root();
+}
+
+LayoutState& LineBox::layoutState() const
+{
+    return formattingContext().layoutState();
+}
+
 }
 }
 
