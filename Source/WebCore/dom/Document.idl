@@ -139,6 +139,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     // FIXME: Should likely be moved to DocumentOrShadowRoot.
     DOMSelection? getSelection();
 
+    // FIXME: The following should be extracted into a new mixin, XPathEvaluatorBase - https://dom.spec.whatwg.org/#xpathevaluatorbase
     // XPath extensions (https://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathEvaluator).
     [MayThrowException] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver);
     XPathNSResolver createNSResolver(Node nodeResolver);

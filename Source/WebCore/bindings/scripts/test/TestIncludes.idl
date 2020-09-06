@@ -30,11 +30,8 @@
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its output.
 [
-    Conditional=Condition22|Condition23,
-    LegacyNoInterfaceObject
-] interface TestIncludes {
-    static readonly attribute long includesStaticReadOnlyAttr;
-    static attribute DOMString includesStaticAttr;
+    Conditional=Condition22|Condition23
+] interface mixin TestIncludes {
     readonly attribute DOMString includesStr1;
     attribute DOMString includesStr2;
     [CustomGetter, CustomSetter] attribute DOMString includesStr3;
@@ -43,7 +40,6 @@
     undefined includesMethod1();
     [CallWith=ScriptExecutionContext, MayThrowException] TestObj includesMethod2(DOMString strArg, TestObj objArg);
     [Custom] undefined includesMethod3();
-    static undefined includesMethod4();
 
     const unsigned short INCLUDES_CONSTANT1 = 1;
     [Reflect=CONST_IMPL] const unsigned short INCLUDES_CONSTANT2 = 2;

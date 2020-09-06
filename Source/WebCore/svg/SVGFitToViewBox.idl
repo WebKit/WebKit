@@ -24,9 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    LegacyNoInterfaceObject,
-] interface SVGFitToViewBox {
+// https://svgwg.org/svg2-draft/types.html#InterfaceSVGFitToViewBox
+interface mixin SVGFitToViewBox {
+    // FIXME: 'viewBox' should be annotated with [SameObject].
     readonly attribute SVGAnimatedRect viewBox;
+    // FIXME: 'preserveAspectRatio' should be annotated with [SameObject].
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };

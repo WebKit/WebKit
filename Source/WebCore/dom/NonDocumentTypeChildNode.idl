@@ -25,9 +25,7 @@
  */
 
 // https://dom.spec.whatwg.org/#interface-nondocumenttypechildnode
-[
-    LegacyNoInterfaceObject,
-] interface NonDocumentTypeChildNode {
+interface mixin NonDocumentTypeChildNode {
     readonly attribute Element? previousElementSibling;
     readonly attribute Element? nextElementSibling;
 };

@@ -138,9 +138,9 @@ foreach my $idlFile (sort keys %idlFileHash) {
 
     updateDictionaryDependencies($idlFileContents, $idlFile);
 
-    # Skip if the IDL file does not contain an interface, a callback interface or an exception.
+    # Skip if the IDL file does not contain an interface or a callback interface.
     # The IDL may contain a dictionary.
-    next unless containsInterfaceOrExceptionFromIDL($idlFileContents);
+    next unless containsInterfaceFromIDL($idlFileContents);
 
     my $interfaceName = fileparse(basename($idlFile), ".idl");
     # Handle include statements.
@@ -155,7 +155,10 @@ foreach my $idlFile (sort keys %idlFileHash) {
         }
     }
 
-    if (!isCallbackInterfaceFromIDL($idlFileContents)) {
+    next if isMixinInterfaceFromIDL($idlFileContents);
+
+    my $isCallbackInterface = isCallbackInterfaceFromIDL($idlFileContents);
+    if (!$isCallbackInterface) {
         $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName};\n";
         if (interfaceIsIterable($idlFileContents)) {
             $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName}Iterator;\n";
@@ -169,7 +172,7 @@ foreach my $idlFile (sort keys %idlFileHash) {
     # See https://heycam.github.io/webidl/#es-interfaces
     my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
     if (shouldExposeInterface($extendedAttributes)) {
-        if (!isCallbackInterfaceFromIDL($idlFileContents) || interfaceHasConstantAttribute($idlFileContents)) {
+        if (!$isCallbackInterface || interfaceHasConstantAttribute($idlFileContents)) {
             my $exposedAttribute = $extendedAttributes->{"Exposed"} || $testGlobalContextName || "Window";
             $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
             my @globalContexts = split(",", $exposedAttribute);
@@ -393,19 +396,24 @@ sub isCallbackInterfaceFromIDL
     return ($fileContents =~ /callback\s+interface\s+\w+/gs);
 }
 
+sub isMixinInterfaceFromIDL
+{
+    my $fileContents = shift;
+    return ($fileContents =~ /interface\s+mixin\s+\w+/gs);
+}
+
 sub interfaceIsIterable
 {
     my $fileContents = shift;
     return ($fileContents =~ /iterable\s*<\s*\w+\s*/gs);
 }
 
-sub containsInterfaceOrExceptionFromIDL
+sub containsInterfaceFromIDL
 {
     my $fileContents = shift;
 
     return 1 if $fileContents =~ /\bcallback\s+interface\s+\w+/gs;
     return 1 if $fileContents =~ /\binterface\s+\w+/gs;
-    return 1 if $fileContents =~ /\bexception\s+\w+/gs;
     return 0;
 }
 
@@ -427,7 +435,7 @@ sub getInterfaceExtendedAttributesFromIDL
     # all build systems.
     $fileContents =~ s/(?:(?:(?:\/\/)(?:[^\n]*)(?:\n))|(?:(?:\/\*)(?:(?:[^\*]+|\*(?!\/))*)(?:\*\/)))//g;
 
-    if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface|exception)\s+(\w+)/gs) {
+    if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface)\s+(\w+)/gs) {
         my $parameters = $1;
         if (index($parameters, '}') != -1) {
             # In case we have a declaration like a dictionary with extended attributes defined before the interface.

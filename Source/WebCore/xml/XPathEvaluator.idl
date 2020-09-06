@@ -22,9 +22,8 @@
 ] interface XPathEvaluator {
     constructor();
 
+    // FIXME: The following should be extracted into a new mixin, XPathEvaluatorBase - https://dom.spec.whatwg.org/#xpathevaluatorbase
     [MayThrowException] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver);
-
     XPathNSResolver createNSResolver(Node nodeResolver);
-
     [MayThrowException] XPathResult evaluate(DOMString expression, Node contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult);
 };

@@ -30,6 +30,8 @@
     readonly attribute unrestricted double? beta;
     readonly attribute unrestricted double? gamma;
 
+    [CallWith=Document, EnabledBySetting=DeviceOrientationPermissionAPI] static Promise<DeviceOrientationOrMotionPermissionState> requestPermission();
+
     // FIXME: Consider defining an ENABLE macro for iOS device orientation code and/or modifying
     // the bindings scripts to support generating more complicated conditional code.
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
@@ -54,5 +56,3 @@
                                     optional boolean? absolute = null);
 #endif
 };
-
-DeviceOrientationEvent includes DeviceOrientationOrMotionEvent;

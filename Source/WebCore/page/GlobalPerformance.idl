@@ -23,11 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://w3c.github.io/hr-time/
-
+// https://w3c.github.io/hr-time/#extensions-to-windoworworkerglobalscope-mixin
 [
-    LegacyNoInterfaceObject,
     Exposed=(Window,Worker)
-] interface GlobalPerformance {
+] interface mixin GlobalPerformance {
     [Replaceable] readonly attribute Performance performance;
 };

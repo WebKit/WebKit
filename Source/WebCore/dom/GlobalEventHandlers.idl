@@ -25,9 +25,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#globaleventhandlers
-[
-    LegacyNoInterfaceObject,
-] interface GlobalEventHandlers {
+interface mixin GlobalEventHandlers {
     // Commented out event handlers are defined by the HTML5 specification but
     // are not yet implemented.
 

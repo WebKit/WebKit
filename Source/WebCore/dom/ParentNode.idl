@@ -25,9 +25,7 @@
  */
 
 // https://dom.spec.whatwg.org/#interface-parentnode
-[
-    LegacyNoInterfaceObject,
-] interface ParentNode {
+interface mixin ParentNode {
     readonly attribute HTMLCollection children; // FIXME: Should be [SameObject].
     readonly attribute Element? firstElementChild;
     readonly attribute Element? lastElementChild;

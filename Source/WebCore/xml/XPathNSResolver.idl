@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://dom.spec.whatwg.org/#callbackdef-xpathnsresolver
+// FIXME: This should be a callback interface.
 [
     LegacyNoInterfaceObject,
     SkipVTableValidation,

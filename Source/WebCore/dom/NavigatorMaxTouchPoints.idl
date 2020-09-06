@@ -26,8 +26,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-[
-    LegacyNoInterfaceObject,
-] interface MaxTouchPoints {
+// https://w3c.github.io/pointerevents/#extensions-to-the-navigator-interface
+interface mixin NavigatorMaxTouchPoints {
     readonly attribute long maxTouchPoints;
 };

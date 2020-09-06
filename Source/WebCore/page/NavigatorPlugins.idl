@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNoInterfaceObject
-] interface NavigatorPlugins {
+// https://html.spec.whatwg.org/multipage/system-state.html#navigatorplugins
+interface mixin NavigatorPlugins {
     [SameObject] readonly attribute DOMPluginArray plugins;
     [SameObject] readonly attribute DOMMimeTypeArray mimeTypes;
     boolean javaEnabled();

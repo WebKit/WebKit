@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://html.spec.whatwg.org/multipage/canvas.html#canvasgradient
 [
     Exposed=(Window,Worker),
     ImplementationLacksVTable

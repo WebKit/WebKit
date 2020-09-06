@@ -30,8 +30,7 @@
     EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),
     InterfaceName=Body,
-    LegacyNoInterfaceObject
-] interface FetchBody {
+] interface mixin FetchBody {
     [ImplementedAs=readableStream, CallWith=GlobalObject] readonly attribute ReadableStream? body;
     readonly attribute boolean bodyUsed;
     [NewObject] Promise<ArrayBuffer> arrayBuffer();

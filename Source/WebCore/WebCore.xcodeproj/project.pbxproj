@@ -7920,7 +7920,6 @@
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
 		4642404520EAF0ED00B29FD2 /* DatabaseManagerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseManagerCocoa.mm; sourceTree = "<group>"; };
 		465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecksCocoa.mm; sourceTree = "<group>"; };
-		465EDD9D222F4EC300B46E16 /* DeviceOrientationOrMotionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeviceOrientationOrMotionEvent.idl; sourceTree = "<group>"; };
 		465EDD9F222F4EC300B46E16 /* DeviceOrientationOrMotionPermissionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationOrMotionPermissionState.h; sourceTree = "<group>"; };
 		465EDDA0222F4EC400B46E16 /* DeviceOrientationOrMotionPermissionState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeviceOrientationOrMotionPermissionState.idl; sourceTree = "<group>"; };
 		466172E923A2ABFA003AB309 /* PostMessageOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PostMessageOptions.idl; sourceTree = "<group>"; };
@@ -29152,7 +29151,6 @@
 				59A85EAA119D7B6E00DEF1EF /* DeviceOrientationEvent.idl */,
 				461DA52C222F486F00D05A87 /* DeviceOrientationOrMotionEvent.cpp */,
 				461DA52A222F486F00D05A87 /* DeviceOrientationOrMotionEvent.h */,
-				465EDD9D222F4EC300B46E16 /* DeviceOrientationOrMotionEvent.idl */,
 				465EDD9F222F4EC300B46E16 /* DeviceOrientationOrMotionPermissionState.h */,
 				465EDDA0222F4EC400B46E16 /* DeviceOrientationOrMotionPermissionState.idl */,
 				A8185F3409765765005826D9 /* Document.cpp */,

@@ -113,6 +113,9 @@ WebDOMTestJSBuiltinConstructor.h:
 JSTestLegacyFactoryFunction.h: 
 DOMTestLegacyFactoryFunction.h: 
 WebDOMTestLegacyFactoryFunction.h: 
+JSTestLegacyNoInterfaceObject.h: 
+DOMTestLegacyNoInterfaceObject.h: 
+WebDOMTestLegacyNoInterfaceObject.h: 
 JSTestLegacyOverrideBuiltIns.h: 
 DOMTestLegacyOverrideBuiltIns.h: 
 WebDOMTestLegacyOverrideBuiltIns.h: 

@@ -53,9 +53,8 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     CustomToJSObject,
     DoNotCheckConstants,
     JSCustomMarkFunction,
-    LegacyNoInterfaceObject,
     ExportMacro=WEBCORE_EXPORT,
-] interface WebGLRenderingContextBase {
+] interface mixin WebGLRenderingContextBase {
 
     readonly attribute WebGLCanvas canvas;
 

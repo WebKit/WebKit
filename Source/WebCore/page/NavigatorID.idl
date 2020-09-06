@@ -26,9 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNoInterfaceObject
-] interface NavigatorID {
+// https://html.spec.whatwg.org/multipage/system-state.html#navigatorid
+interface mixin NavigatorID {
     readonly attribute DOMString appCodeName;
     readonly attribute DOMString appName;
     readonly attribute DOMString appVersion;

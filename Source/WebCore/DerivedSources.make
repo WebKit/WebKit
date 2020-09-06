@@ -712,7 +712,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DataTransferItemList.idl \
     $(WebCore)/dom/DeviceMotionEvent.idl \
     $(WebCore)/dom/DeviceOrientationEvent.idl \
-    $(WebCore)/dom/DeviceOrientationOrMotionEvent.idl \
     $(WebCore)/dom/DeviceOrientationOrMotionPermissionState.idl \
     $(WebCore)/dom/Document.idl \
     $(WebCore)/dom/DocumentAndElementEventHandlers.idl \

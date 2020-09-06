@@ -30,9 +30,8 @@
 // changes in its output.
 
 [
-    Conditional=ConditionBase,
-    LegacyNoInterfaceObject,
-] interface TestOperationBase {
+    Conditional=ConditionBase
+] interface mixin TestOperationBase {
     undefined nonConditionalOperation();
     [Conditional=ConditionOperation] undefined conditionalOperation();
 };

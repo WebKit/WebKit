@@ -26,9 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNoInterfaceObject
-] interface NavigatorLanguage {
+// https://html.spec.whatwg.org/multipage/system-state.html#navigatorlanguage
+interface mixin NavigatorLanguage {
     readonly attribute DOMString language;
     readonly attribute FrozenArray<DOMString> languages;
 };

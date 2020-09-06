@@ -24,14 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    LegacyNoInterfaceObject,
-    SuppressToJSObject,
-] interface SVGTests {
-    [SameObject] readonly attribute SVGStringList requiredFeatures;
+// https://svgwg.org/svg2-draft/types.html#InterfaceSVGTests
+interface mixin SVGTests {
     [SameObject] readonly attribute SVGStringList requiredExtensions;
     [SameObject] readonly attribute SVGStringList systemLanguage;
 
+
+    // As of SVG2, the following are no longer part of this interface.
+
+    [SameObject] readonly attribute SVGStringList requiredFeatures;
     // FIXME: Using "undefined" as default parameter value is wrong.
     boolean hasExtension(optional DOMString extension = "undefined");
 };

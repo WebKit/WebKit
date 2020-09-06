@@ -2834,7 +2834,6 @@ JSDeprecatedCSSOMValue.cpp
 JSDeprecatedCSSOMValueList.cpp
 JSDeviceMotionEvent.cpp
 JSDeviceOrientationEvent.cpp
-JSDeviceOrientationOrMotionEvent.cpp
 JSDeviceOrientationOrMotionPermissionState.cpp
 JSDistanceModelType.cpp
 JSDocument.cpp

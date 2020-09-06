@@ -1,3 +1,144 @@
+2020-09-05  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Add support for interface mixins
+        https://bugs.webkit.org/show_bug.cgi?id=216217
+
+        Reviewed by Darin Adler.
+
+        Implement support for WebIDL interface mixins, which are interface fragments
+        that can be included into other interfaces (using an 'includes' statement), 
+        but do not create new types themselves.
+        
+        Prior to this, we have been emulating the behavior by allowing any interface
+        to be included in another interface, and marking some interfaces with the
+        [LegacyNoInterfaceObject] extended attribute. This change codifies that with
+        in the spec approved way.
+        
+        - Updates IDL parser to parse mixin interfaces (and fixes the parsing of callback
+          interfaces to be a bit more strict while I was there).
+        - Updates IDL pre-processor to avoid creating global variables and IsoSubspaces 
+          for mixins.
+        - Updates IDL code generator to only support including mixin interfaces during
+          supplemental inclusion.
+        - Updates IDL files to use interface mixin where appropriately specified. 
+
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * dom/DeviceOrientationOrMotionEvent.idl: Removed.
+        Remove DeviceOrientationOrMotionEvent.idl and corresponding generated files, inlining
+        it into DeviceMotionEvent.idl and DeviceOrientationEvent.idl as specified. This is
+        needed as mixin interfaces do not support static operations or attributes.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsValidSupplementalInterface):
+        (IsValidSupplementalDictionary):
+        (ProcessSupplementalDependencies):
+        (GetInterfaceExtendedAttributesFromName):
+        Update IDL code generator to only support including mixin interfaces during
+        supplemental inclusion. Also removes some left of remnents of exception interface
+        support.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseCallbackRestOrInterface):
+        (parseCallbackInterface):
+        (parseCallbackInterfaceMembers):
+        (parseCallbackInterfaceMember):
+        (parseMixin):
+        (parseMixinMembers):
+        (parseMixinMember):
+        (parseNamespace):
+        (parsePartialInterfaceMember):
+        (parseAttributeOrOperationForStringifierOrStatic):
+        Update IDL parser to parse mixin interfaces and fix the parsing of callback
+        interfaces to match the spec by restricting its members to constants and
+        regular functions.
+        
+        * bindings/scripts/preprocess-idls.pl:
+        (isMixinInterfaceFromIDL):
+        (containsInterfaceFromIDL):
+        (getInterfaceExtendedAttributesFromIDL):
+        (containsInterfaceOrExceptionFromIDL): Deleted.
+        Ensure mixin interfaces don't get exposed on any global objects and
+        remove some left of remnents of exception interface support.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestLegacyNoInterfaceObject.cpp: Added.
+        * bindings/scripts/test/JS/JSTestLegacyNoInterfaceObject.h: Added.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestIncludes.idl:
+        * bindings/scripts/test/TestLegacyNoInterfaceObject.idl: Added.
+        * bindings/scripts/test/TestOperationBase.idl:
+        Update bindings tests to use mixins for includes. Add new dedicated 
+        [LegacyNoInterfaceObject] since it was no longer being tested. 
+
+        * Modules/fetch/FetchBody.idl:
+        * Modules/mediasource/VideoPlaybackQuality.idl:
+        * Modules/speech/SpeechSynthesis.idl:
+        * Modules/speech/SpeechSynthesisVoice.idl:
+        * Modules/streams/ReadableStreamSink.idl:
+        * accessibility/AccessibilityRole.idl:
+        * accessibility/AriaAttributes.idl:
+        * animation/Animatable.idl:
+        * css/ElementCSSInlineStyle.idl:
+        * css/StyleMedia.idl:
+        * dom/ChildNode.idl:
+        * dom/DeviceMotionEvent.idl:
+        * dom/DeviceOrientationEvent.idl:
+        * dom/Document.idl:
+        * dom/DocumentAndElementEventHandlers.idl:
+        * dom/DocumentOrShadowRoot.idl:
+        * dom/EventListener.idl:
+        * dom/GlobalEventHandlers.idl:
+        * dom/NavigatorMaxTouchPoints.idl:
+        * dom/NonDocumentTypeChildNode.idl:
+        * dom/NonElementParentNode.idl:
+        * dom/ParentNode.idl:
+        * dom/Slotable.idl:
+        * html/HTMLHyperlinkElementUtils.idl:
+        * html/HTMLOrForeignElement.idl:
+        * html/canvas/CanvasCompositing.idl:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasDrawPath.idl:
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasFilters.idl:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasImageData.idl:
+        * html/canvas/CanvasImageSmoothing.idl:
+        * html/canvas/CanvasPath.idl:
+        * html/canvas/CanvasPathDrawingStyles.idl:
+        * html/canvas/CanvasRect.idl:
+        * html/canvas/CanvasShadowStyles.idl:
+        * html/canvas/CanvasState.idl:
+        * html/canvas/CanvasText.idl:
+        * html/canvas/CanvasTextDrawingStyles.idl:
+        * html/canvas/CanvasTransform.idl:
+        * html/canvas/CanvasUserInterface.idl:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * page/GlobalCrypto.idl:
+        * page/GlobalPerformance.idl:
+        * page/Navigator.idl:
+        * page/NavigatorID.idl:
+        * page/NavigatorLanguage.idl:
+        * page/NavigatorOnLine.idl:
+        * page/NavigatorPlugins.idl:
+        * page/NavigatorServiceWorker.idl:
+        * page/NavigatorShare.idl:
+        * page/WindowEventHandlers.idl:
+        * page/WindowOrWorkerGlobalScope.idl:
+        * svg/SVGFilterPrimitiveStandardAttributes.idl:
+        * svg/SVGFitToViewBox.idl:
+        * svg/SVGTests.idl:
+        * svg/SVGURIReference.idl:
+        * svg/SVGZoomAndPan.idl:
+        * workers/AbstractWorker.idl:
+        * xml/XPathEvaluator.idl:
+        * xml/XPathNSResolver.idl:
+        Update IDLs.
+
 2020-09-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [MotionMark] RenderLayer::paintLayerContents spends ~5% of the time in MonotonicTime::now() in Multiply

@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/#documentandelementeventhandlers
-[
-    LegacyNoInterfaceObject,
-] interface DocumentAndElementEventHandlers {
+interface mixin DocumentAndElementEventHandlers {
     attribute EventHandler oncopy;
     attribute EventHandler oncut;
     attribute EventHandler onpaste;
@@ -36,7 +34,6 @@
     [NotEnumerable] attribute EventHandler onbeforecut;
     [NotEnumerable] attribute EventHandler onbeforeinput;
     [NotEnumerable] attribute EventHandler onbeforepaste;
-
     [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend;
     [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration;
     [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart;

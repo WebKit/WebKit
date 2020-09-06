@@ -66,6 +66,7 @@ struct( IDLInterface => {
     attributes => '@',    # List of 'IDLAttribute'
     constructors => '@', # Constructors, list of 'IDLOperation'
     isCallback => '$', # Used for callback interfaces
+    isMixin => '$', # Used for mixin interfaces
     isPartial => '$', # Used for partial interfaces
     iterable => '$', # Used for iterable interfaces, of type 'IDLIterable'
     asyncIterable => '$', # Used for asycn iterable interfaces, of type 'IDLAsyncIterable'
@@ -635,7 +636,7 @@ sub addBuiltinTypedefs()
     $typedefs{"DOMTimeStamp"} = IDLTypedef->new(type => $DOMTimeStampType);
 }
 
-my $nextAttribute_2 = '^(readonly|attribute)$';
+my $nextOptionallyReadonlyAttribute_1 = '^(readonly|attribute)$';
 my $nextIntegerType_1 = '^(int|long|short|unsigned)$';
 my $nextFloatType_1 = '^(double|float|unrestricted)$';
 my $nextArgumentList_1 = '^(\(|ByteString|DOMString|USVString|\[|any|boolean|byte|double|float|in|long|object|octet|optional|sequence|short|symbol|undefined|unrestricted|unsigned)$';
@@ -649,7 +650,9 @@ my $nextType_1 = '^(ByteString|DOMString|USVString|any|boolean|byte|double|float
 my $nextSpecials_1 = '^(deleter|getter|setter)$';
 my $nextDefinitions_1 = '^(callback|dictionary|enum|interface|namespace|partial|typedef)$';
 my $nextDictionaryMember_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|required|sequence|short|symbol|undefined|unrestricted|unsigned)$';
+my $nextCallbackInterfaceMembers_1 = '^(\(|const|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
+my $nextMixinMembers_1 = '^(\(|attribute|ByteString|DOMString|USVString|any|boolean|byte|const|double|float|long|object|octet|readonly|sequence|short|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextNamespaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|readonly|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextPartialInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextSingleType_1 = '^(ByteString|DOMString|USVString|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
@@ -657,7 +660,6 @@ my $nextArgumentName_1 = '^(async|attribute|callback|const|constructor|deleter|d
 my $nextConstValue_1 = '^(false|true)$';
 my $nextConstValue_2 = '^(-|Infinity|NaN)$';
 my $nextCallbackOrInterface = '^(callback|interface)$';
-my $nextOperationRest_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextRegularOperation_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextUnsignedIntegerType_1 = '^(long|short)$';
 my $nextDefaultValue_1 = '^(-|Infinity|NaN|false|null|true)$';
@@ -869,9 +871,7 @@ sub parseCallbackRestOrInterface
     my $next = $self->nextToken();
     if ($next->value() eq "interface") {
         $self->assertTokenValue($self->getToken(), "interface", __LINE__);
-        my $interface = $self->parseInterface($extendedAttributeList);
-        $interface->isCallback(1);
-        return $interface;
+        return $self->parseCallbackInterface($extendedAttributeList);
     }
     if ($next->type() == IdentifierToken) {
         return $self->parseCallbackRest($extendedAttributeList);
@@ -929,6 +929,154 @@ sub parseInterface
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 
+sub parseCallbackInterface
+{
+    my $self = shift;
+    my $extendedAttributeList = shift;
+
+    my $next = $self->nextToken();
+    if ($next->type() == IdentifierToken) {
+        my $interface = IDLInterface->new();
+        $interface->isCallback(1);
+
+        my $interfaceNameToken = $self->getToken();
+        $self->assertTokenType($interfaceNameToken, IdentifierToken);
+        
+        my $name = identifierRemoveNullablePrefix($interfaceNameToken->value());
+        $interface->type(makeSimpleType($name));
+
+        $self->assertTokenValue($self->getToken(), "{", __LINE__);
+        my $interfaceMembers = $self->parseCallbackInterfaceMembers();
+        $self->assertTokenValue($self->getToken(), "}", __LINE__);
+        $self->assertTokenValue($self->getToken(), ";", __LINE__);
+        applyMemberList($interface, $interfaceMembers);
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "interface");
+        applyExtendedAttributeList($interface, $extendedAttributeList);
+
+        return $interface;
+    }
+
+    $self->assertUnexpectedToken($next->value(), __LINE__);
+}
+
+sub parseCallbackInterfaceMembers
+{
+    my $self = shift;
+    my @callbackInterfaceMembers = ();
+
+    while (1) {
+        my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
+        my $next = $self->nextToken();
+        my $callbackInterfaceMember;
+
+        if ($next->type() == IdentifierToken || $next->value() =~ /$nextCallbackInterfaceMembers_1/) {
+            $callbackInterfaceMember = $self->parseCallbackInterfaceMember($extendedAttributeList);
+        } else {
+            last;
+        }
+        if (defined $callbackInterfaceMember) {
+            push(@callbackInterfaceMembers, $callbackInterfaceMember);
+        }
+    }
+    return \@callbackInterfaceMembers;
+}
+
+sub parseCallbackInterfaceMember
+{
+    my $self = shift;
+    my $extendedAttributeList = shift;
+
+    my $next = $self->nextToken();
+    if ($next->value() eq "const") {
+        return $self->parseConst($extendedAttributeList);
+    }
+    if ($next->type() == IdentifierToken || $next->value() =~ /$nextRegularOperation_1/) {
+        return $self->parseRegularOperation($extendedAttributeList);
+    }
+
+    $self->assertUnexpectedToken($next->value(), __LINE__);
+}
+
+sub parseMixin
+{
+    my $self = shift;
+    my $extendedAttributeList = shift;
+
+    my $next = $self->nextToken();
+    if ($next->value() eq "mixin") {
+        $self->assertTokenValue($self->getToken(), "mixin", __LINE__);
+
+        my $interfaceMixin = IDLInterface->new();
+        $interfaceMixin->isMixin(1);
+
+        my $interfaceNameToken = $self->getToken();
+        $self->assertTokenType($interfaceNameToken, IdentifierToken);
+        
+        my $name = identifierRemoveNullablePrefix($interfaceNameToken->value());
+        $interfaceMixin->type(makeSimpleType($name));
+
+        $self->assertTokenValue($self->getToken(), "{", __LINE__);
+        my $interfaceMixinMembers = $self->parseMixinMembers();
+        $self->assertTokenValue($self->getToken(), "}", __LINE__);
+        $self->assertTokenValue($self->getToken(), ";", __LINE__);
+        applyMemberList($interfaceMixin, $interfaceMixinMembers);
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "interface");
+        applyExtendedAttributeList($interfaceMixin, $extendedAttributeList);
+
+        return $interfaceMixin;
+    }
+    $self->assertUnexpectedToken($next->value(), __LINE__);
+}
+
+sub parseMixinMembers
+{
+    my $self = shift;
+    my @mixinMembers = ();
+
+    while (1) {
+        my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
+        my $next = $self->nextToken();
+        my $mixinMember;
+
+        if ($next->type() == IdentifierToken || $next->value() =~ /$nextMixinMembers_1/) {
+            $mixinMember = $self->parseMixinMember($extendedAttributeList);
+        } else {
+            last;
+        }
+        if (defined $mixinMember) {
+            push(@mixinMembers, $mixinMember);
+        }
+    }
+    return \@mixinMembers;
+}
+
+sub parseMixinMember
+{
+    my $self = shift;
+    my $extendedAttributeList = shift;
+
+    my $next = $self->nextToken();
+    if ($next->value() eq "const") {
+        return $self->parseConst($extendedAttributeList);
+    }
+    if ($next->value() eq "stringifier") {
+        return $self->parseStringifier($extendedAttributeList);
+    }
+    if ($next->value() =~ /$nextOptionallyReadonlyAttribute_1/) {
+        my $isReadOnly = $self->parseReadOnly();
+        my $attribute = $self->parseAttributeRest($extendedAttributeList);
+        $attribute->isReadOnly($isReadOnly);
+        return $attribute;
+    }
+    if ($next->type() == IdentifierToken || $next->value() =~ /$nextRegularOperation_1/) {
+        return $self->parseRegularOperation($extendedAttributeList);
+    }
+
+    $self->assertUnexpectedToken($next->value(), __LINE__);
+}
+
 sub parseNamespace
 {
     my $self = shift;
@@ -970,7 +1118,6 @@ sub parseNamespace
         return $namespace;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
-
 }
 
 sub parseNamespaceMembers
@@ -1013,7 +1160,6 @@ sub parseNamespaceMember
 
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
-
 
 sub parsePartial
 {
@@ -1186,7 +1332,7 @@ sub parsePartialInterfaceMember
 
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextOperation_1/) {
         return $self->parseOperation($extendedAttributeList);
-     }
+    }
 
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -1842,26 +1988,15 @@ sub parseAttributeOrOperationForStringifierOrStatic
     my $extendedAttributeList = shift;
 
     my $next = $self->nextToken();
-    if ($next->value() =~ /$nextAttribute_2/) {
+    if ($next->value() =~ /$nextOptionallyReadonlyAttribute_1/) {
         my $isReadOnly = $self->parseReadOnly();
-
         my $attribute = $self->parseAttributeRest($extendedAttributeList);
         $attribute->isReadOnly($isReadOnly);
-
         return $attribute;
     }
 
-    if ($next->type() == IdentifierToken || $next->value() =~ /$nextOperationRest_1/) {
-        my $returnType = $self->parseType();
-
-        # NOTE: This is a non-standard addition. In WebIDL, there is no way to associate
-        # extended attributes with a return type.
-        $self->moveExtendedAttributesApplicableToTypes($returnType, $extendedAttributeList);
-
-        my $operation = $self->parseOperationRest($extendedAttributeList);
-        $operation->type($returnType);
-
-        return $operation;
+    if ($next->type() == IdentifierToken || $next->value() =~ /$nextRegularOperation_1/) {
+        return $self->parseRegularOperation($extendedAttributeList);
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

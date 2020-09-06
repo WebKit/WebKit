@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/web-animations-1/#the-animatable-interface-mixin
 [
-    EnabledAtRuntime=WebAnimations,
-    LegacyNoInterfaceObject
-] interface Animatable {
+    EnabledAtRuntime=WebAnimations
+] interface mixin Animatable {
     [MayThrowException, CallWith=GlobalObject] WebAnimation animate(object? keyframes, optional (unrestricted double or KeyframeAnimationOptions) options);
     sequence<WebAnimation> getAnimations(optional GetAnimationsOptions options);
 };

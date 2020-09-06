@@ -52,11 +52,11 @@
 #include <wtf/URL.h>
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+#include "JSDOMConvertNumbers.h"
 #include "TestSupplementalBuiltins.h"
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12) || ENABLE(Condition22) || ENABLE(Condition23)
-#include "JSDOMConvertNumbers.h"
 #include "JSDOMGlobalObject.h"
 #include "JSNode.h"
 #endif
@@ -80,9 +80,6 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod3(JSC::JSGlobalObject*, JSC::CallFrame*);
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionIncludesMethod4(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionTakeNodes(JSC::JSGlobalObject*, JSC::CallFrame*);
@@ -109,13 +106,6 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionForEach(JSC::J
 
 JSC::EncodedJSValue jsTestInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-#if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceConstructorIncludesStaticReadOnlyAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceConstructorIncludesStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceConstructorIncludesStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-#endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
 JSC::EncodedJSValue jsTestInterfaceIncludesStr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
@@ -216,16 +206,6 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-    { "includesStaticReadOnlyAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorIncludesStaticReadOnlyAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-    { "includesStaticAttr", static_cast<unsigned>(0), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorIncludesStaticAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructorIncludesStaticAttr) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStaticReadOnlyAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
@@ -233,11 +213,6 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStaticAttr", static_cast<unsigned>(0), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorSupplementalStaticAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructorSupplementalStaticAttr) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-    { "includesMethod4", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfaceConstructorFunctionIncludesMethod4), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -504,56 +479,6 @@ bool setJSTestInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJ
     // Shadowing a built-in constructor
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceConstructorIncludesStaticReadOnlyAttrGetter(JSGlobalObject& lexicalGlobalObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, TestInterface::includesStaticReadOnlyAttr())));
-}
-
-EncodedJSValue jsTestInterfaceConstructorIncludesStaticReadOnlyAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorIncludesStaticReadOnlyAttrGetter>(*lexicalGlobalObject, thisValue, "includesStaticReadOnlyAttr");
-}
-
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceConstructorIncludesStaticAttrGetter(JSGlobalObject& lexicalGlobalObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, TestInterface::includesStaticAttr())));
-}
-
-EncodedJSValue jsTestInterfaceConstructorIncludesStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorIncludesStaticAttrGetter>(*lexicalGlobalObject, thisValue, "includesStaticAttr");
-}
-
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceConstructorIncludesStaticAttrSetter(JSGlobalObject& lexicalGlobalObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
-        return TestInterface::setIncludesStaticAttr(WTFMove(nativeValue));
-    });
-    return true;
-}
-
-bool setJSTestInterfaceConstructorIncludesStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorIncludesStaticAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "includesStaticAttr");
-}
-
-#endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline JSValue jsTestInterfaceIncludesStr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject)
@@ -942,25 +867,6 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionIncludesMethod
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod3(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionIncludesMethod3Body>(*lexicalGlobalObject, *callFrame, "includesMethod3");
-}
-
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionIncludesMethod4Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
-{
-    auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(callFrame);
-    throwScope.release();
-    TestInterface::includesMethod4();
-    return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionIncludesMethod4(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
-{
-    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionIncludesMethod4Body>(*lexicalGlobalObject, *callFrame, "includesMethod4");
 }
 
 #endif

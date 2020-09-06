@@ -42,9 +42,8 @@ typedef (HTMLImageElement
 
 typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
 
-[
-    LegacyNoInterfaceObject,
-] interface WindowOrWorkerGlobalScope {
+// https://html.spec.whatwg.org/multipage/webappapis.html#windoworworkerglobalscope-mixin
+interface mixin WindowOrWorkerGlobalScope {
     [Replaceable] readonly attribute USVString origin;
 
     // Timers

@@ -281,6 +281,23 @@ sub MergeExtendedAttributesFromSupplemental
     }
 }
 
+sub IsValidSupplementalInterface
+{
+    my ($object, $targetDocument, $supplementalInterface, $targetInterfaceName) = @_;
+
+    return 1 if $supplementalInterface->isPartial && $supplementalInterface->type->name eq $targetInterfaceName;
+    return 1 if $supplementalInterface->isMixin;
+    return 0;
+}
+
+sub IsValidSupplementalDictionary
+{
+    my ($object, $targetDocument, $supplementalDictionary, $targetInterfaceName) = @_;
+
+    return 1 if $supplementalDictionary->isPartial && $supplementalDictionary->type->name eq $targetInterfaceName;
+    return 0;
+}
+
 sub ProcessSupplementalDependencies
 {
     my ($object, $targetDocument) = @_;
@@ -291,6 +308,9 @@ sub ProcessSupplementalDependencies
         return;
     }
 
+    # FIXME: Add support for processing recursive supplemental dependencies
+    # to provide support for partial interface mixins.
+
     foreach my $idlFile (@{$supplementalDependencies->{$targetFileName}}) {
         next if fileparse($idlFile) eq $targetFileName;
 
@@ -299,7 +319,7 @@ sub ProcessSupplementalDependencies
         my $document = $parser->Parse($idlFile, $defines, $preprocessor, $idlAttributes);
 
         foreach my $interface (@{$document->interfaces}) {
-            next unless !$interface->isPartial || $interface->type->name eq $targetInterfaceName;
+            next unless $object->IsValidSupplementalInterface($targetDocument, $interface, $targetInterfaceName);
 
             my $targetDataNode;
             my @targetGlobalContexts;
@@ -354,7 +374,7 @@ sub ProcessSupplementalDependencies
         }
 
         foreach my $dictionary (@{$document->dictionaries}) {
-            next unless $dictionary->isPartial && $dictionary->type->name eq $targetInterfaceName;
+            next unless $object->IsValidSupplementalDictionary($targetDocument, $dictionary, $targetInterfaceName);
 
             my $targetDataNode;
             my @targetGlobalContexts;
@@ -1184,7 +1204,7 @@ sub GetInterfaceExtendedAttributesFromName
 
     my $extendedAttributes = {};
 
-    if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface|exception)\s+(\w+)/gs) {
+    if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface)\s+(\w+)/gs) {
         my @parts = split(',', $1);
         foreach my $part (@parts) {
             my @keyValue = split('=', $part);
