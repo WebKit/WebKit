@@ -1221,7 +1221,6 @@
         },
         "border-block": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "border-block-start-color",
                     "border-block-start-style",
@@ -1238,7 +1237,6 @@
         },
         "border-block-color": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "border-block-start-color",
                     "border-block-end-color"
@@ -1379,7 +1377,6 @@
         },
         "border-block-style": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "border-block-start-style",
                     "border-block-end-style"
@@ -1392,7 +1389,6 @@
         },
         "border-block-width": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "border-block-start-width",
                     "border-block-end-width"
@@ -1574,7 +1570,6 @@
         },
         "border-inline": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "border-inline-start-color",
                     "border-inline-start-style",
@@ -1591,7 +1586,6 @@
         },
         "border-inline-color": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "border-inline-start-color",
                     "border-inline-end-color"
@@ -1732,7 +1726,6 @@
         },
         "border-inline-style": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "border-inline-start-style",
                     "border-inline-end-style"
@@ -1745,7 +1738,6 @@
         },
         "border-inline-width": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "border-inline-start-width",
                     "border-inline-end-width"
@@ -2583,7 +2575,6 @@
         },
         "inset": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "top",
                     "right",
@@ -2598,7 +2589,6 @@
         },
         "inset-block": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "inset-block-start",
                     "inset-block-end"
@@ -2611,7 +2601,6 @@
         },
         "inset-block-end": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "skip-builder": true
             },
             "specification": {
@@ -2621,7 +2610,6 @@
         },
         "inset-block-start": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "skip-builder": true
             },
             "specification": {
@@ -2631,7 +2619,6 @@
         },
         "inset-inline": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "inset-inline-start",
                     "inset-inline-end"
@@ -2644,7 +2631,6 @@
         },
         "inset-inline-end": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "skip-builder": true
             },
             "specification": {
@@ -2654,7 +2640,6 @@
         },
         "inset-inline-start": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "skip-builder": true
             },
             "specification": {
@@ -2858,7 +2843,6 @@
         },
         "margin-block": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "margin-block-start",
                     "margin-block-end"
@@ -2905,7 +2889,6 @@
         },
         "margin-inline": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "margin-inline-start",
                     "margin-inline-end"
@@ -3305,7 +3288,6 @@
         },
         "padding-block": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "padding-block-start",
                     "padding-block-end"
@@ -3352,7 +3334,6 @@
         },
         "padding-inline": {
             "codegen-properties": {
-                "runtime-flag": "cssLogical",
                 "longhands": [
                     "padding-inline-start",
                     "padding-inline-end"

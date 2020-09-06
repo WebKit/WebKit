@@ -1,3 +1,77 @@
+2020-09-05  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Ship flow-relative shorthand and offset properties
+        https://bugs.webkit.org/show_bug.cgi?id=216178
+
+        Reviewed by Darin Adler.
+
+        This patch ships the logical properties that were already implemented behind a flag.
+        Specifically:
+        - border-block, border-block-color, border-block-style, border-block-width
+        - border-inline, border-inline-color, border-inline-style, border-inline-width
+        - inset-block-start, inset-block-end, inset-inline-start, inset-inline-end
+        - inset, inset-block, inset-inline
+        - margin-block, margin-inline
+        - padding-block, padding-inline
+
+        Tests: imported/w3c/web-platform-tests/css/css-cascade/parsing/all-valid.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-001.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-002.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-003.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-004.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-005.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-007.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-016.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-007.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-012.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-014.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-016.html
+               imported/w3c/web-platform-tests/css/css-logical/animation-001.html
+               imported/w3c/web-platform-tests/css/css-logical/animation-002.html
+               imported/w3c/web-platform-tests/css/css-logical/getComputedStyle-listing.html
+               imported/w3c/web-platform-tests/css/css-logical/inheritance.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-color.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-shorthands.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-style.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-width.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-inset.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-margin.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-padding.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-color-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-color-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-style-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-style-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-width-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-width-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-color-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-color-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-style-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-style-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-width-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-width-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/inset-block-inline-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/inset-block-inline-shorthand.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/inset-block-inline-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/inset-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/inset-shorthand.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/inset-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-shorthand.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-valid.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-computed.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-shorthand.html
+               imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-valid.html
+               imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-001.html
+               imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-001.html
+               imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-001.html
+               imported/w3c/web-platform-tests/quirks/unitless-length/excluded-properties-001.html
+               imported/w3c/web-platform-tests/quirks/unitless-length/excluded-properties-003.html
+
+        * css/CSSProperties.json: Enable logical properties by default.
+        * css/makeprop.pl: Avoid compile warning when generating isEnabledCSSProperty if there is no property behind flag.
+
 2020-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS Family] Remove the concept of custom fallback fonts

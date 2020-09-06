@@ -1,6 +1,6 @@
 
 FAIL .grid 1 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="0" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 1; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="0" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 1; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="0" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 1; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="0" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 1; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 2 
 PASS .grid 3 
@@ -12,7 +12,7 @@ PASS .grid 8
 PASS .grid 9 
 PASS .grid 10 
 FAIL .grid 11 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="145" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 2; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="145" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 2; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="145" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 2; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="145" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 2; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 12 
 PASS .grid 13 
@@ -24,7 +24,7 @@ PASS .grid 18
 PASS .grid 19 
 PASS .grid 20 
 FAIL .grid 21 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="445" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="445" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="445" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="445" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 22 
 PASS .grid 23 
@@ -36,7 +36,7 @@ PASS .grid 28
 PASS .grid 29 
 PASS .grid 30 
 FAIL .grid 31 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="510" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="510" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="510" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="510" data-expected-height="0" data-offset-x="25" data-offset-y="30" style="grid-column-start: auto; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 32 
 PASS .grid 33 
@@ -48,7 +48,7 @@ PASS .grid 38
 PASS .grid 39 
 PASS .grid 40 
 FAIL .grid 41 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="140" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: 2; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="140" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: 2; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="140" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: 2; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="140" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: 2; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 42 
 PASS .grid 43 
@@ -60,7 +60,7 @@ PASS .grid 48
 PASS .grid 49 
 PASS .grid 50 
 FAIL .grid 51 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="440" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="440" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="440" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="440" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 52 
 PASS .grid 53 
@@ -72,7 +72,7 @@ PASS .grid 58
 PASS .grid 59 
 PASS .grid 60 
 FAIL .grid 61 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="505" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="505" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="505" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="505" data-expected-height="0" data-offset-x="30" data-offset-y="30" style="grid-column-start: 1; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 62 
 PASS .grid 63 
@@ -84,7 +84,7 @@ PASS .grid 68
 PASS .grid 69 
 PASS .grid 70 
 FAIL .grid 71 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="240" data-expected-height="0" data-offset-x="230" data-offset-y="30" style="grid-column-start: 2; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="240" data-expected-height="0" data-offset-x="230" data-offset-y="30" style="grid-column-start: 2; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="240" data-expected-height="0" data-offset-x="230" data-offset-y="30" style="grid-column-start: 2; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="240" data-expected-height="0" data-offset-x="230" data-offset-y="30" style="grid-column-start: 2; grid-column-end: 3; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 72 
 PASS .grid 73 
@@ -96,7 +96,7 @@ PASS .grid 78
 PASS .grid 79 
 PASS .grid 80 
 FAIL .grid 81 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="305" data-expected-height="0" data-offset-x="230" data-offset-y="30" style="grid-column-start: 2; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="305" data-expected-height="0" data-offset-x="230" data-offset-y="30" style="grid-column-start: 2; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="305" data-expected-height="0" data-offset-x="230" data-offset-y="30" style="grid-column-start: 2; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="305" data-expected-height="0" data-offset-x="230" data-offset-y="30" style="grid-column-start: 2; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 82 
 PASS .grid 83 
@@ -108,7 +108,7 @@ PASS .grid 88
 PASS .grid 89 
 PASS .grid 90 
 FAIL .grid 91 assert_equals: 
-<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="5" data-expected-height="0" data-offset-x="530" data-offset-y="30" style="grid-column-start: 3; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="5" data-expected-height="0" data-offset-x="530" data-offset-y="30" style="grid-column-start: 3; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; left: 25px; top: 30px; right: 35px; bottom: 40px;">XX</div></div></div>
+<div class="grid"><div style="grid-row-start: 1; grid-column-start: 1; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="5" data-expected-height="0" data-offset-x="530" data-offset-y="30" style="grid-column-start: 3; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div><div style="grid-row-start: 2; grid-column-start: 2; grid-row-end: auto; grid-column-end: auto;">X<br>XX<div class="abspos orthogonal" data-expected-width="5" data-expected-height="0" data-offset-x="530" data-offset-y="30" style="grid-column-start: 3; grid-column-end: auto; grid-row-start: auto; grid-row-end: 1; inset: 30px 35px 40px 25px;">XX</div></div></div>
 height expected 0 but got -50
 PASS .grid 92 
 PASS .grid 93 

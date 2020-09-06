@@ -1,14 +1,14 @@
 
-FAIL e.style['margin-block'] = "10px" should set margin-block-end assert_equals: margin-block-end should be canonical expected "10px" but got ""
-FAIL e.style['margin-block'] = "10px" should set margin-block-start assert_equals: margin-block-start should be canonical expected "10px" but got ""
-FAIL e.style['margin-block'] = "10px" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['margin-block'] = "20% auto" should set margin-block-end assert_equals: margin-block-end should be canonical expected "auto" but got ""
-FAIL e.style['margin-block'] = "20% auto" should set margin-block-start assert_equals: margin-block-start should be canonical expected "20%" but got ""
-FAIL e.style['margin-block'] = "20% auto" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['margin-inline'] = "30%" should set margin-inline-end assert_equals: margin-inline-end should be canonical expected "30%" but got ""
-FAIL e.style['margin-inline'] = "30%" should set margin-inline-start assert_equals: margin-inline-start should be canonical expected "30%" but got ""
-FAIL e.style['margin-inline'] = "30%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['margin-inline'] = "auto 40px" should set margin-inline-end assert_equals: margin-inline-end should be canonical expected "40px" but got ""
-FAIL e.style['margin-inline'] = "auto 40px" should set margin-inline-start assert_equals: margin-inline-start should be canonical expected "auto" but got ""
-FAIL e.style['margin-inline'] = "auto 40px" should not set unrelated longhands assert_true: expected true got false
+PASS e.style['margin-block'] = "10px" should set margin-block-end 
+PASS e.style['margin-block'] = "10px" should set margin-block-start 
+PASS e.style['margin-block'] = "10px" should not set unrelated longhands 
+PASS e.style['margin-block'] = "20% auto" should set margin-block-end 
+PASS e.style['margin-block'] = "20% auto" should set margin-block-start 
+PASS e.style['margin-block'] = "20% auto" should not set unrelated longhands 
+PASS e.style['margin-inline'] = "30%" should set margin-inline-end 
+PASS e.style['margin-inline'] = "30%" should set margin-inline-start 
+PASS e.style['margin-inline'] = "30%" should not set unrelated longhands 
+PASS e.style['margin-inline'] = "auto 40px" should set margin-inline-end 
+PASS e.style['margin-inline'] = "auto 40px" should set margin-inline-start 
+PASS e.style['margin-inline'] = "auto 40px" should not set unrelated longhands 
 

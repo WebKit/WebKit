@@ -9,7 +9,7 @@ PASS Property border-block-end-style value 'double'
 PASS Property border-block-end-style value 'hidden' 
 PASS Property border-block-end-style value 'outset' 
 PASS Property border-block-end-style value 'ridge' 
-FAIL Property border-block-style value 'dotted' assert_true: border-block-style doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-block-style value 'double groove' assert_true: border-block-style doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-block-style value 'hidden hidden' assert_true: border-block-style doesn't seem to be supported in the computed style expected true got false
+PASS Property border-block-style value 'dotted' 
+PASS Property border-block-style value 'double groove' 
+PASS Property border-block-style value 'hidden hidden' 
 

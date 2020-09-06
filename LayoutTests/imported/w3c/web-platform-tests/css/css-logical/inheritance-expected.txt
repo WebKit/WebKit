@@ -35,14 +35,14 @@ FAIL Property border-start-start-radius has initial value 0px assert_true: borde
 FAIL Property border-start-start-radius does not inherit assert_true: expected true got false
 PASS Property inline-size has initial value 294px 
 PASS Property inline-size does not inherit 
-FAIL Property inset-block-end has initial value auto assert_true: inset-block-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-block-end does not inherit assert_true: expected true got false
-FAIL Property inset-block-start has initial value auto assert_true: inset-block-start doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-block-start does not inherit assert_true: expected true got false
-FAIL Property inset-inline-end has initial value auto assert_true: inset-inline-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-inline-end does not inherit assert_true: expected true got false
-FAIL Property inset-inline-start has initial value auto assert_true: inset-inline-start doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-inline-start does not inherit assert_true: expected true got false
+PASS Property inset-block-end has initial value auto 
+PASS Property inset-block-end does not inherit 
+PASS Property inset-block-start has initial value auto 
+PASS Property inset-block-start does not inherit 
+PASS Property inset-inline-end has initial value auto 
+PASS Property inset-inline-end does not inherit 
+PASS Property inset-inline-start has initial value auto 
+PASS Property inset-inline-start does not inherit 
 PASS Property margin-block-end has initial value 0px 
 PASS Property margin-block-end does not inherit 
 PASS Property margin-block-start has initial value 0px 

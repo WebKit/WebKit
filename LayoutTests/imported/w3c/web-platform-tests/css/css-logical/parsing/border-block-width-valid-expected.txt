@@ -6,7 +6,7 @@ PASS e.style['border-block-start-width'] = "thin" should set the property value
 PASS e.style['border-block-end-width'] = "0" should set the property value 
 PASS e.style['border-block-end-width'] = "calc(10px - 0.5em)" should set the property value 
 PASS e.style['border-block-end-width'] = "medium" should set the property value 
-FAIL e.style['border-block-width'] = "10px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['border-block-width'] = "medium calc(10px + 0.5em)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['border-block-width'] = "10px 10px" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['border-block-width'] = "10px" should set the property value 
+PASS e.style['border-block-width'] = "medium calc(10px + 0.5em)" should set the property value 
+PASS e.style['border-block-width'] = "10px 10px" should set the property value 
 

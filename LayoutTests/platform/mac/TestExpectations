@@ -1741,8 +1741,6 @@ webkit.org/b/205862 webgpu/whlsl/while-loop-break.html [ Pass ImageOnlyFailure ]
 webkit.org/b/205865 webgpu/whlsl/ensure-proper-variable-lifetime-2.html [ Pass ImageOnlyFailure ]
 webkit.org/b/205867 webgpu/draw-indexed-triangles.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/197204 webexposed/css-properties-behind-flags.html [ Pass Failure ]
-
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]
 
 # Locale-specific shaping is only enabled on certain OSes.

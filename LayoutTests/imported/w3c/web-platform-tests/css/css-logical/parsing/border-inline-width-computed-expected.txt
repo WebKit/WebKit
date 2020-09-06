@@ -1,13 +1,13 @@
 
-FAIL Property border-inline-start-width value 'calc(10px + 0.5em)' assert_equals: expected "30px" but got "0px"
+PASS Property border-inline-start-width value 'calc(10px + 0.5em)' 
 PASS Property border-inline-start-width value 'calc(10px - 0.5em)' 
-FAIL Property border-inline-start-width value 'thin' assert_equals: expected "1px" but got "0px"
-FAIL Property border-inline-start-width value 'medium' assert_equals: expected "3px" but got "0px"
-FAIL Property border-inline-end-width value 'calc(10px + 0.5em)' assert_equals: expected "30px" but got "0px"
+PASS Property border-inline-start-width value 'thin' 
+PASS Property border-inline-start-width value 'medium' 
+PASS Property border-inline-end-width value 'calc(10px + 0.5em)' 
 PASS Property border-inline-end-width value 'calc(10px - 0.5em)' 
-FAIL Property border-inline-end-width value 'thick' assert_equals: expected "5px" but got "0px"
-FAIL Property border-inline-width value '10px' assert_true: border-inline-width doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-inline-width value '10px 20px' assert_true: border-inline-width doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-inline-width value '10px 10px' assert_true: border-inline-width doesn't seem to be supported in the computed style expected true got false
-FAIL width is zero if the border block style is none or hidden assert_equals: expected (string) "10px" but got (undefined) undefined
+PASS Property border-inline-end-width value 'thick' 
+PASS Property border-inline-width value '10px' 
+PASS Property border-inline-width value '10px 20px' 
+PASS Property border-inline-width value '10px 10px' 
+PASS width is zero if the border block style is none or hidden 
 

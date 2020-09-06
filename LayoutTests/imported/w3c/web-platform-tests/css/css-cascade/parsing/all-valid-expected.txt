@@ -1,5 +1,5 @@
 
-FAIL e.style['all'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['all'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['all'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['all'] = "initial" should set the property value 
+PASS e.style['all'] = "inherit" should set the property value 
+PASS e.style['all'] = "unset" should set the property value 
 

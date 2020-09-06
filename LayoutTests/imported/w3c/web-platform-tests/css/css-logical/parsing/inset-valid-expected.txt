@@ -1,10 +1,10 @@
 
-FAIL e.style['inset'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['inset'] = "-10px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['inset'] = "calc(-0.5em + 10px) -20%" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['inset'] = "auto auto" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['inset'] = "10px calc(-0.5em + 10px) -30px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['inset'] = "auto auto auto" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['inset'] = "10px calc(-0.5em + 10px) auto -30px" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['inset'] = "auto auto auto auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['inset'] = "auto" should set the property value 
+PASS e.style['inset'] = "-10px" should set the property value 
+PASS e.style['inset'] = "calc(-0.5em + 10px) -20%" should set the property value 
+PASS e.style['inset'] = "auto auto" should set the property value 
+PASS e.style['inset'] = "10px calc(-0.5em + 10px) -30px" should set the property value 
+PASS e.style['inset'] = "auto auto auto" should set the property value 
+PASS e.style['inset'] = "10px calc(-0.5em + 10px) auto -30px" should set the property value 
+PASS e.style['inset'] = "auto auto auto auto" should set the property value 
 

@@ -377,20 +377,32 @@ print GPERF << "EOF";
     }
 }
 
+EOF
+
+if (%runtimeFlags) {
+  print GPERF << "EOF";
 bool isEnabledCSSProperty(const CSSPropertyID id)
 {
     switch (id) {
 EOF
-
-foreach my $name (keys %runtimeFlags) {
-  print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
-  print GPERF "        return RuntimeEnabledFeatures::sharedFeatures()." . $runtimeFlags{$name} . "Enabled();\n";
-}
-
-print GPERF << "EOF";
+  foreach my $name (keys %runtimeFlags) {
+    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+    print GPERF "        return RuntimeEnabledFeatures::sharedFeatures()." . $runtimeFlags{$name} . "Enabled();\n";
+  }
+  print GPERF << "EOF";
     default:
         return true;
     }
+EOF
+} else {
+  print GPERF << "EOF";
+bool isEnabledCSSProperty(const CSSPropertyID)
+{
+    return true;
+EOF
+}
+
+print GPERF << "EOF";
 }
 
 bool isCSSPropertyEnabledBySettings(const CSSPropertyID id, const Settings* settings)

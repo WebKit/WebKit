@@ -4,7 +4,7 @@ FAIL Margin properties on mrow (rtl) assert_approx_equals: top margin expected 4
 FAIL Margin properties on mrow (shorthand) assert_approx_equals: top margin expected 20 +/- 1 but got 40
 FAIL Margin properties on mrow (logical) assert_approx_equals: top margin expected 40 +/- 1 but got 80
 FAIL Margin properties on mrow (logical, rtl) assert_approx_equals: top margin expected 40 +/- 1 but got 80
-FAIL Margin properties on mrow (logical, shorthand) assert_approx_equals: left margin expected 20 +/- 1 but got 0
+FAIL Margin properties on mrow (logical, shorthand) assert_approx_equals: top margin expected 30 +/- 1 but got 60
 
 
 

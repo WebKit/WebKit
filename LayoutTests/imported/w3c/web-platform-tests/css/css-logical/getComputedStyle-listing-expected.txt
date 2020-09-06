@@ -11,10 +11,10 @@ PASS border-inline-end-width
 PASS border-inline-start-color 
 PASS border-inline-start-style 
 PASS border-inline-start-width 
-FAIL inset-block-start assert_true: The computed style has the property inset-block-start or insetBlockStart. expected true got false
-FAIL inset-block-end assert_true: The computed style has the property inset-block-end or insetBlockEnd. expected true got false
-FAIL inset-inline-start assert_true: The computed style has the property inset-inline-start or insetInlineStart. expected true got false
-FAIL inset-inline-end assert_true: The computed style has the property inset-inline-end or insetInlineEnd. expected true got false
+PASS inset-block-start 
+PASS inset-block-end 
+PASS inset-inline-start 
+PASS inset-inline-end 
 PASS margin-block-start 
 PASS margin-block-end 
 PASS margin-inline-start 

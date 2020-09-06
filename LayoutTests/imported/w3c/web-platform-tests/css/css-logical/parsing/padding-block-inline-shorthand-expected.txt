@@ -1,14 +1,14 @@
 
-FAIL e.style['padding-block'] = "0% 10px" should set padding-block-end assert_equals: padding-block-end should be canonical expected "10px" but got ""
-FAIL e.style['padding-block'] = "0% 10px" should set padding-block-start assert_equals: padding-block-start should be canonical expected "0%" but got ""
-FAIL e.style['padding-block'] = "0% 10px" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['padding-block'] = "20%" should set padding-block-end assert_equals: padding-block-end should be canonical expected "20%" but got ""
-FAIL e.style['padding-block'] = "20%" should set padding-block-start assert_equals: padding-block-start should be canonical expected "20%" but got ""
-FAIL e.style['padding-block'] = "20%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['padding-inline'] = "10px 30%" should set padding-inline-end assert_equals: padding-inline-end should be canonical expected "30%" but got ""
-FAIL e.style['padding-inline'] = "10px 30%" should set padding-inline-start assert_equals: padding-inline-start should be canonical expected "10px" but got ""
-FAIL e.style['padding-inline'] = "10px 30%" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['padding-inline'] = "0%" should set padding-inline-end assert_equals: padding-inline-end should be canonical expected "0%" but got ""
-FAIL e.style['padding-inline'] = "0%" should set padding-inline-start assert_equals: padding-inline-start should be canonical expected "0%" but got ""
-FAIL e.style['padding-inline'] = "0%" should not set unrelated longhands assert_true: expected true got false
+PASS e.style['padding-block'] = "0% 10px" should set padding-block-end 
+PASS e.style['padding-block'] = "0% 10px" should set padding-block-start 
+PASS e.style['padding-block'] = "0% 10px" should not set unrelated longhands 
+PASS e.style['padding-block'] = "20%" should set padding-block-end 
+PASS e.style['padding-block'] = "20%" should set padding-block-start 
+PASS e.style['padding-block'] = "20%" should not set unrelated longhands 
+PASS e.style['padding-inline'] = "10px 30%" should set padding-inline-end 
+PASS e.style['padding-inline'] = "10px 30%" should set padding-inline-start 
+PASS e.style['padding-inline'] = "10px 30%" should not set unrelated longhands 
+PASS e.style['padding-inline'] = "0%" should set padding-inline-end 
+PASS e.style['padding-inline'] = "0%" should set padding-inline-start 
+PASS e.style['padding-inline'] = "0%" should not set unrelated longhands 
 

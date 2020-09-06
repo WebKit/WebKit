@@ -1,3 +1,68 @@
+2020-09-05  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Ship flow-relative shorthand and offset properties
+        https://bugs.webkit.org/show_bug.cgi?id=216178
+
+        Reviewed by Darin Adler.
+
+        Update test expectations and remove instances of
+        <!-- webkit-test-runner [ internal:CSSLogicalEnabled=true ] -->
+
+        * web-platform-tests/css/css-cascade/parsing/all-valid-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-001-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-002-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-003-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-004-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-005-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-007-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-016-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-007-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-012-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-014-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-016-expected.txt:
+        * web-platform-tests/css/css-logical/animation-001-expected.txt:
+        * web-platform-tests/css/css-logical/animation-002-expected.txt:
+        * web-platform-tests/css/css-logical/getComputedStyle-listing-expected.txt:
+        * web-platform-tests/css/css-logical/inheritance-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-color.html:
+        * web-platform-tests/css/css-logical/logical-box-border-shorthands.html:
+        * web-platform-tests/css/css-logical/logical-box-border-style.html:
+        * web-platform-tests/css/css-logical/logical-box-border-width.html:
+        * web-platform-tests/css/css-logical/logical-box-inset.html:
+        * web-platform-tests/css/css-logical/logical-box-margin.html:
+        * web-platform-tests/css/css-logical/logical-box-padding.html:
+        * web-platform-tests/css/css-logical/parsing/border-block-color-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-block-color-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-block-style-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-block-style-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-block-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-block-width-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-block-width-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-inline-color-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-inline-color-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-inline-style-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-inline-style-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-inline-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-inline-width-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/border-inline-width-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/inset-block-inline-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/inset-block-inline-shorthand-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/inset-block-inline-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/inset-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/inset-shorthand-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/inset-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/margin-block-inline-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/margin-block-inline-shorthand-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/margin-block-inline-valid-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/padding-block-inline-computed-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/padding-block-inline-shorthand-expected.txt:
+        * web-platform-tests/css/css-logical/parsing/padding-block-inline-valid-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-001-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-001-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-001-expected.txt:
+        * web-platform-tests/quirks/unitless-length/excluded-properties-001.html:
+        * web-platform-tests/quirks/unitless-length/excluded-properties-003.html:
+
 2020-09-05  Alex Christensen  <achristensen@webkit.org>
 
         XML documents in iframes should not inherit encoding from parent frame

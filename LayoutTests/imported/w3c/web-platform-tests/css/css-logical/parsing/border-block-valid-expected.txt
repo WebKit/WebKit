@@ -1,6 +1,6 @@
 
-FAIL e.style['border-block'] = "1px dotted red" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['border-block'] = "double" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['border-block'] = "1px dotted red" should set the property value 
+PASS e.style['border-block'] = "double" should set the property value 
 PASS e.style['border-block-start'] = "green double thin" should set the property value 
 PASS e.style['border-block-start'] = "green" should set the property value 
 PASS e.style['border-block-end'] = "thin" should set the property value 

@@ -11,8 +11,8 @@ PASS Property padding-block-start value 'calc(10px - 0.5em)'
 PASS Property padding-block-end value 'calc(10px + 0.5em)' 
 PASS Property padding-inline-start value 'calc(10px + 0.5em)' 
 PASS Property padding-inline-end value 'calc(10px - 0.5em)' 
-FAIL Property padding-block value '10px' assert_true: padding-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property padding-block value '10px 20px' assert_true: padding-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property padding-inline value '30px' assert_true: padding-inline doesn't seem to be supported in the computed style expected true got false
-FAIL Property padding-inline value '30px 40px' assert_true: padding-inline doesn't seem to be supported in the computed style expected true got false
+PASS Property padding-block value '10px' 
+PASS Property padding-block value '10px 20px' 
+PASS Property padding-inline value '30px' 
+PASS Property padding-inline value '30px 40px' 
 

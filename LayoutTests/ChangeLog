@@ -1,3 +1,19 @@
+2020-09-05  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Ship flow-relative shorthand and offset properties
+        https://bugs.webkit.org/show_bug.cgi?id=216178
+
+        Reviewed by Darin Adler.
+
+        css-properties-behind-flags.html used to check that CSS properties
+        disabled behind a flag were effectible disabled.
+        But there is no longer any CSS property disabled behind a flag, so I'm
+        just removing it.
+
+        * platform/mac/TestExpectations:
+        * webexposed/css-properties-behind-flags-expected.txt: Removed.
+        * webexposed/css-properties-behind-flags.html: Removed.
+
 2020-09-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow DOM breakpoints to be configured

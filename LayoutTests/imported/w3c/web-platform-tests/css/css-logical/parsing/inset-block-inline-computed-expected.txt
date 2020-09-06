@@ -1,14 +1,14 @@
 
-FAIL Property inset-block-start value 'auto' assert_true: inset-block-start doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-block-end value '-10px' assert_true: inset-block-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-inline-start value '-20%' assert_true: inset-inline-start doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-inline-end value 'calc(10px - 0.5em)' assert_true: inset-inline-end doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-block value 'auto' assert_true: inset-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-block value '-10px' assert_true: inset-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-block value 'calc(10px - 0.5em) -20%' assert_true: inset-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-block value 'auto auto' assert_true: inset-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-inline value '-20%' assert_true: inset-inline doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-inline value 'calc(10px - 0.5em)' assert_true: inset-inline doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-inline value '-10px auto' assert_true: inset-inline doesn't seem to be supported in the computed style expected true got false
-FAIL Property inset-inline value 'auto calc(10px + 0.5em)' assert_true: inset-inline doesn't seem to be supported in the computed style expected true got false
+PASS Property inset-block-start value 'auto' 
+PASS Property inset-block-end value '-10px' 
+PASS Property inset-inline-start value '-20%' 
+PASS Property inset-inline-end value 'calc(10px - 0.5em)' 
+PASS Property inset-block value 'auto' 
+PASS Property inset-block value '-10px' 
+PASS Property inset-block value 'calc(10px - 0.5em) -20%' 
+PASS Property inset-block value 'auto auto' 
+PASS Property inset-inline value '-20%' 
+PASS Property inset-inline value 'calc(10px - 0.5em)' 
+PASS Property inset-inline value '-10px auto' 
+PASS Property inset-inline value 'auto calc(10px + 0.5em)' 
 

@@ -4,7 +4,7 @@ PASS Border properties on mrow (rtl)
 PASS Border properties on mrow (shorthand) 
 PASS Border properties on mrow (logical) 
 PASS Border properties on mrow (logical, rtl) 
-FAIL Border properties on mrow (logical, shorthand) assert_approx_equals: left border expected 20 +/- 1 but got 0
+PASS Border properties on mrow (logical, shorthand) 
 
 
 

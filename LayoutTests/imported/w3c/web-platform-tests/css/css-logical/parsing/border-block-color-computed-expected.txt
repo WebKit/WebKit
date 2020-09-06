@@ -3,8 +3,8 @@ PASS Property border-block-start-color value 'currentcolor'
 PASS Property border-block-start-color value 'rgb(2, 3, 4)' 
 PASS Property border-block-end-color value 'rgb(34, 51, 68)' 
 PASS Property border-block-end-color value 'transparent' 
-FAIL Property border-block-color value 'rgb(34, 51, 68)' assert_true: border-block-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-block-color value 'transparent rgb(2, 3, 4)' assert_true: border-block-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-block-color value 'rgb(2, 3, 4) rgb(2, 3, 4)' assert_true: border-block-color doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-block-color value 'currentcolor lime' assert_true: border-block-color doesn't seem to be supported in the computed style expected true got false
+PASS Property border-block-color value 'rgb(34, 51, 68)' 
+PASS Property border-block-color value 'transparent rgb(2, 3, 4)' 
+PASS Property border-block-color value 'rgb(2, 3, 4) rgb(2, 3, 4)' 
+PASS Property border-block-color value 'currentcolor lime' 
 

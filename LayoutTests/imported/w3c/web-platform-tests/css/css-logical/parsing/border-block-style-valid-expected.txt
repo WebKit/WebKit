@@ -9,7 +9,7 @@ PASS e.style['border-block-end-style'] = "double" should set the property value
 PASS e.style['border-block-end-style'] = "hidden" should set the property value 
 PASS e.style['border-block-end-style'] = "outset" should set the property value 
 PASS e.style['border-block-end-style'] = "ridge" should set the property value 
-FAIL e.style['border-block-style'] = "dotted" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['border-block-style'] = "double groove" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['border-block-style'] = "hidden hidden" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['border-block-style'] = "dotted" should set the property value 
+PASS e.style['border-block-style'] = "double groove" should set the property value 
+PASS e.style['border-block-style'] = "hidden hidden" should set the property value 
 
