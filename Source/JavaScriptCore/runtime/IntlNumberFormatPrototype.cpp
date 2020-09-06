@@ -115,6 +115,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObjec
     // 11.3.3 Intl.NumberFormat.prototype.format (ECMA-402 2.0)
     // 1. Let nf be this NumberFormat object.
     auto* nf = IntlNumberFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!nf))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s));
 
@@ -162,6 +163,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(JSGlob
     // 11.3.5 Intl.NumberFormat.prototype.resolvedOptions() (ECMA-402 2.0)
 
     auto* numberFormat = IntlNumberFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!numberFormat))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat"_s));
 
