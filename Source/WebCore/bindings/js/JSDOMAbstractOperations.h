@@ -32,10 +32,7 @@ namespace WebCore {
 // Implementations of the abstract operations defined at
 // https://heycam.github.io/webidl/#legacy-platform-object-abstract-ops
 
-enum class LegacyOverrideBuiltIns {
-    No,
-    Yes
-};
+enum class LegacyOverrideBuiltIns { No, Yes };
 
 // An implementation of the 'named property visibility algorithm'
 // https://heycam.github.io/webidl/#dfn-named-property-visibility

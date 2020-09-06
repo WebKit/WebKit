@@ -1,3 +1,15 @@
+2020-09-05  Sam Weinig  <weinig@apple.com>
+
+        Fix formatting of LegacyOverrideBuiltIns
+        https://bugs.webkit.org/show_bug.cgi?id=216218
+
+        Reviewed by Darin Adler.
+
+        Neglected to fix this bit of feedback in a previous change. Makes 
+        enum class LegacyOverrideBuiltIns a bit more readable.
+
+        * bindings/js/JSDOMAbstractOperations.h:
+
 2020-09-05  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Use min-content size for intrinsic maximums resolution
