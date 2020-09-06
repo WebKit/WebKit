@@ -282,6 +282,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'font-property': self.validate_boolean,
             'getter': self.validate_string,
             'high-priority': self.validate_boolean,
+            'sink-priority': self.validate_boolean,
             'initial': self.validate_string,
             'internal-only': self.validate_boolean,
             'longhands': self.validate_array,

@@ -67,6 +67,7 @@ my %settingsFlags;
 my $numPredefinedProperties = 2;
 my %nameIsInherited;
 my %nameIsHighPriority;
+my %namePriorityShouldSink;
 my %propertiesWithStyleBuilderOptions;
 my %styleBuilderOptions = (
     "animatable" => 1, # Defined in Source/WebCore/style/StyleBuilderConverter.h
@@ -241,6 +242,8 @@ sub addProperty($$)
                     next;
                 } elsif ($codegenOptionName eq "high-priority") {
                     $nameIsHighPriority{$name} = 1;
+                } elsif ($codegenOptionName eq "sink-priority") {
+                    $namePriorityShouldSink{$name} = 1;
                 } elsif ($codegenOptionName eq "related-property") {
                     $relatedProperty{$name} = $codegenProperties->{"related-property"}
                 } elsif ($codegenOptionName eq "aliases") {
@@ -277,6 +280,12 @@ sub sortByDescendingPriorityAndName
     }
     if (!!$nameIsHighPriority{$a} > !!$nameIsHighPriority{$b}) {
         return -1;
+    }
+    if (!!$namePriorityShouldSink{$a} < !!$namePriorityShouldSink{$b}) {
+        return -1;
+    }
+    if (!!$namePriorityShouldSink{$a} > !!$namePriorityShouldSink{$b}) {
+        return 1;
     }
     # Sort names without leading '-' to the front
     if (substr($a, 0, 1) eq "-" && substr($b, 0, 1) ne "-") {

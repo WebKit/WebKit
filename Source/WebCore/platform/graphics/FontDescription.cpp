@@ -63,6 +63,7 @@ FontDescription::FontDescription()
     , m_opticalSizing(static_cast<unsigned>(FontOpticalSizing::Enabled))
     , m_fontStyleAxis(FontCascadeDescription::initialFontStyleAxis() == FontStyleAxis::ital)
     , m_shouldAllowUserInstalledFonts(static_cast<unsigned>(AllowUserInstalledFonts::No))
+    , m_shouldDisableLigaturesForSpacing(false)
 {
 }
 

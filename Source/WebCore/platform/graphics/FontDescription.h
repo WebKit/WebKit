@@ -96,6 +96,7 @@ public:
     FontOpticalSizing opticalSizing() const { return static_cast<FontOpticalSizing>(m_opticalSizing); }
     FontStyleAxis fontStyleAxis() const { return m_fontStyleAxis ? FontStyleAxis::ital : FontStyleAxis::slnt; }
     AllowUserInstalledFonts shouldAllowUserInstalledFonts() const { return static_cast<AllowUserInstalledFonts>(m_shouldAllowUserInstalledFonts); }
+    bool shouldDisableLigaturesForSpacing() const { return m_shouldDisableLigaturesForSpacing; }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setItalic(Optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
@@ -131,6 +132,7 @@ public:
     void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = static_cast<unsigned>(sizing); }
     void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
     void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = static_cast<unsigned>(shouldAllowUserInstalledFonts); }
+    void setShouldDisableLigaturesForSpacing(bool shouldDisableLigaturesForSpacing) { m_shouldDisableLigaturesForSpacing = shouldDisableLigaturesForSpacing; }
 
     static AtomString platformResolveGenericFamily(UScriptCode, const AtomString& locale, const AtomString& familyName);
 
@@ -174,6 +176,7 @@ private:
     unsigned m_opticalSizing : 1; // FontOpticalSizing
     unsigned m_fontStyleAxis : 1; // Whether "font-style: italic" or "font-style: oblique 20deg" was specified
     unsigned m_shouldAllowUserInstalledFonts : 1; // AllowUserInstalledFonts: If this description is allowed to match a user-installed font
+    unsigned m_shouldDisableLigaturesForSpacing : 1; // If letter-spacing is nonzero, we need to disable ligatures, which affects font preparation
 };
 
 inline bool FontDescription::operator==(const FontDescription& other) const
@@ -208,7 +211,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_variantEastAsianRuby == other.m_variantEastAsianRuby
         && m_opticalSizing == other.m_opticalSizing
         && m_fontStyleAxis == other.m_fontStyleAxis
-        && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts;
+        && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts
+        && m_shouldDisableLigaturesForSpacing == other.m_shouldDisableLigaturesForSpacing;
 }
 
 template<class Encoder>
@@ -247,6 +251,7 @@ void FontDescription::encode(Encoder& encoder) const
     encoder << opticalSizing();
     encoder << fontStyleAxis();
     encoder << shouldAllowUserInstalledFonts();
+    encoder << shouldDisableLigaturesForSpacing();
 }
 
 template<class Decoder>
@@ -410,6 +415,11 @@ Optional<FontDescription> FontDescription::decode(Decoder& decoder)
     if (!shouldAllowUserInstalledFonts)
         return WTF::nullopt;
 
+    Optional<bool> shouldDisableLigaturesForSpacing;
+    decoder >> shouldDisableLigaturesForSpacing;
+    if (!shouldDisableLigaturesForSpacing)
+        return WTF::nullopt;
+
     fontDescription.setFeatureSettings(WTFMove(*featureSettings));
 #if ENABLE(VARIATION_FONTS)
     fontDescription.setVariationSettings(WTFMove(*variationSettings));
@@ -443,6 +453,7 @@ Optional<FontDescription> FontDescription::decode(Decoder& decoder)
     fontDescription.setOpticalSizing(*opticalSizing);
     fontDescription.setFontStyleAxis(*fontStyleAxis);
     fontDescription.setShouldAllowUserInstalledFonts(*shouldAllowUserInstalledFonts);
+    fontDescription.setShouldDisableLigaturesForSpacing(*shouldDisableLigaturesForSpacing);
 
     return fontDescription;
 }

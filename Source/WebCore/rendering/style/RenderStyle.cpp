@@ -1816,7 +1816,21 @@ void RenderStyle::setWordSpacing(Length&& value)
     m_rareInheritedData.access().wordSpacing = WTFMove(value);
 }
 
-void RenderStyle::setLetterSpacing(float v) { m_inheritedData.access().fontCascade.setLetterSpacing(v); }
+void RenderStyle::setLetterSpacing(float letterSpacing)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setShouldDisableLigaturesForSpacing(letterSpacing);
+    setFontDescription(WTFMove(description));
+    fontCascade().update(currentFontSelector);
+
+    setLetterSpacingWithoutUpdatingFontDescription(letterSpacing);
+}
+
+void RenderStyle::setLetterSpacingWithoutUpdatingFontDescription(float letterSpacing)
+{
+    m_inheritedData.access().fontCascade.setLetterSpacing(letterSpacing);
+}
 
 void RenderStyle::setFontSize(float size)
 {

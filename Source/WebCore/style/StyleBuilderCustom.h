@@ -88,6 +88,7 @@ public:
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ImageResolution);
 #endif
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(LetterSpacing);
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
 #endif
@@ -609,6 +610,61 @@ DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Repeat)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Slice)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Width)
 
+static inline void applyLetterSpacing(BuilderState& builderState, float letterSpacing)
+{
+    // Setting the letter-spacing from a positive value to another positive value shouldn't require fonts to get updated.
+
+    bool shouldDisableLigaturesForSpacing = letterSpacing;
+    if (shouldDisableLigaturesForSpacing != builderState.fontDescription().shouldDisableLigaturesForSpacing()) {
+        auto fontDescription = builderState.fontDescription();
+        fontDescription.setShouldDisableLigaturesForSpacing(letterSpacing);
+        builderState.setFontDescription(WTFMove(fontDescription));
+    }
+
+    builderState.style().setLetterSpacingWithoutUpdatingFontDescription(letterSpacing);
+}
+
+inline void BuilderCustom::applyInheritLetterSpacing(BuilderState& builderState)
+{
+    applyLetterSpacing(builderState, builderState.parentStyle().letterSpacing());
+}
+
+inline void BuilderCustom::applyInitialLetterSpacing(BuilderState& builderState)
+{
+    applyLetterSpacing(builderState, RenderStyle::initialLetterSpacing());
+}
+
+void maybeUpdateFontForLetterSpacing(BuilderState& builderState, CSSValue& value)
+{
+    // This is unfortunate. It's related to https://github.com/w3c/csswg-drafts/issues/5498.
+    //
+    // From StyleBuilder's point of view, there's a dependency cycle:
+    // letter-spacing accepts an arbitrary <length>, which must be resolved against a font, which must
+    // be selected after all the properties that affect font selection are processed, but letter-spacing
+    // itself affects font selection because it can disable font features. StyleBuilder has some (valid)
+    // ASSERT()s which would fire because of this cycle.
+    //
+    // There isn't *actually* a dependency cycle, though, as none of the font-relative units are
+    // actually sensitive to font features (luckily). The problem is that our StyleBuilder is only
+    // smart enough to consider fonts as one indivisible thing, rather than having the deeper
+    // understanding that different parts of fonts may or may not depend on each other.
+    //
+    // So, we update the font early here, so that if there is a font-relative unit inside the CSSValue,
+    // its font is updated and ready to go. In the worst case there might be a second call to
+    // updateFont() later, but that isn't bad for perf because 1. It only happens twice if there is
+    // actually a font-relative unit passed to letter-spacing, and 2. updateFont() internally has logic
+    // to only do work if the font is actually dirty.
+
+    if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isFontRelativeLength())
+        builderState.updateFont();
+}
+
+inline void BuilderCustom::applyValueLetterSpacing(BuilderState& builderState, CSSValue& value)
+{
+    maybeUpdateFontForLetterSpacing(builderState, value);
+    applyLetterSpacing(builderState, BuilderConverter::convertSpacing(builderState, value));
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 
 inline void BuilderCustom::applyInheritLineHeight(BuilderState& builderState)
@@ -749,7 +805,7 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-    FontCascadeDescription fontDescription = builderState.style().fontDescription();
+    FontCascadeDescription fontDescription = builderState.fontDescription();
     if (primitiveValue.valueID() == CSSValueAuto)
         fontDescription.setSpecifiedLocale(nullAtom());
     else
@@ -889,7 +945,7 @@ inline void BuilderCustom::applyValueWebkitBoxShadow(BuilderState& builderState,
 
 inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
 {
-    auto fontDescription = builderState.style().fontDescription();
+    auto fontDescription = builderState.fontDescription();
     auto initialDesc = FontCascadeDescription();
 
     // We need to adjust the size to account for the generic family change from monospace to non-monospace.
@@ -905,7 +961,7 @@ inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
 
 inline void BuilderCustom::applyInheritFontFamily(BuilderState& builderState)
 {
-    auto fontDescription = builderState.style().fontDescription();
+    auto fontDescription = builderState.fontDescription();
     auto parentFontDescription = builderState.parentStyle().fontDescription();
 
     fontDescription.setFamilies(parentFontDescription.families());
@@ -917,7 +973,7 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
 {
     auto& valueList = downcast<CSSValueList>(value);
 
-    auto fontDescription = builderState.style().fontDescription();
+    auto fontDescription = builderState.fontDescription();
     // Before mapping in a new font-family property, we should reset the generic family.
     bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
 
@@ -1555,7 +1611,7 @@ inline void BuilderCustom::applyValueFontVariantEastAsian(BuilderState& builderS
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)
 {
-    auto fontDescription = builderState.style().fontDescription();
+    auto fontDescription = builderState.fontDescription();
     float size = Style::fontSizeForKeyword(CSSValueMedium, fontDescription.useFixedDefaultSize(), builderState.document());
 
     if (size < 0)
@@ -1574,7 +1630,7 @@ inline void BuilderCustom::applyInheritFontSize(BuilderState& builderState)
     if (size < 0)
         return;
 
-    auto fontDescription = builderState.style().fontDescription();
+    auto fontDescription = builderState.fontDescription();
     fontDescription.setKeywordSize(parentFontDescription.keywordSize());
     builderState.setFontSize(fontDescription, size);
     builderState.setFontDescription(WTFMove(fontDescription));
@@ -1641,7 +1697,7 @@ inline void BuilderCustom::applyValueFontStyle(BuilderState& builderState, CSSVa
 
 inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSValue& value)
 {
-    auto fontDescription = builderState.style().fontDescription();
+    auto fontDescription = builderState.fontDescription();
     fontDescription.setKeywordSizeFromIdentifier(CSSValueInvalid);
 
     float parentSize = builderState.parentStyle().fontDescription().specifiedSize();

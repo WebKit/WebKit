@@ -109,6 +109,11 @@
         "",
         "* high-priority:",
         "Whether the property needs to be applied before non-high-priority properties",
+        "in CSS cascading order. High priority properties must not accept <length>",
+        "values. All font-properties must be high-priority.",
+        "",
+        "* sink-priority:",
+        "Whether the property needs to be applied at the end of its priority bucket",
         "in CSS cascading order.",
         "",
         "* related-property:",
@@ -2671,6 +2676,10 @@
         "letter-spacing": {
             "inherited": true,
             "codegen-properties": {
+                "custom": "All",
+                "font-property": true,
+                "high-priority": true,
+                "sink-priority": true,
                 "converter": "Spacing"
             },
             "specification": {

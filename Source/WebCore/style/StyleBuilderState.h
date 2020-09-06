@@ -40,6 +40,9 @@ class StyleResolver;
 namespace Style {
 
 class Builder;
+class BuilderState;
+
+void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
 
 struct BuilderContext {
     Ref<const Document> document;
@@ -98,6 +101,8 @@ public:
     CSSToStyleMap& styleMap() { return m_styleMap; }
 
 private:
+    // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
+    friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
     friend class Builder;
 
     void adjustStyleForInterCharacterRuby();

@@ -1,3 +1,17 @@
+2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Letter-spacing should disable ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=176215
+        <rdar://problem/17044265>
+
+        Reviewed by Antti Koivisto.
+
+        This test is sensitive the order of the CSSPropertyID enum values.
+
+        * web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt: Apparently this
+        test is sensitive to the ordering of CSSPropertyID enum values in CSSPropertyNames.h.
+        I filed https://bugs.webkit.org/show_bug.cgi?id=216170 about this.
+
 2020-09-05  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Use min-content size for intrinsic maximums resolution

@@ -1,3 +1,20 @@
+2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Letter-spacing should disable ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=176215
+        <rdar://problem/17044265>
+
+        Reviewed by Antti Koivisto.
+
+        imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-001.html passes now.
+
+        * TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt:
+        Apparently this test is sensitive to the ordering of CSSPropertyID enum values in CSSPropertyNames.h.
+        I filed https://bugs.webkit.org/show_bug.cgi?id=216170 about this.
+        * platform/mac-wk1/editing/mac/attributed-string/letter-spacing-expected.txt: Updated.
+        * platform/mac-mojave-wk1/editing/mac/attributed-string/letter-spacing-expected.txt: Updated
+
 2020-09-05  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Use min-content size for intrinsic maximums resolution

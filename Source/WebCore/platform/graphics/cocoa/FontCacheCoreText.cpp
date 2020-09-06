@@ -560,6 +560,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     const auto& features = fontDescription.featureSettings();
     const auto& variantSettings = fontDescription.variantSettings();
     auto textRenderingMode = fontDescription.textRenderingMode();
+    auto shouldDisableLigaturesForSpacing = fontDescription.shouldDisableLigaturesForSpacing();
 
     // We might want to check fontType.trackingType == FontType::TrackingType::Manual here, but in order to maintain compatibility with the rest of the system, we don't.
     bool noFontFeatureSettings = features.isEmpty();
@@ -572,7 +573,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     bool variantSettingsIsNormal = variantSettings.isAllNormal();
     bool dontNeedToApplyOpticalSizing = fontOpticalSizing == FontOpticalSizing::Enabled && !forceOpticalSizingOn;
     bool fontFaceDoesntSpecifyFeatures = !fontFaceFeatures || fontFaceFeatures->isEmpty();
-    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures) {
+    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && !shouldDisableLigaturesForSpacing) {
 #if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
         return originalFont;
 #else
@@ -580,37 +581,53 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 #endif
     }
 
-    // This algorithm is described at http://www.w3.org/TR/css3-fonts/#feature-precedence
+    // This algorithm is described at https://drafts.csswg.org/css-fonts-4/#feature-variation-precedence
     FeaturesMap featuresToBeApplied;
+
+    auto applyFeature = [&](const FontTag& tag, int value) {
+        // AAT doesn't differentiate between liga and clig. We need to make sure they always agree.
+        featuresToBeApplied.set(tag, value);
+        if (fontType.aatShaping) {
+            if (tag == fontFeatureTag("liga"))
+                featuresToBeApplied.set(fontFeatureTag("clig"), value);
+            else if (tag == fontFeatureTag("clig"))
+                featuresToBeApplied.set(fontFeatureTag("liga"), value);
+        }
+    };
 
     // Step 1: CoreText handles default features (such as required ligatures).
 
-    // Step 2: Consult with font-variant-* inside @font-face
-    // This no longer happens any more: https://github.com/w3c/csswg-drafts/issues/2531
-
-    // Step 3: Consult with font-feature-settings inside @font-face
+    // Step 6: Consult with font-feature-settings inside @font-face
     if (fontFaceFeatures) {
         for (auto& fontFaceFeature : *fontFaceFeatures)
-            featuresToBeApplied.set(fontFaceFeature.tag(), fontFaceFeature.value());
+            applyFeature(fontFaceFeature.tag(), fontFaceFeature.value());
     }
 
-    // Step 4: Font-variant
+    // Step 10: Font-variant
     for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings))
-        featuresToBeApplied.set(newFeature.key, newFeature.value);
+        applyFeature(newFeature.key, newFeature.value);
 
-    // Step 5: Other properties (text-rendering)
+    // Step 11: Other properties
     if (textRenderingMode == TextRenderingMode::OptimizeSpeed) {
-        featuresToBeApplied.set(fontFeatureTag("liga"), 0);
-        featuresToBeApplied.set(fontFeatureTag("clig"), 0);
-        featuresToBeApplied.set(fontFeatureTag("dlig"), 0);
-        featuresToBeApplied.set(fontFeatureTag("hlig"), 0);
-        featuresToBeApplied.set(fontFeatureTag("calt"), 0);
+        applyFeature(fontFeatureTag("liga"), 0);
+        applyFeature(fontFeatureTag("clig"), 0);
+        applyFeature(fontFeatureTag("dlig"), 0);
+        applyFeature(fontFeatureTag("hlig"), 0);
+        applyFeature(fontFeatureTag("calt"), 0);
+    }
+    if (shouldDisableLigaturesForSpacing) {
+        applyFeature(fontFeatureTag("liga"), 0);
+        applyFeature(fontFeatureTag("clig"), 0);
+        applyFeature(fontFeatureTag("dlig"), 0);
+        applyFeature(fontFeatureTag("hlig"), 0);
+        // Core Text doesn't disable calt when letter-spacing is applied, so we won't either.
     }
 
-    // Step 6: Font-feature-settings
+    // Step 13: Font-feature-settings
     for (auto& newFeature : features)
-        featuresToBeApplied.set(newFeature.tag(), newFeature.value());
+        applyFeature(newFeature.tag(), newFeature.value());
 
+    // The variation fonts are separated from the font features because they don't conflict, and allow us to only have a single ENABLE().
 #if ENABLE(VARIATION_FONTS)
     VariationsMap variationsToBeApplied;
 
@@ -624,6 +641,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         variationsToBeApplied.set(tag, valueToApply);
     };
 
+    // Step 2: font-weight, font-stretch, and font-style
     // The system font is somewhat magical. Don't mess with its variations.
     if (applyWeightWidthSlopeVariations && !fontIsSystemFont(originalFont)) {
         float weight = fontSelectionRequest.weight;
@@ -648,6 +666,13 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
             applyVariation({{'s', 'l', 'n', 't'}}, slope);
     }
 
+    // FIXME: Implement Step 5: font-named-instance
+
+    // FIXME: Implement Step 6: the font-variation-settings descriptor inside @font-face
+
+    // FIXME: Move font-optical-sizing handling here. It should be step 9.
+
+    // Step 12: font-variation-settings
     for (auto& newVariation : variations)
         applyVariation(newVariation.tag(), newVariation.value());
 #endif // ENABLE(VARIATION_FONTS)
@@ -678,6 +703,8 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     }
 #endif
 
+    // Step 9: font-optical-sizing
+    // FIXME: Apply this before font-variation-settings
     if (forceOpticalSizingOn || textRenderingMode == TextRenderingMode::OptimizeLegibility) {
 #if HAVE(CORETEXT_AUTO_OPTICAL_SIZING)
         CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, CFSTR("auto"));

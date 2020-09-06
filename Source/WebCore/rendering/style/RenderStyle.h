@@ -963,7 +963,10 @@ public:
     void setWhiteSpace(WhiteSpace v) { m_inheritedFlags.whiteSpace = static_cast<unsigned>(v); }
 
     void setWordSpacing(Length&&);
+
+    // If letter-spacing is nonzero, we disable ligatures, which means this property affects font preparation.
     void setLetterSpacing(float);
+    void setLetterSpacingWithoutUpdatingFontDescription(float);
 
     void clearBackgroundLayers() { m_backgroundData.access().background = FillLayer::create(FillLayerType::Background); }
     void inheritBackgroundLayers(const FillLayer& parent) { m_backgroundData.access().background = FillLayer::create(parent); }
