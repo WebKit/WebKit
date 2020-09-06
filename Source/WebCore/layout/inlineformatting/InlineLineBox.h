@@ -38,6 +38,21 @@ namespace Layout {
 
 class InlineFormattingContext;
 
+// LineBox contains all the inline boxes both horizontally and vertically. It only has width and height geometry.
+//
+//   ____________________________________________________________ Line Box
+// |                                    --------------
+// |                                   |              |
+// | ----------------------------------|--------------|---------- Root Inline Box
+// ||   _____    ___      ___          |              |
+// ||  |        /   \    /   \         |  Inline Box  |
+// ||  |_____  |     |  |     |        |              |    ascent
+// ||  |       |     |  |     |        |              |
+// ||__|________\___/____\___/_________|______________|_______ alignment_baseline
+// ||
+// ||                                                      descent
+// ||_______________________________________________________________
+// |________________________________________________________________
 class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -80,57 +95,34 @@ public:
 
     enum class IsLastLineWithInlineContent { No, Yes };
     enum class IsLineVisuallyEmpty { No, Yes };
-    LineBox(const InlineFormattingContext&, const InlineLayoutPoint& topLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit contentLogicalWidth, const Line::RunList&, IsLineVisuallyEmpty, IsLastLineWithInlineContent);
+    LineBox(const InlineFormattingContext&, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, const Line::RunList&, IsLineVisuallyEmpty, IsLastLineWithInlineContent);
 
-    InlineLayoutUnit logicalLeft() const { return m_rect.left(); }
-    InlineLayoutUnit logicalRight() const { return m_rect.right(); }
-    InlineLayoutUnit logicalTop() const { return m_rect.top(); }
-    InlineLayoutUnit logicalBottom() const { return m_rect.bottom(); }
-    InlineLayoutUnit logicalWidth() const { return m_rect.width(); }
-    InlineLayoutUnit logicalHeight() const { return m_rect.height(); }
-
-    const Display::InlineRect& logicalRect() const { return m_rect; }
-    const Display::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
+    InlineLayoutUnit logicalWidth() const { return m_logicalSize.width(); }
+    InlineLayoutUnit logicalHeight() const { return m_logicalSize.height(); }
+    InlineLayoutSize logicalSize() const { return m_logicalSize; }
 
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
+    bool isLineVisuallyEmpty() const { return m_isLineVisuallyEmpty; }
 
     const InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineBoxRectMap.get(&layoutBox); }
     Display::InlineRect inlineRectForTextRun(const Line::Run&) const;
 
-    // _____________________________________________________ line box logical top
-    //                      ^
-    //                      |
-    //   ____________________________________ root inline box
-    //   ^                  |
-    //   |                  |
-    //   | root line ascent |
-    //   |                  |
-    //   v                  v
-    //   ___________________________________________________ alignment baseline
-    //   ^
-    //   | root line descent
-    //   v
-    //   ___________________________________
-    // _____________________________________________________ line box logical bottom
     InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox.logicalTop() + m_rootInlineBox.baseline(); }
 
 private:
-    void constructInlineBoxes(const Line::RunList&, IsLineVisuallyEmpty);
+    void constructInlineBoxes(const Line::RunList&);
     void computeInlineBoxesLogicalHeight();
-    void alignInlineBoxesVerticallyAndComputeLineBoxHeight(IsLineVisuallyEmpty);
+    void alignInlineBoxesVerticallyAndComputeLineBoxHeight();
 
     InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) { return *m_inlineBoxRectMap.get(&layoutBox); }
-
-    InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
     const InlineFormattingContext& formattingContext() const;
     const Box& root() const;
     LayoutState& layoutState() const;
 
 private:
-    Display::InlineRect m_rect;
-    Display::InlineRect m_scrollableOverflow;
-    InlineLayoutUnit m_contentLogicalWidth { 0 };
+    InlineLayoutSize m_logicalSize;
+    bool m_isLineVisuallyEmpty { true };
 
     InlineBox m_rootInlineBox;
 

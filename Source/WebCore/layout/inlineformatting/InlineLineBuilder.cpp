@@ -302,7 +302,9 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContent.hasValue());
     auto lineIsVisuallyEmpty = m_line.isVisuallyEmpty() ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No;
     return LineContent { committedContent.partialTrailingContent, committedRange, m_floats, m_line.hasIntrusiveFloat()
-        , LineBox { formattingContext(), lineLogicalTopLeft, m_line.lineLogicalWidth(), m_line.contentLogicalWidth(), m_line.runs(), lineIsVisuallyEmpty
+        , lineLogicalTopLeft
+        , m_line.lineLogicalWidth()
+        , LineBox { formattingContext(), m_line.lineLogicalWidth(), m_line.contentLogicalWidth(), m_line.runs(), lineIsVisuallyEmpty
         , isLastLine ? LineBox::IsLastLineWithInlineContent::Yes : LineBox::IsLastLineWithInlineContent::No }
         , m_line.runs() };
 }

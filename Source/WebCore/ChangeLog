@@ -1,3 +1,69 @@
+2020-09-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineBox should contain all inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=216221
+
+        Reviewed by Antti Koivisto.
+
+        In this patch we decouple the line box and the line.
+
+        Previously the LineBox was pretty much representing the line.
+        It was responsible for both placing the inline boxes and sizing the line and position itself based on line-height/half leading.
+        Now the LineBox is only responsible for placing the inline boxes and sizing itself, it has no position geometry anymore neither
+        does it compute the line height.
+        The line size is computed later using the combination of line-height property/LineBox height/FontMetrics::lineSpacing/half leading.
+        This geometry is preserved in Display::LineBox (this needs to be renamed to Display::Line).
+
+        1. LineBuilder places the runs on the line after each other (at this point they only have horizontal geometry).
+        2. LineBreaker tells when to stop.
+        3. We start constructing inline boxes for the runs (root inline box etc) and place them inside an LineBox. This is when horizontal and vertical alignment happen.
+        4. We use the fully sized LineBox to compute the line geometry. Note that the line's geometry does not necessarily match the LineBox width/height (see below).
+        5. We construct a Display::LineBox for the line and Display::Runs for the runs inside the inline boxes.
+
+        LineBox:
+        - fully contains all the inline boxes, both horizontally and vertically.
+        - has only width and height geometry
+        - height is not constrained by the line-height property
+        - does not have the concept of overflow.
+
+        Line:
+        - contains the LineBox, but the LineBox can overflow the line, both horizontally and vertically.
+        - has position relative to the root block container.
+
+        Simple case.
+        <div>font went crazy with line spacing</div>
+          ___________________________________________  line
+        |                    ^                       |
+        |                    | line spacing          |
+        |                    v                       |
+        | -------------------------------------------|---------  LineBox
+        ||    ^                                      |         |
+        ||    | line box height                      |         |
+        ||----v--------------------------------------|-------- | alignment baseline
+        | -------------------------------------------|---------
+        |                    ^                       |   ^
+        |                    | line spacing          |   |
+        |____________________v_______________________|  scrollable overflow
+
+
+         When glyphs in subsequent lines overflow:
+         <div style="line-height: 5px; font-size: 20px;">line box overflows the line</div>
+            ___________________________________________  LineBox
+          |                          ^                 |
+          |                          | line box height |
+          |                          |                 |
+         -|--------------------------|-----------------|-  Line
+        | |     ^                    |                 | |
+        | |     | line height        |                 | |
+         -|-----v--------------------|-----------------|-
+          |                          |                 |
+          |--------------------------|-----------------| alignment baseline
+          |                          |                 |
+          |__________________________v_________________|
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::createDisplayBoxesForLineContent):
+
 2020-09-06  Darin Adler  <darin@apple.com>
 
         TextCodec refinements

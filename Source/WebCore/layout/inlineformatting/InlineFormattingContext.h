@@ -87,7 +87,12 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectInlineContentIfNeeded();
-    void setDisplayBoxesForLine(const LineBuilder::LineContent&, const HorizontalConstraints&);
+    Display::InlineRect createDisplayBoxesForLineContent(const LineBuilder::LineContent&, const HorizontalConstraints&);
+    struct LineRectAndLineBoxOffset {
+        InlineLayoutUnit lineBoxVerticalOffset;
+        Display::InlineRect logicalRect;
+    };
+    LineRectAndLineBoxOffset computedLineLogicalRect(const LineBuilder::LineContent&) const;
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }

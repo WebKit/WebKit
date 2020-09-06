@@ -150,12 +150,13 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : WTF::nullopt;
         auto initialLineConstraints = ConstraintsForInFlowContent { constraints.horizontal, { lineLogicalTop, makeOptional(toLayoutUnit(quirks().initialLineHeight())) } };
         auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, initialLineConstraints, isFirstLine);
-        setDisplayBoxesForLine(lineContent, constraints.horizontal);
+        auto lineLogicalRect = createDisplayBoxesForLineContent(lineContent, constraints.horizontal);
+
         auto lineContentRange = lineContent.inlineItemRange;
         if (!lineContentRange.isEmpty()) {
             ASSERT(needsLayoutRange.start < lineContentRange.end);
             isFirstLine = false;
-            lineLogicalTop = lineContent.lineBox.logicalBottom();
+            lineLogicalTop = lineLogicalRect.bottom();
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
             auto lastInlineItemNeedsPartialLayout = lineContent.partialContent.hasValue();
             if (lastInlineItemNeedsPartialLayout) {
@@ -178,7 +179,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         ASSERT(lineContent.runs.isEmpty());
         ASSERT(lineContent.hasIntrusiveFloat);
         // Move the next line below the intrusive float.
-        auto floatConstraints = floatingContext.constraints(lineLogicalTop, toLayoutUnit(lineContent.lineBox.logicalBottom()));
+        auto floatConstraints = floatingContext.constraints(lineLogicalTop, toLayoutUnit(lineLogicalRect.bottom()));
         ASSERT(floatConstraints.left || floatConstraints.right);
         static auto inifitePoint = PointInContextRoot::max();
         // In case of left and right constraints, we need to pick the one that's closer to the current line.
@@ -390,10 +391,54 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     }
 }
 
-void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
+InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::computedLineLogicalRect(const LineBuilder::LineContent& lineContent) const
+{
+    // Compute the line height and the line box vertical offset.
+    // The line height is either the line-height value (negative value means line height is not set) or the font metrics's line spacing/line box height.
+    // The line box is then positioned using the half leading centering.
+    //   ___________________________________________  line
+    // |                    ^                       |
+    // |                    | line spacing          |
+    // |                    v                       |
+    // | -------------------------------------------|---------  LineBox
+    // ||    ^                                      |         |
+    // ||    | line box height                      |         |
+    // ||----v--------------------------------------|-------- | alignment baseline
+    // | -------------------------------------------|---------
+    // |                    ^                       |   ^
+    // |                    | line spacing          |   |
+    // |____________________v_______________________|  scrollable overflow
+    //
+    if (lineContent.runs.isEmpty() || lineContent.lineBox.isLineVisuallyEmpty())
+        return { { }, { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, { } } };
+    auto& rootStyle = root().style();
+    auto& fontMetrics = rootStyle.fontMetrics();
+    InlineLayoutUnit lineSpacing = fontMetrics.lineSpacing();
+    auto& lineBox = lineContent.lineBox;
+    auto lineLogicalHeight = rootStyle.lineHeight().isNegative() ? std::max(lineBox.logicalHeight(), lineSpacing) : rootStyle.computedLineHeight();
+    auto logicalRect = Display::InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineLogicalHeight};
+
+    auto halfLeadingOffset = [&] {
+        InlineLayoutUnit ascent = fontMetrics.ascent();
+        InlineLayoutUnit descent = fontMetrics.descent();
+        // 10.8.1 Leading and half-leading
+        auto halfLeading = (lineLogicalHeight - (ascent + descent)) / 2;
+        // Inline tree height is all integer based.
+        return floorf(ascent + halfLeading);
+    }();
+    auto lineBoxOffset = logicalRect.height() == lineBox.logicalHeight() ? InlineLayoutUnit() : halfLeadingOffset - lineBox.alignmentBaseline();
+    return { lineBoxOffset, logicalRect };
+}
+
+Display::InlineRect InlineFormattingContext::createDisplayBoxesForLineContent(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
     auto& lineBox = lineContent.lineBox;
+    auto lineRectAndLineBoxOffset = computedLineLogicalRect(lineContent);
+    auto lineLogicalRect = lineRectAndLineBoxOffset.logicalRect;
+    auto lineBoxVerticalOffset = lineRectAndLineBoxOffset.lineBoxVerticalOffset;
+    auto scrollableOverflow = Display::InlineRect { lineLogicalRect.topLeft(), std::max(lineLogicalRect.width(), lineBox.logicalWidth()), std::max(lineLogicalRect.height(), lineBoxVerticalOffset + lineBox.logicalHeight()) };
+
     if (!lineContent.floats.isEmpty()) {
         auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };
         // Move floats to their final position.
@@ -401,8 +446,8 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineCont
             auto& floatBox = floatCandidate.item->layoutBox();
             auto& displayBox = formattingState.displayBox(floatBox);
             // Set static position first.
-            auto verticalStaticPosition = floatCandidate.isIntrusive ? lineBox.logicalTop() : lineBox.logicalBottom();
-            displayBox.setTopLeft({ lineBox.logicalLeft(), verticalStaticPosition });
+            auto verticalStaticPosition = floatCandidate.isIntrusive ? lineLogicalRect.top() : lineLogicalRect.bottom();
+            displayBox.setTopLeft({ lineLogicalRect.left(), verticalStaticPosition });
             // Float it.
             displayBox.setTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
             floatingContext.append(floatBox);
@@ -417,7 +462,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineCont
         initialContaingBlockSize = geometryForBox(root().initialContainingBlock(), EscapeReason::StrokeOverflowNeedsViewportGeometry).contentBox().size();
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
     auto lineIndex = inlineContent.lineBoxes.size();
-    auto lineInkOverflow = lineBox.scrollableOverflow();
+    auto lineInkOverflow = scrollableOverflow;
     // Compute final box geometry.
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
@@ -443,7 +488,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineCont
             auto logicalRect = lineRun.isBox() ? lineBox.inlineBoxForLayoutBox(layoutBox).logicalRect() : lineBox.inlineRectForTextRun(lineRun);
             // Inline boxes are relative to the line box while final Display::Runs need to be relative to the parent Display:Box
             // FIXME: Shouldn't we just leave them be relative to the line box?
-            logicalRect.moveBy({ lineBox.logicalLeft(), lineBox.logicalTop() });
+            logicalRect.moveBy({ lineLogicalRect.left(), lineLogicalRect.top() + lineBoxVerticalOffset });
             auto inkOverflow = computedInkOverflow(logicalRect);
             lineInkOverflow.expandToContain(inkOverflow);
             inlineContent.runs.append({ lineIndex, layoutBox, logicalRect, inkOverflow, lineRun.expansion(), lineRun.textContent() });
@@ -456,6 +501,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineCont
             auto& displayBox = formattingState.displayBox(layoutBox);
             auto& inlineBox = lineBox.inlineBoxForLayoutBox(layoutBox);
             auto topLeft = inlineBox.logicalRect().topLeft();
+            topLeft.move({ }, lineBoxVerticalOffset);
             if (layoutBox.isInFlowPositioned())
                 topLeft += geometry().inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
             displayBox.setTopLeft(toLayoutPoint(topLeft));
@@ -468,17 +514,17 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder::LineCont
             }
         }
     }
-    // FIXME: This is where the logical to physical translate should happen.
     auto constructDisplayLine = [&] {
-        // FIXME: Layout::LineBox should contain all inline boxes and it should not have neither top/left geometry nor overflow. 
-        auto lineRect = lineBox.logicalRect();
+        // FIXME: This is where the logical to physical translate should happen.
         if (auto horizontalAlignmentOffset = lineBox.horizontalAlignmentOffset()) {
             // Painting code (specifically TextRun's xPos) needs the aligned offset to be able to compute tab positions.
-            lineRect.moveHorizontally(*horizontalAlignmentOffset);
+            lineLogicalRect.moveHorizontally(*horizontalAlignmentOffset);
         }
-        inlineContent.lineBoxes.append({ lineRect, lineBox.scrollableOverflow(), lineInkOverflow, lineBox.alignmentBaseline() });
+        // FIXME: Display::LineBox should really be named Display::Line
+        inlineContent.lineBoxes.append({ lineLogicalRect, scrollableOverflow, lineInkOverflow, lineBoxVerticalOffset + lineBox.alignmentBaseline() });
     };
     constructDisplayLine();
+    return lineLogicalRect;
 }
 
 void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)

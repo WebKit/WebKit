@@ -38,6 +38,7 @@ public:
     Rect() = default;
     Rect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height);
     Rect(LayoutPoint topLeft, LayoutUnit width, LayoutUnit height);
+    Rect(const LayoutPoint& topLeft, const LayoutSize&);
     
     LayoutUnit top() const;
     LayoutUnit left() const;
@@ -110,6 +111,11 @@ inline Rect::Rect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit 
 
 inline Rect::Rect(LayoutPoint topLeft, LayoutUnit width, LayoutUnit height)
     : Rect(topLeft.y(), topLeft.x(), width, height)
+{
+}
+
+inline Rect::Rect(const LayoutPoint& topLeft, const LayoutSize& size)
+    : Rect(topLeft.y(), topLeft.x(), size.width(), size.height())
 {
 }
 

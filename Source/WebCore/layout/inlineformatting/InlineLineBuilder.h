@@ -61,6 +61,8 @@ public:
         using FloatList = Vector<Float>;
         const FloatList& floats;
         bool hasIntrusiveFloat { false };
+        InlineLayoutPoint logicalTopLeft;
+        InlineLayoutUnit lineLogicalWidth;
         const LineBox lineBox;
         const Line::RunList& runs;
     };
