@@ -37,7 +37,7 @@ class PaintFrequencyTracker {
 public:
     PaintFrequencyTracker() = default;
 
-    void begin()
+    void begin(MonotonicTime timestamp)
     {
         static unsigned paintFrequencyPaintCountThreshold = 30;
         static Seconds paintFrequencyTimePerFrameThreshold = 32_ms;
@@ -46,14 +46,13 @@ public:
         // Start by assuming the paint frequency is low
         m_paintFrequency = PaintFrequency::Low;
 
-        MonotonicTime now = MonotonicTime::now();
         if (!m_firstPaintTime) {
             // Handle the first time this method is called.
-            m_firstPaintTime = now;
-        } else if (now - m_lastPaintTime > paintFrequencySecondsIdleThreshold) {
+            m_firstPaintTime = timestamp;
+        } else if (timestamp - m_lastPaintTime > paintFrequencySecondsIdleThreshold) {
             // It has been 5 seconds since last time we draw this renderer. Reset the state
             // of this object as if, we've just started tracking the paint frequency.
-            m_firstPaintTime = now;
+            m_firstPaintTime = timestamp;
             m_totalPaints = 0;
         } else if (m_totalPaints >= paintFrequencyPaintCountThreshold && ((m_lastPaintTime - m_firstPaintTime) / m_totalPaints) <= paintFrequencyTimePerFrameThreshold) {
             // Change the paint frequency to be high only if:
@@ -62,7 +61,7 @@ public:
             m_paintFrequency = PaintFrequency::High;
         }
 
-        m_lastPaintTime = now;
+        m_lastPaintTime = timestamp;
         ++m_totalPaints;
     }
 
@@ -79,19 +78,19 @@ private:
     MonotonicTime m_lastPaintTime;
     unsigned m_totalPaints { 0 };
 
-    enum class PaintFrequency { Low, High };
+    enum class PaintFrequency : bool { Low, High };
     PaintFrequency m_paintFrequency { PaintFrequency::Low };
 };
 
 class SinglePaintFrequencyTracking {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SinglePaintFrequencyTracking(PaintFrequencyTracker& paintFrequencyTracker, bool track = true)
+    SinglePaintFrequencyTracking(PaintFrequencyTracker& paintFrequencyTracker, MonotonicTime timestamp, bool track = true)
         : m_paintFrequencyTracker(paintFrequencyTracker)
         , m_track(track)
     {
         if (m_track)
-            m_paintFrequencyTracker.begin();
+            m_paintFrequencyTracker.begin(timestamp);
     }
 
     ~SinglePaintFrequencyTracking()

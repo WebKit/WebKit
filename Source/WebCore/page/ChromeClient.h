@@ -51,6 +51,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -458,6 +459,8 @@ public:
     virtual void didAddFooterLayer(GraphicsLayer&) { }
 
     virtual bool shouldUseTiledBackingForFrameView(const FrameView&) const { return false; }
+
+    virtual MonotonicTime timestampForPaintFrequencyTracking() const { return MonotonicTime::now(); }
 
     virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags, uint64_t) { }
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }

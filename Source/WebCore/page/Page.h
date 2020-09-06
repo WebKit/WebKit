@@ -775,6 +775,8 @@ public:
     bool hasBeenNotifiedToInjectUserScripts() const { return m_hasBeenNotifiedToInjectUserScripts; }
     WEBCORE_EXPORT void notifyToInjectUserScripts();
 
+    MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1069,6 +1071,8 @@ private:
     bool m_canUseCredentialStorage { true };
     ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
+
+    MonotonicTime m_lastRenderingUpdateTimestamp;
 };
 
 inline PageGroup& Page::group()

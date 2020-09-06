@@ -1438,6 +1438,8 @@ void Page::updateRendering()
         return;
     }
 
+    m_lastRenderingUpdateTimestamp = MonotonicTime::now();
+
     bool isSVGImagePage = chrome().client().isSVGImageChromeClient();
     if (!isSVGImagePage)
         tracePoint(RenderingUpdateStart);

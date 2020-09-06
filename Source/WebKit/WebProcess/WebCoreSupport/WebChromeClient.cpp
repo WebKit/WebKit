@@ -1160,6 +1160,11 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameVi
     return m_page.drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
+MonotonicTime WebChromeClient::timestampForPaintFrequencyTracking() const
+{
+    return isSVGImageChromeClient() ? MonotonicTime::now() : m_page.corePage()->lastRenderingUpdateTimestamp();
+}
+
 void WebChromeClient::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state, uint64_t sourceElementID)
 {
     m_page.send(Messages::WebPageProxy::IsPlayingMediaDidChange(state, sourceElementID));

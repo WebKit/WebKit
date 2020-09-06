@@ -1,3 +1,47 @@
+2020-09-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [MotionMark] RenderLayer::paintLayerContents spends ~5% of the time in MonotonicTime::now() in Multiply
+        https://bugs.webkit.org/show_bug.cgi?id=216190
+
+        Reviewed by Darin Adler.
+
+        In several of MotionMark's subtests (for instance, Multiply), we spent a large amount of time underneath
+        `RenderLayer::paintLayerContents` due to both the large number of layers and the need to frequently repaint
+        each layer (all of which are constantly being animated). Underneath this method, a nontrivial amount of time
+        (~5%) is then spent grabbing the system time via `MonotonicTime::now()`.
+
+        We can avoid this extra work by instead using the timestamp of the last rendering update (before we started
+        painting), which we keep track of using a new member variable on `Page`. See below for more details, as well as
+        the WebKit2 ChangeLog.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::timestampForPaintFrequencyTracking const):
+
+        Add a client hook to fetch the timestamp to use when tracking painting frequency. See the WebKit2 ChangeLog for
+        more details.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+
+        Update `m_lastRenderingUpdateTimestamp`.
+
+        * page/Page.h:
+        (WebCore::Page::lastRenderingUpdateTimestamp const):
+        * rendering/PaintFrequencyTracker.h:
+
+        Drive-by cleanup: narrow the `PaintFrequency` enum to `bool` width.
+
+        (WebCore::PaintFrequencyTracker::begin):
+        (WebCore::SinglePaintFrequencyTracking::SinglePaintFrequencyTracking):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+
+        Call out to the client layer to return a timestamp for tracking painting frequency. By default, this is simply
+        the current time (`MonotonicTime::now()`), but ports (namely, WebKit2) may opt for a coarser granularity.
+
+        (WebCore::RenderLayer::simulateFrequentPaint):
+        * rendering/RenderLayer.h:
+
 2020-09-05  Sam Weinig  <weinig@apple.com>
 
         Fix formatting of LegacyOverrideBuiltIns

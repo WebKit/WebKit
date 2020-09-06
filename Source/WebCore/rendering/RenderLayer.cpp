@@ -4629,7 +4629,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     bool selectionAndBackgroundsOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionAndBackgroundsOnly);
     bool selectionOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionOnly);
 
-    SinglePaintFrequencyTracking singlePaintFrequencyTracking(m_paintFrequencyTracker, shouldPaintContent);
+    SinglePaintFrequencyTracking singlePaintFrequencyTracking(m_paintFrequencyTracker, page().chrome().client().timestampForPaintFrequencyTracking(), shouldPaintContent && !context.performingPaintInvalidation());
 
     LayerFragments layerFragments;
     RenderObject* subtreePaintRootForRenderer = nullptr;
@@ -7023,6 +7023,11 @@ bool RenderLayer::isTransparentRespectingParentFrames() const
     }
 
     return false;
+}
+
+void RenderLayer::simulateFrequentPaint()
+{
+    SinglePaintFrequencyTracking { m_paintFrequencyTracker, page().chrome().client().timestampForPaintFrequencyTracking() };
 }
 
 #if !LOG_DISABLED
