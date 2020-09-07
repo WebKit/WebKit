@@ -1,3 +1,18 @@
+2020-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Add memory cache with/without validation to logResourceResponseSource
+        https://bugs.webkit.org/show_bug.cgi?id=216244
+        <rdar://problem/64184239>
+
+        Reviewed by Darin Adler.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::logResourceResponseSource):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::memoryCacheKey):
+        (WebCore::DiagnosticLoggingKeys::memoryCacheAfterValidationKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2020-09-06  Darin Adler  <darin@apple.com>
 
         Make TextCodecCJK and TextCodecSingleByte thread-safe and refactor a bit to share code
