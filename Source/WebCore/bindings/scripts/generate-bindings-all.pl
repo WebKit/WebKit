@@ -85,8 +85,9 @@ if ($supplementalDependencyFile) {
         readSupplementalDependencyFile($supplementalDependencyFile, \%oldSupplements) if -e $supplementalDependencyFile;
         my @args = (File::Spec->catfile($scriptDir, 'preprocess-idls.pl'),
                     '--defines', $defines,
-                    '--idlFilesList', $ppIDLFilesList,
+                    '--idlFileNamesList', $ppIDLFilesList,
                     '--supplementalDependencyFile', $supplementalDependencyFile,
+                    '--idlAttributesFile', $idlAttributesFile,
                     @ppExtraArgs);
         printProgress("Preprocess IDL");
         executeCommand($perl, @args) == 0 or die;

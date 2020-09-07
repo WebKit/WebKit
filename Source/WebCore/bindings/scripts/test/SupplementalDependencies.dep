@@ -267,3 +267,5 @@ WorkletGlobalScopeConstructors.idl:
 # Dictionaries dependencies
 JSTestDerivedDictionary.cpp: TestInheritedDictionary.idl
 JSTestDerivedDictionary2.cpp: TestInheritedDictionary.idl TestInheritedDictionary2.idl
+JSTestEventConstructor.cpp: EventInit.idl
+JSTestPromiseRejectionEvent.cpp: EventInit.idl

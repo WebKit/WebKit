@@ -23,14 +23,20 @@ use warnings;
 use FindBin;
 use lib $FindBin::Bin;
 
+use English;
 use File::Basename;
 use Getopt::Long;
 use Cwd;
 use Config;
+use Class::Struct;
+use JSON::PP;
+use Data::Dumper;
+
+use IDLParser;
 
 my $defines;
 my $preprocessor;
-my $idlFilesList;
+my $idlFileNamesList;
 my $testGlobalContextName;
 my $supplementalDependencyFile;
 my $isoSubspacesHeaderFile;
@@ -42,10 +48,16 @@ my $workletGlobalScopeConstructorsFile;
 my $paintWorkletGlobalScopeConstructorsFile;
 my $testGlobalScopeConstructorsFile;
 my $supplementalMakefileDeps;
+my $idlAttributesFile;
+
+# Toggle this to validate that the fast regular expression based "parsing" used
+# in this file produces the same results as the slower results produced by the
+# complete IDLParser.
+my $validateAgainstParser = 0;
 
 GetOptions('defines=s' => \$defines,
            'preprocessor=s' => \$preprocessor,
-           'idlFilesList=s' => \$idlFilesList,
+           'idlFileNamesList=s' => \$idlFileNamesList,
            'testGlobalContextName=s' => \$testGlobalContextName,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
            'isoSubspacesHeaderFile=s' => \$isoSubspacesHeaderFile,
@@ -56,7 +68,9 @@ GetOptions('defines=s' => \$defines,
            'workletGlobalScopeConstructorsFile=s' => \$workletGlobalScopeConstructorsFile,
            'paintWorkletGlobalScopeConstructorsFile=s' => \$paintWorkletGlobalScopeConstructorsFile,
            'testGlobalScopeConstructorsFile=s' => \$testGlobalScopeConstructorsFile,
-           'supplementalMakefileDeps=s' => \$supplementalMakefileDeps);
+           'supplementalMakefileDeps=s' => \$supplementalMakefileDeps,
+           'idlAttributesFile=s' => \$idlAttributesFile,
+           'validateAgainstParser' => \$validateAgainstParser);
 
 die('Must specify #define macros using --defines.') unless defined($defines);
 die('Must specify an output file using --supplementalDependencyFile.') unless defined($supplementalDependencyFile);
@@ -67,7 +81,8 @@ die('Must specify an output file using --serviceWorkerGlobalScopeConstructorsFil
 die('Must specify an output file using --workletGlobalScopeConstructorsFile.') unless defined($workletGlobalScopeConstructorsFile);
 die('Must specify an output file using --paintWorkletGlobalScopeConstructorsFile.') unless defined($paintWorkletGlobalScopeConstructorsFile);
 die('Must specify an output file using --testGlobalScopeConstructorsFile.') unless defined($testGlobalScopeConstructorsFile) || !defined($testGlobalContextName);
-die('Must specify the file listing all IDLs using --idlFilesList.') unless defined($idlFilesList);
+die('Must specify the file listing all IDLs using --idlFileNamesList.') unless defined($idlFileNamesList);
+die('Must specify IDL attributes file using --idlAttributesFile.') unless defined($idlAttributesFile);
 
 $supplementalDependencyFile = CygwinPathIfNeeded($supplementalDependencyFile);
 $isoSubspacesHeaderFile = CygwinPathIfNeeded($isoSubspacesHeaderFile);
@@ -79,13 +94,35 @@ $workletGlobalScopeConstructorsFile = CygwinPathIfNeeded($workletGlobalScopeCons
 $paintWorkletGlobalScopeConstructorsFile = CygwinPathIfNeeded($paintWorkletGlobalScopeConstructorsFile);
 $supplementalMakefileDeps = CygwinPathIfNeeded($supplementalMakefileDeps) if defined($supplementalMakefileDeps);
 
-my @idlFiles;
-open(my $fh, '<', $idlFilesList) or die "Cannot open $idlFilesList";
-@idlFiles = map { CygwinPathIfNeeded(s/\r?\n?$//r) } <$fh>;
+my @idlFileNames;
+open(my $fh, '<', $idlFileNamesList) or die "Cannot open $idlFileNamesList";
+@idlFileNames = map { CygwinPathIfNeeded(s/\r?\n?$//r) } <$fh>;
 close($fh) or die;
 
-my %interfaceNameToIdlFile;
-my %idlFileToInterfaceName;
+my $idlAttributes;
+if ($validateAgainstParser) {
+    my $input;
+    {
+        local $INPUT_RECORD_SEPARATOR;
+        open(JSON, "<", $idlAttributesFile) or die "Couldn't open $idlAttributesFile: $!";
+        $input = <JSON>;
+        close(JSON);
+    }
+
+    my $jsonDecoder = JSON::PP->new->utf8;
+    my $jsonHashRef = $jsonDecoder->decode($input);
+    $idlAttributes = $jsonHashRef->{attributes};
+}
+
+struct( IDLFile => {
+    fileName => '$',
+    fileContents => '$',
+    primaryDeclarationName => '$',
+    parsedDocument => '$'
+});
+
+my %interfaceNameToIdlFilePath;
+my %idlFilePathToInterfaceName;
 my %supplementalDependencies;
 my %dictionaryDependencies;
 my %supplementals;
@@ -112,23 +149,25 @@ public:
     DOMIsoSubspaces() = default;
 END
 
-# Get rid of duplicates in idlFiles array.
-my %idlFileHash = map { $_, 1 } @idlFiles;
+# Get rid of duplicates in idlFileNames array.
+my %idlFileNameHash = map { $_, 1 } @idlFileNames;
 
-# Populate $idlFileToInterfaceName and $interfaceNameToIdlFile.
-foreach my $idlFile (sort keys %idlFileHash) {
-    my $fullPath = Cwd::realpath($idlFile);
-    my $interfaceName = fileparse(basename($idlFile), ".idl");
-    $idlFileToInterfaceName{$fullPath} = $interfaceName;
-    $interfaceNameToIdlFile{$interfaceName} = $fullPath;
+# Populate $idlFilePathToInterfaceName and $interfaceNameToIdlFilePath.
+foreach my $idlFileName (sort keys %idlFileNameHash) {
+    my $fullPath = Cwd::realpath($idlFileName);
+    my $interfaceName = fileparse(basename($idlFileName), ".idl");
+    $idlFilePathToInterfaceName{$fullPath} = $interfaceName;
+    $interfaceNameToIdlFilePath{$interfaceName} = $fullPath;
 }
 
 # Parse all IDL files.
-foreach my $idlFile (sort keys %idlFileHash) {
-    my $fullPath = Cwd::realpath($idlFile);
-    my $idlFileContents = getFileContents($fullPath);
+foreach my $idlFileName (sort keys %idlFileNameHash) {
+    my $fullPath = Cwd::realpath($idlFileName);
+    
+    my $idlFile = processIDL($idlFileName, $fullPath);
+
     # Handle partial names.
-    my $partialNames = getPartialNamesFromIDL($idlFileContents);
+    my $partialNames = getPartialNamesFromIDL($idlFile);
     if (@{$partialNames}) {
         $supplementalDependencies{$fullPath} = $partialNames;
         next;
@@ -136,31 +175,34 @@ foreach my $idlFile (sort keys %idlFileHash) {
 
     $supplementals{$fullPath} = [];
 
-    updateDictionaryDependencies($idlFileContents, $idlFile);
+    my $baseDictionaries = getUndefinedBaseDictionariesFromIDL($idlFile);
+    if (@{$baseDictionaries}) {
+        $dictionaryDependencies{$idlFile->primaryDeclarationName} = (join(".idl ", @{$baseDictionaries}) . ".idl");
+    }
 
     # Skip if the IDL file does not contain an interface or a callback interface.
     # The IDL may contain a dictionary.
-    next unless containsInterfaceFromIDL($idlFileContents);
+    next unless containsInterfaceOrCallbackInterfaceFromIDL($idlFile);
 
-    my $interfaceName = fileparse(basename($idlFile), ".idl");
+    my $interfaceName = $idlFile->primaryDeclarationName;
     # Handle include statements.
-    my $includedInterfaces = getIncludedInterfacesFromIDL($idlFileContents, $interfaceName);
+    my $includedInterfaces = getIncludedInterfacesFromIDL($idlFile, $interfaceName);
     foreach my $includedInterface (@{$includedInterfaces}) {
-        my $includedIdlFile = $interfaceNameToIdlFile{$includedInterface};
-        die "Could not find a the IDL file where the following included interface is defined: $includedInterface" unless $includedIdlFile;
-        if ($supplementalDependencies{$includedIdlFile}) {
-            push(@{$supplementalDependencies{$includedIdlFile}}, $interfaceName);
+        my $includedIdlFilePath = $interfaceNameToIdlFilePath{$includedInterface};
+        die "Could not find a the IDL file where the following included interface is defined: $includedInterface" unless $includedIdlFilePath;
+        if ($supplementalDependencies{$includedIdlFilePath}) {
+            push(@{$supplementalDependencies{$includedIdlFilePath}}, $interfaceName);
         } else {
-            $supplementalDependencies{$includedIdlFile} = [$interfaceName];
+            $supplementalDependencies{$includedIdlFilePath} = [$interfaceName];
         }
     }
 
-    next if isMixinInterfaceFromIDL($idlFileContents);
+    next if isMixinInterfaceFromIDL($idlFile);
 
-    my $isCallbackInterface = isCallbackInterfaceFromIDL($idlFileContents);
+    my $isCallbackInterface = isCallbackInterfaceFromIDL($idlFile);
     if (!$isCallbackInterface) {
         $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName};\n";
-        if (interfaceIsIterable($idlFileContents)) {
+        if (containsIterableInterfaceFromIDL($idlFile)) {
             $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName}Iterator;\n";
         }
     }
@@ -170,9 +212,9 @@ foreach my $idlFile (sort keys %idlFileHash) {
     # - is a non-callback interface that is not declared with the [LegacyNoInterfaceObject] extended attribute, a corresponding
     #   property must exist on the ECMAScript environment's global object.
     # See https://heycam.github.io/webidl/#es-interfaces
-    my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
+    my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFile);
     if (shouldExposeInterface($extendedAttributes)) {
-        if (!$isCallbackInterface || interfaceHasConstantAttribute($idlFileContents)) {
+        if (!$isCallbackInterface || containsInterfaceWithConstantsFromIDL($idlFile)) {
             my $exposedAttribute = $extendedAttributes->{"Exposed"} || $testGlobalContextName || "Window";
             $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
             my @globalContexts = split(",", $exposedAttribute);
@@ -193,7 +235,7 @@ foreach my $idlFile (sort keys %idlFileHash) {
                 } elsif ($globalContext eq $testGlobalContextName) {
                     $testGlobalScopeConstructorsCode .= $attributeCode;
                 } else {
-                    die "Unsupported global context '$globalContext' used in [Exposed] at $idlFile";
+                    die "Unsupported global context '$globalContext' used in [Exposed] at $idlFileName";
                 }
             }
             $windowConstructorsCode .= $windowAliases if $windowAliases;
@@ -211,13 +253,13 @@ GeneratePartialInterface("PaintWorkletGlobalScope", $paintWorkletGlobalScopeCons
 GeneratePartialInterface($testGlobalContextName, $testGlobalScopeConstructorsCode, $testGlobalScopeConstructorsFile) if defined($testGlobalContextName);
 
 # Resolves partial interfaces and include dependencies.
-foreach my $idlFile (sort keys %supplementalDependencies) {
-    my $baseFiles = $supplementalDependencies{$idlFile};
+foreach my $idlFilePath (sort keys %supplementalDependencies) {
+    my $baseFiles = $supplementalDependencies{$idlFilePath};
     foreach my $baseFile (@{$baseFiles}) {
-        my $targetIdlFile = $interfaceNameToIdlFile{$baseFile} or die "${baseFile}.idl not found, but it is supplemented by $idlFile";
-        push(@{$supplementals{$targetIdlFile}}, $idlFile);
+        my $targetIdlFilePath = $interfaceNameToIdlFilePath{$baseFile} or die "${baseFile}.idl not found, but it is supplemented by $idlFilePath";
+        push(@{$supplementals{$targetIdlFilePath}}, $idlFilePath);
     }
-    delete $supplementals{$idlFile};
+    delete $supplementals{$idlFilePath};
 }
 
 if ($isoSubspacesHeaderFile) {
@@ -238,17 +280,17 @@ if ($isoSubspacesHeaderFile) {
 # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
 # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
 my $dependencies = "";
-foreach my $idlFile (sort keys %supplementals) {
-    $dependencies .= "$idlFile @{$supplementals{$idlFile}}\n";
+foreach my $idlFilePath (sort keys %supplementals) {
+    $dependencies .= "$idlFilePath @{$supplementals{$idlFilePath}}\n";
 }
 WriteFileIfChanged($supplementalDependencyFile, $dependencies);
 
 if ($supplementalMakefileDeps) {
     my $makefileDeps = "# Supplemental dependencies\n";
-    foreach my $idlFile (sort keys %supplementals) {
-        my $basename = $idlFileToInterfaceName{$idlFile};
+    foreach my $idlFilePath (sort keys %supplementals) {
+        my $basename = $idlFilePathToInterfaceName{$idlFilePath};
 
-        my @dependencyList = map { basename($_) } @{$supplementals{$idlFile}};
+        my @dependencyList = map { basename($_) } @{$supplementals{$idlFilePath}};
         my @dependencies = sort(keys %{{ map{$_=>1}@dependencyList}});
 
         $makefileDeps .= "JS${basename}.h: @{dependencies}\n";
@@ -301,7 +343,7 @@ sub GeneratePartialInterface
     WriteFileIfChanged($destinationFile, $contents);
 
     my $fullPath = Cwd::realpath($destinationFile);
-    $supplementalDependencies{$fullPath} = [$interfaceName] if $interfaceNameToIdlFile{$interfaceName};
+    $supplementalDependencies{$fullPath} = [$interfaceName] if $interfaceNameToIdlFilePath{$interfaceName};
 }
 
 sub GenerateConstructorAttributes
@@ -351,72 +393,6 @@ sub GenerateConstructorAttributes
     return ($code, $windowAliasesCode);
 }
 
-sub getFileContents
-{
-    my $idlFile = shift;
-
-    open my $file, "<", $idlFile or die "Could not open $idlFile for reading: $!";
-    my @lines = <$file>;
-    close $file;
-
-    # Filter out preprocessor lines.
-    @lines = grep(!/^\s*#/, @lines);
-
-    return join('', @lines);
-}
-
-sub getPartialNamesFromIDL
-{
-    my $fileContents = shift;
-    my @partialNames = ();
-    while ($fileContents =~ /partial\s+(interface|dictionary)\s+(\w+)/mg) {
-        push(@partialNames, $2);
-    }
-    return \@partialNames;
-}
-
-# identifier-A includes identifier-B;
-# https://heycam.github.io/webidl/#includes-statement
-sub getIncludedInterfacesFromIDL
-{
-    my $fileContents = shift;
-    my $interfaceName = shift;
-
-    my @includedInterfaces = ();
-    while ($fileContents =~ /^\s*(\w+)\s+includes\s+(\w+)\s*;/mg) {
-        die "Identifier on the left of the 'includes' statement should be $interfaceName in $interfaceName.idl, but found $1" if $1 ne $interfaceName;
-        push(@includedInterfaces, $2);
-    }
-    return \@includedInterfaces
-}
-
-sub isCallbackInterfaceFromIDL
-{
-    my $fileContents = shift;
-    return ($fileContents =~ /callback\s+interface\s+\w+/gs);
-}
-
-sub isMixinInterfaceFromIDL
-{
-    my $fileContents = shift;
-    return ($fileContents =~ /interface\s+mixin\s+\w+/gs);
-}
-
-sub interfaceIsIterable
-{
-    my $fileContents = shift;
-    return ($fileContents =~ /iterable\s*<\s*\w+\s*/gs);
-}
-
-sub containsInterfaceFromIDL
-{
-    my $fileContents = shift;
-
-    return 1 if $fileContents =~ /\bcallback\s+interface\s+\w+/gs;
-    return 1 if $fileContents =~ /\binterface\s+\w+/gs;
-    return 0;
-}
-
 sub trim
 {
     my $string = shift;
@@ -424,9 +400,263 @@ sub trim
     return $string;
 }
 
+sub listsAreIdentical
+{
+    my ($list1, $list2) = @_;
+    
+    if (scalar(@{$list1}) != scalar(@{$list2})) {
+        return 0;
+    }
+    
+    for my $i (0 .. $#{$list1}) {
+        if ($list1->[$i] ne $list2->[$i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+sub processIDL
+{
+    my $fileName = shift;
+    my $filePath = shift;
+
+    my $idlFile = IDLFile->new();
+    $idlFile->fileName($fileName);
+    
+    my $primaryDeclarationName = fileparse(basename($fileName), ".idl");
+    $idlFile->primaryDeclarationName($primaryDeclarationName);
+
+    open my $file, "<", $filePath or die "Could not open $idlFile for reading: $!";
+    my @lines = <$file>;
+    close $file;
+
+    # FIXME: It would be useful to remove all c/c++ style comments as well to reduce false parses. Perhaps we can use preprocessor.pm if it is not too expensive.
+    # Filter out preprocessor lines.
+    @lines = grep(!/^\s*#/, @lines);
+
+    $idlFile->fileContents(join('', @lines));
+
+    if ($validateAgainstParser) {
+        my $parser = IDLParser->new(1);
+        $idlFile->parsedDocument($parser->Parse($filePath, $defines, $preprocessor, $idlAttributes));
+    }
+
+    return $idlFile;
+}
+
+sub getPartialNamesFromIDL
+{
+    my $idlFile = shift;
+
+    my $fileContents = $idlFile->fileContents;
+
+    my @partialNames = ();
+    while ($fileContents =~ /partial\s+(interface|dictionary|namespace)\s+(\w+)/mg) {
+        push(@partialNames, $2);
+    }
+    
+    if ($validateAgainstParser) {
+        print("Validating getPartialNamesFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my @partialsFromParsedDocument = ();
+        foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
+            push(@partialsFromParsedDocument, $interface->type->name) if $interface->isPartial;
+        }
+        foreach my $dictionary (@{$idlFile->parsedDocument->dictionaries}) {
+            push(@partialsFromParsedDocument, $dictionary->type->name) if $dictionary->isPartial;
+        }
+        foreach my $namespace (@{$idlFile->parsedDocument->namespaces}) {
+            push(@partialsFromParsedDocument, $namespace->name) if $namespace->isPartial;
+        }
+
+        my @sortedPartialNames = sort @partialNames;
+        my @sortedPartialsFromParsedDocument = sort @partialsFromParsedDocument;
+
+        local $Data::Dumper::Terse = 1;
+        local $Data::Dumper::Indent = 0;
+        unless (listsAreIdentical(\@sortedPartialNames, \@sortedPartialsFromParsedDocument)) {
+            die "FAILURE: Partial declarations from regular expression based parser (" . Dumper(@sortedPartialNames) . ") don't match those from validation parser (" . Dumper(@sortedPartialsFromParsedDocument) . ") [" . $idlFile->fileName . "].";
+        }
+        print "SUCCESS! Partial declarations from regular expression based parser (" . Dumper(@sortedPartialNames) . ") match those from validation parser (" . Dumper(@sortedPartialsFromParsedDocument) . ").\n";
+    }
+    
+    return \@partialNames;
+}
+
+# identifier-A includes identifier-B;
+# https://heycam.github.io/webidl/#includes-statement
+sub getIncludedInterfacesFromIDL
+{
+    my $idlFile = shift;
+    my $interfaceName = shift;
+
+    my $fileContents = $idlFile->fileContents;
+
+    my @includedInterfaces = ();
+    while ($fileContents =~ /^\s*(\w+)\s+includes\s+(\w+)\s*;/mg) {
+        die "Identifier on the left of the 'includes' statement should be $interfaceName in $interfaceName.idl, but found $1" if $1 ne $interfaceName;
+        push(@includedInterfaces, $2);
+    }
+
+    if ($validateAgainstParser) {
+        print("Validating getIncludedInterfacesFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my @includedInterfacesFromParsedDocument = ();
+        foreach my $include (@{$idlFile->parsedDocument->includes}) {
+            push(@includedInterfacesFromParsedDocument, $include->mixinIdentifier);
+        }
+
+        my @sortedIncludedInterfaces = sort @includedInterfaces;
+        my @sortedIncludedInterfacesFromParsedDocument = sort @includedInterfacesFromParsedDocument;
+
+        local $Data::Dumper::Terse = 1;
+        local $Data::Dumper::Indent = 0;
+
+        unless (listsAreIdentical(\@sortedIncludedInterfaces, \@sortedIncludedInterfacesFromParsedDocument)) {
+            die "FAILURE: Included interfaces from regular expression based parser (" . Dumper(@sortedIncludedInterfaces) . ") don't match those from validation parser (" . Dumper(@sortedIncludedInterfacesFromParsedDocument) . ") [" . $idlFile->fileName . "]";
+        }
+        print "SUCCESS! Included interfaces from regular expression based parser (" . Dumper(@sortedIncludedInterfaces) . ") match those from validation parser (" . Dumper(@sortedIncludedInterfacesFromParsedDocument) . ").\n";
+    }
+
+    return \@includedInterfaces
+}
+
+sub isCallbackInterfaceFromIDL
+{
+    my $idlFile = shift;
+
+    my $fileContents = $idlFile->fileContents;
+    my $containsCallbackInterface = ($fileContents =~ /callback\s+interface\s+\w+/gs);
+
+    if ($validateAgainstParser) {
+        print("Validating isCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my $containsCallbackInterfaceFromParsedDocument = 0;
+        foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
+            if ($interface->isCallback) {
+                $containsCallbackInterfaceFromParsedDocument = 1;
+                last;
+            }
+        }
+
+        unless ($containsCallbackInterface == $containsCallbackInterfaceFromParsedDocument ) {
+            die "FAILURE: Determination of whether there is a callback interface from regular expression based parser (" . ($containsCallbackInterface ? "YES" : "NO") . ") doesn't match the determination from the validation parser (" . ($containsCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
+        }
+        print "SUCCESS! Determination of whether there is a callback interface from regular expression based parser (" . ($containsCallbackInterface ? "YES" : "NO") . ") does match the determination from the validation parser (" . ($containsCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ").\n";
+    }
+
+    return $containsCallbackInterface
+}
+
+sub isMixinInterfaceFromIDL
+{
+    my $idlFile = shift;
+
+    my $fileContents = $idlFile->fileContents;
+    my $containsMixinInterface = ($fileContents =~ /interface\s+mixin\s+\w+/gs);
+
+    if ($validateAgainstParser) {
+        print("Validating isCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my $containsMixinInterfaceFromParsedDocument = 0;
+        foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
+            if ($interface->isMixin) {
+                $containsMixinInterfaceFromParsedDocument = 1;
+                last;
+            }
+        }
+
+        unless ($containsMixinInterface == $containsMixinInterfaceFromParsedDocument ) {
+            die "FAILURE: Determination of whether there is a mixin interface from regular expression based parser (" . ($containsMixinInterface ? "YES" : "NO") . ") doesn't match the determination from validation parser (" . ($containsMixinInterfaceFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
+        }
+        print "SUCCESS! Determination of whether there is a mixin interface from regular expression based parser (" . ($containsMixinInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsMixinInterfaceFromParsedDocument ? "YES" : "NO") . ").\n";
+    }
+
+    return $containsMixinInterface;
+}
+
+sub containsIterableInterfaceFromIDL
+{
+    my $idlFile = shift;
+
+    my $fileContents = $idlFile->fileContents;
+    my $containsIterableInterface = ($fileContents =~ /iterable\s*<\s*\w+\s*/gs);
+
+    if ($validateAgainstParser) {
+        print("Validating containsIterableInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my $containsIterableInterfaceFromParsedDocument = 0;
+        foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
+            if ($interface->iterable) {
+                $containsIterableInterfaceFromParsedDocument = 1;
+                last;
+            }
+        }
+
+        unless ($containsIterableInterface == $containsIterableInterfaceFromParsedDocument ) {
+            die "FAILURE: Determination of whether there is an iterable interface from regular expression based parser (" . ($containsIterableInterface ? "YES" : "NO") . ") doesn't match the determination from validation parser (" . ($containsIterableInterfaceFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
+        }
+        print "SUCCESS! Determination of whether there is an iterable interface from regular expression based parser (" . ($containsIterableInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsIterableInterfaceFromParsedDocument ? "YES" : "NO") . ").\n";
+    }
+
+    return $containsIterableInterface;
+}
+
+sub containsInterfaceOrCallbackInterfaceFromIDL
+{
+    my $idlFile = shift;
+
+    my $fileContents = $idlFile->fileContents;
+    my $containsInterfaceOrCallbackInterface = ($fileContents =~ /\b(callback interface|interface)\s+(\w+)/gs);
+
+    if ($validateAgainstParser) {
+        print("Validating containsInterfaceOrCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my $containsInterfaceOrCallbackInterfaceFromParsedDocument = (@{$idlFile->parsedDocument->interfaces} > 0);
+
+        unless ($containsInterfaceOrCallbackInterface == $containsInterfaceOrCallbackInterfaceFromParsedDocument ) {
+            die "FAILURE: Determination of whether there is an interface or callback interface from regular expression based parser (" . ($containsInterfaceOrCallbackInterface ? "YES" : "NO") . ") doesn't match the determination from validation parser (" . ($containsInterfaceOrCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
+        }
+        print "SUCCESS! Determination of whether there is an interface or callback interface from regular expression based parser (" . ($containsInterfaceOrCallbackInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsInterfaceOrCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ").\n";
+    }
+
+    return $containsInterfaceOrCallbackInterface;
+}
+
+sub containsInterfaceWithConstantsFromIDL
+{
+    my $idlFile = shift;
+
+    my $fileContents = $idlFile->fileContents;
+    my $containsInterfaceWithConstants = ($fileContents =~ /\s+const[\s\w]+=\s+[\w]+;/gs);
+
+    if ($validateAgainstParser) {
+        print("Validating containsInterfaceWithConstantsFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my $containsInterfaceWithConstantsFromParsedDocument = 0;
+        foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
+            if (@{$interface->constants} > 0) {
+                $containsInterfaceWithConstantsFromParsedDocument = 1;
+                last;
+            }
+        }
+
+        unless ($containsInterfaceWithConstants == $containsInterfaceWithConstantsFromParsedDocument ) {
+            die "FAILURE: Determination of whether there is an interface with constants from regular expression based parser (" . ($containsInterfaceWithConstants ? "YES" : "NO") . ") doesn't match the determination from validation parser (" . ($containsInterfaceWithConstantsFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
+        }
+        print "SUCCESS! Determination of whether there is an interface with constants from regular expression based parser (" . ($containsInterfaceWithConstants ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsInterfaceWithConstantsFromParsedDocument ? "YES" : "NO") . ").\n";
+    }
+
+    return $containsInterfaceWithConstants;
+}
+
 sub getInterfaceExtendedAttributesFromIDL
 {
-    my $fileContents = shift;
+    my $idlFile = shift;
+
+    my $fileContents = $idlFile->fileContents;
 
     my $extendedAttributes = {};
 
@@ -453,14 +683,87 @@ sub getInterfaceExtendedAttributesFromIDL
         }
     }
 
+    if ($validateAgainstParser) {
+        print("Validating getInterfaceExtendedAttributesFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my $primaryInterface;
+        foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
+            if ($interface->type->name eq $idlFile->primaryDeclarationName) {
+                $primaryInterface = $interface;
+                last;
+            }
+        }
+
+        # FIXME: Comparing the deep structure of the extended attributes is suitably complex that for now
+        # we only validate that both parsers produce the same keys.
+
+        my @sortedExtendedAttributeKeys = sort keys %{$extendedAttributes};
+        my @sortedExtendedAttributeKeysFromParsedDocument = sort keys %{$primaryInterface->extendedAttributes};
+
+        local $Data::Dumper::Terse = 1;
+        local $Data::Dumper::Indent = 0;
+
+        unless (listsAreIdentical(\@sortedExtendedAttributeKeys, \@sortedExtendedAttributeKeysFromParsedDocument)) {
+            die "FAILURE: Extended attributes for the primary interface from regular expression based parser (" . Dumper(@sortedExtendedAttributeKeys) . ") don't match those from validation parser (" . Dumper(@sortedExtendedAttributeKeysFromParsedDocument) . ") [" . $idlFile->fileName . "]";
+        }
+        print "SUCCESS! Extended attributes for the primary interface from regular expression based parser (" . Dumper(@sortedExtendedAttributeKeys) . ") match those from validation parser (" . Dumper(@sortedExtendedAttributeKeysFromParsedDocument) . ").\n";
+    }
+
     return $extendedAttributes;
 }
 
-sub interfaceHasConstantAttribute
+sub getUndefinedBaseDictionariesFromIDL
 {
-    my $fileContents = shift;
+    my $idlFile = shift;
 
-    return $fileContents =~ /\s+const[\s\w]+=\s+[\w]+;/gs;
+    my $fileContents = $idlFile->fileContents;
+
+    my @dictionaryNames = ();
+    while ($fileContents =~ /\s*dictionary\s+(\w+)\s*/mg) {
+        push(@dictionaryNames, $1)
+    }
+
+    $fileContents = $idlFile->fileContents;
+    my @baseDictionaries = ();
+    while ($fileContents =~ /\s*dictionary\s+(\w+)\s+:\s+(\w+)\s*/mg) {
+        next if (grep { $_ eq $2 } @dictionaryNames);
+        next if (grep { $_ eq $2 } @baseDictionaries);
+        push(@baseDictionaries, $2);
+    }
+
+    if ($validateAgainstParser) {
+        print("Validating getUndefinedBaseDictionariesFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+
+        my @dictionaryNamesFromParsedDocument = ();
+        foreach my $dictionary (@{$idlFile->parsedDocument->dictionaries}) {
+            push(@dictionaryNamesFromParsedDocument, $dictionary->type->name);
+        }
+
+        my @baseDictionariesFromParsedDocument = ();
+        foreach my $dictionary (@{$idlFile->parsedDocument->dictionaries}) {
+            # Skip dictionaries without a base type.
+            next if !$dictionary->parentType;
+            # Skip dictionaries that have their base type defined in this document.
+            next if (grep { $_ eq $dictionary->parentType->name } @dictionaryNamesFromParsedDocument);
+            # Skip dictionaries that have already been added to the list.
+            next if (grep { $_ eq $dictionary->parentType->name } @baseDictionariesFromParsedDocument);
+
+            push(@baseDictionariesFromParsedDocument, $dictionary->parentType->name);
+        }
+
+        my @sortedBaseDictionaries = sort @baseDictionaries;
+        my @sortedBaseDictionariesFromParsedDocument = sort @baseDictionariesFromParsedDocument;
+
+        local $Data::Dumper::Terse = 1;
+        local $Data::Dumper::Indent = 0;
+
+        unless (listsAreIdentical(\@sortedBaseDictionaries, \@sortedBaseDictionariesFromParsedDocument)) {
+            die "FAILURE: Undefined base dictionaries from regular expression based parser (" . Dumper(@sortedBaseDictionaries) . ") don't match those from validation parser (" . Dumper(@sortedBaseDictionariesFromParsedDocument) . ") [" . $idlFile->fileName . "]";
+        }
+        print "SUCCESS! Undefined base dictionaries from regular expression based parser (" . Dumper(@sortedBaseDictionaries) . ") match those from validation parser (" . Dumper(@sortedBaseDictionariesFromParsedDocument) . ").\n";
+    }
+
+    return \@baseDictionaries;
 }
 
 sub shouldExposeInterface
@@ -468,19 +771,4 @@ sub shouldExposeInterface
     my $extendedAttributes = shift;
 
     return !$extendedAttributes->{"LegacyNoInterfaceObject"};
-}
-
-sub updateDictionaryDependencies
-{
-    my $fileContents = shift;
-    my $idlFile = shift;
-
-    my $dictionaryName = fileparse(basename($idlFile), ".idl");
-
-    my @baseDictionaries = ();
-    while ($fileContents =~ /\s*dictionary\s+(\w+)\s+:\s+(\w+)\s*/mg) {
-        next if !$interfaceNameToIdlFile{$2} || (grep { $_ eq $2 } @baseDictionaries);
-        push(@baseDictionaries, $2);
-    }
-    $dictionaryDependencies{$dictionaryName} = (join(".idl ", @baseDictionaries) . ".idl") if @baseDictionaries;
 }

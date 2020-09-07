@@ -1,3 +1,52 @@
+2020-09-06  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Add mode to preprocess-idls.pl to validate fast regex based scanner with the normal IDL parser
+        https://bugs.webkit.org/show_bug.cgi?id=216231
+
+        Reviewed by Darin Adler.
+
+        To aid tracking down mistakes in the fast regex based scanner in preprocess-idls.pl, this
+        adds a validation mode to the script which checks the results against what the normal, much
+        slower, IDL parser gets. In building it, it caught that we were not creating a dependency on
+        RTCRtpCodingParameters.idl for dictionaries that derived from it because it was missing from
+        DerivedSources.make/CMakeLists.txt, which would have manifested in confusing build errors
+        in some cases.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * bindings/scripts/generate-bindings-all.pl:
+        Add missing RTCRtpCodingParameters.idl and update invocation of preprocess-idls.pl to 
+        pass in idlAttributesFile, which the parser needs (it is not read when not validating).
+
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        Updated to include missing dictionary dependencies.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (GeneratePartialInterface):
+        (processIDL):
+        (getPartialNamesFromIDL):
+        (getIncludedInterfacesFromIDL):
+        (isCallbackInterfaceFromIDL):
+        (isMixinInterfaceFromIDL):
+        (containsIterableInterfaceFromIDL):
+        (containsInterfaceOrCallbackInterfaceFromIDL):
+        (containsInterfaceWithConstantsFromIDL):
+        (getInterfaceExtendedAttributesFromIDL):
+        (getUndefinedBaseDictionariesFromIDL):
+        (shouldExposeInterface):
+        (getFileContents): Deleted.
+        (interfaceIsIterable): Deleted.
+        (containsInterfaceFromIDL): Deleted.
+        (interfaceHasConstantAttribute): Deleted.
+        (updateDictionaryDependencies): Deleted.
+        - Allow enabling a validation mode via the $validateAgainstParser variable which parses each
+          IDL with the normal IDL parser and compares results. 
+        - Updates a bunch of naming to be more clear about which variables contain file names vs. file
+          paths.
+        - Renames functions to use more consistent naming.
+        - Fixes bug in dictionary dependency analysis that silently ignored dependencies that weren't
+          in the file list.
+
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove all non-web-exposed uses of ENABLE(VARIATION_FONTS)
