@@ -1873,7 +1873,5 @@ webkit.org/b/216156 http/tests/misc/script-async.html [ Pass Failure ]
 
 webkit.org/b/216159 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure ]
 
-webkit.org/b/216160 css2.1/t0905-c5525-fltwidth-00-c-g.html [ Failure ]
-
 webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Pass Timeout ]
 

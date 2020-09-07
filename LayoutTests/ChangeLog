@@ -1,3 +1,17 @@
+2020-09-07  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed rebaselining.
+
+        The test output (render tree dump) is sensitive to float precision.
+
+        r266509 slightly changed the way we compute the run's horizontal position
+        and its new position is 0.000061px more to the right. The integral ceil that we apply
+        to the run's width computation in the dump-render-tree-as-text makes the final value go from 39px to 40px.
+        (Note that final width value has dependency on the horizontal positon.)
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+
 2020-09-07  Darin Adler  <darin@apple.com>
 
         * platform/mac-wk2/TestExpectations: Revert change I accidentally included in my last patch.
