@@ -213,7 +213,7 @@
             "contextsAllowed": ["interface"]
         },
         "Exposed": {
-            "contextsAllowed": ["interface", "attribute", "operation", "constant", "dictionary"],
+            "contextsAllowed": ["interface", "attribute", "operation", "constant"],
             "values": ["*"],
             "standard": {
                 "url": "https://heycam.github.io/webidl/#Exposed"
