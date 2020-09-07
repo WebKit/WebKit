@@ -2197,6 +2197,8 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
             break;
         }
         callArgs.append(hintString);
+    } else {
+        UNUSED_PARAM(hint);
     }
     ASSERT(!callArgs.hasOverflowed());
 

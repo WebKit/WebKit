@@ -1,3 +1,11 @@
+2020-09-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r266567.
+        warning: parameter ‘hint’ set but not used [-Wunused-but-set-parameter]
+
+        * runtime/JSObject.cpp:
+        (JSC::callToPrimitiveFunction):
+
 2020-09-06  Darin Adler  <darin@apple.com>
 
         TextCodec refinements
