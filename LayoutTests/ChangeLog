@@ -1,3 +1,20 @@
+2020-09-07  Karl Rackler  <rackler@apple.com>
+
+        Remove duplicate test expectaions from platform/mac-bigsur
+        rdar://68372418
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/fast/css/text-overflow-input-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/button-sizes-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/button-table-styles-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/input-button-sizes-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/listbox-bidi-align-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Removed.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug2479-3-expected.txt: Removed.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug33855-expected.txt: Removed.
+        * platform/mac-bigsur/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Removed.
+
 2020-09-07  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed rebaselining.
