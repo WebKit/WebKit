@@ -438,6 +438,13 @@ bool RenderFlexibleBox::isMultiline() const
     return style().flexWrap() != FlexWrap::NoWrap;
 }
 
+bool RenderFlexibleBox::shouldApplyMinSizeAutoForChild(const RenderBox& child) const
+{
+    // css-flexbox section 4.5
+    auto minSize = isHorizontalFlow() ? child.style().minWidth() : child.style().minHeight();
+    return minSize.isAuto() && mainAxisOverflowForChild(child) == Overflow::Visible;
+}
+
 Length RenderFlexibleBox::flexBasisForChild(const RenderBox& child) const
 {
     Length flexLength = child.style().flexBasis();
@@ -796,6 +803,8 @@ bool RenderFlexibleBox::mainAxisLengthIsDefinite(const RenderBox& child, const L
 {
     if (flexBasis.isAuto())
         return false;
+    if (isColumnFlow() && flexBasis.isIntrinsic())
+        return false;
     if (flexBasis.isPercentOrCalculated()) {
         if (!isColumnFlow() || m_hasDefiniteHeight == SizeDefiniteness::Definite)
             return true;
@@ -914,6 +923,9 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
         allItems.append(constructFlexItem(*child, relayoutChildren));
     }
     m_reversedOrderIteratorForHitTesting.reverse();
+
+    // constructFlexItem() might set the override containing block height so any value cached for definiteness might be incorrect.
+    m_hasDefiniteHeight = SizeDefiniteness::Unknown;
     
     const LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
     FlexLayoutAlgorithm flexAlgorithm(style(), lineBreakLength, allItems);
@@ -1128,12 +1140,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     if (min.isSpecifiedOrIntrinsic())
         return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).valueOr(childSize)));
     
-    if (!isFlexibleBoxImpl() && min.isAuto() && mainAxisOverflowForChild(child) == Overflow::Visible && !(isColumnFlow() && is<RenderFlexibleBox>(child))) {
-        // FIXME: For now, we do not handle min-height: auto for nested
-        // column flexboxes. We need to implement
-        // https://drafts.csswg.org/css-flexbox/#intrinsic-sizes before that
-        // produces reasonable results. Tracking bug: https://crbug.com/581553
-        // css-flexbox section 4.5
+    if (shouldApplyMinSizeAutoForChild(child)) {
         // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForChild and
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
         LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).valueOr(0);
@@ -1232,17 +1239,27 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForAspectRatioCrossAxisMinAndMax(co
 
 FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChildren)
 {
-    // If this condition is true, then computeMainAxisExtentForChild will call
-    // child.intrinsicContentLogicalHeight() and
-    // child.scrollbarLogicalHeight(), so if the child has intrinsic
-    // min/max/preferred size, run layout on it now to make sure its logical
-    // height and scroll bars are up to date.
-    if (childHasIntrinsicMainAxisSize(child) && child.needsLayout()) {
-        child.clearOverrideContentSize();
-        child.setChildNeedsLayout(MarkOnlyThis);
-        child.layoutIfNeeded();
-        cacheChildMainSize(child);
-        relayoutChildren = false;
+    if (childHasIntrinsicMainAxisSize(child)) {
+        // If this condition is true, then computeMainAxisExtentForChild will call
+        // child.intrinsicContentLogicalHeight() and child.scrollbarLogicalHeight(),
+        // so if the child has intrinsic min/max/preferred size, run layout on it now to make sure
+        // its logical height and scroll bars are up to date.
+        updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, child);
+        // Don't resolve percentages in children. This is especially important for the min-height calculation,
+        // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
+        // by definition we have an indefinite flex basis here and thus percentages should not resolve.
+        if (child.needsLayout() || !m_intrinsicSizeAlongMainAxis.contains(&child)) {
+            if (isHorizontalWritingMode() == child.isHorizontalWritingMode())
+                child.setOverrideContainingBlockContentLogicalHeight(WTF::nullopt);
+            else
+                child.setOverrideContainingBlockContentLogicalWidth(WTF::nullopt);
+            child.clearOverrideContentSize();
+            child.setChildNeedsLayout(MarkOnlyThis);
+            child.layoutIfNeeded();
+            cacheChildMainSize(child);
+            relayoutChildren = false;
+            child.clearOverrideContainingBlockContentSize();
+        }
     }
     
     LayoutUnit borderAndPadding = isHorizontalFlow() ? child.horizontalBorderAndPaddingExtent() : child.verticalBorderAndPaddingExtent();
@@ -1556,15 +1573,23 @@ bool RenderFlexibleBox::needToStretchChildLogicalHeight(const RenderBox& child) 
 
 bool RenderFlexibleBox::childHasIntrinsicMainAxisSize(const RenderBox& child) const
 {
-    bool result = false;
-    if (isHorizontalFlow() != child.style().isHorizontalWritingMode()) {
-        Length childFlexBasis = flexBasisForChild(child);
-        Length childMinSize = isHorizontalFlow() ? child.style().minWidth() : child.style().minHeight();
-        Length childMaxSize = isHorizontalFlow() ? child.style().maxWidth() : child.style().maxHeight();
-        if (childFlexBasis.isIntrinsic() || childMinSize.isIntrinsicOrAuto() || childMaxSize.isIntrinsic())
-            result = true;
-    }
-    return result;
+    if (isHorizontalFlow() == child.style().isHorizontalWritingMode())
+        return false;
+
+    Length childFlexBasis = flexBasisForChild(child);
+    Length childMinSize = isHorizontalFlow() ? child.style().minWidth() : child.style().minHeight();
+    Length childMaxSize = isHorizontalFlow() ? child.style().maxWidth() : child.style().maxHeight();
+    // FIXME: we must run mainAxisLengthIsDefinite() because it might end up calling computePercentageLogicalHeight()
+    // which has some side effects like calling addPercentHeightDescendant() for example so it is not possible to skip
+    // the call for example by moving it to the end of the conditional expression. This is error-prone and we should
+    // refactor computePercentageLogicalHeight() at some point so that it only computes stuff without those side effects.
+    if (!mainAxisLengthIsDefinite(child, childFlexBasis) || childMinSize.isIntrinsic() || childMaxSize.isIntrinsic())
+        return true;
+
+    if (shouldApplyMinSizeAutoForChild(child))
+        return true;
+
+    return false;
 }
 
 Overflow RenderFlexibleBox::mainAxisOverflowForChild(const RenderBox& child) const

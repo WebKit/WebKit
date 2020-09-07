@@ -1,3 +1,20 @@
+2020-09-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] min-height: auto not applied to nested flexboxes.
+        https://bugs.webkit.org/show_bug.cgi?id=210089
+
+        Reviewed by Daniel Bates.
+
+        Apart from enabling some tests we're removing a test which is now invalid as it was added
+        under the condition that we were not matching the specs wrt percentage height computation in
+        column flexboxes.
+
+        * TestExpectations: Removed two test cases that are passing now.
+        * fast/flexbox/nested-column-intrinsic-min-disabled-expected.html: Removed.
+        * fast/flexbox/nested-column-intrinsic-min-disabled.html: Removed.
+        * platform/ios/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt: Updated.
+        * platform/mac/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt: Ditto.
+
 2020-09-06  Chris Dumez  <cdumez@apple.com>
 
         ConvolverNode incorrectly outputs silence because m_reverb is null
