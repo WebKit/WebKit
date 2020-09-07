@@ -1,3 +1,13 @@
+2020-09-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Allow indefinite size flex items to be definite wrt resolving percentages inside them
+        https://bugs.webkit.org/show_bug.cgi?id=212264
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-flexbox/percentage-heights-003-expected.txt: There were 3 subtests
+        marked as failures. All of them work fine now.
+
 2020-09-06  Chris Dumez  <cdumez@apple.com>
 
         ConvolverNode incorrectly outputs silence because m_reverb is null

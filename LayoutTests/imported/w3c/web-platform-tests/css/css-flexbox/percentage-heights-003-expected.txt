@@ -1,30 +1,9 @@
 
-FAIL .flexbox 1 assert_equals: 
-<div class="flexbox column" style="height: 0">
-        <div>
-            <span data-expected-height="100"></span>
-        </div>
-    </div>
-height expected 100 but got 0
-FAIL .flexbox 2 assert_equals: 
-<div class="flexbox column-wrap" style="height: 0">
-       <div>
-            <span data-expected-height="50"></span>
-        </div>
-        <div>
-            <span data-expected-height="50"></span>
-        </div>
-    </div>
-height expected 50 but got 0
+PASS .flexbox 1 
+PASS .flexbox 2 
 PASS .flexbox 3 
 PASS .flexbox 4 
 PASS .flexbox 5 
 PASS .flexbox 6 
-FAIL .flexbox 7 assert_equals: 
-<div class="flexbox vert-wm">
-        <div class="horiz-wm">
-            <span data-expected-height="100"></span>
-        </div>
-    </div>
-height expected 100 but got 0
+PASS .flexbox 7 
 
