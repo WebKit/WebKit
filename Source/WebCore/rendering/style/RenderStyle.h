@@ -1489,7 +1489,7 @@ public:
     static ColumnAxis initialColumnAxis() { return ColumnAxis::Auto; }
     static ColumnProgression initialColumnProgression() { return ColumnProgression::Normal; }
     static TextDirection initialDirection() { return TextDirection::LTR; }
-    static WritingMode initialWritingMode() { return TopToBottomWritingMode; }
+    static WritingMode initialWritingMode() { return WritingMode::TopToBottom; }
     static TextCombine initialTextCombine() { return TextCombine::None; }
     static TextOrientation initialTextOrientation() { return TextOrientation::Mixed; }
     static ObjectFit initialObjectFit() { return ObjectFit::Fill; }
@@ -2244,7 +2244,7 @@ inline bool RenderStyle::setWritingMode(WritingMode v)
 {
     if (v == writingMode())
         return false;
-    m_inheritedFlags.writingMode = v;
+    m_inheritedFlags.writingMode = static_cast<unsigned>(v);
     return true;
 }
 

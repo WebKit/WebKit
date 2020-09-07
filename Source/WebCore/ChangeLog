@@ -1,3 +1,73 @@
+2020-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make `WebCore::WritingMode` an 8-bit enum class
+        https://bugs.webkit.org/show_bug.cgi?id=216233
+
+        Reviewed by Darin Adler.
+
+        Narrow WebCore::WritingMode to an 8-bit enum class; no change in behavior.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator WritingMode const):
+        * css/CSSProperty.cpp:
+        (WebCore::resolveToPhysicalProperty):
+        * dom/Element.cpp:
+        (WebCore::toScrollAlignmentForInlineDirection):
+        (WebCore::toScrollAlignmentForBlockDirection):
+        * page/FrameView.cpp:
+        (WebCore::paginationModeForRenderStyle):
+        * platform/text/WritingMode.h:
+        * rendering/GridBaselineAlignment.cpp:
+        (WebCore::BaselineGroup::isOppositeBlockFlow const):
+        (WebCore::BaselineGroup::isOrthogonalBlockFlow const):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustBorderBoxRectForPainting):
+        (WebCore::RenderBlock::paintRectToClipOutFromBorder):
+        (WebCore::RenderBlock::borderTop const):
+        (WebCore::RenderBlock::borderLeft const):
+        (WebCore::RenderBlock::borderBottom const):
+        (WebCore::RenderBlock::borderRight const):
+        * rendering/RenderBox.cpp:
+        (WebCore::shouldFlipBeforeAfterMargins):
+        (WebCore::RenderBox::visualOverflowRectForPropagation const):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation const):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::orientation const):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::isLeftToRightFlow const):
+        (WebCore::RenderFlexibleBox::transformedWritingMode const):
+        (WebCore::RenderFlexibleBox::flowAwareBorderBefore const):
+        (WebCore::RenderFlexibleBox::flowAwareBorderAfter const):
+        (WebCore::RenderFlexibleBox::flowAwarePaddingBefore const):
+        (WebCore::RenderFlexibleBox::flowAwarePaddingAfter const):
+        (WebCore::RenderFlexibleBox::flowAwareMarginBeforeForChild const):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paddingTop const):
+        (WebCore::RenderTableCell::paddingBottom const):
+        (WebCore::RenderTableCell::paddingLeft const):
+        (WebCore::RenderTableCell::paddingRight const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::borderBeforeInWritingMode):
+        (WebCore::borderAndPaddingBeforeInWritingMode):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::borderBefore const):
+        (WebCore::RenderStyle::borderAfter const):
+        (WebCore::RenderStyle::borderBeforeWidth const):
+        (WebCore::RenderStyle::borderAfterWidth const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialWritingMode):
+        (WebCore::RenderStyle::setWritingMode):
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::adjustStyleForInterCharacterRuby):
+
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CTFontGetPhysicalSymbolicTraits() is faster than CTFontCopyPhysicalFont()/CTFontGetSymbolicTraits()

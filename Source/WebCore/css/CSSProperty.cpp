@@ -61,7 +61,7 @@ enum LogicalExtent { LogicalWidth, LogicalHeight };
 
 static CSSPropertyID resolveToPhysicalProperty(WritingMode writingMode, LogicalExtent logicalSide, const CSSPropertyID* properties)
 {
-    if (writingMode == TopToBottomWritingMode || writingMode == BottomToTopWritingMode)
+    if (writingMode == WritingMode::TopToBottom || writingMode == WritingMode::BottomToTop)
         return properties[logicalSide];
     return logicalSide == LogicalWidth ? properties[1] : properties[0];
 }

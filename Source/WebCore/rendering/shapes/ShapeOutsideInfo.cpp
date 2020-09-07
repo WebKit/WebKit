@@ -199,10 +199,10 @@ const Shape& ShapeOutsideInfo::computedShape() const
 static inline LayoutUnit borderBeforeInWritingMode(const RenderBox& renderer, WritingMode writingMode)
 {
     switch (writingMode) {
-    case TopToBottomWritingMode: return renderer.borderTop();
-    case BottomToTopWritingMode: return renderer.borderBottom();
-    case LeftToRightWritingMode: return renderer.borderLeft();
-    case RightToLeftWritingMode: return renderer.borderRight();
+    case WritingMode::TopToBottom: return renderer.borderTop();
+    case WritingMode::BottomToTop: return renderer.borderBottom();
+    case WritingMode::LeftToRight: return renderer.borderLeft();
+    case WritingMode::RightToLeft: return renderer.borderRight();
     }
 
     ASSERT_NOT_REACHED();
@@ -212,10 +212,10 @@ static inline LayoutUnit borderBeforeInWritingMode(const RenderBox& renderer, Wr
 static inline LayoutUnit borderAndPaddingBeforeInWritingMode(const RenderBox& renderer, WritingMode writingMode)
 {
     switch (writingMode) {
-    case TopToBottomWritingMode: return renderer.borderTop() + renderer.paddingTop();
-    case BottomToTopWritingMode: return renderer.borderBottom() + renderer.paddingBottom();
-    case LeftToRightWritingMode: return renderer.borderLeft() + renderer.paddingLeft();
-    case RightToLeftWritingMode: return renderer.borderRight() + renderer.paddingRight();
+    case WritingMode::TopToBottom: return renderer.borderTop() + renderer.paddingTop();
+    case WritingMode::BottomToTop: return renderer.borderBottom() + renderer.paddingBottom();
+    case WritingMode::LeftToRight: return renderer.borderLeft() + renderer.paddingLeft();
+    case WritingMode::RightToLeft: return renderer.borderRight() + renderer.paddingRight();
     }
 
     ASSERT_NOT_REACHED();

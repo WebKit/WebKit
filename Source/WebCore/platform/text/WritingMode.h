@@ -42,26 +42,26 @@ inline bool isLeftToRightDirection(TextDirection direction)
     return direction == TextDirection::LTR;
 }
 
-enum WritingMode {
-    TopToBottomWritingMode = 0, // horizontal-tb
-    BottomToTopWritingMode = 1, // horizontal-bt
-    LeftToRightWritingMode = 2, // vertical-lr
-    RightToLeftWritingMode = 3, // vertical-rl
+enum class WritingMode : uint8_t {
+    TopToBottom = 0, // horizontal-tb
+    BottomToTop = 1, // horizontal-bt
+    LeftToRight = 2, // vertical-lr
+    RightToLeft = 3, // vertical-rl
 };
 
-#define MAKE_TEXT_FLOW(writingMode, direction)  ((writingMode) << 1 | static_cast<unsigned>(direction))
+#define MAKE_TEXT_FLOW(writingMode, direction)  (static_cast<unsigned>(writingMode) << 1 | static_cast<unsigned>(direction))
 
 // Define the text flow in terms of the writing mode and the text direction. The first
 // part is the line growing direction and the second part is the block growing direction.
 enum TextFlow {
-    InlineEastBlockSouth = MAKE_TEXT_FLOW(TopToBottomWritingMode, TextDirection::LTR),
-    InlineWestBlockSouth = MAKE_TEXT_FLOW(TopToBottomWritingMode, TextDirection::RTL),
-    InlineEastBlockNorth = MAKE_TEXT_FLOW(BottomToTopWritingMode, TextDirection::LTR),
-    InlineWestBlockNorth = MAKE_TEXT_FLOW(BottomToTopWritingMode, TextDirection::RTL),
-    InlineSouthBlockEast = MAKE_TEXT_FLOW(LeftToRightWritingMode, TextDirection::LTR),
-    InlineSouthBlockWest = MAKE_TEXT_FLOW(LeftToRightWritingMode, TextDirection::RTL),
-    InlineNorthBlockEast = MAKE_TEXT_FLOW(RightToLeftWritingMode, TextDirection::LTR),
-    InlineNorthBlockWest = MAKE_TEXT_FLOW(RightToLeftWritingMode, TextDirection::RTL)
+    InlineEastBlockSouth = MAKE_TEXT_FLOW(WritingMode::TopToBottom, TextDirection::LTR),
+    InlineWestBlockSouth = MAKE_TEXT_FLOW(WritingMode::TopToBottom, TextDirection::RTL),
+    InlineEastBlockNorth = MAKE_TEXT_FLOW(WritingMode::BottomToTop, TextDirection::LTR),
+    InlineWestBlockNorth = MAKE_TEXT_FLOW(WritingMode::BottomToTop, TextDirection::RTL),
+    InlineSouthBlockEast = MAKE_TEXT_FLOW(WritingMode::LeftToRight, TextDirection::LTR),
+    InlineSouthBlockWest = MAKE_TEXT_FLOW(WritingMode::LeftToRight, TextDirection::RTL),
+    InlineNorthBlockEast = MAKE_TEXT_FLOW(WritingMode::RightToLeft, TextDirection::LTR),
+    InlineNorthBlockWest = MAKE_TEXT_FLOW(WritingMode::RightToLeft, TextDirection::RTL)
 };
 
 inline TextFlow makeTextFlow(WritingMode writingMode, TextDirection direction)

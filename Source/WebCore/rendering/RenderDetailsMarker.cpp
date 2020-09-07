@@ -76,19 +76,19 @@ static Path createRightArrowPath()
 RenderDetailsMarker::Orientation RenderDetailsMarker::orientation() const
 {
     switch (style().writingMode()) {
-    case TopToBottomWritingMode:
+    case WritingMode::TopToBottom:
         if (style().isLeftToRightDirection())
             return isOpen() ? Down : Right;
         return isOpen() ? Down : Left;
-    case RightToLeftWritingMode:
+    case WritingMode::RightToLeft:
         if (style().isLeftToRightDirection())
             return isOpen() ? Left : Down;
         return isOpen() ? Left : Up;
-    case LeftToRightWritingMode:
+    case WritingMode::LeftToRight:
         if (style().isLeftToRightDirection())
             return isOpen() ? Right : Down;
         return isOpen() ? Right : Up;
-    case BottomToTopWritingMode:
+    case WritingMode::BottomToTop:
         if (style().isLeftToRightDirection())
             return isOpen() ? Up : Right;
         return isOpen() ? Up : Left;

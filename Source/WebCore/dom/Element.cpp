@@ -747,12 +747,12 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(Optional<ScrollLogica
     switch (position.valueOr(ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start: {
         switch (writingMode) {
-        case TopToBottomWritingMode:
-        case BottomToTopWritingMode: {
+        case WritingMode::TopToBottom:
+        case WritingMode::BottomToTop: {
             return isLTR ? ScrollAlignment::alignLeftAlways : ScrollAlignment::alignRightAlways;
         }
-        case LeftToRightWritingMode:
-        case RightToLeftWritingMode: {
+        case WritingMode::LeftToRight:
+        case WritingMode::RightToLeft: {
             return isLTR ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignBottomAlways;
         }
         default:
@@ -764,12 +764,12 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(Optional<ScrollLogica
         return ScrollAlignment::alignCenterAlways;
     case ScrollLogicalPosition::End: {
         switch (writingMode) {
-        case TopToBottomWritingMode:
-        case BottomToTopWritingMode: {
+        case WritingMode::TopToBottom:
+        case WritingMode::BottomToTop: {
             return isLTR ? ScrollAlignment::alignRightAlways : ScrollAlignment::alignLeftAlways;
         }
-        case LeftToRightWritingMode:
-        case RightToLeftWritingMode: {
+        case WritingMode::LeftToRight:
+        case WritingMode::RightToLeft: {
             return isLTR ? ScrollAlignment::alignBottomAlways : ScrollAlignment::alignTopAlways;
         }
         default:
@@ -790,13 +790,13 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(Optional<ScrollLogical
     switch (position.valueOr(ScrollLogicalPosition::Start)) {
     case ScrollLogicalPosition::Start: {
         switch (writingMode) {
-        case TopToBottomWritingMode:
+        case WritingMode::TopToBottom:
             return ScrollAlignment::alignTopAlways;
-        case BottomToTopWritingMode:
+        case WritingMode::BottomToTop:
             return ScrollAlignment::alignBottomAlways;
-        case LeftToRightWritingMode:
+        case WritingMode::LeftToRight:
             return ScrollAlignment::alignLeftAlways;
-        case RightToLeftWritingMode:
+        case WritingMode::RightToLeft:
             return ScrollAlignment::alignRightAlways;
         default:
             ASSERT_NOT_REACHED();
@@ -807,13 +807,13 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(Optional<ScrollLogical
         return ScrollAlignment::alignCenterAlways;
     case ScrollLogicalPosition::End: {
         switch (writingMode) {
-        case TopToBottomWritingMode:
+        case WritingMode::TopToBottom:
             return ScrollAlignment::alignBottomAlways;
-        case BottomToTopWritingMode:
+        case WritingMode::BottomToTop:
             return ScrollAlignment::alignTopAlways;
-        case LeftToRightWritingMode:
+        case WritingMode::LeftToRight:
             return ScrollAlignment::alignRightAlways;
-        case RightToLeftWritingMode:
+        case WritingMode::RightToLeft:
             return ScrollAlignment::alignLeftAlways;
         default:
             ASSERT_NOT_REACHED();

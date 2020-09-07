@@ -339,7 +339,7 @@ void BuilderState::adjustStyleForInterCharacterRuby()
 
     m_style.setTextAlign(TextAlignMode::Center);
     if (m_style.isHorizontalWritingMode())
-        m_style.setWritingMode(LeftToRightWritingMode);
+        m_style.setWritingMode(WritingMode::LeftToRight);
 }
 
 void BuilderState::updateFont()
