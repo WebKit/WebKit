@@ -7523,6 +7523,14 @@
 		4157EBF81E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockLibWebRTCPeerConnection.h; sourceTree = "<group>"; };
 		4157EBF91E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockLibWebRTCPeerConnection.cpp; sourceTree = "<group>"; };
 		4158649F23BF7B9300A0A61E /* RealtimeVideoUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RealtimeVideoUtilities.mm; sourceTree = "<group>"; };
+		4158DCB624FFCD1B00B9DA41 /* RTCIceComponent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceComponent.idl; sourceTree = "<group>"; };
+		4158DCB824FFCDC300B9DA41 /* RTCIceProtocol.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceProtocol.idl; sourceTree = "<group>"; };
+		4158DCB924FFCDC300B9DA41 /* RTCIceTcpCandidateType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceTcpCandidateType.idl; sourceTree = "<group>"; };
+		4158DCBA24FFCDC300B9DA41 /* RTCIceCandidateType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceCandidateType.idl; sourceTree = "<group>"; };
+		4158DCBB24FFCF6000B9DA41 /* RTCIceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceProtocol.h; sourceTree = "<group>"; };
+		4158DCBC24FFCF6000B9DA41 /* RTCIceTcpCandidateType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceTcpCandidateType.h; sourceTree = "<group>"; };
+		4158DCBD24FFCF6100B9DA41 /* RTCIceComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceComponent.h; sourceTree = "<group>"; };
+		4158DCBE24FFCF6100B9DA41 /* RTCIceCandidateType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceCandidateType.h; sourceTree = "<group>"; };
 		415A3B732138E264001B4BAA /* LibWebRTCObservers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCObservers.h; path = libwebrtc/LibWebRTCObservers.h; sourceTree = "<group>"; };
 		415CDAF61E6CE0D3004F11EE /* JSMediaStreamTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrackCustom.cpp; sourceTree = "<group>"; };
 		415E1BB3215010800022DA96 /* RTCRtpContributingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpContributingSource.h; sourceTree = "<group>"; };
@@ -16740,10 +16748,18 @@
 				07221B7317CEC32700848E51 /* RTCIceCandidate.idl */,
 				410F565924FCF95700A2E50C /* RTCIceCandidateInit.h */,
 				410F565724FCF7C700A2E50C /* RTCIceCandidateInit.idl */,
+				4158DCBE24FFCF6100B9DA41 /* RTCIceCandidateType.h */,
+				4158DCBA24FFCDC300B9DA41 /* RTCIceCandidateType.idl */,
+				4158DCBD24FFCF6100B9DA41 /* RTCIceComponent.h */,
+				4158DCB624FFCD1B00B9DA41 /* RTCIceComponent.idl */,
 				316DCB3B1E790E2C001B5F87 /* RTCIceConnectionState.idl */,
 				316DCB351E790E1B001B5F87 /* RTCIceGatheringState.idl */,
+				4158DCBB24FFCF6000B9DA41 /* RTCIceProtocol.h */,
+				4158DCB824FFCDC300B9DA41 /* RTCIceProtocol.idl */,
 				07AB996718DA3C010018771E /* RTCIceServer.h */,
 				07AB996818DA3C010018771E /* RTCIceServer.idl */,
+				4158DCBC24FFCF6000B9DA41 /* RTCIceTcpCandidateType.h */,
+				4158DCB924FFCDC300B9DA41 /* RTCIceTcpCandidateType.idl */,
 				316DCB881E7A6996001B5F87 /* RTCIceTransport.cpp */,
 				5E6653091DA437BF00FDD84C /* RTCIceTransport.h */,
 				316DCB891E7A6996001B5F87 /* RTCIceTransport.idl */,

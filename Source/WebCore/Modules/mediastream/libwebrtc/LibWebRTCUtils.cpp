@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpSendParameters.h"
 #include <wtf/text/WTFString.h>
@@ -36,6 +37,7 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/rtp_parameters.h>
 #include <webrtc/api/rtp_transceiver_interface.h>
+#include <webrtc/pc/webrtc_sdp.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 
@@ -251,6 +253,73 @@ Exception toException(const webrtc::RTCError& error)
     ASSERT(!error.ok());
 
     return Exception { toExceptionCode(error.type()), error.message() };
+}
+
+static inline RTCIceComponent toRTCIceComponent(int component)
+{
+    return component == cricket::ICE_CANDIDATE_COMPONENT_RTP ? RTCIceComponent::Rtp : RTCIceComponent::Rtcp;
+}
+
+static inline Optional<RTCIceProtocol> toRTCIceProtocol(const std::string& protocol)
+{
+    if (protocol == "")
+        return { };
+    if (protocol == "udp")
+        return RTCIceProtocol::Udp;
+    ASSERT(protocol == "tcp");
+    return RTCIceProtocol::Tcp;
+}
+
+static inline Optional<RTCIceTcpCandidateType> toRTCIceTcpCandidateType(const std::string& type)
+{
+    if (type == "")
+        return { };
+    if (type == "active")
+        return RTCIceTcpCandidateType::Active;
+    if (type == "passive")
+        return RTCIceTcpCandidateType::Passive;
+    ASSERT(type == "so");
+    return RTCIceTcpCandidateType::So;
+}
+
+static inline Optional<RTCIceCandidateType> toRTCIceCandidateType(const std::string& type)
+{
+    if (type == "")
+        return { };
+    if (type == "local")
+        return RTCIceCandidateType::Host;
+    if (type == "stun")
+        return RTCIceCandidateType::Srflx;
+    if (type == "prflx")
+        return RTCIceCandidateType::Prflx;
+    ASSERT(type == "relay");
+    return RTCIceCandidateType::Relay;
+}
+
+Optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
+{
+    cricket::Candidate candidate;
+    if (!webrtc::ParseCandidate(sdp.utf8().data(), &candidate, nullptr, true))
+        return { };
+
+    RTCIceCandidate::Fields fields;
+    fields.foundation = fromStdString(candidate.foundation());
+    fields.component = toRTCIceComponent(candidate.component());
+    fields.priority = candidate.priority();
+    fields.protocol = toRTCIceProtocol(candidate.protocol());
+    if (!candidate.address().IsNil()) {
+        fields.address = fromStdString(candidate.address().HostAsURIString());
+        fields.port = candidate.address().port();
+    }
+    fields.type = toRTCIceCandidateType(candidate.type());
+    fields.tcpType = toRTCIceTcpCandidateType(candidate.tcptype());
+    if (!candidate.related_address().IsNil()) {
+        fields.relatedAddress = fromStdString(candidate.related_address().HostAsURIString());
+        fields.relatedPort = candidate.related_address().port();
+    }
+
+    fields.usernameFragment = fromStdString(candidate.username());
+    return fields;
 }
 
 } // namespace WebCore

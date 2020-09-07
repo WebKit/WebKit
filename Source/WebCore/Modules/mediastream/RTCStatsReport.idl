@@ -275,13 +275,6 @@ dictionary RTCIceCandidatePairStats : RTCStats {
     // FIXME: Expose other fields once libwebrtc support them.
 };
 
-enum RTCIceCandidateType {
-    "host",
-    "srflx",
-    "prflx",
-    "relay"
-};
-
 [ JSGenerateToJSObject ]
 dictionary RTCIceCandidateStats : RTCStats {
     DOMString transportId;

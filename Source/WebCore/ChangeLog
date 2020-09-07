@@ -1,3 +1,49 @@
+2020-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Add missing members to RTCIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=216075
+
+        Reviewed by Eric Carlson.
+
+        Sync IDL with latest spec.
+        Add missing enums and make use of libwebrtc parse routine to get fields from candidate SDP.
+        Covered by updated tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        (WebCore::RTCIceCandidate::RTCIceCandidate):
+        (WebCore::RTCIceCandidate::create):
+        * Modules/mediastream/RTCIceCandidate.h:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCIceCandidateInit.h:
+        * Modules/mediastream/RTCIceCandidateInit.idl:
+        * Modules/mediastream/RTCIceCandidateType.h: Added.
+        * Modules/mediastream/RTCIceCandidateType.idl: Added.
+        * Modules/mediastream/RTCIceComponent.h: Added.
+        * Modules/mediastream/RTCIceComponent.idl: Added.
+        * Modules/mediastream/RTCIceProtocol.h: Added.
+        * Modules/mediastream/RTCIceProtocol.idl: Added.
+        * Modules/mediastream/RTCIceTcpCandidateType.h: Added.
+        * Modules/mediastream/RTCIceTcpCandidateType.idl: Added.
+        * Modules/mediastream/RTCStatsReport.h:
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::iceCandidateState):
+        (WebCore::fillRTCIceCandidateStats):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCIceComponent):
+        (WebCore::toRTCIceProtocol):
+        (WebCore::toRTCIceTcpCandidateType):
+        (WebCore::toRTCIceCandidateType):
+        (WebCore::parseIceCandidateSDP):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnectionForIceCandidates::sendCandidates):
+
 2020-09-07  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] Convert custom GObject subclasses to WEBKIT_DEFINE_TYPE

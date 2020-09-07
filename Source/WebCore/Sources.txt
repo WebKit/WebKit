@@ -3246,9 +3246,13 @@ JSRTCDegradationPreference.cpp
 JSRTCDtxStatus.cpp
 JSRTCIceCandidate.cpp
 JSRTCIceCandidateInit.cpp
+JSRTCIceCandidateType.cpp
+JSRTCIceComponent.cpp
 JSRTCIceConnectionState.cpp
 JSRTCIceGatheringState.cpp
+JSRTCIceProtocol.cpp
 JSRTCIceServer.cpp
+JSRTCIceTcpCandidateType.cpp
 JSRTCIceTransport.cpp
 JSRTCIceTransportState.cpp
 JSRTCOfferAnswerOptions.cpp

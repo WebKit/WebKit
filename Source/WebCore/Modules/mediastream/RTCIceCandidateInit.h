@@ -38,6 +38,7 @@ struct RTCIceCandidateInit {
     String candidate;
     String sdpMid;
     Optional<unsigned short> sdpMLineIndex;
+    String usernameFragment;
 };
 
 } // namespace WebCore

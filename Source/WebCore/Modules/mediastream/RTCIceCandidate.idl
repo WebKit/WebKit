@@ -34,24 +34,23 @@
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
     ImplementationLacksVTable,
-    PrivateIdentifier,
-    PublicIdentifier
 ] interface RTCIceCandidate {
     [MayThrowException] constructor(RTCIceCandidateInit candidateInitDict);
 
     readonly attribute DOMString candidate;
     readonly attribute DOMString? sdpMid;
     readonly attribute unsigned short? sdpMLineIndex;
-    // FIXME 169662: missing foundation
-    // FIXME 169662: missing priority
-    // FIXME 169662: missing ip
-    // FIXME 169662: missing protocol
-    // FIXME 169662: missing port
-    // FIXME 169662: missing type
-    // FIXME 169662: missing tcpType
-    // FIXME 169662: missing relatedAddress
-    // FIXME 169662: missing relatedPort
-    // FIXME 169662: missing ufrag
+    readonly attribute DOMString? foundation;
+    readonly attribute RTCIceComponent? component;
+    readonly attribute unsigned long? priority;
+    readonly attribute DOMString? address;
+    readonly attribute RTCIceProtocol? protocol;
+    readonly attribute unsigned short? port;
+    readonly attribute RTCIceCandidateType? type;
+    readonly attribute RTCIceTcpCandidateType? tcpType;
+    readonly attribute DOMString? relatedAddress;
+    readonly attribute unsigned short? relatedPort;
+    readonly attribute DOMString? usernameFragment;
 
     // FIXME 169662: add ufrag to the list
     serializer = {candidate, sdpMid, sdpMLineIndex};

@@ -384,16 +384,16 @@ static inline void fillRTCIceCandidatePairStats(RTCStatsReport::IceCandidatePair
         stats.consentResponsesSent = *rtcStats.responses_sent;
 }
 
-static inline Optional<RTCStatsReport::IceCandidateType> iceCandidateState(const std::string& state)
+static inline Optional<RTCIceCandidateType> iceCandidateState(const std::string& state)
 {
     if (state == "host")
-        return RTCStatsReport::IceCandidateType::Host;
+        return RTCIceCandidateType::Host;
     if (state == "srflx")
-        return RTCStatsReport::IceCandidateType::Srflx;
+        return RTCIceCandidateType::Srflx;
     if (state == "prflx")
-        return RTCStatsReport::IceCandidateType::Prflx;
+        return RTCIceCandidateType::Prflx;
     if (state == "relay")
-        return RTCStatsReport::IceCandidateType::Relay;
+        return RTCIceCandidateType::Relay;
 
     return { };
 }
@@ -416,7 +416,7 @@ static inline void fillRTCIceCandidateStats(RTCStatsReport::IceCandidateStats& s
     if (rtcStats.candidate_type.is_defined())
         stats.candidateType = iceCandidateState(*rtcStats.candidate_type);
 
-    if (!stats.candidateType || stats.candidateType == RTCStatsReport::IceCandidateType::Prflx || stats.candidateType == RTCStatsReport::IceCandidateType::Host)
+    if (!stats.candidateType || stats.candidateType == RTCIceCandidateType::Prflx || stats.candidateType == RTCIceCandidateType::Host)
         stats.address = { };
 
     if (rtcStats.priority.is_defined())

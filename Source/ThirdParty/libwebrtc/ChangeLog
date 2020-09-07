@@ -1,3 +1,14 @@
+2020-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Add missing members to RTCIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=216075
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2020-08-24  Youenn Fablet  <youenn@apple.com>
 
         Enable VP9D_SET_LOOP_FILTER_OPT for libvpx vp9 decoder

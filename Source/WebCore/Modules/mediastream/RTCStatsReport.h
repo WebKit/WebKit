@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LibWebRTCStatsCollector.h"
+#include "RTCIceCandidateType.h"
 
 namespace WebCore {
 
@@ -278,14 +279,12 @@ public:
         Optional<uint64_t> consentResponsesSent;
     };
 
-    enum class IceCandidateType { Host, Srflx, Prflx, Relay };
-
     struct IceCandidateStats : Stats {
         String transportId;
         String address;
         Optional<int32_t> port;
         String protocol;
-        Optional<IceCandidateType> candidateType;
+        Optional<RTCIceCandidateType> candidateType;
         Optional<int32_t> priority;
         String url;
         bool deleted { false };

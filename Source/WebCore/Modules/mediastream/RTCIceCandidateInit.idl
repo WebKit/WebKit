@@ -37,5 +37,5 @@
     DOMString candidate = "";
     DOMString? sdpMid = null;
     unsigned short? sdpMLineIndex = null;
-    // FIXME 169662: missing ufrag
+    DOMString? usernameFragment = null;
 };

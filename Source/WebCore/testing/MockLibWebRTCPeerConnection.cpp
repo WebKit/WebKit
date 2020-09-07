@@ -121,17 +121,17 @@ void MockLibWebRTCPeerConnectionForIceCandidates::sendCandidates()
 
     // Let's gather candidates
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
-        MockLibWebRTCIceCandidate candidate("2013266431 1 udp 2013266432 192.168.0.100 38838 typ host generation 0", "1");
+        MockLibWebRTCIceCandidate candidate("candidate:2013266431 1 udp 2013266432 192.168.0.100 38838 typ host generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
     });
 
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
-        MockLibWebRTCIceCandidate candidate("1019216383 1 tcp 1019216384 192.168.0.100 9 typ host tcptype passive generation 0", "1");
+        MockLibWebRTCIceCandidate candidate("candidate:1019216383 1 tcp 1019216384 192.168.0.100 9 typ host tcptype passive generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
     });
 
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
-        MockLibWebRTCIceCandidate candidate("1677722111 1 tcp 1677722112 172.18.0.1 47989 typ srflx raddr 192.168.0.100 rport 47989 generation 0", "1");
+        MockLibWebRTCIceCandidate candidate("candidate:1677722111 1 tcp 1677722112 172.18.0.1 47989 typ srflx raddr 192.168.0.100 rport 47989 generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
     });
 

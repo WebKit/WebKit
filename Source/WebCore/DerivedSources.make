@@ -292,9 +292,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/RTCDtxStatus.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidate.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidateInit.idl \
+    $(WebCore)/Modules/mediastream/RTCIceCandidateType.idl \
+    $(WebCore)/Modules/mediastream/RTCIceComponent.idl \
     $(WebCore)/Modules/mediastream/RTCIceConnectionState.idl \
     $(WebCore)/Modules/mediastream/RTCIceGatheringState.idl \
+    $(WebCore)/Modules/mediastream/RTCIceProtocol.idl \
     $(WebCore)/Modules/mediastream/RTCIceServer.idl \
+    $(WebCore)/Modules/mediastream/RTCIceTcpCandidateType.idl \
     $(WebCore)/Modules/mediastream/RTCIceTransport.idl \
     $(WebCore)/Modules/mediastream/RTCIceTransportState.idl \
     $(WebCore)/Modules/mediastream/RTCOfferAnswerOptions.idl \

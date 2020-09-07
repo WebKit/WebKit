@@ -363,9 +363,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCDtxStatus.idl
     Modules/mediastream/RTCIceCandidate.idl
     Modules/mediastream/RTCIceCandidateInit.idl
+    Modules/mediastream/RTCIceCandidateType.idl
+    Modules/mediastream/RTCIceComponent.idl
     Modules/mediastream/RTCIceConnectionState.idl
     Modules/mediastream/RTCIceGatheringState.idl
+    Modules/mediastream/RTCIceProtocol.idl
     Modules/mediastream/RTCIceServer.idl
+    Modules/mediastream/RTCIceTcpCandidateType.idl
     Modules/mediastream/RTCIceTransport.idl
     Modules/mediastream/RTCIceTransportState.idl
     Modules/mediastream/RTCOfferAnswerOptions.idl

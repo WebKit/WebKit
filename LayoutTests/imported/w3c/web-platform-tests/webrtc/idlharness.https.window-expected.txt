@@ -153,34 +153,34 @@ PASS RTCIceCandidate interface: existence and properties of interface prototype 
 PASS RTCIceCandidate interface: attribute candidate 
 PASS RTCIceCandidate interface: attribute sdpMid 
 PASS RTCIceCandidate interface: attribute sdpMLineIndex 
-FAIL RTCIceCandidate interface: attribute foundation assert_true: The prototype object must have a property "foundation" expected true got false
-FAIL RTCIceCandidate interface: attribute component assert_true: The prototype object must have a property "component" expected true got false
-FAIL RTCIceCandidate interface: attribute priority assert_true: The prototype object must have a property "priority" expected true got false
-FAIL RTCIceCandidate interface: attribute address assert_true: The prototype object must have a property "address" expected true got false
-FAIL RTCIceCandidate interface: attribute protocol assert_true: The prototype object must have a property "protocol" expected true got false
-FAIL RTCIceCandidate interface: attribute port assert_true: The prototype object must have a property "port" expected true got false
-FAIL RTCIceCandidate interface: attribute type assert_true: The prototype object must have a property "type" expected true got false
-FAIL RTCIceCandidate interface: attribute tcpType assert_true: The prototype object must have a property "tcpType" expected true got false
-FAIL RTCIceCandidate interface: attribute relatedAddress assert_true: The prototype object must have a property "relatedAddress" expected true got false
-FAIL RTCIceCandidate interface: attribute relatedPort assert_true: The prototype object must have a property "relatedPort" expected true got false
-FAIL RTCIceCandidate interface: attribute usernameFragment assert_true: The prototype object must have a property "usernameFragment" expected true got false
+PASS RTCIceCandidate interface: attribute foundation 
+PASS RTCIceCandidate interface: attribute component 
+PASS RTCIceCandidate interface: attribute priority 
+PASS RTCIceCandidate interface: attribute address 
+PASS RTCIceCandidate interface: attribute protocol 
+PASS RTCIceCandidate interface: attribute port 
+PASS RTCIceCandidate interface: attribute type 
+PASS RTCIceCandidate interface: attribute tcpType 
+PASS RTCIceCandidate interface: attribute relatedAddress 
+PASS RTCIceCandidate interface: attribute relatedPort 
+PASS RTCIceCandidate interface: attribute usernameFragment 
 PASS RTCIceCandidate interface: operation toJSON() 
 PASS RTCIceCandidate must be primary interface of new RTCIceCandidate({ sdpMid: 1 }) 
 PASS Stringification of new RTCIceCandidate({ sdpMid: 1 }) 
 PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "candidate" with the proper type 
 PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "sdpMid" with the proper type 
 PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "sdpMLineIndex" with the proper type 
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "foundation" with the proper type assert_inherits: property "foundation" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "component" with the proper type assert_inherits: property "component" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "priority" with the proper type assert_inherits: property "priority" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "address" with the proper type assert_inherits: property "address" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "protocol" with the proper type assert_inherits: property "protocol" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "port" with the proper type assert_inherits: property "port" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "type" with the proper type assert_inherits: property "type" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "tcpType" with the proper type assert_inherits: property "tcpType" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "relatedAddress" with the proper type assert_inherits: property "relatedAddress" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "relatedPort" with the proper type assert_inherits: property "relatedPort" not found in prototype chain
-FAIL RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "usernameFragment" with the proper type assert_inherits: property "usernameFragment" not found in prototype chain
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "foundation" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "component" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "priority" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "address" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "protocol" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "port" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "type" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "tcpType" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "relatedAddress" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "relatedPort" with the proper type 
+PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "usernameFragment" with the proper type 
 PASS RTCIceCandidate interface: new RTCIceCandidate({ sdpMid: 1 }) must inherit property "toJSON()" with the proper type 
 PASS RTCIceCandidate interface: toJSON operation on new RTCIceCandidate({ sdpMid: 1 }) 
 PASS RTCPeerConnectionIceEvent interface: existence and properties of interface object 
