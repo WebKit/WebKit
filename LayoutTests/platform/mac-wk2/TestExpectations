@@ -1142,9 +1142,6 @@ media/modern-media-controls/scrubber-support/scrubber-support-media-api.html [ P
 # <rdar://problem/63626512> REGRESSION(20A279-20A291a): webrtc/simulcast-h264.html is a constant timeout
 webrtc/simulcast-h264.html [ Pass Timeout ]
 
-# <rdar://problem/66492801> [ Mac wk2 ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html is timing out
-platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure Timeout ]
-
 # <rdar://problem/60642539> [ macOS wk2 ] inspector/unit-tests/async-test-suite.html is flaky timing out
 [ Catalina ] inspector/unit-tests/async-test-suite.html [ Slow ]
 

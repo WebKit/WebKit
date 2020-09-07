@@ -332,10 +332,6 @@
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
-#if PLATFORM(MAC) && USE(LIBWEBRTC)
-#include <webrtc/sdk/WebKit/VideoProcessingSoftLink.h>
-#endif
-
 using JSC::CallData;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
@@ -5680,9 +5676,7 @@ bool Internals::capsLockIsOn()
 
 bool Internals::supportsVCPEncoder()
 {
-#if defined(ENABLE_VCP_ENCODER)
-    return ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER;
-#elif defined(HAVE_VTB_REQUIREDLOWLATENCY)
+#if PLATFORM(COCOA)
     return true;
 #else
     return false;
