@@ -135,9 +135,7 @@ public:
     static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStretch(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
-#if ENABLE(VARIATION_FONTS)
     static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
-#endif
     static SVGLengthValue convertSVGLengthValue(BuilderState&, const CSSValue&);
     static Vector<SVGLengthValue> convertSVGLengthVector(BuilderState&, const CSSValue&);
     static Vector<SVGLengthValue> convertStrokeDashArray(BuilderState&, const CSSValue&);
@@ -1326,7 +1324,6 @@ inline FontSelectionValue BuilderConverter::convertFontStretch(BuilderState&, co
     return convertFontStretchFromValue(value);
 }
 
-#if ENABLE(VARIATION_FONTS)
 inline FontVariationSettings BuilderConverter::convertFontVariationSettings(BuilderState&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
@@ -1341,7 +1338,6 @@ inline FontVariationSettings BuilderConverter::convertFontVariationSettings(Buil
     }
     return settings;
 }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 inline bool BuilderConverter::convertTouchCallout(BuilderState&, const CSSValue& value)

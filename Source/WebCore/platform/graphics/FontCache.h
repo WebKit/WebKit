@@ -80,9 +80,7 @@ struct FontDescriptionKey {
         , m_flags(makeFlagsKey(description))
         , m_locale(description.specifiedLocale())
         , m_featureSettings(description.featureSettings())
-#if ENABLE(VARIATION_FONTS)
         , m_variationSettings(description.variationSettings())
-#endif
     { }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
@@ -96,9 +94,7 @@ struct FontDescriptionKey {
             && m_fontSelectionRequest == other.m_fontSelectionRequest
             && m_flags == other.m_flags
             && m_locale == other.m_locale
-#if ENABLE(VARIATION_FONTS)
             && m_variationSettings == other.m_variationSettings
-#endif
             && m_featureSettings == other.m_featureSettings;
     }
 
@@ -120,9 +116,7 @@ struct FontDescriptionKey {
         for (unsigned flagItem : m_flags)
             hasher.add(flagItem);
         hasher.add(m_featureSettings.hash());
-#if ENABLE(VARIATION_FONTS)
         hasher.add(m_variationSettings.hash());
-#endif
         return hasher.hash();
     }
 
@@ -164,9 +158,7 @@ private:
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
     AtomString m_locale;
     FontFeatureSettings m_featureSettings;
-#if ENABLE(VARIATION_FONTS)
     FontVariationSettings m_variationSettings;
-#endif
 };
 
 struct FontDescriptionKeyHash {

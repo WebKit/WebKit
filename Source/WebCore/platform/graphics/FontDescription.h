@@ -110,9 +110,7 @@ public:
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = static_cast<unsigned>(widthVariant); } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
     WEBCORE_EXPORT void setSpecifiedLocale(const AtomString&);
     void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTFMove(settings); }
-#if ENABLE(VARIATION_FONTS)
     void setVariationSettings(FontVariationSettings&& settings) { m_variationSettings = WTFMove(settings); }
-#endif
     void setFontSynthesis(FontSynthesis fontSynthesis) { m_fontSynthesis = fontSynthesis; }
     void setVariantCommonLigatures(FontVariantLigatures variant) { m_variantCommonLigatures = static_cast<unsigned>(variant); }
     void setVariantDiscretionaryLigatures(FontVariantLigatures variant) { m_variantDiscretionaryLigatures = static_cast<unsigned>(variant); }
@@ -190,9 +188,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_widthVariant == other.m_widthVariant
         && m_specifiedLocale == other.m_specifiedLocale
         && m_featureSettings == other.m_featureSettings
-#if ENABLE(VARIATION_FONTS)
         && m_variationSettings == other.m_variationSettings
-#endif
         && m_fontSynthesis == other.m_fontSynthesis
         && m_variantCommonLigatures == other.m_variantCommonLigatures
         && m_variantDiscretionaryLigatures == other.m_variantDiscretionaryLigatures
@@ -219,9 +215,7 @@ template<class Encoder>
 void FontDescription::encode(Encoder& encoder) const
 {
     encoder << featureSettings();
-#if ENABLE(VARIATION_FONTS)
     encoder << variationSettings();
-#endif
     encoder << computedLocale();
     encoder << italic();
     encoder << stretch();
@@ -263,12 +257,10 @@ Optional<FontDescription> FontDescription::decode(Decoder& decoder)
     if (!featureSettings)
         return WTF::nullopt;
 
-#if ENABLE(VARIATION_FONTS)
     Optional<FontVariationSettings> variationSettings;
     decoder >> variationSettings;
     if (!variationSettings)
         return WTF::nullopt;
-#endif
 
     Optional<AtomString> locale;
     decoder >> locale;
@@ -421,9 +413,7 @@ Optional<FontDescription> FontDescription::decode(Decoder& decoder)
         return WTF::nullopt;
 
     fontDescription.setFeatureSettings(WTFMove(*featureSettings));
-#if ENABLE(VARIATION_FONTS)
     fontDescription.setVariationSettings(WTFMove(*variationSettings));
-#endif
     fontDescription.setSpecifiedLocale(*locale);
     fontDescription.setItalic(*italic);
     fontDescription.setStretch(*stretch);

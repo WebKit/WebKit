@@ -36,11 +36,7 @@ namespace WebCore {
 
 struct SameSizeAsFontCascadeDescription {
     Vector<void*> vector;
-#if ENABLE(VARIATION_FONTS)
     Vector<void*> vector2;
-#else
-    char c;
-#endif
     AtomString string;
     AtomString string2;
     int16_t fontSelectionRequest[3];

@@ -216,19 +216,9 @@ typedef FontTaggedSettings<int> FontFeatureSettings;
 
 template <> unsigned FontFeatureSettings::hash() const;
 
-#if ENABLE(VARIATION_FONTS)
-
 typedef FontTaggedSettings<float> FontVariationSettings;
 WTF::TextStream& operator<<(WTF::TextStream&, const FontVariationSettings&);
 
 template <> unsigned FontVariationSettings::hash() const;
-
-#else
-
-struct FontVariationSettings {
-    bool isEmpty() const { return true; }
-};
-
-#endif
 
 }

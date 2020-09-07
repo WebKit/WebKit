@@ -152,9 +152,7 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
 }
 
 typedef HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits> FeaturesMap;
-#if ENABLE(VARIATION_FONTS)
 typedef HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits> VariationsMap;
-#endif
 
 static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings)
 {
@@ -377,7 +375,6 @@ static inline bool fontNameIsSystemFont(CFStringRef fontName)
     return CFStringGetLength(fontName) > 0 && CFStringGetCharacterAtIndex(fontName, 0) == '.';
 }
 
-#if ENABLE(VARIATION_FONTS)
 struct VariationDefaults {
     float defaultValue;
     float minimumValue;
@@ -462,9 +459,7 @@ static inline float denormalizeVariationWidth(float value)
         return (value + 125) / 200;
     return (value + 400) / 400;
 }
-#endif
 
-#if ENABLE(VARIATION_FONTS) || !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
 static inline float normalizeVariationWidth(float value)
 {
     if (value <= 1.25)
@@ -473,7 +468,6 @@ static inline float normalizeVariationWidth(float value)
         return value * 200 - 125;
     return value * 400 - 400;
 }
-#endif
 
 #if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
 static inline float normalizeWidth(float value)
@@ -542,7 +536,6 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     auto fontOpticalSizing = fontDescription.opticalSizing();
 
-#if ENABLE(VARIATION_FONTS)
     auto defaultValues = defaultVariationValues(originalFont);
 
     auto fontSelectionRequest = fontDescription.fontSelectionRequest();
@@ -551,11 +544,6 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     bool forceOpticalSizingOn = fontOpticalSizing == FontOpticalSizing::Enabled && fontType.variationType == FontType::VariationType::TrueTypeGX && defaultValues.contains({{'o', 'p', 's', 'z'}});
     bool forceVariations = defaultValues.contains({{'w', 'g', 'h', 't'}}) || defaultValues.contains({{'w', 'd', 't', 'h'}}) || (fontStyleAxis == FontStyleAxis::ital && defaultValues.contains({{'i', 't', 'a', 'l'}})) || (fontStyleAxis == FontStyleAxis::slnt && defaultValues.contains({{'s', 'l', 'n', 't'}}));
     const auto& variations = fontDescription.variationSettings();
-#else
-    UNUSED_PARAM(fontFaceCapabilities);
-    UNUSED_PARAM(applyWeightWidthSlopeVariations);
-    bool forceOpticalSizingOn = false;
-#endif
 
     const auto& features = fontDescription.featureSettings();
     const auto& variantSettings = fontDescription.variantSettings();
@@ -564,11 +552,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     // We might want to check fontType.trackingType == FontType::TrackingType::Manual here, but in order to maintain compatibility with the rest of the system, we don't.
     bool noFontFeatureSettings = features.isEmpty();
-#if ENABLE(VARIATION_FONTS)
     bool noFontVariationSettings = !forceVariations && variations.isEmpty();
-#else
-    bool noFontVariationSettings = true;
-#endif
     bool textRenderingModeIsAuto = textRenderingMode == TextRenderingMode::AutoTextRendering;
     bool variantSettingsIsNormal = variantSettings.isAllNormal();
     bool dontNeedToApplyOpticalSizing = fontOpticalSizing == FontOpticalSizing::Enabled && !forceOpticalSizingOn;
@@ -583,6 +567,17 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     // This algorithm is described at https://drafts.csswg.org/css-fonts-4/#feature-variation-precedence
     FeaturesMap featuresToBeApplied;
+    VariationsMap variationsToBeApplied;
+
+    bool needsConversion = fontType.variationType == FontType::VariationType::TrueTypeGX;
+
+    auto applyVariation = [&](const FontTag& tag, float value) {
+        auto iterator = defaultValues.find(tag);
+        if (iterator == defaultValues.end())
+            return;
+        float valueToApply = clampTo(value, iterator->value.minimumValue, iterator->value.maximumValue);
+        variationsToBeApplied.set(tag, valueToApply);
+    };
 
     auto applyFeature = [&](const FontTag& tag, int value) {
         // AAT doesn't differentiate between liga and clig. We need to make sure they always agree.
@@ -596,50 +591,6 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     };
 
     // Step 1: CoreText handles default features (such as required ligatures).
-
-    // Step 6: Consult with font-feature-settings inside @font-face
-    if (fontFaceFeatures) {
-        for (auto& fontFaceFeature : *fontFaceFeatures)
-            applyFeature(fontFaceFeature.tag(), fontFaceFeature.value());
-    }
-
-    // Step 10: Font-variant
-    for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings))
-        applyFeature(newFeature.key, newFeature.value);
-
-    // Step 11: Other properties
-    if (textRenderingMode == TextRenderingMode::OptimizeSpeed) {
-        applyFeature(fontFeatureTag("liga"), 0);
-        applyFeature(fontFeatureTag("clig"), 0);
-        applyFeature(fontFeatureTag("dlig"), 0);
-        applyFeature(fontFeatureTag("hlig"), 0);
-        applyFeature(fontFeatureTag("calt"), 0);
-    }
-    if (shouldDisableLigaturesForSpacing) {
-        applyFeature(fontFeatureTag("liga"), 0);
-        applyFeature(fontFeatureTag("clig"), 0);
-        applyFeature(fontFeatureTag("dlig"), 0);
-        applyFeature(fontFeatureTag("hlig"), 0);
-        // Core Text doesn't disable calt when letter-spacing is applied, so we won't either.
-    }
-
-    // Step 13: Font-feature-settings
-    for (auto& newFeature : features)
-        applyFeature(newFeature.tag(), newFeature.value());
-
-    // The variation fonts are separated from the font features because they don't conflict, and allow us to only have a single ENABLE().
-#if ENABLE(VARIATION_FONTS)
-    VariationsMap variationsToBeApplied;
-
-    bool needsConversion = fontType.variationType == FontType::VariationType::TrueTypeGX;
-
-    auto applyVariation = [&](const FontTag& tag, float value) {
-        auto iterator = defaultValues.find(tag);
-        if (iterator == defaultValues.end())
-            return;
-        float valueToApply = clampTo(value, iterator->value.minimumValue, iterator->value.maximumValue);
-        variationsToBeApplied.set(tag, valueToApply);
-    };
 
     // Step 2: font-weight, font-stretch, and font-style
     // The system font is somewhat magical. Don't mess with its variations.
@@ -670,12 +621,41 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     // FIXME: Implement Step 6: the font-variation-settings descriptor inside @font-face
 
+    // Step 7: Consult with font-feature-settings inside @font-face
+    if (fontFaceFeatures) {
+        for (auto& fontFaceFeature : *fontFaceFeatures)
+            applyFeature(fontFaceFeature.tag(), fontFaceFeature.value());
+    }
+
     // FIXME: Move font-optical-sizing handling here. It should be step 9.
+
+    // Step 10: Font-variant
+    for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings))
+        applyFeature(newFeature.key, newFeature.value);
+
+    // Step 11: Other properties
+    if (textRenderingMode == TextRenderingMode::OptimizeSpeed) {
+        applyFeature(fontFeatureTag("liga"), 0);
+        applyFeature(fontFeatureTag("clig"), 0);
+        applyFeature(fontFeatureTag("dlig"), 0);
+        applyFeature(fontFeatureTag("hlig"), 0);
+        applyFeature(fontFeatureTag("calt"), 0);
+    }
+    if (shouldDisableLigaturesForSpacing) {
+        applyFeature(fontFeatureTag("liga"), 0);
+        applyFeature(fontFeatureTag("clig"), 0);
+        applyFeature(fontFeatureTag("dlig"), 0);
+        applyFeature(fontFeatureTag("hlig"), 0);
+        // Core Text doesn't disable calt when letter-spacing is applied, so we won't either.
+    }
+
+    // Step 13: Font-feature-settings
+    for (auto& newFeature : features)
+        applyFeature(newFeature.tag(), newFeature.value());
 
     // Step 12: font-variation-settings
     for (auto& newVariation : variations)
         applyVariation(newVariation.tag(), newVariation.value());
-#endif // ENABLE(VARIATION_FONTS)
 
     auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if (!featuresToBeApplied.isEmpty()) {
@@ -689,8 +669,6 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         }
         CFDictionaryAddValue(attributes.get(), kCTFontFeatureSettingsAttribute, featureArray.get());
     }
-
-#if ENABLE(VARIATION_FONTS)
     if (!variationsToBeApplied.isEmpty()) {
         auto variationDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         for (auto& p : variationsToBeApplied) {
@@ -701,7 +679,6 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         }
         CFDictionaryAddValue(attributes.get(), kCTFontVariationAttribute, variationDictionary.get());
     }
-#endif
 
     // Step 9: font-optical-sizing
     // FIXME: Apply this before font-variation-settings
@@ -1031,7 +1008,6 @@ struct VariationCapabilities {
     Optional<MinMax> slope;
 };
 
-#if ENABLE(VARIATION_FONTS)
 static Optional<MinMax> extractVariationBounds(CFDictionaryRef axis)
 {
     CFNumberRef minimumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMinimumValueKey));
@@ -1044,13 +1020,11 @@ static Optional<MinMax> extractVariationBounds(CFDictionaryRef axis)
         return {{ rawMinimumValue, rawMaximumValue }};
     return WTF::nullopt;
 }
-#endif
 
 static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescriptorRef fontDescriptor)
 {
     VariationCapabilities result;
 
-#if ENABLE(VARIATION_FONTS)
     if (!adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontVariationAttribute)))
         return result;
 
@@ -1100,9 +1074,6 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
         result.width = { };
     if (result.slope && (result.slope.value().minimum < minimum || result.slope.value().maximum > maximum))
         result.slope = { };
-#else
-    UNUSED_PARAM(fontDescriptor);
-#endif
 
     return result;
 }

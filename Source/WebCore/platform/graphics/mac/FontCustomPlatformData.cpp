@@ -93,14 +93,10 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
     return equalLettersIgnoringASCIICase(format, "truetype")
         || equalLettersIgnoringASCIICase(format, "opentype")
         || equalLettersIgnoringASCIICase(format, "woff2")
-#if ENABLE(VARIATION_FONTS)
         || equalLettersIgnoringASCIICase(format, "woff2-variations")
-#endif
-#if ENABLE(VARIATION_FONTS)
         || equalLettersIgnoringASCIICase(format, "woff-variations")
         || equalLettersIgnoringASCIICase(format, "truetype-variations")
         || equalLettersIgnoringASCIICase(format, "opentype-variations")
-#endif
         || equalLettersIgnoringASCIICase(format, "woff");
 }
 

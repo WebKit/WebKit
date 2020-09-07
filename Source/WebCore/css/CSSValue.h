@@ -92,9 +92,7 @@ public:
     bool isCustomPropertyValue() const { return m_classType == CustomPropertyClass; }
     bool isFunctionValue() const { return m_classType == FunctionClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
-#if ENABLE(VARIATION_FONTS)
     bool isFontVariationValue() const { return m_classType == FontVariationClass; }
-#endif
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
     bool isFontValue() const { return m_classType == FontClass; }
     bool isFontStyleValue() const { return m_classType == FontStyleClass; }
@@ -182,9 +180,7 @@ protected:
         AspectRatioClass,
         BorderImageSliceClass,
         FontFeatureClass,
-#if ENABLE(VARIATION_FONTS)
         FontVariationClass,
-#endif
         FontClass,
         FontStyleClass,
         FontStyleRangeClass,

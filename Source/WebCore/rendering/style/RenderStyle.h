@@ -352,9 +352,7 @@ public:
     unsigned computedFontPixelSize() const;
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
-#if ENABLE(VARIATION_FONTS)
     FontVariationSettings fontVariationSettings() const { return fontDescription().variationSettings(); }
-#endif
     FontSelectionValue fontWeight() const { return fontDescription().weight(); }
     FontSelectionValue fontStretch() const { return fontDescription().stretch(); }
     Optional<FontSelectionValue> fontItalic() const { return fontDescription().italic(); }
@@ -913,9 +911,7 @@ public:
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
     void setFontSize(float);
 
-#if ENABLE(VARIATION_FONTS)
     void setFontVariationSettings(FontVariationSettings);
-#endif
     void setFontWeight(FontSelectionValue);
     void setFontStretch(FontSelectionValue);
     void setFontItalic(Optional<FontSelectionValue>);

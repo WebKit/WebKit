@@ -44,7 +44,6 @@ unsigned FontFeatureSettings::hash() const
     return hasher.hash();
 }
 
-#if ENABLE(VARIATION_FONTS)
 template <>
 unsigned FontVariationSettings::hash() const
 {
@@ -76,6 +75,5 @@ TextStream& operator<<(TextStream& ts, const FontVariationSettings& item)
     }
     return ts;
 }
-#endif
 
 }

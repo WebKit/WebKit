@@ -166,10 +166,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSFontFaceSrcValue>(*this, other);
         case FontFeatureClass:
             return compareCSSValues<CSSFontFeatureValue>(*this, other);
-#if ENABLE(VARIATION_FONTS)
         case FontVariationClass:
             return compareCSSValues<CSSFontVariationValue>(*this, other);
-#endif
         case FunctionClass:
             return compareCSSValues<CSSFunctionValue>(*this, other);
         case LinearGradientClass:
@@ -268,10 +266,8 @@ String CSSValue::cssText() const
         return downcast<CSSFontFaceSrcValue>(*this).customCSSText();
     case FontFeatureClass:
         return downcast<CSSFontFeatureValue>(*this).customCSSText();
-#if ENABLE(VARIATION_FONTS)
     case FontVariationClass:
         return downcast<CSSFontVariationValue>(*this).customCSSText();
-#endif
     case FunctionClass:
         return downcast<CSSFunctionValue>(*this).customCSSText();
     case LinearGradientClass:
@@ -369,11 +365,9 @@ void CSSValue::destroy()
     case FontFeatureClass:
         delete downcast<CSSFontFeatureValue>(this);
         return;
-#if ENABLE(VARIATION_FONTS)
     case FontVariationClass:
         delete downcast<CSSFontVariationValue>(this);
         return;
-#endif
     case FunctionClass:
         delete downcast<CSSFunctionValue>(this);
         return;

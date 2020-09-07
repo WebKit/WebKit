@@ -1,3 +1,60 @@
+2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove all non-web-exposed uses of ENABLE(VARIATION_FONTS)
+        https://bugs.webkit.org/show_bug.cgi?id=216211
+
+        Reviewed by Darin Adler.
+
+        This is the first step toward enabling variation fonts on all ports.
+        This patch compiles internal data structures on all ports, keeping care to not make
+        any web-exposed changes. It also stops consulting with ENABLE(VARIATION_FONTS) on
+        Cocoa platforms, since the flag is enabled on all Cocoa platforms and we've been
+        shipping it for years.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontVariationValue.cpp:
+        * css/CSSFontVariationValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals const):
+        (WebCore::CSSValue::cssText const):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFontFeatureValue const):
+        (WebCore::CSSValue::isFontVariationValue const):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        (WebCore::FontDescriptionKey::operator== const):
+        (WebCore::FontDescriptionKey::computeHash const):
+        * platform/graphics/FontCascadeDescription.cpp:
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::setFeatureSettings):
+        (WebCore::FontDescription::setVariationSettings):
+        (WebCore::FontDescription::operator== const):
+        (WebCore::FontDescription::encode const):
+        (WebCore::FontDescription::decode):
+        * platform/graphics/FontTaggedSettings.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/FontTaggedSettings.h:
+        (WebCore::FontVariationSettings::isEmpty const): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::denormalizeVariationWidth):
+        (WebCore::normalizeVariationWidth):
+        (WebCore::preparePlatformFont):
+        (WebCore::extractVariationBounds):
+        (WebCore::variationCapabilitiesForFontDescriptor):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontVariationSettings):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontVariationSettings const):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertFontVariationSettings):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInheritFontFeatureSettings):
+        (WebCore::Style::BuilderCustom::applyInheritFontVariationSettings):
+
 2020-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Rename Display::LineBox to Display::Line
