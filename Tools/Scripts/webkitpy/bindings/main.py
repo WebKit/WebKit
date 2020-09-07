@@ -98,7 +98,8 @@ class BindingsTests:
                '--serviceWorkerGlobalScopeConstructorsFile', serviceworkerglobalscope_constructors_file,
                '--workletGlobalScopeConstructorsFile', workletglobalscope_constructors_file,
                '--paintWorkletGlobalScopeConstructorsFile', paintworkletglobalscope_constructors_file,
-               '--testGlobalScopeConstructorsFile', testglobalscope_constructors_file]
+               '--testGlobalScopeConstructorsFile', testglobalscope_constructors_file,
+               '--validateAgainstParser']
 
         exit_code = 0
         try:

@@ -1,3 +1,15 @@
+2020-09-07  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Fix issues found by preprocess-idls.pl parser validation and enabled parser validation by default for the tests
+        https://bugs.webkit.org/show_bug.cgi?id=216246
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_supplemental_dependency):
+        Enable the parser validation for preprocess-idls.pl to catch accidental differences between
+        the fast regex based scanner in preprocess-idls.pl and the real IDL parser.
+
 2020-09-06  Darin Adler  <darin@apple.com>
 
         Make TextCodecCJK and TextCodecSingleByte thread-safe and refactor a bit to share code

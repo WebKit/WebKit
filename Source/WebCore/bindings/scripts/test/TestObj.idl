@@ -462,8 +462,9 @@ enum TestConfidence { "high", "kinda-low" };
     [Exposed=(Window, Worker)] undefined conditionallyExposedToWindowAndWorkerFunction();
 };
 
-// The following comment should not generate any code.
+// The following comments should not generate any code.
 // TestObj includes TestIncludes;
+/* TestObj includes TestIncludes; */
 
 typedef any AnyTypedef;
 

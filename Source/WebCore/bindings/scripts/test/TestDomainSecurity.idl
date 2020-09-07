@@ -28,7 +28,7 @@
 
 [
     CheckSecurity
-] interface TestActiveDOMObject {
+] interface TestDomainSecurity {
     readonly attribute long excitingAttr;
     undefined excitingFunction(Node nextChild);
     [DoNotCheckSecurity] undefined postMessage(DOMString message);

@@ -49,6 +49,7 @@ my $paintWorkletGlobalScopeConstructorsFile;
 my $testGlobalScopeConstructorsFile;
 my $supplementalMakefileDeps;
 my $idlAttributesFile;
+my $verbose = 0;
 
 # Toggle this to validate that the fast regular expression based "parsing" used
 # in this file produces the same results as the slower results produced by the
@@ -70,7 +71,8 @@ GetOptions('defines=s' => \$defines,
            'testGlobalScopeConstructorsFile=s' => \$testGlobalScopeConstructorsFile,
            'supplementalMakefileDeps=s' => \$supplementalMakefileDeps,
            'idlAttributesFile=s' => \$idlAttributesFile,
-           'validateAgainstParser' => \$validateAgainstParser);
+           'validateAgainstParser' => \$validateAgainstParser,
+           'verbose' => \$verbose);
 
 die('Must specify #define macros using --defines.') unless defined($defines);
 die('Must specify an output file using --supplementalDependencyFile.') unless defined($supplementalDependencyFile);
@@ -428,15 +430,20 @@ sub processIDL
     my $primaryDeclarationName = fileparse(basename($fileName), ".idl");
     $idlFile->primaryDeclarationName($primaryDeclarationName);
 
-    open my $file, "<", $filePath or die "Could not open $idlFile for reading: $!";
+    open my $file, "<", $filePath or die "Could not open $filePath for reading: $!";
     my @lines = <$file>;
     close $file;
 
-    # FIXME: It would be useful to remove all c/c++ style comments as well to reduce false parses. Perhaps we can use preprocessor.pm if it is not too expensive.
     # Filter out preprocessor lines.
     @lines = grep(!/^\s*#/, @lines);
 
-    $idlFile->fileContents(join('', @lines));
+    # Remove comments from fileContents before processing.
+    # FIX: Preference to use Regex::Common::comment, however it is not available on
+    # all build systems.
+    my $fileContents = join('', @lines);
+    $fileContents =~ s/(?:(?:(?:\/\/)(?:[^\n]*)(?:\n))|(?:(?:\/\*)(?:(?:[^\*]+|\*(?!\/))*)(?:\*\/)))//g;
+
+    $idlFile->fileContents($fileContents);
 
     if ($validateAgainstParser) {
         my $parser = IDLParser->new(1);
@@ -458,7 +465,7 @@ sub getPartialNamesFromIDL
     }
     
     if ($validateAgainstParser) {
-        print("Validating getPartialNamesFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating getPartialNamesFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my @partialsFromParsedDocument = ();
         foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
@@ -479,7 +486,7 @@ sub getPartialNamesFromIDL
         unless (listsAreIdentical(\@sortedPartialNames, \@sortedPartialsFromParsedDocument)) {
             die "FAILURE: Partial declarations from regular expression based parser (" . Dumper(@sortedPartialNames) . ") don't match those from validation parser (" . Dumper(@sortedPartialsFromParsedDocument) . ") [" . $idlFile->fileName . "].";
         }
-        print "SUCCESS! Partial declarations from regular expression based parser (" . Dumper(@sortedPartialNames) . ") match those from validation parser (" . Dumper(@sortedPartialsFromParsedDocument) . ").\n";
+        print "SUCCESS! Partial declarations from regular expression based parser (" . Dumper(@sortedPartialNames) . ") match those from validation parser (" . Dumper(@sortedPartialsFromParsedDocument) . ").\n" if $verbose;
     }
     
     return \@partialNames;
@@ -501,7 +508,7 @@ sub getIncludedInterfacesFromIDL
     }
 
     if ($validateAgainstParser) {
-        print("Validating getIncludedInterfacesFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating getIncludedInterfacesFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my @includedInterfacesFromParsedDocument = ();
         foreach my $include (@{$idlFile->parsedDocument->includes}) {
@@ -517,7 +524,7 @@ sub getIncludedInterfacesFromIDL
         unless (listsAreIdentical(\@sortedIncludedInterfaces, \@sortedIncludedInterfacesFromParsedDocument)) {
             die "FAILURE: Included interfaces from regular expression based parser (" . Dumper(@sortedIncludedInterfaces) . ") don't match those from validation parser (" . Dumper(@sortedIncludedInterfacesFromParsedDocument) . ") [" . $idlFile->fileName . "]";
         }
-        print "SUCCESS! Included interfaces from regular expression based parser (" . Dumper(@sortedIncludedInterfaces) . ") match those from validation parser (" . Dumper(@sortedIncludedInterfacesFromParsedDocument) . ").\n";
+        print "SUCCESS! Included interfaces from regular expression based parser (" . Dumper(@sortedIncludedInterfaces) . ") match those from validation parser (" . Dumper(@sortedIncludedInterfacesFromParsedDocument) . ").\n" if $verbose;
     }
 
     return \@includedInterfaces
@@ -531,7 +538,7 @@ sub isCallbackInterfaceFromIDL
     my $containsCallbackInterface = ($fileContents =~ /callback\s+interface\s+\w+/gs);
 
     if ($validateAgainstParser) {
-        print("Validating isCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating isCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my $containsCallbackInterfaceFromParsedDocument = 0;
         foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
@@ -544,7 +551,7 @@ sub isCallbackInterfaceFromIDL
         unless ($containsCallbackInterface == $containsCallbackInterfaceFromParsedDocument ) {
             die "FAILURE: Determination of whether there is a callback interface from regular expression based parser (" . ($containsCallbackInterface ? "YES" : "NO") . ") doesn't match the determination from the validation parser (" . ($containsCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
         }
-        print "SUCCESS! Determination of whether there is a callback interface from regular expression based parser (" . ($containsCallbackInterface ? "YES" : "NO") . ") does match the determination from the validation parser (" . ($containsCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ").\n";
+        print "SUCCESS! Determination of whether there is a callback interface from regular expression based parser (" . ($containsCallbackInterface ? "YES" : "NO") . ") does match the determination from the validation parser (" . ($containsCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ").\n" if $verbose;
     }
 
     return $containsCallbackInterface
@@ -558,7 +565,7 @@ sub isMixinInterfaceFromIDL
     my $containsMixinInterface = ($fileContents =~ /interface\s+mixin\s+\w+/gs);
 
     if ($validateAgainstParser) {
-        print("Validating isCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating isCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my $containsMixinInterfaceFromParsedDocument = 0;
         foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
@@ -571,7 +578,7 @@ sub isMixinInterfaceFromIDL
         unless ($containsMixinInterface == $containsMixinInterfaceFromParsedDocument ) {
             die "FAILURE: Determination of whether there is a mixin interface from regular expression based parser (" . ($containsMixinInterface ? "YES" : "NO") . ") doesn't match the determination from validation parser (" . ($containsMixinInterfaceFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
         }
-        print "SUCCESS! Determination of whether there is a mixin interface from regular expression based parser (" . ($containsMixinInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsMixinInterfaceFromParsedDocument ? "YES" : "NO") . ").\n";
+        print "SUCCESS! Determination of whether there is a mixin interface from regular expression based parser (" . ($containsMixinInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsMixinInterfaceFromParsedDocument ? "YES" : "NO") . ").\n" if $verbose;
     }
 
     return $containsMixinInterface;
@@ -585,7 +592,7 @@ sub containsIterableInterfaceFromIDL
     my $containsIterableInterface = ($fileContents =~ /iterable\s*<\s*\w+\s*/gs);
 
     if ($validateAgainstParser) {
-        print("Validating containsIterableInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating containsIterableInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my $containsIterableInterfaceFromParsedDocument = 0;
         foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
@@ -598,7 +605,7 @@ sub containsIterableInterfaceFromIDL
         unless ($containsIterableInterface == $containsIterableInterfaceFromParsedDocument ) {
             die "FAILURE: Determination of whether there is an iterable interface from regular expression based parser (" . ($containsIterableInterface ? "YES" : "NO") . ") doesn't match the determination from validation parser (" . ($containsIterableInterfaceFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
         }
-        print "SUCCESS! Determination of whether there is an iterable interface from regular expression based parser (" . ($containsIterableInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsIterableInterfaceFromParsedDocument ? "YES" : "NO") . ").\n";
+        print "SUCCESS! Determination of whether there is an iterable interface from regular expression based parser (" . ($containsIterableInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsIterableInterfaceFromParsedDocument ? "YES" : "NO") . ").\n" if $verbose;
     }
 
     return $containsIterableInterface;
@@ -612,14 +619,14 @@ sub containsInterfaceOrCallbackInterfaceFromIDL
     my $containsInterfaceOrCallbackInterface = ($fileContents =~ /\b(callback interface|interface)\s+(\w+)/gs);
 
     if ($validateAgainstParser) {
-        print("Validating containsInterfaceOrCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating containsInterfaceOrCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my $containsInterfaceOrCallbackInterfaceFromParsedDocument = (@{$idlFile->parsedDocument->interfaces} > 0);
 
         unless ($containsInterfaceOrCallbackInterface == $containsInterfaceOrCallbackInterfaceFromParsedDocument ) {
             die "FAILURE: Determination of whether there is an interface or callback interface from regular expression based parser (" . ($containsInterfaceOrCallbackInterface ? "YES" : "NO") . ") doesn't match the determination from validation parser (" . ($containsInterfaceOrCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
         }
-        print "SUCCESS! Determination of whether there is an interface or callback interface from regular expression based parser (" . ($containsInterfaceOrCallbackInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsInterfaceOrCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ").\n";
+        print "SUCCESS! Determination of whether there is an interface or callback interface from regular expression based parser (" . ($containsInterfaceOrCallbackInterface ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsInterfaceOrCallbackInterfaceFromParsedDocument ? "YES" : "NO") . ").\n" if $verbose;
     }
 
     return $containsInterfaceOrCallbackInterface;
@@ -633,7 +640,7 @@ sub containsInterfaceWithConstantsFromIDL
     my $containsInterfaceWithConstants = ($fileContents =~ /\s+const[\s\w]+=\s+[\w]+;/gs);
 
     if ($validateAgainstParser) {
-        print("Validating containsInterfaceWithConstantsFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating containsInterfaceWithConstantsFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my $containsInterfaceWithConstantsFromParsedDocument = 0;
         foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
@@ -646,7 +653,7 @@ sub containsInterfaceWithConstantsFromIDL
         unless ($containsInterfaceWithConstants == $containsInterfaceWithConstantsFromParsedDocument ) {
             die "FAILURE: Determination of whether there is an interface with constants from regular expression based parser (" . ($containsInterfaceWithConstants ? "YES" : "NO") . ") doesn't match the determination from validation parser (" . ($containsInterfaceWithConstantsFromParsedDocument ? "YES" : "NO") . ") [" . $idlFile->fileName . "].";
         }
-        print "SUCCESS! Determination of whether there is an interface with constants from regular expression based parser (" . ($containsInterfaceWithConstants ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsInterfaceWithConstantsFromParsedDocument ? "YES" : "NO") . ").\n";
+        print "SUCCESS! Determination of whether there is an interface with constants from regular expression based parser (" . ($containsInterfaceWithConstants ? "YES" : "NO") . ") does match the determination from validation parser (" . ($containsInterfaceWithConstantsFromParsedDocument ? "YES" : "NO") . ").\n" if $verbose;
     }
 
     return $containsInterfaceWithConstants;
@@ -659,12 +666,6 @@ sub getInterfaceExtendedAttributesFromIDL
     my $fileContents = $idlFile->fileContents;
 
     my $extendedAttributes = {};
-
-    # Remove comments from fileContents before processing.
-    # FIX: Preference to use Regex::Common::comment, however it is not available on
-    # all build systems.
-    $fileContents =~ s/(?:(?:(?:\/\/)(?:[^\n]*)(?:\n))|(?:(?:\/\*)(?:(?:[^\*]+|\*(?!\/))*)(?:\*\/)))//g;
-
     if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface)\s+(\w+)/gs) {
         my $parameters = $1;
         if (index($parameters, '}') != -1) {
@@ -684,7 +685,7 @@ sub getInterfaceExtendedAttributesFromIDL
     }
 
     if ($validateAgainstParser) {
-        print("Validating getInterfaceExtendedAttributesFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating getInterfaceExtendedAttributesFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my $primaryInterface;
         foreach my $interface (@{$idlFile->parsedDocument->interfaces}) {
@@ -693,6 +694,8 @@ sub getInterfaceExtendedAttributesFromIDL
                 last;
             }
         }
+
+        die "Failed to find primary interface for " . $idlFile->fileName unless $primaryInterface;
 
         # FIXME: Comparing the deep structure of the extended attributes is suitably complex that for now
         # we only validate that both parsers produce the same keys.
@@ -706,7 +709,7 @@ sub getInterfaceExtendedAttributesFromIDL
         unless (listsAreIdentical(\@sortedExtendedAttributeKeys, \@sortedExtendedAttributeKeysFromParsedDocument)) {
             die "FAILURE: Extended attributes for the primary interface from regular expression based parser (" . Dumper(@sortedExtendedAttributeKeys) . ") don't match those from validation parser (" . Dumper(@sortedExtendedAttributeKeysFromParsedDocument) . ") [" . $idlFile->fileName . "]";
         }
-        print "SUCCESS! Extended attributes for the primary interface from regular expression based parser (" . Dumper(@sortedExtendedAttributeKeys) . ") match those from validation parser (" . Dumper(@sortedExtendedAttributeKeysFromParsedDocument) . ").\n";
+        print "SUCCESS! Extended attributes for the primary interface from regular expression based parser (" . Dumper(@sortedExtendedAttributeKeys) . ") match those from validation parser (" . Dumper(@sortedExtendedAttributeKeysFromParsedDocument) . ").\n" if $verbose;
     }
 
     return $extendedAttributes;
@@ -732,7 +735,7 @@ sub getUndefinedBaseDictionariesFromIDL
     }
 
     if ($validateAgainstParser) {
-        print("Validating getUndefinedBaseDictionariesFromIDL for " . $idlFile->fileName . " against validation parser.\n");
+        print "Validating getUndefinedBaseDictionariesFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
 
         my @dictionaryNamesFromParsedDocument = ();
         foreach my $dictionary (@{$idlFile->parsedDocument->dictionaries}) {
@@ -760,7 +763,7 @@ sub getUndefinedBaseDictionariesFromIDL
         unless (listsAreIdentical(\@sortedBaseDictionaries, \@sortedBaseDictionariesFromParsedDocument)) {
             die "FAILURE: Undefined base dictionaries from regular expression based parser (" . Dumper(@sortedBaseDictionaries) . ") don't match those from validation parser (" . Dumper(@sortedBaseDictionariesFromParsedDocument) . ") [" . $idlFile->fileName . "]";
         }
-        print "SUCCESS! Undefined base dictionaries from regular expression based parser (" . Dumper(@sortedBaseDictionaries) . ") match those from validation parser (" . Dumper(@sortedBaseDictionariesFromParsedDocument) . ").\n";
+        print "SUCCESS! Undefined base dictionaries from regular expression based parser (" . Dumper(@sortedBaseDictionaries) . ") match those from validation parser (" . Dumper(@sortedBaseDictionariesFromParsedDocument) . ").\n" if $verbose;
     }
 
     return \@baseDictionaries;

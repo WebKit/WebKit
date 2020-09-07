@@ -183,10 +183,9 @@ WebDOMTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h:
 JSTestNode.h: 
 DOMTestNode.h: 
 WebDOMTestNode.h: 
-JSTestObj.h: TestIncludes.idl
-DOMTestObj.h: TestIncludes.idl
-WebDOMTestObj.h: TestIncludes.idl
-TestIncludes.idl:
+JSTestObj.h: 
+DOMTestObj.h: 
+WebDOMTestObj.h: 
 JSTestOperationConditional.h: TestOperationBase.idl
 DOMTestOperationConditional.h: TestOperationBase.idl
 WebDOMTestOperationConditional.h: TestOperationBase.idl

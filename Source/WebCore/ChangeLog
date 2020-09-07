@@ -1,3 +1,59 @@
+2020-09-07  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Fix issues found by preprocess-idls.pl parser validation and enabled parser validation by default for the tests
+        https://bugs.webkit.org/show_bug.cgi?id=216246
+
+        Reviewed by Darin Adler.
+
+        Enabling preprocess-idls.pl's validation parser for run-bindings-tests revealed a few issues
+        that this change fixes:
+        
+        - Includes statements (as well as any other non-extended attribute related statement) in
+          a comment were being treated as being part of the document. Fixed this by moving the 
+          existing c/c++ style comment removal from getInterfaceExtendedAttributesFromIDL to
+          processIDL so it is run for all IDLs. Since getInterfaceExtendedAttributesFromIDL was
+          called for most files anyway, this doesn't measurably change the performance.
+        - Some test IDLs did not have their primary interface name matching the name of the
+          IDL file. This resulted in a number of tests not actually producing any output. Updated
+          the tests themselves to match name.
+
+        To ensure we don't regress here, the validation parser is now always enabled when running
+        the tests, and preprocess-idls.pl has been updated to be a little less noisy when running
+        with the validation parser enabled (unless you specify --verbose) so that the test output
+        is not disturbed.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (processIDL):
+        (getPartialNamesFromIDL):
+        (getIncludedInterfacesFromIDL):
+        (isCallbackInterfaceFromIDL):
+        (isMixinInterfaceFromIDL):
+        (containsIterableInterfaceFromIDL):
+        (containsInterfaceOrCallbackInterfaceFromIDL):
+        (containsInterfaceWithConstantsFromIDL):
+        (getInterfaceExtendedAttributesFromIDL):
+        (getUndefinedBaseDictionariesFromIDL):
+        * bindings/scripts/test/JS/JSTestDomainSecurity.cpp: Added.
+        * bindings/scripts/test/JS/JSTestDomainSecurity.h: Added.
+        * bindings/scripts/test/JS/JSTestMapLike.cpp: Added.
+        * bindings/scripts/test/JS/JSTestMapLike.h: Added.
+        * bindings/scripts/test/JS/JSTestReadOnlyMapLike.cpp: Added.
+        * bindings/scripts/test/JS/JSTestReadOnlyMapLike.h: Added.
+        * bindings/scripts/test/JS/JSTestReadOnlySetLike.cpp: Added.
+        * bindings/scripts/test/JS/JSTestReadOnlySetLike.h: Added.
+        * bindings/scripts/test/JS/JSTestReportExtraMemoryCost.cpp: Added.
+        * bindings/scripts/test/JS/JSTestReportExtraMemoryCost.h: Added.
+        * bindings/scripts/test/JS/JSTestSetLike.cpp: Added.
+        * bindings/scripts/test/JS/JSTestSetLike.h: Added.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestDomainSecurity.idl:
+        * bindings/scripts/test/TestMapLike.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestReadOnlyMapLike.idl:
+        * bindings/scripts/test/TestReadOnlySetLike.idl:
+        * bindings/scripts/test/TestReportExtraMemoryCost.idl:
+        * bindings/scripts/test/TestSetLike.idl:
+
 2020-09-07  Youenn Fablet  <youenn@apple.com>
 
         Fix https://trac.webkit.org/changeset/266508 as per post-commit comments

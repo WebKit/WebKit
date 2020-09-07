@@ -24,7 +24,7 @@
  */
 
 [
-    ReportExtraMemoryCost,
-] interface InterfaceName {
+    ReportExtraMemoryCost
+] interface TestReportExtraMemoryCost {
 };
 
