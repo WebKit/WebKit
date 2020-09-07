@@ -1,3 +1,46 @@
+2020-09-07  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] Convert custom GObject subclasses to WEBKIT_DEFINE_TYPE
+        https://bugs.webkit.org/show_bug.cgi?id=204673
+
+        Reviewed by Philippe Normand.
+
+        Instead of using G_DEFINE_TYPE macro use rather WEBKIT_DEFINE_TYPE
+        since it handles private structures.
+
+        No new tests since no functional changes.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        Renamed the private structure to match with class name so it can
+        be autogeneterated by the macro.
+        (_WebKitWebAudioSrcPrivate::_WebKitWebAudioSrcPrivate): add
+        constructure.
+        (_WebKitWebAudioSrcPrivate::~_WebKitWebAudioSrcPrivate): add
+        destructor.
+        (webkit_web_audio_src_class_init): remove duplicated
+        initialization.
+        (webKitWebAudioSrcConstructed): add constructed vmethod to
+        initalize some private members.
+        (webKitWebAudioSrcSetProperty): renamed private structure.
+        (webKitWebAudioSrcGetProperty): ditto.
+        (webKitWebAudioSrcAllocateBuffersAndRenderAudio): ditto.
+        (webKitWebAudioSrcLoop): ditto.
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkConstructed): add constructed vmethod to initalize
+        some private members.
+        (webkit_video_sink_class_init): remove duplicated initialization.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webkit_media_clear_key_decrypt_class_init): remove duplicated
+        initialization.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkit_media_common_encryption_decrypt_class_init): remove
+        duplicated initialization.
+        (constructed): add constructed vmethod to initalize some private
+        members.
+        * platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp:
+        (webkit_media_thunder_decrypt_class_init): remove duplicated
+        initialization.
+
 2020-09-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Allow indefinite size flex items to be definite wrt resolving percentages inside them

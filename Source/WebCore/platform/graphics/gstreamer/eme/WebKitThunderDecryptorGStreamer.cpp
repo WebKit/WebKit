@@ -30,15 +30,14 @@
 #include <gcrypt.h>
 #include <gst/base/gstbytereader.h>
 #include <wtf/RunLoop.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebCore;
 
-#define WEBKIT_MEDIA_THUNDER_DECRYPT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT, WebKitMediaThunderDecryptPrivate))
 struct _WebKitMediaThunderDecryptPrivate {
     RefPtr<CDMProxyThunder> cdmProxy;
 };
 
-static void finalize(GObject*);
 static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt*);
 static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt*, const RefPtr<CDMProxy>&);
 static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffer* keyid, GstBuffer* sample, unsigned subSamplesCount,
@@ -63,7 +62,7 @@ static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
         "video/x-vp9; "));
 
 #define webkit_media_thunder_decrypt_parent_class parent_class
-G_DEFINE_TYPE(WebKitMediaThunderDecrypt, webkit_media_thunder_decrypt, WEBKIT_TYPE_MEDIA_CENC_DECRYPT);
+WEBKIT_DEFINE_TYPE(WebKitMediaThunderDecrypt, webkit_media_thunder_decrypt, WEBKIT_TYPE_MEDIA_CENC_DECRYPT)
 
 static GRefPtr<GstCaps> createSinkPadTemplateCaps()
 {
@@ -92,9 +91,6 @@ static void webkit_media_thunder_decrypt_class_init(WebKitMediaThunderDecryptCla
 {
     GST_DEBUG_CATEGORY_INIT(webkitMediaThunderDecryptDebugCategory, "webkitthunder", 0, "Thunder decrypt");
 
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
-    gobjectClass->finalize = finalize;
-
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
     GRefPtr<GstCaps> gstSinkPadTemplateCaps = createSinkPadTemplateCaps();
     gst_element_class_add_pad_template(elementClass, gst_pad_template_new("sink", GST_PAD_SINK, GST_PAD_ALWAYS, gstSinkPadTemplateCaps.get()));
@@ -109,22 +105,6 @@ static void webkit_media_thunder_decrypt_class_init(WebKitMediaThunderDecryptCla
     commonClass->decrypt = GST_DEBUG_FUNCPTR(decrypt);
 
     g_type_class_add_private(klass, sizeof(WebKitMediaThunderDecryptPrivate));
-}
-
-static void webkit_media_thunder_decrypt_init(WebKitMediaThunderDecrypt* self)
-{
-    WebKitMediaThunderDecryptPrivate* priv = WEBKIT_MEDIA_THUNDER_DECRYPT_GET_PRIVATE(self);
-    self->priv = priv;
-    new (priv) WebKitMediaThunderDecryptPrivate();
-}
-
-static void finalize(GObject* object)
-{
-    WebKitMediaThunderDecrypt* self = WEBKIT_MEDIA_THUNDER_DECRYPT(object);
-    WebKitMediaThunderDecryptPrivate* priv = self->priv;
-    priv->~WebKitMediaThunderDecryptPrivate();
-
-    GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
 static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt* self)
