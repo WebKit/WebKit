@@ -816,7 +816,7 @@ static CTFontSymbolicTraits computeTraits(const FontDescription& fontDescription
     return traits;
 }
 
-SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& fontDescription, bool isPlatformFont)
+SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& fontDescription, ShouldComputePhysicalTraits shouldComputePhysicalTraits, bool isPlatformFont)
 {
     if (CTFontIsAppleColorEmoji(font))
         return SynthesisPair(false, false);
@@ -827,8 +827,19 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
     CTFontSymbolicTraits desiredTraits = computeTraits(fontDescription);
 
     CTFontSymbolicTraits actualTraits = 0;
-    if (isFontWeightBold(fontDescription.weight()) || isItalic(fontDescription.italic()))
-        actualTraits = CTFontGetSymbolicTraits(font);
+    if (isFontWeightBold(fontDescription.weight()) || isItalic(fontDescription.italic())) {
+        if (shouldComputePhysicalTraits == ShouldComputePhysicalTraits::Yes) {
+#if HAVE(CTFONTGETPHYSICALSYMBOLICTRAITS)
+            actualTraits = CTFontGetPhysicalSymbolicTraits(font);
+#else
+            auto fontForSynthesisComputation = retainPtr(font);
+            if (auto physicalFont = adoptCF(CTFontCopyPhysicalFont(font)))
+                fontForSynthesisComputation = WTFMove(physicalFont);
+            actualTraits = CTFontGetSymbolicTraits(fontForSynthesisComputation.get());
+#endif
+        } else
+            actualTraits = CTFontGetSymbolicTraits(font);
+    }
 
     bool needsSyntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && (desiredTraits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold);
     bool needsSyntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (desiredTraits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic);
@@ -1494,7 +1505,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     // font pointer.
     CTFontRef substituteFont = fallbackDedupSet().add(result).iterator->get();
 
-    auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(substituteFont, description, isForPlatformFont == IsForPlatformFont::Yes).boldObliquePair();
+    auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(substituteFont, description, ShouldComputePhysicalTraits::No, isForPlatformFont == IsForPlatformFont::Yes).boldObliquePair();
 
     FontPlatformData alternateFont(substituteFont, platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode());
 

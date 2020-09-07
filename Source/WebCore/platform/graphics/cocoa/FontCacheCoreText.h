@@ -51,7 +51,8 @@ struct SynthesisPair {
 };
 
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, const FontDescription&, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool applyWeightWidthSlopeVariations = true);
-SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, bool isPlatformFont = false);
+enum class ShouldComputePhysicalTraits : bool { No, Yes };
+SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, ShouldComputePhysicalTraits = ShouldComputePhysicalTraits::No, bool isPlatformFont = false);
 RetainPtr<CTFontRef> platformFontWithFamily(const AtomString& family, FontSelectionRequest, TextRenderingMode, float size);
 FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef);
 void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);

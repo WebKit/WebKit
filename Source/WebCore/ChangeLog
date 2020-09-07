@@ -1,3 +1,21 @@
+2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CTFontGetPhysicalSymbolicTraits() is faster than CTFontCopyPhysicalFont()/CTFontGetSymbolicTraits()
+        https://bugs.webkit.org/show_bug.cgi?id=215685
+
+        Reviewed by Darin Adler.
+
+        Instead of making the two calls, we can make a single call that has the same effect.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::computeNecessarySynthesis):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        (WebCore::FontFamilySpecificationCoreText::fontRanges const):
+
 2020-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [MotionMark - Multiply] Web process spends ~1% of total samples in PropertyCascade::resolveDirectionAndWritingMode
