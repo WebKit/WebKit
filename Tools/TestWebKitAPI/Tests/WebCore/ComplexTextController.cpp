@@ -80,15 +80,15 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
     EXPECT_NEAR(controller.runWidthSoFar(), advances[4].width(), 0.0001);
     controller.advance(6, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth + totalWidth, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), 0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), 0, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.initialAdvance()), 0, 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 6U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), advances[4].width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), advances[3].width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), advances[2].width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), advances[1].width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(4).width(), -initialAdvance.width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(5).width(), spaceWidth + initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), width(advances[4]), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(1)), width(advances[3]), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(2)), width(advances[2]), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(3)), width(advances[1]), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(4)), -width(initialAdvance), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(5)), spaceWidth + width(initialAdvance), 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
@@ -124,15 +124,15 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
     EXPECT_NEAR(controller.runWidthSoFar(), advances[4].width(), 0.0001);
     controller.advance(5, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.initialAdvance()), initialAdvance.height(), 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 5U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), advances[4].width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), advances[3].width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), advances[2].width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), advances[1].width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(4).width(), -initialAdvance.width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(4).height(), initialAdvance.height(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), advances[4].width(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(1)), advances[3].width(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(2)), advances[2].width(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(3)), advances[1].width(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(4)), -initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(4)), initialAdvance.height(), 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
@@ -170,12 +170,12 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
     EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth + advances[0].width() + initialAdvance.width(), 0.0001);
     controller.advance(3, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth + 76.347656 + initialAdvance.width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), 0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), 0, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.initialAdvance()), 0, 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 3U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), spaceWidth + initialAdvance.width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 53.066406, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), 23.281250, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), spaceWidth + initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(1)), 53.066406, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(2)), 23.281250, 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
@@ -208,11 +208,11 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
     EXPECT_NEAR(controller.runWidthSoFar(), advances[0].width() + initialAdvance.width(), 0.0001);
     controller.advance(2, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 76.347656 + initialAdvance.width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.initialAdvance()), initialAdvance.height(), 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 2U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 53.066406, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 23.281250, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), 53.066406, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(1)), 23.281250, 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
@@ -251,14 +251,14 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
     EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
     controller.advance(4, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width(), 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.initialAdvance()), initialAdvance.height(), 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 4U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 43.8119349005425, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 12.0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), 14.0397830018083, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), -4.33996383363472, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(3).height(), 12.368896925859, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), 43.8119349005425, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(1)), 12.0, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(2)), 14.0397830018083, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(3)), -4.33996383363472, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(3)), 12.368896925859, 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, LeftExpansion)
@@ -285,10 +285,10 @@ TEST_F(ComplexTextControllerTest, LeftExpansion)
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(1, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), 100, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), 0, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), 100, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.initialAdvance()), 0, 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 1U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 24, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), 24, 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, VerticalAdvances)
@@ -322,17 +322,17 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(4, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), 0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), 16, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.initialAdvance()), 16, 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 4U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).height(), 4 - 1 -8, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).height(), 8 - 2 - 512, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), 0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(2).height(), 128 - 32 - 256, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), 0, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(3).height(), 256 - 64, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(0)), 4 - 1 -8, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(1)), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(1)), 8 - 2 - 512, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(2)), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(2)), 128 - 32 - 256, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(3)), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(3)), 256 - 64, 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
@@ -361,7 +361,12 @@ TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(5, &glyphBuffer);
     EXPECT_EQ(glyphBuffer.size(), 5U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width() + glyphBuffer.advanceAt(1).width() + glyphBuffer.advanceAt(2).width() + glyphBuffer.advanceAt(3).width() + glyphBuffer.advanceAt(4).width(), controller.totalAdvance().width(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0))
+        + width(glyphBuffer.advanceAt(1))
+        + width(glyphBuffer.advanceAt(2))
+        + width(glyphBuffer.advanceAt(3))
+        + width(glyphBuffer.advanceAt(4))
+        , controller.totalAdvance().width(), 0.0001);
 }
 
 }

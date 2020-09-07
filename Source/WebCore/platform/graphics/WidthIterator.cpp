@@ -101,7 +101,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
     GlyphBufferAdvance* advances = glyphBuffer.advances(0);
     float beforeWidth = 0;
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
-        beforeWidth += advances[i].width();
+        beforeWidth += width(advances[i]);
 
     ASSERT(lastGlyphCount <= glyphBufferSize);
 
@@ -110,8 +110,8 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
 
     GlyphBufferOrigin* origins = glyphBuffer.origins(0);
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i) {
-        advances[i].setHeight(-advances[i].height());
-        origins[i].setY(-origins[i].y());
+        setHeight(advances[i], -height(advances[i]));
+        setY(origins[i], -y(origins[i]));
     }
 
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i) {
@@ -123,14 +123,14 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
             continue;
         const auto& originalAdvances = *iterator;
         if (i && !originalAdvances.characterIsSpace)
-            glyphBuffer.advances(i - 1)->setWidth(originalAdvances.advanceBeforeCharacter);
-        glyphBuffer.advances(i)->setWidth(originalAdvances.advanceAtCharacter);
+            setWidth(*glyphBuffer.advances(i - 1), originalAdvances.advanceBeforeCharacter);
+        setWidth(*glyphBuffer.advances(i), originalAdvances.advanceAtCharacter);
     }
     charactersTreatedAsSpace.clear();
 
     float afterWidth = 0;
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
-        afterWidth += advances[i].width();
+        afterWidth += width(advances[i]);
 
     return afterWidth - beforeWidth;
 }
@@ -248,7 +248,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             charactersTreatedAsSpace.constructAndAppend(
                 currentCharacterIndex,
                 character == ' ',
-                glyphBuffer.size() ? glyphBuffer.advanceAt(glyphBuffer.size() - 1).width() : 0,
+                glyphBuffer.size() ? WebCore::width(glyphBuffer.advanceAt(glyphBuffer.size() - 1)) : 0,
                 width);
         }
 
@@ -291,7 +291,7 @@ auto WidthIterator::calculateAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphBuff
     if (character == tabCharacter && m_run.allowTabs()) {
         auto& font = glyphBuffer.fontAt(trailingGlyphIndex);
         auto newWidth = m_font.tabWidth(font, m_run.tabSize(), position);
-        auto currentWidth = glyphBuffer.advanceAt(trailingGlyphIndex).width();
+        auto currentWidth = width(glyphBuffer.advanceAt(trailingGlyphIndex));
         rightAdditionalWidth += newWidth - currentWidth;
     }
 
@@ -301,7 +301,7 @@ auto WidthIterator::calculateAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphBuff
         // This is a heuristic to determine if the character is non-visible. Non-visible characters don't get letter-spacing.
         float baseWidth = 0;
         for (unsigned i = leadingGlyphIndex; i <= trailingGlyphIndex; ++i)
-            baseWidth += glyphBuffer.advanceAt(i).width();
+            baseWidth += width(glyphBuffer.advanceAt(i));
         if (baseWidth)
             rightAdditionalWidth += m_font.letterSpacing();
 
@@ -388,7 +388,7 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
     Vector<float> advanceWidths(m_run.length(), 0);
     for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); ++i) {
         auto stringOffset = glyphBuffer.stringOffsetAt(i);
-        advanceWidths[stringOffset] += glyphBuffer.advanceAt(i).width();
+        advanceWidths[stringOffset] += width(glyphBuffer.advanceAt(i));
         auto& glyphIndexRange = characterIndexToGlyphIndexRange[stringOffset];
         if (glyphIndexRange)
             glyphIndexRange->trailingGlyphIndex = i;
@@ -406,7 +406,7 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
             if (character == tabCharacter)
                 continue;
 
-            auto currentAdvance = glyphBuffer.advanceAt(i).width();
+            auto currentAdvance = width(glyphBuffer.advanceAt(i));
             auto newAdvance = currentAdvance * m_run.horizontalGlyphStretch();
             glyphBuffer.expandAdvance(i, newAdvance - currentAdvance);
         }
@@ -493,7 +493,7 @@ bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)
     advance(m_currentCharacterIndex + 1, glyphBuffer);
     float w = 0;
     for (unsigned i = oldSize; i < glyphBuffer.size(); ++i)
-        w += glyphBuffer.advanceAt(i).width();
+        w += WebCore::width(glyphBuffer.advanceAt(i));
     width = w;
     return glyphBuffer.size() > oldSize;
 }

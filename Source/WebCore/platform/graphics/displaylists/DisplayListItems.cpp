@@ -563,10 +563,10 @@ void DrawGlyphs::computeBounds()
     size_t numGlyphs = m_glyphs.size();
     for (size_t i = 0; i < numGlyphs; ++i) {
         GlyphBufferAdvance advance = m_advances[i];
-        FloatRect glyphRect = FloatRect(current.x(), current.y() - ascent, advance.width(), ascent + descent);
+        FloatRect glyphRect = FloatRect(current.x(), current.y() - ascent, width(advance), ascent + descent);
         m_bounds.unite(glyphRect);
 
-        current.move(advance.width(), advance.height());
+        current.move(width(advance), height(advance));
     }
 }
 

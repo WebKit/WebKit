@@ -1127,6 +1127,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GeometryUtilities.h
     platform/graphics/Glyph.h
     platform/graphics/GlyphBuffer.h
+    platform/graphics/GlyphBufferMembers.h
     platform/graphics/GlyphMetricsMap.h
     platform/graphics/GlyphPage.h
     platform/graphics/Gradient.h

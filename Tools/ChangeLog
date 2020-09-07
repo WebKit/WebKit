@@ -1,3 +1,13 @@
+2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make GlyphBufferAdvance and GlyphBufferOrigin more robust
+        https://bugs.webkit.org/show_bug.cgi?id=215143
+
+        Reviewed by Zalan Bujtas.
+
+        * TestWebKitAPI/Tests/WebCore/ComplexTextController.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2020-09-06  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Add mode to preprocess-idls.pl to validate fast regex based scanner with the normal IDL parser

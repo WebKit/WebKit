@@ -32,140 +32,14 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "Glyph.h"
+#include "GlyphBufferMembers.h"
 #include <climits>
 #include <limits>
 #include <wtf/Vector.h>
 
-#if USE(CG)
-#include <CoreGraphics/CGGeometry.h>
-#endif
-
 namespace WebCore {
 
 class Font;
-
-#if USE(WINGDI)
-typedef wchar_t GlyphBufferGlyph;
-#else
-typedef Glyph GlyphBufferGlyph;
-#endif
-
-// CG uses CGSize instead of FloatSize so that the result of advances()
-// can be passed directly to CGContextShowGlyphsWithAdvances in FontMac.mm
-#if USE(CG)
-
-struct GlyphBufferAdvance : CGSize {
-public:
-    GlyphBufferAdvance()
-        : CGSize(CGSizeZero)
-    {
-    }
-    GlyphBufferAdvance(FloatSize size)
-        : CGSize(size)
-    {
-    }
-    GlyphBufferAdvance(float width, float height)
-        : CGSize(CGSizeMake(width, height))
-    {
-    }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<GlyphBufferAdvance> decode(Decoder&);
-
-    operator FloatSize() { return { static_cast<float>(this->CGSize::width), static_cast<float>(this->CGSize::height) }; }
-
-    void setWidth(float width) { this->CGSize::width = width; }
-    void setHeight(float height) { this->CGSize::height = height; }
-    float width() const { return this->CGSize::width; }
-    float height() const { return this->CGSize::height; }
-};
-
-template<class Encoder>
-void GlyphBufferAdvance::encode(Encoder& encoder) const
-{
-    encoder << width();
-    encoder << height();
-}
-
-template<class Decoder>
-Optional<GlyphBufferAdvance> GlyphBufferAdvance::decode(Decoder& decoder)
-{
-    Optional<float> width;
-    decoder >> width;
-    if (!width)
-        return WTF::nullopt;
-
-    Optional<float> height;
-    decoder >> height;
-    if (!height)
-        return WTF::nullopt;
-
-    return GlyphBufferAdvance(*width, *height);
-}
-
-struct GlyphBufferOrigin : CGPoint {
-public:
-    GlyphBufferOrigin()
-        : CGPoint(CGPointZero)
-    {
-    }
-    GlyphBufferOrigin(FloatPoint point)
-        : CGPoint(point)
-    {
-    }
-    GlyphBufferOrigin(float x, float y)
-        : CGPoint(CGPointMake(x, y))
-    {
-    }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<GlyphBufferOrigin> decode(Decoder&);
-
-    operator FloatPoint() { return { static_cast<float>(this->CGPoint::x), static_cast<float>(this->CGPoint::y) }; }
-
-    void setX(float x) { this->CGPoint::x = x; }
-    void setY(float y) { this->CGPoint::y = y; }
-    float x() const { return this->CGPoint::x; }
-    float y() const { return this->CGPoint::y; }
-};
-
-template<class Encoder>
-void GlyphBufferOrigin::encode(Encoder& encoder) const
-{
-    encoder << x();
-    encoder << y();
-}
-
-template<class Decoder>
-Optional<GlyphBufferOrigin> GlyphBufferOrigin::decode(Decoder& decoder)
-{
-    Optional<float> x;
-    decoder >> x;
-    if (!x)
-        return WTF::nullopt;
-
-    Optional<float> y;
-    decoder >> y;
-    if (!y)
-        return WTF::nullopt;
-
-    return GlyphBufferOrigin(*x, *y);
-}
-
-using GlyphBufferStringOffset = CFIndex;
-
-#else
-
-using GlyphBufferAdvance = FloatSize;
-using GlyphBufferOrigin = FloatPoint;
-using GlyphBufferStringOffset = unsigned;
-
-#endif // #if USE(CG)
-
-inline FloatSize toFloatSize(const GlyphBufferAdvance& a)
-{
-    return FloatSize(a.width(), a.height());
-}
 
 class GlyphBuffer {
 public:
@@ -204,19 +78,17 @@ public:
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
-    void expandInitialAdvance(float width) { m_initialAdvance.setWidth(m_initialAdvance.width() + width); }
+    void expandInitialAdvance(float width) { setWidth(m_initialAdvance, WebCore::width(m_initialAdvance) + width); }
     void expandInitialAdvance(GlyphBufferAdvance additionalAdvance)
     {
-        m_initialAdvance.setWidth(m_initialAdvance.width() + additionalAdvance.width());
-        m_initialAdvance.setHeight(m_initialAdvance.height() + additionalAdvance.height());
+        setWidth(m_initialAdvance, width(m_initialAdvance) + width(additionalAdvance));
+        setHeight(m_initialAdvance, height(m_initialAdvance) + height(additionalAdvance));
     }
     
     static constexpr GlyphBufferStringOffset noOffset = std::numeric_limits<GlyphBufferStringOffset>::max();
     void add(Glyph glyph, const Font& font, float width, GlyphBufferStringOffset offsetInString = noOffset)
     {
-        GlyphBufferAdvance advance;
-        advance.setWidth(width);
-        advance.setHeight(0);
+        GlyphBufferAdvance advance = makeGlyphBufferAdvance(width, 0);
         add(glyph, font, advance, offsetInString);
     }
 
@@ -225,7 +97,7 @@ public:
         m_fonts.append(&font);
         m_glyphs.append(glyph);
         m_advances.append(advance);
-        m_origins.append(GlyphBufferOrigin());
+        m_origins.append(makeGlyphBufferOrigin());
         m_offsetsInString.append(offsetInString);
     }
 
@@ -243,9 +115,9 @@ public:
         ASSERT(location <= size());
 
         m_fonts.insertVector(location, Vector<const Font*>(length, font));
-        m_glyphs.insertVector(location, Vector<GlyphBufferGlyph>(length, 0xFFFF));
-        m_advances.insertVector(location, Vector<GlyphBufferAdvance>(length, GlyphBufferAdvance(0, 0)));
-        m_origins.insertVector(location, Vector<GlyphBufferOrigin>(length, GlyphBufferOrigin()));
+        m_glyphs.insertVector(location, Vector<GlyphBufferGlyph>(length, std::numeric_limits<GlyphBufferGlyph>::max()));
+        m_advances.insertVector(location, Vector<GlyphBufferAdvance>(length, makeGlyphBufferAdvance()));
+        m_origins.insertVector(location, Vector<GlyphBufferOrigin>(length, makeGlyphBufferOrigin()));
         m_offsetsInString.insertVector(location, Vector<GlyphBufferStringOffset>(length, 0));
     }
 
@@ -259,22 +131,22 @@ public:
     {
         ASSERT(!isEmpty());
         GlyphBufferAdvance& lastAdvance = m_advances.last();
-        lastAdvance.setWidth(lastAdvance.width() + width);
+        setWidth(lastAdvance, WebCore::width(lastAdvance) + width);
     }
 
     void expandAdvance(unsigned index, float width)
     {
         ASSERT(index < size());
         auto& lastAdvance = m_advances[index];
-        lastAdvance.setWidth(lastAdvance.width() + width);
+        setWidth(lastAdvance, WebCore::width(lastAdvance) + width);
     }
 
     void expandLastAdvance(GlyphBufferAdvance expansion)
     {
         ASSERT(!isEmpty());
         GlyphBufferAdvance& lastAdvance = m_advances.last();
-        lastAdvance.setWidth(lastAdvance.width() + expansion.width());
-        lastAdvance.setHeight(lastAdvance.height() + expansion.height());
+        setWidth(lastAdvance, width(lastAdvance) + width(expansion));
+        setHeight(lastAdvance, height(lastAdvance) + height(expansion));
     }
 
     void shrink(unsigned truncationPoint)
@@ -295,18 +167,18 @@ public:
     void flatten()
     {
         for (unsigned i = 0; i < size(); ++i) {
-            m_advances[i] = GlyphBufferAdvance(
-                -m_origins[i].x() + m_advances[i].width() + (i + 1 < size() ? m_origins[i + 1].x() : 0),
-                -m_origins[i].y() + m_advances[i].height() + (i + 1 < size() ? m_origins[i + 1].y() : 0)
+            m_advances[i] = makeGlyphBufferAdvance(
+                -x(m_origins[i]) + width(m_advances[i]) + (i + 1 < size() ? x(m_origins[i + 1]) : 0),
+                -y(m_origins[i]) + height(m_advances[i]) + (i + 1 < size() ? y(m_origins[i + 1]) : 0)
             );
-            m_origins[i] = GlyphBufferOrigin();
+            m_origins[i] = makeGlyphBufferOrigin();
         }
     }
 
     bool isFlattened() const
     {
         for (unsigned i = 0; i < size(); ++i) {
-            if (m_origins[i] != GlyphBufferOrigin())
+            if (m_origins[i] != makeGlyphBufferOrigin())
                 return false;
         }
         return true;
@@ -341,7 +213,7 @@ private:
     Vector<GlyphBufferAdvance, 1024> m_advances;
     Vector<GlyphBufferOrigin, 1024> m_origins;
     Vector<GlyphBufferStringOffset, 1024> m_offsetsInString;
-    GlyphBufferAdvance m_initialAdvance;
+    GlyphBufferAdvance m_initialAdvance { makeGlyphBufferAdvance() };
 };
 
 }

@@ -1,3 +1,81 @@
+2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make GlyphBufferAdvance and GlyphBufferOrigin more robust
+        https://bugs.webkit.org/show_bug.cgi?id=215143
+
+        Reviewed by Zalan Bujtas.
+
+        GlyphBuffer contains vectors of advances and origins, which are conceptually
+        FloatSizes and FloatPoints. However, we need to pass these arrays into CTFontShapeGlyphs()
+        or CTFontTransformGlyphsWithLanguage(), which expects these vectors to use platform types.
+        Rather than converting in/out of platform types around the call site, we can simply use
+        the platform types throughout. Indeed, that's what we're doing today.
+
+        However, the mechanism we use today to make this platform-independent is to make a struct
+        which inherits from the platform types. Then, we static_cast the array of the struct to
+        an array of the base type. This is brittle, because it relies on the assumption that the
+        struct doesn't have any members added to it, which would change the stride of the array
+        and feed garbage into the shaping function.
+
+        Instead, a better design is to typedef the native type, and have all interactions with the
+        types go through standalone functions which deal with the native type. That way, we can't
+        accidentally change the size of the array elements.
+
+        No new tests because there is no behavior change.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::advance):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText const):
+        (WebCore::FontCascade::layoutComplexText const):
+        (WebCore::FontCascade::drawGlyphBuffer const):
+        (WebCore::FontCascade::drawEmphasisMarks const):
+        (WebCore::GlyphToPathTranslator::extents):
+        (WebCore::GlyphToPathTranslator::advance):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::add):
+        (WebCore::GlyphBuffer::makeHole):
+        (WebCore::GlyphBuffer::expandLastAdvance):
+        (WebCore::GlyphBuffer::flatten):
+        (WebCore::GlyphBufferAdvance::GlyphBufferAdvance): Deleted.
+        (WebCore::GlyphBufferAdvance::operator FloatSize): Deleted.
+        (WebCore::GlyphBufferAdvance::setWidth): Deleted.
+        (WebCore::GlyphBufferAdvance::setHeight): Deleted.
+        (WebCore::GlyphBufferAdvance::width const): Deleted.
+        (WebCore::GlyphBufferAdvance::height const): Deleted.
+        (WebCore::GlyphBufferAdvance::encode const): Deleted.
+        (WebCore::GlyphBufferAdvance::decode): Deleted.
+        (WebCore::GlyphBufferOrigin::GlyphBufferOrigin): Deleted.
+        (WebCore::GlyphBufferOrigin::operator FloatPoint): Deleted.
+        (WebCore::GlyphBufferOrigin::setX): Deleted.
+        (WebCore::GlyphBufferOrigin::setY): Deleted.
+        (WebCore::GlyphBufferOrigin::x const): Deleted.
+        (WebCore::GlyphBufferOrigin::y const): Deleted.
+        (WebCore::GlyphBufferOrigin::encode const): Deleted.
+        (WebCore::GlyphBufferOrigin::decode): Deleted.
+        (WebCore::toFloatSize): Deleted.
+        * platform/graphics/GlyphBufferMembers.h: Added.
+        (WebCore::createGlyphBufferAdvance):
+        (WebCore::floatSizeFromGlyphBufferAdvance):
+        (WebCore::setGlyphBufferAdvanceWidth):
+        (WebCore::setGlyphBufferAdvanceHeight):
+        (WebCore::glyphBufferAdvanceWidth):
+        (WebCore::glyphBufferAdvanceHeight):
+        (WebCore::createGlyphBufferOrigin):
+        (WebCore::floatPointFromGlyphBufferOrigin):
+        (WebCore::setGlyphBufferOriginX):
+        (WebCore::setGlyphBufferOriginY):
+        (WebCore::glyphBufferOriginX):
+        (WebCore::glyphBufferOriginY):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+        (WebCore::WidthIterator::advanceInternal):
+        (WebCore::WidthIterator::advanceOneCharacter):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawGlyphs::computeBounds):
+
 2020-09-06  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Add mode to preprocess-idls.pl to validate fast regex based scanner with the normal IDL parser

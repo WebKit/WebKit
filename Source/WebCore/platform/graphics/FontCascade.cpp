@@ -302,7 +302,7 @@ FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, co
     if (glyphBuffer.isEmpty())
         return FloatSize();
 
-    FloatPoint startPoint = point + FloatSize(glyphBuffer.initialAdvance());
+    FloatPoint startPoint = point + WebCore::size(glyphBuffer.initialAdvance());
     drawGlyphBuffer(context, glyphBuffer, startPoint, customFontNotReadyAction);
     return startPoint - point;
 }
@@ -320,7 +320,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
     if (glyphBuffer.isEmpty())
         return;
 
-    FloatPoint startPoint = point + FloatSize(glyphBuffer.initialAdvance());
+    FloatPoint startPoint = point + WebCore::size(glyphBuffer.initialAdvance());
     drawEmphasisMarks(context, glyphBuffer, mark, startPoint);
 }
 
@@ -345,7 +345,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
         return makeUnique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform());
     });
     
-    FloatPoint startPoint = toFloatPoint(FloatSize(glyphBuffer.initialAdvance()));
+    FloatPoint startPoint = toFloatPoint(WebCore::size(glyphBuffer.initialAdvance()));
     drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);
     return displayList;
 }
@@ -451,7 +451,7 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
     // Same glyph widths but different floating point arithmetic can produce different run width.
     float runWidthDifferenceWithTransformApplied = -runWidth;
     for (size_t i = 0; i < glyphBuffer.size(); ++i)
-        runWidthDifferenceWithTransformApplied += glyphBuffer.advanceAt(i).width();
+        runWidthDifferenceWithTransformApplied += WebCore::width(glyphBuffer.advanceAt(i));
     runWidth += runWidthDifferenceWithTransformApplied;
 
     if (cacheEntry)
@@ -1401,7 +1401,7 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
     if (!glyphBuffer.isEmpty()) {
         // The initial advance is supposed to point directly to the first glyph's paint position.
         // See the ascii-art diagram in ComplexTextController.h.
-        glyphBuffer.expandInitialAdvance(GlyphBufferAdvance(glyphBuffer.originAt(0).x(), glyphBuffer.originAt(0).y()));
+        glyphBuffer.expandInitialAdvance(makeGlyphBufferAdvance(x(glyphBuffer.originAt(0)), y(glyphBuffer.originAt(0))));
     }
 
     // The glyph buffer is currently in logical order,
@@ -1429,18 +1429,18 @@ GlyphBuffer FontCascade::layoutComplexText(const TextRun& run, unsigned from, un
         // the sum of the layout advances.
         FloatSize initialAdvance = controller.totalAdvance();
         for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
-            initialAdvance -= toFloatSize(dummyGlyphBuffer.advanceAt(i));
+            initialAdvance -= WebCore::size(dummyGlyphBuffer.advanceAt(i));
         for (unsigned i = 0; i < glyphBuffer.size(); ++i)
-            initialAdvance -= toFloatSize(glyphBuffer.advanceAt(i));
+            initialAdvance -= WebCore::size(glyphBuffer.advanceAt(i));
         // FIXME: Shouldn't we subtract the other initial advance?
         glyphBuffer.reverse(0, glyphBuffer.size());
-        glyphBuffer.setInitialAdvance(initialAdvance);
+        glyphBuffer.setInitialAdvance(makeGlyphBufferAdvance(initialAdvance));
     } else {
-        FloatSize initialAdvance = toFloatSize(dummyGlyphBuffer.initialAdvance());
+        FloatSize initialAdvance = WebCore::size(dummyGlyphBuffer.initialAdvance());
         for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
-            initialAdvance += toFloatSize(dummyGlyphBuffer.advanceAt(i));
+            initialAdvance += WebCore::size(dummyGlyphBuffer.advanceAt(i));
         // FIXME: Shouldn't we add the other initial advance?
-        glyphBuffer.setInitialAdvance(initialAdvance);
+        glyphBuffer.setInitialAdvance(makeGlyphBufferAdvance(initialAdvance));
     }
 
     return glyphBuffer;
@@ -1459,8 +1459,8 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
     ASSERT(glyphBuffer.isFlattened());
     const Font* fontData = &glyphBuffer.fontAt(0);
     FloatPoint startPoint = point;
-    float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
-    float nextY = startPoint.y() + glyphBuffer.advanceAt(0).height();
+    float nextX = startPoint.x() + WebCore::width(glyphBuffer.advanceAt(0));
+    float nextY = startPoint.y() + height(glyphBuffer.advanceAt(0));
     unsigned lastFrom = 0;
     unsigned nextGlyph = 1;
     while (nextGlyph < glyphBuffer.size()) {
@@ -1475,8 +1475,8 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
             startPoint.setX(nextX);
             startPoint.setY(nextY);
         }
-        nextX += glyphBuffer.advanceAt(nextGlyph).width();
-        nextY += glyphBuffer.advanceAt(nextGlyph).height();
+        nextX += WebCore::width(glyphBuffer.advanceAt(nextGlyph));
+        nextY += height(glyphBuffer.advanceAt(nextGlyph));
         nextGlyph++;
     }
 
@@ -1521,7 +1521,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     GlyphBuffer markBuffer;
     for (unsigned i = 0; i + 1 < glyphBuffer.size(); ++i) {
         float middleOfNextGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, i + 1);
-        float advance = glyphBuffer.advanceAt(i).width() - middleOfLastGlyph + middleOfNextGlyph;
+        float advance = WebCore::width(glyphBuffer.advanceAt(i)) - middleOfLastGlyph + middleOfNextGlyph;
         markBuffer.add(glyphBuffer.glyphAt(i) ? markGlyph : spaceGlyph, *markFontData, advance);
         middleOfLastGlyph = middleOfNextGlyph;
     }
@@ -1766,7 +1766,7 @@ std::pair<float, float> GlyphToPathTranslator::extents()
 {
     auto beginning = m_translation.mapPoint(FloatPoint(0, 0));
     auto advance = m_glyphBuffer.advanceAt(m_index);
-    auto end = m_translation.mapSize(FloatSize(advance.width(), advance.height()));
+    auto end = m_translation.mapSize(size(advance));
     return std::make_pair(beginning.x(), beginning.x() + end.width());
 }
 
@@ -1778,7 +1778,7 @@ auto GlyphToPathTranslator::underlineType() -> GlyphUnderlineType
 void GlyphToPathTranslator::advance()
 {
     GlyphBufferAdvance advance = m_glyphBuffer.advanceAt(m_index);
-    m_translation.translate(FloatSize(advance.width(), advance.height()));
+    m_translation.translate(size(advance));
     ++m_index;
     if (m_index < m_glyphBuffer.size())
         m_fontData = &m_glyphBuffer.fontAt(m_index);
@@ -1794,7 +1794,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     if (!glyphBuffer.size())
         return DashArray();
 
-    FloatPoint origin = textOrigin + FloatSize(glyphBuffer.initialAdvance());
+    FloatPoint origin = textOrigin + WebCore::size(glyphBuffer.initialAdvance());
     GlyphToPathTranslator translator(run, glyphBuffer, origin);
     DashArray result;
     for (unsigned index = 0; translator.containsMorePaths(); ++index, translator.advance()) {
