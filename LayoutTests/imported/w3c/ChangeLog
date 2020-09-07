@@ -1,3 +1,18 @@
+2020-09-06  Darin Adler  <darin@apple.com>
+
+        Make TextCodecCJK and TextCodecSingleByte thread-safe and refactor a bit to share code
+        https://bugs.webkit.org/show_bug.cgi?id=216229
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/encoding/eof-utf-8-one.html:
+        * web-platform-tests/encoding/eof-utf-8-three.html:
+        * web-platform-tests/encoding/eof-utf-8-two.html:
+        Updated these files with fresh copies. Somehow, the trailing invalid
+        UTF-8 sequences from these files must have gotten lost when we
+        re-synced web-platform-tests/encoding from upstream. If we do that
+        again, then these tests will start failing again.
+
 2020-09-07  Youenn Fablet  <youenn@apple.com>
 
         Safari takes too long to fetch images from memory cache

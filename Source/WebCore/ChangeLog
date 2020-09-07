@@ -1,3 +1,71 @@
+2020-09-06  Darin Adler  <darin@apple.com>
+
+        Make TextCodecCJK and TextCodecSingleByte thread-safe and refactor a bit to share code
+        https://bugs.webkit.org/show_bug.cgi?id=216229
+
+        Reviewed by Sam Weinig.
+
+        The text encoding machinery is usable on multiple threads, but our new TextCodec
+        classes have some global data structures that need to be guarded to keep that intact.
+
+        * platform/text/EncodingTables.cpp:
+        (WebCore::checkEncodingTableInvariants): One-time check for invariants that clients
+        of these tables depend on.
+
+        * platform/text/EncodingTables.h: Added checkEncodingTableInvariants. Also Added
+        function templates for encoding tables: Added findFirstInSortedPairs,
+        findLastInSortedPairs and findInSortedPairs for searching a sorted array of pairs
+        used as a map. Added sortByFirst to aid in the creation of such a sorted array.
+        And added isSortedByFirst and sortedFirstsAreUnique so we can assert those invariants.
+        One of the good features of the findInSortedPairs functions is that they handle integer
+        values that don't fit in an integral key type, returning WTF::nullopt in that case.
+        That lets us pass code point values when looking in tables that use code units as their
+        key, without separately checking if they are in range, which otherwise requires
+        converting to UChar and checking for equality or calling U_IS_BMP.
+
+        * platform/text/TextCodecCJK.cpp:
+        (WebCore::TextCodecCJK::TextCodecCJK): Call checkEncodingTableInvariants.
+        (WebCore::TextCodecCJK::encode const): Ditto.
+        (WebCore::jis0208DecodeIndex): Use std::call_once for thread safety.
+        Use sortByFirst and sortedFirstsAreUnique.
+        (WebCore::codePointJIS0208): Use findFirstInSortedPairs.
+        (WebCore::codePointJIS0212): Ditto.
+        (WebCore::TextCodecCJK::eucJPDecode): Cast to char instad of LChar when adding
+        an ASCII character to a StringBuilder.
+        (WebCore::eucJPEncode): Use the name codePoint instead of c to match other
+        surrounding code. Use findLastInSortedPairs.
+        (WebCore::iso2022JPEncode): Removed some unneeded casts to uint8_t when appending
+        bytes to a Vector. Added a static_assert to check the size of iso2022JPKatakana.
+        Use findLastInSortedPairs.
+        (WebCore::shiftJISEncode): Use findInSortedPairs.
+        (WebCore::eucKREncodingIndex): Use std::call_once for thread safety.
+        Use sortByFirst and sortedFirstsAreUnique.
+        (WebCore::eucKREncode): Removed some unneeded casts to uint8_t when appending
+        bytes to a Vector. Use findFirstInSortedPairs.
+        (WebCore::TextCodecCJK::eucKRDecode): Use findFirstInSortedPairs.
+        (WebCore::big5Encode): Use findInSortedPairs. Also renamed c to codePoint.
+        (WebCore::big5DecodeIndex): Use std::call_once for thread safety.
+        Use sortByFirst and sortedFirstsAreUnique.
+        (WebCore::TextCodecCJK::big5Decode): Use findFirstInSortedPairs. Cast to char
+        instad of LChar when adding an ASCII character to a StringBuilder.
+
+        * platform/text/TextCodecSingleByte.cpp:
+        (WebCore::tableForEncoding): Return an IteratorRange instead of a pair of
+        pointer and size. This works with std::begin/end. Also make table with actual
+        encoded bytes, by adding 0x80 here, rather than doing that when using the table.
+        (WebCore::encode): Use std::call_once for thread safety.
+        Use sortByFirst and sortedFirstsAreUnique. The code before was not sorting at
+        all, which means it probably didn't work in any cases where the code units
+        happen to not be in ascending order. We should add some test cases.
+        (WebCore::decode): Use findFirstInSortedPairs. Also use StringView::codePoints
+        because these are likely to be 8-bit strings and we don't need to temporarily
+        upconvert them to 16-bit just to encode them. Should probably later measure if
+        the use of StringView::upconvertedCharacters plus CodePointIterator<UChar>
+        instead of StringView::codePoints is better for performance in the CJK encoding
+        functions. This approach means more branching inside the loop, but the other
+        version involves memory allocation and a second loop when the characters are
+        all 8-bit.
+
 2020-09-07  Youenn Fablet  <youenn@apple.com>
 
         Fix Internals::supportsVCPEncoder on BigSur

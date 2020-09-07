@@ -1,3 +1,14 @@
+2020-09-06  Darin Adler  <darin@apple.com>
+
+        Make TextCodecCJK and TextCodecSingleByte thread-safe and refactor a bit to share code
+        https://bugs.webkit.org/show_bug.cgi?id=216229
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Removed expectation that skips the three eof-utf-8
+        tests. They were failing because the tests were imported into the source
+        tree improperly and are passing now that is fixed.
+
 2020-09-07  Youenn Fablet  <youenn@apple.com>
 
         Fix Internals::supportsVCPEncoder on BigSur

@@ -1109,7 +1109,6 @@ webkit.org/b/189672 [ Mojave Release ] webgl/2.0.0/conformance2/textures/canvas_
 webkit.org/b/215468 [ Mojave Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Failure ]
 
 # <rdar://problem/37330377> ASan tests exiting early due to timeouts
-[ Release ] imported/w3c/web-platform-tests/encoding [ Skip ]
 [ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys [ Skip ]
 
 # <rdar://problem/60063002> REGRESSION: (r257758) http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html is crashing

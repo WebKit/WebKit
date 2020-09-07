@@ -896,7 +896,6 @@ TEST(WTF, StringViewEndsWithIgnoringASCIICaseWithLatin1Characters)
 
 TEST(WTF, StringView8Bit)
 {
-    StringView nullView;
     EXPECT_TRUE(StringView().is8Bit());
     EXPECT_TRUE(StringView::empty().is8Bit());
 

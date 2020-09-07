@@ -26,6 +26,8 @@
 #include "config.h"
 #include "EncodingTables.h"
 
+#include <mutex>
+
 namespace WebCore {
 
 // FIXME: Compress these tables and decompress them if they are actually used. This will significantly decrease the size of WebCore's binary.
@@ -6235,5 +6237,25 @@ const std::pair<uint16_t, UChar> eucKRDecodingIndex[17048] {
     { 23734, 0x59EC }, { 23735, 0x5B09 }, { 23736, 0x5E0C }, { 23737, 0x6199 }, { 23738, 0x6198 }, { 23739, 0x6231 }, { 23740, 0x665E }, { 23741, 0x66E6 },
     { 23742, 0x7199 }, { 23743, 0x71B9 }, { 23744, 0x71BA }, { 23745, 0x72A7 }, { 23746, 0x79A7 }, { 23747, 0x7A00 }, { 23748, 0x7FB2 }, { 23749, 0x8A70 },
 };
+
+#if ASSERT_ENABLED
+
+void checkEncodingTableInvariants()
+{
+    static std::once_flag once;
+    std::call_once(once, [] {
+        ASSERT(isSortedByFirst(jis0208));
+
+        ASSERT(isSortedByFirst(jis0212));
+        ASSERT(sortedFirstsAreUnique(jis0212));
+
+        ASSERT(isSortedByFirst(big5EncodingMap));
+
+        ASSERT(isSortedByFirst(eucKRDecodingIndex));
+        ASSERT(sortedFirstsAreUnique(eucKRDecodingIndex));
+    });
+}
+
+#endif
 
 }

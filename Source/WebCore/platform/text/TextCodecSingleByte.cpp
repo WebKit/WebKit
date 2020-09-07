@@ -26,6 +26,9 @@
 #include "config.h"
 #include "TextCodecSingleByte.h"
 
+#include "EncodingTables.h"
+#include <mutex>
+#include <wtf/IteratorRange.h>
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -46,7 +49,8 @@ enum class TextCodecSingleByte::Encoding : uint8_t {
 };
 
 using SingleByteDecodeTable = std::array<UChar, 128>;
-using SingleByteEncodeTable = std::pair<const std::pair<UChar, uint8_t>*, size_t>;
+using SingleByteEncodeTableEntry = std::pair<UChar, uint8_t>;
+using SingleByteEncodeTable = WTF::IteratorRange<const SingleByteEncodeTableEntry*>;
 
 // From https://encoding.spec.whatwg.org/index-iso-8859-3.txt with 0xFFFD filling the gaps
 static constexpr SingleByteDecodeTable iso88593 {
@@ -169,18 +173,25 @@ static constexpr SingleByteDecodeTable ibm866 {
 
 template<const SingleByteDecodeTable& decodeTable> SingleByteEncodeTable tableForEncoding()
 {
-    // FIXME: With the C++20 version of std::count, we should be able to change this from const to constexpr and get it computed at compile time.
-    static const size_t size = std::size(decodeTable) - std::count(std::begin(decodeTable), std::end(decodeTable), replacementCharacter);
-    static const auto table = [&] {
-        auto table = new std::pair<UChar, uint8_t>[size];
+    // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
+    // FIXME: With the C++20 version of std::count, we should be able to change this from const to constexpr and compute the size at compile time.
+    static const auto size = std::size(decodeTable) - std::count(std::begin(decodeTable), std::end(decodeTable), replacementCharacter);
+    static const SingleByteEncodeTableEntry* entries;
+    std::once_flag once;
+    std::call_once(once, [&] {
+        auto* mutableEntries = new SingleByteEncodeTableEntry[size];
         size_t j = 0;
         for (uint8_t i = 0; i < std::size(decodeTable); i++) {
             if (decodeTable[i] != replacementCharacter)
-                table[j++] = { decodeTable[i], i };
+                mutableEntries[j++] = { decodeTable[i], i + 0x80 };
         }
-        return table;
-    }();
-    return { table, size };
+        ASSERT(j == size);
+        auto collection = WTF::makeIteratorRange(&mutableEntries[0], &mutableEntries[size]);
+        sortByFirst(collection);
+        ASSERT(sortedFirstsAreUnique(collection));
+        entries = mutableEntries;
+    });
+    return WTF::makeIteratorRange(&entries[0], &entries[size]);
 }
 
 static SingleByteEncodeTable tableForEncoding(TextCodecSingleByte::Encoding encoding)
@@ -240,31 +251,20 @@ static constexpr const SingleByteDecodeTable& tableForDecoding(TextCodecSingleBy
 // https://encoding.spec.whatwg.org/#single-byte-encoder
 static Vector<uint8_t> encode(const SingleByteEncodeTable& table, StringView string, Function<void(UChar32, Vector<uint8_t>&)>&& unencodableHandler)
 {
+    // FIXME: Consider adding an ASCII fast path like the one in TextCodecLatin1::decode.
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
-
-    auto characters = string.upconvertedCharacters();
-    for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
-        auto codePoint = *iterator;
+    for (auto codePoint : string.codePoints()) {
         if (isASCII(codePoint)) {
             result.append(codePoint);
             continue;
         }
-
-        auto codeUnit = static_cast<UChar>(codePoint);
-        if (codeUnit != codePoint) {
+        auto byte = findFirstInSortedPairs(table, codePoint);
+        if (!byte) {
             unencodableHandler(codePoint, result);
             continue;
         }
-        
-        auto range = std::equal_range(table.first, table.first + table.second, std::pair<UChar, uint8_t>(codeUnit, 0), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
-        if (range.first == range.second) {
-            unencodableHandler(codePoint, result);
-            continue;
-        }
-        result.append(range.first->second + 0x80);
+        result.append(*byte);
     }
     return result;
 }
@@ -284,7 +284,6 @@ static String decode(const SingleByteDecodeTable& table, const uint8_t* bytes, s
             sawError = true;
         result.append(codePoint);
     };
-
     if (stopOnError) {
         for (size_t i = 0; i < length; i++) {
             parseByte(bytes[i]);
@@ -295,7 +294,6 @@ static String decode(const SingleByteDecodeTable& table, const uint8_t* bytes, s
         for (size_t i = 0; i < length; i++)
             parseByte(bytes[i]);
     }
-
     return result.toString();
 }
 

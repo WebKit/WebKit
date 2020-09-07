@@ -1,3 +1,14 @@
+2020-09-06  Darin Adler  <darin@apple.com>
+
+        Make TextCodecCJK and TextCodecSingleByte thread-safe and refactor a bit to share code
+        https://bugs.webkit.org/show_bug.cgi?id=216229
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST): Removed an unused variable. At one point, with
+        code that I wrote and now have rolled out, this was causing a build failure.
+
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make GlyphBufferAdvance and GlyphBufferOrigin more robust

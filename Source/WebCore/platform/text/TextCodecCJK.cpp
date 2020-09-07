@@ -27,6 +27,7 @@
 #include "TextCodecCJK.h"
 
 #include "EncodingTables.h"
+#include <mutex>
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -44,6 +45,7 @@ enum class TextCodecCJK::Encoding : uint8_t {
 TextCodecCJK::TextCodecCJK(Encoding encoding)
     : m_encoding(encoding)
 {
+    checkEncodingTableInvariants();
 }
 
 void TextCodecCJK::registerEncodingNames(EncodingNameRegistrar registrar)
@@ -124,16 +126,17 @@ void TextCodecCJK::registerCodecs(TextCodecRegistrar registrar)
 using JIS0208DecodeIndex = std::array<std::pair<uint16_t, UChar>, std::size(jis0208)>;
 static const JIS0208DecodeIndex& jis0208DecodeIndex()
 {
-    static auto& table = *[] {
-        auto* table = new JIS0208DecodeIndex;
+    // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
+    static JIS0208DecodeIndex* table;
+    static std::once_flag once;
+    std::call_once(once, [&] {
+        table = new JIS0208DecodeIndex;
         for (size_t i = 0; i < std::size(jis0208); i++)
             (*table)[i] = { jis0208[i].second, jis0208[i].first };
-        std::sort(table->begin(), table->end(), [] (auto& a, auto& b) {
-            return a.first < b.first;
-        });
-        return table;
-    }();
-    return table;
+        sortByFirst(*table);
+        ASSERT(sortedFirstsAreUnique(*table));
+    });
+    return *table;
 }
 
 String TextCodecCJK::decodeCommon(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError, const Function<SawError(uint8_t, StringBuilder&)>& byteParser)
@@ -179,27 +182,12 @@ String TextCodecCJK::decodeCommon(const uint8_t* bytes, size_t length, bool flus
 
 static Optional<UChar> codePointJIS0208(uint16_t pointer)
 {
-    auto& index = jis0208DecodeIndex();
-    auto range = std::equal_range(index.begin(), index.end(), std::pair<uint16_t, UChar>(pointer, 0), [](const auto& a, const auto& b) {
-        return a.first < b.first;
-    });
-    if (range.first != range.second) {
-        ASSERT(range.first + 1 == range.second);
-        return range.first->second;
-    }
-    return WTF::nullopt;
+    return findFirstInSortedPairs(jis0208DecodeIndex(), pointer);
 }
 
 static Optional<UChar> codePointJIS0212(uint16_t pointer)
 {
-    auto range = std::equal_range(jis0212, jis0212 + std::size(jis0212), std::pair<uint16_t, UChar>(pointer, 0), [](const auto& a, const auto& b) {
-        return a.first < b.first;
-    });
-    if (range.first != range.second) {
-        ASSERT(range.first + 1 == range.second);
-        return range.first->second;
-    }
-    return WTF::nullopt;
+    return findFirstInSortedPairs(jis0212, pointer);
 }
 
 // https://encoding.spec.whatwg.org/#euc-jp-decoder
@@ -228,7 +216,7 @@ String TextCodecCJK::eucJPDecode(const uint8_t* bytes, size_t length, bool flush
             return SawError::Yes;
         }
         if (isASCII(byte)) {
-            result.append(static_cast<LChar>(byte));
+            result.append(static_cast<char>(byte));
             return SawError::No;
         }
         if (byte == 0x8E || byte == 0x8F || (byte >= 0xA1 && byte <= 0xFE)) {
@@ -247,42 +235,34 @@ static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar32, Vec
 
     auto characters = string.upconvertedCharacters();
     for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
-        auto c = *iterator;
-        if (isASCII(c)) {
-            result.append(c);
+        auto codePoint = *iterator;
+        if (isASCII(codePoint)) {
+            result.append(codePoint);
             continue;
         }
-        if (c == 0x00A5) {
+        if (codePoint == 0x00A5) {
             result.append(0x5C);
             continue;
         }
-        if (c == 0x203E) {
+        if (codePoint == 0x203E) {
             result.append(0x7E);
             continue;
         }
-        if (c >= 0xFF61 && c <= 0xFF9F) {
+        if (codePoint >= 0xFF61 && codePoint <= 0xFF9F) {
             result.append(0x8E);
-            result.append(c - 0xFF61 + 0xA1);
+            result.append(codePoint - 0xFF61 + 0xA1);
             continue;
         }
-        if (c == 0x2212)
-            c = 0xFF0D;
+        if (codePoint == 0x2212)
+            codePoint = 0xFF0D;
 
-        if (static_cast<UChar>(c) != c) {
-            unencodableHandler(c, result);
+        auto pointer = findLastInSortedPairs(jis0208, codePoint);
+        if (!pointer) {
+            unencodableHandler(codePoint, result);
             continue;
         }
-        
-        auto pointerRange = std::equal_range(std::begin(jis0208), std::end(jis0208), std::pair<UChar, uint16_t>(static_cast<UChar>(c), 0), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
-        if (pointerRange.first == pointerRange.second) {
-            unencodableHandler(c, result);
-            continue;
-        }
-        uint16_t pointer = (pointerRange.second - 1)->second;
-        result.append(pointer / 94 + 0xA1);
-        result.append(pointer % 94 + 0xA1);
+        result.append(*pointer / 94 + 0xA1);
+        result.append(*pointer % 94 + 0xA1);
     }
     return result;
 }
@@ -504,12 +484,12 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(UChar32,
     Function<void(UChar32)> parseCodePoint;
     parseCodePoint = [&] (UChar32 codePoint) {
         if (state == State::ASCII && isASCII(codePoint)) {
-            result.append(static_cast<uint8_t>(codePoint));
+            result.append(codePoint);
             return;
         }
         if (state == State::Roman) {
             if (isASCII(codePoint) && codePoint != 0x005C && codePoint !=0x007E) {
-                result.append(static_cast<uint8_t>(codePoint));
+                result.append(codePoint);
                 return;
             }
             if (codePoint == 0x00A5) {
@@ -545,19 +525,12 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(UChar32,
                 0x30C1, 0x30C4, 0x30C6, 0x30C8, 0x30CA, 0x30CB, 0x30CC, 0x30CD, 0x30CE, 0x30CF, 0x30D2, 0x30D5, 0x30D8, 0x30DB, 0x30DE, 0x30DF,
                 0x30E0, 0x30E1, 0x30E2, 0x30E4, 0x30E6, 0x30E8, 0x30E9, 0x30EA, 0x30EB, 0x30EC, 0x30ED, 0x30EF, 0x30F3, 0x309B, 0x309C
             };
+            static_assert(std::size(iso2022JPKatakana) == 0xFF9F - 0xFF61 + 1);
             codePoint = iso2022JPKatakana[codePoint - 0xFF61];
         }
-        
-        auto codeUnit = static_cast<UChar>(codePoint);
-        if (codeUnit != codePoint) {
-            statefulUnencodableHandler(codePoint, result);
-            return;
-        }
-        
-        auto range = std::equal_range(std::begin(jis0208), std::end(jis0208), std::pair<UChar, uint16_t>(codeUnit, 0), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
-        if (range.first == range.second) {
+
+        auto pointer = findLastInSortedPairs(jis0208, codePoint);
+        if (!pointer) {
             statefulUnencodableHandler(codePoint, result);
             return;
         }
@@ -569,9 +542,8 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(UChar32,
             parseCodePoint(codePoint);
             return;
         }
-        uint16_t pointer = (range.second - 1)->second;
-        result.append(pointer / 94 + 0x21);
-        result.append(pointer % 94 + 0x21);
+        result.append(*pointer / 94 + 0x21);
+        result.append(*pointer % 94 + 0x21);
     };
     
     auto characters = string.upconvertedCharacters();
@@ -650,20 +622,12 @@ static Vector<uint8_t> shiftJISEncode(StringView string, Function<void(UChar32, 
         if (codePoint == 0x2212)
             codePoint = 0xFF0D;
         
-        auto codeUnit = static_cast<UChar>(codePoint);
-        if (codeUnit != codePoint) {
-            unencodableHandler(codePoint, result);
-            continue;
-        }
-        
-        auto range = std::equal_range(std::begin(jis0208), std::end(jis0208), std::pair<UChar, uint16_t>(codeUnit, 0), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
+        auto range = findInSortedPairs(jis0208, codePoint);
         if (range.first == range.second) {
             unencodableHandler(codePoint, result);
             continue;
         }
-        
+
         ASSERT(range.first + 3 >= range.second);
         for (auto* pair = range.second - 1; pair >= range.first; pair--) {
             uint16_t pointer = pair->second;
@@ -684,16 +648,17 @@ static Vector<uint8_t> shiftJISEncode(StringView string, Function<void(UChar32, 
 using EUCKREncodingIndex = std::array<std::pair<UChar, uint16_t>, std::size(eucKRDecodingIndex)>;
 static const EUCKREncodingIndex& eucKREncodingIndex()
 {
-    static auto& table = *[] {
-        auto table = new EUCKREncodingIndex;
+    // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
+    static EUCKREncodingIndex* table;
+    static std::once_flag once;
+    std::call_once(once, [&] {
+        table = new EUCKREncodingIndex;
         for (size_t i = 0; i < std::size(eucKRDecodingIndex); i++)
             (*table)[i] = { eucKRDecodingIndex[i].second, eucKRDecodingIndex[i].first };
-        std::sort(table->begin(), table->end(), [] (auto& a, auto& b) {
-            return a.first < b.first;
-        });
-        return table;
-    }();
-    return table;
+        sortByFirst(*table);
+        ASSERT(sortedFirstsAreUnique(*table));
+    });
+    return *table;
 }
 
 // https://encoding.spec.whatwg.org/#euc-kr-encoder
@@ -706,26 +671,17 @@ static Vector<uint8_t> eucKREncode(StringView string, Function<void(UChar32, Vec
     for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
         auto codePoint = *iterator;
         if (isASCII(codePoint)) {
-            result.append(static_cast<uint8_t>(codePoint));
+            result.append(codePoint);
             continue;
         }
         
-        auto codeUnit = static_cast<UChar>(codePoint);
-        if (codeUnit != codePoint) {
+        auto pointer = findFirstInSortedPairs(eucKREncodingIndex(), codePoint);
+        if (!pointer) {
             unencodableHandler(codePoint, result);
             continue;
         }
-        auto& index = eucKREncodingIndex();
-        auto range = std::equal_range(index.begin(), index.end(), std::pair<UChar, uint16_t>(codePoint, 0), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
-        if (range.first == range.second) {
-            unencodableHandler(codePoint, result);
-            continue;
-        }
-        uint16_t pointer = range.first->second;
-        result.append(pointer / 190 + 0x81);
-        result.append(pointer % 190 + 0x41);
+        result.append(*pointer / 190 + 0x81);
+        result.append(*pointer % 190 + 0x41);
     }
     return result;
 }
@@ -736,12 +692,8 @@ String TextCodecCJK::eucKRDecode(const uint8_t* bytes, size_t length, bool flush
     return decodeCommon(bytes, length, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
         if (uint8_t lead = std::exchange(m_lead, 0x00)) {
             if (byte >= 0x41 && byte <= 0xFE) {
-                uint16_t pointer = (lead - 0x81) * 190 + byte - 0x41;
-                auto range = std::equal_range(std::begin(eucKRDecodingIndex), std::end(eucKRDecodingIndex), std::pair<uint16_t, UChar>(pointer, 0), [] (const auto& a, const auto& b) {
-                    return a.first < b.first;
-                });
-                if (range.first != range.second) {
-                    result.append(range.first->second);
+                if (auto codePoint = findFirstInSortedPairs(eucKRDecodingIndex, (lead - 0x81) * 190 + byte - 0x41)) {
+                    result.append(*codePoint);
                     return SawError::No;
                 }
             }
@@ -769,23 +721,20 @@ static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vect
 
     auto characters = string.upconvertedCharacters();
     for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator) {
-        auto c = *iterator;
-        if (isASCII(c)) {
-            result.append(c);
+        auto codePoint = *iterator;
+        if (isASCII(codePoint)) {
+            result.append(codePoint);
             continue;
         }
 
-        auto pointerRange = std::equal_range(std::begin(big5EncodingMap), std::end(big5EncodingMap), std::pair<UChar32, uint16_t>(c, 0), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
-        
+        auto pointerRange = findInSortedPairs(big5EncodingMap, codePoint);
         if (pointerRange.first == pointerRange.second) {
-            unencodableHandler(c, result);
+            unencodableHandler(codePoint, result);
             continue;
         }
 
         uint16_t pointer = 0;
-        if (c == 0x2550 || c == 0x255E || c == 0x2561 || c == 0x256A || c == 0x5341 || c == 0x5345)
+        if (codePoint == 0x2550 || codePoint == 0x255E || codePoint == 0x2561 || codePoint == 0x256A || codePoint == 0x5341 || codePoint == 0x5345)
             pointer = (pointerRange.second - 1)->second;
         else
             pointer = pointerRange.first->second;
@@ -854,18 +803,19 @@ Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling
 using Big5DecodeIndex = std::array<std::pair<uint16_t, UChar32>, std::size(big5DecodingExtras) + std::size(big5EncodingMap)>;
 static const Big5DecodeIndex& big5DecodeIndex()
 {
-    static auto& table = *[] {
-        auto table = new Big5DecodeIndex;
+    // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
+    static Big5DecodeIndex* table;
+    static std::once_flag once;
+    std::call_once(once, [&] {
+        table = new Big5DecodeIndex;
         for (size_t i = 0; i < std::size(big5DecodingExtras); i++)
             (*table)[i] = big5DecodingExtras[i];
         for (size_t i = 0; i < std::size(big5EncodingMap); i++)
             (*table)[i + std::size(big5DecodingExtras)] = { big5EncodingMap[i].second, big5EncodingMap[i].first };
-        std::sort(table->begin(), table->end(), [] (auto& a, auto& b) {
-            return a.first < b.first;
-        });
-        return table;
-    }();
-    return table;
+        sortByFirst(*table);
+        ASSERT(sortedFirstsAreUnique(*table));
+    });
+    return *table;
 }
 
 String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
@@ -888,14 +838,9 @@ String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush,
                     result.appendCharacter(0x00EA);
                     result.appendCharacter(0x030C);
                 } else {
-                    auto& index = big5DecodeIndex();
-                    auto range = std::equal_range(index.begin(), index.end(), std::pair<uint16_t, UChar32>(pointer, 0), [](const auto& a, const auto& b) {
-                        return a.first < b.first;
-                    });
-                    if (range.first != range.second) {
-                        ASSERT(range.first + 1 == range.second);
-                        result.appendCharacter(range.first->second);
-                    } else
+                    if (auto codePoint = findFirstInSortedPairs(big5DecodeIndex(), pointer))
+                        result.appendCharacter(*codePoint);
+                    else
                         return SawError::Yes;
                 }
                 return SawError::No;
@@ -905,7 +850,7 @@ String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush,
             return SawError::Yes;
         }
         if (isASCII(byte)) {
-            result.append(static_cast<LChar>(byte));
+            result.append(static_cast<char>(byte));
             return SawError::No;
         }
         if (byte >= 0x81 && byte <= 0xFE) {
