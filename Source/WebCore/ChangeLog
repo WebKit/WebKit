@@ -1,3 +1,45 @@
+2020-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [MotionMark - Multiply] Web process spends ~1% of total samples in PropertyCascade::resolveDirectionAndWritingMode
+        https://bugs.webkit.org/show_bug.cgi?id=216223
+
+        Reviewed by Darin Adler.
+
+        A few subtests in MotionMark (Leaves, Focus, Design, and especially Multiply) spend large amounts of time in
+        style resolution (`Document::resolveStyle`) due to constant style changes across many elements during every
+        frame. In Multiply, ~3-4% of the time underneath `Document::resolveStyle` is spent resolving direction and
+        writing modes inside `PropertyCascade::resolveDirectionAndWritingMode` (i.e., ~2.3 million invocations). This
+        helper function is responsible for computing the text direction and CSS writing mode that is used to resolve
+        direction-aware CSS properties (which are enumerated in `CSSProperty::isDirectionAwareProperty`). Resolving the
+        direction and writing mode involves iterating over all of the matched CSS properties (`m_matchResult`) in the
+        property cascade in search of CSS properties for writing and direction, which can be relatively expensive when
+        there are lots of properties in the cascade.
+
+        However, if there are no direction-aware CSS properties in the cascade, this work can actually be elided; to
+        achieve this, we can store the inherited `Direction` in `m_direction`, and then lazily resolve it if needed.
+
+        I measured this locally to yield a little under ~1% in the Multiply subtest in MotionMark. Otherwise, there is
+        no change in behavior; see below for more details.
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::PropertyCascade):
+        (WebCore::Style::PropertyCascade::set):
+
+        If we encounter a direction-aware CSS property, then use `direction()` to ensure that the direction and writing
+        mode are resolved.
+
+        (WebCore::Style::PropertyCascade::direction const):
+
+        Make this getter call `resolveDirectionAndWritingMode` if needed.
+
+        * style/PropertyCascade.h:
+
+        Add a new `bool` member to keep track of whether or not the CSS direction has not yet been resolved. Note that
+        since this member variable fits within the padding after `Direction m_direction;`, this class is still the same
+        size.
+
+        (WebCore::Style::PropertyCascade::direction const): Deleted.
+
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make GlyphBufferAdvance and GlyphBufferOrigin more robust
