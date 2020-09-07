@@ -1399,11 +1399,16 @@ const CFIndex attachmentWrappingTextMaximumLineCount = 2;
 
 static RetainPtr<CTFontRef> attachmentActionFont()
 {
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortFootnote, RenderThemeIOS::singleton().contentSizeCategory(), 0));
-    RetainPtr<CTFontDescriptorRef> emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(),
-        (CFDictionaryRef)@{
-            (id)kCTFontDescriptorTextStyleAttribute: (id)kCTFontDescriptorTextStyleEmphasized
-    }));
+    auto style = kCTUIFontTextStyleFootnote;
+    auto size = RenderThemeIOS::singleton().contentSizeCategory();
+    auto attributes = static_cast<CFDictionaryRef>(@{ (id)kCTFontTraitsAttribute: @{ (id)kCTFontSymbolicTrait: @(kCTFontTraitTightLeading | kCTFontTraitEmphasized) } });
+#if HAVE(CTFONTDESCRIPTOR_CREATE_WITH_TEXT_STYLE_AND_ATTRIBUTES)
+    auto emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyleAndAttributes(style, size, attributes));
+#else
+    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(style, size, 0));
+    auto emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes));
+#endif
+
     return adoptCF(CTFontCreateWithFontDescriptor(emphasizedFontDescriptor.get(), 0, nullptr));
 }
 

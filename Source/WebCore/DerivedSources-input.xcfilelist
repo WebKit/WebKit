@@ -208,6 +208,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCPriorityType.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCapabilities.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCodecCapability.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCodecParameters.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpCodingParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpContributingSource.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpEncodingParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpFecParameters.idl

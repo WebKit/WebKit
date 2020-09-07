@@ -1,5 +1,18 @@
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS] attachmentActionFont() Needs to use kCTFontSymbolicTrait: @(kCTFontTraitTightLeading | kCTFontTraitEmphasized) to get the short emphasized footnote font
+        https://bugs.webkit.org/show_bug.cgi?id=215707
+        <rdar://problem/63930892>
+
+        Reviewed by Darin Adler.
+
+        This is the correct way to get the short emphasized footnote font.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::attachmentActionFont):
+
+2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Prepare for migrating to CTFontHasTable() once it's faster than CTFontCopyAvailableTables()
         https://bugs.webkit.org/show_bug.cgi?id=215688
 

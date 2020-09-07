@@ -1456,6 +1456,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCodecCapability.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCodecCapability.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCodecParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCodecParameters.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCodingParameters.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpCodingParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpContributingSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpContributingSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpEncodingParameters.cpp
