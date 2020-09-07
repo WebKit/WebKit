@@ -95,6 +95,7 @@ public:
     void setForceUpdateImageDataEnabledForTesting(bool enabled) { m_forceUpdateImageDataEnabledForTesting =  enabled; }
 
     bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
+    bool canSkipRevalidation(const CachedResourceLoader&, const CachedResourceRequest&) const;
 
 private:
     void clear();
@@ -186,6 +187,8 @@ private:
     std::unique_ptr<SVGImageCache> m_svgImageCache;
 
     MonotonicTime m_lastUpdateImageDataTime;
+
+    WeakPtr<Document> m_skippingRevalidationDocument;
 
     static constexpr unsigned maxUpdateImageDataCount = 4;
     unsigned m_updateImageDataCount : 3;

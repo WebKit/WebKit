@@ -1,5 +1,19 @@
 2020-09-07  Youenn Fablet  <youenn@apple.com>
 
+        Safari takes too long to fetch images from memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=216048
+        <rdar://problem/68260952>
+
+        Reviewed by Antti Koivisto.
+
+        * http/wpt/html/dom/elements/images/bypass-cache-redirection-revalidation-expected.txt: Added.
+        * http/wpt/html/dom/elements/images/bypass-cache-redirection-revalidation.html: Added.
+        * http/wpt/html/dom/elements/images/hover-image-change-expected.html: Added.
+        * http/wpt/html/dom/elements/images/hover-image-change.html: Added.
+        * http/wpt/html/dom/elements/images/redirect.py: Added.
+
+2020-09-07  Youenn Fablet  <youenn@apple.com>
+
         Add missing members to RTCIceCandidate
         https://bugs.webkit.org/show_bug.cgi?id=216075
 

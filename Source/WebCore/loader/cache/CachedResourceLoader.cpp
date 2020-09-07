@@ -1169,6 +1169,9 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Use;
     ASSERT(!existingResource->validationInProgress());
 
+    if (is<CachedImage>(*existingResource) && downcast<CachedImage>(*existingResource).canSkipRevalidation(*this, cachedResourceRequest))
+        return Use;
+
     auto cachePolicy = this->cachePolicy(type, request.url());
 
     // Validate the redirect chain.

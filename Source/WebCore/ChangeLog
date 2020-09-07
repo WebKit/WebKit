@@ -1,5 +1,29 @@
 2020-09-07  Youenn Fablet  <youenn@apple.com>
 
+        Safari takes too long to fetch images from memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=216048
+        <rdar://problem/68260952>
+
+        Reviewed by Antti Koivisto.
+
+        In case of image resource, we skip revalidation if the stored image is from the same document.
+        This is inline with https://html.spec.whatwg.org/#updating-the-image-data:list-of-available-images
+        which defines a list of available images for each Document.
+        In case fetch mode is different, we do not skip revalidation as we might otherwise bypass security checks.
+
+        Tests: http/wpt/html/dom/elements/images/bypass-cache-redirection-revalidation.html
+               http/wpt/html/dom/elements/images/hover-image-change.html
+               imported/w3c/web-platform-tests/html/dom/elements/images/bypass-cache-revalidation.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        (WebCore::CachedImage::canSkipRevalidation const):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy const):
+
+2020-09-07  Youenn Fablet  <youenn@apple.com>
+
         Add missing members to RTCIceCandidate
         https://bugs.webkit.org/show_bug.cgi?id=216075
 

@@ -97,6 +97,7 @@ CachedImage::~CachedImage()
 
 void CachedImage::load(CachedResourceLoader& loader)
 {
+    m_skippingRevalidationDocument = makeWeakPtr(loader.document());
     if (loader.shouldPerformImageLoad(url()))
         CachedResource::load(loader);
     else
@@ -730,6 +731,16 @@ CachedResource::RevalidationDecision CachedImage::makeRevalidationDecision(Cache
         return RevalidationDecision::No;
     }
     return CachedResource::makeRevalidationDecision(cachePolicy);
+}
+
+bool CachedImage::canSkipRevalidation(const CachedResourceLoader& loader, const CachedResourceRequest& request) const
+{
+    if (options().mode != request.options().mode || options().credentials != request.options().credentials || resourceRequest().allowCookies() != request.resourceRequest().allowCookies())
+        return false;
+
+    // Skip revalidation as per https://html.spec.whatwg.org/#ignore-higher-layer-caching which defines a per-document image list.
+    // This rule is loosely implemented by other browsers, we could relax it and should update it once memory cache is properly specified.
+    return m_skippingRevalidationDocument && loader.document() == m_skippingRevalidationDocument;
 }
 
 } // namespace WebCore
