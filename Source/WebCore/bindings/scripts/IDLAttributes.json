@@ -13,7 +13,8 @@
         "union-member",
         "iterable",
         "map-like",
-        "set-like"
+        "set-like",
+        "includes"
     ],
     "attributes": {
         "ActiveDOMObject": {
@@ -69,7 +70,7 @@
             }
         },
         "Conditional": {
-            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function"],
+            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
             "values": ["*"],
             "supportsConjunction": true
         },
@@ -172,12 +173,12 @@
             "contextsAllowed": ["attribute"]
         },
         "EnabledAtRuntime": {
-            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "iterable"],
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "iterable", "includes"],
             "values": ["*"],
             "supportsConjunction": true
         },
         "EnabledBySetting": {
-            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member"],
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
             "values": ["*"],
             "supportsConjunction": true
         },

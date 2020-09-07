@@ -45,6 +45,10 @@ WebDOMTestCallbackInterface.h:
 JSTestClassWithJSBuiltinConstructor.h: 
 DOMTestClassWithJSBuiltinConstructor.h: 
 WebDOMTestClassWithJSBuiltinConstructor.h: 
+JSTestConditionalIncludes.h: TestIncludes.idl
+DOMTestConditionalIncludes.h: TestIncludes.idl
+WebDOMTestConditionalIncludes.h: TestIncludes.idl
+TestIncludes.idl:
 JSTestDOMJIT.h: 
 DOMTestDOMJIT.h: 
 WebDOMTestDOMJIT.h: 
@@ -179,9 +183,10 @@ WebDOMTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h:
 JSTestNode.h: 
 DOMTestNode.h: 
 WebDOMTestNode.h: 
-JSTestObj.h: 
-DOMTestObj.h: 
-WebDOMTestObj.h: 
+JSTestObj.h: TestIncludes.idl
+DOMTestObj.h: TestIncludes.idl
+WebDOMTestObj.h: TestIncludes.idl
+TestIncludes.idl:
 JSTestOperationConditional.h: TestOperationBase.idl
 DOMTestOperationConditional.h: TestOperationBase.idl
 WebDOMTestOperationConditional.h: TestOperationBase.idl

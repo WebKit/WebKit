@@ -8,6 +8,7 @@ partial interface TestGlobalObject {
     attribute TestCallTracerConstructor TestCallTracer;
     [Conditional=TEST_CONDITIONAL] attribute TestCallbackInterfaceConstructor TestCallbackInterface;
     attribute TestClassWithJSBuiltinConstructorConstructor TestClassWithJSBuiltinConstructor;
+    attribute TestConditionalIncludesConstructor TestConditionalIncludes;
     attribute TestDOMJITConstructor TestDOMJIT;
     attribute TestDomainSecurityConstructor TestDomainSecurity;
     attribute TestEnabledBySettingConstructor TestEnabledBySetting;

@@ -1,3 +1,81 @@
+2020-09-07  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Support extended attributes on includes statements to allow for conditionalized inclusion
+        https://bugs.webkit.org/show_bug.cgi?id=216235
+
+        Reviewed by Darin Adler.
+
+        In some circumstancs, such as with the AnimationFrameProvider interface mixin, it is
+        useful to only include a mixin based on some conditional. For AnimationFrameProvider,
+        we currently only want to include it in DedicatedWorkerGlobalScope if ENABLE(OFFSCREEN_CANVAS)
+        is set at compile time, and the runtime feature flag offscreenCanvasEnabled() is turned
+        on. To support that, this change adds support for specifying extended attributes on the
+        includes statement itself, and having those extended attributes applied to each member
+        of the mixin. For AnimationFrameProvider in DedicatedWorkerGlobalScope, that looks like:
+        
+            [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas] DedicatedWorkerGlobalScope includes AnimationFrameProvider;
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files, update xcfilelists.
+
+        * animation/AnimationFrameProvider.idl: Added.
+        * page/DOMWindow.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        Split AnimationFrameProvider.idl out into its own mixin (as specified) and included it in
+        both DOMWindow and DedicatedWorkerGlobalScope (conditionally).
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ProcessDocument): 
+        (ProcessDictionaryAndEnumerationImplementedAsOverrides):
+        (ProcessInterfaces):
+        (ProcessCallbackFunctions):
+        (ProcessDictionaries):
+        (ProcessEnumerations):
+        Split processing of each different type of top level type into its own function,
+        and defer processing of supplemental dependencies until the primary type has been
+        selected.
+
+        (MergeExtendedAttributesFromSupplemental):
+        (IsValidSupplementalInterface):
+        (IsValidSupplementalDictionary):
+        (ProcessInterfaceSupplementalDependencies):
+        (ProcessDictionarySupplementalDependencies):
+        Split ProcessSupplementalDependencies into ProcessInterfaceSupplementalDependencies
+        and ProcessDictionarySupplementalDependencies, which now get passed the primary
+        interface or dictionary that needs supplementing. ProcessInterfaceSupplementalDependencies
+        now also supports merging extended attributes from includes statements and checking
+        that all includes are listed in the dependency set.
+
+        * bindings/scripts/IDLAttributes.json:
+        Allow setting use of Conditional, EnabledAtRuntime and EnabledBySetting for
+        includes statements.
+ 
+        * bindings/scripts/IDLParser.pm:
+        (parseIncludesStatement):
+        Fix ordering of struct members so that extendedAttributes is always last (no real 
+        good reason other than most of the structs already did this and the lack of consistency
+        bothered me). Add extendedAttributes to IDLIncludesStatement and set it when
+        parsing.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (getIncludedInterfacesFromIDL):
+        Fix bug in regex (found easily by the validation parser!) that incorrectly required the interface
+        name in the includes statement to be the first word on a line.
+        
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp: Added.
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.h: Added.
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestConditionalIncludes.idl: Added.
+        * bindings/scripts/test/TestIncludes.idl:
+        Add tests for extended attributes on includes statements.
+
 2020-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Add memory cache with/without validation to logResourceResponseSource

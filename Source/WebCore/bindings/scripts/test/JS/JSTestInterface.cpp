@@ -26,6 +26,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMIsoSubspaces.h"
+#include "Document.h"
 #include "HTMLNames.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -39,6 +40,7 @@
 #include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "ScriptExecutionContext.h"
+#include "Settings.h"
 #include "TestSupplemental.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
@@ -80,6 +82,12 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod3(JSC::JSGlobalObject*, JSC::CallFrame*);
+#endif
+#if (ENABLE(Condition11) && ENABLE(Condition22)) || ENABLE(Condition23)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethodConditional(JSC::JSGlobalObject*, JSC::CallFrame*);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethodSettingsConditional(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionTakeNodes(JSC::JSGlobalObject*, JSC::CallFrame*);
@@ -349,6 +357,16 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
+#if (ENABLE(Condition11) && ENABLE(Condition22)) || ENABLE(Condition23)
+    { "includesMethodConditional", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionIncludesMethodConditional), (intptr_t) (0) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    { "includesMethodSettingsConditional", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionIncludesMethodSettingsConditional), (intptr_t) (0) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "takeNodes", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestInterfacePrototypeFunctionTakeNodes), (intptr_t) (0) } },
 #else
@@ -406,6 +424,18 @@ void JSTestInterfacePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestInterface::info(), JSTestInterfacePrototypeTableValues, *this);
+    bool hasDisabledRuntimeProperties = false;
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingEnabled()) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("includesMethodSettingsConditional"), strlen("includesMethodSettingsConditional"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+    if (hasDisabledRuntimeProperties && structure()->isDictionary())
+        flattenDictionaryObject(vm);
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
@@ -867,6 +897,46 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionIncludesMethod
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethod3(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionIncludesMethod3Body>(*lexicalGlobalObject, *callFrame, "includesMethod3");
+}
+
+#endif
+
+#if (ENABLE(Condition11) && ENABLE(Condition22)) || ENABLE(Condition23)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionIncludesMethodConditionalBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    throwScope.release();
+    impl.includesMethodConditional();
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethodConditional(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+{
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionIncludesMethodConditionalBody>(*lexicalGlobalObject, *callFrame, "includesMethodConditional");
+}
+
+#endif
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionIncludesMethodSettingsConditionalBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    throwScope.release();
+    impl.includesMethodSettingsConditional();
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionIncludesMethodSettingsConditional(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+{
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionIncludesMethodSettingsConditionalBody>(*lexicalGlobalObject, *callFrame, "includesMethodSettingsConditional");
 }
 
 #endif

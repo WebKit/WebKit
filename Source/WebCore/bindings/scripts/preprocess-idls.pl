@@ -495,7 +495,7 @@ sub getIncludedInterfacesFromIDL
     my $fileContents = $idlFile->fileContents;
 
     my @includedInterfaces = ();
-    while ($fileContents =~ /^\s*(\w+)\s+includes\s+(\w+)\s*;/mg) {
+    while ($fileContents =~ /\b(\w+)\s+includes\s+(\w+)\s*;/mg) {
         die "Identifier on the left of the 'includes' statement should be $interfaceName in $interfaceName.idl, but found $1" if $1 ne $interfaceName;
         push(@includedInterfaces, $2);
     }

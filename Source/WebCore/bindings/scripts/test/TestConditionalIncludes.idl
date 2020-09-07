@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary formstrArg, with or without
  * modification, are permitted provided that the following conditions
@@ -29,23 +28,9 @@
 
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its output.
-[
-    Conditional=Condition22|Condition23
-] interface mixin TestIncludes {
-    readonly attribute DOMString includesStr1;
-    attribute DOMString includesStr2;
-    [CustomGetter, CustomSetter] attribute DOMString includesStr3;
-    attribute Node includesNode;
 
-    undefined includesMethod1();
-    [CallWith=ScriptExecutionContext, MayThrowException] TestObj includesMethod2(DOMString strArg, TestObj objArg);
-    [Custom] undefined includesMethod3();
-    [Conditional=Condition11] undefined includesMethodConditional();
-    [EnabledBySetting=TestSetting] undefined includesMethodSettingsConditional();
-
-    const unsigned short INCLUDES_CONSTANT1 = 1;
-    [Reflect=CONST_IMPL] const unsigned short INCLUDES_CONSTANT2 = 2;
-
-    [ResultField=nodes] sequence<Node> takeNodes();
+interface TestConditionalIncludes {
+    readonly attribute double testAttr;
 };
 
+[Conditional=Condition12, EnabledBySetting=TestSetting2] TestConditionalIncludes includes TestIncludes;

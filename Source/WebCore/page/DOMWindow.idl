@@ -91,9 +91,6 @@ typedef USVString CSSOMString;
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
     undefined print();
 
-    long requestAnimationFrame(RequestAnimationFrameCallback callback); // FIXME: Should return an unsigned long.
-    undefined cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
-
     [EnabledBySetting=requestIdleCallback] unsigned long requestIdleCallback(IdleRequestCallback callback, optional IdleRequestOptions options);
     [EnabledBySetting=requestIdleCallback] undefined cancelIdleCallback(unsigned long handle);
 
@@ -212,6 +209,7 @@ typedef USVString CSSOMString;
   USVString targetOrigin = "/";
 };
 
+DOMWindow includes AnimationFrameProvider;
 DOMWindow includes GlobalCrypto;
 DOMWindow includes GlobalEventHandlers;
 DOMWindow includes GlobalPerformance;

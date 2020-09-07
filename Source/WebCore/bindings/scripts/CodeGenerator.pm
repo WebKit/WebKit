@@ -160,10 +160,45 @@ sub ProcessDocument
     $useDocument = shift;
     $defines = shift;
 
-    $object->ProcessSupplementalDependencies($useDocument);
-
     my $ifaceName = "CodeGenerator" . $useGenerator;
     require $ifaceName . ".pm";
+
+    # Dynamically load external code generation perl module
+    $codeGenerator = $ifaceName->new($object, $writeDependencies, $verbose, $targetIdlFilePath);
+    unless (defined($codeGenerator)) {
+        my $interfaces = $useDocument->interfaces;
+        foreach my $interface (@$interfaces) {
+            print "Skipping $useGenerator code generation for IDL interface \"" . $interface->type->name . "\".\n" if $verbose;
+        }
+        return;
+    }
+
+    if (@{$useDocument->interfaces}) {
+        $object->ProcessInterfaces($useDocument, $defines, $codeGenerator);
+        return;
+    }
+
+    if (@{$useDocument->callbackFunctions}) {
+        $object->ProcessCallbackFunctions($useDocument, $defines, $codeGenerator);
+        return;
+    }
+
+    if (@{$useDocument->dictionaries}) {
+        $object->ProcessDictionaries($useDocument, $defines, $codeGenerator);
+        return;
+    }
+    
+    if (@{$useDocument->enumerations}) {
+        $object->ProcessEnumerations($useDocument, $defines, $codeGenerator);
+        return;
+    }
+
+    die "Processing document " . $useDocument->fileName . " did not generate anything.";
+}
+
+sub ProcessDictionaryAndEnumerationImplementedAsOverrides
+{
+    my ($object, $useDocument) = @_;
 
     foreach my $dictionary (@{$useDocument->dictionaries}) {
         if ($dictionary->extendedAttributes->{"ImplementedAs"}) {
@@ -176,82 +211,84 @@ sub ProcessDocument
             $enumTypeImplementationNameOverrides{$enumeration->type->name} = $enumeration->extendedAttributes->{"ImplementedAs"};
         }
     }
+}
 
-    # Dynamically load external code generation perl module
-    $codeGenerator = $ifaceName->new($object, $writeDependencies, $verbose, $targetIdlFilePath);
-    unless (defined($codeGenerator)) {
-        my $interfaces = $useDocument->interfaces;
-        foreach my $interface (@$interfaces) {
-            print "Skipping $useGenerator code generation for IDL interface \"" . $interface->type->name . "\".\n" if $verbose;
-        }
-        return;
-    }
+sub ProcessInterfaces
+{
+    my ($object, $useDocument, $defines, $codeGenerator) = @_;
 
-    my $interfaces = $useDocument->interfaces;
-    if (@$interfaces) {
-        die "Multiple interfaces per document are not supported" if @$interfaces > 1;
+    die "Multiple interfaces per document are not supported" if @{$useDocument->interfaces} > 1;
+    my $interface = $useDocument->interfaces->[0];
 
-        my $interface = @$interfaces[0];
-        print "Generating $useGenerator bindings code for IDL interface \"" . $interface->type->name . "\"...\n" if $verbose;
-        $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations, $useDocument->dictionaries);
-        $codeGenerator->WriteData($interface, $useOutputDir, $useOutputHeadersDir);
-        return;
-    }
+    $object->ProcessInterfaceSupplementalDependencies($interface, $useDocument);
+    $object->ProcessDictionaryAndEnumerationImplementedAsOverrides($useDocument);
 
-    my $callbackFunctions = $useDocument->callbackFunctions;
-    if (@$callbackFunctions) {
-        die "Multiple standalone callback functions per document are not supported" if @$callbackFunctions > 1;
+    print "Generating $useGenerator bindings code for IDL interface \"" . $interface->type->name . "\"\n" if $verbose;
+    $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations, $useDocument->dictionaries);
+    $codeGenerator->WriteData($interface, $useOutputDir, $useOutputHeadersDir);
+}
 
-        my $callbackFunction = @$callbackFunctions[0];
-        print "Generating $useGenerator bindings code for IDL callback function \"" . $callbackFunction->type->name . "\"...\n" if $verbose;
-        $codeGenerator->GenerateCallbackFunction($callbackFunction, $useDocument->enumerations, $useDocument->dictionaries);
-        $codeGenerator->WriteData($callbackFunction, $useOutputDir, $useOutputHeadersDir);
-        return;
-    }
+sub ProcessCallbackFunctions
+{
+    my ($object, $useDocument, $defines, $codeGenerator) = @_;
 
-    my $dictionaries = $useDocument->dictionaries;
-    if (@$dictionaries) {
-        my $dictionary;
-        my $otherDictionaries;
-        if (@$dictionaries == 1) {
-            $dictionary = @$dictionaries[0];
-        } else {
-            my $primaryDictionaryName = fileparse($targetIdlFilePath, ".idl");
-            for my $candidate (@$dictionaries) {
-                if ($candidate->type->name eq $primaryDictionaryName) {
-                    $dictionary = $candidate;
-                } else {
-                    push @$otherDictionaries, $candidate;
-                }
+    die "Multiple standalone callback functions per document are not supported" if @{$useDocument->callbackFunctions} > 1;
+    my $callbackFunction = $useDocument->callbackFunctions->[0];
+
+    $object->ProcessDictionaryAndEnumerationImplementedAsOverrides($useDocument);
+
+    print "Generating $useGenerator bindings code for IDL callback function \"" . $callbackFunction->type->name . "\"\n" if $verbose;
+    $codeGenerator->GenerateCallbackFunction($callbackFunction, $useDocument->enumerations, $useDocument->dictionaries);
+    $codeGenerator->WriteData($callbackFunction, $useOutputDir, $useOutputHeadersDir);
+}
+
+sub ProcessDictionaries
+{
+    my ($object, $useDocument, $defines, $codeGenerator) = @_;
+
+    my $dictionary;
+    my $otherDictionaries;
+    if (@{$useDocument->dictionaries} == 1) {
+        $dictionary = $useDocument->dictionaries->[0];
+    } else {
+        my $primaryDictionaryName = fileparse($targetIdlFilePath, ".idl");
+        foreach my $candidate (@{$useDocument->dictionaries}) {
+            if ($candidate->type->name eq $primaryDictionaryName) {
+                $dictionary = $candidate;
+            } else {
+                push(@$otherDictionaries, $candidate);
             }
-            die "Multiple dictionaries per document are only supported if one matches the filename" unless $dictionary;
         }
-
-        print "Generating $useGenerator bindings code for IDL dictionary \"" . $dictionary->type->name . "\"...\n" if $verbose;
-        $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations, $otherDictionaries);
-        $codeGenerator->WriteData($dictionary, $useOutputDir, $useOutputHeadersDir);
-        return;
+        die "Multiple dictionaries per document are only supported if one matches the filename" unless $dictionary;
     }
+
+    $object->ProcessDictionarySupplementalDependencies($dictionary, $useDocument);
+    $object->ProcessDictionaryAndEnumerationImplementedAsOverrides($useDocument);
     
-    my $enumerations = $useDocument->enumerations;
-    if (@$enumerations) {
-        die "Multiple standalone enumerations per document are not supported" if @$enumerations > 1;
+    print "Generating $useGenerator bindings code for IDL dictionary \"" . $dictionary->type->name . "\"\n" if $verbose;
+    $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations, $otherDictionaries);
+    $codeGenerator->WriteData($dictionary, $useOutputDir, $useOutputHeadersDir);
+}
 
-        my $enumeration = @$enumerations[0];
-        print "Generating $useGenerator bindings code for IDL enumeration \"" . $enumeration->type->name . "\"...\n" if $verbose;
-        $codeGenerator->GenerateEnumeration($enumeration);
-        $codeGenerator->WriteData($enumeration, $useOutputDir, $useOutputHeadersDir);
-        return;
-    }
+sub ProcessEnumerations
+{
+    my ($object, $useDocument, $defines, $codeGenerator) = @_;
 
-    die "Processing document " . $useDocument->fileName . " did not generate anything"
+    die "Multiple standalone enumerations per document are not supported" if @{$useDocument->enumerations} > 1;
+    my $enumeration = $useDocument->enumerations->[0];
+
+    $object->ProcessDictionaryAndEnumerationImplementedAsOverrides($useDocument);
+
+    print "Generating $useGenerator bindings code for IDL enumeration \"" . $enumeration->type->name . "\"\n" if $verbose;
+    $codeGenerator->GenerateEnumeration($enumeration);
+    $codeGenerator->WriteData($enumeration, $useOutputDir, $useOutputHeadersDir);
 }
 
 sub MergeExtendedAttributesFromSupplemental
 {
-    my ($object, $supplemental, $property, $context) = @_;
+    my ($object, $supplementalExtendedAttributes, $property, $context) = @_;
 
-    foreach my $extendedAttributeName (keys %{$supplemental->extendedAttributes}) {
+    foreach my $extendedAttributeName (keys %{$supplementalExtendedAttributes}) {
         my $isAllowed = 0;
         for my $contextAllowed (@{$idlAttributes->{$extendedAttributeName}->{"contextsAllowed"}}) {
             if ($contextAllowed eq $context) {
@@ -265,7 +302,7 @@ sub MergeExtendedAttributesFromSupplemental
         # be fixed. Ultimately, this will probably mean either removing support for disjunctions for Conditional,
         # which is not used outside of the tests, or adding support for parentheses to disambiguate.
         if ($extendedAttributeName eq "Conditional" && $context ne "operation") {
-            $property->extendedAttributes->{$extendedAttributeName} = $supplemental->extendedAttributes->{$extendedAttributeName};
+            $property->extendedAttributes->{$extendedAttributeName} = $supplementalExtendedAttributes->{$extendedAttributeName};
             next;
         }
 
@@ -274,42 +311,58 @@ sub MergeExtendedAttributesFromSupplemental
             if (!$idlAttributes->{$extendedAttributeName}->{"supportsConjunction"}) {
                 die "Duplicate non-mergeable extended attribute ($extendedAttributeName) found when merging extended attributes for ${property->name}";
             }
-            $property->extendedAttributes->{$extendedAttributeName} = $property->extendedAttributes->{$extendedAttributeName} . "&" . $supplemental->extendedAttributes->{$extendedAttributeName};
+            $property->extendedAttributes->{$extendedAttributeName} = $property->extendedAttributes->{$extendedAttributeName} . "&" . $supplementalExtendedAttributes->{$extendedAttributeName};
         } else {
-            $property->extendedAttributes->{$extendedAttributeName} = $supplemental->extendedAttributes->{$extendedAttributeName};
+            $property->extendedAttributes->{$extendedAttributeName} = $supplementalExtendedAttributes->{$extendedAttributeName};
         }
     }
 }
 
 sub IsValidSupplementalInterface
 {
-    my ($object, $targetDocument, $supplementalInterface, $targetInterfaceName) = @_;
+    my ($object, $supplementalInterface, $targetInterface, $includesMap) = @_;
 
-    return 1 if $supplementalInterface->isPartial && $supplementalInterface->type->name eq $targetInterfaceName;
-    return 1 if $supplementalInterface->isMixin;
+    return 1 if $supplementalInterface->isPartial && $supplementalInterface->type->name eq $targetInterface->type->name;
+    return 1 if $supplementalInterface->isMixin && $includesMap->{$supplementalInterface->type->name};
     return 0;
 }
 
 sub IsValidSupplementalDictionary
 {
-    my ($object, $targetDocument, $supplementalDictionary, $targetInterfaceName) = @_;
+    my ($object, $supplementalDictionary, $targetDictionary) = @_;
 
-    return 1 if $supplementalDictionary->isPartial && $supplementalDictionary->type->name eq $targetInterfaceName;
+    return 1 if $supplementalDictionary->isPartial && $supplementalDictionary->type->name eq $targetDictionary->type->name;
     return 0;
 }
 
-sub ProcessSupplementalDependencies
+sub ProcessInterfaceSupplementalDependencies
 {
-    my ($object, $targetDocument) = @_;
-    my $targetFileName = fileparse($targetDocument->fileName);
-    my $targetInterfaceName = fileparse($targetFileName, ".idl");
+    my ($object, $targetInterface, $targetDocument) = @_;
 
-    if (!$supplementalDependencies) {
-        return;
-    }
+    return unless $supplementalDependencies;
+
+    my $targetFileName = fileparse($targetDocument->fileName);
 
     # FIXME: Add support for processing recursive supplemental dependencies
     # to provide support for partial interface mixins.
+
+    # FIXME: Currently, we require all the includes statements to be in the
+    # same file as the interface they are being mixed into, but that restriction
+    # is artificial and we could add support for includes statements elsewhere.
+    my %includesMap = ();
+    foreach my $include (@{$targetDocument->includes}) {
+        if ($include->interfaceIdentifier eq $targetInterface->type->name) {
+            unless (grep { fileparse($_, ".idl") eq $include->mixinIdentifier } @{$supplementalDependencies->{$targetFileName}}) {
+                die "included interface mixin " . $include->mixinIdentifier . " not in supplemental dependencies."
+            }
+            
+            $includesMap{$include->mixinIdentifier} = $include;
+        }
+    }
+
+    my $exposedAttribute = $targetInterface->extendedAttributes->{"Exposed"} || "Window";
+    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+    my @targetGlobalContexts = split(",", $exposedAttribute);
 
     foreach my $idlFile (@{$supplementalDependencies->{$targetFileName}}) {
         next if fileparse($idlFile) eq $targetFileName;
@@ -319,87 +372,99 @@ sub ProcessSupplementalDependencies
         my $document = $parser->Parse($idlFile, $defines, $preprocessor, $idlAttributes);
 
         foreach my $interface (@{$document->interfaces}) {
-            next unless $object->IsValidSupplementalInterface($targetDocument, $interface, $targetInterfaceName);
+            next unless $object->IsValidSupplementalInterface($interface, $targetInterface, \%includesMap);
 
-            my $targetDataNode;
-            my @targetGlobalContexts;
-            foreach my $interface (@{$targetDocument->interfaces}) {
-                if ($interface->type->name eq $targetInterfaceName) {
-                    $targetDataNode = $interface;
-                    my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
-                    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
-                    @targetGlobalContexts = split(",", $exposedAttribute);
-                    last;
-                }
-            }
-            die "Not found an interface ${targetInterfaceName} in ${targetInterfaceName}.idl." unless defined $targetDataNode;
-
-            # Support for attributes of partial interfaces.
+            # Support for attributes from supplemental interfaces.
             foreach my $attribute (@{$interface->attributes}) {
                 next unless shouldPropertyBeExposed($attribute, \@targetGlobalContexts);
 
-                # Record that this attribute is implemented by $interfaceName.
-                $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial && !$attribute->extendedAttributes->{Reflect};
+                if ($interface->isPartial) {
+                    $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if !$attribute->extendedAttributes->{Reflect};
+                }
+
+                if ($interface->isMixin) {
+                    # Add includes statement specific extended attributes to each attribute.
+                    $object->MergeExtendedAttributesFromSupplemental($includesMap{$interface->type->name}->extendedAttributes, $attribute, "attribute");
+                }
 
                 # Add interface-wide extended attributes to each attribute.
-                $object->MergeExtendedAttributesFromSupplemental($interface, $attribute, "attribute");
+                $object->MergeExtendedAttributesFromSupplemental($interface->extendedAttributes, $attribute, "attribute");
 
-                push(@{$targetDataNode->attributes}, $attribute);
+                push(@{$targetInterface->attributes}, $attribute);
             }
 
-            # Support for methods of partial interfaces.
+            # Support for operations from supplemental interfaces.
             foreach my $operation (@{$interface->operations}) {
                 next unless shouldPropertyBeExposed($operation, \@targetGlobalContexts);
 
-                # Record that this method is implemented by $interfaceName.
-                $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
-    
+                if ($interface->isPartial) {
+                    $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName;
+                }
+
+                if ($interface->isMixin) {
+                    # Add includes statement specific extended attributes to each operation.
+                    $object->MergeExtendedAttributesFromSupplemental($includesMap{$interface->type->name}->extendedAttributes, $operation, "operation");
+                }
+
                 # Add interface-wide extended attributes to each operation.
-                $object->MergeExtendedAttributesFromSupplemental($interface, $operation, "operation");
-                push(@{$targetDataNode->operations}, $operation);
+                $object->MergeExtendedAttributesFromSupplemental($interface->extendedAttributes, $operation, "operation");
+                
+                push(@{$targetInterface->operations}, $operation);
             }
 
-            # Support for constants of partial interfaces.
+            # Support for constants from supplemental interfaces.
             foreach my $constant (@{$interface->constants}) {
                 next unless shouldPropertyBeExposed($constant, \@targetGlobalContexts);
 
-                # Record that this constant is implemented by $interfaceName.
-                $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+                if ($interface->isPartial) {
+                    $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName;
+                }
+
+                if ($interface->isMixin) {
+                    # Add includes statement specific extended attributes to each operation.
+                    $object->MergeExtendedAttributesFromSupplemental($includesMap{$interface->type->name}->extendedAttributes, $constant, "constant");
+                }
 
                 # Add interface-wide extended attributes to each constant.
-                $object->MergeExtendedAttributesFromSupplemental($interface, $constant, "constant");
+                $object->MergeExtendedAttributesFromSupplemental($interface->extendedAttributes, $constant, "constant");
 
-                push(@{$targetDataNode->constants}, $constant);
+                push(@{$targetInterface->constants}, $constant);
             }
         }
+    }
+}
+
+sub ProcessDictionarySupplementalDependencies
+{
+    my ($object, $targetDictionary, $targetDocument) = @_;
+
+    return unless $supplementalDependencies;
+
+    my $exposedAttribute = $targetDictionary->extendedAttributes->{"Exposed"} || "Window";
+    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+    my @targetGlobalContexts = split(",", $exposedAttribute);
+
+    my $targetFileName = fileparse($targetDocument->fileName);
+    foreach my $idlFile (@{$supplementalDependencies->{$targetFileName}}) {
+        next if fileparse($idlFile) eq $targetFileName;
+
+        my $dictionaryName = fileparse($idlFile, ".idl");
+        my $parser = IDLParser->new(!$verbose);
+        my $document = $parser->Parse($idlFile, $defines, $preprocessor, $idlAttributes);
 
         foreach my $dictionary (@{$document->dictionaries}) {
-            next unless $object->IsValidSupplementalDictionary($targetDocument, $dictionary, $targetInterfaceName);
+            next unless $object->IsValidSupplementalDictionary($dictionary, $targetDictionary);
 
-            my $targetDataNode;
-            my @targetGlobalContexts;
-            foreach my $dictionary (@{$targetDocument->dictionaries}) {
-                if ($dictionary->type->name eq $targetInterfaceName) {
-                    $targetDataNode = $dictionary;
-                    my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
-                    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
-                    @targetGlobalContexts = split(",", $exposedAttribute);
-                    last;
-                }
-            }
-            die "Could not find dictionary ${targetInterfaceName} in ${targetInterfaceName}.idl." unless defined $targetDataNode;
-
-            # Support for members of partial dictionaries
+            # Support for members of partial dictionaries.
             foreach my $member (@{$dictionary->members}) {
                 next unless shouldPropertyBeExposed($member, \@targetGlobalContexts);
 
-                # Record that this member is implemented by $interfaceName.
-                $member->extendedAttributes->{"ImplementedBy"} = $interfaceName;
+                $member->extendedAttributes->{"ImplementedBy"} = $dictionaryName;
 
                 # Add interface-wide extended attributes to each member.
-                $object->MergeExtendedAttributesFromSupplemental($dictionary, $member, "dictionary-member");
+                $object->MergeExtendedAttributesFromSupplemental($dictionary->extendedAttributes, $member, "dictionary-member");
 
-                push(@{$targetDataNode->members}, $member);
+                push(@{$targetDictionary->members}, $member);
             }
         }
     }
@@ -734,15 +799,15 @@ sub GetDictionaryByType
         my $parser = IDLParser->new(1);
         my $document = $parser->Parse($filename, $defines, $preprocessor, $idlAttributes);
 
-        $object->ProcessSupplementalDependencies($document);
-
         foreach my $dictionary (@{$document->dictionaries}) {
-            next unless $dictionary->type->name eq $name;
+            if ($dictionary->type->name eq $name) {
+                $object->ProcessDictionarySupplementalDependencies($dictionary, $document);
 
-            $cachedExternalDictionaries->{$name} = $dictionary;
-            my $implementedAs = $dictionary->extendedAttributes->{ImplementedAs};
-            $dictionaryTypeImplementationNameOverrides{$dictionary->type->name} = $implementedAs if $implementedAs;
-            return $dictionary;
+                $cachedExternalDictionaries->{$name} = $dictionary;
+                my $implementedAs = $dictionary->extendedAttributes->{ImplementedAs};
+                $dictionaryTypeImplementationNameOverrides{$name} = $implementedAs if $implementedAs;
+                return $dictionary;
+            }
         }
     }
     $cachedExternalDictionaries->{$name} = undef;

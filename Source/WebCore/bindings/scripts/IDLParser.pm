@@ -193,8 +193,8 @@ struct( IDLDictionary => {
     type => 'IDLType',
     parentType => 'IDLType',
     members => '@', # List of 'IDLDictionaryMember'
-    extendedAttributes => '$',
     isPartial => '$', # Used for partial dictionaries
+    extendedAttributes => '$',
 });
 
 # https://heycam.github.io/webidl/#idl-callback-functions
@@ -209,14 +209,15 @@ struct( IDLNamespace => {
     name => '$',
     operations => '@', # List of 'IDLOperation'
     attributes => '@', # List of 'IDLAttribute'
-    extendedAttributes => '$',
     isPartial => '$', # Used for partial namespaces
+    extendedAttributes => '$',
 });
 
 # https://heycam.github.io/webidl/#includes-statement
 struct( IDLIncludesStatement => {
     interfaceIdentifier => '$',
     mixinIdentifier => '$',
+    extendedAttributes => '$',
 });
 
 # https://heycam.github.io/webidl/#idl-typedefs
@@ -1653,6 +1654,9 @@ sub parseIncludesStatement
         $includesStatement->mixinIdentifier($mixinIdentifier);
 
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "includes");
+        $includesStatement->extendedAttributes($extendedAttributeList);
 
         return $includesStatement;
     }

@@ -63,6 +63,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationEffect.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationEffect.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationFrameProvider.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationFrameProvider.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationPlaybackEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationPlaybackEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationPlaybackEventInit.cpp
