@@ -62,19 +62,9 @@ static inline bool caseInsensitiveCompare(CFStringRef a, CFStringRef b)
     return a && CFStringCompare(a, b, kCFCompareCaseInsensitive) == kCFCompareEqualTo;
 }
 
-static bool fontHasVerticalGlyphs(CTFontRef ctFont)
+static bool fontHasVerticalGlyphs(CTFontRef font)
 {
-    // The check doesn't look neat but this is what AppKit does for vertical writing...
-    RetainPtr<CFArrayRef> tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
-    if (!tableTags)
-        return false;
-    CFIndex numTables = CFArrayGetCount(tableTags.get());
-    for (CFIndex index = 0; index < numTables; ++index) {
-        CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
-        if (tag == kCTFontTableVhea || tag == kCTFontTableVORG)
-            return true;
-    }
-    return false;
+    return fontHasEitherTable(font, kCTFontTableVhea, kCTFontTableVORG);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -119,6 +109,34 @@ static bool isAhemFont(CFStringRef familyName)
     return familyName && caseInsensitiveCompare(familyName, CFSTR("Ahem"));
 }
 
+bool fontHasTable(CTFontRef ctFont, unsigned tableTag)
+{
+    auto tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
+    if (!tableTags)
+        return false;
+    CFIndex numTables = CFArrayGetCount(tableTags.get());
+    for (CFIndex index = 0; index < numTables; ++index) {
+        auto tag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tableTags.get(), index)));
+        if (tag == tableTag)
+            return true;
+    }
+    return false;
+}
+
+bool fontHasEitherTable(CTFontRef ctFont, unsigned tableTag1, unsigned tableTag2)
+{
+    auto tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
+    if (!tableTags)
+        return false;
+    CFIndex numTables = CFArrayGetCount(tableTags.get());
+    for (CFIndex index = 0; index < numTables; ++index) {
+        auto tag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tableTags.get(), index)));
+        if (tag == tableTag1 || tag == tableTag2)
+            return true;
+    }
+    return false;
+}
+
 void Font::platformInit()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -137,7 +155,7 @@ void Font::platformInit()
     // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
     // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
     // On OS X, we only apply this rule in the important case of fonts with a MATH table.
-    if (OpenType::fontHasMathTable(m_platformData.ctFont())) {
+    if (fontHasTable(m_platformData.ctFont(), kCTFontTableMATH)) {
         short typoAscent, typoDescent, typoLineGap;
         if (OpenType::tryGetTypoMetrics(m_platformData.font(), typoAscent, typoDescent, typoLineGap)) {
             ascent = scaleEmToUnits(typoAscent, unitsPerEm) * pointSize;

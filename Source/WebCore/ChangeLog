@@ -1,3 +1,21 @@
+2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Prepare for migrating to CTFontHasTable() once it's faster than CTFontCopyAvailableTables()
+        https://bugs.webkit.org/show_bug.cgi?id=215688
+
+        Reviewed by Darin Adler.
+
+        We can directly ask Core Text for the information we're looking for.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontType::FontType):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::fontHasVerticalGlyphs):
+        * platform/graphics/opentype/OpenTypeCG.cpp:
+        (WebCore::OpenType::fontHasMathTable):
+
 2020-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make `WebCore::WritingMode` an 8-bit enum class

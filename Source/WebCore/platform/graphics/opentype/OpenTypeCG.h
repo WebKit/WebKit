@@ -36,7 +36,6 @@
 namespace WebCore {
 namespace OpenType {
 
-bool fontHasMathTable(CTFontRef);
 bool tryGetTypoMetrics(CTFontRef, short& ascent, short& descent, short& lineGap);
 
 } // namespace OpenType

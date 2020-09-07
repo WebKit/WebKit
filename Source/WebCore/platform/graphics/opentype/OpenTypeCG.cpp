@@ -35,20 +35,6 @@ namespace OpenType {
 static const unsigned long kCTFontTableOS2 = 'OS/2';
 #endif
 
-bool fontHasMathTable(CTFontRef ctFont)
-{
-    RetainPtr<CFArrayRef> tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
-    if (!tableTags)
-        return false;
-    CFIndex numTables = CFArrayGetCount(tableTags.get());
-    for (CFIndex index = 0; index < numTables; ++index) {
-        CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
-        if (tag == 'MATH')
-            return true;
-    }
-    return false;
-}
-
 static inline short readShortFromTable(const UInt8* os2Data, CFIndex offset)
 {
     return *(reinterpret_cast<const OpenType::Int16*>(os2Data + offset));

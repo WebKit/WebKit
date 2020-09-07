@@ -479,36 +479,32 @@ static inline float normalizeWidth(float value)
 struct FontType {
     FontType(CTFontRef font)
     {
+        bool foundStat = false;
+        bool foundTrak = false;
         auto tables = adoptCF(CTFontCopyAvailableTables(font, kCTFontTableOptionNoOptions));
         if (!tables)
             return;
-        bool foundStat = false;
-        bool foundTrak = false;
         auto size = CFArrayGetCount(tables.get());
         for (CFIndex i = 0; i < size; ++i) {
-            // This is so yucky.
-            // https://developer.apple.com/reference/coretext/1510774-ctfontcopyavailabletables
-            // "The returned set will contain unboxed values, which can be extracted like so:"
-            // "CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tags, index);"
-            CTFontTableTag tableTag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tables.get(), i)));
+            auto tableTag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tables.get(), i)));
             switch (tableTag) {
-            case 'fvar':
+            case kCTFontTableFvar:
                 if (variationType == VariationType::NotVariable)
                     variationType = VariationType::TrueTypeGX;
                 break;
-            case 'STAT':
+            case kCTFontTableSTAT:
                 foundStat = true;
                 variationType = VariationType::OpenType18;
                 break;
-            case 'morx':
-            case 'mort':
+            case kCTFontTableMorx:
+            case kCTFontTableMort:
                 aatShaping = true;
                 break;
-            case 'GPOS':
-            case 'GSUB':
+            case kCTFontTableGPOS:
+            case kCTFontTableGSUB:
                 openTypeShaping = true;
                 break;
-            case 'trak':
+            case kCTFontTableTrak:
                 foundTrak = true;
                 break;
             }
