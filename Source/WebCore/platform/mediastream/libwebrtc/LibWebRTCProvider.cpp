@@ -403,13 +403,8 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
         StringBuilder sdpFmtpLine;
         bool hasParameter = false;
         for (auto& parameter : codec.parameters) {
-            if (hasParameter)
-                sdpFmtpLine.append(";");
-            else
-                hasParameter = true;
-            sdpFmtpLine.append(StringView(parameter.first.data(), parameter.first.length()));
-            sdpFmtpLine.append("=");
-            sdpFmtpLine.append(StringView(parameter.second.data(), parameter.second.length()));
+            sdpFmtpLine.append(hasParameter ? ";" : "", StringView(parameter.first.data(), parameter.first.length()), '=', StringView(parameter.second.data(), parameter.second.length()));
+            hasParameter = true;
         }
         capabilities.codecs.uncheckedAppend(RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), sdpFmtpLine.toString() });
     }

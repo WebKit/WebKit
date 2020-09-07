@@ -1,3 +1,15 @@
+2020-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Fix https://trac.webkit.org/changeset/266508 as per post-commit comments
+        https://bugs.webkit.org/show_bug.cgi?id=216242
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::toRTCRtpCapabilities):
+
 2020-09-07  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Support extended attributes on includes statements to allow for conditionalized inclusion
