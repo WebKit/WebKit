@@ -1,3 +1,7 @@
+2020-09-07  Darin Adler  <darin@apple.com>
+
+        * platform/mac-wk2/TestExpectations: Revert change I accidentally included in my last patch.
+
 2020-09-06  Darin Adler  <darin@apple.com>
 
         Make TextCodecCJK and TextCodecSingleByte thread-safe and refactor a bit to share code

@@ -1108,6 +1108,11 @@ webkit.org/b/189672 [ Mojave Release ] webgl/2.0.0/conformance2/textures/canvas_
 
 webkit.org/b/215468 [ Mojave Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Failure ]
 
+# Some WPT encoding tests run too slowly under ASan (and too slowly in debug builds).
+# Since there is no convenient way to skip them under ASan only, skip all encoding tests here.
+# The tests will still be run on other platforms and also when testing with Legacy WebKit.
+[ Release ] imported/w3c/web-platform-tests/encoding [ Skip ]
+
 # <rdar://problem/37330377> ASan tests exiting early due to timeouts
 [ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys [ Skip ]
 
