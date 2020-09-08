@@ -1,0 +1,13 @@
+Test that changing the value of a focused date input preserves focus.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement is date
+PASS document.activeElement is date
+PASS document.activeElement is date
+PASS document.activeElement is text
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

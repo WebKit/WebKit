@@ -162,6 +162,19 @@ size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& fieldToFind
     });
 }
 
+DateTimeFieldElement* DateTimeEditElement::focusedFieldElement() const
+{
+    auto* focusedElement = document().focusedElement();
+    auto fieldIndex = m_fields.findMatching([&] (auto& field) {
+        return field.ptr() == focusedElement;
+    });
+
+    if (fieldIndex == notFound)
+        return nullptr;
+
+    return m_fields[fieldIndex].ptr();
+}
+
 Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, EditControlOwner& editControlOwner)
 {
     return adoptRef(*new DateTimeEditElement(document, editControlOwner));
@@ -178,12 +191,29 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
     }
 
     Element& fieldsWrapper = fieldsWrapperElement();
+    auto* focusedField = focusedFieldElement();
 
     DateTimeEditBuilder builder(*this, layoutParameters);
     Node* lastChildToBeRemoved = fieldsWrapper.lastChild();
     if (!builder.build(layoutParameters.dateTimeFormat) || m_fields.isEmpty()) {
         lastChildToBeRemoved = fieldsWrapper.lastChild();
         builder.build(layoutParameters.fallbackDateTimeFormat);
+    }
+
+    if (focusedField) {
+        auto& focusedFieldId = focusedField->shadowPseudoId();
+
+        auto foundFieldToFocus = false;
+        for (auto& field : m_fields) {
+            if (field->shadowPseudoId() == focusedFieldId) {
+                foundFieldToFocus = true;
+                field->focus();
+                break;
+            }
+        }
+
+        if (!foundFieldToFocus)
+            focusOnNextFocusableField(0);
     }
 
     if (lastChildToBeRemoved) {

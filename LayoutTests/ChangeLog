@@ -1,3 +1,13 @@
+2020-09-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Date/time inputs should preserve focus on value change
+        https://bugs.webkit.org/show_bug.cgi?id=216272
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/forms/date/date-preserve-focus-value-change-expected.txt: Added.
+        * fast/forms/date/date-preserve-focus-value-change.html: Added.
+
 2020-09-08  Youenn Fablet  <youenn@apple.com>
 
         Fix Internals::supportsVCPEncoder on BigSur

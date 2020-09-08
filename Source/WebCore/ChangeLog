@@ -1,3 +1,31 @@
+2020-09-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Date/time inputs should preserve focus on value change
+        https://bugs.webkit.org/show_bug.cgi?id=216272
+
+        Reviewed by Wenson Hsieh.
+
+        When the value of a date/time input is changed programmatically, the
+        inner elements of the input are rebuilt. Removing an inner element
+        that is focused results in the document's activeElement being nulled
+        out, and the date/time input loses focus.
+
+        To fix this issue, check to see whether the input has a focused field
+        prior to rebuilding. If there is a focused field, make an attempt to
+        focus the new field with the matching pseudo identifier. This ensures
+        that the focused field is preserved. If no matching identifier is found,
+        focus the first field to ensure the date/time input retains focus. The
+        second case can occur when the new value has different fields than the
+        old value, for example the presence/lack of a millisecond field in a
+        time input.
+
+        Test: fast/forms/date/date-preserve-focus-value-change.html
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::focusedFieldElement const):
+        (WebCore::DateTimeEditElement::layout):
+        * html/shadow/DateTimeEditElement.h:
+
 2020-09-08  Megan Gardner  <megan_gardner@apple.com>
 
         Switch from deprecated secondarySelectedControlColor to unemphasizedSelectedContentBackgroundColor.

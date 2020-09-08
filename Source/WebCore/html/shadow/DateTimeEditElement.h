@@ -88,6 +88,7 @@ private:
     DateTimeEditElement(Document&, EditControlOwner&);
 
     size_t fieldIndexOf(const DateTimeFieldElement&) const;
+    DateTimeFieldElement* focusedFieldElement() const;
     void layout(const LayoutParameters&);
     DateTimeFieldsState valueAsDateTimeFieldsState() const;
 
