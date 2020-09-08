@@ -1,3 +1,13 @@
+2020-09-08  Peng Liu  <peng.liu6@apple.com>
+
+        Web process crashes at WebCore::HTMLMediaElement::prepareForVideoFullscreenStandby
+        https://bugs.webkit.org/show_bug.cgi?id=216283
+
+        Reviewed by Alex Christensen.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForVideoFullscreenStandby):
+
 2020-09-08  Lauro Moura <lmoura@igalia.com>
 
         REGRESSION(r266681) [GTK] constexpr build failure in LTS/Debian with GCC 8
