@@ -347,6 +347,7 @@ interface UIScriptController {
     undefined setHardwareKeyboardAttached(boolean attached);
 
     object attachmentInfo(DOMString attachmentIdentifier);
+    undefined insertAttachmentForFilePath(DOMString filePath, DOMString contentType, object callback);
 
     readonly attribute DOMString lastUndoLabel;
     readonly attribute DOMString firstRedoLabel;

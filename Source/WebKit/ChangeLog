@@ -1,3 +1,22 @@
+2020-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: <attachment>'s QuickLook thumbnails can appear squished
+        https://bugs.webkit.org/show_bug.cgi?id=216209
+        <rdar://problem/67817706>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::convertPlatformImageToBitmap):
+        Propagate an image of the same aspect ratio that QuickLook provided,
+        instead of squishing it to square.
+
+        * UIProcess/QuickLookThumbnailLoader.mm:
+        (-[WKQLThumbnailLoadOperation start]):
+        Only request full thumbnails; we do not want the icon form, since <attachment>
+        already has one without QuickLook's help; if we can't get a full thumbnail,
+        we'll just leave it alone.
+
 2020-09-08  Sihui Liu  <sihui_liu@apple.com>
 
         Remove storage WorkQueue in NetworkProcess

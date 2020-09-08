@@ -1642,10 +1642,11 @@ RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
         FloatSize iconSize;
         icon = iconForAttachment(attachment, iconSize);
         thumbnailIcon = attachment.attachmentElement().thumbnail();
+        if (thumbnailIcon)
+            iconSize = largestRectWithAspectRatioInsideRect(thumbnailIcon->size().aspectRatio(), FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
         
         if (thumbnailIcon || icon) {
-            auto visibleIconSize = thumbnailIcon ? FloatSize(attachmentIconSize, attachmentIconSize) : iconSize;
-            iconRect = FloatRect(FloatPoint((attachmentRect.width() / 2) - (visibleIconSize.width() / 2), 0), visibleIconSize);
+            iconRect = FloatRect(FloatPoint((attachmentRect.width() / 2) - (iconSize.width() / 2), 0), iconSize);
             yOffset += iconRect.height() + attachmentItemMargin;
         }
     } else

@@ -237,6 +237,15 @@ enum ContentSizeCategory {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=ATTACHMENT_ELEMENT,
+    JSGenerateToJSObject,
+] dictionary AttachmentThumbnailInfo {
+    unsigned long width;
+    unsigned long height;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary TextIndicatorOptions {
     boolean useBoundingRectAndPaintAllContentForComplexRanges = false;
@@ -965,4 +974,6 @@ enum ContentSizeCategory {
     [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeySessionInternalInstanceSessionObjectRefCount(MediaKeySession session);
 
     undefined setContentSizeCategory(ContentSizeCategory category);
+
+    [Conditional=ATTACHMENT_ELEMENT, MayThrowException] AttachmentThumbnailInfo attachmentThumbnailInfo(HTMLAttachmentElement element);
 };

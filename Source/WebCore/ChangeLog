@@ -1,3 +1,24 @@
+2020-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: <attachment>'s QuickLook thumbnails can appear squished
+        https://bugs.webkit.org/show_bug.cgi?id=216209
+        <rdar://problem/67817706>
+
+        Reviewed by Wenson Hsieh.
+
+        Test: fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html
+
+        * html/HTMLAttachmentElement.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::attachmentThumbnailInfo):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Expose the attachment thumbnail size via Internals.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderAttachmentInfo::RenderAttachmentInfo):
+        Allow the thumbnail aspect ratio to vary, instead of assuming it is always square.
+
 2020-09-08  Sihui Liu  <sihui_liu@apple.com>
 
         Remove storage WorkQueue in NetworkProcess

@@ -1,3 +1,23 @@
+2020-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: <attachment>'s QuickLook thumbnails can appear squished
+        https://bugs.webkit.org/show_bug.cgi?id=216209
+        <rdar://problem/67817706>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::insertAttachmentForFilePath):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::currentTestURL const):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::insertAttachmentForFilePath):
+        Make it possible to insert an attachment wrapping a file on disk
+        via UIScriptController.
+
 2020-09-08  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should set cq- flag when a patch fails to build or introduces layout-test failures

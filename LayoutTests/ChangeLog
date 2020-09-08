@@ -1,3 +1,27 @@
+2020-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: <attachment>'s QuickLook thumbnails can appear squished
+        https://bugs.webkit.org/show_bug.cgi?id=216209
+        <rdar://problem/67817706>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/attachment/attachment-thumbnail-preserves-aspect-ratio-expected.txt: Added.
+        * fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html: Added.
+        * fast/attachment/resources/400x200-circle.png: Added.
+        * platform/ios/fast/attachment/attachment-thumbnail-preserves-aspect-ratio-expected.txt: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.insertAttachmentForFilePath):
+        Add a test that dumps the thumbnail size for a 400x200 attachment.
+        We only run it on iOS, because on macOS, QuickLook always returns
+        an image of the size we ask for (400x400), padded with whitespace,
+        so the problem does not reproduce and the test doesn't work right there.
+        On iOS, the result used to be 400x400 and now is 400x200.
+        
+        I tried and failed to make a more useful test (a ref test, actually
+        testing the presentation) because it's quite hard to match the
+        native <attachment> painting.
+
 2020-09-08  Frank Yang  <guowei_yang@apple.com>
 
         CoreImage Implementation of CSS Filters invert(), opacity(), brightness(), contrast()
