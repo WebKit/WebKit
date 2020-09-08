@@ -47,8 +47,7 @@ inline DOMURL::DOMURL(URL&& completeURL, const URL& baseURL)
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
 {
-    if (!base.isValid())
-        return Exception { TypeError };
+    ASSERT(base.isValid() || base.isNull());
     URL completeURL { base, url };
     if (!completeURL.isValid())
         return Exception { TypeError };
@@ -57,7 +56,10 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
 {
-    return create(url, base.isNull() ? aboutBlankURL() : URL { URL { }, base });
+    URL baseURL { URL { }, base };
+    if (!base.isNull() && !baseURL.isValid())
+        return Exception { TypeError };
+    return create(url, baseURL);
 }
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const DOMURL& base)

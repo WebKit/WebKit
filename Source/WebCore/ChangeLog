@@ -1,3 +1,17 @@
+2020-09-08  Alex Christensen  <achristensen@webkit.org>
+
+        new URL("#") should throw an error
+        https://bugs.webkit.org/show_bug.cgi?id=216115
+
+        Reviewed by Yusuke Suzuki and Darin Adler.
+
+        This aligns the DOM URL object with the specification and Firefox.
+        Covered by adding to fast/dom/DOMURL/url-constructor.html.
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::create):
+        * html/DOMURL.h:
+
 2020-09-08  Chris Dumez  <cdumez@apple.com>
 
         Fix precision issues in AudioParamTimeline when event times are very close

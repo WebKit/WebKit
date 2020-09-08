@@ -573,7 +573,7 @@ function test()
             test("http://example.com/path?#", "http://example.com/path?");
             test("http://example.com/path/?#", "http://example.com/path/?");
 
-            test("#hash", "about:blank");
+            test(new URL("#hash", "about:blank"), "about:blank");
             test("invalid", "invalid");
 
             return true;

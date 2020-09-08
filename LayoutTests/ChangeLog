@@ -1,3 +1,15 @@
+2020-09-08  Alex Christensen  <achristensen@webkit.org>
+
+        new URL("#") should throw an error
+        https://bugs.webkit.org/show_bug.cgi?id=216115
+
+        Reviewed by Yusuke Suzuki and Darin Adler.
+
+        * fast/dom/DOMURL/url-constructor-expected.txt:
+        * fast/dom/DOMURL/url-constructor.html:
+        * inspector/unit-tests/url-utilities.html:
+        * inspector/unit-tests/url-utilities-expected.txt:
+
 2020-09-08  Chris Dumez  <cdumez@apple.com>
 
         Fix precision issues in AudioParamTimeline when event times are very close

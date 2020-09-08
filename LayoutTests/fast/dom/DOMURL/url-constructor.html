@@ -15,6 +15,7 @@ shouldBe("url.href", "'http://user:pass@example.com/path?query#fragment'");
 
 debug("One-parameter constructor - invalid URL should throw");
 shouldThrow('url = new URL("%^$#")');
+shouldThrow('url = new URL("#")');
 
 debug("One-parameter constructor - relative URL not valid against default base");
 shouldThrow('url = new URL("foobar")');

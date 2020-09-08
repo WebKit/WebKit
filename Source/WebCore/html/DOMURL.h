@@ -41,7 +41,6 @@ class DOMURL final : public RefCounted<DOMURL>, public URLDecomposition {
 public:
     static ExceptionOr<Ref<DOMURL>> create(const String& url, const String& base);
     static ExceptionOr<Ref<DOMURL>> create(const String& url, const DOMURL& base);
-    static ExceptionOr<Ref<DOMURL>> create(const String& url, const URL& base);
     ~DOMURL();
 
     const URL& href() const { return m_url; }
@@ -58,6 +57,7 @@ public:
     static String createPublicURL(ScriptExecutionContext&, URLRegistrable&);
 
 private:
+    static ExceptionOr<Ref<DOMURL>> create(const String& url, const URL& base);
     DOMURL(URL&& completeURL, const URL& baseURL);
 
     URL fullURL() const final { return m_url; }

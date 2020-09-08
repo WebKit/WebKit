@@ -499,7 +499,7 @@ PASS: Removing fragment of 'http://example.com/path#' should be 'http://example.
 PASS: Removing fragment of 'http://example.com/path/#' should be 'http://example.com/path/'.
 PASS: Removing fragment of 'http://example.com/path?#' should be 'http://example.com/path?'.
 PASS: Removing fragment of 'http://example.com/path/?#' should be 'http://example.com/path/?'.
-PASS: Removing fragment of '#hash' should be 'about:blank'.
+PASS: Removing fragment of 'about:blank#hash' should be 'about:blank'.
 PASS: Removing fragment of 'invalid' should be 'invalid'.
 
 -- Running test case: WI.h2Authority
