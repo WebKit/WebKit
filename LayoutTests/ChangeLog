@@ -1,3 +1,12 @@
+2020-09-08  Karl Rackler  <rackler@apple.com>
+
+        Removed 6 forms and 3 tables test expectations for Big Sur
+        rdar://68372418
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-09-08  Rob Buis  <rbuis@igalia.com>
 
         Fix crash in image-loading-lazy-slow.html WPT test

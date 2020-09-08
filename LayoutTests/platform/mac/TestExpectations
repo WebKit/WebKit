@@ -2186,17 +2186,6 @@ webkit.org/b/215814 [ Debug ] inspector/console/queryInstances.html [ Pass Failu
 
 webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb32f-rgb-float.html [ Pass Failure ]
 
-# rdar://68372418 (REGRESSION (r266045): [ Big Sur ] 6 forms and 3 tables tests are a constant failure with approximately 1px difference)
-[ BigSur+ ] fast/css/text-overflow-input.html [ Failure ]
-[ BigSur+ ] fast/forms/button-sizes.html [ Failure ]
-[ BigSur+ ] fast/forms/button-table-styles.html [ Failure ]
-[ BigSur+ ] fast/forms/input-button-sizes.html [ Failure ]
-[ BigSur+ ] fast/forms/listbox-bidi-align.html [ Failure ]
-[ BigSur+ ] fast/text/international/pop-up-button-text-alignment-and-direction.html [ Failure ]
-[ BigSur+ ] tables/mozilla/bugs/bug2479-3.html [ Failure ]
-[ BigSur+ ] tables/mozilla/bugs/bug33855.html [ Failure ]
-[ BigSur+ ] tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure ]
-
 # <rdar://problem/66346141> [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html is failing
 # <rdar://66295552> [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html
 [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
