@@ -1,3 +1,15 @@
+2020-09-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Don't skip flexboxes with auto height for percentage computations in quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=216249
+
+        Reviewed by Darin Adler.
+
+        Fixed the (FAIL) expectations of two WPT tests that are now passing.
+
+        * web-platform-tests/css/css-flexbox/percentage-size-quirks-expected.txt: Replaced FAIL with PASS.
+        * web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item-expected.txt: Ditto.
+
 2020-09-07  Chris Dumez  <cdumez@apple.com>
 
         AudioParam.cancelAndHoldAtTime() is missing

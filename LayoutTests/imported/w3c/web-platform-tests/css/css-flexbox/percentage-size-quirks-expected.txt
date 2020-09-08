@@ -1,21 +1,10 @@
 
 PASS .flexbox 1 
 PASS .flexbox 2 
-FAIL .flexbox 3 assert_equals: 
-<div class="flexbox" style="height: auto">
-        <div style="height: 10px; min-height: 50%;" data-expected-height="10"></div>
-        <div style="height: 50%;" data-expected-height="0"></div>
-        <div style="height: 10px; max-height: 50%;" data-expected-height="10"></div>
-        <div style="min-height: 10px; height: 100px; max-height: 50%;" data-expected-height="100"></div>
-    </div>
-height expected 10 but got 25
+PASS .flexbox 3 
 PASS .flexbox 4 
 PASS .flexbox 5 
-FAIL .flexbox 6 assert_equals: 
-<div class="flexbox">
-        <div style="flex: 0 0 50%" data-expected-height="0"></div>
-    </div>
-height expected 0 but got 25
+PASS .flexbox 6 
 PASS .flexbox 7 
 PASS .flexbox 8 
 
