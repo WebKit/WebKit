@@ -23,7 +23,7 @@ FAIL X output[128, 143]: Expected 0 for all values but found 16 unexpected value
 	[3]	-0.7989943027496338
 	...and 12 more errors. assert_true: expected true got false
 PASS   output[144, 255] is not constantly 0 (contains 112 different values). 
-PASS   k-rate delayTime AudioParam with input equals [0,0.3311063051223755,0.6248595118522644,0.8481203317642212,0.9757022261619568,0.9932120442390442,0.898674488067627,0.7027547955513,0.4275550842285156,0.10412158071994781,-0.23105812072753906,-0.5401715040206909,-0.7883464097976685,-0.9475855827331543,-0.9999247789382935,-0.9394593238830566...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate delayTime AudioParam with input equals [0,0.3311063051223755,0.6248595118522644,0.8481203317642212,0.9757022261619568,0.9932120442390442,0.898674488067627,0.7027547955513,0.4275550842285156,0.10412158071994781,-0.23105812072753906,-0.5401715040206909,-0.7883464097976685,-0.9475855827331543,-0.9999247193336487,-0.9394593238830566...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 FAIL < [delayTime] 1 out of 15 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

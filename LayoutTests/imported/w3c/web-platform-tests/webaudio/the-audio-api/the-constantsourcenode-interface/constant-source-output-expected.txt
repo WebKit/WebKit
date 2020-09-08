@@ -27,7 +27,7 @@ PASS   Automation: ConstantSourceNode after ramp contains only the constant 1.
 PASS < [basic automation] All assertions passed. (total 2 assertions) 
 PASS > [connected audioparam]  
 PASS   Connected param: ConstantSourceNode frames [0, 10) contains only the constant 0. 
-PASS   Connected param: ConstantSourceNode frames [10, 6000) equals [1.544638752937317,1.5920131206512451,1.6374237537384033,1.6807206869125366,1.7217600345611572,1.7604058980941772,1.7965296506881714,1.8300120830535889,1.8607418537139893,1.888616919517517,1.9135453701019287,1.9354438781738281,1.954240322113037,1.9698717594146729,1.9822871685028076,1.9914445877075195...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   Connected param: ConstantSourceNode frames [10, 6000) equals [1.544638752937317,1.5920131206512451,1.6374237537384033,1.6807208061218262,1.7217600345611572,1.7604058980941772,1.7965296506881714,1.8300120830535889,1.8607418537139893,1.8886170387268066,1.9135453701019287,1.9354438781738281,1.954240322113037,1.9698717594146729,1.9822871685028076,1.9914445877075195...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [connected audioparam] All assertions passed. (total 2 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
 

@@ -12,13 +12,13 @@ PASS < [detune limits] All assertions passed. (total 4 assertions)
 PASS > [detune automation] Oscillator output with detune automation should be zero above Nyquist 
 PASS   Frame where detuned oscillator reaches Nyquist is equal to 5. 
 PASS   osc[0:4] is not constantly 0 (contains 4 different values). 
-FAIL X osc[5:]: Expected 0 for all values but found 2751 unexpected values: 
+FAIL X osc[5:]: Expected 0 for all values but found 2752 unexpected values: 
 	Index	Actual
 	[0]	0.0007123718387447298
 	[1]	0.000854848010931164
 	[2]	0.0009973249398171902
 	[3]	0.0011398025089874864
-	...and 2747 more errors. assert_true: expected true got false
+	...and 2748 more errors. assert_true: expected true got false
 FAIL < [detune automation] 1 out of 3 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
 

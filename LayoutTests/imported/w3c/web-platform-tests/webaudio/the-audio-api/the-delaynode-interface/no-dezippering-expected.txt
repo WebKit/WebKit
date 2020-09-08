@@ -14,7 +14,7 @@ PASS   .value setter output equals [0,0,0,0,0.15114448964595795,0.31478953361511
 PASS   .value setter output matches setValueAtTime output is true. 
 PASS < [test1] All assertions passed. (total 2 assertions) 
 PASS > [test2] Test value setter and modulation 
-PASS   With modulation: .value setter output equals [0,0,0,0,0,0,0,0,0,0.9986401796340942,0.9932120442390442,0.9595714211463928,0.898674488067627,0.812250554561615,0.7027547955513,0.5732971429824829...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   With modulation: .value setter output equals [0,0,0,0,0,0,0,0,0,0.998640239238739,0.9932120442390442,0.9595714211463928,0.898674488067627,0.812250554561615,0.7027547955513,0.5732971429824829...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   With modulation: .value setter output matches setValueAtTime output is true. 
 PASS < [test2] All assertions passed. (total 2 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 

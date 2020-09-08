@@ -1,5 +1,28 @@
 2020-09-08  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline flaky webaudio WPT tests.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/constant-source-output-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/ctor-iirfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-scriptprocessornode-interface/simple-input-output-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering-expected.txt:
+
+2020-09-08  Chris Dumez  <cdumez@apple.com>
+
         Fix precision issues in AudioParamTimeline when event times are very close
         https://bugs.webkit.org/show_bug.cgi?id=216279
 
