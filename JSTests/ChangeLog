@@ -1,3 +1,20 @@
+2020-09-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Special property caching should check Structure's cacheability
+        https://bugs.webkit.org/show_bug.cgi?id=216222
+
+        Reviewed by Saam Barati.
+
+        * stress/module-namespace-object-caching.js: Added.
+        (shouldBe):
+        (async fn):
+        * stress/not-cache-over-uncacheable-dictionary.js: Added.
+        (shouldBe):
+        * stress/resources/to-string-module.js: Added.
+        (export.toString):
+        * stress/resources/value-of-module.js: Added.
+        (export.valueOf):
+
 2020-09-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Align legacy Intl constructor behavior to spec

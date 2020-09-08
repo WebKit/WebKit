@@ -134,6 +134,12 @@ void StructureRareData::cacheSpecialPropertySlow(JSGlobalObject* globalObject, V
         uid = vm.propertyNames->toPrimitiveSymbol.impl();
         break;
     }
+
+    if (!ownStructure->propertyAccessesAreCacheable() || ownStructure->isProxy()) {
+        giveUpOnSpecialPropertyCache(key);
+        return;
+    }
+
     ObjectPropertyConditionSet conditionSet;
     if (slot.isValue()) {
         // We don't handle the own property case of special properties (toString, valueOf, @@toPrimitive, @@toStringTag) because we would never know if a new
@@ -144,11 +150,24 @@ void StructureRareData::cacheSpecialPropertySlow(JSGlobalObject* globalObject, V
 
         // This will not create a condition for the current structure but that is good because we know that property
         // is not on the ownStructure so we will transisition if one is added and this cache will no longer be used.
-        prepareChainForCaching(globalObject, ownStructure, slot.slotBase());
+        auto cacheStatus = prepareChainForCaching(globalObject, ownStructure, slot.slotBase());
+        if (!cacheStatus) {
+            giveUpOnSpecialPropertyCache(key);
+            return;
+        }
         conditionSet = generateConditionsForPrototypePropertyHit(vm, this, globalObject, ownStructure, slot.slotBase(), uid);
         ASSERT(!conditionSet.isValid() || conditionSet.hasOneSlotBaseCondition());
     } else if (slot.isUnset()) {
-        prepareChainForCaching(globalObject, ownStructure, nullptr);
+        if (!ownStructure->propertyAccessesAreCacheableForAbsence()) {
+            giveUpOnSpecialPropertyCache(key);
+            return;
+        }
+
+        auto cacheStatus = prepareChainForCaching(globalObject, ownStructure, nullptr);
+        if (!cacheStatus) {
+            giveUpOnSpecialPropertyCache(key);
+            return;
+        }
         conditionSet = generateConditionsForPropertyMiss(vm, this, globalObject, ownStructure, uid);
     } else
         return;

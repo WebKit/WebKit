@@ -3738,6 +3738,16 @@ void JSObject::convertToDictionary(VM& vm)
         vm, Structure::toCacheableDictionaryTransition(vm, structure(vm), &deferredWatchpointFire));
 }
 
+void JSObject::convertToUncacheableDictionary(VM& vm)
+{
+    if (structure(vm)->isUncacheableDictionary())
+        return;
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure(vm));
+    setStructure(
+        vm, Structure::toUncacheableDictionaryTransition(vm, structure(vm), &deferredWatchpointFire));
+}
+
+
 void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM& vm, Structure* structure, size_t outOfLineCapacityAfter)
 {
     // This could interleave visitChildren because some old structure could have been a non

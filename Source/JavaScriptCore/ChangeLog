@@ -1,3 +1,24 @@
+2020-09-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Special property caching should check Structure's cacheability
+        https://bugs.webkit.org/show_bug.cgi?id=216222
+
+        Reviewed by Saam Barati.
+
+        While StructureRareData::cacheSpecialPropertySlow caches properties, the way it takes is incomplete.
+        It is not checking Structure's cacheability. We were caching miss condition even if structure is !propertyAccessesAreCacheableForAbsence.
+        We should perform the same check done in IC case. Strictly speaking, we can cache value for uncacheable-dictionary because we are setting
+        property change watchpoint (which will fire). But it sounds not so profitable if this structure is uncacheable.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertToUncacheableDictionary):
+        * runtime/JSObject.h:
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::cacheSpecialPropertySlow):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionToUncacheableDictionary):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-09-07  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r266567.
