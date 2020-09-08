@@ -1,3 +1,49 @@
+2020-09-08  Peng Liu  <peng.liu6@apple.com>
+
+        Clean up functions and state variables related to the picture-in-picture implementation
+        https://bugs.webkit.org/show_bug.cgi?id=215972
+
+        Reviewed by Jer Noble.
+
+        This patch adds an optional FloatSize parameter to the VideoFullscreenManager::DidEnterFullscreen message.
+        Also, it enables the picture-in-picture and fullscreen events when a video element enters picture-in-picture
+        from the fullscreen mode.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::didEnterFullscreen):
+        (WebKit::VideoFullscreenModelContext::prepareToExitFullscreen):
+        (WebKit::VideoFullscreenModelContext::willEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::didEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::failedToEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::willExitPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::didExitPictureInPicture):
+        (WebKit::VideoFullscreenManagerProxy::ensureClientForContext):
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::VideoFullscreenManagerProxy::enterFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::didEnterFullscreen):
+        Use ensureClientForContext() instead of addClientForContext() in setupFullscreenWithID()
+        to avoid leaking VideoFullscreenInterfaceAVKit instances.
+        Iterate a copy of the HashSet of VideoFullscreenModelClient pointers because a callback may
+        remove the client itself during the iteration.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController prepareToExitPictureInPicture]):
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController didExitPictureInPicture]):
+        Fix leaking of VideoFullscreenInterfaceMac.
+
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::fullscreenModeChanged):
+        We need to change the fullscreen mode in the VideoFullscreenInterfaceContext instance as well.
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+        (WebKit::VideoFullscreenManager::didCleanupFullscreen):
+        Call didExitFullscreenOrPictureInPicture() instead of didStopBeingFullscreenElement(), which
+        is for the FullscreenManager.
+
 2020-09-08  Mike Gorse  <mgorse@suse.com>
 
         [GTK] AcceleratedBackingStoreWayland might erroneously try to use SHM with older wpebackend-fdo

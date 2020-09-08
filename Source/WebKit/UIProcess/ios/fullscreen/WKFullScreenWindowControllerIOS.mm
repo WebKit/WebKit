@@ -953,7 +953,6 @@ private:
         return;
 
     interface->setReadyToStopPictureInPicture(NO);
-    interface->setWillEnterStandbyFromPictureInPicture(YES);
     _returnToFullscreenFromPictureInPicture = YES;
 
     if (!_exitingFullScreen)

@@ -1,3 +1,126 @@
+2020-09-08  Peng Liu  <peng.liu6@apple.com>
+
+        Clean up functions and state variables related to the picture-in-picture implementation
+        https://bugs.webkit.org/show_bug.cgi?id=215972
+
+        Reviewed by Jer Noble.
+
+        This patch cleans up variables and functions related to changing video presentation mode
+        in HTMLVideoElement and HTMLMediaElement. It cleans up some event-related code as well.
+
+        This patch also simplifies the process of entering the picture-in-picture mode.
+        The XPC message VideoFullscreenManagerProxy::DidEnterFullscreen from the UI process
+        will provide the picture-in-picture window size if the video is entering picture-in-picture,
+        so that we can get rid of the intermediate state (waiting for the initial picture-in-picture
+        window frame).
+
+        With this patch, all presentation mode change requests need to go through the HTMLVideoElement.
+        Normally, video presentation mode change requests come from the web process where a page
+        calls the fullscreen/picture-in-picture API or a user interacts with the modern media controls.
+        However, through gestures, the UI process may request to change the presentation mode
+        (e.g., from fullscreen to picture-in-picture). The web process side will be like a dry run
+        because the tasks in the UI process are mostly completed before the web process receives
+        the request. The motivation to do that is to guarantee correct events are fired.
+        All scenarios sharing the same code path also help us avoid regressions because we don't
+        have a good way to create regression tests for the scenarios where presentation mode change
+        requests come from the UI process.
+
+        Covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::dispatchEvent):
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::setVideoFullscreenStandby):
+        (WebCore::HTMLMediaElement::willBecomeFullscreenElement):
+        Simplify the implementation.
+        (WebCore::HTMLMediaElement::willStopBeingFullscreenElement):
+        (WebCore::HTMLMediaElement::isVideoLayerInline):
+        (WebCore::HTMLMediaElement::setVideoFullscreenFrame):
+        (WebCore::HTMLMediaElement::setFullscreenMode):
+        Delete function HTMLVideoElement::fullscreenModeChanged() and move its code
+        to this function.
+        (WebCore::HTMLMediaElement::fullscreenModeChanged): Deleted.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::fullscreenMode const):
+        Replace fullscreenModeChanged() with a private function setFullscreenMode().
+        Change "void setVideoFullscreenFrame(FloatRect)" to "void setVideoFullscreenFrame(const FloatRect&)".
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitDisplayingFullscreen):
+        (WebCore::HTMLVideoElement::toPresentationMode):
+        (WebCore::HTMLVideoElement::webkitSetPresentationMode):
+        (WebCore::HTMLVideoElement::setPresentationMode):
+        (WebCore::HTMLVideoElement::didEnterFullscreenOrPictureInPicture):
+        (WebCore::HTMLVideoElement::didExitFullscreenOrPictureInPicture):
+        (WebCore::HTMLVideoElement::didBecomeFullscreenElement):
+        (WebCore::HTMLVideoElement::setVideoFullscreenFrame):
+        (WebCore::toPresentationMode): Deleted.
+        (WebCore::HTMLVideoElement::setFullscreenMode): Deleted.
+        (WebCore::HTMLVideoElement::fullscreenModeChanged): Deleted.
+        (WebCore::HTMLVideoElement::didStopBeingFullscreenElement): Deleted.
+        * html/HTMLVideoElement.h:
+        Only HTMLVIdeoElement::setPresentationMode() can be used by other modules (PlaybackSessionManager
+        or VideoFullscreenManager) to change the video presentation mode.
+        This patch defines different callbacks regarding the fullscreen mode change transition
+        for FullscreenManager and VideoFullscreenManager.
+        - didBecomeFullscreenElement for FullscreenManager.
+        - didEnterFullscreenOrPictureInPicture and didExitFullscreenOrPictureInPicture for
+        VideoFullscreenManager.
+        This patch removes m_isWaitingForPictureInPictureWindowFrame and renames m_isChangingPresentationMode
+        to m_isChangingVideoFullscreenMode.
+
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::togglePictureInPicture):
+
+        * platform/cocoa/VideoFullscreenChangeObserver.h:
+
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (WebCore::VideoFullscreenModelVideoElement::requestFullscreenMode):
+        (WebCore::VideoFullscreenModelVideoElement::fullscreenModeChanged):
+        (WebCore::VideoFullscreenModelVideoElement::setHasVideo):
+        (WebCore::VideoFullscreenModelVideoElement::setVideoDimensions):
+        (WebCore::VideoFullscreenModelVideoElement::willEnterPictureInPicture):
+        (WebCore::VideoFullscreenModelVideoElement::didEnterPictureInPicture):
+        (WebCore::VideoFullscreenModelVideoElement::failedToEnterPictureInPicture):
+        (WebCore::VideoFullscreenModelVideoElement::willExitPictureInPicture):
+        (WebCore::VideoFullscreenModelVideoElement::didExitPictureInPicture):
+        Iterate a copy of the HashSet of VideoFullscreenModelClient pointers because a callback may
+        remove the client itself during the iteration.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer calculateTargetVideoFrame]):
+        (-[WebAVPlayerLayer layoutSublayers]):
+        (WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerView):
+        (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+        (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::failedToStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::doSetup):
+        (VideoFullscreenInterfaceAVKit::doEnterFullscreen):
+        (VideoFullscreenInterfaceAVKit::willEnterStandbyFromPictureInPicture): Deleted.
+        (VideoFullscreenInterfaceAVKit::setWillEnterStandbyFromPictureInPicture): Deleted.
+        Add a property isPictureInPicture to WebAVPlayerLayer, which will set to YES if
+        a layer is created for picture-in-picture.
+        This property is used in -[WebAVPlayerLayer layoutSublayers] to skip
+        the unnecessary calculation of "targetVideoFrame" because the PiP window will
+        always have the same aspect ratio as the video content, so we can set
+        "targetVideoFrame" to be the bounds of the layer. Moreover, the calculation may
+        lead to rounding errors for some numbers and the errors may trigger unnecessary
+        picture-in-picture window resize events.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        This file has been moved to WebCore so we don't need to include WebCore headers
+        in a way like "#include <WebCore/XXX.h>".
+
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC enterPIP]):
+        (-[WebVideoFullscreenInterfaceMacObjC boundsDidChangeForVideoViewContainer:]):
+        (WebCore::VideoFullscreenInterfaceMac::enterFullscreen):
+        Add PIPState::EnteringPIP. Notify the observer that the video has entered
+        picture-in-picture after the PiP window size is finalized.
+
 2020-09-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove redundant FormattingContext::Quirks::lineDescentNeedsCollapsing

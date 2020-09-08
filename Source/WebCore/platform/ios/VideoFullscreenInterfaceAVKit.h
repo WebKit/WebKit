@@ -147,8 +147,6 @@ public:
     void enterFullscreenHandler(BOOL success, NSError *);
     bool isPlayingVideoInEnhancedFullscreen() const;
     WEBCORE_EXPORT void setReadyToStopPictureInPicture(BOOL);
-    WEBCORE_EXPORT bool willEnterStandbyFromPictureInPicture();
-    WEBCORE_EXPORT void setWillEnterStandbyFromPictureInPicture(BOOL);
 
     WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);
@@ -225,7 +223,6 @@ protected:
     bool m_enteringPictureInPicture { false };
     bool m_exitingPictureInPicture { false };
     bool m_readyToStopPictureInPicture { true };
-    bool m_willEnterStandbyFromPictureInPicture { false };
 };
 
 }

@@ -178,7 +178,7 @@ public:
 #ifdef __OBJC__
     PlatformLayer* videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
 #endif
-    virtual void setVideoFullscreenFrame(FloatRect);
+    virtual void setVideoFullscreenFrame(const FloatRect&);
     void setVideoFullscreenGravity(MediaPlayer::VideoGravity);
     MediaPlayer::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
 #endif
@@ -430,7 +430,6 @@ public:
 
     using MediaPlayerEnums::VideoFullscreenMode;
     VideoFullscreenMode fullscreenMode() const { return m_videoFullscreenMode; }
-    virtual void fullscreenModeChanged(VideoFullscreenMode);
 
     void enterFullscreen(VideoFullscreenMode);
     WEBCORE_EXPORT void enterFullscreen() override;
@@ -624,6 +623,8 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void didRecalcStyle(Style::Change) override;
     bool isInteractiveContent() const override;
+
+    void setFullscreenMode(VideoFullscreenMode);
 
     void willBecomeFullscreenElement() override;
     void willStopBeingFullscreenElement() override;

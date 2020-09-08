@@ -244,10 +244,10 @@ void VideoFullscreenModelContext::didSetupFullscreen()
         m_manager->didSetupFullscreen(m_contextId);
 }
 
-void VideoFullscreenModelContext::didEnterFullscreen()
+void VideoFullscreenModelContext::didEnterFullscreen(const WebCore::FloatSize& size)
 {
     if (m_manager)
-        m_manager->didEnterFullscreen(m_contextId);
+        m_manager->didEnterFullscreen(m_contextId, size);
 }
 
 void VideoFullscreenModelContext::willExitFullscreen()
@@ -290,13 +290,13 @@ void VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID(Complet
 
 void VideoFullscreenModelContext::prepareToExitFullscreen()
 {
-    for (auto& client : m_clients)
+    for (auto& client : copyToVector(m_clients))
         client->prepareToExitPictureInPicture();
 }
 
 void VideoFullscreenModelContext::willEnterPictureInPicture()
 {
-    for (auto& client : m_clients)
+    for (auto& client : copyToVector(m_clients))
         client->willEnterPictureInPicture();
 }
 
@@ -305,19 +305,19 @@ void VideoFullscreenModelContext::didEnterPictureInPicture()
     if (m_manager)
         m_manager->hasVideoInPictureInPictureDidChange(true);
 
-    for (auto& client : m_clients)
+    for (auto& client : copyToVector(m_clients))
         client->didEnterPictureInPicture();
 }
 
 void VideoFullscreenModelContext::failedToEnterPictureInPicture()
 {
-    for (auto& client : m_clients)
+    for (auto& client : copyToVector(m_clients))
         client->failedToEnterPictureInPicture();
 }
 
 void VideoFullscreenModelContext::willExitPictureInPicture()
 {
-    for (auto& client : m_clients)
+    for (auto& client : copyToVector(m_clients))
         client->willExitPictureInPicture();
 }
 
@@ -326,7 +326,7 @@ void VideoFullscreenModelContext::didExitPictureInPicture()
     if (m_manager)
         m_manager->hasVideoInPictureInPictureDidChange(false);
 
-    for (auto& client : m_clients)
+    for (auto& client : copyToVector(m_clients))
         client->didExitPictureInPicture();
 }
 
@@ -461,6 +461,11 @@ PlatformVideoFullscreenInterface* VideoFullscreenManagerProxy::findInterface(Pla
     return std::get<1>(it->value).get();
 }
 
+void VideoFullscreenManagerProxy::ensureClientForContext(PlaybackSessionContextIdentifier contextId)
+{
+    m_clientCounts.add(contextId, 1);
+}
+
 void VideoFullscreenManagerProxy::addClientForContext(PlaybackSessionContextIdentifier contextId)
 {
     auto addResult = m_clientCounts.add(contextId, 1);
@@ -524,12 +529,7 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
     MESSAGE_CHECK(videoLayerID);
 
     auto& [model, interface] = ensureModelAndInterface(contextId);
-#if PLATFORM(IOS_FAMILY)
-    if (interface->willEnterStandbyFromPictureInPicture())
-        interface->setWillEnterStandbyFromPictureInPicture(NO);
-    else if (videoFullscreenMode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture || !standby)
-        addClientForContext(contextId);
-#endif
+    ensureClientForContext(contextId);
 
     if (m_mockVideoPresentationModeEnabled) {
         if (!videoDimensions.isEmpty())
@@ -598,8 +598,7 @@ void VideoFullscreenManagerProxy::setVideoDimensions(PlaybackSessionContextIdent
 void VideoFullscreenManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
     if (m_mockVideoPresentationModeEnabled) {
-        didEnterFullscreen(contextId);
-        setVideoLayerFrame(contextId, {0, 0, m_mockPictureInPictureWindowSize.width(), m_mockPictureInPictureWindowSize.height()});
+        didEnterFullscreen(contextId, m_mockPictureInPictureWindowSize);
         return;
     }
 
@@ -774,9 +773,13 @@ void VideoFullscreenManagerProxy::didExitFullscreen(PlaybackSessionContextIdenti
     m_page->didExitFullscreen();
 }
 
-void VideoFullscreenManagerProxy::didEnterFullscreen(PlaybackSessionContextIdentifier contextId)
+void VideoFullscreenManagerProxy::didEnterFullscreen(PlaybackSessionContextIdentifier contextId, const WebCore::FloatSize& size)
 {
-    m_page->send(Messages::VideoFullscreenManager::DidEnterFullscreen(contextId));
+    Optional<FloatSize> optionalSize;
+    if (!size.isEmpty())
+        optionalSize = size;
+
+    m_page->send(Messages::VideoFullscreenManager::DidEnterFullscreen(contextId, optionalSize));
     m_page->didEnterFullscreen();
 }
 

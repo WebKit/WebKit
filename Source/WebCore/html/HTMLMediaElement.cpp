@@ -5779,8 +5779,8 @@ void HTMLMediaElement::dispatchEvent(Event& event)
     // We need to fire the end fullscreen event to notify the page
     // to change the position/size back *before* exiting fullscreen.
     // Otherwise, the exit fullscreen animation will be incorrect.
-    if (!m_videoFullscreenStandby && event.type() == eventNames().webkitendfullscreenEvent) {
-        fullscreenModeChanged(VideoFullscreenModeNone);
+    if (!m_videoFullscreenStandby && !m_waitingToEnterFullscreen && event.type() == eventNames().webkitendfullscreenEvent) {
+        setFullscreenMode(VideoFullscreenModeNone);
         document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
     }
 }
@@ -5973,11 +5973,18 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 
                 m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
                 m_waitingToEnterFullscreen = true;
-                fullscreenModeChanged(mode);
+                auto oldMode = m_videoFullscreenMode;
+                setFullscreenMode(mode);
                 configureMediaControls();
 
                 document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);
-                scheduleEvent(eventNames().webkitbeginfullscreenEvent);
+                if (m_videoFullscreenStandby)
+                    return;
+
+                if (mode == VideoFullscreenModeStandard)
+                    scheduleEvent(eventNames().webkitbeginfullscreenEvent);
+                else if (oldMode == VideoFullscreenModeStandard)
+                    scheduleEvent(eventNames().webkitendfullscreenEvent);
             }
         }
     });
@@ -6024,15 +6031,23 @@ void HTMLMediaElement::exitFullscreen()
     }
 
     if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped()) {
-        fullscreenModeChanged(VideoFullscreenModeNone);
+        setFullscreenMode(VideoFullscreenModeNone);
         document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
     } else if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
         if (m_videoFullscreenStandby) {
-            fullscreenModeChanged(VideoFullscreenModeNone);
+            setFullscreenMode(VideoFullscreenModeNone);
             document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), m_videoFullscreenMode, m_videoFullscreenStandby);
+            return;
         }
 
-        scheduleEvent(eventNames().webkitendfullscreenEvent);
+        if (oldVideoFullscreenMode == VideoFullscreenModeStandard) {
+            // The exit fullscreen request will be sent in dispatchEvent().
+            scheduleEvent(eventNames().webkitendfullscreenEvent);
+            return;
+        }
+
+        setFullscreenMode(VideoFullscreenModeNone);
+        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
     }
 }
 
@@ -6066,7 +6081,7 @@ WEBCORE_EXPORT void HTMLMediaElement::setVideoFullscreenStandby(bool value)
         return;
 
     if (m_videoFullscreenStandby)
-        document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), m_videoFullscreenMode, m_videoFullscreenStandby);
+        document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone, m_videoFullscreenStandby);
     else
         document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
 }
@@ -6077,20 +6092,12 @@ void HTMLMediaElement::willBecomeFullscreenElement()
     HTMLMediaElementEnums::VideoFullscreenMode oldVideoFullscreenMode = m_videoFullscreenMode;
 #endif
 
-    fullscreenModeChanged(VideoFullscreenModeStandard);
+    if (m_videoFullscreenMode != VideoFullscreenModeStandard)
+        setFullscreenMode(VideoFullscreenModeStandard);
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    switch (oldVideoFullscreenMode) {
-    case VideoFullscreenModeNone:
-    case VideoFullscreenModeStandard:
-        // Don't need to do anything if we are not in any special fullscreen mode or it's already
-        // in standard fullscreen mode.
-        break;
-    case VideoFullscreenModePictureInPicture:
-        if (is<HTMLVideoElement>(*this))
-            downcast<HTMLVideoElement>(this)->exitToFullscreenModeWithoutAnimationIfPossible(oldVideoFullscreenMode, VideoFullscreenModeStandard);
-        break;
-    }
+    if (oldVideoFullscreenMode == VideoFullscreenModePictureInPicture && is<HTMLVideoElement>(*this))
+        downcast<HTMLVideoElement>(*this).exitToFullscreenModeWithoutAnimationIfPossible(oldVideoFullscreenMode, VideoFullscreenModeStandard);
 #endif
 
     Element::willBecomeFullscreenElement();
@@ -6106,7 +6113,7 @@ void HTMLMediaElement::didBecomeFullscreenElement()
 void HTMLMediaElement::willStopBeingFullscreenElement()
 {
     if (fullscreenMode() == VideoFullscreenModeStandard)
-        fullscreenModeChanged(VideoFullscreenModeNone);
+        setFullscreenMode(VideoFullscreenModeNone);
 }
 
 PlatformLayer* HTMLMediaElement::platformLayer() const
@@ -6146,7 +6153,7 @@ void HTMLMediaElement::willExitFullscreen()
 bool HTMLMediaElement::isVideoLayerInline()
 {
     return !m_videoFullscreenLayer;
-};
+}
 
 RetainPtr<PlatformLayer> HTMLMediaElement::createVideoFullscreenLayer()
 {
@@ -6169,7 +6176,7 @@ void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer, WTF
     updateTextTrackDisplay();
 }
 
-void HTMLMediaElement::setVideoFullscreenFrame(FloatRect frame)
+void HTMLMediaElement::setVideoFullscreenFrame(const FloatRect& frame)
 {
     m_videoFullscreenFrame = frame;
     if (m_player)
@@ -7915,10 +7922,19 @@ bool HTMLMediaElement::shouldOverrideBackgroundLoadingRestriction() const
     return m_videoFullscreenMode == VideoFullscreenModePictureInPicture;
 }
 
-void HTMLMediaElement::fullscreenModeChanged(VideoFullscreenMode mode)
+void HTMLMediaElement::setFullscreenMode(VideoFullscreenMode mode)
 {
-    if (m_videoFullscreenMode == mode)
-        return;
+    INFO_LOG(LOGIDENTIFIER, "changed from ", fullscreenMode(), ", to ", mode);
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
+#endif
+
+    setPreparedToReturnVideoLayerToInline(mode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (player())
+        player()->setVideoFullscreenMode(mode);
+#endif
 
     m_videoFullscreenMode = mode;
     visibilityStateChanged();

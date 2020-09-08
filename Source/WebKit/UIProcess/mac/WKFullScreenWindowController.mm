@@ -80,6 +80,11 @@ public:
         [m_parent didEnterPictureInPicture];
     }
 
+    void didExitPictureInPicture() final
+    {
+        [m_parent didExitPictureInPicture];
+    }
+
 private:
     WKFullScreenWindowController *m_parent { nullptr };
     RefPtr<WebCore::VideoFullscreenInterfaceMac> m_interface;
@@ -659,6 +664,11 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 - (void)didEnterPictureInPicture
 {
     [self requestExitFullScreen];
+}
+
+- (void)didExitPictureInPicture
+{
+    _videoFullscreenClient->setInterface(nullptr);
 }
 
 #pragma mark -

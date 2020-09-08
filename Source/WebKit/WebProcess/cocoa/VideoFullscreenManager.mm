@@ -342,7 +342,9 @@ void VideoFullscreenManager::requestFullscreenMode(PlaybackSessionContextIdentif
 
 void VideoFullscreenManager::fullscreenModeChanged(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 {
-    ensureModel(contextId).fullscreenModeChanged(videoFullscreenMode);
+    auto [model, interface] = ensureModelAndInterface(contextId);
+    model->fullscreenModeChanged(videoFullscreenMode);
+    interface->setFullscreenMode(videoFullscreenMode);
 }
 
 void VideoFullscreenManager::requestUpdateInlineRect(PlaybackSessionContextIdentifier contextId)
@@ -428,7 +430,7 @@ void VideoFullscreenManager::willExitFullscreen(PlaybackSessionContextIdentifier
     });
 }
 
-void VideoFullscreenManager::didEnterFullscreen(PlaybackSessionContextIdentifier contextId)
+void VideoFullscreenManager::didEnterFullscreen(PlaybackSessionContextIdentifier contextId, Optional<WebCore::FloatSize> size)
 {
     LOG(Fullscreen, "VideoFullscreenManager::didEnterFullscreen(%p, %x)", this, contextId);
 
@@ -441,7 +443,7 @@ void VideoFullscreenManager::didEnterFullscreen(PlaybackSessionContextIdentifier
     if (!videoElement)
         return;
 
-    videoElement->didBecomeFullscreenElement();
+    videoElement->didEnterFullscreenOrPictureInPicture(size.valueOr(WebCore::FloatSize()));
 
     if (interface->targetIsFullscreen())
         return;
@@ -483,7 +485,7 @@ void VideoFullscreenManager::didExitFullscreen(PlaybackSessionContextIdentifier 
     });
 #endif
 }
-    
+
 void VideoFullscreenManager::didCleanupFullscreen(PlaybackSessionContextIdentifier contextId)
 {
     LOG(Fullscreen, "VideoFullscreenManager::didCleanupFullscreen(%p, %x)", this, contextId);
@@ -504,7 +506,7 @@ void VideoFullscreenManager::didCleanupFullscreen(PlaybackSessionContextIdentifi
     model->setVideoFullscreenLayer(nil);
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
     if (videoElement)
-        videoElement->didStopBeingFullscreenElement();
+        videoElement->didExitFullscreenOrPictureInPicture();
 
     interface->setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
     interface->setFullscreenStandby(false);
@@ -518,12 +520,12 @@ void VideoFullscreenManager::didCleanupFullscreen(PlaybackSessionContextIdentifi
             protectedThis->enterVideoFullscreenForVideoElement(*videoElement, mode, standby);
     });
 }
-    
+
 void VideoFullscreenManager::setVideoLayerGravityEnum(PlaybackSessionContextIdentifier contextId, unsigned gravity)
 {
     ensureModel(contextId).setVideoLayerGravity((MediaPlayerEnums::VideoGravity)gravity);
 }
-    
+
 void VideoFullscreenManager::fullscreenWillReturnToInline(PlaybackSessionContextIdentifier contextId, bool isPageVisible)
 {
     if (!m_page)

@@ -88,6 +88,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 
 - (void)videoControlsManagerDidChange;
 - (void)didEnterPictureInPicture;
+- (void)didExitPictureInPicture;
 
 @end
 

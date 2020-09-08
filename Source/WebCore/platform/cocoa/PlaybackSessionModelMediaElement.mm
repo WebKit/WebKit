@@ -325,9 +325,9 @@ void PlaybackSessionModelMediaElement::togglePictureInPicture()
 
     auto& element = downcast<HTMLVideoElement>(*m_mediaElement);
     if (element.fullscreenMode() == MediaPlayerEnums::VideoFullscreenModePictureInPicture)
-        element.setFullscreenMode(MediaPlayerEnums::VideoFullscreenModeNone);
+        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
     else
-        element.setFullscreenMode(MediaPlayerEnums::VideoFullscreenModePictureInPicture);
+        element.setPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
 #endif
 }
 

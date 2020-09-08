@@ -28,20 +28,20 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "FrameView.h"
+#import "HTMLVideoElement.h"
 #import "Logging.h"
 #import "MediaSelectionOption.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 #import "PlaybackSessionModelMediaElement.h"
+#import "RenderVideo.h"
 #import "TimeRanges.h"
 #import "VideoFullscreenChangeObserver.h"
 #import "VideoFullscreenInterfaceAVKit.h"
 #import "VideoFullscreenModelVideoElement.h"
+#import "WebCoreThreadRun.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <UIKit/UIView.h>
-#import <WebCore/FrameView.h>
-#import <WebCore/HTMLVideoElement.h>
-#import <WebCore/RenderVideo.h>
-#import <WebCore/WebCoreThreadRun.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
@@ -124,7 +124,7 @@ private:
     void requestVideoContentLayer() final;
     void returnVideoContentLayer() final;
     void didSetupFullscreen() final;
-    void didEnterFullscreen() final { }
+    void didEnterFullscreen(const FloatSize&) final { }
     void willExitFullscreen() final;
     void didExitFullscreen() final;
     void didCleanupFullscreen() final;

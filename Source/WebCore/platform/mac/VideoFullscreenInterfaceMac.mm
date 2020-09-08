@@ -95,6 +95,7 @@ using WebCore::PlaybackSessionModel;
 
 enum class PIPState {
     NotInPIP,
+    EnteringPIP,
     InPIP,
     ExitingPIP
 };
@@ -210,12 +211,12 @@ enum class PIPState {
 
 - (void)enterPIP
 {
-    if (_pipState == PIPState::InPIP)
+    if (_pipState == PIPState::EnteringPIP || _pipState == PIPState::InPIP)
         return;
 
     [_videoViewContainerController view].layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
     [_pipViewController presentViewControllerAsPictureInPicture:_videoViewContainerController.get()];
-    _pipState = PIPState::InPIP;
+    _pipState = PIPState::EnteringPIP;
 }
 
 - (void)exitPIP
@@ -248,8 +249,25 @@ enum class PIPState {
 
     ASSERT_UNUSED(videoViewContainer, videoViewContainer == _videoViewContainer);
 
-    if (_videoFullscreenInterfaceMac && _videoFullscreenInterfaceMac->videoFullscreenModel())
-        _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerFrame([_videoViewContainer bounds]);
+    if (!_videoFullscreenInterfaceMac)
+        return;
+
+    if (_pipState == PIPState::EnteringPIP) {
+        // FIXME(rdar://problem/42250952)
+        // Currently, -[PIPViewController presentViewControllerAsPictureInPicture:] does not
+        // take a completionHandler parameter, so we use the first bounds change event
+        // as an indication that entering picture-in-picture is completed.
+        _pipState = PIPState::InPIP;
+
+        if (auto* model = _videoFullscreenInterfaceMac->videoFullscreenModel())
+            model->didEnterPictureInPicture();
+
+        if (auto* observer = _videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
+            observer->didEnterFullscreen((WebCore::FloatSize)[_videoViewContainer bounds].size);
+    }
+
+    if (auto* model = _videoFullscreenInterfaceMac->videoFullscreenModel())
+        model->setVideoLayerFrame([_videoViewContainer bounds]);
 }
 
 - (void)superviewDidChangeForVideoViewContainer:(WebVideoViewContainer *)videoViewContainer
@@ -456,11 +474,6 @@ void VideoFullscreenInterfaceMac::enterFullscreen()
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
         [m_playbackSessionInterface->playBackControlsManager() setPictureInPictureActive:YES];
 #endif
-
-        // FIXME(rdar://problem/42250952): Move this call into a completion handler or delegate callback.
-        m_videoFullscreenModel->didEnterPictureInPicture();
-        if (m_fullscreenChangeObserver)
-            m_fullscreenChangeObserver->didEnterFullscreen();
     }
 }
 

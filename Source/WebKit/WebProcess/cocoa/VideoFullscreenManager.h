@@ -149,7 +149,7 @@ protected:
     void didSetupFullscreen(PlaybackSessionContextIdentifier);
     void willExitFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
-    void didEnterFullscreen(PlaybackSessionContextIdentifier);
+    void didEnterFullscreen(PlaybackSessionContextIdentifier, Optional<WebCore::FloatSize>);
     void didCleanupFullscreen(PlaybackSessionContextIdentifier);
     void setVideoLayerFrameFenced(PlaybackSessionContextIdentifier, WebCore::FloatRect bounds, IPC::Attachment fencePort);
     void setVideoLayerGravityEnum(PlaybackSessionContextIdentifier, unsigned gravity);

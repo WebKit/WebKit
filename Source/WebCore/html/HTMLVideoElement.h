@@ -82,16 +82,21 @@ public:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    enum class VideoPresentationMode { Inline, Fullscreen, PictureInPicture};
+    enum class VideoPresentationMode { Inline, Fullscreen, PictureInPicture };
+    static VideoPresentationMode toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT bool webkitSupportsPresentationMode(VideoPresentationMode) const;
-    void webkitSetPresentationMode(VideoPresentationMode);
     VideoPresentationMode webkitPresentationMode() const;
-    void setFullscreenMode(VideoFullscreenMode);
-    void fullscreenModeChanged(VideoFullscreenMode) final;
+    void webkitSetPresentationMode(VideoPresentationMode);
 
+    WEBCORE_EXPORT void setPresentationMode(VideoPresentationMode);
+    WEBCORE_EXPORT void didEnterFullscreenOrPictureInPicture(const FloatSize&);
+    WEBCORE_EXPORT void didExitFullscreenOrPictureInPicture();
+
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     WEBCORE_EXPORT void didBecomeFullscreenElement() final;
-    WEBCORE_EXPORT void didStopBeingFullscreenElement() final;
-    void setVideoFullscreenFrame(FloatRect) final;
+#endif
+
+    void setVideoFullscreenFrame(const FloatRect&) final;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
     void setPictureInPictureObserver(PictureInPictureObserver*);
@@ -133,11 +138,11 @@ private:
 
     unsigned m_lastReportedVideoWidth { 0 };
     unsigned m_lastReportedVideoHeight { 0 };
-    bool m_isChangingPresentationMode { false };
+    bool m_isChangingVideoFullscreenMode { false };
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    bool m_isEnteringOrExitingPictureInPicture { false };
-    bool m_isWaitingForPictureInPictureWindowFrame { false };
+    bool m_isEnteringPictureInPicture { false };
+    bool m_isExitingPictureInPicture { false };
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)

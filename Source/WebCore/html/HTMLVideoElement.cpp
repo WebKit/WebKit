@@ -353,11 +353,11 @@ bool HTMLVideoElement::webkitSupportsFullscreen()
 bool HTMLVideoElement::webkitDisplayingFullscreen()
 {
     if (document().quirks().needsAkamaiMediaPlayerQuirk(*this))
-        return isFullscreen() || m_isChangingPresentationMode;
+        return isFullscreen() || m_isChangingVideoFullscreenMode;
 
     // This function starts to return true after the video element has entered
     // fullscreen/picture-in-picture until it has exited fullscreen/picture-in-picture
-    return (isFullscreen() && !waitingToEnterFullscreen()) || (!isFullscreen() && m_isChangingPresentationMode);
+    return (isFullscreen() && !waitingToEnterFullscreen()) || (!isFullscreen() && m_isChangingVideoFullscreenMode);
 }
 
 void HTMLVideoElement::ancestorWillEnterFullscreen()
@@ -451,7 +451,7 @@ static inline HTMLMediaElementEnums::VideoFullscreenMode toFullscreenMode(HTMLVi
     return HTMLMediaElementEnums::VideoFullscreenModeNone;
 }
 
-static inline HTMLVideoElement::VideoPresentationMode toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
+HTMLVideoElement::VideoPresentationMode HTMLVideoElement::toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (mode == HTMLMediaElementEnums::VideoFullscreenModeStandard)
         return HTMLVideoElement::VideoPresentationMode::Fullscreen;
@@ -469,38 +469,39 @@ static inline HTMLVideoElement::VideoPresentationMode toPresentationMode(HTMLMed
 void HTMLVideoElement::webkitSetPresentationMode(VideoPresentationMode mode)
 {
     INFO_LOG(LOGIDENTIFIER, ", mode = ",  mode);
-    setFullscreenMode(toFullscreenMode(mode));
+    setPresentationMode(mode);
 }
 
-void HTMLVideoElement::setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
+void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
 {
-    INFO_LOG(LOGIDENTIFIER, ", mode = ", mode);
-
-    if (m_isChangingPresentationMode)
+    if (m_isChangingVideoFullscreenMode || toPresentationMode(fullscreenMode()) == mode)
         return;
 
-    if (mode == VideoFullscreenModeNone) {
+    auto videoFullscreenMode = toFullscreenMode(mode);
+    INFO_LOG(LOGIDENTIFIER, ", videoFullscreenMode = ", videoFullscreenMode);
+
+    if (videoFullscreenMode == VideoFullscreenModeNone) {
         if (isFullscreen()) {
             if (toPresentationMode(fullscreenMode()) == VideoPresentationMode::PictureInPicture)
-                m_isEnteringOrExitingPictureInPicture = true;
+                m_isExitingPictureInPicture = true;
 
-            m_isChangingPresentationMode = true;
+            m_isChangingVideoFullscreenMode = true;
             exitFullscreen();
         }
 
         return;
     }
 
-    if (!mediaSession().fullscreenPermitted() || !supportsFullscreen(mode))
+    if (!mediaSession().fullscreenPermitted() || !supportsFullscreen(videoFullscreenMode))
         return;
 
-    if (mode == VideoFullscreenModePictureInPicture)
-        m_isEnteringOrExitingPictureInPicture = true;
+    if (videoFullscreenMode == VideoFullscreenModePictureInPicture)
+        m_isEnteringPictureInPicture = true;
+    else if (fullscreenMode() == VideoFullscreenModePictureInPicture)
+        m_isExitingPictureInPicture = true;
 
-    if (mode != fullscreenMode()) {
-        m_isChangingPresentationMode = true;
-        enterFullscreen(mode);
-    }
+    m_isChangingVideoFullscreenMode = true;
+    enterFullscreen(videoFullscreenMode);
 }
 
 auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
@@ -508,34 +509,32 @@ auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
     return toPresentationMode(fullscreenMode());
 }
 
-void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
+void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& size)
 {
-    if (mode != fullscreenMode()) {
-        INFO_LOG(LOGIDENTIFIER, "changed from ", fullscreenMode(), ", to ", mode);
-        scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
-        setPreparedToReturnVideoLayerToInline(mode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+    m_isChangingVideoFullscreenMode = false;
+    if (m_isEnteringPictureInPicture || m_isExitingPictureInPicture) {
+#if ENABLE(PICTURE_IN_PICTURE_API)
+        if (m_pictureInPictureObserver) {
+            if (m_isEnteringPictureInPicture)
+                m_pictureInPictureObserver->didEnterPictureInPicture(flooredIntSize(size));
+            else
+                m_pictureInPictureObserver->didExitPictureInPicture();
+        }
+#else
+        UNUSED_PARAM(size);
+#endif
+        m_isEnteringPictureInPicture = false;
+        m_isExitingPictureInPicture = false;
     }
-
-    if (player())
-        player()->setVideoFullscreenMode(mode);
-
-    HTMLMediaElement::fullscreenModeChanged(mode);
-}
-
-void HTMLVideoElement::didBecomeFullscreenElement()
-{
-    m_isChangingPresentationMode = false;
-    if (m_isEnteringOrExitingPictureInPicture)
-        m_isWaitingForPictureInPictureWindowFrame = true;
 
     HTMLMediaElement::didBecomeFullscreenElement();
 }
 
-void HTMLVideoElement::didStopBeingFullscreenElement()
+void HTMLVideoElement::didExitFullscreenOrPictureInPicture()
 {
-    m_isChangingPresentationMode = false;
-    if (m_isEnteringOrExitingPictureInPicture) {
-        m_isEnteringOrExitingPictureInPicture = false;
+    m_isChangingVideoFullscreenMode = false;
+    if (m_isExitingPictureInPicture) {
+        m_isExitingPictureInPicture = false;
 #if ENABLE(PICTURE_IN_PICTURE_API)
         if (m_pictureInPictureObserver)
             m_pictureInPictureObserver->didExitPictureInPicture();
@@ -543,25 +542,23 @@ void HTMLVideoElement::didStopBeingFullscreenElement()
     }
 }
 
-void HTMLVideoElement::setVideoFullscreenFrame(FloatRect frame)
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
+void HTMLVideoElement::didBecomeFullscreenElement()
+{
+    m_isChangingVideoFullscreenMode = false;
+    HTMLMediaElement::didBecomeFullscreenElement();
+}
+#endif
+
+void HTMLVideoElement::setVideoFullscreenFrame(const FloatRect& frame)
 {
     HTMLMediaElement::setVideoFullscreenFrame(frame);
-
-    if (m_isWaitingForPictureInPictureWindowFrame) {
-        m_isWaitingForPictureInPictureWindowFrame = false;
-        m_isEnteringOrExitingPictureInPicture = false;
-#if ENABLE(PICTURE_IN_PICTURE_API)
-        if (m_pictureInPictureObserver)
-            m_pictureInPictureObserver->didEnterPictureInPicture(IntSize(frame.size()));
-#endif
-        return;
-    }
 
     if (toPresentationMode(fullscreenMode()) != VideoPresentationMode::PictureInPicture)
         return;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    if (!m_isEnteringOrExitingPictureInPicture && m_pictureInPictureObserver)
+    if (!m_isEnteringPictureInPicture && !m_isExitingPictureInPicture && m_pictureInPictureObserver)
         m_pictureInPictureObserver->pictureInPictureWindowResized(IntSize(frame.size()));
 #endif
 }
