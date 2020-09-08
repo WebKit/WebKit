@@ -440,8 +440,8 @@ class AutoInstall(object):
             libraries = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             checkout_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(libraries))))
             for candidate in [
-                os.path.join(libraries, package.name),
-                os.path.join(checkout_root, 'Internal', 'Tools', 'Scripts', 'libraries')
+                os.path.join(libraries, package.pypi_name),
+                os.path.join(checkout_root, 'Internal', 'Tools', 'Scripts', 'libraries', package.pypi_name),
             ]:
                 if candidate in sys.path:
                     return package
