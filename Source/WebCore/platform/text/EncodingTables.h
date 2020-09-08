@@ -26,6 +26,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <iterator>
 #include <unicode/umachine.h>
 #include <utility>
@@ -33,21 +34,20 @@
 
 namespace WebCore {
 
-extern const std::pair<UChar, uint16_t> jis0208[7724];
-extern const std::pair<uint16_t, UChar> jis0212[6067];
-extern const std::pair<UChar32, uint16_t> big5EncodingMap[14686];
-extern const std::pair<uint16_t, UChar32> big5DecodingExtras[3904];
-extern const std::pair<uint16_t, UChar> eucKRDecodingIndex[17048];
+const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208();
+const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212();
+const std::array<std::pair<uint16_t, UChar32>, 18590>& big5();
+const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR();
 
 void checkEncodingTableInvariants();
 
 // Functions for using sorted arrays of pairs as a map.
 // FIXME: Consider moving these functions to StdLibExtras.h for uses other than encoding tables.
 template<typename CollectionType> void sortByFirst(CollectionType&);
+template<typename CollectionType> void stableSortByFirst(CollectionType&);
 template<typename CollectionType> bool isSortedByFirst(const CollectionType&);
 template<typename CollectionType> bool sortedFirstsAreUnique(const CollectionType&);
 template<typename CollectionType, typename KeyType> static auto findFirstInSortedPairs(const CollectionType& collection, const KeyType&) -> Optional<decltype(std::begin(collection)->second)>;
-template<typename CollectionType, typename KeyType> static auto findLastInSortedPairs(const CollectionType& collection, const KeyType&) -> Optional<decltype(std::begin(collection)->second)>;
 template<typename CollectionType, typename KeyType> static auto findInSortedPairs(const CollectionType& collection, const KeyType&) -> std::pair<decltype(std::begin(collection)), decltype(std::begin(collection))>;
 
 #if !ASSERT_ENABLED
@@ -81,6 +81,11 @@ template<typename CollectionType> void sortByFirst(CollectionType& collection)
     std::sort(std::begin(collection), std::end(collection), CompareFirst { });
 }
 
+template<typename CollectionType> void stableSortByFirst(CollectionType& collection)
+{
+    std::stable_sort(std::begin(collection), std::end(collection), CompareFirst { });
+}
+
 template<typename CollectionType> bool isSortedByFirst(const CollectionType& collection)
 {
     return std::is_sorted(std::begin(collection), std::end(collection), CompareFirst { });
@@ -99,18 +104,6 @@ template<typename CollectionType, typename KeyType> static auto findFirstInSorte
     }
     auto iterator = std::lower_bound(std::begin(collection), std::end(collection), makeFirstAdapter(key), CompareFirst { });
     if (iterator == std::end(collection) || key < iterator->first)
-        return WTF::nullopt;
-    return iterator->second;
-}
-
-template<typename CollectionType, typename KeyType> static auto findLastInSortedPairs(const CollectionType& collection, const KeyType& key) -> Optional<decltype(std::begin(collection)->second)>
-{
-    if constexpr (std::is_integral_v<KeyType>) {
-        if (key != decltype(std::begin(collection)->first)(key))
-            return WTF::nullopt;
-    }
-    auto iterator = std::upper_bound(std::begin(collection), std::end(collection), makeFirstAdapter(key), CompareFirst { });
-    if (iterator == std::begin(collection) || (--iterator)->first < key)
         return WTF::nullopt;
     return iterator->second;
 }

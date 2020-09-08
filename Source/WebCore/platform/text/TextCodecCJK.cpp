@@ -123,18 +123,18 @@ void TextCodecCJK::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-using JIS0208DecodeIndex = std::array<std::pair<uint16_t, UChar>, std::size(jis0208)>;
-static const JIS0208DecodeIndex& jis0208DecodeIndex()
+using JIS0208EncodeIndex = std::array<std::pair<UChar, uint16_t>, sizeof(jis0208()) / sizeof(jis0208()[0])>;
+static const JIS0208EncodeIndex& jis0208EncodeIndex()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static JIS0208DecodeIndex* table;
+    static JIS0208EncodeIndex* table;
     static std::once_flag once;
     std::call_once(once, [&] {
-        table = new JIS0208DecodeIndex;
-        for (size_t i = 0; i < std::size(jis0208); i++)
-            (*table)[i] = { jis0208[i].second, jis0208[i].first };
-        sortByFirst(*table);
-        ASSERT(sortedFirstsAreUnique(*table));
+        table = new JIS0208EncodeIndex;
+        auto& index = jis0208();
+        for (size_t i = 0; i < index.size(); i++)
+            (*table)[i] = { index[i].second, index[i].first };
+        stableSortByFirst(*table);
     });
     return *table;
 }
@@ -182,12 +182,12 @@ String TextCodecCJK::decodeCommon(const uint8_t* bytes, size_t length, bool flus
 
 static Optional<UChar> codePointJIS0208(uint16_t pointer)
 {
-    return findFirstInSortedPairs(jis0208DecodeIndex(), pointer);
+    return findFirstInSortedPairs(jis0208(), pointer);
 }
 
 static Optional<UChar> codePointJIS0212(uint16_t pointer)
 {
-    return findFirstInSortedPairs(jis0212, pointer);
+    return findFirstInSortedPairs(jis0212(), pointer);
 }
 
 // https://encoding.spec.whatwg.org/#euc-jp-decoder
@@ -256,7 +256,7 @@ static Vector<uint8_t> eucJPEncode(StringView string, Function<void(UChar32, Vec
         if (codePoint == 0x2212)
             codePoint = 0xFF0D;
 
-        auto pointer = findLastInSortedPairs(jis0208, codePoint);
+        auto pointer = findFirstInSortedPairs(jis0208EncodeIndex(), codePoint);
         if (!pointer) {
             unencodableHandler(codePoint, result);
             continue;
@@ -529,7 +529,7 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(UChar32,
             codePoint = iso2022JPKatakana[codePoint - 0xFF61];
         }
 
-        auto pointer = findLastInSortedPairs(jis0208, codePoint);
+        auto pointer = findFirstInSortedPairs(jis0208EncodeIndex(), codePoint);
         if (!pointer) {
             statefulUnencodableHandler(codePoint, result);
             return;
@@ -622,14 +622,14 @@ static Vector<uint8_t> shiftJISEncode(StringView string, Function<void(UChar32, 
         if (codePoint == 0x2212)
             codePoint = 0xFF0D;
         
-        auto range = findInSortedPairs(jis0208, codePoint);
+        auto range = findInSortedPairs(jis0208EncodeIndex(), codePoint);
         if (range.first == range.second) {
             unencodableHandler(codePoint, result);
             continue;
         }
 
         ASSERT(range.first + 3 >= range.second);
-        for (auto* pair = range.second - 1; pair >= range.first; pair--) {
+        for (auto pair = range.first; pair < range.second; pair++) {
             uint16_t pointer = pair->second;
             if (pointer >= 8272 && pointer <= 8835)
                 continue;
@@ -645,7 +645,7 @@ static Vector<uint8_t> shiftJISEncode(StringView string, Function<void(UChar32, 
     return result;
 }
 
-using EUCKREncodingIndex = std::array<std::pair<UChar, uint16_t>, std::size(eucKRDecodingIndex)>;
+using EUCKREncodingIndex = std::array<std::pair<UChar, uint16_t>, sizeof(eucKR()) / sizeof(eucKR()[0])>;
 static const EUCKREncodingIndex& eucKREncodingIndex()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
@@ -653,8 +653,9 @@ static const EUCKREncodingIndex& eucKREncodingIndex()
     static std::once_flag once;
     std::call_once(once, [&] {
         table = new EUCKREncodingIndex;
-        for (size_t i = 0; i < std::size(eucKRDecodingIndex); i++)
-            (*table)[i] = { eucKRDecodingIndex[i].second, eucKRDecodingIndex[i].first };
+        auto& index = eucKR();
+        for (size_t i = 0; i < index.size(); i++)
+            (*table)[i] = { index[i].second, index[i].first };
         sortByFirst(*table);
         ASSERT(sortedFirstsAreUnique(*table));
     });
@@ -692,7 +693,7 @@ String TextCodecCJK::eucKRDecode(const uint8_t* bytes, size_t length, bool flush
     return decodeCommon(bytes, length, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
         if (uint8_t lead = std::exchange(m_lead, 0x00)) {
             if (byte >= 0x41 && byte <= 0xFE) {
-                if (auto codePoint = findFirstInSortedPairs(eucKRDecodingIndex, (lead - 0x81) * 190 + byte - 0x41)) {
+                if (auto codePoint = findFirstInSortedPairs(eucKR(), (lead - 0x81) * 190 + byte - 0x41)) {
                     result.append(*codePoint);
                     return SawError::No;
                 }
@@ -713,6 +714,25 @@ String TextCodecCJK::eucKRDecode(const uint8_t* bytes, size_t length, bool flush
     });
 }
 
+using Big5EncodeIndex = std::array<std::pair<UChar32, uint16_t>, sizeof(big5()) / sizeof(big5()[0]) - 3904>;
+static const Big5EncodeIndex& big5EncodeIndex()
+{
+    // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
+    static Big5EncodeIndex* table;
+    static std::once_flag once;
+    std::call_once(once, [&] {
+        table = new Big5EncodeIndex;
+        auto& index = big5();
+        // Remove the first 3094 elements because of https://encoding.spec.whatwg.org/#index-big5-pointer
+        ASSERT(index[3903].first == (0xA1 - 0x81) * 157 - 1);
+        ASSERT(index[3904].first == (0xA1 - 0x81) * 157);
+        for (size_t i = 3904; i < index.size(); i++)
+            (*table)[i - 3904] = { index[i].second, index[i].first };
+        stableSortByFirst(*table);
+    });
+    return *table;
+}
+
 // https://encoding.spec.whatwg.org/#big5-encoder
 static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler)
 {
@@ -727,7 +747,7 @@ static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vect
             continue;
         }
 
-        auto pointerRange = findInSortedPairs(big5EncodingMap, codePoint);
+        auto pointerRange = findInSortedPairs(big5EncodeIndex(), codePoint);
         if (pointerRange.first == pointerRange.second) {
             unencodableHandler(codePoint, result);
             continue;
@@ -738,6 +758,11 @@ static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vect
             pointer = (pointerRange.second - 1)->second;
         else
             pointer = pointerRange.first->second;
+
+        if (pointer < 157 * (0xA1 - 0x81)) {
+            unencodableHandler(codePoint, result);
+            continue;
+        }
         
         uint8_t lead = pointer / 157 + 0x81;
         uint8_t trail = pointer % 157;
@@ -800,24 +825,6 @@ Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling
     return entityUnencodableHandler;
 }
 
-using Big5DecodeIndex = std::array<std::pair<uint16_t, UChar32>, std::size(big5DecodingExtras) + std::size(big5EncodingMap)>;
-static const Big5DecodeIndex& big5DecodeIndex()
-{
-    // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static Big5DecodeIndex* table;
-    static std::once_flag once;
-    std::call_once(once, [&] {
-        table = new Big5DecodeIndex;
-        for (size_t i = 0; i < std::size(big5DecodingExtras); i++)
-            (*table)[i] = big5DecodingExtras[i];
-        for (size_t i = 0; i < std::size(big5EncodingMap); i++)
-            (*table)[i + std::size(big5DecodingExtras)] = { big5EncodingMap[i].second, big5EncodingMap[i].first };
-        sortByFirst(*table);
-        ASSERT(sortedFirstsAreUnique(*table));
-    });
-    return *table;
-}
-
 String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
     return decodeCommon(bytes, length, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
@@ -838,7 +845,7 @@ String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush,
                     result.appendCharacter(0x00EA);
                     result.appendCharacter(0x030C);
                 } else {
-                    if (auto codePoint = findFirstInSortedPairs(big5DecodeIndex(), pointer))
+                    if (auto codePoint = findFirstInSortedPairs(big5(), pointer))
                         result.appendCharacter(*codePoint);
                     else
                         return SawError::Yes;

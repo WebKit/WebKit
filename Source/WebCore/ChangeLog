@@ -1,3 +1,38 @@
+2020-09-08  Alex Christensen  <achristensen@webkit.org>
+
+        Derive big5, jis0208 and jis0212 tables from ICU
+        https://bugs.webkit.org/show_bug.cgi?id=216253
+
+        Reviewed by Darin Adler.
+
+        This substantially reduces the size of WebCore's binary data without changing behavior.
+        The EUC-KR table has so many differences from ICU it isn't worth the extraction.
+        Verified by many assertions and web platform tests.
+
+        * platform/text/EncodingTables.cpp:
+        (WebCore::jis0208):
+        (WebCore::jis0212):
+        (WebCore::big5):
+        (WebCore::eucKR):
+        (WebCore::checkEncodingTableInvariants):
+        * platform/text/EncodingTables.h:
+        (WebCore::stableSortByFirst):
+        (WebCore::findLastInSortedPairs): Deleted.
+        * platform/text/TextCodecCJK.cpp:
+        (WebCore::jis0208EncodeIndex):
+        (WebCore::codePointJIS0208):
+        (WebCore::codePointJIS0212):
+        (WebCore::eucJPEncode):
+        (WebCore::iso2022JPEncode):
+        (WebCore::shiftJISEncode):
+        (WebCore::eucKREncodingIndex):
+        (WebCore::TextCodecCJK::eucKRDecode):
+        (WebCore::big5EncodeIndex):
+        (WebCore::big5Encode):
+        (WebCore::TextCodecCJK::big5Decode):
+        (WebCore::jis0208DecodeIndex): Deleted.
+        (WebCore::big5DecodeIndex): Deleted.
+
 2020-09-08  Peng Liu  <peng.liu6@apple.com>
 
         Clean up functions and state variables related to the picture-in-picture implementation
