@@ -127,7 +127,7 @@ class MockSCM(object):
         return path + '-diff'
 
     def diff_for_revision(self, revision):
-        return "DiffForRevision%s\nhttp://bugs.webkit.org/show_bug.cgi?id=12345" % revision
+        return "DiffForRevision%s\nhttps://bugs.webkit.org/show_bug.cgi?id=12345" % revision
 
     def show_head(self, path):
         return path

@@ -1,3 +1,16 @@
+2020-09-08  Aakash Jain  <aakash_jain@apple.com>
+
+        Use https urls instead of http in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=216276
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/common/config/urls_unittest.py: Changed few http urls to https, leaving a mix of http and https for testing.
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/style/checkers/cpp.py:
+
 2020-09-08  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Follow-up fixes for 0.3 branch

@@ -3174,7 +3174,7 @@ def check_for_null(clean_lines, line_number, file_state, error):
 
     if search(r'\bNULL\b', line):
         # FIXME: We should recommend using nullptr instead of NULL in C++ code per
-        # <http://www.webkit.org/coding/coding-style.html#zero-null>.
+        # <https://www.webkit.org/coding/coding-style.html#zero-null>.
         error(line_number, 'readability/null', 5, 'Use nullptr instead of NULL.')
         return
 

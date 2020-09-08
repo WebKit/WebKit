@@ -485,9 +485,9 @@
     "MESSAGE_RULES": {
         "GtkWebKit2PublicAPI": [ "Thanks for the patch. If this patch contains new public API "
                                  "please make sure it follows the guidelines for new WebKit2 GTK+ API. "
-                                 "See http://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API", ],
+                                 "See https://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API", ],
         "ANGLE": [ "Note that there are important steps to take when updating ANGLE. "
-                   "See http://trac.webkit.org/wiki/UpdatingANGLE", ],
+                   "See https://trac.webkit.org/wiki/UpdatingANGLE", ],
         "WebInspectorProtocol": [ "This patch modifies the inspector protocol. Please ensure that any frontend changes appropriately use feature checks for new protocol features." ],
         "WebInspectorGenerator": [ "This patch modifies the inspector protocol generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-inspector-generator-tests --reset-results`)" ],
         "WebPlatformTests&!WebPlatformTestsImport": [ "This patch modifies the imported WPT tests. Please ensure that any changes on the tests (not coming from a WPT import) are exported to WPT. Please see https://trac.webkit.org/wiki/WPTExportProcess" ],

@@ -35,19 +35,19 @@ class URLsTest(unittest.TestCase):
     def test_parse_bug_id(self):
         # FIXME: These would be all better as doctests
         self.assertEqual(12345, parse_bug_id("http://webkit.org/b/12345"))
-        self.assertEqual(12345, parse_bug_id("foo\n\nhttp://webkit.org/b/12345\nbar\n\n"))
-        self.assertEqual(12345, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?id=12345"))
-        self.assertEqual(12345, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?id=12345&ctype=xml"))
-        self.assertEqual(12345, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?id=12345&ctype=xml&excludefield=attachmentdata"))
-        self.assertEqual(12345, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?id=12345excludefield=attachmentdata&ctype=xml"))
+        self.assertEqual(12345, parse_bug_id("foo\n\nhttps://webkit.org/b/12345\nbar\n\n"))
+        self.assertEqual(12345, parse_bug_id("https://bugs.webkit.org/show_bug.cgi?id=12345"))
+        self.assertEqual(12345, parse_bug_id("https://bugs.webkit.org/show_bug.cgi?id=12345&ctype=xml"))
+        self.assertEqual(12345, parse_bug_id("https://bugs.webkit.org/show_bug.cgi?id=12345&ctype=xml&excludefield=attachmentdata"))
+        self.assertEqual(12345, parse_bug_id("https://bugs.webkit.org/show_bug.cgi?id=12345excludefield=attachmentdata&ctype=xml"))
 
         # Our url parser is super-fragile, but at least we're testing it.
         self.assertIsNone(parse_bug_id("http://www.webkit.org/b/12345"))
-        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
-        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345&excludefield=attachmentdata"))
-        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&excludefield=attachmentdata&id=12345"))
-        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?excludefield=attachmentdata&ctype=xml&id=12345"))
-        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?excludefield=attachmentdata&id=12345&ctype=xml"))
+        self.assertIsNone(parse_bug_id("https://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
+        self.assertIsNone(parse_bug_id("https://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345&excludefield=attachmentdata"))
+        self.assertIsNone(parse_bug_id("https://bugs.webkit.org/show_bug.cgi?ctype=xml&excludefield=attachmentdata&id=12345"))
+        self.assertIsNone(parse_bug_id("https://bugs.webkit.org/show_bug.cgi?excludefield=attachmentdata&ctype=xml&id=12345"))
+        self.assertIsNone(parse_bug_id("https://bugs.webkit.org/show_bug.cgi?excludefield=attachmentdata&id=12345&ctype=xml"))
 
     def test_parse_attachment_id(self):
         self.assertEqual(12345, parse_attachment_id("https://bugs.webkit.org/attachment.cgi?id=12345&action=review"))
