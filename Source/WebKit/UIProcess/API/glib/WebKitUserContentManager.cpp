@@ -22,6 +22,7 @@
 
 #include "APISerializedScriptValue.h"
 #include "InjectUserScriptImmediately.h"
+#include "WebKitInitialize.h"
 #include "WebKitJavascriptResultPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitUserContentPrivate.h"
@@ -78,6 +79,8 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass* klass)
 {
+    webkitInitialize();
+
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
 
     /**

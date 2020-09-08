@@ -1,3 +1,49 @@
+2020-09-08  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GLIB] RemoteInspectorServer is not started if WebKitWebContext is not created already created
+        https://bugs.webkit.org/show_bug.cgi?id=216120
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added a WebKit/UIProcess/API/glib/WebKitInitialize what implements
+        its own webkitInitialize() to ensure the inspector server is
+        initialized as early as possible, before other api calls that would
+        depend on the inspector server being running.
+
+        The RemoteInspectorServer initialization is not longer
+        asociated to the initialization of the WebProcessPoolGLib.
+
+        The webkitInitialize() extends the shared InitializeWebKit2();
+        and also includes the initialization of the RemoteInspectorServer
+        so the initialization of the remote inspector server can be now
+        triggered by the initialization of many other API objects too:
+        WebKitInputMethodContext, WebKitSettings, WebKitUserContentManager,
+        WebKitWebContext, WebKitWebsiteDataManager,
+        WebKitUserContentFilterStore, WebKitWebViewBase.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitInitialize.cpp: Added.
+        (WebKit::initializeRemoteInspectorServer):
+        (WebKit::webkitInitialize):
+        * UIProcess/API/glib/WebKitInitialize.h: Added.
+        * UIProcess/API/glib/WebKitInputMethodContext.cpp:
+        (webkit_input_method_context_class_init):
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_class_init):
+        * UIProcess/API/glib/WebKitUserContentFilterStore.cpp:
+        (webkit_user_content_filter_store_class_init):
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_class_init):
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkit_website_data_manager_class_init):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_class_init):
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::initializeRemoteInspectorServer): Deleted.
+
 2020-09-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r266645.

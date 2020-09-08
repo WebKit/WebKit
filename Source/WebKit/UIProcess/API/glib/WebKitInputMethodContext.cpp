@@ -21,6 +21,7 @@
 #include "WebKitInputMethodContext.h"
 
 #include "WebKitEnumTypes.h"
+#include "WebKitInitialize.h"
 #include "WebKitInputMethodContextPrivate.h"
 #include "WebKitWebView.h"
 #include <glib/gi18n-lib.h>
@@ -203,6 +204,8 @@ static void webkitInputMethodContextGetProperty(GObject* object, guint propId, G
 
 static void webkit_input_method_context_class_init(WebKitInputMethodContextClass* klass)
 {
+    WebKit::webkitInitialize();
+
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
     gObjectClass->set_property = webkitInputMethodContextSetProperty;
     gObjectClass->get_property = webkitInputMethodContextGetProperty;

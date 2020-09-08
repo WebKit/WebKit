@@ -31,10 +31,8 @@
 #include "LegacyGlobalSettings.h"
 #include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
-#include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/PlatformDisplay.h>
 #include <wtf/FileSystem.h>
-#include <wtf/glib/GUniquePtr.h>
 
 #if USE(GSTREAMER)
 #include <WebCore/GStreamerCommon.h>
@@ -54,30 +52,6 @@
 
 namespace WebKit {
 
-#if ENABLE(REMOTE_INSPECTOR)
-static void initializeRemoteInspectorServer(const char* address)
-{
-    if (Inspector::RemoteInspectorServer::singleton().isRunning())
-        return;
-
-    if (!address[0])
-        return;
-
-    GUniquePtr<char> inspectorAddress(g_strdup(address));
-    char* portPtr = g_strrstr(inspectorAddress.get(), ":");
-    if (!portPtr)
-        return;
-
-    *portPtr = '\0';
-    portPtr++;
-    guint64 port = g_ascii_strtoull(portPtr, nullptr, 10);
-    if (!port)
-        return;
-
-    Inspector::RemoteInspectorServer::singleton().start(inspectorAddress.get(), port);
-}
-#endif
-
 static bool memoryPressureMonitorDisabled()
 {
     static const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
@@ -91,11 +65,6 @@ void WebProcessPool::platformInitialize()
 #endif
     if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
         m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
-
-#if ENABLE(REMOTE_INSPECTOR)
-    if (const char* address = g_getenv("WEBKIT_INSPECTOR_SERVER"))
-        initializeRemoteInspectorServer(address);
-#endif
 
     if (!memoryPressureMonitorDisabled())
         installMemoryPressureHandler();

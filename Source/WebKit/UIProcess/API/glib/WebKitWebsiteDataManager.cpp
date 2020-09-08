@@ -21,6 +21,7 @@
 #include "WebKitWebsiteDataManager.h"
 
 #include "WebKitCookieManagerPrivate.h"
+#include "WebKitInitialize.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
@@ -244,6 +245,8 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
 
 static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass* findClass)
 {
+    webkitInitialize();
+
     GObjectClass* gObjectClass = G_OBJECT_CLASS(findClass);
 
     gObjectClass->get_property = webkitWebsiteDataManagerGetProperty;

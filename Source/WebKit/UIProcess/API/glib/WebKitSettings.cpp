@@ -32,6 +32,7 @@
 #include "WebKitSettings.h"
 
 #include "WebKitEnumTypes.h"
+#include "WebKitInitialize.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -606,6 +607,8 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
 
 static void webkit_settings_class_init(WebKitSettingsClass* klass)
 {
+    webkitInitialize();
+
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
     gObjectClass->constructed = webKitSettingsConstructed;
     gObjectClass->dispose = webKitSettingsDispose;
