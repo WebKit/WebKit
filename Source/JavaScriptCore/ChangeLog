@@ -1,3 +1,13 @@
+2020-09-08  Saam Barati  <sbarati@apple.com>
+
+        re-enable TCSM on all OSs
+        https://bugs.webkit.org/show_bug.cgi?id=216281
+
+        Reviewed by Tadeu Zagallo.
+
+        * runtime/Options.cpp:
+        (JSC::defaultTCSMValue):
+
 2020-09-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Special property caching should check Structure's cacheability
