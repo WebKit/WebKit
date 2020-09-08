@@ -108,6 +108,7 @@ public:
     ExceptionOr<AudioParam&> setTargetAtTime(float target, double startTime, float timeConstant);
     ExceptionOr<AudioParam&> setValueCurveAtTime(Vector<float>&& curve, double startTime, double duration);
     ExceptionOr<AudioParam&> cancelScheduledValues(double cancelTime);
+    ExceptionOr<AudioParam&> cancelAndHoldAtTime(double cancelTime);
 
     bool hasSampleAccurateValues() const { return m_timeline.hasValues() || numberOfRenderingConnections(); }
     

@@ -48,7 +48,8 @@ public:
     ExceptionOr<void> exponentialRampToValueAtTime(float value, Seconds time);
     ExceptionOr<void> setTargetAtTime(float target, Seconds time, float timeConstant);
     ExceptionOr<void> setValueCurveAtTime(Vector<float>&& curve, Seconds time, Seconds duration);
-    void cancelScheduledValues(Seconds startTime);
+    void cancelScheduledValues(Seconds cancelTime);
+    ExceptionOr<void> cancelAndHoldAtTime(Seconds cancelTime);
 
     // hasValue is set to true if a valid timeline value is returned.
     // otherwise defaultValue is returned.
@@ -65,6 +66,7 @@ public:
 
 private:
     class ParamEvent {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         enum Type {
             SetValue,
@@ -72,39 +74,95 @@ private:
             ExponentialRampToValue,
             SetTarget,
             SetValueCurve,
+            CancelValues,
             LastType
         };
 
-        ParamEvent(Type type, float value, Seconds time, float timeConstant, Seconds duration, Vector<float>&& curve)
+        static UniqueRef<ParamEvent> createSetValueEvent(float value, Seconds time);
+        static UniqueRef<ParamEvent> createLinearRampEvent(float value, Seconds time);
+        static UniqueRef<ParamEvent> createExponentialRampEvent(float value, Seconds time);
+        static UniqueRef<ParamEvent> createSetTargetEvent(float target, Seconds time, float timeConstant);
+        static UniqueRef<ParamEvent> createSetValueCurveEvent(Vector<float>&& curve, Seconds time, Seconds duration);
+        static UniqueRef<ParamEvent> createCancelValuesEvent(Seconds cancelTime, std::unique_ptr<ParamEvent> savedEvent);
+
+        ParamEvent(Type type, float value, Seconds time, float timeConstant, Seconds duration, Vector<float>&& curve, double curvePointsPerSecond, float curveEndValue, std::unique_ptr<ParamEvent> savedEvent)
             : m_type(type)
             , m_value(value)
             , m_time(time)
             , m_timeConstant(timeConstant)
             , m_duration(duration)
             , m_curve(WTFMove(curve))
+            , m_curvePointsPerSecond(curvePointsPerSecond)
+            , m_curveEndValue(curveEndValue)
+            , m_savedEvent(WTFMove(savedEvent))
         {
         }
 
-        unsigned type() const { return m_type; }
+        Type type() const { return m_type; }
         float value() const { return m_value; }
         Seconds time() const { return m_time; }
         float timeConstant() const { return m_timeConstant; }
         Seconds duration() const { return m_duration; }
         Vector<float>& curve() { return m_curve; }
+        ParamEvent* savedEvent() { return m_savedEvent.get(); }
+
+        void setCancelledValue(float cancelledValue)
+        {
+            ASSERT(m_type == Type::CancelValues);
+            m_value = cancelledValue;
+            m_hasDefaultCancelledValue = true;
+        }
+        bool hasDefaultCancelledValue() const
+        {
+            ASSERT(m_type == Type::CancelValues);
+            return m_hasDefaultCancelledValue;
+        }
+
+        double curvePointsPerSecond() const { return m_curvePointsPerSecond; }
+        float curveEndValue() const { return m_curveEndValue; }
 
     private:
-        unsigned m_type;
-        float m_value;
+        Type m_type;
+        float m_value { 0 };
         Seconds m_time;
-        float m_timeConstant;
+
+        // Only used for SetTarget events.
+        float m_timeConstant { 0 };
+
+        // The duration of the curve.
         Seconds m_duration;
+
+        // The array of curve points.
         Vector<float> m_curve;
+
+        // The number of curve points per second. it is used to compute
+        // the curve index step when running the automation.
+        double m_curvePointsPerSecond { 0 };
+
+        // The default value to use at the end of the curve. Normally
+        // it's the last entry in m_curve, but cancelling a SetValueCurve
+        // will set this to a new value.
+        float m_curveEndValue { 0 };
+
+        // True if a default value has been assigned to the CancelValues event.
+        bool m_hasDefaultCancelledValue { false };
+
+        // For CancelValues. If CancelValues is in the middle of an event, this
+        // holds the event that is being cancelled, so that processing can
+        // continue as if the event still existed up until we reach the actual
+        // scheduled cancel time.
+        std::unique_ptr<ParamEvent> m_savedEvent;
     };
 
-    ExceptionOr<void> insertEvent(const ParamEvent&);
+    void removeCancelledEvents(size_t firstEventToRemove);
+    ExceptionOr<void> insertEvent(UniqueRef<ParamEvent>);
     float valuesForTimeRangeImpl(Seconds startTime, Seconds endTime, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
+    float linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
+    float exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
+    float valueCurveAtTime(Seconds t, Seconds time1, Seconds duration, const float* curveData, size_t curveLength);
+    void handleCancelValues(ParamEvent&, ParamEvent* nextEvent, float& value2, Seconds& time2, ParamEvent::Type& nextEventType);
 
-    Vector<ParamEvent> m_events;
+    Vector<UniqueRef<ParamEvent>> m_events;
 
     Lock m_eventsMutex;
 };

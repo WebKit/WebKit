@@ -1,3 +1,17 @@
+2020-09-07  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.cancelAndHoldAtTime() is missing
+        https://bugs.webkit.org/show_bug.cgi?id=215947
+        <rdar://problem/68362061>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurveAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueCurveAtTime-expected.txt:
+
 2020-09-06  Darin Adler  <darin@apple.com>
 
         Make TextCodecCJK and TextCodecSingleByte thread-safe and refactor a bit to share code

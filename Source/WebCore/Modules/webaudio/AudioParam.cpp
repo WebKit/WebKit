@@ -215,6 +215,18 @@ ExceptionOr<AudioParam&> AudioParam::cancelScheduledValues(double cancelTime)
     return *this;
 }
 
+ExceptionOr<AudioParam&> AudioParam::cancelAndHoldAtTime(double cancelTime)
+{
+    if (cancelTime < 0)
+        return Exception { RangeError, "cancelTime must be a positive value"_s };
+
+    auto result = m_timeline.cancelAndHoldAtTime(Seconds { cancelTime });
+    if (result.hasException())
+        return result.releaseException();
+
+    return *this;
+}
+
 float AudioParam::finalValue()
 {
     float value;

@@ -59,9 +59,7 @@
 
     // Cancels all scheduled parameter changes with times greater than or equal to startTime.
     [MayThrowException] AudioParam cancelScheduledValues(double cancelTime);
-
-    // FIXME: Add support for this.
-    // AudioParam cancelAndHoldAtTime(double cancelTime);
+    [MayThrowException] AudioParam cancelAndHoldAtTime(double cancelTime);
 
     // FIXME: These are not standard.
     [EnabledBySetting=PrefixedWebAudio] readonly attribute DOMString name;

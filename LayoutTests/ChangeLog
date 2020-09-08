@@ -1,3 +1,24 @@
+2020-09-07  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.cancelAndHoldAtTime() is missing
+        https://bugs.webkit.org/show_bug.cgi?id=215947
+        <rdar://problem/68362061>
+
+        Reviewed by Darin Adler.
+
+        * webaudio/audioparam-cancel-and-hold-expected.txt: Added.
+        * webaudio/audioparam-cancel-and-hold.html: Added.
+        * webaudio/cancel-values-crash-913217-expected.txt: Added.
+        * webaudio/cancel-values-crash-913217.html: Added.
+        * webaudio/resources/audio-param.js: Added.
+        Import layout test coverage from Blink.
+
+        * webaudio/audioparam-setValueCurveAtTime-expected.txt: Removed.
+        * webaudio/audioparam-setValueCurveAtTime.html: Removed.
+        Remove outdated test. This test is now part of web-platform-tests at
+        webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurveAtTime.html
+        and is now passing.
+
 2020-09-07  Karl Rackler  <rackler@apple.com>
 
         Remove duplicate test expectaions from platform/mac-bigsur

@@ -232,7 +232,7 @@ PASS AudioParam interface: operation exponentialRampToValueAtTime(float, double)
 PASS AudioParam interface: operation setTargetAtTime(float, double, float) 
 PASS AudioParam interface: operation setValueCurveAtTime(sequence<float>, double, double) 
 PASS AudioParam interface: operation cancelScheduledValues(double) 
-FAIL AudioParam interface: operation cancelAndHoldAtTime(double) assert_own_property: interface prototype object missing non-static operation expected property "cancelAndHoldAtTime" missing
+PASS AudioParam interface: operation cancelAndHoldAtTime(double) 
 PASS AudioParam must be primary interface of new AudioBufferSourceNode(context).playbackRate 
 PASS Stringification of new AudioBufferSourceNode(context).playbackRate 
 PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "value" with the proper type 
@@ -252,8 +252,8 @@ PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must 
 PASS AudioParam interface: calling setValueCurveAtTime(sequence<float>, double, double) on new AudioBufferSourceNode(context).playbackRate with too few arguments must throw TypeError 
 PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "cancelScheduledValues(double)" with the proper type 
 PASS AudioParam interface: calling cancelScheduledValues(double) on new AudioBufferSourceNode(context).playbackRate with too few arguments must throw TypeError 
-FAIL AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "cancelAndHoldAtTime(double)" with the proper type assert_inherits: property "cancelAndHoldAtTime" not found in prototype chain
-FAIL AudioParam interface: calling cancelAndHoldAtTime(double) on new AudioBufferSourceNode(context).playbackRate with too few arguments must throw TypeError assert_inherits: property "cancelAndHoldAtTime" not found in prototype chain
+PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "cancelAndHoldAtTime(double)" with the proper type 
+PASS AudioParam interface: calling cancelAndHoldAtTime(double) on new AudioBufferSourceNode(context).playbackRate with too few arguments must throw TypeError 
 PASS AudioScheduledSourceNode interface: existence and properties of interface object 
 PASS AudioScheduledSourceNode interface object length 
 PASS AudioScheduledSourceNode interface object name 

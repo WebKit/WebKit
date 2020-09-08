@@ -1,3 +1,53 @@
+2020-09-07  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.cancelAndHoldAtTime() is missing
+        https://bugs.webkit.org/show_bug.cgi?id=215947
+        <rdar://problem/68362061>
+
+        Reviewed by Darin Adler.
+
+        Add implementation for AudioParam.cancelAndHoldAtTime():
+        - https://www.w3.org/TR/webaudio/#dom-audioparam-cancelandholdattime
+
+        This patch is based on the following Blink commit by Raymond Toy:
+        - https://codereview.chromium.org/1533103002
+
+        Tests: webaudio/audioparam-cancel-and-hold.html
+               webaudio/cancel-values-crash-913217.html
+
+        * Modules/webaudio/AudioParam.cpp:
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParam.idl:
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::setValueAtTime):
+        (WebCore::AudioParamTimeline::linearRampToValueAtTime):
+        (WebCore::AudioParamTimeline::exponentialRampToValueAtTime):
+        (WebCore::AudioParamTimeline::setTargetAtTime):
+        (WebCore::AudioParamTimeline::setValueCurveAtTime):
+        (WebCore::AudioParamTimeline::insertEvent):
+        (WebCore::AudioParamTimeline::cancelAndHoldAtTime):
+        (WebCore::AudioParamTimeline::removeCancelledEvents):
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        (WebCore::AudioParamTimeline::linearRampAtTime):
+        (WebCore::AudioParamTimeline::exponentialRampAtTime):
+        (WebCore::AudioParamTimeline::valueCurveAtTime):
+        (WebCore::AudioParamTimeline::handleCancelValues):
+        * Modules/webaudio/AudioParamTimeline.h:
+        (WebCore::AudioParamTimeline::ParamEvent::createSetValueEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::createLinearRampEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::createExponentialRampEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::createSetTargetEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::createSetValueCurveEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::createCancelValuesEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::ParamEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::type const):
+        (WebCore::AudioParamTimeline::ParamEvent::savedEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::setCancelledValue):
+        (WebCore::AudioParamTimeline::ParamEvent::hasDefaultCancelledValue const):
+        (WebCore::AudioParamTimeline::ParamEvent::curvePointsPerSecond const):
+        (WebCore::AudioParamTimeline::ParamEvent::curveEndValue const):
+
 2020-09-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r266645.

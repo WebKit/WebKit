@@ -46,6 +46,12 @@ UniqueRef<T> makeUniqueRef(Args&&... args)
 }
 
 template<typename T>
+UniqueRef<T> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<T> ptr)
+{
+    return UniqueRef<T>(*ptr.release());
+}
+
+template<typename T>
 class UniqueRef {
 public:
     template <typename U>
@@ -71,6 +77,7 @@ public:
 
 private:
     template<class U, class... Args> friend UniqueRef<U> makeUniqueRefWithoutFastMallocCheck(Args&&...);
+    template<class U> friend UniqueRef<U> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<U>);
     template<class U> friend class UniqueRef;
 
     UniqueRef(T& other)
@@ -87,3 +94,4 @@ private:
 using WTF::UniqueRef;
 using WTF::makeUniqueRef;
 using WTF::makeUniqueRefWithoutFastMallocCheck;
+using WTF::makeUniqueRefFromNonNullUniquePtr;
