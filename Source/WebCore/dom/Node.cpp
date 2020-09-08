@@ -130,10 +130,18 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "AttributeMap";
     case NodeRareData::UseType::InteractionObserver:
         return "InteractionObserver";
-    case NodeRareData::UseType::PseudoElements:
-        return "PseudoElements";
+    case NodeRareData::UseType::ResizeObserver:
+        return "ResizeObserver";
     case NodeRareData::UseType::Animations:
         return "Animations";
+    case NodeRareData::UseType::PseudoElements:
+        return "PseudoElements";
+    case NodeRareData::UseType::StyleMap:
+        return "StyleMap";
+    case NodeRareData::UseType::PartList:
+        return "PartList";
+    case NodeRareData::UseType::PartNames:
+        return "PartNames";
     }
     return nullptr;
 }

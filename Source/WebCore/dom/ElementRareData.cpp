@@ -36,11 +36,6 @@ namespace WebCore {
 struct SameSizeAsElementRareData : NodeRareData {
     int tabIndex;
     unsigned short childIndex;
-#if ENABLE(FULLSCREEN_API)
-    unsigned bitfields : 12;
-#else
-    unsigned bitfields : 11;
-#endif
     LayoutSize sizeForResizing;
     IntPoint savedLayerScrollPosition;
     void* pointers[11];

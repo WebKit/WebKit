@@ -40,9 +40,6 @@
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
-// This needs to be here because Document.h also depends on it.
-#define DUMP_NODE_STATISTICS 0
-
 namespace WTF {
 class TextStream;
 }
@@ -543,15 +540,35 @@ protected:
 
         HasCustomStyleResolveCallbacksFlag = 1 << 22,
 
-        // Bits 23-31 are free.
+        HasPendingResourcesFlag = 1 << 23,
+        HasCSSAnimationFlag = 1 << 24,
+        HasElementIdentifierFlag = 1 << 25,
+#if ENABLE(FULLSCREEN_API)
+        ContainsFullScreenElementFlag = 1 << 26,
+#endif
+
+        // Bits 27-29 are free.
+        // Bits 30-31: TabIndexState
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
+    };
+
+    static constexpr unsigned s_tabIndexStateBitOffset = 30;
+    static constexpr uint32_t s_tabIndexStateBitMask = 3U << s_tabIndexStateBitOffset;
+    enum class TabIndexState : uint8_t {
+        NotSet = 0,
+        Zero = 1,
+        NegativeOne = 2,
+        InRareData = 3,
     };
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
     void setFlag(NodeFlags mask) const { m_nodeFlags |= mask; } 
     void clearFlag(NodeFlags mask) const { m_nodeFlags &= ~mask; }
+
+    TabIndexState tabIndexState() const { return static_cast<TabIndexState>((m_nodeFlags & s_tabIndexStateBitMask) >> s_tabIndexStateBitOffset); }
+    void setTabIndexState(TabIndexState state) { m_nodeFlags = (m_nodeFlags & ~s_tabIndexStateBitMask) | (static_cast<uint32_t>(state) << s_tabIndexStateBitOffset); }
 
     bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }
     void setIsParsingChildrenFinished() { setFlag(IsParsingChildrenFinishedFlag); }

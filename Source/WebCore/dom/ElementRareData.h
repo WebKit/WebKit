@@ -56,16 +56,9 @@ public:
 
     void resetComputedStyle();
     void resetStyleRelations();
-    
-    Optional<int> tabIndex() const { return m_tabIndexWasSetExplicitly ? Optional<int> { m_tabIndex } : WTF::nullopt; }
-    void setTabIndexExplicitly(int index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
-    bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
-    void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
 
-#if ENABLE(FULLSCREEN_API)
-    bool containsFullScreenElement() { return m_containsFullScreenElement; }
-    void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
-#endif
+    int unusualTabIndex() const;
+    void setUnusualTabIndex(int);
 
     unsigned childIndex() const { return m_childIndex; }
     void setChildIndex(unsigned index) { m_childIndex = index; }
@@ -96,17 +89,8 @@ public:
     IntPoint savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
     void setSavedLayerScrollPosition(IntPoint position) { m_savedLayerScrollPosition = position; }
 
-    bool hasPendingResources() const { return m_hasPendingResources; }
-    void setHasPendingResources(bool has) { m_hasPendingResources = has; }
-
-    bool hasCSSAnimation() const { return m_hasCSSAnimation; }
-    void setHasCSSAnimation(bool value) { m_hasCSSAnimation = value; }
-
     ElementAnimationRareData* elementAnimationRareData() { return m_animationRareData.get(); }
     ElementAnimationRareData& ensureAnimationRareData();
-
-    bool hasElementIdentifier() const { return m_hasElementIdentifier; }
-    void setHasElementIdentifier(bool value) { m_hasElementIdentifier = value; }
 
     DOMTokenList* partList() const { return m_partList.get(); }
     void setPartList(std::unique_ptr<DOMTokenList> partList) { m_partList = WTFMove(partList); }
@@ -133,7 +117,7 @@ public:
     OptionSet<UseType> useTypes() const
     {
         auto result = NodeRareData::useTypes();
-        if (m_tabIndexWasSetExplicitly)
+        if (m_unusualTabIndex)
             result.add(UseType::TabIndex);
         if (m_minimumSizeForResizing != defaultMinimumSizeForResizing())
             result.add(UseType::MinimumSize);
@@ -157,24 +141,25 @@ public:
         if (m_resizeObserverData)
             result.add(UseType::ResizeObserver);
 #endif
-        if (m_beforePseudoElement || m_afterPseudoElement)
-            result.add(UseType::PseudoElements);
         if (m_animationRareData)
             result.add(UseType::Animations);
+        if (m_beforePseudoElement || m_afterPseudoElement)
+            result.add(UseType::PseudoElements);
+#if ENABLE(CSS_TYPED_OM)
+        if (m_attributeStyleMap)
+            result.add(UseType::StyleMap);
+#endif
+        if (m_partList)
+            result.add(UseType::PartList);
+        if (!m_partNames.isEmpty())
+            result.add(UseType::PartNames);
         return result;
     }
 #endif
 
 private:
-    int m_tabIndex;
-    unsigned short m_childIndex;
-    unsigned m_tabIndexWasSetExplicitly : 1;
-#if ENABLE(FULLSCREEN_API)
-    unsigned m_containsFullScreenElement : 1;
-#endif
-    unsigned m_hasPendingResources : 1;
-    unsigned m_hasCSSAnimation : 1;
-    unsigned m_hasElementIdentifier : 1;
+    int m_unusualTabIndex { 0 };
+    unsigned short m_childIndex { 0 };
 
     LayoutSize m_minimumSizeForResizing;
     IntPoint m_savedLayerScrollPosition;
@@ -210,15 +195,6 @@ private:
 
 inline ElementRareData::ElementRareData()
     : NodeRareData(Type::Element)
-    , m_tabIndex(0)
-    , m_childIndex(0)
-    , m_tabIndexWasSetExplicitly(false)
-#if ENABLE(FULLSCREEN_API)
-    , m_containsFullScreenElement(false)
-#endif
-    , m_hasPendingResources(false)
-    , m_hasCSSAnimation(false)
-    , m_hasElementIdentifier(false)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }
@@ -250,6 +226,18 @@ inline void ElementRareData::resetComputedStyle()
 inline void ElementRareData::resetStyleRelations()
 {
     setChildIndex(0);
+}
+
+inline int ElementRareData::unusualTabIndex() const
+{
+    ASSERT(m_unusualTabIndex); // setUnusualTabIndex must have been called before this.
+    return m_unusualTabIndex;
+}
+
+inline void ElementRareData::setUnusualTabIndex(int tabIndex)
+{
+    ASSERT(tabIndex && tabIndex != -1); // Common values of 0 and -1 are stored as TabIndexState in Node.
+    m_unusualTabIndex = tabIndex;
 }
 
 inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData()

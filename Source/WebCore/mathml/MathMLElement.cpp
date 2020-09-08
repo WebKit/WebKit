@@ -92,7 +92,7 @@ void MathMLElement::parseAttribute(const QualifiedName& name, const AtomString& 
             downcast<RenderTableCell>(renderer())->colSpanOrRowSpanChanged();
     } else if (name == HTMLNames::tabindexAttr) {
         if (value.isEmpty())
-            clearTabIndexExplicitlyIfNeeded();
+            setTabIndexExplicitly(WTF::nullopt);
         else if (auto optionalTabIndex = parseHTMLInteger(value))
             setTabIndexExplicitly(optionalTabIndex.value());
     } else {

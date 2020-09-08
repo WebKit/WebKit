@@ -1,3 +1,75 @@
+2020-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move all remaining flags from ElementRareData to Node to reduce the frequency
+        https://bugs.webkit.org/show_bug.cgi?id=216208
+
+        Reviewed by Darin Adler.
+
+        This patch moves all remaining bit flags from ElementRareData to Node::m_nodeFlags. It also stores
+        tabIndex of 0 and -1 in Node::m_nodeFlags to avoid creating ElementRareData for these common values.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::clearTabIndexExplicitlyIfNeeded): Deleted. Merged into setTabIndexExplicitly.
+        (WebCore::Element::setTabIndexExplicitly): Now takes Optional<int>. Stores 0 and -1 as node flags.
+        (WebCore::Element::tabIndexSetExplicitly const): Added the special casing for 0 and -1.
+        (WebCore::Element::removedFromAncestor):
+        (WebCore::Element::containsFullScreenElement const): Deleted.
+        (WebCore::Element::setContainsFullScreenElement):
+        (WebCore::Element::hasPendingResources const): Deleted.
+        (WebCore::Element::setHasPendingResources): Deleted.
+        (WebCore::Element::clearHasPendingResources): Deleted.
+        (WebCore::Element::hasCSSAnimation const): Deleted.
+        (WebCore::Element::setHasCSSAnimation): Deleted.
+        (WebCore::Element::clearHasCSSAnimation): Deleted.
+        (WebCore::Element::createElementIdentifier):
+        * dom/Element.h:
+        (WebCore::Element::hasPendingResources const): Moved here from Element.cpp.
+        (WebCore::Element::setHasPendingResources): Ditto.
+        (WebCore::Element::clearHasPendingResources): Ditto.
+        (WebCore::Element::hasCSSAnimation const): Ditto.
+        (WebCore::Element::setHasCSSAnimation): Ditto.
+        (WebCore::Element::clearHasCSSAnimation): Ditto.
+        (WebCore::Element::containsFullScreenElement const): Ditto.
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::tabIndex const): Deleted.
+        (WebCore::ElementRareData::setTabIndexExplicitly): Deleted.
+        (WebCore::ElementRareData::tabIndexSetExplicitly const): Deleted.
+        (WebCore::ElementRareData::clearTabIndexExplicitly): Deleted.
+        (WebCore::ElementRareData::containsFullScreenElement): Deleted.
+        (WebCore::ElementRareData::setContainsFullScreenElement): Deleted.
+        (WebCore::ElementRareData::hasPendingResources const): Deleted.
+        (WebCore::ElementRareData::setHasPendingResources): Deleted.
+        (WebCore::ElementRareData::hasCSSAnimation const): Deleted.
+        (WebCore::ElementRareData::setHasCSSAnimation): Deleted.
+        (WebCore::ElementRareData::hasElementIdentifier const): Deleted.
+        (WebCore::ElementRareData::setHasElementIdentifier): Deleted.
+        (WebCore::ElementRareData::useTypes const): Added the missing use types for style maps, part list,
+        and part names.
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::unusualTabIndex const): Renamed from tabIndex.
+        (WebCore::ElementRareData::setUnusualTabIndex): Ditto from setTabIndexExplicitly.
+        * dom/Node.cpp:
+        (WebCore::stringForRareDataUseType): Added the missing strings.
+        * dom/Node.h:
+        (WebCore::Node::NodeFlags): Moved bit flags from ElementRareData and reserved the two highest bits
+        to store TabIndexState.
+        (WebCore::Node::s_tabIndexStateBitOffset): Added.
+        (WebCore::Node::s_tabIndexStateBitMask): Added.
+        (WebCore::Node::TabIndexState): Added.
+        (WebCore::Node::tabIndexState const): Added.
+        (WebCore::Node::setTabIndexState): Added.
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::UseType): Added the missing use types: style maps, part list, and part names.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseAttribute):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::parseAttribute):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseAttribute):
+
 2020-09-07  Chris Dumez  <cdumez@apple.com>
 
         AudioParam.cancelAndHoldAtTime() is missing

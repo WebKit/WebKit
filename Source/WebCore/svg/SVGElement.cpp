@@ -339,7 +339,7 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& val
 
     if (name == HTMLNames::tabindexAttr) {
         if (value.isEmpty())
-            clearTabIndexExplicitlyIfNeeded();
+            setTabIndexExplicitly(WTF::nullopt);
         else if (auto optionalTabIndex = parseHTMLInteger(value))
             setTabIndexExplicitly(optionalTabIndex.value());
         return;

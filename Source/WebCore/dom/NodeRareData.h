@@ -244,7 +244,7 @@ class NodeRareData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NodeRareData);
 public:
 #if defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS
-    enum class UseType : uint16_t {
+    enum class UseType : uint32_t {
         ConnectedFrameCount = 1 << 0,
         NodeList = 1 << 1,
         MutationObserver = 1 << 2,
@@ -258,8 +258,12 @@ public:
         CustomElementQueue = 1 << 10,
         AttributeMap = 1 << 11,
         InteractionObserver = 1 << 12,
-        PseudoElements = 1 << 13,
+        ResizeObserver = 1 << 13,
         Animations = 1 << 14,
+        PseudoElements = 1 << 15,
+        StyleMap = 1 << 16,
+        PartList = 1 << 17,
+        PartNames = 1 << 18,
     };
 #endif
 

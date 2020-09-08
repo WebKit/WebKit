@@ -241,22 +241,40 @@ inline ElementRareData& Element::ensureElementRareData()
     return static_cast<ElementRareData&>(ensureRareData());
 }
 
-void Element::clearTabIndexExplicitlyIfNeeded()
+void Element::setTabIndexExplicitly(Optional<int> tabIndex)
 {
-    if (hasRareData())
-        elementRareData()->clearTabIndexExplicitly();
-}
-
-void Element::setTabIndexExplicitly(int tabIndex)
-{
-    ensureElementRareData().setTabIndexExplicitly(tabIndex);
+    if (!tabIndex) {
+        setTabIndexState(TabIndexState::NotSet);
+        return;
+    }
+    setTabIndexState([this, value = tabIndex.value()]() {
+        switch (value) {
+        case 0:
+            return TabIndexState::Zero;
+        case -1:
+            return TabIndexState::NegativeOne;
+        default:
+            ensureElementRareData().setUnusualTabIndex(value);
+            return TabIndexState::InRareData;
+        }
+    }());
 }
 
 Optional<int> Element::tabIndexSetExplicitly() const
 {
-    if (!hasRareData())
+    switch (tabIndexState()) {
+    case TabIndexState::NotSet:
         return WTF::nullopt;
-    return elementRareData()->tabIndex();
+    case TabIndexState::Zero:
+        return 0;
+    case TabIndexState::NegativeOne:
+        return -1;
+    case TabIndexState::InRareData:
+        ASSERT(hasRareData());
+        return elementRareData()->unusualTabIndex();
+    }
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
 }
 
 int Element::defaultTabIndex() const
@@ -2266,9 +2284,9 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     }
 #endif
 
-    if (hasRareData() && elementRareData()->hasElementIdentifier()) {
+    if (getFlag(HasElementIdentifierFlag)) {
         document().identifiedElementWasRemovedFromDocument(*this);
-        elementRareData()->setHasElementIdentifier(false);
+        clearFlag(HasElementIdentifierFlag);
     }
 }
 
@@ -3716,14 +3734,12 @@ void Element::webkitRequestFullscreen()
     document().fullscreenManager().requestFullscreenForElement(this, FullscreenManager::EnforceIFrameAllowFullscreenRequirement);
 }
 
-bool Element::containsFullScreenElement() const
-{
-    return hasRareData() && elementRareData()->containsFullScreenElement();
-}
-
 void Element::setContainsFullScreenElement(bool flag)
 {
-    ensureElementRareData().setContainsFullScreenElement(flag);
+    if (flag)
+        setFlag(ContainsFullScreenElementFlag);
+    else
+        clearFlag(ContainsFullScreenElementFlag);
     invalidateStyleAndLayerComposition();
 }
 
@@ -4366,40 +4382,6 @@ void Element::createUniqueElementData()
         m_elementData = downcast<ShareableElementData>(*m_elementData).makeUniqueCopy();
 }
 
-bool Element::hasPendingResources() const
-{
-    return hasRareData() && elementRareData()->hasPendingResources();
-}
-
-void Element::setHasPendingResources()
-{
-    ensureElementRareData().setHasPendingResources(true);
-}
-
-void Element::clearHasPendingResources()
-{
-    if (!hasRareData())
-        return;
-    elementRareData()->setHasPendingResources(false);
-}
-
-bool Element::hasCSSAnimation() const
-{
-    return hasRareData() && elementRareData()->hasCSSAnimation();
-}
-
-void Element::setHasCSSAnimation()
-{
-    ensureElementRareData().setHasCSSAnimation(true);
-}
-
-void Element::clearHasCSSAnimation()
-{
-    if (!hasRareData())
-        return;
-    elementRareData()->setHasCSSAnimation(false);
-}
-
 bool Element::canContainRangeEndPoint() const
 {
     return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(roleAttr), "img");
@@ -4611,10 +4593,8 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(Optional<GetAnimationsOption
 
 ElementIdentifier Element::createElementIdentifier()
 {
-    auto& rareData = ensureElementRareData();
-    ASSERT(!rareData.hasElementIdentifier());
-
-    rareData.setHasElementIdentifier(true);
+    ASSERT(!getFlag(HasElementIdentifierFlag));
+    setFlag(HasElementIdentifierFlag);
     return ElementIdentifier::generate();
 }
 

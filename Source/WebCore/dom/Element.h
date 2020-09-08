@@ -35,6 +35,8 @@
 #include "WebAnimationTypes.h"
 #include <JavaScriptCore/Strong.h>
 
+#define DUMP_NODE_STATISTICS 0
+
 namespace WebCore {
 
 class CustomElementReactionQueue;
@@ -479,14 +481,14 @@ public:
 
     virtual bool childShouldCreateRenderer(const Node&) const;
 
-    bool hasPendingResources() const;
-    void setHasPendingResources();
-    void clearHasPendingResources();
+    bool hasPendingResources() const { return getFlag(HasPendingResourcesFlag); }
+    void setHasPendingResources() { setFlag(HasPendingResourcesFlag); }
+    void clearHasPendingResources() { clearFlag(HasPendingResourcesFlag); }
     virtual void buildPendingResource() { };
 
-    bool hasCSSAnimation() const;
-    void setHasCSSAnimation();
-    void clearHasCSSAnimation();
+    bool hasCSSAnimation() const { return getFlag(HasCSSAnimationFlag); }
+    void setHasCSSAnimation() { setFlag(HasCSSAnimationFlag); }
+    void clearHasCSSAnimation() { clearFlag(HasCSSAnimationFlag); }
 
     KeyframeEffectStack* keyframeEffectStack() const;
     KeyframeEffectStack& ensureKeyframeEffectStack();
@@ -511,7 +513,7 @@ public:
     void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&&);
 
 #if ENABLE(FULLSCREEN_API)
-    WEBCORE_EXPORT bool containsFullScreenElement() const;
+    bool containsFullScreenElement() const { return getFlag(ContainsFullScreenElementFlag); }
     void setContainsFullScreenElement(bool);
     void setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool);
     WEBCORE_EXPORT virtual void webkitRequestFullscreen();
@@ -635,8 +637,7 @@ protected:
     void removeAllEventListeners() final;
     virtual void parserDidSetAttributes();
 
-    void clearTabIndexExplicitlyIfNeeded();
-    void setTabIndexExplicitly(int);
+    void setTabIndexExplicitly(Optional<int>);
 
     void classAttributeChanged(const AtomString& newClassString);
     void partAttributeChanged(const AtomString& newValue);
