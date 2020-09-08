@@ -84,8 +84,6 @@ static void webkit_media_clear_key_decrypt_class_init(WebKitMediaClearKeyDecrypt
     cencClass->protectionSystemId = GST_DEBUG_FUNCPTR(protectionSystemId);
     cencClass->cdmProxyAttached = GST_DEBUG_FUNCPTR(cdmProxyAttached);
     cencClass->decrypt = GST_DEBUG_FUNCPTR(decrypt);
-
-    g_type_class_add_private(klass, sizeof(WebKitMediaClearKeyDecryptPrivate));
 }
 
 static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt*)

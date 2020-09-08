@@ -103,8 +103,6 @@ static void webkit_media_thunder_decrypt_class_init(WebKitMediaThunderDecryptCla
     commonClass->protectionSystemId = GST_DEBUG_FUNCPTR(protectionSystemId);
     commonClass->cdmProxyAttached = GST_DEBUG_FUNCPTR(cdmProxyAttached);
     commonClass->decrypt = GST_DEBUG_FUNCPTR(decrypt);
-
-    g_type_class_add_private(klass, sizeof(WebKitMediaThunderDecryptPrivate));
 }
 
 static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt* self)

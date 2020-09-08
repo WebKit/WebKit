@@ -277,8 +277,6 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&s_sinkTemplate));
     gst_element_class_set_metadata(elementClass, "WebKit video sink", "Sink/Video", "Sends video data from a GStreamer pipeline to WebKit", "Igalia, Alp Toker <alp@atoker.com>");
 
-    g_type_class_add_private(klass, sizeof(WebKitVideoSinkPrivate));
-
     gobjectClass->constructed = webkitVideoSinkConstructed;
 
     baseSinkClass->unlock = webkitVideoSinkUnlock;

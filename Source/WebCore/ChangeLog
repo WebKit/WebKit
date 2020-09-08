@@ -1,3 +1,28 @@
+2020-09-08  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] Follow-up of "Convert custom GObject subclasses to WEBKIT_DEFINE_TYPE"
+        https://bugs.webkit.org/show_bug.cgi?id=204673
+        <rdar://problem/68455348>
+
+        Reviewed by Carlos Garcia Campos.
+
+        This a continuation of 204673 since a post-merge review came up: it
+        was also needed to remove g_type_class_add_private() calls.
+
+        No new tests needed.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (_WebKitWebAudioSrcPrivate::_WebKitWebAudioSrcPrivate):
+        (webkit_web_audio_src_class_init):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_class_init):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webkit_media_clear_key_decrypt_class_init):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkit_media_common_encryption_decrypt_class_init):
+        * platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp:
+        (webkit_media_thunder_decrypt_class_init):
+
 2020-09-08  Rob Buis  <rbuis@igalia.com>
 
         Fix crash in image-loading-lazy-slow.html WPT test

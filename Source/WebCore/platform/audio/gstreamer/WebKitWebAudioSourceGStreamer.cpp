@@ -80,9 +80,6 @@ struct _WebKitWebAudioSrcPrivate {
     {
         sourcePad = webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", nullptr);
 
-        provider = nullptr;
-        bus = nullptr;
-
         g_rec_mutex_init(&mutex);
 
         // GAP buffer support is enabled only for GStreamer 1.12.5 because of a
@@ -190,8 +187,6 @@ static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAud
                                     g_param_spec_uint("frames", "frames",
                                                       "Number of audio frames to pull at each iteration",
                                                       0, G_MAXUINT8, 128, flags));
-
-    g_type_class_add_private(webKitWebAudioSrcClass, sizeof(WebKitWebAudioSrcPrivate));
 }
 
 static void webKitWebAudioSrcConstructed(GObject* object)
