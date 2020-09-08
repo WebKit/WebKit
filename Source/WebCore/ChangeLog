@@ -1,3 +1,13 @@
+2020-09-08  Lauro Moura <lmoura@igalia.com>
+
+        REGRESSION(r266681) [GTK] constexpr build failure in LTS/Debian with GCC 8
+        https://bugs.webkit.org/show_bug.cgi?id=216280
+
+        Reviewed by Darin Adler and Alex Christensen.
+
+        * platform/text/TextCodecSingleByte.cpp:
+        (WebCore::tableForDecoding):
+
 2020-09-08  Alex Christensen  <achristensen@webkit.org>
 
         new URL("#") should throw an error

@@ -221,7 +221,7 @@ static SingleByteEncodeTable tableForEncoding(TextCodecSingleByte::Encoding enco
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static constexpr const SingleByteDecodeTable& tableForDecoding(TextCodecSingleByte::Encoding encoding)
+static const SingleByteDecodeTable& tableForDecoding(TextCodecSingleByte::Encoding encoding)
 {
     switch (encoding) {
     case TextCodecSingleByte::Encoding::ISO_8859_3:
