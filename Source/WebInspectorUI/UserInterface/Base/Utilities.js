@@ -1347,12 +1347,12 @@ Object.defineProperty(Number, "secondsToString",
 
 Object.defineProperty(Number, "bytesToString",
 {
-    value(bytes, higherResolution)
+    value(bytes, higherResolution, bytesThreshold)
     {
-        if (higherResolution === undefined)
-            higherResolution = true;
+        higherResolution ??= true;
+        bytesThreshold ??= 1024;
 
-        if (Math.abs(bytes) < 1024)
+        if (Math.abs(bytes) < bytesThreshold)
             return WI.UIString("%.0f B").format(bytes);
 
         let kilobytes = bytes / 1024;

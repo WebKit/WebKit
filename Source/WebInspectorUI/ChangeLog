@@ -1,3 +1,26 @@
+2020-09-08  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Incorrect decimal separator in Network web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=216177
+
+        Reviewed by Brian Burg.
+
+        Removed separate bytes and suffix pieces for resources sizes, allowing the suffix to be localized and the number
+        to be correctly formatted for the locale.
+
+        * UserInterface/Base/Utilities.js: `Number.bytesToString(...)` now accepts a byte threshold to support
+        `ResourceSizesContentView` where we want less jitter between B and KB as you up/down through resources.
+        * UserInterface/Views/ResourceSizesContentView.css:
+        (.resource-sizes > .content > section.network .bytes): Adopted `text-align` from `.bytes-group`.
+        (.resource-sizes > .content > section.network .bytes-group): Deleted.
+        (.resource-sizes > .content > section.network .suffix): Deleted.
+        * UserInterface/Views/ResourceSizesContentView.js: No longer using a separate `suffix` element for sizes.
+        (WI.ResourceSizesContentView.prototype.initialLayout.createSizeComponents):
+        (WI.ResourceSizesContentView.prototype.initialLayout):
+        (WI.ResourceSizesContentView.prototype._formattedSizeComponent): Replaces `_sizeComponents`.
+        (WI.ResourceSizesContentView.prototype._refreshResourceSizeSection):
+        (WI.ResourceSizesContentView.prototype._sizeComponents): Deleted.
+
 2020-09-05  Greg Doolittle  <gr3g@apple.com>
 
         Web Inspector: AXI: Audit: obtuse error strings

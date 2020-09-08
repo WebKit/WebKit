@@ -78,24 +78,15 @@
     margin-bottom: 8px;
 }
 
-.resource-sizes > .content > section.network .bytes-group {
-    text-align: start;
-}
-
 .resource-sizes > .content > section.network .bytes {
     margin-top: 2px;
+    text-align: start;
     font-size: 28px;
     display: inline-block;
 }
 
 .resource-sizes > .content > section.network table > tr > td.label {
     text-align: end;
-}
-
-.resource-sizes > .content > section.network .suffix {
-    display: inline-block;
-    margin: 13px 1px 0 1px;
-    font-size: 15px;
 }
 
 .resource-sizes > .content > section.network img {

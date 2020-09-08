@@ -69,14 +69,8 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
             if (imageSource)
                 imageElement.src = imageSource;
 
-            let groupElement = container.appendChild(document.createElement("div"));
-            groupElement.className = "bytes-group";
-
-            let bytesElement = groupElement.appendChild(document.createElement("div"));
+            let bytesElement = container.appendChild(document.createElement("div"));
             bytesElement.className = "bytes";
-
-            let suffixElement = groupElement.appendChild(document.createElement("div"));
-            suffixElement.className = "suffix";
 
             let table = parentElement.appendChild(document.createElement("table"));
             let headerRow = table.appendChild(document.createElement("tr"));
@@ -94,7 +88,6 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
             return {
                 container,
                 bytesElement,
-                suffixElement,
                 imageElement,
                 value1Element,
                 value2Element,
@@ -106,7 +99,6 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
 
         let sendingComponents = createSizeComponents(sendingSection, WI.UIString("Bytes Sent"), "Images/Sending.svg", WI.UIString("Headers:"), WI.UIString("Body:"));
         this._sendingBytesElement = sendingComponents.bytesElement;
-        this._sendingBytesSuffixElement = sendingComponents.suffixElement;
         this._sendingHeaderBytesElement = sendingComponents.value1Element;
         this._sendingBodyBytesElement = sendingComponents.value2Element;
 
@@ -118,7 +110,6 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
 
         let receivingComponents = createSizeComponents(receivingSection, WI.UIString("Bytes Received"), "Images/Receiving.svg", WI.UIString("Headers:"), WI.UIString("Body:"));
         this._receivingBytesElement = receivingComponents.bytesElement;
-        this._receivingBytesSuffixElement = receivingComponents.suffixElement;
         this._receivingHeaderBytesElement = receivingComponents.value1Element;
         this._receivingBodyBytesElement = receivingComponents.value2Element;
 
@@ -136,7 +127,6 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
             resourceComponents.imageElement.title = WI.UIString("This resource was loaded from a local override");
 
         this._resourceBytesElement = resourceComponents.bytesElement;
-        this._resourceBytesSuffixElement = resourceComponents.suffixElement;
         this._compressionElement = resourceComponents.value1Element;
         this._contentTypeElement = resourceComponents.value2Element;
 
@@ -171,25 +161,15 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
 
     // Private
 
-    _sizeComponents(bytes)
+    _formattedSizeComponent(bytes)
     {
         console.assert(bytes >= 0);
 
         // Prefer KB over B. And prefer 1 decimal point to keep sizes simple
-        // but we will still need B if bytes is less than 0.1 KB.
-        if (bytes < 103)
-            return [bytes.toFixed(0), "B"];
-
-        let kilobytes = bytes / 1024;
-        if (kilobytes < 1024)
-            return [kilobytes.toFixed(1), "KB"];
-
-        let megabytes = kilobytes / 1024;
-        if (megabytes < 1024)
-            return [megabytes.toFixed(1), "MB"];
-
-        let gigabytes = megabytes / 1024;
-        return [gigabytes.toFixed(1), "GB"];
+        // but we will still need B if bytes is less than 0.1 KB (103 B).
+        const higherResolution = false;
+        const bytesThreshold = 103;
+        return Number.bytesToString(bytes, higherResolution, bytesThreshold);
     }
 
     _refreshTransferSizeSections()
@@ -202,16 +182,12 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
         let bytesReceivedBody = this._resource.responseBodyTransferSize;
         let bytesReceived = bytesReceivedHeader + bytesReceivedBody;
 
-        let [sentValue, sentSuffix] = this._sizeComponents(bytesSent || 0);
-        this._sendingBytesElement.textContent = sentValue;
-        this._sendingBytesSuffixElement.textContent = sentSuffix;
+        this._sendingBytesElement.textContent = this._formattedSizeComponent(bytesSent || 0);
 
         this._sendingHeaderBytesElement.textContent = bytesSentHeader ? Number.bytesToString(bytesSentHeader) : emDash;
         this._sendingBodyBytesElement.textContent = bytesSentBody ? Number.bytesToString(bytesSentBody) : emDash;
 
-        let [receivedValue, receivedSuffix] = this._sizeComponents(bytesReceived || 0);
-        this._receivingBytesElement.textContent = receivedValue;
-        this._receivingBytesSuffixElement.textContent = receivedSuffix;
+        this._receivingBytesElement.textContent = this._formattedSizeComponent(bytesReceived || 0);
 
         this._receivingHeaderBytesElement.textContent = bytesReceivedHeader ? Number.bytesToString(bytesReceivedHeader) : emDash;
         this._receivingBodyBytesElement.textContent = bytesReceivedBody ? Number.bytesToString(bytesReceivedBody) : emDash;
@@ -238,9 +214,7 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
         let compressionRate = decodedSize / encodedSize;
         let compressionString = compressionRate > 0 && isFinite(compressionRate) ? WI.UIString("%.2f\u00d7").format(compressionRate) : WI.UIString("None");
 
-        let [resourceSizeValue, resourceSizeSuffix] = this._sizeComponents(decodedSize || 0);
-        this._resourceBytesElement.textContent = resourceSizeValue;
-        this._resourceBytesSuffixElement.textContent = resourceSizeSuffix;
+        this._resourceBytesElement.textContent = this._formattedSizeComponent(decodedSize || 0);
 
         let contentEncoding = this._resource.responseHeaders.valueForCaseInsensitiveKey("Content-Encoding");
         if (contentEncoding)
