@@ -113,7 +113,7 @@ void TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded()
 
     // Let the first commit complete before sending.
     [CATransaction addCommitHandler:[this, weakThis = makeWeakPtr(*this)] {
-        if (!weakThis)
+        if (!weakThis || !m_layerHostingContext)
             return;
         LayerTreeContext layerTreeContext;
         layerTreeContext.contextID = m_layerHostingContext->contextID();

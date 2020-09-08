@@ -1,3 +1,16 @@
+2020-09-08  Alex Christensen  <achristensen@webkit.org>
+
+        Null check m_layerHostingContext in TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=216282
+        <rdar://problem/64933878>
+
+        Reviewed by Tim Horton.
+
+        There's no reason to dereference null here.  Let's not crash.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded):
+
 2020-09-08  Youenn Fablet  <youenn@apple.com>
 
         Tighten checks when creating an audio buffer list
