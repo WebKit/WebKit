@@ -24,51 +24,12 @@
  */
 
 #include "config.h"
-#include "DisplayBox.h"
 #include "InlineFormattingContext.h"
-#include "InlineLineBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 namespace WebCore {
 namespace Layout {
-
-bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::RunList& runList) const
-{
-    // Collapse line descent in limited and full quirk mode when there's no baseline aligned content or
-    // the baseline aligned content has no descent.
-    auto& layoutState = this->layoutState();
-    if (!layoutState.inQuirksMode() && !layoutState.inLimitedQuirksMode())
-        return false;
-
-    for (auto& run : runList) {
-        auto& layoutBox = run.layoutBox();
-        if (run.isContainerEnd() || layoutBox.style().verticalAlign() != VerticalAlign::Baseline)
-            continue;
-
-        if (run.isLineBreak())
-            return false;
-        if (run.isText())
-            return false;
-        if (run.isContainerStart()) {
-            auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            if (boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value()))
-                return false;
-            continue;
-        }
-        if (run.isBox()) {
-            if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                auto& formattingState = layoutState.establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
-                auto lastLine = formattingState.displayInlineContent()->lines.last();
-                if (lastLine.height() > lastLine.baseline())
-                    return false;
-            }
-            continue;
-        }
-        ASSERT_NOT_REACHED();
-    }
-    return true;
-}
 
 InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
 {

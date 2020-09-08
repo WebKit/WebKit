@@ -1,3 +1,17 @@
+2020-09-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove redundant FormattingContext::Quirks::lineDescentNeedsCollapsing
+        https://bugs.webkit.org/show_bug.cgi?id=216259
+
+        Reviewed by Antti Koivisto.
+
+        This function is not needed anymore. InlineBoxes start collapsed by default and they get stretched when they gain content
+        (and the root inline box has no imaginary strut in non-standard mode).
+
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const): Deleted.
+
 2020-09-08  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] Follow-up of "Convert custom GObject subclasses to WEBKIT_DEFINE_TYPE"

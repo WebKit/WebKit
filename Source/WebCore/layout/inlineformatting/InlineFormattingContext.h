@@ -48,7 +48,6 @@ public:
 
     class Quirks : public FormattingContext::Quirks {
     public:
-        bool lineDescentNeedsCollapsing(const Line::RunList&) const;
         InlineLayoutUnit initialLineHeight() const;
 
     private:
