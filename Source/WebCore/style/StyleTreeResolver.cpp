@@ -361,6 +361,11 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     if (animationImpact)
         Adjuster::adjustAnimatedStyle(*newStyle, parentBoxStyle(), animationImpact);
 
+    // Deduplication speeds up equality comparisons as the properties inherit to descendants.
+    // FIXME: There should be a more general mechanism for this.
+    if (oldStyle)
+        newStyle->deduplicateInheritedCustomProperties(*oldStyle);
+
     auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Detach;
 
     auto validity = element.styleValidity();

@@ -1,3 +1,50 @@
+2020-09-08  Antti Koivisto  <antti@apple.com>
+
+        Comparing styles with large but identical custom property maps is slow
+        https://bugs.webkit.org/show_bug.cgi?id=216241
+        <rdar://problem/67946605>
+
+        Reviewed by Darin Adler.
+
+        In a full style rebuild we lose sharing of equal StyleCustomPropertyDatas between the old and the new style.
+        Custom properties are usually defined in document element and this lack of sharing inherits to all elements.
+        Without sharing equality comparisons end up requiring deep comparisons, which can be slow if there are thousands of properties.
+
+        Fix by deduplicating identical property maps between the old the new style. All the descendants that inherit the properties will
+        now be cheap to compare.
+
+        The patch also contains some other basic custom property optimizations.
+
+        Going to full screen and back on youtube, this patch reduces time in the longest style update from ~460ms to ~90ms.
+
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::equals const):
+
+        Check for pointer equality first.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::deduplicateInheritedCustomProperties):
+
+        Deduplicate if the properties are equal but not shared.
+
+        (WebCore::RenderStyle::setInheritedCustomPropertyValue):
+        (WebCore::RenderStyle::setNonInheritedCustomPropertyValue):
+
+        Check if the value is already in the map before triggering copy-on-write.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setInheritedCustomPropertyValue): Deleted.
+        (WebCore::RenderStyle::setNonInheritedCustomPropertyValue): Deleted.
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyCustomProperty):
+
+        Don't create unnecesary copies of CSSCustomPropertyValue.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+
+        Try to deduplicate before comparing the styles.
+
 2020-09-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Don't skip flexboxes with auto height for percentage computations in quirks mode
