@@ -267,6 +267,10 @@ webkit.org/b/215886 webaudio/audiobuffersource-playbackrate.html [ Skip ]
 
 webkit.org/b/216171 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
 
+webkit.org/b/216118 webaudio/convolver-setBuffer-different-samplerate.html [ Skip ]
+webkit.org/b/216118 webaudio/convolver-setBuffer-null.html [ Skip ]
+webkit.org/b/216118 webaudio/convolvernode-unmodified-buffer.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

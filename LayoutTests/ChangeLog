@@ -1,3 +1,15 @@
+2020-09-08  Chris Lord  <clord@igalia.com>
+
+        [GStreamer] Some convolvernode tests are flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=216118
+
+        Unreviewed test gardening.
+
+        Some tests are causing random, subsequently run tests to crash. Skip
+        these tests on affected platforms.
+
+        * platform/glib/TestExpectations:
+
 2020-09-08  Karl Rackler  <rackler@apple.com>
 
         Removed 6 forms and 3 tables test expectations for Big Sur
