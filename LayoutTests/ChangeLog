@@ -1,3 +1,12 @@
+2020-09-08  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk2 Release ] imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=216292
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         http/tests/history/back-with-fragment-change.php fails
