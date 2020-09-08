@@ -89,3 +89,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FEComponentTransfer)
+    static bool isType(const WebCore::FilterEffect& effect) { return effect.filterEffectClassType() == WebCore::FilterEffect::Type::ComponentTransfer; }
+SPECIALIZE_TYPE_TRAITS_END()

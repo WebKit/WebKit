@@ -1,3 +1,36 @@
+2020-09-08  Frank Yang  <guowei_yang@apple.com>
+
+        CoreImage Implementation of CSS Filters invert(), opacity(), brightness(), contrast()
+        https://bugs.webkit.org/show_bug.cgi?id=215956
+
+        Reviewed by Darin Adler.
+
+        Adding CoreImage support for 4 more CSS filters, invert, opacity, brightness, contrast, 
+        which all uses FEComponentTransfer and the linear transfer function. Partially implemented
+        FEComponentTransfer to support linear function type so that the 4 CSS filters work properly
+
+        Tests: css3/filters/effect-brightness-square.html
+               css3/filters/effect-contrast-square.html
+               css3/filters/effect-invert-square.html
+               css3/filters/effect-opacity-square.html
+
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.h:
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.mm:
+        (WebCore::FilterEffectRendererCoreImage::isNullOrLinearComponentTransferFunction):
+            currently CoreImage can only render FEComponentTransfer filters if the transfer funtion
+            is only linear. A FEComponentTransfer filter using only linear function would have it's 
+            red, green, blue, alpha functions types either be linear or null.
+        (WebCore::FilterEffectRendererCoreImage::supportsCoreImageRendering):
+            currently CoreImage can only render FEComponentTransfer filters if the transfer funtion
+            is only linear.
+        (WebCore::FilterEffectRendererCoreImage::connectCIFilters):
+            now returns image for FEComponentTransfer
+        (WebCore::FilterEffectRendererCoreImage::imageForFEComponentTransfer): 
+            function that uses CIFilters to render FEComponentTransfer.
+        * platform/graphics/filters/FEComponentTransfer.h:
+        (isType): added SPECIALIZE_TYPE_TRAITS so that we can downcast to FEComponentTransfer
+
+
 2020-09-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date/time inputs should preserve focus on value change

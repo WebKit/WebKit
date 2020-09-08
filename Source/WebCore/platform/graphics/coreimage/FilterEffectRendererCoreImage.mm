@@ -28,12 +28,16 @@
 
 #if USE(CORE_IMAGE)
 
+#import "FEColorMatrix.h"
+#import "FEComponentTransfer.h"
 #import "Filter.h"
 #import "FilterEffect.h"
 #import "FilterOperation.h"
+#import "FloatConversion.h"
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
 #import "PlatformImageBuffer.h"
+#import "SourceGraphic.h"
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>
@@ -52,6 +56,16 @@ RetainPtr<CIContext> FilterEffectRendererCoreImage::sharedCIContext()
 {
     static NeverDestroyed<RetainPtr<CIContext>> ciContext = [CIContext contextWithOptions: @{ kCIContextWorkingColorSpace: (__bridge id)CGColorSpaceCreateWithName(kCGColorSpaceSRGB)}];
     return ciContext;
+}
+
+static bool isNullOrLinearComponentTransferFunction(const FEComponentTransfer& effect)
+{
+    auto isNullOrLinear = [] (const ComponentTransferFunction& function) {
+        return function.type == FECOMPONENTTRANSFER_TYPE_UNKNOWN
+            || function.type == FECOMPONENTTRANSFER_TYPE_LINEAR;
+    };
+    return isNullOrLinear(effect.redFunction()) && isNullOrLinear(effect.greenFunction())
+        && isNullOrLinear(effect.blueFunction()) && isNullOrLinear(effect.alphaFunction());
 }
 
 bool FilterEffectRendererCoreImage::supportsCoreImageRendering(FilterEffect& effect)
@@ -73,8 +87,10 @@ bool FilterEffectRendererCoreImage::supportsCoreImageRendering(FilterEffect& eff
         }
     }
 
-    case FilterEffect::Type::Blend:
     case FilterEffect::Type::ComponentTransfer:
+        return isNullOrLinearComponentTransferFunction(downcast<FEComponentTransfer>(effect));
+
+    case FilterEffect::Type::Blend:
     case FilterEffect::Type::Composite:
     case FilterEffect::Type::ConvolveMatrix:
     case FilterEffect::Type::DiffuseLighting:
@@ -125,10 +141,11 @@ RetainPtr<CIImage> FilterEffectRendererCoreImage::connectCIFilters(FilterEffect&
         return imageForSourceGraphic(downcast<SourceGraphic>(effect));
     case FilterEffect::Type::ColorMatrix:
         return imageForFEColorMatrix(downcast<FEColorMatrix>(effect), inputImages);
+    case FilterEffect::Type::ComponentTransfer:
+        return imageForFEComponentTransfer(downcast<FEComponentTransfer>(effect), inputImages);
 
     // FIXME: Implement those filters using CIFilter so that the function returns a valid CIImage
     case FilterEffect::Type::Blend:
-    case FilterEffect::Type::ComponentTransfer:
     case FilterEffect::Type::Composite:
     case FilterEffect::Type::ConvolveMatrix:
     case FilterEffect::Type::DiffuseLighting:
@@ -213,6 +230,28 @@ RetainPtr<CIImage> FilterEffectRendererCoreImage::imageForFEColorMatrix(const FE
         return nullptr;
     }
     return colorMatrixFilter.outputImage;
+}
+
+RetainPtr<CIImage> FilterEffectRendererCoreImage::imageForFEComponentTransfer(const FEComponentTransfer& effect, Vector<RetainPtr<CIImage>>& inputImages)
+{
+    // FIXME: Implement the rest of FEComponentTransfer functions
+    ASSERT(isNullOrLinearComponentTransferFunction(effect));
+
+    auto inputImage = inputImages.at(0);
+    auto filter = [CIFilter filterWithName:@"CIColorPolynomial"];
+    
+    [filter setValue:inputImage.get() forKey:kCIInputImageKey];
+    
+    auto setCoefficients = [&] (NSString *key, const ComponentTransferFunction& function) {
+        if (function.type == FECOMPONENTTRANSFER_TYPE_LINEAR)
+            [filter setValue:[CIVector vectorWithX:function.intercept Y:function.slope Z:0 W:0] forKey:key];
+    };
+    setCoefficients(@"inputRedCoefficients", effect.redFunction());
+    setCoefficients(@"inputGreenCoefficients", effect.greenFunction());
+    setCoefficients(@"inputBlueCoefficients", effect.blueFunction());
+    setCoefficients(@"inputAlphaCoefficients", effect.alphaFunction());
+    
+    return filter.outputImage;
 }
 
 bool FilterEffectRendererCoreImage::canRenderUsingCIFilters(FilterEffect& effect)

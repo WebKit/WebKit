@@ -1,3 +1,19 @@
+2020-09-08  Frank Yang  <guowei_yang@apple.com>
+
+        CoreImage Implementation of CSS Filters invert(), opacity(), brightness(), contrast()
+        https://bugs.webkit.org/show_bug.cgi?id=215956
+
+        Reviewed by Darin Adler.
+
+        * css3/filters/effect-brightness-square-expected.html: Added.
+        * css3/filters/effect-brightness-square.html: Added.
+        * css3/filters/effect-contrast-square-expected.html: Added.
+        * css3/filters/effect-contrast-square.html: Added.
+        * css3/filters/effect-invert-square-expected.html: Added.
+        * css3/filters/effect-invert-square.html: Added.
+        * css3/filters/effect-opacity-square-expected.html: Added.
+        * css3/filters/effect-opacity-square.html: Added.
+
 2020-09-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date/time inputs should preserve focus on value change

@@ -27,9 +27,7 @@
 
 #if USE(CORE_IMAGE)
 
-#import "FEColorMatrix.h"
 #import "FilterEffectRenderer.h"
-#import "SourceGraphic.h"
 #import <wtf/HashMap.h>
 #import <wtf/Vector.h>
 
@@ -38,6 +36,10 @@ OBJC_CLASS CIFilter;
 OBJC_CLASS CIContext;
 
 namespace WebCore {
+
+class FEColorMatrix;
+class FEComponentTransfer;
+class SourceGraphic;
 
 class FilterEffectRendererCoreImage : public FilterEffectRenderer {
     WTF_MAKE_FAST_ALLOCATED;
@@ -60,6 +62,7 @@ private:
     
     RetainPtr<CIImage> imageForSourceGraphic(SourceGraphic&);
     RetainPtr<CIImage> imageForFEColorMatrix(const FEColorMatrix&, const Vector<RetainPtr<CIImage>>&);
+    RetainPtr<CIImage> imageForFEComponentTransfer(const FEComponentTransfer&, Vector<RetainPtr<CIImage>>&);
     
     std::unique_ptr<ImageBuffer> m_outputImageBuffer;
     RetainPtr<CIImage> m_outputImage;
