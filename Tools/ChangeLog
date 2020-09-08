@@ -1,3 +1,15 @@
+2020-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] MiniBrowser URL bar can't insert a longer text than the window width
+        https://bugs.webkit.org/show_bug.cgi?id=216252
+
+        Reviewed by Per Arne Vollan.
+
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::createToolbar): Set ES_AUTOHSCROLL and for the URL
+        bar edit control. Removed ES_AUTOVSCROLL for it since it doesn't
+        scroll vertically.
+
 2020-09-08  Tim Horton  <timothy_horton@apple.com>
 
         iOS: <attachment>'s QuickLook thumbnails can appear squished
