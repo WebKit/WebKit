@@ -40,7 +40,7 @@ ALWAYS_INLINE CompactUniquePtrTuple<T, Type> makeCompactUniquePtr(Args&&... args
 }
 
 template<typename T, typename Type, typename Deleter, typename... Args>
-ALWAYS_INLINE CompactUniquePtrTuple<T, Type> makeCompactUniquePtr(Args&&... args)
+ALWAYS_INLINE CompactUniquePtrTuple<T, Type, Deleter> makeCompactUniquePtr(Args&&... args)
 {
     return CompactUniquePtrTuple<T, Type, Deleter>(makeUnique<T>(std::forward<Args>(args)...));
 }
@@ -52,8 +52,8 @@ class CompactUniquePtrTuple final {
 public:
     CompactUniquePtrTuple() = default;
 
-    template <typename U>
-    CompactUniquePtrTuple(CompactUniquePtrTuple<U, Type, Deleter>&& other)
+    template <typename U, typename UDeleter, typename = std::enable_if_t<std::is_same<UDeleter, Deleter>::value || std::is_same<UDeleter, std::default_delete<U>>::value>>
+    CompactUniquePtrTuple(CompactUniquePtrTuple<U, Type, UDeleter>&& other)
         : m_data { std::exchange(other.m_data, { }) }
     {
     }
@@ -63,10 +63,10 @@ public:
         setPointer(nullptr);
     }
 
-    template <typename U>
-    CompactUniquePtrTuple<T, Type, Deleter>& operator=(CompactUniquePtrTuple<U, Type, Deleter>&& other)
+    template <typename U, typename UDeleter, typename = std::enable_if_t<std::is_same<UDeleter, Deleter>::value || std::is_same<UDeleter, std::default_delete<U>>::value>>
+    CompactUniquePtrTuple<T, Type, Deleter>& operator=(CompactUniquePtrTuple<U, Type, UDeleter>&& other)
     {
-        auto moved = WTFMove(other);
+        CompactUniquePtrTuple moved { WTFMove(other) };
         std::swap(m_data, moved.m_data);
         return *this;
     }
@@ -86,8 +86,8 @@ public:
         m_data.setPointer(nullptr);
     }
 
-    template <typename U>
-    void setPointer(std::unique_ptr<U, Deleter>&& pointer)
+    template <typename U, typename UDeleter, typename = std::enable_if_t<std::is_same<UDeleter, Deleter>::value || std::is_same<UDeleter, std::default_delete<U>>::value>>
+    void setPointer(std::unique_ptr<U, UDeleter>&& pointer)
     {
         deletePointer();
         m_data.setPointer(pointer.release());
@@ -114,6 +114,8 @@ private:
 
     template<typename U, typename E, typename... Args> friend CompactUniquePtrTuple<U, E> makeCompactUniquePtr(Args&&... args);
     template<typename U, typename E, typename D, typename... Args> friend CompactUniquePtrTuple<U, E, D> makeCompactUniquePtr(Args&&... args);
+
+    template <typename, typename, typename> friend class CompactUniquePtrTuple;
 
     CompactPointerTuple<T*, Type> m_data;
 };

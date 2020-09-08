@@ -1,3 +1,20 @@
+2020-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make CompactUniquePtrTuple actually work with subclassing and custom deleter
+        https://bugs.webkit.org/show_bug.cgi?id=216225
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/CompactUniquePtrTuple.cpp:
+        (TestWebKitAPI::A::~A): Make this virtual.
+        (TestWebKitAPI::B): Added.
+        (TestWebKitAPI::B::B): Added.
+        (TestWebKitAPI::B::~B): Added.
+        (WTF_CompactUniquePtrTuple.Subclassing): Added. Tests subclassing.
+        (TestWebKitAPI::ADeleter): Added.
+        (TestWebKitAPI::ADeleter::operator() const):
+        (WTF_CompactUniquePtrTuple.Deleter): Added. Tests a custom deleter.
+
 2020-09-07  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Fix issues found by preprocess-idls.pl parser validation and enabled parser validation by default for the tests

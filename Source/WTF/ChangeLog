@@ -1,3 +1,26 @@
+2020-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make CompactUniquePtrTuple actually work with subclassing and custom deleter
+        https://bugs.webkit.org/show_bug.cgi?id=216225
+
+        Reviewed by Darin Adler.
+
+        Fixed bugs in CompactUniquePtrTuple which prevented subclassing and custom deleter to work.
+
+        * wtf/CompactPointerTuple.h:
+        (WTF::CompactPointerTuple::CompactPointerTuple): Added move constructor with implicit cast
+        of a convertible pointer type.
+        * wtf/CompactUniquePtrTuple.h:
+        (WTF::makeCompactUniquePtr): Added the missing deleter from the return type.
+        (WTF::CompactUniquePtrTuple::CompactUniquePtrTuple): Allow Deleter to be different if it's
+        the default deleter in the move constructor so that CompactUniquePtrTuple<U, Type> could be
+        moved to CompactUniquePtrTuple<T, Type> if U is convertible to T without having to specify
+        the same deleter (std::default_delete<U> is not same as std::default_delete<T> but allow it).
+        (WTF::CompactUniquePtrTuple::operator=): Ditto.
+        (WTF::CompactUniquePtrTuple::setPointer): Ditto from std::unique_ptr.
+        (WTF::CompactUniquePtrTuple): Friend declare all other specializations of CompactUniquePtrTuple
+        so that the above fixes work.
+
 2020-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] attachmentActionFont() Needs to use kCTFontSymbolicTrait: @(kCTFontTraitTightLeading | kCTFontTraitEmphasized) to get the short emphasized footnote font
