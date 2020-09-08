@@ -8,13 +8,13 @@
             background: var(--background);
         }
 
-        #testDiv:hover {
+        .divhover {
             border: 1rem solid blue;
         }
         </style>
     </head>
     <body>
-        <div id="testDiv" onmouseover="checkTestResult()">This is a test</div>
+        <div id="testDiv">This is a test</div>
         <script src="/common/utils.js"></script>
         <script>
         if (window.testRunner)
@@ -22,16 +22,10 @@
 
         style.sheet.insertRule('div { --background: url(/html/dom/elements/images/image.py?id='+ token() + '); }');
 
-        async function checkTestResult()
-        {
+        window.onload = () => {
+            testDiv.className = 'divhover';
             if (window.testRunner)
                 testRunner.notifyDone();
-        }
-
-        window.onload = () => {
-            const y = document.getElementById("testDiv").getBoundingClientRect().top;
-            if (window.testRunner)
-                eventSender.mouseMoveTo(10, y + 10);
         }
         </script>
     </body>

@@ -1,3 +1,13 @@
+2020-09-08  Youenn Fablet  <youenn@apple.com>
+
+        Do not use mouse events in http/wpt/html/dom/elements/images/hover-image-change.html
+        https://bugs.webkit.org/show_bug.cgi?id=216265
+
+        Reviewed by Antti Koivisto.
+
+        * http/wpt/html/dom/elements/images/hover-image-change.html:
+        Mouse events do not work in iOS. Instead, use style change through changing class of an element.
+
 2020-09-08  Simon Fraser  <simon.fraser@apple.com>
 
         Add a standalone version of the test runtime tree map viewer, that can accept stats.json from a local test run
