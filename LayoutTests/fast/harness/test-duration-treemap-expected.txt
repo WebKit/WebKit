@@ -1,0 +1,11 @@
+Drop stats.json file here to load.
+Click on a box to zoom in. Click on the outermost box to zoom out. Reset
+
+LayoutTests (42s - 23 tests)
+fast (42s - 23 tests)
+harness (42s - 23 tests)
+perftests (13s - 3 tests)
+perf-runner-compute-statistics.html (13s)
+uiscriptcontroller (13s - 4 tests)
+concurrent-ui-side-scripts.html (13s)
+fastmallocstatistics-object.html (13s)

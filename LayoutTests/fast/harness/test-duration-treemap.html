@@ -1,0 +1,565 @@
+<!-- 
+Copyright (C) 2020 Apple Inc. All rights reserved.
+Copyright (C) 2011 Google Inc. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+<!DOCTYPE html>
+<html>
+<title>Test Runtimes</title>
+<style>
+    html {
+        height: 100%;
+    }
+
+    body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        font-family: "Helvetica Neue";
+    }
+
+    td:first-child {
+        text-align: left;
+    }
+
+    td {
+        text-align: right;
+    }
+    
+    header {
+        position: relative;
+        height: 4rem;
+    }
+    
+    header a {
+        margin-left: 0.25em
+    }
+
+    header p {
+        font-size: smaller;
+    }
+
+    #map {
+        position: relative;
+        flex-grow: 1;
+        cursor: pointer;
+        -webkit-user-select: none;
+    }
+
+    .extra-dom {
+        display: none;
+        border: none;
+        border-top: 1px dashed;
+        padding: 4px;
+        margin: 0;
+        overflow: auto;
+        cursor: auto;
+        -webkit-user-select: text;
+    }
+
+    .error {
+        color: red;
+        font-style: italic;
+    }
+
+    #dropTarget {
+        font-size: 10pt;
+        font-weight: bold;
+        color: #888;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        border: 2px solid rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    #dropTarget.dragOver {
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #ddd;
+    }
+
+    .webtreemap-node {
+        /* Required attributes. */
+        position: absolute;
+        overflow: hidden;   /* To hide overlong captions. */
+        background: white;  /* Nodes must be opaque for zIndex layering. */
+        border: solid 1px black;  /* Calculations assume 1px border. */
+
+        transition: top    0.3s,
+        left   0.3s,
+        width  0.3s,
+        height 0.3s;
+    }
+
+    /* Optional: highlight nodes on mouseover. */
+    .webtreemap-node:hover {
+        background: #eee;
+    }
+
+    /* Optional: Different borders depending on level. */
+    .webtreemap-level0 {
+        border: solid 1px #444;
+    }
+    .webtreemap-level1 {
+        border: solid 1px #666;
+    }
+    .webtreemap-level2 {
+        border: solid 1px #888;
+    }
+    .webtreemap-level3 {
+        border: solid 1px #aaa;
+    }
+    .webtreemap-level4 {
+        border: solid 1px #ccc;
+    }
+
+    /* Optional: styling on node captions. */
+    .webtreemap-caption {
+        font-family: sans-serif;
+        font-size: 11px;
+        padding: 2px;
+        text-align: center;
+    }
+</style>
+
+<script>
+
+class WebTreeMap {
+    static get borderWidth()
+    {
+        return 1;
+    }
+
+    static get padding()
+    {
+        return 1;
+    }
+
+    constructor(treeData, containerElement)
+    {
+        this._focusedNode = null;
+
+        let style = getComputedStyle(containerElement, null);
+        let width = parseInt(style.width);
+        let height = parseInt(style.height);
+
+        this.makeDom(treeData, 0);
+        containerElement.appendChild(treeData.dom);
+        this.position(treeData.dom, 0, 0, width, height);
+        this.layout(treeData, 0, width, height);
+    }
+
+    focus(tree)
+    {
+        this._focusedNode = tree;
+
+        // Hide all visible siblings of all our ancestors by lowering them.
+        let level = 0;
+        let root = tree;
+        while (root.parent) {
+            root = root.parent;
+            level += 1;
+            for (let i = 0, sibling; sibling = root.children[i]; ++i) {
+                if (sibling.dom)
+                    sibling.dom.style.zIndex = 0;
+            }
+        }
+        let width = root.dom.offsetWidth;
+        let height = root.dom.offsetHeight;
+        // Unhide (raise) and maximize us and our ancestors.
+        for (let t = tree; t.parent; t = t.parent) {
+            // Shift off by border so we don't get nested borders.
+            // TODO: actually make nested borders work (need to adjust width/height).
+            this.position(t.dom, -WebTreeMap.borderWidth, -WebTreeMap.borderWidth, width, height);
+            t.dom.style.zIndex = 1;
+        }
+        // And layout into the topmost box.
+        this.layout(tree, level, width, height);
+        this.handleFocus(tree);
+    }
+    
+    handleFocus(tree)
+    {
+        // For delegation.
+    }
+
+    makeDom(tree, level)
+    {
+        let dom = document.createElement('div');
+        dom.style.zIndex = 1;
+        dom.className = 'webtreemap-node webtreemap-level' + Math.min(level, 4);
+
+        dom.addEventListener('mousedown', e => {
+            if (e.button == 0) {
+                if (this._focusedNode && tree == this._focusedNode && this._focusedNode.parent)
+                    this.focus(this._focusedNode.parent);
+                else
+                    this.focus(tree);
+            }
+            e.stopPropagation();
+            return true;
+        }, false);
+
+        let caption = document.createElement('div');
+        caption.className = 'webtreemap-caption';
+        caption.innerHTML = tree.name;
+        dom.appendChild(caption);
+
+        tree.dom = dom;
+        return dom;
+    }
+
+    position(dom, x, y, width, height)
+    {
+        // CSS width/height does not include border.
+        width -= WebTreeMap.borderWidth * 2;
+        height -= WebTreeMap.borderWidth * 2;
+
+        dom.style.left   = x + 'px';
+        dom.style.top    = y + 'px';
+        dom.style.width  = Math.max(width, 0) + 'px';
+        dom.style.height = Math.max(height, 0) + 'px';
+    }
+
+    // Given a list of rectangles |nodes|, the 1-d space available
+    // |space|, and a starting rectangle index |start|, compute an span of
+    // rectangles that optimizes a pleasant aspect ratio.
+    //
+    // Returns [end, sum], where end is one past the last rectangle and sum is the
+    // 2-d sum of the rectangles' areas.
+    selectSpan(nodes, space, start)
+    {
+        // Add rectangle one by one, stopping when aspect ratios begin to go
+        // bad. Result is [start,end) covering the best run for this span.
+        // http://scholar.google.com/scholar?cluster=5972512107845615474
+        let node = nodes[start];
+        let rmin = node.data['$area'];  // Smallest seen child so far.
+        let rmax = rmin;                // Largest child.
+        let rsum = 0;                   // Sum of children in this span.
+        let last_score = 0;             // Best score yet found.
+        let end;
+        for (end = start; node = nodes[end]; ++end) {
+            let size = node.data['$area'];
+            if (size < rmin)
+                rmin = size;
+            if (size > rmax)
+                rmax = size;
+            rsum += size;
+
+            // This formula is from the paper, but you can easily prove to
+            // yourself it's taking the larger of the x/y aspect ratio or the
+            // y/x aspect ratio. The additional magic fudge constant of 5
+            // makes us prefer wider rectangles to taller ones.
+            let score = Math.max(5 * space * space * rmax / (rsum * rsum), 1 * rsum * rsum / (space * space * rmin));
+            if (last_score && score > last_score) {
+                rsum -= size;    // Undo size addition from just above.
+                break;
+            }
+            last_score = score;
+        }
+        return [end, rsum];
+    }
+
+    layout(tree, level, width, height)
+    {
+        if (!('children' in tree))
+            return;
+
+        let total = tree.data['$area'];
+
+        // XXX why do I need an extra -1/-2 here for width/height to look right?
+        let x1 = 0, y1 = 0, x2 = width - 1, y2 = height - 2;
+        x1 += WebTreeMap.padding; y1 += WebTreeMap.padding;
+        x2 -= WebTreeMap.padding; y2 -= WebTreeMap.padding;
+        y1 += 14; // XXX get first child height for caption spacing
+
+        let pixels_to_units = Math.sqrt(total / ((x2 - x1) * (y2 - y1)));
+
+        for (let start = 0, child; child = tree.children[start]; ++start) {
+            if (x2 - x1 < 60 || y2 - y1 < 40) {
+                if (child.dom) {
+                    child.dom.style.zIndex = 0;
+                    this.position(child.dom, -2, -2, 0, 0);
+                }
+                continue;
+            }
+
+            // In theory we can dynamically decide whether to split in x or y based
+            // on aspect ratio. In practice, changing split direction with this
+            // layout doesn't look very good.
+            //   var ysplit = (y2 - y1) > (x2 - x1);
+            let ysplit = true;
+
+            let space;  // Space available along layout axis.
+            if (ysplit)
+                space = (y2 - y1) * pixels_to_units;
+            else
+                space = (x2 - x1) * pixels_to_units;
+
+            let span = this.selectSpan(tree.children, space, start);
+            let end = span[0];
+            let rsum = span[1];
+
+            // Now that we've selected a span, lay out rectangles [start,end) in our
+            // available space.
+            let x = x1;
+            let y = y1;
+            for (let i = start; i < end; ++i) {
+                child = tree.children[i];
+                if (!child.dom) {
+                    child.parent = tree;
+                    child.dom = this.makeDom(child, level + 1);
+                    tree.dom.appendChild(child.dom);
+                } else {
+                    child.dom.style.zIndex = 1;
+                }
+                let size = child.data['$area'];
+                let frac = size / rsum;
+                if (ysplit) {
+                    width = rsum / space;
+                    height = size / width;
+                } else {
+                    height = rsum / space;
+                    width = size / height;
+                }
+                width /= pixels_to_units;
+                height /= pixels_to_units;
+                width = Math.round(width);
+                height = Math.round(height);
+                this.position(child.dom, x, y, width, height);
+                if ('children' in child) {
+                    this.layout(child, level + 1, width, height);
+                }
+                if (ysplit)
+                    y += height;
+                else
+                    x += width;
+            }
+
+            // Shrink our available space based on the amount we used.
+            if (ysplit)
+                x1 += Math.round((rsum / space) / pixels_to_units);
+            else
+                y1 += Math.round((rsum / space) / pixels_to_units);
+
+            // end points one past where we ended, which is where we want to
+            // begin the next iteration, but subtract one to balance the ++ in
+            // the loop.
+            start = end - 1;
+        }
+    }
+};
+
+class Utils {
+  
+    static humanReadableTime(milliseconds)
+    {
+        if (milliseconds < 1000)
+            return Math.floor(milliseconds) + 'ms';
+        else if (milliseconds < 60000)
+            return (milliseconds / 1000).toPrecision(2) + 's';
+
+        let minutes = Math.floor(milliseconds / 60000);
+        let seconds = Math.floor((milliseconds - minutes * 60000) / 1000);
+        return minutes + 'm' + seconds + 's';
+    }
+};
+
+class DataConverter {
+
+    static convertToWebTreemapFormat(rootNodeName, tree)
+    {
+        return DataConverter._recursiveConvertNode(rootNodeName, tree);
+    }
+  
+    /*
+        stats.json looks like:
+        {
+            "imported": {
+                "w3c": {
+                    "web-platform-tests": {
+                        "IndexedDB": {
+                            "idbobjectstore_get4.htm": {
+                                "results": [
+                                    12,         // worker number
+                                    260,        // test number
+                                    41632,      // worker pid
+                                    50,         // test runtime (ms)
+                                    54          // total runtime (ms; includes time to run ref test, do pixel comparison etc.)
+                                ],
+                                ...
+                            }
+                        }
+                    }
+                }
+            }
+        }    
+    */
+  
+    static _recursiveConvertNode(treename, tree, path)
+    {
+        let total = 0;
+        let childCount = 0;
+        let children = [];
+        for (let name in tree) {
+            let treeNode = tree[name];
+            if ('results' in treeNode) {
+                let times = treeNode.results;
+                if (!times.hasOwnProperty('length'))
+                    continue;
+
+                let test_total_time = treeNode.results[4];
+                let node = {
+                    'data': { '$area': test_total_time },
+                    'name': name + " (" + Utils.humanReadableTime(test_total_time) + ")"
+                };
+                children.push(node);
+                total += test_total_time;
+                childCount++;
+            } else {
+                let newPath = path ? path + '/' + name : name;
+                let subtree = DataConverter._recursiveConvertNode(name, treeNode, newPath);
+                children.push(subtree);
+                total += subtree['data']['$area'];
+                childCount += subtree['childCount'];
+            }
+        }
+
+        children.sort(function(a, b) {
+            let aTime = a.data['$area']
+            let bTime = b.data['$area']
+            return bTime - aTime;
+        });
+
+        return {
+            'data': { '$area': total },
+            'name': treename + ' (' + Utils.humanReadableTime(total) + ' - ' + childCount + ' tests)',
+            'children': children,
+            'childCount': childCount,
+            'path': path
+        };
+    }
+};
+
+let treeMapController;
+class TreeMapController {
+  
+    constructor(statsJSONString, containerElement)
+    {
+        let jsonData = JSON.parse(statsJSONString);
+        this.treeMapData = DataConverter.convertToWebTreemapFormat('LayoutTests', jsonData);
+        this.treeMap = new WebTreeMap(this.treeMapData, containerElement);
+    }
+    
+    resetZoom()
+    {
+        focus(this.webTreeMap);
+    }
+};
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function setupInterface()
+{
+    // See if we have a file to load specified in the query string.
+    let query_parameters = {};
+    let pairs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    let filename = 'stats.json';
+
+    for (let i = 0; i < pairs.length; i++) {
+        let pair = pairs[i].split('=');
+        query_parameters[pair[0]] = decodeURIComponent(pair[1]);
+    }
+
+    if ('filename' in query_parameters)
+        filename = query_parameters['filename'];
+
+    // This is used for local files, so we can't use fetch().
+    var request = new XMLHttpRequest();
+    request.open("GET", filename, true);
+    request.addEventListener('load', () => {
+        treeMapController = new TreeMapController(request.responseText, document.getElementById('map'));
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+    request.addEventListener('error', () => {
+        console.log('Failed to load stats.json');
+    });
+    request.send();
+
+    let drop_target = document.getElementById('dropTarget');
+
+    drop_target.addEventListener('dragenter', function (e) {
+        drop_target.className = 'dragOver';
+        e.stopPropagation();
+        e.preventDefault();
+    }, false);
+
+    drop_target.addEventListener('dragover', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }, false);
+
+    drop_target.addEventListener('dragleave', function (e) {
+        drop_target.className = '';
+        e.stopPropagation();
+        e.preventDefault();
+    }, false);
+
+    drop_target.addEventListener('drop', function (e) {
+        drop_target.className = '';
+        e.stopPropagation();
+        e.preventDefault();
+
+        for (let i = 0; i < e.dataTransfer.files.length; ++i) {
+            let file = e.dataTransfer.files[i];
+
+            let reader = new FileReader();
+            reader.filename = file.name;
+            reader.onload = function(e) {
+                treeMapController = new TreeMapController(reader.result, document.getElementById('map'));
+            };
+
+            reader.readAsText(file);
+            document.title = 'Test result times: ' + reader.filename;
+        }
+    }, false);
+}
+
+window.addEventListener('load', setupInterface, false);
+</script>
+<body>
+<header>
+    <div id="dropTarget">Drop stats.json file here to load.</div>
+    <p>Click on a box to zoom in. Click on the outermost box to zoom out. <a href="" onclick="treeMapController.resetZoom()">Reset</a></p>
+    </div>
+</header>
+<section id='map'></section>
+</body>
+</html>
