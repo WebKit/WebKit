@@ -1,3 +1,21 @@
+2020-09-08  Rob Buis  <rbuis@igalia.com>
+
+        Fix crash in image-loading-lazy-slow.html WPT test
+        https://bugs.webkit.org/show_bug.cgi?id=215998
+
+        Reviewed by Youenn Fablet.
+
+        When setting images to an empty src, make sure
+        to reset any lazy image load information.
+
+        * html/LazyLoadImageObserver.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::elementDidMoveToNewDocument):
+        (WebCore::ImageLoader::resetLazyImageLoading):
+        * loader/ImageLoader.h:
+        (WebCore::ImageLoader::isDeferred const):
+
 2020-09-08  Antti Koivisto  <antti@apple.com>
 
         Comparing styles with large but identical custom property maps is slow

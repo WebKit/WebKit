@@ -1,3 +1,14 @@
+2020-09-08  Rob Buis  <rbuis@igalia.com>
+
+        Fix crash in image-loading-lazy-slow.html WPT test
+        https://bugs.webkit.org/show_bug.cgi?id=215998
+
+        Reviewed by Youenn Fablet.
+
+        Adjust image-loading-lazy-slow.html to enable lazy image loading.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-slow.html:
+
 2020-09-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Don't skip flexboxes with auto height for percentage computations in quirks mode

@@ -38,6 +38,8 @@ public:
     static void observe(Element&);
     static void unobserve(Element&, Document&);
 
+    bool isObserved(Element&) const;
+
 private:
     friend class Document;
 
@@ -48,7 +50,6 @@ private:
     LazyLoadImageObserver() = default;
 
     IntersectionObserver* intersectionObserver(Document&);
-    bool isObserved(Element&) const;
 
     // The intersection observer responsible for loading the image once it's near the viewport.
     RefPtr<IntersectionObserver> m_lazyLoadIntersectionObserver;

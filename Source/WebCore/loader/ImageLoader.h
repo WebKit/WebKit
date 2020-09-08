@@ -81,7 +81,7 @@ public:
 
     void loadDeferredImage();
 
-    bool isDeferred() const { return m_lazyImageLoadState == LazyImageLoadState::Deferred; }
+    bool isDeferred() const { return m_lazyImageLoadState == LazyImageLoadState::Deferred || m_lazyImageLoadState == LazyImageLoadState::LoadImmediately; }
 
     Document& document() { return m_element.document(); }
 
@@ -90,6 +90,7 @@ protected:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
 private:
+    void resetLazyImageLoading(Document&);
     enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };
 
     virtual void dispatchLoadEvent() = 0;

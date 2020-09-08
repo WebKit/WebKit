@@ -275,7 +275,8 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             // being queued to fire. Ensure this happens after beforeload is
             // dispatched.
             newImage->addClient(*this);
-        }
+        } else
+            resetLazyImageLoading(element().document());
         if (oldImage) {
             oldImage->removeClient(*this);
             updateRenderer();
@@ -578,9 +579,7 @@ void ImageLoader::elementDidMoveToNewDocument(Document& oldDocument)
 {
     clearFailedLoadURL();
     clearImage();
-    if (isDeferred())
-        LazyLoadImageObserver::unobserve(element(), oldDocument);
-    m_lazyImageLoadState = LazyImageLoadState::None;
+    resetLazyImageLoading(oldDocument);
 }
 
 inline void ImageLoader::clearFailedLoadURL()
@@ -594,6 +593,13 @@ void ImageLoader::loadDeferredImage()
         return;
     m_lazyImageLoadState = LazyImageLoadState::LoadImmediately;
     updateFromElement(RelevantMutation::No);
+}
+
+void ImageLoader::resetLazyImageLoading(Document& document)
+{
+    if (isDeferred())
+        LazyLoadImageObserver::unobserve(element(), document);
+    m_lazyImageLoadState = LazyImageLoadState::None;
 }
 
 }

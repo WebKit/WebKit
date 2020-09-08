@@ -543,6 +543,7 @@ imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-modify-scrolling-attr-to-yes.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-slow-aspect-ratio.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-slow.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/dynamic-content-change-rendering.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-cr.html [ ImageOnlyFailure ]
