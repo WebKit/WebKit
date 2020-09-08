@@ -40,7 +40,7 @@ function testCanvas(testName, canvas, isSame, count)
     if (isEqual === isSame)
         return;
 
-    if (count === 40)
+    if (count === 200)
         return Promise.reject(testName + " failed: tried " + count + " to get " + isSame + " but got " + isEqual);
 
     return waitFor(50).then(() => {

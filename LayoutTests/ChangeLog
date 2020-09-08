@@ -1,5 +1,16 @@
 2020-09-08  Youenn Fablet  <youenn@apple.com>
 
+        Fix Internals::supportsVCPEncoder on BigSur
+        https://bugs.webkit.org/show_bug.cgi?id=216174
+        <rdar://problem/66492801>
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html:
+        Increase timeout.
+
+2020-09-08  Youenn Fablet  <youenn@apple.com>
+
         Do not use mouse events in http/wpt/html/dom/elements/images/hover-image-change.html
         https://bugs.webkit.org/show_bug.cgi?id=216265
 
