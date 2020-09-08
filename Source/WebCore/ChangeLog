@@ -1,3 +1,81 @@
+2020-09-08  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Add support for partial interface mixins
+        https://bugs.webkit.org/show_bug.cgi?id=216255
+
+        Reviewed by Darin Adler.
+
+        Add support for WebIDL 'partial interface mixins' and adopt them for a few
+        supplements of the DocumentOrShadowRoot mixin.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * dom/DocumentOrShadowRoot.idl:
+        * css/DocumentOrShadowRootStyleSheets.idl: Added.
+        * dom/DocumentOrShadowRootPointerLock.idl: Added.
+        * Modules/pictureinpicture/DocumentOrShadowRootPictureInPicture.idl: Added.
+        * animation/DocumentOrShadowRootAnimations.idl: Added.
+        Add new split-out IDLs.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GenerateEmptyHeaderAndCpp):
+        Move empty file generation here (from generate-bindings.pl), allowing
+        for a simplified compilation model, where all IDLs given to generate-bindings.pl
+        now instantiate the CodeGenerator and it is the CodeGenerators job to figure
+        out if the file needs anything generated. This allows the dependencies file
+        to get out of the business of indicating that an IDL doesn't need generation,
+        and stick to just listing dependencies. This is important now that dependencies
+        like interface mixins can now have depencies of their own, partial interface mixins.
+
+        (ProcessInterfaces):
+        (ProcessDictionaries):
+        Move logic to avoid generation of mixins and partials here.
+
+        (ProcessInterfaceSupplementalDependencies):
+        Support recursively processing supplemental dependencies for partial interface
+        mixins. Ensure that we don't evaluate exposure when doing this, as that should
+        only happen on the final interface.
+
+        (shouldPropertyBeExposed):
+        Move all logic for exposure here, rather than splitting it up between here
+        and ProcessInterfaceSupplementalDependencies/ProcessDictionarySupplementalDependencies
+        
+        * bindings/scripts/generate-bindings.pl:
+        (generateBindings):
+        (generateEmptyHeaderAndCpp): Deleted.
+        Remove support for unused additionalIdlFiles option and simplify things
+        by having CodeGenerator work out whether it should generate an empty set of
+        files based on the files themselves rather than inferring it from the dependency
+        information.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (getPartialNamesFromIDL):
+        Add support for properly parsing partial interface mixins and stop disallowing
+        dependencies, like a mixin interface, from having its own dependences.
+
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp:
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.h:
+        * bindings/scripts/test/JS/JSTestIncludes.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestIncludes.h: Removed.
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMixinInterface.cpp: Added.
+        * bindings/scripts/test/JS/JSTestMixinInterface.h: Added.
+        * bindings/scripts/test/JS/JSTestPartialMixinInterface.cpp: Added.
+        * bindings/scripts/test/JS/JSTestPartialMixinInterface.h: Added.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestConditionalIncludes.idl:
+        * bindings/scripts/test/TestIncludes.idl: Removed.
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestMixinInterface.idl: Added.
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestPartialMixinInterface.idl: Added.
+        Rename TestIncludes to TestMixinInterface (since that is what it is testing)
+        and add TestPartialMixinInterface to test partial interface mixins.
+
 2020-09-08  Peng Liu  <peng.liu6@apple.com>
 
         Web process crashes at WebCore::HTMLMediaElement::prepareForVideoFullscreenStandby

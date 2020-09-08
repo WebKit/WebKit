@@ -463,8 +463,8 @@ enum TestConfidence { "high", "kinda-low" };
 };
 
 // The following comments should not generate any code.
-// TestObj includes TestIncludes;
-/* TestObj includes TestIncludes; */
+// TestObj includes TestMixinInterface;
+/* TestObj includes TestMixinInterface; */
 
 typedef any AnyTypedef;
 

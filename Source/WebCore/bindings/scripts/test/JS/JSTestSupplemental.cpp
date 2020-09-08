@@ -1,6 +1,5 @@
 /*
-    This file is generated just to tell build scripts that JSTestSupplemental.h and
-    JSTestSupplemental.cpp are created for TestSupplemental.idl, and thus
-    prevent the build scripts from trying to generate JSTestSupplemental.h and
-    JSTestSupplemental.cpp at every build. This file must not be tried to compile.
+    This file is generated to inform build scripts that JSTestSupplemental.h and
+    JSTestSupplemental.cpp were created for TestSupplemental.idl, and prevent the build
+    scripts from trying to regenerate JSTestSupplemental.h and JSTestSupplemental.cpp on every build.
 */

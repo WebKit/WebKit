@@ -353,6 +353,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/paymentrequest/PaymentShippingOption.idl \
     $(WebCore)/Modules/paymentrequest/PaymentShippingType.idl \
     $(WebCore)/Modules/paymentrequest/PaymentValidationErrors.idl \
+    $(WebCore)/Modules/pictureinpicture/DocumentOrShadowRootPictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/DocumentPictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl \
     $(WebCore)/Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl \
@@ -598,6 +599,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/CompositeOperation.idl \
     $(WebCore)/animation/CompositeOperationOrAuto.idl \
     $(WebCore)/animation/ComputedEffectTiming.idl \
+    $(WebCore)/animation/DocumentOrShadowRootAnimations.idl \
     $(WebCore)/animation/DocumentTimeline.idl \
     $(WebCore)/animation/DocumentTimelineOptions.idl \
     $(WebCore)/animation/EffectTiming.idl \
@@ -654,6 +656,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/CSSStyleSheet.idl \
     $(WebCore)/css/CSSSupportsRule.idl \
     $(WebCore)/css/CSSUnknownRule.idl \
+    $(WebCore)/css/DocumentOrShadowRootStyleSheets.idl \
     $(WebCore)/css/DOMCSSCustomPropertyDescriptor.idl \
     $(WebCore)/css/DOMCSSNamespace.idl \
     $(WebCore)/css/DOMCSSPaintWorklet.idl \
@@ -724,6 +727,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DocumentFullscreen.idl \
     $(WebCore)/dom/DocumentFragment.idl \
     $(WebCore)/dom/DocumentOrShadowRoot.idl \
+    $(WebCore)/dom/DocumentOrShadowRootPointerLock.idl \
     $(WebCore)/dom/DocumentStorageAccess.idl \
     $(WebCore)/dom/DocumentType.idl \
     $(WebCore)/dom/DragEvent.idl \

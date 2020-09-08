@@ -33,4 +33,4 @@ interface TestConditionalIncludes {
     readonly attribute double testAttr;
 };
 
-[Conditional=Condition12, EnabledBySetting=TestSetting2] TestConditionalIncludes includes TestIncludes;
+[Conditional=Condition12, EnabledBySetting=TestSetting2] TestConditionalIncludes includes TestMixinInterface;

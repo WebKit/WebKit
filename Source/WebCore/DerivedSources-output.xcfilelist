@@ -544,6 +544,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentFullscreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentFullscreen.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRootAnimations.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRootAnimations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRootPictureInPicture.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRootPictureInPicture.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRootPointerLock.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRootPointerLock.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRootStyleSheets.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRootStyleSheets.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentPictureInPicture.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentPictureInPicture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentStorageAccess.cpp

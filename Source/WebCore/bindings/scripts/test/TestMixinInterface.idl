@@ -31,21 +31,19 @@
 // changes in its output.
 [
     Conditional=Condition22|Condition23
-] interface mixin TestIncludes {
-    readonly attribute DOMString includesStr1;
-    attribute DOMString includesStr2;
-    [CustomGetter, CustomSetter] attribute DOMString includesStr3;
-    attribute Node includesNode;
+] interface mixin TestMixinInterface {
+    readonly attribute DOMString mixinReadOnlyAttribute;
+    attribute DOMString mixinAttribute;
+    [CustomGetter, CustomSetter] attribute DOMString mixinCustomAttribute;
+    attribute Node mixinNodeAttribute;
 
-    undefined includesMethod1();
-    [CallWith=ScriptExecutionContext, MayThrowException] TestObj includesMethod2(DOMString strArg, TestObj objArg);
-    [Custom] undefined includesMethod3();
-    [Conditional=Condition11] undefined includesMethodConditional();
-    [EnabledBySetting=TestSetting] undefined includesMethodSettingsConditional();
+    undefined mixinOperation();
+    [CallWith=ScriptExecutionContext, MayThrowException] TestObj mixinComplexOperation(DOMString strArg, TestObj objArg);
+    [Custom] undefined mixinCustomOperation();
+    [Conditional=Condition11] undefined mixinConditionalOperation();
+    [EnabledBySetting=TestSetting] undefined mixinSettingsConditionalOperation();
+    [ResultField=nodes] sequence<Node> mixinResultFieldOperation();
 
-    const unsigned short INCLUDES_CONSTANT1 = 1;
-    [Reflect=CONST_IMPL] const unsigned short INCLUDES_CONSTANT2 = 2;
-
-    [ResultField=nodes] sequence<Node> takeNodes();
+    const unsigned short MIXIN_CONSTANT = 1;
+    [Reflect=CONST_IMPL] const unsigned short MIXIN_REFLECTED_CONSTANT = 2;
 };
-

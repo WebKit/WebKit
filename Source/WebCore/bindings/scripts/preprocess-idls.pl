@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 #
 # Copyright (C) 2011 Google Inc.  All rights reserved.
+# Copyright (C) 2020 Apple Inc.  All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -254,6 +255,12 @@ GeneratePartialInterface("WorkletGlobalScope", $workletGlobalScopeConstructorsCo
 GeneratePartialInterface("PaintWorkletGlobalScope", $paintWorkletGlobalScopeConstructorsCode, $paintWorkletGlobalScopeConstructorsFile);
 GeneratePartialInterface($testGlobalContextName, $testGlobalScopeConstructorsCode, $testGlobalScopeConstructorsFile) if defined($testGlobalContextName);
 
+if ($isoSubspacesHeaderFile) {
+    $isoSubspacesHeaderCode .= "};\n";
+    $isoSubspacesHeaderCode .= "} // namespace WebCore\n";
+    WriteFileIfChanged($isoSubspacesHeaderFile, $isoSubspacesHeaderCode);
+}
+
 # Resolves partial interfaces and include dependencies.
 foreach my $idlFilePath (sort keys %supplementalDependencies) {
     my $baseFiles = $supplementalDependencies{$idlFilePath};
@@ -261,13 +268,6 @@ foreach my $idlFilePath (sort keys %supplementalDependencies) {
         my $targetIdlFilePath = $interfaceNameToIdlFilePath{$baseFile} or die "${baseFile}.idl not found, but it is supplemented by $idlFilePath";
         push(@{$supplementals{$targetIdlFilePath}}, $idlFilePath);
     }
-    delete $supplementals{$idlFilePath};
-}
-
-if ($isoSubspacesHeaderFile) {
-    $isoSubspacesHeaderCode .= "};\n";
-    $isoSubspacesHeaderCode .= "} // namespace WebCore\n";
-    WriteFileIfChanged($isoSubspacesHeaderFile, $isoSubspacesHeaderCode);
 }
 
 # Outputs the dependency.
@@ -280,7 +280,6 @@ if ($isoSubspacesHeaderFile) {
 #
 # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
 # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
-# The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
 my $dependencies = "";
 foreach my $idlFilePath (sort keys %supplementals) {
     $dependencies .= "$idlFilePath @{$supplementals{$idlFilePath}}\n";
@@ -460,8 +459,13 @@ sub getPartialNamesFromIDL
     my $fileContents = $idlFile->fileContents;
 
     my @partialNames = ();
+    while ($fileContents =~ /partial\s+interface\s+mixin\s+(\w+)/mg) {
+        push(@partialNames, $1);
+    }
+
+    $fileContents = $idlFile->fileContents;
     while ($fileContents =~ /partial\s+(interface|dictionary|namespace)\s+(\w+)/mg) {
-        push(@partialNames, $2);
+        push(@partialNames, $2) if $2 ne "mixin";
     }
     
     if ($validateAgainstParser) {

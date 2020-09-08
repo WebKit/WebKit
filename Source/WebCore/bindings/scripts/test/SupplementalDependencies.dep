@@ -45,10 +45,10 @@ WebDOMTestCallbackInterface.h:
 JSTestClassWithJSBuiltinConstructor.h: 
 DOMTestClassWithJSBuiltinConstructor.h: 
 WebDOMTestClassWithJSBuiltinConstructor.h: 
-JSTestConditionalIncludes.h: TestIncludes.idl
-DOMTestConditionalIncludes.h: TestIncludes.idl
-WebDOMTestConditionalIncludes.h: TestIncludes.idl
-TestIncludes.idl:
+JSTestConditionalIncludes.h: TestMixinInterface.idl
+DOMTestConditionalIncludes.h: TestMixinInterface.idl
+WebDOMTestConditionalIncludes.h: TestMixinInterface.idl
+TestMixinInterface.idl:
 JSTestDOMJIT.h: 
 DOMTestDOMJIT.h: 
 WebDOMTestDOMJIT.h: 
@@ -100,10 +100,10 @@ TestSupplemental.idl:
 JSTestInheritedDictionary2.h: 
 DOMTestInheritedDictionary2.h: 
 WebDOMTestInheritedDictionary2.h: 
-JSTestInterface.h: TestIncludes.idl TestSupplemental.idl
-DOMTestInterface.h: TestIncludes.idl TestSupplemental.idl
-WebDOMTestInterface.h: TestIncludes.idl TestSupplemental.idl
-TestIncludes.idl:
+JSTestInterface.h: TestMixinInterface.idl TestSupplemental.idl
+DOMTestInterface.h: TestMixinInterface.idl TestSupplemental.idl
+WebDOMTestInterface.h: TestMixinInterface.idl TestSupplemental.idl
+TestMixinInterface.idl:
 TestSupplemental.idl:
 JSTestInterfaceLeadingUnderscore.h: 
 DOMTestInterfaceLeadingUnderscore.h: 
@@ -126,6 +126,10 @@ WebDOMTestLegacyOverrideBuiltIns.h:
 JSTestMapLike.h: 
 DOMTestMapLike.h: 
 WebDOMTestMapLike.h: 
+JSTestMixinInterface.h: TestPartialMixinInterface.idl
+DOMTestMixinInterface.h: TestPartialMixinInterface.idl
+WebDOMTestMixinInterface.h: TestPartialMixinInterface.idl
+TestPartialMixinInterface.idl:
 JSTestNamedAndIndexedSetterNoIdentifier.h: 
 DOMTestNamedAndIndexedSetterNoIdentifier.h: 
 WebDOMTestNamedAndIndexedSetterNoIdentifier.h: 
@@ -186,6 +190,9 @@ WebDOMTestNode.h:
 JSTestObj.h: 
 DOMTestObj.h: 
 WebDOMTestObj.h: 
+JSTestOperationBase.h: 
+DOMTestOperationBase.h: 
+WebDOMTestOperationBase.h: 
 JSTestOperationConditional.h: TestOperationBase.idl
 DOMTestOperationConditional.h: TestOperationBase.idl
 WebDOMTestOperationConditional.h: TestOperationBase.idl

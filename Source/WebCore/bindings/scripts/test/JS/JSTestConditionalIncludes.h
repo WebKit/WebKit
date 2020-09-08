@@ -60,15 +60,15 @@ public:
 
     // Custom attributes
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    JSC::JSValue includesStr3(JSC::JSGlobalObject&) const;
+    JSC::JSValue mixinCustomAttribute(JSC::JSGlobalObject&) const;
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    void setIncludesStr3(JSC::JSGlobalObject&, JSC::JSValue);
+    void setMixinCustomAttribute(JSC::JSGlobalObject&, JSC::JSValue);
 #endif
 
     // Custom functions
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    JSC::JSValue includesMethod3(JSC::JSGlobalObject&, JSC::CallFrame&);
+    JSC::JSValue mixinCustomOperation(JSC::JSGlobalObject&, JSC::CallFrame&);
 #endif
 protected:
     JSTestConditionalIncludes(JSC::Structure*, JSDOMGlobalObject&, Ref<TestConditionalIncludes>&&);

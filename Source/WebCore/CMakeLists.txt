@@ -427,6 +427,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/paymentrequest/PaymentShippingType.idl
     Modules/paymentrequest/PaymentValidationErrors.idl
 
+    Modules/pictureinpicture/DocumentOrShadowRootPictureInPicture.idl
     Modules/pictureinpicture/DocumentPictureInPicture.idl
     Modules/pictureinpicture/EnterPictureInPictureEvent.idl
     Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl
@@ -641,6 +642,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/CompositeOperation.idl
     animation/CompositeOperationOrAuto.idl
     animation/ComputedEffectTiming.idl
+    animation/DocumentOrShadowRootAnimations.idl
     animation/DocumentTimeline.idl
     animation/DocumentTimelineOptions.idl
     animation/FillMode.idl
@@ -700,6 +702,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSStyleSheet.idl
     css/CSSSupportsRule.idl
     css/CSSUnknownRule.idl
+    css/DocumentOrShadowRootStyleSheets.idl
     css/DOMCSSCustomPropertyDescriptor.idl
     css/DOMCSSNamespace.idl
     css/DOMCSSPaintWorklet.idl
@@ -773,6 +776,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DocumentFragment.idl
     dom/DocumentFullscreen.idl
     dom/DocumentOrShadowRoot.idl
+    dom/DocumentOrShadowRootPointerLock.idl
     dom/DocumentStorageAccess.idl
     dom/DocumentTouch.idl
     dom/DocumentType.idl

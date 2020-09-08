@@ -1,6 +1,5 @@
 /*
-    This file is generated just to tell build scripts that JSPaintWorkletGlobalScopeConstructors.h and
-    JSPaintWorkletGlobalScopeConstructors.cpp are created for PaintWorkletGlobalScopeConstructors.idl, and thus
-    prevent the build scripts from trying to generate JSPaintWorkletGlobalScopeConstructors.h and
-    JSPaintWorkletGlobalScopeConstructors.cpp at every build. This file must not be tried to compile.
+    This file is generated to inform build scripts that JSPaintWorkletGlobalScopeConstructors.h and
+    JSPaintWorkletGlobalScopeConstructors.cpp were created for PaintWorkletGlobalScopeConstructors.idl, and prevent the build
+    scripts from trying to regenerate JSPaintWorkletGlobalScopeConstructors.h and JSPaintWorkletGlobalScopeConstructors.cpp on every build.
 */

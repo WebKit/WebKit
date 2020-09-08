@@ -64,10 +64,10 @@ public:
 
     // Custom attributes
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    JSC::JSValue includesStr3(JSC::JSGlobalObject&) const;
+    JSC::JSValue mixinCustomAttribute(JSC::JSGlobalObject&) const;
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    void setIncludesStr3(JSC::JSGlobalObject&, JSC::JSValue);
+    void setMixinCustomAttribute(JSC::JSGlobalObject&, JSC::JSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalStr3(JSC::JSGlobalObject&) const;
@@ -78,7 +78,7 @@ public:
 
     // Custom functions
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    JSC::JSValue includesMethod3(JSC::JSGlobalObject&, JSC::CallFrame&);
+    JSC::JSValue mixinCustomOperation(JSC::JSGlobalObject&, JSC::CallFrame&);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalMethod3(JSC::JSGlobalObject&, JSC::CallFrame&);

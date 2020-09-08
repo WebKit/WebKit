@@ -40,4 +40,4 @@
     iterable<TestNode, TestObj>;
 };
 
-TestInterface includes TestIncludes;
+TestInterface includes TestMixinInterface;

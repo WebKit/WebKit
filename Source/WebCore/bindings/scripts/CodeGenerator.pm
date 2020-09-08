@@ -196,6 +196,30 @@ sub ProcessDocument
     die "Processing document " . $useDocument->fileName . " did not generate anything.";
 }
 
+sub GenerateEmptyHeaderAndCpp
+{
+    my ($object, $useDocument, $codeGenerator) = @_;
+
+    my $targetName = fileparse($useDocument->fileName, ".idl");
+    my $prefix = $codeGenerator->FileNamePrefix();
+
+    my $headerName = "${prefix}${targetName}.h";
+    my $cppName = "${prefix}${targetName}.cpp";
+    my $contents = "/*
+    This file is generated to inform build scripts that ${headerName} and
+    ${cppName} were created for ${targetName}.idl, and prevent the build
+    scripts from trying to regenerate ${headerName} and ${cppName} on every build.
+*/
+";
+    open FH, "> ${useOutputHeadersDir}/${headerName}" or die "Cannot open ${headerName}\n";
+    print FH $contents;
+    close FH;
+
+    open FH, "> ${useOutputDir}/${cppName}" or die "Cannot open ${cppName}\n";
+    print FH $contents;
+    close FH;
+}
+
 sub ProcessDictionaryAndEnumerationImplementedAsOverrides
 {
     my ($object, $useDocument) = @_;
@@ -219,6 +243,11 @@ sub ProcessInterfaces
 
     die "Multiple interfaces per document are not supported" if @{$useDocument->interfaces} > 1;
     my $interface = $useDocument->interfaces->[0];
+    
+    if ($interface->isMixin || $interface->isPartial) {
+        $object->GenerateEmptyHeaderAndCpp($useDocument, $codeGenerator);
+        return;
+    }
 
     $object->ProcessInterfaceSupplementalDependencies($interface, $useDocument);
     $object->ProcessDictionaryAndEnumerationImplementedAsOverrides($useDocument);
@@ -260,6 +289,11 @@ sub ProcessDictionaries
             }
         }
         die "Multiple dictionaries per document are only supported if one matches the filename" unless $dictionary;
+    }
+
+    if ($dictionary->isPartial) {
+        $object->GenerateEmptyHeaderAndCpp($useDocument, $codeGenerator);
+        return;
     }
 
     $object->ProcessDictionarySupplementalDependencies($dictionary, $useDocument);
@@ -343,9 +377,6 @@ sub ProcessInterfaceSupplementalDependencies
 
     my $targetFileName = fileparse($targetDocument->fileName);
 
-    # FIXME: Add support for processing recursive supplemental dependencies
-    # to provide support for partial interface mixins.
-
     # FIXME: Currently, we require all the includes statements to be in the
     # same file as the interface they are being mixed into, but that restriction
     # is artificial and we could add support for includes statements elsewhere.
@@ -360,10 +391,6 @@ sub ProcessInterfaceSupplementalDependencies
         }
     }
 
-    my $exposedAttribute = $targetInterface->extendedAttributes->{"Exposed"} || "Window";
-    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
-    my @targetGlobalContexts = split(",", $exposedAttribute);
-
     foreach my $idlFile (@{$supplementalDependencies->{$targetFileName}}) {
         next if fileparse($idlFile) eq $targetFileName;
 
@@ -374,15 +401,21 @@ sub ProcessInterfaceSupplementalDependencies
         foreach my $interface (@{$document->interfaces}) {
             next unless $object->IsValidSupplementalInterface($interface, $targetInterface, \%includesMap);
 
+            if ($interface->isMixin && !$interface->isPartial) {
+                # Recursively process any supplemental dependencies for each valid mixin. This
+                # allows partial partial interface mixins to be merged into the mixin.
+                $object->ProcessInterfaceSupplementalDependencies($interface, $document);
+            }
+
             # Support for attributes from supplemental interfaces.
             foreach my $attribute (@{$interface->attributes}) {
-                next unless shouldPropertyBeExposed($attribute, \@targetGlobalContexts);
+                next unless $targetInterface->isMixin || shouldPropertyBeExposed($attribute, $targetInterface);
 
-                if ($interface->isPartial) {
+                if ($interface->isPartial && !$interface->isMixin) {
                     $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if !$attribute->extendedAttributes->{Reflect};
                 }
 
-                if ($interface->isMixin) {
+                if ($interface->isMixin && !$interface->isPartial) {
                     # Add includes statement specific extended attributes to each attribute.
                     $object->MergeExtendedAttributesFromSupplemental($includesMap{$interface->type->name}->extendedAttributes, $attribute, "attribute");
                 }
@@ -395,13 +428,13 @@ sub ProcessInterfaceSupplementalDependencies
 
             # Support for operations from supplemental interfaces.
             foreach my $operation (@{$interface->operations}) {
-                next unless shouldPropertyBeExposed($operation, \@targetGlobalContexts);
+                next unless $targetInterface->isMixin || shouldPropertyBeExposed($operation, $targetInterface);
 
-                if ($interface->isPartial) {
+                if ($interface->isPartial && !$interface->isMixin) {
                     $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName;
                 }
 
-                if ($interface->isMixin) {
+                if ($interface->isMixin && !$interface->isPartial) {
                     # Add includes statement specific extended attributes to each operation.
                     $object->MergeExtendedAttributesFromSupplemental($includesMap{$interface->type->name}->extendedAttributes, $operation, "operation");
                 }
@@ -414,13 +447,13 @@ sub ProcessInterfaceSupplementalDependencies
 
             # Support for constants from supplemental interfaces.
             foreach my $constant (@{$interface->constants}) {
-                next unless shouldPropertyBeExposed($constant, \@targetGlobalContexts);
+                next unless $targetInterface->isMixin || shouldPropertyBeExposed($constant, $targetInterface);
 
-                if ($interface->isPartial) {
+                if ($interface->isPartial && !$interface->isMixin) {
                     $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName;
                 }
 
-                if ($interface->isMixin) {
+                if ($interface->isMixin && !$interface->isPartial) {
                     # Add includes statement specific extended attributes to each operation.
                     $object->MergeExtendedAttributesFromSupplemental($includesMap{$interface->type->name}->extendedAttributes, $constant, "constant");
                 }
@@ -440,10 +473,6 @@ sub ProcessDictionarySupplementalDependencies
 
     return unless $supplementalDependencies;
 
-    my $exposedAttribute = $targetDictionary->extendedAttributes->{"Exposed"} || "Window";
-    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
-    my @targetGlobalContexts = split(",", $exposedAttribute);
-
     my $targetFileName = fileparse($targetDocument->fileName);
     foreach my $idlFile (@{$supplementalDependencies->{$targetFileName}}) {
         next if fileparse($idlFile) eq $targetFileName;
@@ -457,7 +486,7 @@ sub ProcessDictionarySupplementalDependencies
 
             # Support for members of partial dictionaries.
             foreach my $member (@{$dictionary->members}) {
-                next unless shouldPropertyBeExposed($member, \@targetGlobalContexts);
+                next unless shouldPropertyBeExposed($member, $targetDictionary);
 
                 $member->extendedAttributes->{"ImplementedBy"} = $dictionaryName;
 
@@ -474,7 +503,11 @@ sub ProcessDictionarySupplementalDependencies
 # on which global contexts they should be exposed.
 sub shouldPropertyBeExposed
 {
-    my ($context, $targetGlobalContexts) = @_;
+    my ($context, $target) = @_;
+
+    my $exposedAttribute = $target->extendedAttributes->{"Exposed"} || "Window";
+    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+    my @targetGlobalContexts = split(",", $exposedAttribute);
 
     my $exposed = $context->extendedAttributes->{Exposed};
 
@@ -483,22 +516,11 @@ sub shouldPropertyBeExposed
     $exposed = substr($exposed, 1, -1) if substr($exposed, 0, 1) eq "(";
     my @sourceGlobalContexts = split(",", $exposed);
 
-    for my $targetGlobalContext (@$targetGlobalContexts) {
+    foreach my $targetGlobalContext (@targetGlobalContexts) {
         return 1 if grep(/^$targetGlobalContext$/, @sourceGlobalContexts);
     }
+
     return 0;
-}
-
-sub FileNamePrefix
-{
-    my $object = shift;
-
-    my $ifaceName = "CodeGenerator" . $useGenerator;
-    require $ifaceName . ".pm";
-
-    # Dynamically load external code generation perl module
-    $codeGenerator = $ifaceName->new($object, $writeDependencies, $verbose);
-    return $codeGenerator->FileNamePrefix();
 }
 
 sub UpdateFile

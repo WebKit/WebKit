@@ -10126,6 +10126,10 @@
 		7C330A051DF9F95100D3395C /* JSPositionOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionOptions.cpp; sourceTree = "<group>"; };
 		7C330A061DF9F95100D3395C /* JSPositionOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPositionOptions.h; sourceTree = "<group>"; };
 		7C33F3601B4A050400502CAF /* JSDocumentFragmentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragmentCustom.cpp; sourceTree = "<group>"; };
+		7C3655692506DDB700A7882B /* DocumentOrShadowRootStyleSheets.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentOrShadowRootStyleSheets.idl; sourceTree = "<group>"; };
+		7C36556C2506DE9C00A7882B /* DocumentOrShadowRootPointerLock.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentOrShadowRootPointerLock.idl; sourceTree = "<group>"; };
+		7C36556E2506DF9900A7882B /* DocumentOrShadowRootPictureInPicture.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentOrShadowRootPictureInPicture.idl; sourceTree = "<group>"; };
+		7C3655702506E0A700A7882B /* DocumentOrShadowRootAnimations.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentOrShadowRootAnimations.idl; sourceTree = "<group>"; };
 		7C3806DB2505B18900744A7B /* AnimationFrameProvider.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimationFrameProvider.idl; sourceTree = "<group>"; };
 		7C3A91E51C963B8800D1A7E3 /* ClipboardAccessPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardAccessPolicy.h; sourceTree = "<group>"; };
 		7C3B796F1908757B00B47A2D /* UserMessageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessageHandler.cpp; sourceTree = "<group>"; };
@@ -18351,6 +18355,7 @@
 		1DEF06A2233C32DB00EE228D /* pictureinpicture */ = {
 			isa = PBXGroup;
 			children = (
+				7C36556E2506DF9900A7882B /* DocumentOrShadowRootPictureInPicture.idl */,
 				1DEF06DC233D2E1C00EE228D /* DocumentPictureInPicture.cpp */,
 				1DEF06DD233D2E1C00EE228D /* DocumentPictureInPicture.h */,
 				1DEF06DE233D2E1C00EE228D /* DocumentPictureInPicture.idl */,
@@ -21809,6 +21814,7 @@
 				7123C185204739B900789392 /* CSSTransition.idl */,
 				715AD71F2050512400D592DC /* DeclarativeAnimation.cpp */,
 				715AD71D2050512400D592DC /* DeclarativeAnimation.h */,
+				7C3655702506E0A700A7882B /* DocumentOrShadowRootAnimations.idl */,
 				71025EC41F99F096004A250C /* DocumentTimeline.cpp */,
 				71025EC51F99F096004A250C /* DocumentTimeline.h */,
 				71025ECA1F99F096004A250C /* DocumentTimeline.idl */,
@@ -28638,6 +28644,7 @@
 				947949271E03132000018D85 /* DeprecatedCSSOMValueList.h */,
 				A8D0651C0A23C1FE005E7203 /* DeprecatedCSSOMValueList.idl */,
 				0FA0A0E523AEAA35000EEB94 /* dialog.css */,
+				7C3655692506DDB700A7882B /* DocumentOrShadowRootStyleSheets.idl */,
 				4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */,
 				4BDA3FFA2151B6F300FD6604 /* DOMCSSCustomPropertyDescriptor.idl */,
 				FD677735195CAB200072E0D3 /* DOMCSSNamespace.cpp */,
@@ -29187,6 +29194,7 @@
 				CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */,
 				CE057FA41220731100A476D5 /* DocumentMarkerController.h */,
 				9B0FE8731D9E02DF004A8ACB /* DocumentOrShadowRoot.idl */,
+				7C36556C2506DE9C00A7882B /* DocumentOrShadowRootPointerLock.idl */,
 				A8C2280D11D4A59700D5A7D3 /* DocumentParser.cpp */,
 				BCCFBAE70B5152ED0001F1D7 /* DocumentParser.h */,
 				AD6E71AA1668899D00320C13 /* DocumentSharedObjectPool.cpp */,

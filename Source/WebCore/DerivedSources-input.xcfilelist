@@ -255,6 +255,7 @@ $(PROJECT_DIR)/Modules/paymentrequest/PaymentResponse.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentShippingOption.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentShippingType.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentValidationErrors.idl
+$(PROJECT_DIR)/Modules/pictureinpicture/DocumentOrShadowRootPictureInPicture.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/DocumentPictureInPicture.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl
@@ -534,6 +535,7 @@ $(PROJECT_DIR)/animation/CSSTransition.idl
 $(PROJECT_DIR)/animation/CompositeOperation.idl
 $(PROJECT_DIR)/animation/CompositeOperationOrAuto.idl
 $(PROJECT_DIR)/animation/ComputedEffectTiming.idl
+$(PROJECT_DIR)/animation/DocumentOrShadowRootAnimations.idl
 $(PROJECT_DIR)/animation/DocumentTimeline.idl
 $(PROJECT_DIR)/animation/DocumentTimelineOptions.idl
 $(PROJECT_DIR)/animation/EffectTiming.idl
@@ -616,6 +618,7 @@ $(PROJECT_DIR)/css/DeprecatedCSSOMRGBColor.idl
 $(PROJECT_DIR)/css/DeprecatedCSSOMRect.idl
 $(PROJECT_DIR)/css/DeprecatedCSSOMValue.idl
 $(PROJECT_DIR)/css/DeprecatedCSSOMValueList.idl
+$(PROJECT_DIR)/css/DocumentOrShadowRootStyleSheets.idl
 $(PROJECT_DIR)/css/ElementCSSInlineStyle.idl
 $(PROJECT_DIR)/css/FontFace.idl
 $(PROJECT_DIR)/css/FontFaceSet.idl
@@ -691,6 +694,7 @@ $(PROJECT_DIR)/dom/DocumentAndElementEventHandlers.idl
 $(PROJECT_DIR)/dom/DocumentFragment.idl
 $(PROJECT_DIR)/dom/DocumentFullscreen.idl
 $(PROJECT_DIR)/dom/DocumentOrShadowRoot.idl
+$(PROJECT_DIR)/dom/DocumentOrShadowRootPointerLock.idl
 $(PROJECT_DIR)/dom/DocumentStorageAccess.idl
 $(PROJECT_DIR)/dom/DocumentTouch.idl
 $(PROJECT_DIR)/dom/DocumentType.idl
