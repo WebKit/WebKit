@@ -14,14 +14,12 @@ environment:
 config:
   build-commands:
   - |
-    cargo --offline build --features="all,dist-server" --release
+    cargo --offline build --features="all" --release
     strip ./target/release/sccache
-    strip ./target/release/sccache-dist
 
   install-commands:
   - |
     install -D -m a+rx -t "%{install-root}%{bindir}" ./target/release/sccache 
-    install -D -m a+rx -t "%{install-root}%{bindir}" ./target/release/sccache-dist
 
 variables:
   strip-binaries: |

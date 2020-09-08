@@ -85,6 +85,10 @@ config:
       download-if: have-intel-gpu
       version: '%{freedesktop-sdk-flatpak-branch}'
 
+    Extension org.freedesktop.Sdk.Extension.rust-stable:
+      directory: 'lib/sdk/rust-stable'
+      version: '%{freedesktop-sdk-flatpak-branch}'
+
     (?):
     - arch in ["x86_64", "aarch64"]:
         Extension org.webkit.Sdk.Compat.arm:

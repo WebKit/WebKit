@@ -17,6 +17,7 @@ depends:
 - sdk/glib.bst
 - sdk/graphviz.bst
 - sdk/gst-libav.bst
+- sdk/gst-plugin-dav1d.bst
 - sdk/gst-plugins-bad.bst
 - sdk/gst-plugins-base.bst
 - sdk/gst-plugins-good.bst
@@ -56,6 +57,7 @@ depends:
 - sdk/python2.bst
 - sdk/ruby-json.bst
 - sdk/ruby-highline.bst
+- sdk/sccache.bst
 - sdk/shared-mime-info.bst
 - sdk/subversion.bst
 - sdk/woff2.bst
@@ -182,6 +184,7 @@ depends:
 - freedesktop-sdk.bst:components/perf.bst
 - freedesktop-sdk.bst:components/pipewire.bst
 - freedesktop-sdk.bst:components/pixman.bst
+- freedesktop-sdk.bst:components/procps.bst
 - freedesktop-sdk.bst:components/python3-pip.bst
 - freedesktop-sdk.bst:components/python3-setuptools.bst
 - freedesktop-sdk.bst:components/python3-sitecustomize.bst

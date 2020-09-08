@@ -10,4 +10,6 @@ sources:
 - kind: git_tag
   url: github_com:Tencent/rapidjson
   track: master
-  ref: v1.1.0-549-g8f4c021fa2f1e001d2376095928fc0532adf2ae6
+  ref: v1.1.0-565-gce81bc9edfe773667a7a4454ba81dac72ed4364c
+- kind: patch
+  path: patches/rapidjson-0001-Fix-build-warnings-emitted-by-GCC-10-on-Aarch64.patch

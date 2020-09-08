@@ -34,12 +34,6 @@ depends:
 - freedesktop-sdk.bst:components/webrtc-audio-processing.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
 
-(?):
-- arch == "aarch64":
-    variables:
-      meson-local: >-
-        -Dopenh264=disabled
-
 variables:
   meson-local: >-
     -Dpackage-origin="webkit-sdk"
@@ -85,6 +79,7 @@ variables:
     -Dopenal=disabled
     -Dopencv=disabled
     -Dopenexr=disabled
+    -Dopenh264=disabled
     -Dopenmpt=disabled
     -Dopenni2=disabled
     -Dopensles=disabled

@@ -1,3 +1,24 @@
+2020-09-08  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Follow-up fixes for 0.3 branch
+        https://bugs.webkit.org/show_bug.cgi?id=216239
+
+        Reviewed by Žan Doberšek.
+
+        * buildstream/elements/filtered.bst: Enable sccache on aarch64 too.
+        * buildstream/elements/flatpak/sdk.bst: Enable the rust extension, can be useful eg, when
+        using gst-build to have the Rust plugins enabled.
+        * buildstream/elements/freedesktop-sdk.bst: Switch to tracking branch instead of tags.
+        * buildstream/elements/sdk-build-depends/rapidjson.bst: Bump to current git master and add a
+        patch fixing aarch64 build.
+        * buildstream/elements/sdk-platform.bst: Add procps, needed at least for test-webkitpy
+        * buildstream/elements/sdk/gst-plugin-dav1d.bst: Added.
+        * buildstream/elements/sdk/gst-plugins-bad.bst: Fix build for aarch64.
+        * buildstream/elements/sdk/sccache.bst: Disable dist server, we need the client only. The
+        server builds only on x86_64 anyway.
+        * buildstream/files/gst-plugin-dav1d/Cargo.lock: Added.
+        * buildstream/patches/rapidjson-0001-Fix-build-warnings-emitted-by-GCC-10-on-Aarch64.patch: Added.
+
 2020-09-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed gardening. Mark several API-GTK tests as failures after r266697.
