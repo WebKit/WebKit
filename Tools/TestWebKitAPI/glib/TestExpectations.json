@@ -61,7 +61,10 @@
                 "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188117"}}
             },
             "/webkit/WebKitWebsiteData/storage": {
-                "expected": {"wpe": {"status": ["PASS", "FAIL"]}}
+                "expected": {
+                    "wpe": {"status": ["PASS", "FAIL"]},
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}
+                }
             },
             "/webkit/WebKitWebsiteData/configuration": {
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/205441"}}
@@ -71,6 +74,18 @@
                     "gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"},
                     "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"}
                 }
+            },
+            "/webkit/WebKitWebsiteData/service-worker-registrations": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
+            },
+            "/webkit/WebKitWebsiteData/databases": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
+            },
+            "/webkit/WebKitWebsiteData/cookies": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
+            },
+            "/webkit/WebKitWebsiteData/itp": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
             }
         }
     },
@@ -94,6 +109,12 @@
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {"wpe": {"status": ["TIMEOUT", "PASS"]}}
+            },
+            "/webkit/WebKitWebView/ephemeral": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
+            },
+            "/webkit/WebKitWebView/can-show-mime-type": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
             }
         }
     },

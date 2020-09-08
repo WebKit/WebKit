@@ -1,3 +1,9 @@
+2020-09-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed gardening. Mark several API-GTK tests as failures after r266697.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make CompactUniquePtrTuple actually work with subclassing and custom deleter
