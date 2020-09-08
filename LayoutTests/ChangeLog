@@ -1,5 +1,14 @@
 2020-09-08  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update imported/w3c/web-platform-tests/css/css-text/line-break/line-break-{strict,normal}-015.xht
+        https://bugs.webkit.org/show_bug.cgi?id=209250
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Limit image failure expectation to High Sierra & Catalina.
+
+2020-09-08  Ryan Haddad  <ryanhaddad@apple.com>
+
         [ Mac ] fast/history/page-cache-webdatabase-pending-transaction.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=207010
 
