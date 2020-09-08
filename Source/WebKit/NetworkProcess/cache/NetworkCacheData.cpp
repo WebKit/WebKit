@@ -159,6 +159,9 @@ Optional<Salt> readOrMakeSalt(const String& path)
 
     Salt salt = makeSalt();
     auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Write, FileSystem::FileAccessPermission::User);
+    if (!FileSystem::isHandleValid(file))
+        return { };
+
     bool success = static_cast<std::size_t>(FileSystem::writeToFile(file, reinterpret_cast<char*>(salt.data()), salt.size())) == salt.size();
     FileSystem::closeFile(file);
     if (!success)

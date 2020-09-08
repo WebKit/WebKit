@@ -1,3 +1,17 @@
+2020-09-08  Lauro Moura  <lmoura@igalia.com>
+
+        NetworkProcess: Check for invalid handle before writing salt file
+        https://bugs.webkit.org/show_bug.cgi?id=216285
+
+        Reviewed by Sihui Liu.
+
+        Covered by existing tests.
+
+        Fixes crashes in GTK/WPE after r266742.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::readOrMakeSalt):
+
 2020-09-08  Brady Eidson  <beidson@apple.com>
 
         Crashtracer inside PDFPlugin::createScrollbar.
