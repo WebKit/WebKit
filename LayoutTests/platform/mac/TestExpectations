@@ -237,8 +237,6 @@ compositing/rtl/rtl-iframe-relative.html [ Skip ]
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
-
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
