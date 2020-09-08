@@ -1443,12 +1443,12 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
         self.send_email_for_new_build_failure()
 
         self.descriptionDone = message
+        self.setProperty('build_finish_summary', message)
         if self.getProperty('buildername', '').lower() == 'commit-queue':
             self.setProperty('bugzilla_comment_text', message)
-            self.setProperty('build_finish_summary', message)
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
         else:
-            self.build.buildFinished([message], FAILURE)
+            self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch()])
 
     @defer.inlineCallbacks
     def getResults(self, name):
@@ -2129,13 +2129,13 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             message += ' ...'
         self.descriptionDone = message
         self.send_email_for_new_test_failures(new_failures)
+        self.setProperty('build_finish_summary', message)
 
         if self.getProperty('buildername', '').lower() == 'commit-queue':
             self.setProperty('bugzilla_comment_text', message)
-            self.setProperty('build_finish_summary', message)
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
         else:
-            self.build.buildFinished([message], FAILURE)
+            self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch()])
         return defer.succeed(None)
 
     def report_pre_existing_failures(self, clean_tree_failures, flaky_failures):

@@ -1082,7 +1082,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.expectOutcome(result=FAILURE, state_string='Patch 1234 does not build (failure)')
         rc = self.runStep()
         self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
-        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Patch 1234 does not build')
         return rc
 
     def test_patch_with_build_failure_on_commit_queue(self):
@@ -1941,7 +1941,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='Found 1 new test failure: test1 (failure)')
         rc = self.runStep()
         self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
-        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 1 new test failure: test1')
         return rc
 
     def test_consistent_failure_without_clean_tree_failures_commit_queue(self):

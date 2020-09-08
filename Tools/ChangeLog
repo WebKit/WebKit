@@ -1,5 +1,17 @@
 2020-09-08  Aakash Jain  <aakash_jain@apple.com>
 
+        EWS should set cq- flag when a patch fails to build or introduces layout-test failures
+        https://bugs.webkit.org/show_bug.cgi?id=214194
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.start): Set cq- on patch when patch fails to build.
+        (AnalyzeLayoutTestsResults.report_failure): Set cq- on patch when patch introduces layout-test failures.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
+2020-09-08  Aakash Jain  <aakash_jain@apple.com>
+
         Use https urls instead of http in webkitpy
         https://bugs.webkit.org/show_bug.cgi?id=216276
 
