@@ -466,8 +466,6 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     void addIndexedDatabaseSession(PAL::SessionID, String&, SandboxExtension::Handle&);
-    void collectIndexedDatabaseOriginsForVersion(const String&, HashSet<WebCore::SecurityOriginData>&);
-    HashSet<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
     Ref<WebIDBServer> createWebIDBServer(PAL::SessionID);
     void setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID, const String& idbRootPath);
     void removeWebIDBServerIfPossible(PAL::SessionID);
@@ -484,11 +482,6 @@ private:
 
     void addServiceWorkerSession(PAL::SessionID, bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
-
-    void postStorageTask(CrossThreadTask&&);
-    // For execution on work queue thread only.
-    void performNextStorageTask();
-    void ensurePathExists(const String& path);
 
     class SessionStorageQuotaManager {
         WTF_MAKE_FAST_ALLOCATED;
@@ -570,15 +563,10 @@ private:
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
 
-    Ref<WorkQueue> m_storageTaskQueue { WorkQueue::create("com.apple.WebKit.StorageTask") };
-
 #if ENABLE(INDEXED_DATABASE)
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;
     HashMap<PAL::SessionID, RefPtr<WebIDBServer>> m_webIDBServers;
 #endif
-
-    Deque<CrossThreadTask> m_storageTasks;
-    Lock m_storageTaskMutex;
     
 #if ENABLE(SERVICE_WORKER)
     struct ServiceWorkerInfo {

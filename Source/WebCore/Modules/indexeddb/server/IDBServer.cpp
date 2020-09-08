@@ -541,6 +541,37 @@ void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverCon
     connection->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
 }
 
+static void collectOriginsForVersion(const String& versionPath, HashSet<WebCore::SecurityOriginData>& securityOrigins)
+{
+    for (auto& topOriginPath : FileSystem::listDirectory(versionPath, "*")) {
+        auto databaseIdentifier = FileSystem::pathGetFileName(topOriginPath);
+        if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier)) {
+            securityOrigins.add(WTFMove(*securityOrigin));
+        
+            for (auto& originPath : FileSystem::listDirectory(topOriginPath, "*")) {
+                databaseIdentifier = FileSystem::pathGetFileName(originPath);
+                if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
+                    securityOrigins.add(WTFMove(*securityOrigin));
+            }
+        }
+    }
+}
+
+HashSet<SecurityOriginData> IDBServer::getOrigins() const
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_lock.isHeld());
+
+    if (m_databaseDirectoryPath.isEmpty())
+        return { };
+
+    HashSet<WebCore::SecurityOriginData> securityOrigins;
+    collectOriginsForVersion(FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v0"), securityOrigins);
+    collectOriginsForVersion(FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1"), securityOrigins);
+
+    return securityOrigins;
+}
+
 void IDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime)
 {
     ASSERT(!isMainThread());

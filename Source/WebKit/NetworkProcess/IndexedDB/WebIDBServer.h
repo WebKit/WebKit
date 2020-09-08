@@ -47,6 +47,7 @@ class WebIDBServer final : public CrossThreadTaskHandler, public IPC::Connection
 public:
     static Ref<WebIDBServer> create(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
 
+    void getOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
     void closeAndDeleteDatabasesModifiedSince(WallTime, CompletionHandler<void()>&& callback);
     void closeAndDeleteDatabasesForOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&& callback);
     void renameOrigin(const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, CompletionHandler<void()>&&);

@@ -59,6 +59,20 @@ WebIDBServer::~WebIDBServer()
     ASSERT(RunLoop::isMain());
 }
 
+void WebIDBServer::getOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&& callback)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, protectedThis = makeRef(*this), callback = WTFMove(callback)]() mutable {
+        ASSERT(!RunLoop::isMain());
+
+        LockHolder locker(m_server->lock());
+        postTaskReply(CrossThreadTask([callback = WTFMove(callback), origins = crossThreadCopy(m_server->getOrigins())]() mutable {
+            callback(WTFMove(origins));
+        }));
+    });
+}
+
 void WebIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime, CompletionHandler<void()>&& callback)
 {
     ASSERT(RunLoop::isMain());

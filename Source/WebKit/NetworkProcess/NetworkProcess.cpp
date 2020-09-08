@@ -465,11 +465,8 @@ void NetworkProcess::addSessionStorageQuotaManager(PAL::SessionID sessionID, uin
     auto isNewEntry = m_sessionStorageQuotaManagers.ensure(sessionID, [defaultQuota, defaultThirdPartyQuota, &cacheRootPath] {
         return makeUnique<SessionStorageQuotaManager>(cacheRootPath, defaultQuota, defaultThirdPartyQuota);
     }).isNewEntry;
-    if (isNewEntry) {
+    if (isNewEntry)
         SandboxExtension::consumePermanently(cacheRootPathHandle);
-        if (!cacheRootPath.isEmpty())
-            postStorageTask(createCrossThreadTask(*this, &NetworkProcess::ensurePathExists, cacheRootPath));
-    }
 }
 
 void NetworkProcess::removeSessionStorageQuotaManager(PAL::SessionID sessionID)
@@ -1558,13 +1555,10 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 #if ENABLE(INDEXED_DATABASE)
     auto path = m_idbDatabasePaths.get(sessionID);
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        // FIXME: Pick the right database store based on the session ID.
-        postStorageTask(CrossThreadTask([this, callbackAggregator, path = crossThreadCopy(path)]() mutable {
-            RunLoop::main().dispatch([callbackAggregator = WTFMove(callbackAggregator), securityOrigins = indexedDatabaseOrigins(path)] {
-                for (const auto& securityOrigin : securityOrigins)
-                    callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
-            });
-        }));
+        webIDBServer(sessionID).getOrigins([callbackAggregator](auto&& origins) {
+            while (!origins.isEmpty())
+                callbackAggregator->m_websiteData.entries.append({ origins.takeAny(), WebsiteDataType::IndexedDBDatabases, 0 });
+        });
     }
 #endif
 
@@ -1956,22 +1950,13 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
 #if ENABLE(INDEXED_DATABASE)
     auto path = m_idbDatabasePaths.get(sessionID);
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        // FIXME: Pick the right database store based on the session ID.
-        postStorageTask(CrossThreadTask([this, sessionID, callbackAggregator, path = crossThreadCopy(path), domainsToDeleteAllNonCookieWebsiteDataFor = crossThreadCopy(domainsToDeleteAllNonCookieWebsiteDataFor)]() mutable {
-            RunLoop::main().dispatch([this, sessionID, domainsToDeleteAllNonCookieWebsiteDataFor = WTFMove(domainsToDeleteAllNonCookieWebsiteDataFor), callbackAggregator, securityOrigins = indexedDatabaseOrigins(path)] {
-                Vector<SecurityOriginData> entriesToDelete;
-                for (const auto& securityOrigin : securityOrigins) {
-                    auto domain = RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host);
-                    if (!domainsToDeleteAllNonCookieWebsiteDataFor.contains(domain))
-                        continue;
+        webIDBServer(sessionID).getOrigins([this, protectedThis = makeRef(*this), sessionID, callbackAggregator, domainsToDeleteAllNonCookieWebsiteDataFor](auto&& origins) {
+            if (!m_webIDBServers.contains(sessionID))
+                return;
 
-                    entriesToDelete.append(securityOrigin);
-                    callbackAggregator->m_domains.add(domain);
-                }
-
-                webIDBServer(sessionID).closeAndDeleteDatabasesForOrigins(entriesToDelete, [callbackAggregator] { });
-            });
-        }));
+            auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllNonCookieWebsiteDataFor, callbackAggregator->m_domains);
+            webIDBServer(sessionID).closeAndDeleteDatabasesForOrigins(originsToDelete, [callbackAggregator] { });
+        });
     }
 #endif
     
@@ -2101,13 +2086,10 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
 #if ENABLE(INDEXED_DATABASE)
     auto path = m_idbDatabasePaths.get(sessionID);
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        // FIXME: Pick the right database store based on the session ID.
-        postStorageTask(CrossThreadTask([this, callbackAggregator, path = crossThreadCopy(path)]() mutable {
-            RunLoop::main().dispatch([callbackAggregator, securityOrigins = indexedDatabaseOrigins(path)] {
-                for (const auto& securityOrigin : securityOrigins)
-                    callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
-            });
-        }));
+        webIDBServer(sessionID).getOrigins([callbackAggregator](auto&& origins) {
+            while (!origins.isEmpty())
+                callbackAggregator->m_websiteData.entries.append({ origins.takeAny(), WebsiteDataType::IndexedDBDatabases, 0 });
+        });
     }
 #endif
     
@@ -2425,72 +2407,6 @@ WebIDBServer& NetworkProcess::webIDBServer(PAL::SessionID sessionID)
     }).iterator->value;
 }
 
-void NetworkProcess::ensurePathExists(const String& path)
-{
-    ASSERT(!RunLoop::isMain());
-    
-    if (!FileSystem::makeAllDirectories(path))
-        LOG_ERROR("Failed to make all directories for path '%s'", path.utf8().data());
-}
-
-void NetworkProcess::postStorageTask(CrossThreadTask&& task)
-{
-    ASSERT(RunLoop::isMain());
-    
-    LockHolder locker(m_storageTaskMutex);
-    
-    m_storageTasks.append(WTFMove(task));
-    
-    m_storageTaskQueue->dispatch([this] {
-        performNextStorageTask();
-    });
-}
-
-void NetworkProcess::performNextStorageTask()
-{
-    ASSERT(!RunLoop::isMain());
-    
-    CrossThreadTask task;
-    {
-        LockHolder locker(m_storageTaskMutex);
-        ASSERT(!m_storageTasks.isEmpty());
-        task = m_storageTasks.takeFirst();
-    }
-    
-    task.performTask();
-}
-
-void NetworkProcess::collectIndexedDatabaseOriginsForVersion(const String& path, HashSet<WebCore::SecurityOriginData>& securityOrigins)
-{
-    if (path.isEmpty())
-        return;
-
-    for (auto& topOriginPath : FileSystem::listDirectory(path, "*")) {
-        auto databaseIdentifier = FileSystem::pathGetFileName(topOriginPath);
-        if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier)) {
-            securityOrigins.add(WTFMove(*securityOrigin));
-        
-            for (auto& originPath : FileSystem::listDirectory(topOriginPath, "*")) {
-                databaseIdentifier = FileSystem::pathGetFileName(originPath);
-                if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-                    securityOrigins.add(WTFMove(*securityOrigin));
-            }
-        }
-    }
-}
-
-HashSet<WebCore::SecurityOriginData> NetworkProcess::indexedDatabaseOrigins(const String& path)
-{
-    if (path.isEmpty())
-        return { };
-    
-    HashSet<WebCore::SecurityOriginData> securityOrigins;
-    collectIndexedDatabaseOriginsForVersion(FileSystem::pathByAppendingComponent(path, "v0"), securityOrigins);
-    collectIndexedDatabaseOriginsForVersion(FileSystem::pathByAppendingComponent(path, "v1"), securityOrigins);
-
-    return securityOrigins;
-}
-
 void NetworkProcess::addIndexedDatabaseSession(PAL::SessionID sessionID, String& indexedDatabaseDirectory, SandboxExtension::Handle& handle)
 {
     // *********
@@ -2499,8 +2415,6 @@ void NetworkProcess::addIndexedDatabaseSession(PAL::SessionID sessionID, String&
     auto addResult = m_idbDatabasePaths.add(sessionID, indexedDatabaseDirectory);
     if (addResult.isNewEntry) {
         SandboxExtension::consumePermanently(handle);
-        if (!indexedDatabaseDirectory.isEmpty())
-            postStorageTask(createCrossThreadTask(*this, &NetworkProcess::ensurePathExists, indexedDatabaseDirectory));
         setSessionStorageQuotaManagerIDBRootPath(sessionID, indexedDatabaseDirectory);
     }
 }
@@ -2635,11 +2549,8 @@ void NetworkProcess::addServiceWorkerSession(PAL::SessionID sessionID, bool proc
         processTerminationDelayEnabled
     };
     auto addResult = m_serviceWorkerInfo.add(sessionID, WTFMove(info));
-    if (addResult.isNewEntry) {
+    if (addResult.isNewEntry)
         SandboxExtension::consumePermanently(handle);
-        if (!addResult.iterator->value.databasePath.isEmpty())
-            postStorageTask(createCrossThreadTask(*this, &NetworkProcess::ensurePathExists, addResult.iterator->value.databasePath));
-    }
 }
 #endif // ENABLE(SERVICE_WORKER)
 
