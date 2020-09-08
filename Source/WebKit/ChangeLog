@@ -1,3 +1,13 @@
+2020-09-08  Mike Gorse  <mgorse@suse.com>
+
+        [GTK] AcceleratedBackingStoreWayland might erroneously try to use SHM with older wpebackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=216254
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::tryInitializeSHM): Return false for wpebackend-fdo < 1.7.0.
+
 2020-09-08  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GLIB] RemoteInspectorServer is not started if WebKitWebContext is not created already created

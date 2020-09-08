@@ -136,10 +136,12 @@ static bool tryInitializeSHM()
 #if WPE_FDO_CHECK_VERSION(1, 7, 0)
     if (!wpe_fdo_initialize_shm())
         return false;
-#endif
 
     s_waylandImpl = WaylandImpl::SHM;
     return true;
+#else
+    return false;
+#endif
 }
 #endif // USE(WPE_RENDERER)
 
