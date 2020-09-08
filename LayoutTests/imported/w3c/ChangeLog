@@ -1,3 +1,19 @@
+2020-09-08  Chris Dumez  <cdumez@apple.com>
+
+        Fix precision issues in AudioParamTimeline when event times are very close
+        https://bugs.webkit.org/show_bug.cgi?id=216279
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-close-expected.txt:
+        Rebaseline test that is now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exponentialRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-linearRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-position-expected.txt:
+        Rebaseline tests whose output has changed very slightly.
+
 2020-09-08  Rob Buis  <rbuis@igalia.com>
 
         Fix crash in image-loading-lazy-slow.html WPT test

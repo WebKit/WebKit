@@ -60,7 +60,7 @@ public:
     // controlRate is the rate (number per second) at which parameter values will be calculated.
     // It should equal sampleRate for sample-accurate parameter changes, and otherwise will usually match
     // the render quantum size such that the parameter value changes once per render quantum.
-    float valuesForTimeRange(Seconds startTime, Seconds endTime, float defaultValue, float minValue, float maxValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
+    float valuesForTimeRange(size_t startFrame, size_t endFrame, float defaultValue, float minValue, float maxValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
 
     bool hasValues() const { return m_events.size(); }
 
@@ -156,11 +156,12 @@ private:
 
     void removeCancelledEvents(size_t firstEventToRemove);
     ExceptionOr<void> insertEvent(UniqueRef<ParamEvent>);
-    float valuesForTimeRangeImpl(Seconds startTime, Seconds endTime, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
+    float valuesForTimeRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
     float linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
     float exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
     float valueCurveAtTime(Seconds t, Seconds time1, Seconds duration, const float* curveData, size_t curveLength);
     void handleCancelValues(ParamEvent&, ParamEvent* nextEvent, float& value2, Seconds& time2, ParamEvent::Type& nextEventType);
+    bool isEventCurrent(const ParamEvent&, const ParamEvent* nextEvent, size_t currentFrame, double sampleRate) const;
 
     Vector<UniqueRef<ParamEvent>> m_events;
 

@@ -1,3 +1,18 @@
+2020-09-08  Chris Dumez  <cdumez@apple.com>
+
+        Fix precision issues in AudioParamTimeline when event times are very close
+        https://bugs.webkit.org/show_bug.cgi?id=216279
+
+        Reviewed by Darin Adler.
+
+        Rebaseline tests whose output has changed very slightly.
+
+        * webaudio/audioparam-cancel-and-hold-expected.txt:
+        * webaudio/oscillator-custom-expected.wav:
+        * webaudio/oscillator-sawtooth-expected.wav:
+        * webaudio/oscillator-square-expected.wav:
+        * webaudio/oscillator-triangle-expected.wav:
+
 2020-09-08  Tim Horton  <timothy_horton@apple.com>
 
         iOS: <attachment>'s QuickLook thumbnails can appear squished

@@ -87,23 +87,23 @@ PASS   Max error for test 79 at offset 104598 is less than or equal to 0.0000018
 PASS   Max error for test 80 at offset 105921 is less than or equal to 0.000001865. 
 PASS   Max error for test 81 at offset 108474 is less than or equal to 0.000001865. 
 PASS   Max error for test 82 at offset 108567 is less than or equal to 0.000001865. 
-PASS   Max error for test 83 at offset 111112 is less than or equal to 0.000001865. 
+PASS   Max error for test 83 at offset 111128 is less than or equal to 0.000001865. 
 PASS   Max error for test 84 at offset 112443 is less than or equal to 0.000001865. 
 PASS   Max error for test 85 at offset 112459 is less than or equal to 0.000001865. 
-PASS   Max error for test 86 at offset 115081 is less than or equal to 0.000001865. 
+PASS   Max error for test 86 at offset 115097 is less than or equal to 0.000001865. 
 PASS   Max error for test 87 at offset 115182 is less than or equal to 0.000001865. 
 PASS   Max error for test 88 at offset 116426 is less than or equal to 0.000001865. 
 PASS   Max error for test 89 at offset 119064 is less than or equal to 0.000001865. 
 PASS   Max error for test 90 at offset 120375 is less than or equal to 0.000001865. 
 PASS   Max error for test 91 at offset 120395 is less than or equal to 0.000001865. 
 PASS   Max error for test 92 at offset 121718 is less than or equal to 0.000001865. 
-PASS   Max error for test 93 at offset 124251 is less than or equal to 0.000001865. 
-PASS   Max error for test 94 at offset 125671 is less than or equal to 0.000001865. 
-PASS   Max error for test 95 at offset 126989 is less than or equal to 0.000001865. 
+PASS   Max error for test 93 at offset 124360 is less than or equal to 0.000001865. 
+PASS   Max error for test 94 at offset 125663 is less than or equal to 0.000001865. 
+PASS   Max error for test 95 at offset 126993 is less than or equal to 0.000001865. 
 PASS   Max error for test 96 at offset 128330 is less than or equal to 0.000001865. 
 PASS   Max error for test 97 at offset 129581 is less than or equal to 0.000001865. 
 PASS   Max error for test 98 at offset 129709 is less than or equal to 0.000001865. 
-PASS   Max error for test 99 at offset 132209 is less than or equal to 0.000001865. 
+PASS   Max error for test 99 at offset 131537 is less than or equal to 0.000001865. 
 PASS   Number of failed tests with an acceptable relative tolerance of 0.000001865 is equal to 0. 
 PASS < [test] All assertions passed. (total 102 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 

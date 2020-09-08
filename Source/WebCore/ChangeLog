@@ -1,3 +1,28 @@
+2020-09-08  Chris Dumez  <cdumez@apple.com>
+
+        Fix precision issues in AudioParamTimeline when event times are very close
+        https://bugs.webkit.org/show_bug.cgi?id=216279
+
+        Reviewed by Darin Adler.
+
+        Fix precision issues in AudioParamTimeline when event times are very close. To achieve this,
+        AudioParamTimeline::valuesForTimeRange() now uses frames for the range instead of time.
+        frames have the benefit of being more exact.
+
+        This change is based on audio_param_timeline.cc from Blink:
+        - https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/modules/webaudio/audio_param_timeline.cc
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::calculateTimelineValues):
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        (WebCore::AudioParamTimeline::valuesForTimeRange):
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        (WebCore::AudioParamTimeline::isEventCurrent const):
+        * Modules/webaudio/AudioParamTimeline.h:
+
 2020-09-08  Youenn Fablet  <youenn@apple.com>
 
         Tighten checks when creating an audio buffer list

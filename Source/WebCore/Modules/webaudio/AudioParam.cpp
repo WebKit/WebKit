@@ -306,12 +306,12 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
     // Calculate values for this render quantum.
     // Normally numberOfValues will equal AudioNode::ProcessingSizeInFrames (the render quantum size).
     double sampleRate = context().sampleRate();
-    Seconds startTime = Seconds { context().currentTime() };
-    Seconds endTime = startTime + Seconds { numberOfValues / sampleRate };
+    size_t startFrame = context().currentSampleFrame();
+    size_t endFrame = startFrame + numberOfValues;
 
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.
-    m_value = m_timeline.valuesForTimeRange(startTime, endTime, m_value, minValue(), maxValue(), values, numberOfValues, sampleRate, sampleRate);
+    m_value = m_timeline.valuesForTimeRange(startFrame, endFrame, m_value, minValue(), maxValue(), values, numberOfValues, sampleRate, sampleRate);
 }
 
 void AudioParam::connect(AudioNodeOutput* output)

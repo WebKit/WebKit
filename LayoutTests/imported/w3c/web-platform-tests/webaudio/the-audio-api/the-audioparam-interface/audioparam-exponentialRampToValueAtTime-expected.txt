@@ -75,8 +75,8 @@ PASS   Max error for test 67 at offset 89087 is less than or equal to 0.00001222
 PASS   Max error for test 68 at offset 91262 is less than or equal to 0.00001222. 
 PASS   Max error for test 69 at offset 92287 is less than or equal to 0.00001222. 
 PASS   Max error for test 70 at offset 93822 is less than or equal to 0.00001222. 
-PASS   Max error for test 71 at offset 94591 is less than or equal to 0.00001222. 
-PASS   Max error for test 72 at offset 96510 is less than or equal to 0.00001222. 
+PASS   Max error for test 71 at offset 94975 is less than or equal to 0.00001222. 
+PASS   Max error for test 72 at offset 95448 is less than or equal to 0.00001222. 
 PASS   Max error for test 73 at offset 96891 is less than or equal to 0.00001222. 
 PASS   Max error for test 74 at offset 98687 is less than or equal to 0.00001222. 
 PASS   Max error for test 75 at offset 99839 is less than or equal to 0.00001222. 
@@ -89,7 +89,7 @@ PASS   Max error for test 81 at offset 107363 is less than or equal to 0.0000122
 PASS   Max error for test 82 at offset 108799 is less than or equal to 0.00001222. 
 PASS   Max error for test 83 at offset 110438 is less than or equal to 0.00001222. 
 PASS   Max error for test 84 at offset 112112 is less than or equal to 0.00001222. 
-PASS   Max error for test 85 at offset 113596 is less than or equal to 0.00001222. 
+PASS   Max error for test 85 at offset 113201 is less than or equal to 0.00001222. 
 PASS   Max error for test 86 at offset 115071 is less than or equal to 0.00001222. 
 PASS   Max error for test 87 at offset 115839 is less than or equal to 0.00001222. 
 PASS   Max error for test 88 at offset 117375 is less than or equal to 0.00001222. 
