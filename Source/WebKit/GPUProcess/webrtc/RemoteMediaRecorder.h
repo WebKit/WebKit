@@ -44,6 +44,7 @@ namespace WebCore {
 class CARingBuffer;
 class ImageTransferSessionVT;
 class RemoteVideoSample;
+class WebAudioBufferList;
 struct MediaRecorderPrivateOptions;
 }
 
@@ -78,6 +79,7 @@ private:
 
     WebCore::CAAudioStreamDescription m_description;
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
 };
 

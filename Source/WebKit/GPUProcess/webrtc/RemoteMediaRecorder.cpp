@@ -28,12 +28,15 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
 
+#include "Connection.h"
 #include "SharedRingBufferStorage.h"
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&m_gpuConnectionToWebProcess.connection()))
 
 namespace WebKit {
 using namespace WebCore;
@@ -66,9 +69,7 @@ SharedRingBufferStorage& RemoteMediaRecorder::storage()
 
 void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
-    ASSERT(m_ringBuffer);
-    if (!m_ringBuffer)
-        return;
+    MESSAGE_CHECK(m_ringBuffer);
 
     m_description = description;
 
@@ -83,21 +84,22 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::IPCHand
     storage().setStorage(WTFMove(memory));
     storage().setReadOnly(true);
 
-    m_ringBuffer->allocate(description, numberOfFrames);
+    m_ringBuffer->allocate(m_description, numberOfFrames);
+    m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 
 void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
 {
-    ASSERT(m_ringBuffer);
-    if (!m_ringBuffer)
-        return;
+    MESSAGE_CHECK(m_ringBuffer);
+    MESSAGE_CHECK(m_audioBufferList);
+    MESSAGE_CHECK(WebAudioBufferList::isSupportedDescription(m_description, numberOfFrames));
 
     m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
 
-    WebAudioBufferList audioData(m_description, numberOfFrames);
-    m_ringBuffer->fetch(audioData.list(), numberOfFrames, time.timeValue());
+    m_audioBufferList->setSampleCount(numberOfFrames);
+    m_ringBuffer->fetch(m_audioBufferList->list(), numberOfFrames, time.timeValue());
 
-    m_writer->appendAudioSampleBuffer(audioData, m_description, time, numberOfFrames);
+    m_writer->appendAudioSampleBuffer(*m_audioBufferList, m_description, time, numberOfFrames);
 }
 
 void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remoteSample)

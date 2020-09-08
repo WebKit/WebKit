@@ -1,3 +1,19 @@
+2020-09-08  Youenn Fablet  <youenn@apple.com>
+
+        Tighten checks when creating an audio buffer list
+        https://bugs.webkit.org/show_bug.cgi?id=216237
+        <rdar://problem/68271376>
+
+        Reviewed by Geoffrey Garen.
+
+        Add a routine to check there is no multiplication integer overflow.
+
+        * platform/audio/cocoa/WebAudioBufferList.cpp:
+        (WebCore::computeBufferSize):
+        (WebCore::WebAudioBufferList::isSupportedDescription):
+        (WebCore::WebAudioBufferList::setSampleCount):
+        * platform/audio/cocoa/WebAudioBufferList.h:
+
 2020-09-08  Tim Horton  <timothy_horton@apple.com>
 
         iOS: <attachment>'s QuickLook thumbnails can appear squished

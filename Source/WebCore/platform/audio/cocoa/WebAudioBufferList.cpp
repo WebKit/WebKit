@@ -27,6 +27,8 @@
 #include "WebAudioBufferList.h"
 
 #include "CAAudioStreamDescription.h"
+#include <wtf/CheckedArithmetic.h>
+
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
@@ -59,20 +61,48 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, u
     setSampleCount(sampleCount);
 }
 
+static inline Optional<std::pair<size_t, size_t>> computeBufferSizes(uint32_t numberOfInterleavedChannels, uint32_t bytesPerFrame, uint32_t numberOfChannelStreams, uint32_t sampleCount)
+{
+    size_t totalSampleCount;
+    bool result = WTF::safeMultiply(sampleCount, numberOfInterleavedChannels, totalSampleCount);
+    if (!result)
+        return { };
+
+    size_t bytesPerBuffer;
+    result = WTF::safeMultiply(bytesPerFrame, totalSampleCount, bytesPerBuffer);
+    if (!result)
+        return { };
+
+    size_t flatBufferSize;
+    result = WTF::safeMultiply(numberOfChannelStreams, bytesPerBuffer, flatBufferSize);
+    if (!result)
+        return { };
+
+    return std::make_pair(bytesPerBuffer, flatBufferSize);
+}
+
+bool WebAudioBufferList::isSupportedDescription(const CAAudioStreamDescription& format, uint32_t sampleCount)
+{
+    return !!computeBufferSizes(format.numberOfInterleavedChannels(), format.bytesPerFrame(), format.numberOfChannelStreams(), sampleCount);
+}
+
 void WebAudioBufferList::setSampleCount(uint32_t sampleCount)
 {
     if (!sampleCount || m_sampleCount == sampleCount)
         return;
 
     m_sampleCount = sampleCount;
-    size_t bytesPerBuffer = m_sampleCount * m_channelCount * m_bytesPerFrame;
-    m_flatBuffer.resize(m_canonicalList->mNumberBuffers * bytesPerBuffer);
+
+    auto bufferSizes = computeBufferSizes(m_channelCount, m_bytesPerFrame, m_canonicalList->mNumberBuffers, m_sampleCount);
+    ASSERT(bufferSizes);
+
+    m_flatBuffer.resize(bufferSizes->second);
     auto* data = m_flatBuffer.data();
 
     for (uint32_t buffer = 0; buffer < m_canonicalList->mNumberBuffers; ++buffer) {
         m_canonicalList->mBuffers[buffer].mData = data;
-        m_canonicalList->mBuffers[buffer].mDataByteSize = bytesPerBuffer;
-        data += bytesPerBuffer;
+        m_canonicalList->mBuffers[buffer].mDataByteSize = bufferSizes->first;
+        data += bufferSizes->first;
     }
 
     reset();

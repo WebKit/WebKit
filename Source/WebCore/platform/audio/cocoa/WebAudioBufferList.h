@@ -41,7 +41,7 @@ class CAAudioStreamDescription;
 
 class WebAudioBufferList final : public PlatformAudioData {
 public:
-    WebAudioBufferList(const CAAudioStreamDescription&);
+    WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&);
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, uint32_t sampleCount);
     WebAudioBufferList(const CAAudioStreamDescription&, CMSampleBufferRef);
 
@@ -55,6 +55,8 @@ public:
     uint32_t channelCount() const { return m_channelCount; }
     AudioBuffer* buffer(uint32_t index) const;
     WTF::IteratorRange<AudioBuffer*> buffers() const;
+
+    WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, uint32_t sampleCount);
 
 private:
     Kind kind() const { return Kind::WebAudioBufferList; }

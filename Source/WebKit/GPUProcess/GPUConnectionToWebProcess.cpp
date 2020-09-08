@@ -242,7 +242,7 @@ RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
 RemoteAudioMediaStreamTrackRendererManager& GPUConnectionToWebProcess::audioTrackRendererManager()
 {
     if (!m_audioTrackRendererManager)
-        m_audioTrackRendererManager = makeUnique<RemoteAudioMediaStreamTrackRendererManager>();
+        m_audioTrackRendererManager = makeUnique<RemoteAudioMediaStreamTrackRendererManager>(*this);
 
     return *m_audioTrackRendererManager;
 }
