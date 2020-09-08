@@ -1,3 +1,21 @@
+2020-09-08  Brady Eidson  <beidson@apple.com>
+
+        Crashtracer inside PDFPlugin::createScrollbar.
+        <rdar://problem/68474062> and https://bugs.webkit.org/show_bug.cgi?id=216286
+
+        Reviewed by Tim Horton.
+
+        To quote Tim from r264945:
+        No new tests; timing is such that I can't reproduce without inserting
+        intentional delays into the main thread hops, which is further than
+        I'm willing to go for a test.
+
+        This is a speculative fix due to the aforementioned reproducibility issue.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::createScrollbar): Plugin hasn't been destroyed, and there's still a PluginView,
+          but the PluginView isn't in a frame. So null check that.
+
 2020-09-08  Alex Christensen  <achristensen@webkit.org>
 
         Null check m_layerHostingContext in TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded

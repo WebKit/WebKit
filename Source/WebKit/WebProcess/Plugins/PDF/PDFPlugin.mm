@@ -1323,13 +1323,21 @@ Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
         [m_containerLayer addSublayer:m_verticalScrollbarLayer.get()];
     }
     didAddScrollbar(widget.ptr(), orientation);
+
     if (auto* frame = m_frame.coreFrame()) {
         if (Page* page = frame->page()) {
             if (page->isMonitoringWheelEvents())
                 scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
         }
     }
-    pluginView()->frame()->view()->addChild(widget);
+
+    // Is it ever possible that the code above and the code below can ever get at different Frames?
+    // Can't we settle on one Frame accessor?
+    if (auto* frame = pluginView()->frame()) {
+        if (auto* frameView = frame->view())
+            frameView->addChild(widget);
+    }
+
     return widget;
 }
 
