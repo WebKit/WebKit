@@ -1,3 +1,17 @@
+2020-09-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Switch from deprecated secondarySelectedControlColor to unemphasizedSelectedContentBackgroundColor.
+        https://bugs.webkit.org/show_bug.cgi?id=216207
+
+        Reviewed by Darin Adler.
+
+        No behavior change.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::systemColor const):
+
 2020-09-08  Alex Christensen  <achristensen@webkit.org>
 
         Derive big5, jis0208 and jis0212 tables from ICU

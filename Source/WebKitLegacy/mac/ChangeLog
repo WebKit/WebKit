@@ -1,3 +1,13 @@
+2020-09-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Switch from deprecated secondarySelectedControlColor to unemphasizedSelectedContentBackgroundColor.
+        https://bugs.webkit.org/show_bug.cgi?id=216207
+
+        Reviewed by Darin Adler.
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController webPlugInContainerSelectionColor]):
+
 2020-09-02  Darin Adler  <darin@apple.com>
 
         Remove EAffinity, UPSTREAM, DOWNSTREAM, SEL_DEFAULT_AFFINITY, and VisibleSelection::selectionType

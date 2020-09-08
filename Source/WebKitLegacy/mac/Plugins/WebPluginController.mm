@@ -538,9 +538,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
     bool primary = true;
     if (auto* frame = core([self webFrame]))
         primary = frame->selection().isFocusedAndActive();
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return primary ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    return primary ? [NSColor selectedTextBackgroundColor] : [NSColor unemphasizedSelectedContentBackgroundColor];
 }
 
 // For compatibility only.
