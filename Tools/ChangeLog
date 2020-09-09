@@ -1,3 +1,18 @@
+2020-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] TestWTF.WTF.UniqueRef is crashing in Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=216303
+
+        Reviewed by Ryosuke Niwa.
+
+        The class A of UniqueRef.cpp and CompactUniquePtrTuple.cpp are
+        conflicting. CRT heap threw an exception due to allocator
+        mismatching while deleting class A object.
+
+        * TestWebKitAPI/Tests/WTF/CompactUniquePtrTuple.cpp: Added a new namespace CompactUniquePtrTupleTest.
+        * TestWebKitAPI/Tests/WTF/UniqueRef.cpp: Added a new namespace UniqueRefTest.
+        (TestWebKitAPI::function): Deleted an unused function.
+
 2020-09-08  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Register another package in the WebKit repository (Follow-up fix)
