@@ -323,7 +323,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints)
     m_partialLeadingTextItem = { };
     m_lastWrapOpportunityItem = { };
 
-    m_line.open(lineConstraints.availableLogicalWidth);
+    m_line.initialize(lineConstraints.availableLogicalWidth);
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 }
 
@@ -373,7 +373,11 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     ASSERT(lineRange.end <= needsLayoutRange.end);
     // Adjust hyphenated line count.
     m_successiveHyphenatedLineCount = committedContent.partialTrailingContent && committedContent.partialTrailingContent->trailingContentHasHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
-    m_line.close(isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContent.hasValue()));
+    m_line.removeCollapsibleContent();
+    auto horizontalAlignment = root().style().textAlign();
+    auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContent.hasValue());
+    if (runsExpandHorizontally)
+        m_line.applyRunExpansion();
     return lineRange;
 }
 
@@ -612,8 +616,10 @@ void LineBuilder::commitPartialContent(const LineBreaker::RunList& runs, const L
 
 size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange)
 {
-    // Clear the line and start appending the inline items closing with the last wrap opportunity run.
-    m_line.clearContent();
+    ASSERT(m_lastWrapOpportunityItem);
+    // We might already have added intrusive floats. They shrink the avilable horizontal space for the line.
+    // Let's just reuse what the line has at this point.
+    m_line.initialize(m_line.horizontalConstraint());
     auto currentItemIndex = layoutRange.start;
     auto logicalRight = InlineLayoutUnit { };
     if (m_partialLeadingTextItem) {

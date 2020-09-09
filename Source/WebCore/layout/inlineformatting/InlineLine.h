@@ -42,9 +42,7 @@ public:
     Line(const InlineFormattingContext&);
     ~Line();
 
-    void open(InlineLayoutUnit horizontalConstraint);
-    void close(bool isLastLineWithInlineContent);
-    void clearContent();
+    void initialize(InlineLayoutUnit horizontalConstraint);
 
     void append(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendPartialTrailingTextItem(const InlineTextItem&, InlineLayoutUnit logicalWidth, bool needsHypen);
@@ -60,6 +58,9 @@ public:
 
     void moveLogicalLeft(InlineLayoutUnit);
     void moveLogicalRight(InlineLayoutUnit);
+
+    void removeCollapsibleContent();
+    void applyRunExpansion();
 
     struct Run {
         bool isText() const { return m_type == InlineItem::Type::Text; }
@@ -181,9 +182,6 @@ private:
     bool m_isVisuallyEmpty { true };
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent;
     bool m_shouldIgnoreTrailingLetterSpacing { false };
-#if ASSERT_ENABLED
-    bool m_isClosed { false };
-#endif
 };
 
 inline void Line::TrimmableTrailingContent::reset()

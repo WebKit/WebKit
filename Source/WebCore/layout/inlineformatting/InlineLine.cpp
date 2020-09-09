@@ -55,17 +55,9 @@ Line::~Line()
 {
 }
 
-void Line::open(InlineLayoutUnit horizontalConstraint)
+void Line::initialize(InlineLayoutUnit horizontalConstraint)
 {
     m_horizontalConstraint = horizontalConstraint;
-    clearContent();
-#if ASSERT_ENABLED
-    m_isClosed = false;
-#endif
-}
-
-void Line::clearContent()
-{
     m_contentLogicalWidth = { };
     m_isVisuallyEmpty = true;
     m_runs.clear();
@@ -73,59 +65,53 @@ void Line::clearContent()
     m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
 }
 
-void Line::close(bool isLastLineWithInlineContent)
+void Line::removeCollapsibleContent()
 {
-#if ASSERT_ENABLED
-    m_isClosed = true;
-#endif
     removeTrailingTrimmableContent();
     visuallyCollapsePreWrapOverflowContent();
+}
 
-    auto computeExpansionForRunsIfNeeded = [&] {
-        if (formattingContext().root().style().textAlign() != TextAlignMode::Justify)
-            return;
-        // Text is justified according to the method specified by the text-justify property,
-        // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
-        // the last line before a forced break or the end of the block is start-aligned.
-        if (isLastLineWithInlineContent)
-            return;
-        if (m_runs.isEmpty() || m_runs.last().isLineBreak())
-            return;
+void Line::applyRunExpansion()
+{
+    ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify);
+    // Text is justified according to the method specified by the text-justify property,
+    // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
+    // the last line before a forced break or the end of the block is start-aligned.
+    if (m_runs.isEmpty() || m_runs.last().isLineBreak())
+        return;
 
-        auto expansionOpportunityCount = 0;
-        Run* lastRunWithContent = nullptr;
-        // Collect and distribute the expansion opportunities.
-        for (auto& run : m_runs) {
-            expansionOpportunityCount += run.expansionOpportunityCount();
-            if (run.isText() || run.isBox())
-                lastRunWithContent = &run;
-        }
-        // Need to fix up the last run's trailing expansion.
-        if (lastRunWithContent && lastRunWithContent->hasExpansionOpportunity()) {
-            // Turn off the trailing bits first and add the forbid trailing expansion.
-            auto leadingExpansion = lastRunWithContent->expansionBehavior() & LeftExpansionMask;
-            lastRunWithContent->setExpansionBehavior(leadingExpansion | ForbidRightExpansion);
-        }
-        // Anything to distribute?
-        if (expansionOpportunityCount && availableWidth()) {
-            // Distribute the extra space.
-            auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
-            auto accumulatedExpansion = InlineLayoutUnit { };
-            for (auto& run : m_runs) {
-                // Expand and move runs by the accumulated expansion.
-                run.moveHorizontally(accumulatedExpansion);
-                if (!run.hasExpansionOpportunity())
-                    continue;
-                ASSERT(run.expansionOpportunityCount());
-                auto computedExpansion = expansionToDistribute * run.expansionOpportunityCount();
-                // FIXME: Check why we need to set both.
-                run.setHorizontalExpansion(computedExpansion);
-                run.shrinkHorizontally(-computedExpansion);
-                accumulatedExpansion += computedExpansion;
-            }
-        }
-    };
-    computeExpansionForRunsIfNeeded();
+    auto expansionOpportunityCount = 0;
+    Run* lastRunWithContent = nullptr;
+    // Collect and distribute the expansion opportunities.
+    for (auto& run : m_runs) {
+        expansionOpportunityCount += run.expansionOpportunityCount();
+        if (run.isText() || run.isBox())
+            lastRunWithContent = &run;
+    }
+    // Need to fix up the last run's trailing expansion.
+    if (lastRunWithContent && lastRunWithContent->hasExpansionOpportunity()) {
+        // Turn off the trailing bits first and add the forbid trailing expansion.
+        auto leadingExpansion = lastRunWithContent->expansionBehavior() & LeftExpansionMask;
+        lastRunWithContent->setExpansionBehavior(leadingExpansion | ForbidRightExpansion);
+    }
+    // Anything to distribute?
+    if (!expansionOpportunityCount || !availableWidth())
+        return;
+    // Distribute the extra space.
+    auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
+    auto accumulatedExpansion = InlineLayoutUnit { };
+    for (auto& run : m_runs) {
+        // Expand and move runs by the accumulated expansion.
+        run.moveHorizontally(accumulatedExpansion);
+        if (!run.hasExpansionOpportunity())
+            continue;
+        ASSERT(run.expansionOpportunityCount());
+        auto computedExpansion = expansionToDistribute * run.expansionOpportunityCount();
+        // FIXME: Check why we need to set both.
+        run.setHorizontalExpansion(computedExpansion);
+        run.shrinkHorizontally(-computedExpansion);
+        accumulatedExpansion += computedExpansion;
+    }
 }
 
 void Line::removeTrailingTrimmableContent()
@@ -222,7 +208,6 @@ void Line::moveLogicalRight(InlineLayoutUnit delta)
 
 void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(!m_isClosed);
     appendWith(inlineItem, { logicalWidth, false });
 }
 
