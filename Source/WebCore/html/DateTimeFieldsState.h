@@ -33,9 +33,19 @@
 namespace WebCore {
 
 struct DateTimeFieldsState {
+    enum class Meridiem : bool {
+        AM,
+        PM,
+    };
+
     Optional<unsigned> year;
     Optional<unsigned> month;
     Optional<unsigned> dayOfMonth;
+    Optional<unsigned> hour;
+    Optional<unsigned> minute;
+    Optional<unsigned> second;
+    Optional<unsigned> millisecond;
+    Optional<Meridiem> meridiem;
 };
 
 } // namespace WebCore

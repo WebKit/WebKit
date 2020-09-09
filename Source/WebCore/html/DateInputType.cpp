@@ -102,7 +102,7 @@ String DateInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state
     return makeString(pad('0', 4, *state.year), '-', pad('0', 2, *state.month), '-', pad('0', 2, *state.dayOfMonth));
 }
 
-void DateInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters) const
+void DateInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents&) const
 {
     layoutParameters.dateTimeFormat = layoutParameters.locale.dateFormat();
     layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd"_s;

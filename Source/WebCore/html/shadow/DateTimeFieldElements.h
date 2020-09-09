@@ -47,6 +47,62 @@ private:
     void populateDateTimeFieldsState(DateTimeFieldsState&);
 };
 
+class DateTimeHourFieldElement final : public DateTimeNumericFieldElement {
+    WTF_MAKE_ISO_ALLOCATED(DateTimeHourFieldElement);
+
+public:
+    static Ref<DateTimeHourFieldElement> create(Document&, FieldOwner&, int minimum, int maximum);
+
+private:
+    DateTimeHourFieldElement(Document&, FieldOwner&, int minimum, int maximum);
+
+    // DateTimeFieldElement functions:
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&);
+    virtual void setValueAsDate(const DateComponents&);
+};
+
+class DateTimeMeridiemFieldElement final : public DateTimeSymbolicFieldElement {
+    WTF_MAKE_ISO_ALLOCATED(DateTimeMeridiemFieldElement);
+
+public:
+    static Ref<DateTimeMeridiemFieldElement> create(Document&, FieldOwner&, const Vector<String>&);
+
+private:
+    DateTimeMeridiemFieldElement(Document&, FieldOwner&, const Vector<String>&);
+
+    // DateTimeFieldElement functions:
+    void populateDateTimeFieldsState(DateTimeFieldsState&);
+    void setValueAsDate(const DateComponents&);
+};
+
+class DateTimeMillisecondFieldElement final : public DateTimeNumericFieldElement {
+    WTF_MAKE_ISO_ALLOCATED(DateTimeMillisecondFieldElement);
+
+public:
+    static Ref<DateTimeMillisecondFieldElement> create(Document&, FieldOwner&);
+
+private:
+    DateTimeMillisecondFieldElement(Document&, FieldOwner&);
+
+    // DateTimeFieldElement functions:
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&);
+    virtual void setValueAsDate(const DateComponents&);
+};
+
+class DateTimeMinuteFieldElement final : public DateTimeNumericFieldElement {
+    WTF_MAKE_ISO_ALLOCATED(DateTimeMinuteFieldElement);
+
+public:
+    static Ref<DateTimeMinuteFieldElement> create(Document&, FieldOwner&);
+
+private:
+    DateTimeMinuteFieldElement(Document&, FieldOwner&);
+
+    // DateTimeFieldElement functions:
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&);
+    virtual void setValueAsDate(const DateComponents&);
+};
+
 class DateTimeMonthFieldElement final : public DateTimeNumericFieldElement {
     WTF_MAKE_ISO_ALLOCATED(DateTimeMonthFieldElement);
 
@@ -59,6 +115,20 @@ private:
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&);
     void populateDateTimeFieldsState(DateTimeFieldsState&);
+};
+
+class DateTimeSecondFieldElement final : public DateTimeNumericFieldElement {
+    WTF_MAKE_ISO_ALLOCATED(DateTimeSecondFieldElement);
+
+public:
+    static Ref<DateTimeSecondFieldElement> create(Document&, FieldOwner&);
+
+private:
+    DateTimeSecondFieldElement(Document&, FieldOwner&);
+
+    // DateTimeFieldElement functions:
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&);
+    virtual void setValueAsDate(const DateComponents&);
 };
 
 class DateTimeSymbolicMonthFieldElement final : public DateTimeSymbolicFieldElement {

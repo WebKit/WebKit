@@ -1,3 +1,117 @@
+2020-09-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add editability to input type=time
+        https://bugs.webkit.org/show_bug.cgi?id=216188
+
+        Reviewed by Devin Rousso.
+
+        This patch adds editability to input type=time by leveraging existing
+        logic to add editable components to date/time inputs.
+
+        DateTime{Hour|Minute|Second|Millisecond|Meridiem}FieldElements were
+        created to represent the new editable fields. By default, only the
+        hour and minute fields are displayed. However, the millisecond
+        and second fields may be added depending on the initial value of
+        the element, or the value of the step attribute.
+
+        Tests: fast/forms/time/time-editable-components/time-editable-components-focus-and-blur-events.html
+               fast/forms/time/time-editable-components/time-editable-components-keyboard-events.html
+               fast/forms/time/time-editable-components/time-editable-components-mouse-events.html
+               fast/forms/time/time-editable-components/time-editable-components-second-and-millisecond-field.html
+
+        * css/html.css:
+
+        Update stylesheet to handle hour, minute, second, millisecond and meridiem fields.
+
+        (input::-webkit-datetime-edit-fields-wrapper):
+        (input::-webkit-datetime-edit-year-field,):
+        (input::-webkit-datetime-edit-year-field:focus,):
+        (input[disabled]::-webkit-datetime-edit-year-field,):
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::DateTimeFormatValidator::visitField):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::attributeChanged):
+
+        The step attribute can determine whether the second and/or millisecond
+        fields are displayed. Consequently, we should update the fields in
+        m_dateTimeEditElement when the step attribute is changed.
+
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+
+        setupLayoutParameters() now takes an additional DateComponents argument.
+        This argument is needed to determine whether the second and/or
+        millisecond field is displayed.
+
+        * html/BaseDateAndTimeInputType.h:
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::setupLayoutParameters const):
+        * html/DateInputType.h:
+        * html/DateTimeFieldsState.h:
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::setupLayoutParameters const):
+        * html/DateTimeLocalInputType.h:
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::setupLayoutParameters const):
+        * html/MonthInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::isValidFormat const):
+        (WebCore::TimeInputType::formatDateTimeFieldsState const):
+        (WebCore::TimeInputType::setupLayoutParameters const):
+
+        The millisecond field is displayed if the date has a non-zero value for
+        milliseconds, or if the step attribute has sub-second precision. The
+        second field is displayed if the millisecond field is displayed, if the
+        date has a non-zero value for seconds, or if the step attribute has
+        sub-minute precision.
+
+        * html/TimeInputType.h:
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::setupLayoutParameters const):
+        * html/WeekInputType.h:
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitField): Updated to add new field types to the element.
+        * html/shadow/DateTimeEditElement.h:
+        * html/shadow/DateTimeFieldElements.cpp:
+        (WebCore::DateTimeHourFieldElement::DateTimeHourFieldElement):
+        (WebCore::DateTimeHourFieldElement::create):
+        (WebCore::DateTimeHourFieldElement::populateDateTimeFieldsState):
+        (WebCore::DateTimeHourFieldElement::setValueAsDate):
+        (WebCore::DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement):
+        (WebCore::DateTimeMeridiemFieldElement::create):
+        (WebCore::DateTimeMeridiemFieldElement::populateDateTimeFieldsState):
+        (WebCore::DateTimeMeridiemFieldElement::setValueAsDate):
+        (WebCore::DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement):
+        (WebCore::DateTimeMillisecondFieldElement::create):
+        (WebCore::DateTimeMillisecondFieldElement::populateDateTimeFieldsState):
+        (WebCore::DateTimeMillisecondFieldElement::setValueAsDate):
+        (WebCore::DateTimeMinuteFieldElement::DateTimeMinuteFieldElement):
+        (WebCore::DateTimeMinuteFieldElement::create):
+        (WebCore::DateTimeMinuteFieldElement::populateDateTimeFieldsState):
+        (WebCore::DateTimeMinuteFieldElement::setValueAsDate):
+        (WebCore::DateTimeSecondFieldElement::DateTimeSecondFieldElement):
+        (WebCore::DateTimeSecondFieldElement::create):
+        (WebCore::DateTimeSecondFieldElement::populateDateTimeFieldsState):
+        (WebCore::DateTimeSecondFieldElement::setValueAsDate):
+        * html/shadow/DateTimeFieldElements.h:
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::maximum const):
+        * html/shadow/DateTimeNumericFieldElement.h:
+        * html/shadow/DateTimeSymbolicFieldElement.cpp:
+        (WebCore::DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement):
+        (WebCore::DateTimeSymbolicFieldElement::handleKeyboardEvent): Implement editing using the same typeahead behavior as <select> elements.
+        (WebCore::DateTimeSymbolicFieldElement::indexOfSelectedOption const):
+        (WebCore::DateTimeSymbolicFieldElement::optionCount const):
+        (WebCore::DateTimeSymbolicFieldElement::optionAtIndex const):
+        * html/shadow/DateTimeSymbolicFieldElement.h:
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::Locale::localizedDecimalSeparator):
+
+        Added method to ensure the correct decimal separator is displayed
+        depending on the user's locale. This separator is used when
+        the millisecond field is present.
+
+        * platform/text/PlatformLocale.h:
+
 2020-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Node flags should be an OptionSet

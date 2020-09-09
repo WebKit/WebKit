@@ -40,6 +40,7 @@
 #include "RenderElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StepRange.h"
 #include "Text.h"
 #include "UserGestureIndicator.h"
 #include <wtf/NeverDestroyed.h>
@@ -80,7 +81,7 @@ void DateTimeFormatValidator::visitField(DateTimeFormat::FieldType fieldType, in
         break;
 
     case DateTimeFormat::FieldTypePeriod:
-        m_results.add(DateTimeFormatValidationResults::HasAMPM);
+        m_results.add(DateTimeFormatValidationResults::HasMeridiem);
         break;
 
     case DateTimeFormat::FieldTypeHour11:
@@ -91,7 +92,7 @@ void DateTimeFormatValidator::visitField(DateTimeFormat::FieldType fieldType, in
     case DateTimeFormat::FieldTypeHour23:
     case DateTimeFormat::FieldTypeHour24:
         m_results.add(DateTimeFormatValidationResults::HasHour);
-        m_results.add(DateTimeFormatValidationResults::HasAMPM);
+        m_results.add(DateTimeFormatValidationResults::HasMeridiem);
         break;
 
     case DateTimeFormat::FieldTypeMinute:
@@ -192,12 +193,21 @@ void BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue()
     }
 
     DateTimeEditElement::LayoutParameters layoutParameters(element()->locale());
-    setupLayoutParameters(layoutParameters);
+
+    auto date = parseToDateComponents(element()->value());
+    if (date)
+        setupLayoutParameters(layoutParameters, *date);
+    else {
+        if (auto dateForLayout = setMillisecondToDateComponents(createStepRange(AnyStepHandling::Default).minimum().toDouble()))
+            setupLayoutParameters(layoutParameters, *dateForLayout);
+        else
+            setupLayoutParameters(layoutParameters, DateComponents());
+    }
 
     if (!DateTimeFormatValidator().validateFormat(layoutParameters.dateTimeFormat, *this))
         layoutParameters.dateTimeFormat = layoutParameters.fallbackDateTimeFormat;
 
-    if (auto date = parseToDateComponents(element()->value()))
+    if (date)
         m_dateTimeEditElement->setValueAsDate(layoutParameters, *date);
     else
         m_dateTimeEditElement->setEmptyValue(layoutParameters);
@@ -298,7 +308,9 @@ void BaseChooserOnlyDateAndTimeInputType::attributeChanged(const QualifiedName& 
             if (!element->hasDirtyValue())
                 updateInnerTextValue();
         }
-    }
+    } else if (name == stepAttr && m_dateTimeEditElement)
+        updateInnerTextValue();
+
     BaseDateAndTimeInputType::attributeChanged(name);
 }
 

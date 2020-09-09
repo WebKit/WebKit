@@ -354,6 +354,12 @@ String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
     }
     return builder.toString();
 }
+
+String Locale::localizedDecimalSeparator()
+{
+    initializeLocaleData();
+    return m_decimalSymbols[DecimalSeparatorIndex];
+}
 #endif
 
 }

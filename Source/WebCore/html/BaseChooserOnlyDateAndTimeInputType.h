@@ -42,7 +42,7 @@ enum class DateTimeFormatValidationResults : uint8_t {
     HasMonth = 1 << 1,
     HasWeek = 1 << 2,
     HasDay = 1 << 3,
-    HasAMPM = 1 << 4,
+    HasMeridiem = 1 << 4,
     HasHour = 1 << 5,
     HasMinute = 1 << 6,
     HasSecond = 1 << 7,
@@ -56,7 +56,7 @@ protected:
     explicit BaseChooserOnlyDateAndTimeInputType(HTMLInputElement& element) : BaseDateAndTimeInputType(element) { }
     ~BaseChooserOnlyDateAndTimeInputType();
 
-    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const = 0;
+    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
 
 private:
     void updateInnerTextValue() override;

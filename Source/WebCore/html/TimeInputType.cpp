@@ -33,6 +33,7 @@
 #include "TimeInputType.h"
 
 #include "DateComponents.h"
+#include "DateTimeFieldsState.h"
 #include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -112,16 +113,48 @@ void TimeInputType::handleDOMActivateEvent(Event&)
 
 bool TimeInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
 {
-    return results.containsAll({ DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute });
+    return results.containsAll({ DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute, DateTimeFormatValidationResults::HasMeridiem });
 }
 
-String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
+String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
 {
-    return emptyString();
+    if (!state.hour || !state.minute || !state.meridiem)
+        return emptyString();
+
+    unsigned hour23 = (*state.hour % 12) + (*state.meridiem == DateTimeFieldsState::Meridiem::PM ? 12 : 0);
+    auto hourMinuteString = makeString(pad('0', 2, hour23), ':', pad('0', 2, *state.minute));
+
+    if (state.millisecond)
+        return makeString(hourMinuteString, ':', pad('0', 2, state.second ? *state.second : 0), '.', pad('0', 3, *state.millisecond));
+
+    if (state.second)
+        return makeString(hourMinuteString, ':', pad('0', 2, *state.second));
+
+    return hourMinuteString;
 }
 
-void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
+void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
+    auto stepRange = createStepRange(AnyStepHandling::Default);
+    auto millisecondsPerSecond = Decimal::fromDouble(msPerSecond);
+    auto millisecondsPerMinute = Decimal::fromDouble(msPerMinute);
+
+    layoutParameters.shouldHaveMillisecondField = date.millisecond()
+        || !stepRange.minimum().remainder(millisecondsPerSecond).isZero()
+        || !stepRange.step().remainder(millisecondsPerSecond).isZero();
+
+    bool shouldHaveSecondField = layoutParameters.shouldHaveMillisecondField
+        || date.second()
+        || !stepRange.minimum().remainder(millisecondsPerMinute).isZero()
+        || !stepRange.step().remainder(millisecondsPerMinute).isZero();
+
+    if (shouldHaveSecondField) {
+        layoutParameters.dateTimeFormat = layoutParameters.locale.timeFormat();
+        layoutParameters.fallbackDateTimeFormat = "HH:mm:ss"_s;
+    } else {
+        layoutParameters.dateTimeFormat = layoutParameters.locale.shortTimeFormat();
+        layoutParameters.fallbackDateTimeFormat = "HH:mm"_s;
+    }
 }
 
 } // namespace WebCore

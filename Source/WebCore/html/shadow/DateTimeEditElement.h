@@ -55,6 +55,7 @@ public:
         String dateTimeFormat;
         String fallbackDateTimeFormat;
         Locale& locale;
+        bool shouldHaveMillisecondField { false };
 
         LayoutParameters(Locale& locale)
             : locale(locale)

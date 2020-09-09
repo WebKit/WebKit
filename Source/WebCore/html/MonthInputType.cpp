@@ -144,7 +144,7 @@ String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) con
     return emptyString();
 }
 
-void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
+void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const
 {
 }
 

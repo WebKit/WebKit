@@ -49,6 +49,7 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, F
     : DateTimeFieldElement(document, fieldOwner)
     , m_symbols(symbols)
     , m_visibleEmptyValue(makeVisibleEmptyValue(symbols))
+    , m_typeAhead(this)
 {
     ASSERT(!m_symbols.isEmpty());
 }
@@ -111,9 +112,32 @@ String DateTimeSymbolicFieldElement::visibleValue() const
     return hasValue() ? m_symbols[m_selectedIndex] : visibleEmptyValue();
 }
 
-void DateTimeSymbolicFieldElement::handleKeyboardEvent(KeyboardEvent&)
+void DateTimeSymbolicFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEvent)
 {
-    // FIXME: Implement after adding layout for <input type=time>.
+    if (keyboardEvent.type() != eventNames().keypressEvent)
+        return;
+
+    keyboardEvent.setDefaultHandled();
+
+    int index = m_typeAhead.handleEvent(&keyboardEvent, TypeAhead::MatchPrefix | TypeAhead::CycleFirstChar | TypeAhead::MatchIndex);
+    if (index < 0)
+        return;
+    setValueAsInteger(index, DispatchInputAndChangeEvents);
+}
+
+int DateTimeSymbolicFieldElement::indexOfSelectedOption() const
+{
+    return m_selectedIndex;
+}
+
+int DateTimeSymbolicFieldElement::optionCount() const
+{
+    return m_symbols.size();
+}
+
+String DateTimeSymbolicFieldElement::optionAtIndex(int index) const
+{
+    return m_symbols[index];
 }
 
 } // namespace WebCore

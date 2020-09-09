@@ -106,7 +106,7 @@ String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsSta
     return emptyString();
 }
 
-void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
+void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const
 {
 }
 

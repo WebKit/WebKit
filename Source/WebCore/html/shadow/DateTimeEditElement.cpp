@@ -85,6 +85,36 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
         return;
     }
 
+    case DateTimeFormat::FieldTypeFractionalSecond: {
+        m_editElement.addField(DateTimeMillisecondFieldElement::create(document, m_editElement));
+        return;
+    }
+
+    case DateTimeFormat::FieldTypeHour11: {
+        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 11));
+        return;
+    }
+
+    case DateTimeFormat::FieldTypeHour12: {
+        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 1, 12));
+        return;
+    }
+
+    case DateTimeFormat::FieldTypeHour23: {
+        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 23));
+        return;
+    }
+
+    case DateTimeFormat::FieldTypeHour24: {
+        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 1, 24));
+        return;
+    }
+
+    case DateTimeFormat::FieldTypeMinute: {
+        m_editElement.addField(DateTimeMinuteFieldElement::create(document, m_editElement));
+        return;
+    }
+
     case DateTimeFormat::FieldTypeMonth:
     case DateTimeFormat::FieldTypeMonthStandAlone: {
         constexpr int countForAbbreviatedMonth = 3;
@@ -107,6 +137,21 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
             m_editElement.addField(DateTimeMonthFieldElement::create(document, m_editElement));
             return;
         }
+    }
+
+    case DateTimeFormat::FieldTypePeriod: {
+        m_editElement.addField(DateTimeMeridiemFieldElement::create(document, m_editElement, m_parameters.locale.timeAMPMLabels()));
+        return;
+    }
+
+    case DateTimeFormat::FieldTypeSecond: {
+        m_editElement.addField(DateTimeSecondFieldElement::create(document, m_editElement));
+
+        if (m_parameters.shouldHaveMillisecondField) {
+            visitLiteral(m_parameters.locale.localizedDecimalSeparator());
+            visitField(DateTimeFormat::FieldTypeFractionalSecond, 3);
+        }
+        return;
     }
 
     case DateTimeFormat::FieldTypeYear: {

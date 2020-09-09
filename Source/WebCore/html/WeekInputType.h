@@ -51,7 +51,7 @@ private:
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
     String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;
-    void setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const final;
+    void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const final;
 };
 
 } // namespace WebCore

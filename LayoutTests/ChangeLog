@@ -1,3 +1,23 @@
+2020-09-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add editability to input type=time
+        https://bugs.webkit.org/show_bug.cgi?id=216188
+
+        Reviewed by Devin Rousso.
+
+        * TestExpectations:
+        * fast/forms/time/time-editable-components/time-editable-components-focus-and-blur-events-expected.txt: Added.
+        * fast/forms/time/time-editable-components/time-editable-components-focus-and-blur-events.html: Added.
+        * fast/forms/time/time-editable-components/time-editable-components-keyboard-events-expected.txt: Added.
+        * fast/forms/time/time-editable-components/time-editable-components-keyboard-events.html: Added.
+        * fast/forms/time/time-editable-components/time-editable-components-mouse-events-expected.txt: Added.
+        * fast/forms/time/time-editable-components/time-editable-components-mouse-events.html: Added.
+        * fast/forms/time/time-editable-components/time-editable-components-second-and-millisecond-field-expected.txt: Added.
+        * fast/forms/time/time-editable-components/time-editable-components-second-and-millisecond-field.html: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/fast/forms/time/time-appearance-basic-expected.txt: Rebaselined for new appearance.
+        * platform/mac-wk2/fast/forms/time/time-input-rendering-basic-expected.txt: Rebaselined for new appearance.
+
 2020-09-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening after r266761.

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+}
+
+input::-webkit-datetime-edit-text {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-hour-field {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-minute-field {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-meridiem-field {
+    font-size: 30px;
+}
+</style>
+</head>
+<body>
+
+<input id="input" type="time" value="05:30">
+
+<script>
+
+description("Test for mouse events for &lt;input type=time&gt;");
+
+clickEventsFired = 0;
+function onClickEvent() {
+    clickEventsFired++;
+}
+
+function mouseClickOn(x, y) {
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(x + input.offsetLeft, y + input.offsetTop);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+input.addEventListener("click", onClickEvent);
+const center = input.offsetHeight / 2;
+
+debug("Enabled Input\n");
+
+// Click on hour field.
+mouseClickOn(20, center);
+UIHelper.keyDown("9");
+shouldBeEqualToString("input.value", "09:30");
+
+// Click on minute field.
+mouseClickOn(60, center);
+UIHelper.keyDown("1");
+UIHelper.keyDown("2");
+shouldBeEqualToString("input.value", "09:12");
+
+// Click on AM/PM field.
+mouseClickOn(120, center);
+UIHelper.keyDown("upArrow");
+shouldBeEqualToString("input.value", "21:12");
+
+// Click on control, but not a specific field, defaults to first field.
+mouseClickOn(250, center);
+UIHelper.keyDown("6");
+shouldBeEqualToString("input.value", "18:12");
+
+// Click outside control.
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+UIHelper.keyDown("5");
+shouldBeEqualToString("input.value", "18:12");
+
+shouldBe("clickEventsFired", "4");
+
+debug("\nDisabled Input\n");
+clickEventsFired = 0;
+input.disabled = true;
+input.readOnly = false;
+
+// Click on hour field.
+mouseClickOn(20, center);
+// Click on minute field.
+mouseClickOn(60, center);
+// Click on AM/PM field.
+mouseClickOn(120, center);
+// Click on control, but not a specific field, defaults to first field.
+mouseClickOn(250, center);
+// Click outside control.
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+
+shouldBe("clickEventsFired", "0");
+
+debug("\nReadonly Input\n");
+clickEventsFired = 0;
+input.disabled = false;
+input.readOnly = true;
+
+// Click on hour field.
+mouseClickOn(20, center);
+// Click on minute field.
+mouseClickOn(60, center);
+// Click on AM/PM field.
+mouseClickOn(120, center);
+// Click on control, but not a specific field, defaults to first field.
+mouseClickOn(250, center);
+// Click outside control.
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+
+shouldBe("clickEventsFired", "4");
+
+</script>
+
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

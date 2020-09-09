@@ -497,18 +497,29 @@ input::-webkit-datetime-edit {
 
 input::-webkit-datetime-edit-fields-wrapper {
     display: inline-block;
+    white-space: pre;
 }
 
 input::-webkit-datetime-edit-year-field,
 input::-webkit-datetime-edit-month-field,
-input::-webkit-datetime-edit-day-field {
+input::-webkit-datetime-edit-day-field,
+input::-webkit-datetime-edit-hour-field,
+input::-webkit-datetime-edit-minute-field,
+input::-webkit-datetime-edit-second-field,
+input::-webkit-datetime-edit-millisecond-field,
+input::-webkit-datetime-edit-meridiem-field {
     display: inline;
     padding: 1px;
 }
 
 input::-webkit-datetime-edit-year-field:focus,
 input::-webkit-datetime-edit-month-field:focus,
-input::-webkit-datetime-edit-day-field:focus {
+input::-webkit-datetime-edit-day-field:focus,
+input::-webkit-datetime-edit-hour-field:focus,
+input::-webkit-datetime-edit-minute-field:focus,
+input::-webkit-datetime-edit-second-field:focus,
+input::-webkit-datetime-edit-millisecond-field:focus,
+input::-webkit-datetime-edit-meridiem-field:focus {
 #if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
     background-color: -apple-system-control-accent;
     color: white;
@@ -522,6 +533,11 @@ input::-webkit-datetime-edit-day-field:focus {
 input[disabled]::-webkit-datetime-edit-year-field,
 input[disabled]::-webkit-datetime-edit-month-field,
 input[disabled]::-webkit-datetime-edit-day-field,
+input[disabled]::-webkit-datetime-edit-hour-field,
+input[disabled]::-webkit-datetime-edit-minute-field,
+input[disabled]::-webkit-datetime-edit-second-field,
+input[disabled]::-webkit-datetime-edit-millisecond-field,
+input[disabled]::-webkit-datetime-edit-meridiem-field,
 input[disabled]::-webkit-datetime-edit-text {
     color: GrayText;
 }

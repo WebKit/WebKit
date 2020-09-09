@@ -97,7 +97,7 @@ String WeekInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) cons
     return emptyString();
 }
 
-void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&) const
+void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const
 {
 }
 

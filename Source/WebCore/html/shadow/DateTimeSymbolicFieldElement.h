@@ -29,10 +29,11 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "DateTimeFieldElement.h"
+#include "TypeAhead.h"
 
 namespace WebCore {
 
-class DateTimeSymbolicFieldElement : public DateTimeFieldElement {
+class DateTimeSymbolicFieldElement : public DateTimeFieldElement, public TypeAheadDataSource {
     WTF_MAKE_ISO_ALLOCATED(DateTimeSymbolicFieldElement);
 protected:
     DateTimeSymbolicFieldElement(Document&, FieldOwner&, const Vector<String>&);
@@ -55,9 +56,15 @@ private:
     String visibleValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;
 
+    // TypeAheadDataSource functions:
+    int indexOfSelectedOption() const final;
+    int optionCount() const final;
+    String optionAtIndex(int index) const final;
+
     const Vector<String> m_symbols;
 
     const AtomString m_visibleEmptyValue;
+    TypeAhead m_typeAhead;
     int m_selectedIndex { invalidIndex };
 };
 

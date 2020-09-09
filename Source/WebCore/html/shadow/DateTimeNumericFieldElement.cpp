@@ -57,6 +57,11 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Fie
 {
 }
 
+int DateTimeNumericFieldElement::maximum() const
+{
+    return m_range.maximum;
+}
+
 String DateTimeNumericFieldElement::formatValue(int value) const
 {
     Locale& locale = localeForOwner();

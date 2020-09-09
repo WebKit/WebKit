@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+}
+
+input::-webkit-datetime-edit-text {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-hour-field {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-minute-field {
+    font-size: 30px;
+}
+
+input::-webkit-datetime-edit-meridiem-field {
+    font-size: 30px;
+}
+</style>
+</head>
+<body>
+
+<input id="before" type="text">
+<input id="input" type="time" value="18:30">
+<input id="after" type="text">
+
+<script>
+
+description("Test for focus and blur events for &lt;input type=time&gt;");
+
+blurEventsFired = 0;
+function onBlurEvent() {
+    blurEventsFired++;
+}
+
+focusEventsFired = 0;
+function onFocusEvent() {
+    focusEventsFired++;
+}
+
+function assertFocusAndBlurCount(numFocusEvents, numBlurEvents) {
+    shouldBe("focusEventsFired", numFocusEvents.toString());
+    shouldBe("blurEventsFired", numBlurEvents.toString());
+}
+
+function resetFocusAndBlurCount() {
+    blurEventsFired = 0;
+    focusEventsFired = 0;
+}
+
+function mouseClickOn(x, y) {
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(x + input.offsetLeft, y + input.offsetTop);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+input.addEventListener("blur", onBlurEvent);
+input.addEventListener("focus", onFocusEvent);
+
+const center = input.offsetHeight / 2;
+
+debug("Focus/blur using mouse\n");
+
+// Click on hour field.
+mouseClickOn(20, center);
+assertFocusAndBlurCount(1, 0);
+// Click on minute field.
+mouseClickOn(60, center);
+assertFocusAndBlurCount(1, 0);
+// Click on AM/PM field.
+mouseClickOn(120, center);
+assertFocusAndBlurCount(1, 0);
+// Click on control, but not a specific field.
+mouseClickOn(250, center);
+assertFocusAndBlurCount(1, 0);
+// Click outside control.
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+assertFocusAndBlurCount(1, 1);
+resetFocusAndBlurCount();
+
+debug("\nFocus/blur using keyboard\n");
+
+UIHelper.activateElement(before);
+// Focus on hour field.
+UIHelper.keyDown("\t");
+assertFocusAndBlurCount(1, 0);
+// Focus on minute field.
+UIHelper.keyDown("\t");
+assertFocusAndBlurCount(1, 0);
+// Focus on AM/PM field.
+UIHelper.keyDown("\t");
+assertFocusAndBlurCount(1, 0);
+// Focus out.
+UIHelper.keyDown("\t");
+assertFocusAndBlurCount(1, 1);
+// Focus on hour field.
+UIHelper.keyDown("\t", ["shiftKey"]);
+assertFocusAndBlurCount(2, 1);
+// Focus on minute field.
+UIHelper.keyDown("\t", ["shiftKey"]);
+assertFocusAndBlurCount(2, 1);
+// Focus on AM/PM field.
+UIHelper.keyDown("\t", ["shiftKey"]);
+assertFocusAndBlurCount(2, 1);
+// Focus out.
+UIHelper.keyDown("\t", ["shiftKey"]);
+assertFocusAndBlurCount(2, 2);
+resetFocusAndBlurCount();
+
+debug("\nFocus/blur on disabled input\n")
+
+input.disabled = true;
+
+UIHelper.activateElement(before);
+// Tab to focus should skip disabled input.
+UIHelper.keyDown("\t");
+assertFocusAndBlurCount(0, 0);
+shouldBeEqualToString("document.activeElement.id", "after");
+// Shift+Tab should skip disabled input.
+UIHelper.keyDown("\t", ["shiftKey"]);
+assertFocusAndBlurCount(0, 0);
+shouldBeEqualToString("document.activeElement.id", "before");
+// Clicking on any part of the control should not focus/blur events.
+mouseClickOn(20, center);
+mouseClickOn(60, center);
+mouseClickOn(120, center);
+mouseClickOn(250, center);
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+assertFocusAndBlurCount(0, 0);
+resetFocusAndBlurCount();
+
+debug("\nFocus/blur on readonly input\n")
+
+input.disabled = false;
+input.readOnly = true;
+
+UIHelper.activateElement(before);
+// Tab to focus should not skip readonly input.
+UIHelper.keyDown("\t");
+assertFocusAndBlurCount(1, 0);
+UIHelper.keyDown("\t");
+UIHelper.keyDown("\t");
+UIHelper.keyDown("\t");
+shouldBeEqualToString("document.activeElement.id", "after");
+assertFocusAndBlurCount(1, 1);
+// Clicking on any part of the control should fire the appropriate events.
+mouseClickOn(20, center);
+mouseClickOn(60, center);
+mouseClickOn(120, center);
+mouseClickOn(250, center);
+mouseClickOn(input.offsetWidth + 5, input.offsetHeight + 5);
+assertFocusAndBlurCount(1, 1);
+resetFocusAndBlurCount();
+
+</script>
+
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

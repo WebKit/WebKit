@@ -50,6 +50,8 @@ public:
 protected:
     DateTimeNumericFieldElement(Document&, FieldOwner&, const Range&, const String& placeholder);
 
+    int maximum() const;
+
     // DateTimeFieldElement functions:
     bool hasValue() const final;
     void initialize(const AtomString&);

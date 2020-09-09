@@ -1,0 +1,61 @@
+Test for focus and blur events for <input type=time>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Focus/blur using mouse
+
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 1
+
+Focus/blur using keyboard
+
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS focusEventsFired is 1
+PASS blurEventsFired is 1
+PASS focusEventsFired is 2
+PASS blurEventsFired is 1
+PASS focusEventsFired is 2
+PASS blurEventsFired is 1
+PASS focusEventsFired is 2
+PASS blurEventsFired is 1
+PASS focusEventsFired is 2
+PASS blurEventsFired is 2
+
+Focus/blur on disabled input
+
+PASS focusEventsFired is 0
+PASS blurEventsFired is 0
+PASS document.activeElement.id is "after"
+PASS focusEventsFired is 0
+PASS blurEventsFired is 0
+PASS document.activeElement.id is "before"
+PASS focusEventsFired is 0
+PASS blurEventsFired is 0
+
+Focus/blur on readonly input
+
+PASS focusEventsFired is 1
+PASS blurEventsFired is 0
+PASS document.activeElement.id is "after"
+PASS focusEventsFired is 1
+PASS blurEventsFired is 1
+PASS focusEventsFired is 1
+PASS blurEventsFired is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  
