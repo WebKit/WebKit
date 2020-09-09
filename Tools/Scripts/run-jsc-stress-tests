@@ -2440,10 +2440,10 @@ def runGnuParallelRunner
             "--slf", slf,
             "--timeout", timeout.to_s,
             "-a", inputs,
-            "'cd #{$outputDir.basename}/.runner && " +
+            "\"cd #{$outputDir.basename}/.runner && " +
             exportBaseEnvironmentVariables +
             $envVars.collect { |var | "export #{var} &&"}.join("") +
-            "sh '"
+            "sh \""
         ]
         $ignoreNextCommandExecutionExitCode = true
         runAndMonitorTestRunnerCommand(*cmd)

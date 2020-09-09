@@ -1,3 +1,16 @@
+2020-09-09  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        run-jsc-stress-test: fix escaping for --gnu-parallel-runner
+        https://bugs.webkit.org/show_bug.cgi?id=215887
+
+        Reviewed by Keith Miller.
+
+        Change the GNU parallel invocation to use double quotes, to be consistent with
+        the invocation of ssh by the make runner. This should unbreak
+        --gnu-parallel-runner after the fix in r265204.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-09-09  Aakash Jain  <aakash_jain@apple.com>
 
         Add Philippe Normand to EWS emails unsubscribe list
