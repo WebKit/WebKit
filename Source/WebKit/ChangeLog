@@ -1,3 +1,60 @@
+2020-09-09  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Form controls behave strangely (like iPhone) in macOS-idiom apps
+        https://bugs.webkit.org/show_bug.cgi?id=216326
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/UserInterfaceIdiom.h:
+        * Shared/UserInterfaceIdiom.mm:
+        (WebKit::userInterfaceIdiomIsPad):
+        (WebKit::currentUserInterfaceIdiomIsPadOrMac):
+        (WebKit::setCurrentUserInterfaceIdiomIsPadOrMac):
+        (WebKit::currentUserInterfaceIdiomIsPad): Deleted.
+        (WebKit::setCurrentUserInterfaceIdiomIsPad): Deleted.
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+        (WebKit::defaultTextAutosizingUsesIdempotentMode):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession setAccessoryViewCustomButtonTitle:]):
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]):
+        (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView _updateAccessory]):
+        (shouldShowKeyboardForElement):
+        (-[WKContentView _shouldUseLegacySelectPopoverDismissalBehavior]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (WebKit::WebDataListSuggestionsDropdownIOS::show):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingSupported):
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (-[WKAirPlayRoutePicker show:fromRect:]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showPhotoPickerWithSourceType:]):
+        (-[WKFileUploadPanel _presentMenuOptionForCurrentInterfaceIdiom:]):
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKFormColorControl initWithView:]):
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (-[WKColorPicker initWithView:inPopover:]):
+        (-[WKColorPicker drawSelectionIndicatorForColorButton:]):
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Rename currentUserInterfaceIdiomIsPad to currentUserInterfaceIdiomIsPadOrMac,
+        and force it to YES on macCatalyst since internally we use it to distinguish
+        between iPhone and iPad behavior, and (for our behaviors, at least) macCatalyst
+        should always follow iPad.
+
+        We should clean this up, and make all callers make their
+        iPhone vs. iPad vs. macOS decisions more explicit.
+
 2020-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text copied and pasted from Mac Catalyst apps appears larger than expected

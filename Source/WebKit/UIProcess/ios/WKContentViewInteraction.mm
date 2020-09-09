@@ -388,7 +388,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
         [[_contentView formAccessoryView] showAutoFillButtonWithTitle:title];
     else
         [[_contentView formAccessoryView] hideAutoFillButton];
-    if (WebKit::currentUserInterfaceIdiomIsPad())
+    if (WebKit::currentUserInterfaceIdiomIsPadOrMac())
         [_contentView reloadInputViews];
 }
 
@@ -1380,7 +1380,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
                 if (_focusRequiresStrongPasswordAssistance)
                     return true;
 
-                if (!WebKit::currentUserInterfaceIdiomIsPad())
+                if (!WebKit::currentUserInterfaceIdiomIsPadOrMac())
                     return true;
             }
 
@@ -1951,7 +1951,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
-        return !WebKit::currentUserInterfaceIdiomIsPad();
+        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
     default:
         return YES;
     }
@@ -1995,7 +1995,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         fontSize:_focusedElementInformation.nodeFontSize
         minimumScale:_focusedElementInformation.minimumScaleFactor
         maximumScale:_focusedElementInformation.maximumScaleFactorIgnoringAlwaysScalable
-        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && !WebKit::currentUserInterfaceIdiomIsPad()
+        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && !WebKit::currentUserInterfaceIdiomIsPadOrMac()
         forceScroll:[self requiresAccessoryView]];
 }
 
@@ -2965,7 +2965,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
-        return !WebKit::currentUserInterfaceIdiomIsPad();
+        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
     }
 }
 
@@ -4448,7 +4448,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [accessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
     [accessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
 
-    if (WebKit::currentUserInterfaceIdiomIsPad()) {
+    if (WebKit::currentUserInterfaceIdiomIsPadOrMac()) {
         [accessoryView setClearVisible:NO];
         return;
     }
@@ -5820,7 +5820,7 @@ static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation
     if (mayContainSelectableText(information.elementType))
         return true;
 
-    return !WebKit::currentUserInterfaceIdiomIsPad();
+    return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
 }
 
 static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::FocusedElementInformation& elementInfo, const WebKit::EditorState& editorState)
@@ -7115,7 +7115,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (BOOL)_shouldUseLegacySelectPopoverDismissalBehavior
 {
-    if (!WebKit::currentUserInterfaceIdiomIsPad())
+    if (!WebKit::currentUserInterfaceIdiomIsPadOrMac())
         return NO;
 
     if (_focusedElementInformation.elementType != WebKit::InputType::Select)

@@ -192,7 +192,7 @@ using namespace WebKit;
     _popover = popover;
 
     CGSize colorPickerSize;
-    if (currentUserInterfaceIdiomIsPad())
+    if (currentUserInterfaceIdiomIsPadOrMac())
         colorPickerSize = CGSizeMake(pickerWidthForPopover, pickerWidthForPopover);
     else {
         auto keyboardSize = [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
@@ -252,7 +252,7 @@ using namespace WebKit;
     [_colorSelectionIndicator setFrame:frame];
 
     UIRectCorner roundCorner = 0;
-    if (currentUserInterfaceIdiomIsPad()) {
+    if (currentUserInterfaceIdiomIsPadOrMac()) {
         CGRect colorPickerBounds = [_colorPicker bounds];
 
         bool minXEqual = std::abs(CGRectGetMinX(frame) - CGRectGetMinX(colorPickerBounds)) < FLT_EPSILON;

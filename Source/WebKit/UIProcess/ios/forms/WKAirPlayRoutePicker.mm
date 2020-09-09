@@ -154,7 +154,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [_routingController setDiscoveryMode:MPRouteDiscoveryModeDetailed];
 
     MPAVItemType itemType = hasVideo ? MPAVItemTypeVideo : MPAVItemTypeAudio;
-    if (currentUserInterfaceIdiomIsPad())
+    if (currentUserInterfaceIdiomIsPadOrMac())
         [self showAirPlayPickerIPad:itemType fromRect:elementRect];
     else
         [self showAirPlayPickerIPhone:itemType];

@@ -193,11 +193,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _allowsPictureInPictureMediaPlayback = YES;
 #endif
 
-#if PLATFORM(MACCATALYST)
-    _allowsInlineMediaPlayback = YES;
-#else
-    _allowsInlineMediaPlayback = WebKit::currentUserInterfaceIdiomIsPad();
-#endif
+    _allowsInlineMediaPlayback = WebKit::currentUserInterfaceIdiomIsPadOrMac();
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
 

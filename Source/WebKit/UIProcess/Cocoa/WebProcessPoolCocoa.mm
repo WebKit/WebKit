@@ -441,7 +441,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 
 #if PLATFORM(IOS_FAMILY)
-    parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPad();
+    parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPadOrMac();
     parameters.supportsPictureInPicture = supportsPictureInPicture();
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
 #if ENABLE(FULL_KEYBOARD_ACCESS)
