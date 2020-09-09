@@ -186,12 +186,12 @@ public:
 
     // Other methods (not part of DOM)
 
-    bool isElementNode() const { return getFlag(IsElementFlag); }
-    bool isContainerNode() const { return getFlag(IsContainerFlag); }
-    bool isTextNode() const { return getFlag(IsTextFlag); }
-    bool isHTMLElement() const { return getFlag(IsHTMLFlag); }
-    bool isSVGElement() const { return getFlag(IsSVGFlag); }
-    bool isMathMLElement() const { return getFlag(IsMathMLFlag); }
+    bool isElementNode() const { return hasNodeFlag(NodeFlag::IsElement); }
+    bool isContainerNode() const { return hasNodeFlag(NodeFlag::IsContainerNode); }
+    bool isTextNode() const { return hasNodeFlag(NodeFlag::IsText); }
+    bool isHTMLElement() const { return hasNodeFlag(NodeFlag::IsHTMLElement); }
+    bool isSVGElement() const { return hasNodeFlag(NodeFlag::IsSVGElement); }
+    bool isMathMLElement() const { return hasNodeFlag(NodeFlag::IsMathMLElement); }
 
     bool isPseudoElement() const { return pseudoId() != PseudoId::None; }
     bool isBeforePseudoElement() const { return pseudoId() == PseudoId::Before; }
@@ -201,9 +201,9 @@ public:
 #if ENABLE(VIDEO)
     virtual bool isWebVTTElement() const { return false; }
 #endif
-    bool isStyledElement() const { return getFlag(IsHTMLFlag) || getFlag(IsSVGFlag) || getFlag(IsMathMLFlag); }
+    bool isStyledElement() const { return hasNodeFlag(NodeFlag::IsHTMLElement) || hasNodeFlag(NodeFlag::IsSVGElement) || hasNodeFlag(NodeFlag::IsMathMLElement); }
     virtual bool isAttributeNode() const { return false; }
-    bool isCharacterDataNode() const { return !isContainerNode() && (isTextNode() || virtualIsCharacterData()); }
+    bool isCharacterDataNode() const { return hasNodeFlag(NodeFlag::IsCharacterData); }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
 #if ENABLE(SERVICE_CONTROLS)
@@ -211,15 +211,15 @@ public:
     virtual bool isImageControlsButtonElement() const { return false; }
 #endif
 
-    bool isDocumentNode() const { return getFlag(IsDocumentNodeFlag); }
-    bool isTreeScope() const { return getFlag(IsDocumentNodeFlag) || getFlag(IsShadowRootFlag); }
-    bool isDocumentFragment() const { return getFlag(IsContainerFlag) && !(getFlag(IsElementFlag) || getFlag(IsDocumentNodeFlag)); }
-    bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
+    bool isDocumentNode() const { return hasNodeFlag(NodeFlag::IsDocumentNode); }
+    bool isTreeScope() const { return hasNodeFlag(NodeFlag::IsDocumentNode) || hasNodeFlag(NodeFlag::IsShadowRoot); }
+    bool isDocumentFragment() const { return hasNodeFlag(NodeFlag::IsDocumentFragment); }
+    bool isShadowRoot() const { return hasNodeFlag(NodeFlag::IsShadowRoot); }
 
-    bool hasCustomStyleResolveCallbacks() const { return getFlag(HasCustomStyleResolveCallbacksFlag); }
+    bool hasCustomStyleResolveCallbacks() const { return hasNodeFlag(NodeFlag::HasCustomStyleResolveCallbacks); }
 
-    bool hasSyntheticAttrChildNodes() const { return getFlag(HasSyntheticAttrChildNodesFlag); }
-    void setHasSyntheticAttrChildNodes(bool flag) { setFlag(flag, HasSyntheticAttrChildNodesFlag); }
+    bool hasSyntheticAttrChildNodes() const { return hasNodeFlag(NodeFlag::HasSyntheticAttrChildNodes); }
+    void setHasSyntheticAttrChildNodes(bool flag) { setNodeFlag(NodeFlag::HasSyntheticAttrChildNodes, flag); }
 
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
@@ -260,8 +260,8 @@ public:
     // Returns the parent node, but null if the parent node is a ShadowRoot.
     ContainerNode* nonShadowBoundaryParentNode() const;
 
-    bool selfOrAncestorHasDirAutoAttribute() const { return getFlag(SelfOrAncestorHasDirAutoFlag); }
-    void setSelfOrAncestorHasDirAutoAttribute(bool flag) { setFlag(flag, SelfOrAncestorHasDirAutoFlag); }
+    bool selfOrAncestorHasDirAutoAttribute() const { return hasNodeFlag(NodeFlag::SelfOrAncestorHasDirAuto); }
+    void setSelfOrAncestorHasDirAutoAttribute(bool flag) { setNodeFlag(NodeFlag::SelfOrAncestorHasDirAuto, flag); }
 
     // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
     Element* enclosingLinkEventParentOrSelf();
@@ -289,26 +289,26 @@ public:
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool /* error loading subresource */) { }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
-    bool isUserActionElement() const { return getFlag(IsUserActionElement); }
-    void setUserActionElement(bool flag) { setFlag(flag, IsUserActionElement); }
+    bool isUserActionElement() const { return hasNodeFlag(NodeFlag::IsUserActionElement); }
+    void setUserActionElement(bool flag) { setNodeFlag(NodeFlag::IsUserActionElement, flag); }
 
     bool inRenderedDocument() const;
     bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid; }
     Style::Validity styleValidity() const { return styleBitfields().styleValidity(); }
     bool styleResolutionShouldRecompositeLayer() const { return hasStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer); }
     bool childNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
-    bool isEditingText() const { return getFlag(IsTextFlag) && getFlag(IsEditingText); }
+    bool isEditingText() const { return hasNodeFlag(NodeFlag::IsEditingText); }
 
     void setChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     void clearChildNeedsStyleRecalc();
 
     void setHasValidStyle();
 
-    bool isLink() const { return getFlag(IsLinkFlag); }
-    void setIsLink(bool flag) { setFlag(flag, IsLinkFlag); }
+    bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
+    void setIsLink(bool flag) { setNodeFlag(NodeFlag::IsLink, flag); }
 
-    bool hasEventTargetData() const { return getFlag(HasEventTargetDataFlag); }
-    void setHasEventTargetData(bool flag) { setFlag(flag, HasEventTargetDataFlag); }
+    bool hasEventTargetData() const { return hasNodeFlag(NodeFlag::HasEventTargetData); }
+    void setHasEventTargetData(bool flag) { setNodeFlag(NodeFlag::HasEventTargetData, flag); }
 
     WEBCORE_EXPORT bool isContentEditable();
     bool isContentRichlyEditable();
@@ -356,10 +356,10 @@ public:
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise (https://dom.spec.whatwg.org/#connected).
-    bool isConnected() const { return getFlag(IsConnectedFlag); }
+    bool isConnected() const { return hasNodeFlag(NodeFlag::IsConnected); }
     bool isInUserAgentShadowTree() const;
-    bool isInShadowTree() const { return getFlag(IsInShadowTreeFlag); }
-    bool isInTreeScope() const { return getFlag(static_cast<NodeFlags>(IsConnectedFlag | IsInShadowTreeFlag)); }
+    bool isInShadowTree() const { return hasNodeFlag(NodeFlag::IsInShadowTree); }
+    bool isInTreeScope() const { return hasNodeFlag(NodeFlag::IsConnected) || hasNodeFlag(NodeFlag::IsInShadowTree); }
 
     bool isDocumentTypeNode() const { return nodeType() == DOCUMENT_TYPE_NODE; }
     virtual bool childTypeAllowed(NodeType) const { return false; }
@@ -506,31 +506,31 @@ public:
 #else
     static uint32_t rareDataPointerMask() { return -1; }
 #endif
-    static int32_t flagIsText() { return IsTextFlag; }
-    static int32_t flagIsContainer() { return IsContainerFlag; }
-    static int32_t flagIsElement() { return IsElementFlag; }
-    static int32_t flagIsShadowRoot() { return IsShadowRootFlag; }
-    static int32_t flagIsHTML() { return IsHTMLFlag; }
-    static int32_t flagIsLink() { return IsLinkFlag; }
-    static int32_t flagHasFocusWithin() { return HasFocusWithin; }
-    static int32_t flagIsParsingChildrenFinished() { return IsParsingChildrenFinishedFlag; }
+    static int32_t flagIsText() { return static_cast<int32_t>(NodeFlag::IsText); }
+    static int32_t flagIsContainer() { return static_cast<int32_t>(NodeFlag::IsContainerNode); }
+    static int32_t flagIsElement() { return static_cast<int32_t>(NodeFlag::IsElement); }
+    static int32_t flagIsShadowRoot() { return static_cast<int32_t>(NodeFlag::IsShadowRoot); }
+    static int32_t flagIsHTML() { return static_cast<int32_t>(NodeFlag::IsHTMLElement); }
+    static int32_t flagIsLink() { return static_cast<int32_t>(NodeFlag::IsLink); }
+    static int32_t flagHasFocusWithin() { return static_cast<int32_t>(NodeFlag::HasFocusWithin); }
+    static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
 
 protected:
-    enum NodeFlags {
-        IsTextFlag = 1,
-        IsContainerFlag = 1 << 1,
-        IsElementFlag = 1 << 2,
-        IsHTMLFlag = 1 << 3,
-        IsSVGFlag = 1 << 4,
-        IsMathMLFlag = 1 << 5,
-        IsDocumentNodeFlag = 1 << 6,
-        IsShadowRootFlag = 1 << 7,
-        IsConnectedFlag = 1 << 8,
-        IsInShadowTreeFlag = 1 << 9,
-        // UnusedFlag = 1 << 10,
-        HasEventTargetDataFlag = 1 << 11,
-        // UnusedFlag = 1 << 12,
+    enum class NodeFlag : uint32_t {
+        IsCharacterData = 1 << 0,
+        IsText = 1 << 1,
+        IsContainerNode = 1 << 2,
+        IsElement = 1 << 3,
+        IsHTMLElement = 1 << 4,
+        IsSVGElement = 1 << 5,
+        IsMathMLElement = 1 << 6,
+        IsDocumentNode = 1 << 7,
+        IsDocumentFragment = 1 << 8,
+        IsShadowRoot = 1 << 9,
+        IsConnected = 1 << 10,
+        IsInShadowTree = 1 << 11,
+        HasEventTargetData = 1 << 12,
         // UnusedFlag = 1 << 13,
         // UnusedFlag = 1 << 14,
 
@@ -538,24 +538,22 @@ protected:
         // be stored in the same memory word as the Node bits above.
         IsEditingText = 1 << 15, // Text
         HasFocusWithin = 1 << 16, // Element
-        IsLinkFlag = 1 << 17,
+        IsLink = 1 << 17,
         IsUserActionElement = 1 << 18,
-        IsParsingChildrenFinishedFlag = 1 << 19,
-        HasSyntheticAttrChildNodesFlag = 1 << 20,
-        SelfOrAncestorHasDirAutoFlag = 1 << 21,
+        IsParsingChildrenFinished = 1 << 19,
+        HasSyntheticAttrChildNodes = 1 << 20,
+        SelfOrAncestorHasDirAuto = 1 << 21,
 
-        HasCustomStyleResolveCallbacksFlag = 1 << 22,
+        HasCustomStyleResolveCallbacks = 1 << 22,
 
-        HasPendingResourcesFlag = 1 << 23,
-        HasCSSAnimationFlag = 1 << 24,
-        HasElementIdentifierFlag = 1 << 25,
+        HasPendingResources = 1 << 23,
+        HasCSSAnimation = 1 << 24,
+        HasElementIdentifier = 1 << 25,
 #if ENABLE(FULLSCREEN_API)
-        ContainsFullScreenElementFlag = 1 << 26,
+        ContainsFullScreenElement = 1 << 26,
 #endif
 
         // Bits 27-31 are free.
-
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
 
     enum class TabIndexState : uint8_t {
@@ -578,10 +576,9 @@ protected:
         uint16_t customElementState : 2;
     };
 
-    bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
-    void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
-    void setFlag(NodeFlags mask) const { m_nodeFlags |= mask; } 
-    void clearFlag(NodeFlags mask) const { m_nodeFlags &= ~mask; }
+    bool hasNodeFlag(NodeFlag flag) const { return m_nodeFlags.contains(flag); }
+    void setNodeFlag(NodeFlag flag, bool value = true) const { m_nodeFlags.set(flag, value); }
+    void clearNodeFlag(NodeFlag flag) const { m_nodeFlags.remove(flag); }
 
     RareDataBitFields rareDataBitfields() const { return bitwise_cast<RareDataBitFields>(m_rareDataWithBitfields.type()); }
     void setRareDataBitfields(RareDataBitFields bitfields) { m_rareDataWithBitfields.setType(bitwise_cast<uint16_t>(bitfields)); }
@@ -592,24 +589,25 @@ protected:
     CustomElementState customElementState() const { return static_cast<CustomElementState>(rareDataBitfields().customElementState); }
     void setCustomElementState(CustomElementState);
 
-    bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }
-    void setIsParsingChildrenFinished() { setFlag(IsParsingChildrenFinishedFlag); }
-    void clearIsParsingChildrenFinished() { clearFlag(IsParsingChildrenFinishedFlag); }
+    bool isParsingChildrenFinished() const { return hasNodeFlag(NodeFlag::IsParsingChildrenFinished); }
+    void setIsParsingChildrenFinished() { setNodeFlag(NodeFlag::IsParsingChildrenFinished); }
+    void clearIsParsingChildrenFinished() { clearNodeFlag(NodeFlag::IsParsingChildrenFinished); }
 
-    enum ConstructionType {
-        CreateOther = DefaultNodeFlags,
-        CreateText = DefaultNodeFlags | IsTextFlag,
-        CreateContainer = DefaultNodeFlags | IsContainerFlag, 
-        CreateElement = CreateContainer | IsElementFlag, 
-        CreatePseudoElement =  CreateElement | IsConnectedFlag,
-        CreateShadowRoot = CreateContainer | IsShadowRootFlag | IsInShadowTreeFlag,
-        CreateDocumentFragment = CreateContainer,
-        CreateHTMLElement = CreateElement | IsHTMLFlag,
-        CreateSVGElement = CreateElement | IsSVGFlag | HasCustomStyleResolveCallbacksFlag,
-        CreateMathMLElement = CreateElement | IsMathMLFlag,
-        CreateDocument = CreateContainer | IsDocumentNodeFlag | IsConnectedFlag,
-        CreateEditingText = CreateText | IsEditingText,
-    };
+    constexpr static auto DefaultNodeFlags = OptionSet<NodeFlag>(NodeFlag::IsParsingChildrenFinished);
+    constexpr static auto CreateOther = DefaultNodeFlags;
+    constexpr static auto CreateCharacterData = DefaultNodeFlags | NodeFlag::IsCharacterData;
+    constexpr static auto CreateText = CreateCharacterData | NodeFlag::IsText;
+    constexpr static auto CreateContainer = DefaultNodeFlags | NodeFlag::IsContainerNode;
+    constexpr static auto CreateElement = CreateContainer | NodeFlag::IsElement;
+    constexpr static auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected;
+    constexpr static auto CreateDocumentFragment = CreateContainer | NodeFlag::IsDocumentFragment;
+    constexpr static auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot | NodeFlag::IsInShadowTree;
+    constexpr static auto CreateHTMLElement = CreateElement | NodeFlag::IsHTMLElement;
+    constexpr static auto CreateSVGElement = CreateElement | NodeFlag::IsSVGElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    constexpr static auto CreateMathMLElement = CreateElement | NodeFlag::IsMathMLElement;
+    constexpr static auto CreateDocument = CreateContainer | NodeFlag::IsDocumentNode | NodeFlag::IsConnected;
+    constexpr static auto CreateEditingText = CreateText | NodeFlag::IsEditingText;
+    using ConstructionType = OptionSet<NodeFlag>;
     Node(Document&, ConstructionType);
 
     static constexpr uint32_t s_refCountIncrement = 2;
@@ -677,7 +675,7 @@ protected:
 
     void clearEventTargetData();
 
-    void setHasCustomStyleResolveCallbacks() { setFlag(true, HasCustomStyleResolveCallbacksFlag); }
+    void setHasCustomStyleResolveCallbacks() { setNodeFlag(NodeFlag::HasCustomStyleResolveCallbacks); }
 
     void setTreeScope(TreeScope& scope) { m_treeScope = &scope; }
 
@@ -692,8 +690,6 @@ private:
         ASSERT(hasCustomStyleResolveCallbacks());
         return PseudoId::None;
     }
-
-    virtual bool virtualIsCharacterData() const { return false; }
 
     WEBCORE_EXPORT void removedLastRef();
 
@@ -720,7 +716,7 @@ private:
     };
 
     mutable uint32_t m_refCountAndParentBit { s_refCountIncrement };
-    mutable uint32_t m_nodeFlags;
+    mutable OptionSet<NodeFlag> m_nodeFlags;
 
     ContainerNode* m_parentNode { nullptr };
     TreeScope* m_treeScope { nullptr };

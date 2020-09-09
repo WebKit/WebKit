@@ -320,7 +320,7 @@ public:
     bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
     bool focused() const { return isUserActionElement() && isUserActionElementFocused(); }
     bool isBeingDragged() const { return isUserActionElement() && isUserActionElementDragged(); }
-    bool hasFocusWithin() const { return getFlag(HasFocusWithin); };
+    bool hasFocusWithin() const { return hasNodeFlag(NodeFlag::HasFocusWithin); };
 
     virtual void setActive(bool = true, bool pause = false);
     virtual void setHovered(bool = true);
@@ -481,14 +481,14 @@ public:
 
     virtual bool childShouldCreateRenderer(const Node&) const;
 
-    bool hasPendingResources() const { return getFlag(HasPendingResourcesFlag); }
-    void setHasPendingResources() { setFlag(HasPendingResourcesFlag); }
-    void clearHasPendingResources() { clearFlag(HasPendingResourcesFlag); }
+    bool hasPendingResources() const { return hasNodeFlag(NodeFlag::HasPendingResources); }
+    void setHasPendingResources() { setNodeFlag(NodeFlag::HasPendingResources); }
+    void clearHasPendingResources() { clearNodeFlag(NodeFlag::HasPendingResources); }
     virtual void buildPendingResource() { };
 
-    bool hasCSSAnimation() const { return getFlag(HasCSSAnimationFlag); }
-    void setHasCSSAnimation() { setFlag(HasCSSAnimationFlag); }
-    void clearHasCSSAnimation() { clearFlag(HasCSSAnimationFlag); }
+    bool hasCSSAnimation() const { return hasNodeFlag(NodeFlag::HasCSSAnimation); }
+    void setHasCSSAnimation() { setNodeFlag(NodeFlag::HasCSSAnimation); }
+    void clearHasCSSAnimation() { clearNodeFlag(NodeFlag::HasCSSAnimation); }
 
     KeyframeEffectStack* keyframeEffectStack() const;
     KeyframeEffectStack& ensureKeyframeEffectStack();
@@ -513,7 +513,7 @@ public:
     void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&&);
 
 #if ENABLE(FULLSCREEN_API)
-    bool containsFullScreenElement() const { return getFlag(ContainsFullScreenElementFlag); }
+    bool containsFullScreenElement() const { return hasNodeFlag(NodeFlag::ContainsFullScreenElement); }
     void setContainsFullScreenElement(bool);
     void setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool);
     WEBCORE_EXPORT virtual void webkitRequestFullscreen();

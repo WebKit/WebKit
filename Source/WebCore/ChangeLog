@@ -1,5 +1,95 @@
 2020-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Node flags should be an OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=216305
+
+        Reviewed by Antti Koivisto.
+
+        This patch renames NodeFlags to NodeFlag and turns into an enum class and changes the type of
+        m_nodeFlags from uint32_t to OptionSet<NodeFlag> as there is no state stored there after r266769.
+
+        This patch also introduces two new NodeFlag for identifying CharacterData and DocumentFragment
+        to simplify the type check conditions for these nodes now that we have plenty of free bits.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::CharacterData): Sets NodeFlag::IsContainerNode via CreateCharacterData.
+        (WebCore::CharacterData::virtualIsCharacterData): Deleted.
+        * dom/Comment.cpp:
+        (WebCore::Comment::Comment): Ditto.
+        * dom/Element.cpp:
+        (WebCore::Element::setHasFocusWithin):
+        (WebCore::Element::removedFromAncestor):
+        (WebCore::Element::setContainsFullScreenElement):
+        (WebCore::Element::createElementIdentifier):
+        * dom/Element.h:
+        (WebCore::Element::hasFocusWithin const):
+        (WebCore::Element::hasPendingResources const):
+        (WebCore::Element::setHasPendingResources):
+        (WebCore::Element::clearHasPendingResources):
+        (WebCore::Element::hasCSSAnimation const):
+        (WebCore::Element::setHasCSSAnimation):
+        (WebCore::Element::clearHasCSSAnimation):
+        (WebCore::Element::containsFullScreenElement const):
+        * dom/Node.cpp:
+        (WebCore::Node::insertedIntoAncestor):
+        (WebCore::Node::removedFromAncestor):
+        * dom/Node.h:
+        (WebCore::Node::isElementNode const):
+        (WebCore::Node::isContainerNode const):
+        (WebCore::Node::isTextNode const):
+        (WebCore::Node::isHTMLElement const):
+        (WebCore::Node::isSVGElement const):
+        (WebCore::Node::isMathMLElement const):
+        (WebCore::Node::isStyledElement const):
+        (WebCore::Node::isCharacterDataNode const): Check the newly added NodeFlag::IsContainerNode.
+        (WebCore::Node::isDocumentNode const):
+        (WebCore::Node::isTreeScope const):
+        (WebCore::Node::isDocumentFragment const):: Check the newly added NodeFlag::IsDocumentFragment.
+        (WebCore::Node::isShadowRoot const):
+        (WebCore::Node::hasCustomStyleResolveCallbacks const):
+        (WebCore::Node::hasSyntheticAttrChildNodes const):
+        (WebCore::Node::setHasSyntheticAttrChildNodes):
+        (WebCore::Node::selfOrAncestorHasDirAutoAttribute const):
+        (WebCore::Node::setSelfOrAncestorHasDirAutoAttribute):
+        (WebCore::Node::isUserActionElement const):
+        (WebCore::Node::setUserActionElement):
+        (WebCore::Node::isEditingText const): Removed the check for IsTextFlag since this is no longer needed
+        after r266769 as no longer share the bit for IsEditingText with an unknown custom element.
+        (WebCore::Node::isLink const):
+        (WebCore::Node::setIsLink):
+        (WebCore::Node::hasEventTargetData const):
+        (WebCore::Node::setHasEventTargetData):
+        (WebCore::Node::isConnected const):
+        (WebCore::Node::isInShadowTree const):
+        (WebCore::Node::isInTreeScope const):
+        (WebCore::Node::flagIsText):
+        (WebCore::Node::flagIsContainer):
+        (WebCore::Node::flagIsElement):
+        (WebCore::Node::flagIsShadowRoot):
+        (WebCore::Node::flagIsHTML):
+        (WebCore::Node::flagIsLink):
+        (WebCore::Node::flagHasFocusWithin):
+        (WebCore::Node::flagIsParsingChildrenFinished):
+        (WebCore::Node::NodeFlag): Renamed from NodeFlags and made it an enum class, and introduced IsCharacterData
+        and IsDocumentFragment and removed "Flag" suffix from various flags.
+        (WebCore::Node::hasNodeFlag const): Renamed from getFlag for clarity.
+        (WebCore::Node::setNodeFlag const): Ditto from setFlag. Also merge the two versions of setFlag one of which
+        took a boolean arugment as the first argument by making this a second optional argument.
+        (WebCore::Node::clearNodeFlag const): Ditto.
+        (WebCore::Node::isParsingChildrenFinished const):
+        (WebCore::Node::setIsParsingChildrenFinished):
+        (WebCore::Node::clearIsParsingChildrenFinished):
+        (WebCore::Node::ConstructionType): This is now an alias to OptionSet<NodeFlag> instead of a separate enum.
+        (WebCore::Node::setHasCustomStyleResolveCallbacks):
+        (WebCore::Node::virtualIsCharacterData const): Deleted.
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction): Sets NodeFlag::IsContainerNode via CharacterData's
+        constructor's default argument value.
+
+2020-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Having an iframe as a descendent node shouldn't require ElementRareData
         https://bugs.webkit.org/show_bug.cgi?id=216264
 

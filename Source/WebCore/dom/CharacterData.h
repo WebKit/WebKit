@@ -46,11 +46,11 @@ public:
     unsigned parserAppendData(const String& string, unsigned offset, unsigned lengthLimit);
 
 protected:
-    CharacterData(Document& document, const String& text, ConstructionType type)
+    CharacterData(Document& document, const String& text, ConstructionType type = CreateCharacterData)
         : Node(document, type)
         , m_data(!text.isNull() ? text : emptyString())
     {
-        ASSERT(type == CreateOther || type == CreateText || type == CreateEditingText);
+        ASSERT(type == CreateCharacterData || type == CreateText || type == CreateEditingText);
     }
 
     void setDataWithoutUpdate(const String& data)
@@ -63,7 +63,6 @@ protected:
 private:
     String nodeValue() const final;
     ExceptionOr<void> setNodeValue(const String&) final;
-    bool virtualIsCharacterData() const final { return true; }
     void notifyParentAfterChange(ContainerNode::ChildChangeSource);
 
     String m_data;

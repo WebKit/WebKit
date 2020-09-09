@@ -193,6 +193,11 @@ public:
         m_storage &= ~optionSet.m_storage;
     }
 
+    constexpr void set(OptionSet optionSet, bool value)
+    {
+        m_storage = (m_storage & ~optionSet.m_storage) | (-static_cast<StorageType>(value) & optionSet.m_storage);
+    }
+
     constexpr bool hasExactlyOneBitSet() const
     {
         return m_storage && !(m_storage & (m_storage - 1));

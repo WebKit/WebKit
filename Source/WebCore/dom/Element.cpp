@@ -741,7 +741,7 @@ void Element::setHasFocusWithin(bool flag)
         return;
     {
         Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusWithin);
-        setFlag(flag, HasFocusWithin);
+        setNodeFlag(NodeFlag::HasFocusWithin, flag);
     }
 }
 
@@ -2291,9 +2291,9 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     }
 #endif
 
-    if (getFlag(HasElementIdentifierFlag)) {
+    if (hasNodeFlag(NodeFlag::HasElementIdentifier)) {
         document().identifiedElementWasRemovedFromDocument(*this);
-        clearFlag(HasElementIdentifierFlag);
+        clearNodeFlag(NodeFlag::HasElementIdentifier);
     }
 }
 
@@ -3749,9 +3749,9 @@ void Element::webkitRequestFullscreen()
 void Element::setContainsFullScreenElement(bool flag)
 {
     if (flag)
-        setFlag(ContainsFullScreenElementFlag);
+        setNodeFlag(NodeFlag::ContainsFullScreenElement);
     else
-        clearFlag(ContainsFullScreenElementFlag);
+        clearNodeFlag(NodeFlag::ContainsFullScreenElement);
     invalidateStyleAndLayerComposition();
 }
 
@@ -4605,8 +4605,8 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(Optional<GetAnimationsOption
 
 ElementIdentifier Element::createElementIdentifier()
 {
-    ASSERT(!getFlag(HasElementIdentifierFlag));
-    setFlag(HasElementIdentifierFlag);
+    ASSERT(!hasNodeFlag(NodeFlag::HasElementIdentifier));
+    setNodeFlag(NodeFlag::HasElementIdentifier);
     return ElementIdentifier::generate();
 }
 

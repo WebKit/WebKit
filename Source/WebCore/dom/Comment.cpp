@@ -30,7 +30,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Comment);
 
 inline Comment::Comment(Document& document, const String& text)
-    : CharacterData(document, text, CreateOther)
+    : CharacterData(document, text)
 {
 }
 

@@ -1298,9 +1298,9 @@ Node& Node::getRootNode(const GetRootNodeOptions& options) const
 Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument)
-        setFlag(IsConnectedFlag);
+        setNodeFlag(NodeFlag::IsConnected);
     if (parentOfInsertedTree.isInShadowTree())
-        setFlag(IsInShadowTreeFlag);
+        setNodeFlag(NodeFlag::IsInShadowTree);
 
     invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
 
@@ -1310,9 +1310,9 @@ Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insert
 void Node::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument)
-        clearFlag(IsConnectedFlag);
+        clearNodeFlag(NodeFlag::IsConnected);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
-        clearFlag(IsInShadowTreeFlag);
+        clearNodeFlag(NodeFlag::IsInShadowTree);
     if (removalType.disconnectedFromDocument) {
         if (auto* cache = oldParentOfRemovedTree.document().existingAXObjectCache())
             cache->remove(*this);

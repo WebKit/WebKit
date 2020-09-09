@@ -1,3 +1,13 @@
+2020-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Node flags should be an OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=216305
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::set): Added.
+
 2020-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make CompactUniquePtrTuple actually work with subclassing and custom deleter
