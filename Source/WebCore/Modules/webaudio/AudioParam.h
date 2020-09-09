@@ -53,8 +53,8 @@ class AudioParam final
 #endif
 {
 public:
-    static const double DefaultSmoothingConstant;
-    static const double SnapThreshold;
+    static constexpr double SmoothingConstant = 0.05;
+    static constexpr double SnapThreshold = 0.001;
 
     static Ref<AudioParam> create(BaseAudioContext& context, const String& name, float defaultValue, float minValue, float maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode = AutomationRateMode::Variable)
     {
@@ -99,7 +99,6 @@ public:
     bool smooth();
 
     void resetSmoothedValue() { m_smoothedValue = m_value; }
-    void setSmoothingConstant(float k) { m_smoothingConstant = k; }
 
     // Parameter automation.    
     ExceptionOr<AudioParam&> setValueAtTime(float value, double startTime);
@@ -145,7 +144,6 @@ private:
 
     // Smoothing (de-zippering)
     float m_smoothedValue;
-    float m_smoothingConstant;
     
     AudioParamTimeline m_timeline;
 

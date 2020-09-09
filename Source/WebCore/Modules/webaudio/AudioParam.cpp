@@ -39,9 +39,6 @@
 
 namespace WebCore {
 
-const double AudioParam::DefaultSmoothingConstant = 0.05;
-const double AudioParam::SnapThreshold = 0.001;
-
 AudioParam::AudioParam(BaseAudioContext& context, const String& name, float defaultValue, float minValue, float maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode)
     : AudioSummingJunction(context)
     , m_name(name)
@@ -52,7 +49,6 @@ AudioParam::AudioParam(BaseAudioContext& context, const String& name, float defa
     , m_automationRate(automationRate)
     , m_automationRateMode(automationRateMode)
     , m_smoothedValue(defaultValue)
-    , m_smoothingConstant(DefaultSmoothingConstant)
 #if !RELEASE_LOG_DISABLED
     , m_logger(context.logger())
     , m_logIdentifier(context.nextAudioParameterLogIdentifier())
@@ -128,7 +124,7 @@ bool AudioParam::smooth()
         m_smoothedValue = m_value;
     else {
         // Dezipper - exponential approach.
-        m_smoothedValue += (m_value - m_smoothedValue) * m_smoothingConstant;
+        m_smoothedValue += (m_value - m_smoothedValue) * SmoothingConstant;
 
         // If we get close enough then snap to actual value.
         if (fabs(m_smoothedValue - m_value) < SnapThreshold) // FIXME: the threshold needs to be adjustable depending on range - but this is OK general purpose value.
