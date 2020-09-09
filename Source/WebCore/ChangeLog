@@ -1,3 +1,22 @@
+2020-09-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        AccessibilityMenuList and MenuListPopup notifications need to be posted asynchronously.
+        https://bugs.webkit.org/show_bug.cgi?id=216309
+        <rdar://problem/68108824>
+
+        Reviewed by Chris Fleizach.
+
+        MenuList notifications were posted synchronously which triggers a DOM
+        layout and style update in the middle of an ongoing DOM mutation update.
+        This is unnecessary and, furthermore, causes crashes since the DOM
+        layout update cannot be re-entrant. This change makes these
+        notifications asynchronous.
+
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::didUpdateActiveOption):
+
 2020-09-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBuilder::rebuildLine should just re-initialize the current line
