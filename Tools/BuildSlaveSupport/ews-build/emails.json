@@ -6,5 +6,5 @@
   "BOT_WATCHERS_EMAILS": [
       "webkit-ews-bot-watchers@group.apple.com"
   ],
-  "EMAIL_IDS_TO_UNSUBSCRIBE": []
+  "EMAIL_IDS_TO_UNSUBSCRIBE": ["pnormand@igalia.com"]
 }

@@ -1,3 +1,11 @@
+2020-09-09  Aakash Jain  <aakash_jain@apple.com>
+
+        Add Philippe Normand to EWS emails unsubscribe list
+
+        Unreviewed.
+
+        * BuildSlaveSupport/ews-build/emails.json:
+
 2020-09-08  Lauro Moura  <lmoura@igalia.com>
 
         kill-old-processes: Remove stale Apache2 shm segments
