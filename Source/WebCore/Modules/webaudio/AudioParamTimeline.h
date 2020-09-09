@@ -44,8 +44,8 @@ public:
     }
 
     ExceptionOr<void> setValueAtTime(float value, Seconds time);
-    ExceptionOr<void> linearRampToValueAtTime(float value, Seconds time);
-    ExceptionOr<void> exponentialRampToValueAtTime(float value, Seconds time);
+    ExceptionOr<void> linearRampToValueAtTime(float targetValue, Seconds endTime, float currentValue, Seconds currentTime);
+    ExceptionOr<void> exponentialRampToValueAtTime(float targetValue, Seconds endTime, float currentValue, Seconds currentTime);
     ExceptionOr<void> setTargetAtTime(float target, Seconds time, float timeConstant);
     ExceptionOr<void> setValueCurveAtTime(Vector<float>&& curve, Seconds time, Seconds duration);
     void cancelScheduledValues(Seconds cancelTime);

@@ -152,7 +152,7 @@ ExceptionOr<AudioParam&> AudioParam::linearRampToValueAtTime(float value, double
         return Exception { RangeError, "endTime must be a positive value"_s };
 
     endTime = std::max(endTime, context().currentTime());
-    auto result = m_timeline.linearRampToValueAtTime(value, Seconds { endTime });
+    auto result = m_timeline.linearRampToValueAtTime(value, Seconds { endTime }, m_value, Seconds { context().currentTime() });
     if (result.hasException())
         return result.releaseException();
     return *this;
@@ -166,7 +166,7 @@ ExceptionOr<AudioParam&> AudioParam::exponentialRampToValueAtTime(float value, d
         return Exception { RangeError, "endTime must be a positive value"_s };
 
     endTime = std::max(endTime, context().currentTime());
-    auto result = m_timeline.exponentialRampToValueAtTime(value, Seconds { endTime });
+    auto result = m_timeline.exponentialRampToValueAtTime(value, Seconds { endTime }, m_value, Seconds { context().currentTime() });
     if (result.hasException())
         return result.releaseException();
     return *this;

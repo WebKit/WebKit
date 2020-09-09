@@ -69,16 +69,26 @@ ExceptionOr<void> AudioParamTimeline::setValueAtTime(float value, Seconds time)
     return insertEvent(ParamEvent::createSetValueEvent(value, time));
 }
 
-ExceptionOr<void> AudioParamTimeline::linearRampToValueAtTime(float value, Seconds time)
+ExceptionOr<void> AudioParamTimeline::linearRampToValueAtTime(float targetValue, Seconds endTime, float currentValue, Seconds currentTime)
 {
     auto locker = holdLock(m_eventsMutex);
-    return insertEvent(ParamEvent::createLinearRampEvent(value, time));
+
+    // Linear ramp events need a preceding event so that they have an initial value.
+    if (m_events.isEmpty())
+        insertEvent(ParamEvent::createSetValueEvent(currentValue, currentTime));
+
+    return insertEvent(ParamEvent::createLinearRampEvent(targetValue, endTime));
 }
 
-ExceptionOr<void> AudioParamTimeline::exponentialRampToValueAtTime(float value, Seconds time)
+ExceptionOr<void> AudioParamTimeline::exponentialRampToValueAtTime(float targetValue, Seconds endTime, float currentValue, Seconds currentTime)
 {
     auto locker = holdLock(m_eventsMutex);
-    return insertEvent(ParamEvent::createExponentialRampEvent(value, time));
+
+    // Exponential ramp events need a preceding event so that they have an initial value.
+    if (m_events.isEmpty())
+        insertEvent(ParamEvent::createSetValueEvent(currentValue, currentTime));
+
+    return insertEvent(ParamEvent::createExponentialRampEvent(targetValue, endTime));
 }
 
 ExceptionOr<void> AudioParamTimeline::setTargetAtTime(float target, Seconds time, float timeConstant)

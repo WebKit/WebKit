@@ -1,3 +1,22 @@
+2020-09-09  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.linearRampToValueAtTime() / exponentialRampToValueAtTime() have no effect when there is no preceding event
+        https://bugs.webkit.org/show_bug.cgi?id=216284
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-connections-expected.txt:
+        Rebaseline test that is now failing because of the fix. The test was not actually running as intended because
+        it relies on AudioParam.linearRampToValueAtTime(), which was not working until now. I have investigated this
+        failure and it is actually due to a bug in our AudioBus::copyWithGainFrom() implementation. I will land a
+        follow-up fix for this.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-constant-source-expected.txt:
+        Rebaseline test now that output is different (still passing).
+
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting-expected.txt:
+        Rebaseline test that is passing thanks to the fix.
+
 2020-09-09  Alex Christensen  <achristensen@webkit.org>
 
         Import selection web platform tests

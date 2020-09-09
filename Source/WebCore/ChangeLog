@@ -1,3 +1,22 @@
+2020-09-09  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.linearRampToValueAtTime() / exponentialRampToValueAtTime() have no effect when there is no preceding event
+        https://bugs.webkit.org/show_bug.cgi?id=216284
+
+        Reviewed by Darin Adler.
+
+        AudioParam.linearRampToValueAtTime() / exponentialRampToValueAtTime() have no effect when there is no preceding event
+        in the timeline. This is incorrect. We should insert an implicit SetValue event in the timeline if the ramp event is
+        the first one.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioParam.cpp:
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::linearRampToValueAtTime):
+        (WebCore::AudioParamTimeline::exponentialRampToValueAtTime):
+        * Modules/webaudio/AudioParamTimeline.h:
+
 2020-09-09  Andres Gonzalez  <andresg_22@apple.com>
 
         AccessibilityMenuList and MenuListPopup notifications need to be posted asynchronously.
