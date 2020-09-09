@@ -1,3 +1,9 @@
+2020-09-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening after r266761.
+
+        * platform/mac/TestExpectations: This should have been Mojave, not HighSierra.
+
 2020-09-08  Tim Horton  <timothy_horton@apple.com>
 
         [ iOS wk2 ] fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html is a constant failure
