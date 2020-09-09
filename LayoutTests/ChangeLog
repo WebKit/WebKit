@@ -1,3 +1,17 @@
+2020-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        [ iOS wk2 ] fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=216300
+        <rdar://problem/68542670>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html:
+        shouldBecomeDifferent only works if both of the strings it evals are evaluable in the global scope.
+
+        * platform/ios-wk2/TestExpectations:
+        Remove the failure expectation.
+
 2020-09-08  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 ] fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html is a constant failure
