@@ -301,7 +301,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
     auto lineLogicalTopLeft = InlineLayoutPoint { usedConstraints.logicalLeft, initialConstraints.vertical.logicalTop };
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContent.hasValue());
     auto lineIsVisuallyEmpty = m_line.isVisuallyEmpty() ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No;
-    return LineContent { committedContent.partialTrailingContent, committedRange, m_floats, m_line.hasIntrusiveFloat()
+    return LineContent { committedContent.partialTrailingContent, committedRange, m_floats, m_contentIsConstrainedByFloat
         , lineLogicalTopLeft
         , m_line.horizontalConstraint()
         , LineBox { formattingContext(), m_line.horizontalConstraint(), m_line.contentLogicalWidth(), m_line.runs(), lineIsVisuallyEmpty
@@ -324,7 +324,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints)
     m_lastWrapOpportunityItem = { };
 
     m_line.open(lineConstraints.availableLogicalWidth);
-    m_line.setHasIntrusiveFloat(lineConstraints.isConstrainedByFloat);
+    m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 }
 
 LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, Optional<unsigned> partialLeadingContentLength)
@@ -366,7 +366,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
 
 LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
 {
-    ASSERT(committedContent.inlineItemCount || !m_floats.isEmpty() || m_line.hasIntrusiveFloat());
+    ASSERT(committedContent.inlineItemCount || !m_floats.isEmpty() || m_contentIsConstrainedByFloat);
     auto numberOfCommittedItems = committedContent.inlineItemCount + m_floats.size();
     auto trailingInlineItemIndex = needsLayoutRange.start + numberOfCommittedItems - 1;
     auto lineRange = InlineItemRange { needsLayoutRange.start, trailingInlineItemIndex + 1 };
@@ -500,14 +500,13 @@ void LineBuilder::commitFloats(const LineCandidate& lineCandidate, CommitIntrusi
     auto& floatContent = lineCandidate.floatContent;
     auto leftIntrusiveFloatsWidth = InlineLayoutUnit { };
     auto rightIntrusiveFloatsWidth = InlineLayoutUnit { };
-    auto hasIntrusiveFloat = false;
 
     for (auto& floatCandidate : floatContent.list()) {
         if (!floatCandidate.isIntrusive && commitIntrusiveOnly == CommitIntrusiveFloatsOnly::Yes)
             continue;
         m_floats.append({ floatCandidate.isIntrusive, floatCandidate.item });
         if (floatCandidate.isIntrusive) {
-            hasIntrusiveFloat = true;
+            m_contentIsConstrainedByFloat = true;
             // This float is intrusive and it shrinks the current line.
             // Shrink available space for current line.
             if (floatCandidate.item->layoutBox().isLeftFloatingPositioned())
@@ -516,7 +515,6 @@ void LineBuilder::commitFloats(const LineCandidate& lineCandidate, CommitIntrusi
                 rightIntrusiveFloatsWidth += floatCandidate.logicalWidth;
         }
     }
-    m_line.setHasIntrusiveFloat(hasIntrusiveFloat);
     if (leftIntrusiveFloatsWidth || rightIntrusiveFloatsWidth) {
         if (leftIntrusiveFloatsWidth)
             m_line.moveLogicalLeft(leftIntrusiveFloatsWidth);
@@ -545,7 +543,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
     auto& floatContent = lineCandidate.floatContent;
     // Check if this new content fits.
     auto availableWidth = m_line.availableWidth() - floatContent.intrusiveWidth();
-    auto isLineConsideredEmpty = m_line.isVisuallyEmpty() && !m_line.hasIntrusiveFloat();
+    auto isLineConsideredEmpty = m_line.isVisuallyEmpty() && !m_contentIsConstrainedByFloat;
     auto lineStatus = LineBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = lineBreaker.shouldWrapInlineContent(candidateRuns, inlineContent.logicalWidth(), lineStatus);
     if (result.lastWrapOpportunityItem)

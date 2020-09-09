@@ -120,6 +120,7 @@ private:
     Optional<InlineTextItem> m_partialLeadingTextItem;
     const InlineItem* m_lastWrapOpportunityItem { nullptr };
     unsigned m_successiveHyphenatedLineCount { 0 };
+    bool m_contentIsConstrainedByFloat { false };
 };
 
 }

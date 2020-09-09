@@ -46,9 +46,6 @@ public:
     void close(bool isLastLineWithInlineContent);
     void clearContent();
 
-    void setHasIntrusiveFloat(bool hasIntrusiveFloat) { m_hasIntrusiveFloat = hasIntrusiveFloat; }
-    bool hasIntrusiveFloat() const { return m_hasIntrusiveFloat; }
-
     void append(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendPartialTrailingTextItem(const InlineTextItem&, InlineLayoutUnit logicalWidth, bool needsHypen);
 
@@ -181,7 +178,6 @@ private:
     InlineLayoutUnit m_lineLogicalLeft { 0 };
     InlineLayoutUnit m_horizontalConstraint { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
-    bool m_hasIntrusiveFloat { false };
     bool m_isVisuallyEmpty { true };
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent;
     bool m_shouldIgnoreTrailingLetterSpacing { false };
