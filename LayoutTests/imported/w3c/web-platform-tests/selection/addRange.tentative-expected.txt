@@ -1,0 +1,9 @@
+Add a range to the selection
+
+
+FAIL Selection: Add a range to the selection assert_equals: expected Element node <body>
+  <p>Add a range to the selection</p>
+
+
+</body> but got Text node "Add a range to the selection"
+

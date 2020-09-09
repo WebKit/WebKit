@@ -1,0 +1,35 @@
+Äb̈c̈d̈ëf̈g̈ḧ
+
+Qrstuvwx
+
+
+FAIL removeRange() with Range 0 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 1 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 2 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 3 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 4 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 5 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 6 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 7 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 14 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 15 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 16 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 17 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 18 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 22 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 23 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 26 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 27 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 28 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 29 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 30 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 31 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 32 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 34 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 35 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 36 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 37 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 38 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+FAIL removeRange() with Range 39 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
+PASS removeRange() argument is non-optional Range 
+

@@ -1,0 +1,3 @@
+
+FAIL Selection: Collapse the selection using collapse() assert_equals: expected Element node <p id="p1">Add a range to the selection</p> but got Text node "Add a range to the selection"
+Add a range to the selection

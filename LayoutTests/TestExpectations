@@ -274,6 +274,9 @@ imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/worker-
 imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/xhr-messaging.html [ Skip ]
 imported/w3c/web-platform-tests/referrer-policy/generic/unsupported-csp-referrer-directive.html [ Skip ]
 
+# This test times out. We should fix that.
+imported/w3c/web-platform-tests/selection/collapse-30.html [ Skip ]
+
 # Newly imported service worker tests that are timing out.
 imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html [ Skip ]
 webkit.org/b/201665 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Skip ]

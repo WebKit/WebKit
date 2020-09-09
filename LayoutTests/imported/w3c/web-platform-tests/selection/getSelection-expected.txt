@@ -1,0 +1,20 @@
+
+PASS window.getSelection() instanceof Selection 
+PASS window.getSelection() === window.getSelection() 
+PASS document.getSelection() instanceof Selection 
+PASS document.getSelection() === document.getSelection() 
+PASS window.getSelection() === document.getSelection() 
+PASS Selection's range must initially be null 
+PASS getSelection() on HTML document with null defaultView must be null 
+PASS getSelection() on XML document with null defaultView must be null 
+PASS window.getSelection() instanceof Selection in an iframe onload 
+PASS document.getSelection() instanceof Selection in an iframe onload 
+PASS window.getSelection() === document.getSelection() in an iframe onload 
+PASS getSelection() inside and outside iframe must return different objects onload 
+PASS getSelection() on HTML document with null defaultView must be null inside an iframe onload 
+PASS window.getSelection() instanceof Selection in an iframe immediately after appendChild 
+PASS document.getSelection() instanceof Selection in an iframe immediately after appendChild 
+PASS window.getSelection() === document.getSelection() in an iframe immediately after appendChild 
+PASS getSelection() inside and outside iframe must return different objects immediately after appendChild 
+PASS getSelection() on HTML document with null defaultView must be null inside an iframe immediately after appendChild 
+
