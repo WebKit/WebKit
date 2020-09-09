@@ -85,9 +85,6 @@ public:
     float maxValue() const { return m_maxValue; }
     float defaultValue() const { return m_defaultValue; }
 
-    // FIXME: Remove this once it is no longer exposed to the Web.
-    static unsigned units() { return 0; }
-
     // Value smoothing:
 
     // When a new value is set with setValue(), in our internal use of the parameter we don't immediately jump to it.
