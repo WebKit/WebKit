@@ -136,7 +136,7 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
     }
 
     if (auto* cache = document->axObjectCache())
-        cache->postNotification(this, document.ptr(), AXObjectCache::AXMenuListValueChanged, TargetElement, PostAsynchronously);
+        cache->postNotification(this, document.ptr(), AXObjectCache::AXMenuListValueChanged);
 }
 
 } // namespace WebCore

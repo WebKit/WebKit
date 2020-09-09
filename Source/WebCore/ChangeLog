@@ -1,3 +1,32 @@
+2020-09-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        Remove unused enum PostType.
+        https://bugs.webkit.org/show_bug.cgi?id=216320
+
+        Reviewed by Chris Fleizach.
+
+        No functionality change.
+        - Removed the unused enum PostType, since all AX notifications are now
+        posted asynchronously.
+        - PostTarget is now an enum class.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        (WebCore::AXObjectCache::postTextStateChangeNotification):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::postNotification):
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::didUpdateActiveOption):
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::platformHandleFocusedUIElementChanged):
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedContents):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+
 2020-09-09  Zalan Bujtas  <zalan@apple.com>
 
         [Repaint] styleWillChange may call repaint on the same renderer multiple times.

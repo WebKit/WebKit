@@ -127,8 +127,8 @@ void AccessibilityMenuListPopup::didUpdateActiveOption(int optionIndex)
     RefPtr<AXCoreObject> child = m_children[optionIndex].get();
 
     if (auto* cache = axObjectCache()) {
-        cache->postNotification(child.get(), document(), AXObjectCache::AXFocusedUIElementChanged, TargetElement, PostAsynchronously);
-        cache->postNotification(child.get(), document(), AXObjectCache::AXMenuListItemSelected, TargetElement, PostAsynchronously);
+        cache->postNotification(child.get(), document(), AXObjectCache::AXFocusedUIElementChanged);
+        cache->postNotification(child.get(), document(), AXObjectCache::AXMenuListItemSelected);
     }
 }
 
