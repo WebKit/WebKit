@@ -1618,7 +1618,7 @@ sub GetFullyQualifiedImplementationCallName
     my ($interface, $property, $implementationName, $implExpression, $conditional) = @_;
     
     my $implementedBy = $property->extendedAttributes->{ImplementedBy};
-    if ($implementedBy) {
+    if ($implementedBy && !$property->extendedAttributes->{Reflect}) {
         AddToImplIncludes("${implementedBy}.h", $conditional);
         return "WebCore::${implementedBy}::${implementationName}";
     }
@@ -1642,7 +1642,7 @@ sub AddAdditionalArgumentsForImplementationCall
 {
     my ($arguments, $interface, $property, $implExpression, $globalObject, $callFrame, $thisObjectExpression) = @_;
     
-    if ($property->extendedAttributes->{ImplementedBy} && !$property->isStatic) {
+    if ($property->extendedAttributes->{ImplementedBy} && !$property->isStatic && !$property->extendedAttributes->{Reflect}) {
         unshift(@$arguments, $implExpression);
     }
     

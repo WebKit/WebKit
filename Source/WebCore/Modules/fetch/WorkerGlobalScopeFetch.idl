@@ -30,6 +30,7 @@ typedef (FetchRequest or USVString) RequestInfo;
 
 [
     EnabledAtRuntime=FetchAPI,
+    ImplementedBy=WorkerGlobalScopeFetch
 ] partial interface WorkerGlobalScope {
     Promise<FetchResponse> fetch(RequestInfo input, optional FetchRequestInit init);
 };

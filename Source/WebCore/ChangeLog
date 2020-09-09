@@ -1,3 +1,74 @@
+2020-09-09  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Stop automatically applying the ImplementedBy extended attribute to all partial interfaces/dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=216322
+
+        Reviewed by Darin Adler.
+
+        When partial interfaces were originally introduced, there were grand ambitions to modularize
+        and isolate parts of interfaces completely, mostly using the Supplemental<> pattern. As time
+        has passed, more and more specs have usedd partial just to group things together, and having
+        it implicitly mean using a class named after the IDL file with some static functions is not
+        always the right choice. With this change, partial interfaces that want the supplemental style
+        behavior must opt in, using the extended attribute "ImplementedBy", which is what the code
+        generators already called this concept internally.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ProcessInterfaceSupplementalDependencies):
+        (ProcessDictionarySupplementalDependencies):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetFullyQualifiedImplementationCallName):
+        (AddAdditionalArgumentsForImplementationCall):
+        * bindings/scripts/IDLAttributes.json:
+        Remove special casing of partial interfaces / dictionaries automatically getting "ImplementedBy"
+        applied to all members. Maintain the behavior that "ImplementedBy" is silently ignored when
+        an attribute has been marked as "Reflect".
+
+        * Modules/async-clipboard/NavigatorClipboard.idl:
+        * Modules/beacon/NavigatorBeacon.idl:
+        * Modules/cache/DOMWindowCaches.idl:
+        * Modules/cache/WorkerGlobalScopeCaches.idl:
+        * Modules/credentialmanagement/NavigatorCredentials.idl:
+        * Modules/encryptedmedia/NavigatorEME.idl:
+        * Modules/entriesapi/HTMLInputElementEntriesAPI.idl:
+        * Modules/fetch/DOMWindowFetch.idl:
+        * Modules/fetch/WorkerGlobalScopeFetch.idl:
+        * Modules/gamepad/NavigatorGamepad.idl:
+        * Modules/geolocation/NavigatorGeolocation.idl:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.idl:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl:
+        * Modules/mediacapabilities/NavigatorMediaCapabilities.idl:
+        * Modules/mediasession/HTMLMediaElementMediaSession.idl:
+        * Modules/mediasource/AudioTrackMediaSource.idl:
+        * Modules/mediasource/DOMURLMediaSource.idl:
+        * Modules/mediasource/TextTrackMediaSource.idl:
+        * Modules/mediasource/VideoTrackMediaSource.idl:
+        * Modules/mediastream/NavigatorMediaDevices.idl:
+        * Modules/pictureinpicture/DocumentPictureInPicture.idl:
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl:
+        * Modules/quota/DOMWindowQuota.idl:
+        * Modules/quota/NavigatorStorageQuota.idl:
+        * Modules/quota/WorkerNavigatorStorageQuota.idl:
+        * Modules/remoteplayback/HTMLMediaElementRemotePlayback.idl:
+        * Modules/speech/DOMWindowSpeechSynthesis.idl:
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdriver/NavigatorWebDriver.idl:
+        * Modules/webgpu/NavigatorGPU.idl:
+        * Modules/webgpu/WebGPUDeviceErrorScopes.idl:
+        * Modules/webgpu/WebGPUDeviceEventHandler.idl:
+        * Modules/webgpu/WorkerNavigatorGPU.idl:
+        * Modules/webxr/NavigatorWebXR.idl:
+        * css/DOMCSSPaintWorklet.idl:
+        * css/DOMCSSRegisterCustomProperty.idl:
+        * dom/DocumentFullscreen.idl:
+        * dom/DocumentStorageAccess.idl:
+        * dom/DocumentTouch.idl:
+        * page/NavigatorIsLoggedIn.idl:
+        * svg/SVGDocument.idl:
+        Update existing partials to opt into "ImplementedBy" bevahior. A future pass
+        will go through these and see which ones can be simplified by removing the
+        indirection without introducing unnecessary modularization changes.
+
 2020-09-09  Chris Dumez  <cdumez@apple.com>
 
         Move lazy DisplayLink tear down logic from the WebProcess to the UIProcess

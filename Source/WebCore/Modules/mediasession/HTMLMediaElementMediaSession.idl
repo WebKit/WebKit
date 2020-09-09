@@ -25,6 +25,7 @@
 
 [
     Conditional=VIDEO&MEDIA_SESSION,
+    ImplementedBy=HTMLMediaElementMediaSession
 ] partial interface HTMLMediaElement {
     attribute DOMString kind;
 

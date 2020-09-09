@@ -411,10 +411,6 @@ sub ProcessInterfaceSupplementalDependencies
             foreach my $attribute (@{$interface->attributes}) {
                 next unless $targetInterface->isMixin || shouldPropertyBeExposed($attribute, $targetInterface);
 
-                if ($interface->isPartial && !$interface->isMixin) {
-                    $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if !$attribute->extendedAttributes->{Reflect};
-                }
-
                 if ($interface->isMixin && !$interface->isPartial) {
                     # Add includes statement specific extended attributes to each attribute.
                     $object->MergeExtendedAttributesFromSupplemental($includesMap{$interface->type->name}->extendedAttributes, $attribute, "attribute");
@@ -430,10 +426,6 @@ sub ProcessInterfaceSupplementalDependencies
             foreach my $operation (@{$interface->operations}) {
                 next unless $targetInterface->isMixin || shouldPropertyBeExposed($operation, $targetInterface);
 
-                if ($interface->isPartial && !$interface->isMixin) {
-                    $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName;
-                }
-
                 if ($interface->isMixin && !$interface->isPartial) {
                     # Add includes statement specific extended attributes to each operation.
                     $object->MergeExtendedAttributesFromSupplemental($includesMap{$interface->type->name}->extendedAttributes, $operation, "operation");
@@ -448,10 +440,6 @@ sub ProcessInterfaceSupplementalDependencies
             # Support for constants from supplemental interfaces.
             foreach my $constant (@{$interface->constants}) {
                 next unless $targetInterface->isMixin || shouldPropertyBeExposed($constant, $targetInterface);
-
-                if ($interface->isPartial && !$interface->isMixin) {
-                    $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName;
-                }
 
                 if ($interface->isMixin && !$interface->isPartial) {
                     # Add includes statement specific extended attributes to each operation.
@@ -487,8 +475,6 @@ sub ProcessDictionarySupplementalDependencies
             # Support for members of partial dictionaries.
             foreach my $member (@{$dictionary->members}) {
                 next unless shouldPropertyBeExposed($member, $targetDictionary);
-
-                $member->extendedAttributes->{"ImplementedBy"} = $dictionaryName;
 
                 # Add interface-wide extended attributes to each member.
                 $object->MergeExtendedAttributesFromSupplemental($dictionary->extendedAttributes, $member, "dictionary-member");

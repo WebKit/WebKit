@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-partial interface DOMWindow {
+[
+    ImplementedBy=DOMWindowWebDatabase
+] partial interface DOMWindow {
     [Custom, NotEnumerable] attribute any openDatabase;
 };

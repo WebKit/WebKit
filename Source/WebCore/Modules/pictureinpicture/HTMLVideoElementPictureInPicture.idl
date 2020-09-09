@@ -26,13 +26,14 @@
 
 [
     Conditional=PICTURE_IN_PICTURE_API,
-    EnabledBySetting=PictureInPictureAPI
+    EnabledBySetting=PictureInPictureAPI,
+    ImplementedBy=HTMLVideoElementPictureInPicture
 ] partial interface HTMLVideoElement {
-  [NewObject] Promise<PictureInPictureWindow> requestPictureInPicture();
+    [NewObject] Promise<PictureInPictureWindow> requestPictureInPicture();
 
-  attribute EventHandler onenterpictureinpicture;
-  attribute EventHandler onleavepictureinpicture;
+    attribute EventHandler onenterpictureinpicture;
+    attribute EventHandler onleavepictureinpicture;
 
-  [CEReactions, Reflect] attribute boolean autoPictureInPicture;
-  [CEReactions, Reflect] attribute boolean disablePictureInPicture;
+    [CEReactions, Reflect] attribute boolean autoPictureInPicture;
+    [CEReactions, Reflect] attribute boolean disablePictureInPicture;
 };

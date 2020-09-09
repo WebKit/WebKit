@@ -25,7 +25,8 @@
 
 [
     EnabledAtRuntime=WebXR,
-    Conditional=WEBXR
+    Conditional=WEBXR,
+    ImplementedBy=NavigatorWebXR
 ] partial interface Navigator {
     [SecureContext, SameObject] readonly attribute WebXRSystem xr;
 };

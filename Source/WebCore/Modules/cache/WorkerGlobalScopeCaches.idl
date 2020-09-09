@@ -25,6 +25,7 @@
 
 [
     EnabledAtRuntime=CacheAPI,
+    ImplementedBy=WorkerGlobalScopeCaches
 ] partial interface WorkerGlobalScope {
     [SecureContext, SameObject] readonly attribute DOMCacheStorage caches;
 };

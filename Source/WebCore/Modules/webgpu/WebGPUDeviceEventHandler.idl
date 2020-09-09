@@ -26,8 +26,8 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementedBy=WebGPUDeviceEventHandler
 ] partial interface WebGPUDevice {
-    [Exposed=Window]
-    attribute EventHandler onuncapturederror;
+    [Exposed=Window] attribute EventHandler onuncapturederror;
 };

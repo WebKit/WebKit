@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[ EnabledBySetting=MediaCapabilities ]
-partial interface Navigator {
+[
+    EnabledBySetting=MediaCapabilities,
+    ImplementedBy=NavigatorMediaCapabilities
+] partial interface Navigator {
     [SameObject] readonly attribute MediaCapabilities mediaCapabilities;
 };

@@ -245,6 +245,10 @@
             "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation"],
             "values": ["*"]
         },
+        "ImplementedBy": {
+            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "attribute", "operation", "constant"],
+            "values": ["*"]
+        },
         "ImplementationLacksVTable": {
             "contextsAllowed": ["interface"]
         },

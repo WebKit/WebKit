@@ -27,7 +27,8 @@
 // changes in its output.
 
 [
-    EnabledBySetting=TestSettingFromPartialInterface
+    EnabledBySetting=TestSettingFromPartialInterface,
+    ImplementedBy=TestEnabledBySettingSupplemental
 ] partial interface TestEnabledBySetting {
     [EnabledBySetting=TestSettingFromPartialInterfaceAttribute] attribute DOMString supplementalAttribute;
 };

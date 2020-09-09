@@ -30,6 +30,7 @@
     Conditional=ENCRYPTED_MEDIA,
     EnabledBySetting=EncryptedMediaAPI,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
+    ImplementedBy=NavigatorEME
 ] partial interface Navigator {
     [CallWith=Document] Promise<MediaKeySystemAccess> requestMediaKeySystemAccess(DOMString keySystem, sequence<MediaKeySystemConfiguration> supportedConfiguration);
 };

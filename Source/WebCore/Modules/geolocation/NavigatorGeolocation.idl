@@ -19,6 +19,7 @@
 
 [
     Conditional=GEOLOCATION,
+    ImplementedBy=NavigatorGeolocation
 ] partial interface Navigator {
     readonly attribute Geolocation geolocation;
 };

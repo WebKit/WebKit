@@ -25,7 +25,7 @@
 
 [
     Conditional=MEDIA_SOURCE,
-]
-partial interface AudioTrack {
+    ImplementedBy=AudioTrackMediaSource
+] partial interface AudioTrack {
     readonly attribute SourceBuffer? sourceBuffer;
 };

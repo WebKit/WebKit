@@ -27,9 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 [
-    Conditional=MEDIA_SOURCE
-]
-partial interface DOMURL {
+    Conditional=MEDIA_SOURCE,
+    ImplementedBy=DOMURLMediaSource
+] partial interface DOMURL {
     [CallWith=ScriptExecutionContext] static DOMString createObjectURL(MediaSource source);
 };

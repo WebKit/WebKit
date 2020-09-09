@@ -19,6 +19,7 @@
 
 [
     Conditional=QUOTA,
+    ImplementedBy=NavigatorStorageQuota
 ] partial interface Navigator {
     readonly attribute StorageQuota webkitTemporaryStorage;
     readonly attribute StorageQuota webkitPersistentStorage;

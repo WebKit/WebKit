@@ -25,6 +25,7 @@
 
 [
     EnabledBySetting=AsyncClipboardAPI,
+    ImplementedBy=NavigatorClipboard
 ] partial interface Navigator {
     [SecureContext, SameObject] readonly attribute Clipboard clipboard;
 };

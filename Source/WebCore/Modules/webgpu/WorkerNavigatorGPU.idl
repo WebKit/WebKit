@@ -26,7 +26,8 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementedBy=WorkerNavigatorGPU
 ] partial interface WorkerNavigator {
     [SameObject] readonly attribute WebGPU gpu;
 };

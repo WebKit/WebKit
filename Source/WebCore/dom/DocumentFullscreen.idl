@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://fullscreen.spec.whatwg.org/#api
 [
     Conditional=FULLSCREEN_API,
     EnabledBySetting=FullScreen,
-    DisabledByQuirk=shouldDisableElementFullscreen
+    DisabledByQuirk=shouldDisableElementFullscreen,
+    ImplementedBy=DocumentFullscreen
 ] partial interface Document {
-    // Extensions from FullScreen API (https://fullscreen.spec.whatwg.org/#api).
     // FIXME: Should probably be unprefixed.
     readonly attribute boolean webkitFullscreenEnabled;
     readonly attribute Element? webkitFullscreenElement;

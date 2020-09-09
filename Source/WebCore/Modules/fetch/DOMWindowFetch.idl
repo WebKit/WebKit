@@ -30,6 +30,7 @@ typedef (FetchRequest or USVString) RequestInfo;
 
 [
     EnabledAtRuntime=FetchAPI,
+    ImplementedBy=DOMWindowFetch
 ] partial interface DOMWindow {
     Promise<FetchResponse> fetch(RequestInfo input, optional FetchRequestInit init);
 };

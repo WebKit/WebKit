@@ -26,6 +26,7 @@
 
 [
     Conditional=INDEXED_DATABASE_IN_WORKERS,
+    ImplementedBy=WorkerGlobalScopeIndexedDatabase
 ] partial interface WorkerGlobalScope {
     [EnabledAtRuntime=IndexedDBWorkers] readonly attribute IDBFactory indexedDB;
 };

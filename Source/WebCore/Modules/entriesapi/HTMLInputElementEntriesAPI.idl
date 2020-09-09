@@ -26,6 +26,7 @@
 // https://wicg.github.io/entries-api/#dom-htmlinputelement-webkitdirectory
 [
     EnabledAtRuntime=DirectoryUpload,
+    ImplementedBy=HTMLInputElementEntriesAPI
 ] partial interface HTMLInputElement {
     [Reflect] attribute boolean webkitdirectory;
     [CachedAttribute, CallWith=ScriptExecutionContext] readonly attribute FrozenArray<FileSystemEntry> webkitEntries;

@@ -26,7 +26,8 @@
 [
     SecureContext,
     Exposed=Window,
-    EnabledBySetting=IsLoggedInAPI
+    EnabledBySetting=IsLoggedInAPI,
+    ImplementedBy=NavigatorIsLoggedIn
 ] partial interface Navigator {
     Promise<undefined> setLoggedIn();
     Promise<undefined> setLoggedOut();

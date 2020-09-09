@@ -19,7 +19,8 @@
  */
 
 [
-    Conditional=TOUCH_EVENTS
+    Conditional=TOUCH_EVENTS,
+    ImplementedBy=DocumentTouch
 ] partial interface Document {
     // FIXME: This has been dropped from the standard now that Touch has a constructor.
     [NewObject] Touch createTouch(optional WindowProxy? window = null, optional EventTarget? target = null,

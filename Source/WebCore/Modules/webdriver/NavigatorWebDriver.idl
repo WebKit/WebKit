@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-partial interface Navigator {
+[
+    ImplementedBy=NavigatorWebDriver
+] partial interface Navigator {
     readonly attribute boolean webdriver;
 };

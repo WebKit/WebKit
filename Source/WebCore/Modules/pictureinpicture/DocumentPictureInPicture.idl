@@ -26,7 +26,8 @@
 
 [
     Conditional=PICTURE_IN_PICTURE_API,
-    EnabledBySetting=PictureInPictureAPI
+    EnabledBySetting=PictureInPictureAPI,
+    ImplementedBy=DocumentPictureInPicture
 ] partial interface Document {
     readonly attribute boolean pictureInPictureEnabled;
 

@@ -25,7 +25,8 @@
 
 [
     Conditional=RESOURCE_LOAD_STATISTICS,
-    EnabledBySetting=storageAccessAPI
+    EnabledBySetting=storageAccessAPI,
+    ImplementedBy=DocumentStorageAccess
 ] partial interface Document {
     Promise<bool> hasStorageAccess();
     Promise<undefined> requestStorageAccess();
