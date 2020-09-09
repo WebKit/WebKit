@@ -1,5 +1,28 @@
 2020-09-09  Chris Dumez  <cdumez@apple.com>
 
+        Move lazy DisplayLink tear down logic from the WebProcess to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=216195
+
+        Reviewed by Simon Fraser.
+
+        Move lazy DisplayLink tear down logic from the WebProcess to the UIProcess, now that the
+        DisplayLink has been moved to the UIProcess due to sandboxing.
+
+        After a DisplayLink no longer has any clients, we keep it firing up to 20 times without
+        any clients in case a new client gets added shortly after. The idea was to avoid killing
+        and respawning too many threads when adding and removing clients in quick succession.
+        However, now that the DisplayLink lives in the UIProcess side and sends IPC to the
+        WebProcesses every time it fires, it makes a lot more sense to implement this logic in
+        the UIProcess side, to avoid sending unnecessary IPC to processes that do not care about
+        it.
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        * platform/graphics/DisplayRefreshMonitor.h:
+        (WebCore::DisplayRefreshMonitor::shouldBeTerminated const):
+
+2020-09-09  Chris Dumez  <cdumez@apple.com>
+
         Stop performing "de-zippering" when applying gain
         https://bugs.webkit.org/show_bug.cgi?id=216288
 

@@ -34,6 +34,7 @@
 namespace WebKit {
 
 bool DisplayLink::shouldSendIPCOnBackgroundQueue { false };
+constexpr unsigned maxFireCountWithoutObservers { 20 };
     
 DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
     : m_displayID(displayID)
@@ -74,7 +75,6 @@ Optional<unsigned> DisplayLink::nominalFramesPerSecond() const
 void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID observerID)
 {
     ASSERT(RunLoop::isMain());
-    bool isRunning = !m_observers.isEmpty();
 
     {
         LockHolder locker(m_observersLock);
@@ -83,7 +83,7 @@ void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID
         }).iterator->value.append(observerID);
     }
 
-    if (!isRunning) {
+    if (!CVDisplayLinkIsRunning(m_displayLink)) {
         CVReturn error = CVDisplayLinkStart(m_displayLink);
         if (error)
             WTFLogAlways("Could not start the display link: %d", error);
@@ -94,52 +94,57 @@ void DisplayLink::removeObserver(IPC::Connection& connection, DisplayLinkObserve
 {
     ASSERT(RunLoop::isMain());
 
-    {
-        LockHolder locker(m_observersLock);
+    LockHolder locker(m_observersLock);
 
-        auto it = m_observers.find(&connection);
-        if (it == m_observers.end())
-            return;
-        bool removed = it->value.removeFirst(observerID);
-        ASSERT_UNUSED(removed, removed);
-        if (it->value.isEmpty())
-            m_observers.remove(it);
-    }
+    auto it = m_observers.find(&connection);
+    if (it == m_observers.end())
+        return;
+    bool removed = it->value.removeFirst(observerID);
+    ASSERT_UNUSED(removed, removed);
+    if (it->value.isEmpty())
+        m_observers.remove(it);
 
-    if (m_observers.isEmpty())
-        CVDisplayLinkStop(m_displayLink);
+    // We do not stop the display link right away when |m_observers| becomes empty. Instead, we
+    // let the display link fire up to |maxFireCountWithoutObservers| times without observers to avoid
+    // killing & restarting too many threads when observers gets removed & added in quick succession.
 }
 
 void DisplayLink::removeObservers(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
 
-    {
-        LockHolder locker(m_observersLock);
-        m_observers.remove(&connection);
-    }
+    LockHolder locker(m_observersLock);
+    m_observers.remove(&connection);
 
-    if (m_observers.isEmpty())
-        CVDisplayLinkStop(m_displayLink);
-}
-
-bool DisplayLink::hasObservers() const
-{
-    ASSERT(RunLoop::isMain());
-    return !m_observers.isEmpty();
+    // We do not stop the display link right away when |m_observers| becomes empty. Instead, we
+    // let the display link fire up to |maxFireCountWithoutObservers| times without observers to avoid
+    // killing & restarting too many threads when observers gets removed & added in quick succession.
 }
 
 CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
-    auto* displayLink = static_cast<DisplayLink*>(data);
-    LockHolder locker(displayLink->m_observersLock);
-    for (auto& connection : displayLink->m_observers.keys()) {
-        if (shouldSendIPCOnBackgroundQueue)
-            connection->send(Messages::EventDispatcher::DisplayWasRefreshed(displayLink->m_displayID), 0);
-        else
-            connection->send(Messages::WebProcess::DisplayWasRefreshed(displayLink->m_displayID), 0);
-    }
+    static_cast<DisplayLink*>(data)->notifyObserversDisplayWasRefreshed();
     return kCVReturnSuccess;
+}
+
+void DisplayLink::notifyObserversDisplayWasRefreshed()
+{
+    ASSERT(!RunLoop::isMain());
+
+    LockHolder locker(m_observersLock);
+    if (m_observers.isEmpty()) {
+        if (++m_fireCountWithoutObservers >= maxFireCountWithoutObservers)
+            CVDisplayLinkStop(m_displayLink);
+        return;
+    }
+    m_fireCountWithoutObservers = 0;
+
+    for (auto& connection : m_observers.keys()) {
+        if (shouldSendIPCOnBackgroundQueue)
+            connection->send(Messages::EventDispatcher::DisplayWasRefreshed(m_displayID), 0);
+        else
+            connection->send(Messages::WebProcess::DisplayWasRefreshed(m_displayID), 0);
+    }
 }
 
 } // namespace WebKit
