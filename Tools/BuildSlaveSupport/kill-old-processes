@@ -23,7 +23,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import print_function
 import os, sys
+import getpass
+import re
+import subprocess
 
 def listAllWebKitPrograms(builddir_bin):
     foundWebKitPrograms = []
@@ -33,6 +37,42 @@ def listAllWebKitPrograms(builddir_bin):
                 foundWebKitPrograms.append(file)
     return foundWebKitPrograms
 
+def removeOrphanShmSegments():
+    # When Apache2 is not gracefully shut down, it may leave orphaned shared memory segments
+    # that could cause following server instances to abort on startup.
+    try:
+        username = getpass.getuser()
+        segments = orphanedShmSegmentsByUser(username)
+        for s in segments:
+            subprocess.check_call(["ipcrm", "-m", s])
+    except Exception as e:
+        print("Error removing orphaned shared memory segments: {}".format(e), file=sys.stderr)
+
+def orphanedShmSegmentsByUser(username):
+    ret = []
+    output = subprocess.check_output(["ipcs", "-m"])
+    lines = output.split('\n')
+    if len(lines) < 3:
+        return []
+
+    headers = [header.strip() for header in lines[2].split()]
+    wanted_headers = ['nattch', 'owner', 'shmid']
+
+    if any(h not in headers for h in wanted_headers):
+        raise RuntimeError("Failed to find required nattch, owner and shmid cols in ipcs output")
+    nattch_idx = headers.index('nattch')
+    owner_idx = headers.index('owner')
+    shmid_idx = headers.index('shmid')
+
+    for line in lines[3:]:
+        line = line.strip()
+        tokens = [x.strip() for x in line.split()]
+        try:
+            if tokens[nattch_idx] == '0' and tokens[owner_idx] == username:
+                ret.append(tokens[shmid_idx])
+        except IndexError:
+            continue
+    return ret
 
 def main(user=None):
     tasksToKillWin = [
@@ -141,6 +181,7 @@ def main(user=None):
         for task in tasksToKill + taskToKillUnix + listAllWebKitPrograms(builddir_bin):
             os.system("killall -9 -v " + task)
         os.system("ps aux | grep -P '.+/python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
+        removeOrphanShmSegments()
     else:
         sys.exit()
         # FIXME: Should we return an exit code based on how the kills went?
