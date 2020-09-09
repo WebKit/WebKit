@@ -28,12 +28,14 @@
 
 #if ENABLE(WEBXR)
 
+#include "EventNames.h"
 #include "JSWebXRReferenceSpace.h"
 #include "WebXRBoundedReferenceSpace.h"
 #include "WebXRFrame.h"
 #include "WebXRSystem.h"
 #include "XRFrameRequestCallback.h"
 #include "XRRenderStateInit.h"
+#include "XRSessionEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefPtr.h>
 
@@ -328,6 +330,8 @@ void WebXRSession::shutdown()
     //  6.2. Deallocating any graphics resources acquired by session for presentation to the XR device.
     //  6.3. Putting the XR device in a state such that a different source may be able to initiate a session with the same device if session is an immersive session.
     // 7. Queue a task that fires an XRSessionEvent named end on session.
+    auto event = XRSessionEvent::create(eventNames().endEvent, { makeRefPtr(*this) });
+    queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTFMove(event));
 }
 
 // https://immersive-web.github.io/webxr/#dom-xrsession-end

@@ -49,8 +49,14 @@ XRSessionEvent::XRSessionEvent(const AtomString& type, const Init& initializer, 
 
 XRSessionEvent::~XRSessionEvent() = default;
 
+EventInterface XRSessionEvent::eventInterface() const
+{
+    return XRSessionEventInterfaceType;
+}
+
 const WebXRSession& XRSessionEvent::session() const
 {
+    ASSERT(m_session);
     return *m_session;
 }
 

@@ -1,3 +1,12 @@
+2020-09-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Implement XRSession end event
+        https://bugs.webkit.org/show_bug.cgi?id=216181
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/webxr/xrSession_end.https-expected.txt: Added.
+
 2020-09-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline flaky webaudio WPT tests.

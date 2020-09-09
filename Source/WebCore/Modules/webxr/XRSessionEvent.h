@@ -28,15 +28,19 @@
 #if ENABLE(WEBXR)
 
 #include "Event.h"
+#include "WebXRSession.h"
 
 namespace WebCore {
-
-class WebXRSession;
 
 class XRSessionEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(XRSessionEvent);
 public:
     struct Init : EventInit {
+        Init() = default;
+        Init(RefPtr<WebXRSession>&& session)
+            : EventInit()
+            , session(WTFMove(session))
+        { }
         RefPtr<WebXRSession> session;
     };
 
@@ -47,6 +51,9 @@ public:
 
 private:
     XRSessionEvent(const AtomString&, const Init&, IsTrusted);
+
+    // Event.
+    EventInterface eventInterface() const final;
 
     RefPtr<WebXRSession> m_session;
 };

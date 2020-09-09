@@ -1,3 +1,12 @@
+2020-09-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Implement XRSession end event
+        https://bugs.webkit.org/show_bug.cgi?id=216181
+
+        Reviewed by Darin Adler.
+
+        * platform/wpe/TestExpectations: Added a new test that passes now.
+
 2020-09-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Add editability to input type=time
