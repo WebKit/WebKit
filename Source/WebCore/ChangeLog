@@ -1,3 +1,87 @@
+2020-09-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266616. rdar://problem/68584190
+
+    REGRESSION(macOS Big Sur) https://magenta.github.io/lofi-player/ is broken
+    https://bugs.webkit.org/show_bug.cgi?id=216163
+    <rdar://problem/68198173>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Address a crash and a backward-compatibility issue on https://magenta.github.io/lofi-player/.
+    
+    Test: webaudio/webkitofflineaudiocontext-startRendering-crash.html
+    
+    * Modules/webaudio/AudioBufferSourceNode.idl:
+    * Modules/webaudio/AudioListener.idl:
+    * Modules/webaudio/OscillatorNode.idl:
+    Even after fixing the crash, the game would fail to load because it expected
+    window.OscillatorNode to exist. When we started working on modern Web Audio,
+    we renamed the non-standard oscillator node to WebKitOscillatorNode and
+    added a new standards compliant OscillatorNode behind a runtime flag (off
+    by default). As a result, window.OscillatorNode no longer existed on Big Sur,
+    which is not backward compatible. To address the issue, we now expose
+    window.OscillatorNode even if modern unprefixed WebAudio is not enabled and
+    we merely disable its constructor at runtime. The same policy applies to
+    AudioBufferSourceNode & AudioListener because we did the exact same thing
+    for these interfaces.
+    
+    * Modules/webaudio/BaseAudioContext.cpp:
+    (WebCore::BaseAudioContext::startRendering):
+    Make sure we call lazyInitialize() before we start offline rendering.
+    The context may not be initialized yet if no audio nodes were created
+    for this context. This is similar to what is done in our modern Web
+    Audio code in OfflineAudioContext::startOfflineRendering(), which is
+    why the crash was not reproducible when enabling the Modern Web Audio
+    experimental feature.
+    
+    LayoutTests:
+    
+    Add layout test that was reproducing the crash on https://magenta.github.io/lofi-player/.
+    
+    * webaudio/webkitofflineaudiocontext-startRendering-crash-expected.txt: Added.
+    * webaudio/webkitofflineaudiocontext-startRendering-crash.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266616 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-04  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(macOS Big Sur) https://magenta.github.io/lofi-player/ is broken
+            https://bugs.webkit.org/show_bug.cgi?id=216163
+            <rdar://problem/68198173>
+
+            Reviewed by Eric Carlson.
+
+            Address a crash and a backward-compatibility issue on https://magenta.github.io/lofi-player/.
+
+            Test: webaudio/webkitofflineaudiocontext-startRendering-crash.html
+
+            * Modules/webaudio/AudioBufferSourceNode.idl:
+            * Modules/webaudio/AudioListener.idl:
+            * Modules/webaudio/OscillatorNode.idl:
+            Even after fixing the crash, the game would fail to load because it expected
+            window.OscillatorNode to exist. When we started working on modern Web Audio,
+            we renamed the non-standard oscillator node to WebKitOscillatorNode and
+            added a new standards compliant OscillatorNode behind a runtime flag (off
+            by default). As a result, window.OscillatorNode no longer existed on Big Sur,
+            which is not backward compatible. To address the issue, we now expose
+            window.OscillatorNode even if modern unprefixed WebAudio is not enabled and
+            we merely disable its constructor at runtime. The same policy applies to
+            AudioBufferSourceNode & AudioListener because we did the exact same thing
+            for these interfaces.
+
+            * Modules/webaudio/BaseAudioContext.cpp:
+            (WebCore::BaseAudioContext::startRendering):
+            Make sure we call lazyInitialize() before we start offline rendering.
+            The context may not be initialized yet if no audio nodes were created
+            for this context. This is similar to what is done in our modern Web
+            Audio code in OfflineAudioContext::startOfflineRendering(), which is
+            why the crash was not reproducible when enabling the Modern Web Audio
+            experimental feature.
+
 2020-09-03  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r266265. rdar://problem/68168939

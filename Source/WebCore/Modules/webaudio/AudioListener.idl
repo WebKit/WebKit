@@ -29,7 +29,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    EnabledBySetting=ModernUnprefixedWebAudio,
 ] interface AudioListener {
     readonly attribute AudioParam positionX;
     readonly attribute AudioParam positionY;
