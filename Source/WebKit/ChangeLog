@@ -1,3 +1,35 @@
+2020-09-08  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r260614) Power usage has increased due to extra thread hopping
+        https://bugs.webkit.org/show_bug.cgi?id=216296
+        <rdar://problem/67719299>
+
+        Reviewed by Simon Fraser.
+
+        Power usage has increased after r260614 due to extra thread hopping. To recover,
+        we now process the DisplayWasRefreshed IPC to a background queue if there is
+        scrolling going on and responsiveness is thus critical. In the common case, where
+        the user is not scrolling, we keep processing the IPC on the main thread, like
+        before r260614. This avoids extra thread hopping and saves power.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::ScrollingObserver::willSendWheelEvent):
+        (WebKit::ScrollingObserver::ScrollingObserver):
+        (WebKit::ScrollingObserver::singleton):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::displayLinkCallback):
+        * UIProcess/mac/DisplayLink.h:
+        (WebKit::DisplayLink::setShouldSendIPCOnBackgroundQueue):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::notifyScrollingTreesDisplayWasRefreshed):
+        (WebKit::EventDispatcher::displayWasRefreshed):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::displayWasRefreshed):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-09-08  Megan Gardner  <megan_gardner@apple.com>
 
         Removed unneeded respondsToSelector checks on UIWKTextInteractionAssistant in WKContentViewInteraction.

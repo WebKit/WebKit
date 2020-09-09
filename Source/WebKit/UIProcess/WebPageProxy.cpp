@@ -179,6 +179,7 @@
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
 #include <WebCore/WritingDirection.h>
+#include <pal/HysteresisActivity.h>
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
@@ -294,6 +295,10 @@
 #include "WebDateTimePicker.h"
 #endif
 
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#include "DisplayLink.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -316,6 +321,35 @@ namespace WebKit {
 using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
+
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+class ScrollingObserver {
+    WTF_MAKE_NONCOPYABLE(ScrollingObserver);
+    WTF_MAKE_FAST_ALLOCATED;
+    friend NeverDestroyed<ScrollingObserver>;
+public:
+    static ScrollingObserver& singleton();
+
+    void willSendWheelEvent()
+    {
+        m_hysteresis.impulse();
+    }
+
+private:
+    ScrollingObserver()
+        : m_hysteresis([](PAL::HysteresisState state) { DisplayLink::setShouldSendIPCOnBackgroundQueue(state == PAL::HysteresisState::Started); })
+    {
+    }
+
+    PAL::HysteresisActivity m_hysteresis;
+};
+
+ScrollingObserver& ScrollingObserver::singleton()
+{
+    static NeverDestroyed<ScrollingObserver> detector;
+    return detector;
+}
+#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 class StorageRequests {
     WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
@@ -2696,6 +2730,10 @@ void WebPageProxy::processNextQueuedWheelEvent()
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    ScrollingObserver::singleton().willSendWheelEvent();
+#endif
+
     send(
         Messages::EventDispatcher::WheelEvent(
             m_webPageID,

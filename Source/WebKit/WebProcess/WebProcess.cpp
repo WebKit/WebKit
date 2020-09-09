@@ -193,6 +193,10 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#include <WebCore/DisplayRefreshMonitorManager.h>
+#endif
+
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -1899,6 +1903,15 @@ bool WebProcess::areAllPagesThrottleable() const
         return page->isThrottleable();
     });
 }
+
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+void WebProcess::displayWasRefreshed(uint32_t displayID)
+{
+    ASSERT(RunLoop::isMain());
+    m_eventDispatcher->notifyScrollingTreesDisplayWasRefreshed(displayID);
+    DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
+}
+#endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
