@@ -2166,7 +2166,8 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
 
     def retry_build(self, message=''):
         self.finished(RETRY)
-        message = 'Unable to confirm if test failures are introduced by patch, retrying build'
+        if not message:
+            message = 'Unable to confirm if test failures are introduced by patch, retrying build'
         self.descriptionDone = message
         self.build.buildFinished([message], RETRY)
         return defer.succeed(None)
@@ -2241,6 +2242,12 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
         clean_tree_results_did_exceed_test_failure_limit = self.getProperty('clean_tree_results_exceed_failure_limit')
         clean_tree_results_failing_tests = set(self.getProperty('clean_tree_run_failures', []))
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
+
+        if (not first_results_failing_tests) and (not second_results_failing_tests):
+            # If we've made it here, then layout-tests and re-run-layout-tests failed, which means
+            # there should have been some test failures. Otherwise there is some unexpected issue.
+            # TODO: email EWS admins
+            return self.retry_build('Unexpected infrastructure issue, retrying build')
 
         if first_results_did_exceed_test_failure_limit and second_results_did_exceed_test_failure_limit:
             if (len(first_results_failing_tests) - len(clean_tree_results_failing_tests)) <= 5:

@@ -2068,6 +2068,14 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('build_finish_summary'), failure_message)
         return rc
 
+    def test_unexpected_infra_issue(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('second_run_failures', [])
+        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue, retrying build (retry)')
+        return self.runStep()
+
+
 class TestCheckOutSpecificRevision(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

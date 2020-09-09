@@ -1,3 +1,16 @@
+2020-09-09  Aakash Jain  <aakash_jain@apple.com>
+
+        ews might mark build as successful if tests fail to run
+        https://bugs.webkit.org/show_bug.cgi?id=215944
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeLayoutTestsResults.retry_build):
+        (AnalyzeLayoutTestsResults.start):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestAnalyzeLayoutTestsResults.test_test_fail_to_runs):
+
 2020-09-09  Brady Eidson  <beidson@apple.com>
 
         Make sure WKWebsiteDataStore operations reuse existing process pools even when all WKWebViews have closed.
