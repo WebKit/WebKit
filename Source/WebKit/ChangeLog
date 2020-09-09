@@ -1,3 +1,20 @@
+2020-09-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Removed unneeded respondsToSelector checks on UIWKTextInteractionAssistant in WKContentViewInteraction.
+        https://bugs.webkit.org/show_bug.cgi?id=216204
+
+        Reviewed by Wenson Hsieh.
+
+        Over the years, we have had many selection and text interaction assistants, that may not have all
+        responded to the selectors we expect them to. This has left many respondsToSelector checks around that
+        should be removed, as they are unnecessary and an unneeded performance hit.
+
+        No behavior change, covered by existing tests.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _willStartScrollingOrZooming]):
+        (-[WKContentView _didEndScrollingOrZooming]):
+
 2020-09-08  Lauro Moura  <lmoura@igalia.com>
 
         NetworkProcess: Check for invalid handle before writing salt file
