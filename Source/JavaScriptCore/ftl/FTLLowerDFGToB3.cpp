@@ -14743,7 +14743,7 @@ private:
 
     void compileLoopHint()
     {
-        if (!Options::returnEarlyFromInfiniteLoopsForFuzzing())
+        if (LIKELY(!Options::returnEarlyFromInfiniteLoopsForFuzzing()))
             return;
 
         CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(m_origin.semantic);
@@ -14783,7 +14783,7 @@ private:
                 }
             }
             restore();
-            jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
+            jit.moveValue(baselineCodeBlock->globalObject(), JSValueRegs { GPRInfo::returnValueGPR });
             params.code().emitEpilogue(jit); 
 
             skipEarlyReturn.link(&jit);

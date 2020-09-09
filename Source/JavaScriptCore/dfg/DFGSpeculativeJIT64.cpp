@@ -5003,7 +5003,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case LoopHint:
-        if (Options::returnEarlyFromInfiniteLoopsForFuzzing()) {
+        if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing())) {
             CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
             if (baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn()) {
                 BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
@@ -5023,7 +5023,7 @@ void SpeculativeJIT::compile(Node* node)
                 }
 
                 m_jit.popToRestore(GPRInfo::regT0);
-                m_jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
+                m_jit.moveValue(baselineCodeBlock->globalObject(), JSValueRegs { GPRInfo::returnValueGPR });
                 m_jit.emitRestoreCalleeSaves();
                 m_jit.emitFunctionEpilogue();
                 m_jit.ret();

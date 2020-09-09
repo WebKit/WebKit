@@ -2961,7 +2961,8 @@ llintOpWithReturn(op_in_structure_property, OpInStructureProperty, macro (size, 
 end)
 
 op(fuzzer_return_early_from_loop_hint, macro ()
-    move ValueUndefined, r0
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
     doReturn()
 end)
 

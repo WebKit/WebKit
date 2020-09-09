@@ -772,7 +772,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
 
         case op_loop_hint: {
-            if (Options::returnEarlyFromInfiniteLoopsForFuzzing())
+            if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing()))
                 vm.addLoopHintExecutionCounter(instruction.ptr());
             break;
         }
@@ -825,7 +825,7 @@ CodeBlock::~CodeBlock()
     // So, we can access member UnlinkedCodeBlock safely here. We bypass the assertion by using unvalidatedGet.
     UnlinkedCodeBlock* unlinkedCodeBlock = m_unlinkedCode.unvalidatedGet();
 
-    if (Options::returnEarlyFromInfiniteLoopsForFuzzing() && JITCode::isBaselineCode(jitType())) {
+    if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && JITCode::isBaselineCode(jitType()))) {
         for (const auto& instruction : unlinkedCodeBlock->instructions()) {
             if (instruction->is<OpLoopHint>())
                 vm.removeLoopHintExecutionCounter(instruction.ptr());

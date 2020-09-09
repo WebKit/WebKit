@@ -1163,12 +1163,12 @@ void JIT::emitSlow_op_instanceof_custom(const Instruction* currentInstruction, V
 void JIT::emit_op_loop_hint(const Instruction* instruction)
 {
 #if USE(JSVALUE64)
-    if (Options::returnEarlyFromInfiniteLoopsForFuzzing() && m_codeBlock->loopHintsAreEligibleForFuzzingEarlyReturn()) {
+    if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && m_codeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())) {
         uint64_t* ptr = vm().getLoopHintExecutionCounter(instruction);
         load64(ptr, regT0);
         auto skipEarlyReturn = branch64(Below, regT0, TrustedImm64(Options::earlyReturnFromInfiniteLoopsLimit()));
 
-        moveValue(jsUndefined(), JSValueRegs { GPRInfo::returnValueGPR });
+        moveValue(m_codeBlock->globalObject(), JSValueRegs { GPRInfo::returnValueGPR });
         checkStackPointerAlignment();
         emitRestoreCalleeSaves();
         emitFunctionEpilogue();

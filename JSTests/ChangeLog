@@ -1,5 +1,16 @@
 2020-09-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] returnEarlyFromInfiniteLoopsForFuzzing should return object
+        https://bugs.webkit.org/show_bug.cgi?id=216289
+        <rdar://problem/68496533>
+
+        Reviewed by Saam Barati.
+
+        * stress/construct-return-early-from-infinite-loop-for-fuzzer.js: Added.
+        (foo):
+
+2020-09-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Special property caching should check Structure's cacheability
         https://bugs.webkit.org/show_bug.cgi?id=216222
 
