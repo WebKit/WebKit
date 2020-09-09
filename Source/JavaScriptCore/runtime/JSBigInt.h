@@ -575,7 +575,7 @@ private:
 
     const unsigned m_length;
     bool m_sign { false };
-    CagedBarrierPtr<Gigacage::Primitive, Digit> m_data;
+    CagedBarrierPtr<Gigacage::Primitive, Digit, tagCagedPtr> m_data;
 };
 
 inline JSBigInt* asHeapBigInt(JSValue value)
