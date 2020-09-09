@@ -1,3 +1,17 @@
+2020-09-09  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Split GlobalEventHandlers partial interface mixins out of base mixin
+        https://bugs.webkit.org/show_bug.cgi?id=216316
+
+        Reviewed by Darin Adler.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/ios-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        Update for slight enumeration ordering change.
+
 2020-09-09  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r264856): updating easing on accelerated animation results in incorrect playback

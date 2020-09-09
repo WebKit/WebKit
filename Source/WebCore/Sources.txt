@@ -2938,7 +2938,6 @@ JSGeolocationPosition.cpp
 JSGeolocationPositionError.cpp
 JSGetAnimationsOptions.cpp
 JSGlobalCrypto.cpp
-JSGlobalEventHandlers.cpp
 JSGlobalPerformance.cpp
 JSHTMLAllCollection.cpp
 JSHTMLAnchorElement.cpp

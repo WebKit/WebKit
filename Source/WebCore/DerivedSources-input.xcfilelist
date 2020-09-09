@@ -541,6 +541,8 @@ $(PROJECT_DIR)/animation/DocumentTimelineOptions.idl
 $(PROJECT_DIR)/animation/EffectTiming.idl
 $(PROJECT_DIR)/animation/FillMode.idl
 $(PROJECT_DIR)/animation/GetAnimationsOptions.idl
+$(PROJECT_DIR)/animation/GlobalEventHandlersCSSAnimations.idl
+$(PROJECT_DIR)/animation/GlobalEventHandlersCSSTransitions.idl
 $(PROJECT_DIR)/animation/IterationCompositeOperation.idl
 $(PROJECT_DIR)/animation/KeyframeAnimationOptions.idl
 $(PROJECT_DIR)/animation/KeyframeEffect.idl
@@ -710,6 +712,7 @@ $(PROJECT_DIR)/dom/EventTarget.idl
 $(PROJECT_DIR)/dom/EventTargetFactory.in
 $(PROJECT_DIR)/dom/FocusEvent.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers.idl
+$(PROJECT_DIR)/dom/GlobalEventHandlersPointerEvents.idl
 $(PROJECT_DIR)/dom/HashChangeEvent.idl
 $(PROJECT_DIR)/dom/IdleDeadline.idl
 $(PROJECT_DIR)/dom/IdleRequestCallback.idl

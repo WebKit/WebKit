@@ -10115,6 +10115,9 @@
 		7C1F5D581F22FF7300A8874F /* JSDOMConvertScheduledAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertScheduledAction.h; sourceTree = "<group>"; };
 		7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGlobalObjectTask.cpp; sourceTree = "<group>"; };
 		7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGlobalObjectTask.h; sourceTree = "<group>"; };
+		7C2D7229250838B000539662 /* GlobalEventHandlersCSSTransitions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GlobalEventHandlersCSSTransitions.idl; sourceTree = "<group>"; };
+		7C2D722C2508396300539662 /* GlobalEventHandlersCSSAnimations.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GlobalEventHandlersCSSAnimations.idl; sourceTree = "<group>"; };
+		7C2D722E25083A3400539662 /* GlobalEventHandlersPointerEvents.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GlobalEventHandlersPointerEvents.idl; sourceTree = "<group>"; };
 		7C2FA60F1EA95A3200A03108 /* ResourceCryptographicDigest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceCryptographicDigest.cpp; sourceTree = "<group>"; };
 		7C2FA6101EA95A3200A03108 /* ResourceCryptographicDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceCryptographicDigest.h; sourceTree = "<group>"; };
 		7C30D97E1F815AC000268356 /* JSAbortController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortController.cpp; sourceTree = "<group>"; };
@@ -21830,6 +21833,8 @@
 				712BE4821FE865D5002031CC /* FillMode.idl */,
 				713F1D5923DF1D7D003F5EFA /* GetAnimationsOptions.h */,
 				713F1D5723DF1D7D003F5EFA /* GetAnimationsOptions.idl */,
+				7C2D722C2508396300539662 /* GlobalEventHandlersCSSAnimations.idl */,
+				7C2D7229250838B000539662 /* GlobalEventHandlersCSSTransitions.idl */,
 				71247E331FEA5F80008C08CE /* IterationCompositeOperation.h */,
 				71247E311FEA5F7E008C08CE /* IterationCompositeOperation.idl */,
 				71247E2F1FEA5F7D008C08CE /* KeyframeAnimationOptions.h */,
@@ -29315,6 +29320,7 @@
 				0720B09E14D3323500642955 /* GenericEventQueue.cpp */,
 				0720B09F14D3323500642955 /* GenericEventQueue.h */,
 				7C4189AB1B07C170000FA757 /* GlobalEventHandlers.idl */,
+				7C2D722E25083A3400539662 /* GlobalEventHandlersPointerEvents.idl */,
 				E3BF19E622AF302A009C9926 /* HashChangeEvent.cpp */,
 				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,

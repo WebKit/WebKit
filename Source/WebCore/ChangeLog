@@ -1,5 +1,27 @@
 2020-09-09  Sam Weinig  <weinig@apple.com>
 
+        [WebIDL] Split GlobalEventHandlers partial interface mixins out of base mixin
+        https://bugs.webkit.org/show_bug.cgi?id=216316
+
+        Reviewed by Darin Adler.
+
+        Split GlobalEventHandlersCSSAnimations.idl, GlobalEventHandlersCSSTransitions.idl and
+        GlobalEventHandlersPointerEvents.idl out of GlobalEventHandlers.idl to match how they
+        are specified more closely.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/GlobalEventHandlersCSSAnimations.idl: Added.
+        * animation/GlobalEventHandlersCSSTransitions.idl: Added.
+        * dom/GlobalEventHandlers.idl:
+        * dom/GlobalEventHandlersPointerEvents.idl: Added.
+
+2020-09-09  Sam Weinig  <weinig@apple.com>
+
         [WebIDL] Stop automatically applying the ImplementedBy extended attribute to all partial interfaces/dictionaries
         https://bugs.webkit.org/show_bug.cgi?id=216322
 

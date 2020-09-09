@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015, 2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,30 +92,6 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler onunhandledrejection;
     attribute EventHandler onvolumechange;
     attribute EventHandler onwaiting;
-
-    // Extensions from CSS Transitions API (https://drafts.csswg.org/css-transitions/#interface-globaleventhandlers-idl).
-    attribute EventHandler ontransitionend;
-    attribute EventHandler ontransitionrun;
-    attribute EventHandler ontransitionstart;
-    attribute EventHandler ontransitioncancel;
-
-    // Event handlers from CSS Animations API (https://drafts.csswg.org/css-animations/#interface-globaleventhandlers-idl).
-    attribute EventHandler onanimationend;
-    attribute EventHandler onanimationiteration;
-    attribute EventHandler onanimationstart;
-    attribute EventHandler onanimationcancel;
-
-    // Event handlers from Pointer Events API (https://w3c.github.io/pointerevents/#extensions-to-the-globaleventhandlers-mixin)
-    attribute EventHandler ongotpointercapture;
-    attribute EventHandler onlostpointercapture;
-    attribute EventHandler onpointerdown;
-    attribute EventHandler onpointermove;
-    attribute EventHandler onpointerup;
-    attribute EventHandler onpointercancel;
-    attribute EventHandler onpointerover;
-    attribute EventHandler onpointerout;
-    attribute EventHandler onpointerenter;
-    attribute EventHandler onpointerleave;
 
     // Additions that are not yet part of the standard.
 

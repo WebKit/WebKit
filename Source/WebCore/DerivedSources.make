@@ -605,6 +605,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/EffectTiming.idl \
     $(WebCore)/animation/FillMode.idl \
     $(WebCore)/animation/GetAnimationsOptions.idl \
+    $(WebCore)/animation/GlobalEventHandlersCSSAnimations.idl \
+    $(WebCore)/animation/GlobalEventHandlersCSSTransitions.idl \
     $(WebCore)/animation/IterationCompositeOperation.idl \
     $(WebCore)/animation/KeyframeAnimationOptions.idl \
     $(WebCore)/animation/KeyframeEffect.idl \
@@ -740,6 +742,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \
     $(WebCore)/dom/GlobalEventHandlers.idl \
+    $(WebCore)/dom/GlobalEventHandlersPointerEvents.idl \
     $(WebCore)/dom/HashChangeEvent.idl \
     $(WebCore)/dom/IdleDeadline.idl \
     $(WebCore)/dom/IdleRequestCallback.idl \

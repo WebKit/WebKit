@@ -647,6 +647,8 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/DocumentTimelineOptions.idl
     animation/FillMode.idl
     animation/GetAnimationsOptions.idl
+    animation/GlobalEventHandlersCSSAnimations.idl
+    animation/GlobalEventHandlersCSSTransitions.idl
     animation/IterationCompositeOperation.idl
     animation/KeyframeAnimationOptions.idl
     animation/KeyframeEffect.idl
@@ -789,6 +791,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/EventTarget.idl
     dom/FocusEvent.idl
     dom/GlobalEventHandlers.idl
+    dom/GlobalEventHandlersPointerEvents.idl
     dom/HashChangeEvent.idl
     dom/IdleDeadline.idl
     dom/IdleRequestCallback.idl

@@ -776,6 +776,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalCrypto.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalCrypto.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/GlobalEventHandlersCSSAnimations.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/GlobalEventHandlersCSSAnimations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/GlobalEventHandlersCSSTransitions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/GlobalEventHandlersCSSTransitions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/GlobalEventHandlersPointerEvents.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/GlobalEventHandlersPointerEvents.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalPerformance.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalPerformance.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLAllCollection.cpp
