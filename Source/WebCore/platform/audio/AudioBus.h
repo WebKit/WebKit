@@ -134,10 +134,8 @@ public:
     void sumFrom(const AudioBus& sourceBus, ChannelInterpretation = ChannelInterpretation::Speakers);
 
     // Copy each channel from sourceBus into our corresponding channel.
-    // We scale by targetGain (and our own internal gain m_busGain), performing "de-zippering" to smoothly change from *lastMixGain to (targetGain*m_busGain).
-    // The caller is responsible for setting up lastMixGain to point to storage which is unique for every "stream" which will be applied to this bus.
-    // This represents the dezippering memory.
-    void copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, float targetGain);
+    // We scale by targetGain (and our own internal gain m_busGain).
+    void copyWithGainFrom(const AudioBus& sourceBus, float targetGain);
 
     // Copies the sourceBus by scaling with sample-accurate gain values.
     void copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, float* gainValues, unsigned numberOfGainValues);

@@ -139,7 +139,6 @@ private:
     // Gain
     DistanceEffect m_distanceEffect;
     ConeEffect m_coneEffect;
-    float m_lastGain;
 
     // HRTF Database loader
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;

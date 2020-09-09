@@ -1,5 +1,17 @@
 2020-09-09  Chris Dumez  <cdumez@apple.com>
 
+        Stop performing "de-zippering" when applying gain
+        https://bugs.webkit.org/show_bug.cgi?id=216288
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain-expected.txt:
+
+2020-09-09  Chris Dumez  <cdumez@apple.com>
+
         AudioParam.linearRampToValueAtTime() / exponentialRampToValueAtTime() have no effect when there is no preceding event
         https://bugs.webkit.org/show_bug.cgi?id=216284
 

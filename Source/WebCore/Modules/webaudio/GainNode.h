@@ -58,7 +58,6 @@ private:
 
     explicit GainNode(BaseAudioContext&);
 
-    float m_lastGain { 1.0 }; // for de-zippering
     AudioFloatArray m_sampleAccurateGainValues;
     Ref<AudioParam> m_gain;
 };

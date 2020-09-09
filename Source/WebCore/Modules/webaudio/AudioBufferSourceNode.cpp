@@ -146,7 +146,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
 
     // Apply the gain (in-place) to the output bus.
     float totalGain = legacyGainValue() * m_buffer->gain();
-    outputBus.copyWithGainFrom(outputBus, &m_lastGain, totalGain);
+    outputBus.copyWithGainFrom(outputBus, totalGain);
     outputBus.clearSilentFlag();
 }
 
@@ -420,7 +420,6 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 void AudioBufferSourceNode::reset()
 {
     m_virtualReadIndex = 0;
-    m_lastGain = legacyGainValue();
 }
 
 ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)

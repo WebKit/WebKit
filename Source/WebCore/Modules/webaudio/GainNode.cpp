@@ -93,20 +93,17 @@ void GainNode::process(size_t framesToProcess)
         } else {
             // Apply the gain with de-zippering into the output bus.
             float gain = this->gain().hasSampleAccurateValues() ? this->gain().finalValue() : this->gain().value();
-            if (!m_lastGain && m_lastGain == gain) {
-                // If the gain is 0 (and we've converged on dezippering), just zero the bus and set
-                // the silence hint.
+            if (!gain) {
+                // If the gain is 0 just zero the bus.
                 outputBus->zero();
             } else
-                outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain);
+                outputBus->copyWithGainFrom(*inputBus, gain);
         }
     }
 }
 
 void GainNode::reset()
 {
-    // Snap directly to desired gain.
-    m_lastGain = gain().value();
 }
 
 // FIXME: this can go away when we do mixing with gain directly in summing junction of AudioNodeInput

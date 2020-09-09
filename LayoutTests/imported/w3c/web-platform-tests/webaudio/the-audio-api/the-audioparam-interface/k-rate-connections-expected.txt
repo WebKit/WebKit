@@ -5,56 +5,14 @@ PASS Executing "StereoPanner"
 PASS Audit report 
 PASS > [Gain] k-rate GainNode.gain 
 PASS   gain[0:128] contains only the constant 2. 
-FAIL X gain[128:256]: Expected 129.875 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	2.6393749713897705
-	[1]	3.2755532264709473
-	[2]	3.908550500869751
-	[3]	4.538382530212402
-	...and 124 more errors. assert_true: expected true got false
-FAIL X gain[256:384]: Expected 257.75 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	63.5316047668457
-	[1]	64.50269317626953
-	[2]	65.46893310546875
-	[3]	66.43033599853516
-	...and 124 more errors. assert_true: expected true got false
-FAIL X gain[384:512]: Expected 385.625 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	156.14376831054688
-	[1]	157.29116821289062
-	[2]	158.43283081054688
-	[3]	159.56878662109375
-	...and 124 more errors. assert_true: expected true got false
-FAIL X gain[512:640]: Expected 513.5 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	265.45477294921875
-	[1]	266.69500732421875
-	[2]	267.9290466308594
-	[3]	269.1568908691406
-	...and 124 more errors. assert_true: expected true got false
-FAIL X gain[640:768]: Expected 641.375 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	383.5567626953125
-	[1]	384.8458557128906
-	[2]	386.1285095214844
-	[3]	387.4047546386719
-	...and 124 more errors. assert_true: expected true got false
-FAIL X gain[768:896]: Expected 769.25 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	506.286865234375
-	[1]	507.6016845703125
-	[2]	508.909912109375
-	[3]	510.21160888671875
-	...and 124 more errors. assert_true: expected true got false
-FAIL X gain[896:1024]: Expected 897.125 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	631.4533081054688
-	[1]	632.7816772460938
-	[2]	634.1033935546875
-	[3]	635.4185180664062
-	...and 124 more errors. assert_true: expected true got false
-FAIL < [Gain] 7 out of 8 assertions were failed. assert_true: expected true got false
+PASS   gain[128:256] contains only the constant 129.875. 
+PASS   gain[256:384] contains only the constant 257.75. 
+PASS   gain[384:512] contains only the constant 385.625. 
+PASS   gain[512:640] contains only the constant 513.5. 
+PASS   gain[640:768] contains only the constant 641.375. 
+PASS   gain[768:896] contains only the constant 769.25. 
+PASS   gain[896:1024] contains only the constant 897.125. 
+PASS < [Gain] All assertions passed. (total 8 assertions) 
 PASS > [StereoPanner] k-rate StereoPannerNode.pan 
 PASS   pan[0:128] contains only the constant 0.5. 
 PASS   pan[128:256] contains only the constant 0.5879377722740173. 
@@ -65,5 +23,5 @@ PASS   pan[640:768] contains only the constant 0.6935199499130249.
 PASS   pan[768:896] contains only the constant 0.6532814502716064. 
 PASS   pan[896:1024] contains only the constant 0.5879377722740173. 
 PASS < [StereoPanner] All assertions passed. (total 8 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

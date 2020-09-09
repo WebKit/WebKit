@@ -437,7 +437,7 @@ void AudioBus::discreteSumFrom(const AudioBus& sourceBus)
     }
 }
 
-void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, float targetGain)
+void AudioBus::copyWithGainFrom(const AudioBus& sourceBus, float gain)
 {
     if (!topologyMatches(sourceBus)) {
         ASSERT_NOT_REACHED();
@@ -456,7 +456,7 @@ void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, f
         return;
 
     // If it is copying from the same bus and no need to change gain, just return.
-    if (this == &sourceBus && *lastMixGain == targetGain && targetGain == 1)
+    if (this == &sourceBus && gain == 1)
         return;
 
     AudioBus& sourceBusSafe = const_cast<AudioBus&>(sourceBus);
@@ -468,67 +468,19 @@ void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, f
         destinations[i] = channel(i)->mutableData();
     }
 
-    // We don't want to suddenly change the gain from mixing one time slice to the next,
-    // so we "de-zipper" by slowly changing the gain each sample-frame until we've achieved the target gain.
-    
-    // Take master bus gain into account as well as the targetGain.
-    float totalDesiredGain = static_cast<float>(m_busGain * targetGain);
-
-    // First time, snap directly to totalDesiredGain.
-    float gain = static_cast<float>(m_isFirstTime ? totalDesiredGain : *lastMixGain);
-    m_isFirstTime = false;
-
-    const float DezipperRate = 0.005f;
     unsigned framesToProcess = length();
 
-    // If the gain is within epsilon of totalDesiredGain, we can skip dezippering. 
-    // FIXME: this value may need tweaking.
-    const float epsilon = 0.001f; 
-    float gainDiff = fabs(totalDesiredGain - gain);
-
-    // Number of frames to de-zipper before we are close enough to the target gain.
-    // FIXME: framesToDezipper could be smaller when target gain is close enough within this process loop.
-    unsigned framesToDezipper = (gainDiff < epsilon) ? 0 : framesToProcess; 
-
-    if (framesToDezipper) {
-        if (!m_dezipperGainValues.get() || m_dezipperGainValues->size() < framesToDezipper)
-            m_dezipperGainValues = makeUnique<AudioFloatArray>(framesToDezipper);
-
-        float* gainValues = m_dezipperGainValues->data();
-        for (unsigned i = 0; i < framesToDezipper; ++i) {
-            gain += (totalDesiredGain - gain) * DezipperRate;
-        
-            // FIXME: If we are clever enough in calculating the framesToDezipper value, we can probably get
-            // rid of this DenormalDisabler::flushDenormalFloatToZero() call.
-            gain = DenormalDisabler::flushDenormalFloatToZero(gain);
-            *gainValues++ = gain;
-        }
-
-        for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
-            vmul(sources[channelIndex], 1, m_dezipperGainValues->data(), 1, destinations[channelIndex], 1, framesToDezipper);
-            sources[channelIndex] += framesToDezipper;
-            destinations[channelIndex] += framesToDezipper;
-        }
-    } else
-        gain = totalDesiredGain;
-
-    // Apply constant gain after de-zippering has converged on target gain.
-    if (framesToDezipper < framesToProcess) {
-        // Handle gains of 0 and 1 (exactly) specially.
-        if (gain == 1) {
-            for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-                memcpy(destinations[channelIndex], sources[channelIndex], (framesToProcess - framesToDezipper) * sizeof(*destinations[channelIndex]));
-        } else if (!gain) {
-            for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-                memset(destinations[channelIndex], 0, (framesToProcess - framesToDezipper) * sizeof(*destinations[channelIndex]));
-        } else {
-            for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-                vsmul(sources[channelIndex], 1, &gain, destinations[channelIndex], 1, framesToProcess - framesToDezipper);
-        }
+    // Handle gains of 0 and 1 (exactly) specially.
+    if (gain == 1) {
+        for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
+            memcpy(destinations[channelIndex], sources[channelIndex], framesToProcess * sizeof(*destinations[channelIndex]));
+    } else if (!gain) {
+        for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
+            memset(destinations[channelIndex], 0, framesToProcess * sizeof(*destinations[channelIndex]));
+    } else {
+        for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
+            vsmul(sources[channelIndex], 1, &gain, destinations[channelIndex], 1, framesToProcess);
     }
-
-    // Save the target gain as the starting point for next time around.
-    *lastMixGain = gain;
 }
 
 void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, float* gainValues, unsigned numberOfGainValues)

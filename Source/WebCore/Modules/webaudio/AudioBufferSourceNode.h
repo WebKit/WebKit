@@ -139,9 +139,6 @@ private:
     // It incorporates the base pitch rate, any sample-rate conversion factor from the buffer, and any doppler shift from an associated panner node.
     double totalPitchRate();
 
-    // m_lastGain provides continuity when we dynamically adjust the gain.
-    float m_lastGain { 1.0 };
-
     // We optionally keep track of a panner node which has a doppler shift that is incorporated into
     // the pitch rate. We manually manage ref-counting because we want to use RefTypeConnection.
     PannerNodeBase* m_pannerNode { nullptr };

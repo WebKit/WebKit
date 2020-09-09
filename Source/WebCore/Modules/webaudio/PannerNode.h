@@ -153,7 +153,6 @@ private:
     // Gain
     DistanceEffect m_distanceEffect;
     ConeEffect m_coneEffect;
-    float m_lastGain { -1.0 };
     
     Ref<AudioParam> m_positionX;
     Ref<AudioParam> m_positionY;

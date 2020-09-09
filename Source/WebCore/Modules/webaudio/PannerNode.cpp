@@ -177,12 +177,8 @@ void PannerNode::process(size_t framesToProcess)
     // Get the distance and cone gain.
     double totalGain = distanceConeGain();
 
-    // Snap to desired gain at the beginning.
-    if (m_lastGain == -1.0)
-        m_lastGain = totalGain;
-
-    // Apply gain in-place with de-zippering.
-    destination->copyWithGainFrom(*destination, &m_lastGain, totalGain);
+    // Apply gain in-place.
+    destination->copyWithGainFrom(*destination, totalGain);
 }
 
 void PannerNode::processSampleAccurateValues(AudioBus* destination, const AudioBus* source, size_t framesToProcess)
@@ -261,7 +257,6 @@ bool PannerNode::shouldUseARate() const
 
 void PannerNode::reset()
 {
-    m_lastGain = -1.0; // force to snap to initial gain
     if (m_panner.get())
         m_panner->reset();
 }
