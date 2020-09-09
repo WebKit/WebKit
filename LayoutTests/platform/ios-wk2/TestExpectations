@@ -1876,3 +1876,5 @@ webkit.org/b/216159 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-res
 webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Pass Timeout ]
 
 webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-deletion.any.html [ Pass Failure ]
+
+webkit.org/b/216300 fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html [ Failure ]
