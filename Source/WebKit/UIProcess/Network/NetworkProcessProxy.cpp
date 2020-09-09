@@ -1273,6 +1273,8 @@ void NetworkProcessProxy::didSyncAllCookies()
 
 void NetworkProcessProxy::addSession(Ref<WebsiteDataStore>&& store)
 {
+    m_sessionIDs.add(store->sessionID());
+
     if (canSendMessage())
         send(Messages::NetworkProcess::AddWebsiteDataStore { store->parameters() }, 0);
     auto sessionID = store->sessionID();
@@ -1283,8 +1285,15 @@ void NetworkProcessProxy::addSession(Ref<WebsiteDataStore>&& store)
     }
 }
 
+bool NetworkProcessProxy::hasSession(PAL::SessionID sessionID) const
+{
+    return m_sessionIDs.contains(sessionID);
+}
+
 void NetworkProcessProxy::removeSession(PAL::SessionID sessionID)
 {
+    m_sessionIDs.remove(sessionID);
+
     if (canSendMessage())
         send(Messages::NetworkProcess::DestroySession { sessionID }, 0);
 }

@@ -1,3 +1,13 @@
+2020-09-09  Brady Eidson  <beidson@apple.com>
+
+        Make sure WKWebsiteDataStore operations reuse existing process pools even when all WKWebViews have closed.
+        <rdar://problem/62978295> and https://bugs.webkit.org/show_bug.cgi?id=216317
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+
 2020-09-09  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         run-jsc-stress-test: fix escaping for --gnu-parallel-runner

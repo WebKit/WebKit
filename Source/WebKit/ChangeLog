@@ -1,3 +1,26 @@
+2020-09-09  Brady Eidson  <beidson@apple.com>
+
+        Make sure WKWebsiteDataStore operations reuse existing process pools even when all WKWebViews have closed.
+        <rdar://problem/62978295> and https://bugs.webkit.org/show_bug.cgi?id=216317
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by new API test.
+        
+        When WebsiteDataStores are gathering all the NetworkProcesses they might need to message, they miss some
+        obvious candidates if there are no longer any related WKWebViews.
+        
+        Fix that by tracking which sessions a NetworkProcess knows about.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::addSession):
+        (WebKit::NetworkProcessProxy::hasSession const):
+        (WebKit::NetworkProcessProxy::removeSession):
+        * UIProcess/Network/NetworkProcessProxy.h:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::isAssociatedProcessPool const):
+
 2020-09-09  Chris Dumez  <cdumez@apple.com>
 
         Move lazy DisplayLink tear down logic from the WebProcess to the UIProcess
