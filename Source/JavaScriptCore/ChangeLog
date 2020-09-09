@@ -1,3 +1,21 @@
+2020-09-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Don't emitDirectBinding() if there is a [...rest] element binding
+        https://bugs.webkit.org/show_bug.cgi?id=216228
+
+        Reviewed by Darin Adler.
+
+        emitDirectBinding() is up for removal due to not respecting overriden or removed
+        Array.prototype[Symbol.iterator]. However, dropping it slows down popular swap pattern
+        `[a, b] = [b, a]` by 40% with DFG/FTL, and by a factor of 6 with baseline JIT only.
+
+        Until we figure out the best way to preserve common case performance, this patch
+        prevents `let [...rest] = [1]` from ending up as a number instead of an array,
+        aligning JSC with V8 and SpiderMonkey.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::emitDirectBinding):
+
 2020-09-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] returnEarlyFromInfiniteLoopsForFuzzing should return object

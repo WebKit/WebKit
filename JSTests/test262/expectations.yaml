@@ -2927,9 +2927,6 @@ test/language/statements/const/dstr/ary-init-iter-get-err-array-prototype.js:
 test/language/statements/const/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/const/dstr/ary-ptrn-rest-id-direct.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/for-await-of/async-from-sync-iterator-continuation-abrupt-completion-get-constructor.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
@@ -3033,27 +3030,18 @@ test/language/statements/for/dstr/const-ary-init-iter-get-err-array-prototype.js
 test/language/statements/for/dstr/const-ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/for/dstr/const-ary-ptrn-rest-id-direct.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/for/dstr/let-ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/for/dstr/let-ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/for/dstr/let-ary-ptrn-rest-id-direct.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/for/dstr/var-ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError'
 test/language/statements/for/dstr/var-ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/for/dstr/var-ary-ptrn-rest-id-direct.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."
 test/language/statements/for/scope-body-lex-open.js:
@@ -3105,9 +3093,6 @@ test/language/statements/let/dstr/ary-init-iter-get-err-array-prototype.js:
 test/language/statements/let/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/let/dstr/ary-ptrn-rest-id-direct.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/let/syntax/escaped-let.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
@@ -3214,9 +3199,6 @@ test/language/statements/variable/dstr/ary-init-iter-get-err-array-prototype.js:
 test/language/statements/variable/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/variable/dstr/ary-ptrn-rest-id-direct.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/language/types/reference/put-value-prop-base-primitive-realm.js:
   default: 'Test262Error: number Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: number Expected SameValue(«0», «1») to be true'
