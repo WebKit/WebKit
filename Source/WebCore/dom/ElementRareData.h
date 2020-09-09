@@ -158,9 +158,6 @@ public:
 #endif
 
 private:
-    int m_unusualTabIndex { 0 };
-    unsigned short m_childIndex { 0 };
-
     LayoutSize m_minimumSizeForResizing;
     IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;

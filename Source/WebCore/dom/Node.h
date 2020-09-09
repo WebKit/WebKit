@@ -32,6 +32,7 @@
 #include "StyleValidity.h"
 #include "TreeScope.h"
 #include <wtf/CompactPointerTuple.h>
+#include <wtf/CompactUniquePtrTuple.h>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
@@ -229,10 +230,10 @@ public:
     HTMLSlotElement* assignedSlot() const;
     HTMLSlotElement* assignedSlotForBindings() const;
 
-    bool isUndefinedCustomElement() const { return isElementNode() && getFlag(IsEditingTextOrUndefinedCustomElementFlag); }
-    bool isCustomElementUpgradeCandidate() const { return getFlag(IsCustomElement) && getFlag(IsEditingTextOrUndefinedCustomElementFlag); }
-    bool isDefinedCustomElement() const { return getFlag(IsCustomElement) && !getFlag(IsEditingTextOrUndefinedCustomElementFlag); }
-    bool isFailedCustomElement() const { return isElementNode() && !getFlag(IsCustomElement) && getFlag(IsEditingTextOrUndefinedCustomElementFlag); }
+    bool isUndefinedCustomElement() const { return customElementState() == CustomElementState::Undefined || customElementState() == CustomElementState::Failed; }
+    bool isCustomElementUpgradeCandidate() const { return customElementState() == CustomElementState::Undefined; }
+    bool isDefinedCustomElement() const { return customElementState() == CustomElementState::Custom; }
+    bool isFailedCustomElement() const { return customElementState() == CustomElementState::Failed; }
 
     // Returns null, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
@@ -296,7 +297,7 @@ public:
     Style::Validity styleValidity() const { return styleBitfields().styleValidity(); }
     bool styleResolutionShouldRecompositeLayer() const { return hasStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer); }
     bool childNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
-    bool isEditingText() const { return getFlag(IsTextFlag) && getFlag(IsEditingTextOrUndefinedCustomElementFlag); }
+    bool isEditingText() const { return getFlag(IsTextFlag) && getFlag(IsEditingText); }
 
     void setChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     void clearChildNeedsStyleRecalc();
@@ -491,7 +492,7 @@ public:
     void unregisterTransientMutationObserver(MutationObserverRegistration&);
     void notifyMutationObserversNodeWillDetach();
 
-    unsigned connectedSubframeCount() const;
+    unsigned connectedSubframeCount() const { return rareDataBitfields().connectedSubframeCount; }
     void incrementConnectedSubframeCount(unsigned amount = 1);
     void decrementConnectedSubframeCount(unsigned amount = 1);
     void updateAncestorConnectedSubframeCountForRemoval() const;
@@ -499,7 +500,12 @@ public:
 
 #if ENABLE(JIT)
     static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
-    static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_rareData); }
+    static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_rareDataWithBitfields); }
+#if CPU(ADDRESS64)
+    static uint64_t rareDataPointerMask() { return CompactPointerTuple<NodeRareData*, uint16_t>::pointerMask; }
+#else
+    static uint32_t rareDataPointerMask() { return -1; }
+#endif
     static int32_t flagIsText() { return IsTextFlag; }
     static int32_t flagIsContainer() { return IsContainerFlag; }
     static int32_t flagIsElement() { return IsElementFlag; }
@@ -526,12 +532,12 @@ protected:
         HasEventTargetDataFlag = 1 << 11,
         // UnusedFlag = 1 << 12,
         // UnusedFlag = 1 << 13,
+        // UnusedFlag = 1 << 14,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
-        IsEditingTextOrUndefinedCustomElementFlag = 1 << 14, // Text and Element
-        IsCustomElement = 1 << 15, // Element
-        HasFocusWithin = 1 << 16,
+        IsEditingText = 1 << 15, // Text
+        HasFocusWithin = 1 << 16, // Element
         IsLinkFlag = 1 << 17,
         IsUserActionElement = 1 << 18,
         IsParsingChildrenFinishedFlag = 1 << 19,
@@ -547,14 +553,11 @@ protected:
         ContainsFullScreenElementFlag = 1 << 26,
 #endif
 
-        // Bits 27-29 are free.
-        // Bits 30-31: TabIndexState
+        // Bits 27-31 are free.
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
 
-    static constexpr unsigned s_tabIndexStateBitOffset = 30;
-    static constexpr uint32_t s_tabIndexStateBitMask = 3U << s_tabIndexStateBitOffset;
     enum class TabIndexState : uint8_t {
         NotSet = 0,
         Zero = 1,
@@ -562,13 +565,32 @@ protected:
         InRareData = 3,
     };
 
+    enum class CustomElementState : uint8_t {
+        Uncustomized = 0,
+        Undefined = 1,
+        Custom = 2,
+        Failed = 3,
+    };
+
+    struct RareDataBitFields {
+        uint16_t connectedSubframeCount : 10;
+        uint16_t tabIndexState : 2;
+        uint16_t customElementState : 2;
+    };
+
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
     void setFlag(NodeFlags mask) const { m_nodeFlags |= mask; } 
     void clearFlag(NodeFlags mask) const { m_nodeFlags &= ~mask; }
 
-    TabIndexState tabIndexState() const { return static_cast<TabIndexState>((m_nodeFlags & s_tabIndexStateBitMask) >> s_tabIndexStateBitOffset); }
-    void setTabIndexState(TabIndexState state) { m_nodeFlags = (m_nodeFlags & ~s_tabIndexStateBitMask) | (static_cast<uint32_t>(state) << s_tabIndexStateBitOffset); }
+    RareDataBitFields rareDataBitfields() const { return bitwise_cast<RareDataBitFields>(m_rareDataWithBitfields.type()); }
+    void setRareDataBitfields(RareDataBitFields bitfields) { m_rareDataWithBitfields.setType(bitwise_cast<uint16_t>(bitfields)); }
+
+    TabIndexState tabIndexState() const { return static_cast<TabIndexState>(rareDataBitfields().tabIndexState); }
+    void setTabIndexState(TabIndexState);
+
+    CustomElementState customElementState() const { return static_cast<CustomElementState>(rareDataBitfields().customElementState); }
+    void setCustomElementState(CustomElementState);
 
     bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }
     void setIsParsingChildrenFinished() { setFlag(IsParsingChildrenFinishedFlag); }
@@ -586,7 +608,7 @@ protected:
         CreateSVGElement = CreateElement | IsSVGFlag | HasCustomStyleResolveCallbacksFlag,
         CreateMathMLElement = CreateElement | IsMathMLFlag,
         CreateDocument = CreateContainer | IsDocumentNodeFlag | IsConnectedFlag,
-        CreateEditingText = CreateText | IsEditingTextOrUndefinedCustomElementFlag,
+        CreateEditingText = CreateText | IsEditingText,
     };
     Node(Document&, ConstructionType);
 
@@ -648,8 +670,8 @@ protected:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 
-    bool hasRareData() const { return !!m_rareData; }
-    NodeRareData* rareData() const { return m_rareData.get(); }
+    bool hasRareData() const { return !!m_rareDataWithBitfields.pointer(); }
+    NodeRareData* rareData() const { return m_rareDataWithBitfields.pointer(); }
     NodeRareData& ensureRareData();
     void clearRareData();
 
@@ -705,7 +727,7 @@ private:
     Node* m_previous { nullptr };
     Node* m_next { nullptr };
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
-    std::unique_ptr<NodeRareData, NodeRareDataDeleter> m_rareData;
+    CompactUniquePtrTuple<NodeRareData, uint16_t, NodeRareDataDeleter> m_rareDataWithBitfields;
 };
 
 bool connectedInSameTreeScope(const Node*, const Node*);

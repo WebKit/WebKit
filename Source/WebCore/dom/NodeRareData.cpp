@@ -36,7 +36,8 @@
 namespace WebCore {
 
 struct SameSizeAsNodeRareData {
-    unsigned m_frameCountAndIsElementRareDataFlag;
+    uint32_t m_tabIndex;
+    uint32_t m_childIndexAndIsElementRareDataFlag;
     void* m_pointer[2];
 };
 

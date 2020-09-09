@@ -241,6 +241,13 @@ inline ElementRareData& Element::ensureElementRareData()
     return static_cast<ElementRareData&>(ensureRareData());
 }
 
+inline void Node::setTabIndexState(TabIndexState state)
+{
+    auto bitfields = rareDataBitfields();
+    bitfields.tabIndexState = static_cast<uint16_t>(state);
+    setRareDataBitfields(bitfields);
+}
+
 void Element::setTabIndexExplicitly(Optional<int> tabIndex)
 {
     if (!tabIndex) {
@@ -2422,10 +2429,16 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
     return shadow;
 }
 
+inline void Node::setCustomElementState(CustomElementState state)
+{
+    auto bitfields = rareDataBitfields();
+    bitfields.customElementState = static_cast<uint16_t>(state);
+    setRareDataBitfields(bitfields);
+}
+
 void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterface)
 {
-    clearFlag(IsEditingTextOrUndefinedCustomElementFlag);
-    setFlag(IsCustomElement);
+    setCustomElementState(CustomElementState::Custom);
     auto& data = ensureElementRareData();
     if (!data.customElementReactionQueue())
         data.setCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
@@ -2442,8 +2455,8 @@ void Element::setIsFailedCustomElement()
 void Element::setIsFailedCustomElementWithoutClearingReactionQueue()
 {
     ASSERT(isUndefinedCustomElement());
-    ASSERT(getFlag(IsEditingTextOrUndefinedCustomElementFlag));
-    clearFlag(IsCustomElement);
+    ASSERT(customElementState() == CustomElementState::Undefined);
+    setCustomElementState(CustomElementState::Failed);
     InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
@@ -2459,9 +2472,8 @@ void Element::clearReactionQueueFromFailedCustomElement()
 
 void Element::setIsCustomElementUpgradeCandidate()
 {
-    ASSERT(!getFlag(IsCustomElement));
-    setFlag(IsCustomElement);
-    setFlag(IsEditingTextOrUndefinedCustomElementFlag);
+    ASSERT(customElementState() == CustomElementState::Uncustomized);
+    setCustomElementState(CustomElementState::Undefined);
     InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 

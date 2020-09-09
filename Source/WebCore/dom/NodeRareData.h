@@ -245,33 +245,31 @@ class NodeRareData {
 public:
 #if defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS
     enum class UseType : uint32_t {
-        ConnectedFrameCount = 1 << 0,
-        NodeList = 1 << 1,
-        MutationObserver = 1 << 2,
-        TabIndex = 1 << 3,
-        MinimumSize = 1 << 4,
-        ScrollingPosition = 1 << 5,
-        ComputedStyle = 1 << 6,
-        Dataset = 1 << 7,
-        ClassList = 1 << 8,
-        ShadowRoot = 1 << 9,
-        CustomElementQueue = 1 << 10,
-        AttributeMap = 1 << 11,
-        InteractionObserver = 1 << 12,
-        ResizeObserver = 1 << 13,
-        Animations = 1 << 14,
-        PseudoElements = 1 << 15,
-        StyleMap = 1 << 16,
-        PartList = 1 << 17,
-        PartNames = 1 << 18,
+        NodeList = 1 << 0,
+        MutationObserver = 1 << 1,
+        TabIndex = 1 << 2,
+        MinimumSize = 1 << 3,
+        ScrollingPosition = 1 << 4,
+        ComputedStyle = 1 << 5,
+        Dataset = 1 << 6,
+        ClassList = 1 << 7,
+        ShadowRoot = 1 << 8,
+        CustomElementQueue = 1 << 9,
+        AttributeMap = 1 << 10,
+        InteractionObserver = 1 << 11,
+        ResizeObserver = 1 << 12,
+        Animations = 1 << 13,
+        PseudoElements = 1 << 14,
+        StyleMap = 1 << 15,
+        PartList = 1 << 16,
+        PartNames = 1 << 17,
     };
 #endif
 
     enum class Type { Element, Node };
 
     NodeRareData(Type type = Type::Node)
-        : m_connectedFrameCount(0)
-        , m_isElementRareData(type == Type::Element)
+        : m_isElementRareData(type == Type::Element)
     {
     }
 
@@ -294,24 +292,10 @@ public:
         return *m_mutationObserverData;
     }
 
-    unsigned connectedSubframeCount() const { return m_connectedFrameCount; }
-    void incrementConnectedSubframeCount(unsigned amount)
-    {
-        m_connectedFrameCount += amount;
-    }
-    void decrementConnectedSubframeCount(unsigned amount)
-    {
-        ASSERT(m_connectedFrameCount);
-        ASSERT(amount <= m_connectedFrameCount);
-        m_connectedFrameCount -= amount;
-    }
-
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
         OptionSet<UseType> result;
-        if (m_connectedFrameCount)
-            result.add(UseType::ConnectedFrameCount);
         if (m_nodeLists)
             result.add(UseType::NodeList);
         if (m_mutationObserverData)
@@ -320,9 +304,13 @@ public:
     }
 #endif
 
+protected:
+    // Used by ElementRareData. Defined here for better packing in 64-bit.
+    int m_unusualTabIndex { 0 };
+    unsigned short m_childIndex { 0 };
+
 private:
-    unsigned m_connectedFrameCount : 31; // Must fit Page::maxNumberOfFrames.
-    unsigned m_isElementRareData : 1;
+    bool m_isElementRareData;
 
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
     std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;

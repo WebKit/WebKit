@@ -1,3 +1,74 @@
+2020-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Having an iframe as a descendent node shouldn't require ElementRareData
+        https://bugs.webkit.org/show_bug.cgi?id=216264
+
+        Reviewed by Darin Adler.
+
+        Store the number of connected frames in the descendent nodes directly in Node using CompactUniquePtrTuple
+        in the same space as where we store the NodeRareData pointer. This avoids creating ElementRareData on every
+        ancestor element and shadow host / document of an iframe.
+
+        Also moved TabIndexState there to simply NodeFlags, and created CustomElementState to replace the existing
+        flags in NodeFlags to match the latest terminology used in the specification:
+        https://dom.spec.whatwg.org/#concept-element-custom-element-state
+
+        CustomElementState has four states: "uncustomized" (default; builtin elements), "undefined" (i.e. element has
+        a valid custom element but it hasn't been defined or upgraded yet), "custom" (a valid custom element instance),
+        and "failed" (upgrading has resulted in an error). Before this patch, "uncustomized" meant that neither
+        IsCustomElement nor IsEditingTextOrUndefinedCustomElementFlag is set, "undefined" had IsCustomElement
+        and IsEditingTextOrUndefinedCustomElementFlag set, and "custom" had IsCustomElement set but
+        IsEditingTextOrUndefinedCustomElementFlag unset whereas "failed" had the opposite.
+
+        No new tests since there should be no observable behavioral change.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild): Mask out the bits stored in
+        the pointer in the 64-bit architecture. In the 32-bit architecture, the pointer is the first component
+        without any extra bits stored in it.
+        * dom/Element.cpp:
+        (WebCore::Node::setTabIndexState): Moved from Node.h. Updated to use the newly introduced bitfields.
+        (WebCore::Node::setCustomElementState): Added.
+        (WebCore::Element::setIsDefinedCustomElement): Now updates CustomElementState in the newly added bitfields.
+        (WebCore::Element::setIsFailedCustomElementWithoutClearingReactionQueue): Ditto.
+        (WebCore::Element::setIsCustomElementUpgradeCandidate): Ditto.
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData): Moved m_unusualTabIndex and m_childIndex to NodeRareData for better packing.
+        * dom/Node.cpp:
+        (WebCore::Node::materializeRareData):
+        (WebCore::Node::clearRareData):
+        (WebCore::Node::connectedSubframeCount const): Moved to the header file.
+        (WebCore::Node::incrementConnectedSubframeCount): Now updates the newly added bitfields.
+        (WebCore::Node::decrementConnectedSubframeCount): Ditto.
+        * dom/Node.h:
+        (WebCore::Node::isUndefinedCustomElement const): Now uses CustomElementState in the newly added bitfields.
+        (WebCore::Node::isCustomElementUpgradeCandidate const): Ditto.
+        (WebCore::Node::isDefinedCustomElement const): Ditto.
+        (WebCore::Node::isFailedCustomElement const): Ditto.
+        (WebCore::Node::isEditingText const):
+        (WebCore::Node::connectedSubframeCount const): Moved here from cpp file.
+        (WebCore::Node::rareDataMemoryOffset):
+        (WebCore::Node::rareDataPointerMask): Added.
+        (WebCore::Node::CustomElementState): Added.
+        (WebCore::Node::RareDataBitFields): Added.
+        (WebCore::Node::rareDataBitfields const): Added.
+        (WebCore::Node::setRareDataBitfields): Added.
+        (WebCore::Node::tabIndexState const): Updated to use rareDataBitfields.
+        (WebCore::Node::setTabIndexState): Moved to Element.cpp.
+        (WebCore::Node::customElementState const): Added.
+        (WebCore::Node::hasRareData const):
+        (WebCore::Node::rareData const):
+        * dom/NodeRareData.cpp:
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::UseType): Removed ConnectedFrameCount.
+        (WebCore::NodeRareData::NodeRareData):
+        (WebCore::NodeRareData::useTypes const):
+        (WebCore::NodeRareData::connectedSubframeCount const): Deleted.
+        (WebCore::NodeRareData::incrementConnectedSubframeCount): Deleted.
+        (WebCore::NodeRareData::decrementConnectedSubframeCount): Deleted.
+        (WebCore::NodeRareData): Moved m_unusualTabIndex and m_childIndex here for better packing in 64-bit architecture.
+
 2020-09-08  Tim Horton  <timothy_horton@apple.com>
 
         WebCore UnifiedSource81 builds for upwards of 10 minutes

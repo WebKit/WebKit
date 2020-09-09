@@ -413,9 +413,9 @@ void Node::willBeDeletedFrom(Document& document)
 void Node::materializeRareData()
 {
     if (is<Element>(*this))
-        m_rareData = std::unique_ptr<NodeRareData, NodeRareDataDeleter>(new ElementRareData);
+        m_rareDataWithBitfields.setPointer(std::unique_ptr<NodeRareData, NodeRareDataDeleter>(new ElementRareData));
     else
-        m_rareData = std::unique_ptr<NodeRareData, NodeRareDataDeleter>(new NodeRareData);
+        m_rareDataWithBitfields.setPointer(std::unique_ptr<NodeRareData, NodeRareDataDeleter>(new NodeRareData));
 }
 
 inline void Node::NodeRareDataDeleter::operator()(NodeRareData* rareData) const
@@ -431,7 +431,7 @@ void Node::clearRareData()
     ASSERT(hasRareData());
     ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
 
-    m_rareData = nullptr;
+    m_rareDataWithBitfields.setPointer(nullptr);
 }
 
 bool Node::isNode() const
@@ -2573,23 +2573,24 @@ void Node::removedLastRef()
     delete this;
 }
 
-unsigned Node::connectedSubframeCount() const
-{
-    return hasRareData() ? rareData()->connectedSubframeCount() : 0;
-}
-
 void Node::incrementConnectedSubframeCount(unsigned amount)
 {
+    static_assert(RareDataBitFields { Page::maxNumberOfFrames, 0, 0 }.connectedSubframeCount == Page::maxNumberOfFrames, "connectedSubframeCount must fit Page::maxNumberOfFrames");
+
     ASSERT(isContainerNode());
-    ensureRareData().incrementConnectedSubframeCount(amount);
+    auto bitfields = rareDataBitfields();
+    bitfields.connectedSubframeCount += amount;
+    RELEASE_ASSERT(bitfields.connectedSubframeCount == rareDataBitfields().connectedSubframeCount + amount);
+    setRareDataBitfields(bitfields);
 }
 
 void Node::decrementConnectedSubframeCount(unsigned amount)
 {
-    ASSERT(rareData());
-    if (!hasRareData())
-        return; // Defend against type confusion when the above assertion fails. See webkit.org/b/200300.
-    rareData()->decrementConnectedSubframeCount(amount);
+    ASSERT(isContainerNode());
+    auto bitfields = rareDataBitfields();
+    RELEASE_ASSERT(amount <= bitfields.connectedSubframeCount);
+    bitfields.connectedSubframeCount -= amount;
+    setRareDataBitfields(bitfields);
 }
 
 void Node::updateAncestorConnectedSubframeCountForRemoval() const

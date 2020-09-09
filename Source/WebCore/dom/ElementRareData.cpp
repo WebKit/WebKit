@@ -34,8 +34,6 @@
 namespace WebCore {
 
 struct SameSizeAsElementRareData : NodeRareData {
-    int tabIndex;
-    unsigned short childIndex;
     LayoutSize sizeForResizing;
     IntPoint savedLayerScrollPosition;
     void* pointers[11];

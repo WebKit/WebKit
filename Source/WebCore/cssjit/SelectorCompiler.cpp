@@ -3582,6 +3582,10 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
         LocalRegister elementRareData(m_registerAllocator);
         m_assembler.loadPtr(Assembler::Address(previousSibling, Node::rareDataMemoryOffset()), elementRareData);
 
+        LocalRegister rareDataPointerMask(m_registerAllocator);
+        m_assembler.move(Assembler::TrustedImmPtr(Node::rareDataPointerMask()), rareDataPointerMask);
+        m_assembler.andPtr(rareDataPointerMask, elementRareData);
+
         noCachedChildIndexCases.append(m_assembler.branchTestPtr(Assembler::Zero, elementRareData));
         {
             LocalRegister cachedChildIndex(m_registerAllocator);
