@@ -1,3 +1,44 @@
+2020-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text copied and pasted from Mac Catalyst apps appears larger than expected
+        https://bugs.webkit.org/show_bug.cgi?id=215971
+        <rdar://problem/65768907>
+
+        Reviewed by Tim Horton.
+
+        Various pieces of platform logic in Mac Catalyst depend on the user interface idiom (i.e. Mac or iPad) of the
+        app, as well as the application-wide "scale factor". In the context of this bug, NSAttributedString to RTF data
+        conversion methods in `UIFoundation` consult the scale factor of `UIiOSMacIdiomManager` to determine whether to
+        emit 0 (standard) or 1 (iOS) for the `\cocoatextscaling` attribute. The fact that the web process' scale factor
+        may be out of sync with the UI process' scale factor leads to copied RTF data in the web process appearing
+        either larger or smaller than expected, due to an incorrect `NSTextScalingType` value.
+
+        To mitigate this (as well as any other issues), we add a mechanism for the UI process to forward the global
+        scale factor and user interface idiom to the web process inside of the web process creation parameters, and then
+        use new UIKit SPI to override the scale factor and idiom within the web process.
+
+        * Scripts/process-entitlements.sh:
+
+        Add a new entitlement needed to use `_UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor`.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
+        Use `_UIApplicationCatalystUserInterfaceIdiom` and `_UIApplicationCatalystScaleFactor` to grab the global user
+        interface idiom and scale factor, respectively.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+        Override the idiom and scale factor in the web process with the idiom and scale factor from the UI process,
+        using the new SPI `_UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor`. As this function hasn't landed
+        yet, we soft link the function for now to avoid causing the web process to instantly crash on any builds without
+        the fix for <rdar://problem/68524148>.
+
 2020-09-09  Brady Eidson  <beidson@apple.com>
 
         Make sure WKWebsiteDataStore operations reuse existing process pools even when all WKWebViews have closed.
