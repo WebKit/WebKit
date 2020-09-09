@@ -1,5 +1,13 @@
 2020-09-09  Alex Christensen  <achristensen@webkit.org>
 
+        Skip newly imported test that times out sometimes.
+        https://bugs.webkit.org/show_bug.cgi?id=216301
+
+        * TestExpectations:
+        imported/w3c/web-platform-tests/selection/dir-manual.html times out.  It says it's a manual test.  Maybe it should stay skipped forever.
+
+2020-09-09  Alex Christensen  <achristensen@webkit.org>
+
         Import selection web platform tests
         https://bugs.webkit.org/show_bug.cgi?id=216301
 

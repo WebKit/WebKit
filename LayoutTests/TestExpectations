@@ -276,6 +276,7 @@ imported/w3c/web-platform-tests/referrer-policy/generic/unsupported-csp-referrer
 
 # This test times out. We should fix that.
 imported/w3c/web-platform-tests/selection/collapse-30.html [ Skip ]
+imported/w3c/web-platform-tests/selection/dir-manual.html [ Skip ]
 
 # Newly imported service worker tests that are timing out.
 imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html [ Skip ]
