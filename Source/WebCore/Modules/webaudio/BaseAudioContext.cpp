@@ -267,6 +267,15 @@ void BaseAudioContext::uninitialize()
         setState(State::Closed);
     }
 
+    {
+        AutoLocker locker(*this);
+        // This should have been called from handlePostRenderTasks() at the end of rendering.
+        // However, in case of lock contention, the tryLock() call could have failed in handlePostRenderTasks(),
+        // leaving nodes in m_finishedNodes. Now that the audio thread is gone, make sure we deref those nodes
+        // before the BaseAudioContext gets destroyed.
+        derefFinishedSourceNodes();
+    }
+
     // Get rid of the sources which may still be playing.
     derefUnfinishedSourceNodes();
 

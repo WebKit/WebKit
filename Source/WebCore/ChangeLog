@@ -1,3 +1,26 @@
+2020-09-09  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: m_finishedNodes.isEmpty() in AudioContext destructor
+        https://bugs.webkit.org/show_bug.cgi?id=105870
+
+        Reviewed by Darin Adler.
+
+        This assertion indicates that BaseAudioContext::derefFinishedSourceNodes() was not
+        called before the BaseAudioContext destructor. Normally, derefFinishedSourceNodes()
+        gets called from BaseAudioContext::handlePostRenderTasks() at the end of rending.
+        However, BaseAudioContext::handlePostRenderTasks() only calls derefFinishedSourceNodes()
+        if tryLock() succeeds. Therefore, in case of lock contention, it was possible we would
+        end up destroying the BaseAudioContext without derefFinishedSourceNodes() having been
+        called at the end of the rendering.
+
+        To address the issue, we now call derefFinishedSourceNodes() after the audio thread is
+        gone and before the BaseAudioContext gets destroyed, in BaseAudioContext::uninitialize().
+
+        No new tests, covered by existing tests that are flaky crashing.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::uninitialize):
+
 2020-09-09  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r264856): updating easing on accelerated animation results in incorrect playback
