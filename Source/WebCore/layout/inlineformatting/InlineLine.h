@@ -42,7 +42,7 @@ public:
     Line(const InlineFormattingContext&);
     ~Line();
 
-    void open(InlineLayoutUnit availableLogicalWidth);
+    void open(InlineLayoutUnit horizontalConstraint);
     void close(bool isLastLineWithInlineContent);
     void clearContent();
 
@@ -54,9 +54,9 @@ public:
 
     bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
 
-    InlineLayoutUnit lineLogicalWidth() const { return m_lineLogicalWidth; }
+    InlineLayoutUnit horizontalConstraint() const { return m_horizontalConstraint; }
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-    InlineLayoutUnit availableWidth() const { return lineLogicalWidth() - contentLogicalWidth(); }
+    InlineLayoutUnit availableWidth() const { return horizontalConstraint() - contentLogicalWidth(); }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
@@ -179,7 +179,7 @@ private:
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
     InlineLayoutUnit m_lineLogicalLeft { 0 };
-    InlineLayoutUnit m_lineLogicalWidth { 0 };
+    InlineLayoutUnit m_horizontalConstraint { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     bool m_hasIntrusiveFloat { false };
     bool m_isVisuallyEmpty { true };

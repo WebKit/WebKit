@@ -303,8 +303,8 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
     auto lineIsVisuallyEmpty = m_line.isVisuallyEmpty() ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No;
     return LineContent { committedContent.partialTrailingContent, committedRange, m_floats, m_line.hasIntrusiveFloat()
         , lineLogicalTopLeft
-        , m_line.lineLogicalWidth()
-        , LineBox { formattingContext(), m_line.lineLogicalWidth(), m_line.contentLogicalWidth(), m_line.runs(), lineIsVisuallyEmpty
+        , m_line.horizontalConstraint()
+        , LineBox { formattingContext(), m_line.horizontalConstraint(), m_line.contentLogicalWidth(), m_line.runs(), lineIsVisuallyEmpty
         , isLastLine ? LineBox::IsLastLineWithInlineContent::Yes : LineBox::IsLastLineWithInlineContent::No }
         , m_line.runs() };
 }

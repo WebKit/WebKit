@@ -55,9 +55,9 @@ Line::~Line()
 {
 }
 
-void Line::open(InlineLayoutUnit availableWidth)
+void Line::open(InlineLayoutUnit horizontalConstraint)
 {
-    m_lineLogicalWidth = availableWidth;
+    m_horizontalConstraint = horizontalConstraint;
     clearContent();
 #if ASSERT_ENABLED
     m_isClosed = false;
@@ -211,13 +211,13 @@ void Line::moveLogicalLeft(InlineLayoutUnit delta)
         return;
     ASSERT(delta > 0);
     m_lineLogicalLeft += delta;
-    m_lineLogicalWidth -= delta;
+    m_horizontalConstraint -= delta;
 }
 
 void Line::moveLogicalRight(InlineLayoutUnit delta)
 {
     ASSERT(delta > 0);
-    m_lineLogicalWidth -= delta;
+    m_horizontalConstraint -= delta;
 }
 
 void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)

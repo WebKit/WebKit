@@ -1,3 +1,21 @@
+2020-09-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line::lineLogicalWidth is really the horizontal constraint value
+        https://bugs.webkit.org/show_bug.cgi?id=216277
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::open):
+        (WebCore::Layout::Line::moveLogicalLeft):
+        (WebCore::Layout::Line::moveLogicalRight):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::horizontalConstraint const):
+        (WebCore::Layout::Line::availableWidth const):
+        (WebCore::Layout::Line::lineLogicalWidth const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::layoutInlineContent):
+
 2020-09-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Add editability to input type=time
