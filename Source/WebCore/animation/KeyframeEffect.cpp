@@ -1493,9 +1493,14 @@ TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index) c
     return nullptr;
 }
 
+bool KeyframeEffect::canBeAccelerated() const
+{
+    return m_acceleratedPropertiesState != AcceleratedProperties::None && !m_someKeyframesUseStepsTimingFunction && !is<StepsTimingFunction>(timingFunction());
+}
+
 void KeyframeEffect::updateAcceleratedActions()
 {
-    if (m_acceleratedPropertiesState == AcceleratedProperties::None || m_someKeyframesUseStepsTimingFunction || is<StepsTimingFunction>(timingFunction()))
+    if (!canBeAccelerated())
         return;
 
     auto computedTiming = getComputedTiming();
@@ -1557,13 +1562,11 @@ void KeyframeEffect::animationDidPlay()
 void KeyframeEffect::animationDidChangeTimingProperties()
 {
     computeSomeKeyframesUseStepsTimingFunction();
-    // The timing function can affect whether the platform can run this as an accelerated animation.
-    m_runningAccelerated = RunningAccelerated::NotStarted;
 
-    // There is no need to update the animation if we're not playing already. If updating timing
-    // means we're moving into an active lexicalGlobalObject, we'll pick this up in apply().
-    if (isAboutToRunAccelerated())
-        addPendingAcceleratedAction(AcceleratedAction::UpdateTiming);
+    if (isRunningAccelerated() || isAboutToRunAccelerated())
+        addPendingAcceleratedAction(canBeAccelerated() ? AcceleratedAction::UpdateTiming : AcceleratedAction::Stop);
+    else if (canBeAccelerated())
+        m_runningAccelerated = RunningAccelerated::NotStarted;
 }
 
 void KeyframeEffect::animationWasCanceled()

@@ -1,3 +1,24 @@
+2020-09-09  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r264856): updating easing on accelerated animation results in incorrect playback
+        https://bugs.webkit.org/show_bug.cgi?id=215853
+        <rdar://problem/67815853>
+
+        Reviewed by Simon Fraser.
+
+        Stop accelerated animations if the timing function has changed in a way that makes it so that it should
+        no longer play accelerated, but otherwise simply update their timing properties such that may keep
+        playing.
+
+        Test: webanimations/accelerated-animation-easing-update-after-pause.html
+              webanimations/accelerated-animation-easing-update-steps-after-pause.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::canBeAccelerated const):
+        (WebCore::KeyframeEffect::updateAcceleratedActions):
+        (WebCore::KeyframeEffect::animationDidChangeTimingProperties):
+        * animation/KeyframeEffect.h:
+
 2020-09-09  Chris Dumez  <cdumez@apple.com>
 
         AudioParam.linearRampToValueAtTime() / exponentialRampToValueAtTime() have no effect when there is no preceding event
