@@ -1,3 +1,17 @@
+2020-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        WebCore UnifiedSource81 builds for upwards of 10 minutes
+        https://bugs.webkit.org/show_bug.cgi?id=216297
+
+        Reviewed by Simon Fraser.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+        (WebCore::WebCoreBuiltinNames::WebCoreBuiltinNames):
+        Work around an LLVM regression by disabling debugging in the
+        WebCoreBuiltinNames constructor. This is tracked by <rdar://68246686>.
+
+        This drops the WebCore release build time on my iMac Pro from 14 minutes to 6.
+
 2020-09-08  Chris Dumez  <cdumez@apple.com>
 
         Drop non-standard name / units attributes from AudioParam

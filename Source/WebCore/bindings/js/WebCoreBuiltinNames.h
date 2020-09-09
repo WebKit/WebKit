@@ -460,6 +460,10 @@ namespace WebCore {
 
 class WebCoreBuiltinNames {
 public:
+    // FIXME: Remove the __attribute__((nodebug)) when <rdar://68246686> is fixed.
+#if COMPILER(CLANG)
+    __attribute__((nodebug))
+#endif
     explicit WebCoreBuiltinNames(JSC::VM& vm)
         : m_vm(vm)
         WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_NAMES)
