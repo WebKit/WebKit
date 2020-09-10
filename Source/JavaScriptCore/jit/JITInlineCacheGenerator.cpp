@@ -38,7 +38,7 @@ namespace JSC {
 
 static StructureStubInfo* garbageStubInfo()
 {
-    static StructureStubInfo* stubInfo = new StructureStubInfo(AccessType::GetById);
+    static StructureStubInfo* stubInfo = new StructureStubInfo(AccessType::GetById, CodeOrigin());
     return stubInfo;
 }
 
@@ -47,8 +47,7 @@ JITInlineCacheGenerator::JITInlineCacheGenerator(
     const RegisterSet& usedRegisters)
     : m_codeBlock(codeBlock)
 {
-    m_stubInfo = m_codeBlock ? m_codeBlock->addStubInfo(accessType) : garbageStubInfo();
-    m_stubInfo->codeOrigin = codeOrigin;
+    m_stubInfo = m_codeBlock ? m_codeBlock->addStubInfo(accessType, codeOrigin) : garbageStubInfo();
     m_stubInfo->callSiteIndex = callSite;
 
     m_stubInfo->usedRegisters = usedRegisters;

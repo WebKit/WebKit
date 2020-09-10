@@ -68,8 +68,9 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
     return Call;
 }
 
-CallLinkInfo::CallLinkInfo()
-    : m_hasSeenShouldRepatch(false)
+CallLinkInfo::CallLinkInfo(CodeOrigin codeOrigin)
+    : m_codeOrigin(codeOrigin)
+    , m_hasSeenShouldRepatch(false)
     , m_hasSeenClosure(false)
     , m_clearedByGC(false)
     , m_clearedByVirtual(false)

@@ -308,16 +308,16 @@ public:
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITSubGenerator>::value>::type>
     JITSubIC* addMathIC(BinaryArithProfile* profile) { return addJITSubIC(profile); }
 
-    StructureStubInfo* addStubInfo(AccessType);
+    StructureStubInfo* addStubInfo(AccessType, CodeOrigin);
 
     // O(n) operation. Use getICStatusMap() unless you really only intend to get one stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);
     // O(n) operation. Use getICStatusMap() unless you really only intend to get one by-val-info.
     ByValInfo* findByValInfo(CodeOrigin);
 
-    ByValInfo* addByValInfo();
+    ByValInfo* addByValInfo(BytecodeIndex);
 
-    CallLinkInfo* addCallLinkInfo();
+    CallLinkInfo* addCallLinkInfo(CodeOrigin);
 
     // This is a slow function call used primarily for compiling OSR exits in the case
     // that there had been inlining. Chances are if you want to use this, you're really

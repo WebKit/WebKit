@@ -907,8 +907,7 @@ CompilationResult JIT::link()
             auto nextHotPathTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.nextHotPathTarget));
             auto slowPathTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.slowPathTarget));
 
-            *byValCompilationInfo.byValInfo = ByValInfo(
-                byValCompilationInfo.bytecodeIndex,
+            byValCompilationInfo.byValInfo->setUp(
                 notIndexJump,
                 badTypeJump,
                 exceptionHandler,
