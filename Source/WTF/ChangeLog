@@ -1,3 +1,12 @@
+2020-09-10  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] PERF: Don't instantiate AVPlayer-based audio decoders or renderers if an element is initially muted.
+        https://bugs.webkit.org/show_bug.cgi?id=216299
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+
 2020-09-10  Tim Horton  <timothy_horton@apple.com>
 
         Upstream additional linked-on-or-after version checks

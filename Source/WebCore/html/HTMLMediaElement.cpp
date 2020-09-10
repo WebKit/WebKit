@@ -6556,6 +6556,7 @@ void HTMLMediaElement::createMediaPlayer()
     m_player = MediaPlayer::create(*this);
     m_player->setBufferingPolicy(m_bufferingPolicy);
     m_player->setPreferredDynamicRangeMode(preferredDynamicRangeMode(document().view()));
+    m_player->setMuted(effectiveMuted());
     schedulePlaybackControlsManagerUpdate();
 
 #if ENABLE(WEB_AUDIO)

@@ -1,3 +1,31 @@
+2020-09-10  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] PERF: Don't instantiate AVPlayer-based audio decoders or renderers if an element is initially muted.
+        https://bugs.webkit.org/show_bug.cgi?id=216299
+
+        Reviewed by Eric Carlson.
+
+        When an AVPlayer is created, even if muted, it will still instantiate an audio decoder and renderer if the
+        AVAsset in the current player item has an audio track. Ostensibly, this is so that an unmute operation is
+        instantaneous, as it's merely applying a zero gain to the decoded audio. However for web content, there's
+        many autoplaying, muted <video> elements which may never be un-muted before being destroyed.
+
+        Implement a policy where, if an AVPlayer is initially muted, we adopt AVFoundation SPI to forcibly prevent
+        audio decoding and rendering until the first time the AVPlayer is unmuted. This means the first un-mute may
+        not be instantaneous, as an audio decoder will have to be created and fed before any audio is rendered.
+
+        There's some incorrect caching of mute state at the MediaPlayer level; so MediaPlayer and MPPAVFoundationObjC
+        can get their respective m_muted states out of sync. Make sure that HTMLMediaElement always sets muted state
+        after creating a MediaPlayer and that, respectively, MPPAVFoundationObjC always queries it's parent MediaPlayer's
+        mute state when it in turn is created.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setMuted):
+
 2020-09-10  Chris Dumez  <cdumez@apple.com>
 
         Some WebAudio tests give different output on different machines
