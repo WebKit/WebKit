@@ -1118,9 +1118,6 @@ angle::Result ProgramExecutableVk::updateImagesDescriptorSet(
         std::string name = imageUniform.mappedName;
         GetImageNameWithoutIndices(&name);
         ShaderInterfaceVariableInfo &info = mVariableInfoMap[shaderType][name];
-
-        ASSERT(!imageBinding.unreferenced);
-
         for (uint32_t arrayElement = 0; arrayElement < imageBinding.boundImageUnits.size();
              ++arrayElement)
         {
@@ -1306,9 +1303,6 @@ angle::Result ProgramExecutableVk::updateTexturesDescriptorSet(ContextVk *contex
         {
             const gl::SamplerBinding &samplerBinding =
                 programState->getSamplerBindings()[textureIndex];
-
-            ASSERT(!samplerBinding.unreferenced);
-
             uint32_t uniformIndex = programState->getUniformIndexFromSamplerIndex(textureIndex);
             const gl::LinkedUniform &samplerUniform = programState->getUniforms()[uniformIndex];
             std::string mappedSamplerName = GlslangGetMappedSamplerName(samplerUniform.name);

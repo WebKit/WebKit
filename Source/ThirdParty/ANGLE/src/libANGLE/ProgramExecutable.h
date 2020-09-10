@@ -24,10 +24,7 @@ namespace gl
 // This small structure encapsulates binding sampler uniforms to active GL textures.
 struct SamplerBinding
 {
-    SamplerBinding(TextureType textureTypeIn,
-                   SamplerFormat formatIn,
-                   size_t elementCount,
-                   bool unreferenced);
+    SamplerBinding(TextureType textureTypeIn, SamplerFormat formatIn, size_t elementCount);
     SamplerBinding(const SamplerBinding &other);
     ~SamplerBinding();
 
@@ -37,23 +34,20 @@ struct SamplerBinding
     SamplerFormat format;
 
     // List of all textures bound to this sampler, of type textureType.
+    // Cropped by the amount of unused elements reported by the driver.
     std::vector<GLuint> boundTextureUnits;
-
-    // A note if this sampler is an unreferenced uniform.
-    bool unreferenced;
 };
 
 struct ImageBinding
 {
     ImageBinding(size_t count);
-    ImageBinding(GLuint imageUnit, size_t count, bool unreferenced);
+    ImageBinding(GLuint imageUnit, size_t count);
     ImageBinding(const ImageBinding &other);
     ~ImageBinding();
 
+    // List of all textures bound.
+    // Cropped by the amount of unused elements reported by the driver.
     std::vector<GLuint> boundImageUnits;
-
-    // A note if this image unit is an unreferenced uniform.
-    bool unreferenced;
 };
 
 // A varying with transform feedback enabled. If it's an array, either the whole array or one of its
