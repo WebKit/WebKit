@@ -43,6 +43,8 @@
     --sublist-margin-start: 4px;
     --sublist-padding-start: 1px;
     --sublist-border-width-start: 9px;
+
+    --shadow-subtree-background-color: hsla(0, 0%, 0%, 0.05);
 }
 
 .tree-outline.dom.non-selectable {
@@ -54,6 +56,7 @@
     left: 0;
     right: 0;
     height: 15px;
+    z-index: -1;
 }
 
 .tree-outline.dom li.selected .selection-area {
@@ -72,11 +75,6 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:not(.non-s
 .tree-outline.dom:not(.non-selectable) li.hovered:not(.selected) .selection-area {
     background-color: var(--selected-background-color);
     opacity: 0.3;
-}
-
-.tree-outline.dom li > :not(.selection-area) {
-    position: relative;
-    z-index: 1;
 }
 
 .tree-outline.dom li.inspected-node > span::after {
@@ -241,11 +239,11 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
     margin-top: -13px;
     margin-left: -2px;
     content: "";
-    background-color: hsla(0, 0%, 90%, 0.5);
+    background-color: var(--shadow-subtree-background-color);
 }
 
 .tree-outline.dom li.parent.shadow + ol.children.expanded {
-    background-color: hsla(0, 0%, 90%, 0.5);
+    background-color: var(--shadow-subtree-background-color);
 }
 
 .showing-find-banner .tree-outline.dom .search-highlight {
@@ -276,15 +274,12 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
 }
 
 @media (prefers-color-scheme: dark) {
-    .tree-outline.dom .shadow {
-        color: var(--text-color);
+    .tree-outline.dom {
+        --shadow-subtree-background-color: hsla(0, 0%, 100%, 0.05);
     }
 
-    /* FIXME: extract this as a variable. It's slightly different from var(background-color-secondary),
-    but close enough for now. It needs to use partial translucency so that the selection area shines through. */
-    .tree-outline.dom li.parent.shadow + ol.children.expanded,
-    .tree-outline.dom li.parent.shadow::after {
-        background-color: hsla(0, 0%, 90%, 0.1);
+    .tree-outline.dom .shadow {
+        color: var(--text-color);
     }
 
     .showing-find-banner .tree-outline.dom .search-highlight {
