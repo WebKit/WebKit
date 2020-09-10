@@ -30,7 +30,7 @@
 
 namespace WTF {
 
-#if CPU(ARM64E)
+#if CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
 
 static const char* tagForPtr(const void* ptr)
 {
@@ -87,6 +87,6 @@ void reportBadTag(const void* ptr, PtrTag expectedTag)
         dataLogLn(", expected tag = ", ptrTagName(expectedTag));
 }
 
-#endif // CPU(ARM64E)
+#endif // CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
 
 } // namespace WTF
