@@ -263,19 +263,7 @@ function resolve(value)
     if (!@isObject(this))
         @throwTypeError("|this| is not an object");
 
-    if (@isPromise(value)) {
-        var valueConstructor = value.constructor;
-        if (valueConstructor === this)
-            return value;
-    }
-
-    if (this === @Promise) {
-        var promise = @newPromise();
-        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value);
-        return promise;
-    }
-
-    return @promiseResolveSlow(this, value);
+    return @promiseResolve(this, value);
 }
 
 @nakedConstructor

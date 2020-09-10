@@ -90,6 +90,21 @@ function newPromiseCapability(constructor)
 }
 
 @globalPrivate
+function promiseResolve(constructor, value)
+{
+    if (@isPromise(value) && value.constructor === constructor)
+        return value;
+
+    if (constructor === @Promise) {
+        var promise = @newPromise();
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value);
+        return promise;
+    }
+
+    return @promiseResolveSlow(constructor, value);
+}
+
+@globalPrivate
 function promiseResolveSlow(constructor, value)
 {
     @assert(constructor !== @Promise);

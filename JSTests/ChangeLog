@@ -1,5 +1,14 @@
 2020-09-10  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Promise.prototype.finally should perform PromiseResolve
+        https://bugs.webkit.org/show_bug.cgi?id=176006
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
+2020-09-10  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Update test262 to commit 323905b70e64
         https://bugs.webkit.org/show_bug.cgi?id=216379
 

@@ -89,11 +89,8 @@ function getThenFinally(onFinally, constructor)
         var result = onFinally();
 
         @assert(@isConstructor(constructor));
-        var resultCapability = @newPromiseCapability(constructor);
+        var promise = @promiseResolve(constructor, result);
 
-        resultCapability.@resolve.@call(@undefined, result);
-
-        var promise = resultCapability.@promise;
         return promise.then(() => value);
     }
 }
@@ -109,11 +106,8 @@ function getCatchFinally(onFinally, constructor)
         var result = onFinally();
 
         @assert(@isConstructor(constructor));
-        var resultCapability = @newPromiseCapability(constructor);
+        var promise = @promiseResolve(constructor, result);
 
-        resultCapability.@resolve.@call(@undefined, result);
-
-        var promise = resultCapability.@promise;
         return promise.then(() => { throw reason; });
     }
 }

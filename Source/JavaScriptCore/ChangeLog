@@ -1,3 +1,24 @@
+2020-09-10  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Promise.prototype.finally should perform PromiseResolve
+        https://bugs.webkit.org/show_bug.cgi?id=176006
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch extracts @promiseResolve global private function and utilizes it in
+        Promise.prototype.finally then/catch functions [1] to avoid creating an extra
+        Promise Capability. Aligns JSC with V8 and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-thenfinallyfunctions (step 7)
+
+        * builtins/PromiseConstructor.js:
+        (resolve):
+        * builtins/PromiseOperations.js:
+        (globalPrivate.promiseResolve):
+        * builtins/PromisePrototype.js:
+        (globalPrivate.getThenFinally):
+        (globalPrivate.getCatchFinally):
+
 2020-09-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: modernize generated backend protocol code
