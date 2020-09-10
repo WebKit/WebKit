@@ -1,11 +1,4 @@
-# - Try to find libseccomp
-# Once done, this will define
-#
-#  LIBSECCOMP_FOUND - system has libseccomp
-#  LIBSECCOMP_INCLUDE_DIRS - the libseccomp include drectories
-#  LIBSECCOMP_LIBRARIES - link these to use libseccomp
-#
-# Copyright (C) 2018 Igalia S.L.
+# Copyright (C) 2018, 2020 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,26 +21,90 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_package(PkgConfig QUIET)
-pkg_check_modules(PC_LIBSECCOMP libseccomp)
+#[=======================================================================[.rst:
+FindLibseccomp
+--------------
 
-find_path(LIBSECCOMP_INCLUDE_DIRS
+Find the *libseccomp* headers and library.
+
+Imported Targets
+^^^^^^^^^^^^^^^^
+
+``Libseccomp::Libseccomp``
+  The *libseccomp* library, if found.
+
+Result Variables
+^^^^^^^^^^^^^^^^
+
+This will define the following variables in your project:
+
+``Libseccomp_FOUND``
+  true if (the requested version of) *libseccomp* is available.
+``Libseccomp_VERSION``
+  the version of *libseccomp*.
+``Libseccomp_LIBRARIES``
+  the libraries to link against to use *libseccomp*.
+``Libseccomp_INCLUDE_DIRS``
+  where to find the *libseccomp* headers.
+``Libseccomp_COMPILE_OPTIONS``
+  this should be passed to target_compile_options(), if the
+  target is not used for linking
+
+#]=======================================================================]
+
+find_package(PkgConfig QUIET)
+pkg_check_modules(PC_LIBSECCOMP QUIET libseccomp)
+set(Libseccomp_COMPILE_OPTIONS ${PC_LIBSECCOMP_CFLAGS_OTHER})
+set(Libseccomp_VERSION ${PC_LIBSECCOMP_VERSION})
+
+find_path(Libseccomp_INCLUDE_DIR
     NAMES seccomp.h
     HINTS ${PC_LIBSECCOMP_INCLUDEDIR}
+          ${PC_LIBSECCOMP_INCLUDE_DIRS}
 )
 
-find_library(LIBSECCOMP_LIBRARIES
-    NAMES seccomp
+find_library(Libseccomp_LIBRARY
+    NAMES ${Libseccomp_NAMES} seccomp
     HINTS ${PC_LIBSECCOMP_LIBDIR}
+          ${PC_LIBSECCOMP_LIBRARY_DIRS}
 )
+
+if (Libseccomp_INCLUDE_DIR AND NOT Libseccomp_VERSION)
+    if (EXISTS "${Libseccomp_INCLUDE_DIR}/seccomp.h")
+        file(READ "${Libseccomp_INCLUDE_DIR}/seccomp.h" Libseccomp_VERSION_CONTENT)
+
+        string(REGEX MATCH "#define[ \t]+SCMP_VER_MAJOR[ \t]+([0-9]+)" _dummy "${Libseccomp_VERSION_CONTENT}")
+        set(Libseccomp_VERSION_MAJOR "${CMAKE_MATCH_1}")
+
+        string(REGEX MATCH "#define[ \t]+SCMP_VER_MINOR[ \t]+([0-9]+)" _dummy "${Libseccomp_VERSION_CONTENT}")
+        set(Libseccomp_VERSION_MINOR "${CMAKE_MATCH_1}")
+
+        string(REGEX MATCH "#define[ \t]+SCMP_VER_MICRO[ \t]+([0-9]+)" _dummy "${Libseccomp_VERSION_CONTENT}")
+        set(Libseccomp_VERSION_MICRO "${CMAKE_MATCH_1}")
+
+        set(Libseccomp_VERSION "${Libseccomp_VERSION_MAJOR}.${Libseccomp_VERSION_MINOR}.${Libseccomp_VERSION_MICRO}")
+    endif ()
+endif ()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Libseccomp
-    REQUIRED_VARS LIBSECCOMP_LIBRARIES
-    FOUND_VAR LIBSECCOMP_FOUND
-    VERSION_VAR PC_LIBSECCOMP_VERSION)
-
-mark_as_advanced(
-    LIBSECCOMP_INCLUDE_DIRS
-    LIBSECCOMP_LIBRARIES
+    FOUND_VAR Libseccomp_FOUND
+    REQUIRED_VARS Libseccomp_LIBRARY Libseccomp_INCLUDE_DIR
+    VERSION_VAR Libseccomp_VERSION
 )
+
+if (Libseccomp_LIBRARY AND NOT TARGET Libseccomp::Libseccomp)
+    add_library(Libseccomp::Libseccomp UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(Libseccomp::Libseccomp PROPERTIES
+        IMPORTED_LOCATION "${Libseccomp_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "${Libseccomp_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${Libseccomp_INCLUDE_DIR}"
+    )
+endif ()
+
+mark_as_advanced(Libseccomp_INCLUDE_DIR Libseccomp_LIBRARY)
+
+if (Libseccomp_FOUND)
+    set(Libseccomp_LIBRARIES ${Libseccomp_LIBRARY})
+    set(Libseccomp_INCLUDE_DIRS ${Libseccomp_INCLUDE_DIR})
+endif ()

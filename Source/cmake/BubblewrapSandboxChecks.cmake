@@ -5,7 +5,7 @@ if (ENABLE_BUBBLEWRAP_SANDBOX)
     endif ()
 
     find_package(Libseccomp)
-    if (NOT LIBSECCOMP_FOUND)
+    if (NOT Libseccomp_FOUND)
         message(FATAL_ERROR "libseccomp is needed for ENABLE_BUBBLEWRAP_SANDBOX")
     endif ()
 
