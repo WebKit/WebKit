@@ -405,7 +405,7 @@ void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(Ref<MediaSample>&
         return;
     }
 
-    DEBUG_LOG(LOGIDENTIFIER, mediaSample->toJSONString());
+    DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
     if (m_client)
         m_client->sourceBufferPrivateDidReceiveSample(mediaSample);
 }
