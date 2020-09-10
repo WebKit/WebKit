@@ -97,7 +97,7 @@ void AsyncStackTrace::didCancelAsyncCall()
     m_state = State::Canceled;
 }
 
-RefPtr<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() const
+Ref<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() const
 {
     RefPtr<Protocol::Console::StackTrace> topStackTrace;
     RefPtr<Protocol::Console::StackTrace> previousStackTrace;
@@ -120,13 +120,13 @@ RefPtr<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() co
             topStackTrace = protocolObject.ptr();
 
         if (previousStackTrace)
-            previousStackTrace->setParentStackTrace(protocolObject.ptr());
+            previousStackTrace->setParentStackTrace(protocolObject.copyRef());
 
         previousStackTrace = WTFMove(protocolObject);
         stackTrace = stackTrace->m_parent.get();
     }
 
-    return topStackTrace;
+    return topStackTrace.releaseNonNull();
 }
 
 void AsyncStackTrace::truncate(size_t maxDepth)

@@ -3,9 +3,9 @@
     "domain": "TypeDomain",
     "types": [
         {
-            "id": "TypeDomainEnum",
+            "id": "Enum",
             "type": "string",
-            "enum": ["shared", "red", "green", "blue"]
+            "enum": ["shared", "1", "2"]
         }
     ]
 },
@@ -13,10 +13,18 @@
     "domain": "CommandDomain",
     "commands": [
         {
-            "name": "commandWithEnumReturnValue",
-            "parameters": [],
+            "name": "command",
+            "parameters": [
+                { "name": "enumRequired", "$ref": "TypeDomain.Enum" },
+                { "name": "enumOptional", "$ref": "TypeDomain.Enum", "optional": true },
+                { "name": "parameterRequired", "type": "string", "enum": ["shared", "sharedRequired", "black"] },
+                { "name": "parameterOptional", "type": "string", "enum": ["shared", "sharedOptional", "red"], "optional": true }
+            ],
             "returns": [
-                { "name": "returnValue", "type": "string", "enum": ["shared", "cyan", "magenta", "yellow"] }
+                { "name": "enumRequired", "$ref": "TypeDomain.Enum" },
+                { "name": "enumOptional", "$ref": "TypeDomain.Enum", "optional": true },
+                { "name": "returnRequired", "type": "string", "enum": ["shared", "sharedRequired", "white"] },
+                { "name": "returnOptional", "type": "string", "enum": ["shared", "sharedOptional", "blue"], "optional": true }
             ]
         }
     ]
@@ -25,9 +33,12 @@
     "domain": "EventDomain",
     "events": [
         {
-            "name": "eventWithEnumParameter",
+            "name": "event",
             "parameters": [
-                { "name": "parameter", "type": "string", "enum": ["shared", "black", "white"] }
+                { "name": "enumRequired", "$ref": "TypeDomain.Enum" },
+                { "name": "enumOptional", "$ref": "TypeDomain.Enum", "optional": true },
+                { "name": "parameterRequired", "type": "string", "enum": ["shared", "sharedRequired", "grey"] },
+                { "name": "parameterOptional", "type": "string", "enum": ["shared", "sharedOptional", "green"], "optional": true }
             ]
         }
     ]

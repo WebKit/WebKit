@@ -63,7 +63,7 @@
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-#include "TestProtocolTypes.h"
+#include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
@@ -119,11 +119,14 @@ private:
 
 #include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <tuple>
+#include <wtf/Expected.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-typedef String ErrorString;
+
 
 
 
@@ -164,9 +167,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #include "TestAlternateBackendDispatchers.h"
@@ -214,6 +215,7 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -257,7 +259,6 @@ class FrontendRouter;
 #include "TestFrontendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/text/CString.h>
 
 namespace Inspector {
 
@@ -298,7 +299,9 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
-#include <wtf/Assertions.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -352,8 +355,7 @@ namespace Protocol {
 #include "config.h"
 #include "TestProtocolObjects.h"
 
-#include <wtf/Optional.h>
-#include <wtf/text/CString.h>
+#include <wtf/Assertions.h>
 
 namespace Inspector {
 

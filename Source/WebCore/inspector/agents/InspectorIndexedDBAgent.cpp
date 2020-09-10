@@ -70,26 +70,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
-using JSON::ArrayOf;
-using Inspector::Protocol::IndexedDB::DatabaseWithObjectStores;
-using Inspector::Protocol::IndexedDB::DataEntry;
-using Inspector::Protocol::IndexedDB::Key;
-using Inspector::Protocol::IndexedDB::KeyPath;
-using Inspector::Protocol::IndexedDB::KeyRange;
-using Inspector::Protocol::IndexedDB::ObjectStore;
-using Inspector::Protocol::IndexedDB::ObjectStoreIndex;
-
-typedef Inspector::BackendDispatcher::CallbackBase RequestCallback;
-typedef Inspector::IndexedDBBackendDispatcherHandler::RequestDatabaseNamesCallback RequestDatabaseNamesCallback;
-typedef Inspector::IndexedDBBackendDispatcherHandler::RequestDatabaseCallback RequestDatabaseCallback;
-typedef Inspector::IndexedDBBackendDispatcherHandler::RequestDataCallback RequestDataCallback;
-typedef Inspector::IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback ClearObjectStoreCallback;
-
-typedef String ErrorString;
-
-template <typename T>
-using ErrorStringOr = Expected<T, ErrorString>;
-
 namespace WebCore {
 
 using namespace Inspector;
@@ -103,7 +83,7 @@ public:
     virtual ~ExecutableWithDatabase() = default;
     void start(IDBFactory*, SecurityOrigin*, const String& databaseName);
     virtual void execute(IDBDatabase&) = 0;
-    virtual RequestCallback& requestCallback() = 0;
+    virtual BackendDispatcher::CallbackBase& requestCallback() = 0;
     ScriptExecutionContext* context() const { return m_context; }
 private:
     ScriptExecutionContext* m_context;
@@ -171,20 +151,20 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
 }
 
 
-static RefPtr<KeyPath> keyPathFromIDBKeyPath(const Optional<IDBKeyPath>& idbKeyPath)
+static Ref<Protocol::IndexedDB::KeyPath> keyPathFromIDBKeyPath(const Optional<IDBKeyPath>& idbKeyPath)
 {
     if (!idbKeyPath)
-        return KeyPath::create().setType(KeyPath::Type::Null).release();
+        return Protocol::IndexedDB::KeyPath::create().setType(Protocol::IndexedDB::KeyPath::Type::Null).release();
 
     auto visitor = WTF::makeVisitor([](const String& string) {
-        auto keyPath = KeyPath::create().setType(KeyPath::Type::String).release();
+        auto keyPath = Protocol::IndexedDB::KeyPath::create().setType(Protocol::IndexedDB::KeyPath::Type::String).release();
         keyPath->setString(string);
         return keyPath;
     }, [](const Vector<String>& vector) {
         auto array = JSON::ArrayOf<String>::create();
         for (auto& string : vector)
             array->addItem(string);
-        auto keyPath = KeyPath::create().setType(KeyPath::Type::Array).release();
+        auto keyPath = Protocol::IndexedDB::KeyPath::create().setType(Protocol::IndexedDB::KeyPath::Type::Array).release();
         keyPath->setArray(WTFMove(array));
         return keyPath;
     });
@@ -217,7 +197,7 @@ static RefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, cons
 
 class DatabaseLoader final : public ExecutableWithDatabase {
 public:
-    static Ref<DatabaseLoader> create(ScriptExecutionContext* context, Ref<RequestDatabaseCallback>&& requestCallback)
+    static Ref<DatabaseLoader> create(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDatabaseCallback>&& requestCallback)
     {
         return adoptRef(*new DatabaseLoader(context, WTFMove(requestCallback)));
     }
@@ -230,17 +210,17 @@ public:
             return;
     
         auto& databaseInfo = database.info();
-        auto objectStores = JSON::ArrayOf<Inspector::Protocol::IndexedDB::ObjectStore>::create();
+        auto objectStores = JSON::ArrayOf<Protocol::IndexedDB::ObjectStore>::create();
         auto objectStoreNames = databaseInfo.objectStoreNames();
         for (auto& name : objectStoreNames) {
             auto* objectStoreInfo = databaseInfo.infoForExistingObjectStore(name);
             if (!objectStoreInfo)
                 continue;
 
-            auto indexes = JSON::ArrayOf<Inspector::Protocol::IndexedDB::ObjectStoreIndex>::create();
+            auto indexes = JSON::ArrayOf<Protocol::IndexedDB::ObjectStoreIndex>::create();
     
             for (auto& indexInfo : objectStoreInfo->indexMap().values()) {
-                auto objectStoreIndex = ObjectStoreIndex::create()
+                auto objectStoreIndex = Protocol::IndexedDB::ObjectStoreIndex::create()
                     .setName(indexInfo.name())
                     .setKeyPath(keyPathFromIDBKeyPath(indexInfo.keyPath()))
                     .setUnique(indexInfo.unique())
@@ -249,7 +229,7 @@ public:
                 indexes->addItem(WTFMove(objectStoreIndex));
             }
     
-            auto objectStore = ObjectStore::create()
+            auto objectStore = Protocol::IndexedDB::ObjectStore::create()
                 .setName(objectStoreInfo->name())
                 .setKeyPath(keyPathFromIDBKeyPath(objectStoreInfo->keyPath()))
                 .setAutoIncrement(objectStoreInfo->autoIncrement())
@@ -258,7 +238,7 @@ public:
             objectStores->addItem(WTFMove(objectStore));
         }
     
-        auto result = DatabaseWithObjectStores::create()
+        auto result = Protocol::IndexedDB::DatabaseWithObjectStores::create()
             .setName(databaseInfo.name())
             .setVersion(databaseInfo.version())
             .setObjectStores(WTFMove(objectStores))
@@ -266,92 +246,96 @@ public:
         m_requestCallback->sendSuccess(WTFMove(result));
     }
 
-    RequestCallback& requestCallback() override { return m_requestCallback.get(); }
+    BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
 private:
-    DatabaseLoader(ScriptExecutionContext* context, Ref<RequestDatabaseCallback>&& requestCallback)
+    DatabaseLoader(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDatabaseCallback>&& requestCallback)
         : ExecutableWithDatabase(context)
         , m_requestCallback(WTFMove(requestCallback)) { }
-    Ref<RequestDatabaseCallback> m_requestCallback;
+    Ref<IndexedDBBackendDispatcherHandler::RequestDatabaseCallback> m_requestCallback;
 };
 
-static RefPtr<IDBKey> idbKeyFromInspectorObject(JSON::Object* key)
+static RefPtr<IDBKey> idbKeyFromInspectorObject(Ref<JSON::Object>&& key)
 {
-    String type;
-    if (!key->getString("type", type))
+    auto typeString = key->getString(Protocol::IndexedDB::Key::typeKey);
+    if (!typeString)
         return nullptr;
 
-    static NeverDestroyed<const String> numberType(MAKE_STATIC_STRING_IMPL("number"));
-    static NeverDestroyed<const String> stringType(MAKE_STATIC_STRING_IMPL("string"));
-    static NeverDestroyed<const String> dateType(MAKE_STATIC_STRING_IMPL("date"));
-    static NeverDestroyed<const String> arrayType(MAKE_STATIC_STRING_IMPL("array"));
+    auto type = Protocol::Helpers::parseEnumValueFromString<Protocol::IndexedDB::Key::Type>(typeString);
+    if (!type)
+        return nullptr;
 
-    RefPtr<IDBKey> idbKey;
-    if (type == numberType) {
-        double number;
-        if (!key->getDouble("number", number))
+    switch (*type) {
+    case Protocol::IndexedDB::Key::Type::Number: {
+        auto number = key->getDouble(Protocol::IndexedDB::Key::numberKey);
+        if (!number)
             return nullptr;
-        idbKey = IDBKey::createNumber(number);
-    } else if (type == stringType) {
-        String string;
-        if (!key->getString("string", string))
+        return IDBKey::createNumber(*number);
+    }
+
+    case Protocol::IndexedDB::Key::Type::String: {
+        auto string = key->getString(Protocol::IndexedDB::Key::stringKey);
+        if (!string)
             return nullptr;
-        idbKey = IDBKey::createString(string);
-    } else if (type == dateType) {
-        double date;
-        if (!key->getDouble("date", date))
+        return IDBKey::createString(string);
+    }
+
+    case Protocol::IndexedDB::Key::Type::Date: {
+        auto date = key->getDouble(Protocol::IndexedDB::Key::dateKey);
+        if (!date)
             return nullptr;
-        idbKey = IDBKey::createDate(date);
-    } else if (type == arrayType) {
+        return IDBKey::createDate(*date);
+    }
+
+    case Protocol::IndexedDB::Key::Type::Array: {
+        auto array = key->getArray(Protocol::IndexedDB::Key::arrayKey);
+        if (!array)
+            return nullptr;
+
         Vector<RefPtr<IDBKey>> keyArray;
-        RefPtr<JSON::Array> array;
-        if (!key->getArray("array", array))
-            return nullptr;
         for (size_t i = 0; i < array->length(); ++i) {
-            RefPtr<JSON::Value> value = array->get(i);
-            RefPtr<JSON::Object> object;
-            if (!value->asObject(object))
+            auto object = array->get(i)->asObject();
+            if (!object)
                 return nullptr;
-            keyArray.append(idbKeyFromInspectorObject(object.get()));
+            keyArray.append(idbKeyFromInspectorObject(object.releaseNonNull()));
         }
-        idbKey = IDBKey::createArray(keyArray);
-    } else
-        return nullptr;
+        return IDBKey::createArray(keyArray);
+    }
+    }
 
-    return idbKey;
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
-static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const JSON::Object* keyRange)
+static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(JSON::Object& keyRange)
 {
     RefPtr<IDBKey> idbLower;
-    RefPtr<JSON::Object> lower;
-    if (keyRange->getObject("lower"_s, lower)) {
-        idbLower = idbKeyFromInspectorObject(lower.get());
+    if (auto lower = keyRange.getObject(Protocol::IndexedDB::KeyRange::lowerKey)) {
+        idbLower = idbKeyFromInspectorObject(lower.releaseNonNull());
         if (!idbLower)
             return nullptr;
     }
 
     RefPtr<IDBKey> idbUpper;
-    RefPtr<JSON::Object> upper;
-    if (keyRange->getObject("upper"_s, upper)) {
-        idbUpper = idbKeyFromInspectorObject(upper.get());
+    if (auto upper = keyRange.getObject(Protocol::IndexedDB::KeyRange::upperKey)) {
+        idbUpper = idbKeyFromInspectorObject(upper.releaseNonNull());
         if (!idbUpper)
             return nullptr;
     }
 
-    bool lowerOpen;
-    if (!keyRange->getBoolean("lowerOpen"_s, lowerOpen))
+    auto lowerOpen = keyRange.getBoolean(Protocol::IndexedDB::KeyRange::lowerOpenKey);
+    if (!lowerOpen)
         return nullptr;
 
-    bool upperOpen;
-    if (!keyRange->getBoolean("upperOpen"_s, upperOpen))
+    auto upperOpen = keyRange.getBoolean(Protocol::IndexedDB::KeyRange::upperOpenKey);
+    if (!upperOpen)
         return nullptr;
 
-    return IDBKeyRange::create(WTFMove(idbLower), WTFMove(idbUpper), lowerOpen, upperOpen);
+    return IDBKeyRange::create(WTFMove(idbLower), WTFMove(idbUpper), *lowerOpen, *upperOpen);
 }
 
 class OpenCursorCallback final : public EventListener {
 public:
-    static Ref<OpenCursorCallback> create(InjectedScript injectedScript, Ref<RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
+    static Ref<OpenCursorCallback> create(InjectedScript injectedScript, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
     {
         return adoptRef(*new OpenCursorCallback(injectedScript, WTFMove(requestCallback), skipCount, pageSize));
     }
@@ -405,13 +389,23 @@ public:
         }
 
         auto* lexicalGlobalObject = context.execState();
-        auto key =  toJS(*lexicalGlobalObject, *lexicalGlobalObject, cursor->key());
-        auto primaryKey = toJS(*lexicalGlobalObject, *lexicalGlobalObject, cursor->primaryKey());
-        auto value = deserializeIDBValueToJSValue(*lexicalGlobalObject, cursor->value());
-        auto dataEntry = DataEntry::create()
-            .setKey(m_injectedScript.wrapObject(key, String(), true))
-            .setPrimaryKey(m_injectedScript.wrapObject(primaryKey, String(), true))
-            .setValue(m_injectedScript.wrapObject(value, String(), true))
+
+        auto key = m_injectedScript.wrapObject(toJS(*lexicalGlobalObject, *lexicalGlobalObject, cursor->key()), String(), true);
+        if (!key)
+            return;
+
+        auto primaryKey = m_injectedScript.wrapObject(toJS(*lexicalGlobalObject, *lexicalGlobalObject, cursor->primaryKey()), String(), true);
+        if (!primaryKey)
+            return;
+
+        auto value = m_injectedScript.wrapObject(deserializeIDBValueToJSValue(*lexicalGlobalObject, cursor->value()), String(), true);
+        if (!value)
+            return;
+
+        auto dataEntry = Protocol::IndexedDB::DataEntry::create()
+            .setKey(key.releaseNonNull())
+            .setPrimaryKey(primaryKey.releaseNonNull())
+            .setValue(value.releaseNonNull())
             .release();
         m_result->addItem(WTFMove(dataEntry));
     }
@@ -424,25 +418,25 @@ public:
     }
 
 private:
-    OpenCursorCallback(InjectedScript injectedScript, Ref<RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
+    OpenCursorCallback(InjectedScript injectedScript, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
         : EventListener(EventListener::CPPEventListenerType)
         , m_injectedScript(injectedScript)
         , m_requestCallback(WTFMove(requestCallback))
-        , m_result(JSON::ArrayOf<DataEntry>::create())
+        , m_result(JSON::ArrayOf<Protocol::IndexedDB::DataEntry>::create())
         , m_skipCount(skipCount)
         , m_pageSize(pageSize)
     {
     }
     InjectedScript m_injectedScript;
-    Ref<RequestDataCallback> m_requestCallback;
-    Ref<JSON::ArrayOf<DataEntry>> m_result;
+    Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback> m_requestCallback;
+    Ref<JSON::ArrayOf<Protocol::IndexedDB::DataEntry>> m_result;
     int m_skipCount;
     unsigned m_pageSize;
 };
 
 class DataLoader final : public ExecutableWithDatabase {
 public:
-    static Ref<DataLoader> create(ScriptExecutionContext* context, Ref<RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange>&& idbKeyRange, int skipCount, unsigned pageSize)
+    static Ref<DataLoader> create(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange>&& idbKeyRange, int skipCount, unsigned pageSize)
     {
         return adoptRef(*new DataLoader(context, WTFMove(requestCallback), injectedScript, objectStoreName, indexName, WTFMove(idbKeyRange), skipCount, pageSize));
     }
@@ -498,8 +492,8 @@ public:
         idbRequest->addEventListener(eventNames().successEvent, WTFMove(openCursorCallback), false);
     }
 
-    RequestCallback& requestCallback() override { return m_requestCallback.get(); }
-    DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
+    BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
+    DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
         : ExecutableWithDatabase(scriptExecutionContext)
         , m_requestCallback(WTFMove(requestCallback))
         , m_injectedScript(injectedScript)
@@ -508,7 +502,7 @@ public:
         , m_idbKeyRange(WTFMove(idbKeyRange))
         , m_skipCount(skipCount)
         , m_pageSize(pageSize) { }
-    Ref<RequestDataCallback> m_requestCallback;
+    Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback> m_requestCallback;
     InjectedScript m_injectedScript;
     String m_objectStoreName;
     String m_indexName;
@@ -535,19 +529,20 @@ void InspectorIndexedDBAgent::didCreateFrontendAndBackend(Inspector::FrontendRou
 
 void InspectorIndexedDBAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString ignored;
-    disable(ignored);
+    disable();
 }
 
-void InspectorIndexedDBAgent::enable(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorIndexedDBAgent::enable()
 {
+    return { };
 }
 
-void InspectorIndexedDBAgent::disable(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorIndexedDBAgent::disable()
 {
+    return { };
 }
 
-static ErrorStringOr<Document*> documentFromFrame(Frame* frame)
+static Protocol::ErrorStringOr<Document*> documentFromFrame(Frame* frame)
 {
     Document* document = frame ? frame->document() : nullptr;
     if (!document)
@@ -556,7 +551,7 @@ static ErrorStringOr<Document*> documentFromFrame(Frame* frame)
     return document;
 }
 
-static ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
+static Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
 {
     DOMWindow* domWindow = document->domWindow();
     if (!domWindow)
@@ -571,13 +566,13 @@ static ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
 
 static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(Frame* frame, Document*& out_document, IDBFactory*& out_idbFactory, BackendDispatcher::CallbackBase& callback)
 {
-    ErrorStringOr<Document*> document = documentFromFrame(frame);
+    Protocol::ErrorStringOr<Document*> document = documentFromFrame(frame);
     if (!document.has_value()) {
         callback.sendFailure(document.error());
         return false;
     }
 
-    ErrorStringOr<IDBFactory*> idbFactory = IDBFactoryFromDocument(document.value());
+    Protocol::ErrorStringOr<IDBFactory*> idbFactory = IDBFactoryFromDocument(document.value());
     if (!idbFactory.has_value()) {
         callback.sendFailure(idbFactory.error());
         return false;
@@ -620,7 +615,7 @@ void InspectorIndexedDBAgent::requestDatabase(const String& securityOrigin, cons
     databaseLoader->start(idbFactory, &document->securityOrigin(), databaseName);
 }
 
-void InspectorIndexedDBAgent::requestData(const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const JSON::Object* keyRange, Ref<RequestDataCallback>&& callback)
+void InspectorIndexedDBAgent::requestData(const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, RefPtr<JSON::Object>&& keyRange, Ref<RequestDataCallback>&& callback)
 {
     auto* frame = InspectorPageAgent::findFrameWithSecurityOrigin(m_inspectedPage, securityOrigin);
     Document* document;
@@ -629,7 +624,7 @@ void InspectorIndexedDBAgent::requestData(const String& securityOrigin, const St
         return;
 
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(mainWorldExecState(frame));
-    RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(keyRange) : nullptr;
+    RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(*keyRange) : nullptr;
     if (keyRange && !idbKeyRange) {
         callback->sendFailure("Could not parse key range."_s);
         return;
@@ -644,7 +639,7 @@ namespace {
 class ClearObjectStoreListener final : public EventListener {
     WTF_MAKE_NONCOPYABLE(ClearObjectStoreListener);
 public:
-    static Ref<ClearObjectStoreListener> create(Ref<ClearObjectStoreCallback> requestCallback)
+    static Ref<ClearObjectStoreListener> create(Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback> requestCallback)
     {
         return adoptRef(*new ClearObjectStoreListener(WTFMove(requestCallback)));
     }
@@ -668,23 +663,23 @@ public:
         m_requestCallback->sendSuccess();
     }
 private:
-    ClearObjectStoreListener(Ref<ClearObjectStoreCallback>&& requestCallback)
+    ClearObjectStoreListener(Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback>&& requestCallback)
         : EventListener(EventListener::CPPEventListenerType)
         , m_requestCallback(WTFMove(requestCallback))
     {
     }
 
-    Ref<ClearObjectStoreCallback> m_requestCallback;
+    Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback> m_requestCallback;
 };
 
 class ClearObjectStore final : public ExecutableWithDatabase {
 public:
-    static Ref<ClearObjectStore> create(ScriptExecutionContext* context, const String& objectStoreName, Ref<ClearObjectStoreCallback>&& requestCallback)
+    static Ref<ClearObjectStore> create(ScriptExecutionContext* context, const String& objectStoreName, Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback>&& requestCallback)
     {
         return adoptRef(*new ClearObjectStore(context, objectStoreName, WTFMove(requestCallback)));
     }
 
-    ClearObjectStore(ScriptExecutionContext* context, const String& objectStoreName, Ref<ClearObjectStoreCallback>&& requestCallback)
+    ClearObjectStore(ScriptExecutionContext* context, const String& objectStoreName, Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback>&& requestCallback)
         : ExecutableWithDatabase(context)
         , m_objectStoreName(objectStoreName)
         , m_requestCallback(WTFMove(requestCallback))
@@ -723,10 +718,10 @@ public:
         idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback.copyRef()), false);
     }
 
-    RequestCallback& requestCallback() override { return m_requestCallback.get(); }
+    BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
 private:
     const String m_objectStoreName;
-    Ref<ClearObjectStoreCallback> m_requestCallback;
+    Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback> m_requestCallback;
 };
 
 } // anonymous namespace

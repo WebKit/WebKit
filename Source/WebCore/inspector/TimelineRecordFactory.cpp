@@ -161,9 +161,9 @@ Ref<JSON::Object> TimelineRecordFactory::createPaintData(const FloatQuad& quad)
     return data;
 }
 
-void TimelineRecordFactory::appendLayoutRoot(JSON::Object* data, const FloatQuad& quad)
+void TimelineRecordFactory::appendLayoutRoot(JSON::Object& data, const FloatQuad& quad)
 {
-    data->setArray("root"_s, createQuad(quad));
+    data.setArray("root"_s, createQuad(quad));
 }
 
 } // namespace WebCore

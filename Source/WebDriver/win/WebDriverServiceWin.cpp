@@ -44,12 +44,12 @@ bool WebDriverService::platformCompareBrowserVersions(const String& requiredVers
     return true;
 }
 
-bool WebDriverService::platformValidateCapability(const String& name, const RefPtr<JSON::Value>& value) const
+bool WebDriverService::platformValidateCapability(const String& name, const Ref<JSON::Value>& value) const
 {
     return true;
 }
 
-bool WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const
+bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Value>&) const
 {
     return true;
 }

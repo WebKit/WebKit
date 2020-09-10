@@ -40,7 +40,6 @@ struct HeapSnapshotNode;
 namespace Inspector {
 
 class InjectedScriptManager;
-typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorHeapAgent : public InspectorAgentBase, public HeapBackendDispatcherHandler, public JSC::HeapObserver {
     WTF_MAKE_NONCOPYABLE(InspectorHeapAgent);
@@ -54,14 +53,14 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // HeapBackendDispatcherHandler
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void gc(ErrorString&) final;
-    void snapshot(ErrorString&, double* timestamp, String* snapshotData) final;
-    void startTracking(ErrorString&) final;
-    void stopTracking(ErrorString&) final;
-    void getPreview(ErrorString&, int heapObjectId, Optional<String>& resultString, RefPtr<Protocol::Debugger::FunctionDetails>&, RefPtr<Protocol::Runtime::ObjectPreview>&) final;
-    void getRemoteObject(ErrorString&, int heapObjectId, const String* optionalObjectGroup, RefPtr<Protocol::Runtime::RemoteObject>& result) final;
+    Protocol::ErrorStringOr<void> enable() override;
+    Protocol::ErrorStringOr<void> disable() override;
+    Protocol::ErrorStringOr<void> gc() final;
+    Protocol::ErrorStringOr<std::tuple<double, Protocol::Heap::HeapSnapshotData>> snapshot() final;
+    Protocol::ErrorStringOr<void> startTracking() final;
+    Protocol::ErrorStringOr<void> stopTracking() final;
+    Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDetails>, RefPtr<Protocol::Runtime::ObjectPreview>>> getPreview(int heapObjectId) final;
+    Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> getRemoteObject(int heapObjectId, const String& objectGroup) final;
 
     // JSC::HeapObserver
     void willGarbageCollect() final;
@@ -73,7 +72,7 @@ protected:
     virtual void dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime);
 
 private:
-    Optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(ErrorString&, unsigned heapObjectIdentifier);
+    Optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(Protocol::ErrorString&, unsigned heapObjectIdentifier);
 
     InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<HeapFrontendDispatcher> m_frontendDispatcher;

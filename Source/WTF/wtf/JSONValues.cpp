@@ -57,9 +57,9 @@ enum class Token {
     Invalid,
 };
 
-const char* const nullString = "null";
-const char* const trueString = "true";
-const char* const falseString = "false";
+const char* const nullToken = "null";
+const char* const trueToken = "true";
+const char* const falseToken = "false";
 
 bool parseConstToken(const UChar* start, const UChar* end, const UChar** tokenEnd, const char* token)
 {
@@ -209,15 +209,15 @@ Token parseToken(const UChar* start, const UChar* end, const UChar** tokenStart,
 
     switch (*start) {
     case 'n':
-        if (parseConstToken(start, end, tokenEnd, nullString))
+        if (parseConstToken(start, end, tokenEnd, nullToken))
             return Token::Null;
         break;
     case 't':
-        if (parseConstToken(start, end, tokenEnd, trueString))
+        if (parseConstToken(start, end, tokenEnd, trueToken))
             return Token::BoolTrue;
         break;
     case 'f':
-        if (parseConstToken(start, end, tokenEnd, falseString))
+        if (parseConstToken(start, end, tokenEnd, falseToken))
             return Token::BoolFalse;
         break;
     case '[':
@@ -380,7 +380,7 @@ RefPtr<JSON::Value> buildValue(const UChar* start, const UChar* end, const UChar
             RefPtr<JSON::Value> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
             if (!arrayNode)
                 return nullptr;
-            array->pushValue(WTFMove(arrayNode));
+            array->pushValue(arrayNode.releaseNonNull());
 
             // After a list value, we expect a comma or the end of the list.
             start = tokenEnd;
@@ -420,7 +420,7 @@ RefPtr<JSON::Value> buildValue(const UChar* start, const UChar* end, const UChar
             RefPtr<JSON::Value> value = buildValue(start, end, &tokenEnd, depth + 1);
             if (!value)
                 return nullptr;
-            object->setValue(key, WTFMove(value));
+            object->setValue(key, value.releaseNonNull());
             start = tokenEnd;
 
             // After a key/value pair, we expect a comma or the end of the
@@ -489,40 +489,38 @@ Ref<Value> Value::create(const char* value)
     return adoptRef(*new Value(value));
 }
 
-bool Value::asValue(RefPtr<Value>& value)
+RefPtr<Value> Value::asValue()
 {
-    value = this;
-    return true;
+    return this;
 }
 
-bool Value::asObject(RefPtr<Object>&)
+RefPtr<Object> Value::asObject()
 {
-    return false;
+    return nullptr;
 }
 
-bool Value::asArray(RefPtr<Array>&)
+RefPtr<Array> Value::asArray()
 {
-    return false;
+    return nullptr;
 }
 
-bool Value::parseJSON(const String& jsonInput, RefPtr<Value>& output)
+RefPtr<Value> Value::parseJSON(const String& json)
 {
     // FIXME: This whole file should just use StringView instead of UChar/length and avoid upconverting.
-    auto characters = StringView(jsonInput).upconvertedCharacters();
+    auto characters = StringView(json).upconvertedCharacters();
     const UChar* start = characters;
-    const UChar* end = start + jsonInput.length();
+    const UChar* end = start + json.length();
     const UChar* tokenEnd;
     auto result = buildValue(start, end, &tokenEnd, 0);
     if (!result)
-        return false;
+        return nullptr;
 
     for (const UChar* valueEnd = tokenEnd; valueEnd < end; ++valueEnd) {
         if (!isSpaceOrNewline(*valueEnd))
-            return false;
+            return nullptr;
     }
 
-    output = WTFMove(result);
-    return true;
+    return result;
 }
 
 void Value::escapeString(StringBuilder& builder, StringView string)
@@ -573,94 +571,32 @@ String Value::toJSONString() const
     return result.toString();
 }
 
-bool Value::asBoolean(bool& output) const
+Optional<bool> Value::asBoolean() const
 {
     if (type() != Type::Boolean)
-        return false;
-
-    output = m_value.boolean;
-    return true;
+        return WTF::nullopt;
+    return m_value.boolean;
 }
 
-bool Value::asDouble(double& output) const
+Optional<double> Value::asDouble() const
 {
-    if (type() != Type::Double)
-        return false;
-
-    output = m_value.number;
-    return true;
+    if (type() != Type::Double && type() != Type::Integer)
+        return WTF::nullopt;
+    return m_value.number;
 }
 
-bool Value::asDouble(float& output) const
+Optional<int> Value::asInteger() const
 {
-    if (type() != Type::Double)
-        return false;
-
-    output = static_cast<float>(m_value.number);
-    return true;
+    if (type() != Type::Double && type() != Type::Integer)
+        return WTF::nullopt;
+    return static_cast<int>(m_value.number);
 }
 
-bool Value::asInteger(int& output) const
-{
-    if (type() != Type::Integer && type() != Type::Double)
-        return false;
-
-    output = static_cast<int>(m_value.number);
-    return true;
-}
-
-bool Value::asInteger(unsigned& output) const
-{
-    if (type() != Type::Integer && type() != Type::Double)
-        return false;
-
-    output = static_cast<unsigned>(m_value.number);
-    return true;
-}
-
-bool Value::asInteger(long& output) const
-{
-    if (type() != Type::Integer && type() != Type::Double)
-        return false;
-
-    output = static_cast<long>(m_value.number);
-    return true;
-}
-
-bool Value::asInteger(long long& output) const
-{
-    if (type() != Type::Integer && type() != Type::Double)
-        return false;
-
-    output = static_cast<long long>(m_value.number);
-    return true;
-}
-
-bool Value::asInteger(unsigned long& output) const
-{
-    if (type() != Type::Integer && type() != Type::Double)
-        return false;
-
-    output = static_cast<unsigned long>(m_value.number);
-    return true;
-}
-
-bool Value::asInteger(unsigned long long& output) const
-{
-    if (type() != Type::Integer && type() != Type::Double)
-        return false;
-
-    output = static_cast<unsigned long long>(m_value.number);
-    return true;
-}
-
-bool Value::asString(String& output) const
+String Value::asString() const
 {
     if (type() != Type::String)
-        return false;
-
-    output = m_value.string;
-    return true;
+        return nullString();
+    return m_value.string;
 }
 
 void Value::writeJSON(StringBuilder& output) const
@@ -703,76 +639,74 @@ ObjectBase::~ObjectBase()
 {
 }
 
-bool ObjectBase::asObject(RefPtr<Object>& output)
+RefPtr<Object> ObjectBase::asObject()
 {
     COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
-
-    output = static_cast<Object*>(this);
-    return true;
-}
-
-Object* ObjectBase::openAccessors()
-{
-    COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
-
     return static_cast<Object*>(this);
 }
 
 size_t ObjectBase::memoryCost() const
 {
     size_t memoryCost = Value::memoryCost();
-    for (const auto& entry : m_map) {
-        memoryCost += entry.key.sizeInBytes();
-        if (entry.value)
-            memoryCost += entry.value->memoryCost();
-    }
+    for (const auto& entry : m_map)
+        memoryCost += entry.key.sizeInBytes() + entry.value->memoryCost();
     return memoryCost;
 }
 
-bool ObjectBase::getBoolean(const String& name, bool& output) const
+Optional<bool> ObjectBase::getBoolean(const String& name) const
 {
-    RefPtr<Value> value;
-    if (!getValue(name, value))
-        return false;
-
-    return value->asBoolean(output);
+    auto value = getValue(name);
+    if (!value)
+        return WTF::nullopt;
+    return value->asBoolean();
 }
 
-bool ObjectBase::getString(const String& name, String& output) const
+Optional<double> ObjectBase::getDouble(const String& name) const
 {
-    RefPtr<Value> value;
-    if (!getValue(name, value))
-        return false;
-
-    return value->asString(output);
+    auto value = getValue(name);
+    if (!value)
+        return WTF::nullopt;
+    return value->asDouble();
 }
 
-bool ObjectBase::getObject(const String& name, RefPtr<Object>& output) const
+Optional<int> ObjectBase::getInteger(const String& name) const
 {
-    RefPtr<Value> value;
-    if (!getValue(name, value))
-        return false;
-
-    return value->asObject(output);
+    auto value = getValue(name);
+    if (!value)
+        return WTF::nullopt;
+    return value->asInteger();
 }
 
-bool ObjectBase::getArray(const String& name, RefPtr<Array>& output) const
+String ObjectBase::getString(const String& name) const
 {
-    RefPtr<Value> value;
-    if (!getValue(name, value))
-        return false;
-
-    return value->asArray(output);
+    auto value = getValue(name);
+    if (!value)
+        return nullString();
+    return value->asString();
 }
 
-bool ObjectBase::getValue(const String& name, RefPtr<Value>& output) const
+RefPtr<Object> ObjectBase::getObject(const String& name) const
 {
-    Dictionary::const_iterator findResult = m_map.find(name);
+    auto value = getValue(name);
+    if (!value)
+        return nullptr;
+    return value->asObject();
+}
+
+RefPtr<Array> ObjectBase::getArray(const String& name) const
+{
+    auto value = getValue(name);
+    if (!value)
+        return nullptr;
+    return value->asArray();
+}
+
+RefPtr<Value> ObjectBase::getValue(const String& name) const
+{
+    auto findResult = m_map.find(name);
     if (findResult == m_map.end())
-        return false;
-
-    output = findResult->value;
-    return true;
+        return nullptr;
+    return findResult->value.copyRef();
 }
 
 void ObjectBase::remove(const String& name)
@@ -798,8 +732,6 @@ void ObjectBase::writeJSON(StringBuilder& output) const
 
 ObjectBase::ObjectBase()
     : Value(Type::Object)
-    , m_map()
-    , m_order()
 {
 }
 
@@ -807,17 +739,16 @@ ArrayBase::~ArrayBase()
 {
 }
 
-bool ArrayBase::asArray(RefPtr<Array>& output)
+RefPtr<Array> ArrayBase::asArray()
 {
     COMPILE_ASSERT(sizeof(ArrayBase) == sizeof(Array), cannot_cast);
-    output = static_cast<Array*>(this);
-    return true;
+    return static_cast<Array*>(this);
 }
 
 void ArrayBase::writeJSON(StringBuilder& output) const
 {
     output.append('[');
-    for (Vector<RefPtr<Value>>::const_iterator it = m_map.begin(); it != m_map.end(); ++it) {
+    for (auto it = m_map.begin(); it != m_map.end(); ++it) {
         if (it != m_map.begin())
             output.append(',');
         (*it)->writeJSON(output);
@@ -827,11 +758,10 @@ void ArrayBase::writeJSON(StringBuilder& output) const
 
 ArrayBase::ArrayBase()
     : Value(Type::Array)
-    , m_map()
 {
 }
 
-RefPtr<Value> ArrayBase::get(size_t index) const
+Ref<Value> ArrayBase::get(size_t index) const
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < m_map.size());
     return m_map[index];
@@ -850,10 +780,8 @@ Ref<Array> Array::create()
 size_t ArrayBase::memoryCost() const
 {
     size_t memoryCost = Value::memoryCost();
-    for (const auto& item : m_map) {
-        if (item)
-            memoryCost += item->memoryCost();
-    }
+    for (const auto& item : m_map)
+        memoryCost += item->memoryCost();
     return memoryCost;
 }
 

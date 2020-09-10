@@ -69,7 +69,7 @@ InspectorBackend.activateDomain("Test", null);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-#include "TestProtocolTypes.h"
+#include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
@@ -125,11 +125,14 @@ private:
 
 #include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <tuple>
+#include <wtf/Expected.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-typedef String ErrorString;
+
 
 
 
@@ -170,9 +173,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #include "TestAlternateBackendDispatchers.h"
@@ -220,6 +221,7 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -263,7 +265,6 @@ class FrontendRouter;
 #include "TestFrontendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/text/CString.h>
 
 namespace Inspector {
 
@@ -304,7 +305,9 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
-#include <wtf/Assertions.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -346,7 +349,7 @@ template<typename T> String getEnumConstantValue(T enumValue)
 namespace Test {
 
 /* A dummy type that requires runtime casts, and forces non-primitive referenced types to also emit runtime cast helpers. */
-class TypeNeedingCast : public JSON::ObjectBase {
+class TypeNeedingCast final : public JSON::ObjectBase {
 public:
     enum {
         NoFieldsSet = 0,
@@ -376,38 +379,38 @@ public:
         friend class TypeNeedingCast;
     public:
 
-        Builder<STATE | StringSet>& setString(const String& value)
+        Builder<STATE | StringSet>& setString(const String& in_string)
         {
             COMPILE_ASSERT(!(STATE & StringSet), property_string_already_set);
-            m_result->setString("string"_s, value);
+            m_result->setString("string"_s, in_string);
             return castState<StringSet>();
         }
 
-        Builder<STATE | NumberSet>& setNumber(int value)
+        Builder<STATE | NumberSet>& setNumber(int in_number)
         {
             COMPILE_ASSERT(!(STATE & NumberSet), property_number_already_set);
-            m_result->setInteger("number"_s, value);
+            m_result->setInteger("number"_s, in_number);
             return castState<NumberSet>();
         }
 
-        Builder<STATE | AnimalsSet>& setAnimals(Inspector::Protocol::Test::CastedAnimals value)
+        Builder<STATE | AnimalsSet>& setAnimals(Protocol::Test::CastedAnimals in_animals)
         {
             COMPILE_ASSERT(!(STATE & AnimalsSet), property_animals_already_set);
-            m_result->setString("animals"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
+            m_result->setString("animals"_s, Protocol::TestHelpers::getEnumConstantValue(in_animals));
             return castState<AnimalsSet>();
         }
 
-        Builder<STATE | IdSet>& setId(int value)
+        Builder<STATE | IdSet>& setId(int in_id)
         {
             COMPILE_ASSERT(!(STATE & IdSet), property_id_already_set);
-            m_result->setInteger("id"_s, value);
+            m_result->setInteger("id"_s, in_id);
             return castState<IdSet>();
         }
 
-        Builder<STATE | TreeSet>& setTree(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
+        Builder<STATE | TreeSet>& setTree(Ref<Protocol::Test::RecursiveObject1>&& in_tree)
         {
             COMPILE_ASSERT(!(STATE & TreeSet), property_tree_already_set);
-            m_result->setObject("tree"_s, value);
+            m_result->setObject("tree"_s, WTFMove(in_tree));
             return castState<TreeSet>();
         }
 
@@ -452,7 +455,7 @@ enum class CastedAnimals {
     Flamingos = 3,
 }; // enum class CastedAnimals
 
-class RecursiveObject1 : public JSON::ObjectBase {
+class RecursiveObject1 final : public JSON::ObjectBase {
 public:
     enum {
         NoFieldsSet = 0,
@@ -498,13 +501,13 @@ public:
         return Builder<NoFieldsSet>(JSON::Object::create());
     }
 
-    void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject2> value)
+    void setObj(Ref<Protocol::Test::RecursiveObject2>&& in_opt_obj)
     {
-        JSON::ObjectBase::setObject("obj"_s, WTFMove(value));
+        JSON::ObjectBase::setObject("obj"_s, WTFMove(in_opt_obj));
     }
 };
 
-class RecursiveObject2 : public JSON::ObjectBase {
+class RecursiveObject2 final : public JSON::ObjectBase {
 public:
     enum {
         NoFieldsSet = 0,
@@ -550,25 +553,25 @@ public:
         return Builder<NoFieldsSet>(JSON::Object::create());
     }
 
-    void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
+    void setObj(Ref<Protocol::Test::RecursiveObject1>&& in_opt_obj)
     {
-        JSON::ObjectBase::setObject("obj"_s, WTFMove(value));
+        JSON::ObjectBase::setObject("obj"_s, WTFMove(in_opt_obj));
     }
 };
 
 } // Test
 
-template<> struct BindingTraits<Inspector::Protocol::Test::CastedAnimals> {
+template<> struct BindingTraits<Protocol::Test::TypeNeedingCast> {
+static Ref<Protocol::Test::TypeNeedingCast> runtimeCast(Ref<JSON::Value>&& value);
 static void assertValueHasExpectedType(JSON::Value*);
 };
-template<> struct BindingTraits<Inspector::Protocol::Test::TypeNeedingCast> {
-static RefPtr<Inspector::Protocol::Test::TypeNeedingCast> runtimeCast(RefPtr<JSON::Value>&& value);
+template<> struct BindingTraits<Protocol::Test::CastedAnimals> {
 static void assertValueHasExpectedType(JSON::Value*);
 };
-template<> struct BindingTraits<Inspector::Protocol::Test::RecursiveObject1> {
+template<> struct BindingTraits<Protocol::Test::RecursiveObject1> {
 static void assertValueHasExpectedType(JSON::Value*);
 };
-template<> struct BindingTraits<Inspector::Protocol::Test::RecursiveObject2> {
+template<> struct BindingTraits<Protocol::Test::RecursiveObject2> {
 static void assertValueHasExpectedType(JSON::Value*);
 };
 
@@ -579,9 +582,9 @@ Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Test' Domain
 template<>
-Optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String&);
+Optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(const String&);
 template<>
-Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String&);
+Optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(const String&);
 
 } // namespace TestHelpers
 
@@ -635,8 +638,7 @@ struct DefaultHash<Inspector::Protocol::Test::CastedAnimals> : IntHash<Inspector
 #include "config.h"
 #include "TestProtocolObjects.h"
 
-#include <wtf/Optional.h>
-#include <wtf/text/CString.h>
+#include <wtf/Assertions.h>
 
 namespace Inspector {
 
@@ -661,33 +663,33 @@ String getEnumConstantValue(int code) {
 // Enums in the 'Test' Domain
 
 template<>
-Optional<Inspector::Protocol::Test::UncastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::UncastedAnimals>(const String& protocolString)
+Optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
-        (size_t)Inspector::Protocol::Test::UncastedAnimals::Pigs,
-        (size_t)Inspector::Protocol::Test::UncastedAnimals::Cows,
-        (size_t)Inspector::Protocol::Test::UncastedAnimals::Cats,
-        (size_t)Inspector::Protocol::Test::UncastedAnimals::Hens,
+        (size_t)Protocol::Test::UncastedAnimals::Pigs,
+        (size_t)Protocol::Test::UncastedAnimals::Cows,
+        (size_t)Protocol::Test::UncastedAnimals::Cats,
+        (size_t)Protocol::Test::UncastedAnimals::Hens,
     };
     for (size_t i = 0; i < 4; ++i)
         if (protocolString == enum_constant_values[constantValues[i]])
-            return (Inspector::Protocol::Test::UncastedAnimals)constantValues[i];
+            return (Protocol::Test::UncastedAnimals)constantValues[i];
 
     return WTF::nullopt;
 }
 
 template<>
-Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Inspector::Protocol::Test::CastedAnimals>(const String& protocolString)
+Optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
-        (size_t)Inspector::Protocol::Test::CastedAnimals::Ducks,
-        (size_t)Inspector::Protocol::Test::CastedAnimals::Hens,
-        (size_t)Inspector::Protocol::Test::CastedAnimals::Crows,
-        (size_t)Inspector::Protocol::Test::CastedAnimals::Flamingos,
+        (size_t)Protocol::Test::CastedAnimals::Ducks,
+        (size_t)Protocol::Test::CastedAnimals::Hens,
+        (size_t)Protocol::Test::CastedAnimals::Crows,
+        (size_t)Protocol::Test::CastedAnimals::Flamingos,
     };
     for (size_t i = 0; i < 4; ++i)
         if (protocolString == enum_constant_values[constantValues[i]])
-            return (Inspector::Protocol::Test::CastedAnimals)constantValues[i];
+            return (Protocol::Test::CastedAnimals)constantValues[i];
 
     return WTF::nullopt;
 }
@@ -696,115 +698,101 @@ Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Insp
 
 
 
-void BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(JSON::Value* value)
+void BindingTraits<Protocol::Test::CastedAnimals>::assertValueHasExpectedType(JSON::Value* value)
 {
+    ASSERT_UNUSED(value, value);
 #if ASSERT_ENABLED
-    ASSERT_ARG(value, value);
-    String result;
-    bool castSucceeded = value->asString(result);
-    ASSERT(castSucceeded);
+    auto result = value->asString();
+    ASSERT(result);
     ASSERT(result == "Ducks" || result == "Hens" || result == "Crows" || result == "Flamingos");
-#else // ASSERT_ENABLED
-    UNUSED_PARAM(value);
-#endif // ASSERT_ENABLED
+#endif
 }
 
-void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(JSON::Value* value)
+void BindingTraits<Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(JSON::Value* value)
 {
+    ASSERT_UNUSED(value, value);
 #if ASSERT_ENABLED
-    ASSERT_ARG(value, value);
-    RefPtr<JSON::Object> object;
-    bool castSucceeded = value->asObject(object);
-    ASSERT_UNUSED(castSucceeded, castSucceeded);
+    auto object = value->asObject();
+    ASSERT(object);
     {
         auto stringPos = object->find("string"_s);
         ASSERT(stringPos != object->end());
-        BindingTraits<String>::assertValueHasExpectedType(stringPos->value.get());
+        BindingTraits<String>::assertValueHasExpectedType(stringPos->value.ptr());
     }
     {
         auto numberPos = object->find("number"_s);
         ASSERT(numberPos != object->end());
-        BindingTraits<int>::assertValueHasExpectedType(numberPos->value.get());
+        BindingTraits<int>::assertValueHasExpectedType(numberPos->value.ptr());
     }
     {
         auto animalsPos = object->find("animals"_s);
         ASSERT(animalsPos != object->end());
-        BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(animalsPos->value.get());
+        BindingTraits<Protocol::Test::CastedAnimals>::assertValueHasExpectedType(animalsPos->value.ptr());
     }
     {
         auto idPos = object->find("id"_s);
         ASSERT(idPos != object->end());
-        BindingTraits<int>::assertValueHasExpectedType(idPos->value.get());
+        BindingTraits<int>::assertValueHasExpectedType(idPos->value.ptr());
     }
     {
         auto treePos = object->find("tree"_s);
         ASSERT(treePos != object->end());
-        BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(treePos->value.get());
+        BindingTraits<Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(treePos->value.ptr());
     }
 
-    int foundPropertiesCount = 5;
+    size_t foundPropertiesCount = 5;
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-#else // ASSERT_ENABLED
-    UNUSED_PARAM(value);
-#endif // ASSERT_ENABLED
+#endif
 }
 
-RefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::runtimeCast(RefPtr<JSON::Value>&& value)
+Ref<Protocol::Test::TypeNeedingCast> BindingTraits<Protocol::Test::TypeNeedingCast>::runtimeCast(Ref<JSON::Value>&& value)
 {
-    RefPtr<JSON::Object> result;
-    bool castSucceeded = value->asObject(result);
-    ASSERT_UNUSED(castSucceeded, castSucceeded);
-    BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(result.get());
-    COMPILE_ASSERT(sizeof(Inspector::Protocol::Test::TypeNeedingCast) == sizeof(JSON::ObjectBase), type_cast_problem);
-    return static_cast<Inspector::Protocol::Test::TypeNeedingCast*>(static_cast<JSON::ObjectBase*>(result.get()));
+    auto result = value->asObject();
+    BindingTraits<Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(result.get());
+    COMPILE_ASSERT(sizeof(Protocol::Test::TypeNeedingCast) == sizeof(JSON::ObjectBase), type_cast_problem);
+    return static_reference_cast<Protocol::Test::TypeNeedingCast>(static_reference_cast<JSON::ObjectBase>(result.releaseNonNull()));
 }
 
 
-void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(JSON::Value* value)
+void BindingTraits<Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(JSON::Value* value)
 {
+    ASSERT_UNUSED(value, value);
 #if ASSERT_ENABLED
-    ASSERT_ARG(value, value);
-    RefPtr<JSON::Object> object;
-    bool castSucceeded = value->asObject(object);
-    ASSERT_UNUSED(castSucceeded, castSucceeded);
+    auto object = value->asObject();
+    ASSERT(object);
 
-    int foundPropertiesCount = 0;
+    size_t foundPropertiesCount = 0;
     {
         auto objPos = object->find("obj"_s);
         if (objPos != object->end()) {
-            BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(objPos->value.get());
+            BindingTraits<Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(objPos->value.ptr());
             ++foundPropertiesCount;
         }
     }
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-#else // ASSERT_ENABLED
-    UNUSED_PARAM(value);
-#endif // ASSERT_ENABLED
+#endif
 }
 
-void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(JSON::Value* value)
+void BindingTraits<Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(JSON::Value* value)
 {
+    ASSERT_UNUSED(value, value);
 #if ASSERT_ENABLED
-    ASSERT_ARG(value, value);
-    RefPtr<JSON::Object> object;
-    bool castSucceeded = value->asObject(object);
-    ASSERT_UNUSED(castSucceeded, castSucceeded);
+    auto object = value->asObject();
+    ASSERT(object);
 
-    int foundPropertiesCount = 0;
+    size_t foundPropertiesCount = 0;
     {
         auto objPos = object->find("obj"_s);
         if (objPos != object->end()) {
-            BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(objPos->value.get());
+            BindingTraits<Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(objPos->value.ptr());
             ++foundPropertiesCount;
         }
     }
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-#else // ASSERT_ENABLED
-    UNUSED_PARAM(value);
-#endif // ASSERT_ENABLED
+#endif
 }
 
 } // namespace Protocol

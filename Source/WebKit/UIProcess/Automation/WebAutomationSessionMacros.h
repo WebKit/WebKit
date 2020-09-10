@@ -44,14 +44,12 @@
 // Convenience macros for filling in the error string of synchronous commands in bailout branches.
 #define SYNC_FAIL_WITH_PREDEFINED_ERROR(errorName) \
 do { \
-    errorString = STRING_FOR_PREDEFINED_ERROR_NAME(errorName); \
-    return; \
+    return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(errorName)); \
 } while (false)
 
 #define SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(errorName, detailsString) \
 do { \
-    errorString = STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(errorName, detailsString); \
-    return; \
+    return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(errorName, detailsString)); \
 } while (false)
 
 #define ASYNC_FAIL_WITH_PREDEFINED_ERROR(errorName) \

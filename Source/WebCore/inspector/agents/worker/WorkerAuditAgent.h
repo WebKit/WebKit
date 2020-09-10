@@ -37,10 +37,10 @@ class WorkerAuditAgent final : public Inspector::InspectorAuditAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerAuditAgent(WorkerAgentContext&);
-    ~WorkerAuditAgent() override;
+    ~WorkerAuditAgent();
 
 private:
-    Inspector::InjectedScript injectedScriptForEval(Inspector::ErrorString&, const int* executionContextId) override;
+    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
     WorkerGlobalScope& m_workerGlobalScope;
 };

@@ -41,24 +41,22 @@ namespace WebCore {
 class Database;
 class InspectorDatabaseResource;
 
-typedef String ErrorString;
-
 class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector::DatabaseBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDatabaseAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDatabaseAgent(WebAgentContext&);
-    ~InspectorDatabaseAgent() override;
+    ~InspectorDatabaseAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // DatabaseBackendDispatcherHandler
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names) override;
-    void executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
+    Inspector::Protocol::ErrorStringOr<void> enable();
+    Inspector::Protocol::ErrorStringOr<void> disable();
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getDatabaseTableNames(const Inspector::Protocol::Database::DatabaseId&);
+    void executeSQL(const Inspector::Protocol::Database::DatabaseId&, const String& query, Ref<ExecuteSQLCallback>&&);
 
     // InspectorInstrumentation
     void didCommitLoad();

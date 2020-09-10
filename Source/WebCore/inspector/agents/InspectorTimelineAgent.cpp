@@ -102,80 +102,82 @@ void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendRout
 
 void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString ignored;
-    disable(ignored);
+    disable();
 }
 
-void InspectorTimelineAgent::enable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> InspectorTimelineAgent::enable()
 {
-    if (m_instrumentingAgents.enabledTimelineAgent() == this) {
-        errorString = "Timeline domain already enabled"_s;
-        return;
-    }
+    if (m_instrumentingAgents.enabledTimelineAgent() == this)
+        return makeUnexpected("Timeline domain already enabled"_s);
 
     m_instrumentingAgents.setEnabledTimelineAgent(this);
+
+    return { };
 }
 
-void InspectorTimelineAgent::disable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> InspectorTimelineAgent::disable()
 {
-    if (m_instrumentingAgents.enabledTimelineAgent() != this) {
-        errorString = "Timeline domain already disabled"_s;
-        return;
-    }
+    if (m_instrumentingAgents.enabledTimelineAgent() != this)
+        return makeUnexpected("Timeline domain already disabled"_s);
 
     m_instrumentingAgents.setEnabledTimelineAgent(nullptr);
 
-    ErrorString ignored;
-    stop(ignored);
+    stop();
 
     m_autoCaptureEnabled = false;
     m_instruments.clear();
+
+    return { };
 }
 
-void InspectorTimelineAgent::start(ErrorString&, const int* maxCallStackDepth)
+Protocol::ErrorStringOr<void> InspectorTimelineAgent::start(Optional<int>&& maxCallStackDepth)
 {
     m_trackingFromFrontend = true;
 
-    internalStart(maxCallStackDepth);
+    internalStart(WTFMove(maxCallStackDepth));
+
+    return { };
 }
 
-void InspectorTimelineAgent::stop(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorTimelineAgent::stop()
 {
     internalStop();
 
     m_trackingFromFrontend = false;
+
+    return { };
 }
 
-void InspectorTimelineAgent::setAutoCaptureEnabled(ErrorString&, bool enabled)
+Protocol::ErrorStringOr<void> InspectorTimelineAgent::setAutoCaptureEnabled(bool enabled)
 {
     m_autoCaptureEnabled = enabled;
+
+    return { };
 }
 
-void InspectorTimelineAgent::setInstruments(ErrorString& errorString, const JSON::Array& instruments)
+Protocol::ErrorStringOr<void> InspectorTimelineAgent::setInstruments(Ref<JSON::Array>&& instruments)
 {
     Vector<Protocol::Timeline::Instrument> newInstruments;
-    newInstruments.reserveCapacity(instruments.length());
+    newInstruments.reserveCapacity(instruments->length());
 
-    for (const auto& instrumentValue : instruments) {
-        String enumValueString;
-        if (!instrumentValue->asString(enumValueString)) {
-            errorString = "Unexpected non-string value in given instruments"_s;
-            return;
-        }
+    for (const auto& instrumentValue : instruments.get()) {
+        auto instrumentString = instrumentValue->asString();
+        if (!instrumentString)
+            return makeUnexpected("Unexpected non-string value in given instruments"_s);
 
-        Optional<Protocol::Timeline::Instrument> instrumentType = Protocol::InspectorHelpers::parseEnumValueFromString<Protocol::Timeline::Instrument>(enumValueString);
-        if (!instrumentType) {
-            errorString = makeString("Unknown item in given instruments: ", enumValueString);
-            return;
-        }
+        auto instrument = Protocol::Helpers::parseEnumValueFromString<Protocol::Timeline::Instrument>(instrumentString);
+        if (!instrument)
+            return makeUnexpected(makeString("Unknown instrument: ", instrumentString));
 
-        newInstruments.uncheckedAppend(*instrumentType);
+        newInstruments.uncheckedAppend(*instrument);
     }
 
     m_instruments.swap(newInstruments);
+
+    return { };
 }
 
-void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
+void InspectorTimelineAgent::internalStart(Optional<int>&& maxCallStackDepth)
 {
     if (m_tracking)
         return;
@@ -292,8 +294,7 @@ void InspectorTimelineAgent::startFromConsole(JSC::JSGlobalObject* exec, const S
     // Allow duplicate unnamed profiles. Disallow duplicate named profiles.
     if (!title.isEmpty()) {
         for (const TimelineRecordEntry& record : m_pendingConsoleProfileRecords) {
-            String recordTitle;
-            record.data->getString("title"_s, recordTitle);
+            auto recordTitle = record.data->getString("title"_s);
             if (recordTitle == title) {
                 if (auto* consoleAgent = m_instrumentingAgents.webConsoleAgent()) {
                     // FIXME: Send an enum to the frontend for localization?
@@ -318,8 +319,7 @@ void InspectorTimelineAgent::stopFromConsole(JSC::JSGlobalObject*, const String&
     for (int i = m_pendingConsoleProfileRecords.size() - 1; i >= 0; --i) {
         const TimelineRecordEntry& record = m_pendingConsoleProfileRecords[i];
 
-        String recordTitle;
-        record.data->getString("title"_s, recordTitle);
+        auto recordTitle = record.data->getString("title"_s);
         if (title.isEmpty() || recordTitle == title) {
             didCompleteRecordEntry(record);
             m_pendingConsoleProfileRecords.remove(i);
@@ -496,10 +496,8 @@ void InspectorTimelineAgent::mainFrameStartedLoading()
     m_autoCapturePhase = AutoCapturePhase::BeforeLoad;
 
     // Pre-emptively disable breakpoints. The frontend must re-enable them.
-    if (auto* webDebuggerAgent = m_instrumentingAgents.enabledWebDebuggerAgent()) {
-        ErrorString ignored;
-        webDebuggerAgent->setBreakpointsActive(ignored, false);
-    }
+    if (auto* webDebuggerAgent = m_instrumentingAgents.enabledWebDebuggerAgent())
+        webDebuggerAgent->setBreakpointsActive(false);
 
     // Inform the frontend we started an auto capture. The frontend must stop capture.
     m_frontendDispatcher->autoCaptureStarted();
@@ -523,10 +521,8 @@ void InspectorTimelineAgent::startProgrammaticCapture()
     // Disable breakpoints during programmatic capture.
     if (auto* webDebuggerAgent = m_instrumentingAgents.enabledWebDebuggerAgent()) {
         m_programmaticCaptureRestoreBreakpointActiveValue = webDebuggerAgent->breakpointsActive();
-        if (m_programmaticCaptureRestoreBreakpointActiveValue) {
-            ErrorString ignored;
-            webDebuggerAgent->setBreakpointsActive(ignored, false);
-        }
+        if (m_programmaticCaptureRestoreBreakpointActiveValue)
+            webDebuggerAgent->setBreakpointsActive(false);
     } else
         m_programmaticCaptureRestoreBreakpointActiveValue = false;
 
@@ -546,10 +542,8 @@ void InspectorTimelineAgent::stopProgrammaticCapture()
 
     // Re-enable breakpoints if they were enabled.
     if (m_programmaticCaptureRestoreBreakpointActiveValue) {
-        if (auto* webDebuggerAgent = m_instrumentingAgents.enabledWebDebuggerAgent()) {
-            ErrorString ignored;
-            webDebuggerAgent->setBreakpointsActive(ignored, true);
-        }
+        if (auto* webDebuggerAgent = m_instrumentingAgents.enabledWebDebuggerAgent())
+            webDebuggerAgent->setBreakpointsActive(true);
     }
 }
 
@@ -557,26 +551,26 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
 {
     for (auto instrumentType : m_instruments) {
         switch (instrumentType) {
-        case Inspector::Protocol::Timeline::Instrument::ScriptProfiler: {
+        case Protocol::Timeline::Instrument::ScriptProfiler: {
             toggleScriptProfilerInstrument(state);
             break;
         }
-        case Inspector::Protocol::Timeline::Instrument::Heap: {
+        case Protocol::Timeline::Instrument::Heap: {
             toggleHeapInstrument(state);
             break;
         }
-        case Inspector::Protocol::Timeline::Instrument::CPU: {
+        case Protocol::Timeline::Instrument::CPU: {
             toggleCPUInstrument(state);
             break;
         }
-        case Inspector::Protocol::Timeline::Instrument::Memory: {
+        case Protocol::Timeline::Instrument::Memory: {
             toggleMemoryInstrument(state);
             break;
         }
-        case Inspector::Protocol::Timeline::Instrument::Timeline:
+        case Protocol::Timeline::Instrument::Timeline:
             toggleTimelineInstrument(state);
             break;
-        case Inspector::Protocol::Timeline::Instrument::Animation:
+        case Protocol::Timeline::Instrument::Animation:
             toggleAnimationInstrument(state);
             break;
         }
@@ -586,24 +580,21 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
 void InspectorTimelineAgent::toggleScriptProfilerInstrument(InstrumentState state)
 {
     if (auto* scriptProfilerAgent = m_instrumentingAgents.persistentScriptProfilerAgent()) {
-        ErrorString ignored;
-        if (state == InstrumentState::Start) {
-            const bool includeSamples = true;
-            scriptProfilerAgent->startTracking(ignored, &includeSamples);
-        } else
-            scriptProfilerAgent->stopTracking(ignored);
+        if (state == InstrumentState::Start)
+            scriptProfilerAgent->startTracking(true);
+        else
+            scriptProfilerAgent->stopTracking();
     }
 }
 
 void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 {
     if (auto* heapAgent = m_instrumentingAgents.enabledPageHeapAgent()) {
-        ErrorString ignored;
         if (state == InstrumentState::Start) {
             if (m_autoCapturePhase == AutoCapturePhase::None || m_autoCapturePhase == AutoCapturePhase::FirstNavigation)
-                heapAgent->startTracking(ignored);
+                heapAgent->startTracking();
         } else
-            heapAgent->stopTracking(ignored);
+            heapAgent->stopTracking();
     }
 }
 
@@ -611,11 +602,10 @@ void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
 {
 #if ENABLE(RESOURCE_USAGE)
     if (auto* cpuProfilerAgent = m_instrumentingAgents.persistentCPUProfilerAgent()) {
-        ErrorString ignored;
         if (state == InstrumentState::Start)
-            cpuProfilerAgent->startTracking(ignored);
+            cpuProfilerAgent->startTracking();
         else
-            cpuProfilerAgent->stopTracking(ignored);
+            cpuProfilerAgent->stopTracking();
     }
 #else
     UNUSED_PARAM(state);
@@ -626,11 +616,10 @@ void InspectorTimelineAgent::toggleMemoryInstrument(InstrumentState state)
 {
 #if ENABLE(RESOURCE_USAGE)
     if (auto* memoryAgent = m_instrumentingAgents.persistentMemoryAgent()) {
-        ErrorString ignored;
         if (state == InstrumentState::Start)
-            memoryAgent->startTracking(ignored);
+            memoryAgent->startTracking();
         else
-            memoryAgent->stopTracking(ignored);
+            memoryAgent->stopTracking();
     }
 #else
     UNUSED_PARAM(state);
@@ -640,7 +629,7 @@ void InspectorTimelineAgent::toggleMemoryInstrument(InstrumentState state)
 void InspectorTimelineAgent::toggleTimelineInstrument(InstrumentState state)
 {
     if (state == InstrumentState::Start)
-        internalStart();
+        internalStart(WTF::nullopt);
     else
         internalStop();
 }
@@ -648,11 +637,10 @@ void InspectorTimelineAgent::toggleTimelineInstrument(InstrumentState state)
 void InspectorTimelineAgent::toggleAnimationInstrument(InstrumentState state)
 {
     if (auto* animationAgent = m_instrumentingAgents.persistentAnimationAgent()) {
-        ErrorString ignored;
         if (state == InstrumentState::Start)
-            animationAgent->startTracking(ignored);
+            animationAgent->startTracking();
         else
-            animationAgent->stopTracking(ignored);
+            animationAgent->stopTracking();
     }
 }
 
@@ -691,71 +679,71 @@ void InspectorTimelineAgent::breakpointActionProbe(JSC::JSGlobalObject* lexicalG
     appendRecord(TimelineRecordFactory::createProbeSampleData(actionID, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(lexicalGlobalObject));
 }
 
-static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType type)
+static Protocol::Timeline::EventType toProtocol(TimelineRecordType type)
 {
     switch (type) {
     case TimelineRecordType::EventDispatch:
-        return Inspector::Protocol::Timeline::EventType::EventDispatch;
+        return Protocol::Timeline::EventType::EventDispatch;
     case TimelineRecordType::ScheduleStyleRecalculation:
-        return Inspector::Protocol::Timeline::EventType::ScheduleStyleRecalculation;
+        return Protocol::Timeline::EventType::ScheduleStyleRecalculation;
     case TimelineRecordType::RecalculateStyles:
-        return Inspector::Protocol::Timeline::EventType::RecalculateStyles;
+        return Protocol::Timeline::EventType::RecalculateStyles;
     case TimelineRecordType::InvalidateLayout:
-        return Inspector::Protocol::Timeline::EventType::InvalidateLayout;
+        return Protocol::Timeline::EventType::InvalidateLayout;
     case TimelineRecordType::Layout:
-        return Inspector::Protocol::Timeline::EventType::Layout;
+        return Protocol::Timeline::EventType::Layout;
     case TimelineRecordType::Paint:
-        return Inspector::Protocol::Timeline::EventType::Paint;
+        return Protocol::Timeline::EventType::Paint;
     case TimelineRecordType::Composite:
-        return Inspector::Protocol::Timeline::EventType::Composite;
+        return Protocol::Timeline::EventType::Composite;
     case TimelineRecordType::RenderingFrame:
-        return Inspector::Protocol::Timeline::EventType::RenderingFrame;
+        return Protocol::Timeline::EventType::RenderingFrame;
 
     case TimelineRecordType::TimerInstall:
-        return Inspector::Protocol::Timeline::EventType::TimerInstall;
+        return Protocol::Timeline::EventType::TimerInstall;
     case TimelineRecordType::TimerRemove:
-        return Inspector::Protocol::Timeline::EventType::TimerRemove;
+        return Protocol::Timeline::EventType::TimerRemove;
     case TimelineRecordType::TimerFire:
-        return Inspector::Protocol::Timeline::EventType::TimerFire;
+        return Protocol::Timeline::EventType::TimerFire;
 
     case TimelineRecordType::EvaluateScript:
-        return Inspector::Protocol::Timeline::EventType::EvaluateScript;
+        return Protocol::Timeline::EventType::EvaluateScript;
 
     case TimelineRecordType::TimeStamp:
-        return Inspector::Protocol::Timeline::EventType::TimeStamp;
+        return Protocol::Timeline::EventType::TimeStamp;
     case TimelineRecordType::Time:
-        return Inspector::Protocol::Timeline::EventType::Time;
+        return Protocol::Timeline::EventType::Time;
     case TimelineRecordType::TimeEnd:
-        return Inspector::Protocol::Timeline::EventType::TimeEnd;
+        return Protocol::Timeline::EventType::TimeEnd;
 
     case TimelineRecordType::FunctionCall:
-        return Inspector::Protocol::Timeline::EventType::FunctionCall;
+        return Protocol::Timeline::EventType::FunctionCall;
     case TimelineRecordType::ProbeSample:
-        return Inspector::Protocol::Timeline::EventType::ProbeSample;
+        return Protocol::Timeline::EventType::ProbeSample;
     case TimelineRecordType::ConsoleProfile:
-        return Inspector::Protocol::Timeline::EventType::ConsoleProfile;
+        return Protocol::Timeline::EventType::ConsoleProfile;
 
     case TimelineRecordType::RequestAnimationFrame:
-        return Inspector::Protocol::Timeline::EventType::RequestAnimationFrame;
+        return Protocol::Timeline::EventType::RequestAnimationFrame;
     case TimelineRecordType::CancelAnimationFrame:
-        return Inspector::Protocol::Timeline::EventType::CancelAnimationFrame;
+        return Protocol::Timeline::EventType::CancelAnimationFrame;
     case TimelineRecordType::FireAnimationFrame:
-        return Inspector::Protocol::Timeline::EventType::FireAnimationFrame;
+        return Protocol::Timeline::EventType::FireAnimationFrame;
 
     case TimelineRecordType::ObserverCallback:
-        return Inspector::Protocol::Timeline::EventType::ObserverCallback;
+        return Protocol::Timeline::EventType::ObserverCallback;
     }
 
-    return Inspector::Protocol::Timeline::EventType::TimeStamp;
+    return Protocol::Timeline::EventType::TimeStamp;
 }
 
-void InspectorTimelineAgent::addRecordToTimeline(RefPtr<JSON::Object>&& record, TimelineRecordType type)
+void InspectorTimelineAgent::addRecordToTimeline(Ref<JSON::Object>&& record, TimelineRecordType type)
 {
-    ASSERT_ARG(record, record);
-    record->setString("type", Inspector::Protocol::InspectorHelpers::getEnumConstantValue(toProtocol(type)));
+    record->setString(Protocol::Timeline::TimelineEvent::typeKey, Protocol::Helpers::getEnumConstantValue(toProtocol(type)));
 
     if (m_recordStack.isEmpty()) {
-        auto recordObject = BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTFMove(record));
+        // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
+        auto recordObject = Protocol::BindingTraits<Protocol::Timeline::TimelineEvent>::runtimeCast(WTFMove(record));
         sendEvent(WTFMove(recordObject));
     } else {
         const TimelineRecordEntry& parent = m_recordStack.last();
@@ -781,8 +769,9 @@ void InspectorTimelineAgent::setFrameIdentifier(JSON::Object* record, Frame* fra
 
 void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& entry)
 {
-    entry.record->setObject("data"_s, entry.data);
-    entry.record->setArray("children"_s, entry.children);
+    entry.record->setObject(Protocol::Timeline::TimelineEvent::dataKey, entry.data.copyRef());
+    if (entry.children)
+        entry.record->setArray(Protocol::Timeline::TimelineEvent::childrenKey, *entry.children);
     entry.record->setDouble("endTime"_s, timestamp());
     addRecordToTimeline(entry.record.copyRef(), entry.type);
 }
@@ -804,29 +793,29 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     }
 }
 
-void InspectorTimelineAgent::appendRecord(RefPtr<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
+void InspectorTimelineAgent::appendRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
     Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
-    record->setObject("data", WTFMove(data));
+    record->setObject(Protocol::Timeline::TimelineEvent::dataKey, WTFMove(data));
     setFrameIdentifier(&record.get(), frame);
     addRecordToTimeline(WTFMove(record), type);
 }
 
-void InspectorTimelineAgent::sendEvent(RefPtr<JSON::Object>&& event)
+void InspectorTimelineAgent::sendEvent(Ref<JSON::Object>&& event)
 {
     // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
-    auto recordChecked = BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTFMove(event));
+    auto recordChecked = Protocol::BindingTraits<Protocol::Timeline::TimelineEvent>::runtimeCast(WTFMove(event));
     m_frontendDispatcher->eventRecorded(WTFMove(recordChecked));
 }
 
-InspectorTimelineAgent::TimelineRecordEntry InspectorTimelineAgent::createRecordEntry(RefPtr<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
+InspectorTimelineAgent::TimelineRecordEntry InspectorTimelineAgent::createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
     Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     setFrameIdentifier(&record.get(), frame);
     return TimelineRecordEntry(WTFMove(record), WTFMove(data), JSON::Array::create(), type);
 }
 
-void InspectorTimelineAgent::pushCurrentRecord(RefPtr<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
+void InspectorTimelineAgent::pushCurrentRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
     pushCurrentRecord(createRecordEntry(WTFMove(data), type, captureCallStack, frame));
 }

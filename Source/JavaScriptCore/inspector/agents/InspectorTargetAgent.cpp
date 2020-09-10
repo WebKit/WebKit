@@ -55,36 +55,36 @@ void InspectorTargetAgent::willDestroyFrontendAndBackend(DisconnectReason)
     m_shouldPauseOnStart = false;
 }
 
-void InspectorTargetAgent::setPauseOnStart(ErrorString&, bool pauseOnStart)
+Protocol::ErrorStringOr<void> InspectorTargetAgent::setPauseOnStart(bool pauseOnStart)
 {
     m_shouldPauseOnStart = pauseOnStart;
+
+    return { };
 }
 
-void InspectorTargetAgent::resume(ErrorString& errorString, const String& targetId)
+Protocol::ErrorStringOr<void> InspectorTargetAgent::resume(const String& targetId)
 {
     auto* target = m_targets.get(targetId);
-    if (!target) {
-        errorString = "Missing target for given targetId"_s;
-        return;
-    }
+    if (!target)
+        return makeUnexpected("Missing target for given targetId"_s);
 
-    if (!target->isPaused()) {
-        errorString = "Target for given targetId is not paused"_s;
-        return;
-    }
+    if (!target->isPaused())
+        return makeUnexpected("Target for given targetId is not paused"_s);
 
     target->resume();
+
+    return { };
 }
 
-void InspectorTargetAgent::sendMessageToTarget(ErrorString& errorString, const String& targetId, const String& message)
+Protocol::ErrorStringOr<void> InspectorTargetAgent::sendMessageToTarget(const String& targetId, const String& message)
 {
     InspectorTarget* target = m_targets.get(targetId);
-    if (!target) {
-        errorString = "Missing target for given targetId"_s;
-        return;
-    }
+    if (!target)
+        return makeUnexpected("Missing target for given targetId"_s);
 
     target->sendMessageToTargetBackend(message);
+
+    return { };
 }
 
 void InspectorTargetAgent::sendMessageFromTargetToFrontend(const String& targetId, const String& message)

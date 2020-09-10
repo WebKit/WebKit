@@ -203,32 +203,34 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (!this.canForceAppearance())
             return;
 
-        let protocolName = "";
+        let commandArguments = {};
 
         switch (name) {
         case WI.CSSManager.Appearance.Light:
-            protocolName = InspectorBackend.Enum.Page.Appearance.Light;
+            commandArguments.appearance = InspectorBackend.Enum.Page.Appearance.Light;
             break;
 
         case WI.CSSManager.Appearance.Dark:
-            protocolName = InspectorBackend.Enum.Page.Appearance.Dark;
+            commandArguments.appearance = InspectorBackend.Enum.Page.Appearance.Dark;
             break;
 
         case null:
-        case undefined:
-        case "":
-            protocolName = "";
+            // COMPATIBILITY (iOS 14): the `appearance`` parameter of `Page.setForcedAppearance` was not optional.
+            // Since support can't be tested directly, check for the `options`` parameter of `DOMDebugger.setDOMBreakpoint` (iOS 14.0+).
+            // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
+            if (!InspectorBackend.hasCommand("DOMDebugger.setDOMBreakpoint", "options"))
+                commandArguments.appearance = "";
             break;
 
         default:
-            // Abort for unknown values.
+            console.assert(false, "Unknown appearance", name);
             return;
         }
 
         this._forcedAppearance = name || null;
 
         let target = WI.assumingMainTarget();
-        target.PageAgent.setForcedAppearance(protocolName).then(() => {
+        target.PageAgent.setForcedAppearance.invoke(commandArguments).then(() => {
             this.mediaQueryResultChanged();
             this.dispatchEventToListeners(WI.CSSManager.Event.ForcedAppearanceDidChange, {appearance: this._forcedAppearance});
         });

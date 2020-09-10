@@ -1,3 +1,139 @@
+2020-09-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: modernize generated backend protocol code
+        https://bugs.webkit.org/show_bug.cgi?id=216302
+        <rdar://problem/68547649>
+
+        Reviewed by Brian Burg.
+
+        Previously, the inspector protocol was expressed in code in a somewhat confusing way:
+         - the error string was the first argument
+         - required parameters were `T` or `const T&`
+         - optional parameters were `const T*`
+         - enum parameters were the underlying type requiring the backend dispatcher handler to
+           process it instead of it being preprocessed
+         - required returns were `T&`
+         - optional returns were `T*`
+        This doesn't really make for easy/obvious reading of code since the order of arguments is
+        not weird (e.g. error string first), and that there are references/pointers to primitive
+        types.
+
+        This patch cleans up the generated inspector protocol code to be:
+         - required parameters are `T` or `Ref<T>&&`
+         - optional parameters are `Optional<T>&&` or `RefPtr<T>&&`
+         - enum parameters are preprocessed and passed to the backend dispatcher handler if valid
+         - synchronous commands return `Expected<X, ErrorString>` using the same types/rules above
+           where `X` is either a single return or a `std::tuple` of multiple returns
+
+        The one exception to the above is `String`, which is already a tri-state of `nullString()`,
+        `emptyString()`, and something set, so there's no need to use `Optional<String>`.
+
+        Also use `Protocol` objects/`typedefs` wherever possible to further relate the protocol
+        JSON and the actual backend dispatcher handler implementation.
+
+        * inspector/InspectorAuditResourcesObject.cpp:
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorStyleSheet.cpp:
+        * inspector/agents/InspectorAnimationAgent.h:
+        * inspector/agents/InspectorAnimationAgent.cpp:
+        * inspector/agents/InspectorApplicationCacheAgent.h:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        * inspector/agents/InspectorCPUProfilerAgent.h:
+        * inspector/agents/InspectorCPUProfilerAgent.cpp:
+        * inspector/agents/InspectorCSSAgent.h:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        * inspector/agents/InspectorDOMStorageAgent.h:
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        * inspector/agents/InspectorDatabaseAgent.h:
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        * inspector/agents/InspectorIndexedDBAgent.h:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        * inspector/agents/InspectorLayerTreeAgent.h:
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        * inspector/agents/InspectorMemoryAgent.h:
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        * inspector/agents/InspectorWorkerAgent.h:
+        * inspector/agents/InspectorWorkerAgent.cpp:
+        * inspector/agents/WebConsoleAgent.h:
+        * inspector/agents/WebDebuggerAgent.h:
+        * inspector/agents/WebDebuggerAgent.cpp:
+        * inspector/agents/WebHeapAgent.h:
+        * inspector/agents/WebHeapAgent.cpp:
+        * inspector/agents/page/PageAuditAgent.h:
+        * inspector/agents/page/PageAuditAgent.cpp:
+        * inspector/agents/page/PageConsoleAgent.h:
+        * inspector/agents/page/PageConsoleAgent.cpp:
+        * inspector/agents/page/PageDOMDebuggerAgent.h:
+        * inspector/agents/page/PageDOMDebuggerAgent.cpp:
+        * inspector/agents/page/PageDebuggerAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        * inspector/agents/page/PageHeapAgent.h:
+        * inspector/agents/page/PageHeapAgent.cpp:
+        * inspector/agents/page/PageNetworkAgent.h:
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        * inspector/agents/page/PageRuntimeAgent.h:
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        * inspector/agents/worker/ServiceWorkerAgent.h:
+        * inspector/agents/worker/ServiceWorkerAgent.cpp:
+        * inspector/agents/worker/WorkerAuditAgent.h:
+        * inspector/agents/worker/WorkerConsoleAgent.h:
+        * inspector/agents/worker/WorkerAuditAgent.cpp:
+        * inspector/agents/worker/WorkerDOMDebuggerAgent.h:
+        * inspector/agents/worker/WorkerDOMDebuggerAgent.cpp:
+        * inspector/agents/worker/WorkerDebuggerAgent.h:
+        * inspector/agents/worker/WorkerDebuggerAgent.cpp:
+        * inspector/agents/worker/WorkerNetworkAgent.h:
+        * inspector/agents/worker/WorkerNetworkAgent.cpp:
+        * inspector/agents/worker/WorkerRuntimeAgent.h:
+        * inspector/agents/worker/WorkerRuntimeAgent.cpp:
+        Elided backend dispatcher handler changes describe above.
+
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::inspect):
+        (WebCore::CommandLineAPIHost::clearConsoleMessages):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::valuePayloadFromJSONValue):
+        (WebCore::InspectorFrontendHost::logDiagnosticEvent):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::appendLayoutRoot):
+        * Modules/applicationmanifest/ApplicationManifestParser.cpp:
+        (WebCore::ApplicationManifestParser::parseManifest):
+        (WebCore::ApplicationManifestParser::parseStartURL):
+        (WebCore::ApplicationManifestParser::parseDisplay):
+        (WebCore::ApplicationManifestParser::parseScope):
+        (WebCore::ApplicationManifestParser::parseGenericString):
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::extractKeyIDsKeyids):
+        * platform/encryptedmedia/CDMUtilities.cpp:
+        (WebCore::CDMUtilities::parseJSONObject):
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::parseLicenseFormat):
+        (WebCore::parseLicenseReleaseAcknowledgementFormat):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::extractSinfData):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::parseJSONValue):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        `JSON` classes now use `Ref&&` wherever possible and `Optional` instead of an out parameter
+        for `get*`/`as*` so that values can be more easily manipulated and can be confidently known
+        to exist.
+
 2020-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Revert accidental hard-coding of compositing logging from r266825.

@@ -36,17 +36,17 @@ class WorkerDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerDebuggerAgent(WorkerAgentContext&);
-    ~WorkerDebuggerAgent() override;
+    ~WorkerDebuggerAgent();
 
     // JSC::Debugger::Observer
-    void breakpointActionLog(JSC::JSGlobalObject*, const String& data) final;
+    void breakpointActionLog(JSC::JSGlobalObject*, const String& data);
 
 private:
     // We don't need to mute console for workers.
-    void muteConsole() override { }
-    void unmuteConsole() override { }
+    void muteConsole() { }
+    void unmuteConsole() { }
 
-    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
+    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
     WorkerGlobalScope& m_workerGlobalScope;
 };

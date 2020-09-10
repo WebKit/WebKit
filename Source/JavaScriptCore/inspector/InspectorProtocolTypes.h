@@ -27,11 +27,18 @@
 #pragma once
 
 #include <wtf/Assertions.h>
+#include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
 namespace Protocol {
+
+using ErrorString = String;
+
+template <typename T>
+using ErrorStringOr = Expected<T, ErrorString>;
 
 template<typename> struct BindingTraits;
 
@@ -44,29 +51,23 @@ template<JSON::Value::Type type> struct PrimitiveBindingTraits {
 };
 
 template<typename T> struct BindingTraits<JSON::ArrayOf<T>> {
-    static RefPtr<JSON::ArrayOf<T>> runtimeCast(RefPtr<JSON::Value>&& value)
+    static Ref<JSON::ArrayOf<T>> runtimeCast(Ref<JSON::Value>&& value)
     {
-        ASSERT_ARG(value, value);
-        RefPtr<JSON::Array> array;
-        bool castSucceeded = value->asArray(array);
-        ASSERT_UNUSED(castSucceeded, castSucceeded);
-        assertValueHasExpectedType(array.get());
+        auto array = value->asArray();
+        BindingTraits<JSON::ArrayOf<T>>::assertValueHasExpectedType(array.get());
         COMPILE_ASSERT(sizeof(JSON::ArrayOf<T>) == sizeof(JSON::Array), type_cast_problem);
-        return static_cast<JSON::ArrayOf<T>*>(static_cast<JSON::ArrayBase*>(array.get()));
+        return static_reference_cast<JSON::ArrayOf<T>>(static_reference_cast<JSON::ArrayBase>(array.releaseNonNull()));
     }
 
     static void assertValueHasExpectedType(JSON::Value* value)
     {
+        ASSERT_UNUSED(value, value);
 #if ASSERT_ENABLED
-        ASSERT_ARG(value, value);
-        RefPtr<JSON::Array> array;
-        bool castSucceeded = value->asArray(array);
-        ASSERT_UNUSED(castSucceeded, castSucceeded);
+        auto array = value->asArray();
+        ASSERT(array);
         for (unsigned i = 0; i < array->length(); i++)
-            BindingTraits<T>::assertValueHasExpectedType(array->get(i).get());
-#else
-        UNUSED_PARAM(value);
-#endif // ASSERT_ENABLED
+            BindingTraits<T>::assertValueHasExpectedType(array->get(i).ptr());
+#endif
     }
 };
 
@@ -84,7 +85,5 @@ template<> struct BindingTraits<double> : PrimitiveBindingTraits<JSON::Value::Ty
 template<> struct BindingTraits<int> : PrimitiveBindingTraits<JSON::Value::Type::Integer> { };
 
 }
-
-using Protocol::BindingTraits;
 
 } // namespace Inspector

@@ -55,279 +55,329 @@ class CppGenerator(Generator):
         return self.model().framework.setting('cpp_protocol_group', '')
 
     def helpers_namespace(self):
-        return '%sHelpers' % self.protocol_name()
+        namespace = 'Helpers'
+        if self.protocol_name() != 'Inspector':
+            namespace = self.protocol_name() + namespace
+        return namespace
 
     # Miscellaneous text manipulation routines.
     @staticmethod
     def cpp_getter_method_for_type(_type):
-        if isinstance(_type, ObjectType):
-            return 'getObject'
-        if isinstance(_type, ArrayType):
-            return 'getArray'
-        if isinstance(_type, PrimitiveType):
-            if _type.raw_name() == 'integer':
-                return 'getInteger'
-            elif _type.raw_name() == 'number':
-                return 'getDouble'
-            elif _type.raw_name() == 'any':
-                return 'getValue'
-            else:
-                return 'get' + ucfirst(_type.raw_name())
         if isinstance(_type, AliasedType):
-            return CppGenerator.cpp_getter_method_for_type(_type.aliased_type)
+            _type = _type.aliased_type
+            # Fallthrough.
+
         if isinstance(_type, EnumType):
-            return CppGenerator.cpp_getter_method_for_type(_type.primitive_type)
+            _type = _type.primitive_type
+            # Fallthrough.
+
+        if isinstance(_type, ObjectType) or _type.qualified_name() in ['object']:
+            return 'getObject'
+
+        if isinstance(_type, ArrayType) or _type.qualified_name() in ['array']:
+            return 'getArray'
+
+        if isinstance(_type, PrimitiveType):
+            if _type.raw_name() == 'number':
+                return 'getDouble'
+            if _type.raw_name() == 'any':
+                return 'getValue'
+            return 'get' + ucfirst(_type.raw_name())
+
+        raise ValueError("unknown type")
 
     @staticmethod
     def cpp_setter_method_for_type(_type):
-        if isinstance(_type, ObjectType):
-            return 'setObject'
-        if isinstance(_type, ArrayType):
-            return 'setArray'
-        if isinstance(_type, PrimitiveType):
-            if _type.raw_name() == 'integer':
-                return 'setInteger'
-            elif _type.raw_name() == 'number':
-                return 'setDouble'
-            elif _type.raw_name() == 'any':
-                return 'setValue'
-            else:
-                return 'set' + ucfirst(_type.raw_name())
         if isinstance(_type, AliasedType):
-            return CppGenerator.cpp_setter_method_for_type(_type.aliased_type)
+            _type = _type.aliased_type
+            # Fallthrough.
+
         if isinstance(_type, EnumType):
-            return CppGenerator.cpp_setter_method_for_type(_type.primitive_type)
+            _type = _type.primitive_type
+            # Fallthrough.
+
+        if isinstance(_type, ObjectType) or _type.qualified_name() in ['object']:
+            return 'setObject'
+
+        if isinstance(_type, ArrayType) or _type.qualified_name() in ['array']:
+            return 'setArray'
+
+        if isinstance(_type, PrimitiveType):
+            if _type.raw_name() == 'number':
+                return 'setDouble'
+            if _type.raw_name() == 'any':
+                return 'setValue'
+            return 'set' + ucfirst(_type.raw_name())
+
+        raise ValueError("unknown type")
 
     # Generate type representations for various situations.
     @staticmethod
     def cpp_protocol_type_for_type(_type):
         if isinstance(_type, AliasedType):
-            _type = _type.aliased_type  # Fall through to enum or primitive.
+            _type = _type.aliased_type
+            # Fallthrough.
 
-        if isinstance(_type, ObjectType) and len(_type.members) == 0:
-            return 'JSON::Object'
         if isinstance(_type, ArrayType):
-            if _type.raw_name() is None:  # Otherwise, fall through and use typedef'd name.
+            if _type.raw_name() is None:
                 return 'JSON::ArrayOf<%s>' % CppGenerator.cpp_protocol_type_for_type(_type.element_type)
+            # Fallthrough.
+
         if isinstance(_type, (ObjectType, EnumType, ArrayType)):
-            return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            return 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+
         if isinstance(_type, PrimitiveType):
             return CppGenerator.cpp_name_for_primitive_type(_type)
 
-    @staticmethod
-    def cpp_protocol_type_for_type_member(type_member, object_declaration):
-        if isinstance(type_member.type, EnumType) and type_member.type.is_anonymous:
-            return '::'.join([CppGenerator.cpp_protocol_type_for_type(object_declaration.type), ucfirst(type_member.member_name)])
-        else:
-            return CppGenerator.cpp_protocol_type_for_type(type_member.type)
+        raise ValueError("unknown type")
 
     @staticmethod
-    def cpp_type_for_unchecked_formal_in_parameter(parameter):
-        _type = parameter.type
+    def cpp_type_for_type_member_argument(_type, name):
         if isinstance(_type, AliasedType):
-            _type = _type.aliased_type  # Fall through to enum or primitive.
+            _type = _type.aliased_type
+            # Fallthrough.
 
-        if isinstance(_type, EnumType):
-            _type = _type.primitive_type  # Fall through to primitive.
-
-        # This handles the 'any' type and objects with defined properties.
-        if isinstance(_type, ObjectType) or _type.qualified_name() == 'object':
-            cpp_name = 'JSON::Object'
-            if parameter.is_optional:
-                return 'const %s*' % cpp_name
-            else:
-                return 'const %s&' % cpp_name
-        if isinstance(_type, ArrayType):
-            cpp_name = 'JSON::Array'
-            if parameter.is_optional:
-                return 'const %s*' % cpp_name
-            else:
-                return 'const %s&' % cpp_name
-        if isinstance(_type, PrimitiveType):
-            cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
-            if parameter.is_optional:
-                return 'const %s*' % cpp_name
-            elif _type.raw_name() in ['string']:
-                return 'const %s&' % cpp_name
-            else:
-                return cpp_name
-
-        return "unknown_unchecked_formal_in_parameter_type"
-
-    @staticmethod
-    def cpp_type_for_checked_formal_event_parameter(parameter):
-        return CppGenerator.cpp_type_for_type_with_name(parameter.type, parameter.parameter_name, parameter.is_optional)
-
-    @staticmethod
-    def cpp_type_for_type_member(member):
-        return CppGenerator.cpp_type_for_type_with_name(member.type, member.member_name, False)
-
-    @staticmethod
-    def cpp_type_for_type_with_name(_type, type_name, is_optional):
         if isinstance(_type, (ArrayType, ObjectType)):
-            return 'RefPtr<%s>' % CppGenerator.cpp_protocol_type_for_type(_type)
-        if isinstance(_type, AliasedType):
-            builder_type = CppGenerator.cpp_protocol_type_for_type(_type)
-            if is_optional:
-                return 'const %s*' % builder_type
-            elif _type.aliased_type.qualified_name() in ['integer', 'number']:
-                return CppGenerator.cpp_name_for_primitive_type(_type.aliased_type)
-            elif _type.aliased_type.qualified_name() in ['string']:
-                return 'const %s&' % builder_type
-            else:
-                return builder_type
-        if isinstance(_type, PrimitiveType):
-            cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
-            if _type.qualified_name() in ['object']:
-                return 'RefPtr<JSON::Object>'
-            elif _type.qualified_name() in ['any']:
-                return 'RefPtr<JSON::Value>'
-            elif is_optional:
-                return 'const %s*' % cpp_name
-            elif _type.qualified_name() in ['string']:
-                return 'const %s&' % cpp_name
-            else:
-                return cpp_name
+            return 'Ref<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
+
+        if _type.qualified_name() == 'object':
+            return 'Ref<JSON::Object>&&'
+
+        if _type.qualified_name() == 'array':
+            return 'Ref<JSON::Array>&&'
+
+        if _type.qualified_name() == 'any':
+            return 'Ref<JSON::Value>&&'
+
+        if _type.qualified_name() == 'string':
+            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
+
         if isinstance(_type, EnumType):
             if _type.is_anonymous:
-                enum_type_name = ucfirst(type_name)
-            else:
-                enum_type_name = 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+                return ucfirst(name)
+            return 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
 
-            if is_optional:
-                return '%s*' % enum_type_name
-            else:
-                return '%s' % enum_type_name
-
-    @staticmethod
-    def cpp_type_for_formal_out_parameter(parameter):
-        _type = parameter.type
-
-        if isinstance(_type, AliasedType):
-            _type = _type.aliased_type  # Fall through.
-
-        if isinstance(_type, (ObjectType, ArrayType)):
-            return 'RefPtr<%s>&' % CppGenerator.cpp_protocol_type_for_type(_type)
         if isinstance(_type, PrimitiveType):
-            cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
-            if parameter.is_optional:
-                return "Optional<%s>&" % cpp_name
-            else:
-                return '%s*' % cpp_name
-        if isinstance(_type, EnumType):
-            if _type.is_anonymous:
-                return '%sBackendDispatcherHandler::%s*' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
-            else:
-                return 'Inspector::Protocol::%s::%s*' % (_type.type_domain().domain_name, _type.raw_name())
+            return CppGenerator.cpp_name_for_primitive_type(_type)
 
-        raise ValueError("unknown formal out parameter type.")
-
-    # FIXME: this is only slightly different from out parameters; they could be unified.
-    @staticmethod
-    def cpp_type_for_formal_async_parameter(parameter):
-        _type = parameter.type
-        if isinstance(_type, AliasedType):
-            _type = _type.aliased_type  # Fall through.
-
-        if isinstance(_type, (ObjectType, ArrayType)):
-            return 'RefPtr<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
-        if isinstance(_type, PrimitiveType):
-            cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
-            if parameter.is_optional:
-                return "Optional<%s>&" % cpp_name
-            elif _type.qualified_name() in ['integer', 'number']:
-                return CppGenerator.cpp_name_for_primitive_type(_type)
-            elif _type.qualified_name() in ['string']:
-                return 'const %s&' % cpp_name
-            else:
-                return cpp_name
-        if isinstance(_type, EnumType):
-            if _type.is_anonymous:
-                cpp_name = '%sBackendDispatcherHandler::%s' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
-            else:
-                cpp_name = 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
-
-            if parameter.is_optional:
-                return "Optional<%s>" % cpp_name
-            else:
-                return cpp_name
-
-        raise ValueError("Unknown formal async parameter type.")
+        raise ValueError("unknown type")
 
     # In-parameters don't use builder types, because they could be passed
     # "open types" that are manually constructed out of InspectorObjects.
-
-    # FIXME: Only parameters that are actually open types should need non-builder parameter types.
     @staticmethod
-    def cpp_type_for_stack_in_parameter(parameter):
-        _type = parameter.type
+    def cpp_type_for_command_parameter(_type, is_optional):
         if isinstance(_type, AliasedType):
-            _type = _type.aliased_type  # Fall through.
+            _type = _type.aliased_type
+            # Fallthrough.
+
+        if isinstance(_type, EnumType) and _type.is_anonymous:
+            _type = _type.primitive_type
+            # Fallthrough.
+
+        if isinstance(_type, ObjectType) or _type.qualified_name() == 'object':
+            if is_optional:
+                return 'RefPtr<JSON::Object>&&'
+            return 'Ref<JSON::Object>&&'
+
+        if isinstance(_type, ArrayType) or _type.qualified_name() == 'array':
+            if is_optional:
+                return 'RefPtr<JSON::Array>&&'
+            return 'Ref<JSON::Array>&&'
+
+        if _type.qualified_name() == 'any':
+            if is_optional:
+                return 'RefPtr<JSON::Value>&&'
+            return 'Ref<JSON::Value>&&'
+
+        if _type.qualified_name() == 'string':
+            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
 
         if isinstance(_type, EnumType):
-            _type = _type.primitive_type  # Fall through.
-
-        if isinstance(_type, ObjectType):
-            return "RefPtr<JSON::Object>"
-        if isinstance(_type, ArrayType):
-            return "RefPtr<JSON::Array>"
-        if isinstance(_type, PrimitiveType):
+            cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+        elif isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
-            if _type.qualified_name() in ['any', 'object']:
-                return "RefPtr<%s>" % CppGenerator.cpp_name_for_primitive_type(_type)
-            elif parameter.is_optional and _type.qualified_name() not in ['boolean', 'string', 'integer', 'number']:
-                return "Optional<%s>" % cpp_name
-            else:
-                return cpp_name
+        else:
+            raise ValueError("unknown type")
+
+        if is_optional:
+            cpp_name = 'Optional<%s>&&' % cpp_name
+        return cpp_name
 
     @staticmethod
-    def cpp_type_for_stack_out_parameter(parameter):
-        _type = parameter.type
+    def cpp_type_for_command_return_declaration(_type, is_optional):
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+            # Fallthrough.
+
+        if isinstance(_type, EnumType) and _type.is_anonymous:
+            _type = _type.primitive_type
+            # Fallthrough.
+
         if isinstance(_type, (ArrayType, ObjectType)):
-            return 'RefPtr<%s>' % CppGenerator.cpp_protocol_type_for_type(_type)
-        if isinstance(_type, AliasedType):
-            builder_type = CppGenerator.cpp_protocol_type_for_type(_type)
-            if parameter.is_optional:
-                return "Optional<%s>" % builder_type
-            return '%s' % builder_type
-        if isinstance(_type, PrimitiveType):
-            cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
-            if parameter.is_optional:
-                return "Optional<%s>" % cpp_name
-            else:
-                return cpp_name
+            if is_optional:
+                return 'RefPtr<%s>' % CppGenerator.cpp_protocol_type_for_type(_type)
+            return 'Ref<%s>' % CppGenerator.cpp_protocol_type_for_type(_type)
+
+        if _type.qualified_name() == 'object':
+            if is_optional:
+                return 'RefPtr<JSON::Object>'
+            return 'Ref<JSON::Object>'
+
+        if _type.qualified_name() == 'array':
+            if is_optional:
+                return 'RefPtr<JSON::Array>'
+            return 'Ref<JSON::Array>'
+
+        if _type.qualified_name() == 'any':
+            if is_optional:
+                return 'RefPtr<JSON::Value>'
+            return 'Ref<JSON::Value>'
+
+        if _type.qualified_name() == 'string':
+            return CppGenerator.cpp_name_for_primitive_type(_type)
+
         if isinstance(_type, EnumType):
-            if _type.is_anonymous:
-                return '%sBackendDispatcherHandler::%s' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
-            else:
-                return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+        elif isinstance(_type, PrimitiveType):
+            cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
+        else:
+            raise ValueError("unknown type")
+
+        if is_optional:
+            cpp_name = 'Optional<%s>' % cpp_name
+        return cpp_name
 
     @staticmethod
-    def cpp_assertion_method_for_type_member(type_member, object_declaration):
+    def cpp_type_for_command_return_argument(_type, is_optional):
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+            # Fallthrough.
 
-        def assertion_method_for_type(_type):
-            return 'BindingTraits<%s>::assertValueHasExpectedType' % CppGenerator.cpp_protocol_type_for_type(_type)
+        if isinstance(_type, EnumType) and _type.is_anonymous:
+            _type = _type.primitive_type
+            # Fallthrough.
 
-        if isinstance(type_member.type, AliasedType):
-            return assertion_method_for_type(type_member.type.aliased_type)
-        if isinstance(type_member.type, EnumType) and type_member.type.is_anonymous:
-            return 'BindingTraits<%s>::assertValueHasExpectedType' % CppGenerator.cpp_protocol_type_for_type_member(type_member, object_declaration)
+        if isinstance(_type, (ArrayType, ObjectType)):
+            if is_optional:
+                return 'RefPtr<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
+            return 'Ref<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
 
-        return assertion_method_for_type(type_member.type)
+        if _type.qualified_name() == 'object':
+            if is_optional:
+                return 'RefPtr<JSON::Object>&&'
+            return 'Ref<JSON::Object>&&'
+
+        if _type.qualified_name() == 'array':
+            if is_optional:
+                return 'RefPtr<JSON::Array>&&'
+            return 'Ref<JSON::Array>&&'
+
+        if _type.qualified_name() == 'any':
+            if is_optional:
+                return 'RefPtr<JSON::Value>&&'
+            return 'Ref<JSON::Value>&&'
+
+        if _type.qualified_name() == 'string':
+            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
+
+        if isinstance(_type, EnumType):
+            cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+        elif isinstance(_type, PrimitiveType):
+            cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
+        else:
+            raise ValueError("unknown type")
+
+        if is_optional:
+            cpp_name = 'Optional<%s>&&' % cpp_name
+        return cpp_name
+
+    @staticmethod
+    def cpp_type_for_event_parameter(_type, is_optional):
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+            # Fallthrough.
+
+        if isinstance(_type, EnumType) and _type.is_anonymous:
+            _type = _type.primitive_type
+            # Fallthrough.
+
+        if isinstance(_type, (ArrayType, ObjectType)):
+            if is_optional:
+                return 'RefPtr<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
+            return 'Ref<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
+
+        if _type.qualified_name() == 'object':
+            if is_optional:
+                return 'RefPtr<JSON::Object>&&'
+            return 'Ref<JSON::Object>&&'
+
+        if _type.qualified_name() == 'array':
+            if is_optional:
+                return 'RefPtr<JSON::Array>&&'
+            return 'Ref<JSON::Array>&&'
+
+        if _type.qualified_name() == 'any':
+            if is_optional:
+                return 'RefPtr<JSON::Value>&&'
+            return 'Ref<JSON::Value>&&'
+
+        if _type.qualified_name() == 'string':
+            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
+
+        if isinstance(_type, EnumType):
+            cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+        elif isinstance(_type, PrimitiveType):
+            cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
+        else:
+            raise ValueError("unknown type")
+
+        if is_optional:
+            cpp_name = 'Optional<%s>&&' % cpp_name
+        return cpp_name
+
+    @staticmethod
+    def cpp_type_for_enum(enum_type, name):
+        if enum_type.is_anonymous:
+            return 'Protocol::%s::%s' % (enum_type.type_domain().domain_name, ucfirst(name))
+        return 'Protocol::%s::%s' % (enum_type.type_domain().domain_name, enum_type.raw_name())
 
     @staticmethod
     def cpp_name_for_primitive_type(_type):
         return _PRIMITIVE_TO_CPP_NAME_MAP.get(_type.raw_name())
 
-    # Decide whether certain helpers are necessary in a situation.
     @staticmethod
-    def should_use_wrapper_for_return_type(_type):
-        return not isinstance(_type, (ArrayType, ObjectType))
+    def should_move_argument(_type, is_optional):
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+        if isinstance(_type, EnumType):
+            _type = _type.primitive_type
+
+        if _type.raw_name() == 'string':
+            return False
+        return is_optional == (_type.raw_name() in ['boolean', 'integer', 'number'])
 
     @staticmethod
-    def should_use_references_for_type(_type):
-        return isinstance(_type, (ArrayType, ObjectType)) or (isinstance(_type, (PrimitiveType)) and _type.qualified_name() in ["any", "object"])
+    def should_release_argument(_type, is_optional):
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+        if isinstance(_type, EnumType):
+            _type = _type.primitive_type
+
+        if _type.raw_name() == 'string':
+            return False
+        if _type.raw_name() in ['boolean', 'integer', 'number']:
+            return False
+        return is_optional
 
     @staticmethod
-    def should_pass_by_copy_for_return_type(_type):
-        return isinstance(_type, (ArrayType, ObjectType)) or (isinstance(_type, (PrimitiveType)) and _type.qualified_name() == "object")
+    def should_dereference_argument(_type, is_optional):
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+        if isinstance(_type, EnumType):
+            _type = _type.primitive_type
+
+        if _type.raw_name() == 'string':
+            return False
+        if _type.raw_name() not in ['boolean', 'integer', 'number']:
+            return False
+        return is_optional

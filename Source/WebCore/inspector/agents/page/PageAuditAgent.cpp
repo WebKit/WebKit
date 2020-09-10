@@ -56,7 +56,7 @@ PageAuditAgent::PageAuditAgent(PageAgentContext& context)
 
 PageAuditAgent::~PageAuditAgent() = default;
 
-InjectedScript PageAuditAgent::injectedScriptForEval(const int* executionContextId)
+InjectedScript PageAuditAgent::injectedScriptForEval(Optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId)
         return injectedScriptManager().injectedScriptForId(*executionContextId);
@@ -65,9 +65,9 @@ InjectedScript PageAuditAgent::injectedScriptForEval(const int* executionContext
     return injectedScriptManager().injectedScriptFor(scriptState);
 }
 
-InjectedScript PageAuditAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
+InjectedScript PageAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, Optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
-    InjectedScript injectedScript = injectedScriptForEval(executionContextId);
+    InjectedScript injectedScript = injectedScriptForEval(WTFMove(executionContextId));
     if (injectedScript.hasNoValue()) {
         if (executionContextId)
             errorString = "Missing injected script for given executionContextId"_s;

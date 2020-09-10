@@ -85,9 +85,10 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
     def _generate_secondary_header_includes(self):
         header_includes = [
             (["JavaScriptCore", "WebKit"], ("JavaScriptCore", "inspector/InspectorProtocolTypes.h")),
-            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Assertions.h"))
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/JSONValues.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Optional.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/WTFString.h")),
         ]
-
         return '\n'.join(self.generate_includes_from_entries(header_includes))
 
     def _generate_versions(self, domains):
@@ -232,9 +233,6 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_class_for_object_declaration(self, type_declaration, domain):
-        if len(type_declaration.type_members) == 0:
-            return ''
-
         enum_members = [member for member in type_declaration.type_members if isinstance(member.type, EnumType) and member.type.is_anonymous]
         required_members = [member for member in type_declaration.type_members if not member.is_optional]
         optional_members = [member for member in type_declaration.type_members if member.is_optional]
@@ -246,11 +244,12 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         base_class = 'JSON::Object'
         if not Generator.type_has_open_fields(type_declaration.type):
             base_class = base_class + 'Base'
-        lines.append('class %s : public %s {' % (object_name, base_class))
+        lines.append('class %s final : public %s {' % (object_name, base_class))
         lines.append('public:')
         for enum_member in enum_members:
             lines.append('    // Named after property name \'%s\' while generating %s.' % (enum_member.member_name, object_name))
             lines.append(self._generate_struct_for_anonymous_enum_member(enum_member))
+            lines.append('')
         lines.append(self._generate_builder_state_enum(type_declaration))
 
         constructor_example = []
@@ -277,7 +276,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             open_members = Generator.open_fields(type_declaration)
             for type_member in open_members:
                 export_macro = self.model().framework.setting('export_macro', None)
-                lines.append('    %s static const char* %s;' % (export_macro, ucfirst(type_member.member_name)))
+                lines.append('    %s static const char* %sKey;' % (export_macro, type_member.member_name))
 
         lines.append('};')
         return self.wrap_with_guard_for_condition(type_declaration.condition, '\n'.join(lines))
@@ -328,47 +327,56 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         return '\n'.join(lines)
 
     def _generate_builder_setter_for_member(self, type_member, domain):
+        member_name = 'in_' + type_member.member_name
+
+        member_value = member_name
+        if type_member.type.is_enum():
+            member_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), member_value)
+        elif CppGenerator.should_move_argument(type_member.type, False):
+            member_value = 'WTFMove(%s)' % member_value
+
         setter_args = {
             'camelName': ucfirst(type_member.member_name),
-            'keyedSet': CppGenerator.cpp_setter_method_for_type(type_member.type),
-            'name': type_member.member_name,
-            'parameterType': CppGenerator.cpp_type_for_type_member(type_member),
-            'helpersNamespace': self.helpers_namespace(),
+            'setter': CppGenerator.cpp_setter_method_for_type(type_member.type),
+            'memberType': CppGenerator.cpp_type_for_type_member_argument(type_member.type, type_member.member_name),
+            'memberKey': type_member.member_name,
+            'memberName': member_name,
+            'memberValue': member_value,
         }
 
         lines = []
         lines.append('')
-        lines.append('        Builder<STATE | %(camelName)sSet>& set%(camelName)s(%(parameterType)s value)' % setter_args)
+        lines.append('        Builder<STATE | %(camelName)sSet>& set%(camelName)s(%(memberType)s %(memberName)s)' % setter_args)
         lines.append('        {')
-        lines.append('            COMPILE_ASSERT(!(STATE & %(camelName)sSet), property_%(name)s_already_set);' % setter_args)
-
-        if isinstance(type_member.type, EnumType):
-            lines.append('            m_result->%(keyedSet)s("%(name)s"_s, Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(value));' % setter_args)
-        else:
-            lines.append('            m_result->%(keyedSet)s("%(name)s"_s, value);' % setter_args)
+        lines.append('            COMPILE_ASSERT(!(STATE & %(camelName)sSet), property_%(memberKey)s_already_set);' % setter_args)
+        lines.append('            m_result->%(setter)s("%(memberKey)s"_s, %(memberValue)s);' % setter_args)
         lines.append('            return castState<%(camelName)sSet>();' % setter_args)
         lines.append('        }')
         return '\n'.join(lines)
 
     def _generate_unchecked_setter_for_member(self, type_member, domain):
+        member_name = 'in_opt_' + type_member.member_name
+
+        member_value = member_name
+        if type_member.type.is_enum():
+            member_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), member_value)
+        elif CppGenerator.should_move_argument(type_member.type, False):
+            member_value = 'WTFMove(%s)' % member_value
+
         setter_args = {
             'camelName': ucfirst(type_member.member_name),
-            'keyedSet': CppGenerator.cpp_setter_method_for_type(type_member.type),
-            'name': type_member.member_name,
-            'parameterType': CppGenerator.cpp_type_for_type_member(type_member),
-            'helpersNamespace': self.helpers_namespace(),
+            'setter': CppGenerator.cpp_setter_method_for_type(type_member.type),
+            'memberKey': type_member.member_name,
+            'memberName': member_name,
+            'memberValue': member_value,
+            'memberType': CppGenerator.cpp_type_for_type_member_argument(type_member.type, type_member.member_name),
         }
 
         lines = []
         lines.append('')
-        lines.append('    void set%(camelName)s(%(parameterType)s value)' % setter_args)
+        lines.append('    void set%(camelName)s(%(memberType)s %(memberName)s)' % setter_args)
         lines.append('    {')
-        if isinstance(type_member.type, EnumType):
-            lines.append('        JSON::ObjectBase::%(keyedSet)s("%(name)s"_s, Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(value));' % setter_args)
-        elif CppGenerator.should_use_references_for_type(type_member.type):
-            lines.append('        JSON::ObjectBase::%(keyedSet)s("%(name)s"_s, WTFMove(value));' % setter_args)
-        else:
-            lines.append('        JSON::ObjectBase::%(keyedSet)s("%(name)s"_s, value);' % setter_args)
+        lines.append('        JSON::ObjectBase::%(setter)s("%(memberKey)s"_s, %(memberValue)s);' % setter_args)
         lines.append('    }')
         return '\n'.join(lines)
 
@@ -381,12 +389,12 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             declarations_to_generate = [decl for decl in type_declarations if self.type_needs_shape_assertions(decl.type)]
 
             for type_declaration in declarations_to_generate:
-                for type_member in type_declaration.type_members:
-                    if isinstance(type_member.type, EnumType):
-                        type_arguments.append((self.wrap_with_guard_for_condition(type_declaration.condition, CppGenerator.cpp_protocol_type_for_type_member(type_member, type_declaration)), False))
-
                 if isinstance(type_declaration.type, ObjectType):
                     type_arguments.append((self.wrap_with_guard_for_condition(type_declaration.condition, CppGenerator.cpp_protocol_type_for_type(type_declaration.type)), Generator.type_needs_runtime_casts(type_declaration.type)))
+
+                for type_member in type_declaration.type_members:
+                    if isinstance(type_member.type, EnumType):
+                        type_arguments.append((self.wrap_with_guard_for_condition(type_declaration.condition, CppGenerator.cpp_type_for_enum(type_member.type, '%s::%s' % (type_declaration.type_name, ucfirst(type_member.member_name)))), False))
 
         struct_keywords = ['struct']
         function_keywords = ['static void']
@@ -399,7 +407,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         for argument in type_arguments:
             lines.append('template<> %s BindingTraits<%s> {' % (' '.join(struct_keywords), argument[0]))
             if argument[1]:
-                lines.append('static RefPtr<%s> runtimeCast(RefPtr<JSON::Value>&& value);' % argument[0])
+                lines.append('static Ref<%s> runtimeCast(Ref<JSON::Value>&& value);' % argument[0])
             lines.append('%s assertValueHasExpectedType(JSON::Value*);' % ' '.join(function_keywords))
             lines.append('};')
         return '\n'.join(lines)
@@ -438,13 +446,13 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             domain_lines = []
             domain_lines.append("// Enums in the '%s' Domain" % domain.domain_name)
             for enum_type in enum_types:
-                cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type(enum_type)
+                cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_type, enum_type.raw_name())
                 domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, 'template<>\n%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type)))
 
             for object_type in object_types:
                 object_lines = []
                 for enum_member in filter(type_member_is_anonymous_enum_type, object_type.members):
-                    cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type_member(enum_member, object_type.declaration())
+                    cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_member.type, '%s::%s' % (object_type.raw_name(), ucfirst(enum_member.member_name)))
                     object_lines.append('template<>\n%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
                 if len(object_lines):
                     domain_lines.append(self.wrap_with_guard_for_condition(object_type.declaration().condition, '\n'.join(object_lines)))

@@ -15,9 +15,13 @@ PASS: Log channel has known source.
 PASS: Log channel disabled by default.
 PASS: Log channel has known source.
 PASS: Log channel disabled by default.
+PASS: Log channel has known source.
+PASS: Log channel disabled by default.
+PASS: Log channel has known source.
+PASS: Log channel disabled by default.
 
 -- Running test case: Console.Logging.InvalidLevel
-PASS: Unknown channelLevel: DOES_NOT_EXIST
+PASS: Unknown level: DOES_NOT_EXIST
 
 -- Running test case: Console.Logging.NoLogging
 PASS: Media logging disabled.

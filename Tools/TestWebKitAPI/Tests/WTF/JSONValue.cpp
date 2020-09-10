@@ -42,82 +42,68 @@ TEST(JSONValue, Construct)
     {
         Ref<JSON::Value> value = JSON::Value::create(true);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Boolean);
-        bool booleanValue;
-        EXPECT_TRUE(value->asBoolean(booleanValue));
-        EXPECT_EQ(booleanValue, true);
+        auto booleanValue = value->asBoolean();
+        EXPECT_TRUE(booleanValue);
+        EXPECT_EQ(*booleanValue, true);
 
         value = JSON::Value::create(false);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Boolean);
-        EXPECT_TRUE(value->asBoolean(booleanValue));
-        EXPECT_EQ(booleanValue, false);
+        booleanValue = value->asBoolean();
+        EXPECT_TRUE(booleanValue);
+        EXPECT_EQ(*booleanValue, false);
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(1);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Integer);
-        int integerValue;
-        EXPECT_TRUE(value->asInteger(integerValue));
-        EXPECT_EQ(integerValue, 1);
+        auto integerValue = value->asInteger();
+        EXPECT_TRUE(integerValue);
+        EXPECT_EQ(*integerValue, 1);
 
-        // Doubles can be get as integers, but not the other way around.
-        float floatValue;
-        EXPECT_FALSE(value->asDouble(floatValue));
+        // Integers can be converted to doubles.
+        auto doubleValue = value->asDouble();
+        EXPECT_TRUE(doubleValue);
+        EXPECT_EQ(*doubleValue, 1);
 
         value = JSON::Value::create(std::numeric_limits<int>::max());
-        EXPECT_TRUE(value->asInteger(integerValue));
-        EXPECT_EQ(integerValue, std::numeric_limits<int>::max());
-        unsigned unsignedValue;
-        EXPECT_TRUE(value->asInteger(unsignedValue));
-        long longValue;
-        EXPECT_TRUE(value->asInteger(longValue));
-        long long longLongValue;
-        EXPECT_TRUE(value->asInteger(longLongValue));
-        unsigned long unsignedLongValue;
-        EXPECT_TRUE(value->asInteger(unsignedLongValue));
-        unsigned long long unsignedLongLongValue;
-        EXPECT_TRUE(value->asInteger(unsignedLongLongValue));
+        integerValue = value->asInteger();
+        EXPECT_TRUE(integerValue);
+        EXPECT_EQ(*integerValue, std::numeric_limits<int>::max());
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(1.5);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Double);
-        double doubleValue;
-        EXPECT_TRUE(value->asDouble(doubleValue));
-        EXPECT_EQ(doubleValue, 1.5);
 
-        float floatValue;
-        EXPECT_TRUE(value->asDouble(floatValue));
+        auto doubleValue = value->asDouble();
+        EXPECT_TRUE(doubleValue);
+        EXPECT_EQ(*doubleValue, 1.5);
 
-        int integerValue;
-        EXPECT_TRUE(value->asInteger(integerValue));
-        EXPECT_EQ(integerValue, static_cast<int>(1.5));
-
-        unsigned unsignedValue;
-        EXPECT_TRUE(value->asInteger(unsignedValue));
-        long longValue;
-        EXPECT_TRUE(value->asInteger(longValue));
-        long long longLongValue;
-        EXPECT_TRUE(value->asInteger(longLongValue));
-        unsigned long unsignedLongValue;
-        EXPECT_TRUE(value->asInteger(unsignedLongValue));
-        unsigned long long unsignedLongLongValue;
-        EXPECT_TRUE(value->asInteger(unsignedLongLongValue));
+        // Doubles can be converted to integers.
+        auto integerValue = value->asInteger();
+        EXPECT_TRUE(integerValue);
+        EXPECT_EQ(*integerValue, static_cast<int>(1.5));
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create("webkit");
         EXPECT_TRUE(value->type() == JSON::Value::Type::String);
-        String stringValue;
-        EXPECT_TRUE(value->asString(stringValue));
+        auto stringValue = value->asString();
+        EXPECT_TRUE(!!stringValue);
         EXPECT_EQ(stringValue, "webkit");
 
         String nullString;
         value = JSON::Value::create(nullString);
-        EXPECT_TRUE(value->asString(stringValue));
+        EXPECT_TRUE(value->type() == JSON::Value::Type::String);
+        stringValue = value->asString();
+        EXPECT_FALSE(!!stringValue);
         EXPECT_TRUE(stringValue.isNull());
+        EXPECT_TRUE(stringValue.isEmpty());
 
         value = JSON::Value::create(emptyString());
-        EXPECT_TRUE(value->asString(stringValue));
+        EXPECT_TRUE(value->type() == JSON::Value::Type::String);
+        stringValue = value->asString();
+        EXPECT_TRUE(!!stringValue);
         EXPECT_FALSE(stringValue.isNull());
         EXPECT_TRUE(stringValue.isEmpty());
     }
@@ -131,7 +117,7 @@ TEST(JSONValue, Construct)
     {
         Ref<JSON::Object> object = JSON::Object::create();
         EXPECT_TRUE(object->type() == JSON::Value::Type::Object);
-        EXPECT_EQ(object->size(), 0);
+        EXPECT_EQ(object->size(), 0U);
     }
 
     {
@@ -154,48 +140,48 @@ TEST(JSONArray, Basic)
     EXPECT_EQ(array->length(), 2U);
     value = array->get(1);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Boolean);
-    bool booleanValue;
-    EXPECT_TRUE(value->asBoolean(booleanValue));
-    EXPECT_EQ(booleanValue, true);
+    auto booleanValue = value->asBoolean();
+    EXPECT_TRUE(booleanValue);
+    EXPECT_EQ(*booleanValue, true);
 
     array->pushInteger(1);
     EXPECT_EQ(array->length(), 3U);
     value = array->get(2);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Integer);
-    int integerValue;
-    EXPECT_TRUE(value->asInteger(integerValue));
-    EXPECT_EQ(integerValue, 1);
+    auto integerValue = value->asInteger();
+    EXPECT_TRUE(integerValue);
+    EXPECT_EQ(*integerValue, 1);
 
     array->pushDouble(1.5);
     EXPECT_EQ(array->length(), 4U);
     value = array->get(3);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Double);
-    double doubleValue;
-    EXPECT_TRUE(value->asDouble(doubleValue));
-    EXPECT_EQ(doubleValue, 1.5);
+    auto doubleValue = value->asDouble();
+    EXPECT_TRUE(doubleValue);
+    EXPECT_EQ(*doubleValue, 1.5);
 
     array->pushString("webkit");
     EXPECT_EQ(array->length(), 5U);
     value = array->get(4);
     EXPECT_TRUE(value->type() == JSON::Value::Type::String);
-    String stringValue;
-    EXPECT_TRUE(value->asString(stringValue));
+    auto stringValue = value->asString();
+    EXPECT_TRUE(!!stringValue);
     EXPECT_EQ(stringValue, "webkit");
 
     array->pushObject(JSON::Object::create());
     EXPECT_EQ(array->length(), 6U);
     value = array->get(5);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Object);
-    RefPtr<JSON::Object> objectValue;
-    EXPECT_TRUE(value->asObject(objectValue));
-    EXPECT_EQ(objectValue->size(), 0);
+    auto objectValue = value->asObject();
+    EXPECT_TRUE(objectValue);
+    EXPECT_EQ(objectValue->size(), 0U);
 
     array->pushArray(JSON::Array::create());
     EXPECT_EQ(array->length(), 7U);
     value = array->get(6);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Array);
-    RefPtr<JSON::Array> arrayValue;
-    EXPECT_TRUE(value->asArray(arrayValue));
+    auto arrayValue = value->asArray();
+    EXPECT_TRUE(arrayValue);
     EXPECT_EQ(arrayValue->length(), 0U);
 
     auto it = array->begin();
@@ -251,40 +237,40 @@ TEST(JSONArrayOf, Basic)
     EXPECT_EQ(array->length(), 2U);
     value = array->get(1);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Integer);
-    int integerValue;
-    EXPECT_TRUE(value->asInteger(integerValue));
-    EXPECT_EQ(integerValue, 1);
+    auto integerValue = value->asInteger();
+    EXPECT_TRUE(integerValue);
+    EXPECT_EQ(*integerValue, 1);
 
     array->addItem(1.5);
     EXPECT_EQ(array->length(), 3U);
     value = array->get(2);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Double);
-    double doubleValue;
-    EXPECT_TRUE(value->asDouble(doubleValue));
-    EXPECT_EQ(doubleValue, 1.5);
+    auto doubleValue = value->asDouble();
+    EXPECT_TRUE(doubleValue);
+    EXPECT_EQ(*doubleValue, 1.5);
 
     array->addItem("webkit");
     EXPECT_EQ(array->length(), 4U);
     value = array->get(3);
     EXPECT_TRUE(value->type() == JSON::Value::Type::String);
-    String stringValue;
-    EXPECT_TRUE(value->asString(stringValue));
+    auto stringValue = value->asString();
+    EXPECT_TRUE(!!stringValue);
     EXPECT_EQ(stringValue, "webkit");
 
     array->addItem(JSON::Object::create());
     EXPECT_EQ(array->length(), 5U);
     value = array->get(4);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Object);
-    RefPtr<JSON::Object> objectValue;
-    EXPECT_TRUE(value->asObject(objectValue));
-    EXPECT_EQ(objectValue->size(), 0);
+    auto objectValue = value->asObject();
+    EXPECT_TRUE(objectValue);
+    EXPECT_EQ(objectValue->size(), 0U);
 
     array->addItem(JSON::Array::create());
     EXPECT_EQ(array->length(), 6U);
     value = array->get(5);
     EXPECT_TRUE(value->type() == JSON::Value::Type::Array);
-    RefPtr<JSON::Array> arrayValue;
-    EXPECT_TRUE(value->asArray(arrayValue));
+    auto arrayValue = value->asArray();
+    EXPECT_TRUE(arrayValue);
     EXPECT_EQ(arrayValue->length(), 0U);
 
     auto it = array->begin();
@@ -324,45 +310,45 @@ TEST(JSONObject, Basic)
     Ref<JSON::Object> object = JSON::Object::create();
 
     object->setValue("null", JSON::Value::null());
-    EXPECT_EQ(object->size(), 1);
-    RefPtr<JSON::Value> value;
-    EXPECT_TRUE(object->getValue("null", value));
+    EXPECT_EQ(object->size(), 1U);
+    auto value = object->getValue("null");
+    EXPECT_TRUE(value);
     EXPECT_TRUE(value->isNull());
 
     object->setBoolean("boolean", true);
-    EXPECT_EQ(object->size(), 2);
-    bool booleanValue;
-    EXPECT_TRUE(object->getBoolean("boolean", booleanValue));
-    EXPECT_EQ(booleanValue, true);
+    EXPECT_EQ(object->size(), 2U);
+    auto booleanValue = object->getBoolean("boolean");
+    EXPECT_TRUE(booleanValue);
+    EXPECT_EQ(*booleanValue, true);
 
     object->setInteger("integer", 1);
-    EXPECT_EQ(object->size(), 3);
-    int integerValue;
-    EXPECT_TRUE(object->getInteger("integer", integerValue));
-    EXPECT_EQ(integerValue, 1);
+    EXPECT_EQ(object->size(), 3U);
+    auto integerValue = object->getInteger("integer");
+    EXPECT_TRUE(integerValue);
+    EXPECT_EQ(*integerValue, 1);
 
     object->setDouble("double", 1.5);
-    EXPECT_EQ(object->size(), 4);
-    double doubleValue;
-    EXPECT_TRUE(object->getDouble("double", doubleValue));
-    EXPECT_EQ(doubleValue, 1.5);
+    EXPECT_EQ(object->size(), 4U);
+    auto doubleValue = object->getDouble("double");
+    EXPECT_TRUE(doubleValue);
+    EXPECT_EQ(*doubleValue, 1.5);
 
     object->setString("string", "webkit");
-    EXPECT_EQ(object->size(), 5);
-    String stringValue;
-    EXPECT_TRUE(object->getString("string", stringValue));
+    EXPECT_EQ(object->size(), 5U);
+    auto stringValue = object->getString("string");
+    EXPECT_TRUE(!!stringValue);
     EXPECT_EQ(stringValue, "webkit");
 
     object->setObject("object", JSON::Object::create());
-    EXPECT_EQ(object->size(), 6);
-    RefPtr<JSON::Object> objectValue;
-    EXPECT_TRUE(object->getObject("object", objectValue));
-    EXPECT_EQ(objectValue->size(), 0);
+    EXPECT_EQ(object->size(), 6U);
+    auto objectValue = object->getObject("object");
+    EXPECT_TRUE(objectValue);
+    EXPECT_EQ(objectValue->size(), 0U);
 
     object->setArray("array", JSON::Array::create());
-    EXPECT_EQ(object->size(), 7);
-    RefPtr<JSON::Array> arrayValue;
-    EXPECT_TRUE(object->getArray("array", arrayValue));
+    EXPECT_EQ(object->size(), 7U);
+    auto arrayValue = object->getArray("array");
+    EXPECT_TRUE(arrayValue);
     EXPECT_EQ(arrayValue->length(), 0U);
 
     Vector<const char*> keys = { "null", "boolean", "integer", "double", "string", "object", "array" };
@@ -376,31 +362,31 @@ TEST(JSONObject, Basic)
     EXPECT_TRUE(keys.isEmpty());
 
     object->remove("null");
-    EXPECT_EQ(object->size(), 6);
+    EXPECT_EQ(object->size(), 6U);
     EXPECT_TRUE(object->find("null") == object->end());
 
     object->remove("boolean");
-    EXPECT_EQ(object->size(), 5);
+    EXPECT_EQ(object->size(), 5U);
     EXPECT_TRUE(object->find("boolean") == object->end());
 
     object->remove("integer");
-    EXPECT_EQ(object->size(), 4);
+    EXPECT_EQ(object->size(), 4U);
     EXPECT_TRUE(object->find("integer") == object->end());
 
     object->remove("double");
-    EXPECT_EQ(object->size(), 3);
+    EXPECT_EQ(object->size(), 3U);
     EXPECT_TRUE(object->find("double") == object->end());
 
     object->remove("string");
-    EXPECT_EQ(object->size(), 2);
+    EXPECT_EQ(object->size(), 2U);
     EXPECT_TRUE(object->find("string") == object->end());
 
     object->remove("object");
-    EXPECT_EQ(object->size(), 1);
+    EXPECT_EQ(object->size(), 1U);
     EXPECT_TRUE(object->find("object") == object->end());
 
     object->remove("array");
-    EXPECT_EQ(object->size(), 0);
+    EXPECT_EQ(object->size(), 0U);
     EXPECT_TRUE(object->find("array") == object->end());
 }
 
@@ -479,201 +465,204 @@ TEST(JSONValue, ToJSONString)
 TEST(JSONValue, ParseJSON)
 {
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_TRUE(JSON::Value::parseJSON("null", value));
+        auto value = JSON::Value::parseJSON("null");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->isNull());
     }
 
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_TRUE(JSON::Value::parseJSON("true", value));
+        auto value = JSON::Value::parseJSON("true");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Boolean);
-        bool booleanValue;
-        EXPECT_TRUE(value->asBoolean(booleanValue));
-        EXPECT_EQ(booleanValue, true);
+        auto booleanValue = value->asBoolean();
+        EXPECT_TRUE(booleanValue);
+        EXPECT_EQ(*booleanValue, true);
 
-        EXPECT_TRUE(JSON::Value::parseJSON("false", value));
+        value = JSON::Value::parseJSON("false");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Boolean);
-        EXPECT_TRUE(value->asBoolean(booleanValue));
-        EXPECT_EQ(booleanValue, false);
+        booleanValue = value->asBoolean();
+        EXPECT_TRUE(booleanValue);
+        EXPECT_EQ(*booleanValue, false);
     }
 
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_TRUE(JSON::Value::parseJSON("1", value));
+        auto value = JSON::Value::parseJSON("1");
+        EXPECT_TRUE(value);
         // Numbers are always parsed as double.
         EXPECT_TRUE(value->type() == JSON::Value::Type::Double);
-        double doubleValue;
-        EXPECT_TRUE(value->asDouble(doubleValue));
-        EXPECT_EQ(doubleValue, 1.0);
+        auto doubleValue = value->asDouble();
+        EXPECT_TRUE(doubleValue);
+        EXPECT_EQ(*doubleValue, 1.0);
 
-        EXPECT_TRUE(JSON::Value::parseJSON("1.5", value));
+        value = JSON::Value::parseJSON("1.5");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Double);
-        EXPECT_TRUE(value->asDouble(doubleValue));
-        EXPECT_EQ(doubleValue, 1.5);
+        doubleValue = value->asDouble();
+        EXPECT_TRUE(doubleValue);
+        EXPECT_EQ(*doubleValue, 1.5);
     }
 
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_TRUE(JSON::Value::parseJSON("\"string\"", value));
+        auto value = JSON::Value::parseJSON("\"string\"");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->type() == JSON::Value::Type::String);
-        String stringValue;
-        EXPECT_TRUE(value->asString(stringValue));
+        auto stringValue = value->asString();
+        EXPECT_TRUE(!!stringValue);
         EXPECT_EQ(stringValue, "string");
     }
 
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_TRUE(JSON::Value::parseJSON("[]", value));
+        auto value = JSON::Value::parseJSON("[]");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Array);
-        RefPtr<JSON::Array> arrayValue;
-        EXPECT_TRUE(value->asArray(arrayValue));
+        auto arrayValue = value->asArray();
+        EXPECT_TRUE(arrayValue);
         EXPECT_EQ(arrayValue->length(), 0U);
 
-        EXPECT_TRUE(JSON::Value::parseJSON("[null, 1 ,2.5,[{\"foo\":\"bar\"},{\"baz\":false}],\"webkit\"]", value));
+        value = JSON::Value::parseJSON("[null, 1 ,2.5,[{\"foo\":\"bar\"},{\"baz\":false}],\"webkit\"]");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Array);
-        EXPECT_TRUE(value->asArray(arrayValue));
+        arrayValue = value->asArray();
+        EXPECT_TRUE(arrayValue);
         EXPECT_EQ(arrayValue->length(), 5U);
         auto it = arrayValue->begin();
-        RefPtr<JSON::Value> itemValue = it->get();
-        EXPECT_TRUE(itemValue->type() == JSON::Value::Type::Null);
+        EXPECT_TRUE((*it)->type() == JSON::Value::Type::Null);
         ++it;
         EXPECT_FALSE(it == arrayValue->end());
 
-        itemValue = it->get();
-        EXPECT_TRUE(itemValue->type() == JSON::Value::Type::Double);
-        int integerValue;
-        EXPECT_TRUE(itemValue->asInteger(integerValue));
-        EXPECT_EQ(integerValue, 1);
+        EXPECT_TRUE((*it)->type() == JSON::Value::Type::Double);
+        auto integerValue = (*it)->asInteger();
+        EXPECT_TRUE(integerValue);
+        EXPECT_EQ(*integerValue, 1);
         ++it;
         EXPECT_FALSE(it == arrayValue->end());
 
-        itemValue = it->get();
-        EXPECT_TRUE(itemValue->type() == JSON::Value::Type::Double);
-        double doubleValue;
-        EXPECT_TRUE(itemValue->asDouble(doubleValue));
-        EXPECT_EQ(doubleValue, 2.5);
+        EXPECT_TRUE((*it)->type() == JSON::Value::Type::Double);
+        auto doubleValue = (*it)->asDouble();
+        EXPECT_TRUE(doubleValue);
+        EXPECT_EQ(*doubleValue, 2.5);
         ++it;
         EXPECT_FALSE(it == arrayValue->end());
 
-        itemValue = it->get();
-        EXPECT_TRUE(itemValue->type() == JSON::Value::Type::Array);
-        RefPtr<JSON::Array> subArrayValue;
-        EXPECT_TRUE(itemValue->asArray(subArrayValue));
+        EXPECT_TRUE((*it)->type() == JSON::Value::Type::Array);
+        auto subArrayValue = (*it)->asArray();
+        EXPECT_TRUE(subArrayValue);
         EXPECT_EQ(subArrayValue->length(), 2U);
-        RefPtr<JSON::Value> objectValue = subArrayValue->get(0);
+        auto objectValue = subArrayValue->get(0);
         EXPECT_TRUE(objectValue->type() == JSON::Value::Type::Object);
-        RefPtr<JSON::Object> object;
-        EXPECT_TRUE(objectValue->asObject(object));
-        EXPECT_EQ(object->size(), 1);
-        String stringValue;
-        EXPECT_TRUE(object->getString("foo", stringValue));
+        auto object = objectValue->asObject();
+        EXPECT_TRUE(object);
+        EXPECT_EQ(object->size(), 1U);
+        auto stringValue = object->getString("foo");
+        EXPECT_TRUE(!!stringValue);
         EXPECT_EQ(stringValue, "bar");
         objectValue = subArrayValue->get(1);
         EXPECT_TRUE(objectValue->type() == JSON::Value::Type::Object);
-        EXPECT_TRUE(objectValue->asObject(object));
-        EXPECT_EQ(object->size(), 1);
-        bool booleanValue;
-        EXPECT_TRUE(object->getBoolean("baz", booleanValue));
-        EXPECT_EQ(booleanValue, false);
+        object =objectValue->asObject();
+        EXPECT_TRUE(object);
+        EXPECT_EQ(object->size(), 1U);
+        auto booleanValue = object->getBoolean("baz");
+        EXPECT_TRUE(booleanValue);
+        EXPECT_EQ(*booleanValue, false);
         ++it;
         EXPECT_FALSE(it == arrayValue->end());
 
-        itemValue = it->get();
-        EXPECT_TRUE(itemValue->type() == JSON::Value::Type::String);
-        EXPECT_TRUE(itemValue->asString(stringValue));
+        EXPECT_TRUE((*it)->type() == JSON::Value::Type::String);
+        stringValue = (*it)->asString();
+        EXPECT_TRUE(!!stringValue);
         EXPECT_EQ(stringValue, "webkit");
         ++it;
         EXPECT_TRUE(it == arrayValue->end());
     }
 
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_TRUE(JSON::Value::parseJSON("{}", value));
+        auto value = JSON::Value::parseJSON("{}");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Object);
-        RefPtr<JSON::Object> objectValue;
-        EXPECT_TRUE(value->asObject(objectValue));
-        EXPECT_EQ(objectValue->size(), 0);
+        auto objectValue = value->asObject();
+        EXPECT_TRUE(objectValue);
+        EXPECT_EQ(objectValue->size(), 0U);
 
-        EXPECT_TRUE(JSON::Value::parseJSON("{\"foo\": \"bar\", \"baz\": {\"sub\":[null,false]}}", value));
+        value = JSON::Value::parseJSON("{\"foo\": \"bar\", \"baz\": {\"sub\":[null,false]}}");
+        EXPECT_TRUE(value);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Object);
-        EXPECT_TRUE(value->asObject(objectValue));
-        EXPECT_EQ(objectValue->size(), 2);
+        objectValue = value->asObject();
+        EXPECT_TRUE(objectValue);
+        EXPECT_EQ(objectValue->size(), 2U);
 
-        String stringValue;
-        EXPECT_TRUE(objectValue->getString("foo", stringValue));
+        auto stringValue = objectValue->getString("foo");
+        EXPECT_TRUE(!!stringValue);
         EXPECT_EQ(stringValue, "bar");
 
-        RefPtr<JSON::Object> object;
-        EXPECT_TRUE(objectValue->getObject("baz", object));
-        EXPECT_EQ(object->size(), 1);
-        RefPtr<JSON::Array> array;
-        EXPECT_TRUE(object->getArray("sub", array));
+        auto object = objectValue->getObject("baz");
+        EXPECT_TRUE(object);
+        EXPECT_EQ(object->size(), 1U);
+        auto array = object->getArray("sub");
+        EXPECT_TRUE(array);
         EXPECT_EQ(array->length(), 2U);
     }
 
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_FALSE(JSON::Value::parseJSON(",", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"foo", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("foo\"", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("TrUe", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("False", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("1.d", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("[1,]", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("1,2]", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("[1,2", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("[1 2]", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("[1,2]]", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("[1,2],", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("{foo:\"bar\"}", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("{\"foo\":bar}", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("{\"foo:\"bar\"}", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("{foo\":\"bar\"}", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("{{\"foo\":\"bar\"}}", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("{\"foo\":\"bar\"},", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("[{\"foo\":\"bar\"},{\"baz\":false},]", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("[{\"foo\":{\"baz\":false}]", value));
+        EXPECT_FALSE(JSON::Value::parseJSON(","));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"foo"));
+        EXPECT_FALSE(JSON::Value::parseJSON("foo\""));
+        EXPECT_FALSE(JSON::Value::parseJSON("TrUe"));
+        EXPECT_FALSE(JSON::Value::parseJSON("False"));
+        EXPECT_FALSE(JSON::Value::parseJSON("1.d"));
+        EXPECT_FALSE(JSON::Value::parseJSON("[1,]"));
+        EXPECT_FALSE(JSON::Value::parseJSON("1,2]"));
+        EXPECT_FALSE(JSON::Value::parseJSON("[1,2"));
+        EXPECT_FALSE(JSON::Value::parseJSON("[1 2]"));
+        EXPECT_FALSE(JSON::Value::parseJSON("[1,2]]"));
+        EXPECT_FALSE(JSON::Value::parseJSON("[1,2],"));
+        EXPECT_FALSE(JSON::Value::parseJSON("{foo:\"bar\"}"));
+        EXPECT_FALSE(JSON::Value::parseJSON("{\"foo\":bar}"));
+        EXPECT_FALSE(JSON::Value::parseJSON("{\"foo:\"bar\"}"));
+        EXPECT_FALSE(JSON::Value::parseJSON("{foo\":\"bar\"}"));
+        EXPECT_FALSE(JSON::Value::parseJSON("{{\"foo\":\"bar\"}}"));
+        EXPECT_FALSE(JSON::Value::parseJSON("{\"foo\":\"bar\"},"));
+        EXPECT_FALSE(JSON::Value::parseJSON("[{\"foo\":\"bar\"},{\"baz\":false},]"));
+        EXPECT_FALSE(JSON::Value::parseJSON("[{\"foo\":{\"baz\":false}]"));
     }
 
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_TRUE(JSON::Value::parseJSON(" \"foo\" \n", value));
-        String stringValue;
-        EXPECT_TRUE(value->asString(stringValue));
+        auto value = JSON::Value::parseJSON(" \"foo\" \n");
+        EXPECT_TRUE(value);
+        auto stringValue = value->asString();
+        EXPECT_TRUE(!!stringValue);
         EXPECT_EQ("foo", stringValue);
     }
 
     {
-        RefPtr<JSON::Value> value;
-        EXPECT_TRUE(JSON::Value::parseJSON(" 1", value));
-        EXPECT_TRUE(JSON::Value::parseJSON("\t1", value));
-        EXPECT_TRUE(JSON::Value::parseJSON("\n1", value));
-        EXPECT_TRUE(JSON::Value::parseJSON("1 ", value));
-        EXPECT_TRUE(JSON::Value::parseJSON("1\t", value));
-        EXPECT_TRUE(JSON::Value::parseJSON("1\n", value));
-        EXPECT_TRUE(JSON::Value::parseJSON(" 1 ", value));
-        EXPECT_TRUE(JSON::Value::parseJSON(" {} ", value));
-        EXPECT_TRUE(JSON::Value::parseJSON(" [] ", value));
-        EXPECT_TRUE(JSON::Value::parseJSON("\"\\xFF\"", value));
-        EXPECT_TRUE(JSON::Value::parseJSON("\"\\u1234\"", value));
+        EXPECT_TRUE(JSON::Value::parseJSON(" 1"));
+        EXPECT_TRUE(JSON::Value::parseJSON("\t1"));
+        EXPECT_TRUE(JSON::Value::parseJSON("\n1"));
+        EXPECT_TRUE(JSON::Value::parseJSON("1 "));
+        EXPECT_TRUE(JSON::Value::parseJSON("1\t"));
+        EXPECT_TRUE(JSON::Value::parseJSON("1\n"));
+        EXPECT_TRUE(JSON::Value::parseJSON(" 1 "));
+        EXPECT_TRUE(JSON::Value::parseJSON(" {} "));
+        EXPECT_TRUE(JSON::Value::parseJSON(" [] "));
+        EXPECT_TRUE(JSON::Value::parseJSON("\"\\xFF\""));
+        EXPECT_TRUE(JSON::Value::parseJSON("\"\\u1234\""));
 
-        EXPECT_FALSE(JSON::Value::parseJSON("1 1", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("{} {}", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("[] []", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF\"", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF \"", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1\"", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1   \"", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12\"", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12  \"", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123\"", value));
-        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123 \"", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("1 1"));
+        EXPECT_FALSE(JSON::Value::parseJSON("{} {}"));
+        EXPECT_FALSE(JSON::Value::parseJSON("[] []"));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\"));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF"));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF\""));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\xF \""));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1"));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1\""));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u1   \""));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12"));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12\""));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u12  \""));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123"));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123\""));
+        EXPECT_FALSE(JSON::Value::parseJSON("\"\\u123 \""));
     }
 }
 

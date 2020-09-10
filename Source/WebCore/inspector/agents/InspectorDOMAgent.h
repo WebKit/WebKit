@@ -76,14 +76,12 @@ class ShadowRoot;
 
 struct HighlightConfig;
 
-typedef String ErrorString;
-
 class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDOMAgent(PageAgentContext&, InspectorOverlay*);
-    ~InspectorDOMAgent() override;
+    ~InspectorDOMAgent();
 
     static String toErrorString(ExceptionCode);
     static String toErrorString(Exception&&);
@@ -102,62 +100,62 @@ public:
     static JSC::JSValue nodeAsScriptValue(JSC::JSGlobalObject&, Node*);
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // DOMBackendDispatcherHandler
-    void querySelector(ErrorString&, int nodeId, const String& selectors, int* elementId) override;
-    void querySelectorAll(ErrorString&, int nodeId, const String& selectors, RefPtr<JSON::ArrayOf<int>>& result) override;
-    void getDocument(ErrorString&, RefPtr<Inspector::Protocol::DOM::Node>& root) override;
-    void requestChildNodes(ErrorString&, int nodeId, const int* depth) override;
-    void setAttributeValue(ErrorString&, int elementId, const String& name, const String& value) override;
-    void setAttributesAsText(ErrorString&, int elementId, const String& text, const String* name) override;
-    void removeAttribute(ErrorString&, int elementId, const String& name) override;
-    void removeNode(ErrorString&, int nodeId) override;
-    void setNodeName(ErrorString&, int nodeId, const String& name, int* newId) override;
-    void getOuterHTML(ErrorString&, int nodeId, WTF::String* outerHTML) override;
-    void setOuterHTML(ErrorString&, int nodeId, const String& outerHTML) override;
-    void insertAdjacentHTML(ErrorString&, int nodeId, const String& position, const String& html) override;
-    void setNodeValue(ErrorString&, int nodeId, const String& value) override;
-    void getSupportedEventNames(ErrorString&, RefPtr<JSON::ArrayOf<String>>& eventNames) override;
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> querySelector(Inspector::Protocol::DOM::NodeId, const String& selector);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> querySelectorAll(Inspector::Protocol::DOM::NodeId, const String& selector);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Node>> getDocument();
+    Inspector::Protocol::ErrorStringOr<void> requestChildNodes(Inspector::Protocol::DOM::NodeId, Optional<int>&& depth);
+    Inspector::Protocol::ErrorStringOr<void> setAttributeValue(Inspector::Protocol::DOM::NodeId, const String& name, const String& value);
+    Inspector::Protocol::ErrorStringOr<void> setAttributesAsText(Inspector::Protocol::DOM::NodeId, const String& text, const String& name);
+    Inspector::Protocol::ErrorStringOr<void> removeAttribute(Inspector::Protocol::DOM::NodeId, const String& name);
+    Inspector::Protocol::ErrorStringOr<void> removeNode(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> setNodeName(Inspector::Protocol::DOM::NodeId, const String&);
+    Inspector::Protocol::ErrorStringOr<String> getOuterHTML(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<void> setOuterHTML(Inspector::Protocol::DOM::NodeId, const String&);
+    Inspector::Protocol::ErrorStringOr<void> insertAdjacentHTML(Inspector::Protocol::DOM::NodeId, const String& position, const String& html);
+    Inspector::Protocol::ErrorStringOr<void> setNodeValue(Inspector::Protocol::DOM::NodeId, const String&);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getSupportedEventNames();
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    void getDataBindingsForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>& dataArray) override;
-    void getAssociatedDataForNode(ErrorString&, int nodeId, Optional<String>& associatedData) override;
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>> getDataBindingsForNode(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<String> getAssociatedDataForNode(Inspector::Protocol::DOM::NodeId);
 #endif
-    void getEventListenersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
-    void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
-    void setBreakpointForEventListener(ErrorString&, int eventListenerId, const JSON::Object* options) final;
-    void removeBreakpointForEventListener(ErrorString&, int eventListenerId) override;
-    void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
-    void performSearch(ErrorString&, const String& query, const JSON::Array* nodeIds, const bool* caseSensitive, String* searchId, int* resultCount) override;
-    void getSearchResults(ErrorString&, const String& searchId, int fromIndex, int toIndex, RefPtr<JSON::ArrayOf<int>>&) override;
-    void discardSearchResults(ErrorString&, const String& searchId) override;
-    void resolveNode(ErrorString&, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
-    void getAttributes(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<String>>& result) override;
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>> getEventListenersForNode(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<void> setEventListenerDisabled(Inspector::Protocol::DOM::EventListenerId, bool);
+    Inspector::Protocol::ErrorStringOr<void> setBreakpointForEventListener(Inspector::Protocol::DOM::EventListenerId, RefPtr<JSON::Object>&& options);
+    Inspector::Protocol::ErrorStringOr<void> removeBreakpointForEventListener(Inspector::Protocol::DOM::EventListenerId);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::AccessibilityProperties>> getAccessibilityPropertiesForNode(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<std::tuple<String /* searchId */, int /* resultCount */>> performSearch(const String& query, RefPtr<JSON::Array>&& nodeIds, Optional<bool>&& caseSensitive);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> getSearchResults(const String& searchId, int fromIndex, int toIndex);
+    Inspector::Protocol::ErrorStringOr<void> discardSearchResults(const String& searchId);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveNode(Inspector::Protocol::DOM::NodeId, const String& objectGroup);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getAttributes(Inspector::Protocol::DOM::NodeId);
 #if PLATFORM(IOS_FAMILY)
-    void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig) override;
+    Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig);
 #else
-    void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig, const bool* showRulers) override;
+    Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig, Optional<bool>&& showRulers);
 #endif
-    void requestNode(ErrorString&, const String& objectId, int* nodeId) override;
-    void pushNodeByPathToFrontend(ErrorString&, const String& path, int* nodeId) override;
-    void hideHighlight(ErrorString&) override;
-    void highlightRect(ErrorString&, int x, int y, int width, int height, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates) override;
-    void highlightQuad(ErrorString&, const JSON::Array& quad, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates) override;
-    void highlightSelector(ErrorString&, const JSON::Object& highlightConfig, const String& selectorString, const String* frameId) override;
-    void highlightNode(ErrorString&, const JSON::Object& highlightConfig, const int* nodeId, const String* objectId) override;
-    void highlightNodeList(ErrorString&, const JSON::Array& nodeIds, const JSON::Object& highlightConfig) override;
-    void highlightFrame(ErrorString&, const String& frameId, const JSON::Object* color, const JSON::Object* outlineColor) override;
-    void moveTo(ErrorString&, int nodeId, int targetNodeId, const int* anchorNodeId, int* newNodeId) override;
-    void undo(ErrorString&) override;
-    void redo(ErrorString&) override;
-    void markUndoableState(ErrorString&) override;
-    void focus(ErrorString&, int nodeId) override;
-    void setInspectedNode(ErrorString&, int nodeId) override;
-    void setAllowEditingUserAgentShadowTrees(ErrorString&, bool allow) final;
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestNode(const Inspector::Protocol::Runtime::RemoteObjectId&);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> pushNodeByPathToFrontend(const String& path);
+    Inspector::Protocol::ErrorStringOr<void> hideHighlight();
+    Inspector::Protocol::ErrorStringOr<void> highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates);
+    Inspector::Protocol::ErrorStringOr<void> highlightQuad(Ref<JSON::Array>&& quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates);
+    Inspector::Protocol::ErrorStringOr<void> highlightSelector(Ref<JSON::Object>&& highlightConfig, const String& selectorString, const Inspector::Protocol::Network::FrameId&);
+    Inspector::Protocol::ErrorStringOr<void> highlightNode(Ref<JSON::Object>&& highlightConfig, Optional<Inspector::Protocol::DOM::NodeId>&&, const Inspector::Protocol::Runtime::RemoteObjectId&);
+    Inspector::Protocol::ErrorStringOr<void> highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig);
+    Inspector::Protocol::ErrorStringOr<void> highlightFrame(const Inspector::Protocol::Network::FrameId&, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> moveTo(Inspector::Protocol::DOM::NodeId nodeId, Inspector::Protocol::DOM::NodeId targetNodeId, Optional<Inspector::Protocol::DOM::NodeId>&& insertBeforeNodeId);
+    Inspector::Protocol::ErrorStringOr<void> undo();
+    Inspector::Protocol::ErrorStringOr<void> redo();
+    Inspector::Protocol::ErrorStringOr<void> markUndoableState();
+    Inspector::Protocol::ErrorStringOr<void> focus(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<void> setInspectedNode(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<void> setAllowEditingUserAgentShadowTrees(bool);
 
     // InspectorInstrumentation
-    int identifierForNode(Node&);
+    Inspector::Protocol::DOM::NodeId identifierForNode(Node&);
     void addEventListenersToNode(Node&);
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
@@ -185,12 +183,12 @@ public:
 
     void styleAttributeInvalidated(const Vector<Element*>& elements);
 
-    int pushNodeToFrontend(Node*);
-    int pushNodeToFrontend(ErrorString&, int documentNodeId, Node*);
-    int pushNodePathToFrontend(Node*);
-    int pushNodePathToFrontend(ErrorString, Node*);
-    Node* nodeForId(int nodeId);
-    int boundNodeId(const Node*);
+    Inspector::Protocol::DOM::NodeId pushNodeToFrontend(Node*);
+    Inspector::Protocol::DOM::NodeId pushNodeToFrontend(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId documentNodeId, Node*);
+    Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Node*);
+    Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Inspector::Protocol::ErrorString, Node*);
+    Node* nodeForId(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::DOM::NodeId boundNodeId(const Node*);
 
     RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
@@ -202,12 +200,12 @@ public:
     Vector<Document*> documents();
     void reset();
 
-    Node* assertNode(ErrorString&, int nodeId);
-    Element* assertElement(ErrorString&, int nodeId);
-    Document* assertDocument(ErrorString&, int nodeId);
+    Node* assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    Element* assertElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    Document* assertDocument(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
     RefPtr<JSC::Breakpoint> breakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    int idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    Inspector::Protocol::DOM::EventListenerId idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
 
 private:
 #if ENABLE(VIDEO)
@@ -215,33 +213,33 @@ private:
 #endif
 
     void highlightMousedOverNode();
-    void setSearchingForNode(ErrorString&, bool enabled, const JSON::Object* highlightConfig, bool showRulers);
-    std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString&, const JSON::Object* highlightInspectorObject);
+    void setSearchingForNode(Inspector::Protocol::ErrorString&, bool enabled, RefPtr<JSON::Object>&& highlightConfig, bool showRulers);
+    std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(Inspector::Protocol::ErrorString&, RefPtr<JSON::Object>&& highlightInspectorObject);
 
     // Node-related methods.
-    typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
-    int bind(Node*, NodeToIdMap*);
+    typedef HashMap<RefPtr<Node>, Inspector::Protocol::DOM::NodeId> NodeToIdMap;
+    Inspector::Protocol::DOM::NodeId bind(Node*, NodeToIdMap*);
     void unbind(Node*, NodeToIdMap*);
 
-    Node* assertEditableNode(ErrorString&, int nodeId);
-    Element* assertEditableElement(ErrorString&, int nodeId);
+    Node* assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    Element* assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
-    void pushChildNodesToFrontend(int nodeId, int depth = 1);
+    void pushChildNodesToFrontend(Inspector::Protocol::DOM::NodeId, int depth = 1);
 
     Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
     Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, EventTarget&, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
-    RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
-    void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<int>&);
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget&, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
+    Ref<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node&);
+    void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>&);
     
     Node* nodeForPath(const String& path);
-    Node* nodeForObjectId(const String& objectId);
+    Node* nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId&);
 
     void discardBindings();
 
-    void innerHighlightQuad(std::unique_ptr<FloatQuad>, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates);
+    void innerHighlightQuad(std::unique_ptr<FloatQuad>, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates);
 
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
@@ -251,10 +249,10 @@ private:
     NodeToIdMap m_documentNodeToIdMap;
     // Owns node mappings for dangling nodes.
     Vector<std::unique_ptr<NodeToIdMap>> m_danglingNodeToIdMaps;
-    HashMap<int, Node*> m_idToNode;
-    HashMap<int, NodeToIdMap*> m_idToNodesMap;
-    HashSet<int> m_childrenRequested;
-    int m_lastNodeId { 1 };
+    HashMap<Inspector::Protocol::DOM::NodeId, Node*> m_idToNode;
+    HashMap<Inspector::Protocol::DOM::NodeId, NodeToIdMap*> m_idToNodesMap;
+    HashSet<Inspector::Protocol::DOM::NodeId> m_childrenRequested;
+    Inspector::Protocol::DOM::NodeId m_lastNodeId { 1 };
     RefPtr<Document> m_document;
     typedef HashMap<String, Vector<RefPtr<Node>>> SearchResults;
     SearchResults m_searchResults;
@@ -285,7 +283,7 @@ private:
 #endif
 
     struct InspectorEventListener {
-        int identifier { 1 };
+        Inspector::Protocol::DOM::EventListenerId identifier { 1 };
         RefPtr<EventTarget> eventTarget;
         RefPtr<EventListener> eventListener;
         AtomString eventType;
@@ -295,7 +293,7 @@ private:
 
         InspectorEventListener() { }
 
-        InspectorEventListener(int identifier, EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
+        InspectorEventListener(Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
             : identifier(identifier)
             , eventTarget(&target)
             , eventListener(&listener)
@@ -321,8 +319,8 @@ private:
     friend class EventFiredCallback;
 
     HashSet<const Event*> m_dispatchedEvents;
-    HashMap<int, InspectorEventListener> m_eventListenerEntries;
-    int m_lastEventListenerId { 1 };
+    HashMap<Inspector::Protocol::DOM::EventListenerId, InspectorEventListener> m_eventListenerEntries;
+    Inspector::Protocol::DOM::EventListenerId m_lastEventListenerId { 1 };
 
     bool m_searchingForNode { false };
     bool m_suppressAttributeModifiedEvent { false };

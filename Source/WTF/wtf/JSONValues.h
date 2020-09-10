@@ -92,22 +92,15 @@ public:
     Type type() const { return m_type; }
     bool isNull() const { return m_type == Type::Null; }
 
-    bool asBoolean(bool&) const;
-    bool asInteger(int&) const;
-    bool asInteger(unsigned&) const;
-    bool asInteger(long&) const;
-    bool asInteger(long long&) const;
-    bool asInteger(unsigned long&) const;
-    bool asInteger(unsigned long long&) const;
-    bool asDouble(double&) const;
-    bool asDouble(float&) const;
-    bool asString(String&) const;
-    bool asValue(RefPtr<Value>&);
+    Optional<bool> asBoolean() const;
+    Optional<int> asInteger() const;
+    Optional<double> asDouble() const;
+    String asString() const;
+    RefPtr<Value> asValue();
+    virtual RefPtr<Object> asObject();
+    virtual RefPtr<Array> asArray();
 
-    virtual bool asObject(RefPtr<Object>&);
-    virtual bool asArray(RefPtr<Array>&);
-
-    static bool parseJSON(const String& jsonInput, RefPtr<Value>& output);
+    static RefPtr<Value> parseJSON(const String&);
     static void escapeString(StringBuilder&, StringView);
 
     String toJSONString() const;
@@ -172,94 +165,62 @@ private:
 
 class WTF_EXPORT_PRIVATE ObjectBase : public Value {
 private:
-    typedef HashMap<String, RefPtr<Value>> Dictionary;
+    using DataStorage = HashMap<String, Ref<Value>>;
+    using OrderStorage = Vector<String>;
 
 public:
-    typedef Dictionary::iterator iterator;
-    typedef Dictionary::const_iterator const_iterator;
+    using iterator = DataStorage::iterator;
+    using const_iterator = DataStorage::const_iterator;
 
-    Object* openAccessors();
+    RefPtr<Object> asObject() final;
 
     size_t memoryCost() const final;
 
 protected:
     ~ObjectBase() override;
 
-    bool asObject(RefPtr<Object>& output) override;
-
     // FIXME: use templates to reduce the amount of duplicated set*() methods.
     void setBoolean(const String& name, bool);
     void setInteger(const String& name, int);
     void setDouble(const String& name, double);
     void setString(const String& name, const String&);
-    void setValue(const String& name, RefPtr<Value>&&);
-    void setObject(const String& name, RefPtr<ObjectBase>&&);
-    void setArray(const String& name, RefPtr<ArrayBase>&&);
+    void setValue(const String& name, Ref<Value>&&);
+    void setObject(const String& name, Ref<ObjectBase>&&);
+    void setArray(const String& name, Ref<ArrayBase>&&);
 
     iterator find(const String& name);
     const_iterator find(const String& name) const;
 
-    // FIXME: use templates to reduce the amount of duplicated get*() methods.
-    bool getBoolean(const String& name, bool& output) const;
-    template<class T> bool getDouble(const String& name, T& output) const
-    {
-        RefPtr<Value> value;
-        if (!getValue(name, value))
-            return false;
-
-        return value->asDouble(output);
-    }
-    template<class T> bool getInteger(const String& name, T& output) const
-    {
-        RefPtr<Value> value;
-        if (!getValue(name, value))
-            return false;
-
-        return value->asInteger(output);
-    }
-
-    template<class T> Optional<T> getNumber(const String& name) const
-    {
-        RefPtr<Value> value;
-        if (!getValue(name, value))
-            return WTF::nullopt;
-
-        T result;
-        if (!value->asDouble(result))
-            return WTF::nullopt;
-
-        return result;
-    }
-
-    bool getString(const String& name, String& output) const;
-    bool getObject(const String& name, RefPtr<Object>&) const;
-    bool getArray(const String& name, RefPtr<Array>&) const;
-    bool getValue(const String& name, RefPtr<Value>&) const;
+    Optional<bool> getBoolean(const String& name) const;
+    Optional<double> getDouble(const String& name) const;
+    Optional<int> getInteger(const String& name) const;
+    String getString(const String& name) const;
+    RefPtr<Object> getObject(const String& name) const;
+    RefPtr<Array> getArray(const String& name) const;
+    RefPtr<Value> getValue(const String& name) const;
 
     void remove(const String& name);
 
-    void writeJSON(StringBuilder& output) const override;
+    void writeJSON(StringBuilder& output) const final;
 
     iterator begin() { return m_map.begin(); }
     iterator end() { return m_map.end(); }
     const_iterator begin() const { return m_map.begin(); }
     const_iterator end() const { return m_map.end(); }
 
-    int size() const { return m_map.size(); }
+    unsigned size() const { return m_map.size(); }
 
 protected:
     ObjectBase();
 
 private:
-    Dictionary m_map;
-    Vector<String> m_order;
+    DataStorage m_map;
+    OrderStorage m_order;
 };
 
 class Object : public ObjectBase {
 public:
     static WTF_EXPORT_PRIVATE Ref<Object> create();
-
-    using ObjectBase::asObject;
 
     // This class expected non-cyclic values, as we cannot serialize cycles in JSON.
     using ObjectBase::setBoolean;
@@ -274,7 +235,6 @@ public:
     using ObjectBase::getBoolean;
     using ObjectBase::getInteger;
     using ObjectBase::getDouble;
-    using ObjectBase::getNumber;
     using ObjectBase::getString;
     using ObjectBase::getObject;
     using ObjectBase::getArray;
@@ -290,48 +250,48 @@ public:
 
 
 class WTF_EXPORT_PRIVATE ArrayBase : public Value {
+private:
+    using DataStorage = Vector<Ref<Value>>;
+
 public:
-    typedef Vector<RefPtr<Value>>::iterator iterator;
-    typedef Vector<RefPtr<Value>>::const_iterator const_iterator;
+    using iterator = DataStorage::iterator;
+    using const_iterator = DataStorage::const_iterator;
 
-    unsigned length() const { return static_cast<unsigned>(m_map.size()); }
+    size_t length() const { return m_map.size(); }
 
-    RefPtr<Value> get(size_t index) const;
+    Ref<Value> get(size_t index) const;
 
     size_t memoryCost() const final;
 
+    RefPtr<Array> asArray() final;
+
 protected:
     ~ArrayBase() override;
-
-    bool asArray(RefPtr<Array>&) override;
 
     void pushBoolean(bool);
     void pushInteger(int);
     void pushDouble(double);
     void pushString(const String&);
-    void pushValue(RefPtr<Value>&&);
-    void pushObject(RefPtr<ObjectBase>&&);
-    void pushArray(RefPtr<ArrayBase>&&);
-
-    void writeJSON(StringBuilder& output) const override;
+    void pushValue(Ref<Value>&&);
+    void pushObject(Ref<ObjectBase>&&);
+    void pushArray(Ref<ArrayBase>&&);
 
     iterator begin() { return m_map.begin(); }
     iterator end() { return m_map.end(); }
     const_iterator begin() const { return m_map.begin(); }
     const_iterator end() const { return m_map.end(); }
+    void writeJSON(StringBuilder& output) const final;
 
 protected:
     ArrayBase();
 
 private:
-    Vector<RefPtr<Value>> m_map;
+    DataStorage m_map;
 };
 
-class Array : public ArrayBase {
+class Array final : public ArrayBase {
 public:
     static WTF_EXPORT_PRIVATE Ref<Array> create();
-
-    using ArrayBase::asArray;
 
     // This class expected non-cyclic values, as we cannot serialize cycles in JSON.
     using ArrayBase::pushBoolean;
@@ -347,7 +307,6 @@ public:
     using ArrayBase::begin;
     using ArrayBase::end;
 };
-
 
 inline ObjectBase::iterator ObjectBase::find(const String& name)
 {
@@ -379,23 +338,20 @@ inline void ObjectBase::setString(const String& name, const String& value)
     setValue(name, Value::create(value));
 }
 
-inline void ObjectBase::setValue(const String& name, RefPtr<Value>&& value)
+inline void ObjectBase::setValue(const String& name, Ref<Value>&& value)
 {
-    ASSERT(value);
     if (m_map.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
-inline void ObjectBase::setObject(const String& name, RefPtr<ObjectBase>&& value)
+inline void ObjectBase::setObject(const String& name, Ref<ObjectBase>&& value)
 {
-    ASSERT(value);
     if (m_map.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
-inline void ObjectBase::setArray(const String& name, RefPtr<ArrayBase>&& value)
+inline void ObjectBase::setArray(const String& name, Ref<ArrayBase>&& value)
 {
-    ASSERT(value);
     if (m_map.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
@@ -420,26 +376,23 @@ inline void ArrayBase::pushString(const String& value)
     m_map.append(Value::create(value));
 }
 
-inline void ArrayBase::pushValue(RefPtr<Value>&& value)
+inline void ArrayBase::pushValue(Ref<Value>&& value)
 {
-    ASSERT(value);
     m_map.append(WTFMove(value));
 }
 
-inline void ArrayBase::pushObject(RefPtr<ObjectBase>&& value)
+inline void ArrayBase::pushObject(Ref<ObjectBase>&& value)
 {
-    ASSERT(value);
     m_map.append(WTFMove(value));
 }
 
-inline void ArrayBase::pushArray(RefPtr<ArrayBase>&& value)
+inline void ArrayBase::pushArray(Ref<ArrayBase>&& value)
 {
-    ASSERT(value);
     m_map.append(WTFMove(value));
 }
 
 template<typename T>
-class ArrayOf : public ArrayBase {
+class ArrayOf final : public ArrayBase {
 private:
     ArrayOf() { }
 
@@ -450,7 +403,7 @@ private:
     }
 
 public:
-    void addItem(RefPtr<T>&& value)
+    void addItem(Ref<T>&& value)
     {
         castedArray().pushValue(WTFMove(value));
     }

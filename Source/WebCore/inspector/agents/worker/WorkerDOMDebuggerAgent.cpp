@@ -37,19 +37,20 @@ WorkerDOMDebuggerAgent::WorkerDOMDebuggerAgent(WorkerAgentContext& context, Insp
 
 WorkerDOMDebuggerAgent::~WorkerDOMDebuggerAgent() = default;
 
-void WorkerDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int /* nodeId */, const String& /* typeString */, const JSON::Object* /* optionsPayload */)
+Protocol::ErrorStringOr<void> WorkerDOMDebuggerAgent::setDOMBreakpoint(Protocol::DOM::NodeId, Protocol::DOMDebugger::DOMBreakpointType, RefPtr<JSON::Object>&& /* options */)
 {
-    errorString = "Not supported"_s;
+    return makeUnexpected("Not supported"_s);
 }
 
-void WorkerDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int /* nodeId */, const String& /* typeString */)
+Protocol::ErrorStringOr<void> WorkerDOMDebuggerAgent::removeDOMBreakpoint(Protocol::DOM::NodeId, Protocol::DOMDebugger::DOMBreakpointType)
 {
-    errorString = "Not supported"_s;
+    return makeUnexpected("Not supported"_s);
 }
 
-void WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint(ErrorString& errorString, RefPtr<JSC::Breakpoint>&&)
+bool WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint(Protocol::ErrorString& errorString, RefPtr<JSC::Breakpoint>&&)
 {
     errorString = "Not supported"_s;
+    return false;
 }
 
 } // namespace WebCore

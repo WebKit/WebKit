@@ -73,9 +73,9 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
         header_includes = [
             (["JavaScriptCore", "WebKit"], (self.model().framework.name, "%sProtocolObjects.h" % self.protocol_name())),
             (["JavaScriptCore", "WebKit"], ("WTF", "wtf/JSONValues.h")),
-            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/WTFString.h"))
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Optional.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/WTFString.h")),
         ]
-
         return '\n'.join(self.generate_includes_from_entries(header_includes))
 
     def _generate_anonymous_enum_for_parameter(self, parameter, event):
@@ -117,8 +117,13 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
         formal_parameters = []
         lines = []
         for parameter in event.event_parameters:
-            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_checked_formal_event_parameter(parameter), parameter.parameter_name))
-            if isinstance(parameter.type, EnumType) and parameter.parameter_name not in used_enum_names:
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+
+            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_event_parameter(parameter.type, parameter.is_optional), parameter_name))
+
+            if isinstance(parameter.type, EnumType) and parameter.type.is_anonymous and parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(parameter, event))
                 used_enum_names.add(parameter.parameter_name)
 

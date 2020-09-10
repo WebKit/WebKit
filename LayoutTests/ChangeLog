@@ -1,3 +1,17 @@
+2020-09-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: modernize generated backend protocol code
+        https://bugs.webkit.org/show_bug.cgi?id=216302
+        <rdar://problem/68547649>
+
+        Reviewed by Brian Burg.
+
+        * inspector/canvas/requestShaderSource-expected.txt:
+        * inspector/canvas/updateShader-expected.txt:
+        * inspector/console/webcore-logging-expected.txt:
+        * inspector/dom/highlightQuad-expected.txt:
+        * inspector/worker/dom-debugger-dom-breakpoints-expected.txt:
+
 2020-09-10  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r266634): [macOS release] 4 layout tests became flaky failures

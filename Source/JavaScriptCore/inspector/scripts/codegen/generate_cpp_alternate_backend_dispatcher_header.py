@@ -33,9 +33,11 @@ from string import Template
 try:
     from .cpp_generator import CppGenerator
     from .cpp_generator_templates import CppGeneratorTemplates as CppTemplates
+    from .models import EnumType, AliasedType
 except ValueError:
     from cpp_generator import CppGenerator
     from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
+    from models import EnumType, AliasedType
 
 log = logging.getLogger('global')
 
@@ -65,7 +67,7 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
     def _generate_secondary_header_includes(self):
         target_framework_name = self.model().framework.name
         header_includes = [
-            ([target_framework_name], (target_framework_name, "%sProtocolTypes.h" % self.protocol_name())),
+            ([target_framework_name], (target_framework_name, "%sProtocolObjects.h" % self.protocol_name())),
             (["JavaScriptCore"], ("JavaScriptCore", "inspector/InspectorFrontendRouter.h")),
             (["JavaScriptCore"], ("JavaScriptCore", "inspector/InspectorBackendDispatcher.h")),
         ]
@@ -91,9 +93,19 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
 
     def _generate_handler_declaration_for_command(self, command):
         lines = []
-        parameters = ['long callId']
-        for _parameter in command.call_parameters:
-            parameters.append('%s in_%s' % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
+        parameters = ['long protocol_requestId']
+        for parameter in command.call_parameters:
+            parameter_type = parameter.type
+            if isinstance(parameter_type, AliasedType):
+                parameter_type = parameter_type.aliased_type
+            if isinstance(parameter_type, EnumType):
+                parameter_type = parameter_type.primitive_type
+
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+
+            parameters.append('%s %s' % (CppGenerator.cpp_type_for_command_parameter(parameter_type, parameter.is_optional), parameter_name))
 
         command_args = {
             'commandName': command.command_name,

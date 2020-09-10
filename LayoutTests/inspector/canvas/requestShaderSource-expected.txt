@@ -4,5 +4,5 @@ Common tests for Canvas.requestShaderSource command.
 == Running test suite: Canvas.requestShaderSource
 -- Running test case: Canvas.requestShaderSource.ProgramId.Invalid
 PASS: Should produce an error.
-Error: Missing program for given programId
+Error: Unknown shaderType: INVALID_SHADER_TYPE
 

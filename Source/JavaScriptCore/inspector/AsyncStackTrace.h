@@ -51,7 +51,7 @@ public:
     void didDispatchAsyncCall();
     void didCancelAsyncCall();
 
-    RefPtr<Protocol::Console::StackTrace> buildInspectorObject() const;
+    Ref<Protocol::Console::StackTrace> buildInspectorObject() const;
 
     ~AsyncStackTrace();
 

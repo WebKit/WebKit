@@ -37,21 +37,20 @@
 namespace WebCore {
 
 class WorkerGlobalScope;
-typedef String ErrorString;
 
 class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_NONCOPYABLE(WorkerRuntimeAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerRuntimeAgent(WorkerAgentContext&);
-    ~WorkerRuntimeAgent() override;
+    ~WorkerRuntimeAgent();
 
 private:
-    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
+    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
     // We don't need to mute console for workers.
-    void muteConsole() override { }
-    void unmuteConsole() override { }
+    void muteConsole() { }
+    void unmuteConsole() { }
 
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
     WorkerGlobalScope& m_workerGlobalScope;

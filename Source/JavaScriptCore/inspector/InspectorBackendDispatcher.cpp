@@ -68,7 +68,7 @@ void BackendDispatcher::CallbackBase::sendFailure(const ErrorString& error)
     m_backendDispatcher->sendPendingErrors();
 }
 
-void BackendDispatcher::CallbackBase::sendSuccess(RefPtr<JSON::Object>&& partialMessage)
+void BackendDispatcher::CallbackBase::sendSuccess(Ref<JSON::Object>&& partialMessage)
 {
     if (m_alreadySent)
         return;
@@ -107,7 +107,7 @@ void BackendDispatcher::dispatch(const String& message)
 
     ASSERT(!m_protocolErrors.size());
 
-    long requestId = 0;
+    int requestId = 0;
     RefPtr<JSON::Object> messageObject;
 
     {
@@ -115,46 +115,50 @@ void BackendDispatcher::dispatch(const String& message)
         // the outer request's id just because the inner request is bogus.
         SetForScope<Optional<long>> scopedRequestId(m_currentRequestId, WTF::nullopt);
 
-        RefPtr<JSON::Value> parsedMessage;
-        if (!JSON::Value::parseJSON(message, parsedMessage)) {
+        auto parsedMessage = JSON::Value::parseJSON(message);
+        if (!parsedMessage) {
             reportProtocolError(ParseError, "Message must be in JSON format"_s);
             sendPendingErrors();
             return;
         }
 
-        if (!parsedMessage->asObject(messageObject)) {
+        messageObject = parsedMessage->asObject();
+        if (!messageObject) {
             reportProtocolError(InvalidRequest, "Message must be a JSONified object"_s);
             sendPendingErrors();
             return;
         }
 
-        RefPtr<JSON::Value> requestIdValue;
-        if (!messageObject->getValue("id"_s, requestIdValue)) {
+        auto requestIdValue = messageObject->getValue("id"_s);
+        if (!requestIdValue) {
             reportProtocolError(InvalidRequest, "'id' property was not found"_s);
             sendPendingErrors();
             return;
         }
 
-        if (!requestIdValue->asInteger(requestId)) {
+        auto requestIdInt = requestIdValue->asInteger();
+        if (!requestIdInt) {
             reportProtocolError(InvalidRequest, "The type of 'id' property must be integer"_s);
             sendPendingErrors();
             return;
         }
+
+        requestId = *requestIdInt;
     }
 
     {
         // We could be called re-entrantly from a nested run loop, so restore the previous id.
         SetForScope<Optional<long>> scopedRequestId(m_currentRequestId, requestId);
 
-        RefPtr<JSON::Value> methodValue;
-        if (!messageObject->getValue("method"_s, methodValue)) {
+        auto methodValue = messageObject->getValue("method"_s);
+        if (!methodValue) {
             reportProtocolError(InvalidRequest, "'method' property wasn't found"_s);
             sendPendingErrors();
             return;
         }
 
-        String methodString;
-        if (!methodValue->asString(methodString)) {
+        auto methodString = methodValue->asString();
+        if (!methodString) {
             reportProtocolError(InvalidRequest, "The type of 'method' property must be string"_s);
             sendPendingErrors();
             return;
@@ -184,12 +188,12 @@ void BackendDispatcher::dispatch(const String& message)
 }
 
 // FIXME: remove this function when legacy InspectorObject symbols are no longer needed <http://webkit.org/b/179847>.
-void BackendDispatcher::sendResponse(long requestId, RefPtr<JSON::Object>&& result)
+void BackendDispatcher::sendResponse(long requestId, Ref<JSON::Object>&& result)
 {
     sendResponse(requestId, WTFMove(result), false);
 }
 
-void BackendDispatcher::sendResponse(long requestId, RefPtr<JSON::Object>&& result, bool)
+void BackendDispatcher::sendResponse(long requestId, Ref<JSON::Object>&& result, bool)
 {
     ASSERT(!m_protocolErrors.size());
 
@@ -270,74 +274,64 @@ void BackendDispatcher::reportProtocolError(Optional<long> relatedRequestId, Com
 }
 
 template<typename T>
-T BackendDispatcher::getPropertyValue(JSON::Object* object, const String& name, bool* out_optionalValueFound, T defaultValue, std::function<bool(JSON::Value&, T&)> asMethod, const char* typeName)
+T BackendDispatcher::getPropertyValue(JSON::Object* params, const String& name, bool required, std::function<T(JSON::Value&)> converter, const char* typeName)
 {
-    T result(defaultValue);
-    // out_optionalValueFound signals to the caller whether an optional property was found.
-    // if out_optionalValueFound == nullptr, then this is a required property.
-    if (out_optionalValueFound)
-        *out_optionalValueFound = false;
+    T result;
 
-    if (!object) {
-        if (!out_optionalValueFound)
+    if (!params) {
+        if (required)
             reportProtocolError(BackendDispatcher::InvalidParams, makeString("'params' object must contain required parameter '", name, "' with type '", typeName, "'."));
         return result;
     }
 
-    auto findResult = object->find(name);
-    if (findResult == object->end()) {
-        if (!out_optionalValueFound)
+    auto findResult = params->find(name);
+    if (findResult == params->end()) {
+        if (required)
             reportProtocolError(BackendDispatcher::InvalidParams, makeString("Parameter '", name, "' with type '", typeName, "' was not found."));
         return result;
     }
 
-    if (!asMethod(*findResult->value, result)) {
-        reportProtocolError(BackendDispatcher::InvalidParams, makeString("Parameter '", name, "' has wrong type. It must be '", typeName, "'."));
-        return result;
-    }
+    result = converter(findResult->value);
 
-    if (out_optionalValueFound)
-        *out_optionalValueFound = true;
+    if (!result)
+        reportProtocolError(BackendDispatcher::InvalidParams, makeString("Parameter '", name, "' has wrong type. It must be '", typeName, "'."));
 
     return result;
 }
 
-static bool castToInteger(JSON::Value& value, int& result) { return value.asInteger(result); }
-static bool castToNumber(JSON::Value& value, double& result) { return value.asDouble(result); }
-
-int BackendDispatcher::getInteger(JSON::Object* object, const String& name, bool* valueFound)
+Optional<bool> BackendDispatcher::getBoolean(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<int>(object, name, valueFound, 0, &castToInteger, "Integer");
+    return getPropertyValue<Optional<bool>>(params, name, required, &JSON::Value::asBoolean, "Boolean");
 }
 
-double BackendDispatcher::getDouble(JSON::Object* object, const String& name, bool* valueFound)
+Optional<int> BackendDispatcher::getInteger(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<double>(object, name, valueFound, 0, &castToNumber, "Number");
+    return getPropertyValue<Optional<int>>(params, name, required, &JSON::Value::asInteger, "Integer");
 }
 
-String BackendDispatcher::getString(JSON::Object* object, const String& name, bool* valueFound)
+Optional<double> BackendDispatcher::getDouble(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<String>(object, name, valueFound, "", &JSON::Value::asString, "String");
+    return getPropertyValue<Optional<double>>(params, name, required, &JSON::Value::asDouble, "Number");
 }
 
-bool BackendDispatcher::getBoolean(JSON::Object* object, const String& name, bool* valueFound)
+String BackendDispatcher::getString(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<bool>(object, name, valueFound, false, &JSON::Value::asBoolean, "Boolean");
+    return getPropertyValue<String>(params, name, required, &JSON::Value::asString, "String");
 }
 
-RefPtr<JSON::Object> BackendDispatcher::getObject(JSON::Object* object, const String& name, bool* valueFound)
+RefPtr<JSON::Value> BackendDispatcher::getValue(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<RefPtr<JSON::Object>>(object, name, valueFound, nullptr, &JSON::Value::asObject, "Object");
+    return getPropertyValue<RefPtr<JSON::Value>>(params, name, required, &JSON::Value::asValue, "Value");
 }
 
-RefPtr<JSON::Array> BackendDispatcher::getArray(JSON::Object* object, const String& name, bool* valueFound)
+RefPtr<JSON::Object> BackendDispatcher::getObject(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<RefPtr<JSON::Array>>(object, name, valueFound, nullptr, &JSON::Value::asArray, "Array");
+    return getPropertyValue<RefPtr<JSON::Object>>(params, name, required, &JSON::Value::asObject, "Object");
 }
 
-RefPtr<JSON::Value> BackendDispatcher::getValue(JSON::Object* object, const String& name, bool* valueFound)
+RefPtr<JSON::Array> BackendDispatcher::getArray(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<RefPtr<JSON::Value>>(object, name, valueFound, nullptr, &JSON::Value::asValue, "Value");
+    return getPropertyValue<RefPtr<JSON::Array>>(params, name, required, &JSON::Value::asArray, "Array");
 }
 
 } // namespace Inspector

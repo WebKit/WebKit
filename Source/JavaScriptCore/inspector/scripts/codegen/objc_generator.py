@@ -263,7 +263,7 @@ class ObjCGenerator(Generator):
         if (isinstance(_type, EnumType)):
             return ObjCGenerator.protocol_type_for_type(_type.primitive_type)
         if (isinstance(_type, ObjectType)):
-            return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            return 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
         if (isinstance(_type, ArrayType)):
             sub_type = ObjCGenerator.protocol_type_for_type(_type.element_type)
             return 'JSON::ArrayOf<%s>' % sub_type
@@ -353,8 +353,6 @@ class ObjCGenerator(Generator):
         if (isinstance(_type, PrimitiveType)):
             return self.objc_type_for_raw_name(_type.raw_name())
         if (isinstance(_type, EnumType)):
-            if _type.is_anonymous:
-                return self.objc_enum_name_for_anonymous_enum_parameter(domain, event_or_command_name, parameter)
             return self.objc_enum_name_for_non_anonymous_enum(_type)
         if (isinstance(_type, ObjectType)):
             return self.objc_name_for_type(_type) + ' *'
@@ -398,8 +396,6 @@ class ObjCGenerator(Generator):
 
     def objc_protocol_import_expression_for_parameter(self, name, domain, event_or_command_name, parameter):
         if isinstance(parameter.type, EnumType):
-            if parameter.type.is_anonymous:
-                return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_anonymous_enum_parameter(domain, event_or_command_name, parameter), name)
             return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_non_anonymous_enum(parameter.type), name)
         return self.objc_protocol_import_expression_for_variable(parameter.type, name)
 

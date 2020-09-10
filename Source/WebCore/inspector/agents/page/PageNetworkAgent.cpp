@@ -47,7 +47,7 @@ PageNetworkAgent::PageNetworkAgent(PageAgentContext& context)
 
 PageNetworkAgent::~PageNetworkAgent() = default;
 
-String PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
+Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 {
     if (loader) {
         if (auto* pageAgent = m_instrumentingAgents.enabledPageAgent())
@@ -56,7 +56,7 @@ String PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
     return { };
 }
 
-String PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
+Protocol::Network::FrameId PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
 {
     if (loader) {
         if (auto* pageAgent = m_instrumentingAgents.enabledPageAgent())
@@ -91,12 +91,12 @@ Vector<WebSocket*> PageNetworkAgent::activeWebSockets(const LockHolder& lock)
     return webSockets;
 }
 
-void PageNetworkAgent::setResourceCachingDisabled(bool disabled)
+void PageNetworkAgent::setResourceCachingDisabledInternal(bool disabled)
 {
     m_inspectedPage.setResourceCachingDisabledByWebInspector(disabled);
 }
 
-ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(ErrorString& errorString, const String& frameId)
+ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
 {
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent) {

@@ -55,10 +55,9 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         return [domain for domain in Generator.domains_to_generate(self) if len(self.commands_for_domain(domain)) > 0]
 
     def generate_output(self):
-        typedefs = [('String', 'ErrorString')]
         header_args = {
             'includes': self._generate_secondary_header_includes(),
-            'typedefs': '\n'.join(['typedef %s %s;' % typedef for typedef in typedefs]),
+            'typedefs': '',
         }
 
         domains = self.domains_to_generate()
@@ -79,9 +78,11 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         header_includes = [
             (["JavaScriptCore", "WebKit"], (self.model().framework.name, "%sProtocolObjects.h" % self.protocol_name())),
             (["JavaScriptCore", "WebKit"], ("JavaScriptCore", "inspector/InspectorBackendDispatcher.h")),
-            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/WTFString.h"))
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Expected.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Optional.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/WTFString.h")),
+            (["JavaScriptCore", "WebKit"], ("std", "tuple")),
         ]
-
         return '\n'.join(self.generate_includes_from_entries(header_includes))
 
     def _generate_alternate_handler_forward_declarations_for_domains(self, domains):
@@ -101,11 +102,9 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         if exportMacro is not None:
             classComponents.append(exportMacro)
 
-        used_enum_names = set()
-
         command_declarations = []
         for command in self.commands_for_domain(domain):
-            command_declarations.append(self._generate_handler_declaration_for_command(command, used_enum_names))
+            command_declarations.append(self._generate_handler_declaration_for_command(command))
 
         handler_args = {
             'classAndExportMacro': " ".join(classComponents),
@@ -115,69 +114,56 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
 
         return self.wrap_with_guard_for_condition(domain.condition, Template(CppTemplates.BackendDispatcherHeaderDomainHandlerDeclaration).substitute(None, **handler_args))
 
-    def _generate_anonymous_enum_for_parameter(self, parameter, command):
-        enum_args = {
-            'parameterName': parameter.parameter_name,
-            'commandName': command.command_name
-        }
-
-        lines = []
-        lines.append('    // Named after parameter \'%(parameterName)s\' while generating command/event %(commandName)s.' % enum_args)
-        lines.append('    enum class %s {' % ucfirst(parameter.parameter_name))
-        for enum_value in parameter.type.enum_values():
-            lines.append('        %s = %d,' % (Generator.stylized_name_for_enum_value(enum_value), self.encoding_for_enum_value(enum_value)))
-        lines.append('    }; // enum class %s' % ucfirst(parameter.parameter_name))
-        return '\n'.join(lines)
-
-    def _generate_handler_declaration_for_command(self, command, used_enum_names):
+    def _generate_handler_declaration_for_command(self, command):
         if command.is_async:
             return self._generate_async_handler_declaration_for_command(command)
 
         lines = []
-        parameters = ['ErrorString&']
-        for _parameter in command.call_parameters:
-            parameter_name = 'in_' + _parameter.parameter_name
-            if _parameter.is_optional:
+
+        parameters = []
+        for parameter in command.call_parameters:
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
+            parameters.append("%s %s" % (CppGenerator.cpp_type_for_command_parameter(parameter.type, parameter.is_optional), parameter_name))
 
-            parameters.append("%s %s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), parameter_name))
-
-            if isinstance(_parameter.type, EnumType) and _parameter.type.is_anonymous and _parameter.parameter_name not in used_enum_names:
-                lines.append(self._generate_anonymous_enum_for_parameter(_parameter, command))
-                used_enum_names.add(_parameter.parameter_name)
-
-        for _parameter in command.return_parameters:
-            parameter_name = 'out_' + _parameter.parameter_name
-            if _parameter.is_optional:
+        returns = []
+        for parameter in command.return_parameters:
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
-            parameters.append("%s %s" % (CppGenerator.cpp_type_for_formal_out_parameter(_parameter), parameter_name))
-
-            if isinstance(_parameter.type, EnumType) and _parameter.type.is_anonymous and _parameter.parameter_name not in used_enum_names:
-                lines.append(self._generate_anonymous_enum_for_parameter(_parameter, command))
-                used_enum_names.add(_parameter.parameter_name)
+            returns.append('%s /* %s */' % (CppGenerator.cpp_type_for_command_return_declaration(parameter.type, parameter.is_optional), parameter_name))
 
         command_args = {
             'commandName': command.command_name,
-            'parameters': ", ".join(parameters)
+            'parameters': ", ".join(parameters),
+            'returns': ", ".join(returns),
         }
-        lines.append('    virtual void %(commandName)s(%(parameters)s) = 0;' % command_args)
+        if len(returns) == 1:
+            lines.append('    virtual Protocol::ErrorStringOr<%(returns)s> %(commandName)s(%(parameters)s) = 0;' % command_args)
+        elif len(returns) > 1:
+            lines.append('    virtual Protocol::ErrorStringOr<std::tuple<%(returns)s>> %(commandName)s(%(parameters)s) = 0;' % command_args)
+        else:
+            lines.append('    virtual Protocol::ErrorStringOr<void> %(commandName)s(%(parameters)s) = 0;' % command_args)
         return self.wrap_with_guard_for_condition(command.condition, '\n'.join(lines))
 
     def _generate_async_handler_declaration_for_command(self, command):
         callbackName = "%sCallback" % ucfirst(command.command_name)
 
-        in_parameters = []
-        for _parameter in command.call_parameters:
-            parameter_name = 'in_' + _parameter.parameter_name
-            if _parameter.is_optional:
+        parameters = []
+        for parameter in command.call_parameters:
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
+            parameters.append("%s %s" % (CppGenerator.cpp_type_for_command_parameter(parameter.type, parameter.is_optional), parameter_name))
+        parameters.append("Ref<%s>&&" % callbackName)
 
-            in_parameters.append("%s %s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), parameter_name))
-        in_parameters.append("Ref<%s>&& callback" % callbackName)
-
-        out_parameters = []
-        for _parameter in command.return_parameters:
-            out_parameters.append("%s %s" % (CppGenerator.cpp_type_for_formal_async_parameter(_parameter), _parameter.parameter_name))
+        returns = []
+        for parameter in command.return_parameters:
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+            returns.append("%s %s" % (CppGenerator.cpp_type_for_command_return_argument(parameter.type, parameter.is_optional), parameter_name))
 
         class_components = ['class']
         export_macro = self.model().framework.setting('export_macro', None)
@@ -188,8 +174,8 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             'classAndExportMacro': ' '.join(class_components),
             'callbackName': callbackName,
             'commandName': command.command_name,
-            'inParameters': ", ".join(in_parameters),
-            'outParameters': ", ".join(out_parameters),
+            'parameters': ", ".join(parameters),
+            'returns': ", ".join(returns),
         }
 
         return self.wrap_with_guard_for_condition(command.condition, Template(CppTemplates.BackendDispatcherHeaderAsyncCommandDeclaration).substitute(None, **command_args))
@@ -223,4 +209,4 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         return self.wrap_with_guard_for_condition(domain.condition, Template(CppTemplates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
 
     def _generate_dispatcher_declaration_for_command(self, command):
-        return self.wrap_with_guard_for_condition(command.condition, "    void %s(long requestId, RefPtr<JSON::Object>&& parameters);" % command.command_name)
+        return self.wrap_with_guard_for_condition(command.condition, "    void %s(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters);" % command.command_name)

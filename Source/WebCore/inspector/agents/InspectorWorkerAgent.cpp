@@ -53,55 +53,56 @@ void InspectorWorkerAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     m_instrumentingAgents.setPersistentWorkerAgent(nullptr);
 
-    ErrorString ignored;
-    disable(ignored);
+    disable();
 }
 
-void InspectorWorkerAgent::enable(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorWorkerAgent::enable()
 {
     if (m_enabled)
-        return;
+        return { };
 
     m_enabled = true;
 
     connectToAllWorkerInspectorProxiesForPage();
+
+    return { };
 }
 
-void InspectorWorkerAgent::disable(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorWorkerAgent::disable()
 {
     if (!m_enabled)
-        return;
+        return { };
 
     m_enabled = false;
 
     disconnectFromAllWorkerInspectorProxies();
+
+    return { };
 }
 
-void InspectorWorkerAgent::initialized(ErrorString& errorString, const String& workerId)
+Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const String& workerId)
 {
     WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
-    if (!proxy) {
-        errorString = "Missing worker for given workerId"_s;
-        return;
-    }
+    if (!proxy)
+        return makeUnexpected("Missing worker for given workerId"_s);
 
     proxy->resumeWorkerIfPaused();
+
+    return { };
 }
 
-void InspectorWorkerAgent::sendMessageToWorker(ErrorString& errorString, const String& workerId, const String& message)
+Protocol::ErrorStringOr<void> InspectorWorkerAgent::sendMessageToWorker(const String& workerId, const String& message)
 {
-    if (!m_enabled) {
-        errorString = "Worker domain must be enabled"_s;
-        return;
-    }
+    if (!m_enabled)
+        return makeUnexpected("Worker domain must be enabled"_s);
 
     WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
-    if (!proxy) {
-        errorString = "Missing worker for given workerId"_s;
-        return;
-    }
+    if (!proxy)
+        return makeUnexpected("Missing worker for given workerId"_s);
 
     proxy->sendMessageToWorkerInspectorController(message);
+
+    return { };
 }
 
 void InspectorWorkerAgent::sendMessageFromWorkerToFrontend(WorkerInspectorProxy& proxy, const String& message)

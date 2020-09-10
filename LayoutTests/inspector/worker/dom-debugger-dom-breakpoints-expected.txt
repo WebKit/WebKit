@@ -4,9 +4,9 @@ Tests for DOM breakpoint functionality (DOMDebugger) in a Worker.
 == Running test suite: Worker.DOMDebugger.DOMBreakpoint
 -- Running test case: Worker.DOMDebugger.DOMBreakpoint.setDOMBreakpoint
 PASS: Should produce an exception.
-Error: Not supported
+Error: Unknown type: INVALID
 
 -- Running test case: Worker.DOMDebugger.DOMBreakpoint.removeDOMBreakpoint
 PASS: Should produce an exception.
-Error: Not supported
+Error: Unknown type: INVALID
 

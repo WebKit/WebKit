@@ -73,9 +73,6 @@ _TYPES_NEEDING_RUNTIME_CASTS = set([
     "Runtime.CollectionEntry",
     "Debugger.FunctionDetails",
     "Debugger.CallFrame",
-    "Canvas.TraceLog",
-    "Canvas.ResourceInfo",
-    "Canvas.ResourceState",
     # This should be a temporary hack. TimelineEvent should be created via generated C++ API.
     "Timeline.TimelineEvent",
     # For testing purposes only.
@@ -85,10 +82,19 @@ _TYPES_NEEDING_RUNTIME_CASTS = set([
 # FIXME: This should be converted into a property in JSON.
 _TYPES_WITH_OPEN_FIELDS = {
     "Timeline.TimelineEvent": [],
-    # InspectorStyleSheet not only creates this property but wants to read it and modify it.
-    "CSS.CSSProperty": [],
-    # InspectorNetworkAgent needs to update mime-type.
-    "Network.Response": ["mimeType"],
+    "CSS.CSSProperty": ["priority", "parsedOk", "status"],
+    "DOM.HighlightConfig": [],
+    "DOM.RGBAColor": [],
+    "DOMStorage.StorageId": [],
+    "Debugger.BreakpointAction": [],
+    "Debugger.BreakpointOptions": [],
+    "Debugger.Location": [],
+    "IndexedDB.Key": [],
+    "IndexedDB.KeyRange": [],
+    "Network.Response": ["status", "statusText", "mimeType", "source"],
+    "Page.Cookie": [],
+    "Runtime.CallArgument": ["objectId"],
+    "Runtime.TypeLocation": [],
     # For testing purposes only.
     "Test.OpenParameters": ["alpha"],
 }
@@ -134,7 +140,7 @@ class Generator:
             if self.model().framework.name not in allowed_frameworks:
                 continue
 
-            if framework_name == "WTF":
+            if framework_name == "WTF" or framework_name == "std":
                 includes.add("#include <%s>" % header_path)
             elif self.model().framework.name != framework_name:
                 includes.add("#include <%s/%s>" % (framework_name, os.path.basename(header_path)))

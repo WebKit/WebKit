@@ -1,3 +1,230 @@
+2020-09-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: modernize generated backend protocol code
+        https://bugs.webkit.org/show_bug.cgi?id=216302
+        <rdar://problem/68547649>
+
+        Reviewed by Brian Burg.
+
+        Previously, the inspector protocol was expressed in code in a somewhat confusing way:
+         - the error string was the first argument
+         - required parameters were `T` or `const T&`
+         - optional parameters were `const T*`
+         - enum parameters were the underlying type requiring the backend dispatcher handler to
+           process it instead of it being preprocessed
+         - required returns were `T&`
+         - optional returns were `T*`
+        This doesn't really make for easy/obvious reading of code since the order of arguments is
+        not weird (e.g. error string first), and that there are references/pointers to primitive
+        types.
+
+        This patch cleans up the generated inspector protocol code to be:
+         - required parameters are `T` or `Ref<T>&&`
+         - optional parameters are `Optional<T>&&` or `RefPtr<T>&&`
+         - enum parameters are preprocessed and passed to the backend dispatcher handler if valid
+         - synchronous commands return `Expected<X, ErrorString>` using the same types/rules above
+           where `X` is either a single return or a `std::tuple` of multiple returns
+
+        The one exception to the above is `String`, which is already a tri-state of `nullString()`,
+        `emptyString()`, and something set, so there's no need to use `Optional<String>`.
+
+        Also use `Protocol` objects/`typedefs` wherever possible to further relate the protocol
+        JSON and the actual backend dispatcher handler implementation.
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.generate_includes_from_entries):
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.helpers_namespace):
+        (CppGenerator.cpp_getter_method_for_type):
+        (CppGenerator.cpp_setter_method_for_type):
+        (CppGenerator.cpp_protocol_type_for_type):
+        (CppGenerator.cpp_type_for_type_member_argument): Added.
+        (CppGenerator.cpp_type_for_command_parameter): Added.
+        (CppGenerator.cpp_type_for_command_return_declaration): Added.
+        (CppGenerator.cpp_type_for_command_return_argument): Added.
+        (CppGenerator.cpp_type_for_event_parameter): Added.
+        (CppGenerator.cpp_type_for_enum): Added.
+        (CppGenerator.should_move_argument): Added.
+        (CppGenerator.should_release_argument): Added.
+        (CppGenerator.should_dereference_argument): Added.
+        (CppGenerator.cpp_protocol_type_for_type_member): Deleted.
+        (CppGenerator.cpp_type_for_unchecked_formal_in_parameter): Deleted.
+        (CppGenerator.cpp_type_for_checked_formal_event_parameter): Deleted.
+        (CppGenerator.cpp_type_for_type_member): Deleted.
+        (CppGenerator.cpp_type_for_type_with_name): Deleted.
+        (CppGenerator.cpp_type_for_formal_out_parameter): Deleted.
+        (CppGenerator.cpp_type_for_formal_async_parameter): Deleted.
+        (CppGenerator.cpp_type_for_stack_in_parameter): Deleted.
+        (CppGenerator.cpp_type_for_stack_out_parameter): Deleted.
+        (CppGenerator.cpp_assertion_method_for_type_member): Deleted.
+        (CppGenerator.cpp_assertion_method_for_type_member.assertion_method_for_type): Deleted.
+        (CppGenerator.should_use_wrapper_for_return_type): Deleted.
+        (CppGenerator.should_use_references_for_type): Deleted.
+        (CppGenerator.should_pass_by_copy_for_return_type): Deleted.
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator._generate_secondary_header_includes):
+        (CppAlternateBackendDispatcherHeaderGenerator._generate_handler_declaration_for_command):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator.generate_output):
+        (CppBackendDispatcherHeaderGenerator._generate_secondary_header_includes):
+        (CppBackendDispatcherHeaderGenerator._generate_handler_declarations_for_domain):
+        (CppBackendDispatcherHeaderGenerator._generate_handler_declaration_for_command):
+        (CppBackendDispatcherHeaderGenerator._generate_async_handler_declaration_for_command):
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declaration_for_command):
+        (CppBackendDispatcherHeaderGenerator._generate_anonymous_enum_for_parameter): Deleted.
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator._generate_secondary_header_includes):
+        (CppBackendDispatcherImplementationGenerator._generate_small_dispatcher_switch_implementation_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_async_dispatcher_class_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator._generate_secondary_header_includes):
+        (CppFrontendDispatcherHeaderGenerator._generate_dispatcher_declaration_for_event):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator._generate_secondary_header_includes):
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator._generate_secondary_header_includes):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_secondary_header_includes):
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain):
+        (CppProtocolTypesImplementationGenerator._generate_open_field_names):
+        (CppProtocolTypesImplementationGenerator._generate_assertion_for_enum):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_handler_declaration_for_command):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_implementation_for_command):
+        (ObjCBackendDispatcherImplementationGenerator._generate_success_block_for_command):
+        (ObjCBackendDispatcherImplementationGenerator._generate_success_block_for_command.and):
+        (ObjCBackendDispatcherImplementationGenerator._generate_conversions_for_command.in_param_expression):
+        (ObjCBackendDispatcherImplementationGenerator._generate_conversions_for_command):
+        (ObjCBackendDispatcherImplementationGenerator._generate_invocation_for_command):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_out_parameters):
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.protocol_type_for_type):
+        (ObjCGenerator.objc_type_for_param_internal):
+        (ObjCGenerator.objc_protocol_import_expression_for_parameter):
+
+        * inspector/protocol/Page.json:
+        Now that enums are processed before being passed to backend dispacher handlers, the
+        `appearance` parameter of `Page.setForcedAppearance` must be marked `optional` as
+        there's no way for it to accept an empty string, as that's not possible for an enum.
+
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorAgent.cpp:
+        * inspector/agents/InspectorAuditAgent.h:
+        * inspector/agents/InspectorAuditAgent.cpp:
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        * inspector/agents/InspectorScriptProfilerAgent.h:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        * inspector/agents/InspectorTargetAgent.h:
+        * inspector/agents/InspectorTargetAgent.cpp:
+        * inspector/agents/JSGlobalObjectAuditAgent.h:
+        * inspector/agents/JSGlobalObjectAuditAgent.cpp:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        Elided backend dispatcher handler changes describe above.
+
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue):
+        * inspector/AsyncStackTrace.h:
+        * inspector/AsyncStackTrace.cpp:
+        (Inspector::AsyncStackTrace::buildInspectorObject const):
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::addToFrontend):
+        * inspector/InjectedScriptBase.h:
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeEvalCall):
+        (Inspector::InjectedScriptBase::checkCallResult):
+        (Inspector::InjectedScriptBase::checkAsyncCallResult):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::execute):
+        (Inspector::InjectedScript::evaluate):
+        (Inspector::InjectedScript::callFunctionOn):
+        (Inspector::InjectedScript::evaluateOnCallFrame):
+        (Inspector::InjectedScript::getFunctionDetails):
+        (Inspector::InjectedScript::functionDetails):
+        (Inspector::InjectedScript::getPreview):
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getDisplayableProperties):
+        (Inspector::InjectedScript::getInternalProperties):
+        (Inspector::InjectedScript::getCollectionEntries):
+        (Inspector::InjectedScript::saveResult):
+        (Inspector::InjectedScript::wrapCallFrames const):
+        (Inspector::InjectedScript::wrapObject const):
+        (Inspector::InjectedScript::wrapJSONString const):
+        (Inspector::InjectedScript::wrapTable const):
+        (Inspector::InjectedScript::previewValue const):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptForObjectId):
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::CallbackBase::sendSuccess):
+        (Inspector::BackendDispatcher::dispatch):
+        (Inspector::BackendDispatcher::sendResponse):
+        (Inspector::BackendDispatcher::getPropertyValue):
+        (Inspector::BackendDispatcher::getBoolean):
+        (Inspector::BackendDispatcher::getInteger):
+        (Inspector::BackendDispatcher::getDouble):
+        (Inspector::BackendDispatcher::getString):
+        (Inspector::BackendDispatcher::getValue):
+        (Inspector::BackendDispatcher::getObject):
+        (Inspector::BackendDispatcher::getArray):
+        (Inspector::castToInteger): Deleted.
+        (Inspector::castToNumber): Deleted.
+        * inspector/InspectorProtocolTypes.h:
+        (Inspector::Protocol::BindingTraits<JSON::ArrayOf<T>>::runtimeCast):
+        (Inspector::Protocol::BindingTraits<JSON::ArrayOf<T>>::assertValueHasExpectedType):
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp:
+        (Inspector::RemoteInspectorConnectionClient::extractEvent):
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::pushListingsNow):
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::inspectorRepresentation):
+        `JSON` classes now use `Ref&&` wherever possible and `Optional` instead of an out parameter
+        for `get*`/`as*` so that values can be more easily manipulated and can be confidently known
+        to exist.
+
+        * inspector/scripts/tests/enum-values.json:
+        * inspector/scripts/tests/expected/command-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/expected/domain-debuggableTypes.json-result:
+        * inspector/scripts/tests/expected/domain-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/expected/domain-targetTypes.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/event-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/should-strip-comments.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/expected/type-with-open-parameters.json-result:
+        * inspector/scripts/tests/expected/version.json-result:
+
 2020-09-09  Saam Barati  <sbarati@apple.com>
 
         OutOfBoundsSaneChain operations should use their own heap locations

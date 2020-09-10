@@ -35,27 +35,25 @@ namespace WebCore {
 
 class Page;
 
-typedef String ErrorString;
-
 class InspectorWorkerAgent final : public InspectorAgentBase, public Inspector::WorkerBackendDispatcherHandler, public WorkerInspectorProxy::PageChannel {
     WTF_MAKE_NONCOPYABLE(InspectorWorkerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorWorkerAgent(PageAgentContext&);
-    ~InspectorWorkerAgent() override;
+    ~InspectorWorkerAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // WorkerBackendDispatcherHandler
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void initialized(ErrorString&, const String& workerId) override;
-    void sendMessageToWorker(ErrorString&, const String& workerId, const String& message) override;
+    Inspector::Protocol::ErrorStringOr<void> enable();
+    Inspector::Protocol::ErrorStringOr<void> disable();
+    Inspector::Protocol::ErrorStringOr<void> initialized(const String& workerId);
+    Inspector::Protocol::ErrorStringOr<void> sendMessageToWorker(const String& workerId, const String& message);
 
     // WorkerInspectorProxy::PageChannel
-    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, const String& message) override;
+    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, const String& message);
 
     // InspectorInstrumentation
     bool shouldWaitForDebuggerOnStart() const;

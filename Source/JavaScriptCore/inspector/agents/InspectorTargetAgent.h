@@ -35,23 +35,21 @@ namespace Inspector {
 
 class InspectorTarget;
 
-typedef String ErrorString;
-
 class JS_EXPORT_PRIVATE InspectorTargetAgent final : public InspectorAgentBase, public TargetBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorTargetAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
-    ~InspectorTargetAgent() final;
+    ~InspectorTargetAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
-    void willDestroyFrontendAndBackend(DisconnectReason) final;
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*);
+    void willDestroyFrontendAndBackend(DisconnectReason);
 
     // TargetBackendDispatcherHandler
-    void setPauseOnStart(ErrorString&, bool pauseOnStart) final;
-    void resume(ErrorString&, const String& targetId) final;
-    void sendMessageToTarget(ErrorString&, const String& targetId, const String& message) final;
+    Protocol::ErrorStringOr<void> setPauseOnStart(bool);
+    Protocol::ErrorStringOr<void> resume(const String& targetId);
+    Protocol::ErrorStringOr<void> sendMessageToTarget(const String& targetId, const String& message);
 
     // Target lifecycle.
     void targetCreated(InspectorTarget&);

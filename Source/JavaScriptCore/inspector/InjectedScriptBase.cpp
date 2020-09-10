@@ -100,7 +100,7 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
     return resultJSONValue.releaseNonNull();
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, Optional<bool>& out_wasThrown, Optional<int>& out_savedResultIndex)
+void InjectedScriptBase::makeEvalCall(Protocol::ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, Optional<bool>& out_wasThrown, Optional<int>& out_savedResultIndex)
 {
     checkCallResult(errorString, makeCall(function), out_resultObject, out_wasThrown, out_savedResultIndex);
 }
@@ -143,7 +143,7 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
     }
 }
 
-void InjectedScriptBase::checkCallResult(ErrorString& errorString, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, Optional<bool>& out_wasThrown, Optional<int>& out_savedResultIndex)
+void InjectedScriptBase::checkCallResult(Protocol::ErrorString& errorString, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, Optional<bool>& out_wasThrown, Optional<int>& out_savedResultIndex)
 {
     if (!result) {
         errorString = "Internal error: result value is empty"_s;
@@ -151,49 +151,42 @@ void InjectedScriptBase::checkCallResult(ErrorString& errorString, RefPtr<JSON::
     }
 
     if (result->type() == JSON::Value::Type::String) {
-        result->asString(errorString);
-        ASSERT(errorString.length());
+        errorString = result->asString();
         return;
     }
 
-    RefPtr<JSON::Object> resultTuple;
-    if (!result->asObject(resultTuple)) {
+    auto resultTuple = result->asObject();
+    if (!resultTuple) {
         errorString = "Internal error: result is not an Object"_s;
         return;
     }
 
-    RefPtr<JSON::Object> resultObject;
-    if (!resultTuple->getObject("result"_s, resultObject)) {
+    auto resultObject = resultTuple->getObject("result"_s);
+    if (!resultObject) {
         errorString = "Internal error: result is not a pair of value and wasThrown flag"_s;
         return;
     }
 
-    bool wasThrown = false;
-    if (!resultTuple->getBoolean("wasThrown"_s, wasThrown)) {
+    out_wasThrown = resultTuple->getBoolean("wasThrown"_s);
+    if (!out_wasThrown) {
         errorString = "Internal error: result is not a pair of value and wasThrown flag"_s;
         return;
     }
 
-    out_resultObject = BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
-
-    if (wasThrown)
-        out_wasThrown = wasThrown;
-
-    int savedResultIndex;
-    if (resultTuple->getInteger("savedResultIndex"_s, savedResultIndex))
-        out_savedResultIndex = savedResultIndex;
+    out_resultObject = Protocol::BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject.releaseNonNull());
+    out_savedResultIndex = resultTuple->getInteger("savedResultIndex"_s);
 }
 
 void InjectedScriptBase::checkAsyncCallResult(RefPtr<JSON::Value> result, const AsyncCallCallback& callback)
 {
-    ErrorString errorString;
+    Protocol::ErrorString errorString;
     RefPtr<Protocol::Runtime::RemoteObject> resultObject;
     Optional<bool> wasThrown;
     Optional<int> savedResultIndex;
 
     checkCallResult(errorString, result, resultObject, wasThrown, savedResultIndex);
 
-    callback(errorString, WTFMove(resultObject), wasThrown, savedResultIndex);
+    callback(errorString, WTFMove(resultObject), WTFMove(wasThrown), WTFMove(savedResultIndex));
 }
 
 } // namespace Inspector

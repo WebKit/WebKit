@@ -37,16 +37,16 @@ class PageAuditAgent final : public Inspector::InspectorAuditAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageAuditAgent(PageAgentContext&);
-    ~PageAuditAgent() override;
+    ~PageAuditAgent();
 
 private:
-    Inspector::InjectedScript injectedScriptForEval(const int* executionContextId);
-    Inspector::InjectedScript injectedScriptForEval(Inspector::ErrorString&, const int* executionContextId) override;
+    Inspector::InjectedScript injectedScriptForEval(Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
+    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
-    void populateAuditObject(JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>& auditObject) override;
+    void populateAuditObject(JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>& auditObject);
 
-    void muteConsole() override;
-    void unmuteConsole() override;
+    void muteConsole();
+    void unmuteConsole();
 
     Page& m_inspectedPage;
 };

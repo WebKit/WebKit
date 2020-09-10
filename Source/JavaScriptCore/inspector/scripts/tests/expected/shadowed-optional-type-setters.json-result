@@ -63,7 +63,7 @@
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-#include "TestProtocolTypes.h"
+#include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
@@ -119,11 +119,14 @@ private:
 
 #include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <tuple>
+#include <wtf/Expected.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-typedef String ErrorString;
+
 
 
 
@@ -164,9 +167,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #include "TestAlternateBackendDispatchers.h"
@@ -214,6 +215,7 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -257,7 +259,6 @@ class FrontendRouter;
 #include "TestFrontendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/text/CString.h>
 
 namespace Inspector {
 
@@ -298,7 +299,9 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
-#include <wtf/Assertions.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -331,7 +334,7 @@ template<typename T> String getEnumConstantValue(T enumValue)
 namespace Runtime {
 
 /* Key path. */
-class KeyPath : public JSON::ObjectBase {
+class KeyPath final : public JSON::ObjectBase {
 public:
     // Named after property name 'type' while generating KeyPath.
     enum class Type {
@@ -339,6 +342,7 @@ public:
         String = 1,
         Array = 2,
     }; // enum class Type
+
     enum {
         NoFieldsSet = 0,
         TypeSet = 1 << 0,
@@ -363,10 +367,10 @@ public:
         friend class KeyPath;
     public:
 
-        Builder<STATE | TypeSet>& setType(Type value)
+        Builder<STATE | TypeSet>& setType(Type in_type)
         {
             COMPILE_ASSERT(!(STATE & TypeSet), property_type_already_set);
-            m_result->setString("type"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
+            m_result->setString("type"_s, Protocol::TestHelpers::getEnumConstantValue(in_type));
             return castState<TypeSet>();
         }
 
@@ -392,14 +396,14 @@ public:
         return Builder<NoFieldsSet>(JSON::Object::create());
     }
 
-    void setString(const String& value)
+    void setString(const String& in_opt_string)
     {
-        JSON::ObjectBase::setString("string"_s, value);
+        JSON::ObjectBase::setString("string"_s, in_opt_string);
     }
 
-    void setArray(RefPtr<JSON::ArrayOf<String>> value)
+    void setArray(Ref<JSON::ArrayOf<String>>&& in_opt_array)
     {
-        JSON::ObjectBase::setArray("array"_s, WTFMove(value));
+        JSON::ObjectBase::setArray("array"_s, WTFMove(in_opt_array));
     }
 };
 
@@ -414,7 +418,7 @@ Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Runtime' Domain
 template<>
-Optional<Inspector::Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Inspector::Protocol::Runtime::KeyPath::Type>(const String&);
+Optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String&);
 
 } // namespace TestHelpers
 
@@ -456,8 +460,7 @@ Optional<Inspector::Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<I
 #include "config.h"
 #include "TestProtocolObjects.h"
 
-#include <wtf/Optional.h>
-#include <wtf/text/CString.h>
+#include <wtf/Assertions.h>
 
 namespace Inspector {
 
@@ -478,16 +481,16 @@ String getEnumConstantValue(int code) {
 // Enums in the 'Runtime' Domain
 
 template<>
-Optional<Inspector::Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Inspector::Protocol::Runtime::KeyPath::Type>(const String& protocolString)
+Optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String& protocolString)
 {
     static const size_t constantValues[] = {
-        (size_t)Inspector::Protocol::Runtime::KeyPath::Type::Null,
-        (size_t)Inspector::Protocol::Runtime::KeyPath::Type::String,
-        (size_t)Inspector::Protocol::Runtime::KeyPath::Type::Array,
+        (size_t)Protocol::Runtime::KeyPath::Type::Null,
+        (size_t)Protocol::Runtime::KeyPath::Type::String,
+        (size_t)Protocol::Runtime::KeyPath::Type::Array,
     };
     for (size_t i = 0; i < 3; ++i)
         if (protocolString == enum_constant_values[constantValues[i]])
-            return (Inspector::Protocol::Runtime::KeyPath::Type)constantValues[i];
+            return (Protocol::Runtime::KeyPath::Type)constantValues[i];
 
     return WTF::nullopt;
 }

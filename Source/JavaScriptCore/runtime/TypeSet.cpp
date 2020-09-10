@@ -501,14 +501,14 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
         for (const auto& field : currentShape->m_optionalFields)
             optionalFields->addItem(field.get());
 
-        currentObject->setFields(&fields.get());
-        currentObject->setOptionalFields(&optionalFields.get());
+        currentObject->setFields(WTFMove(fields));
+        currentObject->setOptionalFields(WTFMove(optionalFields));
         currentObject->setConstructorName(currentShape->m_constructorName);
         currentObject->setIsImprecise(currentShape->m_isInDictionaryMode);
 
         if (currentShape->m_proto) {
             auto nextObject = Inspector::Protocol::Runtime::StructureDescription::create().release();
-            currentObject->setPrototypeStructure(&nextObject.get());
+            currentObject->setPrototypeStructure(nextObject.copyRef());
             currentObject = WTFMove(nextObject);
         }
 

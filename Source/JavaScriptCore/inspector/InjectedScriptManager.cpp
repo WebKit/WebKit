@@ -102,19 +102,19 @@ int InjectedScriptManager::injectedScriptIdFor(JSGlobalObject* globalObject)
 
 InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& objectId)
 {
-    RefPtr<JSON::Value> parsedObjectId;
-    if (!JSON::Value::parseJSON(objectId, parsedObjectId))
+    auto parsedObjectId = JSON::Value::parseJSON(objectId);
+    if (!parsedObjectId)
         return InjectedScript();
 
-    RefPtr<JSON::Object> resultObject;
-    if (!parsedObjectId->asObject(resultObject))
+    auto resultObject = parsedObjectId->asObject();
+    if (!resultObject)
         return InjectedScript();
 
-    long injectedScriptId = 0;
-    if (!resultObject->getInteger("injectedScriptId"_s, injectedScriptId))
+    auto injectedScriptId = resultObject->getInteger("injectedScriptId"_s);
+    if (!injectedScriptId)
         return InjectedScript();
 
-    return m_idToInjectedScript.get(injectedScriptId);
+    return m_idToInjectedScript.get(*injectedScriptId);
 }
 
 void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)

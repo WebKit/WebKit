@@ -47,12 +47,12 @@ RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
 
     // Parse the buffer contents as JSON, returning the root object (if any).
     String json { buffer.data(), static_cast<unsigned>(size) };
-    RefPtr<JSON::Value> value;
-    RefPtr<JSON::Object> object;
-    if (!JSON::Value::parseJSON(json, value) || !value->asObject(object))
+
+    auto value = JSON::Value::parseJSON(json);
+    if (!value)
         return nullptr;
 
-    return object;
+    return value->asObject();
 }
 
 };

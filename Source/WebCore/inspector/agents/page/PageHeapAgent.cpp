@@ -39,16 +39,20 @@ PageHeapAgent::PageHeapAgent(PageAgentContext& context)
 
 PageHeapAgent::~PageHeapAgent() = default;
 
-void PageHeapAgent::enable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> PageHeapAgent::enable()
 {
-    WebHeapAgent::enable(errorString);
+    auto result = WebHeapAgent::enable();
+
     m_instrumentingAgents.setEnabledPageHeapAgent(this);
+
+    return result;
 }
 
-void PageHeapAgent::disable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> PageHeapAgent::disable()
 {
     m_instrumentingAgents.setEnabledPageHeapAgent(nullptr);
-    WebHeapAgent::disable(errorString);
+
+    return WebHeapAgent::disable();
 }
 
 void PageHeapAgent::mainFrameNavigated()

@@ -38,10 +38,10 @@ class JSGlobalObjectAuditAgent final : public InspectorAuditAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JSGlobalObjectAuditAgent(JSAgentContext&);
-    ~JSGlobalObjectAuditAgent() final;
+    ~JSGlobalObjectAuditAgent();
 
 private:
-    InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) final;
+    InjectedScript injectedScriptForEval(Protocol::ErrorString&, Optional<Protocol::Runtime::ExecutionContextId>&&);
 
     JSC::JSGlobalObject& m_globalObject;
 };

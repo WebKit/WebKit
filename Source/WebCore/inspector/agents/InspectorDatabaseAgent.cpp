@@ -59,7 +59,7 @@ namespace {
 
 void reportTransactionFailed(ExecuteSQLCallback& requestCallback, SQLError& error)
 {
-    auto errorObject = Inspector::Protocol::Database::Error::create()
+    auto errorObject = Protocol::Database::Error::create()
         .setMessage(error.messageIsolatedCopy())
         .setCode(error.code())
         .release();
@@ -230,51 +230,48 @@ void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::FrontendRout
 
 void InspectorDatabaseAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString ignored;
-    disable(ignored);
+    disable();
 }
 
-void InspectorDatabaseAgent::enable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> InspectorDatabaseAgent::enable()
 {
-    if (m_instrumentingAgents.enabledDatabaseAgent() == this) {
-        errorString = "Database domain already enabled"_s;
-        return;
-    }
+    if (m_instrumentingAgents.enabledDatabaseAgent() == this)
+        return makeUnexpected("Database domain already enabled"_s);
 
     m_instrumentingAgents.setEnabledDatabaseAgent(this);
 
     for (auto& database : DatabaseTracker::singleton().openDatabases())
         didOpenDatabase(database.get());
+
+    return { };
 }
 
-void InspectorDatabaseAgent::disable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> InspectorDatabaseAgent::disable()
 {
-    if (m_instrumentingAgents.enabledDatabaseAgent() != this) {
-        errorString = "Database domain already disabled"_s;
-        return;
-    }
+    if (m_instrumentingAgents.enabledDatabaseAgent() != this)
+        return makeUnexpected("Database domain already disabled"_s);
 
     m_instrumentingAgents.setEnabledDatabaseAgent(nullptr);
 
     m_resources.clear();
+
+    return { };
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& errorString, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorDatabaseAgent::getDatabaseTableNames(const Protocol::Database::DatabaseId& databaseId)
 {
-    if (m_instrumentingAgents.enabledDatabaseAgent() != this) {
-        errorString = "Database domain must be enabled"_s;
-        return;
-    }
+    if (m_instrumentingAgents.enabledDatabaseAgent() != this)
+        return makeUnexpected("Database domain must be enabled"_s);
 
-    names = JSON::ArrayOf<String>::create();
-
+    auto names = JSON::ArrayOf<String>::create();
     if (auto* database = databaseForId(databaseId)) {
         for (auto& tableName : database->tableNames())
             names->addItem(tableName);
     }
+    return WTFMove(names);
 }
 
-void InspectorDatabaseAgent::executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&& requestCallback)
+void InspectorDatabaseAgent::executeSQL(const Protocol::Database::DatabaseId& databaseId, const String& query, Ref<ExecuteSQLCallback>&& requestCallback)
 {
     if (m_instrumentingAgents.enabledDatabaseAgent() != this) {
         requestCallback->sendFailure("Database domain must be enabled"_s);

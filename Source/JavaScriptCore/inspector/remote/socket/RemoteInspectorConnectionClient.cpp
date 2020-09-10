@@ -92,31 +92,29 @@ Optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionClient
 
     String jsonData = String::fromUTF8(data);
 
-    RefPtr<JSON::Value> messageValue;
-    if (!JSON::Value::parseJSON(jsonData, messageValue))
+    auto messageValue = JSON::Value::parseJSON(jsonData);
+    if (!messageValue)
         return WTF::nullopt;
 
-    RefPtr<JSON::Object> messageObject;
-    if (!messageValue->asObject(messageObject))
+    auto messageObject = messageValue->asObject();
+    if (!messageObject)
         return WTF::nullopt;
 
     Event event;
-    if (!messageObject->getString("event"_s, event.methodName))
+
+    event.methodName = messageObject->getString("event"_s);
+    if (!event.methodName)
         return WTF::nullopt;
 
     event.clientID = clientID;
 
-    ConnectionID connectionID;
-    if (messageObject->getInteger("connectionID"_s, connectionID))
-        event.connectionID = connectionID;
+    if (auto connectionID = messageObject->getInteger("connectionID"_s))
+        event.connectionID = *connectionID;
 
-    TargetID targetID;
-    if (messageObject->getInteger("targetID"_s, targetID))
-        event.targetID = targetID;
+    if (auto targetID = messageObject->getInteger("targetID"_s))
+        event.targetID = *targetID;
 
-    String message;
-    if (messageObject->getString("message"_s, message))
-        event.message = message;
+    event.message = messageObject->getString("message"_s);
 
     return event;
 }

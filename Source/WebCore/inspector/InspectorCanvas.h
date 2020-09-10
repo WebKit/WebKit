@@ -58,8 +58,6 @@ class OffscreenCanvas;
 class TypedOMCSSImageValue;
 #endif
 
-typedef String ErrorString;
-
 class InspectorCanvas final : public RefCounted<InspectorCanvas> {
 public:
     static Ref<InspectorCanvas> create(CanvasRenderingContext&);
@@ -107,7 +105,7 @@ public:
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);
     Ref<Inspector::Protocol::Recording::Recording> releaseObjectForRecording();
 
-    String getCanvasContentAsDataURL(ErrorString&);
+    String getCanvasContentAsDataURL(Inspector::Protocol::ErrorString&);
 
 private:
     InspectorCanvas(CanvasRenderingContext&);

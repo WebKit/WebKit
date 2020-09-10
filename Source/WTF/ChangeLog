@@ -1,3 +1,52 @@
+2020-09-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: modernize generated backend protocol code
+        https://bugs.webkit.org/show_bug.cgi?id=216302
+        <rdar://problem/68547649>
+
+        Reviewed by Brian Burg.
+
+        * wtf/JSONValues.h:
+        (WTF::JSONImpl::ObjectBase::setValue):
+        (WTF::JSONImpl::ObjectBase::setObject):
+        (WTF::JSONImpl::ObjectBase::setArray):
+        (WTF::JSONImpl::ArrayBase::pushValue):
+        (WTF::JSONImpl::ArrayBase::pushObject):
+        (WTF::JSONImpl::ArrayBase::pushArray):
+        (WTF::JSONImpl::ArrayOf::ArrayOf): Deleted.
+        (WTF::JSONImpl::ArrayOf::castedArray): Deleted.
+        (WTF::JSONImpl::ArrayOf::addItem): Deleted.
+        (WTF::JSONImpl::ArrayOf::create): Deleted.
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::asValue):
+        (WTF::JSONImpl::Value::asObject):
+        (WTF::JSONImpl::Value::asArray):
+        (WTF::JSONImpl::Value::parseJSON):
+        (WTF::JSONImpl::Value::asBoolean const):
+        (WTF::JSONImpl::Value::asDouble const):
+        (WTF::JSONImpl::Value::asInteger const):
+        (WTF::JSONImpl::Value::asString const):
+        (WTF::JSONImpl::ObjectBase::asObject):
+        (WTF::JSONImpl::ObjectBase::memoryCost const):
+        (WTF::JSONImpl::ObjectBase::getBoolean const):
+        (WTF::JSONImpl::ObjectBase::getDouble const):
+        (WTF::JSONImpl::ObjectBase::getInteger const):
+        (WTF::JSONImpl::ObjectBase::getString const):
+        (WTF::JSONImpl::ObjectBase::getObject const):
+        (WTF::JSONImpl::ObjectBase::getArray const):
+        (WTF::JSONImpl::ObjectBase::getValue const):
+        (WTF::JSONImpl::ObjectBase::ObjectBase):
+        (WTF::JSONImpl::ArrayBase::asArray):
+        (WTF::JSONImpl::ArrayBase::writeJSON const):
+        (WTF::JSONImpl::ArrayBase::ArrayBase):
+        (WTF::JSONImpl::ArrayBase::get const):
+        (WTF::JSONImpl::ArrayBase::memoryCost const):
+        (WTF::JSONImpl::ObjectBase::openAccessors): Deleted.
+        Use `Ref&&` wherever possible and `Optional` instead of an out parameter for `get*`/`as*`
+        so that values can be more easily manipulated and can be confidently assumed to exist.
+        Remove unused overloads and allow subclasses to call `as*` instead of `openAccessors` as
+        they're effectively the same thing.
+
 2020-09-10  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] PERF: Don't instantiate AVPlayer-based audio decoders or renderers if an element is initially muted.

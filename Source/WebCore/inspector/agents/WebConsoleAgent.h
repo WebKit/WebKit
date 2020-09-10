@@ -33,7 +33,6 @@ namespace WebCore {
 class DOMWindow;
 class ResourceError;
 class ResourceResponse;
-typedef String ErrorString;
 
 class WebConsoleAgent : public Inspector::InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(WebConsoleAgent);
@@ -46,8 +45,6 @@ public:
     void frameWindowDiscarded(DOMWindow*);
     void didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse&);
     void didFailLoading(unsigned long requestIdentifier, const ResourceError&);
-
-protected:
 };
 
 } // namespace WebCore

@@ -92,24 +92,24 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
         return { };
     String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
 
-    RefPtr<JSON::Value> value;
-    if (!JSON::Value::parseJSON(json, value))
+    auto value = JSON::Value::parseJSON(json);
+    if (!value)
         return { };
 
-    RefPtr<JSON::Object> object;
-    if (!value->asObject(object))
+    auto object = value->asObject();
+    if (!object)
         return { };
 
-    RefPtr<JSON::Array> sinfArray;
-    if (!object->getArray(CDMPrivateFairPlayStreaming::sinfName(), sinfArray))
+    auto sinfArray = object->getArray(CDMPrivateFairPlayStreaming::sinfName());
+    if (!sinfArray)
         return { };
 
     Vector<Ref<SharedBuffer>> sinfs;
     sinfs.reserveInitialCapacity(sinfArray->length());
 
     for (auto& value : *sinfArray) {
-        String keyID;
-        if (!value->asString(keyID))
+        auto keyID = value->asString();
+        if (!keyID)
             continue;
 
         Vector<char> sinfData;

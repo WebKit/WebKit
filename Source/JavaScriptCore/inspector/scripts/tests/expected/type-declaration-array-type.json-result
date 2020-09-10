@@ -68,7 +68,7 @@ InspectorBackend.activateDomain("Debugger", null);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-#include "TestProtocolTypes.h"
+#include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
@@ -124,11 +124,14 @@ private:
 
 #include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <tuple>
+#include <wtf/Expected.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-typedef String ErrorString;
+
 
 
 
@@ -169,9 +172,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #include "TestAlternateBackendDispatchers.h"
@@ -219,6 +220,7 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -262,7 +264,6 @@ class FrontendRouter;
 #include "TestFrontendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/text/CString.h>
 
 namespace Inspector {
 
@@ -303,7 +304,9 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
-#include <wtf/Assertions.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -331,7 +334,7 @@ using LuckyNumbers = JSON::ArrayOf<int>;
 using BabyNames = JSON::ArrayOf<String>;
 using NewObjects = JSON::ArrayOf<int>;
 using OldObjects = JSON::ArrayOf<int>;
-using StopReasons = JSON::ArrayOf<Inspector::Protocol::Debugger::Reason>;
+using StopReasons = JSON::ArrayOf<Protocol::Debugger::Reason>;
 } // Runtime
 // End of typedefs.
 
@@ -365,7 +368,7 @@ Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Debugger' Domain
 template<>
-Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String&);
+Optional<Protocol::Debugger::Reason> parseEnumValueFromString<Protocol::Debugger::Reason>(const String&);
 
 } // namespace TestHelpers
 
@@ -417,8 +420,7 @@ struct DefaultHash<Inspector::Protocol::Debugger::Reason> : IntHash<Inspector::P
 #include "config.h"
 #include "TestProtocolObjects.h"
 
-#include <wtf/Optional.h>
-#include <wtf/text/CString.h>
+#include <wtf/Assertions.h>
 
 namespace Inspector {
 
@@ -439,16 +441,16 @@ String getEnumConstantValue(int code) {
 // Enums in the 'Debugger' Domain
 
 template<>
-Optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<Inspector::Protocol::Debugger::Reason>(const String& protocolString)
+Optional<Protocol::Debugger::Reason> parseEnumValueFromString<Protocol::Debugger::Reason>(const String& protocolString)
 {
     static const size_t constantValues[] = {
-        (size_t)Inspector::Protocol::Debugger::Reason::Died,
-        (size_t)Inspector::Protocol::Debugger::Reason::Fainted,
-        (size_t)Inspector::Protocol::Debugger::Reason::Hungry,
+        (size_t)Protocol::Debugger::Reason::Died,
+        (size_t)Protocol::Debugger::Reason::Fainted,
+        (size_t)Protocol::Debugger::Reason::Hungry,
     };
     for (size_t i = 0; i < 3; ++i)
         if (protocolString == enum_constant_values[constantValues[i]])
-            return (Inspector::Protocol::Debugger::Reason)constantValues[i];
+            return (Protocol::Debugger::Reason)constantValues[i];
 
     return WTF::nullopt;
 }

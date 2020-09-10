@@ -40,57 +40,47 @@ Capabilities WebDriverService::platformCapabilities()
     return capabilities;
 }
 
-bool WebDriverService::platformValidateCapability(const String& name, const RefPtr<JSON::Value>& value) const
+bool WebDriverService::platformValidateCapability(const String& name, const Ref<JSON::Value>& value) const
 {
     if (name != "wpe:browserOptions")
         return true;
 
-    RefPtr<JSON::Object> browserOptions;
-    if (!value->asObject(browserOptions))
+    auto browserOptions = value->asObject();
+    if (!browserOptions)
         return false;
 
     if (browserOptions->isNull())
         return true;
 
     // If browser options are provided, binary is required.
-    String binary;
-    if (!browserOptions->getString("binary"_s, binary))
+    auto binary = browserOptions->getString("binary"_s);
+    if (!binary)
         return false;
 
-    RefPtr<JSON::Value> browserArgumentsValue;
-    RefPtr<JSON::Array> browserArguments;
-    if (browserOptions->getValue("args"_s, browserArgumentsValue) && !browserArgumentsValue->asArray(browserArguments))
+    auto browserArguments = browserOptions->getArray("args"_s);
+    if (!browserArguments)
         return false;
 
     unsigned browserArgumentsLength = browserArguments->length();
     for (unsigned i = 0; i < browserArgumentsLength; ++i) {
-        RefPtr<JSON::Value> value = browserArguments->get(i);
-        String argument;
-        if (!value->asString(argument))
+        auto argument = browserArguments->get(i)->asString();
+        if (!argument)
             return false;
     }
 
-    RefPtr<JSON::Value> certificatesValue;
-    if (browserOptions->getValue("certificates"_s, certificatesValue)) {
-        RefPtr<JSON::Array> certificates;
-        if (!certificatesValue->asArray(certificates))
-            return false;
-
+    if (auto certificates = browserOptions->getArray("certificates"_s)) {
         unsigned certificatesLength = certificates->length();
         for (unsigned i = 0; i < certificatesLength; ++i) {
-            RefPtr<JSON::Value> certificateValue = certificates->get(i);
-            RefPtr<JSON::Object> certificate;
-            if (!certificateValue->asObject(certificate))
+            auto certificate = certificates->get(i)->asObject();
+            if (!certificate)
                 return false;
 
-            RefPtr<JSON::Value> hostValue;
-            String host;
-            if (!certificate->getValue("host"_s, hostValue) || !hostValue->asString(host))
+            auto host = certificate->getString("host"_s);
+            if (!host)
                 return false;
 
-            RefPtr<JSON::Value> certificateFileValue;
-            String certificateFile;
-            if (!certificate->getValue("certificateFile"_s, certificateFileValue) || !certificateFileValue->asString(certificateFile))
+            auto certificateFile = certificate->getString("certificateFile"_s);
+            if (!certificateFile)
                 return false;
         }
     }
@@ -98,7 +88,7 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
     return true;
 }
 
-bool WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const
+bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Value>&) const
 {
     return true;
 }
@@ -108,47 +98,41 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
     capabilities.browserBinary = String("MiniBrowser");
     capabilities.browserArguments = Vector<String> { "--automation"_s };
 
-    RefPtr<JSON::Object> browserOptions;
-    if (!matchedCapabilities.getObject("wpe:browserOptions"_s, browserOptions))
+    auto browserOptions = matchedCapabilities.getObject("wpe:browserOptions"_s);
+    if (!browserOptions)
         return;
 
-    String browserBinary;
-    if (browserOptions->getString("binary"_s, browserBinary)) {
+    auto browserBinary = browserOptions->getString("binary"_s);
+    if (!!browserBinary) {
         capabilities.browserBinary = browserBinary;
         capabilities.browserArguments = WTF::nullopt;
     }
 
-    RefPtr<JSON::Array> browserArguments;
-    if (browserOptions->getArray("args"_s, browserArguments) && browserArguments->length()) {
+    auto browserArguments = browserOptions->getArray("args"_s);
+    if (browserArguments && browserArguments->length()) {
         unsigned browserArgumentsLength = browserArguments->length();
         capabilities.browserArguments = Vector<String>();
         capabilities.browserArguments->reserveInitialCapacity(browserArgumentsLength);
         for (unsigned i = 0; i < browserArgumentsLength; ++i) {
-            RefPtr<JSON::Value> value = browserArguments->get(i);
-            String argument;
-            value->asString(argument);
+            auto argument = browserArguments->get(i)->asString();
             ASSERT(!argument.isNull());
             capabilities.browserArguments->uncheckedAppend(WTFMove(argument));
         }
     }
 
-    RefPtr<JSON::Array> certificates;
-    if (browserOptions->getArray("certificates"_s, certificates) && certificates->length()) {
+    auto certificates = browserOptions->getArray("certificates"_s);
+    if (certificates && certificates->length()) {
         unsigned certificatesLength = certificates->length();
         capabilities.certificates = Vector<std::pair<String, String>>();
         capabilities.certificates->reserveInitialCapacity(certificatesLength);
         for (unsigned i = 0; i < certificatesLength; ++i) {
-            RefPtr<JSON::Value> value = certificates->get(i);
-            RefPtr<JSON::Object> certificate;
-            value->asObject(certificate);
+            auto certificate = certificates->get(i)->asObject();
             ASSERT(certificate);
 
-            String host;
-            certificate->getString("host"_s, host);
+            auto host = certificate->getString("host"_s);
             ASSERT(!host.isNull());
 
-            String certificateFile;
-            certificate->getString("certificateFile"_s, certificateFile);
+            auto certificateFile = certificate->getString("certificateFile"_s);
             ASSERT(!certificateFile.isNull());
 
             capabilities.certificates->uncheckedAppend({ WTFMove(host), WTFMove(certificateFile) });

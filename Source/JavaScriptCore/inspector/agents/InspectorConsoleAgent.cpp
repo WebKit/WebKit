@@ -53,8 +53,7 @@ void InspectorConsoleAgent::didCreateFrontendAndBackend(FrontendRouter*, Backend
 
 void InspectorConsoleAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    String errorString;
-    disable(errorString);
+    disable();
 }
 
 void InspectorConsoleAgent::discardValues()
@@ -63,10 +62,10 @@ void InspectorConsoleAgent::discardValues()
     m_expiredConsoleMessageCount = 0;
 }
 
-void InspectorConsoleAgent::enable(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorConsoleAgent::enable()
 {
     if (m_enabled)
-        return;
+        return { };
 
     m_enabled = true;
 
@@ -80,17 +79,21 @@ void InspectorConsoleAgent::enable(ErrorString&)
 
     for (size_t i = 0; i < messages.size(); ++i)
         messages[i]->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
+
+    return { };
 }
 
-void InspectorConsoleAgent::disable(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorConsoleAgent::disable()
 {
     if (!m_enabled)
-        return;
+        return { };
 
     m_enabled = false;
+
+    return { };
 }
 
-void InspectorConsoleAgent::clearMessages(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorConsoleAgent::clearMessages()
 {
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
@@ -99,6 +102,8 @@ void InspectorConsoleAgent::clearMessages(ErrorString&)
 
     if (m_enabled)
         m_frontendDispatcher->messagesCleared();
+
+    return { };
 }
 
 bool InspectorConsoleAgent::developerExtrasEnabled() const
@@ -108,8 +113,7 @@ bool InspectorConsoleAgent::developerExtrasEnabled() const
 
 void InspectorConsoleAgent::reset()
 {
-    ErrorString ignored;
-    clearMessages(ignored);
+    clearMessages();
 
     m_times.clear();
     m_counts.clear();
@@ -117,10 +121,8 @@ void InspectorConsoleAgent::reset()
 
 void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> message)
 {
-    if (message->type() == MessageType::Clear) {
-        ErrorString ignored;
-        clearMessages(ignored);
-    }
+    if (message->type() == MessageType::Clear)
+        clearMessages();
 
     addConsoleMessage(WTFMove(message));
 }
@@ -191,12 +193,12 @@ void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
     if (!m_heapAgent)
         return;
 
-    ErrorString ignored;
-    double timestamp;
-    String snapshotData;
-    m_heapAgent->snapshot(ignored, &timestamp, &snapshotData);
+    auto result = m_heapAgent->snapshot();
+    if (!result)
+        return;
 
-    m_frontendDispatcher->heapSnapshot(timestamp, snapshotData, title.isEmpty() ? nullptr : &title);
+    auto [timestamp, snapshotData] = WTFMove(result.value());
+    m_frontendDispatcher->heapSnapshot(timestamp, snapshotData, title);
 }
 
 void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, const String& label)
@@ -256,15 +258,15 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
     }
 }
 
-void InspectorConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Protocol::Console::Channel>>& channels)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Console::Channel>>> InspectorConsoleAgent::getLoggingChannels()
 {
     // Default implementation has no logging channels.
-    channels = JSON::ArrayOf<Protocol::Console::Channel>::create();
+    return JSON::ArrayOf<Protocol::Console::Channel>::create();
 }
 
-void InspectorConsoleAgent::setLoggingChannelLevel(ErrorString& errorString, const String&, const String&)
+Protocol::ErrorStringOr<void> InspectorConsoleAgent::setLoggingChannelLevel(Protocol::Console::ChannelSource, Protocol::Console::ChannelLevel)
 {
-    errorString = "Not supported"_s;
+    return makeUnexpected("Not supported"_s);
 }
 
 } // namespace Inspector

@@ -62,22 +62,22 @@ static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffe
         return WTF::nullopt;
     String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
 
-    RefPtr<JSON::Value> value;
-    if (!JSON::Value::parseJSON(json, value))
+    auto value = JSON::Value::parseJSON(json);
+    if (!value)
         return WTF::nullopt;
 
-    RefPtr<JSON::Object> object;
-    if (!value->asObject(object))
+    auto object = value->asObject();
+    if (!object)
         return WTF::nullopt;
 
-    RefPtr<JSON::Array> kidsArray;
-    if (!object->getArray("kids", kidsArray))
+    auto kidsArray = object->getArray("kids"_s);
+    if (!kidsArray)
         return WTF::nullopt;
 
     Vector<Ref<SharedBuffer>> keyIDs;
     for (auto& value : *kidsArray) {
-        String keyID;
-        if (!value->asString(keyID))
+        auto keyID = value->asString();
+        if (!keyID)
             continue;
 
         Vector<char> keyIDData;

@@ -122,8 +122,8 @@ private:
     RefPtr<JSON::Object> validatedCapabilities(const JSON::Object&) const;
     RefPtr<JSON::Object> mergeCapabilities(const JSON::Object&, const JSON::Object&) const;
     RefPtr<JSON::Object> matchCapabilities(const JSON::Object&) const;
-    bool platformValidateCapability(const String&, const RefPtr<JSON::Value>&) const;
-    bool platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const;
+    bool platformValidateCapability(const String&, const Ref<JSON::Value>&) const;
+    bool platformMatchCapability(const String&, const Ref<JSON::Value>&) const;
     bool platformSupportProxyType(const String&) const;
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;

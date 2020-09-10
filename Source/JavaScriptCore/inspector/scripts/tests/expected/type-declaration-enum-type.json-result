@@ -69,7 +69,7 @@ InspectorBackend.activateDomain("Runtime", null);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-#include "TestProtocolTypes.h"
+#include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
@@ -125,11 +125,14 @@ private:
 
 #include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <tuple>
+#include <wtf/Expected.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-typedef String ErrorString;
+
 
 
 
@@ -170,9 +173,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #include "TestAlternateBackendDispatchers.h"
@@ -220,6 +221,7 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -263,7 +265,6 @@ class FrontendRouter;
 #include "TestFrontendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/text/CString.h>
 
 namespace Inspector {
 
@@ -304,7 +305,9 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
-#include <wtf/Assertions.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -362,9 +365,9 @@ Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Runtime' Domain
 template<>
-Optional<Inspector::Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::FarmAnimals>(const String&);
+Optional<Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Protocol::Runtime::FarmAnimals>(const String&);
 template<>
-Optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::TwoLeggedAnimals>(const String&);
+Optional<Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Protocol::Runtime::TwoLeggedAnimals>(const String&);
 
 } // namespace TestHelpers
 
@@ -418,8 +421,7 @@ struct DefaultHash<Inspector::Protocol::Runtime::TwoLeggedAnimals> : IntHash<Ins
 #include "config.h"
 #include "TestProtocolObjects.h"
 
-#include <wtf/Optional.h>
-#include <wtf/text/CString.h>
+#include <wtf/Assertions.h>
 
 namespace Inspector {
 
@@ -444,33 +446,33 @@ String getEnumConstantValue(int code) {
 // Enums in the 'Runtime' Domain
 
 template<>
-Optional<Inspector::Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::FarmAnimals>(const String& protocolString)
+Optional<Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Protocol::Runtime::FarmAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
-        (size_t)Inspector::Protocol::Runtime::FarmAnimals::Pigs,
-        (size_t)Inspector::Protocol::Runtime::FarmAnimals::Cows,
-        (size_t)Inspector::Protocol::Runtime::FarmAnimals::Cats,
-        (size_t)Inspector::Protocol::Runtime::FarmAnimals::Hens,
+        (size_t)Protocol::Runtime::FarmAnimals::Pigs,
+        (size_t)Protocol::Runtime::FarmAnimals::Cows,
+        (size_t)Protocol::Runtime::FarmAnimals::Cats,
+        (size_t)Protocol::Runtime::FarmAnimals::Hens,
     };
     for (size_t i = 0; i < 4; ++i)
         if (protocolString == enum_constant_values[constantValues[i]])
-            return (Inspector::Protocol::Runtime::FarmAnimals)constantValues[i];
+            return (Protocol::Runtime::FarmAnimals)constantValues[i];
 
     return WTF::nullopt;
 }
 
 template<>
-Optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Inspector::Protocol::Runtime::TwoLeggedAnimals>(const String& protocolString)
+Optional<Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Protocol::Runtime::TwoLeggedAnimals>(const String& protocolString)
 {
     static const size_t constantValues[] = {
-        (size_t)Inspector::Protocol::Runtime::TwoLeggedAnimals::Ducks,
-        (size_t)Inspector::Protocol::Runtime::TwoLeggedAnimals::Hens,
-        (size_t)Inspector::Protocol::Runtime::TwoLeggedAnimals::Crows,
-        (size_t)Inspector::Protocol::Runtime::TwoLeggedAnimals::Flamingos,
+        (size_t)Protocol::Runtime::TwoLeggedAnimals::Ducks,
+        (size_t)Protocol::Runtime::TwoLeggedAnimals::Hens,
+        (size_t)Protocol::Runtime::TwoLeggedAnimals::Crows,
+        (size_t)Protocol::Runtime::TwoLeggedAnimals::Flamingos,
     };
     for (size_t i = 0; i < 4; ++i)
         if (protocolString == enum_constant_values[constantValues[i]])
-            return (Inspector::Protocol::Runtime::TwoLeggedAnimals)constantValues[i];
+            return (Protocol::Runtime::TwoLeggedAnimals)constantValues[i];
 
     return WTF::nullopt;
 }

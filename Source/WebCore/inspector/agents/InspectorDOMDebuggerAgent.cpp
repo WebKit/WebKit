@@ -128,109 +128,94 @@ void InspectorDOMDebuggerAgent::mainFrameNavigated()
         m_pauseOnAllTimeoutsBreakpoint->resetHitCount();
 }
 
-void InspectorDOMDebuggerAgent::setEventBreakpoint(ErrorString& errorString, const String& breakpointTypeString, const String* eventName, const JSON::Object* optionsPayload)
+Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setEventBreakpoint(Protocol::DOMDebugger::EventBreakpointType breakpointType, const String& eventName, RefPtr<JSON::Object>&& options)
 {
-    if (breakpointTypeString.isEmpty()) {
-        errorString = "breakpointType is empty"_s;
-        return;
-    }
+    Protocol::ErrorString errorString;
 
-    auto breakpointType = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::DOMDebugger::EventBreakpointType>(breakpointTypeString);
-    if (!breakpointType) {
-        errorString = makeString("Unknown breakpointType: "_s, breakpointTypeString);
-        return;
-    }
-
-    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, optionsPayload);
+    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTFMove(options));
     if (!breakpoint)
-        return;
+        return makeUnexpected(errorString);
 
-    if (eventName && !eventName->isEmpty()) {
-        if (breakpointType.value() == Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener) {
-            if (!m_listenerBreakpoints.add(*eventName, breakpoint.releaseNonNull()))
-                errorString = "Breakpoint with eventName already exists"_s;
-            return;
+    if (!eventName.isEmpty()) {
+        if (breakpointType == Protocol::DOMDebugger::EventBreakpointType::Listener) {
+            if (!m_listenerBreakpoints.add(eventName, breakpoint.releaseNonNull()))
+                return makeUnexpected("Breakpoint with eventName already exists"_s);
+            return { };
         }
 
-        errorString = "Unexpected eventName"_s;
-        return;
+        return makeUnexpected("Unexpected eventName"_s);
     }
 
-    switch (breakpointType.value()) {
-    case Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
-        setAnimationFrameBreakpoint(errorString, WTFMove(breakpoint));
-        break;
+    switch (breakpointType) {
+    case Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
+        if (!setAnimationFrameBreakpoint(errorString, WTFMove(breakpoint)))
+            return makeUnexpected(errorString);
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Interval:
-        if (!m_pauseOnAllIntervalsBreakpoint)
-            m_pauseOnAllIntervalsBreakpoint = WTFMove(breakpoint);
-        else
-            errorString = "Breakpoint for Interval already exists"_s;
-        break;
+    case Protocol::DOMDebugger::EventBreakpointType::Interval:
+        if (m_pauseOnAllIntervalsBreakpoint)
+            return makeUnexpected("Breakpoint for Interval already exists"_s);
+        m_pauseOnAllIntervalsBreakpoint = WTFMove(breakpoint);
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener:
-        if (!m_pauseOnAllListenersBreakpoint)
-            m_pauseOnAllListenersBreakpoint = WTFMove(breakpoint);
-        else
-            errorString = "Breakpoint for Listener already exists"_s;
-        break;
+    case Protocol::DOMDebugger::EventBreakpointType::Listener:
+        if (m_pauseOnAllListenersBreakpoint)
+            return makeUnexpected("Breakpoint for Listener already exists"_s);
+        m_pauseOnAllListenersBreakpoint = WTFMove(breakpoint);
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Timeout:
-        if (!m_pauseOnAllTimeoutsBreakpoint)
-            m_pauseOnAllTimeoutsBreakpoint = WTFMove(breakpoint);
-        else
-            errorString = "Breakpoint for Timeout already exists"_s;
-        break;
+    case Protocol::DOMDebugger::EventBreakpointType::Timeout:
+        if (m_pauseOnAllTimeoutsBreakpoint)
+            return makeUnexpected("Breakpoint for Timeout already exists"_s);
+        m_pauseOnAllTimeoutsBreakpoint = WTFMove(breakpoint);
+        return { };
     }
+
+    ASSERT_NOT_REACHED();
+    return makeUnexpected("Not supported");
 }
 
-void InspectorDOMDebuggerAgent::removeEventBreakpoint(ErrorString& errorString, const String& breakpointTypeString, const String* eventName)
+Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventBreakpoint(Protocol::DOMDebugger::EventBreakpointType breakpointType, const String& eventName)
 {
-    if (breakpointTypeString.isEmpty()) {
-        errorString = "breakpointType is empty"_s;
-        return;
-    }
+    Protocol::ErrorString errorString;
 
-    auto breakpointType = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::DOMDebugger::EventBreakpointType>(breakpointTypeString);
-    if (!breakpointType) {
-        errorString = makeString("Unknown breakpointType: "_s, breakpointTypeString);
-        return;
-    }
-
-    if (eventName && !eventName->isEmpty()) {
-        if (breakpointType.value() == Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener) {
-            if (!m_listenerBreakpoints.remove(*eventName))
-                errorString = "Breakpoint for given eventName missing"_s;
-            return;
+    if (!eventName.isEmpty()) {
+        if (breakpointType == Protocol::DOMDebugger::EventBreakpointType::Listener) {
+            if (!m_listenerBreakpoints.remove(eventName))
+                return makeUnexpected("Breakpoint for given eventName missing"_s);
+            return { };
         }
 
-        errorString = "Unexpected eventName"_s;
-        return;
+        return makeUnexpected("Unexpected eventName"_s);
     }
 
-    switch (breakpointType.value()) {
-    case Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
-        setAnimationFrameBreakpoint(errorString, nullptr);
-        break;
+    switch (breakpointType) {
+    case Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
+        if (!setAnimationFrameBreakpoint(errorString, nullptr))
+            return makeUnexpected(errorString);
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Interval:
+    case Protocol::DOMDebugger::EventBreakpointType::Interval:
         if (!m_pauseOnAllIntervalsBreakpoint)
-            errorString = "Breakpoint for Intervals missing"_s;
+            return makeUnexpected("Breakpoint for Intervals missing"_s);
         m_pauseOnAllIntervalsBreakpoint = nullptr;
-        break;
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener:
+    case Protocol::DOMDebugger::EventBreakpointType::Listener:
         if (!m_pauseOnAllListenersBreakpoint)
-            errorString = "Breakpoint for Listeners missing"_s;
+            return makeUnexpected("Breakpoint for Listeners missing"_s);
         m_pauseOnAllListenersBreakpoint = nullptr;
-        break;
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::EventBreakpointType::Timeout:
+    case Protocol::DOMDebugger::EventBreakpointType::Timeout:
         if (!m_pauseOnAllTimeoutsBreakpoint)
-            errorString = "Breakpoint for Timeouts missing"_s;
+            return makeUnexpected("Breakpoint for Timeouts missing"_s);
         m_pauseOnAllTimeoutsBreakpoint = nullptr;
-        break;
+        return { };
     }
+
+    ASSERT_NOT_REACHED();
+    return makeUnexpected("Not supported");
 }
 
 void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEventListener& registeredEventListener)
@@ -329,45 +314,50 @@ void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
     m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
-void InspectorDOMDebuggerAgent::setURLBreakpoint(ErrorString& errorString, const String& url, const bool* optionalIsRegex, const JSON::Object* optionsPayload)
+Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setURLBreakpoint(const String& url, Optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
 {
-    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, optionsPayload);
+    Protocol::ErrorString errorString;
+
+    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTFMove(options));
     if (!breakpoint)
-        return;
+        return makeUnexpected(errorString);
 
     if (url.isEmpty()) {
-        if (!m_pauseOnAllURLsBreakpoint)
-            m_pauseOnAllURLsBreakpoint = WTFMove(breakpoint);
-        else
-            errorString = "Breakpoint for all URLs already exists"_s;
-        return;
+        if (m_pauseOnAllURLsBreakpoint)
+            return makeUnexpected("Breakpoint for all URLs already exists"_s);
+        m_pauseOnAllURLsBreakpoint = WTFMove(breakpoint);
+        return { };
     }
 
-    if (optionalIsRegex && *optionalIsRegex) {
+    if (isRegex && *isRegex) {
         if (!m_urlRegexBreakpoints.add(url, breakpoint.releaseNonNull()))
-            errorString = "Breakpoint for given regex already exists"_s;
+            return makeUnexpected("Breakpoint for given regex already exists"_s);
     } else {
         if (!m_urlTextBreakpoints.add(url, breakpoint.releaseNonNull()))
-            errorString = "Breakpoint for given URL already exists"_s;
+            return makeUnexpected("Breakpoint for given URL already exists"_s);
     }
+
+    return { };
 }
 
-void InspectorDOMDebuggerAgent::removeURLBreakpoint(ErrorString& errorString, const String& url, const bool* optionalIsRegex)
+Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeURLBreakpoint(const String& url, Optional<bool>&& isRegex)
 {
     if (url.isEmpty()) {
         if (!m_pauseOnAllURLsBreakpoint)
-            errorString = "Breakpoint for all URLs missing"_s;
+            return makeUnexpected("Breakpoint for all URLs missing"_s);
         m_pauseOnAllURLsBreakpoint = nullptr;
-        return;
+        return { };
     }
 
-    if (optionalIsRegex && *optionalIsRegex) {
+    if (isRegex && *isRegex) {
         if (!m_urlRegexBreakpoints.remove(url))
-            errorString = "Missing breakpoint for given regex"_s;
+            return makeUnexpected("Missing breakpoint for given regex"_s);
     } else {
         if (!m_urlTextBreakpoints.remove(url))
-            errorString = "Missing breakpoint for given URL"_s;
+            return makeUnexpected("Missing breakpoint for given URL"_s);
     }
+
+    return { };
 }
 
 void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url, URLBreakpointSource source)

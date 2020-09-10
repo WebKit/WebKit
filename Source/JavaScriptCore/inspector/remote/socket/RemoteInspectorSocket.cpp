@@ -158,7 +158,7 @@ void RemoteInspector::pushListingsNow()
 
     auto targetListJSON = JSON::Array::create();
     for (auto listing : m_targetListingMap.values())
-        targetListJSON->pushObject(listing);
+        targetListJSON->pushObject(*listing);
 
     auto jsonEvent = JSON::Object::create();
     jsonEvent->setString("event"_s, "SetTargetList"_s);

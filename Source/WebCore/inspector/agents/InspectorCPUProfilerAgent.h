@@ -34,22 +34,20 @@
 
 namespace WebCore {
 
-typedef String ErrorString;
-
 class InspectorCPUProfilerAgent final : public InspectorAgentBase, public Inspector::CPUProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorCPUProfilerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorCPUProfilerAgent(PageAgentContext&);
-    ~InspectorCPUProfilerAgent() override;
+    ~InspectorCPUProfilerAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // CPUProfilerBackendDispatcherHandler
-    void startTracking(ErrorString&) override;
-    void stopTracking(ErrorString&) override;
+    Inspector::Protocol::ErrorStringOr<void> startTracking();
+    Inspector::Protocol::ErrorStringOr<void> stopTracking();
 
 private:
     void collectSample(const ResourceUsageData&);

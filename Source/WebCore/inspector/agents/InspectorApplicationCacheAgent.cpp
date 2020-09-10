@@ -57,31 +57,30 @@ void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(FrontendRouter*
 
 void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString ignored;
-    disable(ignored);
+    disable();
 }
 
-void InspectorApplicationCacheAgent::enable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> InspectorApplicationCacheAgent::enable()
 {
-    if (m_instrumentingAgents.enabledApplicationCacheAgent() == this) {
-        errorString = "ApplicationCache domain already enabled"_s;
-        return;
-    }
+    if (m_instrumentingAgents.enabledApplicationCacheAgent() == this)
+        return makeUnexpected("ApplicationCache domain already enabled"_s);
 
     m_instrumentingAgents.setEnabledApplicationCacheAgent(this);
 
     // We need to pass initial navigator.onOnline.
     networkStateChanged();
+
+    return { };
 }
 
-void InspectorApplicationCacheAgent::disable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> InspectorApplicationCacheAgent::disable()
 {
-    if (m_instrumentingAgents.enabledApplicationCacheAgent() != this) {
-        errorString = "ApplicationCache domain already disabled"_s;
-        return;
-    }
+    if (m_instrumentingAgents.enabledApplicationCacheAgent() != this)
+        return makeUnexpected("ApplicationCache domain already disabled"_s);
 
     m_instrumentingAgents.setEnabledApplicationCacheAgent(nullptr);
+
+    return { };
 }
 
 void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
@@ -109,16 +108,13 @@ void InspectorApplicationCacheAgent::networkStateChanged()
     m_frontendDispatcher->networkStateUpdated(platformStrategies()->loaderStrategy()->isOnLine());
 }
 
-void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString& errorString, RefPtr<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result)
+Expected<Ref<JSON::ArrayOf<Protocol::ApplicationCache::FrameWithManifest>>, Protocol::ErrorString> InspectorApplicationCacheAgent::getFramesWithManifests()
 {
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
-    if (!pageAgent) {
-        errorString = "Page domain must be enabled"_s;
-        return;
-    }
+    if (!pageAgent)
+        return makeUnexpected("Page domain must be enabled"_s);
 
-    result = JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>::create();
-
+    auto result = JSON::ArrayOf<Protocol::ApplicationCache::FrameWithManifest>::create();
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* documentLoader = frame->loader().documentLoader();
         if (!documentLoader)
@@ -127,16 +123,17 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString& errorSt
         auto& host = documentLoader->applicationCacheHost();
         String manifestURL = host.applicationCacheInfo().manifest.string();
         if (!manifestURL.isEmpty()) {
-            result->addItem(Inspector::Protocol::ApplicationCache::FrameWithManifest::create()
+            result->addItem(Protocol::ApplicationCache::FrameWithManifest::create()
                 .setFrameId(pageAgent->frameId(frame))
                 .setManifestURL(manifestURL)
                 .setStatus(static_cast<int>(host.status()))
                 .release());
         }
     }
+    return result;
 }
 
-DocumentLoader* InspectorApplicationCacheAgent::assertFrameWithDocumentLoader(ErrorString& errorString, const String& frameId)
+DocumentLoader* InspectorApplicationCacheAgent::assertFrameWithDocumentLoader(Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
 {
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent) {
@@ -151,28 +148,32 @@ DocumentLoader* InspectorApplicationCacheAgent::assertFrameWithDocumentLoader(Er
     return InspectorPageAgent::assertDocumentLoader(errorString, frame);
 }
 
-void InspectorApplicationCacheAgent::getManifestForFrame(ErrorString& errorString, const String& frameId, String* manifestURL)
+Expected<String, Protocol::ErrorString> InspectorApplicationCacheAgent::getManifestForFrame(const Inspector::Protocol::Network::FrameId& frameId)
 {
+    Protocol::ErrorString errorString;
+
     DocumentLoader* documentLoader = assertFrameWithDocumentLoader(errorString, frameId);
     if (!documentLoader)
-        return;
+        return makeUnexpected(errorString);
 
-    *manifestURL = documentLoader->applicationCacheHost().applicationCacheInfo().manifest.string();
+    return documentLoader->applicationCacheHost().applicationCacheInfo().manifest.string();
 }
 
-void InspectorApplicationCacheAgent::getApplicationCacheForFrame(ErrorString& errorString, const String& frameId, RefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache>& applicationCache)
+Expected<Ref<Protocol::ApplicationCache::ApplicationCache>, Protocol::ErrorString> InspectorApplicationCacheAgent::getApplicationCacheForFrame(const Inspector::Protocol::Network::FrameId& frameId)
 {
+    Protocol::ErrorString errorString;
+
     auto* documentLoader = assertFrameWithDocumentLoader(errorString, frameId);
     if (!documentLoader)
-        return;
+        return makeUnexpected(errorString);
 
     auto& host = documentLoader->applicationCacheHost();
-    applicationCache = buildObjectForApplicationCache(host.resourceList(), host.applicationCacheInfo());
+    return buildObjectForApplicationCache(host.resourceList(), host.applicationCacheInfo());
 }
 
-Ref<Inspector::Protocol::ApplicationCache::ApplicationCache> InspectorApplicationCacheAgent::buildObjectForApplicationCache(const Vector<ApplicationCacheHost::ResourceInfo>& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)
+Ref<Protocol::ApplicationCache::ApplicationCache> InspectorApplicationCacheAgent::buildObjectForApplicationCache(const Vector<ApplicationCacheHost::ResourceInfo>& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)
 {
-    return Inspector::Protocol::ApplicationCache::ApplicationCache::create()
+    return Protocol::ApplicationCache::ApplicationCache::create()
         .setManifestURL(applicationCacheInfo.manifest.string())
         .setSize(applicationCacheInfo.size)
         .setCreationTime(applicationCacheInfo.creationTime)
@@ -181,15 +182,15 @@ Ref<Inspector::Protocol::ApplicationCache::ApplicationCache> InspectorApplicatio
         .release();
 }
 
-Ref<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>> InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const Vector<ApplicationCacheHost::ResourceInfo>& applicationCacheResources)
+Ref<JSON::ArrayOf<Protocol::ApplicationCache::ApplicationCacheResource>> InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const Vector<ApplicationCacheHost::ResourceInfo>& applicationCacheResources)
 {
-    auto result = JSON::ArrayOf<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>::create();
+    auto result = JSON::ArrayOf<Protocol::ApplicationCache::ApplicationCacheResource>::create();
     for (auto& info : applicationCacheResources)
         result->addItem(buildObjectForApplicationCacheResource(info));
     return result;
 }
 
-Ref<Inspector::Protocol::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
+Ref<Protocol::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
 {
     StringBuilder types;
 
@@ -208,7 +209,7 @@ Ref<Inspector::Protocol::ApplicationCache::ApplicationCacheResource> InspectorAp
     if (resourceInfo.isExplicit)
         types.appendLiteral("Explicit ");
 
-    return Inspector::Protocol::ApplicationCache::ApplicationCacheResource::create()
+    return Protocol::ApplicationCache::ApplicationCacheResource::create()
         .setUrl(resourceInfo.resource.string())
         .setSize(static_cast<int>(resourceInfo.size))
         .setType(types.toString())

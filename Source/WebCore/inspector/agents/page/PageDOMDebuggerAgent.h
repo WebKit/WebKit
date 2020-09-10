@@ -36,21 +36,19 @@ class Element;
 class Frame;
 class Node;
 
-typedef String ErrorString;
-
 class PageDOMDebuggerAgent final : public InspectorDOMDebuggerAgent {
 public:
     PageDOMDebuggerAgent(PageAgentContext&, Inspector::InspectorDebuggerAgent*);
-    ~PageDOMDebuggerAgent() override;
+    ~PageDOMDebuggerAgent();
 
-    bool enabled() const override;
+    bool enabled() const;
 
     // DOMDebuggerBackendDispatcherHandler
-    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type, const JSON::Object* options) override;
-    void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
+    Inspector::Protocol::ErrorStringOr<void> setDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType, RefPtr<JSON::Object>&& options);
+    Inspector::Protocol::ErrorStringOr<void> removeDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType);
 
     // InspectorInstrumentation
-    void mainFrameNavigated() final;
+    void mainFrameNavigated();
     void frameDocumentUpdated(Frame&);
     void willInsertDOMNode(Node& parent);
     void willRemoveDOMNode(Node&);
@@ -61,10 +59,10 @@ public:
     void didFireAnimationFrame();
 
 private:
-    void enable() override;
-    void disable() override;
+    void enable();
+    void disable();
 
-    void setAnimationFrameBreakpoint(ErrorString&, RefPtr<JSC::Breakpoint>&&) override;
+    bool setAnimationFrameBreakpoint(Inspector::Protocol::ErrorString&, RefPtr<JSC::Breakpoint>&&);
 
     Ref<JSON::Object> buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType, Node& breakpointOwner);
 

@@ -312,11 +312,8 @@ static RefPtr<JSON::Value> parseJSONValue(const SharedBuffer& buffer)
 
     // Parse the buffer contents as JSON, returning the root object (if any).
     String json { buffer.data(), static_cast<unsigned>(size) };
-    RefPtr<JSON::Value> value;
-    if (!JSON::Value::parseJSON(json, value))
-        return nullptr;
 
-    return value;
+    return JSON::Value::parseJSON(json);
 }
 
 bool CDMInstanceFairPlayStreamingAVFObjC::supportsPersistableState()
@@ -804,19 +801,24 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         });
 
         auto root = parseJSONValue(responseData);
-        RefPtr<JSON::Array> array;
-        if (!root || !root->asArray(array)) {
+        if (!root) {
             callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
             return;
         }
 
-        auto parseResponse = [&](RefPtr<JSON::Value>& value) -> bool {
-            RefPtr<JSON::Object> object;
-            if (!value->asObject(object))
+        auto array = root->asArray();
+        if (!array) {
+            callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
+            return;
+        }
+
+        auto parseResponse = [&](Ref<JSON::Value>&& value) -> bool {
+            auto object = value->asObject();
+            if (!object)
                 return false;
 
-            String keyIDString;
-            if (!object->getString("keyID", keyIDString))
+            auto keyIDString = object->getString("keyID");
+            if (!keyIDString)
                 return false;
 
             Vector<uint8_t> keyIDVector;
@@ -843,14 +845,14 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
                 return false;
 
             if (hasError) {
-                NSInteger errorCode;
-                if (!errorFindResults->value->asInteger(errorCode))
+                auto errorCode = errorFindResults->value->asInteger();
+                if (!errorCode)
                     return false;
-                auto error = adoptNS([[NSError alloc] initWithDomain:@"org.webkit.eme" code:errorCode userInfo:nil]);
+                auto error = adoptNS([[NSError alloc] initWithDomain:@"org.webkit.eme" code:*errorCode userInfo:nil]);
                 [request processContentKeyResponseError:error.get()];
             } else if (hasPayload) {
-                String payloadString;
-                if (!payloadFindResults->value->asString(payloadString))
+                auto payloadString = payloadFindResults->value->asString();
+                if (!payloadString)
                     return false;
                 Vector<uint8_t> payloadVector;
                 if (!base64Decode(payloadString, payloadVector))
@@ -861,7 +863,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             return true;
         };
         for (auto value : *array) {
-            if (!parseResponse(value)) {
+            if (!parseResponse(WTFMove(value))) {
                 DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "'cenc' initData, Failed, could not parse response");
                 callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
                 return;

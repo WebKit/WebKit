@@ -51,7 +51,7 @@ WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
 
 WorkerRuntimeAgent::~WorkerRuntimeAgent() = default;
 
-InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
+InjectedScript WorkerRuntimeAgent::injectedScriptForEval(Protocol::ErrorString& errorString, Optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
         errorString = "executionContextId is not supported for workers as there is only one execution context"_s;

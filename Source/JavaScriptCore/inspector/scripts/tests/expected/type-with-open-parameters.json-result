@@ -63,7 +63,7 @@
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-#include "TestProtocolTypes.h"
+#include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
@@ -119,11 +119,14 @@ private:
 
 #include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <tuple>
+#include <wtf/Expected.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-typedef String ErrorString;
+
 
 
 
@@ -164,9 +167,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #include "TestAlternateBackendDispatchers.h"
@@ -214,6 +215,7 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -257,7 +259,6 @@ class FrontendRouter;
 #include "TestFrontendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/text/CString.h>
 
 namespace Inspector {
 
@@ -298,7 +299,9 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
-#include <wtf/Assertions.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -320,7 +323,7 @@ class OpenParameters;
 
 namespace Test {
 
-class NoOpenParameters : public JSON::ObjectBase {
+class NoOpenParameters final : public JSON::ObjectBase {
 public:
     enum {
         NoFieldsSet = 0,
@@ -347,17 +350,17 @@ public:
         friend class NoOpenParameters;
     public:
 
-        Builder<STATE | OneSet>& setOne(double value)
+        Builder<STATE | OneSet>& setOne(double in_one)
         {
             COMPILE_ASSERT(!(STATE & OneSet), property_one_already_set);
-            m_result->setDouble("one"_s, value);
+            m_result->setDouble("one"_s, in_one);
             return castState<OneSet>();
         }
 
-        Builder<STATE | TwoSet>& setTwo(double value)
+        Builder<STATE | TwoSet>& setTwo(double in_two)
         {
             COMPILE_ASSERT(!(STATE & TwoSet), property_two_already_set);
-            m_result->setDouble("two"_s, value);
+            m_result->setDouble("two"_s, in_two);
             return castState<TwoSet>();
         }
 
@@ -385,7 +388,7 @@ public:
     }
 };
 
-class OpenParameters : public JSON::Object {
+class OpenParameters final : public JSON::Object {
 public:
     enum {
         NoFieldsSet = 0,
@@ -412,17 +415,17 @@ public:
         friend class OpenParameters;
     public:
 
-        Builder<STATE | AlphaSet>& setAlpha(double value)
+        Builder<STATE | AlphaSet>& setAlpha(double in_alpha)
         {
             COMPILE_ASSERT(!(STATE & AlphaSet), property_alpha_already_set);
-            m_result->setDouble("alpha"_s, value);
+            m_result->setDouble("alpha"_s, in_alpha);
             return castState<AlphaSet>();
         }
 
-        Builder<STATE | BetaSet>& setBeta(double value)
+        Builder<STATE | BetaSet>& setBeta(double in_beta)
         {
             COMPILE_ASSERT(!(STATE & BetaSet), property_beta_already_set);
-            m_result->setDouble("beta"_s, value);
+            m_result->setDouble("beta"_s, in_beta);
             return castState<BetaSet>();
         }
 
@@ -450,7 +453,7 @@ public:
     }
 
     // Property names for type generated as open.
-    None static const char* Alpha;
+    None static const char* alphaKey;
 };
 
 } // Test
@@ -495,14 +498,13 @@ public:
 #include "config.h"
 #include "TestProtocolObjects.h"
 
-#include <wtf/Optional.h>
-#include <wtf/text/CString.h>
+#include <wtf/Assertions.h>
 
 namespace Inspector {
 
 namespace Protocol {
 
-const char* Inspector::Protocol::Test::OpenParameters::Alpha = "alpha";
+const char* Protocol::Test::OpenParameters::alphaKey = "alpha";
 
 } // namespace Protocol
 

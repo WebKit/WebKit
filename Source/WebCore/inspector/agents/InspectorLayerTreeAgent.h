@@ -42,24 +42,22 @@ class PseudoElement;
 class RenderElement;
 class RenderLayer;
 
-typedef String ErrorString;
-
 class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorLayerTreeAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorLayerTreeAgent(WebAgentContext&);
-    ~InspectorLayerTreeAgent() override;
+    ~InspectorLayerTreeAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // LayerTreeBackendDispatcherHandler
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void layersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&) override;
-    void reasonsForCompositingLayer(ErrorString&, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&) override;
+    Inspector::Protocol::ErrorStringOr<void> enable();
+    Inspector::Protocol::ErrorStringOr<void> disable();
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>> layersForNode(Inspector::Protocol::DOM::NodeId);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId&);
 
     // InspectorInstrumentation
     void layerTreeDidChange();
@@ -72,13 +70,13 @@ private:
     String bind(const RenderLayer*);
     void unbind(const RenderLayer*);
 
-    void gatherLayersUsingRenderObjectHierarchy(ErrorString&, RenderElement&, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&);
-    void gatherLayersUsingRenderLayerHierarchy(ErrorString&, RenderLayer*, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&);
+    void gatherLayersUsingRenderObjectHierarchy(RenderElement&, JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>&);
+    void gatherLayersUsingRenderLayerHierarchy(RenderLayer*, JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>&);
 
-    Ref<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(ErrorString&, RenderLayer*);
+    Ref<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(RenderLayer*);
     Ref<Inspector::Protocol::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
 
-    int idForNode(ErrorString&, Node*);
+    Inspector::Protocol::DOM::NodeId idForNode(Node*);
 
     String bindPseudoElement(PseudoElement*);
     void unbindPseudoElement(PseudoElement*);
@@ -86,11 +84,11 @@ private:
     std::unique_ptr<Inspector::LayerTreeFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::LayerTreeBackendDispatcher> m_backendDispatcher;
 
-    HashMap<const RenderLayer*, String> m_documentLayerToIdMap;
-    HashMap<String, const RenderLayer*> m_idToLayer;
+    HashMap<const RenderLayer*, Inspector::Protocol::LayerTree::LayerId> m_documentLayerToIdMap;
+    HashMap<Inspector::Protocol::LayerTree::LayerId, const RenderLayer*> m_idToLayer;
 
-    HashMap<PseudoElement*, String> m_pseudoElementToIdMap;
-    HashMap<String, PseudoElement*> m_idToPseudoElement;
+    HashMap<PseudoElement*, Inspector::Protocol::LayerTree::PseudoElementId> m_pseudoElementToIdMap;
+    HashMap<Inspector::Protocol::LayerTree::PseudoElementId, PseudoElement*> m_idToPseudoElement;
 
     bool m_suppressLayerChangeEvents { false };
 };

@@ -114,13 +114,13 @@ private:
     """void ObjCInspector${domainName}BackendDispatcher::${commandName}(${parameters})
 {
     if (!${respondsToSelector}) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'${domainName}.${commandName}' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'${domainName}.${commandName}' was not found"_s);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
     };
 

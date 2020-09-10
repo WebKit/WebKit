@@ -346,14 +346,18 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
                 [WI.LoggingChannel.Level.Verbose, WI.UIString("Verbose")],
             ];
             const editorLabels = {
-                media: WI.UIString("Media Logging:"),
-                mediasource: WI.UIString("MSE Logging:"),
-                webrtc: WI.UIString("WebRTC Logging:"),
+                [WI.ConsoleMessage.MessageSource.Media]: WI.UIString("Media Logging:"),
+                [WI.ConsoleMessage.MessageSource.MediaSource]: WI.UIString("MSE Logging:"),
+                [WI.ConsoleMessage.MessageSource.WebRTC]: WI.UIString("WebRTC Logging:"),
             };
 
             let channels = WI.consoleManager.customLoggingChannels;
             for (let channel of channels) {
-                let logEditor = consoleSettingsView.addGroupWithCustomSetting(editorLabels[channel.source], WI.SettingEditor.Type.Select, {values: logLevels});
+                let label = editorLabels[channel.source];
+                if (!label)
+                    continue;
+
+                let logEditor = consoleSettingsView.addGroupWithCustomSetting(label, WI.SettingEditor.Type.Select, {values: logLevels});
                 logEditor.value = channel.level;
                 logEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => {
                     for (let target of WI.targets)

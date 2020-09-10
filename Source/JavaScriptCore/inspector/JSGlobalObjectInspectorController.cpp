@@ -231,9 +231,8 @@ void JSGlobalObjectInspectorController::frontendInitialized()
     if (m_pauseAfterInitialization) {
         m_pauseAfterInitialization = false;
 
-        ErrorString ignored;
-        ensureDebuggerAgent().enable(ignored);
-        ensureDebuggerAgent().pause(ignored);
+        ensureDebuggerAgent().enable();
+        ensureDebuggerAgent().pause();
     }
 
 #if ENABLE(REMOTE_INSPECTOR)

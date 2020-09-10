@@ -64,10 +64,10 @@ void InspectorScriptProfilerAgent::willDestroyFrontendAndBackend(DisconnectReaso
     }
 }
 
-void InspectorScriptProfilerAgent::startTracking(ErrorString&, const bool* includeSamples)
+Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::startTracking(Optional<bool>&& includeSamples)
 {
     if (m_tracking)
-        return;
+        return { };
 
     m_tracking = true;
 
@@ -91,12 +91,14 @@ void InspectorScriptProfilerAgent::startTracking(ErrorString&, const bool* inclu
     m_environment.debugger().setProfilingClient(this);
 
     m_frontendDispatcher->trackingStart(stopwatch.elapsedTime().seconds());
+
+    return { };
 }
 
-void InspectorScriptProfilerAgent::stopTracking(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::stopTracking()
 {
     if (!m_tracking)
-        return;
+        return { };
 
     m_tracking = false;
     m_activeEvaluateScript = false;
@@ -104,6 +106,8 @@ void InspectorScriptProfilerAgent::stopTracking(ErrorString&)
     m_environment.debugger().setProfilingClient(nullptr);
 
     trackingComplete();
+
+    return { };
 }
 
 bool InspectorScriptProfilerAgent::isAlreadyProfiling() const

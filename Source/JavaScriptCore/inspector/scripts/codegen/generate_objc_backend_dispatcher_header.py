@@ -33,13 +33,13 @@ from string import Template
 try:
     from .cpp_generator import CppGenerator
     from .generator import Generator
-    from .models import Frameworks
+    from .models import EnumType, AliasedType, Frameworks
     from .objc_generator import ObjCGenerator
     from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 except ValueError:
     from cpp_generator import CppGenerator
     from generator import Generator
-    from models import Frameworks
+    from models import EnumType, AliasedType, Frameworks
     from objc_generator import ObjCGenerator
     from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -103,9 +103,19 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
 
     def _generate_objc_handler_declaration_for_command(self, command):
         lines = []
-        parameters = ['long requestId']
-        for _parameter in command.call_parameters:
-            parameters.append('%s in_%s' % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
+        parameters = ['long protocol_requestId']
+        for parameter in command.call_parameters:
+            parameter_type = parameter.type
+            if isinstance(parameter_type, AliasedType):
+                parameter_type = parameter_type.aliased_type
+            if isinstance(parameter_type, EnumType):
+                parameter_type = parameter_type.primitive_type
+
+            parameter_name = parameter.parameter_name
+            if parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+
+            parameters.append('%s %s' % (CppGenerator.cpp_type_for_command_parameter(parameter_type, parameter.is_optional), parameter_name))
 
         command_args = {
             'commandName': command.command_name,

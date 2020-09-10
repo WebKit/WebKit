@@ -54,79 +54,83 @@ PageConsoleAgent::PageConsoleAgent(PageAgentContext& context)
 
 PageConsoleAgent::~PageConsoleAgent() = default;
 
-void PageConsoleAgent::clearMessages(ErrorString& errorString)
+Protocol::ErrorStringOr<void> PageConsoleAgent::clearMessages()
 {
     if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent())
         domAgent->releaseDanglingNodes();
 
-    WebConsoleAgent::clearMessages(errorString);
+    return WebConsoleAgent::clearMessages();
 }
 
-void PageConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>& channels)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Console::Channel>>> PageConsoleAgent::getLoggingChannels()
 {
-    static const struct ChannelTable {
-        NeverDestroyed<String> name;
-        Inspector::Protocol::Console::ChannelSource source;
-    } channelTable[] = {
-        { MAKE_STATIC_STRING_IMPL("WebRTC"), Inspector::Protocol::Console::ChannelSource::WebRTC },
-        { MAKE_STATIC_STRING_IMPL("Media"), Inspector::Protocol::Console::ChannelSource::Media },
-        { MAKE_STATIC_STRING_IMPL("MediaSource"), Inspector::Protocol::Console::ChannelSource::MediaSource },
-    };
+    auto channels = JSON::ArrayOf<Protocol::Console::Channel>::create();
 
-    channels = JSON::ArrayOf<Inspector::Protocol::Console::Channel>::create();
-
-    size_t length = WTF_ARRAY_LENGTH(channelTable);
-    for (size_t i = 0; i < length; ++i) {
-        auto* logChannel = getLogChannel(channelTable[i].name);
+    auto addLogChannel = [&] (Protocol::Console::ChannelSource source) {
+        auto* logChannel = getLogChannel(Protocol::Helpers::getEnumConstantValue(source));
         if (!logChannel)
             return;
 
-        auto level = Inspector::Protocol::Console::ChannelLevel::Off;
+        auto level = Protocol::Console::ChannelLevel::Off;
         if (logChannel->state != WTFLogChannelState::Off) {
             switch (logChannel->level) {
             case WTFLogLevel::Always:
             case WTFLogLevel::Error:
             case WTFLogLevel::Warning:
             case WTFLogLevel::Info:
-                level = Inspector::Protocol::Console::ChannelLevel::Basic;
+                level = Protocol::Console::ChannelLevel::Basic;
                 break;
+
             case WTFLogLevel::Debug:
-                level = Inspector::Protocol::Console::ChannelLevel::Verbose;
+                level = Protocol::Console::ChannelLevel::Verbose;
                 break;
             }
         }
 
-        auto channel = Inspector::Protocol::Console::Channel::create()
-            .setSource(channelTable[i].source)
+        auto channel = Protocol::Console::Channel::create()
+            .setSource(source)
             .setLevel(level)
             .release();
         channels->addItem(WTFMove(channel));
-    }
+    };
+    addLogChannel(Protocol::Console::ChannelSource::XML);
+    addLogChannel(Protocol::Console::ChannelSource::JavaScript);
+    addLogChannel(Protocol::Console::ChannelSource::Network);
+    addLogChannel(Protocol::Console::ChannelSource::ConsoleAPI);
+    addLogChannel(Protocol::Console::ChannelSource::Storage);
+    addLogChannel(Protocol::Console::ChannelSource::Appcache);
+    addLogChannel(Protocol::Console::ChannelSource::Rendering);
+    addLogChannel(Protocol::Console::ChannelSource::CSS);
+    addLogChannel(Protocol::Console::ChannelSource::Security);
+    addLogChannel(Protocol::Console::ChannelSource::ContentBlocker);
+    addLogChannel(Protocol::Console::ChannelSource::Media);
+    addLogChannel(Protocol::Console::ChannelSource::MediaSource);
+    addLogChannel(Protocol::Console::ChannelSource::WebRTC);
+    addLogChannel(Protocol::Console::ChannelSource::ITPDebug);
+    addLogChannel(Protocol::Console::ChannelSource::AdClickAttribution);
+    addLogChannel(Protocol::Console::ChannelSource::Other);
+
+    return WTFMove(channels);
 }
 
-static Optional<std::pair<WTFLogChannelState, WTFLogLevel>> channelConfigurationForString(const String& levelString)
+Protocol::ErrorStringOr<void> PageConsoleAgent::setLoggingChannelLevel(Protocol::Console::ChannelSource source, Protocol::Console::ChannelLevel level)
 {
-    if (equalIgnoringASCIICase(levelString, "off"))
-        return { { WTFLogChannelState::Off, WTFLogLevel::Error } };
+    switch (level) {
+    case Protocol::Console::ChannelLevel::Off:
+        m_inspectedPage.configureLoggingChannel(Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::Off, WTFLogLevel::Error);
+        return { };
 
-    if (equalIgnoringASCIICase(levelString, "basic"))
-        return { { WTFLogChannelState::On, WTFLogLevel::Info } };
+    case Protocol::Console::ChannelLevel::Basic:
+        m_inspectedPage.configureLoggingChannel(Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Info);
+        return { };
 
-    if (equalIgnoringASCIICase(levelString, "verbose"))
-        return { { WTFLogChannelState::On, WTFLogLevel::Debug } };
-
-    return WTF::nullopt;
-}
-
-void PageConsoleAgent::setLoggingChannelLevel(ErrorString& errorString, const String& channelName, const String& channelLevel)
-{
-    auto configuration = channelConfigurationForString(channelLevel);
-    if (!configuration) {
-        errorString = makeString("Unknown channelLevel: "_s, channelLevel);
-        return;
+    case Protocol::Console::ChannelLevel::Verbose:
+        m_inspectedPage.configureLoggingChannel(Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Debug);
+        return { };
     }
 
-    m_inspectedPage.configureLoggingChannel(channelName, configuration.value().first, configuration.value().second);
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 } // namespace WebCore

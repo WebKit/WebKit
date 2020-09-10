@@ -49,18 +49,18 @@ bool WebDebuggerAgent::enabled() const
     return m_instrumentingAgents.enabledWebDebuggerAgent() == this && InspectorDebuggerAgent::enabled();
 }
 
-void WebDebuggerAgent::enable()
+void WebDebuggerAgent::internalEnable()
 {
     m_instrumentingAgents.setEnabledWebDebuggerAgent(this);
 
-    InspectorDebuggerAgent::enable();
+    InspectorDebuggerAgent::internalEnable();
 }
 
-void WebDebuggerAgent::disable(bool isBeingDestroyed)
+void WebDebuggerAgent::internalDisable(bool isBeingDestroyed)
 {
     m_instrumentingAgents.setEnabledWebDebuggerAgent(nullptr);
 
-    InspectorDebuggerAgent::disable(isBeingDestroyed);
+    InspectorDebuggerAgent::internalDisable(isBeingDestroyed);
 }
 
 void WebDebuggerAgent::didAddEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)

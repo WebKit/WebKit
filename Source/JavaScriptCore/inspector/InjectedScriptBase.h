@@ -47,8 +47,7 @@ class ScriptFunctionCall;
 
 namespace Inspector {
 
-typedef String ErrorString;
-typedef WTF::Function<void(ErrorString&, RefPtr<Protocol::Runtime::RemoteObject>&&, Optional<bool>&, Optional<int>&)> AsyncCallCallback;
+using AsyncCallCallback = WTF::Function<void(Protocol::ErrorString&, RefPtr<Protocol::Runtime::RemoteObject>&&, Optional<bool>&&, Optional<int>&&)>;
 
 class JS_EXPORT_PRIVATE InjectedScriptBase {
 public:
@@ -69,11 +68,11 @@ protected:
     const Deprecated::ScriptObject& injectedScriptObject() const;
     Expected<JSC::JSValue, NakedPtr<JSC::Exception>> callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&) const;
     Ref<JSON::Value> makeCall(Deprecated::ScriptFunctionCall&);
-    void makeEvalCall(ErrorString&, Deprecated::ScriptFunctionCall&, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
+    void makeEvalCall(Protocol::ErrorString&, Deprecated::ScriptFunctionCall&, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
     void makeAsyncCall(Deprecated::ScriptFunctionCall&, AsyncCallCallback&&);
 
 private:
-    void checkCallResult(ErrorString&, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
+    void checkCallResult(Protocol::ErrorString&, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
     void checkAsyncCallResult(RefPtr<JSON::Value> result, const AsyncCallCallback&);
 
     String m_name;

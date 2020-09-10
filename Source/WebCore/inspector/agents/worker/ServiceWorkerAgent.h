@@ -34,21 +34,19 @@ namespace WebCore {
 
 class ServiceWorkerGlobalScope;
 
-typedef String ErrorString;
-
 class ServiceWorkerAgent final : public InspectorAgentBase, public Inspector::ServiceWorkerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ServiceWorkerAgent(WorkerAgentContext&);
-    ~ServiceWorkerAgent() override;
+    ~ServiceWorkerAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // ServiceWorkerBackendDispatcherHandler
-    void getInitializationInfo(ErrorString&, RefPtr<Inspector::Protocol::ServiceWorker::Configuration>&) override;
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::ServiceWorker::Configuration>> getInitializationInfo();
 
 private:
     ServiceWorkerGlobalScope& m_serviceWorkerGlobalScope;

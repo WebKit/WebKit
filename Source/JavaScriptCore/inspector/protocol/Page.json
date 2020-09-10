@@ -267,7 +267,7 @@
             "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "appearance", "$ref": "Appearance", "description": "Appearance name to force. Empty string disables the override." }
+                { "name": "appearance", "$ref": "Appearance", "optional": true }
             ]
         },
         {

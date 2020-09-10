@@ -50,8 +50,6 @@ namespace WebCore {
 class Event;
 class RegisteredEventListener;
 
-typedef String ErrorString;
-
 class InspectorDOMDebuggerAgent : public InspectorAgentBase, public Inspector::DOMDebuggerBackendDispatcherHandler, public Inspector::InspectorDebuggerAgent::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,10 +63,10 @@ public:
     virtual bool enabled() const;
 
     // DOMDebuggerBackendDispatcherHandler
-    void setURLBreakpoint(ErrorString&, const String& url, const bool* isRegex, const JSON::Object* options) final;
-    void removeURLBreakpoint(ErrorString&, const String& url, const bool* isRegex) final;
-    void setEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName, const JSON::Object* options) final;
-    void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
+    Inspector::Protocol::ErrorStringOr<void> setURLBreakpoint(const String& url, Optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
+    Inspector::Protocol::ErrorStringOr<void> removeURLBreakpoint(const String& url, Optional<bool>&& isRegex) final;
+    Inspector::Protocol::ErrorStringOr<void> setEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName, RefPtr<JSON::Object>&& options) final;
+    Inspector::Protocol::ErrorStringOr<void> removeEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName) final;
 
     // InspectorDebuggerAgent::Listener
     void debuggerWasEnabled() override;
@@ -88,7 +86,7 @@ protected:
     virtual void enable();
     virtual void disable();
 
-    virtual void setAnimationFrameBreakpoint(ErrorString&, RefPtr<JSC::Breakpoint>&&) = 0;
+    virtual bool setAnimationFrameBreakpoint(Inspector::Protocol::ErrorString&, RefPtr<JSC::Breakpoint>&&) = 0;
 
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 

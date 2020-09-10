@@ -40,7 +40,6 @@ namespace Inspector {
 
 class InjectedScript;
 class InjectedScriptManager;
-typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorAuditAgent : public InspectorAgentBase, public AuditBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAuditAgent);
@@ -53,9 +52,9 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // AuditBackendDispatcherHandler
-    void setup(ErrorString&, const int* executionContextId) final;
-    void run(ErrorString&, const String& test, const int* executionContextId, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown) final;
-    void teardown(ErrorString&) final;
+    Protocol::ErrorStringOr<void> setup(Optional<Protocol::Runtime::ExecutionContextId>&&) final;
+    Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, Optional<bool> /* wasThrown */>> run(const String& test, Optional<Protocol::Runtime::ExecutionContextId>&&) final;
+    Protocol::ErrorStringOr<void> teardown() final;
 
     bool hasActiveAudit() const;
 
@@ -64,7 +63,7 @@ protected:
 
     InjectedScriptManager& injectedScriptManager() { return m_injectedScriptManager; }
 
-    virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
+    virtual InjectedScript injectedScriptForEval(Protocol::ErrorString&, Optional<Protocol::Runtime::ExecutionContextId>&&) = 0;
 
     virtual void populateAuditObject(JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>& auditObject);
 

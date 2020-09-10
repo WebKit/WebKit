@@ -69,84 +69,74 @@ void PageDOMDebuggerAgent::disable()
     InspectorDOMDebuggerAgent::disable();
 }
 
-void PageDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString, const JSON::Object* optionsPayload)
+Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::setDOMBreakpoint(Protocol::DOM::NodeId nodeId, Protocol::DOMDebugger::DOMBreakpointType type, RefPtr<JSON::Object>&& options)
 {
+    Protocol::ErrorString errorString;
+
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
-    if (!domAgent) {
-        errorString = "DOM domain must be enabled"_s;
-        return;
-    }
+    if (!domAgent)
+        return makeUnexpected("DOM domain must be enabled"_s);
 
     Node* node = domAgent->assertNode(errorString, nodeId);
     if (!node)
-        return;
+        return makeUnexpected(errorString);
 
-    auto type = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::DOMDebugger::DOMBreakpointType>(typeString);
-    if (!type) {
-        errorString = makeString("Unknown type: "_s, typeString);
-        return;
-    }
-
-    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, optionsPayload);
+    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTFMove(options));
     if (!breakpoint)
-        return;
+        return makeUnexpected(errorString);
 
-    switch (*type) {
-    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified:
+    switch (type) {
+    case Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified:
         if (!m_domSubtreeModifiedBreakpoints.add(node, breakpoint.releaseNonNull()))
-            errorString = "Breakpoint for given node and given type already exists"_s;
-        return;
+            return makeUnexpected("Breakpoint for given node and given type already exists"_s);
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified:
+    case Protocol::DOMDebugger::DOMBreakpointType::AttributeModified:
         if (!m_domAttributeModifiedBreakpoints.add(node, breakpoint.releaseNonNull()))
-            errorString = "Breakpoint for given node and given type already exists"_s;
-        return;
+            return makeUnexpected("Breakpoint for given node and given type already exists"_s);
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved:
+    case Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved:
         if (!m_domNodeRemovedBreakpoints.add(node, breakpoint.releaseNonNull()))
-            errorString = "Breakpoint for given node and given type already exists"_s;
-        return;
+            return makeUnexpected("Breakpoint for given node and given type already exists"_s);
+        return { };
     }
 
     ASSERT_NOT_REACHED();
+    return makeUnexpected("Not supported");
 }
 
-void PageDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
+Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::removeDOMBreakpoint(Protocol::DOM::NodeId nodeId, Protocol::DOMDebugger::DOMBreakpointType type)
 {
+    Protocol::ErrorString errorString;
+
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
-    if (!domAgent) {
-        errorString = "DOM domain must be enabled"_s;
-        return;
-    }
+    if (!domAgent)
+        return makeUnexpected("DOM domain must be enabled"_s);
 
     Node* node = domAgent->assertNode(errorString, nodeId);
     if (!node)
-        return;
+        return makeUnexpected(errorString);
 
-    auto type = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::DOMDebugger::DOMBreakpointType>(typeString);
-    if (!type) {
-        errorString = makeString("Unknown type: "_s, typeString);
-        return;
-    }
-
-    switch (*type) {
-    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified:
+    switch (type) {
+    case Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified:
         if (!m_domSubtreeModifiedBreakpoints.remove(node))
-            errorString = "Breakpoint for given node and given type missing"_s;
-        return;
+            return makeUnexpected("Breakpoint for given node and given type missing"_s);
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified:
+    case Protocol::DOMDebugger::DOMBreakpointType::AttributeModified:
         if (!m_domAttributeModifiedBreakpoints.remove(node))
-            errorString = "Breakpoint for given node and given type missing"_s;
-        return;
+            return makeUnexpected("Breakpoint for given node and given type missing"_s);
+        return { };
 
-    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved:
+    case Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved:
         if (!m_domNodeRemovedBreakpoints.remove(node))
-            errorString = "Breakpoint for given node and given type missing"_s;
-        return;
+            return makeUnexpected("Breakpoint for given node and given type missing"_s);
+        return { };
     }
 
     ASSERT_NOT_REACHED();
+    return makeUnexpected("Not supported");
 }
 
 void PageDOMDebuggerAgent::mainFrameNavigated()
@@ -213,7 +203,7 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
 
     ASSERT(closestBreakpointOwner);
 
-    auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified, *closestBreakpointOwner);
+    auto pauseData = buildPauseDataForDOMBreakpoint(Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified, *closestBreakpointOwner);
     pauseData->setBoolean("insertion", true);
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     // Include the new child node ID so the frontend can show the node that's about to be inserted.
@@ -230,7 +220,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
 
     Optional<size_t> closestDistance;
     RefPtr<JSC::Breakpoint> closestBreakpoint;
-    Optional<Inspector::Protocol::DOMDebugger::DOMBreakpointType> closestBreakpointType;
+    Optional<Protocol::DOMDebugger::DOMBreakpointType> closestBreakpointType;
     Node* closestBreakpointOwner = nullptr;
 
     for (auto [breakpointOwner, breakpoint] : m_domNodeRemovedBreakpoints) {
@@ -241,7 +231,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
         if (!closestDistance || distance < closestDistance) {
             closestDistance = distance;
             closestBreakpoint = breakpoint.copyRef();
-            closestBreakpointType = Inspector::Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved;
+            closestBreakpointType = Protocol::DOMDebugger::DOMBreakpointType::NodeRemoved;
             closestBreakpointOwner = breakpointOwner;
         }
     }
@@ -255,7 +245,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
             if (!closestDistance || distance < closestDistance) {
                 closestDistance = distance;
                 closestBreakpoint = breakpoint.copyRef();
-                closestBreakpointType = Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified;
+                closestBreakpointType = Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified;
                 closestBreakpointOwner = breakpointOwner;
             }
         }
@@ -296,7 +286,7 @@ void PageDOMDebuggerAgent::willModifyDOMAttr(Element& element)
     if (it == m_domAttributeModifiedBreakpoints.end())
         return;
 
-    auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified, element);
+    auto pauseData = buildPauseDataForDOMBreakpoint(Protocol::DOMDebugger::DOMBreakpointType::AttributeModified, element);
     m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), it->value.copyRef());
 }
 
@@ -333,27 +323,28 @@ void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
     if (it == m_domAttributeModifiedBreakpoints.end())
         return;
 
-    auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified, element);
+    auto pauseData = buildPauseDataForDOMBreakpoint(Protocol::DOMDebugger::DOMBreakpointType::AttributeModified, element);
     m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), it->value.copyRef());
 }
 
-void PageDOMDebuggerAgent::setAnimationFrameBreakpoint(ErrorString& errorString, RefPtr<JSC::Breakpoint>&& breakpoint)
+bool PageDOMDebuggerAgent::setAnimationFrameBreakpoint(Protocol::ErrorString& errorString, RefPtr<JSC::Breakpoint>&& breakpoint)
 {
     if (!m_pauseOnAllAnimationFramesBreakpoint == !breakpoint) {
         errorString = m_pauseOnAllAnimationFramesBreakpoint ? "Breakpoint for AnimationFrame already exists"_s : "Breakpoint for AnimationFrame missing"_s;
-        return;
+        return false;
     }
 
     m_pauseOnAllAnimationFramesBreakpoint = WTFMove(breakpoint);
+    return true;
 }
 
-Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType breakpointType, Node& breakpointOwner)
+Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Protocol::DOMDebugger::DOMBreakpointType breakpointType, Node& breakpointOwner)
 {
     ASSERT(m_debuggerAgent->breakpointsActive());
     ASSERT(m_domSubtreeModifiedBreakpoints.contains(&breakpointOwner) || m_domAttributeModifiedBreakpoints.contains(&breakpointOwner) || m_domNodeRemovedBreakpoints.contains(&breakpointOwner));
 
     auto pauseData = JSON::Object::create();
-    pauseData->setString("type", Inspector::Protocol::InspectorHelpers::getEnumConstantValue(breakpointType));
+    pauseData->setString("type", Protocol::Helpers::getEnumConstantValue(breakpointType));
     if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
         if (auto breakpointOwnerNodeId = domAgent->pushNodeToFrontend(&breakpointOwner))
             pauseData->setInteger("nodeId", breakpointOwnerNodeId);

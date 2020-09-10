@@ -31,5 +31,5 @@ Highlight Rect: {"x":-10,"y":-10,"width":1000,"height":2000,"top":-10,"right":99
 
 -- Running test case: BadQuadShouldError
 PASS: Should produce an error.
-Error: Unexpected invalid quadArray
+Error: Unexpected invalid quad
 

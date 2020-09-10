@@ -35,7 +35,7 @@ class WorkerConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerConsoleAgent(WorkerAgentContext&);
-    ~WorkerConsoleAgent() override;
+    ~WorkerConsoleAgent();
 };
 
 } // namespace WebCore

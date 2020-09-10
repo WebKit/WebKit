@@ -55,23 +55,27 @@ static Optional<Vector<RefPtr<KeyHandle>>> parseLicenseFormat(const JSON::Object
         return WTF::nullopt;
 
     // Retrieve the keys array.
-    RefPtr<JSON::Array> keysArray;
-    if (!it->value->asArray(keysArray))
+    auto keysArray = it->value->asArray();
+    if (!keysArray)
         return WTF::nullopt;
 
     Vector<RefPtr<KeyHandle>> decodedKeys;
     bool validFormat = std::all_of(keysArray->begin(), keysArray->end(),
         [&decodedKeys] (const auto& value) {
-            RefPtr<JSON::Object> keyObject;
-            if (!value->asObject(keyObject))
+            auto keyObject = value->asObject();
+            if (!keyObject)
                 return false;
 
-            String keyType;
-            if (!keyObject->getString("kty", keyType) || !equalLettersIgnoringASCIICase(keyType, "oct"))
+            auto keyType = keyObject->getString("kty");
+            if (!keyType || !equalLettersIgnoringASCIICase(keyType, "oct"))
                 return false;
 
-            String keyID, keyValue;
-            if (!keyObject->getString("kid", keyID) || !keyObject->getString("k", keyValue))
+            auto keyID = keyObject->getString("kid");
+            if (!keyID)
+                return false;
+
+            auto keyValue = keyObject->getString("k");
+            if (!keyValue)
                 return false;
 
             KeyIDType keyIDData;
@@ -96,8 +100,8 @@ static bool parseLicenseReleaseAcknowledgementFormat(const JSON::Object& root)
         return false;
 
     // Retrieve the kids array.
-    RefPtr<JSON::Array> kidsArray;
-    if (!it->value->asArray(kidsArray))
+    auto kidsArray = it->value->asArray();
+    if (!kidsArray)
         return false;
 
     // FIXME: Return the key IDs and validate them.

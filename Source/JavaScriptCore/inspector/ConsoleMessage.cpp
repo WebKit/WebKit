@@ -261,9 +261,11 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                         ASSERT_NOT_REACHED();
                         return;
                     }
-                    argumentsObject->addItem(WTFMove(inspectorValue));
-                    if (m_arguments->argumentCount() > 1)
-                        argumentsObject->addItem(injectedScript.wrapObject(columns, "console"_s, true));
+                    argumentsObject->addItem(inspectorValue.releaseNonNull());
+                    if (m_arguments->argumentCount() > 1) {
+                        if (auto inspectorObject = injectedScript.wrapObject(columns, "console"_s, true))
+                            argumentsObject->addItem(inspectorObject.releaseNonNull());
+                    }
                 } else {
                     for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
                         auto inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console"_s, generatePreview);
@@ -271,7 +273,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                             ASSERT_NOT_REACHED();
                             return;
                         }
-                        argumentsObject->addItem(WTFMove(inspectorValue));
+                        argumentsObject->addItem(inspectorValue.releaseNonNull());
                     }
                 }
             }
@@ -284,7 +286,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                     if (!inspectorValue)
                         continue;
 
-                    argumentsObject->addItem(WTFMove(inspectorValue));
+                    argumentsObject->addItem(inspectorValue.releaseNonNull());
                 }
             }
 

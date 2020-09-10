@@ -44,26 +44,24 @@ class KeyframeEffect;
 class Page;
 class WebAnimation;
 
-typedef String ErrorString;
-
 class InspectorAnimationAgent final : public InspectorAgentBase, public Inspector::AnimationBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAnimationAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorAnimationAgent(PageAgentContext&);
-    ~InspectorAnimationAgent() override;
+    ~InspectorAnimationAgent();
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // AnimationBackendDispatcherHandler
-    void enable(ErrorString&) override;
-    void disable(ErrorString&) override;
-    void requestEffectTarget(ErrorString&, const String& animationId, int* nodeId) override;
-    void resolveAnimation(ErrorString&, const String& animationId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
-    void startTracking(ErrorString&) override;
-    void stopTracking(ErrorString&) override;
+    Inspector::Protocol::ErrorStringOr<void> enable();
+    Inspector::Protocol::ErrorStringOr<void> disable();
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestEffectTarget(const Inspector::Protocol::Animation::AnimationId&);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveAnimation(const Inspector::Protocol::Animation::AnimationId&, const String& objectGroup);
+    Inspector::Protocol::ErrorStringOr<void> startTracking();
+    Inspector::Protocol::ErrorStringOr<void> stopTracking();
 
     // InspectorInstrumentation
     void willApplyKeyframeEffect(Element&, KeyframeEffect&, ComputedEffectTiming);
@@ -77,7 +75,7 @@ public:
 
 private:
     String findAnimationId(WebAnimation&);
-    WebAnimation* assertAnimation(ErrorString&, const String& animationId);
+    WebAnimation* assertAnimation(Inspector::Protocol::ErrorString&, const String& animationId);
     void bindAnimation(WebAnimation&, bool captureBacktrace);
     void unbindAnimation(const String& animationId);
     void animationDestroyedTimerFired();

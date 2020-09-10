@@ -45,18 +45,19 @@ class Element;
 class InspectorPageAgent;
 class InspectorStyleSheet;
 
-typedef String ErrorString;
-
 class InspectorCSSId {
 public:
     InspectorCSSId() = default;
 
     explicit InspectorCSSId(const JSON::Object& value)
     {
-        if (!value.getString("styleSheetId"_s, m_styleSheetId))
+        m_styleSheetId = value.getString("styleSheetId"_s);
+        if (!m_styleSheetId)
             return;
 
-        if (!value.getInteger("ordinal"_s, m_ordinal))
+        if (auto ordinal = value.getInteger("ordinal"_s))
+            m_ordinal = *ordinal;
+        else
             m_styleSheetId = String();
     }
 
@@ -126,7 +127,7 @@ public:
     ~InspectorStyle();
 
     CSSStyleDeclaration& cssStyle() const { return m_style.get(); }
-    RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle() const;
+    Ref<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle() const;
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>> buildArrayForComputedStyle() const;
 
     ExceptionOr<String> text() const;
@@ -175,7 +176,7 @@ public:
     RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> buildObjectForStyleSheet();
     RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> buildObjectForStyleSheetInfo();
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(CSSStyleRule*);
-    RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle(CSSStyleDeclaration*);
+    Ref<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle(CSSStyleDeclaration*);
     ExceptionOr<void> setStyleText(const InspectorCSSId&, const String& text, String* oldText);
 
     virtual ExceptionOr<String> text() const;

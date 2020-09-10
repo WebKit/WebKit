@@ -607,7 +607,7 @@ bool InspectorFrontendHost::diagnosticLoggingAvailable()
     return m_client && m_client->diagnosticLoggingAvailable();
 }
 
-static Optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSONValue(const RefPtr<JSON::Value>& value)
+static Optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSONValue(Ref<JSON::Value>&& value)
 {
     switch (value->type()) {
     case JSON::Value::Type::Array:
@@ -617,24 +617,16 @@ static Optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSONValue
         return WTF::nullopt;
 
     case JSON::Value::Type::Boolean:
-        bool boolValue;
-        value->asBoolean(boolValue);
-        return DiagnosticLoggingClient::ValuePayload(boolValue);
+        return DiagnosticLoggingClient::ValuePayload(value->asBoolean().valueOr(false));
 
     case JSON::Value::Type::Double:
-        double doubleValue;
-        value->asDouble(doubleValue);
-        return DiagnosticLoggingClient::ValuePayload(doubleValue);
+        return DiagnosticLoggingClient::ValuePayload(value->asDouble().valueOr(0));
 
     case JSON::Value::Type::Integer:
-        long long intValue;
-        value->asInteger(intValue);
-        return DiagnosticLoggingClient::ValuePayload(intValue);
+        return DiagnosticLoggingClient::ValuePayload(static_cast<long long>(value->asInteger().valueOr(0)));
 
     case JSON::Value::Type::String:
-        String stringValue;
-        value->asString(stringValue);
-        return DiagnosticLoggingClient::ValuePayload(stringValue);
+        return DiagnosticLoggingClient::ValuePayload(value->asString());
     }
 
     ASSERT_NOT_REACHED();
@@ -646,17 +638,17 @@ void InspectorFrontendHost::logDiagnosticEvent(const String& eventName, const St
     if (!supportsDiagnosticLogging())
         return;
 
-    RefPtr<JSON::Value> payloadValue;
-    if (!JSON::Value::parseJSON(payloadString, payloadValue))
+    auto payloadValue = JSON::Value::parseJSON(payloadString);
+    if (!payloadValue)
         return;
 
-    RefPtr<JSON::Object> payloadObject;
-    if (!payloadValue->asObject(payloadObject))
+    auto payloadObject = payloadValue->asObject();
+    if (!payloadObject)
         return;
 
     DiagnosticLoggingClient::ValueDictionary dictionary;
-    for (const auto& [key, value] : *payloadObject) {
-        if (auto valuePayload = valuePayloadFromJSONValue(value))
+    for (auto& [key, value] : *payloadObject) {
+        if (auto valuePayload = valuePayloadFromJSONValue(WTFMove(value)))
             dictionary.set(key, WTFMove(valuePayload.value()));
     }
 

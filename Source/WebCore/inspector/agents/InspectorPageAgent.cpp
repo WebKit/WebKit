@@ -151,7 +151,7 @@ Vector<CachedResource*> InspectorPageAgent::cachedResourcesForFrame(Frame* frame
     return result;
 }
 
-void InspectorPageAgent::resourceContent(ErrorString& errorString, Frame* frame, const URL& url, String* result, bool* base64Encoded)
+void InspectorPageAgent::resourceContent(Protocol::ErrorString& errorString, Frame* frame, const URL& url, String* result, bool* base64Encoded)
 {
     DocumentLoader* loader = assertDocumentLoader(errorString, frame);
     if (!loader)
@@ -213,37 +213,37 @@ CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const URL& url)
     return cachedResource;
 }
 
-Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJSON(InspectorPageAgent::ResourceType resourceType)
+Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJSON(InspectorPageAgent::ResourceType resourceType)
 {
     switch (resourceType) {
     case DocumentResource:
-        return Inspector::Protocol::Page::ResourceType::Document;
+        return Protocol::Page::ResourceType::Document;
     case ImageResource:
-        return Inspector::Protocol::Page::ResourceType::Image;
+        return Protocol::Page::ResourceType::Image;
     case FontResource:
-        return Inspector::Protocol::Page::ResourceType::Font;
+        return Protocol::Page::ResourceType::Font;
     case StyleSheetResource:
-        return Inspector::Protocol::Page::ResourceType::StyleSheet;
+        return Protocol::Page::ResourceType::StyleSheet;
     case ScriptResource:
-        return Inspector::Protocol::Page::ResourceType::Script;
+        return Protocol::Page::ResourceType::Script;
     case XHRResource:
-        return Inspector::Protocol::Page::ResourceType::XHR;
+        return Protocol::Page::ResourceType::XHR;
     case FetchResource:
-        return Inspector::Protocol::Page::ResourceType::Fetch;
+        return Protocol::Page::ResourceType::Fetch;
     case PingResource:
-        return Inspector::Protocol::Page::ResourceType::Ping;
+        return Protocol::Page::ResourceType::Ping;
     case BeaconResource:
-        return Inspector::Protocol::Page::ResourceType::Beacon;
+        return Protocol::Page::ResourceType::Beacon;
     case WebSocketResource:
-        return Inspector::Protocol::Page::ResourceType::WebSocket;
+        return Protocol::Page::ResourceType::WebSocket;
     case OtherResource:
-        return Inspector::Protocol::Page::ResourceType::Other;
+        return Protocol::Page::ResourceType::Other;
 #if ENABLE(APPLICATION_MANIFEST)
     case ApplicationManifestResource:
         break;
 #endif
     }
-    return Inspector::Protocol::Page::ResourceType::Other;
+    return Protocol::Page::ResourceType::Other;
 }
 
 InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(CachedResource::Type type)
@@ -297,7 +297,7 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(const
     return inspectorResourceType(cachedResource.type());
 }
 
-Inspector::Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJSON(const CachedResource& cachedResource)
+Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJSON(const CachedResource& cachedResource)
 {
     return resourceTypeJSON(inspectorResourceType(cachedResource));
 }
@@ -311,7 +311,7 @@ Frame* InspectorPageAgent::findFrameWithSecurityOrigin(Page& page, const String&
     return nullptr;
 }
 
-DocumentLoader* InspectorPageAgent::assertDocumentLoader(ErrorString& errorString, Frame* frame)
+DocumentLoader* InspectorPageAgent::assertDocumentLoader(Protocol::ErrorString& errorString, Frame* frame)
 {
     FrameLoader& frameLoader = frame->loader();
     DocumentLoader* documentLoader = frameLoader.documentLoader();
@@ -338,16 +338,13 @@ void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*,
 
 void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    ErrorString unused;
-    disable(unused);
+    disable();
 }
 
-void InspectorPageAgent::enable(ErrorString& errorString)
+Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
 {
-    if (m_instrumentingAgents.enabledPageAgent() == this) {
-        errorString = "Page domain already enabled"_s;
-        return;
-    }
+    if (m_instrumentingAgents.enabledPageAgent() == this)
+        return makeUnexpected("Page domain already enabled"_s);
 
     m_instrumentingAgents.setEnabledPageAgent(this);
 
@@ -358,21 +355,22 @@ void InspectorPageAgent::enable(ErrorString& errorString)
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     defaultAppearanceDidChange(m_inspectedPage.defaultUseDarkAppearance());
 #endif
+
+    return { };
 }
 
-void InspectorPageAgent::disable(ErrorString&)
+Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 {
     m_instrumentingAgents.setEnabledPageAgent(nullptr);
 
-    ErrorString unused;
-    setShowPaintRects(unused, false);
+    setShowPaintRects(false);
 #if !PLATFORM(IOS_FAMILY)
-    setShowRulers(unused, false);
+    setShowRulers(false);
 #endif
-    overrideUserAgent(unused, nullptr);
-    setEmulatedMedia(unused, emptyString());
+    overrideUserAgent(nullString());
+    setEmulatedMedia(emptyString());
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
-    setForcedAppearance(unused, emptyString());
+    setForcedAppearance(WTF::nullopt);
 #endif
 
     auto& inspectedPageSettings = m_inspectedPage.settings();
@@ -391,6 +389,8 @@ void InspectorPageAgent::disable(ErrorString&)
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::AdClickAttributionDebugModeEnabled, WTF::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::ITPDebugModeEnabled, WTF::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled, WTF::nullopt);
+
+    return { };
 }
 
 double InspectorPageAgent::timestamp()
@@ -398,21 +398,19 @@ double InspectorPageAgent::timestamp()
     return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
-void InspectorPageAgent::reload(ErrorString&, const bool* optionalReloadFromOrigin, const bool* optionalRevalidateAllResources)
+Protocol::ErrorStringOr<void> InspectorPageAgent::reload(Optional<bool>&& ignoreCache, Optional<bool>&& revalidateAllResources)
 {
-    bool reloadFromOrigin = optionalReloadFromOrigin && *optionalReloadFromOrigin;
-    bool revalidateAllResources = optionalRevalidateAllResources && *optionalRevalidateAllResources;
-
     OptionSet<ReloadOption> reloadOptions;
-    if (reloadFromOrigin)
+    if (ignoreCache && *ignoreCache)
         reloadOptions.add(ReloadOption::FromOrigin);
-    if (!revalidateAllResources)
+    if (!revalidateAllResources || !*revalidateAllResources)
         reloadOptions.add(ReloadOption::ExpiredOnly);
-
     m_inspectedPage.mainFrame().loader().reload(reloadOptions);
+
+    return { };
 }
 
-void InspectorPageAgent::navigate(ErrorString&, const String& url)
+Protocol::ErrorStringOr<void> InspectorPageAgent::navigate(const String& url)
 {
     UserGestureIndicator indicator { ProcessingUserGesture };
     Frame& frame = m_inspectedPage.mainFrame();
@@ -421,111 +419,97 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
     FrameLoadRequest frameLoadRequest { *frame.document(), frame.document()->securityOrigin(), WTFMove(resourceRequest), "_self"_s, InitiatedByMainFrame::Unknown };
     frameLoadRequest.disableNavigationToInvalidURL();
     frame.loader().changeLocation(WTFMove(frameLoadRequest));
+
+    return { };
 }
 
-void InspectorPageAgent::overrideUserAgent(ErrorString&, const String* value)
+Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserAgent(const String& value)
 {
-    m_userAgentOverride = value ? *value : String();
+    m_userAgentOverride = value;
+
+    return { };
 }
 
-static inline Optional<bool> asOptionalBool(const bool* value)
+Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page::Setting setting, Optional<bool>&& value)
 {
-    if (!value)
-        return WTF::nullopt;
-    return *value;
-}
-
-void InspectorPageAgent::overrideSetting(ErrorString& errorString, const String& settingString, const bool* value)
-{
-    if (settingString.isEmpty()) {
-        errorString = "settingString is empty"_s;
-        return;
-    }
-
-    auto setting = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Page::Setting>(settingString);
-    if (!setting) {
-        errorString = makeString("Unknown settingString: "_s, settingString);
-        return;
-    }
-
     auto& inspectedPageSettings = m_inspectedPage.settings();
 
-    auto overrideValue = asOptionalBool(value);
-    switch (setting.value()) {
-    case Inspector::Protocol::Page::Setting::AdClickAttributionDebugModeEnabled:
-        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::AdClickAttributionDebugModeEnabled, overrideValue);
-        return;
+    switch (setting) {
+    case Protocol::Page::Setting::AdClickAttributionDebugModeEnabled:
+        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::AdClickAttributionDebugModeEnabled, value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::AuthorAndUserStylesEnabled:
-        inspectedPageSettings.setAuthorAndUserStylesEnabledInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::AuthorAndUserStylesEnabled:
+        inspectedPageSettings.setAuthorAndUserStylesEnabledInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::ICECandidateFilteringEnabled:
-        inspectedPageSettings.setICECandidateFilteringEnabledInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::ICECandidateFilteringEnabled:
+        inspectedPageSettings.setICECandidateFilteringEnabledInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::ITPDebugModeEnabled:
-        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::ITPDebugModeEnabled, overrideValue);
-        return;
+    case Protocol::Page::Setting::ITPDebugModeEnabled:
+        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::ITPDebugModeEnabled, value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::ImagesEnabled:
-        inspectedPageSettings.setImagesEnabledInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::ImagesEnabled:
+        inspectedPageSettings.setImagesEnabledInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::MediaCaptureRequiresSecureConnection:
-        inspectedPageSettings.setMediaCaptureRequiresSecureConnectionInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::MediaCaptureRequiresSecureConnection:
+        inspectedPageSettings.setMediaCaptureRequiresSecureConnectionInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::MockCaptureDevicesEnabled:
-        inspectedPageSettings.setMockCaptureDevicesEnabledInspectorOverride(overrideValue);
-        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled, overrideValue);
-        return;
+    case Protocol::Page::Setting::MockCaptureDevicesEnabled:
+        inspectedPageSettings.setMockCaptureDevicesEnabledInspectorOverride(value);
+        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled, value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::NeedsSiteSpecificQuirks:
-        inspectedPageSettings.setNeedsSiteSpecificQuirksInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::NeedsSiteSpecificQuirks:
+        inspectedPageSettings.setNeedsSiteSpecificQuirksInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::ScriptEnabled:
-        inspectedPageSettings.setScriptEnabledInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::ScriptEnabled:
+        inspectedPageSettings.setScriptEnabledInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::ShowDebugBorders:
-        inspectedPageSettings.setShowDebugBordersInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::ShowDebugBorders:
+        inspectedPageSettings.setShowDebugBordersInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::ShowRepaintCounter:
-        inspectedPageSettings.setShowRepaintCounterInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::ShowRepaintCounter:
+        inspectedPageSettings.setShowRepaintCounterInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::WebRTCEncryptionEnabled:
-        inspectedPageSettings.setWebRTCEncryptionEnabledInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::WebRTCEncryptionEnabled:
+        inspectedPageSettings.setWebRTCEncryptionEnabledInspectorOverride(value);
+        return { };
 
-    case Inspector::Protocol::Page::Setting::WebSecurityEnabled:
-        inspectedPageSettings.setWebSecurityEnabledInspectorOverride(overrideValue);
-        return;
+    case Protocol::Page::Setting::WebSecurityEnabled:
+        inspectedPageSettings.setWebSecurityEnabledInspectorOverride(value);
+        return { };
     }
 
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-static Inspector::Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
+static Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
 {
     switch (policy) {
     case Cookie::SameSitePolicy::None:
-        return Inspector::Protocol::Page::CookieSameSitePolicy::None;
+        return Protocol::Page::CookieSameSitePolicy::None;
     case Cookie::SameSitePolicy::Lax:
-        return Inspector::Protocol::Page::CookieSameSitePolicy::Lax;
+        return Protocol::Page::CookieSameSitePolicy::Lax;
     case Cookie::SameSitePolicy::Strict:
-        return Inspector::Protocol::Page::CookieSameSitePolicy::Strict;
+        return Protocol::Page::CookieSameSitePolicy::Strict;
     }
     ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Page::CookieSameSitePolicy::None;
+    return Protocol::Page::CookieSameSitePolicy::None;
 }
 
-static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
+static Ref<Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
 {
-    return Inspector::Protocol::Page::Cookie::create()
+    return Protocol::Page::Cookie::create()
         .setName(cookie.name)
         .setValue(cookie.value)
         .setDomain(cookie.domain)
@@ -538,9 +522,9 @@ static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie&
         .release();
 }
 
-static Ref<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
+static Ref<JSON::ArrayOf<Protocol::Page::Cookie>> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
 {
-    auto cookies = JSON::ArrayOf<Inspector::Protocol::Page::Cookie>::create();
+    auto cookies = JSON::ArrayOf<Protocol::Page::Cookie>::create();
 
     for (const auto& cookie : cookiesList)
         cookies->addItem(buildObjectForCookie(cookie));
@@ -560,7 +544,7 @@ static Vector<URL> allResourcesURLsForFrame(Frame* frame)
     return result;
 }
 
-void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>>& cookies)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> InspectorPageAgent::getCookies()
 {
     ListHashSet<Cookie> allRawCookies;
 
@@ -579,72 +563,84 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector
         }
     }
 
-    cookies = buildArrayForCookies(allRawCookies);
+    return buildArrayForCookies(allRawCookies);
 }
 
-static Optional<Cookie> parseCookieObject(ErrorString& errorString, const JSON::Object& cookieObject)
+static Optional<Cookie> parseCookieObject(Protocol::ErrorString& errorString, Ref<JSON::Object>&& cookieObject)
 {
     Cookie cookie;
 
-    if (!cookieObject.getString("name"_s, cookie.name)) {
+    cookie.name = cookieObject->getString(Protocol::Page::Cookie::nameKey);
+    if (!cookie.name) {
         errorString = "Invalid value for key name in given cookie";
         return WTF::nullopt;
     }
 
-    if (!cookieObject.getString("value"_s, cookie.value)) {
+    cookie.value = cookieObject->getString(Protocol::Page::Cookie::valueKey);
+    if (!cookie.value) {
         errorString = "Invalid value for key value in given cookie";
         return WTF::nullopt;
     }
 
-    if (!cookieObject.getString("domain"_s, cookie.domain)) {
+    cookie.domain = cookieObject->getString(Protocol::Page::Cookie::domainKey);
+    if (!cookie.domain) {
         errorString = "Invalid value for key domain in given cookie";
         return WTF::nullopt;
     }
 
-    if (!cookieObject.getString("path"_s, cookie.path)) {
+    cookie.path = cookieObject->getString(Protocol::Page::Cookie::pathKey);
+    if (!cookie.path) {
         errorString = "Invalid value for key path in given cookie";
         return WTF::nullopt;
     }
 
-    if (!cookieObject.getBoolean("httpOnly"_s, cookie.httpOnly)) {
+    auto httpOnly = cookieObject->getBoolean(Protocol::Page::Cookie::httpOnlyKey);
+    if (!httpOnly) {
         errorString = "Invalid value for key httpOnly in given cookie";
         return WTF::nullopt;
     }
 
-    if (!cookieObject.getBoolean("secure"_s, cookie.secure)) {
+    cookie.httpOnly = *httpOnly;
+
+    auto secure = cookieObject->getBoolean(Protocol::Page::Cookie::secureKey);
+    if (!secure) {
         errorString = "Invalid value for key secure in given cookie";
         return WTF::nullopt;
     }
 
-    bool validSession = cookieObject.getBoolean("session"_s, cookie.session);
-    cookie.expires = cookieObject.getNumber<double>("expires"_s);
-    if (!validSession && !cookie.expires) {
+    cookie.secure = *secure;
+
+    auto session = cookieObject->getBoolean(Protocol::Page::Cookie::sessionKey);
+    cookie.expires = cookieObject->getDouble(Protocol::Page::Cookie::expiresKey);
+    if (!session && !cookie.expires) {
         errorString = "Invalid value for key expires in given cookie";
         return WTF::nullopt;
     }
 
-    String sameSiteString;
-    if (!cookieObject.getString("sameSite"_s, sameSiteString)) {
+    cookie.session = *session;
+
+    auto sameSiteString = cookieObject->getString(Protocol::Page::Cookie::sameSiteKey);
+    if (!sameSiteString) {
         errorString = "Invalid value for key sameSite in given cookie";
         return WTF::nullopt;
     }
 
-    auto sameSite = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Page::CookieSameSitePolicy>(sameSiteString);
+    auto sameSite = Protocol::Helpers::parseEnumValueFromString<Protocol::Page::CookieSameSitePolicy>(sameSiteString);
     if (!sameSite) {
         errorString = "Invalid value for key sameSite in given cookie";
         return WTF::nullopt;
     }
 
     switch (sameSite.value()) {
-    case Inspector::Protocol::Page::CookieSameSitePolicy::None:
+    case Protocol::Page::CookieSameSitePolicy::None:
         cookie.sameSite = Cookie::SameSitePolicy::None;
-
         break;
-    case Inspector::Protocol::Page::CookieSameSitePolicy::Lax:
+
+    case Protocol::Page::CookieSameSitePolicy::Lax:
         cookie.sameSite = Cookie::SameSitePolicy::Lax;
-
         break;
-    case Inspector::Protocol::Page::CookieSameSitePolicy::Strict:
+
+    case Protocol::Page::CookieSameSitePolicy::Strict:
         cookie.sameSite = Cookie::SameSitePolicy::Strict;
         break;
     }
@@ -652,11 +648,13 @@ static Optional<Cookie> parseCookieObject(ErrorString& errorString, const JSON::
     return cookie;
 }
 
-void InspectorPageAgent::setCookie(ErrorString& errorString, const JSON::Object& cookieObject)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON::Object>&& cookieObject)
 {
-    auto cookie = parseCookieObject(errorString, cookieObject);
+    Protocol::ErrorString errorString;
+
+    auto cookie = parseCookieObject(errorString, WTFMove(cookieObject));
     if (!cookie)
-        return;
+        return makeUnexpected(errorString);
 
     for (auto* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document()) {
@@ -664,9 +662,11 @@ void InspectorPageAgent::setCookie(ErrorString& errorString, const JSON::Object&
                 page->cookieJar().setRawCookie(*document, cookie.value());
         }
     }
+
+    return { };
 }
 
-void InspectorPageAgent::deleteCookie(ErrorString&, const String& cookieName, const String& url)
+Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const String& cookieName, const String& url)
 {
     URL parsedURL({ }, url);
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -675,48 +675,59 @@ void InspectorPageAgent::deleteCookie(ErrorString&, const String& cookieName, co
                 page->cookieJar().deleteCookie(*document, parsedURL, cookieName);
         }
     }
+
+    return { };
 }
 
-void InspectorPageAgent::getResourceTree(ErrorString&, RefPtr<Inspector::Protocol::Page::FrameResourceTree>& object)
+Protocol::ErrorStringOr<Ref<Protocol::Page::FrameResourceTree>> InspectorPageAgent::getResourceTree()
 {
-    object = buildObjectForFrameTree(&m_inspectedPage.mainFrame());
+    return buildObjectForFrameTree(&m_inspectedPage.mainFrame());
 }
 
-void InspectorPageAgent::getResourceContent(ErrorString& errorString, const String& frameId, const String& url, String* content, bool* base64Encoded)
+Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorPageAgent::getResourceContent(const Protocol::Network::FrameId& frameId, const String& url)
 {
+    Protocol::ErrorString errorString;
+
     Frame* frame = assertFrame(errorString, frameId);
     if (!frame)
-        return;
+        return makeUnexpected(errorString);
 
-    resourceContent(errorString, frame, URL({ }, url), content, base64Encoded);
+    String content;
+    bool base64Encoded;
+
+    resourceContent(errorString, frame, URL({ }, url), &content, &base64Encoded);
+
+    return { { content, base64Encoded } };
 }
 
-void InspectorPageAgent::setBootstrapScript(ErrorString&, const String* optionalSource)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setBootstrapScript(const String& source)
 {
-    m_bootstrapScript = optionalSource ? *optionalSource : nullString();
+    m_bootstrapScript = source;
+
+    return { };
 }
 
-void InspectorPageAgent::searchInResource(ErrorString& errorString, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> InspectorPageAgent::searchInResource(const Protocol::Network::FrameId& frameId, const String& url, const String& query, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex, const Protocol::Network::RequestId& requestId)
 {
-    results = JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>::create();
+    Protocol::ErrorString errorString;
 
-    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
-    bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
-
-    if (optionalRequestId) {
+    if (!!requestId) {
         if (auto* networkAgent = m_instrumentingAgents.enabledNetworkAgent()) {
-            networkAgent->searchInRequest(errorString, *optionalRequestId, query, caseSensitive, isRegex, results);
-            return;
+            RefPtr<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> result;
+            networkAgent->searchInRequest(errorString, requestId, query, caseSensitive && *caseSensitive, isRegex && *isRegex, result);
+            if (!result)
+                return makeUnexpected(errorString);
+            return result.releaseNonNull();
         }
     }
 
     Frame* frame = assertFrame(errorString, frameId);
     if (!frame)
-        return;
+        return makeUnexpected(errorString);
 
     DocumentLoader* loader = assertDocumentLoader(errorString, frame);
     if (!loader)
-        return;
+        return makeUnexpected(errorString);
 
     URL kurl({ }, url);
 
@@ -735,29 +746,26 @@ void InspectorPageAgent::searchInResource(ErrorString& errorString, const String
     }
 
     if (!success)
-        return;
+        return JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>::create();
 
-    results = ContentSearchUtilities::searchInTextByLines(content, query, caseSensitive, isRegex);
+    return ContentSearchUtilities::searchInTextByLines(content, query, caseSensitive && *caseSensitive, isRegex && *isRegex);
 }
 
-static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
+static Ref<Protocol::Page::SearchResult> buildObjectForSearchResult(const Protocol::Network::FrameId& frameId, const String& url, int matchesCount)
 {
-    return Inspector::Protocol::Page::SearchResult::create()
+    return Protocol::Page::SearchResult::create()
         .setUrl(url)
         .setFrameId(frameId)
         .setMatchesCount(matchesCount)
         .release();
 }
 
-void InspectorPageAgent::searchInResources(ErrorString&, const String& text, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> InspectorPageAgent::searchInResources(const String& text, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex)
 {
-    result = JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>::create();
+    auto result = JSON::ArrayOf<Protocol::Page::SearchResult>::create();
 
-    bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
-    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
-
-    auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
-    auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, caseSensitive, searchStringType);
+    auto searchStringType = (isRegex && *isRegex) ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
+    auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, caseSensitive && *caseSensitive, searchStringType);
 
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         for (auto* cachedResource : cachedResourcesForFrame(frame)) {
@@ -771,24 +779,30 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
 
     if (auto* networkAgent = m_instrumentingAgents.enabledNetworkAgent())
         networkAgent->searchOtherRequests(regex, result);
+
+    return result;
 }
 
 #if !PLATFORM(IOS_FAMILY)
-void InspectorPageAgent::setShowRulers(ErrorString&, bool showRulers)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setShowRulers(bool showRulers)
 {
     m_overlay->setShowRulers(showRulers);
+
+    return { };
 }
 #endif
 
-void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setShowPaintRects(bool show)
 {
     m_showPaintRects = show;
     m_client->setShowPaintRects(show);
 
     if (m_client->overridesShowPaintRects())
-        return;
+        return { };
 
     m_overlay->setShowPaintRects(show);
+
+    return { };
 }
 
 void InspectorPageAgent::domContentEventFired()
@@ -816,7 +830,7 @@ void InspectorPageAgent::frameDetached(Frame& frame)
     m_identifierToFrame.remove(identifier);
 }
 
-Frame* InspectorPageAgent::frameForId(const String& frameId)
+Frame* InspectorPageAgent::frameForId(const Protocol::Network::FrameId& frameId)
 {
     return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId);
 }
@@ -841,7 +855,7 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
     }).iterator->value;
 }
 
-Frame* InspectorPageAgent::assertFrame(ErrorString& errorString, const String& frameId)
+Frame* InspectorPageAgent::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
 {
     Frame* frame = frameForId(frameId);
     if (!frame)
@@ -877,7 +891,7 @@ void InspectorPageAgent::frameClearedScheduledNavigation(Frame& frame)
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
 void InspectorPageAgent::defaultAppearanceDidChange(bool useDarkAppearance)
 {
-    m_frontendDispatcher->defaultAppearanceDidChange(useDarkAppearance ? Inspector::Protocol::Page::Appearance::Dark : Inspector::Protocol::Page::Appearance::Light);
+    m_frontendDispatcher->defaultAppearanceDidChange(useDarkAppearance ? Protocol::Page::Appearance::Dark : Protocol::Page::Appearance::Light);
 }
 #endif
 
@@ -933,11 +947,11 @@ void InspectorPageAgent::didRecalculateStyle()
     m_overlay->update();
 }
 
-Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
+Ref<Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
 {
     ASSERT_ARG(frame, frame);
 
-    auto frameObject = Inspector::Protocol::Page::Frame::create()
+    auto frameObject = Protocol::Page::Frame::create()
         .setId(frameId(frame))
         .setLoaderId(loaderId(frame->loader().documentLoader()))
         .setUrl(frame->document()->url().string())
@@ -956,19 +970,19 @@ Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Fr
     return frameObject;
 }
 
-Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
+Ref<Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
 {
     ASSERT_ARG(frame, frame);
 
-    Ref<Inspector::Protocol::Page::Frame> frameObject = buildObjectForFrame(frame);
-    auto subresources = JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>::create();
-    auto result = Inspector::Protocol::Page::FrameResourceTree::create()
+    auto frameObject = buildObjectForFrame(frame);
+    auto subresources = JSON::ArrayOf<Protocol::Page::FrameResource>::create();
+    auto result = Protocol::Page::FrameResourceTree::create()
         .setFrame(WTFMove(frameObject))
         .setResources(subresources.copyRef())
         .release();
 
     for (auto* cachedResource : cachedResourcesForFrame(frame)) {
-        auto resourceObject = Inspector::Protocol::Page::FrameResource::create()
+        auto resourceObject = Protocol::Page::FrameResource::create()
             .setUrl(cachedResource->url().string())
             .setType(cachedResourceTypeJSON(*cachedResource))
             .setMimeType(cachedResource->response().mimeType())
@@ -986,21 +1000,21 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
         subresources->addItem(WTFMove(resourceObject));
     }
 
-    RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::FrameResourceTree>> childrenArray;
+    RefPtr<JSON::ArrayOf<Protocol::Page::FrameResourceTree>> childrenArray;
     for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (!childrenArray) {
-            childrenArray = JSON::ArrayOf<Inspector::Protocol::Page::FrameResourceTree>::create();
-            result->setChildFrames(childrenArray);
+            childrenArray = JSON::ArrayOf<Protocol::Page::FrameResourceTree>::create();
+            result->setChildFrames(*childrenArray);
         }
         childrenArray->addItem(buildObjectForFrameTree(child));
     }
     return result;
 }
 
-void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(const String& media)
 {
     if (media == m_emulatedMedia)
-        return;
+        return { };
 
     m_emulatedMedia = media;
 
@@ -1009,21 +1023,34 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
 
     auto document = makeRefPtr(m_inspectedPage.mainFrame().document());
     if (!document)
-        return;
+        return { };
 
     document->updateLayout();
     document->evaluateMediaQueriesAndReportChanges();
+
+    return { };
 }
 
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
-void InspectorPageAgent::setForcedAppearance(ErrorString&, const String& appearance)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setForcedAppearance(Optional<Protocol::Page::Appearance>&& appearance)
 {
-    if (appearance == "Light"_s)
-        m_inspectedPage.setUseDarkAppearanceOverride(false);
-    else if (appearance == "Dark"_s)
-        m_inspectedPage.setUseDarkAppearanceOverride(true);
-    else
+    if (!appearance) {
         m_inspectedPage.setUseDarkAppearanceOverride(WTF::nullopt);
+        return { };
+    }
+
+    switch (*appearance) {
+    case Protocol::Page::Appearance::Light:
+        m_inspectedPage.setUseDarkAppearanceOverride(false);
+        return { };
+
+    case Protocol::Page::Appearance::Dark:
+        m_inspectedPage.setUseDarkAppearanceOverride(true);
+        return { };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 #endif
 
@@ -1039,51 +1066,47 @@ void InspectorPageAgent::applyEmulatedMedia(String& media)
         media = m_emulatedMedia;
 }
 
-void InspectorPageAgent::snapshotNode(ErrorString& errorString, int nodeId, String* outDataURL)
+Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Protocol::DOM::NodeId nodeId)
 {
+    Protocol::ErrorString errorString;
+
     InspectorDOMAgent* domAgent = m_instrumentingAgents.persistentDOMAgent();
     ASSERT(domAgent);
     Node* node = domAgent->assertNode(errorString, nodeId);
     if (!node)
-        return;
+        return makeUnexpected(errorString);
 
     std::unique_ptr<ImageBuffer> snapshot = WebCore::snapshotNode(m_inspectedPage.mainFrame(), *node);
-    if (!snapshot) {
-        errorString = "Could not capture snapshot"_s;
-        return;
-    }
+    if (!snapshot)
+        return makeUnexpected("Could not capture snapshot"_s);
 
-    *outDataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+    return snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
 }
 
-void InspectorPageAgent::snapshotRect(ErrorString& errorString, int x, int y, int width, int height, const String& coordinateSystem, String* outDataURL)
+Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem coordinateSystem)
 {
     SnapshotOptions options = SnapshotOptionsNone;
-    if (coordinateSystem == "Viewport")
+    if (coordinateSystem == Protocol::Page::CoordinateSystem::Viewport)
         options |= SnapshotOptionsInViewCoordinates;
 
     IntRect rectangle(x, y, width, height);
     std::unique_ptr<ImageBuffer> snapshot = snapshotFrameRect(m_inspectedPage.mainFrame(), rectangle, options);
 
-    if (!snapshot) {
-        errorString = "Could not capture snapshot"_s;
-        return;
-    }
+    if (!snapshot)
+        return makeUnexpected("Could not capture snapshot"_s);
 
-    *outDataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+    return snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
 }
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-void InspectorPageAgent::archive(ErrorString& errorString, String* data)
+Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
 {
     auto archive = LegacyWebArchive::create(m_inspectedPage.mainFrame());
-    if (!archive) {
-        errorString = "Could not create web archive for main frame"_s;
-        return;
-    }
+    if (!archive)
+        return makeUnexpected("Could not create web archive for main frame"_s);
 
     RetainPtr<CFDataRef> buffer = archive->rawDataRepresentation();
-    *data = base64Encode(CFDataGetBytePtr(buffer.get()), CFDataGetLength(buffer.get()));
+    return base64Encode(CFDataGetBytePtr(buffer.get()), CFDataGetLength(buffer.get()));
 }
 #endif
 

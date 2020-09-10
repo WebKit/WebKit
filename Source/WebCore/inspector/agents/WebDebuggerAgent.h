@@ -35,7 +35,6 @@ class EventTarget;
 class InstrumentingAgents;
 class RegisteredEventListener;
 class TimerBase;
-typedef String ErrorString;
 
 class WebDebuggerAgent : public Inspector::InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WebDebuggerAgent);
@@ -56,8 +55,8 @@ public:
 
 protected:
     WebDebuggerAgent(WebAgentContext&);
-    void enable() override;
-    void disable(bool isBeingDestroyed) override;
+    void internalEnable() override;
+    void internalDisable(bool isBeingDestroyed) override;
 
     void didClearAsyncStackTraceData() final;
 

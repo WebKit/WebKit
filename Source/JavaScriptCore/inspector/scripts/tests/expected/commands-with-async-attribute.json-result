@@ -73,7 +73,7 @@ InspectorBackend.activateDomain("Database", null);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-#include "TestProtocolTypes.h"
+#include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
@@ -91,10 +91,10 @@ private:
 class AlternateDatabaseBackendDispatcher : public AlternateBackendDispatcher {
 public:
     virtual ~AlternateDatabaseBackendDispatcher() { }
-    virtual void executeSQLSyncOptionalReturnValues(long callId, int in_databaseId, const String& in_query) = 0;
-    virtual void executeSQLAsyncOptionalReturnValues(long callId, int in_databaseId, const String& in_query) = 0;
-    virtual void executeSQLSync(long callId, int in_databaseId, const String& in_query) = 0;
-    virtual void executeSQLAsync(long callId, int in_databaseId, const String& in_query) = 0;
+    virtual void executeSQLSyncOptionalReturnValues(long protocol_requestId, int databaseId, const String& query) = 0;
+    virtual void executeSQLAsyncOptionalReturnValues(long protocol_requestId, int databaseId, const String& query) = 0;
+    virtual void executeSQLSync(long protocol_requestId, int databaseId, const String& query) = 0;
+    virtual void executeSQLAsync(long protocol_requestId, int databaseId, const String& query) = 0;
 };
 
 } // namespace Inspector
@@ -136,11 +136,14 @@ public:
 
 #include "TestProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <tuple>
+#include <wtf/Expected.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-typedef String ErrorString;
+
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 class AlternateDatabaseBackendDispatcher;
@@ -148,27 +151,20 @@ class AlternateDatabaseBackendDispatcher;
 
 class DatabaseBackendDispatcherHandler {
 public:
-    // Named after parameter 'printColor' while generating command/event executeSQLSyncOptionalReturnValues.
-    enum class PrintColor {
-        Cyan = 3,
-        Magenta = 4,
-        Yellow = 5,
-        Black = 6,
-    }; // enum class PrintColor
-    virtual void executeSQLSyncOptionalReturnValues(ErrorString&, int in_databaseId, const String& in_query, RefPtr<JSON::ArrayOf<String>>& opt_out_columnNames, Optional<String>& opt_out_notes, Optional<double>& opt_out_timestamp, Optional<JSON::Object>& opt_out_values, Optional<JSON::Value>& opt_out_payload, Optional<int>& opt_out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& opt_out_sqlError, Inspector::Protocol::Database::PrimaryColors* opt_out_screenColor, RefPtr<Inspector::Protocol::Database::ColorList>& opt_out_alternateColors, DatabaseBackendDispatcherHandler::PrintColor* opt_out_printColor) = 0;
+    virtual Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<String>> /* opt_columnNames */, String /* opt_notes */, Optional<double> /* opt_timestamp */, RefPtr<JSON::Object> /* opt_values */, RefPtr<JSON::Value> /* opt_payload */, Optional<int> /* opt_databaseId */, RefPtr<Protocol::Database::Error> /* opt_sqlError */, Optional<Protocol::Database::PrimaryColors> /* opt_screenColor */, RefPtr<Protocol::Database::ColorList> /* opt_alternateColors */, String /* opt_printColor */>> executeSQLSyncOptionalReturnValues(int databaseId, const String& query) = 0;
     class ExecuteSQLAsyncOptionalReturnValuesCallback : public BackendDispatcher::CallbackBase {
     public:
         ExecuteSQLAsyncOptionalReturnValuesCallback(Ref<BackendDispatcher>&&, int id);
-        void sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, Optional<String>& notes, Optional<double>& timestamp, Optional<JSON::Object>& values, Optional<JSON::Value>& payload, Optional<int>& databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Optional<Inspector::Protocol::Database::PrimaryColors> screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, Optional<DatabaseBackendDispatcherHandler::PrintColor> printColor);
+        void sendSuccess(RefPtr<JSON::ArrayOf<String>>&& opt_columnNames, const String& opt_notes, Optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, Optional<int>&& opt_databaseId, RefPtr<Protocol::Database::Error>&& opt_sqlError, Optional<Protocol::Database::PrimaryColors>&& opt_screenColor, RefPtr<Protocol::Database::ColorList>&& opt_alternateColors, const String& opt_printColor);
     };
-    virtual void executeSQLAsyncOptionalReturnValues(int in_databaseId, const String& in_query, Ref<ExecuteSQLAsyncOptionalReturnValuesCallback>&& callback) = 0;
-    virtual void executeSQLSync(ErrorString&, int in_databaseId, const String& in_query, RefPtr<JSON::ArrayOf<String>>& out_columnNames, String* out_notes, double* out_timestamp, JSON::Object* out_values, JSON::Value* out_payload, int* out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& out_sqlError, RefPtr<Inspector::Protocol::Database::ColorList>& out_alternateColors, Inspector::Protocol::Database::PrimaryColors* out_screenColor, DatabaseBackendDispatcherHandler::PrintColor* out_printColor) = 0;
+    virtual void executeSQLAsyncOptionalReturnValues(int databaseId, const String& query, Ref<ExecuteSQLAsyncOptionalReturnValuesCallback>&&) = 0;
+    virtual Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<String>> /* columnNames */, String /* notes */, double /* timestamp */, Ref<JSON::Object> /* values */, Ref<JSON::Value> /* payload */, int /* databaseId */, Ref<Protocol::Database::Error> /* sqlError */, Ref<Protocol::Database::ColorList> /* alternateColors */, Protocol::Database::PrimaryColors /* screenColor */, String /* printColor */>> executeSQLSync(int databaseId, const String& query) = 0;
     class ExecuteSQLAsyncCallback : public BackendDispatcher::CallbackBase {
     public:
         ExecuteSQLAsyncCallback(Ref<BackendDispatcher>&&, int id);
-        void sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, JSON::Object values, JSON::Value payload, int databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Inspector::Protocol::Database::PrimaryColors screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, DatabaseBackendDispatcherHandler::PrintColor printColor);
+        void sendSuccess(Ref<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, Ref<JSON::Object>&& values, Ref<JSON::Value>&& payload, int databaseId, Ref<Protocol::Database::Error>&& sqlError, Protocol::Database::PrimaryColors screenColor, Ref<Protocol::Database::ColorList>&& alternateColors, const String& printColor);
     };
-    virtual void executeSQLAsync(int in_databaseId, const String& in_query, Ref<ExecuteSQLAsyncCallback>&& callback) = 0;
+    virtual void executeSQLAsync(int databaseId, const String& query, Ref<ExecuteSQLAsyncCallback>&&) = 0;
 protected:
     virtual ~DatabaseBackendDispatcherHandler();
 };
@@ -176,12 +172,12 @@ protected:
 class DatabaseBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<DatabaseBackendDispatcher> create(BackendDispatcher&, DatabaseBackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) final;
+    void dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message) final;
 private:
-    void executeSQLSyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters);
-    void executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters);
-    void executeSQLSync(long requestId, RefPtr<JSON::Object>&& parameters);
-    void executeSQLAsync(long requestId, RefPtr<JSON::Object>&& parameters);
+    void executeSQLSyncOptionalReturnValues(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters);
+    void executeSQLAsyncOptionalReturnValues(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters);
+    void executeSQLSync(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters);
+    void executeSQLAsync(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateDatabaseBackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
@@ -230,9 +226,7 @@ private:
 #include "TestBackendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #include "TestAlternateBackendDispatchers.h"
@@ -254,37 +248,36 @@ DatabaseBackendDispatcher::DatabaseBackendDispatcher(BackendDispatcher& backendD
     m_backendDispatcher->registerDispatcherForDomain("Database"_s, this);
 }
 
-void DatabaseBackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
+void DatabaseBackendDispatcher::dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message)
 {
     Ref<DatabaseBackendDispatcher> protect(*this);
 
-    RefPtr<JSON::Object> parameters;
-    message->getObject("params"_s, parameters);
+    auto protocol_parameters = protocol_message->getObject("params"_s);
 
-    if (method == "executeSQLSyncOptionalReturnValues") {
-        executeSQLSyncOptionalReturnValues(requestId, WTFMove(parameters));
+    if (protocol_method == "executeSQLSyncOptionalReturnValues") {
+        executeSQLSyncOptionalReturnValues(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
-    if (method == "executeSQLAsyncOptionalReturnValues") {
-        executeSQLAsyncOptionalReturnValues(requestId, WTFMove(parameters));
+    if (protocol_method == "executeSQLAsyncOptionalReturnValues") {
+        executeSQLAsyncOptionalReturnValues(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
-    if (method == "executeSQLSync") {
-        executeSQLSync(requestId, WTFMove(parameters));
+    if (protocol_method == "executeSQLSync") {
+        executeSQLSync(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
-    if (method == "executeSQLAsync") {
-        executeSQLAsync(requestId, WTFMove(parameters));
+    if (protocol_method == "executeSQLAsync") {
+        executeSQLAsync(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
 
-    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Database." + method + "' was not found");
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Database." + protocol_method + "' was not found");
 }
 
-void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters)
+void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters)
 {
-    int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), "databaseId"_s, nullptr);
-    String in_query = m_backendDispatcher->getString(parameters.get(), "query"_s, nullptr);
+    auto in_databaseId = m_backendDispatcher->getInteger(protocol_parameters.get(), "databaseId"_s, true);
+    auto in_query = m_backendDispatcher->getString(protocol_parameters.get(), "query"_s, true);
     if (m_backendDispatcher->hasProtocolErrors()) {
         m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method 'Database.executeSQLSyncOptionalReturnValues' can't be processed"_s);
         return;
@@ -292,85 +285,76 @@ void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestI
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->executeSQLSyncOptionalReturnValues(requestId, in_databaseId, in_query);
+        m_alternateDispatcher->executeSQLSyncOptionalReturnValues(protocol_requestId, *in_databaseId, in_query);
         return;
     }
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-    ErrorString error;
-    Ref<JSON::Object> result = JSON::Object::create();
-    RefPtr<JSON::ArrayOf<String>> out_columnNames;
-    Optional<String> out_notes;
-    Optional<double> out_timestamp;
-    Optional<JSON::Object> out_values;
-    Optional<JSON::Value> out_payload;
-    Optional<int> out_databaseId;
-    RefPtr<Inspector::Protocol::Database::Error> out_sqlError;
-    Inspector::Protocol::Database::PrimaryColors out_screenColor;
-    RefPtr<Inspector::Protocol::Database::ColorList> out_alternateColors;
-    DatabaseBackendDispatcherHandler::PrintColor out_printColor;
-    m_agent->executeSQLSyncOptionalReturnValues(error, in_databaseId, in_query, out_columnNames, out_notes, out_timestamp, out_values, out_payload, out_databaseId, out_sqlError, out_screenColor, out_alternateColors, out_printColor);
-
-    if (!error.length()) {
-        if (out_columnNames)
-            result->setArray("columnNames"_s, out_columnNames);
-        if (out_notes.hasValue())
-            result->setString("notes"_s, *out_notes);
-        if (out_timestamp.hasValue())
-            result->setDouble("timestamp"_s, *out_timestamp);
-        if (out_values.hasValue())
-            result->setObject("values"_s, *out_values);
-        if (out_payload.hasValue())
-            result->setValue("payload"_s, *out_payload);
-        if (out_databaseId.hasValue())
-            result->setInteger("databaseId"_s, *out_databaseId);
-        if (out_sqlError)
-            result->setObject("sqlError"_s, out_sqlError);
-        if (out_screenColor.hasValue())
-            result->setString("screenColor"_s, *out_screenColor);
-        if (out_alternateColors)
-            result->setArray("alternateColors"_s, out_alternateColors);
-        if (out_printColor.hasValue())
-            result->setString("printColor"_s, *out_printColor);
+    auto result = m_agent->executeSQLSyncOptionalReturnValues(*in_databaseId, in_query);
+    if (!result) {
+        ASSERT(!result.error().isEmpty());
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, result.error());
+        return;
     }
-    if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
-    else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
+
+    auto [out_opt_columnNames, out_opt_notes, out_opt_timestamp, out_opt_values, out_opt_payload, out_opt_databaseId, out_opt_sqlError, out_opt_screenColor, out_opt_alternateColors, out_opt_printColor] = WTFMove(result.value());
+
+    auto protocol_jsonMessage = JSON::Object::create();
+    if (!!out_opt_columnNames)
+        protocol_jsonMessage->setArray("columnNames"_s, out_opt_columnNames.releaseNonNull());
+    if (!!out_opt_notes)
+        protocol_jsonMessage->setString("notes"_s, out_opt_notes);
+    if (!!out_opt_timestamp)
+        protocol_jsonMessage->setDouble("timestamp"_s, *out_opt_timestamp);
+    if (!!out_opt_values)
+        protocol_jsonMessage->setObject("values"_s, out_opt_values.releaseNonNull());
+    if (!!out_opt_payload)
+        protocol_jsonMessage->setValue("payload"_s, out_opt_payload.releaseNonNull());
+    if (!!out_opt_databaseId)
+        protocol_jsonMessage->setInteger("databaseId"_s, *out_opt_databaseId);
+    if (!!out_opt_sqlError)
+        protocol_jsonMessage->setObject("sqlError"_s, out_opt_sqlError.releaseNonNull());
+    if (!!out_opt_screenColor)
+        protocol_jsonMessage->setString("screenColor"_s, Protocol::TestHelpers::getEnumConstantValue(*out_opt_screenColor));
+    if (!!out_opt_alternateColors)
+        protocol_jsonMessage->setArray("alternateColors"_s, out_opt_alternateColors.releaseNonNull());
+    if (!!out_opt_printColor)
+        protocol_jsonMessage->setString("printColor"_s, out_opt_printColor);
+    m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
 }
 
 DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::ExecuteSQLAsyncOptionalReturnValuesCallback(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
 
-void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, Optional<String>& notes, Optional<double>& timestamp, Optional<JSON::Object>& values, Optional<JSON::Value>& payload, Optional<int>& databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Optional<Inspector::Protocol::Database::PrimaryColors> screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, Optional<DatabaseBackendDispatcherHandler::PrintColor> printColor)
+void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::sendSuccess(RefPtr<JSON::ArrayOf<String>>&& opt_columnNames, const String& opt_notes, Optional<double>&& opt_timestamp, RefPtr<JSON::Object>&& opt_values, RefPtr<JSON::Value>&& opt_payload, Optional<int>&& opt_databaseId, RefPtr<Protocol::Database::Error>&& opt_sqlError, Optional<Protocol::Database::PrimaryColors>&& opt_screenColor, RefPtr<Protocol::Database::ColorList>&& opt_alternateColors, const String& opt_printColor)
 {
-    Ref<JSON::Object> jsonMessage = JSON::Object::create();
-    if (columnNames)
-        jsonMessage->setArray("columnNames"_s, columnNames);
-    if (notes.hasValue())
-        jsonMessage->setString("notes"_s, *notes);
-    if (timestamp.hasValue())
-        jsonMessage->setDouble("timestamp"_s, *timestamp);
-    if (values.hasValue())
-        jsonMessage->setObject("values"_s, *values);
-    if (payload.hasValue())
-        jsonMessage->setValue("payload"_s, *payload);
-    if (databaseId.hasValue())
-        jsonMessage->setInteger("databaseId"_s, *databaseId);
-    if (sqlError)
-        jsonMessage->setObject("sqlError"_s, sqlError);
-    if (screenColor.hasValue())
-        jsonMessage->setString("screenColor"_s, *screenColor);
-    if (alternateColors)
-        jsonMessage->setArray("alternateColors"_s, alternateColors);
-    if (printColor.hasValue())
-        jsonMessage->setString("printColor"_s, *printColor);
-    CallbackBase::sendSuccess(WTFMove(jsonMessage));
+    auto protocol_jsonMessage = JSON::Object::create();
+    if (!!opt_columnNames)
+        protocol_jsonMessage->setArray("columnNames"_s, opt_columnNames.releaseNonNull());
+    if (!!opt_notes)
+        protocol_jsonMessage->setString("notes"_s, opt_notes);
+    if (!!opt_timestamp)
+        protocol_jsonMessage->setDouble("timestamp"_s, *opt_timestamp);
+    if (!!opt_values)
+        protocol_jsonMessage->setObject("values"_s, opt_values.releaseNonNull());
+    if (!!opt_payload)
+        protocol_jsonMessage->setValue("payload"_s, opt_payload.releaseNonNull());
+    if (!!opt_databaseId)
+        protocol_jsonMessage->setInteger("databaseId"_s, *opt_databaseId);
+    if (!!opt_sqlError)
+        protocol_jsonMessage->setObject("sqlError"_s, opt_sqlError.releaseNonNull());
+    if (!!opt_screenColor)
+        protocol_jsonMessage->setString("screenColor"_s, Protocol::TestHelpers::getEnumConstantValue(*opt_screenColor));
+    if (!!opt_alternateColors)
+        protocol_jsonMessage->setArray("alternateColors"_s, opt_alternateColors.releaseNonNull());
+    if (!!opt_printColor)
+        protocol_jsonMessage->setString("printColor"_s, opt_printColor);
+    CallbackBase::sendSuccess(WTFMove(protocol_jsonMessage));
 }
 
-void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters)
+void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters)
 {
-    int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), "databaseId"_s, nullptr);
-    String in_query = m_backendDispatcher->getString(parameters.get(), "query"_s, nullptr);
+    auto in_databaseId = m_backendDispatcher->getInteger(protocol_parameters.get(), "databaseId"_s, true);
+    auto in_query = m_backendDispatcher->getString(protocol_parameters.get(), "query"_s, true);
     if (m_backendDispatcher->hasProtocolErrors()) {
         m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method 'Database.executeSQLAsyncOptionalReturnValues' can't be processed"_s);
         return;
@@ -378,20 +362,18 @@ void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long request
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->executeSQLAsyncOptionalReturnValues(requestId, in_databaseId, in_query);
+        m_alternateDispatcher->executeSQLAsyncOptionalReturnValues(protocol_requestId, *in_databaseId, in_query);
         return;
     }
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-    Ref<DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback> callback = adoptRef(*new DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback(m_backendDispatcher.copyRef(), requestId));
-    m_agent->executeSQLAsyncOptionalReturnValues(in_databaseId, in_query, callback.copyRef());
-
+    m_agent->executeSQLAsyncOptionalReturnValues(*in_databaseId, in_query, adoptRef(*new DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback(m_backendDispatcher.copyRef(), protocol_requestId)));
 }
 
-void DatabaseBackendDispatcher::executeSQLSync(long requestId, RefPtr<JSON::Object>&& parameters)
+void DatabaseBackendDispatcher::executeSQLSync(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters)
 {
-    int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), "databaseId"_s, nullptr);
-    String in_query = m_backendDispatcher->getString(parameters.get(), "query"_s, nullptr);
+    auto in_databaseId = m_backendDispatcher->getInteger(protocol_parameters.get(), "databaseId"_s, true);
+    auto in_query = m_backendDispatcher->getString(protocol_parameters.get(), "query"_s, true);
     if (m_backendDispatcher->hasProtocolErrors()) {
         m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method 'Database.executeSQLSync' can't be processed"_s);
         return;
@@ -399,65 +381,56 @@ void DatabaseBackendDispatcher::executeSQLSync(long requestId, RefPtr<JSON::Obje
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->executeSQLSync(requestId, in_databaseId, in_query);
+        m_alternateDispatcher->executeSQLSync(protocol_requestId, *in_databaseId, in_query);
         return;
     }
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-    ErrorString error;
-    Ref<JSON::Object> result = JSON::Object::create();
-    RefPtr<JSON::ArrayOf<String>> out_columnNames;
-    String out_notes;
-    double out_timestamp;
-    JSON::Object out_values;
-    JSON::Value out_payload;
-    int out_databaseId;
-    RefPtr<Inspector::Protocol::Database::Error> out_sqlError;
-    RefPtr<Inspector::Protocol::Database::ColorList> out_alternateColors;
-    Inspector::Protocol::Database::PrimaryColors out_screenColor;
-    DatabaseBackendDispatcherHandler::PrintColor out_printColor;
-    m_agent->executeSQLSync(error, in_databaseId, in_query, out_columnNames, &out_notes, &out_timestamp, out_values, &out_payload, &out_databaseId, out_sqlError, out_alternateColors, &out_screenColor, &out_printColor);
-
-    if (!error.length()) {
-        result->setArray("columnNames"_s, out_columnNames);
-        result->setString("notes"_s, out_notes);
-        result->setDouble("timestamp"_s, out_timestamp);
-        result->setObject("values"_s, out_values);
-        result->setValue("payload"_s, out_payload);
-        result->setInteger("databaseId"_s, out_databaseId);
-        result->setObject("sqlError"_s, out_sqlError);
-        result->setArray("alternateColors"_s, out_alternateColors);
-        result->setString("screenColor"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(out_screenColor));
-        result->setString("printColor"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(out_printColor));
+    auto result = m_agent->executeSQLSync(*in_databaseId, in_query);
+    if (!result) {
+        ASSERT(!result.error().isEmpty());
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, result.error());
+        return;
     }
-    if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
-    else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
+
+    auto [out_columnNames, out_notes, out_timestamp, out_values, out_payload, out_databaseId, out_sqlError, out_alternateColors, out_screenColor, out_printColor] = WTFMove(result.value());
+
+    auto protocol_jsonMessage = JSON::Object::create();
+    protocol_jsonMessage->setArray("columnNames"_s, WTFMove(out_columnNames));
+    protocol_jsonMessage->setString("notes"_s, out_notes);
+    protocol_jsonMessage->setDouble("timestamp"_s, out_timestamp);
+    protocol_jsonMessage->setObject("values"_s, WTFMove(out_values));
+    protocol_jsonMessage->setValue("payload"_s, WTFMove(out_payload));
+    protocol_jsonMessage->setInteger("databaseId"_s, out_databaseId);
+    protocol_jsonMessage->setObject("sqlError"_s, WTFMove(out_sqlError));
+    protocol_jsonMessage->setArray("alternateColors"_s, WTFMove(out_alternateColors));
+    protocol_jsonMessage->setString("screenColor"_s, Protocol::TestHelpers::getEnumConstantValue(out_screenColor));
+    protocol_jsonMessage->setString("printColor"_s, out_printColor);
+    m_backendDispatcher->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
 }
 
 DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::ExecuteSQLAsyncCallback(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
 
-void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::sendSuccess(RefPtr<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, JSON::Object values, JSON::Value payload, int databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Inspector::Protocol::Database::PrimaryColors screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, DatabaseBackendDispatcherHandler::PrintColor printColor)
+void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::sendSuccess(Ref<JSON::ArrayOf<String>>&& columnNames, const String& notes, double timestamp, Ref<JSON::Object>&& values, Ref<JSON::Value>&& payload, int databaseId, Ref<Protocol::Database::Error>&& sqlError, Protocol::Database::PrimaryColors screenColor, Ref<Protocol::Database::ColorList>&& alternateColors, const String& printColor)
 {
-    Ref<JSON::Object> jsonMessage = JSON::Object::create();
-    jsonMessage->setArray("columnNames"_s, columnNames);
-    jsonMessage->setString("notes"_s, notes);
-    jsonMessage->setDouble("timestamp"_s, timestamp);
-    jsonMessage->setObject("values"_s, values);
-    jsonMessage->setValue("payload"_s, payload);
-    jsonMessage->setInteger("databaseId"_s, databaseId);
-    jsonMessage->setObject("sqlError"_s, sqlError);
-    jsonMessage->setString("screenColor"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(screenColor));
-    jsonMessage->setArray("alternateColors"_s, alternateColors);
-    jsonMessage->setString("printColor"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(printColor));
-    CallbackBase::sendSuccess(WTFMove(jsonMessage));
+    auto protocol_jsonMessage = JSON::Object::create();
+    protocol_jsonMessage->setArray("columnNames"_s, WTFMove(columnNames));
+    protocol_jsonMessage->setString("notes"_s, notes);
+    protocol_jsonMessage->setDouble("timestamp"_s, timestamp);
+    protocol_jsonMessage->setObject("values"_s, WTFMove(values));
+    protocol_jsonMessage->setValue("payload"_s, WTFMove(payload));
+    protocol_jsonMessage->setInteger("databaseId"_s, databaseId);
+    protocol_jsonMessage->setObject("sqlError"_s, WTFMove(sqlError));
+    protocol_jsonMessage->setString("screenColor"_s, Protocol::TestHelpers::getEnumConstantValue(screenColor));
+    protocol_jsonMessage->setArray("alternateColors"_s, WTFMove(alternateColors));
+    protocol_jsonMessage->setString("printColor"_s, printColor);
+    CallbackBase::sendSuccess(WTFMove(protocol_jsonMessage));
 }
 
-void DatabaseBackendDispatcher::executeSQLAsync(long requestId, RefPtr<JSON::Object>&& parameters)
+void DatabaseBackendDispatcher::executeSQLAsync(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters)
 {
-    int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), "databaseId"_s, nullptr);
-    String in_query = m_backendDispatcher->getString(parameters.get(), "query"_s, nullptr);
+    auto in_databaseId = m_backendDispatcher->getInteger(protocol_parameters.get(), "databaseId"_s, true);
+    auto in_query = m_backendDispatcher->getString(protocol_parameters.get(), "query"_s, true);
     if (m_backendDispatcher->hasProtocolErrors()) {
         m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method 'Database.executeSQLAsync' can't be processed"_s);
         return;
@@ -465,14 +438,12 @@ void DatabaseBackendDispatcher::executeSQLAsync(long requestId, RefPtr<JSON::Obj
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->executeSQLAsync(requestId, in_databaseId, in_query);
+        m_alternateDispatcher->executeSQLAsync(protocol_requestId, *in_databaseId, in_query);
         return;
     }
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
-    Ref<DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback> callback = adoptRef(*new DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback(m_backendDispatcher.copyRef(), requestId));
-    m_agent->executeSQLAsync(in_databaseId, in_query, callback.copyRef());
-
+    m_agent->executeSQLAsync(*in_databaseId, in_query, adoptRef(*new DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback(m_backendDispatcher.copyRef(), protocol_requestId)));
 }
 
 } // namespace Inspector
@@ -513,6 +484,7 @@ void DatabaseBackendDispatcher::executeSQLAsync(long requestId, RefPtr<JSON::Obj
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -556,7 +528,6 @@ class FrontendRouter;
 #include "TestFrontendDispatchers.h"
 
 #include <JavaScriptCore/InspectorFrontendRouter.h>
-#include <wtf/text/CString.h>
 
 namespace Inspector {
 
@@ -597,7 +568,9 @@ namespace Inspector {
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
-#include <wtf/Assertions.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -619,7 +592,7 @@ enum class PrimaryColors;
 namespace Database {
 /* Unique identifier of Database object. */
 using DatabaseId = int;
-using ColorList = JSON::ArrayOf<Inspector::Protocol::Database::PrimaryColors>;
+using ColorList = JSON::ArrayOf<Protocol::Database::PrimaryColors>;
 } // Database
 // End of typedefs.
 
@@ -643,7 +616,7 @@ enum class PrimaryColors {
 }; // enum class PrimaryColors
 
 /* Database error. */
-class Error : public JSON::ObjectBase {
+class Error final : public JSON::ObjectBase {
 public:
     enum {
         NoFieldsSet = 0,
@@ -670,17 +643,17 @@ public:
         friend class Error;
     public:
 
-        Builder<STATE | MessageSet>& setMessage(const String& value)
+        Builder<STATE | MessageSet>& setMessage(const String& in_message)
         {
             COMPILE_ASSERT(!(STATE & MessageSet), property_message_already_set);
-            m_result->setString("message"_s, value);
+            m_result->setString("message"_s, in_message);
             return castState<MessageSet>();
         }
 
-        Builder<STATE | CodeSet>& setCode(int value)
+        Builder<STATE | CodeSet>& setCode(int in_code)
         {
             COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
-            m_result->setInteger("code"_s, value);
+            m_result->setInteger("code"_s, in_code);
             return castState<CodeSet>();
         }
 
@@ -719,7 +692,7 @@ Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Database' Domain
 template<>
-Optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<Inspector::Protocol::Database::PrimaryColors>(const String&);
+Optional<Protocol::Database::PrimaryColors> parseEnumValueFromString<Protocol::Database::PrimaryColors>(const String&);
 
 } // namespace TestHelpers
 
@@ -771,8 +744,7 @@ struct DefaultHash<Inspector::Protocol::Database::PrimaryColors> : IntHash<Inspe
 #include "config.h"
 #include "TestProtocolObjects.h"
 
-#include <wtf/Optional.h>
-#include <wtf/text/CString.h>
+#include <wtf/Assertions.h>
 
 namespace Inspector {
 
@@ -797,16 +769,16 @@ String getEnumConstantValue(int code) {
 // Enums in the 'Database' Domain
 
 template<>
-Optional<Inspector::Protocol::Database::PrimaryColors> parseEnumValueFromString<Inspector::Protocol::Database::PrimaryColors>(const String& protocolString)
+Optional<Protocol::Database::PrimaryColors> parseEnumValueFromString<Protocol::Database::PrimaryColors>(const String& protocolString)
 {
     static const size_t constantValues[] = {
-        (size_t)Inspector::Protocol::Database::PrimaryColors::Red,
-        (size_t)Inspector::Protocol::Database::PrimaryColors::Green,
-        (size_t)Inspector::Protocol::Database::PrimaryColors::Blue,
+        (size_t)Protocol::Database::PrimaryColors::Red,
+        (size_t)Protocol::Database::PrimaryColors::Green,
+        (size_t)Protocol::Database::PrimaryColors::Blue,
     };
     for (size_t i = 0; i < 3; ++i)
         if (protocolString == enum_constant_values[constantValues[i]])
-            return (Inspector::Protocol::Database::PrimaryColors)constantValues[i];
+            return (Protocol::Database::PrimaryColors)constantValues[i];
 
     return WTF::nullopt;
 }
@@ -863,10 +835,10 @@ class ObjCInspectorDatabaseBackendDispatcher final : public AlternateDatabaseBac
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorDatabaseBackendDispatcher(id<TestProtocolDatabaseDomainHandler> handler) { m_delegate = handler; }
-    void executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) final;
-    void executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) final;
-    void executeSQLSync(long requestId, int in_databaseId, const String& in_query) final;
-    void executeSQLAsync(long requestId, int in_databaseId, const String& in_query) final;
+    void executeSQLSyncOptionalReturnValues(long protocol_requestId, int databaseId, const String& query) final;
+    void executeSQLAsyncOptionalReturnValues(long protocol_requestId, int databaseId, const String& query) final;
+    void executeSQLSync(long protocol_requestId, int databaseId, const String& query) final;
+    void executeSQLAsync(long protocol_requestId, int databaseId, const String& query) final;
 private:
     RetainPtr<id<TestProtocolDatabaseDomainHandler>> m_delegate;
 };
@@ -914,183 +886,179 @@ private:
 
 namespace Inspector {
 
-void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query)
+void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long protocol_requestId, int in_databaseId, const String& in_query)
 {
     if (![m_delegate respondsToSelector:@selector(executeSQLSyncOptionalReturnValuesWithErrorCallback:successCallback:databaseId:query:)]) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLSyncOptionalReturnValues' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLSyncOptionalReturnValues' was not found"_s);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
     };
 
-    id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor) {
-        Ref<JSON::Object> resultObject = JSON::Object::create();
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(values, @"values");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(payload, @"payload");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(alternateColors, @"alternateColors");
-        if (columnNames)
-            resultObject->setArray("columnNames"_s, toJSONStringArray(*columnNames));
-        if (notes)
-            resultObject->setString("notes"_s, *notes);
-        if (timestamp)
-            resultObject->setDouble("timestamp"_s, *timestamp);
-        if (values)
-            resultObject->setObject("values"_s, [*values toJSONObject]);
-        if (payload)
-            resultObject->setValue("payload"_s, [*payload toJSONObject]);
-        if (databaseId)
-            resultObject->setInteger("databaseId"_s, *databaseId);
-        if (sqlError)
-            resultObject->setObject("sqlError"_s, [*sqlError toJSONObject]);
-        if (screenColor)
-            resultObject->setString("screenColor"_s, toProtocolString(*screenColor));
-        if (alternateColors)
-            resultObject->setArray("alternateColors"_s, toJSONStringArray(*alternateColors));
-        if (printColor)
-            resultObject->setString("printColor"_s, toProtocolString(*printColor));
-        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
+    id successCallback = ^(NSArray/*<NSString>*/ **out_opt_columnNames, NSString **out_opt_notes, double *out_opt_timestamp, RWIProtocolJSONObject **out_opt_values, RWIProtocolJSONObject **out_opt_payload, int *out_opt_databaseId, TestProtocolDatabaseError **out_opt_sqlError, TestProtocolDatabasePrimaryColors *out_opt_screenColor, NSArray/*<NSString>*/ **out_opt_alternateColors, TestProtocolDatabase(anonymous) *out_opt_printColor) {
+        auto protocol_jsonMessage = JSON::Object::create();
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_columnNames, @"columnNames");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_notes, @"notes");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_values, @"values");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_payload, @"payload");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_sqlError, @"sqlError");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_alternateColors, @"alternateColors");
+        if (!!out_opt_columnNames)
+            protocol_jsonMessage->setArray("columnNames"_s, toJSONStringArray(*out_opt_columnNames));
+        if (!!out_opt_notes)
+            protocol_jsonMessage->setString("notes"_s, *out_opt_notes);
+        if (!!out_opt_timestamp)
+            protocol_jsonMessage->setDouble("timestamp"_s, *out_opt_timestamp);
+        if (!!out_opt_values)
+            protocol_jsonMessage->setObject("values"_s, [*out_opt_values toJSONObject]);
+        if (!!out_opt_payload)
+            protocol_jsonMessage->setValue("payload"_s, [*out_opt_payload toJSONObject]);
+        if (!!out_opt_databaseId)
+            protocol_jsonMessage->setInteger("databaseId"_s, *out_opt_databaseId);
+        if (!!out_opt_sqlError)
+            protocol_jsonMessage->setObject("sqlError"_s, [*out_opt_sqlError toJSONObject]);
+        if (!!out_opt_screenColor)
+            protocol_jsonMessage->setString("screenColor"_s, toProtocolString(*out_opt_screenColor));
+        if (!!out_opt_alternateColors)
+            protocol_jsonMessage->setArray("alternateColors"_s, toJSONStringArray(*out_opt_alternateColors));
+        if (!!out_opt_printColor)
+            protocol_jsonMessage->setString("printColor"_s, toProtocolString(*out_opt_printColor));
+        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
     };
 
     int o_in_databaseId = in_databaseId;
     NSString *o_in_query = in_query;
-
     [m_delegate executeSQLSyncOptionalReturnValuesWithErrorCallback:errorCallback successCallback:successCallback databaseId:o_in_databaseId query:o_in_query];
 }
 
-void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query)
+void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long protocol_requestId, int in_databaseId, const String& in_query)
 {
     if (![m_delegate respondsToSelector:@selector(executeSQLAsyncOptionalReturnValuesWithErrorCallback:successCallback:databaseId:query:)]) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLAsyncOptionalReturnValues' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLAsyncOptionalReturnValues' was not found"_s);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
     };
 
-    id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor) {
-        Ref<JSON::Object> resultObject = JSON::Object::create();
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(values, @"values");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(payload, @"payload");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
-        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(alternateColors, @"alternateColors");
-        if (columnNames)
-            resultObject->setArray("columnNames"_s, toJSONStringArray(*columnNames));
-        if (notes)
-            resultObject->setString("notes"_s, *notes);
-        if (timestamp)
-            resultObject->setDouble("timestamp"_s, *timestamp);
-        if (values)
-            resultObject->setObject("values"_s, [*values toJSONObject]);
-        if (payload)
-            resultObject->setValue("payload"_s, [*payload toJSONObject]);
-        if (databaseId)
-            resultObject->setInteger("databaseId"_s, *databaseId);
-        if (sqlError)
-            resultObject->setObject("sqlError"_s, [*sqlError toJSONObject]);
-        if (screenColor)
-            resultObject->setString("screenColor"_s, toProtocolString(*screenColor));
-        if (alternateColors)
-            resultObject->setArray("alternateColors"_s, toJSONStringArray(*alternateColors));
-        if (printColor)
-            resultObject->setString("printColor"_s, toProtocolString(*printColor));
-        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
+    id successCallback = ^(NSArray/*<NSString>*/ **out_opt_columnNames, NSString **out_opt_notes, double *out_opt_timestamp, RWIProtocolJSONObject **out_opt_values, RWIProtocolJSONObject **out_opt_payload, int *out_opt_databaseId, TestProtocolDatabaseError **out_opt_sqlError, TestProtocolDatabasePrimaryColors *out_opt_screenColor, NSArray/*<NSString>*/ **out_opt_alternateColors, TestProtocolDatabase(anonymous) *out_opt_printColor) {
+        auto protocol_jsonMessage = JSON::Object::create();
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_columnNames, @"columnNames");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_notes, @"notes");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_values, @"values");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_payload, @"payload");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_sqlError, @"sqlError");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(out_opt_alternateColors, @"alternateColors");
+        if (!!out_opt_columnNames)
+            protocol_jsonMessage->setArray("columnNames"_s, toJSONStringArray(*out_opt_columnNames));
+        if (!!out_opt_notes)
+            protocol_jsonMessage->setString("notes"_s, *out_opt_notes);
+        if (!!out_opt_timestamp)
+            protocol_jsonMessage->setDouble("timestamp"_s, *out_opt_timestamp);
+        if (!!out_opt_values)
+            protocol_jsonMessage->setObject("values"_s, [*out_opt_values toJSONObject]);
+        if (!!out_opt_payload)
+            protocol_jsonMessage->setValue("payload"_s, [*out_opt_payload toJSONObject]);
+        if (!!out_opt_databaseId)
+            protocol_jsonMessage->setInteger("databaseId"_s, *out_opt_databaseId);
+        if (!!out_opt_sqlError)
+            protocol_jsonMessage->setObject("sqlError"_s, [*out_opt_sqlError toJSONObject]);
+        if (!!out_opt_screenColor)
+            protocol_jsonMessage->setString("screenColor"_s, toProtocolString(*out_opt_screenColor));
+        if (!!out_opt_alternateColors)
+            protocol_jsonMessage->setArray("alternateColors"_s, toJSONStringArray(*out_opt_alternateColors));
+        if (!!out_opt_printColor)
+            protocol_jsonMessage->setString("printColor"_s, toProtocolString(*out_opt_printColor));
+        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
     };
 
     int o_in_databaseId = in_databaseId;
     NSString *o_in_query = in_query;
-
     [m_delegate executeSQLAsyncOptionalReturnValuesWithErrorCallback:errorCallback successCallback:successCallback databaseId:o_in_databaseId query:o_in_query];
 }
 
-void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long requestId, int in_databaseId, const String& in_query)
+void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long protocol_requestId, int in_databaseId, const String& in_query)
 {
     if (![m_delegate respondsToSelector:@selector(executeSQLSyncWithErrorCallback:successCallback:databaseId:query:)]) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLSync' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLSync' was not found"_s);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
     };
 
-    id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabasePrimaryColors screenColor, TestProtocolDatabaseExecuteSQLSyncPrintColor printColor) {
-        Ref<JSON::Object> resultObject = JSON::Object::create();
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(values, @"values");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(alternateColors, @"alternateColors");
-        resultObject->setArray("columnNames"_s, toJSONStringArray(columnNames));
-        resultObject->setString("notes"_s, notes);
-        resultObject->setDouble("timestamp"_s, timestamp);
-        resultObject->setObject("values"_s, [values toJSONObject]);
-        resultObject->setValue("payload"_s, [payload toJSONObject]);
-        resultObject->setInteger("databaseId"_s, databaseId);
-        resultObject->setObject("sqlError"_s, [sqlError toJSONObject]);
-        resultObject->setArray("alternateColors"_s, toJSONStringArray(alternateColors));
-        resultObject->setString("screenColor"_s, toProtocolString(screenColor));
-        resultObject->setString("printColor"_s, toProtocolString(printColor));
-        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
+    id successCallback = ^(NSArray/*<NSString>*/ *out_columnNames, NSString *out_notes, double out_timestamp, RWIProtocolJSONObject *out_values, RWIProtocolJSONObject *out_payload, int out_databaseId, TestProtocolDatabaseError *out_sqlError, NSArray/*<NSString>*/ *out_alternateColors, TestProtocolDatabasePrimaryColors out_screenColor, TestProtocolDatabase(anonymous) out_printColor) {
+        auto protocol_jsonMessage = JSON::Object::create();
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_columnNames, @"columnNames");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_notes, @"notes");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_values, @"values");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_payload, @"payload");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_sqlError, @"sqlError");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_alternateColors, @"alternateColors");
+        protocol_jsonMessage->setArray("columnNames"_s, toJSONStringArray(out_columnNames));
+        protocol_jsonMessage->setString("notes"_s, out_notes);
+        protocol_jsonMessage->setDouble("timestamp"_s, out_timestamp);
+        protocol_jsonMessage->setObject("values"_s, [out_values toJSONObject]);
+        protocol_jsonMessage->setValue("payload"_s, [out_payload toJSONObject]);
+        protocol_jsonMessage->setInteger("databaseId"_s, out_databaseId);
+        protocol_jsonMessage->setObject("sqlError"_s, [out_sqlError toJSONObject]);
+        protocol_jsonMessage->setArray("alternateColors"_s, toJSONStringArray(out_alternateColors));
+        protocol_jsonMessage->setString("screenColor"_s, toProtocolString(out_screenColor));
+        protocol_jsonMessage->setString("printColor"_s, toProtocolString(out_printColor));
+        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
     };
 
     int o_in_databaseId = in_databaseId;
     NSString *o_in_query = in_query;
-
     [m_delegate executeSQLSyncWithErrorCallback:errorCallback successCallback:successCallback databaseId:o_in_databaseId query:o_in_query];
 }
 
-void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long requestId, int in_databaseId, const String& in_query)
+void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long protocol_requestId, int in_databaseId, const String& in_query)
 {
     if (![m_delegate respondsToSelector:@selector(executeSQLAsyncWithErrorCallback:successCallback:databaseId:query:)]) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLAsync' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLAsync' was not found"_s);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
     };
 
-    id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, TestProtocolDatabasePrimaryColors screenColor, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabaseExecuteSQLAsyncPrintColor printColor) {
-        Ref<JSON::Object> resultObject = JSON::Object::create();
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(values, @"values");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
-        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(alternateColors, @"alternateColors");
-        resultObject->setArray("columnNames"_s, toJSONStringArray(columnNames));
-        resultObject->setString("notes"_s, notes);
-        resultObject->setDouble("timestamp"_s, timestamp);
-        resultObject->setObject("values"_s, [values toJSONObject]);
-        resultObject->setValue("payload"_s, [payload toJSONObject]);
-        resultObject->setInteger("databaseId"_s, databaseId);
-        resultObject->setObject("sqlError"_s, [sqlError toJSONObject]);
-        resultObject->setString("screenColor"_s, toProtocolString(screenColor));
-        resultObject->setArray("alternateColors"_s, toJSONStringArray(alternateColors));
-        resultObject->setString("printColor"_s, toProtocolString(printColor));
-        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
+    id successCallback = ^(NSArray/*<NSString>*/ *out_columnNames, NSString *out_notes, double out_timestamp, RWIProtocolJSONObject *out_values, RWIProtocolJSONObject *out_payload, int out_databaseId, TestProtocolDatabaseError *out_sqlError, TestProtocolDatabasePrimaryColors out_screenColor, NSArray/*<NSString>*/ *out_alternateColors, TestProtocolDatabase(anonymous) out_printColor) {
+        auto protocol_jsonMessage = JSON::Object::create();
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_columnNames, @"columnNames");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_notes, @"notes");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_values, @"values");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_payload, @"payload");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_sqlError, @"sqlError");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(out_alternateColors, @"alternateColors");
+        protocol_jsonMessage->setArray("columnNames"_s, toJSONStringArray(out_columnNames));
+        protocol_jsonMessage->setString("notes"_s, out_notes);
+        protocol_jsonMessage->setDouble("timestamp"_s, out_timestamp);
+        protocol_jsonMessage->setObject("values"_s, [out_values toJSONObject]);
+        protocol_jsonMessage->setValue("payload"_s, [out_payload toJSONObject]);
+        protocol_jsonMessage->setInteger("databaseId"_s, out_databaseId);
+        protocol_jsonMessage->setObject("sqlError"_s, [out_sqlError toJSONObject]);
+        protocol_jsonMessage->setString("screenColor"_s, toProtocolString(out_screenColor));
+        protocol_jsonMessage->setArray("alternateColors"_s, toJSONStringArray(out_alternateColors));
+        protocol_jsonMessage->setString("printColor"_s, toProtocolString(out_printColor));
+        backendDispatcher()->sendResponse(protocol_requestId, WTFMove(protocol_jsonMessage), false);
     };
 
     int o_in_databaseId = in_databaseId;
     NSString *o_in_query = in_query;
-
     [m_delegate executeSQLAsyncWithErrorCallback:errorCallback successCallback:successCallback databaseId:o_in_databaseId query:o_in_query];
 }
 
@@ -1346,10 +1314,10 @@ __attribute__((visibility ("default")))
 
 @protocol TestProtocolDatabaseDomainHandler <NSObject>
 @optional
-- (void)executeSQLSyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
-- (void)executeSQLAsyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
-- (void)executeSQLSyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabasePrimaryColors screenColor, TestProtocolDatabaseExecuteSQLSyncPrintColor printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
-- (void)executeSQLAsyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, TestProtocolDatabasePrimaryColors screenColor, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabaseExecuteSQLAsyncPrintColor printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
+- (void)executeSQLSyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabase(anonymous) *printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
+- (void)executeSQLAsyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabase(anonymous) *printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
+- (void)executeSQLSyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabasePrimaryColors screenColor, TestProtocolDatabase(anonymous) printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
+- (void)executeSQLAsyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, TestProtocolDatabasePrimaryColors screenColor, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabase(anonymous) printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
 @end
 
 

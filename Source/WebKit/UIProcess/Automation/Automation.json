@@ -29,10 +29,11 @@
         {
             "id": "CoordinateSystem",
             "type": "string",
-            "description": "The coordinate system in which rects, points, and sizes are to be interpreted.",
+            "description": "The coordinate system in which rects, points, and sizes are to be interpreted. LayoutViewport is a legacy value and should not be used going forward.",
             "enum": [
                 "Page",
-                "Viewport"
+                "Viewport",
+                "LayoutViewport"
             ]
         },
         {

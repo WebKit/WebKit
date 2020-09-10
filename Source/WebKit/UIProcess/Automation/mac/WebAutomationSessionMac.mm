@@ -44,7 +44,7 @@ using namespace WebCore;
 
 #pragma mark Commands for 'PLATFORM(MAC)'
 
-void WebAutomationSession::inspectBrowsingContext(const String& handle, const bool* optionalEnableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
+void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, Optional<bool>&& enableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
@@ -60,7 +60,7 @@ void WebAutomationSession::inspectBrowsingContext(const String& handle, const bo
         page->inspector()->show();
 
         // Start collecting profile information immediately so the entire session is captured.
-        if (optionalEnableAutoCapturing && *optionalEnableAutoCapturing)
+        if (enableAutoCapturing && *enableAutoCapturing)
             page->inspector()->togglePageProfiling();
     }
 }
