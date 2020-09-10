@@ -1,3 +1,13 @@
+2020-09-10  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS ] media/modern-media-controls/playback-support/playback-support-autoplay.html is a flaky failure/timeout
+        <rdar://problem/63026283>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-09-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: modernize generated backend protocol code
