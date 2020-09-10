@@ -670,7 +670,7 @@ void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (Comman
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
 
         if (auto frameIndex = frameID->asInteger()) {
-            ASSERT(frameIndex >= 0 && frameIndex < std::numeric_limits<unsigned short>::max());
+            ASSERT(*frameIndex >= 0 && *frameIndex < std::numeric_limits<unsigned short>::max());
             parameters->setInteger("ordinal"_s, *frameIndex);
         } else {
             String frameElementID = extractElementID(*frameID);
