@@ -457,7 +457,11 @@ static void logResourceResponseSource(Frame* frame, ResourceResponse::Source sou
         sourceKey = DiagnosticLoggingKeys::serviceWorkerKey();
         break;
     case ResourceResponse::Source::MemoryCache:
+        sourceKey = DiagnosticLoggingKeys::memoryCacheKey();
+        break;
     case ResourceResponse::Source::MemoryCacheAfterValidation:
+        sourceKey = DiagnosticLoggingKeys::memoryCacheAfterValidationKey();
+        break;
     case ResourceResponse::Source::DOMCache:
     case ResourceResponse::Source::ApplicationCache:
     case ResourceResponse::Source::InspectorOverride:
