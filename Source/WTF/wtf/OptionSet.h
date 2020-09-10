@@ -195,7 +195,10 @@ public:
 
     constexpr void set(OptionSet optionSet, bool value)
     {
-        m_storage = (m_storage & ~optionSet.m_storage) | (-static_cast<StorageType>(value) & optionSet.m_storage);
+        if (value)
+            add(optionSet);
+        else
+            remove(optionSet);
     }
 
     constexpr bool hasExactlyOneBitSet() const

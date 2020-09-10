@@ -1,3 +1,16 @@
+2020-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Simplify OptionSet::set
+        https://bugs.webkit.org/show_bug.cgi?id=216335
+
+        Reviewed by Said Abou-Hallawa.
+
+        Simplified the implementation of OptionSet::set since we've verified that both clang and gcc
+        generate comparable code in x86_64 and clang does the same for arm64.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::set):
+
 2020-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text copied and pasted from Mac Catalyst apps appears larger than expected

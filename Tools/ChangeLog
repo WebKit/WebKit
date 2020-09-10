@@ -1,3 +1,15 @@
+2020-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Simplify OptionSet::set
+        https://bugs.webkit.org/show_bug.cgi?id=216335
+
+        Reviewed by Said Abou-Hallawa.
+
+        Added a unit test for OptionSet::set.
+
+        * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
+        (WTF_OptionSet.Set):
+
 2020-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add Visual Studio debugger custom views for NeverDestroyed, LazyNeverDestroyed, VectorBufferBase, Optional, and StringView

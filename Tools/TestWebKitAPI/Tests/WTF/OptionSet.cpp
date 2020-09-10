@@ -123,6 +123,31 @@ TEST(WTF_OptionSet, AddAndRemove)
     EXPECT_FALSE(set.contains(ExampleFlags::C));
 }
 
+TEST(WTF_OptionSet, Set)
+{
+    OptionSet<ExampleFlags> set;
+
+    set.set(ExampleFlags::A, true);
+    EXPECT_TRUE(set.contains(ExampleFlags::A));
+    EXPECT_FALSE(set.contains(ExampleFlags::B));
+    EXPECT_FALSE(set.contains(ExampleFlags::C));
+
+    set.set({ ExampleFlags::B, ExampleFlags::C }, true);
+    EXPECT_TRUE(set.contains(ExampleFlags::A));
+    EXPECT_TRUE(set.contains(ExampleFlags::B));
+    EXPECT_TRUE(set.contains(ExampleFlags::C));
+
+    set.set(ExampleFlags::B, false);
+    EXPECT_TRUE(set.contains(ExampleFlags::A));
+    EXPECT_FALSE(set.contains(ExampleFlags::B));
+    EXPECT_TRUE(set.contains(ExampleFlags::C));
+
+    set.set({ ExampleFlags::A, ExampleFlags::C }, false);
+    EXPECT_FALSE(set.contains(ExampleFlags::A));
+    EXPECT_FALSE(set.contains(ExampleFlags::B));
+    EXPECT_FALSE(set.contains(ExampleFlags::C));
+}
+
 TEST(WTF_OptionSet, ContainsTwoFlags)
 {
     OptionSet<ExampleFlags> set { ExampleFlags::A, ExampleFlags::B };
