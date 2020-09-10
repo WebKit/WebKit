@@ -1,3 +1,30 @@
+2020-09-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Construct LineBox::InlineBoxes for nested inline level boxes when they overlap multiple lines
+        https://bugs.webkit.org/show_bug.cgi?id=216369
+
+        Reviewed by Antti Koivisto.
+
+        An inline box may not necessarily start on the current line:
+
+        <span id=outer>line break
+          <br>
+          this content's parent inline box('outer') <span id=inner>starts on the previous line</span>
+        </span>
+
+        We need to make sure that there's an LineBox::InlineBox for every inline box that's present on the current line.
+        (both 'outer' and 'inner' inline boxes have to have a corresponding LineBox::InlineBox here to be able to compute their geometry)
+        They normally get constructed when when we see a [container start] run, but when the nesting level > 1 at the start of the line,
+        we will not see those [container start] runs.
+        In such cases we need to create LineBox::InlineBoxes for the inline box ancestors. 
+        We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level or
+        nested with a [container start] run.
+
+        Test: fast/layoutformattingcontext/inline-box-overlaps-multiple-lines.html
+
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+
 2020-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r257839): clickpay.com - password placeholder text cannot be replaced

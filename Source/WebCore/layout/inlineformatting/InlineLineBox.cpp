@@ -159,6 +159,33 @@ void LineBox::constructInlineBoxes(const Line::RunList& runs)
         m_inlineBoxRectMap.set(&root(), &m_rootInlineBox);
     };
     constructRootInlineBox();
+    if (!runs.isEmpty()) {
+        // An inline box may not necessarily start on the current line:
+        // <span id=outer>line break<br>this content's parent inline box('outer') <span id=inner>starts on the previous line</span></span>
+        // We need to make sure that there's an LineBox::InlineBox for every inline box that's present on the current line.
+        // In nesting case we need to create LineBox::InlineBoxes for the inline box ancestors. 
+        // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level or
+        // nested with a [container start] run.
+        auto& firstRunParentInlineBox = runs[0].layoutBox().parent();
+        // If the parent is the root(), we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s).
+        if (&firstRunParentInlineBox != &root()) {
+            auto* ancestor = &firstRunParentInlineBox;
+            Vector<const Box*> ancestorsWithoutInlineBoxes;
+            while (ancestor != &root()) {
+                ancestorsWithoutInlineBoxes.append(ancestor);
+                ancestor = &ancestor->parent();
+            }
+            // Construct the missing LineBox::InlineBoxes starting with the topmost ancestor.
+            for (auto* ancestor : WTF::makeReversedRange(ancestorsWithoutInlineBoxes)) {
+                auto& fontMetrics = ancestor->style().fontMetrics();
+                InlineLayoutUnit logicalHeight = fontMetrics.height();
+                auto inlineBoxRect = Display::InlineRect { { }, m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }), logicalWidth(), logicalHeight };
+                auto inlineBox = makeUnique<InlineBox>(*ancestor, inlineBoxRect, fontMetrics.ascent(), fontMetrics.descent(), InlineBox::IsConsideredEmpty::No);
+                m_inlineBoxRectMap.set(ancestor, inlineBox.get());
+                m_inlineBoxList.append(WTFMove(inlineBox));
+            }
+        }
+    }
 
     for (auto& run : runs) {
         auto& inlineLevelBox = run.layoutBox();
@@ -196,16 +223,16 @@ void LineBox::constructInlineBoxes(const Line::RunList& runs)
             auto& fontMetrics = inlineLevelBox.style().fontMetrics();
             InlineLayoutUnit logicalHeight = fontMetrics.height();
             InlineLayoutUnit baseline = fontMetrics.ascent();
-            auto inlineBoxRect = Display::InlineRect { { }, inlineBoxLogicalLeft, initialWidth, logicalHeight };
-            auto inlineBox = makeUnique<InlineBox>(inlineLevelBox, inlineBoxRect, baseline, logicalHeight - baseline, InlineBox::IsConsideredEmpty::Yes);
+            auto logicalRect = Display::InlineRect { { }, inlineBoxLogicalLeft, initialWidth, logicalHeight };
+            auto inlineBox = makeUnique<InlineBox>(inlineLevelBox, logicalRect, baseline, logicalHeight - baseline, InlineBox::IsConsideredEmpty::Yes);
             m_inlineBoxRectMap.set(&inlineLevelBox, inlineBox.get());
             m_inlineBoxList.append(WTFMove(inlineBox));
         } else if (run.isContainerEnd()) {
             // Adjust the logical width when the inline level container closes on this line.
             auto& inlineBox = *m_inlineBoxRectMap.get(&inlineLevelBox);
             inlineBox.setLogicalWidth(run.logicalRight() - inlineBox.logicalLeft());
-        } else if ((run.isText() || run.isLineBreak())) {
-            auto& containerBox = run.layoutBox().parent();
+        } else if (run.isText() || run.isLineBreak()) {
+            auto& containerBox = inlineLevelBox.parent();
             &containerBox == &root() ? m_rootInlineBox.setIsNonEmpty() : m_inlineBoxRectMap.get(&containerBox)->setIsNonEmpty();
         }
     }
