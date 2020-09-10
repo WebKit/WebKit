@@ -81,6 +81,8 @@ private:
 
     void displayDidRefreshOnScrollingThread();
     void waitForRenderingUpdateCompletionOrTimeout();
+    
+    bool canUpdateLayersOnScrollingThread() const;
 
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds);
     void delayedRenderingUpdateDetectionTimerFired();
