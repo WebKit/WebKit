@@ -422,6 +422,12 @@ bool IOSApplication::isOKCupid()
     return isOKCupid;
 }
 
+bool IOSApplication::isJWLibrary()
+{
+    static bool isJWLibrary = applicationBundleIsEqualTo("org.jw.jwlibrary"_s);
+    return isJWLibrary;
+}
+
 #endif
 
 } // namespace WebCore
