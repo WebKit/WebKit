@@ -259,8 +259,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     // FIXME Tail call if the wasm return type is void and no registers were spilled. https://bugs.webkit.org/show_bug.cgi?id=165488
 
-    CallLinkInfo* callLinkInfo = callLinkInfos.add();
-    callLinkInfo->setUpCall(CallLinkInfo::Call, CodeOrigin(), importJSCellGPRReg);
+    CallLinkInfo* callLinkInfo = callLinkInfos.add(CodeOrigin());
+    callLinkInfo->setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
     JIT::DataLabelPtr targetToCheck;
     JIT::TrustedImmPtr initialRightValue(nullptr);
     JIT::Jump slowPath = jit.branchPtrWithPatch(MacroAssembler::NotEqual, importJSCellGPRReg, targetToCheck, initialRightValue);

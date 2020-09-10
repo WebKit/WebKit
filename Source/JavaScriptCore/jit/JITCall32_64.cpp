@@ -251,8 +251,8 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     linkAllSlowCases(iter);
 
     auto bytecode = instruction->as<OpCallEval>();
-    CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
-    info->setUpCall(CallLinkInfo::Call, CodeOrigin(m_bytecodeIndex), regT0);
+    CallLinkInfo* info = m_codeBlock->addCallLinkInfo(CodeOrigin(m_bytecodeIndex));
+    info->setUpCall(CallLinkInfo::Call, regT0);
 
     int registerOffset = -bytecode.m_argv;
     VirtualRegister callee = bytecode.m_callee;
@@ -290,7 +290,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     */
     CallLinkInfo* info = nullptr;
     if (opcodeID != op_call_eval)
-        info = m_codeBlock->addCallLinkInfo();
+        info = m_codeBlock->addCallLinkInfo(CodeOrigin(m_bytecodeIndex));
     compileSetupFrame(bytecode, info);
     // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
     
@@ -316,7 +316,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     addSlowCase(slowCase);
 
     ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
-    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), CodeOrigin(m_bytecodeIndex), regT0);
+    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), regT0);
     m_callCompilationInfo.append(CallCompilationInfo());
     m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
