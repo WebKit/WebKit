@@ -4555,6 +4555,7 @@ webkit.org/b/215827 animations/steps-transform-rendering-updates.html [ Failure 
 webkit.org/b/215930 webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Skip ]
 webkit.org/b/216313 webanimations/accelerated-animation-easing-update-after-pause.html [ Skip ]
 webkit.org/b/216313 webanimations/accelerated-animation-easing-update-steps-after-pause.html [ Skip ]
+webkit.org/b/216367 webanimations/accelerated-animation-easing-and-direction-update.html [ Skip ]
 
 # This test requires the OS to have a font that supports the Ahom language.
 webkit.org/b/216024 fast/text/ahom.html [ ImageOnlyFailure ]

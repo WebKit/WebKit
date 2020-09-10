@@ -1,3 +1,21 @@
+2020-09-10  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r260360): Ionic modal dialog doesn't animate correctly when dragged and released
+        https://bugs.webkit.org/show_bug.cgi?id=216308
+        <rdar://problem/68567444>
+
+        Reviewed by Simon Fraser.
+
+        We fixed seeking for animations with a reversed playback rate in r261637, the fix for bug 204717,
+        but only looked at the animation's playback rate. However, an animation can also play in reverse
+        using the "direction" property of the timing object passed to updateTiming(), so we should also
+        check that it's playing forwards in order to be seeked.
+
+        Test: webanimations/accelerated-animation-easing-and-direction-update.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::animationCanBeAccelerated const):
+
 2020-09-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Use imported targets in find module for libseccomp

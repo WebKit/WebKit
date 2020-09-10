@@ -1028,7 +1028,7 @@ bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
 
 bool GraphicsLayerCA::animationCanBeAccelerated(const KeyframeValueList& valueList, const Animation* anim) const
 {
-    if (anim->playbackRate() != 1)
+    if (anim->playbackRate() != 1 || !anim->directionIsForwards())
         return false;
 
     if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
