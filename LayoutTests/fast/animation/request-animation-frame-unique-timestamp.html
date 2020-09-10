@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+promise_test(async t => {
+	let firstFrameTimestamp = await new Promise(requestAnimationFrame);
+	let secondFrameTimestamp = await new Promise(requestAnimationFrame);
+	assert_greater_than(secondFrameTimestamp, firstFrameTimestamp);
+}, "Timestamps of requestAnimationFrame() callbacks increase.");
+
+</script>
+</body>
+</html>

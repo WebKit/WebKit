@@ -1,0 +1,3 @@
+
+PASS Timestamps of requestAnimationFrame() callbacks increase. 
+
