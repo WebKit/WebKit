@@ -13,7 +13,7 @@
           (position 8.00 13.00)
           (bounds 200.00 200.00)
           (event region
-            (rect (0,0) width=500 height=500)
+            (rect (0,0) width=200 height=200)
           )
           (children 1
             (GraphicsLayer

@@ -17,9 +17,6 @@
           (drawsContent 1)
           (event region
             (rect (0,0) width=800 height=46)
-          (editable region
-            (rect (10,10) width=138 height=22)
-          )
           )
           (children 2
             (GraphicsLayer
@@ -29,7 +26,7 @@
               (bounds 800.00 600.00)
               (drawsContent 1)
               (event region
-                (rect (0,0) width=800 height=46)
+                (rect (8,8) width=784 height=25)
               (editable region
                 (rect (10,10) width=138 height=22)
               )

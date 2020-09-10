@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<script>
+window.onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (window.internals)
+        results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+}
+</script>
+<style>
+.container {
+    position: fixed;
+    top: 10px;
+    height: 400px;
+    width: 100%;
+    border: 1px solid blue;
+    z-index: -10;
+}
+
+.box {
+    width: 200px;
+    height: 200px;
+    background-color: rgba(0, 128, 0, 0.2);
+}
+
+.scroller {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: -1;
+    margin: 50px;
+    width: 400px;
+    height: 600px;
+    overflow: scroll;
+    border: 30px solid rgba(0, 0, 128, 0.5);
+    padding: 20px;
+    line-height: 1.5em;
+}
+
+.scroller-content {
+    width: 400px;
+    height: 10000px;
+    background: repeating-linear-gradient(white, silver 100px);
+}
+</style>
+</head>
+<body>
+<pre id=results></pre>
+<div class="container">
+<div class="box">
+
+</div>
+<div class="scroller">
+<div class="scroller-content"></div>
+</div>
+</div>
+
+</body>
+</html>

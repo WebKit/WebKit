@@ -25,7 +25,7 @@
               (bounds 800.00 600.00)
               (drawsContent 1)
               (event region
-                (rect (0,0) width=800 height=123)
+                (rect (8,8) width=784 height=102)
                 (touch-action
                   (none                  
                     (rect (8,8) width=102 height=102)

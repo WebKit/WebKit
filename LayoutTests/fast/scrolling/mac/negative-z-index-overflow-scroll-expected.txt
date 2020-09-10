@@ -1,0 +1,91 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (bounds 800.00 600.00)
+          (event region
+            (rect (0,0) width=800 height=13)
+          )
+          (children 2
+            (GraphicsLayer
+              (position 8.00 10.00)
+              (bounds 792.00 402.00)
+              (drawsContent 1)
+              (event region
+                (rect (0,0) width=802 height=402)
+              )
+              (children 2
+                (GraphicsLayer
+                  (position 61.00 61.00)
+                  (bounds 500.00 700.00)
+                  (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=500 height=700)
+                  )
+                  (children 2
+                    (GraphicsLayer
+                      (offsetFromRenderer width=30 height=30)
+                      (position 30.00 30.00)
+                      (bounds 425.00 625.00)
+                      (event region
+                        (rect (0,0) width=425 height=625)
+                      )
+                      (children 1
+                        (GraphicsLayer
+                          (offsetFromRenderer width=30 height=30)
+                          (anchor 0.00 0.00)
+                          (bounds 425.00 10040.00)
+                          (drawsContent 1)
+                          (event region
+                            (rect (0,0) width=425 height=10040)
+                          )
+                        )
+                      )
+                    )
+                    (GraphicsLayer
+                      (position 30.00 30.00)
+                      (bounds 440.00 640.00)
+                      (children 3
+                        (GraphicsLayer
+                          (position 0.00 625.00)
+                          (bounds 425.00 15.00)
+                          (drawsContent 1)
+                        )
+                        (GraphicsLayer
+                          (position 425.00 0.00)
+                          (bounds 15.00 625.00)
+                          (drawsContent 1)
+                        )
+                        (GraphicsLayer
+                          (position 425.00 625.00)
+                          (bounds 15.00 15.00)
+                          (drawsContent 1)
+                        )
+                      )
+                    )
+                  )
+                )
+                (GraphicsLayer
+                  (bounds 792.00 402.00)
+                  (drawsContent 1)
+                  (event region
+                    (rect (1,1) width=200 height=200)
+                  )
+                )
+              )
+            )
+            (GraphicsLayer
+              (bounds 800.00 600.00)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
