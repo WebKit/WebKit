@@ -1408,6 +1408,46 @@ TEST_P(UniformTest, UniformWithReservedOpenGLName)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
+// Test that unused sampler array elements do not corrupt
+// used sampler array elements. Checks for a bug where unused
+// samplers in an array would mark the whole array unused.
+TEST_P(UniformTest, UnusedUniformsInSamplerArray)
+{
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+varying vec2 texcoord;
+void main()
+{
+    gl_Position = position;
+    texcoord = (position.xy * 0.5) + 0.5;
+})";
+    constexpr char kFS[] = R"(precision highp float;
+uniform sampler2D tex[3];
+varying vec2 texcoord;
+void main()
+{
+    gl_FragColor = texture2D(tex[0], texcoord);
+})";
+
+    mProgram = CompileProgram(kVS, kFS);
+
+    ASSERT_NE(mProgram, 0u);
+    GLint texLocation = glGetUniformLocation(mProgram, "tex[0]");
+    ASSERT_NE(-1, texLocation);
+    glUseProgram(mProgram);
+    glUniform1i(texLocation, 0);
+    GLTexture tex;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    constexpr GLsizei kTextureSize = 2;
+    std::vector<GLColor> textureData(kTextureSize * kTextureSize, GLColor::green);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTextureSize, kTextureSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, textureData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SimpleUniformTest);

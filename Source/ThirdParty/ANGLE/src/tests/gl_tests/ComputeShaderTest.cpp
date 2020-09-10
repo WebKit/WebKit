@@ -808,6 +808,73 @@ void main()
     }
 }
 
+// When declare a image array without a binding qualifier, all elements are bound to unit zero.
+// Check that the unused uniform image array element does not cause any corruption.
+// Checks for a bug where unused element could make the whole array seem as unused.
+TEST_P(ComputeShaderTest, ImageArrayUnusedElement)
+{
+    ANGLE_SKIP_TEST_IF(IsD3D11());
+
+    // TODO(xinghua.cao@intel.com): On AMD desktop OpenGL, bind two image variables to unit 0,
+    // only one variable is valid.
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL());
+
+    // Crash on Vulkan.
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
+    GLFramebuffer mFramebuffer;
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(r32ui, binding=0) writeonly uniform highp uimage2D uOut;
+layout(r32ui, binding=1) readonly uniform highp uimage2D uIn[2];
+
+void main()
+{
+    uvec4 inValue = imageLoad(uIn[0], ivec2(gl_LocalInvocationID.xy));
+    imageStore(uOut, ivec2(gl_LocalInvocationIndex, 0), inValue);
+    imageStore(uOut, ivec2(gl_LocalInvocationIndex, 1), inValue);
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glUseProgram(program.get());
+    constexpr int kTextureWidth = 1, kTextureHeight = 2;
+    GLuint inputValues[] = {100, 100};
+    GLTexture mIn;
+    glBindTexture(GL_TEXTURE_2D, mIn);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, kTextureWidth, kTextureHeight);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTextureWidth, kTextureHeight, GL_RED_INTEGER,
+                    GL_UNSIGNED_INT, inputValues);
+    EXPECT_GL_NO_ERROR();
+    glBindImageTexture(0, mIn, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32UI);
+
+    GLuint initValues[] = {111, 111};
+    GLTexture mOut;
+    glBindTexture(GL_TEXTURE_2D, mOut);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, kTextureWidth, kTextureHeight);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTextureWidth, kTextureHeight, GL_RED_INTEGER,
+                    GL_UNSIGNED_INT, initValues);
+    EXPECT_GL_NO_ERROR();
+
+    glBindImageTexture(1, mOut, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32UI);
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+    glUseProgram(0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, mFramebuffer);
+
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mOut, 0);
+    GLuint outputValues[kTextureWidth * kTextureHeight];
+    glReadPixels(0, 0, kTextureWidth, kTextureHeight, GL_RED_INTEGER, GL_UNSIGNED_INT,
+                 outputValues);
+    EXPECT_GL_NO_ERROR();
+
+    GLuint expectedValue = 100;
+    for (int i = 0; i < kTextureWidth * kTextureHeight; i++)
+    {
+        EXPECT_EQ(expectedValue, outputValues[i]);
+    }
+}
 // imageLoad functions
 TEST_P(ComputeShaderTest, ImageLoad)
 {

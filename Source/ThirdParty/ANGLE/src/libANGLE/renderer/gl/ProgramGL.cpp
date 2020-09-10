@@ -1087,13 +1087,19 @@ void ProgramGL::markUnusedUniformLocations(std::vector<gl::VariableLocation> *un
             auto &locationRef = (*uniformLocations)[location];
             if (mState.isSamplerUniformIndex(locationRef.index))
             {
-                GLuint samplerIndex = mState.getSamplerIndexFromUniformIndex(locationRef.index);
-                (*samplerBindings)[samplerIndex].unreferenced = true;
+                GLuint samplerIndex  = mState.getSamplerIndexFromUniformIndex(locationRef.index);
+                auto &samplerBinding = (*samplerBindings)[samplerIndex];
+                // Crop unused sampler bindings in the sampler array.
+                if (locationRef.arrayIndex < samplerBinding.boundTextureUnits.size())
+                    samplerBinding.boundTextureUnits.resize(locationRef.arrayIndex);
             }
             else if (mState.isImageUniformIndex(locationRef.index))
             {
-                GLuint imageIndex = mState.getImageIndexFromUniformIndex(locationRef.index);
-                (*imageBindings)[imageIndex].unreferenced = true;
+                GLuint imageIndex  = mState.getImageIndexFromUniformIndex(locationRef.index);
+                auto &imageBinding = (*imageBindings)[imageIndex];
+                // Crop unused image bindings in the image array.
+                if (locationRef.arrayIndex < imageBinding.boundImageUnits.size())
+                    imageBinding.boundImageUnits.resize(locationRef.arrayIndex);
             }
             // If the location has been previously bound by a glBindUniformLocation call, it should
             // be marked as ignored. Otherwise it's unused.
