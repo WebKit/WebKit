@@ -142,8 +142,8 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
     WebCore::IntPoint point { [self locationInView:self.view] };
 
-    auto timestamp = WallTime::fromRawSeconds(Seconds::fromNanoseconds(GSCurrentEventTimestamp()).seconds());
-
+    // UITouch's timestamp uses mach_absolute_time as its timebase, same as MonotonicTime.
+    auto timestamp = MonotonicTime::fromRawSeconds([_currentTouch timestamp]).approximateWallTime();
     return WTF::makeUnique<WebKit::NativeWebMouseEvent>(type, button, buttons, point, point, 0, 0, 0, [_currentTouch tapCount], modifiers, timestamp, 0);
 }
 
