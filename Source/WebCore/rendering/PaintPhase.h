@@ -69,6 +69,8 @@ enum class PaintBehavior : uint16_t {
     TileFirstPaint                      = 1 << 11,
     CompositedOverflowScrollContent     = 1 << 12,
     AnnotateLinks                       = 1 << 13, // Collect all renderers with links to annotate their URLs (e.g. PDFs)
+    EventRegionIncludeForeground        = 1 << 14, // FIXME: Event region painting should use paint phases.
+    EventRegionIncludeBackground        = 1 << 15,
 };
 
 } // namespace WebCore
