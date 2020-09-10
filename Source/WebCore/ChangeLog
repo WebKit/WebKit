@@ -1,5 +1,48 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266470. rdar://problem/68652453
+
+    REGRESSION (r264661): Crashes in WebCore::wrap<WebCore::Blob> in CloneDeserializer
+    https://bugs.webkit.org/show_bug.cgi?id=215835
+    
+    Reviewed by Youenn Fablet.
+    
+    Partially revert r264661 as there are cases, other than our previous IDB, where we may not use JSDOMGlobalObject
+    for serialization and deserialization, like the one showed in the crashlog. Therefore, we still need the check
+    for JSDOMGlobalObject.
+    
+    API Test: WebKit.EvaluateJavaScriptThatCreatesBlob
+    
+    * bindings/js/SerializedScriptValue.cpp:
+    (WebCore::CloneDeserializer::CloneDeserializer):
+    (WebCore::CloneDeserializer::readFile):
+    (WebCore::CloneDeserializer::readRTCCertificate):
+    (WebCore::CloneDeserializer::readTerminal):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266470 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-02  Sihui Liu  <sihui_liu@apple.com>
+
+            REGRESSION (r264661): Crashes in WebCore::wrap<WebCore::Blob> in CloneDeserializer
+            https://bugs.webkit.org/show_bug.cgi?id=215835
+
+            Reviewed by Youenn Fablet.
+
+            Partially revert r264661 as there are cases, other than our previous IDB, where we may not use JSDOMGlobalObject
+            for serialization and deserialization, like the one showed in the crashlog. Therefore, we still need the check
+            for JSDOMGlobalObject.
+
+            API Test: WebKit.EvaluateJavaScriptThatCreatesBlob
+
+            * bindings/js/SerializedScriptValue.cpp:
+            (WebCore::CloneDeserializer::CloneDeserializer):
+            (WebCore::CloneDeserializer::readFile):
+            (WebCore::CloneDeserializer::readRTCCertificate):
+            (WebCore::CloneDeserializer::readTerminal):
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266454. rdar://problem/68652810
 
     Safari is not able to hear audio when using WebRTC in multiple tabs
