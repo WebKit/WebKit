@@ -68,7 +68,6 @@ class Attachment;
 namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
 class IconLoadingDelegate;
-class InspectorDelegate;
 class NavigationState;
 class ResourceLoadDelegate;
 class SafeBrowsingWarning;
@@ -113,7 +112,6 @@ class ViewGestureController;
     std::unique_ptr<WebKit::UIDelegate> _uiDelegate;
     std::unique_ptr<WebKit::IconLoadingDelegate> _iconLoadingDelegate;
     std::unique_ptr<WebKit::ResourceLoadDelegate> _resourceLoadDelegate;
-    std::unique_ptr<WebKit::InspectorDelegate> _inspectorDelegate;
 
     WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;

@@ -27,6 +27,7 @@
 #include "InspectorBrowserAgent.h"
 
 #include "APIInspectorClient.h"
+#include "WebInspectorProxy.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
@@ -70,9 +71,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::enable()
 
     m_inspectedPage.inspectorController().setEnabledBrowserAgent(this);
 
-    auto* inspector = m_inspectedPage.inspector();
-    ASSERT(inspector);
-    m_inspectedPage.inspectorClient().browserDomainEnabled(m_inspectedPage, *inspector);
+    if (auto* inspector = m_inspectedPage.inspector())
+        inspector->inspectorClient().browserDomainEnabled(*inspector);
 
     return { };
 }
@@ -85,7 +85,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::disable()
     m_inspectedPage.inspectorController().setEnabledBrowserAgent(nullptr);
 
     if (auto* inspector = m_inspectedPage.inspector())
-        m_inspectedPage.inspectorClient().browserDomainDisabled(m_inspectedPage, *inspector);
+        inspector->inspectorClient().browserDomainDisabled(*inspector);
 
     return { };
 }

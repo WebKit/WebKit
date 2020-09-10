@@ -59,6 +59,10 @@ namespace WebCore {
 class CertificateInfo;
 }
 
+namespace API {
+class InspectorClient;
+}
+
 namespace WebKit {
 
 class WebFrameProxy;
@@ -86,9 +90,13 @@ public:
         return adoptRef(*new WebInspectorProxy(inspectedPage));
     }
 
-    ~WebInspectorProxy();
+    explicit WebInspectorProxy(WebPageProxy&);
+    virtual ~WebInspectorProxy();
 
     void invalidate();
+
+    API::InspectorClient& inspectorClient() { return *m_inspectorClient; }
+    void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     // Public APIs
     WebPageProxy* inspectedPage() const { return m_inspectedPage; }
@@ -184,8 +192,6 @@ public:
     static const unsigned initialWindowHeight;
 
 private:
-    explicit WebInspectorProxy(WebPageProxy&);
-
     void createFrontendPage();
     void closeFrontendPageAndWindow();
 
@@ -273,6 +279,7 @@ private:
 
     WebPageProxy* m_inspectedPage { nullptr };
     WebPageProxy* m_inspectorPage { nullptr };
+    std::unique_ptr<API::InspectorClient> m_inspectorClient;
 
     bool m_underTest { false };
     bool m_isVisible { false };

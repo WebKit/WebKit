@@ -787,7 +787,6 @@
 		8C10AF98206467920018FD90 /* localstorage-empty-string-value.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 8C10AF97206467830018FD90 /* localstorage-empty-string-value.html */; };
 		8C10AF99206467A90018FD90 /* LocalStoragePersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C10AF96206467770018FD90 /* LocalStoragePersistence.mm */; };
 		8E4A85371E1D1AB200F53B0F /* GridPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E4A85361E1D1AA100F53B0F /* GridPosition.cpp */; };
-		912479FA23E269A200C6CEC8 /* _WKInspectorDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 912479F923E269A100C6CEC8 /* _WKInspectorDelegate.mm */; };
 		930AD402150698D00067970F /* lots-of-text.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 930AD401150698B30067970F /* lots-of-text.html */; };
 		9310CD381EF708FB0050FFE0 /* Function.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9310CD361EF708FB0050FFE0 /* Function.cpp */; };
 		931C281D22BC55F2001D98C4 /* WebSQLBasics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 931C281C22BC55A7001D98C4 /* WebSQLBasics.mm */; };
@@ -828,6 +827,7 @@
 		9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */; };
 		9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9984FACD1CFFB038008D198C /* editable-body.html */; };
 		9999108B1F393C96008AD455 /* Copying.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9999108A1F393C8B008AD455 /* Copying.mm */; };
+		99B4F9C624EDED9700022B82 /* WKInspectorDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */; };
 		9B02E0D6235FA47D004044B2 /* TextManipulation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B02E0D5235FA47D004044B2 /* TextManipulation.mm */; };
 		9B0786A51C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0786A41C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp */; };
 		9B0C051924FDFB7D00F2FE31 /* CompactUniquePtrTuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0C051824FDFB7000F2FE31 /* CompactUniquePtrTuple.cpp */; };
@@ -2367,7 +2367,6 @@
 		8C10AF97206467830018FD90 /* localstorage-empty-string-value.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "localstorage-empty-string-value.html"; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* TestWebKitAPI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWebKitAPI; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E4A85361E1D1AA100F53B0F /* GridPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridPosition.cpp; sourceTree = "<group>"; };
-		912479F923E269A100C6CEC8 /* _WKInspectorDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorDelegate.mm; sourceTree = "<group>"; };
 		930AD401150698B30067970F /* lots-of-text.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "lots-of-text.html"; sourceTree = "<group>"; };
 		9310CD361EF708FB0050FFE0 /* Function.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Function.cpp; sourceTree = "<group>"; };
 		931C281B22BC5583001D98C4 /* opendatabase-always-exists.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "opendatabase-always-exists.html"; sourceTree = "<group>"; };
@@ -2425,6 +2424,7 @@
 		9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTextInput.mm; sourceTree = "<group>"; };
 		9984FACD1CFFB038008D198C /* editable-body.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "editable-body.html"; sourceTree = "<group>"; };
 		9999108A1F393C8B008AD455 /* Copying.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Copying.mm; sourceTree = "<group>"; };
+		99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorDelegate.mm; sourceTree = "<group>"; };
 		9B02E0D5235FA47D004044B2 /* TextManipulation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextManipulation.mm; sourceTree = "<group>"; };
 		9B0786A21C58830F00D159E3 /* InjectedBundleMakeAllShadowRootsOpen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMakeAllShadowRootsOpen.cpp; sourceTree = "<group>"; };
 		9B0786A41C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp; sourceTree = "<group>"; };
@@ -3144,7 +3144,6 @@
 			children = (
 				A16F66B81C40E9E100BD4D24 /* Resources */,
 				5CEAB5DF1FA937CB00A77FAA /* _WKInputDelegate.mm */,
-				912479F923E269A100C6CEC8 /* _WKInspectorDelegate.mm */,
 				7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */,
 				57C6244D2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm */,
 				0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */,
@@ -3380,6 +3379,7 @@
 				2D838B1E1EEF3A5B009B980E /* WKContentViewEditingActions.mm */,
 				370CE2291F57343400E7410B /* WKContentViewTargetForAction.mm */,
 				51D124971E763AF8002B2820 /* WKHTTPCookieStore.mm */,
+				99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */,
 				A5A729F01F622A9A00DE5A28 /* WKNavigationResponse.mm */,
 				DF4B273821A47727009BD1CA /* WKNSDictionaryEmptyDictionaryCrash.mm */,
 				375E0E151D66674400EFEC2C /* WKNSNumber.mm */,
@@ -4968,7 +4968,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CEAB5E11FA939F400A77FAA /* _WKInputDelegate.mm in Sources */,
-				912479FA23E269A200C6CEC8 /* _WKInspectorDelegate.mm in Sources */,
 				7CEFA9661AC0B9E200B910FD /* _WKUserContentExtensionStore.mm in Sources */,
 				57C6244E2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm in Sources */,
 				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
@@ -5490,6 +5489,7 @@
 				370CE22A1F57343400E7410B /* WKContentViewTargetForAction.mm in Sources */,
 				51D124981E763B02002B2820 /* WKHTTPCookieStore.mm in Sources */,
 				7CCE7F1D1A411AE600447C4C /* WKImageCreateCGImageCrash.cpp in Sources */,
+				99B4F9C624EDED9700022B82 /* WKInspectorDelegate.mm in Sources */,
 				A5A729F11F622AA700DE5A28 /* WKNavigationResponse.mm in Sources */,
 				DF4B273921A47728009BD1CA /* WKNSDictionaryEmptyDictionaryCrash.mm in Sources */,
 				375E0E171D66674400EFEC2C /* WKNSNumber.mm in Sources */,

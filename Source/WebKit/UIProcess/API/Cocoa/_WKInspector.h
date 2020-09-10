@@ -28,6 +28,7 @@
 
 @class WKWebView;
 @class _WKFrameHandle;
+@protocol _WKInspectorDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,6 +36,8 @@ WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
 @interface _WKInspector : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
+
+@property (nonatomic, weak) id <_WKInspectorDelegate> delegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) WKWebView *webView;
 @property (nonatomic, readonly) BOOL isConnected;

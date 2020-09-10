@@ -26,25 +26,19 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
-@class WKWebView;
 @class _WKInspector;
 
 @protocol _WKInspectorDelegate <NSObject>
 @optional
 
-/*! @abstract Called when a Web Inspector instance is attached to this WKWebView. This is not called in the case of remote inspection.
-    @param inspector The Web Inspector instance attached to this WKWebView.
+/*! @abstract Called when the Browser domain is enabled for the associated _WKInspector.
+    @param inspector the associated _WKInspector for which the Browser domain has been enabled.
  */
-- (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector;
+- (void)inspectorDidEnableBrowserDomain:(_WKInspector *)inspector;
 
-/*! @abstract Called when the Web Inspector protocol Browser domain is enabled for the Web Inspector instance attached to this WKWebView.
-    @param inspector The Web Inspector instance attached to this WKWebView.
+/*! @abstract Called when the  Browser domain is disabled for the associated _WKInspector.
+    @param inspector the associated _WKInspector for which the Browser domain has been disabled.
  */
-- (void)_webView:(WKWebView *)webView browserDomainEnabledForInspector:(_WKInspector *)inspector;
-
-/*! @abstract Called when the Web Inspector protocol Browser domain is disabled for the Web Inspector instance attached to this WKWebView.
-    @param inspector The Web Inspector instance attached to this WKWebView.
- */
-- (void)_webView:(WKWebView *)webView browserDomainDisabledForInspector:(_WKInspector *)inspector;
+- (void)inspectorDidDisableBrowserDomain:(_WKInspector *)inspector;
 
 @end

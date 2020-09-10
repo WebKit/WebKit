@@ -247,6 +247,12 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler WK_API_AVAILABLE(macos(10.14));
 - (void)_webView:(WKWebView *)webView didPerformDragOperation:(BOOL)handled WK_API_AVAILABLE(macos(10.14.4));
 
+/*! @abstract Called when a Web Inspector instance is attached to this WKWebView. This is not called in the case of remote inspection.
+    @param webView The WKWebView instance being inspected.
+    @param inspector The Web Inspector instance attached to this WKWebView.
+ */
+- (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 #endif // !TARGET_OS_IPHONE
 
 @end

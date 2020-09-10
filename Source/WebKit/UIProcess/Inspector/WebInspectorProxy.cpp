@@ -68,6 +68,7 @@ const unsigned WebInspectorProxy::initialWindowHeight = 650;
 
 WebInspectorProxy::WebInspectorProxy(WebPageProxy& inspectedPage)
     : m_inspectedPage(&inspectedPage)
+    , m_inspectorClient(makeUnique<API::InspectorClient>())
 #if PLATFORM(MAC)
     , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorProxy::closeFrontendAfterInactivityTimerFired)
 #endif
@@ -77,6 +78,16 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy& inspectedPage)
 
 WebInspectorProxy::~WebInspectorProxy()
 {
+}
+
+void WebInspectorProxy::setInspectorClient(std::unique_ptr<API::InspectorClient>&& inspectorClient)
+{
+    if (!inspectorClient) {
+        m_inspectorClient = makeUnique<API::InspectorClient>();
+        return;
+    }
+
+    m_inspectorClient = WTFMove(inspectorClient);
 }
 
 unsigned WebInspectorProxy::inspectionLevel() const
@@ -466,7 +477,7 @@ void WebInspectorProxy::openLocalInspectorFrontend(bool canAttach, bool underTes
     }
 
     // Notify WebKit client when a local inspector attaches so that it may install delegates prior to the _WKInspector loading its frontend.
-    m_inspectedPage->inspectorClient().didAttachLocalInspector(*m_inspectedPage, *this);
+    m_inspectedPage->uiClient().didAttachLocalInspector(*m_inspectedPage, *this);
 
     // Bail out if the client closed the inspector from the delegate method.
     if (!m_inspectorPage)

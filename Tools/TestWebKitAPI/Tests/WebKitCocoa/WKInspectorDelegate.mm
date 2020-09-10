@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,14 +36,38 @@
 
 #if PLATFORM(MAC)
 
+@class InspectorDelegate;
+
 static bool didAttachLocalInspectorCalled = false;
 static bool browserDomainEnabledForInspectorCalled = false;
 static bool browserDomainDisabledForInspectorCalled = false;
+static RetainPtr<InspectorDelegate> sharedInspectorDelegate;
 
 @interface InspectorDelegate : NSObject <_WKInspectorDelegate>
 @end
 
 @implementation InspectorDelegate
+
+- (void)inspectorDidEnableBrowserDomain:(_WKInspector *)inspector
+{
+    browserDomainEnabledForInspectorCalled = true;
+
+    // Wait for the Browser domain to be enabled before closing Web Inspector, which will
+    // automatically disable the domain.
+    [inspector close];
+}
+
+- (void)inspectorDidDisableBrowserDomain:(_WKInspector *)inspector
+{
+    browserDomainDisabledForInspectorCalled = true;
+}
+
+@end
+
+@interface UIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation UIDelegate
 
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector
 {
@@ -52,27 +76,11 @@ static bool browserDomainDisabledForInspectorCalled = false;
     browserDomainDisabledForInspectorCalled = false;
 
     EXPECT_EQ(webView._inspector, inspector);
-    EXPECT_TRUE(webView._hasInspectorFrontend);
+
+    sharedInspectorDelegate = [InspectorDelegate new];
+    [inspector setDelegate:sharedInspectorDelegate.get()];
 
     didAttachLocalInspectorCalled = true;
-}
-
-- (void)_webView:(WKWebView *)webView browserDomainEnabledForInspector:(_WKInspector *)inspector
-{
-    EXPECT_EQ(webView._inspector, inspector);
-
-    // Wait for the Browser domain to be enabled before closing Web Inspector, which will
-    // automatically disable the domain.
-    [inspector close];
-
-    browserDomainEnabledForInspectorCalled = true;
-}
-
-- (void)_webView:(WKWebView *)webView browserDomainDisabledForInspector:(_WKInspector *)inspector
-{
-    EXPECT_EQ(webView._inspector, inspector);
-
-    browserDomainDisabledForInspectorCalled = true;
 }
 
 @end
@@ -82,8 +90,9 @@ TEST(WebKit_WKInspectorDelegate, DidNotifyForLocalInspector)
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    auto delegate = adoptNS([InspectorDelegate new]);
-    [webView _setInspectorDelegate:delegate.get()];
+    auto uiDelegate = adoptNS([UIDelegate new]);
+
+    [webView setUIDelegate:uiDelegate.get()];
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
 
     EXPECT_FALSE(webView.get()._hasInspectorFrontend);

@@ -40,7 +40,6 @@
 #include "APIHistoryClient.h"
 #include "APIHitTestResult.h"
 #include "APIIconLoadingClient.h"
-#include "APIInspectorClient.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APILoaderClient.h"
 #include "APINavigation.h"
@@ -488,7 +487,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #if ENABLE(CONTEXT_MENUS)
     , m_contextMenuClient(makeUnique<API::ContextMenuClient>())
 #endif
-    , m_inspectorClient(makeUnique<API::InspectorClient>())
     , m_navigationState(makeUnique<WebNavigationState>())
     , m_process(process)
     , m_pageGroup(*m_configuration->pageGroup())
@@ -729,16 +727,6 @@ void WebPageProxy::setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>&
         return;
 
     send(Messages::WebPage::SetUseIconLoadingClient(hasClient));
-}
-
-void WebPageProxy::setInspectorClient(std::unique_ptr<API::InspectorClient>&& inspectorClient)
-{
-    if (!inspectorClient) {
-        m_inspectorClient = makeUnique<API::InspectorClient>();
-        return;
-    }
-
-    m_inspectorClient = WTFMove(inspectorClient);
 }
 
 void WebPageProxy::setPageLoadStateObserver(std::unique_ptr<PageLoadState::Observer>&& observer)

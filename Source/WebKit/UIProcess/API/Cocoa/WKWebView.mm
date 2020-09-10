@@ -38,7 +38,6 @@
 #import "FullscreenClient.h"
 #import "GlobalFindInPageState.h"
 #import "IconLoadingDelegate.h"
-#import "InspectorDelegate.h"
 #import "LegacySessionStateCoding.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
@@ -103,7 +102,6 @@
 #import "_WKFullscreenDelegate.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKInputDelegate.h"
-#import "_WKInspectorDelegate.h"
 #import "_WKInspectorInternal.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
@@ -398,7 +396,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     _iconLoadingDelegate = makeUnique<WebKit::IconLoadingDelegate>(self);
     _resourceLoadDelegate = makeUnique<WebKit::ResourceLoadDelegate>(self);
-    _inspectorDelegate = makeUnique<WebKit::InspectorDelegate>(self);
 
     for (auto& pair : pageConfiguration->urlSchemeHandlers())
         _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
@@ -1551,17 +1548,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     if (auto* inspector = _page->inspector())
         return wrapper(*inspector);
     return nil;
-}
-
-- (id <_WKInspectorDelegate>)_inspectorDelegate
-{
-    return _inspectorDelegate->delegate().autorelease();
-}
-
-- (void)_setInspectorDelegate:(id<_WKInspectorDelegate>)delegate
-{
-    _page->setInspectorClient(_inspectorDelegate->createInspectorClient());
-    _inspectorDelegate->setDelegate(delegate);
 }
 
 - (_WKFrameHandle *)_mainFrame

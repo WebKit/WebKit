@@ -29,8 +29,7 @@
 #import "WKFoundation.h"
 #import <wtf/WeakObjCPtr.h>
 
-@class WKWebView;
-
+@class _WKInspector;
 @protocol _WKInspectorDelegate;
 
 namespace WebKit {
@@ -41,7 +40,7 @@ class WebPageProxy;
 class InspectorDelegate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorDelegate(WKWebView *);
+    explicit InspectorDelegate(_WKInspector *);
 
     std::unique_ptr<API::InspectorClient> createInspectorClient();
 
@@ -49,7 +48,7 @@ public:
     void setDelegate(id <_WKInspectorDelegate>);
 
 private:
-    class InspectorClient : public API::InspectorClient {
+    class InspectorClient final : public API::InspectorClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit InspectorClient(InspectorDelegate&);
@@ -57,20 +56,18 @@ private:
 
     private:
         // API::InspectorClient
-        void didAttachLocalInspector(WebPageProxy&, WebInspectorProxy&) override;
-        void browserDomainEnabled(WebPageProxy&, WebInspectorProxy&) override;
-        void browserDomainDisabled(WebPageProxy&, WebInspectorProxy&) override;
+        void browserDomainEnabled(WebInspectorProxy&);
+        void browserDomainDisabled(WebInspectorProxy&);
 
         InspectorDelegate& m_inspectorDelegate;
     };
 
-    WeakObjCPtr<WKWebView> m_webView;
+    WeakObjCPtr<_WKInspector> m_inspector;
     WeakObjCPtr<id <_WKInspectorDelegate>> m_delegate;
 
     struct {
-        unsigned webviewDidAttachInspector : 1;
-        unsigned webViewBrowserDomainEnabledForInspector : 1;
-        unsigned webViewBrowserDomainDisabledForInspector : 1;
+        bool inspectorDidEnableBrowserDomain : 1;
+        bool inspectorDidDisableBrowserDomain : 1;
     } m_delegateMethods;
 };
 

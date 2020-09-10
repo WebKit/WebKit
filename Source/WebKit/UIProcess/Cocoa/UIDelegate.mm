@@ -53,6 +53,7 @@
 #import "_WKContextMenuElementInfo.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
+#import "_WKInspectorInternal.h"
 #import "_WKWebAuthenticationPanelInternal.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
@@ -129,6 +130,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
+    m_delegateMethods.webViewDidAttachLocalInspector = [delegate respondsToSelector:@selector(_webView:didAttachLocalInspector:)];
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
     m_delegateMethods.webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:)];
@@ -812,6 +814,18 @@ void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::
         checker->didCallCompletionHandler();
         completionHandler(result);
     }).get()];
+}
+
+void UIDelegate::UIClient::didAttachLocalInspector(WebPageProxy&, WebInspectorProxy& inspector)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewDidAttachLocalInspector)
+        return;
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didAttachLocalInspector:wrapper(inspector)];
 }
 
 bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFrameProxy, FrameInfoData&& frameInfo, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)

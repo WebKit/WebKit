@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKInspectorInternal.h"
 
+#import "InspectorDelegate.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -39,6 +40,20 @@
 @implementation _WKInspector
 
 // MARK: _WKInspector methods
+
+- (id <_WKInspectorDelegate>)delegate
+{
+    return _delegate->delegate().autorelease();
+}
+
+- (void)setDelegate:(id<_WKInspectorDelegate>)delegate
+{
+    if (!_delegate)
+        _delegate = makeUnique<WebKit::InspectorDelegate>(self);
+
+    _inspector->setInspectorClient(_delegate->createInspectorClient());
+    _delegate->setDelegate(delegate);
+}
 
 - (WKWebView *)webView
 {
