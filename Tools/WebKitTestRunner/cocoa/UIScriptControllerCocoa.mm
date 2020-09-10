@@ -98,7 +98,7 @@ void UIScriptControllerCocoa::removeViewFromWindow(JSValueRef callback)
     mainWebView->removeFromWindow();
 
 #if PLATFORM(MAC)
-    [mainWebView->platformView() _doAfterNextPresentationUpdate:^{
+    [mainWebView->platformView() _doAfterActivityStateUpdate:^{
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -118,7 +118,7 @@ void UIScriptControllerCocoa::addViewToWindow(JSValueRef callback)
     mainWebView->addToWindow();
 
 #if PLATFORM(MAC)
-    [mainWebView->platformView() _doAfterNextPresentationUpdate:^{
+    [mainWebView->platformView() _doAfterActivityStateUpdate:^{
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

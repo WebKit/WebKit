@@ -3,15 +3,16 @@ This test checks that an iframe that moves between pages with different visibili
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Window 1 Loaded
-Window 2 Loaded
+Window 1 is loaded
+Window 2 is loaded
 PASS window.document.hidden is false
 PASS window2.document.hidden is false
 PASS iframe.contentDocument.hidden is false
+VisibilityChange event is received
 PASS window.document.hidden is true
 PASS window2.document.hidden is false
 PASS iframe.contentDocument.hidden is false
-Adopted iframe to Window 1
+Frame is moved
 PASS window.document.hidden is true
 PASS window2.document.hidden is false
 PASS iframe.contentDocument.hidden is true

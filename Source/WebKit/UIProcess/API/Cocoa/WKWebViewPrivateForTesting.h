@@ -75,4 +75,6 @@ typedef enum {
 - (BOOL)_hasSleepDisabler;
 - (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus;
 - (double)_audioRoutingArbitrationUpdateTime;
+
+- (void)_doAfterActivityStateUpdate:(void (^)(void))completionHandler;
 @end

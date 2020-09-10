@@ -2056,6 +2056,12 @@ void WebPageProxy::dispatchActivityStateChange()
     m_potentiallyChangedActivityStateFlags = { };
     m_activityStateChangeWantsSynchronousReply = false;
     m_viewWasEverInWindow |= isNowInWindow;
+
+#if PLATFORM(COCOA)
+    for (auto& callback : m_activityStateUpdateCallbacks)
+        callback();
+    m_activityStateUpdateCallbacks.clear();
+#endif
 }
 
 bool WebPageProxy::isAlwaysOnLoggingAllowed() const

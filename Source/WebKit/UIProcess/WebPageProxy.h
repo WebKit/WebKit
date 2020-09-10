@@ -901,6 +901,7 @@ public:
     RemoteLayerTreeScrollingPerformanceData* scrollingPerformanceData() { return m_scrollingPerformanceData.get(); }
 
     void scheduleActivityStateUpdate();
+    void addActivityStateUpdateCompletionHandler(CompletionHandler<void()>&&);
 #endif // PLATFORM(COCOA)
 
     void changeFontAttributes(WebCore::FontAttributeChanges&&);
@@ -2742,6 +2743,7 @@ private:
     bool m_scrollPerformanceDataCollectionEnabled { false };
 
     bool m_hasScheduledActivityStateUpdate { false };
+    Vector<CompletionHandler<void()>> m_activityStateUpdateCallbacks;
 #endif
     UserObservablePageCounter::Token m_pageIsUserObservableCount;
     ProcessSuppressionDisabledToken m_preventProcessSuppressionCount;

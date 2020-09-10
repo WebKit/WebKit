@@ -1,3 +1,24 @@
+2020-09-10  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r266634): [macOS release] 4 layout tests became flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=216275
+        <rdar://problem/68515242>
+
+        Reviewed by Tim Horton.
+
+        After r266634, activity state changes caused by adding/removing view will not be dispatched to web process until
+        transaction is committed in UI process. To make sure web process picks up the changes, we need to invoke the 
+        callbacks after activity state changes are dispatched.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _doAfterActivityStateUpdate:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::addActivityStateUpdateCompletionHandler):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        * UIProcess/WebPageProxy.h:
+
 2020-09-10  Chris Dumez  <cdumez@apple.com>
 
         Some WebAudio tests give different output on different machines

@@ -1,3 +1,16 @@
+2020-09-10  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r266634): [macOS release] 4 layout tests became flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=216275
+        <rdar://problem/68515242>
+
+        Reviewed by Tim Horton.
+
+        Add more event handlers to make test more stable, and add extra logging for debugging.
+
+        * fast/events/page-visibility-iframe-move-test-expected.txt:
+        * fast/events/page-visibility-iframe-move-test.html:
+
 2020-09-10  Antti Koivisto  <antti@apple.com>
 
         Don't create event regions when the page has no subscrollers

@@ -1,3 +1,15 @@
+2020-09-10  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r266634): [macOS release] 4 layout tests became flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=216275
+        <rdar://problem/68515242>
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::removeViewFromWindow):
+        (WTR::UIScriptControllerCocoa::addViewToWindow):
+
 2020-09-10  Chris Dumez  <cdumez@apple.com>
 
         Some WebAudio tests give different output on different machines

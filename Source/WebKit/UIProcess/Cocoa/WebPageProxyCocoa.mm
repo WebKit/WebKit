@@ -527,6 +527,16 @@ void WebPageProxy::scheduleActivityStateUpdate()
     m_activityStateChangeDispatcher->schedule();
 }
 
+void WebPageProxy::addActivityStateUpdateCompletionHandler(CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_hasScheduledActivityStateUpdate) {
+        completionHandler();
+        return;
+    }
+
+    m_activityStateUpdateCallbacks.append(WTFMove(completionHandler));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

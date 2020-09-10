@@ -271,4 +271,9 @@
 #endif
 }
 
+- (void)_doAfterActivityStateUpdate:(void (^)(void))completionHandler
+{
+    _page->addActivityStateUpdateCompletionHandler(makeBlockPtr(completionHandler));
+}
+
 @end
