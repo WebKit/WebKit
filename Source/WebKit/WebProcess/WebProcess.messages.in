@@ -183,4 +183,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if PLATFORM(COCOA)
     DidWriteToPasteboardAsynchronously(String pasteboardName);
 #endif
+
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    DisplayWasRefreshed(uint32_t displayID)
+#endif
 }

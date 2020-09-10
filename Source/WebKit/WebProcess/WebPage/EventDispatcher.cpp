@@ -269,13 +269,20 @@ void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEvent::Type 
 #endif
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID)
+
+void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID displayID)
 {
 #if ENABLE(SCROLLING_THREAD)
     LockHolder locker(m_scrollingTreesMutex);
     for (auto keyValuePair : m_scrollingTrees)
         keyValuePair.value->displayDidRefresh(displayID);
 #endif
+}
+
+void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID)
+{
+    ASSERT(!RunLoop::isMain());
+    notifyScrollingTreesDisplayWasRefreshed(displayID);
 
     RunLoop::main().dispatch([displayID]() {
         DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
