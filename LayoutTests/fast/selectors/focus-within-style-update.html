@@ -69,6 +69,9 @@ shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test
 
 debug("Set display none on target2");
 target2.style.display = "none";
+// NOTE: At the time of this writing, it is is critical that this behavior, keeping focus even if display is set to "none"
+// does *not* change, despite the fact that the HTML standard currently mandates a change. In 2014, an attempt to change
+// this broke the facebook.com website, which depended on the behavior. See <https://bugs.webkit.org/show_bug.cgi?id=29241>.
 shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
 shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
 shouldBeTrue('target2.matches(":focus")');

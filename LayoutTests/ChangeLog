@@ -1,3 +1,20 @@
+2020-09-10  Darin Adler  <darin@apple.com>
+
+        Fix failing combobox-activedescendant-notifications.html test
+        https://bugs.webkit.org/show_bug.cgi?id=216366
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/mac/combobox-activedescendant-notifications.html:
+        * accessibility/mac/combobox-activedescendant-notifications.html:
+        Fix the listener in this test that was listening to the wrong accessibility object and
+        also changed it to not hide the test elements until the test is complete. I do not
+        understand fully why this test ever passed before at all; with this it passes consistently.
+
+        * fast/selectors/focus-within-style-update.html: Unrelated bonus: Added comments to this
+        test since it's one that will fail if someone changes focus behavior with display:none.
+        Just comments.
+
 2020-09-10  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r266634): fast/animation/request-animation-frame-throttling-lowPowerMode.html is flaky

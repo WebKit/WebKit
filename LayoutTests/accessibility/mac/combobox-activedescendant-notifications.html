@@ -27,19 +27,20 @@
         shouldBeTrue("combo.isEqual(accessibilityController.focusedElement)");
 
         // When the active descendant changes, we should receive a selected children changed notification.
-        combo.addNotificationListener(function(notification) {
-           debug("Received notification: " + notification); 
-           if (notification == "AXSelectedChildrenChanged") {
-                combo.removeNotificationListener();
+        var list = accessibilityController.accessibleElementById("list");
+        list.addNotificationListener(function(notification) {
+            debug("Received notification: " + notification);
+            if (notification == "AXSelectedChildrenChanged") {
+                list.removeNotificationListener();
+                document.getElementById("content").style.visibility = 'hidden';
                 finishJSTest();
-           }
+            }
         });
 
         // After the descendant changes, the combo box should still be the focused object.
         document.getElementById("combo").setAttribute("aria-activedescendant", "item1");
         debug("\nThe ComboBox should still be the focused element even after the aria-activedescendant was changed.");
         shouldBeTrue("combo.isEqual(accessibilityController.focusedElement)");
-        document.getElementById("content").style.visibility = 'hidden';
     }
 
 </script>
