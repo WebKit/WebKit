@@ -130,6 +130,7 @@
 #import <JavaScriptCore/JSValueRef.h>
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/AudioDestination.h>
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/CSSAnimationController.h>
@@ -2304,6 +2305,11 @@ static NSMutableSet *knownPluginMIMETypes()
 + (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f
 {
     WebCore::FontCascade::setCodePath(f ? WebCore::FontCascade::Complex : WebCore::FontCascade::Auto);
+}
+
++ (void)_setHardwareSampleRateOverride:(float)sampleRate
+{
+    WebCore::AudioDestination::setHardwareSampleRateOverride(sampleRate ? makeOptional(sampleRate) : WTF::nullopt);
 }
 
 + (BOOL)canCloseAllWebViews

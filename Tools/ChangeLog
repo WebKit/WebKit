@@ -1,3 +1,18 @@
+2020-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Some WebAudio tests give different output on different machines
+        https://bugs.webkit.org/show_bug.cgi?id=216371
+
+        Reviewed by Alex Christensen.
+
+        Update DRT / WRT to hardcode the hardware sample rate to 44100 so that Web Audio
+        test have the same output on different hardware.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2020-09-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Clean up App-Bound Domains code to only compile for iOS with its own macro

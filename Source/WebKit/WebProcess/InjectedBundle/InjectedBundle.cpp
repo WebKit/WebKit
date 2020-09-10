@@ -55,6 +55,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/ApplicationCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/AudioDestination.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
@@ -395,6 +396,11 @@ void InjectedBundle::resetOriginAccessAllowLists()
 {
     SecurityPolicy::resetOriginAccessAllowlists();
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ResetOriginAccessAllowLists { }, 0);
+}
+
+void InjectedBundle::setHardwareSampleRateOverride(Optional<float> sampleRate)
+{
+    AudioDestination::setHardwareSampleRateOverride(sampleRate);
 }
 
 void InjectedBundle::setAsynchronousSpellCheckingEnabled(WebPageGroupProxy* pageGroup, bool enabled)

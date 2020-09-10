@@ -1,3 +1,23 @@
+2020-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Some WebAudio tests give different output on different machines
+        https://bugs.webkit.org/show_bug.cgi?id=216371
+
+        Reviewed by Alex Christensen.
+
+        Add function to override the value returned by AudioDestination::hardwareSampleRate().
+
+        * DerivedSources-output.xcfilelist:
+        * platform/audio/AudioDestination.h:
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::hardwareSampleRateOverride):
+        (WebCore::AudioDestination::hardwareSampleRate):
+        (WebCore::AudioDestination::setHardwareSampleRateOverride):
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::hardwareSampleRateOverride):
+        (WebCore::AudioDestination::hardwareSampleRate):
+        (WebCore::AudioDestination::setHardwareSampleRateOverride):
+
 2020-09-10  Don Olmstead  <don.olmstead@sony.com>
 
         WebGL2RenderingContext should use Graphics Context types
