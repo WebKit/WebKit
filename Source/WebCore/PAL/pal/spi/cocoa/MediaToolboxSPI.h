@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
 #if USE(MEDIATOOLBOX)
 
-#include <MediaToolbox/MediaToolbox.h>
-#include <pal/spi/cocoa/MediaToolboxSPI.h>
-#include <wtf/SoftLinking.h>
+#if USE(APPLE_INTERNAL_SDK)
+#include <MediaToolbox/FigPhoto.h>
+#else
+#include <CoreFoundation/CoreFoundation.h>
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, MediaToolbox, PAL_EXPORT)
+typedef CF_ENUM(int, FigPhotoContainerFormat)
+{
+    kFigPhotoContainerFormat_HEIF,
+    kFigPhotoContainerFormat_JFIF,
 
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, MediaToolbox, FigPhotoDecompressionSetHardwareCutoff, void, (FigPhotoContainerFormat format, size_t numPixelsCutoff), (format, numPixelsCutoff), PAL_EXPORT)
-
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, MediaToolbox, MTShouldPlayHDRVideo, Boolean, (CFArrayRef displayList), (displayList), PAL_EXPORT)
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, MediaToolbox, MTOverrideShouldPlayHDRVideo, void, (Boolean override, Boolean playHDRVideo), (override, playHDRVideo), PAL_EXPORT)
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, MediaToolbox, MT_GetShouldPlayHDRVideoNotificationSingleton, CFTypeRef, (void), (), PAL_EXPORT)
-
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, MediaToolbox, kMTSupportNotification_ShouldPlayHDRVideoChanged, CFStringRef, PAL_EXPORT)
+};
+#endif
 
 #endif
