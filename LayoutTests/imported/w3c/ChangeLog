@@ -1,5 +1,12 @@
 2020-09-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline a couple of flaky WebAudio WPT tests.
+
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt:
+
+2020-09-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html.
 
         * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct-expected.txt:
