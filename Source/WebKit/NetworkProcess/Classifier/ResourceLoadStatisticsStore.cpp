@@ -449,13 +449,9 @@ void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(const Registrab
 
 bool ResourceLoadStatisticsStore::shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain& domain) const
 {
-    static NeverDestroyed<HashSet<RegistrableDomain>> domains = [] {
-        HashSet<RegistrableDomain> set;
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("yahoo.co.jp"_s));
-        return set;
-    }();
-
-    return domains.get().contains(domain);
+    // We currently know of no domains that need this protection.
+    UNUSED_PARAM(domain);
+    return false;
 }
 
 void ResourceLoadStatisticsStore::setMaxStatisticsEntries(size_t maximumEntryCount)
