@@ -1,3 +1,24 @@
+2020-09-09  David Kilzer  <ddkilzer@apple.com>
+
+        [WebRTC] Fix uninitialized fields in FilterAnalyzer::ConsistentFilterDetector, FilterAnalyzer::FilterAnalysisState and InterArrival::TimestampGroup
+        <https://webkit.org/b/216314>
+
+        Reviewed by Youenn Fablet.
+
+        * Source/webrtc/modules/audio_processing/aec3/filter_analyzer.h:
+        (webrtc::FilterAnalyzer::ConsistentFilterDetector):
+        - Initialize fields in declarations. This matches the values set
+          by webrtc::FilterAnalyzer::ConsistentFilterDetector::Reset().
+        (webrtc::FilterAnalyzer::FilterAnalysisState):
+        - Initialize fields in declarations. Note that the
+          FilterAnalysis constructor calls FilterAnalyzer::Reset(),
+          which also sets these fields, but after the FilterAnalysisState
+          construtor is called.
+        * Source/webrtc/modules/remote_bitrate_estimator/inter_arrival.h:
+        (webrtc::InterArrival::TimestampGroup::TimestampGroup):
+        - Initialize field in constructor argument list.
+        * WebKit/0001-fix-216314.patch: Add.
+
 2020-09-07  Youenn Fablet  <youenn@apple.com>
 
         Add missing members to RTCIceCandidate

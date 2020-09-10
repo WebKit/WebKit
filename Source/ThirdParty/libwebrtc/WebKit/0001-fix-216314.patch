@@ -1,0 +1,76 @@
+From ce74a7a03a8e661ba60bde4ea32cda8c66723a4a Mon Sep 17 00:00:00 2001
+From: David Kilzer <ddkilzer@apple.com>
+Date: Wed, 9 Sep 2020 10:14:45 -0700
+Subject: [PATCH] [WebRTC] Fix uninitialized fields in
+ FilterAnalyzer::ConsistentFilterDetector, FilterAnalyzer::FilterAnalysisState
+ and InterArrival::TimestampGroup <https://webkit.org/b/216314>
+
+Reviewed by NOBODY (OOPS!).
+
+* Source/webrtc/modules/audio_processing/aec3/filter_analyzer.h:
+(webrtc::FilterAnalyzer::ConsistentFilterDetector):
+- Initialize fields in declarations. This matches the values set
+  by webrtc::FilterAnalyzer::ConsistentFilterDetector::Reset().
+(webrtc::FilterAnalyzer::FilterAnalysisState):
+- Initialize fields in declarations. Note that the
+  FilterAnalysis constructor calls FilterAnalyzer::Reset(),
+  which also sets these fields, but after the FilterAnalysisState
+  construtor is called.
+* Source/webrtc/modules/remote_bitrate_estimator/inter_arrival.h:
+(webrtc::InterArrival::TimestampGroup::TimestampGroup):
+- Initialize field in constructor argument list.
+---
+ Source/ThirdParty/libwebrtc/ChangeLog         | 20 +++++++++++++++++++
+ .../audio_processing/aec3/filter_analyzer.h   | 14 ++++++-------
+ .../remote_bitrate_estimator/inter_arrival.h  |  3 ++-
+ 3 files changed, 29 insertions(+), 8 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/aec3/filter_analyzer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/aec3/filter_analyzer.h
+index a7375778c676..9de0a0d04a1d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/aec3/filter_analyzer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/aec3/filter_analyzer.h
+@@ -99,11 +99,11 @@ class FilterAnalyzer {
+                 int delay_blocks);
+ 
+    private:
+-    bool significant_peak_;
+-    float filter_floor_accum_;
+-    float filter_secondary_peak_;
+-    size_t filter_floor_low_limit_;
+-    size_t filter_floor_high_limit_;
++    bool significant_peak_ = false;
++    float filter_floor_accum_ = 0.f;
++    float filter_secondary_peak_ = 0.f;
++    size_t filter_floor_low_limit_ = 0;
++    size_t filter_floor_high_limit_ = 0;
+     const float active_render_threshold_;
+     size_t consistent_estimate_counter_ = 0;
+     int consistent_delay_reference_ = -10;
+@@ -113,8 +113,8 @@ class FilterAnalyzer {
+     explicit FilterAnalysisState(const EchoCanceller3Config& config)
+         : filter_length_blocks(config.filter.main_initial.length_blocks),
+           consistent_filter_detector(config) {}
+-    float gain;
+-    size_t peak_index;
++    float gain = 0.f;
++    size_t peak_index = 0;
+     int filter_length_blocks;
+     bool consistent_estimate = false;
+     ConsistentFilterDetector consistent_filter_detector;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/remote_bitrate_estimator/inter_arrival.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/remote_bitrate_estimator/inter_arrival.h
+index 1d84970deb2b..2d2194683e9e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/remote_bitrate_estimator/inter_arrival.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/remote_bitrate_estimator/inter_arrival.h
+@@ -58,7 +58,8 @@ class InterArrival {
+           first_timestamp(0),
+           timestamp(0),
+           first_arrival_ms(-1),
+-          complete_time_ms(-1) {}
++          complete_time_ms(-1),
++          last_system_time_ms(0) {}
+ 
+     bool IsFirstPacket() const { return complete_time_ms == -1; }
+ 
+-- 
+2.21.0 (Apple Git-122)
+
