@@ -1,3 +1,41 @@
+2020-09-10  Don Olmstead  <don.olmstead@sony.com>
+
+        WebGL2RenderingContext should use Graphics Context types
+        https://bugs.webkit.org/show_bug.cgi?id=216310
+
+        Reviewed by Kenneth Russell.
+
+        A number of declarations were using OpenGL types instead of the GCGL types.
+        All instances of GL types were replaced with the equivalent GCGL ones. Any
+        GL constants were replaced with the listing in GraphicsContext.
+
+        Renamed GraphcsContext::WAIT_FAILED to WAIT_FAILED_WEBGL to remove PLATFORM(WIN)
+        defining its own variant WAIT_FAILED_WIN. WAIT_FAILED conflicts with a Windows
+        definition.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::validateTexFuncLayer):
+        (WebCore::WebGL2RenderingContext::compressedTexSubImage2D):
+        (WebCore::WebGL2RenderingContext::clientWaitSync):
+        (WebCore::ValidateTransformFeedbackPrimitiveMode):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockParameter):
+        (WebCore::WebGL2RenderingContext::getParameter):
+        (WebCore::WebGL2RenderingContext::validateClearBuffer):
+        (WebCore::WebGL2RenderingContext::uniform1fv):
+        (WebCore::WebGL2RenderingContext::uniform2fv):
+        (WebCore::WebGL2RenderingContext::uniform3fv):
+        (WebCore::WebGL2RenderingContext::uniform4fv):
+        (WebCore::WebGL2RenderingContext::uniform1iv):
+        (WebCore::WebGL2RenderingContext::uniform2iv):
+        (WebCore::WebGL2RenderingContext::uniform3iv):
+        (WebCore::WebGL2RenderingContext::uniform4iv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4fv):
+        (WebCore::WebGL2RenderingContext::readPixels):
+        * html/canvas/WebGL2RenderingContext.h:
+        * platform/graphics/GraphicsContextGL.h:
+
 2020-09-10  Chris Dumez  <cdumez@apple.com>
 
         Port BaseAudioContext to the HTML event loop
