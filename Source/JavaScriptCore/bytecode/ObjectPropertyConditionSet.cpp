@@ -400,7 +400,13 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
                     // notices a custom, it must be a CustomGetterSetterType cell or something
                     // in the static property table. Custom values get reified into CustomGetterSetters.
                     JSValue value = object->getDirect(offset);
-                    ASSERT_UNUSED(value, value.isCell() && value.asCell()->type() == CustomGetterSetterType);
+
+                    if (!value.isCell() || value.asCell()->type() != CustomGetterSetterType) {
+                        // The value could have just got changed to some other type, so check if it's still
+                        // a custom getter setter.
+                        return false;
+                    }
+
                     kind = PropertyCondition::Equivalence;
                 } else if (structure->findPropertyHashEntry(uid))
                     kind = PropertyCondition::CustomFunctionEquivalence;
