@@ -1,3 +1,28 @@
+2020-09-10  Zalan Bujtas  <zalan@apple.com>
+
+        [Repaint] RenderElement::setStyle may issue redundant repaint
+        https://bugs.webkit.org/show_bug.cgi?id=216324
+        <rdar://problem/68595896>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/masks/compositing-clip-path-change-no-repaint-expected.txt:
+        * compositing/shared-backing/overflow-scroll/shared-layer-repaint-expected.txt:
+        * fast/css-custom-paint/delay-repaint-expected.txt:
+        * fast/images/async-image-multiple-clients-repaint-expected.txt:
+        * fast/repaint/horizontal-bt-overflow-child-expected.txt:
+        * fast/repaint/horizontal-bt-overflow-parent-expected.txt:
+        * fast/repaint/horizontal-bt-overflow-same-expected.txt:
+        * fast/repaint/mutate-non-visible-expected.txt:
+        * fast/repaint/negative-text-indent-with-overflow-hidden-expected.txt:
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.txt:
+        * fast/repaint/spanner-with-margin-expected.txt:
+        * fast/repaint/table-row-repaint-expected.txt:
+        * fast/repaint/vertical-overflow-child-expected.txt:
+        * fast/repaint/vertical-overflow-parent-expected.txt:
+        * fast/repaint/vertical-overflow-same-expected.txt:
+        * svg/transforms/svg-transform-foreign-object-repaint-expected.txt:
+
 2020-09-10  Darin Adler  <darin@apple.com>
 
         webkit-test-runner: Add support for the reftest-wait class name
