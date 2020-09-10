@@ -552,8 +552,9 @@ protected:
 #if ENABLE(FULLSCREEN_API)
         ContainsFullScreenElement = 1 << 26,
 #endif
+        IsComputedStyleInvalidFlag = 1 << 27,
 
-        // Bits 27-31 are free.
+        // Bits 28-31 are free.
     };
 
     enum class TabIndexState : uint8_t {
@@ -873,6 +874,7 @@ inline void Node::setHasValidStyle()
     bitfields.setStyleValidity(Style::Validity::Valid);
     bitfields.clearFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
     setStyleBitfields(bitfields);
+    clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 }
 
 inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)

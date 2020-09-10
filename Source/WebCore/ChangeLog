@@ -1,3 +1,50 @@
+2020-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r257839): clickpay.com - password placeholder text cannot be replaced
+        https://bugs.webkit.org/show_bug.cgi?id=216257
+        <rdar://problem/68150686>
+
+        Reviewed by Antti Koivisto.
+
+        On clickpay.com, the field in the login form that contains the text "Password" is actually a plain text input,
+        referred to by the site's script as the "null text input". The page adds a focus event listener to this null
+        text input, and inside of this focus event listener, it reveals a hidden password field by removing an inline
+        `display: none;` style rule on the real password input element, programmatically focuses it, and then hides the
+        null text input by setting it to `display: none;` via inline style.
+
+        However, after the changes in r257839, we no longer attempt to do a style update upon programmatic focus in the
+        case where the programmatically focused element does not have a renderer yet (this applies to the password field
+        in this scenario, because it previously had `display: none;`). When we determine whether the newly displayed
+        password field is focusable using `Element::isVisibleWithoutResolvingFullStyle`, we then attempt to use either
+        the existing computed `RenderStyle` on the element, or perform a partial computed style resolution using the
+        `ResolveComputedStyleMode::RenderedOnly` flag.
+
+        But in the case where `ElementRareData`'s computed style exists, it is not guaranteed to be up to date if the
+        inline style changed since the computed style was last set. In the context of this bug, it's actually Safari's
+        AutoFill logic (embedded in the injected bundle) that ends up asking for the computed style of the password
+        input, forcing it to be created and set (though, as demonstrated in the layout test, simply grabbing the
+        computed style is sufficient to replicate the bug outside of Safari).
+
+        The end result is that we'll use this stale computed style, which still believes that the password input is not
+        displayed, and we end up not focusing the element due to believing that the password input is hidden. To fix
+        this, we would need to either check whether the element has an invalid style (i.e. `needsStyleRecalc()`) before
+        attempting to use the existing computed style, or clear out the `ElementRareData` computed style anytime the
+        element's style is invalidated. However, both of these approaches will cause us to perform partial style
+        resolution much more aggressively, leading to a 2-3% regression in Speedometer.
+
+        To address the bug without hampering our performance wins from r257839, we add a new node flag so that we can
+        remember when computed styles are no longer valid due to style invalidation, and consult this flag in
+        `Element::isVisibleWithoutResolvingFullStyle` to avoid using the existing computed style.
+
+        Test: fast/forms/programmatic-focus-after-display.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::invalidateStyle):
+        (WebCore::Element::resolveComputedStyle):
+        (WebCore::Element::isVisibleWithoutResolvingFullStyle const):
+        * dom/Node.h:
+        (WebCore::Node::setHasValidStyle):
+
 2020-09-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: modernize generated backend protocol code
