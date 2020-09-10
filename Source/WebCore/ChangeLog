@@ -1,5 +1,50 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266454. rdar://problem/68652810
+
+    Safari is not able to hear audio when using WebRTC in multiple tabs
+    https://bugs.webkit.org/show_bug.cgi?id=215270
+    <rdar://problem/66736746>
+    
+    Reviewed by Eric Carlson.
+    
+    Covered by manually testing that audio continues when two pages in the same process create a peer connection,
+    one plays audio with WebRTC and the second one is closed.
+    Before the patch, the closing page would stop the audio device module, even though the first page would like the module to continue playing.
+    Fix this by creating an audio module per page instead of process wide.
+    
+    * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+    * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+    (WebCore::initializePeerConnectionFactoryAndThreads):
+    (WebCore::LibWebRTCProvider::factory):
+    (WebCore::LibWebRTCProvider::createPeerConnectionFactory):
+    * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266454 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-02  Youenn Fablet  <youenn@apple.com>
+
+            Safari is not able to hear audio when using WebRTC in multiple tabs
+            https://bugs.webkit.org/show_bug.cgi?id=215270
+            <rdar://problem/66736746>
+
+            Reviewed by Eric Carlson.
+
+            Covered by manually testing that audio continues when two pages in the same process create a peer connection,
+            one plays audio with WebRTC and the second one is closed.
+            Before the patch, the closing page would stop the audio device module, even though the first page would like the module to continue playing.
+            Fix this by creating an audio module per page instead of process wide.
+
+            * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+            * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+            (WebCore::initializePeerConnectionFactoryAndThreads):
+            (WebCore::LibWebRTCProvider::factory):
+            (WebCore::LibWebRTCProvider::createPeerConnectionFactory):
+            * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266443. rdar://problem/68652756
 
     REGRESSION(r262366): MotionMark1.1 | macOS | Some devices | 1-3% overall regression
