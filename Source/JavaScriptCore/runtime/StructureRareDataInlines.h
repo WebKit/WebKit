@@ -32,6 +32,21 @@
 
 namespace JSC {
 
+// FIXME: Use ObjectPropertyConditionSet instead.
+// https://bugs.webkit.org/show_bug.cgi?id=216112
+struct SpecialPropertyCacheEntry {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    ~SpecialPropertyCacheEntry();
+    Bag<CachedSpecialPropertyAdaptiveStructureWatchpoint> m_missWatchpoints;
+    std::unique_ptr<CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint> m_equivalenceWatchpoint;
+    WriteBarrier<Unknown> m_value;
+};
+
+struct SpecialPropertyCache {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    SpecialPropertyCacheEntry m_cache[numberOfCachedSpecialPropertyKeys];
+};
+
 inline void StructureRareData::setPreviousID(VM& vm, Structure* structure)
 {
     m_previous.set(vm, this, structure);
@@ -42,13 +57,18 @@ inline void StructureRareData::clearPreviousID()
     m_previous.clear();
 }
 
-inline JSString* StructureRareData::objectToStringValue() const
+inline JSValue StructureRareData::cachedSpecialProperty(CachedSpecialPropertyKey key) const
 {
-    auto* value = m_objectToStringValue.unvalidatedGet();
-    if (value == objectToStringCacheGiveUpMarker())
-        return nullptr;
-    if (value)
-        validateCell(value);
+    auto* cache = m_specialPropertyCache.get();
+    if (!cache)
+        return JSValue();
+    JSValue value = cache->m_cache[static_cast<unsigned>(key)].m_value.get();
+    if (value == JSCell::seenMultipleCalleeObjects())
+        return JSValue();
+#if ASSERT_ENABLED
+    if (value && value.isCell())
+        validateCell(value.asCell());
+#endif
     return value;
 }
 
@@ -94,6 +114,30 @@ inline void StructureRareData::setCachedPropertyNames(VM& vm, CachedPropertyName
 
     WTF::storeStoreFence();
     m_cachedPropertyNames[static_cast<unsigned>(kind)].set(vm, this, butterfly);
+}
+
+inline bool StructureRareData::canCacheSpecialProperty(CachedSpecialPropertyKey key)
+{
+    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    auto* cache = m_specialPropertyCache.get();
+    if (!cache)
+        return true;
+    return cache->m_cache[static_cast<unsigned>(key)].m_value.get() != JSCell::seenMultipleCalleeObjects();
+}
+
+inline SpecialPropertyCache& StructureRareData::ensureSpecialPropertyCache()
+{
+    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    if (auto* cache = m_specialPropertyCache.get())
+        return *cache;
+    return ensureSpecialPropertyCacheSlow();
+}
+
+inline void StructureRareData::cacheSpecialProperty(JSGlobalObject* globalObject, VM& vm, Structure* ownStructure, JSValue value, CachedSpecialPropertyKey key, const PropertySlot& slot)
+{
+    if (!canCacheSpecialProperty(key))
+        return;
+    return cacheSpecialPropertySlow(globalObject, vm, ownStructure, value, key, slot);
 }
 
 } // namespace JSC
