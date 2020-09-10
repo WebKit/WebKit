@@ -321,6 +321,7 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interfac
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-routing.html [ Skip ]
 
 # Test prints out sample rate, which appears to be hardware-specific.
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/no-dezippering.html [ Pass Failure ]

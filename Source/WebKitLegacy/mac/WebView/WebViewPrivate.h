@@ -554,8 +554,6 @@ Could be worth adding to the API.
 
 + (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f;
 
-+ (void)_setHardwareSampleRateOverride:(float)sampleRate;
-
 #if !TARGET_OS_IPHONE
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
 #endif

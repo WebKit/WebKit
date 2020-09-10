@@ -37,12 +37,6 @@ namespace WebCore {
 
 const int kRenderBufferSize = 128;
 
-static Optional<float>& hardwareSampleRateOverride()
-{
-    static NeverDestroyed<Optional<float>> sampleRate;
-    return sampleRate.get();
-}
-
 CreateAudioDestinationCocoaOverride AudioDestinationCocoa::createOverride = nullptr;
 
 std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
@@ -66,14 +60,7 @@ std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& call
 
 float AudioDestination::hardwareSampleRate()
 {
-    if (auto sampleRate = hardwareSampleRateOverride())
-        return *sampleRate;
     return AudioSession::sharedSession().sampleRate();
-}
-
-void AudioDestination::setHardwareSampleRateOverride(Optional<float> sampleRate)
-{
-    hardwareSampleRateOverride() = sampleRate;
 }
 
 unsigned long AudioDestination::maxChannelCount()
@@ -99,7 +86,7 @@ AudioDestinationCocoa::~AudioDestinationCocoa()
 
 unsigned AudioDestinationCocoa::framesPerBuffer() const
 {
-    return kRenderBufferSize;
+    return m_renderBus->length();
 }
 
 void AudioDestinationCocoa::start()

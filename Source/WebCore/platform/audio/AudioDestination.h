@@ -56,7 +56,6 @@ public:
     // Sample-rate conversion may happen in AudioDestination to the hardware sample-rate
     virtual float sampleRate() const = 0;
     static float hardwareSampleRate();
-    WEBCORE_EXPORT static void setHardwareSampleRateOverride(Optional<float>);
 
     virtual unsigned framesPerBuffer() const = 0;
 

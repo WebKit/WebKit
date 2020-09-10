@@ -189,11 +189,6 @@ void WKBundleResetOriginAccessAllowLists(WKBundleRef bundleRef)
     WebKit::toImpl(bundleRef)->resetOriginAccessAllowLists();
 }
 
-void WKBundleSetHardwareSampleRateOverride(WKBundleRef bundleRef, float sample)
-{
-    WebKit::toImpl(bundleRef)->setHardwareSampleRateOverride(sample ? makeOptional(sample) : WTF::nullopt);
-}
-
 void WKBundleSetAsynchronousSpellCheckingEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
     WebKit::toImpl(bundleRef)->setAsynchronousSpellCheckingEnabled(WebKit::toImpl(pageGroupRef), enabled);

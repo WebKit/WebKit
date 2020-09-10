@@ -110,7 +110,6 @@ public:
     void addOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void removeOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void resetOriginAccessAllowLists();
-    void setHardwareSampleRateOverride(Optional<float>);
     void setAsynchronousSpellCheckingEnabled(WebPageGroupProxy*, bool);
     int numberOfPages(WebFrame*, double, double);
     int pageNumberForElementById(WebFrame*, const String&, double, double);

@@ -682,10 +682,6 @@ WebView *createWebViewAndOffscreenWindow()
     [WebView registerURLSchemeAsLocal:@"feeds"];
     [WebView registerURLSchemeAsLocal:@"feedsearch"];
 
-    // Don't use the actual hardware sample rate during testing or audio tests may have
-    // different output on different hardware.
-    [WebView _setHardwareSampleRateOverride:44100];
-
     [[webView preferences] _setMediaRecorderEnabled:YES];
 
 #if PLATFORM(MAC)

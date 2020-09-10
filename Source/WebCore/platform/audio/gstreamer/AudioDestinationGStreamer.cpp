@@ -39,12 +39,6 @@ namespace WebCore {
 // needs to handle this number of frames per cycle as well.
 const unsigned framesToPull = 128;
 
-static Optional<float>& hardwareSampleRateOverride()
-{
-    static NeverDestroyed<Optional<float>> sampleRate;
-    return sampleRate.get();
-}
-
 gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer* destination)
 {
     return destination->handleMessage(message);
@@ -73,14 +67,7 @@ std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& call
 
 float AudioDestination::hardwareSampleRate()
 {
-    if (auto sampleRate = hardwareSampleRateOverride())
-        return *sampleRate;
     return 44100;
-}
-
-void AudioDestination::setHardwareSampleRateOverride(Optional<float> sampleRate)
-{
-    hardwareSampleRateOverride() = sampleRate;
 }
 
 unsigned long AudioDestination::maxChannelCount()

@@ -86,10 +86,6 @@
 #include "WebNotificationManager.h"
 #endif
 
-#if ENABLE(WEB_AUDIO)
-#include <WebCore/AudioDestination.h>
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 using namespace JSC;
@@ -399,15 +395,6 @@ void InjectedBundle::resetOriginAccessAllowLists()
 {
     SecurityPolicy::resetOriginAccessAllowlists();
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ResetOriginAccessAllowLists { }, 0);
-}
-
-void InjectedBundle::setHardwareSampleRateOverride(Optional<float> sampleRate)
-{
-#if ENABLE(WEB_AUDIO)
-    AudioDestination::setHardwareSampleRateOverride(sampleRate);
-#else
-    UNUSED_PARAM(sampleRate);
-#endif
 }
 
 void InjectedBundle::setAsynchronousSpellCheckingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
