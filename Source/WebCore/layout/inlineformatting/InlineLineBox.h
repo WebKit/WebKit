@@ -105,7 +105,7 @@ public:
     bool isLineVisuallyEmpty() const { return m_isLineVisuallyEmpty; }
 
     const InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineBoxRectMap.get(&layoutBox); }
-    Display::InlineRect inlineRectForTextRun(const Line::Run&) const;
+    Display::InlineRect logicalRectForTextRun(const Line::Run&) const;
 
     InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox.logicalTop() + m_rootInlineBox.baseline(); }
 

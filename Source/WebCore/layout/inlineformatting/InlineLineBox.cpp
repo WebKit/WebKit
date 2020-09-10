@@ -137,7 +137,7 @@ LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, InlineL
     alignInlineBoxesVerticallyAndComputeLineBoxHeight();
 }
 
-Display::InlineRect LineBox::inlineRectForTextRun(const Line::Run& run) const
+Display::InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
 {
     ASSERT(run.isText() || run.isLineBreak());
     auto& parentInlineBox = inlineBoxForLayoutBox(run.layoutBox().parent());
@@ -161,15 +161,13 @@ void LineBox::constructInlineBoxes(const Line::RunList& runs)
     constructRootInlineBox();
 
     for (auto& run : runs) {
-        auto& layoutBox = run.layoutBox();
+        auto& inlineLevelBox = run.layoutBox();
         if (run.isBox()) {
-            auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            auto inlineBoxLogicalLeft = m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft();
-            if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
-                // Spec makes us generate at least one line -even if it is empty.
-                auto& lastLine = formattingState.displayInlineContent()->lines.last();
-                auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
+            auto logicalLeft = m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft();
+            auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(inlineLevelBox);
+            auto logicalHeight = inlineLevelBoxGeometry.marginBoxHeight();
+            auto baseline = logicalHeight;
+            if (inlineLevelBox.isInlineBlockBox() && inlineLevelBox.establishesInlineFormattingContext()) {
                 // The inline-block's baseline offset is relative to its content box. Let's convert it relative to the margin box.
                 //           _______________ <- margin box
                 //          |
@@ -182,32 +180,29 @@ void LineBox::constructInlineBoxes(const Line::RunList& runs)
                 //     text | | |   v text
                 //     -----|-|-|---------- <- baseline
                 //
-                auto adjustedBaseline = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
-                auto inlineBoxRect = Display::InlineRect { { }, inlineBoxLogicalLeft, run.logicalWidth(), boxGeometry.marginBoxHeight() };
-                auto inlineBox = makeUnique<InlineBox>(layoutBox, inlineBoxRect, adjustedBaseline, InlineLayoutUnit { }, InlineBox::IsConsideredEmpty::No);
-                m_inlineBoxRectMap.set(&layoutBox, inlineBox.get());
-                m_inlineBoxList.append(WTFMove(inlineBox));
-            } else {
-                auto runHeight = boxGeometry.marginBoxHeight();
-                auto inlineBoxRect = Display::InlineRect { { }, inlineBoxLogicalLeft, run.logicalWidth(), runHeight };
-                auto inlineBox = makeUnique<InlineBox>(layoutBox, inlineBoxRect, runHeight, InlineLayoutUnit { }, InlineBox::IsConsideredEmpty::No);
-                m_inlineBoxRectMap.set(&layoutBox, inlineBox.get());
-                m_inlineBoxList.append(WTFMove(inlineBox));
+                auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(inlineLevelBox));
+                auto& lastLine = formattingState.displayInlineContent()->lines.last();
+                auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
+                baseline = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
             }
+            auto rect = Display::InlineRect { { }, logicalLeft, run.logicalWidth(), logicalHeight };
+            auto inlineBox = makeUnique<InlineBox>(inlineLevelBox, rect, baseline, InlineLayoutUnit { }, InlineBox::IsConsideredEmpty::No);
+            m_inlineBoxRectMap.set(&inlineLevelBox, inlineBox.get());
+            m_inlineBoxList.append(WTFMove(inlineBox));
         } else if (run.isContainerStart()) {
             auto inlineBoxLogicalLeft = m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft();
             auto initialWidth = logicalWidth() - run.logicalLeft();
             ASSERT(initialWidth >= 0);
-            auto& fontMetrics = layoutBox.style().fontMetrics();
+            auto& fontMetrics = inlineLevelBox.style().fontMetrics();
             InlineLayoutUnit logicalHeight = fontMetrics.height();
             InlineLayoutUnit baseline = fontMetrics.ascent();
             auto inlineBoxRect = Display::InlineRect { { }, inlineBoxLogicalLeft, initialWidth, logicalHeight };
-            auto inlineBox = makeUnique<InlineBox>(layoutBox, inlineBoxRect, baseline, logicalHeight - baseline, InlineBox::IsConsideredEmpty::Yes);
-            m_inlineBoxRectMap.set(&layoutBox, inlineBox.get());
+            auto inlineBox = makeUnique<InlineBox>(inlineLevelBox, inlineBoxRect, baseline, logicalHeight - baseline, InlineBox::IsConsideredEmpty::Yes);
+            m_inlineBoxRectMap.set(&inlineLevelBox, inlineBox.get());
             m_inlineBoxList.append(WTFMove(inlineBox));
         } else if (run.isContainerEnd()) {
             // Adjust the logical width when the inline level container closes on this line.
-            auto& inlineBox = *m_inlineBoxRectMap.get(&layoutBox);
+            auto& inlineBox = *m_inlineBoxRectMap.get(&inlineLevelBox);
             inlineBox.setLogicalWidth(run.logicalRight() - inlineBox.logicalLeft());
         } else if ((run.isText() || run.isLineBreak())) {
             auto& containerBox = run.layoutBox().parent();

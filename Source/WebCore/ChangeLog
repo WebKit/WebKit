@@ -1,3 +1,18 @@
+2020-09-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Share code when constructing LineBox::InlineBox for the atomic inline-level box
+        https://bugs.webkit.org/show_bug.cgi?id=216338
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::createDisplayBoxesForLineContent):
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::logicalRectForTextRun const):
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+        (WebCore::Layout::LineBox::inlineRectForTextRun const): Deleted.
+        * layout/inlineformatting/InlineLineBox.h:
+
 2020-09-10  Antti Koivisto  <antti@apple.com>
 
         Don't create event regions when the page has no subscrollers

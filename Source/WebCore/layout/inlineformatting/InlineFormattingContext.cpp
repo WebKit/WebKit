@@ -485,7 +485,7 @@ Display::InlineRect InlineFormattingContext::createDisplayBoxesForLineContent(co
                 }
                 return inkOverflow;
             };
-            auto logicalRect = lineRun.isBox() ? lineBox.inlineBoxForLayoutBox(layoutBox).logicalRect() : lineBox.inlineRectForTextRun(lineRun);
+            auto logicalRect = lineRun.isBox() ? lineBox.inlineBoxForLayoutBox(layoutBox).logicalRect() : lineBox.logicalRectForTextRun(lineRun);
             // Inline boxes are relative to the line box while final Display::Runs need to be relative to the parent Display:Box
             // FIXME: Shouldn't we just leave them be relative to the line box?
             logicalRect.moveBy({ lineLogicalRect.left(), lineLogicalRect.top() + lineBoxVerticalOffset });
