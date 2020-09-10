@@ -1,3 +1,29 @@
+2020-09-09  Saam Barati  <sbarati@apple.com>
+
+        OutOfBoundsSaneChain operations should use their own heap locations
+        https://bugs.webkit.org/show_bug.cgi?id=216328
+        <rdar://problem/68568039>
+
+        Reviewed by Keith Miller.
+
+        There is code in local CSE that does some basic bounds check elimination
+        for PutByVal. It does this analysis by seeing if a particular heap location
+        is already defined, and if so, it eliminates the bounds check for the
+        PutByVal. This doesn't work for OutOfBoundsSaneChain for the obvious reason
+        that these GetByVals are not proven to be in bounds. So GetByVal's in the
+        OutOfBoundsSaneChain mode reusing non OutOfBoundsSaneChain heap locations
+        can lead to a bug where we mistakenly remove a bounds check. The fix is to
+        have all OutOfBoundsSaneChain operations use distinct heaps, and for CSE to
+        not query those heaps.
+
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::isAnySaneChain const): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+
 2020-09-09  Keith Miller  <keith_miller@apple.com>
 
         BigInt should PACCage its data pointer

@@ -1,3 +1,14 @@
+2020-09-09  Saam Barati  <sbarati@apple.com>
+
+        OutOfBoundsSaneChain operations should use their own heap locations
+        https://bugs.webkit.org/show_bug.cgi?id=216328
+        <rdar://problem/68568039>
+
+        Reviewed by Keith Miller.
+
+        * stress/out-of-bounds-sane-chain-need-their-own-heap-location.js: Added.
+        (foo):
+
 2020-09-09  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Don't emitDirectBinding() if there is a [...rest] element binding

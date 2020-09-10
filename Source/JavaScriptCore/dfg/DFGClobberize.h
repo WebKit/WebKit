@@ -937,7 +937,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds() || mode.isOutOfBoundsSaneChain()) {
                 read(Butterfly_publicLength);
                 read(IndexedInt32Properties);
-                LocationKind kind = mode.isOutOfBoundsSaneChain() ? IndexedPropertyInt32OrOtherLoc : indexedPropertyLoc;
+                LocationKind kind = mode.isOutOfBoundsSaneChain() ? IndexedPropertyInt32OutOfBoundsSaneChainLoc : indexedPropertyLoc;
                 def(HeapLocation(kind, IndexedInt32Properties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
@@ -949,11 +949,16 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 read(Butterfly_publicLength);
                 read(IndexedDoubleProperties);
                 LocationKind kind;
-                if (node->hasDoubleResult())
-                    kind = mode.isAnySaneChain() ? IndexedPropertyDoubleSaneChainLoc : IndexedPropertyDoubleLoc;
-                else {
+                if (node->hasDoubleResult()) {
+                    if (mode.isInBoundsSaneChain())
+                        kind = IndexedPropertyDoubleSaneChainLoc;
+                    else if (mode.isOutOfBoundsSaneChain())
+                        kind = IndexedPropertyDoubleOutOfBoundsSaneChainLoc;
+                    else
+                        kind = IndexedPropertyDoubleLoc;
+                } else {
                     ASSERT(mode.isOutOfBoundsSaneChain());
-                    kind = IndexedPropertyDoubleOrOtherSaneChainLoc;
+                    kind = IndexedPropertyDoubleOrOtherOutOfBoundsSaneChainLoc;
                 }
                 def(HeapLocation(kind, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
@@ -965,7 +970,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds() || mode.isOutOfBoundsSaneChain()) {
                 read(Butterfly_publicLength);
                 read(IndexedContiguousProperties);
-                def(HeapLocation(indexedPropertyLoc, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                def(HeapLocation(mode.isOutOfBoundsSaneChain() ? IndexedPropertyJSOutOfBoundsSaneChainLoc : indexedPropertyLoc, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             clobberTop();
@@ -1054,7 +1059,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (node->arrayMode().mayStoreToHole())
                 write(Butterfly_publicLength);
             def(HeapLocation(indexedPropertyLoc, IndexedInt32Properties, base, index), LazyNode(value));
-            def(HeapLocation(IndexedPropertyInt32OrOtherLoc, IndexedInt32Properties, base, index), LazyNode(value));
+            def(HeapLocation(IndexedPropertyInt32OutOfBoundsSaneChainLoc, IndexedInt32Properties, base, index), LazyNode(value));
             return;
             
         case Array::Double:
@@ -1070,6 +1075,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 write(Butterfly_publicLength);
             def(HeapLocation(IndexedPropertyDoubleLoc, IndexedDoubleProperties, base, index), LazyNode(value));
             def(HeapLocation(IndexedPropertyDoubleSaneChainLoc, IndexedDoubleProperties, base, index), LazyNode(value));
+            def(HeapLocation(IndexedPropertyDoubleOutOfBoundsSaneChainLoc, IndexedDoubleProperties, base, index), LazyNode(value));
             return;
             
         case Array::Contiguous:
@@ -1084,6 +1090,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (node->arrayMode().mayStoreToHole())
                 write(Butterfly_publicLength);
             def(HeapLocation(indexedPropertyLoc, IndexedContiguousProperties, base, index), LazyNode(value));
+            def(HeapLocation(IndexedPropertyJSOutOfBoundsSaneChainLoc, IndexedContiguousProperties, base, index), LazyNode(value));
             return;
             
         case Array::ArrayStorage:
