@@ -610,12 +610,12 @@ bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const
     return false;
 }
 
-bool WebProcessProxy::checkURLReceivedFromWebProcess(const String& urlString)
+bool WebProcessProxy::checkURLReceivedFromWebProcess(const String& urlString, CheckBackForwardList checkBackForwardList)
 {
-    return checkURLReceivedFromWebProcess(URL(URL(), urlString));
+    return checkURLReceivedFromWebProcess(URL(URL(), urlString), checkBackForwardList);
 }
 
-bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url)
+bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url, CheckBackForwardList checkBackForwardList)
 {
     // FIXME: Consider checking that the URL is valid. Currently, WebProcess sends invalid URLs in many cases, but it probably doesn't have good reasons to do that.
 
@@ -633,14 +633,16 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url)
 
     // Items in back/forward list have been already checked.
     // One case where we don't have sandbox extensions for file URLs in b/f list is if the list has been reinstated after a crash or a browser restart.
-    String path = url.fileSystemPath();
-    for (auto& item : WebBackForwardListItem::allItems().values()) {
-        URL itemURL(URL(), item->url());
-        if (itemURL.isLocalFile() && itemURL.fileSystemPath() == path)
-            return true;
-        URL itemOriginalURL(URL(), item->originalURL());
-        if (itemOriginalURL.isLocalFile() && itemOriginalURL.fileSystemPath() == path)
-            return true;
+    if (checkBackForwardList == CheckBackForwardList::Yes) {
+        String path = url.fileSystemPath();
+        for (auto& item : WebBackForwardListItem::allItems().values()) {
+            URL itemURL(URL(), item->url());
+            if (itemURL.isLocalFile() && itemURL.fileSystemPath() == path)
+                return true;
+            URL itemOriginalURL(URL(), item->originalURL());
+            if (itemOriginalURL.isLocalFile() && itemOriginalURL.fileSystemPath() == path)
+                return true;
+        }
     }
 
     // A Web process that was never asked to load a file URL should not ever ask us to do anything with a file URL.

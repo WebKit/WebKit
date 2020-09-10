@@ -269,7 +269,10 @@ void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const Pas
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
 
     if (auto* webProcessProxy = webProcessProxyForConnection(connection)) {
-        if (!webProcessProxy->checkURLReceivedFromWebProcess(pasteboardURL.url.string()))
+        if (!pasteboardURL.url.isValid())
+            return completionHandler(0);
+
+        if (!webProcessProxy->checkURLReceivedFromWebProcess(pasteboardURL.url.string(), CheckBackForwardList::No))
             return completionHandler(0);
 
         auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
