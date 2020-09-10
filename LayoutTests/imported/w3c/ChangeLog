@@ -1,3 +1,19 @@
+2020-09-10  Sam Sneddon  <gsnedders@apple.com>
+
+        Improve logging for errors from wptserve.
+        https://bugs.webkit.org/show_bug.cgi?id=215829
+
+        Reviewed by Jonathan Bedard.
+
+        * web-platform-tests/tools/wptserve/wptserve/handlers.py:
+        (FileHandler.__call__):
+        (PythonScriptHandler._set_path_and_load_file):
+        (AsIsHandler.__call__):
+        * web-platform-tests/tools/wptserve/wptserve/response.py:
+        (Response.set_error):
+        * imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https-expected.txt:
+        Rebased according new 404 response body.
+
 2020-09-09  Chris Dumez  <cdumez@apple.com>
 
         Stop performing "de-zippering" when applying gain

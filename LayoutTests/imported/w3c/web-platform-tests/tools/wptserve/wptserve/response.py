@@ -247,7 +247,7 @@ class Response(object):
         self.headers = [("Content-Type", "application/json"),
                         ("Content-Length", len(data))]
         self.content = data
-        if code == 500:
+        if message:
             self.logger.error(message)
 
 

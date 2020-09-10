@@ -8,7 +8,7 @@ FAIL Verify a cors worker script served by a service worker fails shared worker 
 PASS Verify a no-cors cross-origin worker script served by a service worker fails dedicated worker start. 
 FAIL Verify a no-cors cross-origin worker script served by a service worker fails shared worker start. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
 PASS Register a service worker for worker subresource interception tests. 
-FAIL Requests on a dedicated worker controlled by a service worker. assert_equals: expected "This load was successfully intercepted." but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+FAIL Requests on a dedicated worker controlled by a service worker. assert_equals: expected "This load was successfully intercepted." but got "{\"error\": {\"message\": \"No such file or directory\", \"code\": 404}}"
 FAIL Requests on a shared worker controlled by a service worker. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
 FAIL Requests on a dedicated worker nested in a dedicated worker and controlled by a service worker assert_equals: expected "This load was successfully intercepted." but got "Unexpected error! Can't find variable: Worker"
 FAIL Requests on a dedicated worker nested in a shared worker and controlled by a service worker promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
