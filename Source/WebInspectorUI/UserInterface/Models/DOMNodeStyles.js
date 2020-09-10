@@ -150,8 +150,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._needsRefresh = false;
 
-        let previousStylesMap = this._stylesMap.copy();
-
         let fetchedMatchedStylesPromise = new WI.WrappedPromise;
         let fetchedInlineStylesPromise = new WI.WrappedPromise;
         let fetchedComputedStylesPromise = new WI.WrappedPromise;
@@ -188,6 +186,9 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             matchedRulesPayload = matchedRulesPayload || [];
             pseudoElementRulesPayload = pseudoElementRulesPayload || [];
             inheritedRulesPayload = inheritedRulesPayload || [];
+
+            this._previousStylesMap = this._stylesMap;
+            this._stylesMap = new Multimap;
 
             this._matchedRules = parseRuleMatchArrayPayload(matchedRulesPayload, this._node);
 
@@ -250,7 +251,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
             let significantChange = false;
             for (let [key, styles] of this._stylesMap.sets()) {
-                let previousStyles = previousStylesMap.get(key);
+                // Check if the same key exists in the previous map and has the same style objects.
+                let previousStyles = this._previousStylesMap.get(key);
                 if (previousStyles) {
                     // Some styles have selectors such that they will match with the DOM node twice (for example "::before, ::after").
                     // In this case a second style for a second matching may be generated and added which will cause the shallowEqual
@@ -284,7 +286,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             }
 
             if (!significantChange) {
-                for (let [key, previousStyles] of previousStylesMap.sets()) {
+                for (let [key, previousStyles] of this._previousStylesMap.sets()) {
                     // Check if the same key exists in current map. If it does exist it was already checked for equality above.
                     if (this._stylesMap.has(key))
                         continue;
@@ -302,6 +304,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 }
             }
 
+            this._previousStylesMap = null;
             this._includeUserAgentRulesOnNextRefresh = false;
 
             this.dispatchEventToListeners(WI.DOMNodeStyles.Event.Refreshed, {significantChange});
@@ -561,7 +564,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         console.assert(matchesNode || style);
 
         if (matchesNode) {
-            let existingStyles = this._stylesMap.get(mapKey);
+            console.assert(this._previousStylesMap);
+            let existingStyles = this._previousStylesMap.get(mapKey);
             if (existingStyles && !style) {
                 for (let existingStyle of existingStyles) {
                     if (existingStyle.node === node && existingStyle.inherited === inherited) {
