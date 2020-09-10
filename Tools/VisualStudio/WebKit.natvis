@@ -40,6 +40,15 @@
     <DisplayString>not supported ({m_hashAndFlags})</DisplayString>
   </Type>
   
+  <Type Name="WTF::StringView">
+    <DisplayString Condition="m_is8Bit">
+      {m_characters,[m_length]s}
+    </DisplayString>
+    <DisplayString Condition="!m_is8Bit">
+      {m_characters,[m_length]su}
+    </DisplayString>
+  </Type>
+
   <Type Name="WTF::String">
     <DisplayString>{m_impl}</DisplayString>
   </Type>
@@ -60,6 +69,20 @@
     <DisplayString>{m_string} (Atom)</DisplayString>
   </Type>
  
+  <Type Name="WTF::NeverDestroyed&lt;*,*&gt;">
+    <DisplayString>{*($T1 *)this}</DisplayString>
+    <Expand>
+      <ExpandedItem>*($T1 *)this</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="WTF::LazyNeverDestroyed&lt;*,*&gt;">
+    <DisplayString>{*($T1 *)this}</DisplayString>
+    <Expand>
+      <ExpandedItem>*($T1 *)this</ExpandedItem>
+    </Expand>
+  </Type>
+
   <Type Name="PAL::SessionID">
     <DisplayString>{m_identifier}</DisplayString>
   </Type>
@@ -68,8 +91,29 @@
     <DisplayString>{m_identifier}</DisplayString>
   </Type>
 
+  <Type Name="WTF::Optional&lt;*&gt;">
+    <Intrinsic Name="has_value" Expression="init_"/>
+    <Intrinsic Name="value" Expression="storage_.value_"/>
+    <DisplayString Condition="!has_value()">nullopt</DisplayString>
+    <DisplayString Condition="has_value()">{value()}</DisplayString>
+    <Expand>
+      <Item Condition="has_value()" Name="value">value()</Item>
+    </Expand>
+  </Type>
+
   <Type Name="WTF::OptionSet&lt;*&gt;">
     <DisplayString>{m_storage,x}</DisplayString>
+  </Type>
+
+  <Type Name="WTF::VectorBufferBase&lt;*,*&gt;">
+    <DisplayString>{{ size={m_size} }}</DisplayString>
+    <Expand>
+      <Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
+      <ArrayItems>
+        <Size>m_size</Size>
+        <ValuePointer>m_buffer</ValuePointer>
+      </ArrayItems>
+    </Expand>
   </Type>
 
   <Type Name="WebCore::IntSize">

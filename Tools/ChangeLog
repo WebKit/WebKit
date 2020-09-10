@@ -1,3 +1,12 @@
+2020-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Add Visual Studio debugger custom views for NeverDestroyed, LazyNeverDestroyed, VectorBufferBase, Optional, and StringView
+        https://bugs.webkit.org/show_bug.cgi?id=216304
+
+        Reviewed by Don Olmstead.
+
+        * VisualStudio/WebKit.natvis:
+
 2020-09-09  Lauro Moura  <lmoura@igalia.com>
 
         kill-old-processes: Avoid calling kill command with empty string with GNU xargs
