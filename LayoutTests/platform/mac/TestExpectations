@@ -1848,7 +1848,7 @@ webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.h
 
 webkit.org/b/209446 [ Debug ] imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
 
-webkit.org/b/209619 [ Catalina ] compositing/clipping/border-radius-async-overflow-stacking.html [ Pass ImageOnlyFailure ]
+webkit.org/b/209619 compositing/clipping/border-radius-async-overflow-stacking.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout ]
 
