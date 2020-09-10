@@ -1,5 +1,48 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266410. rdar://problem/68652625
+
+    <video> element prevents screen from sleeping even after playback finishes
+    https://bugs.webkit.org/show_bug.cgi?id=216017
+    <rdar://problem/66665846>
+    
+    Reviewed by Darin Adler.
+    
+    When video playback would finish (due to reaching end of file), HTMLMediaElement::mediaPlayerRateChanged()
+    would get called, which would call updateSleepDisabling(). The idea was that updateSleepDisabling() would
+    destroy the SleepDisabler to allow the display to sleep again. However, updateSleepDisabling() would not
+    destroy the SleepDisabler because it does not know yet that the media has been paused. We only learned
+    about it later on, when MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange() gets called.
+    To address the problem, we now call updateSleepDisabling() when
+    MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange() is called too.
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266410 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-01  Chris Dumez  <cdumez@apple.com>
+
+            <video> element prevents screen from sleeping even after playback finishes
+            https://bugs.webkit.org/show_bug.cgi?id=216017
+            <rdar://problem/66665846>
+
+            Reviewed by Darin Adler.
+
+            When video playback would finish (due to reaching end of file), HTMLMediaElement::mediaPlayerRateChanged()
+            would get called, which would call updateSleepDisabling(). The idea was that updateSleepDisabling() would
+            destroy the SleepDisabler to allow the display to sleep again. However, updateSleepDisabling() would not
+            destroy the SleepDisabler because it does not know yet that the media has been paused. We only learned
+            about it later on, when MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange() gets called.
+            To address the problem, we now call updateSleepDisabling() when
+            MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange() is called too.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange):
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266407. rdar://problem/68652645
 
     Some apps linked beyond iOS 13.4 don't respect mouse events, only touch events
