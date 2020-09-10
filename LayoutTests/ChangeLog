@@ -1,5 +1,55 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266526. rdar://problem/68652615
+
+    Consecutive requestAnimationFrame callbacks may be passed the same timestamp
+    https://bugs.webkit.org/show_bug.cgi?id=216122
+    <rdar://problem/68269445>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Test: fast/animation/request-animation-frame-unique-timestamp.html
+    
+    Ensure that the page only sees increasing timestamps in requestAnimationFrame() callbacks.
+    
+    * dom/ScriptedAnimationController.cpp:
+    (WebCore::ScriptedAnimationController::shouldRescheduleRequestAnimationFrame const):
+    
+    LayoutTests:
+    
+    Add a test that two subsequent animation frames as identified via requestAnimationFrame() callbacks
+    are provided increasing timestamps.
+    
+    Also removing flaky expectation for two WPT animations tests which pass reliably after this fix.
+    
+    * fast/animation/request-animation-frame-unique-timestamp-expected.txt: Added.
+    * fast/animation/request-animation-frame-unique-timestamp.html: Added.
+    * platform/mac-wk2/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266526 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-03  Antoine Quint  <graouts@webkit.org>
+
+            Consecutive requestAnimationFrame callbacks may be passed the same timestamp
+            https://bugs.webkit.org/show_bug.cgi?id=216122
+            <rdar://problem/68269445>
+
+            Reviewed by Simon Fraser.
+
+            Add a test that two subsequent animation frames as identified via requestAnimationFrame() callbacks
+            are provided increasing timestamps.
+
+            Also removing flaky expectation for two WPT animations tests which pass reliably after this fix.
+
+            * fast/animation/request-animation-frame-unique-timestamp-expected.txt: Added.
+            * fast/animation/request-animation-frame-unique-timestamp.html: Added.
+            * platform/mac-wk2/TestExpectations:
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266475. rdar://problem/68652660
 
     REGRESSION: [ macOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html is a flaky timeout
