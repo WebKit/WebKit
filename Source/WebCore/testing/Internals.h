@@ -917,8 +917,6 @@ public:
 
     bool capsLockIsOn();
         
-    bool supportsVCPEncoder();
-        
     using HEVCParameterSet = WebCore::HEVCParameterSet;
     Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
 

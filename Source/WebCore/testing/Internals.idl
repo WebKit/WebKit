@@ -910,8 +910,6 @@ enum ContentSizeCategory {
 
     boolean capsLockIsOn();
 
-    boolean supportsVCPEncoder();
-
     HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);
     DoViParameterSet? parseDoViCodecParameters(DOMString codecParameters);
     VPCodecConfigurationRecord? parseVPCodecParameters(DOMString codecParameters);

@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <canvas id="canvas0" width=320px height=240px></canvas>
+        <canvas id="canvas1" width=100px height=100px></canvas>
+        <video id="video" autoplay width=320px height=240px></video>
+        <canvas id="canvas2" width=320px height=240px></canvas>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="routines.js"></script>
+        <script src="captureCanvas-webrtc-software-h264.js"></script>
+        <script>
+promise_test((test) => {
+    if (window.internals)
+        internals.setH264HardwareEncoderAllowed(false);
+    return doTest(test, (sdp) => setH264HighCodec(sdp));
+}, "captureStream with webrtc - h264 high profile");
+        </script>
+    </head>
+</html>

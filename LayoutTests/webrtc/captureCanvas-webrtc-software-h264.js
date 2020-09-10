@@ -1,15 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html>
-    <head>
-        <canvas id="canvas0" width=320px height=240px></canvas>
-        <canvas id="canvas1" width=100px height=100px></canvas>
-        <video id="video" autoplay width=320px height=240px></video>
-        <canvas id="canvas2" width=320px height=240px></canvas>
-        <script src="../../../resources/testharness.js"></script>
-        <script src="../../../resources/testharnessreport.js"></script>
-        <script src="../../../webrtc/routines.js"></script>
-        <script>
-
 function printRectangle(canvas)
 {
     var context = canvas.getContext("2d");
@@ -17,9 +5,6 @@ function printRectangle(canvas)
     context.fillRect(0, 0, 100, 100);
     setTimeout(() => printRectangle(canvas), 50);
 }
-
-if (window.internals)
-    internals.setH264HardwareEncoderAllowed(false);
 
 function testCanvas(testName, canvas, isSame, count)
 {
@@ -94,20 +79,5 @@ function doTest(test, setupOffer)
         return waitFor(200);
     }).then(() => {
         return testCanvas("test4", canvas0, true);
-    }).catch((error) => {
-        if (window.internals)
-            internals.setH264HardwareEncoderAllowed(true);
-	return Promise.reject(error);
     });
 }
-
-promise_test((test) => {
-    return doTest(test, (sdp) => setH264BaselineCodec(sdp));
-}, "captureStream with webrtc - h264 baseline");
-
-promise_test((test) => {
-    return doTest(test, (sdp) => setH264HighCodec(sdp));
-}, "captureStream with webrtc - h264 high profile");
-        </script>
-    </head>
-</html>

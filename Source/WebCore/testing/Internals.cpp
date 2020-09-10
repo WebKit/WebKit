@@ -564,6 +564,7 @@ void Internals::resetToConsistentState(Page& page)
     auto& rtcProvider = page.libWebRTCProvider();
     WebCore::useRealRTCPeerConnectionFactory(rtcProvider);
     rtcProvider.disableNonLocalhostConnections();
+    rtcProvider.setH264HardwareEncoderAllowed(true);
     RuntimeEnabledFeatures::sharedFeatures().setWebRTCH265CodecEnabled(true);
     page.settings().setWebRTCEncryptionEnabled(true);
 #endif
@@ -5673,15 +5674,6 @@ unsigned Internals::primaryScreenDisplayID()
 bool Internals::capsLockIsOn()
 {
     return WebCore::PlatformKeyboardEvent::currentCapsLockState();
-}
-
-bool Internals::supportsVCPEncoder()
-{
-#if PLATFORM(COCOA)
-    return true;
-#else
-    return false;
-#endif
 }
 
 Optional<HEVCParameterSet> Internals::parseHEVCCodecParameters(const String& codecString)
