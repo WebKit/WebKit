@@ -550,10 +550,10 @@ void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivitySta
             suspendPainting();
     }
 
-    if (m_activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbackIDs.isEmpty())
+    if (m_activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbackIDs.isEmpty()) {
         m_shouldHandleActivityStateChangeCallbacks = true;
-
-    scheduleRenderingUpdate();
+        scheduleRenderingUpdate();
+    }
 }
 
 void TiledCoreAnimationDrawingArea::suspendPainting()

@@ -10,17 +10,17 @@
             internals.setLowPowerModeEnabled(true);
 
         var start = null;
-        var farmesPerSecond = 0;
+        var framesPerSecond = 0;
         function doWork(timestamp) {
             if (!start)
                 start = timestamp;
             if (timestamp - start < 1000) {
-                ++farmesPerSecond;
+                ++framesPerSecond;
                 window.requestAnimationFrame(doWork);
             }
             else {
                 // The LowPowerMode throttling interval = 30_ms. The frame rate ~= 33.3 fps.
-                shouldBeTrue("farmesPerSecond < 35");
+                shouldBeTrue("framesPerSecond < 35");
                 finishJSTest();
             }
         }
