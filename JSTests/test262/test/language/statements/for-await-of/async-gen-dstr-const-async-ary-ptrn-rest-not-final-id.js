@@ -5,7 +5,7 @@
 description: Rest element (identifier) may not be followed by any element (for-await-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 features: [destructuring-binding, async-iteration]
-flags: [generated, async]
+flags: [generated]
 negative:
   phase: parse
   type: SyntaxError

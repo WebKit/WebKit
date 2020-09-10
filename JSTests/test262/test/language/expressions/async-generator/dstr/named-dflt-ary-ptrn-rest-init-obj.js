@@ -5,7 +5,7 @@
 description: Rest element (nested object pattern) does not support initializer (async generator named function expression (default parameter))
 esid: sec-asyncgenerator-definitions-evaluation
 features: [async-iteration]
-flags: [generated, async]
+flags: [generated]
 negative:
   phase: parse
   type: SyntaxError

@@ -7,6 +7,7 @@ info: |
   1. If _limit_ is *undefined*, let _lim_ be 2<sup>32</sup> - 1; else let _lim_ be ? ToUint32(_limit_).
   1. Let _R_ be ? ToString(_separator_).
   1. If _lim_ = 0, return _A_.
+features: [Symbol, Symbol.toPrimitive]
 ---*/
 
 function ExpectedError(message) {

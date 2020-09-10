@@ -5,7 +5,7 @@
 description: Rest element (identifier) does not support initializer (class expression method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 features: [async-iteration]
-flags: [generated, async]
+flags: [generated]
 negative:
   phase: parse
   type: SyntaxError

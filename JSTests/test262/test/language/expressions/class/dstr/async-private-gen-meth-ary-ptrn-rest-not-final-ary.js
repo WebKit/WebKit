@@ -5,7 +5,7 @@
 description: Rest element (array binding pattern) may not be followed by any element (private class expression method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 features: [class, class-methods-private, async-iteration]
-flags: [generated, async]
+flags: [generated]
 negative:
   phase: parse
   type: SyntaxError

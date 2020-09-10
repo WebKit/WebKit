@@ -27,6 +27,7 @@ assert.sameValue(delete 0, true, 'delete 0');
 assert.sameValue(delete 1, true, 'delete 1');
 assert.sameValue(delete '', true, 'delete ""');
 assert.sameValue(delete 'Test262', true, 'delete "Test262"');
+assert.sameValue(delete 'Test262'[100], true, 'delete "Test262"[100]');
 assert.sameValue(delete typeof +-~!0, true, 'delete typeof +-~!0');
 assert.sameValue(delete +-~!0, true, 'delete +-~!0');
 assert.sameValue(delete -~!0, true, 'delete -~!0');

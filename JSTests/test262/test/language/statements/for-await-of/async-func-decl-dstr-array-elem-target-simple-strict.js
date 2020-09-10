@@ -5,7 +5,7 @@
 description: It is a Syntax Error if LeftHandSideExpression is neither an ObjectLiteral nor an ArrayLiteral and IsValidSimpleAssignmentTarget(LeftHandSideExpression) is false. (for-await-of statement in an async function declaration)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 features: [destructuring-binding, async-iteration]
-flags: [generated, onlyStrict, async]
+flags: [generated, onlyStrict]
 negative:
   phase: parse
   type: SyntaxError

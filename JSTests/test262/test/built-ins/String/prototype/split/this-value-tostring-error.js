@@ -10,6 +10,7 @@ info: |
     1. If _splitter_ is not *undefined*, then
       1. Return ? Call(_splitter_, _separator_, &laquo; _O_, _limit_ &raquo;).
   1. Let _S_ be ? ToString(_O_).
+features: [Symbol, Symbol.split, Symbol.toPrimitive]
 ---*/
 
 function ExpectedError(message) {

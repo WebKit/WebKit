@@ -5,7 +5,7 @@
 description: Rest element (nested array pattern) does not support initializer (private static class expression async generator method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 features: [class, class-static-methods-private, async-iteration]
-flags: [generated, async]
+flags: [generated]
 negative:
   phase: parse
   type: SyntaxError

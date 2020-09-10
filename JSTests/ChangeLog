@@ -1,3 +1,16 @@
+2020-09-10  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Update test262 to commit 323905b70e64
+        https://bugs.webkit.org/show_bug.cgi?id=216379
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/config.yaml: Skip "legacy-regexp" feature and unskip 2 passing tests.
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/*: Updated.
+        * test262/test262-Revision.txt:
+
 2020-09-09  Saam Barati  <sbarati@apple.com>
 
         OutOfBoundsSaneChain operations should use their own heap locations

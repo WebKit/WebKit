@@ -5,7 +5,7 @@
 description: Rest element (identifier) does not support initializer (async generator named function expression)
 esid: sec-asyncgenerator-definitions-evaluation
 features: [async-iteration]
-flags: [generated, async]
+flags: [generated]
 negative:
   phase: parse
   type: SyntaxError

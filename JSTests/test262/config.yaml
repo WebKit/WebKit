@@ -14,6 +14,7 @@ skip:
     - Atomics.waitAsync
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
+    - legacy-regexp
 
     - class-methods-private
     - class-static-fields-public
@@ -77,14 +78,6 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=213822
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts
   files:
-    # https://bugs.webkit.org/show_bug.cgi?id=186749
-    - test/built-ins/RegExp/property-escapes/character-class.js
-
-    # [[OwnPropertyKeys]] order with large integer index keys up to 2 ** 53 - 1
-    # https://bugs.webkit.org/show_bug.cgi?id=186691
-    - test/built-ins/Reflect/ownKeys/return-on-corresponding-order-large-index.js
-
-
     # https://bugs.webkit.org/show_bug.cgi?id=190800
     - test/built-ins/TypedArray/prototype/set/src-typedarray-big-throws.js
     - test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/src-typedarray-big-throws.js

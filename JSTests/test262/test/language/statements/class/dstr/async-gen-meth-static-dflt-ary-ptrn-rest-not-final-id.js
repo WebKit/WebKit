@@ -5,7 +5,7 @@
 description: Rest element (identifier) may not be followed by any element (static class expression async generator method (default parameter))
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 features: [async-iteration]
-flags: [generated, async]
+flags: [generated]
 negative:
   phase: parse
   type: SyntaxError

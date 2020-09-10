@@ -5,7 +5,7 @@
 description: Rest element (object binding pattern) may not be followed by any element (static class expression async generator method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 features: [async-iteration]
-flags: [generated, async]
+flags: [generated]
 negative:
   phase: parse
   type: SyntaxError
