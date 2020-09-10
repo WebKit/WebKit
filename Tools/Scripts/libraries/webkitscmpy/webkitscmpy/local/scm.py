@@ -50,5 +50,13 @@ class Scm(object):
     def branch(self):
         raise NotImplementedError()
 
+    @property
+    def branches(self):
+        raise NotImplementedError()
+
+    @property
+    def tags(self):
+        raise NotImplementedError()
+
     def remote(self, name=None):
         raise NotImplementedError()

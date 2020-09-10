@@ -58,6 +58,20 @@ class Git(Scm):
             raise self.Exception('Failed to retrieve branch for {}'.format(self.root_path))
         return result.stdout.rstrip()
 
+    @property
+    def branches(self):
+        branch = run([self.executable, 'branch', '-a'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        if branch.returncode:
+            raise self.Exception('Failed to retrieve branch list for {}'.format(self.root_path))
+        return [branch.lstrip(' *') for branch in filter(lambda branch: '->' not in branch, branch.stdout.splitlines())]
+
+    @property
+    def tags(self):
+        tags = run([self.executable, 'tag'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        if tags.returncode:
+            raise self.Exception('Failed to retrieve tag list for {}'.format(self.root_path))
+        return tags.stdout.splitlines()
+
     def remote(self, name=None):
         result = run([self.executable, 'remote', 'get-url', name or 'origin'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:

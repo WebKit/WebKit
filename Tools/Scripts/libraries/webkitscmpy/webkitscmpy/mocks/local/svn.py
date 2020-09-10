@@ -27,10 +27,13 @@ from webkitscmpy import local
 
 
 class Svn(mocks.Subprocess):
-    def __init__(self, path='/.invalid-svn', branch=None, remote=None):
+    def __init__(self, path='/.invalid-svn', branch=None, remote=None, branches=None, tags=None):
         self.path = path
         self.branch = branch or 'trunk'
         self.remote = remote or 'https://svn.mock.org/repository/{}'.format(os.path.basename(path))
+
+        self.branches = branches or []
+        self.tags = tags or []
 
         super(Svn, self).__init__(
             mocks.Subprocess.Route(
@@ -49,6 +52,20 @@ class Svn(mocks.Subprocess):
                             remote=self.remote,
                             branch=self.branch,
                         ),
+                ),
+            ), mocks.Subprocess.Route(
+                local.Svn.executable, 'list', '^/branches',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='/\n'.join(self.branches) + '/\n',
+                ),
+            ), mocks.Subprocess.Route(
+                local.Svn.executable, 'list', '^/tags',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='/\n'.join(self.tags) + '/\n',
                 ),
             ), mocks.Subprocess.Route(
                 local.Svn.executable,

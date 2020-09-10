@@ -60,5 +60,19 @@ class Svn(Scm):
             return self.info()['Relative URL'][2:-len(local_path)]
         return self.info()['Relative URL'][2:]
 
+    def list(self, category):
+        list_result = run([self.executable, 'list', '^/{}'.format(category)], cwd=self.path, capture_output=True, encoding='utf-8')
+        if list_result.returncode:
+            return []
+        return [element.rstrip('/') for element in list_result.stdout.splitlines()]
+
+    @property
+    def branches(self):
+        return ['trunk'] + self.list('branches')
+
+    @property
+    def tags(self):
+        return self.list('tags')
+
     def remote(self, name=None):
         return self.info()['Repository Root']

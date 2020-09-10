@@ -1,3 +1,39 @@
+2020-09-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add tags, branches queries on local repositories
+        https://bugs.webkit.org/show_bug.cgi?id=216333
+        <rdar://problem/68603047>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git):
+        (Git.branches): List all branches associated with a local repository.
+        (Git.tags): List all tags associated with a local repository.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm):
+        (Scm.branches):
+        (Scm.tags):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn):
+        (Svn.list):
+        (Svn.branches): List all branches associated with a local repository.
+        (Svn.tags): List all branches associated with a local repository.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add 'git branch -a' and 'git tag', change default branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__init__): Add 'svn list ^/*' commands.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_branch): Change default branch to main.
+        (TestGit):
+        (TestGit.test_branches):
+        (TestGit.test_tags):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestSvn):
+        (TestSvn.test_branches):
+        (TestSvn.test_tags):
+
 2020-09-10  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Add tests timing out after r266815.

@@ -27,11 +27,19 @@ from webkitscmpy import local
 
 
 class Git(mocks.Subprocess):
-    def __init__(self, path='/.invalid-git', branch=None, remote=None, detached=None):
+
+    def __init__(
+        self, path='/.invalid-git',
+        branch=None, remote=None, branches=None, tags=None,
+        detached=None, default_branch='main',
+    ):
         self.path = path
-        self.branch = branch or 'master'
+        self.branch = branch or default_branch
         self.remote = remote or 'git@webkit.org:/mock/{}'.format(os.path.basename(path))
         self.detached = detached or False
+
+        self.branches = branches or []
+        self.tags = tags or []
 
         super(Git, self).__init__(
             mocks.Subprocess.Route(
@@ -72,6 +80,21 @@ nothing to commit, working tree clean
                 ) if args[3] == 'origin' else mocks.ProcessCompletion(
                     returncode=128,
                     stderr="fatal: No such remote '{}'\n".format(args[3]),
+                ),
+            ), mocks.Subprocess.Route(
+                local.Git.executable, 'branch', '-a',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join(sorted(['* ' + self.branch] + list(({default_branch} | set(self.branches)) - {self.branch}))) +
+                           '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch),
+                ),
+            ), mocks.Subprocess.Route(
+                local.Git.executable, 'tag',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join(self.tags) + '\n',
                 ),
             ), mocks.Subprocess.Route(
                 local.Git.executable,
