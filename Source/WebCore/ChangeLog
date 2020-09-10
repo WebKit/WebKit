@@ -1,5 +1,47 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266664. rdar://problem/68652524
+
+    REGRESSION (r260571): Scrolling on weather.com in Safari causes the gradient background to flicker (fixed backgrounds)
+    https://bugs.webkit.org/show_bug.cgi?id=216192
+    <rdar://problem/68192010>
+    
+    Reviewed by Tim Horton.
+    
+    If a page has slow-scrolling reasons, like background-attachment:fixed on a non-root element,
+    then we should never update layer positions on the scrolling thread, since this results
+    in scroll position being out of sync with the painted background position.
+    
+    * page/scrolling/ThreadedScrollingTree.cpp:
+    (WebCore::ThreadedScrollingTree::canUpdateLayersOnScrollingThread const):
+    (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+    (WebCore::ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired):
+    (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+    * page/scrolling/ThreadedScrollingTree.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266664 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-04  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r260571): Scrolling on weather.com in Safari causes the gradient background to flicker (fixed backgrounds)
+            https://bugs.webkit.org/show_bug.cgi?id=216192
+            <rdar://problem/68192010>
+
+            Reviewed by Tim Horton.
+
+            If a page has slow-scrolling reasons, like background-attachment:fixed on a non-root element,
+            then we should never update layer positions on the scrolling thread, since this results
+            in scroll position being out of sync with the painted background position.
+
+            * page/scrolling/ThreadedScrollingTree.cpp:
+            (WebCore::ThreadedScrollingTree::canUpdateLayersOnScrollingThread const):
+            (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+            (WebCore::ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired):
+            (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+            * page/scrolling/ThreadedScrollingTree.h:
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266635. rdar://problem/68652685
 
     [Cocoa,EME] -outputObscuredDueToInsufficientExternalProtection KVO will set OutputObscured for all attached MediaKeySessions.
