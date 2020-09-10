@@ -1,3 +1,10 @@
+2020-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Windows build fix after r266842.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setHardwareSampleRateOverride):
+
 2020-09-10  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r266634): [macOS release] 4 layout tests became flaky failures

@@ -55,7 +55,6 @@
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/ApplicationCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
-#include <WebCore/AudioDestination.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
@@ -85,6 +84,10 @@
 
 #if ENABLE(NOTIFICATIONS)
 #include "WebNotificationManager.h"
+#endif
+
+#if ENABLE(WEB_AUDIO)
+#include <WebCore/AudioDestination.h>
 #endif
 
 namespace WebKit {
@@ -400,7 +403,11 @@ void InjectedBundle::resetOriginAccessAllowLists()
 
 void InjectedBundle::setHardwareSampleRateOverride(Optional<float> sampleRate)
 {
+#if ENABLE(WEB_AUDIO)
     AudioDestination::setHardwareSampleRateOverride(sampleRate);
+#else
+    UNUSED_PARAM(sampleRate);
+#endif
 }
 
 void InjectedBundle::setAsynchronousSpellCheckingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
