@@ -1,3 +1,11 @@
+2020-09-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Add tests timing out after r266815.
+
+        Also update test expectations to remove test passing after r266721.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-09-10  Darin Adler  <darin@apple.com>
 
         webkit-test-runner: Add support for the reftest-wait class name

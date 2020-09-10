@@ -61,10 +61,7 @@
                 "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188117"}}
             },
             "/webkit/WebKitWebsiteData/storage": {
-                "expected": {
-                    "wpe": {"status": ["PASS", "FAIL"]},
-                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}
-                }
+                "expected": { "wpe": {"status": ["PASS", "FAIL"]}}
             },
             "/webkit/WebKitWebsiteData/configuration": {
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/205441"}}
@@ -74,18 +71,6 @@
                     "gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"},
                     "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"}
                 }
-            },
-            "/webkit/WebKitWebsiteData/service-worker-registrations": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
-            },
-            "/webkit/WebKitWebsiteData/databases": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
-            },
-            "/webkit/WebKitWebsiteData/cookies": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
-            },
-            "/webkit/WebKitWebsiteData/itp": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
             }
         }
     },
@@ -109,17 +94,24 @@
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {"wpe": {"status": ["TIMEOUT", "PASS"]}}
-            },
-            "/webkit/WebKitWebView/ephemeral": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
-            },
-            "/webkit/WebKitWebView/can-show-mime-type": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/216268"}}
             }
         }
     },
     "TestInspectorServer": {
         "expected": {"all": {"slow": true}}
+    },
+    "TestInspector": {
+        "subtests": {
+            "/webkit/WebKitWebInspector/custom-container-destroyed": {
+              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/216361"}}
+            },
+            "/webkit/WebKitWebInspector/manual-attach-detach": {
+              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/216361"}}
+            },
+            "/webkit/WebKitWebInspector/default": {
+              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/216361"}}
+            }
+        }
     },
     "TestWebKitFaviconDatabase": {
         "subtests": {
