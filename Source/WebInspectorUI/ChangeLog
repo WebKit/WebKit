@@ -1,5 +1,46 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266477. rdar://problem/68652841
+
+    Web Inspector: Timelines: duplicate "Timeline Recording 1" on open
+    https://bugs.webkit.org/show_bug.cgi?id=216060
+    
+    Reviewed by Brian Burg.
+    
+    * UserInterface/Controllers/TimelineManager.js:
+    (WI.TimelineManager):
+    (WI.TimelineManager.prototype.get recordings): Deleted.
+    Don't `reset` in the `constructor` as this is already done in `enable` and `disable`, which
+    is called whenever the Timeline Tab is added/removed.
+    
+    * UserInterface/Views/TimelineTabContentView.js:
+    (WI.TimelineTabContentView):
+    There should never be any existing recordings when adding the Timelines Tab, as they should
+    have been removed when the tab was last removed (via `WI.TimelineManager.prototype.disable`).
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266477 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-02  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: Timelines: duplicate "Timeline Recording 1" on open
+            https://bugs.webkit.org/show_bug.cgi?id=216060
+
+            Reviewed by Brian Burg.
+
+            * UserInterface/Controllers/TimelineManager.js:
+            (WI.TimelineManager):
+            (WI.TimelineManager.prototype.get recordings): Deleted.
+            Don't `reset` in the `constructor` as this is already done in `enable` and `disable`, which
+            is called whenever the Timeline Tab is added/removed.
+
+            * UserInterface/Views/TimelineTabContentView.js:
+            (WI.TimelineTabContentView):
+            There should never be any existing recordings when adding the Timelines Tab, as they should
+            have been removed when the tab was last removed (via `WI.TimelineManager.prototype.disable`).
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266451. rdar://problem/68652772
 
     REGRESSION(r243264): Web Inspector: Style pane doesn't update after toggling CSS class
