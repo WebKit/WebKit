@@ -58,6 +58,9 @@ protected:
 
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
 
+    bool shouldHaveSecondField(const DateComponents&) const;
+    bool shouldHaveMillisecondField(const DateComponents&) const;
+
 private:
     void updateInnerTextValue() override;
     void closeDateTimeChooser();

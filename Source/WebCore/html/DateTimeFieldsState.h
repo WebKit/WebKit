@@ -38,6 +38,13 @@ struct DateTimeFieldsState {
         PM,
     };
 
+    inline Optional<unsigned> hour23() const
+    {
+        if (!hour || !meridiem)
+            return WTF::nullopt;
+        return (*hour % 12) + (*meridiem == DateTimeFieldsState::Meridiem::PM ? 12 : 0);
+    }
+
     Optional<unsigned> year;
     Optional<unsigned> month;
     Optional<unsigned> dayOfMonth;

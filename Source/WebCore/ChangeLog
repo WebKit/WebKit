@@ -1,3 +1,42 @@
+2020-09-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add editability to input type=datetime-local
+        https://bugs.webkit.org/show_bug.cgi?id=216311
+
+        Reviewed by Devin Rousso.
+
+        This patch adds editability to input type=datetime-local by leveraging
+        existing logic to add editable components to date/time inputs.
+
+        Tests: fast/forms/datetimelocal/datetimelocal-editable-components/*
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+
+        Add shouldHaveSecondField and shouldHaveMillisecondField methods so
+        that the logic can be shared by TimeInputType and DateTimeLocalInputType.
+
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::shouldHaveSecondField const):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::shouldHaveMillisecondField const):
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        * html/DateTimeFieldsState.h:
+
+        Add method to compute the 23-hour value to avoid duplication in TimeInputType
+        and DateTimeLocalInputType.
+
+        (WebCore::DateTimeFieldsState::hour23 const):
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::isValidFormat const):
+        (WebCore::DateTimeLocalInputType::formatDateTimeFieldsState const):
+        (WebCore::DateTimeLocalInputType::setupLayoutParameters const):
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::formatDateTimeFieldsState const):
+        (WebCore::TimeInputType::setupLayoutParameters const):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::dateTimeLocalInputStyleSheet const):
+
+        Increase width to reflect the fact that this input contains more fields
+        than the other date/time inputs.
+
 2020-09-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Clean up App-Bound Domains code to only compile for iOS with its own macro

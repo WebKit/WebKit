@@ -1,0 +1,84 @@
+Test for keyboard operations for <input type=datetime-local>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Digit keys
+PASS input.value is "2012-09-02T00:02"
+PASS changeEventsFired is 1
+PASS inputEventsFired is 1
+
+Digit keys with timeout
+PASS input.value is "0001-02-04T14:05"
+PASS changeEventsFired is 1
+PASS inputEventsFired is 1
+
+Digit keys clamp value
+PASS input.value is "2018-09-06T12:22"
+PASS input.value is "2018-12-06T12:22"
+PASS input.value is "2018-12-09T12:22"
+PASS input.value is "2018-12-31T12:22"
+PASS input.value is "0009-12-31T12:22"
+PASS input.value is "0099-12-31T12:22"
+PASS input.value is "0999-12-31T12:22"
+PASS input.value is "9999-12-31T12:22"
+PASS input.value is "9999-12-31T13:22"
+PASS input.value is "9999-12-31T12:22"
+PASS input.value is "9999-12-31T13:22"
+PASS input.value is "9999-12-31T13:06"
+PASS input.value is "9999-12-31T13:59"
+PASS changeEventsFired is 13
+PASS inputEventsFired is 13
+
+Left/Right arrow keys
+PASS input.value is "0002-02-02T02:02"
+PASS input.value is "0003-03-03T03:03"
+PASS changeEventsFired is 11
+PASS inputEventsFired is 11
+
+Up/Down arrow keys
+PASS input.value is "2020-01-20T23:59"
+PASS input.value is "2020-02-20T23:59"
+PASS input.value is "2020-01-20T23:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T12:59"
+PASS input.value is "2020-12-20T13:59"
+PASS input.value is "2020-12-20T12:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T11:59"
+PASS input.value is "2020-12-20T23:59"
+PASS input.value is "2020-12-20T11:59"
+PASS changeEventsFired is 11
+PASS inputEventsFired is 11
+
+Tab key
+PASS input.value is "0002-02-02T02:02"
+PASS document.activeElement.id is "after"
+PASS input.value is "0003-03-03T03:03"
+PASS document.activeElement.id is "before"
+PASS changeEventsFired is 6
+PASS inputEventsFired is 6
+
+Backspace key
+PASS input.value is ""
+PASS input.value is "2016-07-12T16:30"
+PASS changeEventsFired is 2
+PASS inputEventsFired is 2
+
+Delete key
+PASS input.value is ""
+PASS changeEventsFired is 1
+PASS inputEventsFired is 1
+
+Disabled/readonly
+PASS input.value is "2020-09-01T09:01"
+PASS input.value is "2020-01-01T09:01"
+PASS input.value is "2020-01-01T09:01"
+FAIL input.value should be 2020-09-02T09:01. Was 2020-01-02T09:01.
+PASS changeEventsFired is 2
+PASS inputEventsFired is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

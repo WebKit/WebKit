@@ -372,7 +372,7 @@ String RenderThemeMac::dateInputStyleSheet() const
 
 String RenderThemeMac::dateTimeLocalInputStyleSheet() const
 {
-    return "input[type=\"datetime-local\"] { -webkit-appearance: textfield; align-items: center; display: -webkit-inline-flex; overflow: hidden; width: 10em; outline: none; } "_s;
+    return "input[type=\"datetime-local\"] { -webkit-appearance: textfield; align-items: center; display: -webkit-inline-flex; overflow: hidden; width: 18em; outline: none; } "_s;
 }
 
 #endif

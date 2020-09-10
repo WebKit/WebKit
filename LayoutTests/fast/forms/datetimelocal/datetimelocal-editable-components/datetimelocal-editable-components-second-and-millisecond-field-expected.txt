@@ -1,0 +1,40 @@
+Test for presence of second and millisecond fields in <input type=datetime-local>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Default
+PASS numberOfFields is 6
+
+Zero seconds
+PASS numberOfFields is 6
+
+Zero seconds and zero milliseconds
+PASS numberOfFields is 6
+
+Zero seconds and non-zero milliseconds
+PASS numberOfFields is 8
+
+Non-zero seconds
+PASS numberOfFields is 7
+
+Non-zero seconds and zero milliseconds
+PASS numberOfFields is 7
+
+Non-zero seconds and non-zero milliseconds
+PASS numberOfFields is 8
+
+Step attribute minute precision
+PASS numberOfFields is 6
+
+Step attribute second precision
+PASS numberOfFields is 7
+
+Step attribute millisecond precision
+PASS numberOfFields is 8
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

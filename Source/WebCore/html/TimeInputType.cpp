@@ -121,8 +121,7 @@ String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state
     if (!state.hour || !state.minute || !state.meridiem)
         return emptyString();
 
-    unsigned hour23 = (*state.hour % 12) + (*state.meridiem == DateTimeFieldsState::Meridiem::PM ? 12 : 0);
-    auto hourMinuteString = makeString(pad('0', 2, hour23), ':', pad('0', 2, *state.minute));
+    auto hourMinuteString = makeString(pad('0', 2, *state.hour23()), ':', pad('0', 2, *state.minute));
 
     if (state.millisecond)
         return makeString(hourMinuteString, ':', pad('0', 2, state.second ? *state.second : 0), '.', pad('0', 3, *state.millisecond));
@@ -135,20 +134,9 @@ String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state
 
 void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
-    auto stepRange = createStepRange(AnyStepHandling::Default);
-    auto millisecondsPerSecond = Decimal::fromDouble(msPerSecond);
-    auto millisecondsPerMinute = Decimal::fromDouble(msPerMinute);
+    layoutParameters.shouldHaveMillisecondField = shouldHaveMillisecondField(date);
 
-    layoutParameters.shouldHaveMillisecondField = date.millisecond()
-        || !stepRange.minimum().remainder(millisecondsPerSecond).isZero()
-        || !stepRange.step().remainder(millisecondsPerSecond).isZero();
-
-    bool shouldHaveSecondField = layoutParameters.shouldHaveMillisecondField
-        || date.second()
-        || !stepRange.minimum().remainder(millisecondsPerMinute).isZero()
-        || !stepRange.step().remainder(millisecondsPerMinute).isZero();
-
-    if (shouldHaveSecondField) {
+    if (layoutParameters.shouldHaveMillisecondField || shouldHaveSecondField(date)) {
         layoutParameters.dateTimeFormat = layoutParameters.locale.timeFormat();
         layoutParameters.fallbackDateTimeFormat = "HH:mm:ss"_s;
     } else {

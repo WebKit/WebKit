@@ -1,3 +1,30 @@
+2020-09-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add editability to input type=datetime-local
+        https://bugs.webkit.org/show_bug.cgi?id=216311
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/mac/WebDateTimePickerMac.mm:
+        (-[WKDateTimePicker initWithParams:inView:]):
+
+        Move initialization that relies on DateTimeChooserParameters to
+        updatePicker: to reduce code duplication.
+
+        (-[WKDateTimePicker updatePicker:]):
+        (-[WKDateTimePicker dateFormatStringForType:value:]):
+
+        datetime-local inputs can have three different formats. The default
+        contains hour and minute fields, but second and millisecond fields 
+        may also be present. Update this method to return the appropriate
+        format string based on the current value of the input.
+
+        (-[WKDateTimePicker initialDateForEmptyValue]):
+
+        The initial value displayed on the picker when the input's value is
+        empty should match the user's system time. Since the date picker
+        maintains UTC time, return [NSDate date] with an appropriate offset.
+
 2020-09-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Clean up App-Bound Domains code to only compile for iOS with its own macro

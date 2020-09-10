@@ -43,6 +43,7 @@
 #include "StepRange.h"
 #include "Text.h"
 #include "UserGestureIndicator.h"
+#include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -218,6 +219,30 @@ void BaseChooserOnlyDateAndTimeInputType::setValue(const String& value, bool val
     BaseDateAndTimeInputType::setValue(value, valueChanged, eventBehavior);
     if (valueChanged)
         updateInnerTextValue();
+}
+
+bool BaseChooserOnlyDateAndTimeInputType::shouldHaveSecondField(const DateComponents& date) const
+{
+    if (date.second())
+        return true;
+
+    auto stepRange = createStepRange(AnyStepHandling::Default);
+    auto millisecondsPerMinute = Decimal::fromDouble(msPerMinute);
+
+    return !stepRange.minimum().remainder(millisecondsPerMinute).isZero()
+        || !stepRange.step().remainder(millisecondsPerMinute).isZero();
+}
+
+bool BaseChooserOnlyDateAndTimeInputType::shouldHaveMillisecondField(const DateComponents& date) const
+{
+    if (date.millisecond())
+        return true;
+
+    auto stepRange = createStepRange(AnyStepHandling::Default);
+    auto millisecondsPerSecond = Decimal::fromDouble(msPerSecond);
+
+    return !stepRange.minimum().remainder(millisecondsPerSecond).isZero()
+        || !stepRange.step().remainder(millisecondsPerSecond).isZero();
 }
 
 void BaseChooserOnlyDateAndTimeInputType::detach()

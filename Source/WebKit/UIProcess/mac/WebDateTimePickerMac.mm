@@ -35,6 +35,8 @@ constexpr CGFloat kCalendarWidth = 139;
 constexpr CGFloat kCalendarHeight = 148;
 constexpr NSString * kDateFormatString = @"yyyy-MM-dd";
 constexpr NSString * kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm";
+constexpr NSString * kDateTimeWithSecondsFormatString = @"yyyy-MM-dd'T'HH:mm:ss";
+constexpr NSString * kDateTimeWithMillisecondsFormatString = @"yyyy-MM-dd'T'HH:mm:ss.SSS";
 constexpr NSString * kDefaultLocaleIdentifier = @"en_US_POSIX";
 constexpr NSString * kDefaultTimeZoneIdentifier = @"UTC";
 
@@ -160,9 +162,8 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
         return self;
 
     _presentingView = view;
-    _params = WTFMove(params);
 
-    NSRect windowRect = [[_presentingView window] convertRectToScreen:[_presentingView convertRect:_params.anchorRectInRootView toView:nil]];
+    NSRect windowRect = [[_presentingView window] convertRectToScreen:[_presentingView convertRect:params.anchorRectInRootView toView:nil]];
     windowRect.origin.y = NSMinY(windowRect) - kCalendarHeight;
     windowRect.size.width = kCalendarWidth;
     windowRect.size.height = kCalendarHeight;
@@ -185,18 +186,10 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     auto englishLocale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:kDefaultLocaleIdentifier]);
     _dateFormatter = adoptNS([[NSDateFormatter alloc] init]);
-    [_dateFormatter setDateFormat:[self dateFormatStringForType:_params.type]];
     [_dateFormatter setLocale:englishLocale.get()];
     [_dateFormatter setTimeZone:timeZone];
 
-    NSString *currentDateValueString = _params.currentValue;
-    if (![currentDateValueString length])
-        [_datePicker setDateValue:[NSDate date]];
-    else
-        [_datePicker setDateValue:[_dateFormatter dateFromString:currentDateValueString]];
-
-    [_datePicker setMinDate:[NSDate dateWithTimeIntervalSince1970:_params.minimum / 1000.0]];
-    [_datePicker setMaxDate:[NSDate dateWithTimeIntervalSince1970:_params.maximum / 1000.0]];
+    [self updatePicker:WTFMove(params)];
 
     return self;
 }
@@ -214,10 +207,16 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     _params = WTFMove(params);
 
     NSString *currentDateValueString = _params.currentValue;
+
+    [_dateFormatter setDateFormat:[self dateFormatStringForType:_params.type value:currentDateValueString]];
+
     if (![currentDateValueString length])
-        [_datePicker setDateValue:[NSDate date]];
+        [_datePicker setDateValue:[self initialDateForEmptyValue]];
     else
         [_datePicker setDateValue:[_dateFormatter dateFromString:currentDateValueString]];
+
+    [_datePicker setMinDate:[NSDate dateWithTimeIntervalSince1970:_params.minimum / 1000.0]];
+    [_datePicker setMaxDate:[NSDate dateWithTimeIntervalSince1970:_params.maximum / 1000.0]];
 }
 
 - (void)invalidate
@@ -243,12 +242,27 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     _picker->didChooseDate(StringView(dateString));
 }
 
-- (NSString *)dateFormatStringForType:(NSString *)type
+- (NSString *)dateFormatStringForType:(NSString *)type value:(NSString *)value
 {
-    if ([type isEqualToString:@"datetime-local"])
-        return kDateTimeFormatString;
+    if ([type isEqualToString:@"datetime-local"]) {
+        // Add two additional characters for the string delimiters in 'T'.
+        NSUInteger valueLengthForFormat = value.length + 2;
+        if (valueLengthForFormat == kDateTimeFormatString.length)
+            return kDateTimeFormatString;
+        if (valueLengthForFormat == kDateTimeWithSecondsFormatString.length)
+            return kDateTimeWithSecondsFormatString;
+        return kDateTimeWithMillisecondsFormatString;
+    }
 
     return kDateFormatString;
+}
+
+- (NSDate *)initialDateForEmptyValue
+{
+    NSDate *now = [NSDate date];
+    NSTimeZone *defaultTimeZone = [NSTimeZone defaultTimeZone];
+    NSInteger offset = [defaultTimeZone secondsFromGMTForDate:now];
+    return [now dateByAddingTimeInterval:offset];
 }
 
 @end

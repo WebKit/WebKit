@@ -98,16 +98,37 @@ bool DateTimeLocalInputType::isDateTimeLocalField() const
 
 bool DateTimeLocalInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
 {
-    return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay, DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute });
+    return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay, DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute, DateTimeFormatValidationResults::HasMeridiem });
 }
 
-String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsState&) const
+String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
 {
-    return emptyString();
+    if (!state.year || !state.month || !state.dayOfMonth || !state.hour || !state.minute || !state.meridiem)
+        return emptyString();
+
+    auto dateString = makeString(pad('0', 4, *state.year), '-', pad('0', 2, *state.month), '-', pad('0', 2, *state.dayOfMonth));
+    auto hourMinuteString = makeString(pad('0', 2, *state.hour23()), ':', pad('0', 2, *state.minute));
+
+    if (state.millisecond)
+        return makeString(dateString, 'T', hourMinuteString, ':', pad('0', 2, state.second ? *state.second : 0), '.', pad('0', 3, *state.millisecond));
+
+    if (state.second)
+        return makeString(dateString, 'T', hourMinuteString, ':', pad('0', 2, *state.second));
+
+    return makeString(dateString, 'T', hourMinuteString);
 }
 
-void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const
+void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
+    layoutParameters.shouldHaveMillisecondField = shouldHaveMillisecondField(date);
+
+    if (layoutParameters.shouldHaveMillisecondField || shouldHaveSecondField(date)) {
+        layoutParameters.dateTimeFormat = layoutParameters.locale.dateTimeFormatWithSeconds();
+        layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss"_s;
+    } else {
+        layoutParameters.dateTimeFormat = layoutParameters.locale.dateTimeFormatWithoutSeconds();
+        layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm"_s;
+    }
 }
 
 } // namespace WebCore

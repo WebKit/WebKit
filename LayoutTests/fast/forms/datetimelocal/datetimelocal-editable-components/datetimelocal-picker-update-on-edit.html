@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="datetime-local" value="2020-09-16T10:45"/>
+
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that a user edit in the control updates the datetime-local picker.");
+    await UIHelper.activateElementAndWaitForInputSession(input);
+
+    debug("Check that picker is displayed");
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeTrue("showingPicker");
+    debug("");
+
+    debug("Check initial value");
+    pickerValue = await UIHelper.dateTimePickerValue();
+    shouldBeEqualToString("input.value", "2020-09-16T10:45");
+    shouldBe("input.valueAsNumber", "pickerValue");
+    debug("");
+
+    debug("Check picker value after user edit");
+    // Ensure we are at the first field of the input.
+    UIHelper.keyDown("leftArrow");
+    UIHelper.keyDown("leftArrow");
+    UIHelper.keyDown("leftArrow");
+    UIHelper.keyDown("leftArrow");
+    UIHelper.keyDown("leftArrow");
+    // Edit month.
+    UIHelper.keyDown("3");
+    UIHelper.keyDown("rightArrow");
+    // Edit day.
+    UIHelper.keyDown("2");
+    UIHelper.keyDown("4");
+    shouldBeEqualToString("input.value", "2020-03-24T10:45")
+    pickerValue = await UIHelper.dateTimePickerValue();
+    shouldBe("input.valueAsNumber", "pickerValue");
+    debug("");
+
+    debug("Check picker value after programmatic change");
+    input.value = "2020-12-30T10:30";
+    shouldBeEqualToString("input.value", "2020-12-30T10:30")
+    pickerValue = await UIHelper.dateTimePickerValue();
+    shouldNotBe("input.valueAsNumber", "pickerValue");
+    debug("");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>
