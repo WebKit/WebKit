@@ -1,3 +1,15 @@
+2020-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Support NTLM authentication
+        https://bugs.webkit.org/show_bug.cgi?id=122952
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add SoupAuthNTLM feature to the session.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+
 2020-09-10  Zalan Bujtas  <zalan@apple.com>
 
         [Repaint] RenderElement::setStyle may issue redundant repaint
