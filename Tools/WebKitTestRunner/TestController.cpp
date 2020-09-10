@@ -4121,4 +4121,9 @@ void TestController::markAdClickAttributionsAsExpiredForTesting()
     runUntil(callbackContext.done, noTimeout);
 }
 
+WKURLRef TestController::currentTestURL() const
+{
+    return m_currentInvocation ? m_currentInvocation->url() : nullptr;
+}
+
 } // namespace WTR

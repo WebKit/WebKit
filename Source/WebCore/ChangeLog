@@ -1,5 +1,98 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266743. rdar://problem/68652752
+
+    iOS: <attachment>'s QuickLook thumbnails can appear squished
+    https://bugs.webkit.org/show_bug.cgi?id=216209
+    <rdar://problem/67817706>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    Test: fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html
+    
+    * html/HTMLAttachmentElement.idl:
+    * testing/Internals.cpp:
+    (WebCore::Internals::attachmentThumbnailInfo):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    Expose the attachment thumbnail size via Internals.
+    
+    * rendering/RenderThemeIOS.mm:
+    (WebCore::RenderAttachmentInfo::RenderAttachmentInfo):
+    Allow the thumbnail aspect ratio to vary, instead of assuming it is always square.
+    
+    Source/WebKit:
+    
+    * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+    (WebKit::convertPlatformImageToBitmap):
+    Propagate an image of the same aspect ratio that QuickLook provided,
+    instead of squishing it to square.
+    
+    * UIProcess/QuickLookThumbnailLoader.mm:
+    (-[WKQLThumbnailLoadOperation start]):
+    Only request full thumbnails; we do not want the icon form, since <attachment>
+    already has one without QuickLook's help; if we can't get a full thumbnail,
+    we'll just leave it alone.
+    
+    Tools:
+    
+    * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+    * TestRunnerShared/UIScriptContext/UIScriptController.h:
+    (WTR::UIScriptController::insertAttachmentForFilePath):
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::currentTestURL const):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+    * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+    (WTR::UIScriptControllerCocoa::insertAttachmentForFilePath):
+    Make it possible to insert an attachment wrapping a file on disk
+    via UIScriptController.
+    
+    LayoutTests:
+    
+    * fast/attachment/attachment-thumbnail-preserves-aspect-ratio-expected.txt: Added.
+    * fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html: Added.
+    * fast/attachment/resources/400x200-circle.png: Added.
+    * platform/ios/fast/attachment/attachment-thumbnail-preserves-aspect-ratio-expected.txt: Added.
+    * resources/ui-helper.js:
+    (window.UIHelper.insertAttachmentForFilePath):
+    Add a test that dumps the thumbnail size for a 400x200 attachment.
+    We only run it on iOS, because on macOS, QuickLook always returns
+    an image of the size we ask for (400x400), padded with whitespace,
+    so the problem does not reproduce and the test doesn't work right there.
+    On iOS, the result used to be 400x400 and now is 400x200.
+    
+    I tried and failed to make a more useful test (a ref test, actually
+    testing the presentation) because it's quite hard to match the
+    native <attachment> painting.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266743 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-08  Tim Horton  <timothy_horton@apple.com>
+
+            iOS: <attachment>'s QuickLook thumbnails can appear squished
+            https://bugs.webkit.org/show_bug.cgi?id=216209
+            <rdar://problem/67817706>
+
+            Reviewed by Wenson Hsieh.
+
+            Test: fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html
+
+            * html/HTMLAttachmentElement.idl:
+            * testing/Internals.cpp:
+            (WebCore::Internals::attachmentThumbnailInfo):
+            * testing/Internals.h:
+            * testing/Internals.idl:
+            Expose the attachment thumbnail size via Internals.
+
+            * rendering/RenderThemeIOS.mm:
+            (WebCore::RenderAttachmentInfo::RenderAttachmentInfo):
+            Allow the thumbnail aspect ratio to vary, instead of assuming it is always square.
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266717. rdar://problem/68652576
 
     Comparing styles with large but identical custom property maps is slow
