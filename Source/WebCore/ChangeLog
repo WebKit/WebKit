@@ -1,3 +1,11 @@
+2020-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, update DerivedSources-output.xcfilelist after r266801
+
+        Sort the contents of the xcfilelist, and add missing entries for new wrapper objects.
+
+        * DerivedSources-output.xcfilelist:
+
 2020-09-09  Dean Jackson  <dino@apple.com>
 
         CrashTracer: com.apple.WebKit.WebContent at WebCore: WebCore::WebGLRenderingContext::getExtension
