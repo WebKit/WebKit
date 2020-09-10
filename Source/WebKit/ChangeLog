@@ -1,5 +1,35 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266613. rdar://problem/68652692
+
+    [macOS] Add client decoder entitlement
+    https://bugs.webkit.org/show_bug.cgi?id=216175
+    <rdar://problem/67532128>
+    
+    Reviewed by Brent Fulgham.
+    
+    Add client decoder entitlement in the WebContent process on macOS.
+    
+    * Scripts/process-entitlements.sh:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266613 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-04  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Add client decoder entitlement
+            https://bugs.webkit.org/show_bug.cgi?id=216175
+            <rdar://problem/67532128>
+
+            Reviewed by Brent Fulgham.
+
+            Add client decoder entitlement in the WebContent process on macOS.
+
+            * Scripts/process-entitlements.sh:
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266606. rdar://problem/68652779
 
     WebProcessProxy::checkURLReceivedFromWebProcess() does not always need to check the back/forward list
