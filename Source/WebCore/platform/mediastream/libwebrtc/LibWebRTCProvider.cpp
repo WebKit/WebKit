@@ -118,7 +118,6 @@ struct PeerConnectionFactoryAndThreads : public rtc::MessageHandler {
     std::unique_ptr<rtc::Thread> networkThread;
     std::unique_ptr<rtc::Thread> signalingThread;
     bool networkThreadWithSocketServer { false };
-    std::unique_ptr<LibWebRTCAudioModule> audioDeviceModule;
     std::unique_ptr<rtc::NetworkManager> networkManager;
     std::unique_ptr<BasicPacketSocketFactory> packetSocketFactory;
     std::unique_ptr<rtc::RTCCertificateGenerator> certificateGenerator;
@@ -187,8 +186,6 @@ static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndTh
 
     result = factoryAndThreads.signalingThread->Start();
     ASSERT(result);
-
-    factoryAndThreads.audioDeviceModule = makeUnique<LibWebRTCAudioModule>();
 }
 
 static inline PeerConnectionFactoryAndThreads& staticFactoryAndThreads()
@@ -263,14 +260,16 @@ webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
 
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
-    m_factory = createPeerConnectionFactory(factoryAndThreads.networkThread.get(), factoryAndThreads.networkThread.get(), factoryAndThreads.audioDeviceModule.get());
+    m_factory = createPeerConnectionFactory(factoryAndThreads.networkThread.get(), factoryAndThreads.networkThread.get());
 
     return m_factory;
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread, LibWebRTCAudioModule* audioModule)
+rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread)
 {
-    return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, audioModule, webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr);
+    auto audioModule = rtc::scoped_refptr<webrtc::AudioDeviceModule>(new rtc::RefCountedObject<LibWebRTCAudioModule>());
+
+    return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, WTFMove(audioModule), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr);
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFactory()
