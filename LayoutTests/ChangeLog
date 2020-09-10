@@ -1,5 +1,11 @@
 2020-09-10  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Update baseline after r266803.
+
+        * platform/gtk/fast/repaint/focus-ring-repaint-expected.txt: Updated after r266803.
+
+2020-09-10  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Update test expectations and baselines after r266812.
 
         * platform/glib/TestExpectations:
