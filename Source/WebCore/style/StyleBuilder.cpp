@@ -193,7 +193,7 @@ void Builder::applyCustomProperty(const String& name)
         if (index != SelectorChecker::MatchDefault && m_state.style().insideLink() == InsideLink::NotInside)
             continue;
 
-        Ref<CSSCustomPropertyValue> valueToApply = CSSCustomPropertyValue::create(downcast<CSSCustomPropertyValue>(*property.cssValue[index]));
+        auto valueToApply = makeRef(downcast<CSSCustomPropertyValue>(*property.cssValue[index]));
 
         if (inCycle) {
             m_state.m_appliedCustomProperties.add(name); // Make sure we do not try to apply this property again while resolving it.
@@ -230,7 +230,7 @@ void Builder::applyCustomProperty(const String& name)
         if (index != SelectorChecker::MatchDefault && m_state.style().insideLink() == InsideLink::NotInside)
             continue;
 
-        Ref<CSSCustomPropertyValue> valueToApply = CSSCustomPropertyValue::create(downcast<CSSCustomPropertyValue>(*property.cssValue[index]));
+        auto valueToApply = makeRef(downcast<CSSCustomPropertyValue>(*property.cssValue[index]));
 
         if (inCycle && WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
             // Resolve this value so that we reset its dependencies.
