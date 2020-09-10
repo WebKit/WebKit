@@ -427,11 +427,11 @@ inline size_t nextOutOfLineStorageCapacity(size_t currentCapacity)
     return currentCapacity * outOfLineGrowthFactor;
 }
 
-inline void Structure::setObjectToStringValue(JSGlobalObject* globalObject, VM& vm, JSString* value, const PropertySlot& toStringTagSymbolSlot)
+inline void Structure::cacheSpecialProperty(JSGlobalObject* globalObject, VM& vm, JSValue value, CachedSpecialPropertyKey key, const PropertySlot& slot)
 {
     if (!hasRareData())
         allocateRareData(vm);
-    rareData()->setObjectToStringValue(globalObject, vm, this, value, toStringTagSymbolSlot);
+    rareData()->cacheSpecialProperty(globalObject, vm, this, value, key, slot);
 }
 
 template<Structure::ShouldPin shouldPin, typename Func>

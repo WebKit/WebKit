@@ -529,14 +529,13 @@ public:
 
     void getPropertyNamesFromStructure(VM&, PropertyNameArray&, EnumerationMode);
 
-    JSString* objectToStringValue()
+    JSValue cachedSpecialProperty(CachedSpecialPropertyKey key)
     {
         if (!hasRareData())
-            return nullptr;
-        return rareData()->objectToStringValue();
+            return JSValue();
+        return rareData()->cachedSpecialProperty(key);
     }
-
-    void setObjectToStringValue(JSGlobalObject*, VM&, JSString* value, const PropertySlot& toStringTagSymbolSlot);
+    void cacheSpecialProperty(JSGlobalObject*, VM&, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
     const ClassInfo* classInfo() const { return m_classInfo; }
 

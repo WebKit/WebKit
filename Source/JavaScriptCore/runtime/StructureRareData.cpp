@@ -27,12 +27,12 @@
 #include "StructureRareData.h"
 
 #include "AdaptiveInferredPropertyValueWatchpointBase.h"
+#include "CachedSpecialPropertyAdaptiveStructureWatchpoint.h"
 #include "JSImmutableButterfly.h"
 #include "JSObjectInlines.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
 #include "ObjectPropertyConditionSet.h"
-#include "ObjectToStringAdaptiveStructureWatchpoint.h"
 #include "StructureChain.h"
 #include "StructureInlines.h"
 #include "StructureRareDataInlines.h"
@@ -74,7 +74,10 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_previous);
-    visitor.appendUnbarriered(thisObject->objectToStringValue());
+    if (thisObject->m_specialPropertyCache) {
+        for (unsigned index = 0; index < numberOfCachedSpecialPropertyKeys; ++index)
+            visitor.appendUnbarriered(thisObject->cachedSpecialProperty(static_cast<CachedSpecialPropertyKey>(index)));
+    }
     visitor.append(thisObject->m_cachedPropertyNameEnumerator);
     for (unsigned index = 0; index < numberOfCachedPropertyNames; ++index) {
         auto* cached = thisObject->m_cachedPropertyNames[index].unvalidatedGet();
@@ -83,12 +86,12 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     }
 }
 
-// ----------- Object.prototype.toString() helper watchpoint classes -----------
+// ----------- Cached special properties helper watchpoint classes -----------
 
-class ObjectToStringAdaptiveInferredPropertyValueWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
+class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
 public:
     typedef AdaptiveInferredPropertyValueWatchpointBase Base;
-    ObjectToStringAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
+    CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
 
 private:
     bool isValid() const final;
@@ -97,33 +100,61 @@ private:
     StructureRareData* m_structureRareData;
 };
 
-void StructureRareData::setObjectToStringValue(JSGlobalObject* globalObject, VM& vm, Structure* ownStructure, JSString* value, const PropertySlot& toStringTagSymbolSlot)
-{
-    if (canCacheObjectToStringValue())
-        return;
+SpecialPropertyCacheEntry::~SpecialPropertyCacheEntry() = default;
 
+SpecialPropertyCache& StructureRareData::ensureSpecialPropertyCacheSlow()
+{
+    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    ASSERT(!m_specialPropertyCache);
+    auto cache = makeUnique<SpecialPropertyCache>();
+    WTF::storeStoreFence(); // Expose valid struct for concurrent threads including concurrent compilers.
+    m_specialPropertyCache = WTFMove(cache);
+    return *m_specialPropertyCache.get();
+}
+
+inline void StructureRareData::giveUpOnSpecialPropertyCache(CachedSpecialPropertyKey key)
+{
+    ensureSpecialPropertyCache().m_cache[static_cast<unsigned>(key)].m_value.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
+}
+
+void StructureRareData::cacheSpecialPropertySlow(JSGlobalObject* globalObject, VM& vm, Structure* ownStructure, JSValue value, CachedSpecialPropertyKey key, const PropertySlot& slot)
+{
+    UniquedStringImpl* uid = nullptr;
+    switch (key) {
+    case CachedSpecialPropertyKey::ToStringTag:
+        uid = vm.propertyNames->toStringTagSymbol.impl();
+        break;
+    case CachedSpecialPropertyKey::ToString:
+        uid = vm.propertyNames->toString.impl();
+        break;
+    case CachedSpecialPropertyKey::ValueOf:
+        uid = vm.propertyNames->valueOf.impl();
+        break;
+    case CachedSpecialPropertyKey::ToPrimitive:
+        uid = vm.propertyNames->toPrimitiveSymbol.impl();
+        break;
+    }
     ObjectPropertyConditionSet conditionSet;
-    if (toStringTagSymbolSlot.isValue()) {
-        // We don't handle the own property case of Symbol.toStringTag because we would never know if a new
-        // object transitioning to the same structure had the same value stored in Symbol.toStringTag.
+    if (slot.isValue()) {
+        // We don't handle the own property case of special properties (toString, valueOf, @@toPrimitive, @@toStringTag) because we would never know if a new
+        // object transitioning to the same structure had the same value stored in that property.
         // Additionally, this is a super unlikely case anyway.
-        if (!toStringTagSymbolSlot.isCacheable() || toStringTagSymbolSlot.slotBase()->structure(vm) == ownStructure)
+        if (!slot.isCacheable() || slot.slotBase()->structure(vm) == ownStructure)
             return;
 
-
-        // This will not create a condition for the current structure but that is good because we know the Symbol.toStringTag
+        // This will not create a condition for the current structure but that is good because we know that property
         // is not on the ownStructure so we will transisition if one is added and this cache will no longer be used.
-        prepareChainForCaching(globalObject, ownStructure, toStringTagSymbolSlot.slotBase());
-        conditionSet = generateConditionsForPrototypePropertyHit(vm, this, globalObject, ownStructure, toStringTagSymbolSlot.slotBase(), vm.propertyNames->toStringTagSymbol.impl());
+        prepareChainForCaching(globalObject, ownStructure, slot.slotBase());
+        conditionSet = generateConditionsForPrototypePropertyHit(vm, this, globalObject, ownStructure, slot.slotBase(), uid);
         ASSERT(!conditionSet.isValid() || conditionSet.hasOneSlotBaseCondition());
-    } else if (toStringTagSymbolSlot.isUnset()) {
+    } else if (slot.isUnset()) {
         prepareChainForCaching(globalObject, ownStructure, nullptr);
-        conditionSet = generateConditionsForPropertyMiss(vm, this, globalObject, ownStructure, vm.propertyNames->toStringTagSymbol.impl());
+        conditionSet = generateConditionsForPropertyMiss(vm, this, globalObject, ownStructure, uid);
     } else
         return;
 
     if (!conditionSet.isValid()) {
-        giveUpOnObjectToStringValueCache();
+        giveUpOnSpecialPropertyCache(key);
         return;
     }
 
@@ -136,67 +167,90 @@ void StructureRareData::setObjectToStringValue(JSGlobalObject* globalObject, VM&
 
             // The equivalence condition won't be watchable if we have already seen a replacement.
             if (!equivCondition.isWatchable()) {
-                giveUpOnObjectToStringValueCache();
+                giveUpOnSpecialPropertyCache(key);
                 return;
             }
         } else if (!condition.isWatchable()) {
-            giveUpOnObjectToStringValueCache();
+            giveUpOnSpecialPropertyCache(key);
             return;
         }
     }
 
     ASSERT(conditionSet.structuresEnsureValidity());
+    auto& cache = ensureSpecialPropertyCache().m_cache[static_cast<unsigned>(key)];
     for (ObjectPropertyCondition condition : conditionSet) {
         if (condition.condition().kind() == PropertyCondition::Presence) {
-            m_objectToStringAdaptiveInferredValueWatchpoint = makeUnique<ObjectToStringAdaptiveInferredPropertyValueWatchpoint>(equivCondition, this);
-            m_objectToStringAdaptiveInferredValueWatchpoint->install(vm);
+            cache.m_equivalenceWatchpoint = makeUnique<CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint>(equivCondition, this);
+            cache.m_equivalenceWatchpoint->install(vm);
         } else
-            m_objectToStringAdaptiveWatchpointSet.add(condition, this)->install(vm);
+            cache.m_missWatchpoints.add(condition, this)->install(vm);
     }
-
-    m_objectToStringValue.set(vm, this, value);
+    cache.m_value.set(vm, this, value);
 }
 
-void StructureRareData::clearObjectToStringValue()
+void StructureRareData::clearCachedSpecialProperty(CachedSpecialPropertyKey key)
 {
-    m_objectToStringAdaptiveWatchpointSet.clear();
-    m_objectToStringAdaptiveInferredValueWatchpoint.reset();
-    if (!canCacheObjectToStringValue())
-        m_objectToStringValue.clear();
+    auto* objectToStringCache = m_specialPropertyCache.get();
+    if (!objectToStringCache)
+        return;
+    auto& cache = objectToStringCache->m_cache[static_cast<unsigned>(key)];
+    cache.m_missWatchpoints.clear();
+    cache.m_equivalenceWatchpoint.reset();
+    if (cache.m_value.get() != JSCell::seenMultipleCalleeObjects())
+        cache.m_value.clear();
 }
 
 void StructureRareData::finalizeUnconditionally(VM& vm)
 {
-    if (m_objectToStringAdaptiveInferredValueWatchpoint) {
-        if (!m_objectToStringAdaptiveInferredValueWatchpoint->key().isStillLive(vm)) {
-            clearObjectToStringValue();
-            return;
-        }
-    }
-    for (auto* watchpoint : m_objectToStringAdaptiveWatchpointSet) {
-        if (!watchpoint->key().isStillLive(vm)) {
-            clearObjectToStringValue();
-            return;
-        }
+    if (m_specialPropertyCache) {
+        auto clearCacheIfInvalidated = [&](CachedSpecialPropertyKey key) {
+            auto& cache = m_specialPropertyCache->m_cache[static_cast<unsigned>(key)];
+            if (cache.m_equivalenceWatchpoint) {
+                if (!cache.m_equivalenceWatchpoint->key().isStillLive(vm)) {
+                    clearCachedSpecialProperty(key);
+                    return;
+                }
+            }
+            for (auto* watchpoint : cache.m_missWatchpoints) {
+                if (!watchpoint->key().isStillLive(vm)) {
+                    clearCachedSpecialProperty(key);
+                    return;
+                }
+            }
+        };
+
+        for (unsigned index = 0; index < numberOfCachedSpecialPropertyKeys; ++index)
+            clearCacheIfInvalidated(static_cast<CachedSpecialPropertyKey>(index));
     }
 }
 
 // ------------- Methods for Object.prototype.toString() helper watchpoint classes --------------
 
-ObjectToStringAdaptiveInferredPropertyValueWatchpoint::ObjectToStringAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition& key, StructureRareData* structureRareData)
+CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition& key, StructureRareData* structureRareData)
     : Base(key)
     , m_structureRareData(structureRareData)
 {
 }
 
-bool ObjectToStringAdaptiveInferredPropertyValueWatchpoint::isValid() const
+bool CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::isValid() const
 {
     return m_structureRareData->isLive();
 }
 
-void ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire(VM&, const FireDetail&)
+void CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire(VM& vm, const FireDetail&)
 {
-    m_structureRareData->clearObjectToStringValue();
+    CachedSpecialPropertyKey key = CachedSpecialPropertyKey::ToStringTag;
+    if (this->key().uid() == vm.propertyNames->toStringTagSymbol.impl())
+        key = CachedSpecialPropertyKey::ToStringTag;
+    else if (this->key().uid() == vm.propertyNames->toString.impl())
+        key = CachedSpecialPropertyKey::ToString;
+    else if (this->key().uid() == vm.propertyNames->valueOf.impl())
+        key = CachedSpecialPropertyKey::ValueOf;
+    else {
+        ASSERT(this->key().uid() == vm.propertyNames->toPrimitiveSymbol.impl());
+        key = CachedSpecialPropertyKey::ToPrimitive;
+    }
+    m_structureRareData->clearCachedSpecialProperty(key);
 }
 
 } // namespace JSC
