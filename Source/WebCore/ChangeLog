@@ -1,3 +1,17 @@
+2020-09-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        Small cleanup in DateTimeFieldElements
+        https://bugs.webkit.org/show_bug.cgi?id=216339
+
+        Reviewed by Darin Adler.
+
+        Address some post-review comments after r266779.
+
+        * html/shadow/DateTimeFieldElements.h:
+
+        Removed virtual from overridden methods, reordered declarations for
+        consistency, and added final keyword to all overridden methods.
+
 2020-09-10  Enrique Ocaña González  <eocanha@igalia.com>
 
         [MSE][GStreamer] Support Google Dynamic Ad Insertion (DAI)

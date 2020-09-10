@@ -43,8 +43,8 @@ private:
     DateTimeDayFieldElement(Document&, FieldOwner&);
 
     // DateTimeFieldElement functions:
-    void setValueAsDate(const DateComponents&);
-    void populateDateTimeFieldsState(DateTimeFieldsState&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 class DateTimeHourFieldElement final : public DateTimeNumericFieldElement {
@@ -57,8 +57,8 @@ private:
     DateTimeHourFieldElement(Document&, FieldOwner&, int minimum, int maximum);
 
     // DateTimeFieldElement functions:
-    virtual void populateDateTimeFieldsState(DateTimeFieldsState&);
-    virtual void setValueAsDate(const DateComponents&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 class DateTimeMeridiemFieldElement final : public DateTimeSymbolicFieldElement {
@@ -71,8 +71,8 @@ private:
     DateTimeMeridiemFieldElement(Document&, FieldOwner&, const Vector<String>&);
 
     // DateTimeFieldElement functions:
-    void populateDateTimeFieldsState(DateTimeFieldsState&);
-    void setValueAsDate(const DateComponents&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 class DateTimeMillisecondFieldElement final : public DateTimeNumericFieldElement {
@@ -85,8 +85,8 @@ private:
     DateTimeMillisecondFieldElement(Document&, FieldOwner&);
 
     // DateTimeFieldElement functions:
-    virtual void populateDateTimeFieldsState(DateTimeFieldsState&);
-    virtual void setValueAsDate(const DateComponents&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 class DateTimeMinuteFieldElement final : public DateTimeNumericFieldElement {
@@ -99,8 +99,8 @@ private:
     DateTimeMinuteFieldElement(Document&, FieldOwner&);
 
     // DateTimeFieldElement functions:
-    virtual void populateDateTimeFieldsState(DateTimeFieldsState&);
-    virtual void setValueAsDate(const DateComponents&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 class DateTimeMonthFieldElement final : public DateTimeNumericFieldElement {
@@ -113,8 +113,8 @@ private:
     DateTimeMonthFieldElement(Document&, FieldOwner&);
 
     // DateTimeFieldElement functions:
-    void setValueAsDate(const DateComponents&);
-    void populateDateTimeFieldsState(DateTimeFieldsState&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 class DateTimeSecondFieldElement final : public DateTimeNumericFieldElement {
@@ -127,8 +127,8 @@ private:
     DateTimeSecondFieldElement(Document&, FieldOwner&);
 
     // DateTimeFieldElement functions:
-    virtual void populateDateTimeFieldsState(DateTimeFieldsState&);
-    virtual void setValueAsDate(const DateComponents&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 class DateTimeSymbolicMonthFieldElement final : public DateTimeSymbolicFieldElement {
@@ -141,8 +141,8 @@ private:
     DateTimeSymbolicMonthFieldElement(Document&, FieldOwner&, const Vector<String>&);
 
     // DateTimeFieldElement functions:
-    void setValueAsDate(const DateComponents&);
-    void populateDateTimeFieldsState(DateTimeFieldsState&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 class DateTimeYearFieldElement final : public DateTimeNumericFieldElement {
@@ -155,8 +155,8 @@ private:
     DateTimeYearFieldElement(Document&, FieldOwner&);
 
     // DateTimeFieldElement functions:
-    void setValueAsDate(const DateComponents&);
-    void populateDateTimeFieldsState(DateTimeFieldsState&);
+    void setValueAsDate(const DateComponents&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 
 } // namespace WebCore
