@@ -30,41 +30,8 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/VersionChecksAdditions.h>
 #else
-#define DYLD_IOS_VERSION_FIRST_WITH_LAZY_GESTURE_RECOGNIZER_INSTALLATION 0
-#define DYLD_IOS_VERSION_FIRST_WITH_PROCESS_SWAP_ON_CROSS_SITE_NAVIGATION 0
-#define DYLD_IOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES 0
-#define DYLD_IOS_VERSION_FIRST_THAT_DECIDES_POLICY_BEFORE_LOADING_QUICK_LOOK_PREVIEW 0
-#define DYLD_IOS_VERSION_FIRST_WITH_MODERN_COMPATIBILITY_MODE_BY_DEFAULT 0
 #define DYLD_IOS_VERSION_FIRST_WITH_IOS_APPS_ON_MACOS 0
-#define DYLD_MACOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES 0
 #endif
-
-#if PLATFORM(IOS_FAMILY)
-#ifndef DYLD_IOS_VERSION_FIRST_WITH_EXCEPTIONS_FOR_RELATED_WEBVIEWS_USING_DIFFERENT_DATA_STORES
-#define DYLD_IOS_VERSION_FIRST_WITH_EXCEPTIONS_FOR_RELATED_WEBVIEWS_USING_DIFFERENT_DATA_STORES 0
-#endif
-
-#ifndef DYLD_IOS_VERSION_FIRST_WITH_DEVICE_ORIENTATION_AND_MOTION_PERMISSION_API
-#define DYLD_IOS_VERSION_FIRST_WITH_DEVICE_ORIENTATION_AND_MOTION_PERMISSION_API 0
-#endif
-
-#ifndef DYLD_IOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT
-#define DYLD_IOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT 0
-#endif
-
-#endif // PLATFORM(IOS_FAMILY)
-
-#if PLATFORM(MAC)
-#ifndef DYLD_MACOS_VERSION_FIRST_WITH_EXCEPTIONS_FOR_RELATED_WEBVIEWS_USING_DIFFERENT_DATA_STORES
-#define DYLD_MACOS_VERSION_FIRST_WITH_EXCEPTIONS_FOR_RELATED_WEBVIEWS_USING_DIFFERENT_DATA_STORES 0
-#endif
-
-#ifndef DYLD_MACOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT
-#define DYLD_MACOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT 0
-#endif
-
-#endif // PLATFORM(MAC)
-
 
 namespace WebKit {
 
@@ -80,19 +47,19 @@ enum class SDKVersion : uint32_t {
     FirstWhereUIScrollViewDoesNotApplyKeyboardInsetsUnconditionally = DYLD_IOS_VERSION_12_0,
     FirstWithMainThreadReleaseAssertionInWebPageProxy = DYLD_IOS_VERSION_12_0,
     FirstWithoutUnconditionalUniversalSandboxExtension = DYLD_IOS_VERSION_13_0,
-    FirstWithLazyGestureRecognizerInstallation = DYLD_IOS_VERSION_FIRST_WITH_LAZY_GESTURE_RECOGNIZER_INSTALLATION,
-    FirstWithProcessSwapOnCrossSiteNavigation = DYLD_IOS_VERSION_FIRST_WITH_PROCESS_SWAP_ON_CROSS_SITE_NAVIGATION,
-    FirstWithSnapshotAfterScreenUpdates = DYLD_IOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES,
-    FirstWithDeviceOrientationAndMotionPermissionAPI = DYLD_IOS_VERSION_FIRST_WITH_DEVICE_ORIENTATION_AND_MOTION_PERMISSION_API,
-    FirstThatDecidesPolicyBeforeLoadingQuickLookPreview = DYLD_IOS_VERSION_FIRST_THAT_DECIDES_POLICY_BEFORE_LOADING_QUICK_LOOK_PREVIEW,
-    FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores = DYLD_IOS_VERSION_FIRST_WITH_EXCEPTIONS_FOR_RELATED_WEBVIEWS_USING_DIFFERENT_DATA_STORES,
-    FirstWithModernCompabilityModeByDefault = DYLD_IOS_VERSION_FIRST_WITH_MODERN_COMPATIBILITY_MODE_BY_DEFAULT,
+    FirstWithLazyGestureRecognizerInstallation = DYLD_IOS_VERSION_12_2,
+    FirstWithProcessSwapOnCrossSiteNavigation = DYLD_IOS_VERSION_12_2,
+    FirstWithSnapshotAfterScreenUpdates = DYLD_IOS_VERSION_13_0,
+    FirstWithDeviceOrientationAndMotionPermissionAPI = DYLD_IOS_VERSION_13_0,
+    FirstThatDecidesPolicyBeforeLoadingQuickLookPreview = DYLD_IOS_VERSION_13_0,
+    FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores = DYLD_IOS_VERSION_13_0,
+    FirstWithModernCompabilityModeByDefault = DYLD_IOS_VERSION_13_0,
     FirstThatHasUIContextMenuInteraction = DYLD_IOS_VERSION_13_0,
     FirstWhereWKContentViewDoesNotOverrideKeyCommands = DYLD_IOS_VERSION_13_0,
     FirstThatSupportsOverflowHiddenOnMainFrame = DYLD_IOS_VERSION_13_0,
     FirstWhereSiteSpecificQuirksAreEnabledByDefault = DYLD_IOS_VERSION_13_2,
     FirstThatRestrictsBaseURLSchemes = DYLD_IOS_VERSION_13_4,
-    FirstWithSessionCleanupByDefault = DYLD_IOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT,
+    FirstWithSessionCleanupByDefault = DYLD_IOS_VERSION_14_0,
     FirstThatSendsNativeMouseEvents = DYLD_IOS_VERSION_13_4,
     FirstWithInitializeWebKit2MainThreadAssertion = DYLD_IOS_VERSION_14_0,
     FirstWithWKWebsiteDataStoreInitReturningNil = DYLD_IOS_VERSION_14_0,
@@ -104,11 +71,11 @@ enum class SDKVersion : uint32_t {
     FirstWithExpiredOnlyReloadBehavior = DYLD_MACOSX_VERSION_10_13,
     FirstWithMainThreadReleaseAssertionInWebPageProxy = DYLD_MACOSX_VERSION_10_14,
     FirstWithoutUnconditionalUniversalSandboxExtension = DYLD_MACOSX_VERSION_10_15,
-    FirstWithSnapshotAfterScreenUpdates = DYLD_MACOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES,
-    FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores = DYLD_MACOS_VERSION_FIRST_WITH_EXCEPTIONS_FOR_RELATED_WEBVIEWS_USING_DIFFERENT_DATA_STORES,
+    FirstWithSnapshotAfterScreenUpdates = DYLD_MACOSX_VERSION_10_15,
+    FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores = DYLD_MACOSX_VERSION_10_15,
     FirstWhereSiteSpecificQuirksAreEnabledByDefault = DYLD_MACOSX_VERSION_10_15_1,
     FirstThatRestrictsBaseURLSchemes = DYLD_MACOSX_VERSION_10_15_4,
-    FirstWithSessionCleanupByDefault = DYLD_MACOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT,
+    FirstWithSessionCleanupByDefault = DYLD_MACOSX_VERSION_10_16,
     FirstWithInitializeWebKit2MainThreadAssertion = DYLD_MACOSX_VERSION_10_16,
     FirstWithWKWebsiteDataStoreInitReturningNil = DYLD_MACOSX_VERSION_10_16,
 #endif
