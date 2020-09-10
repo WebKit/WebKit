@@ -183,11 +183,12 @@ public:
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
 
+    void deduplicateInheritedCustomProperties(const RenderStyle&);
     const CustomPropertyValueMap& inheritedCustomProperties() const { return m_rareInheritedData->customProperties->values; }
     const CustomPropertyValueMap& nonInheritedCustomProperties() const { return m_rareNonInheritedData->customProperties->values; }
     const CSSCustomPropertyValue* getCustomProperty(const AtomString&) const;
-    void setInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
-    void setNonInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&& value) { return m_rareNonInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value)); }
+    void setInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
+    void setNonInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
 
     void setHasViewportUnits(bool v = true) { m_nonInheritedFlags.hasViewportUnits = v; }
     bool hasViewportUnits() const { return m_nonInheritedFlags.hasViewportUnits; }
