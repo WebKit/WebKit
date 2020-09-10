@@ -1004,6 +1004,19 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static insertAttachmentForFilePath(path, contentType)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.insertAttachmentForFilePath('${path}', '${contentType}', function() {
+                    uiController.uiScriptComplete();
+                });`, resolve);
+        });
+    }
+
     static setMinimumEffectiveWidth(effectiveWidth)
     {
         if (!this.isWebKit2())

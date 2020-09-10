@@ -32,6 +32,7 @@
 #import "TestRunnerWKWebView.h"
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JavaScriptCore.h>
+#import <WebKit/WKURLCF.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
@@ -206,6 +207,21 @@ void UIScriptControllerCocoa::setContinuousSpellCheckingEnabled(bool enabled)
 void UIScriptControllerCocoa::paste()
 {
     [webView() paste:nil];
+}
+
+void UIScriptControllerCocoa::insertAttachmentForFilePath(JSStringRef filePath, JSStringRef contentType, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    RetainPtr<CFURLRef> testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, TestController::singleton().currentTestURL()));
+    RetainPtr<NSURL> attachmentURL = [NSURL fileURLWithPath:toWTFString(toWK(filePath)) relativeToURL:(__bridge NSURL *)testURL.get()];
+
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:attachmentURL.get() options:0 error:nil]);
+    [webView() _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:toWTFString(toWK(contentType)) completion:^(BOOL success) {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
 }
 
 } // namespace WTR

@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<html>
+<body contenteditable>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+async function runTest() {
+    await UIHelper.activateAt(10, 10);
+    await UIHelper.insertAttachmentForFilePath("resources/400x200-circle.png", "image/png");
+
+    function attachmentThumbnailInfo() {
+        return window.internals.attachmentThumbnailInfo(document.getElementsByTagName("attachment")[0]);
+    }
+
+    try {
+        attachmentThumbnailInfo();
+    } catch (e) {
+        if (e.name == "InvalidAccessError")
+            document.body.innerText = `Attachment thumbnails not supported.`;
+        else
+            document.body.innerText = e.name;
+    }
+
+    shouldBecomeDifferent('attachmentThumbnailInfo().width', '0', function () {
+        let info = attachmentThumbnailInfo();
+        document.body.innerText = `Attachment Thumbnail: ${info.width}x${info.height}`;
+        testRunner.notifyDone();
+    });
+}
+
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+addEventListener("load", runTest);
+</script>
+</body>
+</html>

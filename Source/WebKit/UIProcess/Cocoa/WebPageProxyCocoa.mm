@@ -43,6 +43,7 @@
 #import "WebsiteDataStore.h"
 #import "WKErrorInternal.h"
 #import <WebCore/DragItem.h>
+#import <WebCore/GeometryUtilities.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
@@ -435,10 +436,14 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
 
-static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::IntSize& size)
+static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::IntSize& fittingSize)
 {
+    FloatSize originalThumbnailSize([image size]);
+    auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
+    resultRect.setLocation({ });
+
     WebKit::ShareableBitmap::Configuration bitmapConfiguration;
-    auto bitmap = WebKit::ShareableBitmap::createShareable(size, bitmapConfiguration);
+    auto bitmap = WebKit::ShareableBitmap::createShareable(resultRect.size(), bitmapConfiguration);
     if (!bitmap)
         return nullptr;
 
@@ -448,9 +453,9 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
 
     LocalCurrentGraphicsContext savedContext(*graphicsContext);
 #if PLATFORM(IOS_FAMILY)
-    [image drawInRect:CGRectMake(0, 0, bitmap->size().width(), bitmap->size().height())];
+    [image drawInRect:resultRect];
 #elif USE(APPKIT)
-    [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
+    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
 #endif
 
     return bitmap;
