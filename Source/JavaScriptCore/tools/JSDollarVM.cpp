@@ -3135,6 +3135,19 @@ static EncodedJSValue JSC_HOST_CALL functionUseJIT(JSGlobalObject*, CallFrame*)
     return JSValue::encode(jsBoolean(Options::useJIT()));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionToUncacheableDictionary(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* object = jsDynamicCast<JSObject*>(vm, callFrame->argument(0));
+    if (!object)
+        return throwVMTypeError(globalObject, scope, "Expected first argument to be an object"_s);
+    object->convertToUncacheableDictionary(vm);
+    return JSValue::encode(object);
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -3279,6 +3292,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "isMemoryLimited", functionIsMemoryLimited, 0);
     addFunction(vm, "useJIT", functionUseJIT, 0);
+
+    addFunction(vm, "toUncacheableDictionary", functionToUncacheableDictionary, 1);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

@@ -851,6 +851,7 @@ public:
     void setStructure(VM&, Structure*);
 
     JS_EXPORT_PRIVATE void convertToDictionary(VM&);
+    JS_EXPORT_PRIVATE void convertToUncacheableDictionary(VM&);
 
     void flattenDictionaryObject(VM& vm)
     {
