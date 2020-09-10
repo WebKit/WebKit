@@ -77,6 +77,10 @@ public:
     bool callTracingActive() const { return m_callTracingActive; }
     void setCallTracingActive(bool callTracingActive) { m_callTracingActive = callTracingActive; }
 
+    virtual bool compositingResultsNeedUpdating() const { return false; }
+    virtual bool needsPreparationForDisplay() const { return false; }
+    virtual void prepareForDisplay() { }
+
 protected:
     explicit CanvasRenderingContext(CanvasBase&);
     bool wouldTaintOrigin(const CanvasPattern*);

@@ -1,0 +1,39 @@
+<style>
+canvas {
+    width: 10px;
+    height: 10px;
+}
+</style>
+<script>
+function runTest() {
+    // Step 1. Grab the WebGL canvas and render a solid color.
+
+    const canvas = document.querySelector("canvas");
+    canvas.width = 10;
+    canvas.height = 10;
+
+    const gl = canvas.getContext("webgl");
+
+    // Clear to green
+
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    // Step 2. Remove the canvas from its parent.
+
+    canvas.parentNode.removeChild(canvas);
+
+    // Step 3. Insert the canvas into a new parent.
+
+    document.getElementById("container2").appendChild(canvas);
+
+    // End result should be a green canvas.
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+<div id="container1">
+<canvas></canvas>
+</div>
+<div id="container2">
+</div>
