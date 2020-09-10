@@ -136,13 +136,13 @@ void CanvasBase::removeObserver(CanvasObserver& observer)
 
 void CanvasBase::notifyObserversCanvasChanged(const FloatRect& rect)
 {
-    for (auto& observer : copyToVector(m_observers))
+    for (auto& observer : m_observers)
         observer->canvasChanged(*this, rect);
 }
 
 void CanvasBase::notifyObserversCanvasResized()
 {
-    for (auto& observer : copyToVector(m_observers))
+    for (auto& observer : m_observers)
         observer->canvasResized(*this);
 }
 
