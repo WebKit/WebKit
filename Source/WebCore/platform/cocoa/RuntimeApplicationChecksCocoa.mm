@@ -404,6 +404,24 @@ bool IOSApplication::isDoubleDown()
     return isDoubleDown;
 }
 
+bool IOSApplication::isFIFACompanion()
+{
+    static bool isFIFACompanion = applicationBundleIsEqualTo("com.ea.ios.fifaultimate"_s);
+    return isFIFACompanion;
+}
+
+bool IOSApplication::isNoggin()
+{
+    static bool isNoggin = applicationBundleIsEqualTo("com.mtvn.noggin"_s);
+    return isNoggin;
+}
+
+bool IOSApplication::isOKCupid()
+{
+    static bool isOKCupid = applicationBundleIsEqualTo("com.okcupid.app"_s);
+    return isOKCupid;
+}
+
 #endif
 
 } // namespace WebCore
