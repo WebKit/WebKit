@@ -1,5 +1,50 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266336. rdar://problem/68652585
+
+    REGRESSION (r266262): Scroll latching fails when scrolling into a preventDefault() region
+    https://bugs.webkit.org/show_bug.cgi?id=215988
+    <rdar://problem/68034716>
+    
+    Reviewed by Tim Horton.
+    Source/WebCore:
+    
+    In r266262 ScrollingTreeLatchingController started to consult the "last handled wheel event"
+    time when deciding whether to use the latched node, but we didn't update this timestamp when
+    handling an event on the latched node, on the scrolling thread. So fix that.
+    
+    Test: fast/scrolling/latching/latched-scroll-into-nonfast-region.html
+    
+    * page/scrolling/ScrollingTree.cpp:
+    (WebCore::ScrollingTree::handleWheelEvent):
+    
+    LayoutTests:
+    
+    * fast/scrolling/latching/latched-scroll-into-nonfast-region-expected.txt: Added.
+    * fast/scrolling/latching/latched-scroll-into-nonfast-region.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266336 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-30  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r266262): Scroll latching fails when scrolling into a preventDefault() region
+            https://bugs.webkit.org/show_bug.cgi?id=215988
+            <rdar://problem/68034716>
+
+            Reviewed by Tim Horton.
+
+            In r266262 ScrollingTreeLatchingController started to consult the "last handled wheel event"
+            time when deciding whether to use the latched node, but we didn't update this timestamp when
+            handling an event on the latched node, on the scrolling thread. So fix that.
+
+            Test: fast/scrolling/latching/latched-scroll-into-nonfast-region.html
+
+            * page/scrolling/ScrollingTree.cpp:
+            (WebCore::ScrollingTree::handleWheelEvent):
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266329. rdar://problem/68652477
 
     [Cocoa] MediaSample JSON strings are created for logging to disabled channels

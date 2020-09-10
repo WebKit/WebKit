@@ -1,0 +1,11 @@
+Tests that a scroll that should latched to the main frame doens't get interrupted by the non-fast region
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Scrolling the main frame with latching
+PASS wheelEventHandlerCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

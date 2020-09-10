@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        height: 3000px;
+    }
+    #wheel-handler-region {
+        width: 300px;
+        height: 1500px;
+        background-image: repeating-linear-gradient(white, silver 200px);
+        margin-top: 200px;
+    }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    let wheelEventHandlerCount = 0;
+    async function scrollTest()
+    {
+        let slowRegion = document.getElementById('wheel-handler-region')
+        slowRegion.addEventListener('wheel', (event) => {
+            ++wheelEventHandlerCount;
+            event.preventDefault();
+        });
+        
+        debug('Scrolling the main frame with latching');
+        eventSender.mouseMoveTo(100, 10); // Above the slow region.
+        eventSender.monitorWheelEvents();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+        // 100ms has to elapse between the start of the gesture and some momentum event to trigger the bug.
+        await UIHelper.delayFor(25);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
+        await UIHelper.delayFor(25);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        await UIHelper.delayFor(25);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
+        await UIHelper.delayFor(25);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+        await UIHelper.delayFor(25);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+        await UIHelper.delayFor(25);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        await UIHelper.waitForScrollCompletion();
+        
+        shouldBe('wheelEventHandlerCount', '0');
+
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        description("Tests that a scroll that should latched to the main frame doens't get interrupted by the non-fast region");
+        setTimeout(scrollTest, 0);
+    }, false);
+</script>
+</head>
+<body>
+    <div id="wheel-handler-region"></div>
+    <div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
