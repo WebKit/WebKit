@@ -72,7 +72,6 @@ class DynamicsCompressorNode;
 class GainNode;
 class HTMLMediaElement;
 class IIRFilterNode;
-class MainThreadGenericEventQueue;
 class MediaElementAudioSourceNode;
 class MediaStream;
 class MediaStreamAudioDestinationNode;
@@ -432,7 +431,6 @@ private:
     Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
-    UniqueRef<MainThreadGenericEventQueue> m_eventQueue;
 
     RefPtr<AudioBuffer> m_renderTarget;
     RefPtr<AudioDestinationNode> m_destinationNode;

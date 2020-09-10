@@ -1,3 +1,19 @@
+2020-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Port BaseAudioContext to the HTML event loop
+        https://bugs.webkit.org/show_bug.cgi?id=216331
+
+        Reviewed by Sam Weinig.
+
+        As per specification, we schedule a task to dispatch the statechange event after resolving
+        the promise (e.g. the resume promise). In some cases, this test moves from one subtest to
+        another after the promise gets resolved. When the promise gets resolved, there is still
+        a pending statechange event that has not been fired yet. Because the next subtest may rely
+        on a statechange event, I delayed the next subtest using a 0-timer to make sure any pending
+        statechange event has been fired before we move on to the next subtest.
+
+        * webaudio/audiocontext-state-interrupted.html:
+
 2020-09-10  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r260360): Ionic modal dialog doesn't animate correctly when dragged and released

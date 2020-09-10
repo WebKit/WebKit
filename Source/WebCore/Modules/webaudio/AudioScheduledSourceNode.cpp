@@ -200,7 +200,7 @@ void AudioScheduledSourceNode::finish()
     m_playbackState = FINISHED_STATE;
     context().decrementActiveSourceCount();
 
-    context().postTask([this, protectedThis = makeRef(*this)] {
+    callOnMainThread([this, protectedThis = makeRef(*this)] {
         auto release = makeScopeExit([&] () {
             AudioContext::AutoLocker locker(context());
             m_pendingActivity = nullptr;

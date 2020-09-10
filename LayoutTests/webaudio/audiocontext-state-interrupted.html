@@ -64,12 +64,14 @@ function firstResumeSucceeded() {
     testPassed('context.resume() promise resolved');
     shouldBe('context.state', '"running"');
 
-    debug('');
-    debug('Test 2: resume() while interrupted will cause interruption to end.')
+    setTimeout(function() {
+        debug('');
+        debug('Test 2: resume() while interrupted will cause interruption to end.')
 
-    context.onstatechange = secondInterruptionStarted;
-    if (window.internals)
-        evalAndLog('internals.beginMediaSessionInterruption("System")');
+        context.onstatechange = secondInterruptionStarted;
+        if (window.internals)
+            evalAndLog('internals.beginMediaSessionInterruption("System")');
+    }, 0);
 }
 
 function secondInterruptionStarted(e) {
@@ -88,12 +90,14 @@ function secondResumeSucceeded() {
     testPassed('context.resume() promise resolved');
     shouldBe('context.state', '"running"');
 
-    debug('');
-    debug('Test 3: running AudioContexts will not resume after an interruption ends.')
+    setTimeout(function() {
+        debug('');
+        debug('Test 3: running AudioContexts will not resume after an interruption ends.')
 
-    context.onstatechange = thirdInterruptionStarted;
-    if (window.internals)
-        evalAndLog('internals.beginMediaSessionInterruption("System")');
+        context.onstatechange = thirdInterruptionStarted;
+        if (window.internals)
+            evalAndLog('internals.beginMediaSessionInterruption("System")');
+    }, 0);
 }
 
 function thirdInterruptionStarted() {

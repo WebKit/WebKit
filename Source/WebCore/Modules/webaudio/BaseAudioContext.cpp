@@ -57,7 +57,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "GainNode.h"
-#include "GenericEventQueue.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
 #include "IIRFilterNode.h"
@@ -126,7 +125,6 @@ BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
-    , m_eventQueue(MainThreadGenericEventQueue::create(*this))
 {
     // According to spec AudioContext must die only after page navigate.
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
@@ -152,7 +150,6 @@ BaseAudioContext::BaseAudioContext(Document& document, AudioBuffer* renderTarget
 #endif
     , m_isOfflineContext(true)
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
-    , m_eventQueue(MainThreadGenericEventQueue::create(*this))
     , m_renderTarget(renderTarget)
 {
     constructCommon();
@@ -302,7 +299,8 @@ void BaseAudioContext::setState(State state)
         return;
 
     m_state = state;
-    m_eventQueue->enqueueEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+
+    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
     size_t stateIndex = static_cast<size_t>(state);
     if (stateIndex >= m_stateReactions.size())
@@ -1148,7 +1146,7 @@ void BaseAudioContext::finishedRendering(bool didRendering)
         return;
 
     clearPendingActivityIfExitEarly.release();
-    m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(*renderedBuffer));
+    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, OfflineAudioCompletionEvent::create(*renderedBuffer));
 
     finishedRenderingScope.release();
     didFinishOfflineRendering(renderedBuffer.releaseNonNull());
@@ -1275,10 +1273,11 @@ void BaseAudioContext::mayResumePlayback(bool shouldResume)
 
 void BaseAudioContext::postTask(WTF::Function<void()>&& task)
 {
+    ASSERT(isMainThread());
     if (m_isStopScheduled)
         return;
 
-    m_scriptExecutionContext->postTask(WTFMove(task));
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, WTFMove(task));
 }
 
 const SecurityOrigin* BaseAudioContext::origin() const
