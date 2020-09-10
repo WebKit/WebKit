@@ -1,5 +1,53 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266407. rdar://problem/68652645
+
+    Some apps linked beyond iOS 13.4 don't respect mouse events, only touch events
+    https://bugs.webkit.org/show_bug.cgi?id=216021
+    <rdar://problem/64830335>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    * platform/RuntimeApplicationChecks.h:
+    * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+    (WebCore::IOSApplication::isFIFACompanion):
+    (WebCore::IOSApplication::isNoggin):
+    (WebCore::IOSApplication::isOKCupid):
+    Add some more bundle checks.
+    
+    Source/WebKit:
+    
+    * UIProcess/Cocoa/VersionChecks.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (applicationIsKnownToIgnoreMouseEvents):
+    (-[WKContentView shouldUseMouseGestureRecognizer]):
+    Remove Feedly from the list, they are no longer affected.
+    Add a once-per-app-launch error-level log message to warn developers
+    of the impending behavior change.
+    Add three new apps with a later linked-on target.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266407 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-01  Tim Horton  <timothy_horton@apple.com>
+
+            Some apps linked beyond iOS 13.4 don't respect mouse events, only touch events
+            https://bugs.webkit.org/show_bug.cgi?id=216021
+            <rdar://problem/64830335>
+
+            Reviewed by Wenson Hsieh.
+
+            * platform/RuntimeApplicationChecks.h:
+            * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+            (WebCore::IOSApplication::isFIFACompanion):
+            (WebCore::IOSApplication::isNoggin):
+            (WebCore::IOSApplication::isOKCupid):
+            Add some more bundle checks.
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266405. rdar://problem/68652679
 
     Crashtracer in SubresourceLoader::didCancel.
