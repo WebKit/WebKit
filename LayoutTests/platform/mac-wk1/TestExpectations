@@ -538,8 +538,6 @@ webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/xhr/event-readysta
 
 webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
-webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Pass Crash ]
-
 # rdar://problem/27723718
 imported/blink/compositing/child-transform-with-anchor-point.html [ ImageOnlyFailure ]
 

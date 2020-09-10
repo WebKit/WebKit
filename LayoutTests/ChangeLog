@@ -1,3 +1,15 @@
+2020-09-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        ASSERTION FAILED: m_finishedNodes.isEmpty() in AudioContext destructor
+        https://bugs.webkit.org/show_bug.cgi?id=105870
+
+        Unreviewed test gardening.
+
+        Remove test expectations for other tests that were hitting this crash.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-09-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] REGRESSION (Big Sur): A GIF image with a finite loopCount loops an extra cycle
