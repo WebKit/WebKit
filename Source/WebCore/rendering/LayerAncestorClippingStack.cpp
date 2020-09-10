@@ -163,6 +163,17 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
     return stackChanged;
 }
 
+Vector<CompositedClipData> LayerAncestorClippingStack::compositedClipData() const
+{
+    Vector<CompositedClipData> clipData;
+    clipData.reserveInitialCapacity(m_stack.size());
+
+    for (const auto& entry : m_stack)
+        clipData.uncheckedAppend(entry.clipData);
+
+    return clipData;
+}
+
 static TextStream& operator<<(TextStream& ts, const LayerAncestorClippingStack::ClippingStackEntry& entry)
 {
     ts.dumpProperty("layer", entry.clipData.clippingLayer.get());

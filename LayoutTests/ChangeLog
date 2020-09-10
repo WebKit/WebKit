@@ -1,3 +1,41 @@
+2020-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Async overflow scroll): Truncated scrollbars in facebook chat
+        https://bugs.webkit.org/show_bug.cgi?id=216294
+        <rdar://problem/61918702>
+
+        Reviewed by Antti Koivisto.
+
+        Some new tests, and new baselines for tests that have different layer trees now.
+
+        * compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt:
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt:
+        * compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt:
+        * compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-dynamic-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-dynamic.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-inside-hidden-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-inside-hidden.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-nested-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-nested.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/transform-change-scrollbar-position-expected.txt: Added.
+        * compositing/scrolling/async-overflow-scrolling/transform-change-scrollbar-position.html: Added.
+        * compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt:
+        * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+
 2020-09-10  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update baseline after r266803.
