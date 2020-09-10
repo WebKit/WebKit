@@ -1,3 +1,26 @@
+2020-09-10  Darin Adler  <darin@apple.com>
+
+        webkit-test-runner: Add support for the reftest-wait class name
+        https://bugs.webkit.org/show_bug.cgi?id=186045
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: Expect a pass on the test that directly tests this feature.
+        There are multiple other tests that should now be passing. We should find them
+        by searching for the string "reftest-wait" and updating TestExpectations after
+        verifying that they are indeed passing. This is easier to do after we have some
+        history of results on all platforms of which ones pass after this change.
+        Expect failure on the video-poster-shown-preload-auto.html, which requires Ogg
+        Vorbis video; the pass before was a false negative because the video never
+        loaded, which turns into a timeout now that we support reftest-wait.
+
+        * mathml/presentation/attributes-accent-accentunder-dynamic-expected.html:
+        * mathml/presentation/mathvariant-dynamic-expected.html:
+        * mathml/presentation/mpadded-dynamic-expected.html:
+        * mathml/presentation/mpadded-style-change-expected.html:
+        Remove incorrect use of "reftest-wait". These files had the attribute set on
+        the <html> element, and no code to ever remove it.
+
 2020-09-09  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: InvalidCharacterError: The string contains invalid characters.

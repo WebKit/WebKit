@@ -1954,6 +1954,23 @@ String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef)
 }
 #endif
 
+static bool hasRefTestWaitAttribute(InjectedBundlePage& page)
+{
+    auto frame = WKBundlePageGetMainFrame(page.page());
+    return frame && hasRefTestWaitAttribute(WKBundleFrameGetJavaScriptContext(frame));
+}
+
+static void dumpAfterWaitAttributeIsRemoved(void* = nullptr)
+{
+    auto page = InjectedBundle::singleton().page();
+    if (!page)
+        return;
+    if (hasRefTestWaitAttribute(*page))
+        WKBundlePageCallAfterTasksAndTimers(page->page(), dumpAfterWaitAttributeIsRemoved, nullptr);
+    else
+        page->dump();
+}
+
 void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
 {
     auto& injectedBundle = InjectedBundle::singleton();
@@ -1970,10 +1987,12 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
         return;
     }
 
-    if (injectedBundle.pageCount())
-        injectedBundle.page()->dump();
-    else
+    if (!injectedBundle.pageCount()) {
         injectedBundle.done();
+        return;
+    }
+
+    dumpAfterWaitAttributeIsRemoved();
 }
 
 } // namespace WTR

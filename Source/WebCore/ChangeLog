@@ -1,3 +1,17 @@
+2020-09-10  Darin Adler  <darin@apple.com>
+
+        webkit-test-runner: Add support for the reftest-wait class name
+        https://bugs.webkit.org/show_bug.cgi?id=186045
+
+        Reviewed by Antti Koivisto.
+
+        * html/LazyLoadImageObserver.cpp:
+        (WebCore::LazyLoadImageObserver::unobserve): Removed an incorrect assertion that was firing
+        when running regression tests. The code this calls correctly handles the case this was
+        asserting about and from examining the ImageLoader call that invokes this it's clear that
+        the invariant is not guaranteed by that code. The assertion can be re-added if needed later
+        after fixing how ImageLoader calls this function.
+
 2020-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, update DerivedSources-output.xcfilelist after r266801

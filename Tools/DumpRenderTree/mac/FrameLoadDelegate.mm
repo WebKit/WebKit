@@ -6,13 +6,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -33,6 +33,7 @@
 #import "AccessibilityController.h"
 #import "EventSendingController.h"
 #import "GCController.h"
+#import "JSWrapper.h"
 #import "NavigationController.h"
 #import "ObjCController.h"
 #import "ObjCPlugin.h"
@@ -135,6 +136,18 @@ IGNORE_WARNINGS_END
     [super dealloc];
 }
 
+- (void)dumpAfterWaitAttributeIsRemoved:(id)dummy
+{
+#if PLATFORM(IOS_FAMILY)
+    WebThreadLock();
+#endif
+
+    if (WTR::hasRefTestWaitAttribute(mainFrame.globalContext))
+        [self performSelector:@selector(dumpAfterWaitAttributeIsRemoved:) withObject:nil afterDelay:0];
+    else
+        dump();
+}
+
 // Exec messages in the work queue until they're all done, or one of them starts a new load
 - (void)processWork:(id)dummy
 {
@@ -148,7 +161,7 @@ IGNORE_WARNINGS_END
 
     // if we finish all the commands, we're ready to dump state
     if (DRT::WorkQueue::singleton().processWork() && !gTestRunner->waitToDump())
-        dump();
+        [self dumpAfterWaitAttributeIsRemoved:nil];
 }
 
 - (void)resetToConsistentState
@@ -166,7 +179,7 @@ IGNORE_WARNINGS_END
             if (workQueue.count())
                 [self performSelector:@selector(processWork:) withObject:nil afterDelay:0];
             else
-                dump();
+                [self dumpAfterWaitAttributeIsRemoved:nil];
         }
     }
 }
@@ -273,7 +286,7 @@ IGNORE_WARNINGS_END
     ASSERT(![frame provisionalDataSource]);
     ASSERT([frame dataSource]);
     
-    [self webView:sender locationChangeDone:error forDataSource:[frame dataSource]];    
+    [self webView:sender locationChangeDone:error forDataSource:[frame dataSource]];
 }
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")

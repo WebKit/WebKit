@@ -1,3 +1,43 @@
+2020-09-10  Darin Adler  <darin@apple.com>
+
+        webkit-test-runner: Add support for the reftest-wait class name
+        https://bugs.webkit.org/show_bug.cgi?id=186045
+
+        Reviewed by Antti Koivisto.
+
+        Rather than implement this in a JavaScript test running, built this
+        support into the two test runner tools.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate dumpAfterWaitAttributeIsRemoved:]): Added. Use to keep
+        polling until the reftest-wait attribute is gone.
+        (-[FrameLoadDelegate processWork:]): Call dumpAfterWaitAttributeIsRemoved
+        instead of calling dump directly.
+        (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]): Ditto.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (dumpAfterWaitAttributeIsRemoved): Added. Use to keep polling until the
+        reftest-wait attribute is gone.
+        (FrameLoadDelegate::processWork): Call dumpAfterWaitAttributeIsRemoved
+        intead of calling dump directly.
+        (FrameLoadDelegate::locationChangeDone): Ditto.
+
+        * TestRunnerShared/Bindings/JSWrappable.h: Added helper functions for
+        dealing with JavaScript strings, values, properties, and function calls.
+        Also added a hasRefTestWaitAttribute function. All of these could probably
+        find a better home, but for now it was nice to not have to add a new source file.
+
+        * TestRunnerShared/Bindings/JSWrapper.h:
+        (WTR::setProperty): Use the new createJSString. A lot of other TestRunner code
+        could be tightened up by using these functions, but didn't do that for now.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::hasRefTestWaitAttribute): Added. Calls the other overload of this.
+        (WTR::dumpAfterWaitAttributeIsRemoved): Added. Use to keep polling until
+        the reftest-wait attribute is gone.
+        (WTR::InjectedBundlePage::frameDidChangeLocation): Call
+        dumpAfterWaitAttributeIsRemoved instead of done.
+
 2020-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify OptionSet::set

@@ -2,4 +2,4 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (90,90) size 120x120
-    RenderSVGPath {path} at (90,90) size 120x120 [stroke={[type=SOLID] [color=#0000FF] [stroke width=20.00] [dash array={25.00}] [path length=800.00]}] [data="M 100 100 L 200 100 L 200 200 L 100 200 Z"]
+    RenderSVGPath {path} at (90,90) size 120x120 [stroke={[type=SOLID] [color=#0000FF] [stroke width=20.00] [dash array={25.00}] [path length=200.00]}] [data="M 100 100 L 200 100 L 200 200 L 100 200 Z"]

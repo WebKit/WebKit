@@ -35,6 +35,7 @@
 #include "DumpRenderTree.h"
 #include "EventSender.h"
 #include "GCController.h"
+#include "JSWrapper.h"
 #include "TestRunner.h"
 #include "TextInputController.h"
 #include "WebCoreTestSupport.h"
@@ -187,6 +188,21 @@ HRESULT FrameLoadDelegate::didChangeIcons(_In_opt_ IWebView*, _In_opt_ IWebFrame
     return S_OK;
 }
 
+static void CALLBACK dumpAfterWaitAttributeIsRemoved(HWND = nullptr, UINT = 0, UINT_PTR = 0, DWORD = 0)
+{
+    static UINT_PTR timerID;
+    if (frame && WTR::hasRefTestWaitAttribute(frame->globalContext())) {
+        if (!timerID)
+            timerID = ::SetTimer(nullptr, 0, 0, dumpAfterWaitAttributeIsRemoved);
+    } else {
+        if (timerID) {
+            ::KillTimer(nullptr, timerID);
+            timerID = 0;
+        }
+        dump();
+    }
+}
+
 void FrameLoadDelegate::processWork()
 {
     // if another load started, then wait for it to complete.
@@ -195,7 +211,7 @@ void FrameLoadDelegate::processWork()
 
     // if we finish all the commands, we're ready to dump state
     if (DRT::WorkQueue::singleton().processWork() && !::gTestRunner->waitToDump())
-        dump();
+        dumpAfterWaitAttributeIsRemoved();
 }
 
 void FrameLoadDelegate::resetToConsistentState()
@@ -244,7 +260,7 @@ void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
         return;
     }
 
-    dump();
+    dumpAfterWaitAttributeIsRemoved();
 }
 
 HRESULT FrameLoadDelegate::didFinishLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
@@ -337,7 +353,6 @@ void FrameLoadDelegate::didClearWindowObjectForFrameInIsolatedWorld(IWebFrame* f
         return;
 
     JSObjectSetProperty(ctx, globalObject, JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString("__worldID")).get(), JSValueMakeNumber(ctx, worldIDForWorld(world)), kJSPropertyAttributeReadOnly, 0);
-    return;
 }
 
 void FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld(IWebFrame* frame)

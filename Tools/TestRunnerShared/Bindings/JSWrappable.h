@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
+#include <initializer_list>
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
@@ -50,6 +52,52 @@ inline Optional<bool> JSValueToNullableBoolean(JSContextRef context, JSValueRef 
 inline JSValueRef JSValueMakeStringOrNull(JSContextRef context, JSStringRef stringOrNull)
 {
     return stringOrNull ? JSValueMakeString(context, stringOrNull) : JSValueMakeNull(context);
+}
+
+inline JSRetainPtr<JSStringRef> createJSString(const char* string)
+{
+    return adopt(JSStringCreateWithUTF8CString(string));
+}
+
+inline JSValueRef makeValue(JSContextRef context, const char* string)
+{
+    return JSValueMakeString(context, createJSString(string).get());
+}
+
+inline JSObjectRef objectProperty(JSContextRef context, JSObjectRef object, const char* name)
+{
+    if (!object)
+        return nullptr;
+    auto value = JSObjectGetProperty(context, object, createJSString(name).get(), nullptr);
+    if (!JSValueIsObject(context, value))
+        return nullptr;
+    return const_cast<JSObjectRef>(value);
+}
+
+inline JSObjectRef objectProperty(JSContextRef context, JSObjectRef object, std::initializer_list<const char*> names)
+{
+    for (auto name : names)
+        object = objectProperty(context, object, name);
+    return object;
+}
+
+inline JSValueRef call(JSContextRef context, JSObjectRef object, const char* name, std::initializer_list<JSValueRef> arguments)
+{
+    if (!object)
+        return nullptr;
+    auto function = objectProperty(context, object, name);
+    if (!function)
+        return nullptr;
+    return JSObjectCallAsFunction(context, function, object, arguments.size(), arguments.begin(), nullptr);
+}
+
+// FIXME: Move this somewhere better. We want to share it, so it belongs in TestRunnerShared, but not as part of JSWrappable.
+inline bool hasRefTestWaitAttribute(JSContextRef context)
+{
+    if (!context)
+        return false;
+    auto classList = objectProperty(context, JSContextGetGlobalObject(context), { "document", "documentElement", "classList" });
+    return JSValueToBoolean(context, call(context, classList, "contains", { makeValue(context, "reftest-wait") }));
 }
 
 } // namespace WTR

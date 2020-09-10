@@ -1,3 +1,13 @@
+2020-09-10  Darin Adler  <darin@apple.com>
+
+        webkit-test-runner: Add support for the reftest-wait class name
+        https://bugs.webkit.org/show_bug.cgi?id=186045
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/svg/path/distance/pathlength-path-mutating-expected.txt:
+        Expect correct length (after correctly waiting) rather than incorrect length.
+
 2020-09-10  Sam Sneddon  <gsnedders@apple.com>
 
         Improve logging for errors from wptserve.

@@ -76,9 +76,8 @@ void LazyLoadImageObserver::observe(Element& element)
 
 void LazyLoadImageObserver::unobserve(Element& element, Document& document)
 {
-    auto& observer = document.lazyLoadImageObserver();
-    ASSERT(observer.isObserved(element));
-    observer.m_lazyLoadIntersectionObserver->unobserve(element);
+    if (auto& observer = document.lazyLoadImageObserver().m_lazyLoadIntersectionObserver)
+        observer->unobserve(element);
 }
 
 IntersectionObserver* LazyLoadImageObserver::intersectionObserver(Document& document)
