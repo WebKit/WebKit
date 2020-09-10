@@ -1,3 +1,79 @@
+2020-09-09  Dean Jackson  <dino@apple.com>
+
+        CrashTracer: com.apple.WebKit.WebContent at WebCore: WebCore::WebGLRenderingContext::getExtension
+        https://bugs.webkit.org/show_bug.cgi?id=216337
+        <rdar://problem/68421590>
+
+        Reviewed by Sam Weinig.
+
+        Bug 215599 added IsoHeap storage to WebGLExtension, but didn't add it
+        to any of the subclasses. This causes a crash in ::getExtension because
+        allocation of the new instance fails.
+
+        Add WTF_MAKE_ISO_ALLOCATED_IMPL to the .cpp files, and
+        WTF_MAKE_ISO_ALLOCATED to the .h files.
+
+        This should have been detected by on-device testing, since a debug
+        build would have asserted because the size passed into the constructor
+        was different from the actual size of the class.
+
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        * html/canvas/ANGLEInstancedArrays.h:
+        * html/canvas/EXTBlendMinMax.cpp:
+        * html/canvas/EXTBlendMinMax.h:
+        * html/canvas/EXTColorBufferFloat.cpp:
+        * html/canvas/EXTColorBufferFloat.h:
+        * html/canvas/EXTColorBufferHalfFloat.cpp:
+        * html/canvas/EXTColorBufferHalfFloat.h:
+        * html/canvas/EXTFragDepth.cpp:
+        * html/canvas/EXTFragDepth.h:
+        * html/canvas/EXTShaderTextureLOD.cpp:
+        * html/canvas/EXTShaderTextureLOD.h:
+        * html/canvas/EXTTextureFilterAnisotropic.cpp:
+        * html/canvas/EXTTextureFilterAnisotropic.h:
+        * html/canvas/EXTsRGB.cpp:
+        * html/canvas/EXTsRGB.h:
+        * html/canvas/OESElementIndexUint.cpp:
+        * html/canvas/OESElementIndexUint.h:
+        * html/canvas/OESStandardDerivatives.cpp:
+        * html/canvas/OESStandardDerivatives.h:
+        * html/canvas/OESTextureFloat.cpp:
+        * html/canvas/OESTextureFloat.h:
+        * html/canvas/OESTextureFloatLinear.cpp:
+        * html/canvas/OESTextureFloatLinear.h:
+        * html/canvas/OESTextureHalfFloat.cpp:
+        * html/canvas/OESTextureHalfFloat.h:
+        * html/canvas/OESTextureHalfFloatLinear.cpp:
+        * html/canvas/OESTextureHalfFloatLinear.h:
+        * html/canvas/OESVertexArrayObject.cpp:
+        * html/canvas/OESVertexArrayObject.h:
+        * html/canvas/WebGLColorBufferFloat.cpp:
+        * html/canvas/WebGLColorBufferFloat.h:
+        * html/canvas/WebGLCompressedTextureASTC.cpp:
+        * html/canvas/WebGLCompressedTextureASTC.h:
+        * html/canvas/WebGLCompressedTextureATC.cpp:
+        * html/canvas/WebGLCompressedTextureATC.h:
+        * html/canvas/WebGLCompressedTextureETC.cpp:
+        * html/canvas/WebGLCompressedTextureETC.h:
+        * html/canvas/WebGLCompressedTextureETC1.cpp:
+        * html/canvas/WebGLCompressedTextureETC1.h:
+        * html/canvas/WebGLCompressedTexturePVRTC.cpp:
+        * html/canvas/WebGLCompressedTexturePVRTC.h:
+        * html/canvas/WebGLCompressedTextureS3TC.cpp:
+        * html/canvas/WebGLCompressedTextureS3TC.h:
+        * html/canvas/WebGLCompressedTextureS3TCsRGB.cpp:
+        * html/canvas/WebGLCompressedTextureS3TCsRGB.h:
+        * html/canvas/WebGLDebugRendererInfo.cpp:
+        * html/canvas/WebGLDebugRendererInfo.h:
+        * html/canvas/WebGLDebugShaders.cpp:
+        * html/canvas/WebGLDebugShaders.h:
+        * html/canvas/WebGLDepthTexture.cpp:
+        * html/canvas/WebGLDepthTexture.h:
+        * html/canvas/WebGLDrawBuffers.cpp:
+        * html/canvas/WebGLDrawBuffers.h:
+        * html/canvas/WebGLLoseContext.cpp:
+        * html/canvas/WebGLLoseContext.h:
+
 2020-09-09  Andres Gonzalez  <andresg_22@apple.com>
 
         Remove unused enum PostType.

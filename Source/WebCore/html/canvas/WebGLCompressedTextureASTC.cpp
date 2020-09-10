@@ -33,7 +33,9 @@
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
-    
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureASTC);
+
 WebGLCompressedTextureASTC::WebGLCompressedTextureASTC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
     , m_isHDRSupported(context.graphicsContextGL()->getExtensions().supports("GL_KHR_texture_compression_astc_hdr"_s))

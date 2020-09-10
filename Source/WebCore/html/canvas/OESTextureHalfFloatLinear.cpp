@@ -27,8 +27,11 @@
 
 #if ENABLE(WEBGL)
 #include "OESTextureHalfFloatLinear.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(OESTextureHalfFloatLinear);
 
 OESTextureHalfFloatLinear::OESTextureHalfFloatLinear(WebGLRenderingContextBase& context)
     : WebGLExtension(context)

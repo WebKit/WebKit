@@ -30,8 +30,11 @@
 #include "OESTextureHalfFloat.h"
 
 #include "ExtensionsGL.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(OESTextureHalfFloat);
 
 OESTextureHalfFloat::OESTextureHalfFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)

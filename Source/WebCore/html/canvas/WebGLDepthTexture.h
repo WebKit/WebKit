@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class WebGLDepthTexture final : public WebGLExtension {
+    WTF_MAKE_ISO_ALLOCATED(WebGLDepthTexture);
 public:
     explicit WebGLDepthTexture(WebGLRenderingContextBase&);
     virtual ~WebGLDepthTexture();

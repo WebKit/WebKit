@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class EXTsRGB final : public WebGLExtension {
+    WTF_MAKE_ISO_ALLOCATED(EXTsRGB);
 public:
     explicit EXTsRGB(WebGLRenderingContextBase&);
     virtual ~EXTsRGB();

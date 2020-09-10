@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class EXTTextureFilterAnisotropic final : public WebGLExtension {
+    WTF_MAKE_ISO_ALLOCATED(EXTTextureFilterAnisotropic);
 public:
     explicit EXTTextureFilterAnisotropic(WebGLRenderingContextBase&);
     virtual ~EXTTextureFilterAnisotropic();
