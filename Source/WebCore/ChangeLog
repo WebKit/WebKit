@@ -1,5 +1,58 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266635. rdar://problem/68652685
+
+    [Cocoa,EME] -outputObscuredDueToInsufficientExternalProtection KVO will set OutputObscured for all attached MediaKeySessions.
+    https://bugs.webkit.org/show_bug.cgi?id=216185
+    
+    Reviewed by Eric Carlson.
+    
+    When EME clients add licenses that have, for instance, different HDCP level requirements, the keyStatus for
+    each key in the Session (and indeed all attached MediaKeySessions) will be marked as OutputRestricted, since
+    it is impossible to tell from that KVO which key or session was responsible for creating the violation.
+    
+    On platforms where the more granular -willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays: query
+    is available, ignore the KVO from AVSampleBufferDisplayLayer, and rely entirely on the per-request query to
+    determine key status.
+    
+    Drive-by fix: add logging when we receive the -outputObscuredDueToInsufficientExternalProtection KVO notification, and
+    include keyIDs in the keyStatus logging.
+    
+    * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+    (WTF::LogArgument<WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys>::toString):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtectionForDisplayID const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266635 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-04  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa,EME] -outputObscuredDueToInsufficientExternalProtection KVO will set OutputObscured for all attached MediaKeySessions.
+            https://bugs.webkit.org/show_bug.cgi?id=216185
+
+            Reviewed by Eric Carlson.
+
+            When EME clients add licenses that have, for instance, different HDCP level requirements, the keyStatus for
+            each key in the Session (and indeed all attached MediaKeySessions) will be marked as OutputRestricted, since
+            it is impossible to tell from that KVO which key or session was responsible for creating the violation.
+
+            On platforms where the more granular -willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays: query
+            is available, ignore the KVO from AVSampleBufferDisplayLayer, and rely entirely on the per-request query to
+            determine key status.
+
+            Drive-by fix: add logging when we receive the -outputObscuredDueToInsufficientExternalProtection KVO notification, and
+            include keyIDs in the keyStatus logging.
+
+            * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+            (WTF::LogArgument<WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys>::toString):
+            (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+            (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+            (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtectionForDisplayID const):
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266526. rdar://problem/68652615
 
     Consecutive requestAnimationFrame callbacks may be passed the same timestamp
