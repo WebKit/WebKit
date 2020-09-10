@@ -1,5 +1,36 @@
 2020-09-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266475. rdar://problem/68652660
+
+    REGRESSION: [ macOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html is a flaky timeout
+    https://bugs.webkit.org/show_bug.cgi?id=215614
+    <rdar://problem/67333849>
+    
+    Reviewed by Eric Carlson.
+    
+    * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html:
+    * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl-expected.txt:
+    
+    * platform/mac/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266475 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-02  Devin Rousso  <drousso@apple.com>
+
+            REGRESSION: [ macOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html is a flaky timeout
+            https://bugs.webkit.org/show_bug.cgi?id=215614
+            <rdar://problem/67333849>
+
+            Reviewed by Eric Carlson.
+
+            * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html:
+            * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl-expected.txt:
+
+            * platform/mac/TestExpectations:
+
+2020-09-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266451. rdar://problem/68652772
 
     REGRESSION(r243264): Web Inspector: Style pane doesn't update after toggling CSS class

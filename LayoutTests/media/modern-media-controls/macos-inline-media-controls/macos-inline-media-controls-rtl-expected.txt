@@ -13,7 +13,7 @@ PASS getComputedStyle(mediaControls.topLeftControlsBar.element).left became "6px
 width = 600
 muted = false
 usesLTRUserInterfaceLayoutDirection = false
-PASS mediaControls.muteButton.iconName became Icons.Volume
+PASS mediaControls.muteButton.iconName became Icons.VolumeRTL
 PASS mediaControls.topLeftControlsBar.children[1].children became [mediaControls.pipButton, mediaControls.fullscreenButton]
 PASS getComputedStyle(mediaControls.topLeftControlsBar.element).right became "6px"
 
