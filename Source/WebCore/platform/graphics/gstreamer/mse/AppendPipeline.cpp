@@ -215,7 +215,9 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
         return GST_FLOW_OK;
     }), this);
     g_signal_connect(m_appsink.get(), "eos", G_CALLBACK(+[](GstElement*, AppendPipeline* appendPipeline) {
-        if (appendPipeline->m_errorReceived)
+        // Just ignore EOS when having more than one pad. It likely means that one of the pads is
+        // going to be removed and the remaining one will be reattached.
+        if (appendPipeline->m_errorReceived || appendPipeline->m_demux->numsrcpads > 1)
             return;
 
         GST_ERROR("AppendPipeline's appsink received EOS. This is usually caused by an invalid initialization segment.");
@@ -800,12 +802,71 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     m_playerPrivate->trackDetected(*this, m_track, true);
 }
 
-void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*)
+void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad* demuxerSrcPad)
 {
     // Note: This function can be called either from the streaming thread (e.g. if a strange initialization segment with
     // incompatible tracks is appended and the srcpad disconnected) or -- more usually -- from the main thread, when
     // a state change is made to bring the demuxer down. (State change operations run in the main thread.)
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "pad-removed-before");
+
+    // Reconnect the other pad if it's the only remaining after removing this one and wasn't connected yet (has a black hole probe).
+    if (m_demux->numsrcpads == 1) {
+        auto remainingPad = GST_PAD(m_demux->srcpads->data);
+
+        auto probeId = GPOINTER_TO_ULONG(g_object_get_data(G_OBJECT(remainingPad), "blackHoleProbeId"));
+        if (remainingPad && probeId) {
+            auto oldPeerPad = adoptGRef(gst_element_get_static_pad(m_appsink.get(), "sink"));
+            while (gst_pad_is_linked(oldPeerPad.get())) {
+                // Get sink pad of the parser before appsink.
+                // All the expected elements between the demuxer and appsink are supposed to have pads named "sink".
+                oldPeerPad = adoptGRef(gst_pad_get_peer(oldPeerPad.get()));
+                auto element = adoptGRef(gst_pad_get_parent_element(oldPeerPad.get()));
+                oldPeerPad = adoptGRef(gst_element_get_static_pad(element.get(), "sink"));
+                ASSERT(oldPeerPad);
+            }
+
+            gst_pad_remove_probe(remainingPad, probeId);
+
+            auto oldPeerPadCaps = adoptGRef(gst_pad_get_current_caps(oldPeerPad.get()));
+            auto remainingPadCaps = adoptGRef(gst_pad_get_current_caps(remainingPad));
+            const char* oldPeerPadType = nullptr;
+            const char* remainingPadType = nullptr;
+
+            if (oldPeerPadCaps) {
+                auto oldPeerPadCapsStructure = gst_caps_get_structure(oldPeerPadCaps.get(), 0);
+                if (oldPeerPadCapsStructure)
+                    oldPeerPadType = gst_structure_get_name(oldPeerPadCapsStructure);
+            }
+            if (remainingPadCaps) {
+                auto remainingPadCapsStructure = gst_caps_get_structure(remainingPadCaps.get(), 0);
+                if (remainingPadCapsStructure)
+                    remainingPadType = gst_structure_get_name(remainingPadCapsStructure);
+            }
+
+            if (g_strcmp0(oldPeerPadType, remainingPadType)) {
+                GST_ERROR("The remaining pad has a blackHoleProbe, but can't reconnect as main pad because the caps types are incompatible: oldPeerPadCaps: %" GST_PTR_FORMAT ", remainingPadCaps: %" GST_PTR_FORMAT, oldPeerPadCaps.get(), remainingPadCaps.get());
+                if (!isMainThread())
+                    handleErrorConditionFromStreamingThread();
+                else
+                    m_sourceBufferPrivate.appendParsingFailed();
+                return;
+            }
+
+            GST_DEBUG("The remaining pad has a blackHoleProbe, reconnecting as main pad. oldPad: %" GST_PTR_FORMAT ", newPad: %" GST_PTR_FORMAT ", peerPad: %" GST_PTR_FORMAT, demuxerSrcPad, remainingPad, oldPeerPad.get());
+
+            gst_pad_link(remainingPad, oldPeerPad.get());
+            if (m_parser)
+                gst_element_set_state(m_parser.get(), GST_STATE_NULL);
+            gst_element_set_state(m_appsink.get(), GST_STATE_NULL);
+            gst_element_set_state(m_appsink.get(), GST_STATE_PLAYING);
+            if (m_parser)
+                gst_element_set_state(m_parser.get(), GST_STATE_PLAYING);
+
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-after-relink");
+
+            return;
+        }
+    }
 
     GST_DEBUG("Disconnecting appsink");
 

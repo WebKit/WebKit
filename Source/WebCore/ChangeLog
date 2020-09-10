@@ -1,3 +1,36 @@
+2020-09-10  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE][GStreamer] Support Google Dynamic Ad Insertion (DAI)
+        https://bugs.webkit.org/show_bug.cgi?id=216039
+
+        Reviewed by Philippe Normand.
+
+        What happens on the DAI transitions between regular and advertisement videos
+        (and back) on MP4 is that each track has a different stream id, so qtdemux
+        doesn't reuse streams and created a new pad/stream/track for the new piece
+        of video. Our current code only supports a single simultaneous track per
+        SourceBuffer, so it "disables" the second (new) one by attaching a blackk hole
+        probe which drops all the buffers. Right after the new pad is created, the old
+        pad/stream/track is removed, so in the end only a single "disabled" track
+        remains.
+
+        This patch detects that situation and reattaches the single remaining pad to
+        the existing downstream elements of the AppendPipeline (an optional parser and
+        the appsink) as long as the old and new caps are compatible. For appsink to
+        keep working after the EOS caused by the old pad removal, it must be reset by
+        changing its state to NULL and then to PLAYING again.
+
+        For more info and test cases about Google DAI, have a look at:
+        https://developers.google.com/interactive-media-ads/docs/sdks/html5/dai
+        https://github.com/googleads/googleads-ima-html5-dai
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline): Ignore EOS when there are multiple demuxer src pads.
+        It likely means that one of the pads is going to be removed (EOS legitimally happens right
+        before that).
+        (WebCore::AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread): Reconnect the
+        remaining demuxer pad when it's the last one remaining after some other has been removed.
+
 2020-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Support NTLM authentication
