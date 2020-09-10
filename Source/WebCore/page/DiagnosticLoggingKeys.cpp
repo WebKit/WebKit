@@ -475,6 +475,16 @@ String DiagnosticLoggingKeys::diskCacheAfterValidationKey()
     return "diskCacheAfterValidation"_s;
 }
 
+String DiagnosticLoggingKeys::memoryCacheKey()
+{
+    return "memoryCache"_s;
+}
+
+String DiagnosticLoggingKeys::memoryCacheAfterValidationKey()
+{
+    return "memoryCacheAfterValidation"_s;
+}
+
 String DiagnosticLoggingKeys::reloadKey()
 {
     return "reload"_s;
