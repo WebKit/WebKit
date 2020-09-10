@@ -1,3 +1,13 @@
+2020-09-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] REGRESSION (Big Sur): A GIF image with a finite loopCount loops an extra cycle
+        https://bugs.webkit.org/show_bug.cgi?id=216018
+        <rdar://problem/68304035>
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/TestExpectations:
+
 2020-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Async overflow scroll): Truncated scrollbars in facebook chat

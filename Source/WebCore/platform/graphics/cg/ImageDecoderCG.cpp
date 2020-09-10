@@ -294,12 +294,16 @@ RepetitionCount ImageDecoderCG::repetitionCount() const
     if (!loopCount)
         return RepetitionCountInfinite;
 
+#if HAVE(CGIMAGESOURCE_WITH_ACCURATE_LOOP_COUNT)
+    return loopCount;
+#else
     if (!isGIFImageType(uti()))
         return loopCount;
 
     // For GIF and loopCount > 0, the specs is not clear about it. But it looks the meaning
     // is: play once + loop loopCount which is equivalent to play loopCount + 1.
     return loopCount + 1;
+#endif
 }
 
 Optional<IntPoint> ImageDecoderCG::hotSpot() const

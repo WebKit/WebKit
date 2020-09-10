@@ -2111,9 +2111,6 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 [ BigSur+ ] http/tests/media/hls/range-request.html [ Skip ]
 [ BigSur+ ] http/tests/media/hls/video-cookie.html [ Skip ]
 
-# rdar://66660579 (REGRESSION (20A2327a-20A2348b): fast/images/animated-gif-loop-count.html is failing)
-[ BigSur+ ] fast/images/animated-gif-loop-count.html [ ImageOnlyFailure ]
-
 # rdar://66660680 (REGRESSION (20A2327a-20A2348b): media/video-canvas-createPattern.html is failing)
 [ BigSur+ ] media/video-canvas-createPattern.html [ Failure ]
 

@@ -1,3 +1,18 @@
+2020-09-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] REGRESSION (Big Sur): A GIF image with a finite loopCount loops an extra cycle
+        https://bugs.webkit.org/show_bug.cgi?id=216018
+        <rdar://problem/68304035>
+
+        Reviewed by Tim Horton.
+
+        Remove the extra 'one' we used to add to the GIF loopCount since it is 
+        now added by the underlying frameworks. But make sure we are compatible
+        with the older versions of macOS and iOS.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::repetitionCount const):
+
 2020-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Async overflow scroll): Truncated scrollbars in facebook chat
