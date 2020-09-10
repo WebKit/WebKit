@@ -781,6 +781,17 @@ webkit.org/b/186488 imported/w3c/web-platform-tests/web-animations/animation-mod
 
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-005.html [ ImageOnlyFailure ]
 
+# New selection wpt tests that are timing out, likely to an unsupported operation.
+webkit.org/b/216350 imported/w3c/web-platform-tests/selection/collapse-00.html [ Skip ]
+webkit.org/b/216350 imported/w3c/web-platform-tests/selection/collapse-15.html [ Skip ]
+webkit.org/b/216350 imported/w3c/web-platform-tests/selection/collapse-45.html [ Skip ]
+
+# Failing since r266683.
+webkit.org/b/216358 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-001.html [ ImageOnlyFailure ]
+
+# Failing since r266665.
+webkit.org/b/216359 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

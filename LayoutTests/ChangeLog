@@ -1,3 +1,11 @@
+2020-09-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update test expectations and baselines after r266812.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt: Added after r266784.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt: Update after r266746.
+
 2020-09-10  Zalan Bujtas  <zalan@apple.com>
 
         [Repaint] RenderElement::setStyle may issue redundant repaint
