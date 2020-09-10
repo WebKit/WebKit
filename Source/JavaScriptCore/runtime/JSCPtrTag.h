@@ -71,9 +71,9 @@ FOR_EACH_JSC_PTRTAG(WTF_DECLARE_PTRTAG)
 #pragma warning(pop)
 #endif
 
+#if CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
 void initializePtrTagLookup();
-
-#if !CPU(ARM64E)
+#else
 inline void initializePtrTagLookup() { }
 #endif
 
