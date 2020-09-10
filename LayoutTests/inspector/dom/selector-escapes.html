@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("DOMNode.SelectorEscapes");
+
+    suite.addTestCase({
+        name: "DOMNode.SelectorEscapes.NormalId",
+        test(resolve, reject) {
+            documentNode.querySelector("#id", (nodeId) => {
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, "Got DOMNode for id `id`");
+                
+                InspectorTest.expectEqual(domNode._idSelector(false), "#id", "Unescaped id selector should be `#id`.");
+                InspectorTest.expectEqual(domNode._classSelector(false), ".class", "Unescaped class selector should be `.class`.");
+                InspectorTest.expectEqual(domNode.unescapedSelector, "div#id.class", "Unescaped selector should be `div#id.class`.");
+
+                InspectorTest.expectEqual(domNode._idSelector(true), "#id", "Escaped id selector should be `#id`.");
+                InspectorTest.expectEqual(domNode._classSelector(true), ".class", "Escaped class selector should be `.class`.");
+                InspectorTest.expectEqual(domNode.displayName, "div#id.class", "Display name should be `div#id.class`.");
+                
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOMNode.SelectorEscapes.NumberId",
+        test(resolve, reject) {
+            documentNode.querySelector("#\\31 23Id", (nodeId) => {
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, "Got DOMNode for id `123Id`");
+
+                InspectorTest.expectEqual(domNode._idSelector(false), "#123Id", "Unescaped id selector should be `#123Id`.");
+                InspectorTest.expectEqual(domNode._classSelector(false), ".123Class", "Unescaped class selector should be `.123Class`.");
+                InspectorTest.expectEqual(domNode.unescapedSelector, "div#123Id.123Class", "Unescaped selector should be `div#123Id.123Class`.");
+
+                InspectorTest.expectEqual(domNode._idSelector(true), "[id=\"\\31 23Id\"]", "Escaped id selector should be `[id=\"\\31 23Id\"]`.");
+                InspectorTest.expectEqual(domNode._classSelector(true), ".\\31 23Class", "Escaped class selector should be `.\\31 23Class`.");
+                InspectorTest.expectEqual(domNode.displayName, "div[id=\"\\31 23Id\"].\\31 23Class", "Display name should be `div[id=\"\\31 23Id\"].\\31 23Class`.");
+
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOMNode.SelectorEscapes.PoundId",
+        test(resolve, reject) {
+            documentNode.querySelector("#\\#id", (nodeId) => {
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, "Got DOMNode for id `#id`");
+                
+                InspectorTest.expectEqual(domNode._idSelector(false), "##id", "Unescaped id selector should be `##id`.");
+                InspectorTest.expectEqual(domNode._classSelector(false), ".#class", "Unescaped class selector should be `.#class`.");
+                InspectorTest.expectEqual(domNode.unescapedSelector, "div##id.#class", "Unescaped selector should be `div##id.#class`.");
+
+                InspectorTest.expectEqual(domNode._idSelector(true), "#\\#id", "Escaped id selector should be `#\\#id`.");
+                InspectorTest.expectEqual(domNode._classSelector(true), ".\\#class", "Escaped class selector should be `.\\#class`.");
+                InspectorTest.expectEqual(domNode.displayName, "div#\\#id.\\#class", "Display name should be `div#\\#id.\\#class`.");
+
+                resolve();
+            });
+        }
+    });
+
+    WI.domManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for DOMNode.SelectorEscapes.</p>
+<div style="display: none">
+    <div id="id" class="class"></div>
+    <div id="123Id" class="123Class"></div>
+    <div id="#id" class="#class"></div>
+</div>
+</body>
+</html>

@@ -1,3 +1,24 @@
+2020-09-09  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: InvalidCharacterError: The string contains invalid characters.
+        https://bugs.webkit.org/show_bug.cgi?id=216138
+
+        Reviewed by Brian Burg.
+
+        Fixed to no longer use displayName as the identifier for `DOMNodeDetailsSidebarPanel` when creating a
+        `DetailsSection`, which could end up with illegal characters due to the escaping done by
+        `DOMNode.prototype.displayName`.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype.get escapedIdSelector): Changed to use `_idSelector`.
+        (WI.DOMNode.prototype.get escapedClassSelector): Changed to use `_classSelector`.
+        (WI.DOMNode.prototype.get unescapedSelector): Added. Uses unescaped forms of `_idSelector` and `_classSelector`.
+        (WI.DOMNode.prototype._idSelector): Added. Supports optionally not escaping the selector.
+        (WI.DOMNode.prototype._classSelector): Added. Supports optionally not escaping the selector.
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.generateGroupsByTarget): Use separate identifier
+        and title.
+
 2020-09-08  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Incorrect decimal separator in Network web inspector

@@ -757,39 +757,12 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     get escapedIdSelector()
     {
-        let id = this.getAttribute("id");
-        if (!id)
-            return "";
-
-        id = id.trim();
-        if (!id.length)
-            return "";
-
-        id = CSS.escape(id);
-        if (/[\s'"]/.test(id))
-            return `[id="${id}"]`;
-
-        return `#${id}`;
+        return this._idSelector(true);
     }
 
     get escapedClassSelector()
     {
-        let classes = this.getAttribute("class");
-        if (!classes)
-            return "";
-
-        classes = classes.trim();
-        if (!classes.length)
-            return "";
-
-        let foundClasses = new Set;
-        return classes.split(/\s+/).reduce((selector, className) => {
-            if (!className.length || foundClasses.has(className))
-                return selector;
-
-            foundClasses.add(className);
-            return `${selector}.${CSS.escape(className)}`;
-        }, "");
+        return this._classSelector(true);
     }
 
     get displayName()
@@ -797,6 +770,15 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this.isPseudoElement())
             return "::" + this._pseudoType;
         return this.nodeNameInCorrectCase() + this.escapedIdSelector + this.escapedClassSelector;
+    }
+
+    get unescapedSelector()
+    {
+        if (this.isPseudoElement())
+            return "::" + this._pseudoType;
+
+        const shouldEscape = false;
+        return this.nodeNameInCorrectCase() + this._idSelector(shouldEscape) + this._classSelector(shouldEscape);
     }
 
     appropriateSelectorFor(justSelector)
@@ -1065,6 +1047,43 @@ WI.DOMNode = class DOMNode extends WI.Object
             if (callback)
                 callback.apply(null, args);
         };
+    }
+
+    _idSelector(shouldEscape)
+    {
+        let id = this.getAttribute("id");
+        if (!id)
+            return "";
+
+        id = id.trim();
+        if (!id.length)
+            return "";
+
+        if (shouldEscape)
+            id = CSS.escape(id);
+        if (/[\s'"]/.test(id))
+            return `[id="${id}"]`;
+
+        return `#${id}`;
+    }
+
+    _classSelector(shouldEscape) {
+        let classes = this.getAttribute("class");
+        if (!classes)
+            return "";
+
+        classes = classes.trim();
+        if (!classes.length)
+            return "";
+
+        let foundClasses = new Set;
+        return classes.split(/\s+/).reduce((selector, className) => {
+            if (!className.length || foundClasses.has(className))
+                return selector;
+
+            foundClasses.add(className);
+            return `${selector}.${(shouldEscape ? CSS.escape(className) : className)}`;
+        }, "");
     }
 };
 

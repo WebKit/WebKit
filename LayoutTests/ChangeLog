@@ -1,3 +1,16 @@
+2020-09-09  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: InvalidCharacterError: The string contains invalid characters.
+        https://bugs.webkit.org/show_bug.cgi?id=216138
+
+        Reviewed by Brian Burg.
+
+        Added tests for `DOMNode.prototype._idSelector(…)`, `DOMNode.prototype._classSelector(…)`,
+        `DOMNode.prototype.unescapedSelector` and `DOMNode.prototype.displayName`.
+
+        * inspector/dom/selector-escapes-expected.txt: Added.
+        * inspector/dom/selector-escapes.html: Added.
+
 2020-09-09  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS ] compositing/clipping/border-radius-async-overflow-stacking.html is flaky failing.
