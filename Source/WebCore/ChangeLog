@@ -1,3 +1,10 @@
+2020-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert accidental hard-coding of compositing logging from r266825.
+
+        * platform/Logging.cpp:
+        (WebCore::initializeLogChannelsIfNecessary):
+
 2020-09-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Share code when constructing LineBox::InlineBox for the atomic inline-level box
