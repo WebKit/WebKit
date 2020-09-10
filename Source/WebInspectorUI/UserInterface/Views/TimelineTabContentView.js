@@ -83,14 +83,6 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         const selectedByUser = false;
         this._changeViewMode(WI.TimelineOverview.ViewMode.Timelines, selectedByUser);
 
-        for (let recording of WI.timelineManager.recordings)
-            this._addRecording(recording);
-
-        this._recordingCountChanged();
-
-        // Explicitly update the path for the navigation bar to prevent it from showing up as blank.
-        this.contentBrowser.updateHierarchicalPathForCurrentContentView();
-
         WI.heapManager.enable();
         WI.memoryManager.enable();
         WI.timelineManager.enable();
