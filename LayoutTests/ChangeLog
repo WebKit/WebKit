@@ -1,3 +1,34 @@
+2020-09-10  Antti Koivisto  <antti@apple.com>
+
+        Don't create event regions when the page has no subscrollers
+        https://bugs.webkit.org/show_bug.cgi?id=216355
+        <rdar://problem/67900642>
+
+        Reviewed by Simon Fraser.
+
+        Add overflow scrollers to some existing tests so they still generate event regions.
+
+        * fast/scrolling/ios/border-radius-event-region-expected.txt:
+        * fast/scrolling/ios/border-radius-event-region.html:
+        * fast/scrolling/ios/event-region-float-expected.txt:
+        * fast/scrolling/ios/event-region-float.html:
+        * fast/scrolling/ios/event-region-pointer-events-expected.txt:
+        * fast/scrolling/ios/event-region-pointer-events.html:
+        * fast/scrolling/ios/event-region-scale-transform-shared-expected.txt:
+        * fast/scrolling/ios/event-region-scale-transform-shared.html:
+        * fast/scrolling/ios/event-region-translate-transform-shared-expected.txt:
+        * fast/scrolling/ios/event-region-translate-transform-shared.html:
+        * fast/scrolling/ios/event-region-visibility-hidden-expected.txt:
+        * fast/scrolling/ios/event-region-visibility-hidden.html:
+        * fast/scrolling/mac/border-radius-event-region-expected.txt:
+        * fast/scrolling/mac/border-radius-event-region.html:
+        * fast/scrolling/mac/event-region-subscroller-frame-expected.txt: Added.
+        * fast/scrolling/mac/event-region-subscroller-frame.html: Added.
+        * fast/scrolling/mac/event-region-subscroller-overflow-expected.txt: Added.
+        * fast/scrolling/mac/event-region-subscroller-overflow.html: Copied from LayoutTests/fast/scrolling/ios/event-region-visibility-hidden.html.
+        * fast/scrolling/mac/event-region-visibility-hidden-expected.txt:
+        * fast/scrolling/mac/event-region-visibility-hidden.html:
+
 2020-09-10  Darin Adler  <darin@apple.com>
 
         Fix failing combobox-activedescendant-notifications.html test

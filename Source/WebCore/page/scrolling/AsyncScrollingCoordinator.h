@@ -145,6 +145,8 @@ private:
 
     WEBCORE_EXPORT void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond) final;
 
+    WEBCORE_EXPORT bool hasSubscrollers() const final;
+
     virtual void scheduleTreeStateCommit() = 0;
 
     void ensureRootStateNodeForFrameView(FrameView&);

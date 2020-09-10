@@ -16,11 +16,21 @@
     float: right;
     visibility: visible;
 }
+.scroller {
+    overflow: scroll;
+    height: 50px;
+    width: 50px;
+}
+.scrollcontent {
+    height: 100px;
+    width: 50px;
+}
 </style>
 <body>
 <div class="container">
     <div class="inner"></div>
 </div>
+<div class="scroller"><div class="scrollcontent"></div></div>
 <pre id="results"></pre>
 <script>
 if (window.testRunner)

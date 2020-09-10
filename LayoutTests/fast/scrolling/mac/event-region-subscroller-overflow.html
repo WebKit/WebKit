@@ -22,6 +22,7 @@
 }
 .scrollcontent {
     height: 100px;
+    background-color:red;
 }
 </style>
 <script>
@@ -31,36 +32,19 @@ window.onload = function () {
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    results.innerText = "Before:\n\n"
+    results.innerText = "Before adding scroller:\n\n"
     results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
 
-    test1.style.pointerEvents = "auto";
-    test2.style.pointerEvents = "auto";
-    test3.style.pointerEvents = "auto";
+    scroller.removeAttribute("hidden");
 
-    results.innerText += "After setting 'pointer-events:auto':\n\n"
-    results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
-
-    test1.style.pointerEvents = "none";
-    test2.style.pointerEvents = "none";
-    test3.style.pointerEvents = "none";
-
-    results.innerText += "After setting 'pointer-events:none':\n\n"
+    results.innerText += "After adding scroller:\n\n"
     results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
 }
 </script>
 <body>
-<div class="testdiv" id="test1" style="pointer-events:none">
+<div class="testdiv">
 </div>
-<div class="testdiv" style="pointer-events:none">
-    <div id="test2" class="inner"></div>
-</div>
-<div class="testdiv" style="pointer-events:none">
-    <div class="inner" style="position:relative">
-        <div id="test3" class="inner"></div>
-    </div>
-</div>
-<div class="scroller"><div class="scrollcontent"></div></div>
+<div id="scroller" class="scroller" hidden><div class="scrollcontent"></div></div>
 
 <pre id="results"></pre>
 </body>

@@ -68,6 +68,7 @@ public:
     void setHasNewRootStateNode(bool hasNewRoot) { m_hasNewRootStateNode = hasNewRoot; }
 
     unsigned nodeCount() const { return m_stateNodeMap.size(); }
+    unsigned scrollingNodeCount() const { return m_scrollingNodeCount; }
 
     typedef HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> StateNodeMap;
     const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
@@ -76,6 +77,14 @@ public:
     void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
 
     void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
+
+    void scrollingNodeAdded() { ++m_scrollingNodeCount; }
+    void scrollingNodeRemoved()
+    {
+        ASSERT(m_scrollingNodeCount);
+        --m_scrollingNodeCount;
+    }
+
 
 private:
     void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&&);
@@ -103,6 +112,7 @@ private:
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
     bool m_hasChangedProperties { false };
     bool m_hasNewRootStateNode { false };
+    unsigned m_scrollingNodeCount { 0 };
     LayerRepresentation::Type m_preferredLayerRepresentation { LayerRepresentation::GraphicsLayerRepresentation };
 };
 
