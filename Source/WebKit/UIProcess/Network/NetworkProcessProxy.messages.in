@@ -69,7 +69,9 @@ messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
 
     SetWebProcessHasUploads(WebCore::ProcessIdentifier processID, bool hasUpload)
 
+#if ENABLE(APP_BOUND_DOMAINS)
     GetAppBoundDomains(PAL::SessionID sessionID) -> (HashSet<WebCore::RegistrableDomain> appBoundDomains) Async
+#endif
 
     RequestStorageSpace(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired) -> (Optional<uint64_t> newQuota) Async
     

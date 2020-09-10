@@ -591,16 +591,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _pageConfiguration->copy();
 }
 
-- (BOOL)limitsNavigationsToAppBoundDomains
-{
-    return _pageConfiguration->limitsNavigationsToAppBoundDomains();
-}
-
-- (void)setLimitsNavigationsToAppBoundDomains:(BOOL)limitsToAppBoundDomains
-{
-    _pageConfiguration->setLimitsNavigationsToAppBoundDomains(limitsToAppBoundDomains);
-}
-
 @end
 
 @implementation WKWebViewConfiguration (WKPrivate)
@@ -824,6 +814,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (id <_UIClickInteractionDriving>)_clickInteractionDriverForTesting
 {
     return _pageConfiguration->clickInteractionDriverForTesting().get();
+}
+
+- (BOOL)limitsNavigationsToAppBoundDomains
+{
+    return _pageConfiguration->limitsNavigationsToAppBoundDomains();
+}
+
+- (void)setLimitsNavigationsToAppBoundDomains:(BOOL)limitsToAppBoundDomains
+{
+    _pageConfiguration->setLimitsNavigationsToAppBoundDomains(limitsToAppBoundDomains);
+}
+
+- (BOOL)_ignoresAppBoundDomains
+{
+    return _pageConfiguration->ignoresAppBoundDomains();
+}
+
+- (void)_setIgnoresAppBoundDomains:(BOOL)ignoresAppBoundDomains
+{
+    _pageConfiguration->setIgnoresAppBoundDomains(ignoresAppBoundDomains);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -1231,16 +1241,6 @@ static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
 - (void)_setWebViewCategory:(_WKWebViewCategory)category
 {
     _pageConfiguration->setWebViewCategory(toWebKitWebViewCategory(category));
-}
-
-- (BOOL)_ignoresAppBoundDomains
-{
-    return _pageConfiguration->ignoresAppBoundDomains();
-}
-
-- (void)_setIgnoresAppBoundDomains:(BOOL)ignoresAppBoundDomains
-{
-    _pageConfiguration->setIgnoresAppBoundDomains(ignoresAppBoundDomains);
 }
 
 - (BOOL)_shouldRelaxThirdPartyCookieBlocking

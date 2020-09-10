@@ -1897,8 +1897,9 @@ void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Exp
 #endif
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.options.destination = FetchOptions::Destination::EmptyString;
+#if ENABLE(APP_BOUND_DOMAINS)
     parameters.isNavigatingToAppBoundDomain = m_frame->isTopFrameNavigatingToAppBoundDomain();
-    
+#endif
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SendH2Ping(parameters), WTFMove(completionHandler));
 }
 
@@ -1952,6 +1953,7 @@ void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackI
 }
 #endif // ENABLE(APPLICATION_MANIFEST)
 
+#if ENABLE(APP_BOUND_DOMAINS)
 bool WebFrameLoaderClient::shouldEnableInAppBrowserPrivacyProtections() const
 {
     return m_frame->shouldEnableInAppBrowserPrivacyProtections();
@@ -1968,6 +1970,7 @@ void WebFrameLoaderClient::notifyPageOfAppBoundBehavior()
 
     webPage->notifyPageOfAppBoundBehavior();
 }
+#endif
 
 } // namespace WebKit
 

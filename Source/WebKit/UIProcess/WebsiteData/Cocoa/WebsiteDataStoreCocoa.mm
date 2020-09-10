@@ -63,14 +63,15 @@ static HashSet<WebsiteDataStore*>& dataStores()
 
 static NSString * const WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey = @"WebKitNetworkLoadThrottleLatencyMilliseconds";
 
+#if ENABLE(APP_BOUND_DOMAINS)
 static WorkQueue& appBoundDomainQueue()
 {
     static auto& queue = WorkQueue::create("com.apple.WebKit.AppBoundDomains", WorkQueue::Type::Serial).leakRef();
     return queue;
 }
-
 static std::atomic<bool> hasInitializedAppBoundDomains = false;
 static std::atomic<bool> keyExists = false;
+#endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
@@ -215,8 +216,9 @@ void WebsiteDataStore::platformInitialize()
 {
     ASSERT(!dataStores().contains(this));
     dataStores().add(this);
-
+#if ENABLE(APP_BOUND_DOMAINS)
     initializeAppBoundDomains();
+#endif
 }
 
 void WebsiteDataStore::platformDestroy()
@@ -393,6 +395,7 @@ WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const
     return url.absoluteURL.path.fileSystemRepresentation;
 }
 
+#if ENABLE(APP_BOUND_DOMAINS)
 static HashSet<WebCore::RegistrableDomain>& appBoundDomains()
 {
     ASSERT(RunLoop::isMain());
@@ -558,5 +561,6 @@ void WebsiteDataStore::reinitializeAppBoundDomains()
     hasInitializedAppBoundDomains = false;
     initializeAppBoundDomains(ForceReinitialization::Yes);
 }
+#endif
 
 }

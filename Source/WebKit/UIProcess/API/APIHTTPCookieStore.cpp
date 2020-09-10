@@ -62,7 +62,7 @@ HTTPCookieStore::~HTTPCookieStore()
 void HTTPCookieStore::filterAppBoundCookies(const Vector<WebCore::Cookie>& cookies, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
 {
     Vector<WebCore::Cookie> appBoundCookies;
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(APP_BOUND_DOMAINS)
     m_owningDataStore->getAppBoundDomains([cookies, appBoundCookies = WTFMove(appBoundCookies), completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
         if (!domains.isEmpty() && !isFullWebBrowser()) {
             for (auto& cookie : cookies) {

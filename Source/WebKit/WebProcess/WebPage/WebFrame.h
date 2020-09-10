@@ -172,10 +172,13 @@ public:
 #endif
 
     WebFrameLoaderClient* frameLoaderClient() const;
+
+#if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections();
     void setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) { m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain; };
     Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
     Optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const;
+#endif
 
 private:
     WebFrame();

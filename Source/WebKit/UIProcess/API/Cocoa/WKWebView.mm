@@ -2641,20 +2641,6 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     _page->recordNavigationSnapshot(item._item);
 }
 
-- (void)_isNavigatingToAppBoundDomain:(void(^)(BOOL))completionHandler
-{
-    _page->isNavigatingToAppBoundDomainTesting([completionHandler = makeBlockPtr(completionHandler)] (bool isAppBound) {
-        completionHandler(isAppBound);
-    });
-}
-
-- (void)_isForcedIntoAppBoundMode:(void(^)(BOOL))completionHandler
-{
-    _page->isForcedIntoAppBoundModeTesting([completionHandler = makeBlockPtr(completionHandler)] (bool isForcedIntoAppBoundMode) {
-        completionHandler(isForcedIntoAppBoundMode);
-    });
-}
-
 - (void)_serviceWorkersEnabled:(void(^)(BOOL))completionHandler
 {
     auto enabled = [_configuration preferences]->_preferences.get()->serviceWorkersEnabled() || WebCore::RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled();

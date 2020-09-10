@@ -3253,12 +3253,14 @@ void Page::revealCurrentSelection()
 
 void Page::injectUserStyleSheet(UserStyleSheet& userStyleSheet)
 {
+#if ENABLE(APP_BOUND_DOMAINS)
     if (m_mainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
         if (auto* document = m_mainFrame->document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
         return;
     }
     m_mainFrame->loader().client().notifyPageOfAppBoundBehavior();
+#endif
 
     // We need to wait until we're no longer displaying the initial empty document before we can inject the stylesheets.
     if (m_mainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument()) {

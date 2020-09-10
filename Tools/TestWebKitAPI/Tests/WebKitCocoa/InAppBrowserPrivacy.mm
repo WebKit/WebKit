@@ -43,7 +43,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(APP_BOUND_DOMAINS)
 
 static bool isDone;
 

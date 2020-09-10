@@ -1,3 +1,16 @@
+2020-09-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App-Bound Domains code to only compile for iOS with its own macro
+        https://bugs.webkit.org/show_bug.cgi?id=215027
+        <rdar://problem/63688232>
+
+        Reviewed by Darin Adler.
+
+        Replace check for IOS_FAMILY with more aptly named APP_BOUND_DOMAINS
+        macro.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2020-09-10  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add tags, branches queries on local repositories

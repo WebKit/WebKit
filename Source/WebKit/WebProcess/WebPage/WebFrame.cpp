@@ -855,6 +855,7 @@ RefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
     return sharedSnapshot;
 }
 
+#if ENABLE(APP_BOUND_DOMAINS)
 bool WebFrame::shouldEnableInAppBrowserPrivacyProtections()
 {
     if (page() && page()->needsInAppBrowserPrivacyQuirks())
@@ -876,6 +877,6 @@ Optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBoundDom
 {
     return fromCoreFrame(m_coreFrame->mainFrame())->isNavigatingToAppBoundDomain();
 }
-
+#endif
     
 } // namespace WebKit

@@ -91,6 +91,7 @@ void ScopeRuleSets::initializeUserStyle()
     auto tempUserStyle = RuleSet::create();
     if (CSSStyleSheet* pageUserSheet = extensionStyleSheets.pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), nullptr, mediaQueryEvaluator, m_styleResolver);
+#if ENABLE(APP_BOUND_DOMAINS)
     auto* page = m_styleResolver.document().page();
     if (!extensionStyleSheets.injectedUserStyleSheets().isEmpty() && page && page->mainFrame().loader().client().shouldEnableInAppBrowserPrivacyProtections())
         m_styleResolver.document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
@@ -99,6 +100,9 @@ void ScopeRuleSets::initializeUserStyle()
         if (page && !extensionStyleSheets.injectedUserStyleSheets().isEmpty())
             page->mainFrame().loader().client().notifyPageOfAppBoundBehavior();
     }
+#else
+    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), tempUserStyle.get(), mediaQueryEvaluator);
+#endif
     collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), tempUserStyle.get(), mediaQueryEvaluator);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
         m_userStyle = WTFMove(tempUserStyle);

@@ -1,3 +1,16 @@
+2020-09-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App-Bound Domains code to only compile for iOS with its own macro
+        https://bugs.webkit.org/show_bug.cgi?id=215027
+        <rdar://problem/63688232>
+
+        Reviewed by Darin Adler.
+
+        These tests should be skipped on mac-wk2 because App Bound Domains
+        is an iOS feature only.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         ASSERTION FAILED: m_finishedNodes.isEmpty() in AudioContext destructor

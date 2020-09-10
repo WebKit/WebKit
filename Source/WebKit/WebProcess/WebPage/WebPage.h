@@ -1344,9 +1344,11 @@ public:
 
     void getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&&);
 
+#if ENABLE(APP_BOUND_DOMAINS)
     void notifyPageOfAppBoundBehavior();
     void setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain>, WebFrame*);
     bool needsInAppBrowserPrivacyQuirks() { return m_needsInAppBrowserPrivacyQuirks; }
+#endif
 
     bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
 
@@ -1818,8 +1820,9 @@ private:
     bool m_alwaysShowsVerticalScroller { false };
 
     bool m_shouldRenderCanvasInGPUProcess { false };
+#if ENABLE(APP_BOUND_DOMAINS)
     bool m_needsInAppBrowserPrivacyQuirks { false };
-
+#endif
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     bool m_readyToFindPrimarySnapshottedPlugin { false };
     bool m_didFindPrimarySnapshottedPlugin { false };
@@ -2159,8 +2162,10 @@ private:
     String m_themeName;
 #endif
     
+#if ENABLE(APP_BOUND_DOMAINS)
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_navigationHasOccured { false };
+#endif
     bool m_canUseCredentialStorage { true };
 
     Vector<String> m_corsDisablingPatterns;

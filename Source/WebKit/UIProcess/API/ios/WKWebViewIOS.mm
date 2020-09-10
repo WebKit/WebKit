@@ -3115,6 +3115,20 @@ static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
         _page->willOpenAppLink();
 }
 
+- (void)_isNavigatingToAppBoundDomain:(void(^)(BOOL))completionHandler
+{
+    _page->isNavigatingToAppBoundDomainTesting([completionHandler = makeBlockPtr(completionHandler)] (bool isAppBound) {
+        completionHandler(isAppBound);
+    });
+}
+
+- (void)_isForcedIntoAppBoundMode:(void(^)(BOOL))completionHandler
+{
+    _page->isForcedIntoAppBoundModeTesting([completionHandler = makeBlockPtr(completionHandler)] (bool isForcedIntoAppBoundMode) {
+        completionHandler(isForcedIntoAppBoundMode);
+    });
+}
+
 @end // WKWebView (WKPrivateIOS)
 
 #if ENABLE(FULLSCREEN_API)

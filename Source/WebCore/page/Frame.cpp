@@ -657,6 +657,7 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
 
 void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript& script)
 {
+#if ENABLE(APP_BOUND_DOMAINS)
     if (loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
         if (auto* document = this->document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
@@ -664,6 +665,7 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
         return;
     }
     loader().client().notifyPageOfAppBoundBehavior();
+#endif
 
     auto* document = this->document();
     if (!document)

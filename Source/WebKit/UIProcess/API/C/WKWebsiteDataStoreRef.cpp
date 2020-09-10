@@ -579,9 +579,14 @@ void WKWebsiteDataStoreStatisticsHasIsolatedSession(WKWebsiteDataStoreRef dataSt
 
 void WKWebsiteDataStoreHasAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreHasAppBoundSessionFunction callback)
 {
+#if ENABLE(APP_BOUND_DOMAINS)
     WebKit::toImpl(dataStoreRef)->hasAppBoundSession([context, callback](bool hasAppBoundSession) {
         callback(hasAppBoundSession, context);
     });
+#else
+    UNUSED_PARAM(dataStoreRef);
+    callback(false, context);
+#endif
 }
 
 void WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTesting(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTestingFunction completionHandler)
@@ -652,7 +657,7 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(
 
 void WKWebsiteDataStoreSetAppBoundDomainsForTesting(WKArrayRef originURLsRef, void* context, WKWebsiteDataStoreSetAppBoundDomainsForTestingFunction completionHandler)
 {
-#if PLATFORM(COCOA)
+#if ENABLE(APP_BOUND_DOMAINS)
     RefPtr<API::Array> originURLsArray = toImpl(originURLsRef);
     size_t newSize = originURLsArray ? originURLsArray->size() : 0;
     HashSet<WebCore::RegistrableDomain> domains;
@@ -815,15 +820,22 @@ void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* cont
 
 void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAppBoundSessionFunction completionHandler)
 {
+#if ENABLE(APP_BOUND_DOMAINS)
     WebKit::toImpl(dataStoreRef)->clearAppBoundSession([context, completionHandler] {
         completionHandler(context);
     });
+#else
+    UNUSED_PARAM(dataStoreRef);
+    completionHandler(context);
+#endif
 }
 
 void WKWebsiteDataStoreReinitializeAppBoundDomains(WKWebsiteDataStoreRef dataStoreRef)
 {
-#if PLATFORM(COCOA)
+#if ENABLE(APP_BOUND_DOMAINS)
     WebKit::toImpl(dataStoreRef)->reinitializeAppBoundDomains();
+#else
+    UNUSED_PARAM(dataStoreRef);
 #endif
 }
 

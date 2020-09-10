@@ -1774,11 +1774,14 @@ public:
     void setIsTakingSnapshotsForApplicationSuspension(bool);
     void setNeedsDOMWindowResizeEvent();
 
+#if ENABLE(APP_BOUND_DOMAINS)
+    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
     void isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&&);
     void isForcedIntoAppBoundModeTesting(CompletionHandler<void(bool)>&&);
-
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
     Optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const { return m_isTopFrameNavigatingToAppBoundDomain; }
+#else
+        Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return WTF::nullopt; }
+#endif
 
 #if PLATFORM(COCOA)
     WebCore::ResourceError errorForUnpermittedAppBoundDomainNavigation(const URL&);
@@ -2375,8 +2378,10 @@ private:
     void tryCloseTimedOut();
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
         
+#if ENABLE(APP_BOUND_DOMAINS)
     bool setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMainFrame, const URL&, Optional<NavigatingToAppBoundDomain>);
-        
+#endif
+
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;
     WeakPtr<PageClient> m_pageClient;
@@ -2872,11 +2877,14 @@ private:
     MonotonicTime m_didFinishDocumentLoadForMainFrameTimestamp;
 #endif
         
+#if ENABLE(APP_BOUND_DOMAINS)
     Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
     Optional<NavigatingToAppBoundDomain> m_isTopFrameNavigatingToAppBoundDomain;
     bool m_ignoresAppBoundDomains { false };
-    bool m_userScriptsNotified { false };
     bool m_limitsNavigationsToAppBoundDomains { false };
+#endif
+
+    bool m_userScriptsNotified { false };
     bool m_hasExecutedAppBoundBehaviorBeforeNavigation { false };
     bool m_canUseCredentialStorage { true };
 };

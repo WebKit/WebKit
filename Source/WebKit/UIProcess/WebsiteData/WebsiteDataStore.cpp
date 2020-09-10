@@ -2299,7 +2299,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;
-#if PLATFORM(COCOA)
+#if ENABLE(APP_BOUND_DOMAINS)
     if (isAppBoundITPRelaxationEnabled)
         appBoundDomains = appBoundDomainsIfInitialized().valueOr(HashSet<WebCore::RegistrableDomain> { });
 #endif
@@ -2476,6 +2476,18 @@ WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
 }
 #endif
 
+void WebsiteDataStore::renameOriginInWebsiteData(URL&& oldName, URL&& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
+        if (auto* networkProcess = processPool->networkProcess()) {
+            networkProcess->addSession(*this);
+            networkProcess->renameOriginInWebsiteData(m_sessionID, oldName, newName, dataTypes, [callbackAggregator] { });
+        }
+    }
+}
+
+#if ENABLE(APP_BOUND_DOMAINS)
 void WebsiteDataStore::hasAppBoundSession(CompletionHandler<void(bool)>&& completionHandler) const
 {
     for (auto& processPool : processPools()) {
@@ -2497,18 +2509,6 @@ void WebsiteDataStore::clearAppBoundSession(CompletionHandler<void()>&& completi
     }
 }
 
-void WebsiteDataStore::renameOriginInWebsiteData(URL&& oldName, URL&& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
-{
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    for (auto& processPool : WebProcessPool::allProcessPools()) {
-        if (auto* networkProcess = processPool->networkProcess()) {
-            networkProcess->addSession(*this);
-            networkProcess->renameOriginInWebsiteData(m_sessionID, oldName, newName, dataTypes, [callbackAggregator] { });
-        }
-    }
-}
-
-#if PLATFORM(COCOA)
 void WebsiteDataStore::forwardAppBoundDomainsToITPIfInitialized(CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));

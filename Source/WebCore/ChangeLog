@@ -1,3 +1,33 @@
+2020-09-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App-Bound Domains code to only compile for iOS with its own macro
+        https://bugs.webkit.org/show_bug.cgi?id=215027
+        <rdar://problem/63688232>
+
+        Reviewed by Darin Adler.
+
+        App-Bound Domains code should only be compiled and run on iOS.
+        This patch wraps any App-Bound Domains code in #if ENABLE(APP_BOUND_DOMAINS),
+        which is equal to IOS_FAMILY, making sure we don't execute or compile 
+        the code unnecessarily on macOS.
+
+        No new tests, behavior should not change so testing is covered by
+        all existing App-Bound Domains layout and API tests.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorld):
+        * loader/FrameLoaderClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptImmediately):
+        * page/Page.cpp:
+        (WebCore::Page::injectUserStyleSheet):
+        * page/WebKitNamespace.cpp:
+        (WebCore::WebKitNamespace::messageHandlers):
+        * platform/network/NetworkStorageSession.cpp:
+        * platform/network/NetworkStorageSession.h:
+        * style/StyleScopeRuleSets.cpp:
+        (WebCore::Style::ScopeRuleSets::initializeUserStyle):
+
 2020-09-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] REGRESSION (Big Sur): A GIF image with a finite loopCount loops an extra cycle

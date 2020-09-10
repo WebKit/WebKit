@@ -136,7 +136,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (null_resettable, nonatomic, copy) WKWebpagePreferences *defaultWebpagePreferences WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
-@property (nonatomic) BOOL limitsNavigationsToAppBoundDomains WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL limitsNavigationsToAppBoundDomains WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline

@@ -635,6 +635,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_appBoundDomains:(void (^)(NSArray<NSString *> *))completionHandler
 {
+#if ENABLE(APP_BOUND_DOMAINS)
     _websiteDataStore->getAppBoundDomains([completionHandler = makeBlockPtr(completionHandler)](auto& domains) mutable {
         Vector<RefPtr<API::Object>> apiDomains;
         apiDomains.reserveInitialCapacity(domains.size());
@@ -642,10 +643,14 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             apiDomains.uncheckedAppend(API::String::create(domain.string()));
         completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
     });
+#else
+    completionHandler({ });
+#endif
 }
 
 - (void)_appBoundSchemes:(void (^)(NSArray<NSString *> *))completionHandler
 {
+#if ENABLE(APP_BOUND_DOMAINS)
     _websiteDataStore->getAppBoundSchemes([completionHandler = makeBlockPtr(completionHandler)](auto& schemes) mutable {
         Vector<RefPtr<API::Object>> apiSchemes;
         apiSchemes.reserveInitialCapacity(schemes.size());
@@ -653,6 +658,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             apiSchemes.uncheckedAppend(API::String::create(scheme));
         completionHandler(wrapper(API::Array::create(WTFMove(apiSchemes))));
     });
+#else
+    completionHandler({ });
+#endif
 }
 
 @end

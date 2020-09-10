@@ -148,17 +148,19 @@ public:
     WebKit::WebViewCategory webViewCategory() const { return m_webViewCategory; }
     void setWebViewCategory(WebKit::WebViewCategory category) { m_webViewCategory = category; }
 
-    bool ignoresAppBoundDomains() const { return m_ignoresAppBoundDomains; }
-    void setIgnoresAppBoundDomains(bool shouldIgnore) { m_ignoresAppBoundDomains = shouldIgnore; }
-
     bool loadsSubresources() const { return m_loadsSubresources; }
     void setLoadsSubresources(bool loads) { m_loadsSubresources = loads; }
 
     bool loadsFromNetwork() const { return m_loadsFromNetwork; }
     void setLoadsFromNetwork(bool loads) { m_loadsFromNetwork = loads; }
 
+#if ENABLE(APP_BOUND_DOMAINS)
+    bool ignoresAppBoundDomains() const { return m_ignoresAppBoundDomains; }
+    void setIgnoresAppBoundDomains(bool shouldIgnore) { m_ignoresAppBoundDomains = shouldIgnore; }
+    
     bool limitsNavigationsToAppBoundDomains() const { return m_limitsNavigationsToAppBoundDomains; }
     void setLimitsNavigationsToAppBoundDomains(bool limits) { m_limitsNavigationsToAppBoundDomains = limits; }
+#endif
 
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
@@ -202,10 +204,14 @@ private:
     bool m_crossOriginAccessControlCheckEnabled { true };
     WTF::String m_processDisplayName;
     WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::AppBoundDomain };
-    bool m_ignoresAppBoundDomains { false };
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
+    
+#if ENABLE(APP_BOUND_DOMAINS)
+    bool m_ignoresAppBoundDomains { false };
     bool m_limitsNavigationsToAppBoundDomains { false };
+#endif
+
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 };
 

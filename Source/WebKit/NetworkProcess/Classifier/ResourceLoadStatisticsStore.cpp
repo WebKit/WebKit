@@ -312,10 +312,12 @@ void ResourceLoadStatisticsStore::setPrevalentResourceForDebugMode(const Registr
     m_debugManualPrevalentResource = domain;
 }
 
+#if ENABLE(APP_BOUND_DOMAINS)
 void ResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomain>&& domains)
 {
     m_appBoundDomains = WTFMove(domains);
 }
+#endif
 
 void ResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary()
 {

@@ -155,8 +155,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldRenderCanvasInGPUProcess;
     encoder << shouldEnableVP9Decoder;
     encoder << shouldEnableVP9SWDecoder;
+#if ENABLE(APP_BOUND_DOMAINS)
     encoder << needsInAppBrowserPrivacyQuirks;
     encoder << limitsNavigationsToAppBoundDomains;
+#endif
     encoder << shouldRelaxThirdPartyCookieBlocking;
     encoder << canUseCredentialStorage;
 
@@ -500,12 +502,14 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.shouldEnableVP9SWDecoder))
         return WTF::nullopt;
 
+#if ENABLE(APP_BOUND_DOMAINS)
     if (!decoder.decode(parameters.needsInAppBrowserPrivacyQuirks))
         return WTF::nullopt;
     
     if (!decoder.decode(parameters.limitsNavigationsToAppBoundDomains))
         return WTF::nullopt;
-    
+#endif
+
     if (!decoder.decode(parameters.shouldRelaxThirdPartyCookieBlocking))
         return WTF::nullopt;
 

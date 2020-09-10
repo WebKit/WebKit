@@ -1317,6 +1317,7 @@ void NetworkProcess::hasIsolatedSession(PAL::SessionID sessionID, const WebCore:
     completionHandler(result);
 }
 
+#if ENABLE(APP_BOUND_DOMAINS)
 void NetworkProcess::setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain>&& appBoundDomains, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
@@ -1328,6 +1329,7 @@ void NetworkProcess::setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID 
     ASSERT_NOT_REACHED();
     completionHandler();
 }
+#endif
 
 void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
 {
@@ -2513,8 +2515,13 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
         }, [this, sessionID](auto& registrableDomain, auto&& completionHandler) {
             ASSERT(!registrableDomain.isEmpty());
             parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, WTFMove(completionHandler), 0);
+#if ENABLE(APP_BOUND_DOMAINS)
         }, [this, sessionID](auto&& completionHandler) {
             parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { sessionID }, WTFMove(completionHandler), 0);
+#else
+        }, [] (auto&& completionHandler) {
+            completionHandler({ });
+#endif
         });
     });
     return *result.iterator->value;
@@ -2720,6 +2727,7 @@ Seconds NetworkProcess::randomClosedPortDelay()
     return delayMin + Seconds::fromMilliseconds(static_cast<double>(cryptographicallyRandomNumber())) % delayMax;
 }
 
+#if ENABLE(APP_BOUND_DOMAINS)
 void NetworkProcess::hasAppBoundSession(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler) const
 {
     bool result = false;
@@ -2738,6 +2746,7 @@ void NetworkProcess::clearAppBoundSession(PAL::SessionID sessionID, CompletionHa
         completionHandler();
     }
 }
+#endif
 
 void NetworkProcess::broadcastConsoleMessage(PAL::SessionID sessionID, JSC::MessageSource source, JSC::MessageLevel level, const String& message)
 {

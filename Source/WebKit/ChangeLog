@@ -1,3 +1,135 @@
+2020-09-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App-Bound Domains code to only compile for iOS with its own macro
+        https://bugs.webkit.org/show_bug.cgi?id=215027
+        <rdar://problem/63688232>
+
+        Reviewed by Darin Adler.
+
+        App-bound domains code should only be compiled on iOS, so this patch
+        adds additional '#if ENABLE()' checks to ensure that. Additionally,
+        for clarity this patch creates a new APP_BOUND_DOMAINS macro and
+        replaces existing IOS_FAMILY checks for App-Bound Domains code with
+        this new macro.
+
+        LoadParameters, PolicyDecision and WKPreferences will be in another
+        patch, this one is huge already.
+
+        No new tests, behavior should not change so testing is covered by
+        all existing App-Bound Domains layout and API tests.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resetParametersToDefaultValues):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::swServerForSession):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::filterAppBoundCookies):
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::ignoresAppBoundDomains const):
+        (API::PageConfiguration::setIgnoresAppBoundDomains):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreHasAppBoundSession):
+        (WKWebsiteDataStoreSetAppBoundDomainsForTesting):
+        (WKWebsiteDataStoreClearAppBoundSession):
+        (WKWebsiteDataStoreReinitializeAppBoundDomains):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isNavigatingToAppBoundDomain:]): Deleted.
+        (-[WKWebView _isForcedIntoAppBoundMode:]): Deleted.
+        Moved to WKWebViewIOS.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration limitsNavigationsToAppBoundDomains]):
+        (-[WKWebViewConfiguration setLimitsNavigationsToAppBoundDomains:]):
+        (-[WKWebViewConfiguration _ignoresAppBoundDomains]):
+        (-[WKWebViewConfiguration _setIgnoresAppBoundDomains:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        Moved App-Bound Domain functions to the part of the file that only compiles
+        on iOS and removed macos tags for WK_API_AVAILABLE, because both the
+        API and SPI are iOS only.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Moved App-Bound Domain functions to the part of the file that only compiles on iOS.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _appBoundDomains:]):
+        (-[WKWebsiteDataStore _appBoundSchemes:]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _isNavigatingToAppBoundDomain:]):
+        (-[WKWebView _isForcedIntoAppBoundMode:]):
+        Moved these from WKWebView.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getAppBoundDomains):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::shouldTreatURLProtocolAsAppBound):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        (WebKit::WebPageProxy::disableServiceWorkerEntitlementInNetworkProcess):
+        (WebKit::WebPageProxy::clearServiceWorkerEntitlementOverride):
+        (WebKit::WebPageProxy::preconnectTo):
+        Now that m_isNavigatingToAppBoundDomain is iOS only, I changed WebPageProxy::preconnectTo 
+        to call the isNavigatingToAppBoundDomain() function, which is available
+        on all platforms but returns WTF::nullopt unless the platform is iOS.
+
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isNavigatingToAppBoundDomain const):
+        isNavigatingToAppBoundDomain() is used very frequently, it is cleaner
+        to have two functions -- one for iOS which returns the actual value
+        and one for non-iOS platforms which returns WTF::nullopt -- rather
+        than have #if ENABLE(APP_BOUND_DOMAIN) checks everywhere. 
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::appBoundDomainQueue):
+        (WebKit::WebsiteDataStore::platformInitialize):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        (WebKit::WebsiteDataStore::renameOriginInWebsiteData):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::sendH2Ping):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::runJavaScript):
+        (WebKit::WebPage::updatePreferences):
+        Only check for the m_limitsNavigationsToAppBoundDomains flag if the
+        platform is iOS. Otherwise it should always be false, because it will
+        never be enabled on a non-iOS platform.
+
+        * WebProcess/WebPage/WebPage.h:
+
 2020-09-09  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Form controls behave strangely (like iPhone) in macOS-idiom apps

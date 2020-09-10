@@ -696,6 +696,7 @@ void WebResourceLoadStatisticsStore::setStandaloneApplicationDomain(const Regist
     });
 }
 
+#if ENABLE(APP_BOUND_DOMAINS)
 void WebResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -722,6 +723,7 @@ void WebResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomai
         postTaskReply(WTFMove(completionHandler));
     });
 }
+#endif
 
 void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
 {
@@ -1346,10 +1348,12 @@ void WebResourceLoadStatisticsStore::resetParametersToDefaultValues(CompletionHa
         return;
     }
 
+#if ENABLE(APP_BOUND_DOMAINS)
     if (m_networkSession) {
         if (auto* storageSession = m_networkSession->networkStorageSession())
             storageSession->resetAppBoundDomains();
     }
+#endif
 
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore)

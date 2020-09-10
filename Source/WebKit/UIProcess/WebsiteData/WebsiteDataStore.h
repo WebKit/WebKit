@@ -300,22 +300,26 @@ public:
     static bool http3Enabled();
 
     void resetQuota(CompletionHandler<void()>&&);
+
+#if ENABLE(APP_BOUND_DOMAINS)
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
     void clearAppBoundSession(CompletionHandler<void()>&&);
-
     void beginAppBoundDomainCheck(const URL&, WebFramePolicyListenerProxy&);
     void getAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
     void getAppBoundSchemes(CompletionHandler<void(const HashSet<String>&)>&&) const;
     void ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&, const HashSet<String>&)>&&) const;
     void reinitializeAppBoundDomains();
     static void setAppBoundDomainsForTesting(HashSet<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
+#endif
     void updateBundleIdentifierInNetworkProcess(const String&, CompletionHandler<void()>&&);
     void clearBundleIdentifierInNetworkProcess(CompletionHandler<void()>&&);
     
 private:
     enum class ForceReinitialization : bool { No, Yes };
+#if ENABLE(APP_BOUND_DOMAINS)
     void initializeAppBoundDomains(ForceReinitialization = ForceReinitialization::No);
     void addTestDomains() const;
+#endif
 
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
@@ -347,7 +351,7 @@ private:
 
     void maybeRegisterWithSessionIDMap();
 
-#if PLATFORM(COCOA)
+#if ENABLE(APP_BOUND_DOMAINS)
     static Optional<HashSet<WebCore::RegistrableDomain>> appBoundDomainsIfInitialized();
     constexpr static const std::atomic<bool> isAppBoundITPRelaxationEnabled = false;
     static void forwardAppBoundDomainsToITPIfInitialized(CompletionHandler<void()>&&);
