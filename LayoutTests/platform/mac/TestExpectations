@@ -1950,9 +1950,6 @@ imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm [ Pass 
 # <rdar://problem/61264058> [ iOS and Mac with Guard-Malloc and wk2 or Stress-GC ] imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html is flaky failing.
 imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html [ Pass Failure ]
 
-# <rdar://problem/61833551> REGRESSION: fast/loader/create-frame-in-DOMContentLoaded.html is failing
-[ BigSur+ ] fast/loader/create-frame-in-DOMContentLoaded.html [ Failure ]
-
 # <rdar://problem/61948094>
 [ BigSur+ ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html [ Pass Failure ]
 

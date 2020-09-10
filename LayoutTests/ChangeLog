@@ -1,3 +1,12 @@
+2020-09-10  Karl Rackler  <rackler@apple.com>
+
+        Remove test expectation now that test is passing.
+        rdar://61833551
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-09-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r266842 and r266883.
