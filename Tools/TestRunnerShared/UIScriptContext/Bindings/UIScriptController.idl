@@ -344,6 +344,7 @@ interface UIScriptController {
     void setHardwareKeyboardAttached(boolean attached);
 
     object attachmentInfo(DOMString attachmentIdentifier);
+    void insertAttachmentForFilePath(DOMString filePath, DOMString contentType, object callback);
 
     // Editing
     void drawSquareInEditableImage();
