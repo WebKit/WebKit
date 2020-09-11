@@ -1,3 +1,18 @@
+2020-09-10  Zalan Bujtas  <zalan@apple.com>
+
+        [Repaint] RenderLayerModelObject::styleWillChange may issue redundant repaint
+        https://bugs.webkit.org/show_bug.cgi?id=216374
+        <rdar://problem/68657490>
+
+        Reviewed by Simon Fraser.
+
+        Move the repaintIncludingDescendants() calls to repaintBeforeStyleChange() to avoid redundant repaints on the same renderer.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::repaintBeforeStyleChange):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleWillChange):
+
 2020-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Address a post-commit review comment after r266887

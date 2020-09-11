@@ -1,3 +1,14 @@
+2020-09-10  Zalan Bujtas  <zalan@apple.com>
+
+        [Repaint] RenderLayerModelObject::styleWillChange may issue redundant repaint
+        https://bugs.webkit.org/show_bug.cgi?id=216374
+        <rdar://problem/68657490>
+
+        Reviewed by Simon Fraser.
+
+        * css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+        * platform/ios/css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+
 2020-09-10  Karl Rackler  <rackler@apple.com>
 
         Remove test expectation now that test is passing.
