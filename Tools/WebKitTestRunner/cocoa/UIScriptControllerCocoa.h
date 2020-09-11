@@ -57,6 +57,8 @@ public:
 
     void setContinuousSpellCheckingEnabled(bool) override;
 
+    void insertAttachmentForFilePath(JSStringRef filePath, JSStringRef contentType, JSValueRef callback) override;
+
 protected:
     explicit UIScriptControllerCocoa(UIScriptContext&);
     TestRunnerWKWebView *webView() const;
