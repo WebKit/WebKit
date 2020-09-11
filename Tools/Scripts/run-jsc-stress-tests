@@ -266,7 +266,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--os'
         $hostOS = arg
     when '--model'
-        $model = arg
+        $model = arg.gsub(/\A['"]+|['"]+\Z/, '')
     when '--env-vars'
         $envVars = arg.gsub(/\s+/, ' ').split(' ')
     when '--quick'
