@@ -359,8 +359,6 @@ public:
 
     void didSetAppBoundDomains() const;
 
-    WKURLRef currentTestURL() const;
-
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions::ContextOptions&) const;

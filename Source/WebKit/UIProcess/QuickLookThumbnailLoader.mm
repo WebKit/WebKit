@@ -107,7 +107,7 @@
             return;
     }
 
-    auto request = adoptNS([WebKit::allocQLThumbnailGenerationRequestInstance() initWithFileAtURL:_filePath.get() size:CGSizeMake(400, 400) scale:1 representationTypes:QLThumbnailGenerationRequestRepresentationTypeThumbnail]);
+    auto request = adoptNS([WebKit::allocQLThumbnailGenerationRequestInstance() initWithFileAtURL:_filePath.get() size:CGSizeMake(400, 400) scale:1 representationTypes:QLThumbnailGenerationRequestRepresentationTypeAll]);
     [request setIconMode:YES];
     
     [[WebKit::getQLThumbnailGeneratorClass() sharedGenerator] generateBestRepresentationForRequest:request.get() completionHandler:^(QLThumbnailRepresentation *thumbnail, NSError *error) {

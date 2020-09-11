@@ -278,7 +278,6 @@ public:
     // Attachment Elements
 
     virtual JSObjectRef attachmentInfo(JSStringRef attachmentIdentifier) { notImplemented(); return nullptr; }
-    virtual void insertAttachmentForFilePath(JSStringRef filePath, JSStringRef contentType, JSValueRef callback) { notImplemented(); }
 
     // Callbacks
     
