@@ -5,17 +5,16 @@ Test: ../../resources/webgl_test_files/conformance2/extensions/promoted-extensio
 [ 1: PASS ] gl = wtu.create3DContext(undefined, undefined, 2) is non-null.
 [ 2: PASS ] ANGLE_instanced_arrays was not exposed in the WebGL 2.0 context
 [ 3: PASS ] EXT_blend_minmax was not exposed in the WebGL 2.0 context
-[ 4: PASS ] EXT_color_buffer_half_float was not exposed in the WebGL 2.0 context
-[ 5: PASS ] EXT_frag_depth was not exposed in the WebGL 2.0 context
-[ 6: PASS ] EXT_shader_texture_lod was not exposed in the WebGL 2.0 context
-[ 7: PASS ] EXT_sRGB was not exposed in the WebGL 2.0 context
-[ 8: PASS ] OES_element_index_uint was not exposed in the WebGL 2.0 context
-[ 9: PASS ] OES_standard_derivatives was not exposed in the WebGL 2.0 context
-[ 10: FAIL ] OES_texture_float was exposed in the WebGL 2.0 context but should not have been
-[ 11: FAIL ] OES_texture_half_float was exposed in the WebGL 2.0 context but should not have been
-[ 12: FAIL ] OES_texture_half_float_linear was exposed in the WebGL 2.0 context but should not have been
-[ 13: PASS ] OES_vertex_array_object was not exposed in the WebGL 2.0 context
-[ 14: FAIL ] WEBGL_depth_texture was exposed in the WebGL 2.0 context but should not have been
-[ 15: PASS ] WEBGL_draw_buffers was not exposed in the WebGL 2.0 context
-[ 16: PASS ] successfullyParsed is true
+[ 4: PASS ] EXT_frag_depth was not exposed in the WebGL 2.0 context
+[ 5: PASS ] EXT_shader_texture_lod was not exposed in the WebGL 2.0 context
+[ 6: PASS ] EXT_sRGB was not exposed in the WebGL 2.0 context
+[ 7: PASS ] OES_element_index_uint was not exposed in the WebGL 2.0 context
+[ 8: PASS ] OES_standard_derivatives was not exposed in the WebGL 2.0 context
+[ 9: FAIL ] OES_texture_float was exposed in the WebGL 2.0 context but should not have been
+[ 10: FAIL ] OES_texture_half_float was exposed in the WebGL 2.0 context but should not have been
+[ 11: FAIL ] OES_texture_half_float_linear was exposed in the WebGL 2.0 context but should not have been
+[ 12: PASS ] OES_vertex_array_object was not exposed in the WebGL 2.0 context
+[ 13: FAIL ] WEBGL_depth_texture was exposed in the WebGL 2.0 context but should not have been
+[ 14: PASS ] WEBGL_draw_buffers was not exposed in the WebGL 2.0 context
+[ 15: PASS ] successfullyParsed is true
 [ FAIL ] 4 failures reported

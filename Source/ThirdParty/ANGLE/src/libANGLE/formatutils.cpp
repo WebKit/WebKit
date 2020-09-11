@@ -186,7 +186,7 @@ static bool SizedHalfFloatRGTextureAttachmentSupport(const Version &clientVersio
     // HALF_FLOAT
     if (clientVersion >= Version(3, 0))
     {
-        return extensions.colorBufferFloat;
+        return extensions.colorBufferFloat || (extensions.webglCompatibility && extensions.colorBufferHalfFloat);
     }
     // HALF_FLOAT_OES
     else
@@ -253,7 +253,7 @@ static bool SizedHalfFloatRGBTextureAttachmentSupport(const Version &clientVersi
         // It is unclear how EXT_color_buffer_half_float applies to ES3.0 and above, however,
         // dEQP GLES3 es3fFboColorbufferTests.cpp verifies that texture attachment of GL_RGB16F
         // is possible, so assume that all GLES implementations support it.
-        return extensions.colorBufferHalfFloat;
+        return extensions.colorBufferHalfFloat && !extensions.webglCompatibility;
     }
     // HALF_FLOAT_OES
     else
@@ -265,8 +265,8 @@ static bool SizedHalfFloatRGBTextureAttachmentSupport(const Version &clientVersi
 static bool SizedHalfFloatRGBRenderbufferSupport(const Version &clientVersion,
                                                  const Extensions &extensions)
 {
-    return (clientVersion >= Version(3, 0) || extensions.textureHalfFloat) &&
-           extensions.colorBufferHalfFloat;
+    return !extensions.webglCompatibility && ((clientVersion >= Version(3, 0) || extensions.textureHalfFloat) &&
+           extensions.colorBufferHalfFloat);
 }
 
 static bool SizedHalfFloatRGBATextureAttachmentSupport(const Version &clientVersion,
@@ -275,7 +275,7 @@ static bool SizedHalfFloatRGBATextureAttachmentSupport(const Version &clientVers
     // HALF_FLOAT
     if (clientVersion >= Version(3, 0))
     {
-        return extensions.colorBufferFloat;
+        return extensions.colorBufferFloat || (extensions.webglCompatibility && extensions.colorBufferHalfFloat);
     }
     // HALF_FLOAT_OES
     else

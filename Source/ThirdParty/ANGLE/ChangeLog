@@ -1,3 +1,16 @@
+2020-09-11  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Support EXT_color_buffer_half_float on WebGL 2.0 contexts
+        https://bugs.webkit.org/show_bug.cgi?id=216010
+
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/formatutils.cpp:
+        (gl::SizedHalfFloatRGTextureAttachmentSupport):
+        (gl::SizedHalfFloatRGBTextureAttachmentSupport):
+        (gl::SizedHalfFloatRGBRenderbufferSupport):
+        (gl::SizedHalfFloatRGBATextureAttachmentSupport):
+
 2020-09-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Mark uniform samplers in an array unused per element

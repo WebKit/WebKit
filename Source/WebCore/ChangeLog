@@ -1,3 +1,17 @@
+2020-09-11  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Support EXT_color_buffer_half_float on WebGL 2.0 contexts
+        https://bugs.webkit.org/show_bug.cgi?id=216010
+
+        Reviewed by Kenneth Russell.
+
+        Added test webgl/2.0.0/conformance2/extensions/ext-color-buffer-half-float.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        (WebCore::WebGL2RenderingContext::renderbufferStorageImpl):
+
 2020-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Move _setCookieAcceptPolicy to WKHTTPCookieStore

@@ -1,3 +1,16 @@
+2020-09-11  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Support EXT_color_buffer_half_float on WebGL 2.0 contexts
+        https://bugs.webkit.org/show_bug.cgi?id=216010
+
+        Reviewed by Kenneth Russell.
+
+        * webgl/2.0.0/conformance2/extensions/ext-color-buffer-half-float-expected.txt: Added.
+        * webgl/2.0.0/conformance2/extensions/ext-color-buffer-half-float.html: Added.
+        * webgl/2.0.0/conformance2/extensions/promoted-extensions-expected.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/extensions/ext-color-buffer-half-float.html: Added.
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/extensions/promoted-extensions.html:
+
 2020-09-11  Devin Rousso  <drousso@apple.com>
 
         REGRESSION(r266885): ASSERTION FAILED: Inspector::CSSBackendDispatcher::getInlineStylesForNode(long, RefPtr<JSON::Object> &&) !result.error().isEmpty()
