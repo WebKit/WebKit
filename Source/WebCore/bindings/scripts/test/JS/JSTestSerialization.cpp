@@ -638,17 +638,20 @@ JSC::JSObject* JSTestSerialization::serialize(JSGlobalObject& lexicalGlobalObjec
     auto seventhDirectlySerializableAttributeValue = jsTestSerializationSeventhDirectlySerializableAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     auto* seventhDirectlySerializableAttributeSerializedValue = JSTestSerializationInheritFinal::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationInheritFinal*>(seventhDirectlySerializableAttributeValue), globalObject);
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "seventhDirectlySerializableAttribute"), seventhDirectlySerializableAttributeSerializedValue);
 
     auto eighthIndirectlyAttributeValue = jsTestSerializationEighthIndirectlyAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     auto* eighthIndirectlyAttributeSerializedValue = JSTestSerializationIndirectInheritance::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationIndirectInheritance*>(eighthIndirectlyAttributeValue), globalObject);
+    throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "eighthIndirectlyAttribute"), eighthIndirectlyAttributeSerializedValue);
 
     auto ninthOptionalDirectlySerializableAttributeValue = jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     if (!ninthOptionalDirectlySerializableAttributeValue.isNull()) {
         auto* ninthOptionalDirectlySerializableAttributeSerializedValue = JSTestSerializationInheritFinal::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationInheritFinal*>(ninthOptionalDirectlySerializableAttributeValue), globalObject);
+        throwScope.assertNoException();
         result->putDirect(vm, Identifier::fromString(vm, "ninthOptionalDirectlySerializableAttribute"), ninthOptionalDirectlySerializableAttributeSerializedValue);
     } else
         result->putDirect(vm, Identifier::fromString(vm, "ninthOptionalDirectlySerializableAttribute"), ninthOptionalDirectlySerializableAttributeValue);

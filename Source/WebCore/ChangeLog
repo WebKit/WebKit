@@ -1,3 +1,25 @@
+2020-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Serialization should have exception checks
+        https://bugs.webkit.org/show_bug.cgi?id=216399
+        <rdar://problem/68633776>
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: js/dom/serialization-should-have-exception-check.html
+
+        IDL CodeGenerator missed appropriate exception checks in serialization code. This patch adds it.
+        In serialization we cannot throw an error currently. So we should ensure it with assertNoException().
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateSerializerDefinition):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerialization::serialize):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::JSTestSerializationInherit::serialize):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::JSTestSerializationInheritFinal::serialize):
+
 2020-09-11  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Support EXT_color_buffer_half_float on WebGL 2.0 contexts

@@ -256,6 +256,7 @@ JSC::JSObject* JSTestSerializationInheritFinal::serialize(JSGlobalObject& lexica
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* result = JSTestSerializationInherit::serialize(lexicalGlobalObject, thisObject, globalObject);
+    throwScope.assertNoException();
 
     auto finalLongAttributeBarValue = jsTestSerializationInheritFinalFinalLongAttributeBarGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();

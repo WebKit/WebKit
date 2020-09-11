@@ -222,6 +222,7 @@ JSC::JSObject* JSTestSerializationInherit::serialize(JSGlobalObject& lexicalGlob
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* result = JSTestSerialization::serialize(lexicalGlobalObject, thisObject, globalObject);
+    throwScope.assertNoException();
 
     auto inheritLongAttributeValue = jsTestSerializationInheritInheritLongAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();

@@ -5591,6 +5591,7 @@ sub GenerateSerializerDefinition
     if ($interface->serializable->hasInherit) {
         my $parentSerializerInterfaceName = $parentSerializerInterface->type->name;
         push(@implContent, "    auto* result = JS${parentSerializerInterfaceName}::serialize(lexicalGlobalObject, thisObject, globalObject);\n");
+        push(@implContent, "    throwScope.assertNoException();\n");
     } else {
         push(@implContent, "    auto* result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());\n");
     }
@@ -5609,11 +5610,13 @@ sub GenerateSerializerDefinition
             if ($attribute->type->isNullable) {
                 push(@implContent, "    if (!${name}Value.isNull()) {\n");
                 push(@implContent, "        auto* ${name}SerializedValue = JS${attributeInterfaceName}::serialize(lexicalGlobalObject, *jsCast<JS${attributeInterfaceName}*>(${name}Value), globalObject);\n");
+                push(@implContent, "        throwScope.assertNoException();\n");
                 push(@implContent, "        result->putDirect(vm, Identifier::fromString(vm, \"${name}\"), ${name}SerializedValue);\n");
                 push(@implContent, "    } else\n");
                 push(@implContent, "        result->putDirect(vm, Identifier::fromString(vm, \"${name}\"), ${name}Value);\n");
             } else {
                 push(@implContent, "    auto* ${name}SerializedValue = JS${attributeInterfaceName}::serialize(lexicalGlobalObject, *jsCast<JS${attributeInterfaceName}*>(${name}Value), globalObject);\n");
+                push(@implContent, "    throwScope.assertNoException();\n");
                 push(@implContent, "    result->putDirect(vm, Identifier::fromString(vm, \"${name}\"), ${name}SerializedValue);\n");
             }
         } else {
