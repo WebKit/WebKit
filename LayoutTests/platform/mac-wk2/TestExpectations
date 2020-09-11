@@ -1295,5 +1295,3 @@ http/tests/resourceLoadStatistics/exemptDomains/ [ Skip ]
 
 webkit.org/b/216394 [ Release ] fast/selectors/text-field-selection-stroke-color.html [ Pass Failure ]
 
-webkit.org/b/216409 [ Debug ] inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Crash ]
-

@@ -533,8 +533,11 @@ Protocol::ErrorStringOr<std::tuple<RefPtr<Protocol::CSS::CSSStyle> /* inlineStyl
     Protocol::ErrorString errorString;
 
     auto* element = elementForId(errorString, nodeId);
-    if (!is<StyledElement>(element))
+    if (!element)
         return makeUnexpected(errorString);
+
+    if (!is<StyledElement>(element))
+        return { { nullptr, nullptr } };
 
     auto& styledElement = downcast<StyledElement>(*element);
     auto& styleSheet = asInspectorStyleSheet(styledElement);
