@@ -62,7 +62,7 @@ public:
 
     bool shouldBeTerminated() const
     {
-        const int maxInactiveFireCount = 20;
+        const int maxInactiveFireCount = 1;
         return !m_scheduled && m_unscheduledFireCount > maxInactiveFireCount;
     }
 
