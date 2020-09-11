@@ -1,3 +1,12 @@
+2020-09-10  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk2 Release ] fast/selectors/text-field-selection-stroke-color.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=216394
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-10  Zalan Bujtas  <zalan@apple.com>
 
         [Repaint] RenderLayerModelObject::styleWillChange may issue redundant repaint
