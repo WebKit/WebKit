@@ -1,3 +1,15 @@
+2020-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Protect this object in ValidationMessage::buildBubbleTree
+        https://bugs.webkit.org/show_bug.cgi?id=211832
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/validation-bubble-disappears-during-layout-expected.txt: Added.
+        * fast/forms/validation-bubble-disappears-during-layout.html: Added.
+        * platform/ios-wk1/TestExpectations: Marked validation-bubble-disappears-during-layout.html as Skip.
+        * platform/win/TestExpectations: Ditto.
+
 2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JSDOMConvertSequences should have exception checks appropriately

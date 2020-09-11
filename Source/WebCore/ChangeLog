@@ -1,3 +1,32 @@
+2020-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Protect this object in ValidationMessage::buildBubbleTree
+        https://bugs.webkit.org/show_bug.cgi?id=211832
+
+        Reviewed by Ryosuke Niwa.
+
+        ValidationMessage::buildBubbleTree is doing layout which can run a
+        script detaching the owner form element, and this
+        ValidationMessage object can be destroyed. Don't do layout in
+        buildBubbleTree. Call adjustBubblePosition by using
+        queuePostLayoutCallback and a weak pointer of ValidationMessage.
+
+        ValidationMessage::deleteBubbleTree was causing
+        ASSERT_WITH_SECURITY_IMPLICATION failures in
+        ContainerNode::removeNodeWithScriptAssertion due to re-entrant of
+        removeNodeWithScriptAssertion. UA shadow roots are never exposed
+        to author scripts so this is safe. Use
+        ScriptDisallowedScope::EventAllowedScope in it.
+
+        Test: fast/forms/validation-bubble-disappears-during-layout.html
+
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::adjustBubblePosition):
+        (WebCore::ValidationMessage::buildBubbleTree):
+        (WebCore::ValidationMessage::deleteBubbleTree): Use ScriptDisallowedScope::EventAllowedScope.
+        (WebCore::adjustBubblePosition): Changed to a member function.
+        * html/ValidationMessage.h: Inherit CanMakeWeakPtr.
+
 2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JSDOMConvertSequences should have exception checks appropriately

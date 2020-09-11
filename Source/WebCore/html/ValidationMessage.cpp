@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "RenderBlock.h"
 #include "RenderObject.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
@@ -148,14 +149,18 @@ void ValidationMessage::setMessageDOMAndStartTimer()
     }
 }
 
-static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble)
+void ValidationMessage::adjustBubblePosition()
 {
-    ASSERT(bubble);
+    if (!m_bubble)
+        return;
+    if (!m_element->renderer())
+        return;
+    LayoutRect hostRect = m_element->renderer()->absoluteBoundingBoxRect();
     if (hostRect.isEmpty())
         return;
     double hostX = hostRect.x();
     double hostY = hostRect.y();
-    if (RenderObject* renderer = bubble->renderer()) {
+    if (RenderObject* renderer = m_bubble->renderer()) {
         if (RenderBox* container = renderer->containingBlock()) {
             FloatPoint containerLocation = container->localToAbsolute();
             hostX -= containerLocation.x() + container->borderLeft();
@@ -163,13 +168,13 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
         }
     }
 
-    bubble->setInlineStyleProperty(CSSPropertyTop, hostY + hostRect.height(), CSSUnitType::CSS_PX);
+    m_bubble->setInlineStyleProperty(CSSPropertyTop, hostY + hostRect.height(), CSSUnitType::CSS_PX);
     // The 'left' value of ::-webkit-validation-bubble-arrow.
     const int bubbleArrowTopOffset = 32;
     double bubbleX = hostX;
     if (hostRect.width() / 2 < bubbleArrowTopOffset)
         bubbleX = std::max(hostX + hostRect.width() / 2 - bubbleArrowTopOffset, 0.0);
-    bubble->setInlineStyleProperty(CSSPropertyLeft, bubbleX, CSSUnitType::CSS_PX);
+    m_bubble->setInlineStyleProperty(CSSPropertyLeft, bubbleX, CSSUnitType::CSS_PX);
 }
 
 void ValidationMessage::buildBubbleTree()
@@ -179,7 +184,10 @@ void ValidationMessage::buildBubbleTree()
     if (!m_element->renderer())
         return;
 
-    ShadowRoot& shadowRoot = m_element->ensureUserAgentShadowRoot();
+    auto shadowRoot = makeRef(m_element->ensureUserAgentShadowRoot());
+
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    ScriptDisallowedScope::EventAllowedScope allowedScope(shadowRoot);
 
     static MainThreadNeverDestroyed<const AtomString> webkitValidationBubbleName("-webkit-validation-bubble", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> webkitValidationBubbleArrowClipperName("-webkit-validation-bubble-arrow-clipper", AtomString::ConstructFromLiteral);
@@ -192,47 +200,46 @@ void ValidationMessage::buildBubbleTree()
 
     Document& document = m_element->document();
     m_bubble = HTMLDivElement::create(document);
+    shadowRoot->appendChild(*m_bubble);
     m_bubble->setPseudo(webkitValidationBubbleName);
     // Need to force position:absolute because RenderMenuList doesn't assume it
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
-    shadowRoot.appendChild(*m_bubble);
-
-    auto weakElement = makeWeakPtr(*m_element);
-
-    document.updateLayout();
-
-    if (!weakElement || !m_element->renderer())
-        return;
-
-    adjustBubblePosition(m_element->renderer()->absoluteBoundingBoxRect(), m_bubble.get());
 
     auto clipper = HTMLDivElement::create(document);
+    m_bubble->appendChild(clipper);
     clipper->setPseudo(webkitValidationBubbleArrowClipperName);
     auto bubbleArrow = HTMLDivElement::create(document);
-    bubbleArrow->setPseudo(webkitValidationBubbleArrowName);
     clipper->appendChild(bubbleArrow);
-    m_bubble->appendChild(clipper);
+    bubbleArrow->setPseudo(webkitValidationBubbleArrowName);
 
     auto message = HTMLDivElement::create(document);
+    m_bubble->appendChild(message);
     message->setPseudo(webkitValidationBubbleMessageName);
     auto icon = HTMLDivElement::create(document);
-    icon->setPseudo(webkitValidationBubbleIconName);
     message->appendChild(icon);
+    icon->setPseudo(webkitValidationBubbleIconName);
     auto textBlock = HTMLDivElement::create(document);
+    message->appendChild(textBlock);
     textBlock->setPseudo(webkitValidationBubbleTextBlockName);
     m_messageHeading = HTMLDivElement::create(document);
-    m_messageHeading->setPseudo(webkitValidationBubbleHeadingName);
     textBlock->appendChild(*m_messageHeading);
+    m_messageHeading->setPseudo(webkitValidationBubbleHeadingName);
     m_messageBody = HTMLDivElement::create(document);
-    m_messageBody->setPseudo(webkitValidationBubbleBodyName);
     textBlock->appendChild(*m_messageBody);
-    message->appendChild(textBlock);
-    m_bubble->appendChild(message);
+    m_messageBody->setPseudo(webkitValidationBubbleBodyName);
 
     setMessageDOMAndStartTimer();
 
     // FIXME: Use transition to show the bubble.
+
+    if (!document.view())
+        return;
+    document.view()->queuePostLayoutCallback([weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+        weakThis->adjustBubblePosition();
+    });
 }
 
 void ValidationMessage::requestToHideMessage()
@@ -258,6 +265,7 @@ void ValidationMessage::deleteBubbleTree()
 {
     ASSERT(!validationMessageClient());
     if (m_bubble) {
+        ScriptDisallowedScope::EventAllowedScope allowedScope(*m_element->userAgentShadowRoot());
         m_messageHeading = nullptr;
         m_messageBody = nullptr;
         m_element->userAgentShadowRoot()->removeChild(*m_bubble);

@@ -34,6 +34,7 @@
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ class ValidationMessageClient;
 
 // FIXME: We should remove the code for !validationMessageClient() when all
 // ports supporting interactive validation switch to ValidationMessageClient.
-class ValidationMessage {
+class ValidationMessage : public CanMakeWeakPtr<ValidationMessage> {
     WTF_MAKE_NONCOPYABLE(ValidationMessage); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ValidationMessage(HTMLFormControlElement*);
@@ -60,6 +61,7 @@ private:
     ValidationMessageClient* validationMessageClient() const;
     void setMessage(const String&);
     void setMessageDOMAndStartTimer();
+    void adjustBubblePosition();
     void buildBubbleTree();
     void deleteBubbleTree();
 
