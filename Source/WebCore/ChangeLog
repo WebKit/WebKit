@@ -1,3 +1,99 @@
+2020-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate CoreText-specific code from ***Cocoa.mm to ***CoreText.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=216400
+
+        Reviewed by Tim Horton.
+
+        This is in preparation for sharing the CoreText code with the Apple Windows port.
+
+        This patch doesn't actually cause Windows to use this code yet. That will happen
+        in a series of subsequent patches. This patch is just the first stage.
+
+        There isn't any actual behavior change here - it's just moving code around between
+        files.
+
+        This patch also adds a new USE() flag: USE(CORE_TEXT). It migrates CoreText-specific
+        code from #if PLATFORM(COCOA) to #if USE(CORE_TEXT).
+
+        No new tests because there is no behavior change.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Font.cpp:
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascade.cpp:
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/FontPlatformData.cpp:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::showLetterpressedGlyphsWithAdvances):
+        (WebCore::FontCascade::isSubpixelAntialiasingAvailable): Deleted.
+        (WebCore::fillVectorWithHorizontalGlyphPositions): Deleted.
+        (WebCore::shouldUseLetterpressEffect): Deleted.
+        (WebCore::showGlyphsWithAdvances): Deleted.
+        (WebCore::setCGFontRenderingMode): Deleted.
+        (WebCore::FontCascade::drawGlyphs): Deleted.
+        (WebCore::FontCascade::primaryFontIsSystemFont const): Deleted.
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const): Deleted.
+        * platform/graphics/cocoa/FontCocoa.cpp: Added.
+        (WebCore::Font::platformDestroy):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::hash const):
+        (WebCore::isSystemFont): Deleted.
+        (): Deleted.
+        (WebCore::FontPlatformData::FontPlatformData): Deleted.
+        (WebCore::FontPlatformData::registeredFont const): Deleted.
+        (WebCore::mapFontWidthVariantToCTFeatureSelector): Deleted.
+        (WebCore::cascadeToLastResortAttributesDictionary): Deleted.
+        (WebCore::cascadeToLastResortAndVariationsFontDescriptor): Deleted.
+        (WebCore::FontPlatformData::ctFont const): Deleted.
+        (WebCore::FontPlatformData::objectForEqualityCheck): Deleted.
+        (WebCore::FontPlatformData::objectForEqualityCheck const): Deleted.
+        (WebCore::FontPlatformData::openTypeTable const): Deleted.
+        (WebCore::FontPlatformData::description const): Deleted.
+        (WebCore::FontPlatformData::familyName const): Deleted.
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        * platform/graphics/ct/FontCascadeCoreText.cpp: Copied from Source/WebCore/platform/graphics/cocoa/FontCascadeCocoa.mm.
+        (WebCore::FontCascade::isSubpixelAntialiasingAvailable):
+        (WebCore::fillVectorWithHorizontalGlyphPositions):
+        (WebCore::shouldUseLetterpressEffect):
+        (WebCore::showGlyphsWithAdvances):
+        (WebCore::setCGFontRenderingMode):
+        (WebCore::FontCascade::drawGlyphs):
+        (WebCore::FontCascade::primaryFontIsSystemFont const):
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const):
+        * platform/graphics/ct/FontCoreText.cpp: Renamed from Source/WebCore/platform/graphics/cocoa/FontCocoa.mm.
+        (WebCore::Font::platformInit):
+        (WebCore::Font::platformCharWidthInit):
+        (WebCore::Font::platformCreateScaledFont const):
+        (WebCore::Font::applyTransforms const):
+        * platform/graphics/ct/FontPlatformDataCoreText.cpp: Copied from Source/WebCore/platform/graphics/cocoa/FontPlatformDataCocoa.mm.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::isSystemFont):
+        (WebCore::FontPlatformData::registeredFont const):
+        (WebCore::mapFontWidthVariantToCTFeatureSelector):
+        (WebCore::cascadeToLastResortAttributesDictionary):
+        (WebCore::cascadeToLastResortAndVariationsFontDescriptor):
+        (WebCore::FontPlatformData::ctFont const):
+        (WebCore::FontPlatformData::objectForEqualityCheck):
+        (WebCore::FontPlatformData::objectForEqualityCheck const):
+        (WebCore::FontPlatformData::openTypeTable const):
+        (WebCore::FontPlatformData::description const):
+        (WebCore::FontPlatformData::familyName const):
+        * platform/graphics/ct/GlyphPageCoreText.cpp: Renamed from Source/WebCore/platform/graphics/mac/GlyphPageMac.cpp.
+        * platform/graphics/win/FontCascadeCGWin.cpp: Added.
+        (WebCore::FontCascade::setFontSmoothingLevel):
+        (WebCore::setCGFontSmoothingStyle):
+        (WebCore::FontCascade::setFontSmoothingStyle):
+        (WebCore::FontCascade::setFontSmoothingContrast):
+        (WebCore::clearTypeContrast):
+        (WebCore::FontCascade::systemFontSmoothingChanged):
+        (WebCore::FontCascade::setCGContextFontRenderingStyle):
+        (WebCore::renderingStyleForFont):
+        (WebCore::FontCascade::getPlatformGlyphAdvances):
+
 2020-09-11  Devin Rousso  <drousso@apple.com>
 
         REGRESSION(r266885): ASSERTION FAILED: Inspector::CSSBackendDispatcher::getInlineStylesForNode(long, RefPtr<JSON::Object> &&) !result.error().isEmpty()

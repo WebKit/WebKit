@@ -474,7 +474,7 @@ const Font& Font::brokenIdeographFont() const
     return *derivedFontData.brokenIdeographFont;
 }
 
-#if !PLATFORM(COCOA)
+#if !USE(CORE_TEXT)
 
 bool Font::isProbablyOnlyUsedToRenderIcons() const
 {
@@ -511,7 +511,7 @@ RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, floa
     return platformCreateScaledFont(fontDescription, scaleFactor);
 }
 
-#if !PLATFORM(COCOA)
+#if !USE(CORE_TEXT)
 void Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool, bool, const AtomString&, StringView, TextDirection) const
 {
 }

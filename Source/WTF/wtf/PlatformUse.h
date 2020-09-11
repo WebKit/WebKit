@@ -55,6 +55,10 @@
 #endif
 
 #if PLATFORM(COCOA)
+#define USE_CORE_TEXT 1
+#endif
+
+#if PLATFORM(COCOA)
 #define USE_CA 1
 #endif
 

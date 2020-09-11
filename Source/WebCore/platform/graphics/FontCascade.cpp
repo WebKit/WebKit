@@ -595,7 +595,7 @@ bool FontCascade::shouldUseSmoothing()
     return shouldUseFontSmoothing;
 }
 
-#if !PLATFORM(COCOA)
+#if !USE(CORE_TEXT)
 bool FontCascade::isSubpixelAntialiasingAvailable()
 {
     return false;

@@ -306,7 +306,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/FloatRectCocoa.mm
     platform/graphics/cocoa/FontCacheCoreText.cpp
     platform/graphics/cocoa/FontCascadeCocoa.mm
-    platform/graphics/cocoa/FontCocoa.mm
+    platform/graphics/cocoa/FontCocoa.cpp
     platform/graphics/cocoa/FontDescriptionCocoa.cpp
     platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
     platform/graphics/cocoa/FontPlatformDataCocoa.mm
@@ -320,6 +320,11 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/WebCoreDecompressionSession.mm
     platform/graphics/cocoa/WebGLLayer.mm
     platform/graphics/cocoa/WebGPULayer.mm
+
+    platform/graphics/ct/FontCascadeCoreText.cpp
+    platform/graphics/ct/FontCoreText.cpp
+    platform/graphics/ct/FontPlatformDataCoreText.cpp
+    platform/graphics/ct/GlyphPageCoreText.cpp
 
     platform/graphics/cv/ImageRotationSessionVT.mm
     platform/graphics/cv/PixelBufferConformerCV.cpp
@@ -335,7 +340,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/FloatPointMac.mm
     platform/graphics/mac/FloatSizeMac.mm
     platform/graphics/mac/FontCustomPlatformData.cpp
-    platform/graphics/mac/GlyphPageMac.cpp
     platform/graphics/mac/IconMac.mm
     platform/graphics/mac/ImageMac.mm
     platform/graphics/mac/IntPointMac.mm

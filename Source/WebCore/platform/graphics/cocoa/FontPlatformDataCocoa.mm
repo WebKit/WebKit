@@ -35,33 +35,6 @@
 
 namespace WebCore {
 
-bool isSystemFont(CTFontRef font)
-{
-#if HAVE(CTFONTISSYSTEMUIFONT)
-    return CTFontIsSystemUIFont(font);
-#else
-    return CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get());
-#endif
-}
-
-// These CoreText Text Spacing feature selectors are not defined in CoreText.
-enum TextSpacingCTFeatureSelector { TextSpacingProportional, TextSpacingFullWidth, TextSpacingHalfWidth, TextSpacingThirdWidth, TextSpacingQuarterWidth };
-
-FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
-    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
-{
-    ASSERT_ARG(font, font);
-    m_font = font;
-    m_isColorBitmapFont = CTFontGetSymbolicTraits(font) & kCTFontTraitColorGlyphs;
-    m_isSystemFont = WebCore::isSystemFont(m_font.get());
-    auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font, kCTFontVariationAttribute)));
-    m_hasVariations = variations && CFDictionaryGetCount(variations.get());
-
-#if PLATFORM(IOS_FAMILY)
-    m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
-#endif
-}
-
 unsigned FontPlatformData::hash() const
 {
     uintptr_t flags = static_cast<uintptr_t>(static_cast<unsigned>(m_widthVariant) << 6
@@ -71,7 +44,7 @@ unsigned FontPlatformData::hash() const
         | m_syntheticBold << 1
         | m_syntheticOblique);
 
-    uintptr_t fontHash = reinterpret_cast<uintptr_t>(CFHash(m_font.get()));
+    uintptr_t fontHash = static_cast<uintptr_t>(CFHash(m_font.get()));
     uintptr_t hashCodes[] = { fontHash, flags };
     return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 }
@@ -81,120 +54,6 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     if (!m_font || !other.m_font)
         return m_font == other.m_font;
     return CFEqual(m_font.get(), other.m_font.get());
-}
-
-CTFontRef FontPlatformData::registeredFont() const
-{
-    CTFontRef platformFont = font();
-    ASSERT(platformFont);
-    if (platformFont && adoptCF(CTFontCopyAttribute(platformFont, kCTFontURLAttribute)))
-        return platformFont;
-    return nullptr;
-}
-
-inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
-{
-    switch(variant) {
-    case FontWidthVariant::RegularWidth:
-        return TextSpacingProportional;
-
-    case FontWidthVariant::HalfWidth:
-        return TextSpacingHalfWidth;
-
-    case FontWidthVariant::ThirdWidth:
-        return TextSpacingThirdWidth;
-
-    case FontWidthVariant::QuarterWidth:
-        return TextSpacingQuarterWidth;
-    }
-
-    ASSERT_NOT_REACHED();
-    return TextSpacingProportional;
-}
-
-static RetainPtr<CFDictionaryRef> cascadeToLastResortAttributesDictionary()
-{
-    auto lastResort = adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0));
-
-    CFTypeRef descriptors[] = { lastResort.get() };
-    RetainPtr<CFArrayRef> array = adoptCF(CFArrayCreate(kCFAllocatorDefault, descriptors, WTF_ARRAY_LENGTH(descriptors), &kCFTypeArrayCallBacks));
-
-    CFTypeRef keys[] = { kCTFontCascadeListAttribute };
-    CFTypeRef values[] = { array.get() };
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-}
-
-static CTFontDescriptorRef cascadeToLastResortAndVariationsFontDescriptor()
-{
-    static CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes(cascadeToLastResortAttributesDictionary().get());
-    return descriptor;
-}
-
-CTFontRef FontPlatformData::ctFont() const
-{
-    if (m_ctFont)
-        return m_ctFont.get();
-
-    ASSERT(m_font);
-    m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, cascadeToLastResortAndVariationsFontDescriptor()));
-
-    if (m_widthVariant != FontWidthVariant::RegularWidth) {
-        int featureTypeValue = kTextSpacingType;
-        int featureSelectorValue = mapFontWidthVariantToCTFeatureSelector(m_widthVariant);
-        RetainPtr<CTFontDescriptorRef> sourceDescriptor = adoptCF(CTFontCopyFontDescriptor(m_ctFont.get()));
-        RetainPtr<CFNumberRef> featureType = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureTypeValue));
-        RetainPtr<CFNumberRef> featureSelector = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureSelectorValue));
-        RetainPtr<CTFontDescriptorRef> newDescriptor = adoptCF(CTFontDescriptorCreateCopyWithFeature(sourceDescriptor.get(), featureType.get(), featureSelector.get()));
-        RetainPtr<CTFontRef> newFont = adoptCF(CTFontCreateWithFontDescriptor(newDescriptor.get(), m_size, 0));
-
-        if (newFont)
-            m_ctFont = newFont;
-    }
-
-    return m_ctFont.get();
-}
-
-RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
-{
-    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=138683 This is a shallow pointer compare for web fonts
-    // because the URL contains the address of the font. This means we might erroneously get false negatives.
-    RetainPtr<CFURLRef> url = adoptCF(static_cast<CFURLRef>(CTFontDescriptorCopyAttribute(fontDescriptor.get(), kCTFontReferenceURLAttribute)));
-    ASSERT(!url || CFGetTypeID(url.get()) == CFURLGetTypeID());
-    return url;
-}
-
-RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
-{
-    return objectForEqualityCheck(ctFont());
-}
-
-RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
-{
-    if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(font(), table, kCTFontTableOptionNoOptions)))
-        return SharedBuffer::create(data.get());
-    
-    return nullptr;
-}
-
-#if !LOG_DISABLED
-
-String FontPlatformData::description() const
-{
-    String fontDescription { adoptCF(CFCopyDescription(font())).get() };
-    return makeString(fontDescription, ' ', m_size,
-        (m_syntheticBold ? " synthetic bold" : ""),
-        (m_syntheticOblique ? " synthetic oblique" : ""),
-        (m_orientation == FontOrientation::Vertical ? " vertical orientation" : ""));
-}
-
-#endif
-
-String FontPlatformData::familyName() const
-{
-    if (auto platformFont = font())
-        return adoptCF(CTFontCopyFamilyName(platformFont)).get();
-    return { };
 }
 
 } // namespace WebCore

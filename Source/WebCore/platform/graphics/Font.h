@@ -64,7 +64,7 @@ enum FontVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVar
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 enum class IsForPlatformFont : uint8_t { No, Yes };
 
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
 bool fontHasTable(CTFontRef, unsigned tableTag);
 bool fontHasEitherTable(CTFontRef, unsigned tableTag1, unsigned tableTag2);
 #endif

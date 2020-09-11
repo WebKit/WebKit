@@ -53,9 +53,6 @@ WTF_WEAK_LINK_FORCE_IMPORT(webm::swap);
 
 namespace WebCore {
 
-// FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
-constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
-
 using namespace PAL;
 
 static bool isWebmParserAvailable()

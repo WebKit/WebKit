@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
@@ -49,7 +49,7 @@
 OBJC_CLASS NSFont;
 #endif
 
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
 typedef const struct __CTFont* CTFontRef;
 #endif
 
@@ -82,7 +82,7 @@ public:
 
     FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering);
 
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
     WEBCORE_EXPORT FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering);
 #endif
 
@@ -119,7 +119,7 @@ public:
     bool useGDI() const { return m_useGDI; }
 #endif
 
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
     CTFontRef font() const { return m_font.get(); }
     WEBCORE_EXPORT CTFontRef registeredFont() const; // Returns nullptr iff the font is not registered, such as web fonts (otherwise returns font()).
 
@@ -222,7 +222,7 @@ private:
     void buildScaledFont(cairo_font_face_t*);
 #endif
 
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
     // FIXME: Get rid of one of these. These two fonts are subtly different, and it is not obvious which one to use where.
     RetainPtr<CTFontRef> m_font;
     mutable RetainPtr<CTFontRef> m_ctFont;
@@ -276,7 +276,7 @@ private:
 #endif
 };
 
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
 bool isSystemFont(CTFontRef);
 #endif
 

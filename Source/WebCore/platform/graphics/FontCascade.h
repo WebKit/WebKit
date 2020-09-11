@@ -81,6 +81,11 @@ struct GlyphOverflow {
     bool computeBounds { false };
 };
 
+#if USE(CORE_TEXT)
+void showLetterpressedGlyphsWithAdvances(const FloatPoint&, const Font&, GraphicsContext&, const CGGlyph*, const CGSize* advances, unsigned count);
+void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef, const CGSize* advances, unsigned count);
+#endif
+
 class TextLayoutDeleter {
 public:
     void operator()(TextLayout*) const;

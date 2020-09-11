@@ -84,7 +84,7 @@ FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source,
 }
 #endif
 
-#if !PLATFORM(COCOA)
+#if !USE(CORE_TEXT)
 
 String FontPlatformData::familyName() const
 {
