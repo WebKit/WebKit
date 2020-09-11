@@ -1,3 +1,19 @@
+2020-09-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Followup to Bug 215027: address comments to improve APP_BOUND_DOMAINS macro use
+        https://bugs.webkit.org/show_bug.cgi?id=216373
+        <rdar://problem/68645704>
+
+        Reviewed by Darin Adler.
+
+        Skip tests in platform/wk2/TestExpectations file to overwrite the
+        expectation that all resourceLoadStatistics tests pass on wk2. Then
+        unskip for the ios-wk2 specific platform.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2020-09-11  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION(r266885): ASSERTION FAILED: Inspector::CSSBackendDispatcher::getInlineStylesForNode(long, RefPtr<JSON::Object> &&) !result.error().isEmpty()

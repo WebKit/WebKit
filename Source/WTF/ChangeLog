@@ -1,3 +1,15 @@
+2020-09-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Followup to Bug 215027: address comments to improve APP_BOUND_DOMAINS macro use
+        https://bugs.webkit.org/show_bug.cgi?id=216373
+        <rdar://problem/68645704>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary default. All enable flags are off by default.
+
+        * wtf/PlatformEnable.h:
+
 2020-09-10  Ben Nham  <nham@apple.com>
 
         Disable hardware JPEG decoding on x86 Mac

@@ -193,10 +193,6 @@
 #define ENABLE_APNG 1
 #endif
 
-#if !defined(ENABLE_APP_BOUND_DOMAINS)
-#define ENABLE_APP_BOUND_DOMAINS 0
-#endif
-
 #if !defined(ENABLE_CHANNEL_MESSAGING)
 #define ENABLE_CHANNEL_MESSAGING 1
 #endif

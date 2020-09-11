@@ -1881,3 +1881,5 @@ webkit.org/b/209619 compositing/clipping/border-radius-async-overflow-stacking.h
 
 #<rdar://problem/63026283> [ macOS iOS ] media/modern-media-controls/playback-support/playback-support-autoplay.html is a flaky failure/timeout
 media/modern-media-controls/playback-support/playback-support-autoplay.html [ Pass Timeout ]
+
+http/tests/resourceLoadStatistics/exemptDomains/ [ Pass ]

@@ -1,3 +1,16 @@
+2020-09-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Followup to Bug 215027: address comments to improve APP_BOUND_DOMAINS macro use
+        https://bugs.webkit.org/show_bug.cgi?id=216373
+        <rdar://problem/68645704>
+
+        Reviewed by Darin Adler.
+
+        Use a local variable to avoid awkward #if ENABLE() macro placement.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::swServerForSession):
+
 2020-09-10  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r266885.
