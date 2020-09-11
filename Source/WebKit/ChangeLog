@@ -1,3 +1,13 @@
+2020-09-11  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Add Experimental setting to disable calling PID Inheritance API.
+        https://bugs.webkit.org/show_bug.cgi?id=216387
+        <rdar://problem/66286777>
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+
 2020-09-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Followup to Bug 215027: address comments to improve APP_BOUND_DOMAINS macro use

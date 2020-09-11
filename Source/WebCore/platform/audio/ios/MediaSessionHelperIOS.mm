@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
+#import "RuntimeEnabledFeatures.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <AVFoundation/AVRouteDetector.h>
@@ -183,6 +184,9 @@ void MediaSessionHelperiOS::providePresentingApplicationPID(int pid)
     if (m_havePresentedApplicationPID)
         return;
     m_havePresentedApplicationPID = true;
+
+    if (RuntimeEnabledFeatures::sharedFeatures().disableMediaExperiencePIDInheritance())
+        return;
 
     if (!canLoadAVSystemController_PIDToInheritApplicationStateFrom())
         return;

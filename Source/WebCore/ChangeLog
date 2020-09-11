@@ -1,3 +1,18 @@
+2020-09-11  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Add Experimental setting to disable calling PID Inheritance API.
+        https://bugs.webkit.org/show_bug.cgi?id=216387
+        <rdar://problem/66286777>
+
+        Reviewed by Eric Carlson.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDisableMediaExperiencePIDInheritance):
+        (WebCore::RuntimeEnabledFeatures::disableMediaExperiencePIDInheritance const):
+        * page/Settings.yaml:
+        * platform/audio/ios/MediaSessionHelperIOS.mm:
+        (MediaSessionHelperiOS::providePresentingApplicationPID):
+
 2020-09-11  Zalan Bujtas  <zalan@apple.com>
 
         styleDidChange functions should all check for nullptr oldStyle

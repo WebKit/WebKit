@@ -2157,3 +2157,12 @@ CoreImageAcceleratedFilterRenderEnabled:
   humanReadableDescription: "Accelerated CSS and SVG filter rendering using CoreImage"
   category: experimental
   condition: ENABLE(CORE_IMAGE_ACCELERATED_FILTER_RENDER)
+
+DisableMediaExperiencePIDInheritance:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "Disable Media Experience PID Inheritance"
+  humanReadableDescription: "Disable Media Experience PID Inheritance"
+  category: experimental
+  condition: HAVE(CELESTIAL)

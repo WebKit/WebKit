@@ -289,6 +289,11 @@ public:
     bool webMParserEnabled() const { return m_webMParserEnabled; }
 #endif
 
+#if HAVE(CELESTIAL)
+    void setDisableMediaExperiencePIDInheritance(bool isDisabled) { m_disableMediaExperiencePIDInheritance = isDisabled; }
+    bool disableMediaExperiencePIDInheritance() const { return m_disableMediaExperiencePIDInheritance; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -428,6 +433,10 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     bool m_webMParserEnabled { false };
+#endif
+
+#if HAVE(CELESTIAL)
+    bool m_disableMediaExperiencePIDInheritance { false };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
