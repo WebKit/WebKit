@@ -1,5 +1,20 @@
 2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] agent start function should move isolated copy of source
+        https://bugs.webkit.org/show_bug.cgi?id=216383
+        <rdar://problem/66371008>
+
+        Reviewed by Saam Barati.
+
+        We are calling `isolatedCopy()` and setting it to variable in caller thread. And we are copying it to the thread.
+        This means that ref-count will happen in caller thread and callee thread, this is wrong.
+        We should pass isolatedCopy string directly to the callee thread.
+
+        * jsc.cpp:
+        (functionDollarAgentStart):
+
+2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] unshift / shift should take structure lock
         https://bugs.webkit.org/show_bug.cgi?id=216378
         <rdar://problem/68496096>

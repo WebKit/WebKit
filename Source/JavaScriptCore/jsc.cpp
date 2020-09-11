@@ -1898,7 +1898,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(JSGlobalObject* globalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String sourceCode = callFrame->argument(0).toWTFString(globalObject).isolatedCopy();
+    String sourceCode = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     Lock didStartLock;
@@ -1918,7 +1918,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(JSGlobalObject* globalObje
     
     Thread::create(
         "JSC Agent",
-        [sourceCode, &didStartLock, &didStartCondition, &didStart] () {
+        [sourceCode = sourceCode.isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
             CommandLine commandLine(CommandLine::CommandLineForWorkers);
             commandLine.m_interactive = false;
             runJSC(
