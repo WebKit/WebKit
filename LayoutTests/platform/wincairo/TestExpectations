@@ -699,6 +699,7 @@ editing/spelling/spellcheck-attribute.html [ Timeout ]
 # UIScriptController.setContinuousSpellCheckingEnabled is not implemented.
 editing/spelling/markers.html [ Skip ]
 editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
+editing/spelling/text-replacement-first-word-second-line.html [ Skip ]
 editing/spelling/toggle-spellchecking.html [ Skip ]
 
 # LayoutTest/fast/loader tests that fail or time out.

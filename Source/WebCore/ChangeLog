@@ -1,3 +1,26 @@
+2020-09-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Text replacements at the beginning of a second line are replaced too early
+        https://bugs.webkit.org/show_bug.cgi?id=216327
+        <rdar://problem/68170353>
+
+        Reviewed by Darin Adler.
+
+        In the changes in r258871, using SimpleRanges instead of Range causing some side effects
+        when the replacements at the beginning of lines. The ranges that we are counting are backwards
+        and the return characters are being counted instead of being ignored. There is almost 
+        certainly a better fix than this, but this patch restores the original logic that
+        was present when Range was being used, until a better fix can be worked out. 
+
+        Test: editing/spelling/text-replacement-first-word-second-line.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::automaticReplacementStart const):
+        (WebCore::TextCheckingParagraph::automaticReplacementLength const):
+        * editing/TextCheckingHelper.h:
+
 2020-09-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Small cleanup in RenderTheme

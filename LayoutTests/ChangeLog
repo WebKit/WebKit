@@ -1,3 +1,13 @@
+2020-09-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Overlapping text replacements at the beginning of a line are replaced too early
+        https://bugs.webkit.org/show_bug.cgi?id=216327
+
+        Reviewed by Darin Adler.
+
+        * editing/spelling/text-replacement-first-word-second-line-expected.txt: Added.
+        * editing/spelling/text-replacement-first-word-second-line.html: Added.
+
 2020-09-10  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Garden consistent reftest-wait timeouts after r266817.

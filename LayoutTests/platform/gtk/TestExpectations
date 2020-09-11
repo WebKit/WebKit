@@ -991,6 +991,7 @@ webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html
 
 # Requires support for testing text replacement
 editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
+editing/spelling/text-replacement-first-word-second-line.html [ Skip ]
 
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]

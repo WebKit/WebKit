@@ -127,6 +127,7 @@ editing/spelling/spelling-markers-after-pasting-sentence.html [ WontFix ]
 
 # Requires support for testing text replacement
 editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
+editing/spelling/text-replacement-first-word-second-line.html [ Skip ]
 
 # UIKit draws selection on iOS
 fast/selectors/input-with-selection-pseudo-element.html [ WontFix ]
