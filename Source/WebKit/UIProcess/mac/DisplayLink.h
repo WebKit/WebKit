@@ -54,6 +54,10 @@ public:
     
     Optional<unsigned> nominalFramesPerSecond() const;
 
+    // When responsiveness is critical, we send the IPC to a background queue. Otherwise, we send it to the
+    // main thread to avoid unnecessary thread hopping and save power.
+    static void setShouldSendIPCOnBackgroundQueue(bool value) { shouldSendIPCOnBackgroundQueue = value; }
+
 private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     
@@ -61,6 +65,7 @@ private:
     Lock m_observersLock;
     HashMap<RefPtr<IPC::Connection>, Vector<DisplayLinkObserverID>> m_observers;
     WebCore::PlatformDisplayID m_displayID;
+    static bool shouldSendIPCOnBackgroundQueue;
 };
 
 } // namespace WebKit
