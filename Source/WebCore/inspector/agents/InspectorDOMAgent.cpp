@@ -500,7 +500,7 @@ Protocol::ErrorStringOr<Ref<Protocol::DOM::Node>> InspectorDOMAgent::getDocument
     if (m_nodeToFocus)
         focusNode();
 
-    return WTFMove(root);
+    return root;
 }
 
 void InspectorDOMAgent::pushChildNodesToFrontend(Protocol::DOM::NodeId nodeId, int depth)
@@ -630,7 +630,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOM::NodeId>>> InspectorDOMA
     auto nodeIds = JSON::ArrayOf<Protocol::DOM::NodeId>::create();
     for (unsigned i = 0; i < nodes->length(); ++i)
         nodeIds->addItem(pushNodePathToFrontend(nodes->item(i)));
-    return WTFMove(nodeIds);
+    return nodeIds;
 }
 
 Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
@@ -908,7 +908,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorDOMAgent::getSuppor
     DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_ADD)
 #undef DOM_EVENT_NAMES_ADD
 
-    return WTFMove(eventNames);
+    return eventNames;
 }
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -1008,7 +1008,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOM::EventListener>>> Inspec
     if (m_inspectedNode == node)
         m_suppressEventListenerChangedEvent = false;
 
-    return WTFMove(listeners);
+    return listeners;
 }
 
 Protocol::ErrorStringOr<void> InspectorDOMAgent::setEventListenerDisabled(Protocol::DOM::EventListenerId eventListenerId, bool disabled)
@@ -1112,7 +1112,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOM::NodeId>>> InspectorDOMA
     auto nodeIds = JSON::ArrayOf<Protocol::DOM::NodeId>::create();
     for (int i = fromIndex; i < toIndex; ++i)
         nodeIds->addItem(pushNodePathToFrontend((it->value)[i].get()));
-    return WTFMove(nodeIds);
+    return nodeIds;
 }
 
 Protocol::ErrorStringOr<void> InspectorDOMAgent::discardSearchResults(const String& searchId)

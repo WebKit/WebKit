@@ -565,7 +565,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSStyleSheetHeader>>> 
             headers->addItem(header.releaseNonNull());
     }
 
-    return WTFMove(headers);
+    return headers;
 }
 
 void InspectorCSSAgent::collectAllStyleSheets(Vector<InspectorStyleSheet*>& result)
@@ -835,7 +835,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>>> Insp
         cssProperties->addItem(WTFMove(property));
     }
 
-    return WTFMove(cssProperties);
+    return cssProperties;
 }
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSupportedSystemFontFamilyNames()
@@ -846,7 +846,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSuppor
     for (const auto& familyName : systemFontFamilies)
         fontFamilyNames->addItem(familyName);
 
-    return WTFMove(fontFamilyNames);
+    return fontFamilyNames;
 }
 
 Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM::NodeId nodeId, Ref<JSON::Array>&& forcedPseudoClasses)

@@ -1424,7 +1424,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Automa
         .release();
 
     permissionsObjectArray->addItem(WTFMove(getUserMediaPermissionObject));
-    return WTFMove(permissionsObjectArray);
+    return permissionsObjectArray;
 }
 
 Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::setSessionPermissions(Ref<JSON::Array>&& permissions)

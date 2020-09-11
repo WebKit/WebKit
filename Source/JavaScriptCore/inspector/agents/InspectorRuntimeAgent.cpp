@@ -348,7 +348,7 @@ Protocol::ErrorStringOr<Optional<int> /* saveResultIndex */> InspectorRuntimeAge
     if (!savedResultIndex)
         return makeUnexpected(errorString);
 
-    return WTFMove(savedResultIndex);
+    return savedResultIndex;
 }
 
 Protocol::ErrorStringOr<void> InspectorRuntimeAgent::setSavedResultAlias(const String& savedResultAlias)
@@ -426,7 +426,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
     if (verbose)
         dataLogF("Inspector::getRuntimeTypesForVariablesAtOffsets took %lfms\n", (end - start).milliseconds());
 
-    return WTFMove(types);
+    return types;
 }
 
 void InspectorRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
@@ -513,7 +513,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>> Inspe
             .release();
         basicBlocks->addItem(WTFMove(location));
     }
-    return WTFMove(basicBlocks);
+    return basicBlocks;
 }
 
 } // namespace Inspector

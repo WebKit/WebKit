@@ -237,7 +237,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOM::NodeId>>> InspectorCanv
         if (auto documentNodeId = domAgent->boundNodeId(&clientNode->document()))
             clientNodeIds->addItem(domAgent->pushNodeToFrontend(errorString, documentNodeId, clientNode));
     }
-    return WTFMove(clientNodeIds);
+    return clientNodeIds;
 }
 
 Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorCanvasAgent::resolveContext(const Protocol::Canvas::CanvasId& canvasId, const String& objectGroup)

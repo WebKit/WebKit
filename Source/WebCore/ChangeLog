@@ -1,3 +1,35 @@
+2020-09-10  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r266885.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        Because return statement already returns rvalue reference,
+        we don't need WTFMove at return.
+
+        No new tests, no new behaviors.
+
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        (WebCore::InspectorCSSAgent::getSupportedSystemFontFamilyNames):
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::requestClientNodes):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::querySelectorAll):
+        (WebCore::InspectorDOMAgent::getSupportedEventNames):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::getSearchResults):
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::layersForNode):
+        (WebCore::InspectorLayerTreeAgent::reasonsForCompositingLayer):
+        * inspector/agents/page/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::getLoggingChannels):
+
 2020-09-10  Zalan Bujtas  <zalan@apple.com>
 
         [Repaint] RenderLayerModelObject::styleWillChange may issue redundant repaint

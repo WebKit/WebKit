@@ -1,3 +1,15 @@
+2020-09-10  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r266885.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        Because return statement already returns rvalue reference,
+        we don't need WTFMove at return.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        (Inspector::InspectorRuntimeAgent::getBasicBlocks):
+
 2020-09-10  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Promise.prototype.finally should perform PromiseResolve

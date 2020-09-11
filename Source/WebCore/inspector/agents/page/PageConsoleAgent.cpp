@@ -110,7 +110,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Console::Channel>>> PageCons
     addLogChannel(Protocol::Console::ChannelSource::AdClickAttribution);
     addLogChannel(Protocol::Console::ChannelSource::Other);
 
-    return WTFMove(channels);
+    return channels;
 }
 
 Protocol::ErrorStringOr<void> PageConsoleAgent::setLoggingChannelLevel(Protocol::Console::ChannelSource source, Protocol::Console::ChannelLevel level)

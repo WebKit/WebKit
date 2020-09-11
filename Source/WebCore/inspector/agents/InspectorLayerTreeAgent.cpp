@@ -128,7 +128,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::LayerTree::Layer>>> Inspecto
 
     m_suppressLayerChangeEvents = false;
 
-    return WTFMove(layers);
+    return layers;
 }
 
 void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(RenderElement& renderer, JSON::ArrayOf<Protocol::LayerTree::Layer>& layers)
@@ -323,7 +323,7 @@ Protocol::ErrorStringOr<Ref<Protocol::LayerTree::CompositingReasons>> InspectorL
     if (reasons.contains(CompositingReason::Root))
         compositingReasons->setRoot(true);
 
-    return WTFMove(compositingReasons);
+    return compositingReasons;
 }
 
 String InspectorLayerTreeAgent::bind(const RenderLayer* layer)

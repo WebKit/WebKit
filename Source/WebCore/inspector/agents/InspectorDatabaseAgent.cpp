@@ -268,7 +268,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorDatabaseAgent::getD
         for (auto& tableName : database->tableNames())
             names->addItem(tableName);
     }
-    return WTFMove(names);
+    return names;
 }
 
 void InspectorDatabaseAgent::executeSQL(const Protocol::Database::DatabaseId& databaseId, const String& query, Ref<ExecuteSQLCallback>&& requestCallback)

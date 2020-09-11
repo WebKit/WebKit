@@ -112,7 +112,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOMStorage::Item>>> Inspecto
         entry->addItem(value);
         storageItems->addItem(WTFMove(entry));
     }
-    return WTFMove(storageItems);
+    return storageItems;
 }
 
 Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value)

@@ -1,3 +1,14 @@
+2020-09-10  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r266885.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        Because return statement already returns rvalue reference,
+        we don't need WTFMove at return.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getSessionPermissions):
+
 2020-09-10  Ben Nham  <nham@apple.com>
 
         Disable hardware JPEG decoding on x86 Mac
