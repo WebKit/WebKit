@@ -1,3 +1,33 @@
+2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] unshift / shift should take structure lock
+        https://bugs.webkit.org/show_bug.cgi?id=216378
+        <rdar://problem/68496096>
+
+        Reviewed by Mark Lam.
+
+        When unshifting / shifting butterfly, we need to move property storage values too.
+        If property storage values are moved while concurrent JIT compiler is accessing it, it could include garbage value.
+
+        For example, concurrent JIT compiler is accessing [2] property storage.
+
+                            1          2         3
+                       [ JSValue ][ JSValue ][ Header ]
+
+        But unshift moved it like this.
+
+                            1          2         3
+            [ JSValue ][ JSValue ][ Header ]
+
+        Since butterfly pointer held by JSObject is not updated yet, concurrent JIT compiler will read [ Header ] as JSValue and crash.
+        In this patch, we take structure lock when shifting existing butterfly since this affect on property storage. Since JSObject::getDirectConcurrently
+        takes a structure lock, this locking prevents concurrent compilers from getting an invalid value.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+
 2020-09-10  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r266885.

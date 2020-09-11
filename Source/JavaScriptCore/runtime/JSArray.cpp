@@ -413,32 +413,38 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
 
     Butterfly* newButterfly = Butterfly::fromBase(newAllocBase, preCapacity, propertyCapacity);
 
-    if (addToFront) {
-        ASSERT(count + usedVectorLength <= newVectorLength);
-        gcSafeMemmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
-        gcSafeMemmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
+    {
+        // When moving Butterfly's head to adjust property-storage, we must take a structure lock.
+        // Otherwise, concurrent JIT compiler accesses to a property storage which is half-baked due to move for shift / unshift.
+        // If the butterfly is newly allocated one, we do not need to take a lock since this is not changing the old butterfly.
+        ConcurrentJSLocker structureLock(allocatedNewStorage ? nullptr : &structure->lock());
+        if (addToFront) {
+            ASSERT(count + usedVectorLength <= newVectorLength);
+            gcSafeMemmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
+            gcSafeMemmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
 
-        // We don't need to zero the pre-capacity for the concurrent GC because it is not available to use as property storage.
-        gcSafeZeroMemory(static_cast<JSValue*>(newButterfly->base(0, propertyCapacity)), (propertyCapacity - propertySize) * sizeof(JSValue));
+            // We don't need to zero the pre-capacity for the concurrent GC because it is not available to use as property storage.
+            gcSafeZeroMemory(static_cast<JSValue*>(newButterfly->base(0, propertyCapacity)), (propertyCapacity - propertySize) * sizeof(JSValue));
 
-        if (allocatedNewStorage) {
-            // We will set the vectorLength to newVectorLength. We populated requiredVectorLength
-            // (usedVectorLength + count), which is less. Clear the difference.
-            for (unsigned i = requiredVectorLength; i < newVectorLength; ++i)
+            if (allocatedNewStorage) {
+                // We will set the vectorLength to newVectorLength. We populated requiredVectorLength
+                // (usedVectorLength + count), which is less. Clear the difference.
+                for (unsigned i = requiredVectorLength; i < newVectorLength; ++i)
+                    newButterfly->arrayStorage()->m_vector[i].clear();
+            }
+        } else if ((newAllocBase != butterfly->base(structure)) || (preCapacity != storage->m_indexBias)) {
+            gcSafeMemmove(newButterfly->propertyStorage() - propertyCapacity, butterfly->propertyStorage() - propertyCapacity, sizeof(JSValue) * propertyCapacity + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
+            gcSafeMemmove(newButterfly->arrayStorage()->m_vector, storage->m_vector, sizeof(JSValue) * usedVectorLength);
+            
+            for (unsigned i = requiredVectorLength; i < newVectorLength; i++)
                 newButterfly->arrayStorage()->m_vector[i].clear();
         }
-    } else if ((newAllocBase != butterfly->base(structure)) || (preCapacity != storage->m_indexBias)) {
-        gcSafeMemmove(newButterfly->propertyStorage() - propertyCapacity, butterfly->propertyStorage() - propertyCapacity, sizeof(JSValue) * propertyCapacity + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
-        gcSafeMemmove(newButterfly->arrayStorage()->m_vector, storage->m_vector, sizeof(JSValue) * usedVectorLength);
-        
-        for (unsigned i = requiredVectorLength; i < newVectorLength; i++)
-            newButterfly->arrayStorage()->m_vector[i].clear();
-    }
 
-    newButterfly->arrayStorage()->setVectorLength(newVectorLength);
-    newButterfly->arrayStorage()->m_indexBias = preCapacity;
-    
-    setButterfly(vm, newButterfly);
+        newButterfly->arrayStorage()->setVectorLength(newVectorLength);
+        newButterfly->arrayStorage()->m_indexBias = preCapacity;
+        
+        setButterfly(vm, newButterfly);
+    }
 
     return true;
 }
@@ -847,17 +853,23 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
                 storage->m_vector,
                 sizeof(JSValue) * startIndex);
         }
-        // Adjust the Butterfly and the index bias. We only need to do this here because we're changing
-        // the start of the Butterfly, which needs to point at the first indexed property in the used
-        // portion of the vector.
-        Butterfly* butterfly = this->butterfly()->shift(structure(vm), count);
-        storage = butterfly->arrayStorage();
-        storage->m_indexBias += count;
+        {
+            // When moving Butterfly's head to adjust property-storage, we must take a structure lock.
+            // Otherwise, concurrent JIT compiler accesses to a property storage which is half-baked due to move for shift / unshift.
+            Structure* structure = this->structure(vm);
+            ConcurrentJSLocker structureLock(structure->lock());
+            // Adjust the Butterfly and the index bias. We only need to do this here because we're changing
+            // the start of the Butterfly, which needs to point at the first indexed property in the used
+            // portion of the vector.
+            Butterfly* butterfly = this->butterfly()->shift(structure, count);
+            storage = butterfly->arrayStorage();
+            storage->m_indexBias += count;
 
-        // Since we're consuming part of the vector by moving its beginning to the left,
-        // we need to modify the vector length appropriately.
-        storage->setVectorLength(vectorLength - count);
-        setButterfly(vm, butterfly);
+            // Since we're consuming part of the vector by moving its beginning to the left,
+            // we need to modify the vector length appropriately.
+            storage->setVectorLength(vectorLength - count);
+            setButterfly(vm, butterfly);
+        }
     } else {
         // The number of elements before the shift region is greater than or equal to the number 
         // of elements after the shift region, so we move the elements after the shift region to the left.
@@ -1009,7 +1021,11 @@ bool JSArray::unshiftCountWithArrayStorage(JSGlobalObject* globalObject, unsigne
     auto locker = holdLock(cellLock());
     
     if (moveFront && storage->m_indexBias >= count) {
-        Butterfly* newButterfly = storage->butterfly()->unshift(structure(vm), count);
+        // When moving Butterfly's head to adjust property-storage, we must take a structure lock.
+        // Otherwise, concurrent JIT compiler accesses to a property storage which is half-baked due to move for shift / unshift.
+        Structure* structure = this->structure(vm);
+        ConcurrentJSLocker structureLock(structure->lock());
+        Butterfly* newButterfly = storage->butterfly()->unshift(structure, count);
         storage = newButterfly->arrayStorage();
         storage->m_indexBias -= count;
         storage->setVectorLength(vectorLength + count);
