@@ -1,5 +1,16 @@
 2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        JSDOMConvertSequences should have exception checks appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=216390
+        <rdar://problem/68631333>
+
+        Reviewed by Mark Lam.
+
+        * js/dom/frozen-array-exception-check-expected.txt: Added.
+        * js/dom/frozen-array-exception-check.html: Added.
+
+2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] customGetterSetterFunctionCall should have proper exception checking
         https://bugs.webkit.org/show_bug.cgi?id=216391
         <rdar://problem/68631643>

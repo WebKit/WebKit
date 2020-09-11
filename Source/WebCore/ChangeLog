@@ -1,3 +1,20 @@
+2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JSDOMConvertSequences should have exception checks appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=216390
+        <rdar://problem/68631333>
+
+        Reviewed by Mark Lam.
+
+        Test: js/dom/frozen-array-exception-check.html
+
+        Add appropriate exception checks to JSDOMConvertSequences.
+
+        * bindings/js/JSDOMConvertSequences.h:
+        (WebCore::Detail::NumericSequenceConverter::convert):
+        (WebCore::JSConverter<IDLSequence<T>>::convert):
+        (WebCore::JSConverter<IDLFrozenArray<T>>::convert):
+
 2020-09-10  Megan Gardner  <megan_gardner@apple.com>
 
         Text replacements at the beginning of a second line are replaced too early

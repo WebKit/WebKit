@@ -129,11 +129,11 @@ struct NumericSequenceConverter {
 
         JSC::JSObject* object = JSC::asObject(value);
         if (!JSC::isJSArray(object))
-            return GenericConverter::convert(lexicalGlobalObject, object);
+            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object));
 
         JSC::JSArray* array = JSC::asArray(object);
         if (!array->isIteratorProtocolFastAndNonObservable())
-            return GenericConverter::convert(lexicalGlobalObject, object);
+            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object));
 
         unsigned length = array->length();
         ReturnType result;
@@ -151,7 +151,7 @@ struct NumericSequenceConverter {
         
         JSC::IndexingType indexingType = array->indexingType() & JSC::IndexingShapeMask;
         if (indexingType != JSC::Int32Shape && indexingType != JSC::DoubleShape)
-            return GenericConverter::convert(lexicalGlobalObject, object, WTFMove(result));
+            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object, WTFMove(result)));
 
         return convertArray(lexicalGlobalObject, scope, array, length, indexingType, WTFMove(result));
     }
@@ -162,11 +162,11 @@ struct NumericSequenceConverter {
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (!JSC::isJSArray(object))
-            return GenericConverter::convert(lexicalGlobalObject, object, method);
+            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object, method));
 
         JSC::JSArray* array = JSC::asArray(object);
         if (!array->isIteratorProtocolFastAndNonObservable())
-            return GenericConverter::convert(lexicalGlobalObject, object, method);
+            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object, method));
 
         unsigned length = array->length();
         ReturnType result;
@@ -184,7 +184,7 @@ struct NumericSequenceConverter {
         
         JSC::IndexingType indexingType = array->indexingType() & JSC::IndexingShapeMask;
         if (indexingType != JSC::Int32Shape && indexingType != JSC::DoubleShape)
-            return GenericConverter::convert(lexicalGlobalObject, object, method, WTFMove(result));
+            RELEASE_AND_RETURN(scope, GenericConverter::convert(lexicalGlobalObject, object, method, WTFMove(result)));
 
         return convertArray(lexicalGlobalObject, scope, array, length, indexingType, WTFMove(result));
     }
@@ -386,7 +386,7 @@ template<typename T> struct JSConverter<IDLSequence<T>> {
             throwOutOfMemoryError(&lexicalGlobalObject, scope);
             return { };
         }
-        return JSC::constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
+        RELEASE_AND_RETURN(scope, JSC::constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list));
     }
 };
 
@@ -421,7 +421,8 @@ template<typename T> struct JSConverter<IDLFrozenArray<T>> {
             return { };
         }
         auto* array = JSC::constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
-        return JSC::objectConstructorFreeze(&lexicalGlobalObject, array);
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, JSC::objectConstructorFreeze(&lexicalGlobalObject, array));
     }
 };
 
