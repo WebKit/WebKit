@@ -1,3 +1,12 @@
+=================
+WPE WebKit 2.30.0
+=================
+
+What's new in WPE WebKit 2.30.0?
+
+  - Fix NTLM authentication.
+  - Fix the build due to the seccomp.h header not being found.
+
 ==================
 WPE WebKit 2.29.91
 ==================
