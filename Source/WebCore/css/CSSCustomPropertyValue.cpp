@@ -31,6 +31,8 @@ namespace WebCore {
 
 bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
 {
+    if (this == &other)
+        return true;
     if (m_name != other.m_name || m_value.index() != other.m_value.index())
         return false;
     return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& value) {
