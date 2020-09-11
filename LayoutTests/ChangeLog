@@ -9,6 +9,15 @@
         * js/dom/serialization-should-have-exception-check-expected.txt: Added.
         * js/dom/serialization-should-have-exception-check.html: Added.
 
+2020-09-11  Karl Rackler  <rackler@apple.com>
+
+        (REGRESSION: [ BigSur < 20A2374 ] fast/images/animated-gif-loop-count.html is a constant image failure)
+        rdar://68736735 
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-09-11  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Support EXT_color_buffer_half_float on WebGL 2.0 contexts

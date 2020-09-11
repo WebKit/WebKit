@@ -2202,3 +2202,6 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/forms/the-sel
 
 #<rdar://63026283> [ macOS iOS ] media/modern-media-controls/playback-support/playback-support-autoplay.html is a flaky failure/timeout
 [ BigSur+ ] media/modern-media-controls/playback-support/playback-support-autoplay.html [ Pass Failure ]
+
+# rdar://68736735 (REGRESSION: [ BigSur < 20A2374 ] fast/images/animated-gif-loop-count.html is a constant image failure)
+[ BigSur+ ] fast/images/animated-gif-loop-count.html [ ImageOnlyFailure ]
