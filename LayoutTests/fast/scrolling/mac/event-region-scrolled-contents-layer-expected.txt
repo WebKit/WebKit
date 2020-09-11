@@ -36,16 +36,25 @@
                   (position 0.00 285.00)
                   (bounds 285.00 15.00)
                   (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=285 height=15)
+                  )
                 )
                 (GraphicsLayer
                   (position 285.00 0.00)
                   (bounds 15.00 285.00)
                   (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=15 height=285)
+                  )
                 )
                 (GraphicsLayer
                   (position 285.00 285.00)
                   (bounds 15.00 15.00)
                   (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=15 height=15)
+                  )
                 )
               )
             )

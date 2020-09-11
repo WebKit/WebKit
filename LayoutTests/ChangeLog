@@ -1,3 +1,19 @@
+2020-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Async overflow scroll): Mouse wheel scrolling over an "always-on" overflow scrollbar doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=216381
+        <rdar://problem/68593743>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/mac/border-radius-event-region-expected.txt:
+        * fast/scrolling/mac/event-region-scrolled-contents-layer-expected.txt:
+        * fast/scrolling/mac/event-region-subscroller-overflow-expected.txt:
+        * fast/scrolling/mac/event-region-visibility-hidden-expected.txt:
+        * fast/scrolling/mac/mousewheel-over-scrollbar-expected.txt: Added.
+        * fast/scrolling/mac/mousewheel-over-scrollbar.html: Added.
+        * fast/scrolling/mac/negative-z-index-overflow-scroll-expected.txt:
+
 2020-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Protect this object in ValidationMessage::buildBubbleTree

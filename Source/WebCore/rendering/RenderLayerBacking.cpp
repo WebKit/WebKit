@@ -1527,7 +1527,15 @@ void RenderLayerBacking::updateAfterDescendants()
     m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants());
     if (m_scrollContainerLayer) {
         m_scrollContainerLayer->setContentsVisible(renderer().style().visibility() == Visibility::Visible);
-        m_scrollContainerLayer->setUserInteractionEnabled(renderer().style().pointerEvents() != PointerEvents::None);
+
+        bool userInteractive = renderer().style().pointerEvents() != PointerEvents::None;
+        m_scrollContainerLayer->setUserInteractionEnabled(userInteractive);
+        if (m_layerForHorizontalScrollbar)
+            m_layerForHorizontalScrollbar->setUserInteractionEnabled(userInteractive);
+        if (m_layerForVerticalScrollbar)
+            m_layerForVerticalScrollbar->setUserInteractionEnabled(userInteractive);
+        if (m_layerForScrollCorner)
+            m_layerForScrollCorner->setUserInteractionEnabled(userInteractive);
     }
 
 #if USE(OWNING_LAYER_BEAR_TRAP)
@@ -1735,6 +1743,20 @@ void RenderLayerBacking::updateEventRegion()
 
     TraceScope scope(ComputeEventRegionsStart, ComputeEventRegionsEnd);
 
+    auto visibleToHitTesting = renderer().visibleToHitTesting();
+
+    auto setEventRegionToLayerBounds = [&](GraphicsLayer* graphicsLayer) {
+        if (!graphicsLayer)
+            return;
+
+        EventRegion eventRegion;
+        auto eventRegionContext = eventRegion.makeContext();
+        if (visibleToHitTesting)
+            eventRegionContext.unite(enclosingIntRect(FloatRect({ }, graphicsLayer->size())), renderer().style());
+
+        graphicsLayer->setEventRegion(WTFMove(eventRegion));
+    };
+
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
         GraphicsContext nullContext(nullptr);
         EventRegion eventRegion;
@@ -1745,13 +1767,7 @@ void RenderLayerBacking::updateEventRegion()
         auto eventRegionContext = eventRegion.makeContext();
         auto layerOffset = graphicsLayer.scrollOffset() - roundedIntSize(graphicsLayer.offsetFromRenderer());
 
-        if (renderer().visibleToHitTesting()) {
-            if (&graphicsLayer == m_scrollContainerLayer) {
-                eventRegionContext.unite(enclosingIntRect(FloatRect({ }, graphicsLayer.size())), renderer().style());
-                graphicsLayer.setEventRegion(WTFMove(eventRegion));
-                return;
-            }
-
+        if (visibleToHitTesting) {
             if (&graphicsLayer == m_scrolledContentsLayer) {
                 // Initialize scrolled contents layer with layer-sized event region as it can all used for scrolling.
                 // This avoids generating unnecessarily complex event regions. We still need to to do the paint to capture touch-action regions.
@@ -1769,8 +1785,10 @@ void RenderLayerBacking::updateEventRegion()
 
     updateEventRegionForLayer(*m_graphicsLayer);
 
-    if (m_scrollContainerLayer)
-        updateEventRegionForLayer(*m_scrollContainerLayer);
+    setEventRegionToLayerBounds(m_scrollContainerLayer.get());
+    setEventRegionToLayerBounds(m_layerForHorizontalScrollbar.get());
+    setEventRegionToLayerBounds(m_layerForVerticalScrollbar.get());
+    setEventRegionToLayerBounds(m_layerForScrollCorner.get());
 
     if (m_scrolledContentsLayer)
         updateEventRegionForLayer(*m_scrolledContentsLayer);
@@ -2269,6 +2287,12 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
 #if ENABLE(SCROLLING_THREAD)
         if (m_scrollContainerLayer)
             m_scrollContainerLayer->setScrollingNodeID(0);
+        if (m_layerForHorizontalScrollbar)
+            m_layerForHorizontalScrollbar->setScrollingNodeID(0);
+        if (m_layerForVerticalScrollbar)
+            m_layerForVerticalScrollbar->setScrollingNodeID(0);
+        if (m_layerForScrollCorner)
+            m_layerForScrollCorner->setScrollingNodeID(0);
 #endif
     }
 
@@ -2307,6 +2331,13 @@ void RenderLayerBacking::setScrollingNodeIDForRole(ScrollingNodeID nodeID, Scrol
 #if ENABLE(SCROLLING_THREAD)
         if (m_scrollContainerLayer)
             m_scrollContainerLayer->setScrollingNodeID(m_scrollingNodeID);
+
+        if (m_layerForHorizontalScrollbar)
+            m_layerForHorizontalScrollbar->setScrollingNodeID(m_scrollingNodeID);
+        if (m_layerForVerticalScrollbar)
+            m_layerForVerticalScrollbar->setScrollingNodeID(m_scrollingNodeID);
+        if (m_layerForScrollCorner)
+            m_layerForScrollCorner->setScrollingNodeID(m_scrollingNodeID);
 #endif
         break;
     case ScrollCoordinationRole::ScrollingProxy:

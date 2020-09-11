@@ -1,3 +1,22 @@
+2020-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Async overflow scroll): Mouse wheel scrolling over an "always-on" overflow scrollbar doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=216381
+        <rdar://problem/68593743>
+
+        Reviewed by Antti Koivisto.
+
+        The scrollbar and scroll corner layers need event regions and scrollingNodeIDs so that
+        we hit-test them via CA layers and find the right scrolling node.
+
+        Test: fast/scrolling/mac/mousewheel-over-scrollbar.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+        (WebCore::RenderLayerBacking::updateEventRegion):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        (WebCore::RenderLayerBacking::setScrollingNodeIDForRole):
+
 2020-09-11  Chris Dumez  <cdumez@apple.com>
 
         AudioContext does not start rendering until an AudioNode is constructed
