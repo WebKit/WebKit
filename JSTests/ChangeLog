@@ -1,3 +1,12 @@
+2020-09-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Update test262 to commit 323905b70e64
+        https://bugs.webkit.org/show_bug.cgi?id=216379
+
+        Unreviewed test gardening.
+
+        * test262/expectations.yaml: Reset expectations for --debug.
+
 2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] agent start function should move isolated copy of source
