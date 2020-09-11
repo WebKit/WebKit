@@ -1,5 +1,18 @@
 2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] customGetterSetterFunctionCall should have proper exception checking
+        https://bugs.webkit.org/show_bug.cgi?id=216391
+        <rdar://problem/68631643>
+
+        Reviewed by Mark Lam.
+
+        Add appropriate exception checking to customGetterSetterFunctionCall.
+
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSCustomGetterSetterFunction::customGetterSetterFunctionCall):
+
+2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add exception checks to JSCallbackObject
         https://bugs.webkit.org/show_bug.cgi?id=216384
         <rdar://problem/68632190>

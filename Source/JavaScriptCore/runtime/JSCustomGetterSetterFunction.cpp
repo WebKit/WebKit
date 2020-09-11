@@ -45,6 +45,7 @@ EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFun
     if (customGetterSetterFunction->isSetter()) {
         CustomGetterSetter::CustomSetter setter = customGetterSetter->setter();
         ASSERT(setter);
+        scope.release();
         callCustomSetter(globalObject, setter, true, thisValue, callFrame->argument(0));
         return JSValue::encode(jsUndefined());
     }
@@ -55,7 +56,7 @@ EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFun
             return throwVMDOMAttributeGetterTypeError(globalObject, scope, domAttribute.classInfo, customGetterSetterFunction->propertyName());
     }
 
-    return customGetterSetter->getter()(globalObject, JSValue::encode(thisValue), customGetterSetterFunction->propertyName());
+    RELEASE_AND_RETURN(scope, customGetterSetter->getter()(globalObject, JSValue::encode(thisValue), customGetterSetterFunction->propertyName()));
 }
 
 JSCustomGetterSetterFunction::JSCustomGetterSetterFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, const Type type, const PropertyName& propertyName)
