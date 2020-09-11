@@ -59,8 +59,8 @@ public:
     struct InlineBox {
         WTF_MAKE_ISO_ALLOCATED_INLINE(InlineBox);
     public:
-        enum class IsConsideredEmpty { Yes, No };
-        InlineBox(const Box&, const Display::InlineRect&, InlineLayoutUnit baseline, InlineLayoutUnit descent, IsConsideredEmpty);
+        InlineBox(const Box&, const Display::InlineRect&, InlineLayoutUnit baseline, InlineLayoutUnit descent);
+        InlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         InlineBox() = default;
 
         const Display::InlineRect& logicalRect() const { return m_logicalRect; }
@@ -76,6 +76,7 @@ public:
         bool isEmpty() const { return m_isEmpty; }
         void setIsNonEmpty() { m_isEmpty = false; }
 
+        const FontMetrics& fontMetrics() const { return layoutBox().style().fontMetrics(); }
         const Box& layoutBox() const { return *m_layoutBox; }
 
     private:
@@ -85,10 +86,11 @@ public:
         void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
         void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
         void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
+        void setDescent(InlineLayoutUnit descent) { m_descent = descent; }
 
         WeakPtr<const Box> m_layoutBox;
         Display::InlineRect m_logicalRect;
-        InlineLayoutUnit m_baseline;
+        InlineLayoutUnit m_baseline { 0 };
         Optional<InlineLayoutUnit> m_descent;
         bool m_isEmpty { true };
     };

@@ -1,3 +1,24 @@
+2020-09-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Make InlineBoxes grow vertically as they gain content
+        https://bugs.webkit.org/show_bug.cgi?id=216405
+
+        Reviewed by Antti Koivisto.
+
+        Construct InlineBoxes with zero height (even the root inline box starts empty in quirks mode) and make them grow as they gain text runs.
+        (This initial vertical geometry adjustment is different from the sizing in computeInlineBoxesLogicalHeight(). It is based on
+        the font metrics (triggered by text runs), while in computeInlineBoxesLogicalHeight inline boxes stretch their parent inline boxes.) 
+        This will also turn into a more dynamic sizing when we start handling fallback fonts.
+
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::InlineBox::InlineBox):
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+        (WebCore::Layout::LineBox::computeInlineBoxesLogicalHeight):
+        (WebCore::Layout::LineBox::alignInlineBoxesVerticallyAndComputeLineBoxHeight):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::InlineBox::fontMetrics const):
+        (WebCore::Layout::LineBox::InlineBox::setDescent):
+
 2020-09-11  Rob Buis  <rbuis@igalia.com>
 
         Rename m_URL to m_frameURL
