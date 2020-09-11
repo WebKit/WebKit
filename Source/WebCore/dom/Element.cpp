@@ -1972,8 +1972,7 @@ void Element::invalidateStyle()
 
     // FIXME: This flag should be set whenever styles are invalidated while computed styles are present,
     // not just in this codepath.
-    if (hasRareData() && elementRareData()->computedStyle())
-        setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+    setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 }
 
 void Element::invalidateStyleAndLayerComposition()
@@ -2024,6 +2023,7 @@ void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
     ASSERT(style && style->display() == DisplayType::Contents);
     ASSERT(!renderer() || isPseudoElement());
     ensureElementRareData().setComputedStyle(WTFMove(style));
+    clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 }
 
 // Returns true is the given attribute is an event handler.
