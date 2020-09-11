@@ -1,3 +1,9 @@
+2020-09-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.30.0 release
+
+        * gtk/NEWS: Add release notes for 2.30.0
+
 2020-09-08  Mike Gorse  <mgorse@suse.com>
 
         [GTK] AcceleratedBackingStoreWayland might erroneously try to use SHM with older wpebackend-fdo

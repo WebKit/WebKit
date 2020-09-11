@@ -1,3 +1,13 @@
+================
+WebKitGTK 2.30.0
+================
+
+What's new in WebKitGTK 2.30.0?
+
+  - Fix NTLM authentication.
+  - Don't try to use SHM on wayland with older wpebackend-fdo.
+  - Fix the build due to seccomp.h heasder not found.
+
 =================
 WebKitGTK 2.29.92
 =================
