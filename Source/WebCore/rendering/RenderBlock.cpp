@@ -1136,6 +1136,9 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOf
         paintInfoForChild.phase = newPhase;
         paintInfoForChild.updateSubtreePaintRootForChildren(this);
 
+        if (paintInfo.eventRegionContext)
+            paintInfoForChild.paintBehavior.add(PaintBehavior::EventRegionIncludeBackground);
+
         // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
         // NSViews. Do not add any more code for this.
         bool usePrintRect = !view().printRect().isEmpty();
@@ -1249,11 +1252,14 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if (paintPhase == PaintPhase::EventRegion) {
         auto borderRect = LayoutRect(paintOffset, size());
 
-        if (visibleToHitTesting()) {
+        if (paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeBackground) && visibleToHitTesting()) {
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
             LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRegion);
             paintInfo.eventRegionContext->unite(borderRegion, style(), isTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
         }
+
+        if (!paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeForeground))
+            return;
 
         bool needsTraverseDescendants = hasVisualOverflow() || containsFloats() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect)) || view().needsEventRegionUpdateForNonCompositedFrame();
         LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " needsTraverseDescendants for event region: hasVisualOverflow: " << hasVisualOverflow() << " containsFloats: "
