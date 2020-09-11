@@ -1,3 +1,15 @@
+2020-09-07  Mike Gorse  <mgorse@suse.com>
+
+        Build failure; cannot find seccomp.h
+        https://bugs.webkit.org/show_bug.cgi?id=216226
+
+        Reviewed by Darin Adler.
+
+        No new tests (build fix only).
+
+        * PlatformGTK.cmake: Add LIBSECCOMP_INCLUDE_DIRS to
+        WebKit_SYSTEM_INCLUDE_DIRECTORIES.
+
 2020-09-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.29.91 release
