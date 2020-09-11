@@ -26,16 +26,12 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
-#import <WebKit/WKProcessPool.h>
+#import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
-
-// FIXME: This test is causing flakiness in API tests. It sets the cookie accept policy to 'Never'
-// and following tests often are unable to set cookies.
-#if !PLATFORM(IOS_FAMILY)
 
 static bool receivedScriptMessage = false;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
@@ -56,25 +52,27 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 TEST(WebKit, CookieAcceptPolicy)
 {
     auto originalCookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
-    
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    
-    RetainPtr<WKProcessPool> processPool = adoptNS([[WKProcessPool alloc] init]);
-    [configuration setProcessPool:processPool.get()];
-    
-    RetainPtr<CookieAcceptPolicyMessageHandler> handler = adoptNS([[CookieAcceptPolicyMessageHandler alloc] init]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto handler = adoptNS([[CookieAcceptPolicyMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-    
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"CookieMessage" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [processPool _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyNever];
+    __block bool setPolicy = false;
+    [configuration.get().websiteDataStore.httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyNever completionHandler:^{
+        setPolicy = true;
+    }];
+    TestWebKitAPI::Util::run(&setPolicy);
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "COOKIE:");
-    
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:originalCookieAcceptPolicy];
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies];
-}
 
-#endif // !PLATFORM(IOS_FAMILY)
+    setPolicy = false;
+    [configuration.get().websiteDataStore.httpCookieStore _setCookieAcceptPolicy:originalCookieAcceptPolicy completionHandler:^{
+        setPolicy = true;
+    }];
+    TestWebKitAPI::Util::run(&setPolicy);
+}

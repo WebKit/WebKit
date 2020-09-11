@@ -318,9 +318,6 @@ public:
     };
     static Statistics& statistics();    
 
-    void useTestingNetworkSession();
-    bool isUsingTestingNetworkSession() const { return m_shouldUseTestingNetworkSession; }
-
     void setAllowsAnySSLCertificateForWebSocket(bool);
 
     void clearCachedCredentials();
@@ -724,8 +721,6 @@ private:
     RetainPtr<NSObject> m_activationObserver;
     RetainPtr<NSObject> m_accessibilityEnabledObserver;
 #endif
-
-    bool m_shouldUseTestingNetworkSession { false };
 
     bool m_processTerminationEnabled { true };
 

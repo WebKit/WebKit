@@ -1768,20 +1768,6 @@ void WebProcessPool::stopMemorySampler()
     sendToAllProcesses(Messages::WebProcess::StopMemorySampler());
 }
 
-void WebProcessPool::useTestingNetworkSession()
-{
-    ASSERT(m_processes.isEmpty());
-    ASSERT(!m_networkProcess);
-
-    if (m_networkProcess)
-        return;
-
-    if (!m_processes.isEmpty())
-        return;
-
-    m_shouldUseTestingNetworkSession = true;
-}
-
 template<typename T, typename U>
 void WebProcessPool::sendSyncToNetworkingProcess(T&& message, U&& reply)
 {

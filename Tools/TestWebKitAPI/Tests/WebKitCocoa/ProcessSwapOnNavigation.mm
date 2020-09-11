@@ -31,6 +31,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKContentRuleListStore.h>
+#import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -5397,6 +5398,8 @@ TEST(ProcessSwap, UsePrewarmedProcessAfterTerminatingNetworkProcess)
 
 TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInPrivateBrowsing)
 {
+    auto originalCookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
+
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     RetainPtr<WKWebsiteDataStore> ephemeralStore = [WKWebsiteDataStore nonPersistentDataStore];
@@ -5415,7 +5418,11 @@ TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInPrivateBrowsing)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [processPool _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
+    __block bool setPolicy = false;
+    [webView.get().configuration.websiteDataStore.httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways completionHandler:^{
+        setPolicy = true;
+    }];
+    TestWebKitAPI::Util::run(&setPolicy);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"SetSessionCookie" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
@@ -5450,10 +5457,18 @@ TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInPrivateBrowsing)
 
     EXPECT_EQ(1u, [receivedMessages count]);
     EXPECT_WK_STREQ(@"foo=bar", receivedMessages.get()[0]);
+    
+    setPolicy = false;
+    [webView.get().configuration.websiteDataStore.httpCookieStore _setCookieAcceptPolicy:originalCookieAcceptPolicy completionHandler:^{
+        setPolicy = true;
+    }];
+    TestWebKitAPI::Util::run(&setPolicy);
 }
 
 TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInNonDefaultPersistentSession)
 {
+    auto originalCookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
+
     auto processPoolConfiguration = psonProcessPoolConfiguration();
 
     // Prevent WebProcess reuse.
@@ -5481,7 +5496,11 @@ TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInNonDefaultPersistentSession
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [processPool _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
+    __block bool setPolicy = false;
+    [webView.get().configuration.websiteDataStore.httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways completionHandler:^{
+        setPolicy = true;
+    }];
+    TestWebKitAPI::Util::run(&setPolicy);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"SetSessionCookie" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
@@ -5517,6 +5536,12 @@ TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInNonDefaultPersistentSession
 
     EXPECT_EQ(1u, [receivedMessages count]);
     EXPECT_WK_STREQ(@"foo=bar", receivedMessages.get()[0]);
+
+    setPolicy = false;
+    [webView.get().configuration.websiteDataStore.httpCookieStore _setCookieAcceptPolicy:originalCookieAcceptPolicy completionHandler:^{
+        setPolicy = true;
+    }];
+    TestWebKitAPI::Util::run(&setPolicy);
 }
 
 TEST(ProcessSwap, ProcessSwapInRelatedView)

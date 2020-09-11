@@ -579,7 +579,6 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
             WKContextSetIconDatabasePath(m_context.get(), toWK(emptyString()).get());
         }
 
-        WKContextUseTestingNetworkSession(m_context.get());
         WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
 
         platformInitializeContext();

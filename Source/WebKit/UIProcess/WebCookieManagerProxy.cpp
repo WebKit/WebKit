@@ -211,10 +211,6 @@ void WebCookieManagerProxy::cookiesDidChange(PAL::SessionID sessionID)
 
 void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& callbackFunction)
 {
-#if PLATFORM(COCOA)
-    if (!processPool()->isUsingTestingNetworkSession())
-        persistHTTPCookieAcceptPolicy(policy);
-#endif
 #if USE(SOUP)
     processPool()->setInitialHTTPCookieAcceptPolicy(policy);
 #endif

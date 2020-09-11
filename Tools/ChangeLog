@@ -1,3 +1,16 @@
+2020-09-11  Alex Christensen  <achristensen@webkit.org>
+
+        Move _setCookieAcceptPolicy to WKHTTPCookieStore
+        https://bugs.webkit.org/show_bug.cgi?id=216375
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CookieAcceptPolicy.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+
 2020-09-11  Zhifei Fang  <zhifei_fang@apple.com>
 
         Strip Quotes for run-jsc-stress-tests --model arg

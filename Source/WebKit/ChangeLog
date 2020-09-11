@@ -1,3 +1,34 @@
+2020-09-11  Alex Christensen  <achristensen@webkit.org>
+
+        Move _setCookieAcceptPolicy to WKHTTPCookieStore
+        https://bugs.webkit.org/show_bug.cgi?id=216375
+
+        Reviewed by Geoffrey Garen.
+
+        It is only used by Safari, which I am changing along with this in rdar://problem/68659937
+        I need it to not be on the process pool for https://bugs.webkit.org/show_bug.cgi?id=216041
+        and because the cookie store's job is to manage cookie storage.  The fact that it was on the process pool
+        is just a historical artifact of us trying to make it global.
+
+        WKContextUseTestingNetworkSession has had its important parts replaced by WKWebsiteDataStoreConfigurationSetTestingSessionEnabled
+        but it was still being used to determinte whether the UI process should persist the cookie accept policy.  We don't need this
+        any more because we send a message to the network process and let it manage the cookie accept policy.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextUseTestingNetworkSession): Deleted.
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        (-[WKHTTPCookieStore _setCookieAcceptPolicy:completionHandler:]):
+        * UIProcess/API/Cocoa/WKHTTPCookieStorePrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setCookieAcceptPolicy:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::useTestingNetworkSession): Deleted.
+        * UIProcess/WebProcessPool.h:
+
 2020-09-11  Ben Nham  <nham@apple.com>
 
         Fix undeclared identifier issue due to clashes in soft link headers

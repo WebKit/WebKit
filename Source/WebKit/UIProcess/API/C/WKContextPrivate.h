@@ -89,9 +89,6 @@ WK_EXPORT void WKContextTerminateServiceWorkers(WKContextRef);
 WK_EXPORT void WKContextSetAllowsAnySSLCertificateForWebSocketTesting(WKContextRef, bool);
 WK_EXPORT void WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(WKContextRef, bool);
 
-// Test only. Should be called before any secondary processes are started.
-WK_EXPORT void WKContextUseTestingNetworkSession(WKContextRef context);
-
 // Test only. Should be called before running a test.
 WK_EXPORT void WKContextClearCachedCredentials(WKContextRef context);
 
