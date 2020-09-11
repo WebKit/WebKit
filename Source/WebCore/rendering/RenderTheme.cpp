@@ -1283,41 +1283,32 @@ auto RenderTheme::colorCache(OptionSet<StyleColor::Options> options) const -> Co
 
 FontCascadeDescription& RenderTheme::cachedSystemFontDescription(CSSValueID systemFontID) const
 {
-    static NeverDestroyed<FontCascadeDescription> caption;
-    static NeverDestroyed<FontCascadeDescription> icon;
-    static NeverDestroyed<FontCascadeDescription> menu;
-    static NeverDestroyed<FontCascadeDescription> messageBox;
-    static NeverDestroyed<FontCascadeDescription> smallCaption;
-    static NeverDestroyed<FontCascadeDescription> statusBar;
-    static NeverDestroyed<FontCascadeDescription> webkitMiniControl;
-    static NeverDestroyed<FontCascadeDescription> webkitSmallControl;
-    static NeverDestroyed<FontCascadeDescription> webkitControl;
-    static NeverDestroyed<FontCascadeDescription> defaultDescription;
+    static auto fontDescriptions = makeNeverDestroyed<std::array<FontCascadeDescription, 10>>({ });
 
     switch (systemFontID) {
     case CSSValueCaption:
-        return caption;
+        return fontDescriptions.get()[0];
     case CSSValueIcon:
-        return icon;
+        return fontDescriptions.get()[1];
     case CSSValueMenu:
-        return menu;
+        return fontDescriptions.get()[2];
     case CSSValueMessageBox:
-        return messageBox;
+        return fontDescriptions.get()[3];
     case CSSValueSmallCaption:
-        return smallCaption;
+        return fontDescriptions.get()[4];
     case CSSValueStatusBar:
-        return statusBar;
+        return fontDescriptions.get()[5];
     case CSSValueWebkitMiniControl:
-        return webkitMiniControl;
+        return fontDescriptions.get()[6];
     case CSSValueWebkitSmallControl:
-        return webkitSmallControl;
+        return fontDescriptions.get()[7];
     case CSSValueWebkitControl:
-        return webkitControl;
+        return fontDescriptions.get()[8];
     case CSSValueNone:
-        return defaultDescription;
+        return fontDescriptions.get()[9];
     default:
         ASSERT_NOT_REACHED();
-        return defaultDescription;
+        return fontDescriptions.get()[9];
     }
 }
 

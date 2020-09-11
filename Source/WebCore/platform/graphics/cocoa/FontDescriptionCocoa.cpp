@@ -78,9 +78,16 @@ static inline Optional<SystemFontKind> matchSystemFontUse(const AtomString& stri
         kCTUIFontTextStyleTitle0,
         kCTUIFontTextStyleTitle4,
     };
-    
-    static auto strings { makeNeverDestroyed(convertArray<AtomString>(styles)) };
-    if (std::find(strings.get().begin(), strings.get().end(), string) != strings.get().end())
+
+    auto compareAsPointer = [](const AtomString& lhs, const AtomString& rhs) {
+        return lhs.impl() < rhs.impl();
+    };
+    static auto strings = makeNeverDestroyed([&compareAsPointer] {
+        auto result = convertArray<AtomString>(styles);
+        std::sort(result.begin(), result.end(), compareAsPointer);
+        return result;
+    }());
+    if (std::binary_search(strings.get().begin(), strings.get().end(), string, compareAsPointer))
         return SystemFontKind::TextStyle;
 
     return WTF::nullopt;

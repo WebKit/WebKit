@@ -556,7 +556,7 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
 {
     float size = m_platformData.size() * scaleFactor;
     CTFontSymbolicTraits fontTraits = CTFontGetSymbolicTraits(m_platformData.font());
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontCopyFontDescriptor(m_platformData.font()));
+    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(m_platformData.font()));
     RetainPtr<CTFontRef> scaledFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
 
     return createDerivativeFont(scaledFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique());

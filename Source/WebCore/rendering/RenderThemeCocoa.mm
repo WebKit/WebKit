@@ -29,6 +29,7 @@
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
 #import "RenderText.h"
+#import <algorithm>
 #import <pal/spi/cocoa/CoreTextSPI.h>
 
 #if ENABLE(VIDEO)
@@ -178,81 +179,47 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
 
 FontCascadeDescription& RenderThemeCocoa::cachedSystemFontDescription(CSSValueID valueID) const
 {
-    static NeverDestroyed<FontCascadeDescription> systemFont;
-    static NeverDestroyed<FontCascadeDescription> headlineFont;
-    static NeverDestroyed<FontCascadeDescription> bodyFont;
-    static NeverDestroyed<FontCascadeDescription> subheadlineFont;
-    static NeverDestroyed<FontCascadeDescription> footnoteFont;
-    static NeverDestroyed<FontCascadeDescription> caption1Font;
-    static NeverDestroyed<FontCascadeDescription> caption2Font;
-    static NeverDestroyed<FontCascadeDescription> shortHeadlineFont;
-    static NeverDestroyed<FontCascadeDescription> shortBodyFont;
-    static NeverDestroyed<FontCascadeDescription> shortSubheadlineFont;
-    static NeverDestroyed<FontCascadeDescription> shortFootnoteFont;
-    static NeverDestroyed<FontCascadeDescription> shortCaption1Font;
-    static NeverDestroyed<FontCascadeDescription> tallBodyFont;
-    static NeverDestroyed<FontCascadeDescription> title0Font;
-    static NeverDestroyed<FontCascadeDescription> title1Font;
-    static NeverDestroyed<FontCascadeDescription> title2Font;
-    static NeverDestroyed<FontCascadeDescription> title3Font;
-    static NeverDestroyed<FontCascadeDescription> title4Font;
+    static auto fontDescriptions = makeNeverDestroyed<std::array<FontCascadeDescription, 17>>({ });
 
-    static CFStringRef userTextSize = contentSizeCategory();
-
-    if (userTextSize != contentSizeCategory()) {
-        userTextSize = contentSizeCategory();
-
-        headlineFont.get().setIsAbsoluteSize(false);
-        bodyFont.get().setIsAbsoluteSize(false);
-        subheadlineFont.get().setIsAbsoluteSize(false);
-        footnoteFont.get().setIsAbsoluteSize(false);
-        caption1Font.get().setIsAbsoluteSize(false);
-        caption2Font.get().setIsAbsoluteSize(false);
-        shortHeadlineFont.get().setIsAbsoluteSize(false);
-        shortBodyFont.get().setIsAbsoluteSize(false);
-        shortSubheadlineFont.get().setIsAbsoluteSize(false);
-        shortFootnoteFont.get().setIsAbsoluteSize(false);
-        shortCaption1Font.get().setIsAbsoluteSize(false);
-        tallBodyFont.get().setIsAbsoluteSize(false);
-    }
+    ASSERT(std::all_of(std::begin(fontDescriptions.get()), std::end(fontDescriptions.get()), [](auto& description) {
+        return !description.isAbsoluteSize();
+    }));
 
     switch (valueID) {
     case CSSValueAppleSystemHeadline:
-        return headlineFont;
+        return fontDescriptions.get()[0];
     case CSSValueAppleSystemBody:
-        return bodyFont;
+        return fontDescriptions.get()[1];
     case CSSValueAppleSystemTitle0:
-        return title0Font;
+        return fontDescriptions.get()[2];
     case CSSValueAppleSystemTitle1:
-        return title1Font;
+        return fontDescriptions.get()[3];
     case CSSValueAppleSystemTitle2:
-        return title2Font;
+        return fontDescriptions.get()[4];
     case CSSValueAppleSystemTitle3:
-        return title3Font;
+        return fontDescriptions.get()[5];
     case CSSValueAppleSystemTitle4:
-        return title4Font;
+        return fontDescriptions.get()[6];
     case CSSValueAppleSystemSubheadline:
-        return subheadlineFont;
+        return fontDescriptions.get()[7];
     case CSSValueAppleSystemFootnote:
-        return footnoteFont;
+        return fontDescriptions.get()[8];
     case CSSValueAppleSystemCaption1:
-        return caption1Font;
+        return fontDescriptions.get()[9];
     case CSSValueAppleSystemCaption2:
-        return caption2Font;
-        // Short version.
+        return fontDescriptions.get()[10];
     case CSSValueAppleSystemShortHeadline:
-        return shortHeadlineFont;
+        return fontDescriptions.get()[11];
     case CSSValueAppleSystemShortBody:
-        return shortBodyFont;
+        return fontDescriptions.get()[12];
     case CSSValueAppleSystemShortSubheadline:
-        return shortSubheadlineFont;
+        return fontDescriptions.get()[13];
     case CSSValueAppleSystemShortFootnote:
-        return shortFootnoteFont;
+        return fontDescriptions.get()[14];
     case CSSValueAppleSystemShortCaption1:
-        return shortCaption1Font;
-        // Tall version.
+        return fontDescriptions.get()[15];
     case CSSValueAppleSystemTallBody:
-        return tallBodyFont;
+        return fontDescriptions.get()[16];
     default:
         return RenderTheme::cachedSystemFontDescription(valueID);
     }
@@ -265,7 +232,7 @@ static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
     float result = 0;
     CFNumberGetValue(resultRef, kCFNumberFloatType, &result);
     // These numbers were experimentally gathered from weights of the system font.
-    static constexpr const float weightThresholds[] = { -0.6, -0.365, -0.115, 0.130, 0.235, 0.350, 0.5, 0.7 };
+    static constexpr float weightThresholds[] = { -0.6, -0.365, -0.115, 0.130, 0.235, 0.350, 0.5, 0.7 };
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(weightThresholds); ++i) {
         if (result < weightThresholds[i])
             return FontSelectionValue((static_cast<int>(i) + 1) * 100);
@@ -409,7 +376,7 @@ void RenderThemeCocoa::updateCachedSystemFontDescription(CSSValueID valueID, Fon
         style = textStyle;
 
     ASSERT(fontDescriptor);
-    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
+    auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setOneFamily(style);
     fontDescription.setSpecifiedSize(CTFontGetSize(font.get()));
