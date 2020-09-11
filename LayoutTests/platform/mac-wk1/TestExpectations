@@ -1155,3 +1155,6 @@ webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
 # rdar://65188503
 [ BigSur+ ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
+
+# <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
+[ Mojave Catalina ] imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]

@@ -1392,9 +1392,6 @@ fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
 imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
 
-# <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
-imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
-
 # <rdar://problem/32826391> LayoutTest imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm is failing on High Sierra
 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 

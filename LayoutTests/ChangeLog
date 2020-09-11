@@ -11,6 +11,16 @@
 
 2020-09-10  Karl Rackler  <rackler@apple.com>
 
+        Update test expectations for imported/blink/fast/gradients/gradient-transparency.html
+        rdar://32800095
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2020-09-10  Karl Rackler  <rackler@apple.com>
+
         Remove test expectation now that test is passing.
         rdar://61833551
 
