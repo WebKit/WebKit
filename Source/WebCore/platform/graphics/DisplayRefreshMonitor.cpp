@@ -94,7 +94,12 @@ void DisplayRefreshMonitor::displayDidRefresh()
 {
     {
         LockHolder lock(m_mutex);
-        LOG(RequestAnimationFrame, "DisplayRefreshMonitor::displayDidRefresh(%p) - m_scheduled(%d)", this, m_scheduled);
+        LOG(RequestAnimationFrame, "DisplayRefreshMonitor::displayDidRefresh(%p) - m_scheduled(%d), m_unscheduledFireCount(%d)", this, m_scheduled, m_unscheduledFireCount);
+        if (!m_scheduled)
+            ++m_unscheduledFireCount;
+        else
+            m_unscheduledFireCount = 0;
+
         m_scheduled = false;
     }
 

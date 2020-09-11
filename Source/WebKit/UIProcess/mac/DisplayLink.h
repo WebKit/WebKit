@@ -48,6 +48,7 @@ public:
     void addObserver(IPC::Connection&, DisplayLinkObserverID);
     void removeObserver(IPC::Connection&, DisplayLinkObserverID);
     void removeObservers(IPC::Connection&);
+    bool hasObservers() const;
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     
@@ -60,7 +61,6 @@ private:
     Lock m_observersLock;
     HashMap<RefPtr<IPC::Connection>, Vector<DisplayLinkObserverID>> m_observers;
     WebCore::PlatformDisplayID m_displayID;
-    unsigned m_fireCountWithoutObservers { 0 };
 };
 
 } // namespace WebKit
