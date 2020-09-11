@@ -1,3 +1,25 @@
+2020-09-11  Chris Dumez  <cdumez@apple.com>
+
+        AudioContext does not start rendering until an AudioNode is constructed
+        https://bugs.webkit.org/show_bug.cgi?id=216393
+
+        Reviewed by Eric Carlson.
+
+        AudioContext does not start rendering until an AudioNode is constructed. This is not as per specification
+        and does not match Chrome's behavior.
+
+        Specification section is here:
+        - https://www.w3.org/TR/webaudio/#dom-audiocontext-audiocontext
+        and says
+        "If the context is allowed to start, send a control message to start processing."
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        * dom/Document.cpp:
+        (WebCore::Document::addMediaCanStartListener):
+
 2020-09-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Make InlineBoxes grow vertically as they gain content

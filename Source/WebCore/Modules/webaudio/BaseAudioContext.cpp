@@ -139,6 +139,16 @@ BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions
 
     document.addAudioProducer(*this);
     document.registerForVisibilityStateChangedCallbacks(*this);
+
+    // Unlike OfflineAudioContext, AudioContext does not require calling resume() to start rendering.
+    // Lazy initialization starts rendering so we schedule a task here to make sure lazy initialization
+    // ends up happening, even if no audio node gets constructed.
+    postTask([this] {
+        if (m_isStopScheduled)
+            return;
+
+        lazyInitialize();
+    });
 }
 
 // Constructor for offline (non-realtime) rendering.

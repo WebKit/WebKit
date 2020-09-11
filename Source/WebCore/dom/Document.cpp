@@ -6513,7 +6513,6 @@ void Document::dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject
 
 void Document::addMediaCanStartListener(MediaCanStartListener& listener)
 {
-    ASSERT(!m_mediaCanStartListeners.contains(listener));
     m_mediaCanStartListeners.add(listener);
 }
 
