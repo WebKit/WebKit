@@ -910,7 +910,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         // to mark the new containing blocks for layout. The change that can
         // directly affect the containing block of this object is a change to
         // the position style.
-        if (needsLayout() && oldStyle->position() != m_style.position())
+        if (needsLayout() && oldStyle && oldStyle->position() != m_style.position())
             markContainingBlocksForLayout();
 
         if (diff == StyleDifference::Layout)

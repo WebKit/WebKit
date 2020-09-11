@@ -1,3 +1,23 @@
+2020-09-11  Zalan Bujtas  <zalan@apple.com>
+
+        styleDidChange functions should all check for nullptr oldStyle
+        https://bugs.webkit.org/show_bug.cgi?id=216410
+
+        Reviewed by Simon Fraser.
+
+        While some of these calls are protected by the StyleDifference value check (!StyleDifference::NewStyle), an unsafe code refactoring could result in null deref. 
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleDidChange):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleDidChange):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::styleDidChange):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::styleDidChange):
+
 2020-09-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Followup to Bug 215027: address comments to improve APP_BOUND_DOMAINS macro use

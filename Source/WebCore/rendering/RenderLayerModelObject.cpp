@@ -141,7 +141,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         }
     } else if (layer() && layer()->parent()) {
 #if ENABLE(CSS_COMPOSITING)
-        if (oldStyle->hasBlendMode())
+        if (oldStyle && oldStyle->hasBlendMode())
             layer()->willRemoveChildWithBlendMode();
 #endif
         setHasTransformRelatedProperty(false); // All transform-related properties force layers, so we know we don't have one or the object doesn't support them.
