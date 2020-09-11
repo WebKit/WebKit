@@ -1,3 +1,16 @@
+2020-09-11  Ben Nham  <nham@apple.com>
+
+        Fix undeclared identifier issue due to clashes in soft link headers
+        https://bugs.webkit.org/show_bug.cgi?id=216412
+
+        Reviewed by Geoffrey Garen.
+
+        Use the workaround constant kPALFigPhotoContainerFormat_JFIF instead of the enum value
+        kFigPhotoContainerFormat_JFIF.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-09-11  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Add Experimental setting to disable calling PID Inheritance API.
