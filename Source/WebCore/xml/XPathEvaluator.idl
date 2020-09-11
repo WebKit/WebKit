@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,13 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://dom.spec.whatwg.org/#xpathevaluator
 [
     ImplementationLacksVTable,
 ] interface XPathEvaluator {
     constructor();
-
-    // FIXME: The following should be extracted into a new mixin, XPathEvaluatorBase - https://dom.spec.whatwg.org/#xpathevaluatorbase
-    [MayThrowException] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver);
-    XPathNSResolver createNSResolver(Node nodeResolver);
-    [MayThrowException] XPathResult evaluate(DOMString expression, Node contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult);
 };
+
+XPathEvaluator includes XPathEvaluatorBase;

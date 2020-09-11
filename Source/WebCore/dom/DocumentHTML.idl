@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+enum DocumentReadyState { "loading", "interactive", "complete" };
+typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
+
+// https://html.spec.whatwg.org/multipage/dom.html#document
+// FIXME: This should have the [LegacyOverrideBuiltIns] extended attribute.
+partial interface Document {
+    // resource metadata management
+    [PutForwards=href, LegacyUnforgeable] readonly attribute Location? location;
+    attribute USVString domain;
+    readonly attribute USVString referrer;
+    attribute USVString cookie;
+    readonly attribute DOMString lastModified;
+    readonly attribute DocumentReadyState readyState;
+
+    // DOM tree accessors
+    // getter object (DOMString name);
+    [CEReactions] attribute DOMString title;
+    [CEReactions] attribute DOMString dir;
+    [CEReactions, DOMJIT=Getter, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
+    readonly attribute HTMLHeadElement? head;
+    readonly attribute HTMLCollection images; // Should be [SameObject].
+    readonly attribute HTMLCollection embeds; // Should be [SameObject].
+    readonly attribute HTMLCollection plugins; // Should be [SameObject].
+    readonly attribute HTMLCollection links; // Should be [SameObject].
+    readonly attribute HTMLCollection forms; // Should be [SameObject].
+    readonly attribute HTMLCollection scripts; // Should be [SameObject].
+    NodeList getElementsByName([AtomString] DOMString elementName);
+    // currentScript is specified to use type HTMLOrSVGScriptElement?, but implemented using
+    // shared base type Element? to optimize implementation without an observable difference.
+    readonly attribute Element? currentScript; // classic scripts in a document tree only
+
+    // dynamic markup insertion
+    // FIXME: The HTML spec says this should consult the "responsible document". We should ensure
+    // that the caller document matches those semantics. It is possible we should replace it with
+    // the existing 'incumbent document' concept.
+    [CEReactions, CallWith=ResponsibleDocument, ImplementedAs=openForBindings, MayThrowException] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
+    [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings, MayThrowException] WindowProxy open(USVString url, DOMString name, DOMString features);
+    [CEReactions, ImplementedAs=closeForBindings, MayThrowException] undefined close();
+    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] undefined write(DOMString... text);
+    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] undefined writeln(DOMString... text);
+
+    // user interaction
+    [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;
+    boolean hasFocus();
+    [CEReactions] attribute DOMString designMode;
+    [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString? value = null); // FIXME: value should not be nullable.
+    boolean queryCommandEnabled(DOMString commandId);
+    boolean queryCommandIndeterm(DOMString commandId);
+    boolean queryCommandState(DOMString commandId);
+    boolean queryCommandSupported(DOMString commandId);
+    DOMString queryCommandValue(DOMString commandId);
+
+    // special event handler IDL attributes that only apply to Document objects
+    [LegacyLenientThis] attribute EventHandler onreadystatechange;
+};

@@ -642,6 +642,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/CompositeOperation.idl
     animation/CompositeOperationOrAuto.idl
     animation/ComputedEffectTiming.idl
+    animation/DocumentAnimations.idl
     animation/DocumentOrShadowRootAnimations.idl
     animation/DocumentTimeline.idl
     animation/DocumentTimelineOptions.idl
@@ -722,6 +723,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/ElementCSSInlineStyle.idl
     css/FontFace.idl
     css/FontFaceSet.idl
+    css/FontFaceSource.idl
     css/MediaList.idl
     css/MediaQueryList.idl
     css/MediaQueryListEvent.idl
@@ -777,11 +779,18 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DocumentAndElementEventHandlers.idl
     dom/DocumentFragment.idl
     dom/DocumentFullscreen.idl
+    dom/DocumentHTML.idl
+    dom/DocumentHTMLObsolete.idl
     dom/DocumentOrShadowRoot.idl
     dom/DocumentOrShadowRootPointerLock.idl
+    dom/DocumentPageVisibility.idl
+    dom/DocumentPointerLock.idl
+    dom/DocumentScrolling.idl
+    dom/DocumentSelection.idl
     dom/DocumentStorageAccess.idl
     dom/DocumentTouch.idl
     dom/DocumentType.idl
+    dom/DocumentUndoMananger.idl
     dom/DragEvent.idl
     dom/Element.idl
     dom/ErrorEvent.idl
@@ -1110,6 +1119,7 @@ set(WebCore_NON_SVG_IDL_FILES
     xml/XMLHttpRequestUpload.idl
     xml/XMLSerializer.idl
     xml/XPathEvaluator.idl
+    xml/XPathEvaluatorBase.idl
     xml/XPathExpression.idl
     xml/XPathNSResolver.idl
     xml/XPathResult.idl

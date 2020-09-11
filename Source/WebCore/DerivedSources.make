@@ -599,6 +599,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/CompositeOperation.idl \
     $(WebCore)/animation/CompositeOperationOrAuto.idl \
     $(WebCore)/animation/ComputedEffectTiming.idl \
+    $(WebCore)/animation/DocumentAnimations.idl \
     $(WebCore)/animation/DocumentOrShadowRootAnimations.idl \
     $(WebCore)/animation/DocumentTimeline.idl \
     $(WebCore)/animation/DocumentTimelineOptions.idl \
@@ -676,6 +677,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/ElementCSSInlineStyle.idl \
     $(WebCore)/css/FontFace.idl \
     $(WebCore)/css/FontFaceSet.idl \
+    $(WebCore)/css/FontFaceSource.idl \
     $(WebCore)/css/MediaList.idl \
     $(WebCore)/css/MediaQueryList.idl \
     $(WebCore)/css/MediaQueryListEvent.idl \
@@ -726,12 +728,19 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DeviceOrientationOrMotionPermissionState.idl \
     $(WebCore)/dom/Document.idl \
     $(WebCore)/dom/DocumentAndElementEventHandlers.idl \
-    $(WebCore)/dom/DocumentFullscreen.idl \
     $(WebCore)/dom/DocumentFragment.idl \
+    $(WebCore)/dom/DocumentFullscreen.idl \
+    $(WebCore)/dom/DocumentHTML.idl \
+    $(WebCore)/dom/DocumentHTMLObsolete.idl \
     $(WebCore)/dom/DocumentOrShadowRoot.idl \
     $(WebCore)/dom/DocumentOrShadowRootPointerLock.idl \
+    $(WebCore)/dom/DocumentPageVisibility.idl \
+    $(WebCore)/dom/DocumentPointerLock.idl \
+    $(WebCore)/dom/DocumentScrolling.idl \
+    $(WebCore)/dom/DocumentSelection.idl \
     $(WebCore)/dom/DocumentStorageAccess.idl \
     $(WebCore)/dom/DocumentType.idl \
+    $(WebCore)/dom/DocumentUndoMananger.idl \
     $(WebCore)/dom/DragEvent.idl \
     $(WebCore)/dom/Element.idl \
     $(WebCore)/dom/ErrorEvent.idl \
@@ -1267,6 +1276,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/xml/XMLHttpRequestUpload.idl \
     $(WebCore)/xml/XMLSerializer.idl \
     $(WebCore)/xml/XPathEvaluator.idl \
+    $(WebCore)/xml/XPathEvaluatorBase.idl \
     $(WebCore)/xml/XPathExpression.idl \
     $(WebCore)/xml/XPathNSResolver.idl \
     $(WebCore)/xml/XPathResult.idl \

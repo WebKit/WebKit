@@ -1,3 +1,30 @@
+2020-09-11  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Split supplemental interfaces out of Document
+        https://bugs.webkit.org/show_bug.cgi?id=216336
+
+        Reviewed by Darin Adler.
+
+        Split supplemental interfaces out of Document, adding/updating comments.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/DocumentAnimations.idl: Added.
+        * css/FontFaceSource.idl: Added.
+        * dom/Document.idl:
+        * dom/DocumentHTML.idl: Added.
+        * dom/DocumentHTMLObsolete.idl: Added.
+        * dom/DocumentPageVisibility.idl: Added.
+        * dom/DocumentPointerLock.idl: Added.
+        * dom/DocumentScrolling.idl: Added.
+        * dom/DocumentSelection.idl: Added.
+        * dom/DocumentUndoMananger.idl: Added.
+        * xml/XPathEvaluator.idl:
+        * xml/XPathEvaluatorBase.idl: Added.
+
 2020-09-11  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Async overflow scroll): Mouse wheel scrolling over an "always-on" overflow scrollbar doesn't work

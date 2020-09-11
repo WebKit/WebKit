@@ -535,6 +535,7 @@ $(PROJECT_DIR)/animation/CSSTransition.idl
 $(PROJECT_DIR)/animation/CompositeOperation.idl
 $(PROJECT_DIR)/animation/CompositeOperationOrAuto.idl
 $(PROJECT_DIR)/animation/ComputedEffectTiming.idl
+$(PROJECT_DIR)/animation/DocumentAnimations.idl
 $(PROJECT_DIR)/animation/DocumentOrShadowRootAnimations.idl
 $(PROJECT_DIR)/animation/DocumentTimeline.idl
 $(PROJECT_DIR)/animation/DocumentTimelineOptions.idl
@@ -624,6 +625,7 @@ $(PROJECT_DIR)/css/DocumentOrShadowRootStyleSheets.idl
 $(PROJECT_DIR)/css/ElementCSSInlineStyle.idl
 $(PROJECT_DIR)/css/FontFace.idl
 $(PROJECT_DIR)/css/FontFaceSet.idl
+$(PROJECT_DIR)/css/FontFaceSource.idl
 $(PROJECT_DIR)/css/MediaList.idl
 $(PROJECT_DIR)/css/MediaQueryList.idl
 $(PROJECT_DIR)/css/MediaQueryListEvent.idl
@@ -695,11 +697,18 @@ $(PROJECT_DIR)/dom/Document.idl
 $(PROJECT_DIR)/dom/DocumentAndElementEventHandlers.idl
 $(PROJECT_DIR)/dom/DocumentFragment.idl
 $(PROJECT_DIR)/dom/DocumentFullscreen.idl
+$(PROJECT_DIR)/dom/DocumentHTML.idl
+$(PROJECT_DIR)/dom/DocumentHTMLObsolete.idl
 $(PROJECT_DIR)/dom/DocumentOrShadowRoot.idl
 $(PROJECT_DIR)/dom/DocumentOrShadowRootPointerLock.idl
+$(PROJECT_DIR)/dom/DocumentPageVisibility.idl
+$(PROJECT_DIR)/dom/DocumentPointerLock.idl
+$(PROJECT_DIR)/dom/DocumentScrolling.idl
+$(PROJECT_DIR)/dom/DocumentSelection.idl
 $(PROJECT_DIR)/dom/DocumentStorageAccess.idl
 $(PROJECT_DIR)/dom/DocumentTouch.idl
 $(PROJECT_DIR)/dom/DocumentType.idl
+$(PROJECT_DIR)/dom/DocumentUndoMananger.idl
 $(PROJECT_DIR)/dom/DragEvent.idl
 $(PROJECT_DIR)/dom/Element.idl
 $(PROJECT_DIR)/dom/ErrorEvent.idl
@@ -1266,6 +1275,7 @@ $(PROJECT_DIR)/xml/XMLSerializer.idl
 $(PROJECT_DIR)/xml/XMLViewer.css
 $(PROJECT_DIR)/xml/XMLViewer.js
 $(PROJECT_DIR)/xml/XPathEvaluator.idl
+$(PROJECT_DIR)/xml/XPathEvaluatorBase.idl
 $(PROJECT_DIR)/xml/XPathExpression.idl
 $(PROJECT_DIR)/xml/XPathNSResolver.idl
 $(PROJECT_DIR)/xml/XPathResult.idl

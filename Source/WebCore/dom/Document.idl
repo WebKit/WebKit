@@ -82,120 +82,20 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     [NewObject] NodeIterator createNodeIterator(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
     [NewObject] TreeWalker createTreeWalker(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
 
-    // Extensions from HTML specification (https://html.spec.whatwg.org/#the-document-object).
-    [PutForwards=href, LegacyUnforgeable] readonly attribute Location? location;
-    attribute USVString domain;
-    readonly attribute USVString referrer;
-    attribute USVString cookie;
-    readonly attribute DOMString lastModified;
-    readonly attribute DocumentReadyState readyState;
-
-    // DOM tree accessors.
-    [CEReactions] attribute DOMString title;
-    [CEReactions] attribute DOMString dir;
-    [CEReactions, DOMJIT=Getter, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
-    readonly attribute HTMLHeadElement? head;
-    readonly attribute HTMLCollection images; // Should be [SameObject].
-    readonly attribute HTMLCollection embeds; // Should be [SameObject].
-    readonly attribute HTMLCollection plugins; // Should be [SameObject].
-    readonly attribute HTMLCollection links; // Should be [SameObject].
-    readonly attribute HTMLCollection forms; // Should be [SameObject].
-    readonly attribute HTMLCollection scripts; // Should be [SameObject].
-    NodeList getElementsByName([AtomString] DOMString elementName);
-    
-    // currentScript is specified to use type HTMLOrSVGScriptElement?, but implemented using
-    // shared base type Element? to optimize implementation without an observable difference.
-    readonly attribute Element? currentScript;
-
-    // dynamic markup insertion
-    // FIXME: The HTML spec says this should consult the "responsible document". We should ensure
-    // that the caller document matches those semantics. It is possible we should replace it with
-    // the existing 'incumbent document' concept.
-    [CEReactions, CallWith=ResponsibleDocument, ImplementedAs=openForBindings, MayThrowException] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
-    [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings, MayThrowException] WindowProxy open(USVString url, DOMString name, DOMString features);
-    [CEReactions, ImplementedAs=closeForBindings, MayThrowException] undefined close();
-    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] undefined write(DOMString... text);
-    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] undefined writeln(DOMString... text);
-
-    // User interaction.
-    [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;
-    boolean hasFocus();
-    [CEReactions] attribute DOMString designMode;
-    [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString? value = null); // FIXME: value should not be nullable.
-    boolean queryCommandEnabled(DOMString commandId);
-    boolean queryCommandIndeterm(DOMString commandId);
-    boolean queryCommandState(DOMString commandId);
-    boolean queryCommandSupported(DOMString commandId);
-    DOMString queryCommandValue(DOMString commandId);
-    [EnabledBySetting=UndoManagerAPI] readonly attribute UndoManager undoManager;
-
-    // Special event handler IDL attributes that only apply to Document objects.
-    [LegacyLenientThis] attribute EventHandler onreadystatechange;
-
-    // Extensions from the CSSOM-View specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-document-interface).
-    [ImplementedAs=scrollingElementForAPI] readonly attribute Element? scrollingElement;
-
-    // Extensions from Selection API (https://www.w3.org/TR/selection-api/#extensions-to-document-interface).
-    // FIXME: Should likely be moved to DocumentOrShadowRoot.
-    DOMSelection? getSelection();
-
-    // FIXME: The following should be extracted into a new mixin, XPathEvaluatorBase - https://dom.spec.whatwg.org/#xpathevaluatorbase
-    // XPath extensions (https://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathEvaluator).
-    [MayThrowException] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver);
-    XPathNSResolver createNSResolver(Node nodeResolver);
-    [MayThrowException] XPathResult evaluate(DOMString expression, Node contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult);
-
-    // Extensions from Pointer Lock API (https://www.w3.org/TR/pointerlock/#extensions-to-the-document-interface).
-    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange; // FIXME: Should be enumerable.
-    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror; // FIXME: Should be enumerable.
-    [Conditional=POINTER_LOCK] undefined exitPointerLock();
-
-    // Extensions from CSS Font Loading API (https://drafts.csswg.org/css-font-loading/#font-face-source).
-    // FIXME: Should be in a separate FontFaceSource interface.
-    readonly attribute FontFaceSet fonts;
-
-    // Extensions from Page visibility API (https://www.w3.org/TR/page-visibility/#sec-document-interface).
-    readonly attribute boolean hidden;
-    readonly attribute VisibilityState visibilityState;
-    attribute EventHandler onvisibilitychange;
-
-    // FIXME: Those have been dropped from the DOM specification.
+    // Removed from standard: Those have been dropped from the DOM specification.
     readonly attribute DOMString? xmlEncoding;
     attribute DOMString? xmlVersion;
     attribute boolean xmlStandalone;
 
-    // FIXME: Blink has already dropped this (https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/s3ezjTuC8ig).
+    // Non standard: Blink has already dropped this (https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/s3ezjTuC8ig).
     // And it's just a stub that always returns null, so we can probably remove it some time soon.
     CSSStyleDeclaration? getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
-
-    // FIXME: Should be moved to GlobalEventHandlers (http://w3c.github.io/selection-api/#extensions-to-globaleventhandlers).
-    [NotEnumerable] attribute EventHandler onselectstart; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler onselectionchange; // FIXME: Should be enumerable.
 
     // Non standard: It has been superseeded by caretPositionFromPoint which we do not implement yet.
     Range caretRangeFromPoint(optional long x = 0, optional long y = 0);
 
-    // FIXME: This is not standard and has been dropped from Blink already.
+    // Non standard: It has been dropped from Blink already.
     RenderingContext? getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
-
-    // Obsolete features from https://html.spec.whatwg.org/multipage/obsolete.html
-
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString fgColor;
-    [CEReactions, ImplementedAs=linkColorForBindings] attribute [LegacyNullToEmptyString] DOMString linkColor;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString vlinkColor;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString alinkColor;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString bgColor;
-
-    readonly attribute HTMLCollection anchors; /* [SameObject] */
-    readonly attribute HTMLCollection applets; /* [SameObject] */
-
-    undefined clear();
-    undefined captureEvents();
-    undefined releaseEvents();
-
-    [Replaceable] readonly attribute HTMLAllCollection all; /* [SameObject] */
-
-    [EnabledAtRuntime=WebAnimations] readonly attribute DocumentTimeline timeline;
 };
 
 enum DocumentReadyState { "loading", "interactive", "complete" };
@@ -205,3 +105,5 @@ Document includes ParentNode;
 Document includes NonElementParentNode;
 Document includes DocumentOrShadowRoot;
 Document includes GlobalEventHandlers;
+Document includes FontFaceSource;
+Document includes XPathEvaluatorBase;
