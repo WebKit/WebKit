@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSObject.h"
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 struct UCollator;
 
