@@ -59,9 +59,9 @@ bool HTMLFrameElementBase::canLoadScriptURL(const URL& scriptURL) const
 
 bool HTMLFrameElementBase::canLoad() const
 {
-    // FIXME: Why is it valuable to return true when m_URL is empty?
+    // FIXME: Why is it valuable to return true when m_frameURL is empty?
     // FIXME: After openURL replaces an empty URL with the blank URL, this may no longer necessarily return true.
-    return m_URL.isEmpty() || canLoadURL(m_URL);
+    return m_frameURL.isEmpty() || canLoadURL(m_frameURL);
 }
 
 bool HTMLFrameElementBase::canLoadURL(const String& relativeURL) const
@@ -86,20 +86,20 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (!canLoad())
         return;
 
-    if (m_URL.isEmpty())
-        m_URL = aboutBlankURL().string();
+    if (m_frameURL.isEmpty())
+        m_frameURL = aboutBlankURL().string();
 
     RefPtr<Frame> parentFrame = document().frame();
     if (!parentFrame)
         return;
 
-    document().willLoadFrameElement(document().completeURL(m_URL));
+    document().willLoadFrameElement(document().completeURL(m_frameURL));
 
     String frameName = getNameAttribute();
     if (frameName.isNull() && UNLIKELY(document().settings().needsFrameNameFallbackToIdQuirk()))
         frameName = getIdAttribute();
 
-    parentFrame->loader().subframeLoader().requestFrame(*this, m_URL, frameName, lockHistory, lockBackForwardList);
+    parentFrame->loader().subframeLoader().requestFrame(*this, m_frameURL, frameName, lockHistory, lockBackForwardList);
 }
 
 void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -159,10 +159,10 @@ URL HTMLFrameElementBase::location() const
 
 void HTMLFrameElementBase::setLocation(const String& str)
 {
-    if (document().settings().needsAcrobatFrameReloadingQuirk() && m_URL == str)
+    if (document().settings().needsAcrobatFrameReloadingQuirk() && m_frameURL == str)
         return;
 
-    m_URL = AtomString(str);
+    m_frameURL = AtomString(str);
 
     if (isConnected())
         openURL(LockHistory::No, LockBackForwardList::No);

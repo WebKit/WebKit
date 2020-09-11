@@ -70,7 +70,7 @@ private:
 
     void openURL(LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
 
-    AtomString m_URL;
+    AtomString m_frameURL;
 };
 
 } // namespace WebCore
