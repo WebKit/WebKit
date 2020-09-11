@@ -1,3 +1,11 @@
+2020-09-10  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Garden consistent reftest-wait timeouts after r266817.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-09-10  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk2 Release ] fast/selectors/text-field-selection-stroke-color.html is a flaky failure
