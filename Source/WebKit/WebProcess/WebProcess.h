@@ -478,6 +478,10 @@ private:
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 #endif
 
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    void displayWasRefreshed(uint32_t displayID);
+#endif
+
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
 
     // IPC::Connection::Client

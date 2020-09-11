@@ -29,9 +29,12 @@
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 #include "EventDispatcherMessages.h"
+#include "WebProcessMessages.h"
 #include <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
+
+bool DisplayLink::shouldSendIPCOnBackgroundQueue { false };
     
 DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
     : m_displayID(displayID)
@@ -131,8 +134,12 @@ CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const
 {
     auto* displayLink = static_cast<DisplayLink*>(data);
     LockHolder locker(displayLink->m_observersLock);
-    for (auto& connection : displayLink->m_observers.keys())
-        connection->send(Messages::EventDispatcher::DisplayWasRefreshed(displayLink->m_displayID), 0);
+    for (auto& connection : displayLink->m_observers.keys()) {
+        if (shouldSendIPCOnBackgroundQueue)
+            connection->send(Messages::EventDispatcher::DisplayWasRefreshed(displayLink->m_displayID), 0);
+        else
+            connection->send(Messages::WebProcess::DisplayWasRefreshed(displayLink->m_displayID), 0);
+    }
     return kCVReturnSuccess;
 }
 
