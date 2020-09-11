@@ -296,7 +296,7 @@ TEST(WebKit, WKThumbnailViewResetsViewStateWhenUnparented)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.internals.isPageActive()"] boolValue]);
 
     [thumbnailView removeFromSuperview];
-    [webView waitForNextPresentationUpdate];
+    [webView waitUntilActivityStateUpdateDone];
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.internals.isPageActive()"] boolValue]);
 
     [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];

@@ -534,6 +534,16 @@ static UICalloutBar *suppressUICalloutBar()
     TestWebKitAPI::Util::run(&done);
 }
 
+- (void)waitUntilActivityStateUpdateDone
+{
+    __block bool done = false;
+    [self _doAfterActivityStateUpdate:^() {
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
 - (void)forceDarkMode
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)

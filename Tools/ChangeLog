@@ -1,3 +1,20 @@
+2020-09-11  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r266634): WKThumbnailViewResetsViewStateWhenUnparented is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=216258
+        <rdar://problem/68515242>
+
+        Reviewed by Tim Horton.
+
+        r266634 makes activity state changes dispatched after existing CA transaction is committed, which delays update 
+        of page state in web process.
+
+        * TestWebKitAPI/Tests/WebKit/WKThumbnailView.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView waitUntilActivityStateUpdateDone]):
+
 2020-09-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r266842 and r266883.
