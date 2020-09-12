@@ -86,40 +86,38 @@ public:
     WEBCORE_EXPORT FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering);
 #endif
 
-    static FontPlatformData cloneWithOrientation(const FontPlatformData&, FontOrientation);
-    static FontPlatformData cloneWithSyntheticOblique(const FontPlatformData&, bool);
-    static FontPlatformData cloneWithSize(const FontPlatformData&, float);
-
-#if USE(CG) && PLATFORM(WIN)
-    FontPlatformData(CGFontRef, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant, TextRenderingMode);
-#endif
-
 #if PLATFORM(WIN)
     FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
-#endif
-
-#if PLATFORM(WIN) && USE(CG)
+#if USE(CG)
     FontPlatformData(GDIObject<HFONT>, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
+    FontPlatformData(CGFontRef, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant, TextRenderingMode);
 #endif
-
-#if PLATFORM(WIN) && USE(DIRECT2D)
+#if USE(DIRECT2D)
     FontPlatformData(GDIObject<HFONT>&&, COMPtr<IDWriteFont>&&, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #endif
-
-#if PLATFORM(WIN) && USE(CAIRO)
+#if USE(CAIRO)
     FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic);
+#endif
 #endif
 
 #if USE(FREETYPE)
     FontPlatformData(cairo_font_face_t*, RefPtr<FcPattern>&&, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation);
 #endif
 
+    static FontPlatformData cloneWithOrientation(const FontPlatformData&, FontOrientation);
+    static FontPlatformData cloneWithSyntheticOblique(const FontPlatformData&, bool);
+    static FontPlatformData cloneWithSize(const FontPlatformData&, float);
+
 #if PLATFORM(WIN)
     HFONT hfont() const { return m_font ? m_font->get() : 0; }
     bool useGDI() const { return m_useGDI; }
+#if USE(CG)
+    CGFontRef cgFont() const { return m_cgFont.get(); }
 #endif
-
 #if USE(CORE_TEXT)
+    CTFontRef ctFont() const { return m_ctFont.get(); }
+#endif
+#elif USE(CORE_TEXT)
     CTFontRef font() const { return m_font.get(); }
     WEBCORE_EXPORT CTFontRef registeredFont() const; // Returns nullptr iff the font is not registered, such as web fonts (otherwise returns font()).
 
@@ -135,10 +133,6 @@ public:
 #endif
 
     bool hasVariations() const { return m_hasVariations; }
-
-#if USE(CG) && PLATFORM(WIN)
-    CGFontRef cgFont() const { return m_cgFont.get(); }
-#endif
 
 #if USE(DIRECT2D)
     IDWriteFont* dwFont() const { return m_dwFont.get(); }
@@ -199,13 +193,9 @@ public:
 #endif
     }
 
-#if PLATFORM(COCOA) || PLATFORM(WIN) || USE(FREETYPE)
     RefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
-#endif
 
-#if !LOG_DISABLED
     String description() const;
-#endif
 
 private:
     bool platformIsEqual(const FontPlatformData&) const;
@@ -222,16 +212,18 @@ private:
     void buildScaledFont(cairo_font_face_t*);
 #endif
 
+#if PLATFORM(WIN)
+    RefPtr<SharedGDIObject<HFONT>> m_font; // FIXME: Delete this in favor of m_ctFont or m_dwFont or m_scaledFont.
+#if USE(CG)
+    RetainPtr<CGFontRef> m_cgFont; // FIXME: Delete this in favor of m_ctFont.
+#endif
 #if USE(CORE_TEXT)
+    RetainPtr<CTFontRef> m_ctFont;
+#endif
+#elif USE(CORE_TEXT)
     // FIXME: Get rid of one of these. These two fonts are subtly different, and it is not obvious which one to use where.
     RetainPtr<CTFontRef> m_font;
     mutable RetainPtr<CTFontRef> m_ctFont;
-#elif PLATFORM(WIN)
-    RefPtr<SharedGDIObject<HFONT>> m_font;
-#endif
-
-#if USE(CG) && PLATFORM(WIN)
-    RetainPtr<CGFontRef> m_cgFont;
 #endif
 
 #if USE(DIRECT2D)
@@ -247,8 +239,6 @@ private:
     RefPtr<FcPattern> m_pattern;
 #endif
 
-    // The values below are common to all ports
-    // FIXME: If they're common to all ports, they should move to Font
     float m_size { 0 };
 
     FontOrientation m_orientation { FontOrientation::Horizontal };

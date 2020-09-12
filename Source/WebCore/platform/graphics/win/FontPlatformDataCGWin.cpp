@@ -28,6 +28,7 @@
 
 #include "SharedGDIObject.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <pal/spi/win/CoreTextSPIWin.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -114,6 +115,7 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
     LOGFONT logfont;
     GetObject(font, sizeof(logfont), &logfont);
     m_cgFont = adoptCF(CGFontCreateWithPlatformFont(&logfont));
+    m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), size, nullptr, nullptr));
     if (!m_useGDI)
         m_isSystemFont = !wcscmp(faceName, L"Lucida Grande");
 }
@@ -124,19 +126,33 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CGFontRef font, float
     , m_size(size)
     , m_font(SharedGDIObject<HFONT>::create(WTFMove(hfont)))
     , m_cgFont(font)
+    , m_ctFont(adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), size, nullptr, nullptr)))
     , m_useGDI(useGDI)
 {
 }
 
+FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
+    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
+{
+    m_cgFont = cgFont;
+    ASSERT(m_cgFont);
+    m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), size, nullptr, nullptr));
+}
+
 unsigned FontPlatformData::hash() const
 {
-    return m_font ? m_font->hash() : 0;
+    unsigned fontHash = m_font ? m_font->hash() : 0;
+    CFHashCode cgFontHash = WTF::safeCFHash(m_cgFont.get());
+    CFHashCode ctFontHash = WTF::safeCFHash(m_ctFont.get());
+    uintptr_t hashCodes[] = { fontHash, cgFontHash, ctFontHash, m_useGDI };
+    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 }
 
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
     return m_font == other.m_font
-        && m_cgFont == other.m_cgFont
+        && WTF::safeCFEqual(m_cgFont.get(), other.m_cgFont.get())
+        && WTF::safeCFEqual(m_ctFont.get(), other.m_ctFont.get())
         && m_useGDI == other.m_useGDI;
 }
 

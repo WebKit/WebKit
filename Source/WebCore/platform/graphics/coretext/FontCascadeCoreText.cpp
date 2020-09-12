@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+#if !PLATFORM(WIN)
+
 // Confusingly, even when CGFontRenderingGetFontSmoothingDisabled() returns true, CGContextSetShouldSmoothFonts() still impacts text
 // rendering, which is why this function uses the "subpixel antialiasing" rather than "smoothing" terminology.
 bool FontCascade::isSubpixelAntialiasingAvailable()
@@ -308,5 +310,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
 
     return Font::systemFallback();
 }
+
+#endif
 
 }

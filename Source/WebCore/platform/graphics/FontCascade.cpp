@@ -595,7 +595,7 @@ bool FontCascade::shouldUseSmoothing()
     return shouldUseFontSmoothing;
 }
 
-#if !USE(CORE_TEXT)
+#if !USE(CORE_TEXT) || PLATFORM(WIN)
 bool FontCascade::isSubpixelAntialiasingAvailable()
 {
     return false;

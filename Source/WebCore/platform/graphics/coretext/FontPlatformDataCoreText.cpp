@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+#if !PLATFORM(WIN)
+
 FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
 {
@@ -179,5 +181,7 @@ String FontPlatformData::familyName() const
         return adoptCF(CTFontCopyFamilyName(platformFont)).get();
     return { };
 }
+
+#endif
 
 } // namespace WebCore

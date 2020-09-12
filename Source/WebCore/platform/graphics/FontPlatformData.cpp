@@ -31,6 +31,10 @@
 #include <CoreGraphics/CGFont.h>
 #endif
 
+#if PLATFORM(WIN) && USE(CORE_TEXT)
+#include <pal/spi/win/CoreTextSPIWin.h>
+#endif
+
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
@@ -51,15 +55,6 @@ FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheti
     , m_syntheticOblique(syntheticOblique)
 {
 }
-
-#if USE(CG) && PLATFORM(WIN)
-FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
-    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
-{
-    m_cgFont = cgFont;
-    ASSERT(m_cgFont);
-}
-#endif
 
 #if !USE(FREETYPE)
 FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
@@ -84,7 +79,7 @@ FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source,
 }
 #endif
 
-#if !USE(CORE_TEXT)
+#if !USE(CORE_TEXT) || PLATFORM(WIN)
 
 String FontPlatformData::familyName() const
 {

@@ -1,5 +1,42 @@
 2020-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Apple Win] Add a CTFont member to FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=216432
+
+        Reviewed by Darin Adler.
+
+        This is the second step on the path to replacing the Apple Win port's use of CGFont with CTFont.
+        This patch adds m_ctFont to FontPlatformData, and makes FontPlatformData's constructors create
+        this object from their existing arguments. It also enables the USE(CORE_TEXT) flag on the Apple
+        Win port, but manually disables each of the USE(CORE_TEXT) sites on Windows, so there isn't any
+        behavior change just yet. The new member, m_ctFont, is therefore still unused in this patch. The
+        next steps will be replacing our current Apple Win font functions with their USE(CORE_TEXT)
+        counterparts, one-by-one. (Replacing them one-by-one is better than doing them all at once in a
+        giant mondo-patch.)
+
+        No new tests because there is no behavior change yet.
+
+        * PlatformAppleWin.cmake:
+        * platform/graphics/Font.cpp:
+        * platform/graphics/FontCascade.cpp:
+        * platform/graphics/FontPlatformData.cpp:
+        * platform/graphics/FontPlatformData.h: The #defines are temporarily getting worse before they'll
+        be getting better. When this project is done, there will be fewer #defines, and this file will be
+        cleaner than it was when I started.
+        (WebCore::FontPlatformData::cgFont const):
+        (WebCore::FontPlatformData::ctFont const):
+        * platform/graphics/coretext/FontCascadeCoreText.cpp:
+        * platform/graphics/coretext/FontCoreText.cpp:
+        * platform/graphics/coretext/FontPlatformDataCoreText.cpp:
+        * platform/graphics/coretext/GlyphPageCoreText.cpp:
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash const):
+        (WebCore::FontPlatformData::platformIsEqual const):
+
+2020-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Remove dead code FontCascadeCGWin.cpp
         https://bugs.webkit.org/show_bug.cgi?id=216444
 

@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+#if !PLATFORM(WIN)
+
 static bool shouldFillWithVerticalGlyphs(const UChar* buffer, unsigned bufferLength, const Font& font)
 {
     if (!font.hasVerticalGlyphs())
@@ -77,5 +79,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     }
     return haveGlyphs;
 }
+
+#endif
 
 } // namespace WebCore

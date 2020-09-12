@@ -51,6 +51,8 @@
 
 namespace WebCore {
 
+#if !PLATFORM(WIN)
+
 static inline bool caseInsensitiveCompare(CFStringRef a, CFStringRef b)
 {
     return a && CFStringCompare(a, b, kCFCompareCaseInsensitive) == kCFCompareEqualTo;
@@ -767,5 +769,7 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
         return !CGRectIsEmpty(rect);
     });
 }
+
+#endif
 
 } // namespace WebCore
