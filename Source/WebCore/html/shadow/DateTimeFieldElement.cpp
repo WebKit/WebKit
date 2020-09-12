@@ -36,6 +36,7 @@
 #include "LocalizedStrings.h"
 #include "PlatformLocale.h"
 #include "Text.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

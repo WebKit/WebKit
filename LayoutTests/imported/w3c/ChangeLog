@@ -1,3 +1,19 @@
+2020-09-12  Rob Buis  <rbuis@igalia.com>
+
+        Implement lazy iframe loading
+        https://bugs.webkit.org/show_bug.cgi?id=215442
+
+        Reviewed by Darin Adler.
+
+        Update improved test result.
+
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-load-event.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-times.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-referrerpolicy-change.sub.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-to-eager.tentative-expected.txt:
+
 2020-09-11  Chris Dumez  <cdumez@apple.com>
 
         AudioContext does not start rendering until an AudioNode is constructed

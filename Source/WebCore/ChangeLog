@@ -1,3 +1,66 @@
+2020-09-12  Rob Buis  <rbuis@igalia.com>
+
+        Implement lazy iframe loading
+        https://bugs.webkit.org/show_bug.cgi?id=215442
+
+        Reviewed by Darin Adler.
+
+        Implement lazy iframe loading as specified [1, 2]. Lazy iframe loading
+        is controlled by the loading attribute on <iframe>. When the loading attribute is
+        not specified, the behavior is like before this patch, i.e. loading is eager.
+
+        This changes the way iframe attribute processing is handled as specified here [2].
+
+        This implementation relies on Intersection Observer and hence works on WK2 only.
+
+        [1] https://html.spec.whatwg.org/#attr-iframe-loading
+        [2] https://html.spec.whatwg.org/#process-the-iframe-attributes
+
+        Tests: imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2.tentative.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url.tentative.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-load-event.tentative.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-times.tentative.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-referrerpolicy-change.sub.tentative.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-to-eager.tentative.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::openURL):
+        * html/HTMLFrameElementBase.h:
+        (WebCore::HTMLFrameElementBase::frameURL const):
+        (WebCore::HTMLFrameElementBase::setFrameURL):
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::shouldLoadFrameLazily):
+        (WebCore::HTMLFrameOwnerElement::isLazyLoadObserverActive const):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        (WebCore::HTMLIFrameElement::referrerPolicy const):
+        (WebCore::HTMLIFrameElement::loadingForBindings const):
+        (WebCore::HTMLIFrameElement::setLoadingForBindings):
+        (WebCore::isFrameLazyLoadable):
+        (WebCore::HTMLIFrameElement::shouldLoadFrameLazily):
+        (WebCore::HTMLIFrameElement::isLazyLoadObserverActive const):
+        (WebCore::HTMLIFrameElement::loadDeferredFrame):
+        (WebCore::HTMLIFrameElement::lazyLoadFrameObserver):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLIFrameElement.idl:
+        * html/LazyLoadFrameObserver.cpp: Added.
+        (WebCore::LazyLoadFrameObserver::LazyLoadFrameObserver):
+        (WebCore::LazyLoadFrameObserver::observe):
+        (WebCore::LazyLoadFrameObserver::unobserve):
+        (WebCore::LazyLoadFrameObserver::intersectionObserver):
+        (WebCore::LazyLoadFrameObserver::isObserved const):
+        * html/LazyLoadFrameObserver.h: Copied from Source/WebCore/html/canvas/WebGLCompressedTextureETC1.cpp.
+        (WebCore::LazyLoadFrameObserver::frameURL const):
+        (WebCore::LazyLoadFrameObserver::referrerPolicy const):
+        * html/canvas/WebGLCompressedTextureETC1.cpp:
+        * html/shadow/DateTimeFieldElement.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::preventsParentFromBeingComplete const):
+        (WebCore::FrameLoader::allChildrenAreComplete const):
+        * loader/FrameLoader.h:
+
 2020-09-11  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r255383): Transition from email to password field on login.live.com stutters after going back and forth

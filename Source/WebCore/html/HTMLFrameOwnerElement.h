@@ -62,6 +62,9 @@ public:
 
     virtual ReferrerPolicy referrerPolicy() const { return ReferrerPolicy::EmptyString; }
 
+    virtual bool shouldLoadFrameLazily() { return false; }
+    virtual bool isLazyLoadObserverActive() const { return false; }
+
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);
     void setSandboxFlags(SandboxFlags);

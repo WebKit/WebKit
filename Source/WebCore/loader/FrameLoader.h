@@ -426,6 +426,8 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const { return !m_openedFrames.isEmpty(); }
 
+    bool preventsParentFromBeingComplete(const Frame&) const;
+
     Frame& m_frame;
     UniqueRef<FrameLoaderClient> m_client;
 

@@ -1,5 +1,5 @@
    
 
-FAIL In-viewport loading=lazy iframe does not block the load event assert_true: The visible iframe should not block the load event expected true got false
-FAIL In-viewport loading=lazy visibility:hidden iframe does not block the load event assert_true: The hidden iframe should not block the load event expected true got false
+PASS In-viewport loading=lazy iframe does not block the load event 
+PASS In-viewport loading=lazy visibility:hidden iframe does not block the load event 
 

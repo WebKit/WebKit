@@ -89,6 +89,9 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (m_frameURL.isEmpty())
         m_frameURL = aboutBlankURL().string();
 
+    if (shouldLoadFrameLazily())
+        return;
+
     RefPtr<Frame> parentFrame = document().frame();
     if (!parentFrame)
         return;

@@ -824,10 +824,15 @@ void FrameLoader::subresourceLoadDone(LoadCompletionType type)
         scheduleCheckLoadComplete();
 }
 
+bool FrameLoader::preventsParentFromBeingComplete(const Frame& frame) const
+{
+    return !frame.loader().m_isComplete && (!frame.ownerElement() || !frame.ownerElement()->isLazyLoadObserverActive());
+}
+
 bool FrameLoader::allChildrenAreComplete() const
 {
     for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (!child->loader().m_isComplete)
+        if (preventsParentFromBeingComplete(*child))
             return false;
     }
     return true;

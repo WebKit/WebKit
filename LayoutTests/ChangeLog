@@ -1,3 +1,16 @@
+2020-09-12  Rob Buis  <rbuis@igalia.com>
+
+        Implement lazy iframe loading
+        https://bugs.webkit.org/show_bug.cgi?id=215442
+
+        Reviewed by Darin Adler.
+
+        Unskip iframe-loading-lazy-to-eager.tentative.html and
+        disable lazy iframe loading tests for WK1.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2020-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Timeouts after reftest-wait class enablement in r266817

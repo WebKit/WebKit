@@ -43,4 +43,6 @@ interface HTMLIFrameElement : HTMLElement {
     [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 
     [EnabledBySetting=ReferrerPolicyAttribute, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
+
+    [CEReactions, EnabledBySetting=LazyIframeLoading, ImplementedAs=loadingForBindings] attribute DOMString loading;
 };

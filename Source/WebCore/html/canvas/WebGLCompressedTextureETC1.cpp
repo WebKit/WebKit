@@ -30,6 +30,7 @@
 
 #include "ExtensionsGL.h"
 #include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

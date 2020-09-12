@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class DOMTokenList;
+class LazyLoadFrameObserver;
 class RenderIFrame;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
@@ -46,6 +47,13 @@ public:
 
     const FeaturePolicy& featurePolicy() const;
 
+    const AtomString& loadingForBindings() const;
+    void setLoadingForBindings(const AtomString&);
+
+    LazyLoadFrameObserver& lazyLoadFrameObserver();
+
+    void loadDeferredFrame();
+
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
@@ -59,8 +67,12 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
+    bool shouldLoadFrameLazily() final;
+    bool isLazyLoadObserverActive() const final;
+
     std::unique_ptr<DOMTokenList> m_sandbox;
     mutable Optional<FeaturePolicy> m_featurePolicy;
+    std::unique_ptr<LazyLoadFrameObserver> m_lazyLoadFrameObserver;
 };
 
 } // namespace WebCore

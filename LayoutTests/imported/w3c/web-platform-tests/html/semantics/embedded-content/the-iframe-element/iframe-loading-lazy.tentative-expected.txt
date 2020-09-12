@@ -3,6 +3,6 @@
 
 PASS In-viewport iframes load eagerly 
 PASS In-viewport srcdoc iframes load eagerly 
-FAIL Below-viewport iframes load lazily assert_true: The window load event should have fired before the below-viewport iframe loads expected true got false
+PASS Below-viewport iframes load lazily 
 FAIL Below-viewport srcdoc iframes load lazily assert_true: The window load event should have fired before the below-viewport srcdoc iframe loads expected true got false
 
