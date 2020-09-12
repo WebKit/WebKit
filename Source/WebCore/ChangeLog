@@ -1,3 +1,17 @@
+2020-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove dead code FontCascadeCGWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=216444
+
+        Reviewed by Darin Adler.
+
+        This file isn't actually referenced by any port's build system.
+        The Apple Win port uses FontCGWin.cpp instead, which defines the same symbols as this file.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/win/FontCascadeCGWin.cpp: Removed.
+
 2020-09-12  Simon Fraser  <simon.fraser@apple.com>
 
         Convert TextStream::FormattingFlags to an OptionSet<>
