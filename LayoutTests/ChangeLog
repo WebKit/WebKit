@@ -1,3 +1,12 @@
+2020-09-11  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: [ BigSur wk2 ] http/tests/media/video-no-content-length-stall.html is a constant failure
+        rdar://68740987
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Serialization should have exception checks
