@@ -2062,8 +2062,6 @@ webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass 
 webkit.org/b/210360 [ Release ] webrtc/video-update-often.html [ Pass Timeout Crash ]
 webkit.org/b/210370 [ Release ] media/track/text-track-cue-is-reachable.html [ Pass Crash ]
 
-webkit.org/b/210375 imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/210390 storage/domstorage/sessionstorage/blocked-file-access.html [ Pass Crash ]
 webkit.org/b/210390 streams/clone-array-buffer.html [ Pass Crash ]
 

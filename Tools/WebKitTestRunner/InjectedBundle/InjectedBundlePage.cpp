@@ -1955,25 +1955,31 @@ String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef)
 }
 #endif
 
-static bool hasRefTestWaitAttribute(InjectedBundlePage& page)
+static bool hasRefTestWaitAttribute(WKBundlePageRef page)
 {
-    auto frame = WKBundlePageGetMainFrame(page.page());
+    auto frame = WKBundlePageGetMainFrame(page);
     return frame && hasRefTestWaitAttribute(WKBundleFrameGetJavaScriptContext(frame));
 }
 
-static void dumpAfterWaitAttributeIsRemoved(void* = nullptr)
+static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
 {
-    auto page = InjectedBundle::singleton().page();
-    if (!page)
+    if (hasRefTestWaitAttribute(page)) {
+        WKRetain(page);
+        // Use a 1ms interval between tries to allow lower priority run loop sources with zero delays to run.
+        RunLoop::current().dispatchAfter(1_ms, [page] {
+            WKBundlePageCallAfterTasksAndTimers(page, [] (void* typelessPage) {
+                auto page = static_cast<WKBundlePageRef>(typelessPage);
+                dumpAfterWaitAttributeIsRemoved(page);
+                WKRelease(page);
+            }, const_cast<OpaqueWKBundlePage*>(page));
+        });
         return;
-    if (hasRefTestWaitAttribute(*page)) {
-        // Use a 1ms delay between tries to give some time for other lower priority run loop sources to be run.
-        RunLoop::current().dispatchAfter(1_ms, [] {
-            if (auto page = InjectedBundle::singleton().page()) {
-                WKBundlePageCallAfterTasksAndTimers(page->page(), dumpAfterWaitAttributeIsRemoved, nullptr);
-        }});
-    } else
-        page->dump();
+    }
+
+    if (auto& bundle = InjectedBundle::singleton(); bundle.isTestRunning()) {
+        if (auto currentPage = bundle.page(); currentPage && currentPage->page() == page)
+            currentPage->dump();
+    }
 }
 
 void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
@@ -1992,12 +1998,13 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
         return;
     }
 
-    if (!injectedBundle.pageCount()) {
+    auto page = InjectedBundle::singleton().page();
+    if (!page) {
         injectedBundle.done();
         return;
     }
 
-    dumpAfterWaitAttributeIsRemoved();
+    dumpAfterWaitAttributeIsRemoved(page->page());
 }
 
 } // namespace WTR

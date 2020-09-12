@@ -1,3 +1,29 @@
+2020-09-12  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r266817): ASSERTION FAILED: injectedBundle.isTestRunning() on imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=216440
+
+        [GTK] imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=210375
+
+        Reviewed by Sam Weinig.
+
+        Did some hardening of the reftest-wait mechanism in WebKitTestRunner.
+        We can later do the same in DumpRenderTree if the same problem comes up there,
+        but at this time I don't have a test that reproduces the issue there so not
+        changing it for now. Don't want to add speculative code without testing it.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::hasRefTestWaitAttribute): Changed to take a WKBundlePageRef instead of
+        a InjectedBundlePage&.
+        (WTR::dumpAfterWaitAttributeIsRemoved): Changed to take a WKBundlePageRef.
+        Added code to handle cases where an explicit dump occurs while we are waiting
+        for the attribute to be removed. Identify the page with the WKBundlePageRef,
+        which can be retained/released.
+        (WTR::InjectedBundlePage::frameDidChangeLocation): Check page for null
+        instead of indirectly checking by asking if the pageCount is 0. Also pass
+        a WKBundlePageRef in to dumpAfterWaitAttributeIsRemoved.
+
 2020-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] REGRESSION(r266815): Several GTK API tests are timing out

@@ -2790,7 +2790,8 @@ webkit.org/b/172243 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-create
 
 webkit.org/b/182177 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html [ Pass Failure ]
 
-imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ ImageOnlyFailure ]
+# This fails with Legacy WebKit, and the symptom is a hang so we need to skip it. Skipped here and un-skipped in platform/wk2/TestExpectations.
+imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ Skip ]
 
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
 

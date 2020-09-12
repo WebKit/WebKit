@@ -1,3 +1,22 @@
+2020-09-12  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r266817): ASSERTION FAILED: injectedBundle.isTestRunning() on imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=216440
+
+        [GTK] imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=210375
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/service-workers/service-worker/resources/svg-target-reftest-frame.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/svg-target-reftest-001-frame.html: Added.
+        Somehow these files were missed in the web-platform-tests import, and they are both used by the
+        svg-target-reftest.https.html test.
+
+        * web-platform-tests/service-workers/service-worker/svg-target-reftest.https-expected.html:
+        Updated the path in this expected result file. The test importer script should have done this;
+        not sure why it did not.
+
 2020-09-12  Rob Buis  <rbuis@igalia.com>
 
         Implement lazy iframe loading

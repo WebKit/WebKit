@@ -1,3 +1,25 @@
+2020-09-12  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r266817): ASSERTION FAILED: injectedBundle.isTestRunning() on imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=216440
+
+        [GTK] imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=210375
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Skip svg-target-reftest.https.html because it fails in
+        legacy WebKit and the symptom is a hang waiting for the reftest-wait attribute
+        to be removed. The failure is not new.
+
+        * platform/gtk/TestExpectations: Removed expectation that this same test will
+        be flaky. The addition of reftest-wait support and the subresource along with
+        the bug fix to WebKitTestRunner should leave this passing and non-flaky on GTK.
+        Feel free to add this back if that proves wrong.
+
+        * platform/wk2/TestExpectations: Expect a pass for this test. It's working fine
+        on modern WebKit.
+
 2020-09-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for non-root-inline-box line spacing
