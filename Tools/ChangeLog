@@ -1,3 +1,20 @@
+2020-09-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Assertion Failed: m_currentScriptCallbackID in UIScriptContext::requestUIScriptCompletion
+        https://bugs.webkit.org/show_bug.cgi?id=216376
+
+        Reviewed by Tim Horton.
+
+        After completing each task, we will end UIScript if there is no remaining task. We need to make sure task is
+        completed asynchronously, otherwise it may finish before other tasks in the same script are scheduled as
+        script ends early.
+
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::completeTaskAsynchronouslyAfterActivityStateUpdate):
+        (WTR::UIScriptControllerCocoa::removeViewFromWindow):
+        (WTR::UIScriptControllerCocoa::addViewToWindow):
+
 2020-09-11  Frank Yang  <guowei_yang@apple.com>
 
         Adding myself as committer

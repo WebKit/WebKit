@@ -83,6 +83,21 @@ void UIScriptControllerCocoa::doAsyncTask(JSValueRef callback)
     });
 }
 
+void UIScriptControllerCocoa::completeTaskAsynchronouslyAfterActivityStateUpdate(unsigned callbackID)
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        auto* mainWebView = TestController::singleton().mainWebView();
+        ASSERT(mainWebView);
+
+        [mainWebView->platformView() _doAfterActivityStateUpdate: ^{
+            if (!m_context)
+                return;
+
+            m_context->asyncTaskComplete(callbackID);
+        }];
+    });
+}
+
 void UIScriptControllerCocoa::removeViewFromWindow(JSValueRef callback)
 {
     // FIXME: On iOS, we never invoke the completion callback that's passed in. Fixing this causes the layout
@@ -98,11 +113,7 @@ void UIScriptControllerCocoa::removeViewFromWindow(JSValueRef callback)
     mainWebView->removeFromWindow();
 
 #if PLATFORM(MAC)
-    [mainWebView->platformView() _doAfterActivityStateUpdate:^{
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    }];
+    completeTaskAsynchronouslyAfterActivityStateUpdate(callbackID);
 #endif // PLATFORM(MAC)
 }
 
@@ -118,11 +129,7 @@ void UIScriptControllerCocoa::addViewToWindow(JSValueRef callback)
     mainWebView->addToWindow();
 
 #if PLATFORM(MAC)
-    [mainWebView->platformView() _doAfterActivityStateUpdate:^{
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    }];
+    completeTaskAsynchronouslyAfterActivityStateUpdate(callbackID);
 #endif // PLATFORM(MAC)
 }
 

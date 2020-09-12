@@ -62,6 +62,9 @@ public:
 protected:
     explicit UIScriptControllerCocoa(UIScriptContext&);
     TestRunnerWKWebView *webView() const;
+
+private:
+    void completeTaskAsynchronouslyAfterActivityStateUpdate(unsigned callbackID);
 };
 
 } // namespace WTR
