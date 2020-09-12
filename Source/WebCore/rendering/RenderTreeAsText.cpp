@@ -805,7 +805,7 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
 
 static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
-    TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect | TextStream::Formatting::LayoutUnitsAsIntegers);
+    TextStream ts(TextStream::LineMode::MultipleLine, { TextStream::Formatting::SVGStyleRect, TextStream::Formatting::LayoutUnitsAsIntegers });
     if (!renderer.hasLayer())
         return ts.release();
 
@@ -881,7 +881,7 @@ String counterValueForElement(Element* element)
     // Make sure the element is not freed during the layout.
     RefPtr<Element> elementRef(element);
     element->document().updateLayout();
-    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect | TextStream::Formatting::LayoutUnitsAsIntegers);
+    TextStream stream(TextStream::LineMode::MultipleLine, { TextStream::Formatting::SVGStyleRect, TextStream::Formatting::LayoutUnitsAsIntegers });
     bool isFirstCounter = true;
     // The counter renderers should be children of :before or :after pseudo-elements.
     if (PseudoElement* before = element->beforePseudoElement())

@@ -27,6 +27,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -44,16 +45,14 @@ public:
         double value;
     };
     
-    enum Formatting {
+    enum class Formatting : uint8_t {
         SVGStyleRect                = 1 << 0, // "at (0,0) size 10x10"
         NumberRespectingIntegers    = 1 << 1,
         LayoutUnitsAsIntegers       = 1 << 2,
     };
-    
-    using FormattingFlags = unsigned;
-    
+
     enum class LineMode { SingleLine, MultipleLine };
-    TextStream(LineMode lineMode = LineMode::MultipleLine, FormattingFlags formattingFlags = 0)
+    TextStream(LineMode lineMode = LineMode::MultipleLine, OptionSet<Formatting> formattingFlags = { })
         : m_formattingFlags(formattingFlags)
         , m_multiLineMode(lineMode == LineMode::MultipleLine)
     {
@@ -80,10 +79,10 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(id<NSObject>);
 #endif
 
-    FormattingFlags formattingFlags() const { return m_formattingFlags; }
-    void setFormattingFlags(FormattingFlags flags) { m_formattingFlags = flags; }
+    OptionSet<Formatting> formattingFlags() const { return m_formattingFlags; }
+    void setFormattingFlags(OptionSet<Formatting> flags) { m_formattingFlags = flags; }
 
-    bool hasFormattingFlag(Formatting flag) const { return m_formattingFlags & flag; }
+    bool hasFormattingFlag(Formatting flag) const { return m_formattingFlags.contains(flag); }
 
     template<typename T>
     void dumpProperty(const String& name, const T& value)
@@ -166,8 +165,8 @@ public:
 
 private:
     StringBuilder m_text;
-    FormattingFlags m_formattingFlags { 0 };
     int m_indent { 0 };
+    OptionSet<Formatting> m_formattingFlags;
     bool m_multiLineMode { true };
 };
 

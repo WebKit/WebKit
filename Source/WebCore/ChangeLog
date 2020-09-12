@@ -1,3 +1,16 @@
+2020-09-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert TextStream::FormattingFlags to an OptionSet<>
+        https://bugs.webkit.org/show_bug.cgi?id=216443
+
+        Reviewed by Darin Adler.
+        
+        Use an OptionSet<> for FormattingFlags.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation):
+        (WebCore::counterValueForElement):
+
 2020-09-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Simplify LineBox offset computation

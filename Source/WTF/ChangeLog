@@ -1,3 +1,18 @@
+2020-09-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert TextStream::FormattingFlags to an OptionSet<>
+        https://bugs.webkit.org/show_bug.cgi?id=216443
+
+        Reviewed by Darin Adler.
+
+        Use an OptionSet<> for FormattingFlags.
+
+        * wtf/text/TextStream.h:
+        (WTF::TextStream::TextStream):
+        (WTF::TextStream::formattingFlags const):
+        (WTF::TextStream::setFormattingFlags):
+        (WTF::TextStream::hasFormattingFlag const):
+
 2020-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Canonicalize "true" unicode extension type value to ""
