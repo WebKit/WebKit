@@ -3691,6 +3691,8 @@ http/wpt/fetch/response-status-text.html [ Failure ]
 js/dom/builtin-getter-name.html [ Failure ]
 fast/forms/file/entries-api/webkitdirectory-open-panel.html [ Skip ]
 
+fast/layoutformattingcontext [ Skip ]
+
 # Requires WK2 loading support
 http/wpt/fetch/dnt-header-after-redirection.html [ Skip ]
 http/wpt/fetch/inspect-preflight.html [ Skip ]
@@ -4444,8 +4446,6 @@ webkit.org/b/204545 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/204545 svg/as-image/svg-nested.html [ Pass Timeout Crash ]
 
 webkit.org/b/204794 webanimations/accelerated-animation-removal-upon-transition-completion.html [ Timeout ]
-
-webkit.org/b/204795 fast/layoutformattingcontext/flow-integration-basic.html [ Failure ]
 
 webkit.org/b/204974 http/tests/xmlhttprequest/sync-xhr-in-unload.html [ Failure ]
 

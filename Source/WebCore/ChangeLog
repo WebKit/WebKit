@@ -1,3 +1,27 @@
+2020-09-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for non-root-inline-box line spacing
+        https://bugs.webkit.org/show_bug.cgi?id=216433
+
+        Reviewed by Antti Koivisto.
+
+        While the LineBox vertically contains all the LineBox::InlineBoxes, its height value does not
+        include any line spacing (FontMetrics::lineSpacing).
+        Each LineBox::InlineBox may have a different line spacing value (this value is zero in many cases).
+        This patch collects line spacing values from the LineBox::InlineBoxes on the line and adjusts the final
+        line height value accordingly.
+
+        Test: fast/layoutformattingcontext/inline-box-with-line-spacing-simple.html
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedLineLogicalRect const):
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::InlineBox::lineSpacing const):
+        (WebCore::Layout::LineBox::InlineBox::setLineSpacing):
+        (WebCore::Layout::LineBox::inlineBoxList const):
+
 2020-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing feedback on r266936

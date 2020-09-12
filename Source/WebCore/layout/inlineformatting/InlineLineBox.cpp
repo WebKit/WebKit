@@ -164,6 +164,8 @@ void LineBox::constructInlineBoxes(const Line::RunList& runs)
         inlineBox.setLogicalHeight(logicalHeight);
         inlineBox.setBaseline(baseline);
         inlineBox.setDescent(logicalHeight - baseline);
+        if (auto lineSpacing = fontMetrics.lineSpacing() - logicalHeight)
+            inlineBox.setLineSpacing(lineSpacing);
     };
 
     auto constructRootInlineBox = [&] {

@@ -409,16 +409,34 @@ InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::compu
     // |                    | line spacing          |   |
     // |____________________v_______________________|  scrollable overflow
     //
-    if (lineContent.runs.isEmpty() || lineContent.lineBox.isLineVisuallyEmpty())
-        return { { }, { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, { } } };
-    auto& rootStyle = root().style();
-    auto& fontMetrics = rootStyle.fontMetrics();
-    InlineLayoutUnit lineSpacing = fontMetrics.lineSpacing();
     auto& lineBox = lineContent.lineBox;
-    auto lineLogicalHeight = rootStyle.lineHeight().isNegative() ? std::max(lineBox.logicalHeight(), lineSpacing) : rootStyle.computedLineHeight();
-    auto logicalRect = Display::InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineLogicalHeight};
+    if (lineContent.runs.isEmpty() || lineBox.isLineVisuallyEmpty())
+        return { { }, { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, { } } };
 
+    auto& rootStyle = root().style();
+    auto lineLogicalHeight = InlineLayoutUnit { };
+    if (rootStyle.lineHeight().isNegative()) {
+        // Negative line height value means the line height is driven by the content.
+        auto usedLineSpacing = [&] {
+            auto lineBoxLogicalHeight = lineBox.logicalHeight();
+            auto logicalTopWithLineSpacing = InlineLayoutUnit { };
+            auto logicalBottomWithLineSpacing = lineBoxLogicalHeight;
+            for (auto& inlineBox : lineBox.inlineBoxList()) {
+                if (auto lineSpacing = inlineBox->lineSpacing()) {
+                    // FIXME: check if line spacing is distributed evenly.
+                    logicalTopWithLineSpacing = std::min(logicalTopWithLineSpacing, inlineBox->logicalTop() - *lineSpacing / 2);
+                    logicalBottomWithLineSpacing = std::max(logicalBottomWithLineSpacing, inlineBox->logicalBottom() + *lineSpacing / 2);
+                }
+            }
+            return -logicalTopWithLineSpacing + (logicalBottomWithLineSpacing - lineBoxLogicalHeight);
+        };
+        lineLogicalHeight = lineBox.logicalHeight() + usedLineSpacing();
+    } else
+        lineLogicalHeight = rootStyle.computedLineHeight();
+
+    auto logicalRect = Display::InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineLogicalHeight};
     auto halfLeadingOffset = [&] {
+        auto& fontMetrics = rootStyle.fontMetrics();
         InlineLayoutUnit ascent = fontMetrics.ascent();
         InlineLayoutUnit descent = fontMetrics.descent();
         // 10.8.1 Leading and half-leading

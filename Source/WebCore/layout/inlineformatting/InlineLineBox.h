@@ -76,6 +76,7 @@ public:
         bool isEmpty() const { return m_isEmpty; }
         void setIsNonEmpty() { m_isEmpty = false; }
 
+        Optional<InlineLayoutUnit> lineSpacing() const { return m_lineSpacing; }
         const FontMetrics& fontMetrics() const { return layoutBox().style().fontMetrics(); }
         const Box& layoutBox() const { return *m_layoutBox; }
 
@@ -87,11 +88,13 @@ public:
         void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
         void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
         void setDescent(InlineLayoutUnit descent) { m_descent = descent; }
+        void setLineSpacing(InlineLayoutUnit lineSpacing) { m_lineSpacing = lineSpacing; }
 
         WeakPtr<const Box> m_layoutBox;
         Display::InlineRect m_logicalRect;
         InlineLayoutUnit m_baseline { 0 };
         Optional<InlineLayoutUnit> m_descent;
+        Optional<InlineLayoutUnit> m_lineSpacing;
         bool m_isEmpty { true };
     };
 
@@ -108,6 +111,9 @@ public:
 
     const InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineBoxRectMap.get(&layoutBox); }
     Display::InlineRect logicalRectForTextRun(const Line::Run&) const;
+
+    using InlineBoxMap = HashMap<const Box*, InlineBox*>;
+    auto inlineBoxList() const { return m_inlineBoxRectMap.values(); }
 
     InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox.logicalTop() + m_rootInlineBox.baseline(); }
 
@@ -129,7 +135,7 @@ private:
     InlineBox m_rootInlineBox;
 
     Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
-    HashMap<const Box*, InlineBox*> m_inlineBoxRectMap;
+    InlineBoxMap m_inlineBoxRectMap;
     Vector<std::unique_ptr<InlineBox>> m_inlineBoxList;
     const InlineFormattingContext& m_inlineFormattingContext;
 };
