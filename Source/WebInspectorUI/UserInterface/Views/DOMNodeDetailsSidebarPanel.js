@@ -354,7 +354,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
             }
 
             const defaultCollapsedSettingValue = true;
-            let identifier = `${options.identifier ?? title}-event-listener-section`
+            let identifier = `${options.identifier ?? title}-event-listener-section`;
             let section = new WI.DetailsSection(identifier, title, groups, optionsElement, defaultCollapsedSettingValue);
             section.element.classList.add("event-listener-section");
             return section;

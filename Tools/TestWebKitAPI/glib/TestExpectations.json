@@ -100,19 +100,6 @@
     "TestInspectorServer": {
         "expected": {"all": {"slow": true}}
     },
-    "TestInspector": {
-        "subtests": {
-            "/webkit/WebKitWebInspector/custom-container-destroyed": {
-              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/216361"}}
-            },
-            "/webkit/WebKitWebInspector/manual-attach-detach": {
-              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/216361"}}
-            },
-            "/webkit/WebKitWebInspector/default": {
-              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/216361"}}
-            }
-        }
-    },
     "TestWebKitFaviconDatabase": {
         "subtests": {
             "/webkit/WebKitFaviconDatabase/get-favicon": {

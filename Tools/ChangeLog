@@ -1,5 +1,16 @@
 2020-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] REGRESSION(r266815): Several GTK API tests are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=216361
+
+        Reviewed by Adrian Perez de Castro.
+
+        Unskip tests that are now passing.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2020-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Timeouts after reftest-wait class enablement in r266817
         https://bugs.webkit.org/show_bug.cgi?id=216397
 
