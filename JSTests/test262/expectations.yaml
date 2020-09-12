@@ -1452,9 +1452,6 @@ test/built-ins/TypedArrayConstructors/of/custom-ctor.js:
 test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
   default: 'TypeError: TypedArray.of requires its this argument to subclass a TypedArray constructor (Testing with Float64Array.)'
   strict mode: 'TypeError: TypedArray.of requires its this argument to subclass a TypedArray constructor (Testing with Float64Array.)'
-test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
-  default: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
-  strict mode: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
 test/intl402/DateTimeFormat/prototype/format/timedatestyle-en.js:
   default: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
   strict mode: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
@@ -1497,9 +1494,6 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
 test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
   default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
   strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
-test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js:
-  default: 'Test262Error: Expected SameValue(«und-u-kb-true», «und-u-kb») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«und-u-kb-true», «und-u-kb») to be true'
 test/intl402/Intl/getCanonicalLocales/unicode-ext-key-with-digit.js:
   default: 'Test262Error: Expected SameValue(«en-u-0c-yes», «en-u-0c») to be true'
   strict mode: 'Test262Error: Expected SameValue(«en-u-0c-yes», «en-u-0c») to be true'
@@ -1509,21 +1503,12 @@ test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js:
 test/intl402/Locale/constructor-non-iana-canon.js:
   default: 'Test262Error: new Intl.Locale("mo").maximize().toString() returns "ro-Latn-RO" Expected SameValue(«ro», «ro-Latn-RO») to be true'
   strict mode: 'Test262Error: new Intl.Locale("mo").maximize().toString() returns "ro-Latn-RO" Expected SameValue(«ro», «ro-Latn-RO») to be true'
-test/intl402/Locale/constructor-options-numeric-undefined.js:
-  default: 'Test262Error: new Intl.Locale("en-u-kn-true", {numeric: undefined}).toString() returns "en-u-kn" Expected SameValue(«en-u-kn-true», «en-u-kn») to be true'
-  strict mode: 'Test262Error: new Intl.Locale("en-u-kn-true", {numeric: undefined}).toString() returns "en-u-kn" Expected SameValue(«en-u-kn-true», «en-u-kn») to be true'
-test/intl402/Locale/constructor-options-numeric-valid.js:
-  default: 'Test262Error: new Intl.Locale("en", {numeric: true}).toString() returns "true" Expected SameValue(«en-u-kn-true», «en-u-kn») to be true'
-  strict mode: 'Test262Error: new Intl.Locale("en", {numeric: true}).toString() returns "true" Expected SameValue(«en-u-kn-true», «en-u-kn») to be true'
 test/intl402/Locale/constructor-options-region-valid.js:
   default: "Test262Error: new Intl.Locale('en', {region: \"554\"}).toString() returns \"en-NZ\" Expected SameValue(«en-554», «en-NZ») to be true"
   strict mode: "Test262Error: new Intl.Locale('en', {region: \"554\"}).toString() returns \"en-NZ\" Expected SameValue(«en-554», «en-NZ») to be true"
 test/intl402/Locale/constructor-tag.js:
   default: 'Test262Error: new Intl.Locale("sl-ROZAJ-BISKE-1994").toString() returns "sl-1994-biske-rozaj" Expected SameValue(«sl-rozaj-biske-1994», «sl-1994-biske-rozaj») to be true'
   strict mode: 'Test262Error: new Intl.Locale("sl-ROZAJ-BISKE-1994").toString() returns "sl-1994-biske-rozaj" Expected SameValue(«sl-rozaj-biske-1994», «sl-1994-biske-rozaj») to be true'
-test/intl402/Locale/getters.js:
-  default: 'Test262Error: Expected SameValue(«de-Latn-DE-u-ca-gregory-co-phonebk-hc-h23-kf-true-kn-false-nu-latn», «de-Latn-DE-u-ca-gregory-co-phonebk-hc-h23-kf-kn-false-nu-latn») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«de-Latn-DE-u-ca-gregory-co-phonebk-hc-h23-kf-true-kn-false-nu-latn», «de-Latn-DE-u-ca-gregory-co-phonebk-hc-h23-kf-kn-false-nu-latn») to be true'
 test/intl402/Locale/likely-subtags-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'

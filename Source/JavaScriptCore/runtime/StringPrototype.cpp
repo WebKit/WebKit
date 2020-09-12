@@ -1541,12 +1541,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(JSGlobalObject* global
     RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(globalObject, string, that)));
 }
 
-template<typename StringType>
-static constexpr uint32_t computeTwoCharacters16Code(const StringType& string)
-{
-    return static_cast<uint16_t>(string.characterAt(0)) | (static_cast<uint32_t>(static_cast<uint16_t>(string.characterAt(1))) << 16);
-}
-
 enum class CaseConversionMode {
     Upper,
     Lower,

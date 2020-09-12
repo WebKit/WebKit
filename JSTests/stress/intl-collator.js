@@ -19,10 +19,6 @@ function shouldThrow(func, errorType) {
         throw new Error(`Expected ${errorType.name}!`);
 }
 
-function explicitTrueBeforeICU67() {
-    return $vm.icuVersion() < 67 ? '-true' : '';
-}
-
 // 10.1 The Intl.Collator Constructor
 
 // The Intl.Collator constructor is a standard built-in property of the Intl object.
@@ -85,8 +81,8 @@ shouldBe(testCollator(Intl.Collator('en-u-co-abcd'), [{locale: 'en'}]), true);
 shouldBe(testCollator(Intl.Collator('de-u-co-phonebk'), [{locale: 'de-u-co-phonebk', collation: 'phonebk'}, {locale: 'de'}]), true);
 
 // The 'kn' key is processed correctly.
-shouldBe(testCollator(Intl.Collator('en-u-kn'), [{locale: 'en-u-kn' + explicitTrueBeforeICU67(), numeric: true}]), true);
-shouldBe(testCollator(Intl.Collator('en-u-kn-true'), [{locale: 'en-u-kn' + explicitTrueBeforeICU67(), numeric: true}]), true);
+shouldBe(testCollator(Intl.Collator('en-u-kn'), [{locale: 'en-u-kn', numeric: true}]), true);
+shouldBe(testCollator(Intl.Collator('en-u-kn-true'), [{locale: 'en-u-kn', numeric: true}]), true);
 shouldBe(testCollator(Intl.Collator('en-u-kn-false'), [{locale: 'en-u-kn-false', numeric: false}]), true);
 shouldBe(testCollator(Intl.Collator('en-u-kn-abcd'), [{locale: 'en'}]), true);
 
@@ -150,7 +146,7 @@ shouldThrow(() => Intl.Collator('en', { get ignorePunctuation() { throw new Erro
 // Options override the language tag.
 shouldBe(testCollator(Intl.Collator('en-u-kn-true', {numeric: false}), [{locale: 'en', numeric: false}]), true);
 shouldBe(testCollator(Intl.Collator('en-u-kn-false', {numeric: true}), [{locale: 'en', numeric: true}]), true);
-shouldBe(testCollator(Intl.Collator('en-u-kn-true', {numeric: true}), [{locale: 'en-u-kn' + explicitTrueBeforeICU67(), numeric: true}]), true);
+shouldBe(testCollator(Intl.Collator('en-u-kn-true', {numeric: true}), [{locale: 'en-u-kn', numeric: true}]), true);
 shouldBe(testCollator(Intl.Collator('en-u-kn-false', {numeric: false}), [{locale: 'en-u-kn-false', numeric: false}]), true);
 
 // Options and extension keys are processed correctly.
@@ -192,7 +188,7 @@ shouldBe(
     JSON.stringify(Intl.Collator.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
     $vm.icuVersion() >= 67
         ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
-        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]'
+        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-x-reserved"]'
 );
 // Throws on problems with length, get, or toString.
 shouldThrow(() => Intl.Collator.supportedLocalesOf(Object.create(null, { length: { get() { throw Error() } } })), Error);

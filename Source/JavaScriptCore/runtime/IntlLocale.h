@@ -60,6 +60,7 @@ public:
     const String& language();
     const String& script();
     const String& region();
+
     const String& calendar();
     const String& caseFirst();
     const String& collation();
@@ -83,11 +84,11 @@ private:
     String m_language;
     String m_script;
     String m_region;
-    String m_calendar;
-    String m_caseFirst;
-    String m_collation;
-    String m_hourCycle;
-    String m_numberingSystem;
+    Optional<String> m_calendar;
+    Optional<String> m_caseFirst;
+    Optional<String> m_collation;
+    Optional<String> m_hourCycle;
+    Optional<String> m_numberingSystem;
     TriState m_numeric { TriState::Indeterminate };
 };
 

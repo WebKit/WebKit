@@ -91,11 +91,12 @@ CString LocaleIDBuilder::toCanonical()
 {
     ASSERT(m_buffer.size());
 
-    Vector<char, 32> result;
-    auto status = callBufferProducingFunction(uloc_canonicalize, m_buffer.data(), result);
+    Vector<char, 32> buffer;
+    auto status = callBufferProducingFunction(uloc_canonicalize, m_buffer.data(), buffer);
     if (U_FAILURE(status))
         return CString();
 
+    auto result = canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer));
     return CString(result.data(), result.size());
 }
 
@@ -189,9 +190,15 @@ String IntlLocale::keywordValue(ASCIILiteral key, bool isBoolean) const
         uloc_getKeywordValue(m_localeID.data(), key.characters(), buffer.data(), bufferLength + 1, &status);
     }
     ASSERT(U_SUCCESS(status));
-
-    const char* value = !isBoolean ? uloc_toUnicodeLocaleType(key.characters(), buffer.data()) : buffer.data();
-    return value ? String(value) : emptyString();
+    if (isBoolean)
+        return String(buffer.data());
+    const char* value = uloc_toUnicodeLocaleType(key.characters(), buffer.data());
+    if (!value)
+        return nullString();
+    String result(value);
+    if (result == "true"_s)
+        return emptyString();
+    return result;
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale
@@ -404,41 +411,41 @@ const String& IntlLocale::region()
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.calendar
 const String& IntlLocale::calendar()
 {
-    if (m_calendar.isNull())
+    if (!m_calendar)
         m_calendar = keywordValue("calendar"_s);
-    return m_calendar;
+    return m_calendar.value();
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.caseFirst
 const String& IntlLocale::caseFirst()
 {
-    if (m_caseFirst.isNull())
+    if (!m_caseFirst)
         m_caseFirst = keywordValue("colcasefirst"_s);
-    return m_caseFirst;
+    return m_caseFirst.value();
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.collation
 const String& IntlLocale::collation()
 {
-    if (m_collation.isNull())
+    if (!m_collation)
         m_collation = keywordValue("collation"_s);
-    return m_collation;
+    return m_collation.value();
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.hourCycle
 const String& IntlLocale::hourCycle()
 {
-    if (m_hourCycle.isNull())
+    if (!m_hourCycle)
         m_hourCycle = keywordValue("hours"_s);
-    return m_hourCycle;
+    return m_hourCycle.value();
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numberingSystem
 const String& IntlLocale::numberingSystem()
 {
-    if (m_numberingSystem.isNull())
+    if (!m_numberingSystem)
         m_numberingSystem = keywordValue("numbers"_s);
-    return m_numberingSystem;
+    return m_numberingSystem.value();
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numeric
@@ -446,7 +453,7 @@ TriState IntlLocale::numeric()
 {
     constexpr bool isBoolean = true;
     if (m_numeric == TriState::Indeterminate)
-        m_numeric = triState(keywordValue("colnumeric"_s, isBoolean) == "yes");
+        m_numeric = triState(keywordValue("colnumeric"_s, isBoolean) == "yes"_s);
     return m_numeric;
 }
 

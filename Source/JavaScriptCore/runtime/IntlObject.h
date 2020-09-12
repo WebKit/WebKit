@@ -113,6 +113,8 @@ String bestAvailableLocale(const HashSet<String>& availableLocales, const String
 template<typename Predicate> String bestAvailableLocale(const String& requestedLocale, Predicate);
 Vector<String> numberingSystemsForLocale(const String& locale);
 
+Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vector<char, 32>&&);
+
 bool isUnicodeLocaleIdentifierType(StringView);
 
 bool isUnicodeLanguageSubtag(StringView);

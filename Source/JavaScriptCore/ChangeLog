@@ -1,3 +1,40 @@
+2020-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Canonicalize "true" unicode extension type value to ""
+        https://bugs.webkit.org/show_bug.cgi?id=216224
+
+        Reviewed by Ross Kirsling.
+
+        Unicode Technical Standard #35 defines that unicode extension type's "true" should be converged to "".
+        This patch implements it by extracting unicode extension subtags and replacing "true" to "".
+
+        * runtime/IntlLocale.cpp:
+        (JSC::LocaleIDBuilder::toCanonical):
+        (JSC::IntlLocale::keywordValue const):
+        (JSC::IntlLocale::calendar):
+        (JSC::IntlLocale::caseFirst):
+        (JSC::IntlLocale::collation):
+        (JSC::IntlLocale::hourCycle):
+        (JSC::IntlLocale::numberingSystem):
+        (JSC::IntlLocale::numeric):
+        * runtime/IntlLocale.h:
+        * runtime/IntlLocalePrototype.cpp:
+        (JSC::IntlLocalePrototypeGetterCalendar):
+        (JSC::IntlLocalePrototypeGetterCaseFirst):
+        (JSC::IntlLocalePrototypeGetterCollation):
+        (JSC::IntlLocalePrototypeGetterHourCycle):
+        (JSC::IntlLocalePrototypeGetterNumberingSystem):
+        * runtime/IntlObject.cpp:
+        (JSC::unicodeExtensionSubTags):
+        (JSC::canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization):
+        (JSC::languageTagForLocaleID):
+        (JSC::resolveLocale):
+        * runtime/IntlObject.h:
+        * runtime/IntlObjectInlines.h:
+        (JSC::computeTwoCharacters16Code):
+        * runtime/StringPrototype.cpp:
+        (JSC::computeTwoCharacters16Code): Deleted.
+
 2020-09-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] attribute-change transition should not pin Structure

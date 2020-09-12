@@ -150,7 +150,7 @@ shouldBe(
     new Intl.Locale('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED').toString(),
     $vm.icuVersion() >= 67
         ? 'en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved'
-        : 'en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved'
+        : 'en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-x-reserved'
 );
 shouldBe(new Intl.Locale('cel-gaulish', { script: 'Arab', numberingSystem: 'gujr' }).toString(), 'xtg-Arab-u-nu-gujr-x-cel-gaulish');
 shouldBe(new Intl.Locale('en-Latn-US-u-ca-gregory-co-phonebk-hc-h12-kf-upper-kn-false-nu-latn').toString(), 'en-Latn-US-u-ca-gregory-co-phonebk-hc-h12-kf-upper-kn-false-nu-latn');

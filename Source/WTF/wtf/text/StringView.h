@@ -79,6 +79,7 @@ public:
     explicit operator bool() const;
     bool isNull() const;
 
+    UChar characterAt(unsigned index) const;
     UChar operator[](unsigned index) const;
 
     class CodeUnits;
@@ -499,12 +500,17 @@ inline StringView StringView::substring(unsigned start, unsigned length) const
     return result;
 }
 
-inline UChar StringView::operator[](unsigned index) const
+inline UChar StringView::characterAt(unsigned index) const
 {
     ASSERT(index < length());
     if (is8Bit())
         return characters8()[index];
     return characters16()[index];
+}
+
+inline UChar StringView::operator[](unsigned index) const
+{
+    return characterAt(index);
 }
 
 inline bool StringView::contains(UChar character) const

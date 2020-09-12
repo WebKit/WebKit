@@ -1,3 +1,23 @@
+2020-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Canonicalize "true" unicode extension type value to ""
+        https://bugs.webkit.org/show_bug.cgi?id=216224
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-collator-co-extension.js:
+        (explicitTrueBeforeICU67): Deleted.
+        * stress/intl-collator.js:
+        (shouldBe.testCollator.Intl.Collator):
+        (explicitTrueBeforeICU67): Deleted.
+        * stress/intl-datetimeformat.js:
+        * stress/intl-locale.js:
+        * stress/intl-numberformat.js:
+        * stress/intl-object.js:
+        * stress/intl-pluralrules.js:
+        * stress/intl-relativetimeformat.js:
+        * test262/expectations.yaml:
+
 2020-09-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] attribute-change transition should not pin Structure

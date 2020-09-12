@@ -190,6 +190,47 @@ Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
+static Vector<StringView> unicodeExtensionComponents(StringView extension)
+{
+    // UnicodeExtensionSubtags (extension)
+    // https://tc39.github.io/ecma402/#sec-unicodeextensionsubtags
+
+    auto extensionLength = extension.length();
+    if (extensionLength < 3)
+        return { };
+
+    Vector<StringView> subtags;
+    size_t subtagStart = 3; // Skip initial -u-.
+    size_t valueStart = 3;
+    bool isLeading = true;
+    for (size_t index = subtagStart; index < extensionLength; ++index) {
+        if (extension[index] == '-') {
+            if (index - subtagStart == 2) {
+                // Tag is a key, first append prior key's value if there is one.
+                if (subtagStart - valueStart > 1)
+                    subtags.append(extension.substring(valueStart, subtagStart - valueStart - 1));
+                subtags.append(extension.substring(subtagStart, index - subtagStart));
+                valueStart = index + 1;
+                isLeading = false;
+            } else if (isLeading) {
+                // Leading subtags before first key.
+                subtags.append(extension.substring(subtagStart, index - subtagStart));
+                valueStart = index + 1;
+            }
+            subtagStart = index + 1;
+        }
+    }
+    if (extensionLength - subtagStart == 2) {
+        // Trailing an extension key, first append prior key's value if there is one.
+        if (subtagStart - valueStart > 1)
+            subtags.append(extension.substring(valueStart, subtagStart - valueStart - 1));
+        valueStart = subtagStart;
+    }
+    // Append final key's value.
+    subtags.append(extension.substring(valueStart, extensionLength - valueStart));
+    return subtags;
+}
+
 Vector<char, 32> localeIDBufferForLanguageTag(const CString& tag)
 {
     if (!tag.length())
@@ -212,6 +253,71 @@ Vector<char, 32> localeIDBufferForLanguageTag(const CString& tag)
     return buffer;
 }
 
+Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vector<char, 32>&& buffer)
+{
+    StringView locale(buffer.data(), buffer.size());
+    ASSERT(locale.is8Bit());
+    size_t extensionIndex = locale.find("-u-");
+    if (extensionIndex == notFound)
+        return WTFMove(buffer);
+
+    // Since ICU's canonicalization is incomplete, we need to perform some of canonicalization here.
+    size_t extensionLength = locale.length() - extensionIndex;
+    size_t end = extensionIndex + 3;
+    while (end < locale.length()) {
+        end = locale.find('-', end);
+        if (end == notFound)
+            break;
+        // Found another singleton.
+        if (end + 2 < locale.length() && locale[end + 2] == '-') {
+            extensionLength = end - extensionIndex;
+            break;
+        }
+        end++;
+    }
+
+    Vector<char, 32> result;
+    result.append(buffer.data(), extensionIndex + 2); // "-u" is included.
+    StringView extension = locale.substring(extensionIndex, extensionLength);
+    ASSERT(extension.is8Bit());
+    auto subtags = unicodeExtensionComponents(extension);
+    for (unsigned index = 0; index < subtags.size();) {
+        auto subtag = subtags[index];
+        ASSERT(subtag.is8Bit());
+        result.append('-');
+        result.append(subtag.characters8(), subtag.length());
+
+        if (subtag.length() != 2) {
+            ++index;
+            continue;
+        }
+        ASSERT(subtag.length() == 2);
+
+        // This is unicode extension key.
+        unsigned valueIndexStart = index + 1;
+        unsigned valueIndexEnd = valueIndexStart;
+        for (; valueIndexEnd < subtags.size(); ++valueIndexEnd) {
+            if (subtags[valueIndexEnd].length() == 2)
+                break;
+        }
+        // [valueIndexStart, valueIndexEnd) is value of this unicode extension. If there is no value, valueIndexStart == valueIndexEnd.
+
+        for (unsigned valueIndex = valueIndexStart; valueIndex < valueIndexEnd; ++valueIndex) {
+            auto value = subtags[valueIndex];
+            if (value != "true"_s) {
+                result.append('-');
+                result.append(value.characters8(), value.length());
+            }
+        }
+        index = valueIndexEnd;
+    }
+
+    unsigned remainingStart = extensionIndex + extensionLength;
+    unsigned remainingLength = buffer.size() - remainingStart;
+    result.append(buffer.data() + remainingStart, remainingLength);
+    return result;
+}
+
 String languageTagForLocaleID(const char* localeID, bool isImmortal)
 {
     Vector<char, 32> buffer;
@@ -219,12 +325,15 @@ String languageTagForLocaleID(const char* localeID, bool isImmortal)
     if (U_FAILURE(status))
         return String();
 
-    // This is used to store into static variables that may be shared across JSC execution threads.
-    // This must be immortal to make concurrent ref/deref safe.
-    if (isImmortal)
-        return StringImpl::createStaticStringImpl(buffer.data(), buffer.size());
+    auto createResult = [&](Vector<char, 32>&& buffer) -> String {
+        // This is used to store into static variables that may be shared across JSC execution threads.
+        // This must be immortal to make concurrent ref/deref safe.
+        if (isImmortal)
+            return StringImpl::createStaticStringImpl(buffer.data(), buffer.size());
+        return String(buffer.data(), buffer.size());
+    };
 
-    return String(buffer.data(), buffer.size());
+    return createResult(canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer)));
 }
 
 // Ensure we have xx-ZZ whenever we have xx-Yyyy-ZZ.
@@ -694,45 +803,6 @@ static MatcherResult bestFitMatcher(JSGlobalObject* globalObject, const HashSet<
     return lookupMatcher(globalObject, availableLocales, requestedLocales);
 }
 
-static void unicodeExtensionSubTags(const String& extension, Vector<String>& subtags)
-{
-    // UnicodeExtensionSubtags (extension)
-    // https://tc39.github.io/ecma402/#sec-unicodeextensionsubtags
-
-    auto extensionLength = extension.length();
-    if (extensionLength < 3)
-        return;
-
-    size_t subtagStart = 3; // Skip initial -u-.
-    size_t valueStart = 3;
-    bool isLeading = true;
-    for (size_t index = subtagStart; index < extensionLength; ++index) {
-        if (extension[index] == '-') {
-            if (index - subtagStart == 2) {
-                // Tag is a key, first append prior key's value if there is one.
-                if (subtagStart - valueStart > 1)
-                    subtags.append(extension.substring(valueStart, subtagStart - valueStart - 1));
-                subtags.append(extension.substring(subtagStart, index - subtagStart));
-                valueStart = index + 1;
-                isLeading = false;
-            } else if (isLeading) {
-                // Leading subtags before first key.
-                subtags.append(extension.substring(subtagStart, index - subtagStart));
-                valueStart = index + 1;
-            }
-            subtagStart = index + 1;
-        }
-    }
-    if (extensionLength - subtagStart == 2) {
-        // Trailing an extension key, first append prior key's value if there is one.
-        if (subtagStart - valueStart > 1)
-            subtags.append(extension.substring(valueStart, subtagStart - valueStart - 1));
-        valueStart = subtagStart;
-    }
-    // Append final key's value.
-    subtags.append(extension.substring(valueStart, extensionLength - valueStart));
-}
-
 constexpr ASCIILiteral relevantExtensionKeyString(RelevantExtensionKey key)
 {
     switch (key) {
@@ -756,9 +826,9 @@ ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const HashSet<String>
 
     String foundLocale = matcherResult.locale;
 
-    Vector<String> extensionSubtags;
+    Vector<StringView> extensionSubtags;
     if (!matcherResult.extension.isNull())
-        unicodeExtensionSubTags(matcherResult.extension, extensionSubtags);
+        extensionSubtags = unicodeExtensionComponents(matcherResult.extension);
 
     ResolvedLocale resolved;
     resolved.dataLocale = foundLocale;
@@ -776,9 +846,10 @@ ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const HashSet<String>
             size_t keyPos = extensionSubtags.find(keyString);
             if (keyPos != notFound) {
                 if (keyPos + 1 < extensionSubtags.size() && extensionSubtags[keyPos + 1].length() > 2) {
-                    const String& requestedValue = extensionSubtags[keyPos + 1];
-                    if (keyLocaleData.contains(requestedValue)) {
-                        value = requestedValue;
+                    StringView requestedValue = extensionSubtags[keyPos + 1];
+                    auto dataPos = keyLocaleData.find(requestedValue);
+                    if (dataPos != notFound) {
+                        value = keyLocaleData[dataPos];
                         supportedExtensionAddition = makeString('-', keyString, '-', value);
                     }
                 } else if (keyLocaleData.contains("true"_s)) {

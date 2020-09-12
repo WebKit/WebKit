@@ -34,6 +34,12 @@
 
 namespace JSC {
 
+template<typename StringType>
+static constexpr uint32_t computeTwoCharacters16Code(const StringType& string)
+{
+    return static_cast<uint16_t>(string.characterAt(0)) | (static_cast<uint32_t>(static_cast<uint16_t>(string.characterAt(1))) << 16);
+}
+
 template<typename Predicate> String bestAvailableLocale(const String& locale, Predicate predicate)
 {
     // BestAvailableLocale (availableLocales, locale)
