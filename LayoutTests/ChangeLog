@@ -1,3 +1,14 @@
+2020-09-11  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r255383): Transition from email to password field on login.live.com stutters after going back and forth
+        https://bugs.webkit.org/show_bug.cgi?id=216368
+        <rdar://problem/67019460>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/animation/repaint-after-clearing-shared-backing-expected.html: Added.
+        * compositing/animation/repaint-after-clearing-shared-backing.html: Added.
+
 2020-09-11  Sihui Liu  <sihui_liu@apple.com>
 
         [ macOS wk2 Release ] fast/events/page-visibility-iframe-move-test.html is flaky

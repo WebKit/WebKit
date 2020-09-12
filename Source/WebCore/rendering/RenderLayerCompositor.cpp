@@ -1764,14 +1764,15 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
     };
 
     if (backingRequired == BackingRequired::Yes) {
+        // If we need to repaint, do so before making backing and disconnecting from the backing provider layer.
+        if (!layer.backing())
+            repaintLayer(layer);
+
         layer.disconnectFromBackingProviderLayer();
 
         enableCompositingMode();
         
         if (!layer.backing()) {
-            // If we need to repaint, do so before making backing
-            repaintLayer(layer);
-
             layer.ensureBacking();
 
             if (layer.isRenderViewLayer() && useCoordinatedScrollingForLayer(layer)) {
