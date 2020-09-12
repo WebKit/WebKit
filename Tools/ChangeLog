@@ -1,3 +1,15 @@
+2020-09-11  Frank Yang  <guowei_yang@apple.com>
+
+        Adding myself as committer
+        https://bugs.webkit.org/show_bug.cgi?id=216419
+
+        Reviewed by Myles C. Maxfield.
+
+        Adding myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+            adding committer status to my name.
+
 2020-09-11  Aakash Jain  <aakash_jain@apple.com>
 
         Disable gtk-api queue temporarily
