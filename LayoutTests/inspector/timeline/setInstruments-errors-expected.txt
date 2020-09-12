@@ -9,7 +9,7 @@ PASS: Should be an error: Some arguments of method 'Timeline.setInstruments' can
 PASS: Should be an error: Unexpected non-string value in given instruments
 
 -- Running test case: InvalidInstrumentInInstrumentsList
-PASS: Should be an error: Unknown item in given instruments: NoSuchInstrument
+PASS: Should be an error: Unknown instrument: NoSuchInstrument
 
 -- Running test case: ValidInstrumentInInstrumentsList
 PASS: Should not be an error setting valid instruments.

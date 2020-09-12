@@ -1,3 +1,12 @@
+2020-09-11  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Rebaseline after r266885
+        https://bugs.webkit.org/show_bug.cgi?id=216302
+
+        Unreviewed test gardening.
+
+        * inspector/timeline/setInstruments-errors-expected.txt:
+
 2020-09-11  Karl Rackler  <rackler@apple.com>
 
         REGRESSION: [ BigSur wk2 ] http/tests/media/video-no-content-length-stall.html is a constant failure
