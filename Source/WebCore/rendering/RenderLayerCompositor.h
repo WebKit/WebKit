@@ -285,6 +285,7 @@ public:
     void setIsInWindow(bool);
 
     void clearBackingForAllLayers();
+    void invalidateEventRegionForAllFrames();
     void invalidateEventRegionForAllLayers();
     
     void layerBecameComposited(const RenderLayer&);
