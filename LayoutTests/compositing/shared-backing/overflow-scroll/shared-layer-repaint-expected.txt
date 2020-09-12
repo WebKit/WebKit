@@ -18,7 +18,6 @@
           (drawsContent 1)
           (repaint rects
             (rect 151.00 81.00 71.00 110.00)
-            (rect 151.00 81.00 71.00 110.00)
           )
         )
       )
