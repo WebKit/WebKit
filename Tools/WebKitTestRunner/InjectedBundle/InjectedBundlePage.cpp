@@ -47,6 +47,7 @@
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKURLRequest.h>
 #include <wtf/HashMap.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -1965,9 +1966,13 @@ static void dumpAfterWaitAttributeIsRemoved(void* = nullptr)
     auto page = InjectedBundle::singleton().page();
     if (!page)
         return;
-    if (hasRefTestWaitAttribute(*page))
-        WKBundlePageCallAfterTasksAndTimers(page->page(), dumpAfterWaitAttributeIsRemoved, nullptr);
-    else
+    if (hasRefTestWaitAttribute(*page)) {
+        // Use a 1ms delay between tries to give some time for other lower priority run loop sources to be run.
+        RunLoop::current().dispatchAfter(1_ms, [] {
+            if (auto page = InjectedBundle::singleton().page()) {
+                WKBundlePageCallAfterTasksAndTimers(page->page(), dumpAfterWaitAttributeIsRemoved, nullptr);
+        }});
+    } else
         page->dump();
 }
 

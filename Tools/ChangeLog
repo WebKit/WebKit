@@ -1,3 +1,18 @@
+2020-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Timeouts after reftest-wait class enablement in r266817
+        https://bugs.webkit.org/show_bug.cgi?id=216397
+
+        Reviewed by Adrian Perez de Castro.
+
+        Tests are timing out because dumpAfterWaitAttributeIsRemoved() is called recursively from a WebCore timer, not
+        allowing other sources with lower priority like display refresh monitor one to be run. This patch simply adds a
+        1 millisecond delay between dumpAfterWaitAttributeIsRemoved tries to allow other sources to be run in the main
+        loop.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpAfterWaitAttributeIsRemoved):
+
 2020-09-11  Sihui Liu  <sihui_liu@apple.com>
 
         Assertion Failed: m_currentScriptCallbackID in UIScriptContext::requestUIScriptCompletion

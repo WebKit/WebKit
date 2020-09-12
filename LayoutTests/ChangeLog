@@ -1,3 +1,14 @@
+2020-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Timeouts after reftest-wait class enablement in r266817
+        https://bugs.webkit.org/show_bug.cgi?id=216397
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update expectations for tests that are now passing and failing.
+
+        * platform/gtk/TestExpectations:
+
 2020-09-11  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r255383): Transition from email to password field on login.live.com stutters after going back and forth
