@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSDOMConvertStrings.h"
+#include "JSDOMExceptionHandling.h"
 
 namespace WebCore {
 
@@ -115,6 +116,31 @@ static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject,
 
     // 6. Return true.
     return result;
+}
+
+// This implements steps 2.2 through 2.5 of https://heycam.github.io/webidl/#legacy-platform-object-delete.
+template<typename Functor> bool performLegacyPlatformObjectDeleteOperation(JSC::JSGlobalObject& lexicalGlobalObject, Functor&& functor)
+{
+    using ReturnType = std::invoke_result_t<Functor>;
+
+    if constexpr (IsExceptionOr<ReturnType>::value) {
+        auto result = functor();
+        if (result.hasException()) {
+            auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
+            propagateException(lexicalGlobalObject, throwScope, result.releaseException());
+            return true;
+        }
+        
+        if constexpr (std::is_same_v<ReturnType, ExceptionOr<bool>>)
+            return result.releaseReturnValue();
+        return true;
+    }
+
+    if constexpr (std::is_same_v<ReturnType, bool>)
+        return functor();
+    
+    functor();
+    return true;
 }
 
 }

@@ -1274,33 +1274,14 @@ sub GenerateDeletePropertyCommon
     my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $codeGenerator->WK_lcfirst($operation->name) || "deleteNamedProperty";
     my $functionCall = "impl." . $functionImplementationName . "(propertyNameToString(propertyName))";
 
-    # NOTE: We expect the implementation function of named deleters without an identifier to
-    #       return either bool or ExceptionOr<bool>. the implementation function of named deleters
-    #       with an identifier have no restriction, but if the return value of the operation is
-    #       boolean, we return that value, otherwise it is ignored (as per section 4.2).
-
-    if ($operation->extendedAttributes->{MayThrowException}) {
-        push(@$outputArray, "        auto result = ${functionCall};\n");
-        push(@$outputArray, "        if (result.hasException()) {\n");
-        push(@$outputArray, "            auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));\n");
-        push(@$outputArray, "            propagateException(*lexicalGlobalObject, throwScope, result.releaseException());\n");
-        push(@$outputArray, "            return true;\n");
-        push(@$outputArray, "        }\n\n");
-
-        if (!$operation->name || $operation->name && $operation->type->name eq "boolean") {
-            push(@$outputArray, "        return result.releaseReturnValue();\n");
-        } else {
-            push(@$outputArray, "        return true;\n");
-        }
-    } else {
-        if (!$operation->name || $operation->name && $operation->type->name eq "boolean") {
-            push(@$outputArray, "        return ${functionCall};\n");
-        } else {
-            push(@$outputArray, "        ${functionCall};\n");
-            push(@$outputArray, "        return true;\n");
-        }
+    # NOTE: We require the implementation function of named deleters without an identifier to
+    #       return either bool or ExceptionOr<bool>.
+    if (!$operation->name) {
+        push(@$outputArray, "        using ReturnType = decltype($functionCall);\n");
+        push(@$outputArray, "        static_assert(std::is_same_v<ReturnType, ExceptionOr<bool>> || std::is_same_v<ReturnType, bool>, \"The implementation of named deleters without an identifer must return either bool or ExceptionOr<bool>.\");\n");
     }
 
+    push(@$outputArray, "        return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return $functionCall; });\n");
     push(@$outputArray, "    }\n");
 }
 

@@ -24,7 +24,7 @@
  */
 
 interface TestNamedDeleterThrowingException {
-    [MayThrowException] deleter undefined (DOMString name);
+    deleter undefined (DOMString name);
 
     // NOTE: Named deleters require the presence of a named getter as well.
     getter DOMString (DOMString name);

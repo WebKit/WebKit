@@ -206,7 +206,9 @@ bool JSTestNamedDeleterNoIdentifier::deleteProperty(JSCell* cell, JSGlobalObject
     auto& thisObject = *jsCast<JSTestNamedDeleterNoIdentifier*>(cell);
     auto& impl = thisObject.wrapped();
     if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
-        return impl.deleteNamedProperty(propertyNameToString(propertyName));
+        using ReturnType = decltype(impl.deleteNamedProperty(propertyNameToString(propertyName)));
+        static_assert(std::is_same_v<ReturnType, ExceptionOr<bool>> || std::is_same_v<ReturnType, bool>, "The implementation of named deleters without an identifer must return either bool or ExceptionOr<bool>.");
+        return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return impl.deleteNamedProperty(propertyNameToString(propertyName)); });
     }
     return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
 }
@@ -218,7 +220,9 @@ bool JSTestNamedDeleterNoIdentifier::deletePropertyByIndex(JSCell* cell, JSGloba
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
-        return impl.deleteNamedProperty(propertyNameToString(propertyName));
+        using ReturnType = decltype(impl.deleteNamedProperty(propertyNameToString(propertyName)));
+        static_assert(std::is_same_v<ReturnType, ExceptionOr<bool>> || std::is_same_v<ReturnType, bool>, "The implementation of named deleters without an identifer must return either bool or ExceptionOr<bool>.");
+        return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return impl.deleteNamedProperty(propertyNameToString(propertyName)); });
     }
     return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
 }

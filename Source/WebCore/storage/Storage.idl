@@ -31,6 +31,6 @@
     DOMString? key(unsigned long index);
     getter DOMString? getItem(DOMString key);
     [MayThrowException] setter undefined setItem(DOMString key, DOMString data);
-    [MayThrowException] deleter undefined removeItem(DOMString key);
+    deleter undefined removeItem(DOMString key);
     [MayThrowException] undefined clear();
 };

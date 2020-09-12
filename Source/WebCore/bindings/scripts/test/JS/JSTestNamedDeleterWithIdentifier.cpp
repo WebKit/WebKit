@@ -212,8 +212,7 @@ bool JSTestNamedDeleterWithIdentifier::deleteProperty(JSCell* cell, JSGlobalObje
     auto& thisObject = *jsCast<JSTestNamedDeleterWithIdentifier*>(cell);
     auto& impl = thisObject.wrapped();
     if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
-        impl.namedDeleter(propertyNameToString(propertyName));
-        return true;
+        return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return impl.namedDeleter(propertyNameToString(propertyName)); });
     }
     return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
 }
@@ -225,8 +224,7 @@ bool JSTestNamedDeleterWithIdentifier::deletePropertyByIndex(JSCell* cell, JSGlo
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
-        impl.namedDeleter(propertyNameToString(propertyName));
-        return true;
+        return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return impl.namedDeleter(propertyNameToString(propertyName)); });
     }
     return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
 }

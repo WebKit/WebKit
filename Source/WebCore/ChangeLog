@@ -1,3 +1,35 @@
+2020-09-12  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Remove need for [MayThrowException] on named deleters
+        https://bugs.webkit.org/show_bug.cgi?id=216429
+
+        Reviewed by Darin Adler.
+        
+        Deduce implementation potentially thowing by introspecting the return
+        type of the deleters implementation. This allows us to remove another
+        use of [MayThrowException].
+
+        * bindings/js/JSDOMAbstractOperations.h:
+        (WebCore::performLegacyPlatformObjectDeleteOperation):
+        Add helper function to house shared implementation of the various
+        combinations of return types allowed.  
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDeletePropertyCommon):
+        Convert the commented expectation that unnamed deleters return bool
+        or ExceptionOr<bool> into a static assertion and use the new helper 
+        function to simplify code generation. 
+
+        * storage/Storage.idl:
+        Remove now unneeded [MayThrowException].
+
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        * bindings/scripts/test/TestNamedDeleterThrowingException.idl:
+        Update tests/expectations.
+
 2020-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Apple Win] Add a CTFont member to FontPlatformData
