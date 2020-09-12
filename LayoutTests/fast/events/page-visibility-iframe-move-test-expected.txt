@@ -4,7 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Window 1 is loaded
+Open window 2
 Window 2 is loaded
+Will change visibility of window 1
 PASS window.document.hidden is false
 PASS window2.document.hidden is false
 PASS iframe.contentDocument.hidden is false

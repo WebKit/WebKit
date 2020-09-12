@@ -9,6 +9,8 @@ description("This test checks that an iframe that moves between pages with diffe
 
 var jsTestIsAsync = true;
 var window2, iframe;
+var isVisibilityChangeListenerAdded = false;
+var isWindow2VisibilityChangeListenerAdded = false;
 
 function startTest() {
     if (!window.testRunner)
@@ -19,6 +21,7 @@ function startTest() {
     debug("Window 1 is loaded");
 
     if (window.document.hidden) {
+        isVisibilityChangeListenerAdded = true;
         document.addEventListener("visibilitychange", openWindow, false);
         return;
     }
@@ -27,6 +30,8 @@ function startTest() {
 }
 
 function openWindow() {
+    debug("Open window 2");
+
     window2 = window.open("resources/page-visibility-iframe-move-new-page.html");
     window2.addEventListener("load", window2Loaded, false);
 }
@@ -35,6 +40,7 @@ function window2Loaded() {
     debug("Window 2 is loaded");
 
     if (window2.document.hidden) {
+        isWindow2VisibilityChangeListenerAdded = true;
         window2.document.addEventListener("visibilitychange", changePageVisibility, false);
         return;
     }
@@ -43,11 +49,16 @@ function window2Loaded() {
 }
 
 function changePageVisibility() {
+    debug("Will change visibility of window 1");
+
     iframe = window2.document.getElementById("iframe");
 
     shouldBeFalse("window.document.hidden");
     shouldBeFalse("window2.document.hidden");
     shouldBeFalse("iframe.contentDocument.hidden");
+
+    if (isVisibilityChangeListenerAdded)
+        document.removeEventListener("visibilitychange", openWindow, false);
 
     document.addEventListener("visibilitychange", onVisibilityChange, false);
     if (window.testRunner)
@@ -76,7 +87,9 @@ function finishTest() {
     window2.close();
     document.removeEventListener("visibilitychange", onVisibilityChange, false);
     window2.removeEventListener("load", window2Loaded, false);
-    window2.document.removeEventListener("visibilitychange", changePageVisibility, false);
+
+    if (isWindow2VisibilityChangeListenerAdded)
+        window2.document.removeEventListener("visibilitychange", changePageVisibility, false);
 
     finishJSTest();
 }

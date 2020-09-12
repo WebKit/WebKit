@@ -1,3 +1,15 @@
+2020-09-11  Sihui Liu  <sihui_liu@apple.com>
+
+        [ macOS wk2 Release ] fast/events/page-visibility-iframe-move-test.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=216424
+
+        Reviewed by Tim Horton.
+
+        Remove event handler after it's called, or it can be invoked at the wrong time and produce unexpected result.
+
+        * fast/events/page-visibility-iframe-move-test-expected.txt:
+        * fast/events/page-visibility-iframe-move-test.html:
+
 2020-09-11  Karl Rackler  <rackler@apple.com>
 
         REGRESSION: [ BigSur wk2 ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is a constant failure
