@@ -1,3 +1,44 @@
+2020-09-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] attribute-change transition should not pin Structure
+        https://bugs.webkit.org/show_bug.cgi?id=215528
+
+        Reviewed by Saam Barati.
+
+        This patch avoids using pin in attribute-change transition. To achieve this, attribute-change transition is now fully supported
+        transition chain in forEachPropertyConcurrently etc.: we can retrieve properties with changed attributes correctly via traversing
+        transition chain. And we also support attribute-change transition in materializePropertyTable, so we do not need to pin structure.
+
+        The design largely mimics existing removePropertyTransition and addPropertyTransition. This patch also adds `hasBeenDictionary()`
+        check before adding structure to the transition so that we can avoid adding unnecessary structure entry to the transition table.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutStructure):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheDeleteBy):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::removePropertyTransitionFromExistingStructureImpl):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::attributeChangeTransitionToExistingStructure):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::attributeChange):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::forEachPropertyConcurrently):
+        (JSC::Structure::attributeChange):
+        (JSC::Structure::attributeChangeWithoutTransition):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVMHelper::functionGetStructureTransitionList):
+
 2020-09-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] customGetterSetterFunctionCall should have proper exception checking

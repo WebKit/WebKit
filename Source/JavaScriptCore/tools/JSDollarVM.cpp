@@ -3045,7 +3045,7 @@ EncodedJSValue JSC_HOST_CALL JSDollarVMHelper::functionGetStructureTransitionLis
         else
             result->push(globalObject, jsNull());
         RETURN_IF_EXCEPTION(scope, { });
-        result->push(globalObject, JSValue(structure->isPropertyDeletionTransition()));
+        result->push(globalObject, jsNumber(static_cast<int32_t>(structure->transitionKind())));
         RETURN_IF_EXCEPTION(scope, { });
     }
 

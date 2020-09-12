@@ -3818,7 +3818,7 @@ private:
 
         LValue cell = lowCell(m_node->child1()); 
 
-        auto& heap = m_node->transition()->next->isPropertyDeletionTransition() ? m_heaps.JSCellHeaderAndNamedProperties : m_heaps.JSCell_structureID;
+        auto& heap = m_node->transition()->next->transitionKind() == TransitionKind::PropertyDeletion ? m_heaps.JSCellHeaderAndNamedProperties : m_heaps.JSCell_structureID;
         TypedPointer pointer { heap, m_out.addPtr(cell, m_heaps.JSCell_structureID.offset()) };
 
         m_out.store32(

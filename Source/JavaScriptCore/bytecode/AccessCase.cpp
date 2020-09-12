@@ -1977,7 +1977,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         allocator.lock(baseGPR);
         allocator.lock(scratchGPR);
         ASSERT(structure()->transitionWatchpointSetHasBeenInvalidated());
-        ASSERT(newStructure()->isPropertyDeletionTransition());
+        ASSERT(newStructure()->transitionKind() == TransitionKind::PropertyDeletion);
         ASSERT(baseGPR != scratchGPR);
         ASSERT(!valueRegs.uses(baseGPR));
         ASSERT(!valueRegs.uses(scratchGPR));

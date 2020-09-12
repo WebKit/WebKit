@@ -1183,7 +1183,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(JSCell_typeInfoFlags);
         write(JSCell_indexingType);
 
-        if (node->transition()->next->isPropertyDeletionTransition()) {
+        if (node->transition()->next->transitionKind() == TransitionKind::PropertyDeletion) {
             // We use this "delete fence" to model the proper aliasing of future stores.
             // Both in DFG and when we lower to B3, we model aliasing of properties by
             // property  name. In a world without delete, that also models {base, propertyOffset}.

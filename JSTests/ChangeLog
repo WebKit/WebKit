@@ -1,3 +1,18 @@
+2020-09-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] attribute-change transition should not pin Structure
+        https://bugs.webkit.org/show_bug.cgi?id=215528
+
+        Reviewed by Saam Barati.
+
+        * stress/change-attribute-structure-transition.js: Added.
+        (shouldBe):
+        (sd.let.data.vm.getStructureTransitionList.let.result.return.result.kind):
+        (sd):
+        (shouldBe.JSON.stringify.sd):
+        (lastStructureID):
+        (shouldBe.JSON.stringify.Object.getOwnPropertyDescriptor):
+
 2020-09-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Update test262 to commit 323905b70e64

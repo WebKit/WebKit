@@ -831,7 +831,7 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
                 return GiveUpOnCache;
             ASSERT(newOffset == slot.cachedOffset());
             ASSERT(newStructure->previousID() == oldStructure);
-            ASSERT(newStructure->isPropertyDeletionTransition());
+            ASSERT(newStructure->transitionKind() == TransitionKind::PropertyDeletion);
             ASSERT(newStructure->isObject());
             ASSERT(isValidOffset(newOffset));
             newCase = AccessCase::createDelete(vm, codeBlock, propertyName, newOffset, oldStructure, newStructure);
