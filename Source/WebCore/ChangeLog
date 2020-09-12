@@ -1,3 +1,22 @@
+2020-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing feedback on r266936
+        https://bugs.webkit.org/show_bug.cgi?id=216431
+
+        Unreviewed.
+
+        I didn't follow the reviewer's advice thoroughly.
+
+        No new tests because there is no behavior change.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/coretext/FontCascadeCoreText.cpp: Renamed from Source/WebCore/platform/graphics/ct/FontCascadeCoreText.cpp.
+        * platform/graphics/coretext/FontCoreText.cpp: Renamed from Source/WebCore/platform/graphics/ct/FontCoreText.cpp.
+        * platform/graphics/coretext/FontPlatformDataCoreText.cpp: Renamed from Source/WebCore/platform/graphics/ct/FontPlatformDataCoreText.cpp.
+        * platform/graphics/coretext/GlyphPageCoreText.cpp: Renamed from Source/WebCore/platform/graphics/ct/GlyphPageCoreText.cpp.
+
 2020-09-12  Rob Buis  <rbuis@igalia.com>
 
         Implement lazy iframe loading

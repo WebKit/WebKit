@@ -321,10 +321,10 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/WebGLLayer.mm
     platform/graphics/cocoa/WebGPULayer.mm
 
-    platform/graphics/ct/FontCascadeCoreText.cpp
-    platform/graphics/ct/FontCoreText.cpp
-    platform/graphics/ct/FontPlatformDataCoreText.cpp
-    platform/graphics/ct/GlyphPageCoreText.cpp
+    platform/graphics/coretext/FontCascadeCoreText.cpp
+    platform/graphics/coretext/FontCoreText.cpp
+    platform/graphics/coretext/FontPlatformDataCoreText.cpp
+    platform/graphics/coretext/GlyphPageCoreText.cpp
 
     platform/graphics/cv/ImageRotationSessionVT.mm
     platform/graphics/cv/PixelBufferConformerCV.cpp
