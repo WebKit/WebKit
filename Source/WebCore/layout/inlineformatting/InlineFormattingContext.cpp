@@ -414,11 +414,11 @@ InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::compu
         return { { }, { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, { } } };
 
     auto& rootStyle = root().style();
+    auto lineBoxLogicalHeight = lineBox.logicalHeight();
     auto lineLogicalHeight = InlineLayoutUnit { };
     if (rootStyle.lineHeight().isNegative()) {
         // Negative line height value means the line height is driven by the content.
         auto usedLineSpacing = [&] {
-            auto lineBoxLogicalHeight = lineBox.logicalHeight();
             auto logicalTopWithLineSpacing = InlineLayoutUnit { };
             auto logicalBottomWithLineSpacing = lineBoxLogicalHeight;
             for (auto& inlineBox : lineBox.inlineBoxList()) {
@@ -435,16 +435,8 @@ InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::compu
         lineLogicalHeight = rootStyle.computedLineHeight();
 
     auto logicalRect = Display::InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineLogicalHeight};
-    auto halfLeadingOffset = [&] {
-        auto& fontMetrics = rootStyle.fontMetrics();
-        InlineLayoutUnit ascent = fontMetrics.ascent();
-        InlineLayoutUnit descent = fontMetrics.descent();
-        // 10.8.1 Leading and half-leading
-        auto halfLeading = (lineLogicalHeight - (ascent + descent)) / 2;
-        // Inline tree height is all integer based.
-        return floorf(ascent + halfLeading);
-    }();
-    auto lineBoxOffset = logicalRect.height() == lineBox.logicalHeight() ? InlineLayoutUnit() : halfLeadingOffset - lineBox.alignmentBaseline();
+    // Inline tree height is all integer based.
+    auto lineBoxOffset = floorf((lineLogicalHeight - lineBoxLogicalHeight) / 2);
     return { lineBoxOffset, logicalRect };
 }
 

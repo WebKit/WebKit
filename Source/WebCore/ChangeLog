@@ -1,5 +1,18 @@
 2020-09-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Simplify LineBox offset computation
+        https://bugs.webkit.org/show_bug.cgi?id=216434
+
+        Reviewed by Antti Koivisto.
+
+        This is still inline with the half leading logic where the ascent + descent (LineBox height) and the line spacing are
+        used to position the inline content.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedLineLogicalRect const):
+
+2020-09-12  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for non-root-inline-box line spacing
         https://bugs.webkit.org/show_bug.cgi?id=216433
 
