@@ -1,3 +1,19 @@
+2020-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a key to the text manipulation userInfo dictionary indicating whether the translated item is on-screen
+        https://bugs.webkit.org/show_bug.cgi?id=216452
+        <rdar://problem/68785397>
+
+        Reviewed by Darin Adler.
+
+        Add `_WKTextManipulationTokenUserInfoVisibilityKey` and set its value to the value of the `isVisible` member in
+        `ManipulationTokenInfo`. See WebCore ChangeLog for more details.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (createUserInfo):
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.mm:
+
 2020-09-13  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] Build fails when -DENABLE_SERVICE_WORKER=OFF

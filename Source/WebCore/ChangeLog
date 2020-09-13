@@ -1,3 +1,32 @@
+2020-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a key to the text manipulation userInfo dictionary indicating whether the translated item is on-screen
+        https://bugs.webkit.org/show_bug.cgi?id=216452
+        <rdar://problem/68785397>
+
+        Reviewed by Darin Adler.
+
+        For debugging purposes, and also to provide a hint as to what text should be prioritized when translating
+        web pages, WebKit clients have requested a new field in the userInfo metadata dictionary associated with each
+        token that indicates whether or not a translation (i.e. text manipulation) token represents an element that is
+        currently on-screen. See below for more details.
+
+        Test: TextManipulation.StartTextManipulationExtractsUserInfo
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::tokenInfo):
+
+        Set the flag by checking whether or not the absolute bounding rect intersects with the visible content rect of
+        the enclosing frame. Note that since subframe content is currently never extracted for translation, we don't
+        need logic yet to recursively check that parent iframe elements are visible.
+
+        * editing/TextManipulationController.h:
+
+        Add a new `bool` flag in `ManipulationTokenInfo`.
+
+        (WebCore::TextManipulationController::ManipulationTokenInfo::encode const):
+        (WebCore::TextManipulationController::ManipulationTokenInfo::decode):
+
 2020-09-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK/WPE EME build fixes after r266721

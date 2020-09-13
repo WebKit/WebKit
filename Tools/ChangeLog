@@ -1,3 +1,19 @@
+2020-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a key to the text manipulation userInfo dictionary indicating whether the translated item is on-screen
+        https://bugs.webkit.org/show_bug.cgi?id=216452
+        <rdar://problem/68785397>
+
+        Reviewed by Darin Adler.
+
+        Adjust an existing test so that it adds a fourth text paragraph with 2000px of top margin, and also
+        programmatically scrolls after loading the page so that only this last paragraph is visible. We expect the
+        metadata to indicate that none of the other tokens except this last one has a value of `YES` for
+        `_WKTextManipulationTokenUserInfoVisibilityKey`.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-09-12  Darin Adler  <darin@apple.com>
 
         Send TestRendered event after running a test but before dumping

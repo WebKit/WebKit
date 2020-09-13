@@ -1622,6 +1622,7 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const Optional<Web
         [result setObject:(NSString *)info->tagName forKey:_WKTextManipulationTokenUserInfoTagNameKey];
     if (!info->roleAttribute.isNull())
         [result setObject:(NSString *)info->roleAttribute forKey:_WKTextManipulationTokenUserInfoRoleAttributeKey];
+    [result setObject:@(info->isVisible) forKey:_WKTextManipulationTokenUserInfoVisibilityKey];
 
     return result;
 }

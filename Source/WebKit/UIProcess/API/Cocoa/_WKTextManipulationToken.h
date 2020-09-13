@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 WK_EXTERN NSString * const _WKTextManipulationTokenUserInfoDocumentURLKey WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 WK_EXTERN NSString * const _WKTextManipulationTokenUserInfoTagNameKey WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 WK_EXTERN NSString * const _WKTextManipulationTokenUserInfoRoleAttributeKey WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKTextManipulationTokenUserInfoVisibilityKey WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKTextManipulationToken : NSObject

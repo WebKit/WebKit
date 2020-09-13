@@ -52,6 +52,7 @@ public:
         String tagName;
         String roleAttribute;
         URL documentURL;
+        bool isVisible { false };
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static Optional<ManipulationTokenInfo> decode(Decoder&);
@@ -202,6 +203,7 @@ void TextManipulationController::ManipulationTokenInfo::encode(Encoder& encoder)
     encoder << tagName;
     encoder << roleAttribute;
     encoder << documentURL;
+    encoder << isVisible;
 }
 
 template<class Decoder>
@@ -215,6 +217,9 @@ Optional<TextManipulationController::ManipulationTokenInfo> TextManipulationCont
         return WTF::nullopt;
 
     if (!decoder.decode(result.documentURL))
+        return WTF::nullopt;
+
+    if (!decoder.decode(result.isVisible))
         return WTF::nullopt;
 
     return result;

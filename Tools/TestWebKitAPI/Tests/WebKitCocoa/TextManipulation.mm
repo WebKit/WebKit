@@ -801,7 +801,11 @@ TEST(TextManipulation, StartTextManipulationExtractsUserInfo)
         "    <p>First</p>"
         "    <div role='button'>Second</div>"
         "    <span>Third</span>"
+        "    <div style='margin-top: 2000px;'>Fourth</div>"
+        "    <script>scrollTo(0, 2000);</script>"
         "</body>"];
+
+    [webView waitForNextPresentationUpdate];
 
     done = false;
     [webView _startTextManipulationsWithConfiguration:nil completion:^{
@@ -810,35 +814,47 @@ TEST(TextManipulation, StartTextManipulationExtractsUserInfo)
     TestWebKitAPI::Util::run(&done);
 
     auto items = [delegate items];
-    EXPECT_EQ(items.count, 4UL);
+    EXPECT_EQ(items.count, 5UL);
     EXPECT_EQ(items[0].tokens.count, 1UL);
     EXPECT_EQ(items[1].tokens.count, 1UL);
     EXPECT_EQ(items[2].tokens.count, 1UL);
     EXPECT_EQ(items[3].tokens.count, 1UL);
+    EXPECT_EQ(items[4].tokens.count, 1UL);
     EXPECT_WK_STREQ("This is a test", items[0].tokens[0].content);
     EXPECT_WK_STREQ("First", items[1].tokens[0].content);
     EXPECT_WK_STREQ("Second", items[2].tokens[0].content);
     EXPECT_WK_STREQ("Third", items[3].tokens[0].content);
+    EXPECT_WK_STREQ("Fourth", items[4].tokens[0].content);
     {
         auto userInfo = items[0].tokens[0].userInfo;
         EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
         EXPECT_WK_STREQ("TITLE", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
+        EXPECT_FALSE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
     {
         auto userInfo = items[1].tokens[0].userInfo;
         EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
         EXPECT_WK_STREQ("P", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
+        EXPECT_FALSE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
     {
         auto userInfo = items[2].tokens[0].userInfo;
         EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
         EXPECT_WK_STREQ("DIV", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
         EXPECT_WK_STREQ("button", (NSString *)userInfo[_WKTextManipulationTokenUserInfoRoleAttributeKey]);
+        EXPECT_FALSE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
     {
         auto userInfo = items[3].tokens[0].userInfo;
         EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
         EXPECT_WK_STREQ("SPAN", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
+        EXPECT_FALSE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
+    }
+    {
+        auto userInfo = items[4].tokens[0].userInfo;
+        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+        EXPECT_WK_STREQ("DIV", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
+        EXPECT_TRUE([userInfo[_WKTextManipulationTokenUserInfoVisibilityKey] boolValue]);
     }
 }
 

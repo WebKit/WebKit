@@ -297,6 +297,12 @@ static Optional<TextManipulationController::ManipulationTokenInfo> tokenInfo(Nod
         result.tagName = element->tagName();
         if (element->hasAttributeWithoutSynchronization(HTMLNames::roleAttr))
             result.roleAttribute = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
+        if (auto frame = makeRefPtr(node->document().frame()); frame && frame->view() && element->renderer()) {
+            // FIXME: This doesn't account for overflow clip.
+            auto elementRect = element->renderer()->absoluteAnchorRect();
+            auto visibleContentRect = frame->view()->visibleContentRect();
+            result.isVisible = visibleContentRect.intersects(enclosingIntRect(elementRect));
+        }
     }
     return result;
 }

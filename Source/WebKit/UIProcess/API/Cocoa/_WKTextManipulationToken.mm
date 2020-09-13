@@ -31,6 +31,7 @@
 NSString * const _WKTextManipulationTokenUserInfoDocumentURLKey = @"_WKTextManipulationTokenUserInfoDocumentURLKey";
 NSString * const _WKTextManipulationTokenUserInfoTagNameKey = @"_WKTextManipulationTokenUserInfoTagNameKey";
 NSString * const _WKTextManipulationTokenUserInfoRoleAttributeKey = @"_WKTextManipulationTokenUserInfoRoleAttributeKey";
+NSString * const _WKTextManipulationTokenUserInfoVisibilityKey = @"_WKTextManipulationTokenUserInfoVisibilityKey";
 
 @implementation _WKTextManipulationToken {
     RetainPtr<NSDictionary<NSString *, id>> _userInfo;
