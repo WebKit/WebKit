@@ -34,7 +34,7 @@
 
     // Non-standard legacy aliases (Compositing).
     [ImplementedAs=setGlobalAlpha] undefined setAlpha(optional unrestricted float alpha = NaN);
-    [ImplementedAs=setGlobalCompositeOperation] undefined setCompositeOperation(optional DOMString compositeOperation = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
+    [ImplementedAs=setGlobalCompositeOperation] undefined setCompositeOperation(optional DOMString compositeOperation);
 
     // Non-standard functionality (CanvasDrawImage).
     undefined drawImageFromRect(HTMLImageElement image,
@@ -60,8 +60,8 @@
 
     // Non-standard legacy aliases (CanvasPathDrawingStyles).
     undefined setLineWidth(optional unrestricted float width = NaN);
-    undefined setLineCap(optional DOMString cap = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
-    undefined setLineJoin(optional DOMString join = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
+    undefined setLineCap(optional DOMString cap);
+    undefined setLineJoin(optional DOMString join);
     undefined setMiterLimit(optional unrestricted float limit = NaN);
     attribute sequence<unrestricted float> webkitLineDash;
     [ImplementedAs=lineDashOffset] attribute unrestricted float webkitLineDashOffset;

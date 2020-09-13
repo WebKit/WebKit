@@ -652,7 +652,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   48: (duration)
-    0: setCompositeOperation("undefined")
+    0: setCompositeOperation("")
       swizzleTypes: [String]
       trace:
         0: setCompositeOperation
@@ -702,7 +702,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   50: (duration)
-    0: setLineCap("undefined")
+    0: setLineCap("")
       swizzleTypes: [String]
       trace:
         0: setLineCap
@@ -722,7 +722,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   52: (duration)
-    0: setLineJoin("undefined")
+    0: setLineJoin("")
       swizzleTypes: [String]
       trace:
         0: setLineJoin

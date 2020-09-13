@@ -1,3 +1,16 @@
+2020-09-13  Rob Buis  <rbuis@igalia.com>
+
+        Make CanvasRenderingContext2D functions parameters not default to undefined
+        https://bugs.webkit.org/show_bug.cgi?id=216438
+
+        Reviewed by Sam Weinig.
+
+        Some string parameters default to "undefined", however the code path is the same when
+        no default is given and implicitly a null string is passed, so remove the default
+        values.
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2020-09-13  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Remove need for [MayThrowException] on indexed and named setters

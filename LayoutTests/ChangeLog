@@ -1,3 +1,14 @@
+2020-09-13  Rob Buis  <rbuis@igalia.com>
+
+        Make CanvasRenderingContext2D functions parameters not default to undefined
+        https://bugs.webkit.org/show_bug.cgi?id=216438
+
+        Reviewed by Sam Weinig.
+
+        Adjust expected test result.
+
+        * inspector/canvas/recording-2d-full-expected.txt:
+
 2020-09-12  Tyler Wilcock <twilco.o@protonmail.com>
 
         Safely handle overly-long CSS variable values
