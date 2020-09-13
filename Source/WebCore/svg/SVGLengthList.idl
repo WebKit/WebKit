@@ -37,5 +37,5 @@
     [MayThrowException] SVGLength replaceItem(SVGLength newItem, unsigned long index);
     [MayThrowException] SVGLength removeItem(unsigned long index);
     [MayThrowException] SVGLength appendItem(SVGLength newItem);
-    [MayThrowException] setter undefined (unsigned long index, SVGLength newItem);
+    setter undefined (unsigned long index, SVGLength newItem);
 };

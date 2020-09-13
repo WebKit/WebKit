@@ -234,7 +234,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
-        thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue));
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
         return true;
     }
 
@@ -251,7 +251,7 @@ bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
     auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
     auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, true);
-    thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue));
+    invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
     return true;
 }
 
@@ -272,7 +272,7 @@ static bool isLegacyUnforgeablePropertyName(PropertyName propertyName)
             auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, propertyDescriptor.value());
             RETURN_IF_EXCEPTION(throwScope, true);
-            thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue));
+            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
             return true;
         }
     }

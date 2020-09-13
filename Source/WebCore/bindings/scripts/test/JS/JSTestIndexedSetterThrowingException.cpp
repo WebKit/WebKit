@@ -198,7 +198,7 @@ bool JSTestIndexedSetterThrowingException::put(JSCell* cell, JSGlobalObject* lex
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
-        propagateException(*lexicalGlobalObject, throwScope, thisObject->wrapped().setItem(index.value(), WTFMove(nativeValue)));
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setItem(index.value(), WTFMove(nativeValue)); });
         return true;
     }
 
@@ -214,7 +214,7 @@ bool JSTestIndexedSetterThrowingException::putByIndex(JSCell* cell, JSGlobalObje
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
-        propagateException(*lexicalGlobalObject, throwScope, thisObject->wrapped().setItem(index, WTFMove(nativeValue)));
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setItem(index, WTFMove(nativeValue)); });
         return true;
     }
 
@@ -232,7 +232,7 @@ bool JSTestIndexedSetterThrowingException::defineOwnProperty(JSObject* object, J
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, propertyDescriptor.value());
         RETURN_IF_EXCEPTION(throwScope, true);
-        propagateException(*lexicalGlobalObject, throwScope, thisObject->wrapped().setItem(index.value(), WTFMove(nativeValue)));
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setItem(index.value(), WTFMove(nativeValue)); });
         return true;
     }
 

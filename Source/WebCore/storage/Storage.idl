@@ -30,7 +30,7 @@
     readonly attribute unsigned long length;
     DOMString? key(unsigned long index);
     getter DOMString? getItem(DOMString key);
-    [MayThrowException] setter undefined setItem(DOMString key, DOMString data);
+    setter undefined setItem(DOMString key, DOMString data);
     deleter undefined removeItem(DOMString key);
     [MayThrowException] undefined clear();
 };

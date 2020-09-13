@@ -1,5 +1,61 @@
 2020-09-13  Sam Weinig  <weinig@apple.com>
 
+        [WebIDL] Remove need for [MayThrowException] on indexed and named setters
+        https://bugs.webkit.org/show_bug.cgi?id=216441
+
+        Reviewed by Darin Adler.
+
+        Deduce implementation potentially throwing by introspecting the return
+        type of the setters implementation in a new helper, invokeFunctorPropagatingExceptionIfNecessary. 
+        This allows us to remove another set of uses of [MayThrowException].
+
+        * bindings/js/JSDOMConvertBase.h:
+        * dom/ExceptionOr.h:
+        Move IsExceptionOr to ExceptionOr.h so it can be used more widely.
+
+        * bindings/js/JSDOMExceptionHandling.h:
+        (WebCore::invokeFunctorPropagatingExceptionIfNecessary):
+        Add helper that invokes the passed in functor and calls propagateException
+        if the return type was an ExceptionOr<>. If the return type is not an 
+        ExceptionOr<>, it just invokes the functor and returns.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateInvokeIndexedPropertySetter):
+        (GenerateInvokeNamedPropertySetter):
+        Update to call invokeFunctorPropagatingExceptionIfNecessary.
+
+        * css/CSSStyleDeclaration.idl:
+        * dom/DOMStringMap.idl:
+        * storage/Storage.idl:
+        * svg/SVGLengthList.idl:
+        * svg/SVGNumberList.idl:
+        * svg/SVGPathSegList.idl:
+        * svg/SVGPointList.idl:
+        * svg/SVGStringList.idl:
+        * svg/SVGTransformList.idl:
+        Remove now unneeded [MayThrowException].
+
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyOverrideBuiltIns.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.cpp:
+        * bindings/scripts/test/TestIndexedSetterThrowingException.idl:
+        * bindings/scripts/test/TestNamedAndIndexedSetterThrowingException.idl:
+        * bindings/scripts/test/TestNamedSetterThrowingException.idl:
+        Update tests/expectations.
+
+2020-09-13  Sam Weinig  <weinig@apple.com>
+
         Fix FIXME in XPathEvaluatorBase about using [NewObject]
         https://bugs.webkit.org/show_bug.cgi?id=216458
 

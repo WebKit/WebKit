@@ -49,7 +49,7 @@
     // prefixes for this to be practical. If we remove legacy aliases, we should
     // reconsider this decision.
     getter (DOMString or double) (DOMString name);
-    [CEReactions, MayThrowException, CallNamedSetterOnlyForSupportedProperties] setter undefined (DOMString name, [LegacyNullToEmptyString] DOMString value);
+    [CEReactions, CallNamedSetterOnlyForSupportedProperties] setter undefined (DOMString name, [LegacyNullToEmptyString] DOMString value);
 
     // This method is deprecated, and we would like to drop support for it someday
     DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);

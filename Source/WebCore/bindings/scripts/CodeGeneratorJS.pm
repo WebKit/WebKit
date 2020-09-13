@@ -897,9 +897,7 @@ sub GenerateInvokeIndexedPropertySetter
     my $indexedSetterFunctionName = $indexedSetterOperation->name || "setItem";
     my $nativeValuePassExpression = PassArgumentExpression("nativeValue", $argument);
     my $functionString = "thisObject->wrapped().${indexedSetterFunctionName}(${indexExpression}, ${nativeValuePassExpression})";
-    $functionString = "propagateException(*lexicalGlobalObject, throwScope, ${functionString})" if NeedsExplicitPropagateExceptionCall($indexedSetterOperation);
-    
-    push(@$outputArray, $indent . $functionString . ";\n");
+    push(@$outputArray, $indent . "invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return ${functionString}; });\n");
 }
 
 # https://heycam.github.io/webidl/#invoke-named-setter
@@ -925,9 +923,7 @@ sub GenerateInvokeNamedPropertySetter
     push(@arguments, "isPropertySupported") if $namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
 
     my $functionString = "thisObject->wrapped().${namedSetterFunctionName}(" . join(", ", @arguments) . ")";
-    $functionString = "propagateException(*lexicalGlobalObject, throwScope, ${functionString})" if NeedsExplicitPropagateExceptionCall($namedSetterOperation);
-
-    push(@$outputArray, $indent . $functionString . ";\n");
+    push(@$outputArray, $indent . "invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return ${functionString}; });\n");
 }
 
 sub GeneratePut

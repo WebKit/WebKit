@@ -24,7 +24,7 @@
  */
 
 interface TestIndexedSetterThrowingException {
-    [MayThrowException] setter undefined (unsigned long index, DOMString value);
+    setter undefined (unsigned long index, DOMString value);
 
     // NOTE: Indexed setters require the presence of a indexed getter as well.
     getter DOMString (unsigned long index);

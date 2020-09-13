@@ -87,10 +87,6 @@ template<typename T, typename ExceptionThrower> inline typename Converter<T>::Re
 }
 
 
-template <typename T>
-struct IsExceptionOr : public std::integral_constant<bool, WTF::IsTemplate<std::decay_t<T>, ExceptionOr>::value> { };
-
-
 // Conversion from Implementation -> JSValue
 template<typename T> struct JSConverter;
 

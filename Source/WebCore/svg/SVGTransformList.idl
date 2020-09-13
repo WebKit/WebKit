@@ -35,7 +35,7 @@ interface SVGTransformList {
     [MayThrowException] SVGTransform replaceItem(SVGTransform newItem, unsigned long index);
     [MayThrowException] SVGTransform removeItem(unsigned long index);
     [MayThrowException] SVGTransform appendItem(SVGTransform newItem);
-    [MayThrowException] setter undefined (unsigned long index, SVGTransform newItem);
+    setter undefined (unsigned long index, SVGTransform newItem);
 
     [MayThrowException, NewObject] SVGTransform createSVGTransformFromMatrix(optional DOMMatrix2DInit matrix);
     [MayThrowException] SVGTransform consolidate();

@@ -35,5 +35,5 @@ interface SVGPathSegList {
     [MayThrowException] SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index);
     [MayThrowException] SVGPathSeg removeItem(unsigned long index);
     [MayThrowException] SVGPathSeg appendItem(SVGPathSeg newItem);
-    [MayThrowException] setter undefined (unsigned long index, SVGPathSeg newItem);
+    setter undefined (unsigned long index, SVGPathSeg newItem);
 };

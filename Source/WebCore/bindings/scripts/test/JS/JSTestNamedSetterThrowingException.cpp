@@ -215,7 +215,7 @@ bool JSTestNamedSetterThrowingException::put(JSCell* cell, JSGlobalObject* lexic
             auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
             RETURN_IF_EXCEPTION(throwScope, true);
-            propagateException(*lexicalGlobalObject, throwScope, thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)));
+            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
             return true;
         }
     }
@@ -238,7 +238,7 @@ bool JSTestNamedSetterThrowingException::putByIndex(JSCell* cell, JSGlobalObject
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
-        propagateException(*lexicalGlobalObject, throwScope, thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)));
+        invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
         return true;
     }
 
@@ -260,7 +260,7 @@ bool JSTestNamedSetterThrowingException::defineOwnProperty(JSObject* object, JSG
             auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, propertyDescriptor.value());
             RETURN_IF_EXCEPTION(throwScope, true);
-            propagateException(*lexicalGlobalObject, throwScope, thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)));
+            invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return thisObject->wrapped().setNamedItem(propertyNameToString(propertyName), WTFMove(nativeValue)); });
             return true;
         }
     }

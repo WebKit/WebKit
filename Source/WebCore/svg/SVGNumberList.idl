@@ -35,5 +35,5 @@ interface SVGNumberList {
     [MayThrowException] SVGNumber replaceItem(SVGNumber newItem, unsigned long index);
     [MayThrowException] SVGNumber removeItem(unsigned long index);
     [MayThrowException] SVGNumber appendItem(SVGNumber newItem);
-    [MayThrowException] setter undefined (unsigned long index, SVGNumber newItem);
+    setter undefined (unsigned long index, SVGNumber newItem);
 };

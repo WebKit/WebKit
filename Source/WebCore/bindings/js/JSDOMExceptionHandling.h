@@ -89,4 +89,18 @@ inline void propagateException(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Th
         propagateException(lexicalGlobalObject, throwScope, value.releaseException());
 }
 
+template<typename Functor> void invokeFunctorPropagatingExceptionIfNecessary(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, Functor&& functor)
+{
+    using ReturnType = std::invoke_result_t<Functor>;
+
+    if constexpr (IsExceptionOr<ReturnType>::value) {
+        auto result = functor();
+        if (UNLIKELY(result.hasException()))
+            propagateException(lexicalGlobalObject, throwScope, result.releaseException());
+        return;
+    }
+
+    functor();
+}
+
 } // namespace WebCore

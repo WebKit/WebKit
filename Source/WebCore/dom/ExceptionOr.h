@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Exception.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Expected.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -198,6 +199,8 @@ inline ExceptionOr<void> isolatedCopy(ExceptionOr<void>&& value)
         return isolatedCopy(value.releaseException());
     return { };
 }
+
+template <typename T> struct IsExceptionOr : public std::integral_constant<bool, WTF::IsTemplate<std::decay_t<T>, ExceptionOr>::value> { };
 
 }
 

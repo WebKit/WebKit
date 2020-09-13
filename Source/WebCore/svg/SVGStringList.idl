@@ -34,5 +34,5 @@ interface SVGStringList {
     [MayThrowException] DOMString replaceItem(DOMString newItem, unsigned long index);
     [MayThrowException] DOMString removeItem(unsigned long index);
     [MayThrowException] DOMString appendItem(DOMString newItem);
-    [MayThrowException] setter undefined (unsigned long index, DOMString newItem);
+    setter undefined (unsigned long index, DOMString newItem);
 };
