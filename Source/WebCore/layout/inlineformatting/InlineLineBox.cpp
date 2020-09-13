@@ -147,8 +147,10 @@ Display::InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
 {
     ASSERT(run.isText() || run.isLineBreak());
     auto& parentInlineBox = inlineBoxForLayoutBox(run.layoutBox().parent());
-    auto inlineBoxRect = parentInlineBox.logicalRect();
-    return { inlineBoxRect.top(), m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft(), run.logicalWidth(), inlineBoxRect.height() };
+    auto& fontMetrics = parentInlineBox.fontMetrics();
+    auto runlogicalTop = parentInlineBox.logicalTop() + parentInlineBox.baseline() - fontMetrics.ascent();
+    InlineLayoutUnit logicalHeight = fontMetrics.height();
+    return { runlogicalTop, m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
 
 void LineBox::constructInlineBoxes(const Line::RunList& runs)

@@ -1,5 +1,19 @@
 2020-09-13  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Text run is at incorrect vertical position when parent inline box is stretched
+        https://bugs.webkit.org/show_bug.cgi?id=216453
+
+        Reviewed by Antti Koivisto.
+
+        Text runs don't necessarily start at the top of the parent inline box. When the inline box is
+        stretched by some other content (nested inline box or atomic inline-level box) the run is pushed down.
+        This patch computes the correct vertical position by using the inline box's baseline (text always sits on the baseline).
+
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::logicalRectForTextRun const):
+
+2020-09-13  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Fix showLayoutTree to show anonymous inline boxes
         https://bugs.webkit.org/show_bug.cgi?id=215437
 
