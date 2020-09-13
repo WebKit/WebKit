@@ -1,3 +1,13 @@
+2020-09-13  Sam Weinig  <weinig@apple.com>
+
+        FIXME in MouseEventInit.idl is incorrect (we do support unsigned short buttons = 0)
+        https://bugs.webkit.org/show_bug.cgi?id=216460
+
+        Reviewed by Darin Adler.
+
+        * dom/MouseEventInit.idl:
+        Removes incorrect FIXME, adds spec link, and updates formatting to match spec.
+
 2020-09-13  Aditya Keerthi  <akeerthi@apple.com>
 
         Consolidate BaseDateAndTimeInputType and BaseChooserOnlyDateAndTimeInputType

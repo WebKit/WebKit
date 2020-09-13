@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/uievents/#idl-mouseeventinit
 dictionary MouseEventInit : EventModifierInit {
     long screenX = 0;
     long screenY = 0;
     long clientX = 0;
     long clientY = 0;
+
     short button = 0;
     unsigned short buttons = 0;
-
-    // FIXME: We need to support the following member.
-    // unsigned short buttons = 0;
-
     EventTarget? relatedTarget = null;
 };
