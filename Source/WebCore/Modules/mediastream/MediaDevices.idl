@@ -28,7 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME 169871: should be subclass of EventTarget
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,

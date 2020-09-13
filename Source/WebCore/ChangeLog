@@ -1,5 +1,16 @@
 2020-09-13  Sam Weinig  <weinig@apple.com>
 
+        FIXME in MediaDevices.idl is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=216459
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/mediastream/MediaDevices.idl:
+        Remove FIXME about making MediaDevices an EventTarget subclass as it is a subclass
+        EventTarget.
+
+2020-09-13  Sam Weinig  <weinig@apple.com>
+
         FIXME in MouseEventInit.idl is incorrect (we do support unsigned short buttons = 0)
         https://bugs.webkit.org/show_bug.cgi?id=216460
 
