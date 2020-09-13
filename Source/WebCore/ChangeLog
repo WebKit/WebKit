@@ -1,3 +1,13 @@
+2020-09-13  Sam Weinig  <weinig@apple.com>
+
+        Fix FIXME in XPathEvaluatorBase about using [NewObject]
+        https://bugs.webkit.org/show_bug.cgi?id=216458
+
+        Reviewed by Anders Carlsson.
+
+        * xml/XPathEvaluatorBase.idl:
+        Address FIXME by applying [NewObject] to createExpression. The implementation already matches this.
+
 2020-09-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Tree building] Table rows may not have any children.

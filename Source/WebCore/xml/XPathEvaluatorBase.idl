@@ -25,7 +25,7 @@
 
 // https://dom.spec.whatwg.org/#xpathevaluatorbase
 interface mixin XPathEvaluatorBase {
-    [MayThrowException] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver); // FIXME: Should be [NewObject].
+    [MayThrowException, NewObject] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver);
     XPathNSResolver createNSResolver(Node nodeResolver);
     // XPathResult.ANY_TYPE = 0
     [MayThrowException] XPathResult evaluate(DOMString expression, Node contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult);
