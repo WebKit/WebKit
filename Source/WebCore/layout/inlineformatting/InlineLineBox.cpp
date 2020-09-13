@@ -189,9 +189,14 @@ void LineBox::constructInlineBoxes(const Line::RunList& runs)
         // In nesting case we need to create LineBox::InlineBoxes for the inline box ancestors. 
         // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level or
         // nested with a [container start] run.
-        auto& firstRunParentInlineBox = runs[0].layoutBox().parent();
-        // If the parent is the root(), we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s).
-        if (&firstRunParentInlineBox != &root()) {
+        auto& firstRun = runs[0];
+        auto& firstRunParentInlineBox = firstRun.layoutBox().parent();
+        // If the parent is the root(), we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s)
+        // unless the inline box closing (container end run) is forced over to the current line.
+        // e.g.
+        // <span>normally the inline box closing forms a continuous content</span>
+        // <span>unless it's forced to the next line<br></span>
+        if (firstRun.isContainerEnd() || &firstRunParentInlineBox != &root()) {
             auto* ancestor = &firstRunParentInlineBox;
             Vector<const Box*> ancestorsWithoutInlineBoxes;
             while (ancestor != &root()) {

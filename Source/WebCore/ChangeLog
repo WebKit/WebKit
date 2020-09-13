@@ -1,3 +1,20 @@
+2020-09-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Create LineBox::InlineBox for [ContainerEnd] runs forced to the next line.
+        https://bugs.webkit.org/show_bug.cgi?id=216462
+
+        Reviewed by Antti Koivisto.
+
+        Normally the [container end] run forms a continous content with the runs in front of it 
+        (there's no breaking opportunity between e.g the last text run and the [container end] run).
+        However in certain cases the [container end] run may be forced over to the next line.
+        e.g.
+        <span>the [container end] run is forced over to the next line<br></span>over here
+        runs: [container start][text run][line break run]<-new line->[container end][text run]
+
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+
 2020-09-13  Rob Buis  <rbuis@igalia.com>
 
         Make CanvasRenderingContext2D functions parameters not default to undefined
