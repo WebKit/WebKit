@@ -222,6 +222,10 @@ void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
     UNUSED_PARAM(delta);
     // FIXME: need to not map back and forth all the time.
     m_scrollableArea.setScrollOffsetFromAnimation(m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition())));
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+    m_scrollController.scrollPositionChanged();
+#endif
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)

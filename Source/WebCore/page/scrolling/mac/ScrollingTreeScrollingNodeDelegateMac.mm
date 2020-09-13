@@ -160,6 +160,16 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     return handled;
 }
 
+void ScrollingTreeScrollingNodeDelegateMac::currentScrollPositionChanged()
+{
+    m_scrollController.scrollPositionChanged();
+}
+
+bool ScrollingTreeScrollingNodeDelegateMac::isRubberBandInProgress() const
+{
+    return m_scrollController.isRubberBandInProgress();
+}
+
 bool ScrollingTreeScrollingNodeDelegateMac::isScrollSnapInProgress() const
 {
     return m_scrollController.isScrollSnapInProgress();
@@ -312,10 +322,13 @@ void ScrollingTreeScrollingNodeDelegateMac::immediateScrollByWithoutContentEdgeC
 
 void ScrollingTreeScrollingNodeDelegateMac::didStopRubberbandSnapAnimation()
 {
-    scrollingTree().setMainFrameIsRubberBanding(false);
-
     // Since the rubberband timer has stopped, totalContentsSizeForRubberBand can be synchronized with totalContentsSize.
     scrollingNode().setTotalContentsSizeForRubberBand(totalContentsSize());
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::rubberBandingStateChanged(bool inRubberBand)
+{
+    scrollingTree().setRubberBandingInProgressForNode(scrollingNode().scrollingNodeID(), inRubberBand);
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::adjustScrollPositionToBoundsIfNecessary()

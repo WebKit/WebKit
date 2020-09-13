@@ -50,6 +50,8 @@ public:
     void nodeWillBeDestroyed();
 
     bool handleWheelEvent(const PlatformWheelEvent&);
+    
+    void currentScrollPositionChanged();
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
@@ -58,6 +60,8 @@ public:
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     bool isScrollSnapInProgress() const;
 #endif
+
+    bool isRubberBandInProgress() const;
 
     void updateFromStateNode(const ScrollingStateScrollingNode&);
     void updateScrollbarPainters();
@@ -80,6 +84,7 @@ private:
     void immediateScrollBy(const FloatSize&) final;
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
     void didStopRubberbandSnapAnimation() final;
+    void rubberBandingStateChanged(bool) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
 
 #if ENABLE(CSS_SCROLL_SNAP)

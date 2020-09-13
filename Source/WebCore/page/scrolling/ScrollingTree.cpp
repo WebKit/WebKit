@@ -465,16 +465,22 @@ TrackingType ScrollingTree::eventTrackingTypeForPoint(const AtomString& eventNam
 }
 
 // Can be called from the main thread.
-bool ScrollingTree::isRubberBandInProgress()
+bool ScrollingTree::isRubberBandInProgressForNode(ScrollingNodeID nodeID)
 {
+    if (!nodeID)
+        return false;
+
     LockHolder lock(m_treeStateMutex);
-    return m_treeState.mainFrameIsRubberBanding;
+    return m_treeState.nodesWithActiveRubberBanding.contains(nodeID);
 }
 
-void ScrollingTree::setMainFrameIsRubberBanding(bool isRubberBanding)
+void ScrollingTree::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bool isRubberBanding)
 {
     LockHolder locker(m_treeStateMutex);
-    m_treeState.mainFrameIsRubberBanding = isRubberBanding;
+    if (isRubberBanding)
+        m_treeState.nodesWithActiveRubberBanding.add(nodeID);
+    else
+        m_treeState.nodesWithActiveRubberBanding.remove(nodeID);
 }
 
 // Can be called from the main thread.

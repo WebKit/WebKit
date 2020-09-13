@@ -1909,6 +1909,11 @@ bool RenderLayer::isRubberBandInProgress() const
     if (!scrollsOverflow())
         return false;
 
+    if (auto scrollingCoordinator = page().scrollingCoordinator()) {
+        if (scrollingCoordinator->isRubberBandInProgress(scrollingNodeID()))
+            return true;
+    }
+
     if (auto scrollAnimator = existingScrollAnimator())
         return scrollAnimator->isRubberBandInProgress();
 #endif
@@ -3913,7 +3918,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
     updateSnapOffsets();
 #endif
 
-    if (!box->isHTMLMarquee() && !isRubberBandInProgress()) {
+    if (!box->isHTMLMarquee() && !isRubberBandInProgress() && !isUserScrollInProgress()) {
         // Layout may cause us to be at an invalid scroll position. In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
         ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset());

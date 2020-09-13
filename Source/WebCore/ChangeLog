@@ -1,3 +1,74 @@
+2020-09-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Overflow:scroll rubberbanding is interrupted by post-layout scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=216463
+        <rdar://problem/67095741>
+
+        Reviewed by Darin Adler.
+
+        When rubberbanding overflow:scroll RenderLayer has an overscrolled scroll offset.
+        If RenderLayer::updateScrollInfoAfterLayout() happens when in this state, it can 
+        clamp the scroll offset, causing the rubberband to collapse which interferes with
+        the user interaction. This happend on Gmail when composing a reply.
+        
+        Fix by tracking the rubberbanding state in the scrolling tree, and having RenderLayer
+        query this state via the ScrollingCoordinator. RenderLayer::updateScrollInfoAfterLayout()
+        already tested isRubberBandInProgress(). This is similar to how isUserScrollInProgress()
+        and isScrollSnapInProgress() work.
+        
+        This patch also fixes the tracking of rubberbanding state. Previously setMainFrameIsRubberBanding()
+        was just based on when the timer was started and stopped, which did not match the
+        implementation of ScrollController::isRubberBandInProgress(). Now ScrollController
+        correctly notifies its clients when the rubberbanding state changes by updating that
+        state whenever any of the conditions consulted in isRubberBandInProgressInternal() change.
+
+        I tried to make tests for this, but the timing of wheel and scroll event delivery makes
+        reliable detection of interrupted rubberbands impossible in WebKitTestRunner.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isRubberBandInProgress const):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::isRubberBandInProgress const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::isRubberBandInProgress const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::isRubberBandInProgressForNode):
+        (WebCore::ScrollingTree::setRubberBandingInProgressForNode):
+        (WebCore::ScrollingTree::isRubberBandInProgress): Deleted.
+        (WebCore::ScrollingTree::setMainFrameIsRubberBanding): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateMainFramePinAndRubberbandState):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::currentScrollPositionChanged):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::currentScrollPositionChanged):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isRubberBandInProgress const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::didStopRubberbandSnapAnimation):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::rubberBandingStateChanged):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::notifyPositionChanged):
+        * platform/cocoa/ScrollController.h:
+        (WebCore::ScrollControllerClient::rubberBandingStateChanged):
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::handleWheelEvent):
+        (WebCore::ScrollController::snapRubberBandTimerFired):
+        (WebCore::ScrollController::scrollPositionChanged):
+        (WebCore::ScrollController::isRubberBandInProgress const):
+        (WebCore::ScrollController::stopSnapRubberbandTimer):
+        (WebCore::ScrollController::isRubberBandInProgressInternal const):
+        (WebCore::ScrollController::updateRubberBandingState):
+        (WebCore::ScrollController::updateGestureInProgressState):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isRubberBandInProgress const):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
 2020-09-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Create LineBox::InlineBox for [ContainerEnd] runs forced to the next line.

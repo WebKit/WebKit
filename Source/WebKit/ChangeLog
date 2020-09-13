@@ -1,3 +1,32 @@
+2020-09-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Overflow:scroll rubberbanding is interrupted by post-layout scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=216463
+        <rdar://problem/67095741>
+
+        Reviewed by Darin Adler.
+
+        When rubberbanding overflow:scroll RenderLayer has an overscrolled scroll offset.
+        If RenderLayer::updateScrollInfoAfterLayout() happens when in this state, it can 
+        clamp the scroll offset, causing the rubberband to collapse which interferes with
+        the user interaction. This happend on Gmail when composing a reply.
+        
+        Fix by tracking the rubberbanding state in the scrolling tree, and having RenderLayer
+        query this state via the ScrollingCoordinator. RenderLayer::updateScrollInfoAfterLayout()
+        already tested isRubberBandInProgress(). This is similar to how isUserScrollInProgress()
+        and isScrollSnapInProgress() work.
+        
+        This patch also fixes the tracking of rubberbanding state. Previously setMainFrameIsRubberBanding()
+        was just based on when the timer was started and stopped, which did not match the
+        implementation of ScrollController::isRubberBandInProgress(). Now ScrollController
+        correctly notifies its clients when the rubberbanding state changes by updating that
+        state whenever any of the conditions consulted in isRubberBandInProgressInternal() change.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::isRubberBandInProgress const):
+        (WebKit::RemoteScrollingCoordinator::scrollingStateInUIProcessChanged):
+
 2020-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a key to the text manipulation userInfo dictionary indicating whether the translated item is on-screen
