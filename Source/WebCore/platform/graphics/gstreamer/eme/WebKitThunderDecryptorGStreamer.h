@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 
 typedef struct _WebKitMediaThunderDecrypt        WebKitMediaThunderDecrypt;
 typedef struct _WebKitMediaThunderDecryptClass   WebKitMediaThunderDecryptClass;
-typedef struct _WebKitMediaThunderDecryptPrivate WebKitMediaThunderDecryptPrivate;
+struct WebKitMediaThunderDecryptPrivate;
 
 GType webkit_media_thunder_decrypt_get_type(void);
 

@@ -34,7 +34,7 @@
 
 using namespace WebCore;
 
-struct _WebKitMediaThunderDecryptPrivate {
+struct WebKitMediaThunderDecryptPrivate {
     RefPtr<CDMProxyThunder> cdmProxy;
 };
 
@@ -105,24 +105,25 @@ static void webkit_media_thunder_decrypt_class_init(WebKitMediaThunderDecryptCla
     commonClass->decrypt = GST_DEBUG_FUNCPTR(decrypt);
 }
 
-static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt* self)
+static const char* protectionSystemId(WebKitMediaCommonEncryptionDecrypt* decryptor)
 {
-    WebKitMediaThunderDecryptPrivate* priv = WEBKIT_MEDIA_THUNDER_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_THUNDER_DECRYPT(self));
-    ASSERT(priv->cdmProxy);
-    return GStreamerEMEUtilities::keySystemToUuid(priv->cdmProxy->keySystem());
+    auto* self = WEBKIT_MEDIA_THUNDER_DECRYPT(decryptor);
+    ASSERT(self->priv->cdmProxy);
+    return GStreamerEMEUtilities::keySystemToUuid(self->priv->cdmProxy->keySystem());
 }
 
-static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, const RefPtr<CDMProxy>& cdmProxy)
+static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* decryptor, const RefPtr<CDMProxy>& cdmProxy)
 {
-    WebKitMediaThunderDecryptPrivate* priv = WEBKIT_MEDIA_THUNDER_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_THUNDER_DECRYPT(self));
-    priv->cdmProxy = reinterpret_cast<CDMProxyThunder*>(cdmProxy.get());
-    return priv->cdmProxy;
+    auto* self = WEBKIT_MEDIA_THUNDER_DECRYPT(decryptor);
+    self->priv->cdmProxy = reinterpret_cast<CDMProxyThunder*>(cdmProxy.get());
+    return self->priv->cdmProxy;
 }
 
-static bool decrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffer, GstBuffer* keyIDBuffer, GstBuffer* buffer, unsigned subsampleCount,
+static bool decrypt(WebKitMediaCommonEncryptionDecrypt* decryptor, GstBuffer* ivBuffer, GstBuffer* keyIDBuffer, GstBuffer* buffer, unsigned subsampleCount,
     GstBuffer* subsamplesBuffer)
 {
-    WebKitMediaThunderDecryptPrivate* priv = WEBKIT_MEDIA_THUNDER_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_THUNDER_DECRYPT(self));
+    auto* self = WEBKIT_MEDIA_THUNDER_DECRYPT(decryptor);
+    auto* priv = self->priv;
 
     if (!ivBuffer || !keyIDBuffer || !buffer) {
         GST_ERROR_OBJECT(self, "invalid decrypt() parameter");

@@ -1,3 +1,16 @@
+2020-09-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK/WPE EME build fixes after r266721
+
+        The Thunder decryptor changes were not tested before landing, this code path is not enabled
+        on any bot currently, hence requires manual testing.
+
+        * platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp:
+        (protectionSystemId):
+        (cdmProxyAttached):
+        (decrypt):
+        * platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.h:
+
 2020-09-13  Rob Buis  <rbuis@igalia.com>
 
         Clean up LazyLoadImageObserver
