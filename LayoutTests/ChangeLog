@@ -1,3 +1,13 @@
+2020-09-12  Tyler Wilcock <twilco.o@protonmail.com>
+
+        Safely handle overly-long CSS variable values
+        https://bugs.webkit.org/show_bug.cgi?id=216407
+
+        Reviewed by Darin Adler.
+
+        * fast/css/variables/invalidate-overly-long-variable-values.html: Added.
+        * fast/css/variables/invalidate-overly-long-variable-values-expected.html: Added.
+
 2020-09-12  Darin Adler  <darin@apple.com>
 
         Send TestRendered event after running a test but before dumping

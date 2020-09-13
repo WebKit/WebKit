@@ -49,6 +49,11 @@ public:
 
     RefPtr<CSSVariableData> resolveVariableReferences(Style::BuilderState&) const;
 
+    // The maximum number of tokens that may be produced by a var()
+    // reference or var() fallback value.
+    // https://drafts.csswg.org/css-variables/#long-variables
+    static constexpr size_t maxSubstitutionTokens = 65536;
+
 private:
     explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&);
 
