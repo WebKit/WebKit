@@ -1,3 +1,31 @@
+2020-09-13  Rob Buis  <rbuis@igalia.com>
+
+        Clean up LazyLoadImageObserver
+        https://bugs.webkit.org/show_bug.cgi?id=216435
+
+        Reviewed by Darin Adler.
+
+        Clean up LazyLoadImageObserver to match LazyLoadFrameObserver, inspired by the
+        review of bug 215442. Specifically remove the friend declaration and create
+        function, rename m_lazyLoadImageObserver to make its use more clear and therefore
+        remove the comment about it.
+
+        * dom/Document.cpp:
+        (WebCore::Document::lazyLoadImageObserver):
+        * html/HTMLIFrameElement.cpp:
+        * html/LazyLoadFrameObserver.cpp:
+        (WebCore::LazyLoadFrameObserver::observe):
+        (WebCore::LazyLoadFrameObserver::unobserve):
+        (WebCore::LazyLoadFrameObserver::intersectionObserver):
+        (WebCore::LazyLoadFrameObserver::isObserved const):
+        * html/LazyLoadFrameObserver.h:
+        * html/LazyLoadImageObserver.cpp:
+        (WebCore::LazyLoadImageObserver::unobserve):
+        (WebCore::LazyLoadImageObserver::intersectionObserver):
+        (WebCore::LazyLoadImageObserver::isObserved const):
+        * html/LazyLoadImageObserver.h:
+        (WebCore::LazyLoadImageObserver::create): Deleted.
+
 2020-09-12  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Safely handle overly-long CSS variable values

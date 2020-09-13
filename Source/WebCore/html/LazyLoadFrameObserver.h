@@ -51,7 +51,7 @@ private:
     HTMLIFrameElement& m_element;
     AtomString m_frameURL;
     ReferrerPolicy m_referrerPolicy;
-    RefPtr<IntersectionObserver> m_lazyLoadFrameIntersectionObserver;
+    RefPtr<IntersectionObserver> m_observer;
 };
 
 } // namespace

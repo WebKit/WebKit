@@ -72,8 +72,8 @@ LazyLoadFrameObserver::LazyLoadFrameObserver(HTMLIFrameElement& element)
 
 void LazyLoadFrameObserver::observe(const AtomString& frameURL, const ReferrerPolicy& referrerPolicy)
 {
-    auto& observer = m_element.lazyLoadFrameObserver();
-    auto* intersectionObserver = observer.intersectionObserver(m_element.document());
+    auto& frameObserver = m_element.lazyLoadFrameObserver();
+    auto* intersectionObserver = frameObserver.intersectionObserver(m_element.document());
     if (!intersectionObserver)
         return;
     m_frameURL = frameURL;
@@ -83,27 +83,27 @@ void LazyLoadFrameObserver::observe(const AtomString& frameURL, const ReferrerPo
 
 void LazyLoadFrameObserver::unobserve()
 {
-    auto& observer = m_element.lazyLoadFrameObserver();
-    ASSERT(observer.isObserved(m_element));
-    observer.m_lazyLoadFrameIntersectionObserver->unobserve(m_element);
+    auto& frameObserver = m_element.lazyLoadFrameObserver();
+    ASSERT(frameObserver.isObserved(m_element));
+    frameObserver.m_observer->unobserve(m_element);
 }
 
 IntersectionObserver* LazyLoadFrameObserver::intersectionObserver(Document& document)
 {
-    if (!m_lazyLoadFrameIntersectionObserver) {
+    if (!m_observer) {
         auto callback = LazyFrameLoadIntersectionObserverCallback::create(document);
         IntersectionObserver::Init options { WTF::nullopt, emptyString(), { } };
         auto observer = IntersectionObserver::create(document, WTFMove(callback), WTFMove(options));
         if (observer.hasException())
             return nullptr;
-        m_lazyLoadFrameIntersectionObserver = observer.releaseReturnValue();
+        m_observer = observer.releaseReturnValue();
     }
-    return m_lazyLoadFrameIntersectionObserver.get();
+    return m_observer.get();
 }
 
 bool LazyLoadFrameObserver::isObserved(Element& element) const
 {
-    return m_lazyLoadFrameIntersectionObserver && m_lazyLoadFrameIntersectionObserver->observationTargets().contains(&element);
+    return m_observer && m_observer->observationTargets().contains(&element);
 }
 
 }

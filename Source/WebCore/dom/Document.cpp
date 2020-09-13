@@ -8626,7 +8626,7 @@ TextManipulationController& Document::textManipulationController()
 LazyLoadImageObserver& Document::lazyLoadImageObserver()
 {
     if (!m_lazyLoadImageObserver)
-        m_lazyLoadImageObserver = LazyLoadImageObserver::create();
+        m_lazyLoadImageObserver = makeUnique<LazyLoadImageObserver>();
     return *m_lazyLoadImageObserver;
 }
 

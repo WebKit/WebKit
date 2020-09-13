@@ -76,26 +76,26 @@ void LazyLoadImageObserver::observe(Element& element)
 
 void LazyLoadImageObserver::unobserve(Element& element, Document& document)
 {
-    if (auto& observer = document.lazyLoadImageObserver().m_lazyLoadIntersectionObserver)
+    if (auto& observer = document.lazyLoadImageObserver().m_observer)
         observer->unobserve(element);
 }
 
 IntersectionObserver* LazyLoadImageObserver::intersectionObserver(Document& document)
 {
-    if (!m_lazyLoadIntersectionObserver) {
+    if (!m_observer) {
         auto callback = LazyImageLoadIntersectionObserverCallback::create(document);
         IntersectionObserver::Init options { WTF::nullopt, emptyString(), { } };
         auto observer = IntersectionObserver::create(document, WTFMove(callback), WTFMove(options));
         if (observer.hasException())
             return nullptr;
-        m_lazyLoadIntersectionObserver = observer.returnValue().ptr();
+        m_observer = observer.returnValue().ptr();
     }
-    return m_lazyLoadIntersectionObserver.get();
+    return m_observer.get();
 }
 
 bool LazyLoadImageObserver::isObserved(Element& element) const
 {
-    return m_lazyLoadIntersectionObserver && m_lazyLoadIntersectionObserver->observationTargets().contains(&element);
+    return m_observer && m_observer->observationTargets().contains(&element);
 }
 
 }

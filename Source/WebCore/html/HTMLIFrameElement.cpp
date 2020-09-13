@@ -34,7 +34,6 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
