@@ -1,3 +1,68 @@
+2020-09-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        Consolidate BaseDateAndTimeInputType and BaseChooserOnlyDateAndTimeInputType
+        https://bugs.webkit.org/show_bug.cgi?id=216414
+
+        Reviewed by Devin Rousso.
+
+        BaseChooserOnlyDateAndTimeInputType is the only derived class of
+        BaseDateAndTimeInputType. Furthermore, with the introduction of editable
+        components, "ChooserOnly" no longer makes sense as a name for the
+        derived class. Consequently, all logic in BaseChooserOnlyDateAndTimeInputType
+        was moved into BaseDateAndTimeInputType, and the derived classes of the
+        "ChooserOnly" type now inherit BaseDateAndTimeInputType.
+
+        Also changed some methods from override to final, and made some protected
+        methods private, where possible.
+
+        No new tests, as there is no change in behavior.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp: Removed.
+        * html/BaseChooserOnlyDateAndTimeInputType.h: Removed.
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::DateTimeFormatValidator::visitField):
+        (WebCore::BaseDateAndTimeInputType::DateTimeFormatValidator::validateFormat):
+        (WebCore::BaseDateAndTimeInputType::~BaseDateAndTimeInputType):
+        (WebCore::BaseDateAndTimeInputType::isMouseFocusable const):
+        (WebCore::BaseDateAndTimeInputType::shouldHaveSecondField const):
+        (WebCore::BaseDateAndTimeInputType::shouldHaveMillisecondField const):
+        (WebCore::BaseDateAndTimeInputType::setValue):
+        (WebCore::BaseDateAndTimeInputType::handleDOMActivateEvent):
+        (WebCore::BaseDateAndTimeInputType::createShadowSubtree):
+        (WebCore::BaseDateAndTimeInputType::destroyShadowSubtree):
+        (WebCore::BaseDateAndTimeInputType::updateInnerTextValue):
+        (WebCore::BaseDateAndTimeInputType::hasCustomFocusLogic const):
+        (WebCore::BaseDateAndTimeInputType::attributeChanged):
+        (WebCore::BaseDateAndTimeInputType::elementDidBlur):
+        (WebCore::BaseDateAndTimeInputType::detach):
+        (WebCore::BaseDateAndTimeInputType::isPresentingAttachedView const):
+        (WebCore::BaseDateAndTimeInputType::handleKeydownEvent):
+        (WebCore::BaseDateAndTimeInputType::handleKeypressEvent):
+        (WebCore::BaseDateAndTimeInputType::handleKeyupEvent):
+        (WebCore::BaseDateAndTimeInputType::handleFocusEvent):
+        (WebCore::BaseDateAndTimeInputType::accessKeyAction):
+        (WebCore::BaseDateAndTimeInputType::didBlurFromControl):
+        (WebCore::BaseDateAndTimeInputType::didChangeValueFromControl):
+        (WebCore::BaseDateAndTimeInputType::isEditControlOwnerDisabled const):
+        (WebCore::BaseDateAndTimeInputType::isEditControlOwnerReadOnly const):
+        (WebCore::BaseDateAndTimeInputType::localeIdentifier const):
+        (WebCore::BaseDateAndTimeInputType::didChooseValue):
+        (WebCore::BaseDateAndTimeInputType::didEndChooser):
+        (WebCore::BaseDateAndTimeInputType::closeDateTimeChooser):
+        * html/BaseDateAndTimeInputType.h:
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::DateInputType):
+        * html/DateInputType.h:
+        * html/DateTimeLocalInputType.cpp:
+        * html/DateTimeLocalInputType.h:
+        * html/MonthInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::TimeInputType):
+        * html/TimeInputType.h:
+        * html/WeekInputType.h:
+
 2020-09-13  Simon Fraser  <simon.fraser@apple.com>
 
         Overflow:scroll rubberbanding is interrupted by post-layout scrolling

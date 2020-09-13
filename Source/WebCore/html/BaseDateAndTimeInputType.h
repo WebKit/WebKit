@@ -33,42 +33,111 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "DateTimeChooser.h"
+#include "DateTimeChooserClient.h"
+#include "DateTimeEditElement.h"
+#include "DateTimeFormat.h"
 #include "InputType.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class DateComponents;
 
 // A super class of date, datetime, datetime-local, month, time, and week types.
-class BaseDateAndTimeInputType : public InputType {
+class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElement::EditControlOwner {
 protected:
+    enum class DateTimeFormatValidationResults : uint8_t {
+        HasYear = 1 << 0,
+        HasMonth = 1 << 1,
+        HasWeek = 1 << 2,
+        HasDay = 1 << 3,
+        HasHour = 1 << 4,
+        HasMinute = 1 << 5,
+        HasSecond = 1 << 6,
+        HasMeridiem = 1 << 7,
+    };
+
     BaseDateAndTimeInputType(HTMLInputElement& element) : InputType(element) { }
+    ~BaseDateAndTimeInputType();
 
     Decimal parseToNumber(const String&, const Decimal&) const override;
-    String sanitizeValue(const String&) const override;
     String serialize(const Decimal&) const override;
     String serializeWithComponents(const DateComponents&) const;
-    String visibleValue() const override;
-    void attributeChanged(const QualifiedName&) override;
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
+
+    bool shouldHaveSecondField(const DateComponents&) const;
+    bool shouldHaveMillisecondField(const DateComponents&) const;
+
+private:
+    class DateTimeFormatValidator final : public DateTimeFormat::TokenHandler {
+    public:
+        DateTimeFormatValidator() { }
+
+        void visitField(DateTimeFormat::FieldType, int);
+        void visitLiteral(const String&) { }
+
+        bool validateFormat(const String& format, const BaseDateAndTimeInputType&);
+
+    private:
+        OptionSet<DateTimeFormatValidationResults> m_results;
+    };
 
     virtual Optional<DateComponents> parseToDateComponents(const StringView&) const = 0;
     virtual Optional<DateComponents> setMillisecondToDateComponents(double) const = 0;
+    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
+    virtual bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const = 0;
+    virtual String serializeWithMilliseconds(double) const;
 
-private:
+    // InputType functions:
+    String visibleValue() const final;
+    String sanitizeValue(const String&) const final;
+    void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
     double valueAsDate() const override;
     ExceptionOr<void> setValueAsDate(double) const override;
-    double valueAsDouble() const override;
-    ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const override;
-    bool typeMismatchFor(const String&) const override;
-    bool typeMismatch() const override;
-    bool valueMissing(const String&) const override;
+    double valueAsDouble() const final;
+    ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
+    bool typeMismatchFor(const String&) const final;
+    bool typeMismatch() const final;
+    bool valueMissing(const String&) const final;
     Decimal defaultValueForStepUp() const override;
-    bool isSteppable() const override;
-    virtual String serializeWithMilliseconds(double) const;
-    String localizeValue(const String&) const override;
-    bool supportsReadOnly() const override;
-    bool shouldRespectListAttribute() override;
+    bool isSteppable() const final;
+    String localizeValue(const String&) const final;
+    bool supportsReadOnly() const final;
+    bool shouldRespectListAttribute() final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
+    bool isMouseFocusable() const final;
+
+    void handleDOMActivateEvent(Event&) override;
+    void createShadowSubtree() final;
+    void destroyShadowSubtree() final;
+    void updateInnerTextValue() final;
+    bool hasCustomFocusLogic() const final;
+    void attributeChanged(const QualifiedName&) final;
+    bool isPresentingAttachedView() const final;
+    void elementDidBlur() final;
+    void detach() final;
+
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
+    void handleKeypressEvent(KeyboardEvent&) override;
+    void handleKeyupEvent(KeyboardEvent&) override;
+    void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
+    bool accessKeyAction(bool sendMouseEvents) override;
+
+    // DateTimeEditElement::EditControlOwner functions:
+    void didBlurFromControl() final;
+    void didChangeValueFromControl() final;
+    bool isEditControlOwnerDisabled() const final;
+    bool isEditControlOwnerReadOnly() const final;
+    AtomString localeIdentifier() const final;
+
+    // DateTimeChooserClient functions:
+    void didChooseValue(StringView) final;
+    void didEndChooser() final;
+
+    void closeDateTimeChooser();
+
+    std::unique_ptr<DateTimeChooser> m_dateTimeChooser;
+    RefPtr<DateTimeEditElement> m_dateTimeEditElement;
 };
 
 } // namespace WebCore

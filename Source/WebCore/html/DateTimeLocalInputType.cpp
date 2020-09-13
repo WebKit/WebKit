@@ -34,10 +34,12 @@
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
 
 #include "DateComponents.h"
+#include "DateTimeFieldsState.h"
 #include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
+#include "PlatformLocale.h"
 #include "StepRange.h"
 
 namespace WebCore {

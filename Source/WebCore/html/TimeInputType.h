@@ -32,11 +32,11 @@
 
 #if ENABLE(INPUT_TYPE_TIME)
 
-#include "BaseChooserOnlyDateAndTimeInputType.h"
+#include "BaseDateAndTimeInputType.h"
 
 namespace WebCore {
 
-class TimeInputType final : public BaseChooserOnlyDateAndTimeInputType {
+class TimeInputType final : public BaseDateAndTimeInputType {
 public:
     explicit TimeInputType(HTMLInputElement&);
 

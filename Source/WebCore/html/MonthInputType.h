@@ -32,13 +32,16 @@
 
 #if ENABLE(INPUT_TYPE_MONTH)
 
-#include "BaseChooserOnlyDateAndTimeInputType.h"
+#include "BaseDateAndTimeInputType.h"
 
 namespace WebCore {
 
-class MonthInputType final : public BaseChooserOnlyDateAndTimeInputType {
+class MonthInputType final : public BaseDateAndTimeInputType {
 public:
-    explicit MonthInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
+    explicit MonthInputType(HTMLInputElement& element)
+        : BaseDateAndTimeInputType(element)
+    {
+    }
 
 private:
     const AtomString& formControlType() const override;

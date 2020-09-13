@@ -32,13 +32,16 @@
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
 
-#include "BaseChooserOnlyDateAndTimeInputType.h"
+#include "BaseDateAndTimeInputType.h"
 
 namespace WebCore {
 
-class DateTimeLocalInputType final : public BaseChooserOnlyDateAndTimeInputType {
+class DateTimeLocalInputType final : public BaseDateAndTimeInputType {
 public:
-    explicit DateTimeLocalInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
+    explicit DateTimeLocalInputType(HTMLInputElement& element)
+        : BaseDateAndTimeInputType(element)
+    {
+    }
 
 private:
     const AtomString& formControlType() const final;

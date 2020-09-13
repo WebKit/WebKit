@@ -50,7 +50,7 @@ static const int dateStepScaleFactor = 86400000;
 static const StepRange::StepDescription dateStepDescription { dateDefaultStep, dateDefaultStepBase, dateStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger };
 
 DateInputType::DateInputType(HTMLInputElement& element)
-    : BaseChooserOnlyDateAndTimeInputType(element)
+    : BaseDateAndTimeInputType(element)
 {
 }
 

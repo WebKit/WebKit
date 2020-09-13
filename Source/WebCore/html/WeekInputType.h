@@ -32,13 +32,16 @@
 
 #if ENABLE(INPUT_TYPE_WEEK)
 
-#include "BaseChooserOnlyDateAndTimeInputType.h"
+#include "BaseDateAndTimeInputType.h"
 
 namespace WebCore {
 
-class WeekInputType final : public BaseChooserOnlyDateAndTimeInputType {
+class WeekInputType final : public BaseDateAndTimeInputType {
 public:
-    explicit WeekInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
+    explicit WeekInputType(HTMLInputElement& element)
+        : BaseDateAndTimeInputType(element)
+    {
+    }
 
 private:
     const AtomString& formControlType() const override;

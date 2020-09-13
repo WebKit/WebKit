@@ -1065,7 +1065,6 @@ html/Autocapitalize.cpp
 html/Autofill.cpp
 html/BaseButtonInputType.cpp
 html/BaseCheckableInputType.cpp
-html/BaseChooserOnlyDateAndTimeInputType.cpp
 html/BaseClickableWithKeyInputType.cpp
 html/BaseDateAndTimeInputType.cpp
 html/BaseTextInputType.cpp

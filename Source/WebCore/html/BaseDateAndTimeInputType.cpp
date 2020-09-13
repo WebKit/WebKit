@@ -34,12 +34,23 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "BaseClickableWithKeyInputType.h"
+#include "Chrome.h"
 #include "DateComponents.h"
+#include "DateTimeChooserParameters.h"
 #include "Decimal.h"
+#include "FocusController.h"
+#include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "Page.h"
 #include "PlatformLocale.h"
+#include "Settings.h"
+#include "ShadowRoot.h"
+#include "StepRange.h"
+#include "Text.h"
+#include "UserGestureIndicator.h"
 #include <limits>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
@@ -51,6 +62,66 @@ using namespace HTMLNames;
 
 static const int msecPerMinute = 60 * 1000;
 static const int msecPerSecond = 1000;
+
+void BaseDateAndTimeInputType::DateTimeFormatValidator::visitField(DateTimeFormat::FieldType fieldType, int)
+{
+    switch (fieldType) {
+    case DateTimeFormat::FieldTypeYear:
+        m_results.add(DateTimeFormatValidationResults::HasYear);
+        break;
+
+    case DateTimeFormat::FieldTypeMonth:
+    case DateTimeFormat::FieldTypeMonthStandAlone:
+        m_results.add(DateTimeFormatValidationResults::HasMonth);
+        break;
+
+    case DateTimeFormat::FieldTypeWeekOfYear:
+        m_results.add(DateTimeFormatValidationResults::HasWeek);
+        break;
+
+    case DateTimeFormat::FieldTypeDayOfMonth:
+        m_results.add(DateTimeFormatValidationResults::HasDay);
+        break;
+
+    case DateTimeFormat::FieldTypePeriod:
+        m_results.add(DateTimeFormatValidationResults::HasMeridiem);
+        break;
+
+    case DateTimeFormat::FieldTypeHour11:
+    case DateTimeFormat::FieldTypeHour12:
+        m_results.add(DateTimeFormatValidationResults::HasHour);
+        break;
+
+    case DateTimeFormat::FieldTypeHour23:
+    case DateTimeFormat::FieldTypeHour24:
+        m_results.add(DateTimeFormatValidationResults::HasHour);
+        m_results.add(DateTimeFormatValidationResults::HasMeridiem);
+        break;
+
+    case DateTimeFormat::FieldTypeMinute:
+        m_results.add(DateTimeFormatValidationResults::HasMinute);
+        break;
+
+    case DateTimeFormat::FieldTypeSecond:
+        m_results.add(DateTimeFormatValidationResults::HasSecond);
+        break;
+
+    default:
+        break;
+    }
+}
+
+bool BaseDateAndTimeInputType::DateTimeFormatValidator::validateFormat(const String& format, const BaseDateAndTimeInputType& inputType)
+{
+    if (!DateTimeFormat::parse(format, *this))
+        return false;
+    return inputType.isValidFormat(m_results);
+}
+
+BaseDateAndTimeInputType::~BaseDateAndTimeInputType()
+{
+    closeDateTimeChooser();
+}
 
 double BaseDateAndTimeInputType::valueAsDate() const
 {
@@ -99,15 +170,6 @@ Decimal BaseDateAndTimeInputType::defaultValueForStepUp() const
 bool BaseDateAndTimeInputType::isSteppable() const
 {
     return true;
-}
-
-void BaseDateAndTimeInputType::attributeChanged(const QualifiedName& name)
-{
-    if (name == maxAttr || name == minAttr) {
-        if (auto* element = this->element())
-            element->invalidateStyleForSubtree();
-    }
-    InputType::attributeChanged(name);
 }
 
 Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const
@@ -188,6 +250,260 @@ bool BaseDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
     ASSERT(element());
     return !element()->isReadOnly() && element()->isTextFormControlFocusable();
+}
+
+bool BaseDateAndTimeInputType::isMouseFocusable() const
+{
+    ASSERT(element());
+    return element()->isTextFormControlFocusable();
+}
+
+bool BaseDateAndTimeInputType::shouldHaveSecondField(const DateComponents& date) const
+{
+    if (date.second())
+        return true;
+
+    auto stepRange = createStepRange(AnyStepHandling::Default);
+    return !stepRange.minimum().remainder(msecPerMinute).isZero()
+        || !stepRange.step().remainder(msecPerMinute).isZero();
+}
+
+bool BaseDateAndTimeInputType::shouldHaveMillisecondField(const DateComponents& date) const
+{
+    if (date.millisecond())
+        return true;
+
+    auto stepRange = createStepRange(AnyStepHandling::Default);
+    return !stepRange.minimum().remainder(msecPerSecond).isZero()
+        || !stepRange.step().remainder(msecPerSecond).isZero();
+}
+
+void BaseDateAndTimeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)
+{
+    InputType::setValue(value, valueChanged, eventBehavior);
+    if (valueChanged)
+        updateInnerTextValue();
+}
+
+void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
+{
+    ASSERT(element());
+    if (element()->isDisabledOrReadOnly() || !element()->renderer() || !UserGestureIndicator::processingUserGesture())
+        return;
+
+    if (m_dateTimeChooser)
+        return;
+    if (!element()->document().page())
+        return;
+
+    DateTimeChooserParameters parameters;
+    if (!element()->setupDateTimeChooserParameters(parameters))
+        return;
+
+    if (auto chrome = this->chrome()) {
+        m_dateTimeChooser = chrome->createDateTimeChooser(*this);
+        if (m_dateTimeChooser)
+            m_dateTimeChooser->showChooser(parameters);
+    }
+}
+
+void BaseDateAndTimeInputType::createShadowSubtree()
+{
+    ASSERT(element());
+
+    auto& element = *this->element();
+    auto& document = element.document();
+
+    if (document.settings().dateTimeInputsEditableComponentsEnabled()) {
+        m_dateTimeEditElement = DateTimeEditElement::create(document, *this);
+        element.userAgentShadowRoot()->appendChild(*m_dateTimeEditElement);
+    } else {
+        static MainThreadNeverDestroyed<const AtomString> valueContainerPseudo("-webkit-date-and-time-value", AtomString::ConstructFromLiteral);
+        auto valueContainer = HTMLDivElement::create(document);
+        valueContainer->setPseudo(valueContainerPseudo);
+        element.userAgentShadowRoot()->appendChild(valueContainer);
+    }
+    updateInnerTextValue();
+}
+
+void BaseDateAndTimeInputType::destroyShadowSubtree()
+{
+    InputType::destroyShadowSubtree();
+    m_dateTimeEditElement = nullptr;
+}
+
+void BaseDateAndTimeInputType::updateInnerTextValue()
+{
+    ASSERT(element());
+    if (!m_dateTimeEditElement) {
+        auto node = element()->userAgentShadowRoot()->firstChild();
+        if (!is<HTMLElement>(node))
+            return;
+        auto displayValue = visibleValue();
+        if (displayValue.isEmpty()) {
+            // Need to put something to keep text baseline.
+            displayValue = " "_s;
+        }
+        downcast<HTMLElement>(*node).setInnerText(displayValue);
+        return;
+    }
+
+    DateTimeEditElement::LayoutParameters layoutParameters(element()->locale());
+
+    auto date = parseToDateComponents(element()->value());
+    if (date)
+        setupLayoutParameters(layoutParameters, *date);
+    else {
+        if (auto dateForLayout = setMillisecondToDateComponents(createStepRange(AnyStepHandling::Default).minimum().toDouble()))
+            setupLayoutParameters(layoutParameters, *dateForLayout);
+        else
+            setupLayoutParameters(layoutParameters, DateComponents());
+    }
+
+    if (!DateTimeFormatValidator().validateFormat(layoutParameters.dateTimeFormat, *this))
+        layoutParameters.dateTimeFormat = layoutParameters.fallbackDateTimeFormat;
+
+    if (date)
+        m_dateTimeEditElement->setValueAsDate(layoutParameters, *date);
+    else
+        m_dateTimeEditElement->setEmptyValue(layoutParameters);
+}
+
+bool BaseDateAndTimeInputType::hasCustomFocusLogic() const
+{
+    if (m_dateTimeEditElement)
+        return false;
+    return InputType::hasCustomFocusLogic();
+}
+
+void BaseDateAndTimeInputType::attributeChanged(const QualifiedName& name)
+{
+    if (name == maxAttr || name == minAttr) {
+        if (auto* element = this->element())
+            element->invalidateStyleForSubtree();
+    } else if (name == valueAttr) {
+        if (auto* element = this->element()) {
+            if (!element->hasDirtyValue())
+                updateInnerTextValue();
+        }
+    } else if (name == stepAttr && m_dateTimeEditElement)
+        updateInnerTextValue();
+
+    InputType::attributeChanged(name);
+}
+
+void BaseDateAndTimeInputType::elementDidBlur()
+{
+    closeDateTimeChooser();
+}
+
+void BaseDateAndTimeInputType::detach()
+{
+    closeDateTimeChooser();
+}
+
+bool BaseDateAndTimeInputType::isPresentingAttachedView() const
+{
+    return !!m_dateTimeChooser;
+}
+
+auto BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
+{
+    ASSERT(element());
+    return BaseClickableWithKeyInputType::handleKeydownEvent(*element(), event);
+}
+
+void BaseDateAndTimeInputType::handleKeypressEvent(KeyboardEvent& event)
+{
+    ASSERT(element());
+    BaseClickableWithKeyInputType::handleKeypressEvent(*element(), event);
+}
+
+void BaseDateAndTimeInputType::handleKeyupEvent(KeyboardEvent& event)
+{
+    BaseClickableWithKeyInputType::handleKeyupEvent(*this, event);
+}
+
+void BaseDateAndTimeInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection direction)
+{
+    if (!m_dateTimeEditElement) {
+        InputType::handleFocusEvent(oldFocusedNode, direction);
+        return;
+    }
+
+    // If the element contains editable components, the element itself should not
+    // be focused. Instead, one of it's children should receive focus.
+
+    if (direction == FocusDirectionBackward) {
+        // If the element received focus when going backwards, advance the focus one more time
+        // so that this element no longer has focus. In this case, one of the children should
+        // not be focused as the element is losing focus entirely.
+        if (auto* page = element()->document().page())
+            page->focusController().advanceFocus(direction, 0);
+    } else {
+        // If the element received focus in any other direction, transfer focus to the first focusable child.
+        m_dateTimeEditElement->focusByOwner();
+    }
+}
+
+bool BaseDateAndTimeInputType::accessKeyAction(bool sendMouseEvents)
+{
+    InputType::accessKeyAction(sendMouseEvents);
+    ASSERT(element());
+    return BaseClickableWithKeyInputType::accessKeyAction(*element(), sendMouseEvents);
+}
+
+void BaseDateAndTimeInputType::didBlurFromControl()
+{
+    closeDateTimeChooser();
+}
+
+void BaseDateAndTimeInputType::didChangeValueFromControl()
+{
+    String value = sanitizeValue(m_dateTimeEditElement->value());
+    InputType::setValue(value, value != element()->value(), DispatchInputAndChangeEvent);
+
+    DateTimeChooserParameters parameters;
+    if (!element()->setupDateTimeChooserParameters(parameters))
+        return;
+
+    if (m_dateTimeChooser)
+        m_dateTimeChooser->showChooser(parameters);
+}
+
+bool BaseDateAndTimeInputType::isEditControlOwnerDisabled() const
+{
+    ASSERT(element());
+    return element()->isDisabledFormControl();
+}
+
+bool BaseDateAndTimeInputType::isEditControlOwnerReadOnly() const
+{
+    ASSERT(element());
+    return element()->isReadOnly();
+}
+
+AtomString BaseDateAndTimeInputType::localeIdentifier() const
+{
+    ASSERT(element());
+    return element()->computeInheritedLanguage();
+}
+
+void BaseDateAndTimeInputType::didChooseValue(StringView value)
+{
+    ASSERT(element());
+    element()->setValue(value.toString(), DispatchInputAndChangeEvent);
+}
+
+void BaseDateAndTimeInputType::didEndChooser()
+{
+    m_dateTimeChooser = nullptr;
+}
+
+void BaseDateAndTimeInputType::closeDateTimeChooser()
+{
+    if (m_dateTimeChooser)
+        m_dateTimeChooser->endChooser();
 }
 
 } // namespace WebCore

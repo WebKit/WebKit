@@ -53,7 +53,7 @@ static const int timeStepScaleFactor = 1000;
 static const StepRange::StepDescription timeStepDescription { timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger };
 
 TimeInputType::TimeInputType(HTMLInputElement& element)
-    : BaseChooserOnlyDateAndTimeInputType(element)
+    : BaseDateAndTimeInputType(element)
 {
 }
 
