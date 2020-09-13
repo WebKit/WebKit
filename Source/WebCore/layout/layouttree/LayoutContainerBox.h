@@ -39,7 +39,7 @@ namespace Layout {
 class ContainerBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(ContainerBox);
 public:
-    ContainerBox(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = Box::ContainerBoxFlag);
+    ContainerBox(Optional<ElementAttributes>, RenderStyle&&, OptionSet<BaseTypeFlag> = { ContainerBoxFlag });
 
     const Box* firstChild() const { return m_firstChild; }
     const Box* firstInFlowChild() const;

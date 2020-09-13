@@ -41,10 +41,10 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, OptionSet<BaseTypeFlag> baseTypeFlags)
     : m_style(WTFMove(style))
     , m_elementAttributes(attributes)
-    , m_baseTypeFlags(baseTypeFlags)
+    , m_baseTypeFlags(baseTypeFlags.toRaw())
     , m_hasRareData(false)
     , m_isAnonymous(false)
 {

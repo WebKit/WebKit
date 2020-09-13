@@ -1,3 +1,25 @@
+2020-09-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Use an OptionSet<> for LayoutBox::BaseTypeFlags
+        https://bugs.webkit.org/show_bug.cgi?id=216445
+
+        Reviewed by Darin Adler.
+
+        Use an OptionSet<> for LayoutBox::BaseTypeFlags.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isInitialContainingBlock const):
+        (WebCore::Layout::Box::isContainerBox const):
+        (WebCore::Layout::Box::isInlineTextBox const):
+        (WebCore::Layout::Box::isLineBreakBox const):
+        (WebCore::Layout::Box::isReplacedBox const):
+        * layout/layouttree/LayoutContainerBox.cpp:
+        (WebCore::Layout::ContainerBox::ContainerBox):
+        * layout/layouttree/LayoutContainerBox.h:
+        (WebCore::Layout::ContainerBox::ContainerBox):
+
 2020-09-12  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Remove need for [MayThrowException] on named deleters
