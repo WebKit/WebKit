@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ReftestFunctions.h"
 
-#include <JavaScriptCore/JavaScript.h>
-#include <wtf/RefCounted.h>
+#include "JSBasics.h"
 
 namespace WTR {
 
-class JSWrappable : public RefCounted<JSWrappable> {
-public:
-    virtual ~JSWrappable() { }
-    virtual JSClassRef wrapperClass() = 0;
-};
+void sendTestRenderedEvent(JSGlobalContextRef context)
+{
+    if (!context)
+        return;
+    auto initializer = JSObjectMake(context, nullptr, nullptr);
+    setProperty(context, initializer, "bubbles", true);
+    auto event = callConstructor(context, "Event", { makeValue(context, "TestRendered"), initializer });
+    auto documentElement = objectProperty(context, JSContextGetGlobalObject(context), { "document", "documentElement" });
+    call(context, documentElement, "dispatchEvent", { event });
+}
 
-} // namespace WTR
+bool hasReftestWaitAttribute(JSGlobalContextRef context)
+{
+    if (!context)
+        return false;
+    auto classList = objectProperty(context, JSContextGetGlobalObject(context), { "document", "documentElement", "classList" });
+    return JSValueToBoolean(context, call(context, classList, "contains", { makeValue(context, "reftest-wait") }));
+}
+
+}

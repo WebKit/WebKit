@@ -2197,8 +2197,6 @@ webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-d
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe.sub.html [ Skip ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/dynamic-content-change-rendering.html [ Skip ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ Skip ]
 
 #<rdar://63026283> [ macOS iOS ] media/modern-media-controls/playback-support/playback-support-autoplay.html is a flaky failure/timeout
 [ BigSur+ ] media/modern-media-controls/playback-support/playback-support-autoplay.html [ Pass Failure ]

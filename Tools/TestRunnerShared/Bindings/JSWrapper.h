@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "JSBasics.h"
 #include "JSWrappable.h"
 
 namespace WTR {

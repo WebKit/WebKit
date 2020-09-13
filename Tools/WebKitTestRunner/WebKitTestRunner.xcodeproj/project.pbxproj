@@ -122,6 +122,9 @@
 		8034C6621487636400AC32E9 /* AccessibilityControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */; };
 		8097338A14874A5A008156D9 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8097338914874A5A008156D9 /* AccessibilityNotificationHandler.mm */; };
 		9376417A210D737200A3DAAE /* WebKitTestRunnerWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93764176210D736000A3DAAE /* WebKitTestRunnerWindow.mm */; };
+		93C78823250C6C2E00C0AA24 /* ReftestFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C7881F250C69E400C0AA24 /* ReftestFunctions.cpp */; };
+		93C78831250C719F00C0AA24 /* JSBasics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78830250C719900C0AA24 /* JSBasics.cpp */; };
+		93C78832250C71B700C0AA24 /* JSBasics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78830250C719900C0AA24 /* JSBasics.cpp */; };
 		A185103A1B9AE0DA00744AEB /* CrashReporterInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */; };
 		A185103B1B9AE0E200744AEB /* TestControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */; };
 		A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841CC00D181185BF0042E9B6 /* Options.cpp */; };
@@ -352,6 +355,10 @@
 		8DD76FA10486AA7600D96B5E /* WebKitTestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitTestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
 		93764176210D736000A3DAAE /* WebKitTestRunnerWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerWindow.mm; sourceTree = "<group>"; };
 		93764177210D736100A3DAAE /* WebKitTestRunnerWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerWindow.h; sourceTree = "<group>"; };
+		93C7881F250C69E400C0AA24 /* ReftestFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReftestFunctions.cpp; path = ../TestRunnerShared/ReftestFunctions.cpp; sourceTree = "<group>"; };
+		93C78820250C69E400C0AA24 /* ReftestFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReftestFunctions.h; path = ../TestRunnerShared/ReftestFunctions.h; sourceTree = "<group>"; };
+		93C7882F250C719900C0AA24 /* JSBasics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSBasics.h; path = ../TestRunnerShared/Bindings/JSBasics.h; sourceTree = "<group>"; };
+		93C78830250C719900C0AA24 /* JSBasics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSBasics.cpp; path = ../TestRunnerShared/Bindings/JSBasics.cpp; sourceTree = "<group>"; };
 		9B0D132E2036D346008FC8FB /* WebKitTestRunnerApp-iOS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "WebKitTestRunnerApp-iOS.entitlements"; sourceTree = "<group>"; };
 		9B36A270209453A0003E0651 /* WhatToDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhatToDump.h; sourceTree = "<group>"; };
 		A18510271B9ADE4800744AEB /* libWebKitTestRunner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWebKitTestRunner.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -536,6 +543,8 @@
 				0F73B5471BA782FE004B3EF4 /* UIScriptContext */,
 				3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */,
 				3148A0541E6F85B600D3B316 /* IOSLayoutTestCommunication.h */,
+				93C7881F250C69E400C0AA24 /* ReftestFunctions.cpp */,
+				93C78820250C69E400C0AA24 /* ReftestFunctions.h */,
 			);
 			name = TestRunnerShared;
 			sourceTree = "<group>";
@@ -543,6 +552,8 @@
 		0F18E71B1D6BC4E60027E547 /* Bindings */ = {
 			isa = PBXGroup;
 			children = (
+				93C78830250C719900C0AA24 /* JSBasics.cpp */,
+				93C7882F250C719900C0AA24 /* JSBasics.h */,
 				0F18E7141D6BC4560027E547 /* JSWrappable.h */,
 				0F18E7151D6BC4560027E547 /* JSWrapper.cpp */,
 				0F18E7161D6BC4560027E547 /* JSWrapper.h */,
@@ -1184,6 +1195,7 @@
 				A185103F1B9AE12900744AEB /* GeolocationProviderMock.cpp in Sources */,
 				F44A531821B899E500DBB99C /* InstanceMethodSwizzler.mm in Sources */,
 				31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */,
+				93C78832250C71B700C0AA24 /* JSBasics.cpp in Sources */,
 				0F73B5511BA78968004B3EF4 /* JSUIScriptController.cpp in Sources */,
 				0F18E7181D6BC4560027E547 /* JSWrapper.cpp in Sources */,
 				F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */,
@@ -1241,11 +1253,13 @@
 				29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */,
 				29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */,
 				29210EE1144CDB2600835BB5 /* JSAccessibilityUIElement.cpp in Sources */,
+				93C78831250C719F00C0AA24 /* JSBasics.cpp in Sources */,
 				BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */,
 				BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */,
 				BC952F1F11F3C652003398B4 /* JSTestRunner.cpp in Sources */,
 				5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */,
 				0F6E89031D6BC5A2008ED0FA /* JSWrapper.cpp in Sources */,
+				93C78823250C6C2E00C0AA24 /* ReftestFunctions.cpp in Sources */,
 				2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */,
 				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,

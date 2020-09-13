@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,24 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
-#include <wtf/RefCounted.h>
+#include <initializer_list>
+#include <wtf/Optional.h>
 
 namespace WTR {
 
-class JSWrappable : public RefCounted<JSWrappable> {
-public:
-    virtual ~JSWrappable() { }
-    virtual JSClassRef wrapperClass() = 0;
-};
+JSValueRef JSValueMakeBooleanOrNull(JSContextRef, Optional<bool>);
+Optional<bool> JSValueToNullableBoolean(JSContextRef, JSValueRef);
+
+JSValueRef JSValueMakeStringOrNull(JSContextRef, JSStringRef);
+
+JSRetainPtr<JSStringRef> createJSString(const char*);
+JSValueRef makeValue(JSContextRef, const char*);
+JSObjectRef objectProperty(JSContextRef, JSObjectRef, const char* name);
+JSObjectRef objectProperty(JSContextRef, JSObjectRef, std::initializer_list<const char*> names);
+void setProperty(JSContextRef, JSObjectRef, const char* name, bool value);
+JSValueRef call(JSContextRef, JSObjectRef, const char* name, std::initializer_list<JSValueRef> arguments);
+JSObjectRef callConstructor(JSGlobalContextRef, const char* name, std::initializer_list<JSValueRef> arguments);
 
 } // namespace WTR

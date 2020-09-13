@@ -7,6 +7,7 @@ file(MAKE_DIRECTORY ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle)
 file(MAKE_DIRECTORY ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext)
 
 set(WebKitTestRunner_SOURCES
+    ${WebKitTestRunner_BINDINGS_DIR}/JSBasics.cpp
     ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp
 
     ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
@@ -47,6 +48,9 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 set(WebKitTestRunnerInjectedBundle_SOURCES
+    ${WebKitTestRunner_SHARED_DIR}/ReftestFunctions.cpp
+
+    ${WebKitTestRunner_BINDINGS_DIR}/JSBasics.cpp
     ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp
 
     InjectedBundle/AccessibilityController.cpp
@@ -64,6 +68,7 @@ set(WebKitTestRunnerInjectedBundle_SOURCES
 
 set(WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
+    ${WebKitTestRunner_SHARED_DIR}
     ${WebKitTestRunner_BINDINGS_DIR}
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
     ${WebKitTestRunner_DIR}

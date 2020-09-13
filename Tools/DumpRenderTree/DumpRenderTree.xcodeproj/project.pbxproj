@@ -111,6 +111,8 @@
 		5DB9ACA00F722C3600684641 /* WebKitWeightWatcher900.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */; };
 		80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */; };
 		8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */; };
+		93C78826250C6D3A00C0AA24 /* ReftestFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78824250C6D3900C0AA24 /* ReftestFunctions.cpp */; };
+		93C7882E250C717200C0AA24 /* JSBasics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78829250C713400C0AA24 /* JSBasics.cpp */; };
 		9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */; };
 		A1158D581892740C0088C17B /* DumpRenderTreeBrowserView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1158D56189273EB0088C17B /* DumpRenderTreeBrowserView.mm */; };
 		A1158D59189274360088C17B /* PixelDumpSupportIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1158D57189273EB0088C17B /* PixelDumpSupportIOS.mm */; };
@@ -334,6 +336,10 @@
 		8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		93C78824250C6D3900C0AA24 /* ReftestFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReftestFunctions.cpp; sourceTree = "<group>"; };
+		93C78825250C6D3900C0AA24 /* ReftestFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReftestFunctions.h; sourceTree = "<group>"; };
+		93C78829250C713400C0AA24 /* JSBasics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSBasics.cpp; sourceTree = "<group>"; };
+		93C7882B250C713400C0AA24 /* JSBasics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSBasics.h; sourceTree = "<group>"; };
 		9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DumpRenderTreeCommon.cpp; sourceTree = "<group>"; };
 		A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = LayoutTestHelper.xcconfig; path = mac/Configurations/LayoutTestHelper.xcconfig; sourceTree = "<group>"; };
 		A1158D55189273EB0088C17B /* DumpRenderTreeBrowserView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeBrowserView.h; path = ios/DumpRenderTreeBrowserView.h; sourceTree = "<group>"; };
@@ -719,11 +725,14 @@
 		3148A0651E6F90F400D3B316 /* TestRunnerShared */ = {
 			isa = PBXGroup;
 			children = (
+				93C78828250C713400C0AA24 /* Bindings */,
 				F4B6C31820E84382008AC225 /* cocoa */,
 				F4FED31623581EF3003C139C /* mac */,
 				A17A5A2B22A880D80065C5F0 /* spi */,
 				3148A0551E6F90F400D3B316 /* IOSLayoutTestCommunication.cpp */,
 				3148A0561E6F90F400D3B316 /* IOSLayoutTestCommunication.h */,
+				93C78824250C6D3900C0AA24 /* ReftestFunctions.cpp */,
+				93C78825250C6D3900C0AA24 /* ReftestFunctions.h */,
 			);
 			name = TestRunnerShared;
 			path = ../TestRunnerShared;
@@ -766,6 +775,15 @@
 				375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		93C78828250C713400C0AA24 /* Bindings */ = {
+			isa = PBXGroup;
+			children = (
+				93C78829250C713400C0AA24 /* JSBasics.cpp */,
+				93C7882B250C713400C0AA24 /* JSBasics.h */,
+			);
+			path = Bindings;
 			sourceTree = "<group>";
 		};
 		A1158D6A18927CE10088C17B /* ios */ = {
@@ -1215,6 +1233,7 @@
 				F44A531E21B89A5000DBB99C /* InstanceMethodSwizzler.mm in Sources */,
 				312943F91E71F2B4001EE2CC /* IOSLayoutTestCommunication.cpp in Sources */,
 				2CE88FA217124D8C00734FC0 /* JavaScriptThreading.cpp in Sources */,
+				93C7882E250C717200C0AA24 /* JSBasics.cpp in Sources */,
 				0F18E7061D6BA0230027E547 /* JSUIScriptController.cpp in Sources */,
 				0F18E7131D6BC43A0027E547 /* JSWrapper.cpp in Sources */,
 				F4C3578D20E8444E00FA0748 /* LayoutTestSpellChecker.mm in Sources */,
@@ -1231,6 +1250,7 @@
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
 				F4010B7B24DA201F00A876E2 /* PoseAsClass.mm in Sources */,
+				93C78826250C6D3A00C0AA24 /* ReftestFunctions.cpp in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
 				A30A21F82051D8C40008FF42 /* TestOptions.cpp in Sources */,
 				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,

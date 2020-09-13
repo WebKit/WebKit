@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "ActivateFonts.h"
 #include "InjectedBundle.h"
+#include "ReftestFunctions.h"
 #include "StringFunctions.h"
 #include "WebCoreTestSupport.h"
 #include <cmath>
@@ -1955,15 +1956,15 @@ String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef)
 }
 #endif
 
-static bool hasRefTestWaitAttribute(WKBundlePageRef page)
+static bool hasReftestWaitAttribute(WKBundlePageRef page)
 {
     auto frame = WKBundlePageGetMainFrame(page);
-    return frame && hasRefTestWaitAttribute(WKBundleFrameGetJavaScriptContext(frame));
+    return frame && hasReftestWaitAttribute(WKBundleFrameGetJavaScriptContext(frame));
 }
 
 static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
 {
-    if (hasRefTestWaitAttribute(page)) {
+    if (hasReftestWaitAttribute(page)) {
         WKRetain(page);
         // Use a 1ms interval between tries to allow lower priority run loop sources with zero delays to run.
         RunLoop::current().dispatchAfter(1_ms, [page] {
@@ -2004,6 +2005,8 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
         return;
     }
 
+    if (auto frame = WKBundlePageGetMainFrame(page->page()))
+        sendTestRenderedEvent(WKBundleFrameGetJavaScriptContext(frame));
     dumpAfterWaitAttributeIsRemoved(page->page());
 }
 

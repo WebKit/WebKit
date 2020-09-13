@@ -1,5 +1,78 @@
 2020-09-12  Darin Adler  <darin@apple.com>
 
+        Send TestRendered event after running a test but before dumping
+        https://bugs.webkit.org/show_bug.cgi?id=216428
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/CMakeLists.txt: Added the new files and directories.
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Ditto.
+
+        * DumpRenderTree/PlatformWin.cmake: Temporarily disable precompiled headers
+        on WinCairo since they were not working properly with JSBasics.cpp.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate readyToDumpState]): Added. Calls sendTestRenderedEvent.
+        (-[FrameLoadDelegate processWork:]): Call readyToDumpState.
+        (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]): Ditto.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (readyToDumpState): Added. Calls sendTestRenderedEvent.
+        (FrameLoadDelegate::processWork): Call readyToDumpState.
+        (FrameLoadDelegate::locationChangeDone): Ditto.
+
+        * TestRunnerShared/Bindings/JSBasics.cpp: Added.
+        (WTR::JSValueMakeBooleanOrNull): Moved from JSWrappable.h.
+        (WTR::JSValueToNullableBoolean): Ditto.
+        (WTR::JSValueMakeStringOrNull): Ditto.
+        (WTR::createJSString): Ditto.
+        (WTR::makeValue): Ditto.
+        (WTR::objectProperty): Ditto.
+        (WTR::setProperty): Added. Sets a named property value to a boolean.
+        (WTR::call): Moved from JSWrappable.h.
+        (WTR::callConstructor): Added. Gets a global constructor and calls it.
+
+        * TestRunnerShared/Bindings/JSBasics.h: Added. Declares the above functions.
+
+        * TestRunnerShared/Bindings/JSWrappable.h:
+        (WTR::JSValueMakeBooleanOrNull): Deleted.
+        (WTR::JSValueToNullableBoolean): Deleted.
+        (WTR::JSValueMakeStringOrNull): Deleted.
+        (WTR::createJSString): Deleted.
+        (WTR::makeValue): Deleted.
+        (WTR::objectProperty): Deleted.
+        (WTR::call): Deleted.
+        (WTR::hasRefTestWaitAttribute): Deleted.
+
+        * TestRunnerShared/Bindings/JSWrapper.h: Updated includes.
+
+        * TestRunnerShared/ReftestFunctions.cpp: Added.
+        (WTR::sendTestRenderedEvent): Added. Creates and dispatches a TestRendered event.
+        (WTR::hasReftestWaitAttribute): Moved from JSWrappable.h and renamed to use a
+        lowercase T since that's how web-platform-tests names things.
+
+        * TestRunnerShared/ReftestFunctions.h: Added. Declares the above functions.
+
+        * WebKitTestRunner/CMakeLists.txt: Added the new files and directories.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::frameDidChangeLocation): Call sendTestRenderedEvent
+        before calling dumpAfterWaitAttributeIsRemoved.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityTextMarkerMac.mm: Added a
+        missing include of "config.h" to fix build failures I was seeing.  An alternative,
+        since this is a Cocoa-only source file, would be to put config.h into a
+        precompiled prefix header.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityTextMarkerRangeMac.mm: Ditto.
+
+        * WebKitTestRunner/PlatformWin.cmake: Temporarily disable precompiled headers
+        on WinCairo since they were not working properly with JSBasics.cpp.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Added the new
+        files and directories.
+
+2020-09-12  Darin Adler  <darin@apple.com>
+
         REGRESSION (r266817): ASSERTION FAILED: injectedBundle.isTestRunning() on imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html
         https://bugs.webkit.org/show_bug.cgi?id=216440
 

@@ -6,6 +6,8 @@ set(WebKitTestRunner_UISCRIPTCONTEXT_DIR "${TOOLS_DIR}/TestRunnerShared/UIScript
 file(MAKE_DIRECTORY ${DumpRenderTree_DERIVED_SOURCES_DIR})
 
 set(DumpRenderTree_SOURCES
+    ${WebKitTestRunner_SHARED_DIR}/ReftestFunctions.cpp
+    ${WebKitTestRunner_SHARED_DIR}/Bindings/JSBasics.cpp
     ${WebKitTestRunner_SHARED_DIR}/Bindings/JSWrapper.cpp
 
     ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
@@ -34,6 +36,7 @@ set(DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
     ${DumpRenderTree_DERIVED_SOURCES_DIR}
     ${DumpRenderTree_DIR}
+    ${WebKitTestRunner_SHARED_DIR}
     ${WebKitTestRunner_SHARED_DIR}/Bindings
     ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}
 )

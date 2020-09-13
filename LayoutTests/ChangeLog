@@ -1,5 +1,19 @@
 2020-09-12  Darin Adler  <darin@apple.com>
 
+        Send TestRendered event after running a test but before dumping
+        https://bugs.webkit.org/show_bug.cgi?id=216428
+
+        Reviewed by Sam Weinig.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        Unskip two tests that no longer time out since we are sending this event.
+
+        * platform/win/TestExpectations:
+        Add a failure expectation for a test that has a couple non-green pixels.
+
+2020-09-12  Darin Adler  <darin@apple.com>
+
         REGRESSION (r266817): ASSERTION FAILED: injectedBundle.isTestRunning() on imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html
         https://bugs.webkit.org/show_bug.cgi?id=216440
 

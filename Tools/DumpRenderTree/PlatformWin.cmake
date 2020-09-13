@@ -72,7 +72,9 @@ else ()
     endif ()
 endif ()
 
-WEBKIT_ADD_PRECOMPILED_HEADER("DumpRenderTreePrefix.h" "win/DumpRenderTreePrefix.cpp" DumpRenderTree_SOURCES)
+if (NOT WTF_PLATFORM_WIN_CAIRO)
+    WEBKIT_ADD_PRECOMPILED_HEADER("DumpRenderTreePrefix.h" "win/DumpRenderTreePrefix.cpp" DumpRenderTree_SOURCES)
+endif ()
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MSVC_RUNTIME_LINKER_FLAGS}")
 
 WEBKIT_WRAP_EXECUTABLE(DumpRenderTree

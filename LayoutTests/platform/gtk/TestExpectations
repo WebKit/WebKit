@@ -57,9 +57,6 @@ webkit.org/b/196542 printing/printing-events.html [ Crash ]
 # Reftest-wait timeouts
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Timeout ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Timeout ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/dynamic-content-change-rendering.html [ Timeout ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ Timeout ]
-
 
 # ResourceLoading
 webkit.org/b/201270 [ Release ] http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]

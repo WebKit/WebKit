@@ -4535,21 +4535,21 @@ webkit.org/b/215170 webanimations/accelerated-animation-with-easing.html [ Skip 
 webkit.org/b/215172 imported/blink/fast/css/fixed-overlaps-absolute-in-clip.html [ Skip ]
 
 webkit.org/b/215636 fast/text/emoji-gender-2-3.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-2-4.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-2-5.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-2-6.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-2-7.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-2-8.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-2-9.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-2-4.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-2-5.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-2-6.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-2-7.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-2-8.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-2-9.html [ ImageOnlyFailure ]
 
-webkit.org/b/215636  fast/text/emoji-gender-fe0f-3.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-fe0f-4.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-fe0f-5.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-fe0f-6.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-fe0f-7.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-fe0f-8.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
-webkit.org/b/215636  fast/text/emoji-gender.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-fe0f-3.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-fe0f-4.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-fe0f-5.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-fe0f-6.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-fe0f-7.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-fe0f-8.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
+webkit.org/b/215636 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 
 webkit.org/b/215827 animations/steps-transform-rendering-updates.html [ Failure ]
 
@@ -4566,3 +4566,6 @@ webkit.org/b/216036 webanimations/animation-page-cache.html [ Pass Timeout ]
 
 # Emoji synthesis is only currently disabled on Cocoa platforms
 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
+
+# This test is basically passing, but off by a pixel or two. Not sure this is important enough to track with a bug.
+webanimations/accelerated-css-animation-with-easing.html [ Pass ImageOnlyFailure ]

@@ -39,7 +39,9 @@ list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
 # present in the list of sources when the macro is invoked. Remove it, create the precompiled
 # header, and add it back to work around this.
 list(REMOVE_ITEM WebKitTestRunner_SOURCES ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp)
-WEBKIT_ADD_PRECOMPILED_HEADER("WebKitTestRunnerPrefix.h" "win/WebKitTestRunnerPrefix.cpp" WebKitTestRunner_SOURCES)
+if (NOT WTF_PLATFORM_WIN_CAIRO)
+    WEBKIT_ADD_PRECOMPILED_HEADER("WebKitTestRunnerPrefix.h" "win/WebKitTestRunnerPrefix.cpp" WebKitTestRunner_SOURCES)
+endif ()
 list(APPEND WebKitTestRunner_SOURCES ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp)
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MSVC_RUNTIME_LINKER_FLAGS}")

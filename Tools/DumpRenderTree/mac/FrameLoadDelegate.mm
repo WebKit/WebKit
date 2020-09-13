@@ -38,6 +38,7 @@
 #import "ObjCController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
+#import "ReftestFunctions.h"
 #import "TestRunner.h"
 #import "TextInputController.h"
 #import "WebCoreTestSupport.h"
@@ -141,14 +142,22 @@ IGNORE_WARNINGS_END
 #if PLATFORM(IOS_FAMILY)
     WebThreadLock();
 #endif
-
-    if (WTR::hasRefTestWaitAttribute(mainFrame.globalContext))
+    if (WTR::hasReftestWaitAttribute(mainFrame.globalContext))
         [self performSelector:@selector(dumpAfterWaitAttributeIsRemoved:) withObject:nil afterDelay:0];
     else
         dump();
 }
 
-// Exec messages in the work queue until they're all done, or one of them starts a new load
+- (void)readyToDumpState
+{
+#if PLATFORM(IOS_FAMILY)
+    WebThreadLock();
+#endif
+    WTR::sendTestRenderedEvent(mainFrame.globalContext);
+    [self dumpAfterWaitAttributeIsRemoved:nil];
+}
+
+// Execute messages in the work queue until they're all done, or one of them starts a new load.
 - (void)processWork:(id)dummy
 {
     // if another load started, then wait for it to complete.
@@ -158,10 +167,9 @@ IGNORE_WARNINGS_END
 #if PLATFORM(IOS_FAMILY)
     WebThreadLock();
 #endif
-
-    // if we finish all the commands, we're ready to dump state
+    // If we finish all the commands, we're ready to dump state.
     if (DRT::WorkQueue::singleton().processWork() && !gTestRunner->waitToDump())
-        [self dumpAfterWaitAttributeIsRemoved:nil];
+        [self readyToDumpState];
 }
 
 - (void)resetToConsistentState
@@ -179,7 +187,7 @@ IGNORE_WARNINGS_END
             if (workQueue.count())
                 [self performSelector:@selector(processWork:) withObject:nil afterDelay:0];
             else
-                [self dumpAfterWaitAttributeIsRemoved:nil];
+                [self readyToDumpState];
         }
     }
 }

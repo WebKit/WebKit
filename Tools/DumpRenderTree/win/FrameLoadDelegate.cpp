@@ -36,6 +36,7 @@
 #include "EventSender.h"
 #include "GCController.h"
 #include "JSWrapper.h"
+#include "ReftestFunctions.h"
 #include "TestRunner.h"
 #include "TextInputController.h"
 #include "WebCoreTestSupport.h"
@@ -191,7 +192,7 @@ HRESULT FrameLoadDelegate::didChangeIcons(_In_opt_ IWebView*, _In_opt_ IWebFrame
 static void CALLBACK dumpAfterWaitAttributeIsRemoved(HWND = nullptr, UINT = 0, UINT_PTR = 0, DWORD = 0)
 {
     static UINT_PTR timerID;
-    if (frame && WTR::hasRefTestWaitAttribute(frame->globalContext())) {
+    if (frame && WTR::hasReftestWaitAttribute(frame->globalContext())) {
         if (!timerID)
             timerID = ::SetTimer(nullptr, 0, 0, dumpAfterWaitAttributeIsRemoved);
     } else {
@@ -203,6 +204,13 @@ static void CALLBACK dumpAfterWaitAttributeIsRemoved(HWND = nullptr, UINT = 0, U
     }
 }
 
+static void readyToDumpState()
+{
+    if (frame)
+        WTR::sendTestRenderedEvent(frame->globalContext());
+    dumpAfterWaitAttributeIsRemoved();
+}
+
 void FrameLoadDelegate::processWork()
 {
     // if another load started, then wait for it to complete.
@@ -211,7 +219,7 @@ void FrameLoadDelegate::processWork()
 
     // if we finish all the commands, we're ready to dump state
     if (DRT::WorkQueue::singleton().processWork() && !::gTestRunner->waitToDump())
-        dumpAfterWaitAttributeIsRemoved();
+        readyToDumpState();
 }
 
 void FrameLoadDelegate::resetToConsistentState()
@@ -260,7 +268,7 @@ void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
         return;
     }
 
-    dumpAfterWaitAttributeIsRemoved();
+    readyToDumpState();
 }
 
 HRESULT FrameLoadDelegate::didFinishLoadForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
