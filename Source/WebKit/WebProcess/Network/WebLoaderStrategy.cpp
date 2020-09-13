@@ -228,12 +228,14 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     if (!tryLoadingUsingURLSchemeHandler(resourceLoader, trackingParameters)) {
         WEBLOADERSTRATEGY_RELEASE_LOG_IF_ALLOWED("scheduleLoad: URL will be scheduled with the NetworkProcess");
 
+#if ENABLE(SERVICE_WORKER)
         if (!resourceLoader.options().serviceWorkerRegistrationIdentifier && InspectorInstrumentationWebKit::shouldInterceptRequest(resourceLoader.frame(), resourceLoader.request())) {
             InspectorInstrumentationWebKit::interceptRequest(resourceLoader, [this, protectedResourceLoader = makeRefPtr(&resourceLoader), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, resource](const ResourceRequest& request) {
                 scheduleLoadFromNetworkProcess(*protectedResourceLoader, request, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
             });
             return;
         }
+#endif
         scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
         return;
     }

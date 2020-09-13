@@ -1,3 +1,18 @@
+2020-09-13  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] Build fails when -DENABLE_SERVICE_WORKER=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=216455
+
+        Unreviewed build fix.
+
+        * UIProcess/API/glib/WebKitWebsiteData.cpp:
+        (recordContainsSupportedDataTypes):
+        (toWebKitWebsiteDataTypes):
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (toWebsiteDataTypes):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2020-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Move _setCookieAcceptPolicy to WKHTTPCookieStore
