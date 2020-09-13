@@ -337,15 +337,23 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
 
         // Find the max number of columns and fill in the gaps.
         size_t maximumColumns = 0;
-        Vector<size_t> numberOfCellsPerRow;
         size_t currentRow = 0;
+        Vector<size_t> numberOfCellsPerRow;
         for (auto& rowBox : childrenOfType<ContainerBox>(tableBody)) {
+            if (numberOfCellsPerRow.size() <= currentRow) {
+                // Ensure we always have a vector entry for the current row -even when the row is empty.
+                numberOfCellsPerRow.append({ });
+            }
             for (auto& cellBox : childrenOfType<ContainerBox>(rowBox)) {
+                auto numberOfSpannedColumns = cellBox.columnSpan();
                 for (size_t rowSpan = 0; rowSpan < cellBox.rowSpan(); ++rowSpan) {
-                    if (numberOfCellsPerRow.size() <= currentRow + rowSpan)
-                        numberOfCellsPerRow.append(cellBox.columnSpan());
-                    else
-                        numberOfCellsPerRow[currentRow + rowSpan] += cellBox.columnSpan();
+                    auto rowIndexWithSpan = currentRow + rowSpan;
+                    if (numberOfCellsPerRow.size() <= rowIndexWithSpan) {
+                        // This is where we advance from the current row by having a row spanner.
+                        numberOfCellsPerRow.append(numberOfSpannedColumns);
+                        continue;
+                    }
+                    numberOfCellsPerRow[rowIndexWithSpan] += numberOfSpannedColumns;
                 }
             }
             maximumColumns = std::max(maximumColumns, numberOfCellsPerRow[currentRow]);

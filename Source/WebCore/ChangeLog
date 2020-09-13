@@ -1,5 +1,17 @@
 2020-09-13  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Tree building] Table rows may not have any children.
+        https://bugs.webkit.org/show_bug.cgi?id=216456
+
+        Reviewed by Antti Koivisto.
+
+        Cover the case when the table row has no children at all (call numberOfCellsPerRow.append() on evey row when needed).
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::buildTableStructure):
+
+2020-09-13  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Text run is at incorrect vertical position when parent inline box is stretched
         https://bugs.webkit.org/show_bug.cgi?id=216453
 
