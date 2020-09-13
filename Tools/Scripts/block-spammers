@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@ import atexit
 import logging
 import requests
 import os
-import sys
 from dateutil.parser import parse
 from webkitpy.common.net.credentials import Credentials
 
@@ -120,7 +119,7 @@ def hide_bug(bug_id):
         json={'product': 'Spam', 'component': 'Spam', 'version': 'unspecified', 'is_creator_accessible': False, 'is_cc_accessible': False},
         params = {'token': bugzilla_token})
     if not response:
-        print '!!! Failed to move bug ' + str(bug_id) + ': ' + response.text
+        print('!!! Failed to move bug ' + str(bug_id) + ': ' + response.text)
 
 
 def hide_comments(bug_id, comment_ids):
@@ -128,20 +127,20 @@ def hide_comments(bug_id, comment_ids):
         json={'comment_is_private': {str(id): True for id in comment_ids}},
         params={'token': bugzilla_token})
     if not response:
-        print '!!! Failed to hide comments for bug ' + str(bug_id) + ': ' + response.text
+        print('!!! Failed to hide comments for bug ' + str(bug_id) + ': ' + response.text)
     for comment_id in comment_ids:
         response = requests.put('https://bugs.webkit.org/rest/bug/comment/' + str(comment_id) + '/tags',
                                 json={'comment_id': comment_id, 'add': ['spam']},
                                 params={'token': bugzilla_token})
         if not response:
-            print '!!! Failed to mark comment with spam tag: ' + response.text
+            print('!!! Failed to mark comment with spam tag: ' + response.text)
 
 def hide_attachments(bug_id, attachment_ids):
     response = requests.put('https://bugs.webkit.org/rest/bug/attachment/1',
         json={'ids': attachment_ids, 'is_private': True},
         params={'token': bugzilla_token})
     if not response:
-        print '!!! Failed to hide attachments for bug ' + str(bug_id) + ': ' + response.text
+        print('!!! Failed to hide attachments for bug ' + str(bug_id) + ': ' + response.text)
 
 
 def ask_yes_no(question, default='yes'):
@@ -154,8 +153,7 @@ def ask_yes_no(question, default='yes'):
 
     answers= {'yes': True, 'y': True, 'ye': True, 'no': False, 'n': False}
     while True:
-        sys.stdout.write(question + prompt_string)
-        response = raw_input().lower()
+        response = input(question + prompt_string).lower()
         if default is not None and response == '':
             return answers[default]
         elif response in answers:
@@ -163,7 +161,7 @@ def ask_yes_no(question, default='yes'):
 
 
 def sanitized_string(string):
-    return string.encode('utf-8').translate(None, '\x1B')
+    return string.translate(str.maketrans('', '', '\x1B'))
 
 def main():
     parser = argparse.ArgumentParser(description='Block Bugzilla spammers, and hide their comments.')
@@ -173,10 +171,10 @@ def main():
     get_bugzilla_token()
 
     if not can_use_this_tool():
-        print 'You need to be a Bugzilla admin to use this tool.'
+        print('You need to be a Bugzilla admin to use this tool.')
         exit(1)
 
-    print 'Fetching account activity...'
+    print('Fetching account activity...')
 
     users_to_disable = []
     for account_id in args.accounts:
@@ -192,47 +190,47 @@ def main():
             bug['attachments'] = get_attachments(bug['id'])
 
     for user in users_to_disable:
-        print sanitized_string(user['real_name']) + ' <' + user['name'] + '>'
+        print(sanitized_string(user['real_name']) + ' <' + user['name'] + '>')
         if not user['can_login']:
-            print '*** already disabled ***'
+            print('*** already disabled ***')
         if user['bugs_created']:
-            print 'Created ' + str(len(user['bugs_created'])) + ' bug(s):'
+            print('Created ' + str(len(user['bugs_created'])) + ' bug(s):')
             for bug in user['bugs_created']:
-                print 'https://bugs.webkit.org/show_bug.cgi?id=' + str(bug['id']) + ' ' + sanitized_string(bug['summary'])
+                print('https://bugs.webkit.org/show_bug.cgi?id=' + str(bug['id']) + ' ' + sanitized_string(bug['summary']))
         if user['bugs_commented']:
-            print 'Commented on ' + str(len(user['bugs_commented'])) + ' bug(s):'
+            print('Commented on ' + str(len(user['bugs_commented'])) + ' bug(s):')
         for bug in user['bugs_commented']:
-            print 'https://bugs.webkit.org/show_bug.cgi?id=' + str(bug['id']) + ' ' + sanitized_string(bug['summary'])
+            print('https://bugs.webkit.org/show_bug.cgi?id=' + str(bug['id']) + ' ' + sanitized_string(bug['summary']))
             for comment in bug['comments']:
                 if comment['creator'] == user['name']:
-                    print 'Comment ' + str(comment['count']) + ', ' + str(parse(comment['creation_time'])) + ': ' + sanitized_string(comment['text'])
+                    print('Comment ' + str(comment['count']) + ', ' + str(parse(comment['creation_time'])) + ': ' + sanitized_string(comment['text']))
         if user['bugs_with_attachments_added']:
-            print 'Added attachments to ' + str(len(user['bugs_with_attachments_added'])) + ' bug(s):'
+            print('Added attachments to ' + str(len(user['bugs_with_attachments_added'])) + ' bug(s):')
         for bug in user['bugs_with_attachments_added']:
-            print 'https://bugs.webkit.org/show_bug.cgi?id=' + str(bug['id']) + ' ' + sanitized_string(bug['summary'])
+            print('https://bugs.webkit.org/show_bug.cgi?id=' + str(bug['id']) + ' ' + sanitized_string(bug['summary']))
             for attachment in bug['attachments']:
                 if attachment['creator'] == user['name']:
-                    print 'Attachment ' + str(attachment['id']) + ', ' + str(parse(attachment['creation_time'])) + ': ' + sanitized_string(attachment['summary'])
-        print
+                    print('Attachment ' + str(attachment['id']) + ', ' + str(parse(attachment['creation_time'])) + ': ' + sanitized_string(attachment['summary']))
+        print()
 
     if not ask_yes_no("Block all these accounts, and hide their bugs and comments?"):
-        print "*** Exiting, no work performed ***"
+        print("*** Exiting, no work performed ***")
         exit(0)
 
     # Block all of the users first, so that they don't receive e-mail notifications about further actions.
     for user in users_to_disable:
         if not user['can_login']:
-            print 'User ' + str(user['name']) + ' is already disabled, skipping'
+            print('User ' + str(user['name']) + ' is already disabled, skipping')
             continue
-        print 'Disabling user ' + str(user['name'])
+        print('Disabling user ' + str(user['name']))
         disable_user(user['id'], 'spam')
 
     for user in users_to_disable:
         for bug in user['bugs_created']:
             if bug['product'] == 'Spam':
-                print 'Bug ' + str(bug['id']) + ' is already in the Spam product, skipping'
+                print('Bug ' + str(bug['id']) + ' is already in the Spam product, skipping')
                 continue
-            print 'Moving bug ' + str(bug['id']) + ' to the Spam product'
+            print('Moving bug ' + str(bug['id']) + ' to the Spam product')
             hide_bug(bug['id'])
 
         for bug in user['bugs_commented']:
@@ -241,12 +239,12 @@ def main():
                 if comment['creator'] != user['name']:
                     continue
                 if comment['is_private']:
-                    print 'Comment ' + str(comment['count']) + ' on bug ' + str(bug['id']) + ' is already private, skipping'
+                    print('Comment ' + str(comment['count']) + ' on bug ' + str(bug['id']) + ' is already private, skipping')
                     continue
                 assert(comment['bug_id'] == bug['id'])
                 comments_to_hide.append(comment['id'])
             if comments_to_hide:
-                print 'Hiding comment(s) from user ' + str(user['name']) + ' on bug ' + str(bug['id'])
+                print('Hiding comment(s) from user ' + str(user['name']) + ' on bug ' + str(bug['id']))
             hide_comments(bug['id'], comments_to_hide)
 
         for bug in user['bugs_with_attachments_added']:
@@ -255,12 +253,12 @@ def main():
                 if attachment['creator'] != user['name']:
                     continue
                 if attachment['is_private']:
-                    print 'Attachment ' + str(attachment['id']) + ' on bug ' + str(bug['id']) + ' is already private, skipping'
+                    print('Attachment ' + str(attachment['id']) + ' on bug ' + str(bug['id']) + ' is already private, skipping')
                     continue
                 assert(attachment['bug_id'] == bug['id'])
                 attachments_to_hide.append(attachment['id'])
             if attachments_to_hide:
-                print 'Deleting attachment(s) from user ' + str(user['name']) + ' on bug ' + str(bug['id'])
+                print('Deleting attachment(s) from user ' + str(user['name']) + ' on bug ' + str(bug['id']))
             hide_attachments(bug['id'], attachments_to_hide)
 
 
