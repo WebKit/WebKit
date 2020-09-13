@@ -675,25 +675,11 @@ void VisibleSelection::debugPosition() const
     fprintf(stderr, "================================\n");
 }
 
-void VisibleSelection::formatForDebugger(char* buffer, unsigned length) const
+String VisibleSelection::debugDescription() const
 {
-    StringBuilder result;
-    String s;
-
-    if (isNone()) {
-        result.appendLiteral("<none>");
-    } else {
-        const int FormatBufferSize = 1024;
-        char s[FormatBufferSize];
-        result.appendLiteral("from ");
-        start().formatForDebugger(s, FormatBufferSize);
-        result.append(s);
-        result.appendLiteral(" to ");
-        end().formatForDebugger(s, FormatBufferSize);
-        result.append(s);
-    }
-
-    strncpy(buffer, result.toString().utf8().data(), length - 1);
+    if (isNone())
+        return "<none>"_s;
+    return makeString("from ", start().debugDescription(), " to ", end().debugDescription());
 }
 
 void VisibleSelection::showTreeForThis() const

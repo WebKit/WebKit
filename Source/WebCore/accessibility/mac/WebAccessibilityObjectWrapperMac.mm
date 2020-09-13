@@ -3688,9 +3688,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #if ENABLE(TREE_DEBUGGING)
 - (NSString *)debugDescriptionForTextMarker:(id)textMarker
 {
-    char description[1024];
-    [self visiblePositionForTextMarker:textMarker].formatForDebugger(description, sizeof(description));
-    return [NSString stringWithUTF8String:description];
+    return [self visiblePositionForTextMarker:textMarker].debugDescription();
 
 }
 
@@ -3728,14 +3726,10 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
 {
     StringBuilder result;
     
-    const int FormatBufferSize = 1024;
-    char format[FormatBufferSize];
     result.appendLiteral("from ");
-    range.start.formatForDebugger(format, FormatBufferSize);
-    result.append(format);
+    result.append(range.start.debugDescription());
     result.appendLiteral(" to ");
-    range.end.formatForDebugger(format, FormatBufferSize);
-    result.append(format);
+    result.append(range.end.debugDescription());
     
     strlcpy(buffer, result.toString().utf8().data(), length);
 }

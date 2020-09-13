@@ -193,7 +193,7 @@ public:
     void debugPosition(const char* msg = "") const;
 
 #if ENABLE(TREE_DEBUGGING)
-    void formatForDebugger(char* buffer, unsigned length) const;
+    String debugDescription() const;
     void showAnchorTypeAndOffset() const;
     void showTreeForThis() const;
 #endif

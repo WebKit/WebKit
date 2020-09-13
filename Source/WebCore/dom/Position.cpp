@@ -1379,22 +1379,11 @@ void Position::debugPosition(const char* msg) const
         fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8().data(), deprecatedNode(), m_offset);
 }
 
-void Position::formatForDebugger(char* buffer, unsigned length) const
+String Position::debugDescription() const
 {
-    StringBuilder result;
-
     if (isNull())
-        result.appendLiteral("<null>");
-    else {
-        char s[1024];
-        result.appendLiteral("offset ");
-        result.appendNumber(m_offset);
-        result.appendLiteral(" of ");
-        deprecatedNode()->formatForDebugger(s, sizeof(s));
-        result.append(s);
-    }
-
-    strncpy(buffer, result.toString().utf8().data(), length - 1);
+        return "<null>"_s;
+    return makeString("offset ", m_offset, " of ", deprecatedNode()->debugDescription());
 }
 
 void Position::showAnchorTypeAndOffset() const

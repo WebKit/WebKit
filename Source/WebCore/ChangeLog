@@ -1,5 +1,49 @@
 2020-09-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Replace formatForDebugger() which uses raw char* with debugDescription()
+        https://bugs.webkit.org/show_bug.cgi?id=216447
+
+        Reviewed by Darin Adler.
+
+        formatForDebugger() relied on raw char* and buffer lengths. Replace with debugDescription()
+        which returns a String, and is already a convention used in various classes.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper debugDescriptionForTextMarker:]):
+        (formatForDebugger):
+        * dom/Element.cpp:
+        (WebCore::Element::formatForDebugger const): Deleted.
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::debugDescription const):
+        (WebCore::Node::formatForDebugger const): Deleted.
+        * dom/Node.h:
+        * dom/Position.cpp:
+        (WebCore::Position::debugDescription const):
+        (WebCore::Position::formatForDebugger const): Deleted.
+        * dom/Position.h:
+        * dom/Range.cpp:
+        (WebCore::Range::debugDescription const):
+        (WebCore::Range::formatForDebugger const): Deleted.
+        * dom/Range.h:
+        * dom/Text.cpp:
+        (WebCore::Text::formatForDebugger const): Deleted.
+        * dom/Text.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::debugDescription const):
+        (WebCore::FrameSelection::formatForDebugger const): Deleted.
+        * editing/FrameSelection.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::debugDescription const):
+        (WebCore::VisiblePosition::formatForDebugger const): Deleted.
+        * editing/VisiblePosition.h:
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::debugDescription const):
+        (WebCore::VisibleSelection::formatForDebugger const): Deleted.
+        * editing/VisibleSelection.h:
+
+2020-09-12  Simon Fraser  <simon.fraser@apple.com>
+
         Use an OptionSet<> for LayoutBox::BaseTypeFlags
         https://bugs.webkit.org/show_bug.cgi?id=216445
 

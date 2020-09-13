@@ -423,8 +423,6 @@ public:
     virtual String debugDescription() const;
 
 #if ENABLE(TREE_DEBUGGING)
-    virtual void formatForDebugger(char* buffer, unsigned length) const;
-
     void showNode(const char* prefix = "") const;
     void showTreeForThis() const;
     void showNodePathForThis() const;

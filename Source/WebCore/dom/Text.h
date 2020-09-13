@@ -72,10 +72,6 @@ private:
     bool childTypeAllowed(NodeType) const override;
 
     virtual Ref<Text> virtualCreate(const String&);
-
-#if ENABLE(TREE_DEBUGGING)
-    void formatForDebugger(char* buffer, unsigned length) const override;
-#endif
 };
 
 } // namespace WebCore

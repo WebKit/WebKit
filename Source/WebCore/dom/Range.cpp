@@ -839,24 +839,9 @@ ExceptionOr<void> Range::setStartBefore(Node& node)
 }
 
 #if ENABLE(TREE_DEBUGGING)
-void Range::formatForDebugger(char* buffer, unsigned length) const
+String Range::debugDescription() const
 {
-    StringBuilder result;
-
-    const int FormatBufferSize = 1024;
-    char s[FormatBufferSize];
-    result.appendLiteral("from offset ");
-    result.appendNumber(m_start.offset());
-    result.appendLiteral(" of ");
-    startContainer().formatForDebugger(s, FormatBufferSize);
-    result.append(s);
-    result.appendLiteral(" to offset ");
-    result.appendNumber(m_end.offset());
-    result.appendLiteral(" of ");
-    endContainer().formatForDebugger(s, FormatBufferSize);
-    result.append(s);
-
-    strncpy(buffer, result.toString().utf8().data(), length - 1);
+    return makeString("from offset ", m_start.offset(), " of ", startContainer().debugDescription(), " to offset ", m_end.offset(), " of ", endContainer().debugDescription());
 }
 #endif
 

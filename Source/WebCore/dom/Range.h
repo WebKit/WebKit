@@ -100,7 +100,7 @@ public:
     void textNodeSplit(Text& oldNode);
 
 #if ENABLE(TREE_DEBUGGING)
-    void formatForDebugger(char* buffer, unsigned length) const;
+    String debugDescription() const;
 #endif
 
     enum ActionType : uint8_t { Delete, Extract, Clone };

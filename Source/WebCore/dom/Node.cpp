@@ -1757,9 +1757,8 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
 
 String Node::debugDescription() const
 {
-    StringBuilder builder;
-    builder.append(nodeName(), " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
-    return builder.toString();
+    auto name = nodeName();
+    return makeString(name.isEmpty() ? "<none>" : "", name, " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -1882,20 +1881,6 @@ void Node::showTreeAndMark(const Node* markedNode1, const char* markedLabel1, co
 
     String startingIndent;
     traverseTreeAndMark(startingIndent, rootNode, markedNode1, markedLabel1, markedNode2, markedLabel2);
-}
-
-void Node::formatForDebugger(char* buffer, unsigned length) const
-{
-    String result;
-    String s;
-
-    s = nodeName();
-    if (s.isEmpty())
-        result = "<none>";
-    else
-        result = s;
-
-    strncpy(buffer, result.utf8().data(), length - 1);
 }
 
 static ContainerNode* parentOrShadowHostOrFrameOwner(const Node* node)

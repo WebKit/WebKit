@@ -2483,9 +2483,9 @@ void FrameSelection::updateAppearanceAfterLayoutOrStyleChange()
 
 #if ENABLE(TREE_DEBUGGING)
 
-void FrameSelection::formatForDebugger(char* buffer, unsigned length) const
+String FrameSelection::debugDescription() const
 {
-    m_selection.formatForDebugger(buffer, length);
+    return m_selection.debugDescription();
 }
 
 void FrameSelection::showTreeForThis() const

@@ -106,7 +106,7 @@ public:
 
 #if ENABLE(TREE_DEBUGGING)
     void debugPosition() const;
-    void formatForDebugger(char* buffer, unsigned length) const;
+    String debugDescription() const;
     void showTreeForThis() const;
 #endif
 

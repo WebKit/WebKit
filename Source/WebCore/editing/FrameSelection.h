@@ -217,7 +217,7 @@ public:
     WEBCORE_EXPORT void updateAppearance();
 
 #if ENABLE(TREE_DEBUGGING)
-    void formatForDebugger(char* buffer, unsigned length) const;
+    String debugDescription() const;
     void showTreeForThis() const;
 #endif
 

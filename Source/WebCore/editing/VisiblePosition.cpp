@@ -681,9 +681,9 @@ void VisiblePosition::debugPosition(const char* msg) const
     }
 }
 
-void VisiblePosition::formatForDebugger(char* buffer, unsigned length) const
+String VisiblePosition::debugDescription() const
 {
-    m_deepPosition.formatForDebugger(buffer, length);
+    return m_deepPosition.debugDescription();
 }
 
 void VisiblePosition::showTreeForThis() const
