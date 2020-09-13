@@ -399,7 +399,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
 
     stream << "lines are -> ";
     for (auto& line : lines)
-        stream << "[" << line.left() << "," << line.top() << " " << line.width() << "x" << line.height() << "] ";
+        stream << "[" << line.left() << "," << line.top() << " " << line.width() << "x" << line.height() << "][baseline: " << line.baseline() << "]";
     stream.nextLine();
 
     for (auto& displayRun : displayRuns) {
@@ -453,17 +453,19 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         stream << "TD";
     else if (layoutBox.isTableRow())
         stream << "TR";
-    else if (layoutBox.isInlineBlockBox())
-        stream << "Inline-block";
     else if (layoutBox.isInlineLevelBox()) {
-        if (layoutBox.isInlineBox())
-            stream << "SPAN inline box";
-        else if (layoutBox.isReplacedBox())
-            stream << "IMG replaced inline box";
-        else if (layoutBox.isAnonymous())
+        if (layoutBox.isAnonymous())
             stream << "anonymous inline box";
+        else if (layoutBox.isInlineBlockBox())
+            stream << "inline-block box";
+        else if (layoutBox.isInlineBox())
+            stream << "inline box";
+        else if (layoutBox.isAtomicInlineLevelBox())
+            stream << "atomic inline level box";
+        else if (layoutBox.isReplacedBox())
+            stream << "replaced inline box";
         else if (layoutBox.isLineBreakBox())
-            stream << "BR line break";
+            stream << "line break";
         else
             stream << "other inline level box";
     } else if (layoutBox.isBlockLevelBox())
@@ -471,13 +473,23 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     else
         stream << "unknown box";
 
-    // FIXME: Inline text runs don't create display boxes yet.
     if (displayBox)
         stream << " at (" << displayBox->left() << "," << displayBox->top() << ") size " << displayBox->width() << "x" << displayBox->height();
-    stream << " layout box->(" << &layoutBox << ")";
-    if (is<InlineTextBox>(layoutBox))
-        stream << " text content [\"" << downcast<InlineTextBox>(layoutBox).content().utf8().data() << "\"]";
+    stream << " (" << &layoutBox << ")";
+    if (is<InlineTextBox>(layoutBox)) {
+        auto textContent = downcast<InlineTextBox>(layoutBox).content();
+        stream << " length->(" << textContent.length() << ")";
 
+        textContent.replaceWithLiteral('\\', "\\\\");
+        textContent.replaceWithLiteral('\n', "\\n");
+
+        const size_t maxPrintedLength = 80;
+        if (textContent.length() > maxPrintedLength) {
+            auto substring = textContent.substring(0, maxPrintedLength);
+            stream << " \"" << substring.utf8().data() << "\"...";
+        } else
+            stream << " \"" << textContent.utf8().data() << "\"";
+    }
     stream.nextLine();
 }
 
@@ -488,6 +500,8 @@ static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream,
             // Not all boxes generate display boxes.
             if (layoutState->hasDisplayBox(child))
                 outputLayoutBox(stream, child, &layoutState->displayBoxForLayoutBox(child), depth);
+            else
+                outputLayoutBox(stream, child, nullptr, depth);
             if (child.establishesInlineFormattingContext())
                 outputInlineRuns(stream, *layoutState, downcast<ContainerBox>(child), depth + 1);
         } else

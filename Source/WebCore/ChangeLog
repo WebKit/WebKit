@@ -1,3 +1,16 @@
+2020-09-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Fix showLayoutTree to show anonymous inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=215437
+
+        Reviewed by Antti Koivisto.
+
+        This patch also adds baseline and run content logging.  
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox):
+        (WebCore::Layout::outputLayoutTree):
+
 2020-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a key to the text manipulation userInfo dictionary indicating whether the translated item is on-screen
