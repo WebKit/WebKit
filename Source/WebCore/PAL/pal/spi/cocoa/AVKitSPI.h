@@ -26,75 +26,31 @@
 #import <objc/runtime.h>
 #import <wtf/SoftLinking.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <AVKit/AVPlayerController.h>
-#else
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIResponder.h>
-@interface AVPlayerController : UIResponder
-#else
-#import <AppKit/NSResponder.h>
-@interface AVPlayerController : NSResponder <NSUserInterfaceValidations>
-#endif
-@end
-
-@interface AVPlayerController ()
-typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
-    AVPlayerControllerStatusUnknown = 0,
-    AVPlayerControllerStatusReadyToPlay = 2,
-};
-
-typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
-    AVPlayerControllerExternalPlaybackTypeNone = 0,
-    AVPlayerControllerExternalPlaybackTypeAirPlay = 1,
-    AVPlayerControllerExternalPlaybackTypeTVOut = 2,
-};
-
-@property (NS_NONATOMIC_IOSONLY, readonly) AVPlayerControllerStatus status;
-@end
-#endif // USE(APPLE_INTERNAL_SDK)
-
-#if HAVE(AVOBSERVATIONCONTROLLER)
-#if USE(APPLE_INTERNAL_SDK)
-#import <AVKit/AVObservationController.h>
-#else
-
-@class AVKeyValueChange;
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface AVObservationController<Owner> : NSObject
-- (instancetype)initWithOwner:(Owner)owner NS_DESIGNATED_INITIALIZER;
-- (id)startObserving:(id)object keyPath:(NSString *)keyPath includeInitialValue:(BOOL)shouldIncludeInitialValue observationHandler:(void (^)(Owner owner, id observed, AVKeyValueChange *change))observationHandler;
-- (void)stopAllObservation;
-@end
-
-NS_ASSUME_NONNULL_END
-
-#endif
-#endif // HAVE(AVOBSERVATIONCONTROLLER)
-
 #if PLATFORM(IOS_FAMILY)
 #import <AVKit/AVKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import <UIKit/UIKit.h>
+#endif
+
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
-#import <AVKit/AVBackgroundView.h>
-#endif
+#import <AVKit/AVValueTiming.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <AVKit/AVPlayerController.h>
 IGNORE_WARNINGS_BEGIN("objc-property-no-attribute")
 #import <AVKit/AVPlayerLayerView.h>
 IGNORE_WARNINGS_END
 #import <AVKit/AVPlayerViewController_Private.h>
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
+#endif
+
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#import <AVKit/AVBackgroundView.h>
+#endif
 
 #if PLATFORM(WATCHOS)
-
 #import <AVFoundation/AVPlayerLayer.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVPictureInPicturePlayerLayerView : UIView
@@ -136,8 +92,9 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 @end
 
 NS_ASSUME_NONNULL_END
+#endif // PLATFORM(WATCHOS)
 
-#elif PLATFORM(APPLETV)
+#if PLATFORM(APPLETV)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerViewController (AVPlayerViewController_WebKitOnly_OverrideRouteSharingPolicy)
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
@@ -145,8 +102,56 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 #endif
 
+#if PLATFORM(MAC)
+#import <AVKit/AVPlayerView_Private.h>
+#endif
+
 #else
 
+NS_ASSUME_NONNULL_BEGIN
+
+@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
+@end
+
+@interface AVValueTiming ()
++ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
+@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
+@property (NS_NONATOMIC_IOSONLY, readonly) double rate;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSTimeInterval anchorTimeStamp;
+@property (NS_NONATOMIC_IOSONLY, readonly) double anchorValue;
+
++ (NSTimeInterval)currentTimeStamp;
+- (double)valueForTimeStamp:(NSTimeInterval)timeStamp;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIResponder.h>
+@interface AVPlayerController : UIResponder
+@end
+#else
+#import <AppKit/NSResponder.h>
+@interface AVPlayerController : NSResponder <NSUserInterfaceValidations>
+@end
+#endif
+
+@interface AVPlayerController ()
+typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
+    AVPlayerControllerStatusUnknown = 0,
+    AVPlayerControllerStatusReadyToPlay = 2,
+};
+
+typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
+    AVPlayerControllerExternalPlaybackTypeNone = 0,
+    AVPlayerControllerExternalPlaybackTypeAirPlay = 1,
+    AVPlayerControllerExternalPlaybackTypeTVOut = 2,
+};
+
+@property (NS_NONATOMIC_IOSONLY, readonly) AVPlayerControllerStatus status;
+@end
+
+#if PLATFORM(IOS_FAMILY)
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVBackgroundView : UIView
@@ -203,16 +208,10 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif // USE(APPLE_INTERNAL_SDK)
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
-#if USE(APPLE_INTERNAL_SDK)
-#import <AVKit/AVPlayerView_Private.h>
-#else
 #import <AVKit/AVPlayerView.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVPlayerView (WebKitFullscreenSPI)
@@ -223,17 +222,33 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+#endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
-#endif // PLATFORM(MAC)
+
+
+#if HAVE(AVOBSERVATIONCONTROLLER)
+#if USE(APPLE_INTERNAL_SDK)
+#import <AVKit/AVObservationController.h>
+#else
+@class AVKeyValueChange;
+NS_ASSUME_NONNULL_BEGIN
+
+@interface AVObservationController<Owner> : NSObject
+- (instancetype)initWithOwner:(Owner)owner NS_DESIGNATED_INITIALIZER;
+- (id)startObserving:(id)object keyPath:(NSString *)keyPath includeInitialValue:(BOOL)shouldIncludeInitialValue observationHandler:(void (^)(Owner owner, id observed, AVKeyValueChange *change))observationHandler;
+- (void)stopAllObservation;
+@end
+
+NS_ASSUME_NONNULL_END
+#endif // USE(APPLE_INTERNAL_SDK)
+#endif // HAVE(AVOBSERVATIONCONTROLLER)
+
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 #if USE(APPLE_INTERNAL_SDK)
-
 #import <AVKit/AVOutputDeviceMenuController.h>
-
 #else
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class AVOutputContext;
@@ -253,43 +268,24 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 @end
 
 NS_ASSUME_NONNULL_END
-
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
-NS_ASSUME_NONNULL_BEGIN
 
-@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying> 
-@end
-
-@interface AVValueTiming ()
-+ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
-@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
-@property (NS_NONATOMIC_IOSONLY, readonly) double rate;
-@property (NS_NONATOMIC_IOSONLY, readonly) NSTimeInterval anchorTimeStamp;
-@property (NS_NONATOMIC_IOSONLY, readonly) double anchorValue;
-
-+ (NSTimeInterval)currentTimeStamp;
-- (double)valueForTimeStamp:(NSTimeInterval)timeStamp;
-@end
-
-NS_ASSUME_NONNULL_END
-
-#if PLATFORM(MAC) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-
-OBJC_CLASS AVFunctionBarPlaybackControlsProvider;
-OBJC_CLASS AVFunctionBarScrubber;
-OBJC_CLASS AVFunctionBarMediaSelectionOption;
-OBJC_CLASS AVTouchBarPlaybackControlsProvider;
-OBJC_CLASS AVTouchBarScrubber;
-OBJC_CLASS AVTouchBarMediaSelectionOption;
-
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && PLATFORM(MAC)
 #if USE(APPLE_INTERNAL_SDK)
-
+#import <AVKit/AVFunctionBarPlaybackControlsProvider.h>
+#import <AVKit/AVFunctionBarScrubber.h>
+#import <AVKit/AVTouchBarMediaSelectionOption.h>
 #import <AVKit/AVTouchBarPlaybackControlsProvider.h>
 #import <AVKit/AVTouchBarScrubber.h>
-
 #else
+OBJC_CLASS AVFunctionBarMediaSelectionOption;
+OBJC_CLASS AVFunctionBarPlaybackControlsProvider;
+OBJC_CLASS AVFunctionBarScrubber;
+OBJC_CLASS AVTouchBarMediaSelectionOption;
+OBJC_CLASS AVTouchBarPlaybackControlsProvider;
+OBJC_CLASS AVTouchBarScrubber;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -349,22 +345,16 @@ typedef NS_ENUM(NSInteger, AVTouchBarMediaSelectionOptionType) {
 - (instancetype)initWithTitle:(nonnull NSString *)title type:(AVTouchBarMediaSelectionOptionType)type;
 @end
 
-@class AVThumbnail;
-
 NS_ASSUME_NONNULL_END
+#endif // USE(APPLE_INTERNAL_SDK)
+#endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && PLATFORM(MAC)
 
-#endif
-
-#endif // PLATFORM(MAC) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)
 #if USE(APPLE_INTERNAL_SDK)
-
 #import <AVKit/AVRoutePickerView_Private.h>
 #import <AVKit/AVRoutePickerView_WebKitOnly.h>
-
 #else
-
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol AVRoutePickerViewDelegate;
@@ -385,6 +375,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)
