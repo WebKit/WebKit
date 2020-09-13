@@ -2543,7 +2543,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
         if (!spellCheckingRange)
             return;
 
-        auto adjacentWordRange = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary)).toNormalizedRange();
+        auto adjacentWordRange = intersection(VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary)).toNormalizedRange(), fullSentenceRange);
         if (!adjacentWordRange)
             return;
 
@@ -2799,8 +2799,8 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
         auto resultLocation = results[i].range.location + offsetDueToReplacement;
         auto resultLength = results[i].range.length;
         auto resultEndLocation = resultLocation + resultLength;
-        auto automaticReplacementStartLocation = paragraph.automaticReplacementStart(true);
-        auto automaticReplacementEndLocation = automaticReplacementStartLocation + paragraph.automaticReplacementLength(true) + offsetDueToReplacement;
+        auto automaticReplacementStartLocation = paragraph.automaticReplacementStart();
+        auto automaticReplacementEndLocation = automaticReplacementStartLocation + paragraph.automaticReplacementLength() + offsetDueToReplacement;
         const String& replacement = results[i].replacement;
         bool resultEndsAtAmbiguousBoundary = useAmbiguousBoundaryOffset && selectionOffset - 1 <= resultEndLocation;
 

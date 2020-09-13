@@ -1,3 +1,31 @@
+2020-09-12  Darin Adler  <darin@apple.com>
+
+        Fix root cause of problem with text replacements at the beginnings of sentences so we can remove the workaround
+        https://bugs.webkit.org/show_bug.cgi?id=216450
+
+        Reviewed by Tim Horton.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::compareByDocumentOrder): Added so we can use std::min/max.
+        (WebCore::unionRange): Refactored to use std::min/max.
+        (WebCore::intersection): Added.
+        * dom/SimpleRange.h: Added intersection.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord): Intersect with the sentence range,
+        since we don't have a guarantee that moving to the start of a word and end of a word
+        stays within the sentence since the word and sentence algorithms are not wholly consistent.
+        In such cases we would like to restrict our checking to the sentence. Another way to fix
+        this would be to change the behavior of the word and sentence boundary functions.
+        (WebCore::Editor::markAndReplaceFor): Remove the boolean "true" flags that we used to
+        trigger our workaround for the above.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::automaticReplacementStart const): Removed the boolean
+        argument and the workaround code that runs when it's true.
+        (WebCore::TextCheckingParagraph::automaticReplacementLength const): Ditto.
+        * editing/TextCheckingHelper.h: Removed the boolean arguments.
+
 2020-09-12  Simon Fraser  <simon.fraser@apple.com>
 
         Replace formatForDebugger() which uses raw char* with debugDescription()

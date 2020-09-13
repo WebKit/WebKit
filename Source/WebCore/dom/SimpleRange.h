@@ -71,6 +71,7 @@ bool isPointInRange(const SimpleRange&, const Optional<BoundaryPoint>&);
 WEBCORE_EXPORT bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT SimpleRange unionRange(const SimpleRange&, const SimpleRange&);
+WEBCORE_EXPORT Optional<SimpleRange> intersection(const Optional<SimpleRange>&, const Optional<SimpleRange>&);
 
 WEBCORE_EXPORT bool contains(const SimpleRange&, const Node&);
 WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);

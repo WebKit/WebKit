@@ -246,11 +246,22 @@ bool intersects(const SimpleRange& a, const SimpleRange& b)
     return is_lteq(documentOrder(a.start, b.end)) && is_lteq(documentOrder(b.start, a.end));
 }
 
+static bool compareByDocumentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
+{
+    return is_lt(documentOrder(a, b));
+}
+
 SimpleRange unionRange(const SimpleRange& a, const SimpleRange& b)
 {
-    auto& start = is_lteq(documentOrder(a.start, b.start)) ? a : b;
-    auto& end = is_lteq(documentOrder(a.end, b.end)) ? b : a;
-    return { start.start, end.end };
+    return { std::min(a.start, b.start, compareByDocumentOrder), std::max(a.end, b.end, compareByDocumentOrder) };
+}
+
+Optional<SimpleRange> intersection(const Optional<SimpleRange>& a, const Optional<SimpleRange>& b)
+{
+    // FIXME: Can this be done with fewer calls to documentOrder?
+    if (!a || !b || !intersects(*a, *b))
+        return WTF::nullopt;
+    return { { std::max(a->start, b->start, compareByDocumentOrder), std::min(a->end, b->end, compareByDocumentOrder) } };
 }
 
 bool contains(const SimpleRange& range, const Node& node)
