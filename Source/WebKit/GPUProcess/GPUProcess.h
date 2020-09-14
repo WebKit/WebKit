@@ -75,6 +75,10 @@ public:
 
     WebCore::NowPlayingManager& nowPlayingManager();
 
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    WorkQueue& audioMediaStreamTrackRendererQueue();
+#endif
+
 private:
     void lowMemoryHandler(Critical);
 
@@ -112,6 +116,9 @@ private:
         bool allowDisplayCapture { false };
     };
     HashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
+#if PLATFORM(COCOA)
+    RefPtr<WorkQueue> m_audioMediaStreamTrackRendererQueue;
+#endif
 #endif
 
     struct GPUSession {

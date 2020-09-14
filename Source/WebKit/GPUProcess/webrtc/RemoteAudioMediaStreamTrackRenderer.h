@@ -44,13 +44,13 @@ namespace WebKit {
 class RemoteAudioMediaStreamTrackRendererManager;
 class SharedRingBufferStorage;
 
-class RemoteAudioMediaStreamTrackRenderer final : private IPC::MessageReceiver {
+class RemoteAudioMediaStreamTrackRenderer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RemoteAudioMediaStreamTrackRenderer(RemoteAudioMediaStreamTrackRendererManager&);
     ~RemoteAudioMediaStreamTrackRenderer();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
     // IPC::MessageReceiver

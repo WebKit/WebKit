@@ -38,8 +38,6 @@
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
-#include "RemoteAudioMediaStreamTrackRendererManagerMessages.h"
-#include "RemoteAudioMediaStreamTrackRendererMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"
@@ -156,6 +154,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_gpuProcess(gpuProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_sessionID(sessionID)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    , m_audioTrackRendererManager(RemoteAudioMediaStreamTrackRendererManager::create(*this))
+#endif
 {
     RELEASE_ASSERT(RunLoop::isMain());
     m_connection->open();
@@ -166,6 +167,10 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
     RELEASE_ASSERT(RunLoop::isMain());
 
     m_connection->invalidate();
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    m_audioTrackRendererManager->close();
+#endif
 }
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection&)
@@ -238,14 +243,6 @@ RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
     return *m_remoteMediaRecorderManager;
 }
 #endif
-
-RemoteAudioMediaStreamTrackRendererManager& GPUConnectionToWebProcess::audioTrackRendererManager()
-{
-    if (!m_audioTrackRendererManager)
-        m_audioTrackRendererManager = makeUnique<RemoteAudioMediaStreamTrackRendererManager>(*this);
-
-    return *m_audioTrackRendererManager;
-}
 
 RemoteSampleBufferDisplayLayerManager& GPUConnectionToWebProcess::sampleBufferDisplayLayerManager()
 {
@@ -382,14 +379,6 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif // HAVE(AVASSETWRITERDELEGATE)
-    if (decoder.messageReceiverName() == Messages::RemoteAudioMediaStreamTrackRendererManager::messageReceiverName()) {
-        audioTrackRendererManager().didReceiveMessageFromWebProcess(connection, decoder);
-        return true;
-    }
-    if (decoder.messageReceiverName() == Messages::RemoteAudioMediaStreamTrackRenderer::messageReceiverName()) {
-        audioTrackRendererManager().didReceiveRendererMessage(connection, decoder);
-        return true;
-    }
     if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName()) {
         sampleBufferDisplayLayerManager().didReceiveMessageFromWebProcess(connection, decoder);
         return true;

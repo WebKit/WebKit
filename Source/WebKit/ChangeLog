@@ -1,3 +1,39 @@
+2020-09-14  Youenn Fablet  <youenn@apple.com>
+
+        RemoteAudioMediaStreamTrackRenderer should process its IPC messages from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=216474
+
+        Reviewed by Eric Carlson.
+
+        Register RemoteAudioMediaStreamTrackRendererManager as a thread message receiver
+        for both RemoteAudioMediaStreamTrackRenderer and RemoteAudioMediaStreamTrackRendererManager messages.
+        All processing is sent to a high priority work queue.
+        Given AudioMediaStreamTrackRendererUnit is not fully thread safe, we use a single WorkQueue for the whole GPUProcess.
+        All operations will happen in this thread, while in WebProcess, create/start/stop/release are main thread.
+
+        We no longer compile the generated RemoteAudioMediaStreamTrackRendererManager::didReceiveMessage
+        and instead implement our own version to handle manager and renderer messages.
+
+        Covered by WebRTC audio tests run with GPU process enabled.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::~GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::audioMediaStreamTrackRendererQueue):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::RemoteAudioMediaStreamTrackRendererManager):
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::~RemoteAudioMediaStreamTrackRendererManager):
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::close):
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::dispatchToThread):
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::didReceiveMessage):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.h:
+        * SourcesCocoa.txt:
+
 2020-09-13  Simon Fraser  <simon.fraser@apple.com>
 
         Overflow:scroll rubberbanding is interrupted by post-layout scrolling
