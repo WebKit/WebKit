@@ -1,5 +1,43 @@
 2020-09-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266901. rdar://problem/68881000
+
+    [Repaint] RenderLayerModelObject::styleWillChange may issue redundant repaint
+    https://bugs.webkit.org/show_bug.cgi?id=216374
+    <rdar://problem/68657490>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Move the repaintIncludingDescendants() calls to repaintBeforeStyleChange() to avoid redundant repaints on the same renderer.
+    
+    * rendering/RenderElement.cpp:
+    (WebCore::RenderElement::repaintBeforeStyleChange):
+    * rendering/RenderLayerModelObject.cpp:
+    (WebCore::RenderLayerModelObject::styleWillChange):
+    
+    LayoutTests:
+    
+    * css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+    * platform/ios/css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266901 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-10  Zalan Bujtas  <zalan@apple.com>
+
+            [Repaint] RenderLayerModelObject::styleWillChange may issue redundant repaint
+            https://bugs.webkit.org/show_bug.cgi?id=216374
+            <rdar://problem/68657490>
+
+            Reviewed by Simon Fraser.
+
+            * css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+            * platform/ios/css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+
+2020-09-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266818. rdar://problem/68881035
 
     [Repaint] RenderElement::setStyle may issue redundant repaint
