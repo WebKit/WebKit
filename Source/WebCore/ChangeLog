@@ -1,5 +1,61 @@
 2020-09-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266818. rdar://problem/68881035
+
+    [Repaint] RenderElement::setStyle may issue redundant repaint
+    https://bugs.webkit.org/show_bug.cgi?id=216324
+    <rdar://problem/68595896>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    If we issue a repaint in ::styleWillChange, we should not need to re-issue it again in RenderElement::setStyle (see r266803 for details).
+    
+    * rendering/RenderElement.cpp:
+    (WebCore::RenderElement::repaintBeforeStyleChange):
+    (WebCore::RenderElement::setStyle):
+    * rendering/RenderElement.h:
+    
+    LayoutTests:
+    
+    * compositing/masks/compositing-clip-path-change-no-repaint-expected.txt:
+    * compositing/shared-backing/overflow-scroll/shared-layer-repaint-expected.txt:
+    * fast/css-custom-paint/delay-repaint-expected.txt:
+    * fast/images/async-image-multiple-clients-repaint-expected.txt:
+    * fast/repaint/horizontal-bt-overflow-child-expected.txt:
+    * fast/repaint/horizontal-bt-overflow-parent-expected.txt:
+    * fast/repaint/horizontal-bt-overflow-same-expected.txt:
+    * fast/repaint/mutate-non-visible-expected.txt:
+    * fast/repaint/negative-text-indent-with-overflow-hidden-expected.txt:
+    * fast/repaint/overflow-flipped-writing-mode-table-expected.txt:
+    * fast/repaint/spanner-with-margin-expected.txt:
+    * fast/repaint/table-row-repaint-expected.txt:
+    * fast/repaint/vertical-overflow-child-expected.txt:
+    * fast/repaint/vertical-overflow-parent-expected.txt:
+    * fast/repaint/vertical-overflow-same-expected.txt:
+    * svg/transforms/svg-transform-foreign-object-repaint-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266818 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-10  Zalan Bujtas  <zalan@apple.com>
+
+            [Repaint] RenderElement::setStyle may issue redundant repaint
+            https://bugs.webkit.org/show_bug.cgi?id=216324
+            <rdar://problem/68595896>
+
+            Reviewed by Simon Fraser.
+
+            If we issue a repaint in ::styleWillChange, we should not need to re-issue it again in RenderElement::setStyle (see r266803 for details).
+
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::repaintBeforeStyleChange):
+            (WebCore::RenderElement::setStyle):
+            * rendering/RenderElement.h:
+
+2020-09-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266803. rdar://problem/68881014
 
     [Repaint] styleWillChange may call repaint on the same renderer multiple times.
