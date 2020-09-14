@@ -27,17 +27,8 @@
 
 #if USE(MEDIATOOLBOX)
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <MediaToolbox/FigPhoto.h>
-#else
-#include <CoreFoundation/CoreFoundation.h>
-
-typedef CF_ENUM(int, FigPhotoContainerFormat)
-{
-    kFigPhotoContainerFormat_HEIF,
-    kFigPhotoContainerFormat_JFIF,
-
-};
-#endif
+// FIXME (68673547): Use actual <MediaToolbox/FigPhoto.h> and FigPhotoContainerFormat enum when we weak-link instead of soft-link MediaToolbox and CoreMedia.
+#define kPALFigPhotoContainerFormat_HEIF 0
+#define kPALFigPhotoContainerFormat_JFIF 1
 
 #endif
