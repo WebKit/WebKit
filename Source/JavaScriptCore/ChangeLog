@@ -1,3 +1,38 @@
+2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Make a few built-in methods throw if called as top-level functions
+        https://bugs.webkit.org/show_bug.cgi?id=216467
+
+        Reviewed by Darin Adler.
+
+        Non-strict userland functions substitute undefined & null `this` values
+        with the global object [1], while built-in functions do not [2].
+
+        This patch adds 5 missing toThis(globalObject, ECMAMode::strict()) calls,
+        preventing built-in methods from being called as top-level functions:
+
+        ```
+        let {toString} = Error.prototype;
+        toString(); // now throws TypeError
+        ```
+
+        Aligns JSC with V8 and SpiderMonkey.
+        This change is performance-neutral due to DFG inlining of OpToThis.
+        All other callFrame->thisValue() usages were vetted to be spec-correct.
+
+        [1]: https://tc39.es/ecma262/#sec-ordinarycallbindthis (step 6.a.iii)
+        [2]: https://tc39.es/ecma262/#sec-built-in-function-objects-call-thisargument-argumentslist (step 10)
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::createArrayIteratorObject):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToPrimitiveSymbol):
+        (JSC::dateProtoFuncToJSON):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+
 2020-09-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r266885): dyld: Symbol not found: __ZN9Inspector17BackendDispatcher12sendResponseElON3WTF6RefPtrINS1_8JSONImpl6ObjectENS1_13DumbPtrTraitsIS4_EEEEb

@@ -609,9 +609,6 @@ test/built-ins/Array/length/define-own-prop-length-coercion-order.js:
 test/built-ins/Array/length/define-own-prop-length-overflow-order.js:
   default: 'Test262Error: Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
-test/built-ins/Array/prototype/methods-called-as-functions.js:
-  default: 'Test262Error: entries Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: entries Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/ArrayBuffer/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -642,15 +639,6 @@ test/built-ins/ArrayBuffer/prototype/slice/species.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/Date/prototype/Symbol.toPrimitive/called-as-function.js:
-  default: 'Test262Error: Expected a TypeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
-test/built-ins/Date/prototype/toJSON/called-as-function.js:
-  default: 'Test262Error: Expected a TypeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
-test/built-ins/Error/prototype/toString/called-as-function.js:
-  default: 'Test262Error: Expected a TypeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
 test/built-ins/Function/call-bind-this-realm-undef.js:
   default: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
   strict mode: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
@@ -1285,9 +1273,6 @@ test/built-ins/RegExp/prototype/Symbol.split/u-lastindex-adv-thru-failure.js:
 test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
-test/built-ins/RegExp/prototype/toString/called-as-function.js:
-  default: 'Test262Error: Expected a TypeError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'

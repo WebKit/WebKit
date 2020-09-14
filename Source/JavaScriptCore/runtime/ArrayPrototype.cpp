@@ -828,7 +828,7 @@ inline EncodedJSValue createArrayIteratorObject(JSGlobalObject* globalObject, Ca
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject  = callFrame->thisValue().toObject(globalObject);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     UNUSED_PARAM(scope);
     if (UNLIKELY(!thisObject))
