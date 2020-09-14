@@ -17015,7 +17015,6 @@ private:
             return result;
         }
 
-        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecInt32Only), provenType(edge));
         if (mayHaveTypeCheck(edge.useKind()))
             terminate(Uncountable);
         return m_out.int32Zero;
@@ -17050,7 +17049,6 @@ private:
             break;
         }
 
-        DFG_ASSERT(m_graph, m_node, !provenType(edge), provenType(edge));
         if (mayHaveTypeCheck(edge.useKind()))
             terminate(Uncountable);
         return m_out.int64Zero;
@@ -17122,7 +17120,6 @@ private:
             return uncheckedValue;
         }
         
-        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecCellCheck), provenType(edge));
         if (mayHaveTypeCheck(edge.useKind()))
             terminate(Uncountable);
         return m_out.intPtrZero;
@@ -17283,7 +17280,6 @@ private:
             return result;
         }
 
-        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecBoolean), provenType(edge));
         if (mayHaveTypeCheck(edge.useKind()))
             terminate(Uncountable);
         return m_out.booleanFalse;
@@ -17296,7 +17292,6 @@ private:
         LoweredNodeValue value = m_doubleValues.get(edge.node());
         if (isValid(value))
             return value.value();
-        DFG_ASSERT(m_graph, m_node, !provenType(edge), provenType(edge));
         if (mayHaveTypeCheck(edge.useKind()))
             terminate(Uncountable);
         return m_out.doubleZero;

@@ -1,3 +1,39 @@
+2020-09-14  Saam Barati  <sbarati@apple.com>
+
+        Remove bogus asserts in FTLLower that assume programs are compiled with sensible speculations
+        https://bugs.webkit.org/show_bug.cgi?id=216485
+        <rdar://problem/68562804>
+
+        Reviewed by Keith Miller.
+
+        We had an assert inside lowCell that if a value was not part of the JSValue
+        hashmap of values, then the type must not conform to being a cell. However,
+        consider a program like this:
+        
+        ```
+        x = ArithAdd(i32, i32) <-- x is an i32 here
+        if (b) {
+            Check(Cell:@x)
+            ArrayifyToStructure(@x, thingy)
+        }
+        <-- HERE
+        ```
+        
+        @x will live in FTLLower's i32 hashmap, but because of the AI rule for
+        ArrayifyToStructure, it will also have SpecCell in its type. This is totally
+        valid, and asserting that this isn't possible is wrong. (Obviously the above
+        speculation is stupid, as we will always exit at the Check, but it's valid IR.)
+        
+        This patch removes this assertion from lowCell, and removes similar assertions
+        from other low* functions.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lowInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::lowInt52):
+        (JSC::FTL::DFG::LowerDFGToB3::lowCell):
+        (JSC::FTL::DFG::LowerDFGToB3::lowBoolean):
+        (JSC::FTL::DFG::LowerDFGToB3::lowDouble):
+
 2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Make a few built-in methods throw if called as top-level functions
