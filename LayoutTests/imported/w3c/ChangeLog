@@ -1,3 +1,14 @@
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
+        AudioDestinationCocoa should stop hardcoding the number of output channels to 2
+        https://bugs.webkit.org/show_bug.cgi?id=216491
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing test.
+
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Replace 'serializable' with '[Default] object toJSON()'

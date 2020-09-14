@@ -1,3 +1,23 @@
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
+        AudioDestinationCocoa should stop hardcoding the number of output channels to 2
+        https://bugs.webkit.org/show_bug.cgi?id=216491
+
+        Reviewed by Darin Adler.
+
+        Stop hardcoding the number of output channels in AudioDestinationCocoa and instead use the AudioDestinationNode's
+        number of output channels.
+
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestinationCocoa::AudioDestinationCocoa):
+        (WebCore::AudioDestinationCocoa::numberOfOutputChannels const):
+        (WebCore::AudioDestinationCocoa::setAudioStreamBasicDescription):
+        (): Deleted.
+        * platform/audio/cocoa/AudioDestinationCocoa.h:
+        * platform/mock/MockAudioDestinationCocoa.cpp:
+        (WebCore::MockAudioDestinationCocoa::MockAudioDestinationCocoa):
+
 2020-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][MediaFoundation] r264188 introduced linker warning: LNK4199: /DELAYLOAD:mf.dll ignored; no imports found from mf.dll

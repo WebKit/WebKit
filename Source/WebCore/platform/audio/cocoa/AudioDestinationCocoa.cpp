@@ -56,7 +56,7 @@ std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& call
     if (AudioDestinationCocoa::createOverride)
         return AudioDestinationCocoa::createOverride(callback, sampleRate);
 
-    auto destination = makeUnique<AudioDestinationCocoa>(callback, sampleRate);
+    auto destination = makeUnique<AudioDestinationCocoa>(callback, numberOfOutputChannels, sampleRate);
     destination->configure();
     return destination;
 }
@@ -71,15 +71,12 @@ unsigned long AudioDestination::maxChannelCount()
     return AudioSession::sharedSession().maximumNumberOfOutputChannels();
 }
 
-// FIXME: We should not be hardcoding the number of input channels.
-constexpr unsigned legacyNumberOfOutputChannels { 2 };
-
-AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, float sampleRate)
+AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate)
     : m_outputUnit(0)
     , m_callback(callback)
-    , m_outputBus(AudioBus::create(legacyNumberOfOutputChannels, kRenderBufferSize, false).releaseNonNull())
-    , m_renderBus(AudioBus::create(legacyNumberOfOutputChannels, kRenderBufferSize).releaseNonNull())
-    , m_fifo(makeUniqueRef<PushPullFIFO>(legacyNumberOfOutputChannels, fifoSize))
+    , m_outputBus(AudioBus::create(numberOfOutputChannels, kRenderBufferSize, false).releaseNonNull())
+    , m_renderBus(AudioBus::create(numberOfOutputChannels, kRenderBufferSize).releaseNonNull())
+    , m_fifo(makeUniqueRef<PushPullFIFO>(numberOfOutputChannels, fifoSize))
     , m_contextSampleRate(sampleRate)
 {
     configure();
@@ -87,7 +84,7 @@ AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, float sa
     auto hardwareSampleRate = this->hardwareSampleRate();
     if (sampleRate != hardwareSampleRate) {
         double scaleFactor = static_cast<double>(sampleRate) / hardwareSampleRate;
-        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, legacyNumberOfOutputChannels, kRenderBufferSize);
+        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfOutputChannels, kRenderBufferSize);
     }
 }
 
@@ -95,6 +92,11 @@ AudioDestinationCocoa::~AudioDestinationCocoa()
 {
     if (m_outputUnit)
         AudioComponentInstanceDispose(m_outputUnit);
+}
+
+unsigned AudioDestinationCocoa::numberOfOutputChannels() const
+{
+    return m_renderBus->numberOfChannels();
 }
 
 unsigned AudioDestinationCocoa::framesPerBuffer() const
@@ -139,7 +141,7 @@ void AudioDestinationCocoa::setAudioStreamBasicDescription(AudioStreamBasicDescr
     streamFormat.mBytesPerPacket = bytesPerFloat;
     streamFormat.mFramesPerPacket = 1;
     streamFormat.mBytesPerFrame = bytesPerFloat;
-    streamFormat.mChannelsPerFrame = 2;
+    streamFormat.mChannelsPerFrame = numberOfOutputChannels();
     streamFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
 }
 

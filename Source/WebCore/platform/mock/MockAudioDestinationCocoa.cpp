@@ -37,7 +37,7 @@ namespace WebCore {
 const int kRenderBufferSize = 128;
 
 MockAudioDestinationCocoa::MockAudioDestinationCocoa(AudioIOCallback& callback, float sampleRate)
-    : AudioDestinationCocoa(callback, sampleRate)
+    : AudioDestinationCocoa(callback, 2, sampleRate)
     , m_workQueue(WorkQueue::create("MockAudioDestinationCocoa Render Queue"))
     , m_timer(RunLoop::current(), this, &MockAudioDestinationCocoa::tick)
 {

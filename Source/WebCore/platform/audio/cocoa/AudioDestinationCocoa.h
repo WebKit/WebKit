@@ -45,7 +45,7 @@ using CreateAudioDestinationCocoaOverride = std::unique_ptr<AudioDestination>(*)
 // An AudioDestination using CoreAudio's default output AudioUnit
 class AudioDestinationCocoa : public AudioDestination, public AudioSourceProvider {
 public:
-    AudioDestinationCocoa(AudioIOCallback&, float sampleRate);
+    AudioDestinationCocoa(AudioIOCallback&, unsigned numberOfOutputChannels, float sampleRate);
     virtual ~AudioDestinationCocoa();
 
     WEBCORE_EXPORT static CreateAudioDestinationCocoaOverride createOverride;
@@ -57,6 +57,8 @@ protected:
     float sampleRate() const final { return m_contextSampleRate; }
     unsigned framesPerBuffer() const final;
     AudioUnit& outputUnit() { return m_outputUnit; }
+
+    unsigned numberOfOutputChannels() const;
     
     // DefaultOutputUnit callback
     static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);
