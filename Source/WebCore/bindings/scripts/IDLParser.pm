@@ -72,7 +72,7 @@ struct( IDLInterface => {
     asyncIterable => '$', # Used for asycn iterable interfaces, of type 'IDLAsyncIterable'
     mapLike => '$', # Used for mapLike interfaces, of type 'IDLMapLike'
     setLike => '$', # Used for setLike interfaces, of type 'IDLSetLike'
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # Used to represent an argument to a IDLOperation.
@@ -92,14 +92,10 @@ struct( IDLOperation => {
     arguments => '@', # List of 'IDLArgument'
     isConstructor => '$',
     isStatic => '$',
-    isIterable => '$',
     isStringifier => '$',
-    isMapLike => '$',
-    isSetLike => '$',
     specials => '@',
     extendedAttributes => '%',
 });
-
 
 # https://heycam.github.io/webidl/#idl-attributes
 struct( IDLAttribute => {
@@ -107,12 +103,10 @@ struct( IDLAttribute => {
     type => 'IDLType',
     isConstructor => '$',
     isStatic => '$',
-    isMapLike => '$',
-    isSetLike => '$',
     isStringifier => '$',
     isReadOnly => '$',
     isInherit => '$',
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-iterable
@@ -120,8 +114,8 @@ struct( IDLIterable => {
     isKeyValue => '$',
     keyType => 'IDLType',
     valueType => 'IDLType',
-    operations => '@', # Iterable operations (entries, keys, values, [Symbol.Iterator], forEach)
-    extendedAttributes => '$',
+    operations => '@',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-async-iterable
@@ -130,7 +124,7 @@ struct( IDLAsyncIterable => {
     keyType => 'IDLType',
     valueType => 'IDLType',
     arguments => '@', # List of 'IDLArgument'
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#es-maplike
@@ -138,18 +132,14 @@ struct( IDLMapLike => {
     isReadOnly => '$',
     keyType => 'IDLType',
     valueType => 'IDLType',
-    attributes => '@', # MapLike attributes (size)
-    operations => '@', # MapLike operations (entries, keys, values, forEach, get, has and if not readonly, delete, set and clear)
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#es-setlike
 struct( IDLSetLike => {
     isReadOnly => '$',
     itemType => 'IDLType',
-    attributes => '@', # SetLike attributes (size)
-    operations => '@', # SetLike operations (entries, keys, values, forEach, has and if not readonly, delete, set and clear)
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-constants
@@ -157,7 +147,7 @@ struct( IDLConstant => {
     name => '$',
     type => 'IDLType',
     value => '$',
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-enums
@@ -165,7 +155,7 @@ struct( IDLEnum => {
     name => '$',
     type => 'IDLType',
     values => '@',
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#dfn-dictionary-member
@@ -174,7 +164,7 @@ struct( IDLDictionaryMember => {
     type => 'IDLType',
     isRequired => '$',
     default => '$',
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-dictionaries
@@ -183,14 +173,14 @@ struct( IDLDictionary => {
     parentType => 'IDLType',
     members => '@', # List of 'IDLDictionaryMember'
     isPartial => '$', # Used for partial dictionaries
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-callback-functions
 struct( IDLCallbackFunction => {
     type => '$',
     operation => 'IDLOperation',
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-namespaces
@@ -199,14 +189,14 @@ struct( IDLNamespace => {
     operations => '@', # List of 'IDLOperation'
     attributes => '@', # List of 'IDLAttribute'
     isPartial => '$', # Used for partial namespaces
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#includes-statement
 struct( IDLIncludesStatement => {
     interfaceIdentifier => '$',
     mixinIdentifier => '$',
-    extendedAttributes => '$',
+    extendedAttributes => '%',
 });
 
 # https://heycam.github.io/webidl/#idl-typedefs
@@ -588,10 +578,7 @@ sub cloneOperation
 
     $clonedOperation->isConstructor($operation->isConstructor);
     $clonedOperation->isStatic($operation->isStatic);
-    $clonedOperation->isIterable($operation->isIterable);
     $clonedOperation->isStringifier($operation->isStringifier);
-    $clonedOperation->isMapLike($operation->isMapLike);
-    $clonedOperation->isSetLike($operation->isSetLike);
     $clonedOperation->specials($operation->specials);
 
     copyExtendedAttributes($clonedOperation->extendedAttributes, $operation->extendedAttributes);
@@ -703,9 +690,6 @@ sub applyTypedefs
                 if ($definition->iterable->valueType) {
                     $definition->iterable->valueType($self->typeByApplyingTypedefs($definition->iterable->valueType));
                 }
-                foreach my $operation (@{$definition->iterable->operations}) {
-                    $self->applyTypedefsToOperation($operation);
-                }
             }
             if ($definition->asyncIterable) {
                 if ($definition->asyncIterable->keyType) {
@@ -725,22 +709,10 @@ sub applyTypedefs
                 if ($definition->mapLike->valueType) {
                     $definition->mapLike->valueType($self->typeByApplyingTypedefs($definition->mapLike->valueType));
                 }
-                foreach my $attribute (@{$definition->mapLike->attributes}) {
-                    $attribute->type($self->typeByApplyingTypedefs($attribute->type));
-                }
-                foreach my $operation (@{$definition->mapLike->operations}) {
-                    $self->applyTypedefsToOperation($operation);
-                }
             }
             if ($definition->setLike) {
                 if ($definition->setLike->itemType) {
                     $definition->setLike->itemType($self->typeByApplyingTypedefs($definition->setLike->itemType));
-                }
-                foreach my $attribute (@{$definition->setLike->attributes}) {
-                    $attribute->type($self->typeByApplyingTypedefs($attribute->type));
-                }
-                foreach my $operation (@{$definition->setLike->operations}) {
-                    $self->applyTypedefsToOperation($operation);
                 }
             }
         } elsif (ref($definition) eq "IDLDictionary") {
@@ -1305,10 +1277,10 @@ sub parsePartialInterfaceMember
         return $self->parseAttributeRest($extendedAttributeList);
     }
     if ($next->value() eq "maplike") {
-        return $self->parseMapLikeRest($extendedAttributeList, 0);
+        return $self->parseMapLikeRest($extendedAttributeList);
     }
     if ($next->value() eq "setlike") {
-        return $self->parseSetLikeRest($extendedAttributeList, 0);
+        return $self->parseSetLikeRest($extendedAttributeList);
     }
     if ($next->value() eq "inherit") {
         return $self->parseInheritAttribute($extendedAttributeList);
@@ -1745,10 +1717,14 @@ sub parseReadOnlyMember
             return $attribute;
         }
         if ($next->value() eq "maplike") {
-            return $self->parseMapLikeRest($extendedAttributeList, 1);
+            my $mapLike = $self->parseMapLikeRest($extendedAttributeList);
+            $mapLike->isReadOnly(1);
+            return $mapLike;
         }
         if ($next->value() eq "setlike") {
-            return $self->parseSetLikeRest($extendedAttributeList, 1);
+            my $setLike = $self->parseSetLikeRest($extendedAttributeList);
+            $setLike->isReadOnly(1);
+            return $setLike;
         }
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -2081,353 +2057,82 @@ sub parseIterableRest
     my $next = $self->nextToken();
     if ($next->value() eq "iterable") {
         $self->assertTokenValue($self->getToken(), "iterable", __LINE__);
-        my $iterableNode = $self->parseOptionalIterableInterface($extendedAttributeList);
+
+        my $iterable = IDLIterable->new();
+
+        $self->assertTokenValue($self->getToken(), "<", __LINE__);
+        my $type1 = $self->parseTypeWithExtendedAttributes();
+
+        if ($self->nextToken()->value() eq ",") {
+            $self->assertTokenValue($self->getToken(), ",", __LINE__);
+
+            my $type2 = $self->parseTypeWithExtendedAttributes();
+            $iterable->isKeyValue(1);
+            $iterable->keyType($type1);
+            $iterable->valueType($type2);
+        } else {
+            $iterable->isKeyValue(0);
+            $iterable->valueType($type1);
+        }
+        $self->assertTokenValue($self->getToken(), ">", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return $iterableNode;
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "iterable");
+        $iterable->extendedAttributes($extendedAttributeList);
+
+        return $iterable;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseOptionalIterableInterface
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-
-    my $newDataNode = IDLIterable->new();
-
-    $self->assertExtendedAttributesValidForContext($extendedAttributeList, "iterable");
-    $newDataNode->extendedAttributes($extendedAttributeList);
-
-    $self->assertTokenValue($self->getToken(), "<", __LINE__);
-    my $type1 = $self->parseTypeWithExtendedAttributes();
-
-    if ($self->nextToken()->value() eq ",") {
-        $self->assertTokenValue($self->getToken(), ",", __LINE__);
-
-        my $type2 = $self->parseTypeWithExtendedAttributes();
-        $newDataNode->isKeyValue(1);
-        $newDataNode->keyType($type1);
-        $newDataNode->valueType($type2);
-    } else {
-        $newDataNode->isKeyValue(0);
-        $newDataNode->valueType($type1);
-    }
-    $self->assertTokenValue($self->getToken(), ">", __LINE__);
-
-    # FIXME: Synthetic operations should not be added during parsing. Instead, the CodeGenerator
-    # should be responsible for them.
-
-    my $symbolIteratorOperation = IDLOperation->new();
-    $symbolIteratorOperation->name("[Symbol.Iterator]");
-    $symbolIteratorOperation->extendedAttributes($extendedAttributeList);
-    $symbolIteratorOperation->isIterable(1);
-
-    my $entriesOperation = IDLOperation->new();
-    $entriesOperation->name("entries");
-    $entriesOperation->extendedAttributes($extendedAttributeList);
-    $entriesOperation->isIterable(1);
-
-    my $keysOperation = IDLOperation->new();
-    $keysOperation->name("keys");
-    $keysOperation->extendedAttributes($extendedAttributeList);
-    $keysOperation->isIterable(1);
-
-    my $valuesOperation = IDLOperation->new();
-    $valuesOperation->name("values");
-    $valuesOperation->extendedAttributes($extendedAttributeList);
-    $valuesOperation->isIterable(1);
-
-    my $forEachOperation = IDLOperation->new();
-    $forEachOperation->name("forEach");
-    $forEachOperation->extendedAttributes($extendedAttributeList);
-    $forEachOperation->isIterable(1);
-    my $forEachArgument = IDLArgument->new();
-    $forEachArgument->name("callback");
-    $forEachArgument->type(makeSimpleType("any"));
-    push(@{$forEachOperation->arguments}, ($forEachArgument));
-
-    push(@{$newDataNode->operations}, $symbolIteratorOperation);
-    push(@{$newDataNode->operations}, $entriesOperation);
-    push(@{$newDataNode->operations}, $keysOperation);
-    push(@{$newDataNode->operations}, $valuesOperation);
-    push(@{$newDataNode->operations}, $forEachOperation);
-
-    return $newDataNode;
 }
 
 sub parseMapLikeRest
 {
     my $self = shift;
     my $extendedAttributeList = shift;
-    my $isReadOnly = shift;
 
     my $next = $self->nextToken();
     if ($next->value() eq "maplike") {
         $self->assertTokenValue($self->getToken(), "maplike", __LINE__);
-        my $mapLikeNode = $self->parseMapLikeProperties($extendedAttributeList, $isReadOnly);
+
+        my $maplike = IDLMapLike->new();
+
+        $self->assertTokenValue($self->getToken(), "<", __LINE__);
+        $maplike->keyType($self->parseTypeWithExtendedAttributes());
+        $self->assertTokenValue($self->getToken(), ",", __LINE__);
+        $maplike->valueType($self->parseTypeWithExtendedAttributes());
+        $self->assertTokenValue($self->getToken(), ">", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return $mapLikeNode;
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "map-like");
+        $maplike->extendedAttributes($extendedAttributeList);
+
+        return $maplike;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseMapLikeProperties
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-    my $isReadOnly = shift;
-
-    my $maplike = IDLMapLike->new();
-    $maplike->extendedAttributes($extendedAttributeList);
-    $maplike->isReadOnly($isReadOnly);
-
-    $self->assertTokenValue($self->getToken(), "<", __LINE__);
-    $maplike->keyType($self->parseTypeWithExtendedAttributes());
-    $self->assertTokenValue($self->getToken(), ",", __LINE__);
-    $maplike->valueType($self->parseTypeWithExtendedAttributes());
-    $self->assertTokenValue($self->getToken(), ">", __LINE__);
-
-    # FIXME: Synthetic operations should not be added during parsing. Instead, the CodeGenerator
-    # should be responsible for them.
-
-    my $notEnumerableExtendedAttributeList = $extendedAttributeList;
-    $notEnumerableExtendedAttributeList->{NotEnumerable} = 1;
-
-    my $sizeAttribute = IDLAttribute->new();
-    $sizeAttribute->name("size");
-    $sizeAttribute->isMapLike(1);
-    $sizeAttribute->extendedAttributes($extendedAttributeList);
-    $sizeAttribute->isReadOnly(1);
-    $sizeAttribute->type(makeSimpleType("any"));
-    push(@{$maplike->attributes}, $sizeAttribute);
-
-    my $getOperation = IDLOperation->new();
-    $getOperation->name("get");
-    $getOperation->isMapLike(1);
-    my $getArgument = IDLArgument->new();
-    $getArgument->name("key");
-    $getArgument->type($maplike->keyType);
-    $getArgument->extendedAttributes($extendedAttributeList);
-    push(@{$getOperation->arguments}, ($getArgument));
-    $getOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $getOperation->type(makeSimpleType("any"));
-
-    my $hasOperation = IDLOperation->new();
-    $hasOperation->name("has");
-    $hasOperation->isMapLike(1);
-    my $hasArgument = IDLArgument->new();
-    $hasArgument->name("key");
-    $hasArgument->type($maplike->keyType);
-    $hasArgument->extendedAttributes($extendedAttributeList);
-    push(@{$hasOperation->arguments}, ($hasArgument));
-    $hasOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $hasOperation->type(makeSimpleType("any"));
-
-    my $entriesOperation = IDLOperation->new();
-    $entriesOperation->name("entries");
-    $entriesOperation->isMapLike(1);
-    $entriesOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $entriesOperation->type(makeSimpleType("any"));
-
-    my $keysOperation = IDLOperation->new();
-    $keysOperation->name("keys");
-    $keysOperation->isMapLike(1);
-    $keysOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $keysOperation->type(makeSimpleType("any"));
-
-    my $valuesOperation = IDLOperation->new();
-    $valuesOperation->name("values");
-    $valuesOperation->isMapLike(1);
-    $valuesOperation->extendedAttributes($extendedAttributeList);
-    $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
-    $valuesOperation->type(makeSimpleType("any"));
-
-    my $forEachOperation = IDLOperation->new();
-    $forEachOperation->name("forEach");
-    $forEachOperation->isMapLike(1);
-    $forEachOperation->extendedAttributes({});
-    $forEachOperation->type(makeSimpleType("any"));
-    my $forEachArgument = IDLArgument->new();
-    $forEachArgument->name("callback");
-    $forEachArgument->type(makeSimpleType("any"));
-    $forEachArgument->extendedAttributes($extendedAttributeList);
-    push(@{$forEachOperation->arguments}, ($forEachArgument));
-
-    push(@{$maplike->operations}, $getOperation);
-    push(@{$maplike->operations}, $hasOperation);
-    push(@{$maplike->operations}, $entriesOperation);
-    push(@{$maplike->operations}, $keysOperation);
-    push(@{$maplike->operations}, $valuesOperation);
-    push(@{$maplike->operations}, $forEachOperation);
-
-    return $maplike if $isReadOnly;
-
-    my $setOperation = IDLOperation->new();
-    $setOperation->name("set");
-    $setOperation->isMapLike(1);
-    my $setKeyArgument = IDLArgument->new();
-    $setKeyArgument->name("key");
-    $setKeyArgument->type($maplike->keyType);
-    $setKeyArgument->extendedAttributes($extendedAttributeList);
-    my $setValueArgument = IDLArgument->new();
-    $setValueArgument->name("value");
-    $setValueArgument->type($maplike->valueType);
-    $setValueArgument->extendedAttributes($extendedAttributeList);
-    push(@{$setOperation->arguments}, ($setKeyArgument));
-    push(@{$setOperation->arguments}, ($setValueArgument));
-    $setOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $setOperation->type(makeSimpleType("any"));
-
-    my $clearOperation = IDLOperation->new();
-    $clearOperation->name("clear");
-    $clearOperation->isMapLike(1);
-    $clearOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $clearOperation->type(makeSimpleType("undefined"));
-
-    my $deleteOperation = IDLOperation->new();
-    $deleteOperation->name("delete");
-    $deleteOperation->isMapLike(1);
-    my $deleteArgument = IDLArgument->new();
-    $deleteArgument->name("key");
-    $deleteArgument->type($maplike->keyType);
-    $deleteArgument->extendedAttributes($extendedAttributeList);
-    push(@{$deleteOperation->arguments}, ($deleteArgument));
-    $deleteOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $deleteOperation->type(makeSimpleType("any"));
-
-    push(@{$maplike->operations}, $setOperation);
-    push(@{$maplike->operations}, $clearOperation);
-    push(@{$maplike->operations}, $deleteOperation);
-
-    return $maplike;
 }
 
 sub parseSetLikeRest
 {
     my $self = shift;
     my $extendedAttributeList = shift;
-    my $isReadOnly = shift;
 
     my $next = $self->nextToken();
     if ($next->value() eq "setlike") {
         $self->assertTokenValue($self->getToken(), "setlike", __LINE__);
-        my $setLikeNode = $self->parseSetLikeProperties($extendedAttributeList, $isReadOnly);
+        
+        my $setlike = IDLSetLike->new();
+
+        $self->assertTokenValue($self->getToken(), "<", __LINE__);
+        $setlike->itemType($self->parseTypeWithExtendedAttributes());
+        $self->assertTokenValue($self->getToken(), ">", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return $setLikeNode;
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "set-like");
+        $setlike->extendedAttributes($extendedAttributeList);
+        
+        return $setlike;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseSetLikeProperties
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-    my $isReadOnly = shift;
-
-    my $setlike = IDLSetLike->new();
-    $setlike->extendedAttributes($extendedAttributeList);
-
-    $self->assertTokenValue($self->getToken(), "<", __LINE__);
-    $setlike->itemType($self->parseTypeWithExtendedAttributes());
-    $self->assertTokenValue($self->getToken(), ">", __LINE__);
-
-    # FIXME: Synthetic operations should not be added during parsing. Instead, the CodeGenerator
-    # should be responsible for them.
-
-    my $notEnumerableExtendedAttributeList = $extendedAttributeList;
-    $notEnumerableExtendedAttributeList->{NotEnumerable} = 1;
-
-    my $sizeAttribute = IDLAttribute->new();
-    $sizeAttribute->name("size");
-    $sizeAttribute->isSetLike(1);
-    $sizeAttribute->extendedAttributes($extendedAttributeList);
-    $sizeAttribute->isReadOnly(1);
-    $sizeAttribute->type(makeSimpleType("any"));
-    push(@{$setlike->attributes}, $sizeAttribute);
-
-    my $hasOperation = IDLOperation->new();
-    $hasOperation->name("has");
-    $hasOperation->isSetLike(1);
-    my $hasArgument = IDLArgument->new();
-    $hasArgument->name("key");
-    $hasArgument->type($setlike->itemType);
-    $hasArgument->extendedAttributes($extendedAttributeList);
-    push(@{$hasOperation->arguments}, ($hasArgument));
-    $hasOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $hasOperation->type(makeSimpleType("any"));
-
-    my $entriesOperation = IDLOperation->new();
-    $entriesOperation->name("entries");
-    $entriesOperation->isSetLike(1);
-    $entriesOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $entriesOperation->type(makeSimpleType("any"));
-
-    my $keysOperation = IDLOperation->new();
-    $keysOperation->name("keys");
-    $keysOperation->isSetLike(1);
-    $keysOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $keysOperation->type(makeSimpleType("any"));
-
-    my $valuesOperation = IDLOperation->new();
-    $valuesOperation->name("values");
-    $valuesOperation->isSetLike(1);
-    $valuesOperation->extendedAttributes($extendedAttributeList);
-    $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
-    $valuesOperation->type(makeSimpleType("any"));
-
-    my $forEachOperation = IDLOperation->new();
-    $forEachOperation->name("forEach");
-    $forEachOperation->isSetLike(1);
-    my $forEachArgument = IDLArgument->new();
-    $forEachArgument->name("callback");
-    $forEachArgument->type(makeSimpleType("any"));
-    $forEachArgument->extendedAttributes($extendedAttributeList);
-    push(@{$forEachOperation->arguments}, ($forEachArgument));
-    $forEachOperation->extendedAttributes($extendedAttributeList);
-    $forEachOperation->extendedAttributes->{Enumerable} = 1;
-    $forEachOperation->type(makeSimpleType("any"));
-
-    push(@{$setlike->operations}, $hasOperation);
-    push(@{$setlike->operations}, $entriesOperation);
-    push(@{$setlike->operations}, $keysOperation);
-    push(@{$setlike->operations}, $valuesOperation);
-    push(@{$setlike->operations}, $forEachOperation);
-
-    return $setlike if $isReadOnly;
-
-    my $addOperation = IDLOperation->new();
-    $addOperation->name("add");
-    $addOperation->isSetLike(1);
-    my $addArgument = IDLArgument->new();
-    $addArgument->name("key");
-    $addArgument->type($setlike->itemType);
-    $addArgument->extendedAttributes($extendedAttributeList);
-    push(@{$addOperation->arguments}, ($addArgument));
-    $addOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $addOperation->type(makeSimpleType("any"));
-
-    my $clearOperation = IDLOperation->new();
-    $clearOperation->name("clear");
-    $clearOperation->isSetLike(1);
-    $clearOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $clearOperation->type(makeSimpleType("undefined"));
-
-    my $deleteOperation = IDLOperation->new();
-    $deleteOperation->name("delete");
-    $deleteOperation->isSetLike(1);
-    my $deleteArgument = IDLArgument->new();
-    $deleteArgument->name("key");
-    $deleteArgument->type($setlike->itemType);
-    $deleteArgument->extendedAttributes($extendedAttributeList);
-    push(@{$deleteOperation->arguments}, ($deleteArgument));
-    $deleteOperation->extendedAttributes($notEnumerableExtendedAttributeList);
-    $deleteOperation->type(makeSimpleType("any"));
-
-    push(@{$setlike->operations}, $addOperation);
-    push(@{$setlike->operations}, $clearOperation);
-    push(@{$setlike->operations}, $deleteOperation);
-
-    return $setlike;
 }
 
 sub parseOperationRest

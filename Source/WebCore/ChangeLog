@@ -1,3 +1,38 @@
+2020-09-14  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Move synthetic operation creation from IDLParser to CodeGeneratorJS
+        https://bugs.webkit.org/show_bug.cgi?id=216468
+
+        Reviewed by Chris Dumez.
+
+        Address FIXMEs in IDLParser by moving synthetic operation creation out of IDLParser
+        and into CodeGeneratorJS. Replace use of isIterable/isMapLike/isSetLike predicates
+        on IDLOperation and IDLAttribute with extended attributes, FromIterable, 
+        ForwardToMapLike and ForwardToSetLike.
+
+        While this change completely removes all notion of operations/attributes from 
+        IDLMapLike and IDLSetLike, IDLIterable retains an operations array, now only
+        used by CodeGeneratorJS, to avoid a larger refactoring of the code generation.
+        Eventually, it would be good to stop using AST level operations and attributes
+        to model these synthetic operations, and instead have the code generation
+        maintain a model that more closely resembles the ECMAScript output directly.
+
+        While here, also fix the issue that maplike and setlike were always overriding
+        set/clear/delete and add/clear/delete (respectively) where as WebIDL says they
+        should only add those if the interface doesn't already have members with those
+        names. Adds new tests for this behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/IDLParser.pm:
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+        * bindings/scripts/test/JS/JSTestMapLikeWithOverriddenOperations.cpp: Added.
+        * bindings/scripts/test/JS/JSTestMapLikeWithOverriddenOperations.h: Added.
+        * bindings/scripts/test/JS/JSTestSetLikeWithOverriddenOperations.cpp: Added.
+        * bindings/scripts/test/JS/JSTestSetLikeWithOverriddenOperations.h: Added.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestMapLikeWithOverriddenOperations.idl: Added.
+        * bindings/scripts/test/TestSetLikeWithOverriddenOperations.idl: Added.
+
 2020-09-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][FFC] Each in-flow child of a flex container becomes a flex item.

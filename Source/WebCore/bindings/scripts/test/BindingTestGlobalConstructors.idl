@@ -33,6 +33,7 @@ partial interface TestGlobalObject {
     attribute TestLegacyFactoryFunctionLegacyFactoryFunctionConstructor Audio;
     attribute TestLegacyOverrideBuiltInsConstructor TestLegacyOverrideBuiltIns;
     attribute TestMapLikeConstructor TestMapLike;
+    attribute TestMapLikeWithOverriddenOperationsConstructor TestMapLikeWithOverriddenOperations;
     attribute TestNamedAndIndexedSetterNoIdentifierConstructor TestNamedAndIndexedSetterNoIdentifier;
     attribute TestNamedAndIndexedSetterThrowingExceptionConstructor TestNamedAndIndexedSetterThrowingException;
     attribute TestNamedAndIndexedSetterWithIdentifierConstructor TestNamedAndIndexedSetterWithIdentifier;
@@ -59,6 +60,7 @@ partial interface TestGlobalObject {
     attribute TestReportExtraMemoryCostConstructor TestReportExtraMemoryCost;
     [Conditional=Condition1|Condition2] attribute TestSerializedScriptValueInterfaceConstructor TestSerializedScriptValueInterface;
     attribute TestSetLikeConstructor TestSetLike;
+    attribute TestSetLikeWithOverriddenOperationsConstructor TestSetLikeWithOverriddenOperations;
     attribute TestStringifierConstructor TestStringifier;
     attribute TestStringifierAnonymousOperationConstructor TestStringifierAnonymousOperation;
     attribute TestStringifierNamedOperationConstructor TestStringifierNamedOperation;

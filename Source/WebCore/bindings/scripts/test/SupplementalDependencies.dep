@@ -141,6 +141,9 @@ WebDOMTestLegacyOverrideBuiltIns.h:
 JSTestMapLike.h: 
 DOMTestMapLike.h: 
 WebDOMTestMapLike.h: 
+JSTestMapLikeWithOverriddenOperations.h: 
+DOMTestMapLikeWithOverriddenOperations.h: 
+WebDOMTestMapLikeWithOverriddenOperations.h: 
 JSTestMixinInterface.h: TestPartialMixinInterface.idl
 DOMTestMixinInterface.h: TestPartialMixinInterface.idl
 WebDOMTestMixinInterface.h: TestPartialMixinInterface.idl
@@ -236,6 +239,9 @@ WebDOMTestSerializedScriptValueInterface.h:
 JSTestSetLike.h: 
 DOMTestSetLike.h: 
 WebDOMTestSetLike.h: 
+JSTestSetLikeWithOverriddenOperations.h: 
+DOMTestSetLikeWithOverriddenOperations.h: 
+WebDOMTestSetLikeWithOverriddenOperations.h: 
 JSTestStandaloneDictionary.h: TestSupplemental.idl
 DOMTestStandaloneDictionary.h: TestSupplemental.idl
 WebDOMTestStandaloneDictionary.h: TestSupplemental.idl

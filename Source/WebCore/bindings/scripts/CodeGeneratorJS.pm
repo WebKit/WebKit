@@ -163,6 +163,9 @@ sub GenerateInterface
 
     $codeGenerator->LinkOverloadedOperations($interface);
 
+    AddIterableOperationIfNeeded($interface);
+    AddMapLikeAttributesAndOperationIfNeeded($interface);
+    AddSetLikeAttributesAndOperationIfNeeded($interface);
     AddStringifierOperationIfNeeded($interface);
     AddLegacyCallerOperationIfNeeded($interface);
 
@@ -172,6 +175,273 @@ sub GenerateInterface
     } else {
         $object->GenerateHeader($interface, $enumerations, $dictionaries);
         $object->GenerateImplementation($interface, $enumerations, $dictionaries);
+    }
+}
+
+sub AddIterableOperationIfNeeded
+{
+    my $interface = shift;
+
+    return unless $interface->iterable;
+
+    $interface->iterable->extendedAttributes->{FromIterable} = 1;
+
+    my $symbolIteratorOperation = IDLOperation->new();
+    $symbolIteratorOperation->name("[Symbol.Iterator]");
+    IDLParser::copyExtendedAttributes($symbolIteratorOperation->extendedAttributes, $interface->iterable->extendedAttributes);
+    push(@{$interface->iterable->operations}, $symbolIteratorOperation);
+    push(@{$interface->operations}, $symbolIteratorOperation) if IsKeyValueIterableInterface($interface);
+
+    my $entriesOperation = IDLOperation->new();
+    $entriesOperation->name("entries");
+    IDLParser::copyExtendedAttributes($entriesOperation->extendedAttributes, $interface->iterable->extendedAttributes);
+    push(@{$interface->iterable->operations}, $entriesOperation);
+    push(@{$interface->operations}, $entriesOperation) if IsKeyValueIterableInterface($interface);
+
+    my $keysOperation = IDLOperation->new();
+    $keysOperation->name("keys");
+    IDLParser::copyExtendedAttributes($keysOperation->extendedAttributes, $interface->iterable->extendedAttributes);
+    push(@{$interface->iterable->operations}, $keysOperation);
+    push(@{$interface->operations}, $keysOperation) if IsKeyValueIterableInterface($interface);
+
+    my $valuesOperation = IDLOperation->new();
+    $valuesOperation->name("values");
+    IDLParser::copyExtendedAttributes($valuesOperation->extendedAttributes, $interface->iterable->extendedAttributes);
+    push(@{$interface->iterable->operations}, $valuesOperation);
+    push(@{$interface->operations}, $valuesOperation) if IsKeyValueIterableInterface($interface);
+
+    my $forEachOperation = IDLOperation->new();
+    $forEachOperation->name("forEach");
+    my $forEachArgument = IDLArgument->new();
+    $forEachArgument->name("callback");
+    $forEachArgument->type(IDLParser::makeSimpleType("any"));
+    push(@{$forEachOperation->arguments}, ($forEachArgument));
+    IDLParser::copyExtendedAttributes($forEachOperation->extendedAttributes, $interface->iterable->extendedAttributes);
+    push(@{$interface->iterable->operations}, $forEachOperation);
+    push(@{$interface->operations}, $forEachOperation) if IsKeyValueIterableInterface($interface);
+}
+
+sub AddMapLikeAttributesAndOperationIfNeeded
+{
+    my $interface = shift;
+
+    return unless $interface->mapLike;
+
+    $interface->mapLike->extendedAttributes->{ForwardToMapLike} = 1;
+
+    # https://heycam.github.io/webidl/#es-map-size
+    my $sizeAttribute = IDLAttribute->new();
+    $sizeAttribute->name("size");
+    $sizeAttribute->isReadOnly(1);
+    $sizeAttribute->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($sizeAttribute->extendedAttributes, $interface->mapLike->extendedAttributes);
+    $sizeAttribute->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->attributes}, $sizeAttribute);
+
+    # https://heycam.github.io/webidl/#es-map-get-has
+    my $getOperation = IDLOperation->new();
+    $getOperation->name("get");
+    my $getArgument = IDLArgument->new();
+    $getArgument->name("key");
+    $getArgument->type(IDLParser::cloneType($interface->mapLike->keyType));
+    push(@{$getOperation->arguments}, ($getArgument));
+    $getOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($getOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+    $getOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $getOperation);
+
+    my $hasOperation = IDLOperation->new();
+    $hasOperation->name("has");
+    my $hasArgument = IDLArgument->new();
+    $hasArgument->name("key");
+    $hasArgument->type(IDLParser::cloneType($interface->mapLike->keyType));
+    push(@{$hasOperation->arguments}, ($hasArgument));
+    $hasOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($hasOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+    $hasOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $hasOperation);
+
+    # https://heycam.github.io/webidl/#es-map-entries
+    my $entriesOperation = IDLOperation->new();
+    $entriesOperation->name("entries");
+    $entriesOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($entriesOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+    $entriesOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $entriesOperation);
+
+    # https://heycam.github.io/webidl/#es-map-keys-values
+    my $keysOperation = IDLOperation->new();
+    $keysOperation->name("keys");
+    $keysOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($keysOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+    $keysOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $keysOperation);
+
+    my $valuesOperation = IDLOperation->new();
+    $valuesOperation->name("values");
+    $valuesOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($valuesOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+    $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $valuesOperation);
+
+    # https://heycam.github.io/webidl/#es-forEach
+    my $forEachOperation = IDLOperation->new();
+    $forEachOperation->name("forEach");
+    $forEachOperation->type(IDLParser::makeSimpleType("any"));
+    my $forEachArgument = IDLArgument->new();
+    $forEachArgument->name("callback");
+    $forEachArgument->type(IDLParser::makeSimpleType("any"));
+    push(@{$forEachOperation->arguments}, ($forEachArgument));
+    IDLParser::copyExtendedAttributes($forEachOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+    push(@{$interface->operations}, $forEachOperation);
+
+    return if $interface->mapLike->isReadOnly;
+
+    # https://heycam.github.io/webidl/#es-map-set
+    unless (grep { $_->name eq "set" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
+        my $setOperation = IDLOperation->new();
+        $setOperation->name("set");
+        my $setKeyArgument = IDLArgument->new();
+        $setKeyArgument->name("key");
+        $setKeyArgument->type(IDLParser::cloneType($interface->mapLike->keyType));
+        my $setValueArgument = IDLArgument->new();
+        $setValueArgument->name("value");
+        $setValueArgument->type(IDLParser::cloneType($interface->mapLike->valueType));
+        push(@{$setOperation->arguments}, ($setKeyArgument));
+        push(@{$setOperation->arguments}, ($setValueArgument));
+        $setOperation->type(IDLParser::makeSimpleType("any"));
+        IDLParser::copyExtendedAttributes($setOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+        $setOperation->extendedAttributes->{NotEnumerable} = 1;
+        push(@{$interface->operations}, $setOperation);
+    }
+
+    # https://heycam.github.io/webidl/#es-map-clear
+    unless (grep { $_->name eq "clear" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
+        my $clearOperation = IDLOperation->new();
+        $clearOperation->name("clear");
+        $clearOperation->type(IDLParser::makeSimpleType("undefined"));
+        IDLParser::copyExtendedAttributes($clearOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+        $clearOperation->extendedAttributes->{NotEnumerable} = 1;
+        push(@{$interface->operations}, $clearOperation);
+    }
+
+    # https://heycam.github.io/webidl/#es-map-delete
+    unless (grep { $_->name eq "delete" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
+        my $deleteOperation = IDLOperation->new();
+        $deleteOperation->name("delete");
+        my $deleteArgument = IDLArgument->new();
+        $deleteArgument->name("key");
+        $deleteArgument->type(IDLParser::cloneType($interface->mapLike->keyType));
+        push(@{$deleteOperation->arguments}, ($deleteArgument));
+        $deleteOperation->type(IDLParser::makeSimpleType("any"));
+        IDLParser::copyExtendedAttributes($deleteOperation->extendedAttributes, $interface->mapLike->extendedAttributes);
+        $deleteOperation->extendedAttributes->{NotEnumerable} = 1;
+        push(@{$interface->operations}, $deleteOperation);
+    }
+}
+
+sub AddSetLikeAttributesAndOperationIfNeeded
+{
+    my $interface = shift;
+
+    return unless $interface->setLike;
+
+    $interface->setLike->extendedAttributes->{ForwardToSetLike} = 1;
+
+    # https://heycam.github.io/webidl/#es-set-size
+    my $sizeAttribute = IDLAttribute->new();
+    $sizeAttribute->name("size");
+    $sizeAttribute->isReadOnly(1);
+    $sizeAttribute->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($sizeAttribute->extendedAttributes, $interface->setLike->extendedAttributes);
+    $sizeAttribute->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->attributes}, $sizeAttribute);
+
+    # https://heycam.github.io/webidl/#es-set-has
+    my $hasOperation = IDLOperation->new();
+    $hasOperation->name("has");
+    my $hasArgument = IDLArgument->new();
+    $hasArgument->name("key");
+    $hasArgument->type(IDLParser::cloneType($interface->setLike->itemType));
+    push(@{$hasOperation->arguments}, ($hasArgument));
+    $hasOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($hasOperation->extendedAttributes, $interface->setLike->extendedAttributes);
+    $hasOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $hasOperation);
+
+    # https://heycam.github.io/webidl/#es-set-entries-keys
+    my $entriesOperation = IDLOperation->new();
+    $entriesOperation->name("entries");
+    $entriesOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($entriesOperation->extendedAttributes, $interface->setLike->extendedAttributes);
+    $entriesOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $entriesOperation);
+
+    my $keysOperation = IDLOperation->new();
+    $keysOperation->name("keys");
+    $keysOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($keysOperation->extendedAttributes, $interface->setLike->extendedAttributes);
+    $keysOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $keysOperation);
+
+    # https://heycam.github.io/webidl/#es-set-values
+    my $valuesOperation = IDLOperation->new();
+    $valuesOperation->name("values");
+    $valuesOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($valuesOperation->extendedAttributes, $interface->setLike->extendedAttributes);
+    $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $valuesOperation);
+
+    # https://heycam.github.io/webidl/#es-forEach
+    my $forEachOperation = IDLOperation->new();
+    $forEachOperation->name("forEach");
+    my $forEachArgument = IDLArgument->new();
+    $forEachArgument->name("callback");
+    $forEachArgument->type(IDLParser::makeSimpleType("any"));
+    push(@{$forEachOperation->arguments}, ($forEachArgument));
+    $forEachOperation->type(IDLParser::makeSimpleType("any"));
+    IDLParser::copyExtendedAttributes($forEachOperation->extendedAttributes, $interface->setLike->extendedAttributes);
+    # FIXME: The WebIDL spec says that the forEach operation should be enumerable.
+    $forEachOperation->extendedAttributes->{NotEnumerable} = 1;
+    push(@{$interface->operations}, $forEachOperation);
+
+    return if $interface->setLike->isReadOnly;
+
+    # https://heycam.github.io/webidl/#es-add-delete
+    unless (grep { $_->name eq "add" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
+        my $addOperation = IDLOperation->new();
+        $addOperation->name("add");
+        my $addArgument = IDLArgument->new();
+        $addArgument->name("key");
+        $addArgument->type(IDLParser::cloneType($interface->setLike->itemType));
+        push(@{$addOperation->arguments}, ($addArgument));
+        $addOperation->type(IDLParser::makeSimpleType("any"));
+        IDLParser::copyExtendedAttributes($addOperation->extendedAttributes, $interface->setLike->extendedAttributes);
+        $addOperation->extendedAttributes->{NotEnumerable} = 1;
+        push(@{$interface->operations}, $addOperation);
+    }
+
+    # https://heycam.github.io/webidl/#es-set-clear
+    unless (grep { $_->name eq "clear" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
+        my $clearOperation = IDLOperation->new();
+        $clearOperation->name("clear");
+        $clearOperation->type(IDLParser::makeSimpleType("undefined"));
+        IDLParser::copyExtendedAttributes($clearOperation->extendedAttributes, $interface->setLike->extendedAttributes);
+        $clearOperation->extendedAttributes->{NotEnumerable} = 1;
+        push(@{$interface->operations}, $clearOperation);
+    }
+
+    unless (grep { $_->name eq "delete" } (@{$interface->attributes}, @{$interface->operations}, @{$interface->constants})) {
+        my $deleteOperation = IDLOperation->new();
+        $deleteOperation->name("delete");
+        my $deleteArgument = IDLArgument->new();
+        $deleteArgument->name("key");
+        $deleteArgument->type(IDLParser::cloneType($interface->setLike->itemType));
+        push(@{$deleteOperation->arguments}, ($deleteArgument));
+        $deleteOperation->type(IDLParser::makeSimpleType("any"));
+        IDLParser::copyExtendedAttributes($deleteOperation->extendedAttributes, $interface->setLike->extendedAttributes);
+        $deleteOperation->extendedAttributes->{NotEnumerable} = 1;
+        push(@{$interface->operations}, $deleteOperation);
     }
 }
 
@@ -1604,11 +1874,11 @@ sub GetFullyQualifiedImplementationCallName
         return $interface->type->name . "::${implementationName}";
     }
     
-    if ($property->isMapLike) {
+    if ($property->extendedAttributes->{ForwardToMapLike}) {
         return "forward" . $codeGenerator->WK_ucfirst($property->name) . "ToMapLike";
     }
     
-    if ($property->isSetLike) {
+    if ($property->extendedAttributes->{ForwardToSetLike}) {
         return "forward" . $codeGenerator->WK_ucfirst($property->name) . "ToSetLike";
     }
 
@@ -1623,7 +1893,7 @@ sub AddAdditionalArgumentsForImplementationCall
         unshift(@$arguments, $implExpression);
     }
     
-    if ($property->isMapLike or $property->isSetLike) {
+    if ($property->extendedAttributes->{ForwardToMapLike} or $property->extendedAttributes->{ForwardToSetLike}) {
         push(@$arguments, $globalObject);
         if (ref($property) eq "IDLOperation") {
             push(@$arguments, $callFrame);
@@ -1761,8 +2031,8 @@ sub IsAcceleratedDOMAttribute
     return 0 if $interface->extendedAttributes->{CustomProxyToJSObject};
 
     return 0 if $attribute->isStatic;
-    return 0 if $attribute->isMapLike;
-    return 0 if $attribute->isSetLike;
+    return 0 if $attribute->extendedAttributes->{ForwardToMapLike};
+    return 0 if $attribute->extendedAttributes->{ForwardToSetLike};
     return 0 if $codeGenerator->IsConstructorType($attribute->type);
     return 0 if IsJSBuiltin($interface, $attribute);
     return 0 if $attribute->extendedAttributes->{LegacyLenientThis};
@@ -1840,10 +2110,6 @@ sub PrototypeOperationCount
     foreach my $operation (@{$interface->operations}) {
         $count++ if !$operation->isStatic && !OperationShouldBeOnInstance($interface, $operation);
     }
-
-    $count += scalar @{$interface->iterable->operations} if $interface->iterable;
-    $count += scalar @{$interface->mapLike->operations} if $interface->mapLike;
-    $count += scalar @{$interface->setLike->operations} if $interface->setLike;
 
     return $count;
 }
@@ -3101,11 +3367,7 @@ sub GeneratePropertiesHashTable
 
     return 0 if !$propertyCount;
 
-    my @attributes = @{$interface->attributes};
-    push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
-    push(@attributes, @{$interface->setLike->attributes}) if $interface->setLike;
-
-    foreach my $attribute (@attributes) {
+    foreach my $attribute (@{$interface->attributes}) {
         next if ($attribute->isStatic);
         next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
         next if ($attribute->extendedAttributes->{PrivateIdentifier} and not $attribute->extendedAttributes->{PublicIdentifier});
@@ -3153,11 +3415,7 @@ sub GeneratePropertiesHashTable
         }
     }
 
-    my @operations = @{$interface->operations};
-    push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
-    push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
-    push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
-    foreach my $operation (@operations) {
+    foreach my $operation (@{$interface->operations}) {
         next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
         next if ($operation->isStatic);
         next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
@@ -3960,23 +4218,14 @@ sub GenerateImplementation
     push(@implContent, GenerateEnumerationsImplementationContent($interface, $enumerations));
     push(@implContent, GenerateDictionariesImplementationContent($interface, $dictionaries));
 
-    my @operations = @{$interface->operations};
-    push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
-    push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
-    push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
-
-    my @attributes = @{$interface->attributes};
-    push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
-    push(@attributes, @{$interface->setLike->attributes}) if $interface->setLike;
-
     my $numConstants = @{$interface->constants};
-    my $numOperations = @operations;
-    my $numAttributes = @attributes;
+    my $numAttributes = @{$interface->attributes};
+    my $numOperations = @{$interface->operations};
 
     if ($numOperations > 0) {
         my $inAppleCopyright = 0;
         push(@implContent,"// Functions\n\n");
-        foreach my $operation (@operations) {
+        foreach my $operation (@{$interface->operations}) {
             next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
             next if $operation->extendedAttributes->{ForwardDeclareInHeader};
             next if IsJSBuiltin($interface, $operation);
@@ -4025,7 +4274,7 @@ sub GenerateImplementation
             push(@implContent, "bool ${constructorSetter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
         }
 
-        foreach my $attribute (@attributes) {
+        foreach my $attribute (@{$interface->attributes}) {
             next if $attribute->extendedAttributes->{ForwardDeclareInHeader};
             next if IsJSBuiltin($interface, $attribute);
 
@@ -4050,7 +4299,7 @@ sub GenerateImplementation
     }
 
     if ($numOperations > 0) {
-        foreach my $operation (@operations) {
+        foreach my $operation (@{$interface->operations}) {
             next unless $operation->extendedAttributes->{DOMJIT};
             $implIncludes{"DOMJITIDLTypeFilter.h"} = 1;
             $implIncludes{"DOMJITAbstractHeapRepository.h"} = 1;
@@ -4082,7 +4331,7 @@ sub GenerateImplementation
     }
 
     if ($numAttributes > 0 || NeedsConstructorProperty($interface)) {
-        foreach my $attribute (@attributes) {
+        foreach my $attribute (@{$interface->attributes}) {
             next unless $attribute->extendedAttributes->{DOMJIT};
             assert("Only DOMJIT=Getter is supported for attributes") unless $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{DOMJIT}, "Getter");
 
@@ -4632,12 +4881,12 @@ sub GenerateImplementation
 
     }
 
-    foreach my $attribute (@attributes) {
+    foreach my $attribute (@{$interface->attributes}) {
         GenerateAttributeGetterDefinition(\@implContent, $interface, $className, $attribute);
         GenerateAttributeSetterDefinition(\@implContent, $interface, $className, $attribute);
     }
 
-    foreach my $operation (@operations) {
+    foreach my $operation (@{$interface->operations}) {
         GenerateOperationDefinition(\@implContent, $interface, $className, $operation);
     }
     
@@ -5022,7 +5271,7 @@ sub GenerateAttributeGetterBodyDefinition
 
         my $globalObjectReference = $attribute->isStatic ? "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)" : "*thisObject.globalObject()";
         my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", $globalObjectReference);
-        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->isMapLike or $attribute->isSetLike;
+        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->extendedAttributes->{ForwardToMapLike} or $attribute->extendedAttributes->{ForwardToSetLike};
 
         if (!IsReadonly($attribute)) {
             my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
@@ -5365,7 +5614,7 @@ sub GenerateOperationBodyDefinition
     } elsif (HasCustomMethod($operation)) {
         GenerateImplementationCustomFunctionCall($outputArray, $operation, $interface, $className, $functionImplementationName, $indent);
     } else {
-        if (!$operation->isMapLike && !$operation->isSetLike && !$operation->isStatic) {
+        if (!$operation->extendedAttributes->{ForwardToMapLike} && !$operation->extendedAttributes->{ForwardToSetLike} && !$operation->isStatic) {
             push(@$outputArray, "    auto& impl = castedThis->wrapped();\n");
         }
 
@@ -5390,7 +5639,7 @@ sub GenerateOperationDefinition
     my ($outputArray, $interface, $className, $operation) = @_;
 
     return if IsJSBuiltin($interface, $operation);
-    return if $operation->isIterable;
+    return if $operation->extendedAttributes->{FromIterable};
     
     if ($operation->extendedAttributes->{Default}) {
         return GenerateDefaultOperationDefinition($outputArray, $interface, $className, $operation);
@@ -7542,11 +7791,7 @@ sub GetRuntimeEnabledStaticProperties
 
     my @runtimeEnabledProperties = ();
 
-    my @attributes = @{$interface->attributes};
-    push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
-    push(@attributes, @{$interface->setLike->attributes}) if $interface->setLike;
-
-    foreach my $attribute (@attributes) {
+    foreach my $attribute (@{$interface->attributes}) {
         next if AttributeShouldBeOnInstance($interface, $attribute) != 0;
         next if not $attribute->isStatic;
 
@@ -7555,11 +7800,7 @@ sub GetRuntimeEnabledStaticProperties
         }
     }
 
-    my @operations = @{$interface->operations};
-    push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
-    push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
-    push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
-    foreach my $operation (@operations) {
+    foreach my $operation (@{$interface->operations}) {
         next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
         next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
         next if OperationShouldBeOnInstance($interface, $operation) != 0;
