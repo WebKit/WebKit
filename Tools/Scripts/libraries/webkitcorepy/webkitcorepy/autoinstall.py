@@ -21,6 +21,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import logging
 import math
 import os
 import platform
@@ -32,6 +33,7 @@ import tarfile
 import tempfile
 import zipfile
 
+from logging import NullHandler
 from webkitcorepy import log
 from webkitcorepy.version import Version
 from xml.dom import minidom
@@ -215,7 +217,7 @@ class Package(object):
             install_location = os.path.dirname(self.location)
             shutil.rmtree(self.location, ignore_errors=True)
 
-            log.warning('Downloading {}...'.format(archive))
+            AutoInstall.log('Downloading {}...'.format(archive))
             archive.download()
 
             temp_location = os.path.join(tempfile.gettempdir(), self.name)
@@ -230,10 +232,10 @@ class Package(object):
                 if not os.path.exists(os.path.join(candidate, 'setup.py')):
                     continue
 
-                log.warning('Installing {}...'.format(archive))
+                AutoInstall.log('Installing {}...'.format(archive))
 
                 if self.slow_install:
-                    log.warning('{} is known to be slow to install'.format(archive))
+                    AutoInstall.log('{} is known to be slow to install'.format(archive))
 
                 with open(os.devnull, 'w') as devnull:
                     subprocess.check_call(
@@ -290,9 +292,9 @@ class Package(object):
                 json.dump(AutoInstall.manifest, file, indent=4)
             AutoInstall.userspace_should_own(manifest)
 
-            log.warning('Installed {}!'.format(archive))
+            AutoInstall.log('Installed {}!'.format(archive))
         except Exception:
-            log.critical('Failed to install {}!'.format(archive))
+            AutoInstall.log('Failed to install {}!'.format(archive), level=logging.CRITICAL)
             raise
 
 
@@ -490,6 +492,13 @@ class AutoInstall(object):
                     if not tag.platform:
                         pass
                     yield tags.Tag(tag.interpreter, tag.abi, override)
+
+    @classmethod
+    def log(cls, message, level=logging.WARNING):
+        if not log.handlers or all([isinstance(handle, NullHandler) for handle in log.handlers]):
+            sys.stderr.write(message + '\n')
+        else:
+            log.log(level, message)
 
 
 sys.meta_path.insert(0, AutoInstall)
