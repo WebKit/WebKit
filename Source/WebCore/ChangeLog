@@ -1,3 +1,29 @@
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Some WebAudio tests give different output on different machines
+        https://bugs.webkit.org/show_bug.cgi?id=216371
+        <rdar://problem/68653909>
+
+        Reviewed by Alex Christensen.
+
+        Hardcode default sample rate for AudioContext to 44100 for WPT tests instead
+        of using the hardware sample rate. This allows some tests to output consistent
+        results on different machines.
+
+        No new tests, unskipped existing test.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::defaultSampleRateForTesting):
+        (WebCore::AudioContext::setDefaultSampleRateForTesting):
+        (WebCore::AudioContext::create):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::create):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setDefaultAudioContextSampleRate):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2020-09-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Cache the last status of the image encoded data

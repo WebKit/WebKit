@@ -39,7 +39,8 @@ class AudioContext : public BaseAudioContext {
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static ExceptionOr<Ref<AudioContext>> create(Document&, const AudioContextOptions& = { });
+    static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&& = { });
+    WEBCORE_EXPORT static void setDefaultSampleRateForTesting(Optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);
 

@@ -51,6 +51,10 @@
 #include "SoupNetworkSession.h"
 #endif
 
+#if ENABLE(WEB_AUDIO)
+#include "AudioContext.h"
+#endif
+
 namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
@@ -171,6 +175,9 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
     settings.setShouldDisplayCaptions(m_shouldDisplayCaptions);
     settings.setShouldDisplayTextDescriptions(m_shouldDisplayTextDescriptions);
+#endif
+#if ENABLE(WEB_AUDIO)
+    AudioContext::setDefaultSampleRateForTesting(WTF::nullopt);
 #endif
     settings.setDefaultVideoPosterURL(m_defaultVideoPosterURL);
     settings.setForcePendingWebGLPolicy(m_forcePendingWebGLPolicy);
@@ -485,6 +492,15 @@ ExceptionOr<void> InternalSettings::setMediaCaptureRequiresSecureConnection(bool
     UNUSED_PARAM(requires);
 #endif
     return { };
+}
+
+void InternalSettings::setDefaultAudioContextSampleRate(float sampleRate)
+{
+#if ENABLE(WEB_AUDIO)
+    AudioContext::setDefaultSampleRateForTesting(sampleRate);
+#else
+    UNUSED_PARAM(sampleRate);
+#endif
 }
 
 ExceptionOr<void> InternalSettings::setEditingBehavior(const String& editingBehavior)

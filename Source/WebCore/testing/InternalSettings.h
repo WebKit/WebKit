@@ -67,6 +67,7 @@ public:
     ExceptionOr<void> setCanStartMedia(bool);
     ExceptionOr<void> setAllowsAirPlayForMediaPlayback(bool);
     ExceptionOr<void> setMediaCaptureRequiresSecureConnection(bool);
+    void setDefaultAudioContextSampleRate(float);
 
     ExceptionOr<void> setEditingBehavior(const String&);
     ExceptionOr<void> setPreferMIMETypeForImages(bool);

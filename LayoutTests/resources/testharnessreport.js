@@ -22,16 +22,20 @@ if (self.testRunner) {
     if (testRunner.timeout && (location.port == 8800 || location.port == 9443))
         setTimeout(timeout, testRunner.timeout * 0.9);
 
-    // Make WebAudio map to webkitWebAudio for WPT tests
     if (location.port == 8800 || location.port == 9443) {
+        // Make WebAudio map to webkitWebAudio for WPT tests
         if (window.webkitAudioContext && !window.AudioContext)
             Object.defineProperty(self, "AudioContext", Object.getOwnPropertyDescriptor(self, "webkitAudioContext"));
         if (window.webkitOfflineAudioContext && !window.OfflineAudioContext)
             Object.defineProperty(self, "OfflineAudioContext", Object.getOwnPropertyDescriptor(self, "webkitOfflineAudioContext"));
         if (window.webkitAudioPannerNode && !window.PannerNode)
             Object.defineProperty(self, "PannerNode", Object.getOwnPropertyDescriptor(self, "webkitAudioPannerNode"));
-        if (self.internals)
+        if (self.internals) {
+            // Use 44100 sample rate by default instead of the hardware sample rate so that we get consistent results across machines.
+            internals.settings.setDefaultAudioContextSampleRate(44100);
+
             internals.settings.setLazyIframeLoadingEnabled(location.pathname.indexOf('iframe-loading-lazy') !== -1);
+        }
     }
 
     if (testRunner.setStatisticsShouldDowngradeReferrer) 

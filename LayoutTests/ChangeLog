@@ -1,3 +1,18 @@
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Some WebAudio tests give different output on different machines
+        https://bugs.webkit.org/show_bug.cgi?id=216371
+        <rdar://problem/68653909>
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        Unskip test that should now have consistent results across machines.
+
+        * resources/testharnessreport.js:
+        Hardcode default sample rate for AudioContext to 44100 for WPT tests instead
+        of using the hardware sample rate.
+
 2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] webanimations/accelerated-animation-easing-update-after-pause.html is a flaky ImageOnlyFailure

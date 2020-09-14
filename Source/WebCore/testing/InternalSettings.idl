@@ -60,6 +60,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     [MayThrowException] undefined setMediaTypeOverride(DOMString mediaTypeOverride);
     undefined setAllowsAirPlayForMediaPlayback(boolean available);
     [Conditional=MEDIA_STREAM, MayThrowException] undefined setMediaCaptureRequiresSecureConnection(boolean enable);
+    undefined setDefaultAudioContextSampleRate(float sampleRate);
 
     [MayThrowException] undefined setForcePendingWebGLPolicy(boolean forced);
 
