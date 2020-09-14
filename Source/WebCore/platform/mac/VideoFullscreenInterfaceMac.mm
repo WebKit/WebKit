@@ -552,15 +552,9 @@ static const char* boolString(bool val)
 
 void VideoFullscreenInterfaceMac::preparedToReturnToInline(bool visible, const IntRect& inlineRect, NSWindow *parentWindow)
 {
-    LOG(Fullscreen, "VideoFullscreenInterfaceMac::preparedToReturnToInline(%p), visible:%s, inlineRect:{%d, %d, %d, %d}, parentWindow:%p", this, boolString(visible), inlineRect.x(), inlineRect.y(), inlineRect.width(), inlineRect.height(), parentWindow);
-
-    if (!visible) {
-        [m_webVideoFullscreenInterfaceObjC exitPIP];
-        return;
-    }
-
-    ASSERT(parentWindow);
-    [m_webVideoFullscreenInterfaceObjC exitPIPAnimatingToRect:(NSRect)inlineRect inWindow:parentWindow];
+    UNUSED_PARAM(visible);
+    UNUSED_PARAM(inlineRect);
+    UNUSED_PARAM(parentWindow);
 }
 
 void VideoFullscreenInterfaceMac::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)

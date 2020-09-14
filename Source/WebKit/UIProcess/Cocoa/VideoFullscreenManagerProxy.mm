@@ -288,25 +288,22 @@ void VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID(Complet
         completionHandler(WebCore::RouteSharingPolicy::Default, emptyString());
 }
 
-void VideoFullscreenModelContext::prepareToExitFullscreen()
+void VideoFullscreenModelContext::didEnterPictureInPicture()
 {
-    for (auto& client : copyToVector(m_clients))
-        client->prepareToExitPictureInPicture();
+    if (m_manager)
+        m_manager->hasVideoInPictureInPictureDidChange(true);
+}
+
+void VideoFullscreenModelContext::didExitPictureInPicture()
+{
+    if (m_manager)
+        m_manager->hasVideoInPictureInPictureDidChange(false);
 }
 
 void VideoFullscreenModelContext::willEnterPictureInPicture()
 {
     for (auto& client : copyToVector(m_clients))
         client->willEnterPictureInPicture();
-}
-
-void VideoFullscreenModelContext::didEnterPictureInPicture()
-{
-    if (m_manager)
-        m_manager->hasVideoInPictureInPictureDidChange(true);
-
-    for (auto& client : copyToVector(m_clients))
-        client->didEnterPictureInPicture();
 }
 
 void VideoFullscreenModelContext::failedToEnterPictureInPicture()
@@ -319,15 +316,6 @@ void VideoFullscreenModelContext::willExitPictureInPicture()
 {
     for (auto& client : copyToVector(m_clients))
         client->willExitPictureInPicture();
-}
-
-void VideoFullscreenModelContext::didExitPictureInPicture()
-{
-    if (m_manager)
-        m_manager->hasVideoInPictureInPictureDidChange(false);
-
-    for (auto& client : copyToVector(m_clients))
-        client->didExitPictureInPicture();
 }
 
 #pragma mark - VideoFullscreenManagerProxy
@@ -520,6 +508,8 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
 void VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange(bool value)
 {
     m_page->uiClient().hasVideoInPictureInPictureDidChange(m_page, value);
+    if (m_client)
+        m_client->hasVideoInPictureInPictureDidChange(value);
 }
 
 #pragma mark Messages from VideoFullscreenManager
@@ -825,6 +815,8 @@ void VideoFullscreenManagerProxy::fullscreenModeChanged(PlaybackSessionContextId
 void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(PlaybackSessionContextIdentifier contextId)
 {
     m_page->fullscreenMayReturnToInline();
+    if (m_client)
+        m_client->fullscreenMayReturnToInline();
 }
 
 void VideoFullscreenManagerProxy::fullscreenWillReturnToInline(PlaybackSessionContextIdentifier contextId)

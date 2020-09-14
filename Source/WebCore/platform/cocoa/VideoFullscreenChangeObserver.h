@@ -41,7 +41,6 @@ public:
     virtual void willExitFullscreen() = 0;
     virtual void didExitFullscreen() = 0;
     virtual void didCleanupFullscreen() = 0;
-    virtual void prepareToExitFullscreen() = 0;
     virtual void fullscreenMayReturnToInline() = 0;
     virtual void fullscreenWillReturnToInline() = 0;
 };

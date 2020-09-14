@@ -1,3 +1,63 @@
+2020-09-14  Peng Liu  <peng.liu6@apple.com>
+
+        Returning to element fullscreen from PiP is not stable under stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=216287
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        (WebKit::VideoFullscreenManagerProxyClient::~VideoFullscreenManagerProxyClient):
+        (WebKit::VideoFullscreenManagerProxy::setClient):
+        (WebKit::VideoFullscreenManagerProxy::client const):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::didEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::didExitPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::willEnterPictureInPicture):
+        (WebKit::VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange):
+        (WebKit::VideoFullscreenManagerProxy::fullscreenMayReturnToInline):
+        (WebKit::VideoFullscreenModelContext::prepareToExitFullscreen): Deleted.
+        Add the interface VideoFullscreenManagerProxyClient, which is used by WKFullScreenWindowController
+        to implement the support of "returning to element fullscreen from PiP". Using VideoFullscreenModelClient
+        for that purpose is not a good idea because the instance observed by VideoFullscreenModelClient may be
+        destroyed when a video element is exiting picture-in-picture if we don't call
+        VideoFullscreenManagerProxy::addClientForContext() and VideoFullscreenManagerProxy::removeClientForContext()
+        properly.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController initWithWebView:]):
+        (-[WKFullScreenWindowController dealloc]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        (-[WKFullScreenWindowController videoControlsManagerDidChange]):
+        (-[WKFullScreenWindowController prepareToExitPictureInPicture]):
+        (-[WKFullScreenWindowController didExitPictureInPicture]):
+        (-[WKFullScreenWindowController _videoFullscreenManager]):
+        (WKFullScreenWindowControllerVideoFullscreenModelClient::setParent): Deleted.
+        (WKFullScreenWindowControllerVideoFullscreenModelClient::setInterface): Deleted.
+        (WKFullScreenWindowControllerVideoFullscreenModelClient::interface const): Deleted.
+        (-[WKFullScreenWindowController willEnterPictureInPicture]): Deleted.
+        (-[WKFullScreenWindowController failedToEnterPictureInPicture]): Deleted.
+        Use VideoFullscreenManagerProxyClient instead of VideoFullscreenModelClient to implement
+        the support of "returning to element fullscreen from PiP" on iOS.
+        A user can "return to element fullscreen from PiP" by clicking the "return to fullscreen"
+        button on the PiP window, or by clicking the "fullscreen" button on the page. This patch
+        adds support for the latter case.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]):
+        (-[WKFullScreenWindowController dealloc]):
+        (-[WKFullScreenWindowController videoControlsManagerDidChange]):
+        (-[WKFullScreenWindowController didExitPictureInPicture]):
+        (-[WKFullScreenWindowController windowDidEnterFullScreen:]):
+        (-[WKFullScreenWindowController _videoFullscreenManager]):
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::setParent): Deleted.
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::setInterface): Deleted.
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::interface const): Deleted.
+        Use VideoFullscreenManagerProxyClient instead of VideoFullscreenModelClient to implement the
+        support of "exiting fullscreen after entering PiP" on Mac. We may implement the support of
+        "returning to element fullscreen from PiP" on Mac in the future.
+
 2020-09-14  Alex Christensen  <achristensen@webkit.org>
 
         Move cookie flushing SPI from WKProcessPool to WKHTTPCookieStore

@@ -85,6 +85,7 @@ static const char* boolString(bool val)
 #endif
 
 static const Seconds defaultWatchdogTimerInterval { 1_s };
+static const Seconds stopPictureInPictureTimerInterval { 1_s };
 static bool ignoreWatchdogForDebugging = false;
 
 @interface AVPlayerViewController (Details)
@@ -812,6 +813,7 @@ VideoFullscreenInterfaceAVKit::VideoFullscreenInterfaceAVKit(PlaybackSessionInte
     : m_playbackSessionInterface(playbackSessionInterface)
     , m_playerViewControllerDelegate(adoptNS([[WebAVPlayerViewControllerDelegate alloc] init]))
     , m_watchdogTimer(RunLoop::main(), this, &VideoFullscreenInterfaceAVKit::watchdogTimerFired)
+    , m_stopPictureInPictureTimer(RunLoop::main(), this, &VideoFullscreenInterfaceAVKit::stopPictureInPictureTimerFired)
 {
 }
 
@@ -1084,7 +1086,6 @@ void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStop(WTF::Function
     m_prepareToInlineCallback = WTFMove(callback);
     if (m_fullscreenChangeObserver) {
         m_fullscreenChangeObserver->fullscreenMayReturnToInline();
-        m_fullscreenChangeObserver->prepareToExitFullscreen();
         if (m_readyToStopPictureInPicture)
             m_fullscreenChangeObserver->fullscreenWillReturnToInline();
     }
@@ -1176,25 +1177,37 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 
         if (m_exitFullscreenNeedsExitPictureInPicture)
             doExitFullscreen();
+        else if (m_exitingPictureInPicture) {
+            m_exitingPictureInPicture = false;
+            if (m_videoFullscreenModel)
+                m_videoFullscreenModel->didExitPictureInPicture();
+        }
 
         if (m_enterFullscreenNeedsExitPictureInPicture)
             doEnterFullscreen();
         return;
     }
 
+    if (!m_readyToStopPictureInPicture) {
+        if (!m_stopPictureInPictureTimer.isActive())
+            m_stopPictureInPictureTimer.startOneShot(stopPictureInPictureTimerInterval);
+    } else
+        clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+
     [m_playerLayerView setBackgroundColor:clearUIColor()];
     [[m_playerViewController view] setBackgroundColor:clearUIColor()];
-
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
-
-    clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 
     if (m_enterFullscreenNeedsExitPictureInPicture)
         doEnterFullscreen();
 
     if (m_exitFullscreenNeedsExitPictureInPicture)
         doExitFullscreen();
+    else if (m_exitingPictureInPicture) {
+        m_exitingPictureInPicture = false;
+
+        if (m_videoFullscreenModel)
+            m_videoFullscreenModel->didExitPictureInPicture();
+    }
 }
 
 void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler(void (^completionHandler)(BOOL restored))
@@ -1572,6 +1585,13 @@ NO_RETURN_DUE_TO_ASSERT void VideoFullscreenInterfaceAVKit::watchdogTimerFired()
     [[m_playerViewController view] setHidden:YES];
 }
 
+void VideoFullscreenInterfaceAVKit::stopPictureInPictureTimerFired()
+{
+    LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::stopPictureInPictureTimerFired(%p) - not ready to stop picture-in-picture in %gs; forcing stop picture-in-picture.", this, stopPictureInPictureTimerInterval.value());
+    m_stopPictureInPictureTimer.stop();
+    clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+}
+
 void VideoFullscreenInterfaceAVKit::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if ((m_currentMode.mode() & mode) == mode)
@@ -1605,8 +1625,15 @@ void VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture(BOOL ready)
         return;
 
     m_readyToStopPictureInPicture = ready;
-    if (m_readyToStopPictureInPicture && m_fullscreenChangeObserver)
-        m_fullscreenChangeObserver->fullscreenWillReturnToInline();
+    if (m_readyToStopPictureInPicture) {
+        if (m_stopPictureInPictureTimer.isActive()) {
+            m_stopPictureInPictureTimer.stop();
+            clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+        }
+
+        if (m_fullscreenChangeObserver)
+            m_fullscreenChangeObserver->fullscreenWillReturnToInline();
+    }
 }
 
 static Optional<bool> isPictureInPictureSupported;

@@ -128,7 +128,6 @@ private:
     void willExitFullscreen() final;
     void didExitFullscreen() final;
     void didCleanupFullscreen() final;
-    void prepareToExitFullscreen() final { }
     void fullscreenMayReturnToInline() final { }
     void fullscreenWillReturnToInline() final;
 

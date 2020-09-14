@@ -1,3 +1,35 @@
+2020-09-14  Peng Liu  <peng.liu6@apple.com>
+
+        Returning to element fullscreen from PiP is not stable under stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=216287
+
+        Reviewed by Jer Noble.
+
+        * platform/cocoa/VideoFullscreenChangeObserver.h:
+        Delete prepareToExitFullscreen().
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::VideoFullscreenInterfaceAVKit):
+        (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStop):
+        (VideoFullscreenInterfaceAVKit::didStopPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::stopPictureInPictureTimerFired):
+        (VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture):
+        VideoFullscreenInterfaceAVKit expects an element enters fullscreen and figure out the
+        location and size of the video element after that, which will be used by AVKit for the
+        exiting picture-in-picture animation. However, the entering fullscreen may take a long
+        time and AVKit will start exiting picture-in-picture before the entering fullscreen
+        transition is done. We need to add protection for such a scenario. This patch adds
+        a timer (m_stopPictureInPictureTimer) for this purpose. This patch also makes sure
+        VideoFullscreenInterfaceAVKit will call didExitPictureInPicture() properly.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        Delete prepareToExitFullscreen().
+
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (WebCore::VideoFullscreenInterfaceMac::preparedToReturnToInline): This function
+        is not used on Mac.
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Move synthetic operation creation from IDLParser to CodeGeneratorJS

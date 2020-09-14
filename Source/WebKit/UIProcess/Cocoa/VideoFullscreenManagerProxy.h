@@ -111,7 +111,6 @@ private:
     void willExitFullscreen() final;
     void didExitFullscreen() final;
     void didCleanupFullscreen() final;
-    void prepareToExitFullscreen() final;
     void fullscreenMayReturnToInline() final;
     void fullscreenWillReturnToInline() final;
 
@@ -122,6 +121,14 @@ private:
     HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
+};
+
+class VideoFullscreenManagerProxyClient : public CanMakeWeakPtr<VideoFullscreenManagerProxyClient> {
+public:
+    virtual ~VideoFullscreenManagerProxyClient() { };
+
+    virtual void fullscreenMayReturnToInline() = 0;
+    virtual void hasVideoInPictureInPictureDidChange(bool value) = 0;
 };
 
 class VideoFullscreenManagerProxy : public RefCounted<VideoFullscreenManagerProxy>, private IPC::MessageReceiver {
@@ -144,6 +151,8 @@ public:
     bool isPlayingVideoInEnhancedFullscreen() const;
 
     PlatformVideoFullscreenInterface* controlsManagerInterface();
+    void setClient(VideoFullscreenManagerProxyClient* client) { m_client = makeWeakPtr(client); }
+    VideoFullscreenManagerProxyClient* client() const { return m_client.get(); }
 
     void forEachSession(Function<void(WebCore::VideoFullscreenModel&, PlatformVideoFullscreenInterface&)>&&);
 
@@ -202,6 +211,7 @@ private:
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
+    WeakPtr<VideoFullscreenManagerProxyClient> m_client;
 };
 
 } // namespace WebKit
