@@ -1,3 +1,12 @@
+2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
+
+        REGRESSION (r266634): fast/selectors/text-field-selection-stroke-color.html and fast/selectors/text-field-selection-window-inactive-stroke-color.html are flaky failures with pixel noise
+        https://bugs.webkit.org/show_bug.cgi?id=216394
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Split DOM Parsing related functions out of Element and ShadowRoot and into their own IDL files to match specs
