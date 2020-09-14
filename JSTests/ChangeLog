@@ -1,5 +1,18 @@
 2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Proxy's "ownKeys" trap result should not be sorted
+        https://bugs.webkit.org/show_bug.cgi?id=216227
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/object-get-own-property-symbols-on-large-array.js:
+        * microbenchmarks/object-get-own-property-symbols.js:
+        * microbenchmarks/reflect-own-keys.js: Added.
+        * stress/proxy-own-keys.js: Fix incorrect assert.
+        * test262/expectations.yaml: Mark 20 test cases as passing.
+
+2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         ArraySetLength should coerce [[Value]] before descriptor validation
         https://bugs.webkit.org/show_bug.cgi?id=158791
 

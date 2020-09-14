@@ -482,7 +482,7 @@ function shallowEq(a, b) {
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 500; i++) {
         let result = Reflect.ownKeys(proxy);
-        assert(shallowEq(result, ["a", "b", "c", s1, s2]));
+        assert(shallowEq(result, arr));
         assert(called);
         called = false;
     }

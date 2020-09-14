@@ -10,5 +10,5 @@ function test(object)
 }
 noInline(test);
 
-for (var i = 0; i < 1e3; ++i)
+for (var i = 0; i < 2500; ++i)
     test(object);

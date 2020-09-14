@@ -786,21 +786,9 @@ test/built-ins/Function/prototype/toString/setter-object.js:
 test/built-ins/Function/prototype/toString/unicode.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }" (function \u0061(\u{62}, \u0063) { \u0062 = \u{00063}; return b; })'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }" (function \u0061(\u{62}, \u0063) { \u0062 = \u{00063}; return b; })'
-test/built-ins/Object/assign/strings-and-symbol-order-proxy.js:
-  default: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
-  strict mode: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
-test/built-ins/Object/defineProperties/proxy-no-ownkeys-returned-keys-order.js:
-  default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-  strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
 test/built-ins/Object/entries/order-after-define-property.js:
   default: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
-test/built-ins/Object/freeze/proxy-no-ownkeys-returned-keys-order.js:
-  default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-  strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-test/built-ins/Object/getOwnPropertyDescriptors/proxy-no-ownkeys-returned-keys-order.js:
-  default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-  strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-arguments.js:
   default: 'Test262Error: Expected SameValue(«null», «[object Arguments]») to be true'
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-caller.js:
@@ -808,18 +796,9 @@ test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-call
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar1.js:
   default: 'Test262Error: Expected SameValue(«», «x») to be true'
   strict mode: 'Test262Error: Expected SameValue(«», «x») to be true'
-test/built-ins/Object/isFrozen/proxy-no-ownkeys-returned-keys-order.js:
-  default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-  strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-test/built-ins/Object/isSealed/proxy-no-ownkeys-returned-keys-order.js:
-  default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-  strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
 test/built-ins/Object/keys/order-after-define-property.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
-test/built-ins/Object/seal/proxy-no-ownkeys-returned-keys-order.js:
-  default: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
-  strict mode: 'Test262Error: Expected [0, Symbol(), foo] and [0, foo, Symbol()] to have the same contents. '
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 'Test262Error: Expected SameValue(«function Array() {'
   strict mode: 'Test262Error: Expected SameValue(«function Array() {'
@@ -856,9 +835,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
-test/built-ins/Proxy/ownKeys/trap-is-undefined-target-is-proxy.js:
-  default: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
-  strict mode: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
 test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
   default: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
@@ -2659,9 +2635,6 @@ test/language/expressions/object/covered-ident-name-prop-name-literal-while-esca
 test/language/expressions/object/covered-ident-name-prop-name-literal-with-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
-test/language/expressions/object/dstr/object-rest-proxy-ownkeys-returned-keys-order.js:
-  default: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
-  strict mode: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
 test/language/expressions/object/ident-name-method-def-break-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
@@ -2918,9 +2891,6 @@ test/language/expressions/object/method-definition/gen-meth-eval-var-scope-synta
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/method-definition/meth-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/object-spread-proxy-ownkeys-returned-keys-order.js:
-  default: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
-  strict mode: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
 test/language/expressions/object/scope-gen-meth-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/scope-gen-meth-param-rest-elem-var-open.js:

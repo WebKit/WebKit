@@ -1,5 +1,32 @@
 2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Proxy's "ownKeys" trap result should not be sorted
+        https://bugs.webkit.org/show_bug.cgi?id=216227
+
+        Reviewed by Yusuke Suzuki.
+
+        Given that we can't know whether ownPropertyKeys() received property names from
+        userland Proxy's "ownKeys" trap, this patch moves symbols after strings sorting [1]
+        to Structure::getPropertyNamesFromStructure(), aligning observed property order
+        (via Proxy's "getOwnPropertyDescriptor" trap) with V8 and SpiderMonkey.
+
+        Also, removes sorting logic duplication in objectConstructorAssign().
+
+        This change is neutral on provided Reflect.ownKeys microbenchmark. Although property
+        name collection besides PropertyNameMode::StringsAndSymbols cases is unaffected,
+        Object.{keys,getOwnPropertySymbols} microbenchmarks regress by 6-12% due to
+        increased Structure::getPropertyNamesFromStructure() code size.
+
+        [1]: https://tc39.es/ecma262/#sec-ordinaryownpropertykeys (steps 3-4)
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorAssign):
+        (JSC::ownPropertyKeys):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+
+2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         ArraySetLength should coerce [[Value]] before descriptor validation
         https://bugs.webkit.org/show_bug.cgi?id=158791
 

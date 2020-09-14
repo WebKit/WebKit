@@ -363,50 +363,29 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObjec
         source->methodTable(vm)->getOwnPropertyNames(source, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
         RETURN_IF_EXCEPTION(scope, { });
 
-        auto assign = [&] (PropertyName propertyName) {
+        unsigned numProperties = properties.size();
+        for (unsigned j = 0; j < numProperties; j++) {
+            const auto& propertyName = properties[j];
+            ASSERT(!propertyName.isPrivateName());
+
             PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
             bool hasProperty = source->methodTable(vm)->getOwnPropertySlot(source, globalObject, propertyName, slot);
-            RETURN_IF_EXCEPTION(scope, void());
+            RETURN_IF_EXCEPTION(scope, { });
             if (!hasProperty)
-                return;
+                continue;
             if (slot.attributes() & PropertyAttribute::DontEnum)
-                return;
+                continue;
 
             JSValue value;
             if (LIKELY(!slot.isTaintedByOpaqueObject()))
                 value = slot.getValue(globalObject, propertyName);
             else
                 value = source->get(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, void());
+            RETURN_IF_EXCEPTION(scope, { });
 
             PutPropertySlot putPropertySlot(target, true);
             target->putInline(globalObject, propertyName, value, putPropertySlot);
-        };
-
-        // First loop is for strings. Second loop is for symbols to keep standardized order requirement in the spec.
-        // https://tc39.github.io/ecma262/#sec-ordinaryownpropertykeys
-        bool foundSymbol = false;
-        unsigned numProperties = properties.size();
-        for (unsigned j = 0; j < numProperties; j++) {
-            const auto& propertyName = properties[j];
-            if (propertyName.isSymbol()) {
-                foundSymbol = true;
-                continue;
-            }
-
-            assign(propertyName);
             RETURN_IF_EXCEPTION(scope, { });
-        }
-
-        if (foundSymbol) {
-            for (unsigned j = 0; j < numProperties; j++) {
-                const auto& propertyName = properties[j];
-                if (propertyName.isSymbol()) {
-                    ASSERT(!propertyName.isPrivateName());
-                    assign(propertyName);
-                    RETURN_IF_EXCEPTION(scope, { });
-                }
-            }
         }
     }
     return JSValue::encode(target);
@@ -982,26 +961,16 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
     }
 
     case PropertyNameMode::StringsAndSymbols: {
-        Vector<Identifier, 16> propertySymbols;
         size_t numProperties = properties.size();
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
             if (identifier.isSymbol()) {
                 ASSERT(!identifier.isPrivateName());
-                propertySymbols.append(identifier);
-                continue;
-            }
-
-            pushDirect(globalObject, keys, jsOwnedString(vm, identifier.string()));
+                pushDirect(globalObject, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+            } else
+                pushDirect(globalObject, keys, jsOwnedString(vm, identifier.string()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
-
-        // To ensure the order defined in the spec (9.1.12), we append symbols at the last elements of keys.
-        for (const auto& identifier : propertySymbols) {
-            pushDirect(globalObject, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
-            RETURN_IF_EXCEPTION(scope, nullptr);
-        }
-
         break;
     }
     }

@@ -1210,18 +1210,35 @@ void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propert
         return;
     
     bool knownUnique = propertyNames.canAddKnownUniqueForStructure();
+    bool foundSymbol = false;
+
+    auto checkDontEnumAndAdd = [&](PropertyTable::iterator iter) {
+        if (!(iter->attributes & PropertyAttribute::DontEnum) || mode.includeDontEnumProperties()) {
+            if (knownUnique)
+                propertyNames.addUnchecked(iter->key);
+            else
+                propertyNames.add(iter->key);
+        }
+    };
     
     PropertyTable::iterator end = table->end();
     for (PropertyTable::iterator iter = table->begin(); iter != end; ++iter) {
         ASSERT(!isQuickPropertyAccessAllowedForEnumeration() || !(iter->attributes & PropertyAttribute::DontEnum));
         ASSERT(!isQuickPropertyAccessAllowedForEnumeration() || !iter->key->isSymbol());
-        if (!(iter->attributes & PropertyAttribute::DontEnum) || mode.includeDontEnumProperties()) {
-            if (iter->key->isSymbol() && !propertyNames.includeSymbolProperties())
+        if (iter->key->isSymbol()) {
+            foundSymbol = true;
+            if (propertyNames.propertyNameMode() != PropertyNameMode::Symbols)
                 continue;
-            if (knownUnique)
-                propertyNames.addUnchecked(iter->key);
-            else
-                propertyNames.add(iter->key);
+        }
+        checkDontEnumAndAdd(iter);
+    }
+
+    if (foundSymbol && propertyNames.propertyNameMode() == PropertyNameMode::StringsAndSymbols) {
+        // To ensure the order defined in the spec, we append symbols at the last elements of keys.
+        // https://tc39.es/ecma262/#sec-ordinaryownpropertykeys
+        for (PropertyTable::iterator iter = table->begin(); iter != end; ++iter) {
+            if (iter->key->isSymbol())
+                checkDontEnumAndAdd(iter);
         }
     }
 }
