@@ -6555,7 +6555,7 @@ void HTMLMediaElement::createMediaPlayer()
 
     m_player = MediaPlayer::create(*this);
     m_player->setBufferingPolicy(m_bufferingPolicy);
-    m_player->setPreferredDynamicRangeMode(preferredDynamicRangeMode(document().view()));
+    m_player->setPreferredDynamicRangeMode(m_overrideDynamicRangeMode.valueOr(preferredDynamicRangeMode(document().view())));
     m_player->setMuted(effectiveMuted());
     schedulePlaybackControlsManagerUpdate();
 
@@ -6971,6 +6971,13 @@ String HTMLMediaElement::sourceApplicationIdentifier() const
 
 void HTMLMediaElement::setPreferredDynamicRangeMode(DynamicRangeMode mode)
 {
+    if (m_player && !m_overrideDynamicRangeMode)
+        m_player->setPreferredDynamicRangeMode(mode);
+}
+
+void HTMLMediaElement::setOverridePreferredDynamicRangeMode(DynamicRangeMode mode)
+{
+    m_overrideDynamicRangeMode = mode;
     if (m_player)
         m_player->setPreferredDynamicRangeMode(mode);
 }

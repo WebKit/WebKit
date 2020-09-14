@@ -2208,3 +2208,6 @@ webkit.org/b/216481 webanimations/accelerated-animation-easing-update-after-paus
 
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-20.html [ Pass Timeout ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ Pass Timeout ]
+
+# This test requires API only availble on BigSur and later
+[ BigSur+ ] http/tests/media/hls/hls-hdr-switch.html [ Pass ]

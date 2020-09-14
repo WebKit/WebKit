@@ -660,6 +660,7 @@ enum ContentSizeCategory {
     [Conditional=VIDEO] boolean elementShouldBufferData(HTMLMediaElement media);
     [Conditional=VIDEO] DOMString elementBufferingPolicy(HTMLMediaElement media);
     [Conditional=VIDEO] double privatePlayerVolume(HTMLMediaElement media);
+    [Conditional=VIDEO, MayThrowException] undefined setOverridePreferredDynamicRangeMode(HTMLMediaElement media, DOMString mode);
 
     [MayThrowException] undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
 

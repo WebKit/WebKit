@@ -1,3 +1,18 @@
+2020-09-14  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa,HDR] HLS streams with HDR variants will not select HDR.
+        https://bugs.webkit.org/show_bug.cgi?id=216203
+        <rdar://problem/67438626>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/media/hls/hls-hdr-switch-expected.txt: Added.
+        * http/tests/media/hls/hls-hdr-switch.html: Added.
+        * http/tests/media/resources/hls/green-bip.ts: Added.
+        * http/tests/media/resources/hls/hdr.m3u8: Added.
+        * http/tests/media/resources/hls/red-bip.ts: Added.
+        * http/tests/media/resources/hls/test-live.php:
+
 2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS Release ] imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html is a flaky failure

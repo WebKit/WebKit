@@ -577,6 +577,7 @@ public:
     String mediaSessionTitle() const;
     String sourceApplicationIdentifier() const;
 
+    WEBCORE_EXPORT void setOverridePreferredDynamicRangeMode(DynamicRangeMode);
     void setPreferredDynamicRangeMode(DynamicRangeMode);
 
 protected:
@@ -1146,6 +1147,8 @@ private:
     std::unique_ptr<SleepDisabler> m_sleepDisabler;
 
     WeakPtr<const MediaResourceLoader> m_lastMediaResourceLoaderForTesting;
+
+    Optional<DynamicRangeMode> m_overrideDynamicRangeMode;
 
     friend class TrackDisplayUpdateScope;
 

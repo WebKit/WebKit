@@ -3931,6 +3931,27 @@ String Internals::elementBufferingPolicy(HTMLMediaElement& element)
     ASSERT_NOT_REACHED();
     return "UNKNOWN";
 }
+
+ExceptionOr<void> Internals::setOverridePreferredDynamicRangeMode(HTMLMediaElement& element, const String& modeString)
+{
+    DynamicRangeMode mode;
+    if (modeString == "None")
+        mode = DynamicRangeMode::None;
+    else if (modeString == "Standard")
+        mode = DynamicRangeMode::Standard;
+    else if (modeString == "HLG")
+        mode = DynamicRangeMode::HLG;
+    else if (modeString == "HDR10")
+        mode = DynamicRangeMode::HDR10;
+    else if (modeString == "DolbyVisionPQ")
+        mode = DynamicRangeMode::DolbyVisionPQ;
+    else
+        return Exception { SyntaxError };
+
+    element.setOverridePreferredDynamicRangeMode(mode);
+    return { };
+}
+
 #endif
 
 bool Internals::isSelectPopupVisible(HTMLSelectElement& element)
