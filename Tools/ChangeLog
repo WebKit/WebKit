@@ -1,3 +1,21 @@
+2020-09-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Disable AutoInstaller with environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=216396
+        <rdar://problem/68680933>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (AutoInstall):
+        (AutoInstall.enabled): Check DISABLE_WEBKITCOREPY_AUTOINSTALLER to see if the autoinstaller
+        has been explicitly disabled.
+        (AutoInstall.set_directory): Early exit if the autoinstaller is explicitly disabled.
+        (AutoInstall.find_module):
+        (AutoInstall.enable): Deleted.
+        (AutoInstall.disable): Deleted.
+
 2020-09-14  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Migration to SDK 0.3 branch

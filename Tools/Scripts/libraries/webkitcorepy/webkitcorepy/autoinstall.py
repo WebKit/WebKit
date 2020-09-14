@@ -297,8 +297,8 @@ class Package(object):
 
 
 class AutoInstall(object):
-    _enabled = None
-    enabled = False
+    DISABLE_ENV_VAR = 'DISABLE_WEBKITCOREPY_AUTOINSTALLER'
+
     directory = None
     index = 'pypi.org'
     timeout = 30
@@ -322,14 +322,10 @@ class AutoInstall(object):
         return urlopen(url, timeout=cls.timeout)
 
     @classmethod
-    def enable(cls):
-        cls._enabled = True
-        cls.enabled = True
-
-    @classmethod
-    def disable(cls):
-        cls._enabled = False
-        cls.enabled = False
+    def enabled(cls):
+        if os.environ.get(cls.DISABLE_ENV_VAR) not in ['0', 'FALSE', 'false', 'NO', 'no', None]:
+            return False
+        return True if cls.directory else None
 
     @classmethod
     def userspace_should_own(cls, path):
@@ -360,6 +356,14 @@ class AutoInstall(object):
         if not directory or not isinstance(directory, str):
             raise ValueError('{} is an invalid autoinstall directory'.format(directory))
 
+        if cls.enabled() is False:
+            print('Request to set autoinstall directory to {}'.format(directory))
+            print('Environment variable {}={} overriding request'.format(
+                cls.DISABLE_ENV_VAR,
+                os.environ.get(cls.DISABLE_ENV_VAR),
+            ))
+            return
+
         directory = os.path.abspath(directory)
         if not os.path.isdir(directory):
             creation_root = directory
@@ -380,9 +384,6 @@ class AutoInstall(object):
 
         sys.path.insert(0, directory)
         cls.directory = directory
-        if cls._enabled is None:
-            cls._enabled = True
-            cls.enabled = True
 
     @classmethod
     def set_index(cls, index, check=True, fatal=False):
@@ -468,7 +469,7 @@ class AutoInstall(object):
 
     @classmethod
     def find_module(cls, fullname, path=None):
-        if not cls.enabled or path is not None:
+        if not cls.enabled() or path is not None:
             return
 
         name = fullname.split('.')[0]
