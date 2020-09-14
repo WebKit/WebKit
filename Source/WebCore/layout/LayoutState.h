@@ -41,6 +41,7 @@ class Box;
 
 namespace Layout {
 
+class FlexFormattingState;
 class FormattingContext;
 class FormattingState;
 class BlockFormattingState;
@@ -57,11 +58,13 @@ public:
     InlineFormattingState& ensureInlineFormattingState(const ContainerBox& formattingContextRoot);
     BlockFormattingState& ensureBlockFormattingState(const ContainerBox& formattingContextRoot);
     TableFormattingState& ensureTableFormattingState(const ContainerBox& formattingContextRoot);
+    FlexFormattingState& ensureFlexFormattingState(const ContainerBox& formattingContextRoot);
 
     FormattingState& establishedFormattingState(const ContainerBox& formattingRoot) const;
     InlineFormattingState& establishedInlineFormattingState(const ContainerBox& formattingContextRoot) const;
     BlockFormattingState& establishedBlockFormattingState(const ContainerBox& formattingContextRoot) const;
     TableFormattingState& establishedTableFormattingState(const ContainerBox& formattingContextRoot) const;
+    FlexFormattingState& establishedFlexFormattingState(const ContainerBox& formattingContextRoot) const;
 
     FormattingState& formattingStateForBox(const Box&) const;
     bool hasInlineFormattingState(const ContainerBox& formattingRoot) const { return m_inlineFormattingStates.contains(&formattingRoot); }
@@ -98,6 +101,7 @@ private:
     HashMap<const ContainerBox*, std::unique_ptr<InlineFormattingState>> m_inlineFormattingStates;
     HashMap<const ContainerBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
     HashMap<const ContainerBox*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
+    HashMap<const ContainerBox*, std::unique_ptr<FlexFormattingState>> m_flexFormattingStates;
 
     std::unique_ptr<InlineFormattingState> m_rootInlineFormattingStateForIntegration;
 

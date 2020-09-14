@@ -1437,6 +1437,8 @@ layout/display/DisplayView.cpp
 layout/displaytree/DisplayBox.cpp
 layout/displaytree/DisplayInlineContent.cpp
 layout/displaytree/DisplayPainter.cpp
+layout/flexformatting/FlexFormattingContext.cpp
+layout/flexformatting/FlexFormattingState.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/FloatingState.cpp

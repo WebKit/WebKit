@@ -77,6 +77,7 @@ public:
     bool establishesBlockFormattingContext() const;
     bool establishesInlineFormattingContext() const;
     bool establishesTableFormattingContext() const;
+    bool establishesFlexFormattingContext() const;
     bool establishesIndependentFormattingContext() const;
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
@@ -124,6 +125,7 @@ public:
     bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
     bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
     bool isTableCell() const { return style().display() == DisplayType::TableCell; }
+    bool isFlexBox() const { return style().display() == DisplayType::Flex; }
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
 

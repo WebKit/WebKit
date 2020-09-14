@@ -30,6 +30,7 @@
 
 #include "BlockFormattingState.h"
 #include "DisplayBox.h"
+#include "FlexFormattingState.h"
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
@@ -100,8 +101,13 @@ FormattingState& LayoutState::establishedFormattingState(const ContainerBox& for
     if (auto* formattingState = m_blockFormattingStates.get(&formattingContextRoot))
         return *formattingState;
 
-    ASSERT(m_tableFormattingStates.contains(&formattingContextRoot));
-    return *m_tableFormattingStates.get(&formattingContextRoot);
+    if (auto* formattingState = m_tableFormattingStates.get(&formattingContextRoot))
+        return *formattingState;
+
+    if (auto* formattingState = m_flexFormattingStates.get(&formattingContextRoot))
+        return *formattingState;
+
+    CRASH();
 }
 
 InlineFormattingState& LayoutState::establishedInlineFormattingState(const ContainerBox& formattingContextRoot) const
@@ -128,6 +134,12 @@ TableFormattingState& LayoutState::establishedTableFormattingState(const Contain
     return *m_tableFormattingStates.get(&formattingContextRoot);
 }
 
+FlexFormattingState& LayoutState::establishedFlexFormattingState(const ContainerBox& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesFlexFormattingContext());
+    return *m_flexFormattingStates.get(&formattingContextRoot);
+}
+
 FormattingState& LayoutState::ensureFormattingState(const ContainerBox& formattingContextRoot)
 {
     if (formattingContextRoot.establishesInlineFormattingContext())
@@ -136,7 +148,13 @@ FormattingState& LayoutState::ensureFormattingState(const ContainerBox& formatti
     if (formattingContextRoot.establishesBlockFormattingContext())
         return ensureBlockFormattingState(formattingContextRoot);
 
-    return ensureTableFormattingState(formattingContextRoot);
+    if (formattingContextRoot.establishesTableFormattingContext())
+        return ensureTableFormattingState(formattingContextRoot);
+
+    if (formattingContextRoot.establishesFlexFormattingContext())
+        return ensureFlexFormattingState(formattingContextRoot);
+
+    CRASH();
 }
 
 InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerBox& formattingContextRoot)
@@ -189,6 +207,18 @@ TableFormattingState& LayoutState::ensureTableFormattingState(const ContainerBox
     };
 
     return *m_tableFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
+}
+
+FlexFormattingState& LayoutState::ensureFlexFormattingState(const ContainerBox& formattingContextRoot)
+{
+    ASSERT(formattingContextRoot.establishesFlexFormattingContext());
+
+    auto create = [&] {
+        // Flex formatting context always establishes a new floating state -and it stays empty.
+        return makeUnique<FlexFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+    };
+
+    return *m_flexFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
 
 void LayoutState::setViewportSize(const LayoutSize& viewportSize)

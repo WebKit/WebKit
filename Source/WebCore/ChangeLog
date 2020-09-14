@@ -1,3 +1,40 @@
+2020-09-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][FFC] Introduce flex formatting context
+        https://bugs.webkit.org/show_bug.cgi?id=216483
+
+        Reviewed by Antti Koivisto.
+
+        Add the basic class structure for the flex formatting context.
+        https://www.w3.org/TR/css-flexbox-1/
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::isFlexFormattingContext const):
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::isFlexFormattingState const):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::establishedFormattingState const):
+        (WebCore::Layout::LayoutState::establishedFlexFormattingState const):
+        (WebCore::Layout::LayoutState::ensureFormattingState):
+        (WebCore::Layout::LayoutState::ensureFlexFormattingState):
+        * layout/LayoutState.h:
+        * layout/flexformatting/FlexFormattingContext.cpp: Added.
+        (WebCore::Layout::FlexFormattingContext::FlexFormattingContext):
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::FlexFormattingContext::computedIntrinsicWidthConstraints):
+        * layout/flexformatting/FlexFormattingContext.h: Added.
+        * layout/flexformatting/FlexFormattingState.cpp: Added.
+        (WebCore::Layout::FlexFormattingState::FlexFormattingState):
+        (WebCore::Layout::FlexFormattingState::~FlexFormattingState):
+        * layout/flexformatting/FlexFormattingState.h: Added.
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::establishesFormattingContext const):
+        (WebCore::Layout::Box::establishesFlexFormattingContext const):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isFlexBox const):
+
 2020-09-14  Simon Fraser  <simon.fraser@apple.com>
 
         First steps towards LFC painting in WebKit2

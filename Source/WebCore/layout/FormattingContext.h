@@ -95,6 +95,7 @@ public:
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
     bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }
     bool isTableWrapperBlockFormattingContext() const { return isBlockFormattingContext() && root().isTableWrapperBox(); }
+    bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }
 
     enum class EscapeReason {
         NeedsGeometryFromEstablishedFormattingContext,

@@ -57,6 +57,7 @@ public:
     bool isBlockFormattingState() const { return m_type == Type::Block; }
     bool isInlineFormattingState() const { return m_type == Type::Inline; }
     bool isTableFormattingState() const { return m_type == Type::Table; }
+    bool isFlexFormattingState() const { return m_type == Type::Flex; }
 
     LayoutState& layoutState() const { return m_layoutState; }
 
@@ -68,7 +69,7 @@ public:
     const OutOfFlowBoxList& outOfFlowBoxes() const { return m_outOfFlowBoxes; }
 
 protected:
-    enum class Type { Block, Inline, Table };
+    enum class Type { Block, Inline, Table, Flex };
     FormattingState(Ref<FloatingState>&&, Type, LayoutState&);
     ~FormattingState();
 
