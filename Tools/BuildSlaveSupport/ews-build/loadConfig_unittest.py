@@ -40,7 +40,7 @@ class ConfigDotJSONTest(unittest.TestCase):
         config = json.load(open(os.path.join(cwd, 'config.json')))
         valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
                               'defaultProperties', 'env', 'factory', 'icon', 'locks', 'name', 'platform', 'properties',
-                              'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'workernames', 'workerbuilddir']
+                              'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'triggered_by', 'workernames', 'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:
                 self.assertTrue(key in valid_builder_keys, 'Unexpected key "{}" for builder {}'.format(key, builder.get('name')))
@@ -49,7 +49,15 @@ class ConfigDotJSONTest(unittest.TestCase):
         cwd = os.path.dirname(os.path.abspath(__file__))
         config = json.load(open(os.path.join(cwd, 'config.json')))
         builder_to_schduler_map = {}
+        triggered_by_schedulers = []
+        for builder in config['builders']:
+            triggered_by = builder.get('triggered_by')
+            if triggered_by:
+                triggered_by_schedulers.extend(triggered_by)
+
         for scheduler in config.get('schedulers'):
+            if scheduler['name'] in triggered_by_schedulers:
+                continue
             for buildername in scheduler.get('builderNames'):
                 self.assertTrue(buildername not in builder_to_schduler_map, 'builder {} appears multiple times in schedulers.'.format(buildername))
                 builder_to_schduler_map[buildername] = scheduler.get('name')

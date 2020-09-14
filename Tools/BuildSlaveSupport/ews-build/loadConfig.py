@@ -62,7 +62,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
         if 'icon' in builder:
             del builder['icon']
         factorykwargs = {}
-        for key in ['platform', 'configuration', 'architectures', 'triggers', 'remotes', 'additionalArguments', 'runTests']:
+        for key in ['platform', 'configuration', 'architectures', 'triggers', 'remotes', 'additionalArguments', 'runTests', 'triggered_by']:
             value = builder.pop(key, None)
             if value:
                 factorykwargs[key] = value
@@ -139,7 +139,7 @@ def checkValidBuilder(config, builder):
 def checkValidSchedulers(config, schedulers):
     for scheduler in config.get('schedulers') or []:
         if scheduler.get('type') == 'Triggerable':
-            if not isTriggerUsedByAnyBuilder(config, scheduler['name']):
+            if not isTriggerUsedByAnyBuilder(config, scheduler['name']) and 'build' not in scheduler['name'].lower():
                 raise Exception('Trigger: {} is not used by any builder in config.json'.format(scheduler['name']))
 
 

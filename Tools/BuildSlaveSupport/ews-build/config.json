@@ -396,6 +396,7 @@
       "platform": "ios-simulator-13",
       "configuration": "release",
       "architectures": ["x86_64"],
+      "triggered_by": ["ios-13-sim-build-ews"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
@@ -427,6 +428,7 @@
       "platform": "mac-mojave",
       "configuration": "release",
       "architectures": ["x86_64"],
+      "triggered_by": ["macos-mojave-release-build-ews"],
       "workernames": ["ews100", "ews101", "ews102", "ews103"]
     },
     {
@@ -437,6 +439,7 @@
       "platform": "mac-mojave",
       "configuration": "release",
       "architectures": ["x86_64"],
+      "triggered_by": ["macos-mojave-release-build-ews"],
       "workernames": ["ews104", "ews105", "ews106", "ews107"]
     },
     {
@@ -458,6 +461,7 @@
       "platform": "mac-mojave",
       "configuration": "debug",
       "architectures": ["x86_64"],
+      "triggered_by": ["macos-mojave-debug-build-ews"],
       "workernames": ["ews112", "ews113", "ews115", "ews117"]
     },
     {
@@ -626,6 +630,7 @@
       "icon": "testOnly",
       "factory": "APITestsFactory",
       "platform": "*",
+      "triggered_by": ["ios-13-sim-build-ews"],
       "workernames": ["ews156", "ews157", "ews158", "ews159"]
     },
     {
@@ -634,6 +639,7 @@
       "icon": "testOnly",
       "factory": "APITestsFactory",
       "platform": "*",
+      "triggered_by": ["macos-mojave-release-build-ews"],
       "workernames": ["ews119", "ews150", "ews153", "ews155"]
     },
     {
@@ -685,9 +691,23 @@
     },
     {
       "type": "Triggerable",
+      "name": "macos-mojave-debug-build-ews",
+      "builderNames": [
+        "macOS-Mojave-Debug-Build-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
       "name": "macos-mojave-debug-wk1-tests-ews",
       "builderNames": [
         "macOS-Mojave-Debug-WK1-Tests-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
+      "name": "macos-mojave-release-build-ews",
+      "builderNames": [
+        "macOS-Mojave-Release-Build-EWS"
       ]
     },
     {
@@ -702,6 +722,13 @@
       "name": "macos-mojave-release-wk2-tests-ews",
       "builderNames": [
         "macOS-Mojave-Release-WK2-Tests-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
+      "name": "ios-13-sim-build-ews",
+      "builderNames": [
+        "iOS-13-Simulator-Build-EWS"
       ]
     },
     {

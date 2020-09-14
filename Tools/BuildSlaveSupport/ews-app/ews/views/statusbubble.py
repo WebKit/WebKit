@@ -72,6 +72,7 @@ class StatusBubble(View):
     DAYS_TO_CHECK = 3
     BUILDER_ICON = u'\U0001f6e0'
     TESTER_ICON = u'\U0001f52c'
+    BUILD_RETRY_MSG = 'retrying build'
 
     def _build_bubble(self, patch, queue, hide_icons=False):
         bubble = {
@@ -151,6 +152,8 @@ class StatusBubble(View):
         elif build.result == Buildbot.FAILURE:
             bubble['state'] = 'fail'
             bubble['details_message'] = self._most_recent_failure_message(build)
+            if StatusBubble.BUILD_RETRY_MSG in bubble['details_message']:
+                bubble['state'] = 'provisional-fail'
         elif build.result == Buildbot.SKIPPED:
             bubble['state'] = 'none'
             bubble['details_message'] = 'The patch is no longer eligible for processing.'
@@ -239,6 +242,8 @@ class StatusBubble(View):
 
     def _most_recent_failure_message(self, build):
         for step in build.step_set.all().order_by('-uid'):
+            if step.result == Buildbot.SUCCESS and StatusBubble.BUILD_RETRY_MSG in step.state_string:
+                return step.state_string
             if step.result == Buildbot.FAILURE:
                 return step.state_string
         return ''

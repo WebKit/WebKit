@@ -22,7 +22,7 @@
 
 from buildbot.plugins import steps, util
 from buildbot.process import buildstep, logobserver, properties
-from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
+from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
@@ -51,7 +51,7 @@ class ConfigureBuild(buildstep.BuildStep):
     description = ['configuring build']
     descriptionDone = ['Configured build']
 
-    def __init__(self, platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments):
+    def __init__(self, platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments, triggered_by=None):
         super(ConfigureBuild, self).__init__()
         self.platform = platform
         if platform != 'jsc-only':
@@ -61,6 +61,7 @@ class ConfigureBuild(buildstep.BuildStep):
         self.architecture = ' '.join(architectures) if architectures else None
         self.buildOnly = buildOnly
         self.triggers = triggers
+        self.triggered_by = triggered_by
         self.remotes = remotes
         self.additionalArguments = additionalArguments
 
@@ -75,8 +76,10 @@ class ConfigureBuild(buildstep.BuildStep):
             self.setProperty('architecture', self.architecture, 'config.json')
         if self.buildOnly:
             self.setProperty('buildOnly', self.buildOnly, 'config.json')
-        if self.triggers:
+        if self.triggers and not self.getProperty('triggers'):
             self.setProperty('triggers', self.triggers, 'config.json')
+        if self.triggered_by:
+            self.setProperty('triggered_by', self.triggered_by, 'config.json')
         if self.remotes:
             self.setProperty('remotes', self.remotes, 'config.json')
         if self.additionalArguments:
@@ -951,12 +954,14 @@ class UnApplyPatchIfRequired(CleanWorkingDirectory):
 
 
 class Trigger(trigger.Trigger):
-    def __init__(self, schedulerNames, **kwargs):
+    def __init__(self, schedulerNames, include_revision=True, triggers=None, **kwargs):
+        self.include_revision = include_revision
+        self.triggers = triggers
         set_properties = self.propertiesToPassToTriggers() or {}
         super(Trigger, self).__init__(schedulerNames=schedulerNames, set_properties=set_properties, **kwargs)
 
     def propertiesToPassToTriggers(self):
-        return {
+        properties_to_pass = {
             'patch_id': properties.Property('patch_id'),
             'bug_id': properties.Property('bug_id'),
             'configuration': properties.Property('configuration'),
@@ -964,8 +969,12 @@ class Trigger(trigger.Trigger):
             'fullPlatform': properties.Property('fullPlatform'),
             'architecture': properties.Property('architecture'),
             'owner': properties.Property('owner'),
-            'ews_revision': properties.Property('got_revision'),
         }
+        if self.include_revision:
+            properties_to_pass['ews_revision'] = properties.Property('got_revision')
+        if self.triggers:
+            properties_to_pass['triggers'] = self.triggers
+        return properties_to_pass
 
 
 class TestWithFailureCount(shell.Test):
@@ -2165,11 +2174,20 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
         return defer.succeed(None)
 
     def retry_build(self, message=''):
-        self.finished(RETRY)
         if not message:
             message = 'Unable to confirm if test failures are introduced by patch, retrying build'
         self.descriptionDone = message
-        self.build.buildFinished([message], RETRY)
+
+        triggered_by = self.getProperty('triggered_by', None)
+        if triggered_by:
+            # Trigger parent build so that it can re-build ToT
+            schduler_for_current_queue = self.getProperty('scheduler')
+            self.build.addStepsAfterCurrentStep([Trigger(schedulerNames=triggered_by, include_revision=False, triggers=[schduler_for_current_queue])])
+            self.setProperty('build_summary', message)
+            self.finished(SUCCESS)
+        else:
+            self.finished(RETRY)
+            self.build.buildFinished([message], RETRY)
         return defer.succeed(None)
 
     def _results_failed_different_tests(self, first_results_failing_tests, second_results_failing_tests):

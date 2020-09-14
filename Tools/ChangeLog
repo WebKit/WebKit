@@ -1,3 +1,29 @@
+2020-09-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Layout testers can go in an infinite RETRY loop when there are 30+ failures on trunk
+        https://bugs.webkit.org/show_bug.cgi?id=203698
+        <rdar://problem/66157544>
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ConfigureBuild.__init__): Added triggerred_by key.
+        (ConfigureBuild.start): Set triggers property only if it is not already set (by the build who triggerred this build).
+        (Trigger.__init__):  Added include_revision parameter, it would be False while triggerring builder, so that builder
+        can use ToT instead of the specific revision.
+        Also added triggers, so that when the tester trigger the builder, it can explicitly specify only to trigger it back and
+        nothing else.
+        (Trigger.propertiesToPassToTriggers): Pass ews_revision and triggers properties to triggered builds appropriately.
+        (AnalyzeLayoutTestsResults.retry_build): Trigger the parent build if triggered_by is specified.
+        * BuildSlaveSupport/ews-build/config.json: Added triggered_by key.
+        * BuildSlaveSupport/ews-build/factories.py: Updated to handle triggered_by key.
+        * BuildSlaveSupport/ews-build/loadConfig.py: Ditto.
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble): If the build is retried, ensure that the status-bubble is orange.
+        (StatusBubble._most_recent_failure_message): Display the retry message from analyze-layout-tests-results step in the status-bubble.
+
 2020-09-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Disable AutoInstaller with environment variable
