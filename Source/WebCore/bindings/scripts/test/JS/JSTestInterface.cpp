@@ -276,10 +276,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(JS
     auto str2 = argument1.value().isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2));
-    static_assert(IsExceptionOr<decltype(object)>::value);
-    static_assert(decltype(object)::ReturnType::isRef);
+    static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestInterface>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if constexpr (IsExceptionOr<decltype(object)>)
+        RETURN_IF_EXCEPTION(throwScope, { });
     setSubclassStructureIfNeeded<TestInterface>(lexicalGlobalObject, callFrame, asObject(jsValue));
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);

@@ -32,8 +32,8 @@
     JSGenerateToNativeObject,
     LegacyWindowAlias=webkitURL,
 ] interface DOMURL {
-    [MayThrowException] constructor(USVString url, optional USVString base);
-    [MayThrowException] constructor(USVString url, DOMURL base);
+    constructor(USVString url, optional USVString base);
+    constructor(USVString url, DOMURL base);
 
     [URL] stringifier attribute USVString href;
     readonly attribute USVString origin;

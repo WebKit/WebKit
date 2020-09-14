@@ -28,6 +28,6 @@
     JSGenerateToJSObject,
     EnabledBySetting=ModernUnprefixedWebAudio
 ] interface StereoPannerNode : AudioNode {
-    [MayThrowException] constructor (BaseAudioContext context, optional StereoPannerOptions options);
+    constructor (BaseAudioContext context, optional StereoPannerOptions options);
     readonly attribute AudioParam pan;
 };

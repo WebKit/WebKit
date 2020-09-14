@@ -38,7 +38,7 @@ class HTMLAudioElement final : public HTMLMediaElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLAudioElement);
 public:
     static Ref<HTMLAudioElement> create(const QualifiedName&, Document&, bool);
-    static Ref<HTMLAudioElement> createForJSConstructor(Document&, const AtomString& src);
+    static Ref<HTMLAudioElement> createForLegacyFactoryFunction(Document&, const AtomString& src);
 
 private:
     HTMLAudioElement(const QualifiedName&, Document&, bool);

@@ -29,7 +29,7 @@
     ImplementationLacksVTable,
     PrivateIdentifier,
 ] interface TextDecoderStreamDecoder {
-    [MayThrowException] constructor(DOMString label, boolean fatal, boolean ignoreBOM);
+    constructor(DOMString label, boolean fatal, boolean ignoreBOM);
 
     [PrivateIdentifier] DOMString encoding();
     [PrivateIdentifier, MayThrowException] DOMString decode(BufferSource source);

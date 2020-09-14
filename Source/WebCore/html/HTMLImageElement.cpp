@@ -102,7 +102,7 @@ HTMLImageElement::~HTMLImageElement()
     setPictureElement(nullptr);
 }
 
-Ref<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document& document, Optional<unsigned> width, Optional<unsigned> height)
+Ref<HTMLImageElement> HTMLImageElement::createForLegacyFactoryFunction(Document& document, Optional<unsigned> width, Optional<unsigned> height)
 {
     auto image = adoptRef(*new HTMLImageElement(imgTag, document));
     if (width)

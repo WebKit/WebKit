@@ -28,6 +28,6 @@
     JSGenerateToJSObject,
     EnabledBySetting=ModernUnprefixedWebAudio
 ] interface ConstantSourceNode : AudioScheduledSourceNode {
-    [MayThrowException] constructor (BaseAudioContext context, optional ConstantSourceOptions options);
+    constructor (BaseAudioContext context, optional ConstantSourceOptions options);
     readonly attribute AudioParam offset;
 };

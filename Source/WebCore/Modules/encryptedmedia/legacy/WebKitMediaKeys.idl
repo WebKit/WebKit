@@ -27,7 +27,7 @@
     Conditional=LEGACY_ENCRYPTED_MEDIA,
     EnabledBySetting=LegacyEncryptedMediaAPI,
 ] interface WebKitMediaKeys {
-    [MayThrowException] constructor(DOMString keySystem);
+    constructor(DOMString keySystem);
 
     [CallWith=ScriptExecutionContext, MayThrowException] WebKitMediaKeySession createSession(DOMString type, Uint8Array initData);
     static boolean isTypeSupported(DOMString keySystem, optional DOMString type);

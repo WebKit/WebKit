@@ -30,7 +30,7 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface AudioContext : BaseAudioContext {
-    [CallWith=Document, MayThrowException] constructor(optional AudioContextOptions contextOptions);
+    [CallWith=Document] constructor(optional AudioContextOptions contextOptions);
 
     readonly attribute double baseLatency;
 

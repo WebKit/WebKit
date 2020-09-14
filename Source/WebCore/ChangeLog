@@ -1,5 +1,126 @@
 2020-09-13  Sam Weinig  <weinig@apple.com>
 
+        [WebIDL] Remove need for [MayThrowException] on constructors and legacy factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=216442
+
+        Reviewed by Darin Adler.
+
+        Deduce implementation potentially throwing by using the existing overload of
+        toJSNewlyCreated that conditionally checks for exceptions based on the return
+        type. constexpr IsExceptionOr to maintain existing optimizations around conditional
+        calls to RETURN_IF_EXCEPTION.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        Update code generation to output code that can handle constructors that return either
+        ExceptionOr or not. Maintain existing static assertion that the underlying return type
+        is a Ref<> using std::conditional_t predicated on IsExceptionOr and maintain the existing
+        optimization to not check for an exception after toJSNewlyCreated if one could not have
+        been made by again utilizing IsExceptionOr.
+
+        * bindings/scripts/IDLAttributes.json:
+        Remove [LegacyFactoryFunctionMayThrowException] now that it is not needed.
+
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.idl:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/paymentrequest/MerchantValidationEvent.idl:
+        * Modules/paymentrequest/PaymentRequest.idl:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/BiquadFilterNode.idl:
+        * Modules/webaudio/ChannelMergerNode.idl:
+        * Modules/webaudio/ChannelSplitterNode.idl:
+        * Modules/webaudio/ConstantSourceNode.idl:
+        * Modules/webaudio/ConvolverNode.idl:
+        * Modules/webaudio/DelayNode.idl:
+        * Modules/webaudio/DynamicsCompressorNode.idl:
+        * Modules/webaudio/GainNode.idl:
+        * Modules/webaudio/IIRFilterNode.idl:
+        * Modules/webaudio/MediaElementAudioSourceNode.idl:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.idl:
+        * Modules/webaudio/MediaStreamAudioSourceNode.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webaudio/PannerNode.idl:
+        * Modules/webaudio/PeriodicWave.idl:
+        * Modules/webaudio/StereoPannerNode.idl:
+        * Modules/webaudio/WaveShaperNode.idl:
+        * Modules/webaudio/WebKitAudioContext.idl:
+        * Modules/webaudio/WebKitOfflineAudioContext.idl:
+        * Modules/websockets/WebSocket.idl:
+        * Modules/webxr/WebXRRigidTransform.idl:
+        * Modules/webxr/WebXRWebGLLayer.idl:
+        * animation/KeyframeEffect.idl:
+        * css/DOMMatrix.idl:
+        * css/DOMMatrixReadOnly.idl:
+        * css/WebKitCSSMatrix.idl:
+        * dom/StaticRange.idl:
+        * dom/TextDecoder.idl:
+        * dom/TextDecoderStreamDecoder.idl:
+        * html/DOMURL.idl:
+        * html/HTMLOptionElement.h:
+        * html/HTMLOptionElement.idl:
+        * html/ImageData.idl:
+        * html/URLSearchParams.idl:
+        * html/track/TextTrackCue.idl:
+        * page/EventSource.idl:
+        * page/IntersectionObserver.idl:
+        * workers/Worker.idl:
+        Remove all uses of [LegacyFactoryFunctionMayThrowException] and [MayThrowException]
+        on constructors.
+
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::createForLegacyFactoryFunction):
+        (WebCore::HTMLAudioElement::createForJSConstructor): Deleted.
+        * html/HTMLAudioElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::createForLegacyFactoryFunction):
+        (WebCore::HTMLImageElement::createForJSConstructor): Deleted.
+        * html/HTMLImageElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::createForLegacyFactoryFunction):
+        (WebCore::HTMLOptionElement::createForJSConstructor): Deleted.
+        Renamed createForJSConstructor to createForLegacyFactoryFunction to better
+        match current WebIDL terminology.
+
+        * bindings/scripts/test/JS/JSExposedToWorkerAndWindow.cpp:
+        (WebCore::JSExposedToWorkerAndWindowConstructor::construct):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        * bindings/scripts/test/JS/JSTestLegacyFactoryFunction.cpp:
+        (WebCore::JSTestLegacyFactoryFunctionLegacyFactoryFunction::construct):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::construct):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        (WebCore::constructJSTestOverloadedConstructors4):
+        (WebCore::constructJSTestOverloadedConstructors5):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence1):
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence2):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEventConstructor::construct):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        * bindings/scripts/test/TestLegacyFactoryFunction.idl:
+        Update tests/expectations.
+
+2020-09-13  Sam Weinig  <weinig@apple.com>
+
         FIXME in MediaDevices.idl is incorrect
         https://bugs.webkit.org/show_bug.cgi?id=216459
 

@@ -27,7 +27,7 @@
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
 ] interface URLSearchParams {
-    [MayThrowException] constructor(optional (sequence<sequence<USVString>> or record<USVString, USVString> or USVString) init = "");
+    constructor(optional (sequence<sequence<USVString>> or record<USVString, USVString> or USVString) init = "");
 
     undefined append(USVString name, USVString value);
     [ImplementedAs=remove] undefined delete(USVString name);

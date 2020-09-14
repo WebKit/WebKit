@@ -34,7 +34,7 @@ typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) Heade
     ImplementationLacksVTable,
     InterfaceName=Headers,
 ] interface FetchHeaders {
-    [MayThrowException] constructor(optional HeadersInit init);
+    constructor(optional HeadersInit init);
 
     [MayThrowException] undefined append(ByteString name, ByteString value);
     [MayThrowException, ImplementedAs=remove] undefined delete(ByteString name);

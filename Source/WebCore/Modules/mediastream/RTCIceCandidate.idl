@@ -35,7 +35,7 @@
     EnabledAtRuntime=PeerConnection,
     ImplementationLacksVTable,
 ] interface RTCIceCandidate {
-    [MayThrowException] constructor(RTCIceCandidateInit candidateInitDict);
+    constructor(RTCIceCandidateInit candidateInitDict);
 
     readonly attribute DOMString candidate;
     readonly attribute DOMString? sdpMid;

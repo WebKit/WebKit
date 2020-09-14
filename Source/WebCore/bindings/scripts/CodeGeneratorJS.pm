@@ -7490,17 +7490,13 @@ sub GenerateConstructorDefinition
 
             GenerateArgumentsCountCheck($outputArray, $operation, $interface, "    ");
 
-            my $functionImplementationName = $generatingLegacyFactoryFunction ? "createForJSConstructor" : "create";
+            my $functionImplementationName = $generatingLegacyFactoryFunction ? "createForLegacyFactoryFunction" : "create";
             my $functionString = GenerateParametersCheck($outputArray, $operation, $interface, $functionImplementationName, "    ");
 
             push(@$outputArray, "    auto object = ${functionString};\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{CallWith}, "ExecState");
-            if ($interface->extendedAttributes->{LegacyFactoryFunctionMayThrowException} || $operation->extendedAttributes->{MayThrowException}) {
-                push(@$outputArray, "    static_assert(IsExceptionOr<decltype(object)>::value);\n");
-                push(@$outputArray, "    static_assert(decltype(object)::ReturnType::isRef);\n");
-            } else {
-                push(@$outputArray, "    static_assert(decltype(object)::isRef);\n");
-            }
+
+            push(@$outputArray, "    static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);\n");
 
             my $IDLType = GetIDLType($interface, $interface->type);
             my $implType = GetImplClassName($interface);
@@ -7510,12 +7506,13 @@ sub GenerateConstructorDefinition
             my @constructionConversionArguments = ();
             push(@constructionConversionArguments, "*lexicalGlobalObject");
             push(@constructionConversionArguments, "*castedThis->globalObject()");
-            push(@constructionConversionArguments, "throwScope") if $interface->extendedAttributes->{LegacyFactoryFunctionMayThrowException} || $operation->extendedAttributes->{MayThrowException};
+            push(@constructionConversionArguments, "throwScope");
             push(@constructionConversionArguments, "WTFMove(object)");
 
             # FIXME: toJSNewlyCreated should return JSObject* instead of JSValue.
             push(@$outputArray, "    auto jsValue = toJSNewlyCreated<${IDLType}>(" . join(", ", @constructionConversionArguments) . ");\n");
-            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n") if $interface->extendedAttributes->{LegacyFactoryFunctionMayThrowException} || $operation->extendedAttributes->{MayThrowException};
+            push(@$outputArray, "    if constexpr (IsExceptionOr<decltype(object)>)\n");
+            push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, { });\n");
             push(@$outputArray, "    setSubclassStructureIfNeeded<${implType}>(lexicalGlobalObject, callFrame, asObject(jsValue));\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n");
             push(@$outputArray, "    return JSValue::encode(jsValue);\n");

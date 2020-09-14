@@ -27,6 +27,6 @@
     JSGenerateToJSObject,
     EnabledBySetting=ModernUnprefixedWebAudio,
 ] interface IIRFilterNode : AudioNode {
-    [MayThrowException, CallWith=ScriptExecutionContext] constructor(BaseAudioContext audioContext, IIRFilterOptions options);
+    [CallWith=ScriptExecutionContext] constructor(BaseAudioContext audioContext, IIRFilterOptions options);
     [MayThrowException] undefined getFrequencyResponse(Float32Array frequencyHz, Float32Array magResponse, Float32Array phaseResponse);
 };

@@ -76,7 +76,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     EnabledAtRuntime=PeerConnection,
     ExportMacro=WEBCORE_EXPORT,
 ] interface RTCPeerConnection : EventTarget {
-    [CallWith=Document, MayThrowException] constructor(optional RTCConfiguration configuration);
+    [CallWith=Document] constructor(optional RTCConfiguration configuration);
 
     // 4.3.2 Interface Definition
     Promise<RTCSessionDescriptionInit> createOffer(optional RTCOfferOptions offerOptions);

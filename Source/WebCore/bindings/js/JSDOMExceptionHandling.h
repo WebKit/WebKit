@@ -93,7 +93,7 @@ template<typename Functor> void invokeFunctorPropagatingExceptionIfNecessary(JSC
 {
     using ReturnType = std::invoke_result_t<Functor>;
 
-    if constexpr (IsExceptionOr<ReturnType>::value) {
+    if constexpr (IsExceptionOr<ReturnType>) {
         auto result = functor();
         if (UNLIKELY(result.hasException()))
             propagateException(lexicalGlobalObject, throwScope, result.releaseException());

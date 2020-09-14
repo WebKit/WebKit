@@ -50,7 +50,7 @@ class HTMLImageElement : public HTMLElement, public FormNamedItem {
 public:
     static Ref<HTMLImageElement> create(Document&);
     static Ref<HTMLImageElement> create(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
-    static Ref<HTMLImageElement> createForJSConstructor(Document&, Optional<unsigned> width, Optional<unsigned> height);
+    static Ref<HTMLImageElement> createForLegacyFactoryFunction(Document&, Optional<unsigned> width, Optional<unsigned> height);
 
     virtual ~HTMLImageElement();
 

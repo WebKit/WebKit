@@ -28,7 +28,7 @@
     JSGenerateToJSObject,
     ActiveDOMObject,
 ] interface OscillatorNode : AudioScheduledSourceNode {
-    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional OscillatorOptions options);
+    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional OscillatorOptions options);
 
     attribute OscillatorType type;
 

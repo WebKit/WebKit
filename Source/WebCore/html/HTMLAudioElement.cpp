@@ -52,7 +52,7 @@ Ref<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Doc
     return element;
 }
 
-Ref<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document& document, const AtomString& src)
+Ref<HTMLAudioElement> HTMLAudioElement::createForLegacyFactoryFunction(Document& document, const AtomString& src)
 {
     auto element = create(audioTag, document, false);
     element->setAttributeWithoutSynchronization(preloadAttr, "auto");

@@ -200,7 +200,12 @@ inline ExceptionOr<void> isolatedCopy(ExceptionOr<void>&& value)
     return { };
 }
 
-template <typename T> struct IsExceptionOr : public std::integral_constant<bool, WTF::IsTemplate<std::decay_t<T>, ExceptionOr>::value> { };
+template <typename T> inline constexpr bool IsExceptionOr = WTF::IsTemplate<std::decay_t<T>, ExceptionOr>::value;
+
+template <typename T, bool isExceptionOr = IsExceptionOr<T>> struct TypeOrExceptionOrUnderlyingTypeImpl;
+template <typename T> struct TypeOrExceptionOrUnderlyingTypeImpl<T, true> { using Type = typename T::ReturnType; };
+template <typename T> struct TypeOrExceptionOrUnderlyingTypeImpl<T, false> { using Type = T; };
+template <typename T> using TypeOrExceptionOrUnderlyingType = typename TypeOrExceptionOrUnderlyingTypeImpl<T>::Type;
 
 }
 

@@ -27,7 +27,7 @@
     Conditional=WEB_AUDIO&VIDEO,
     JSGenerateToJSObject
 ] interface MediaElementAudioSourceNode : AudioNode {
-    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor (AudioContext context, MediaElementAudioSourceOptions options);
+    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (AudioContext context, MediaElementAudioSourceOptions options);
 
     readonly attribute HTMLMediaElement mediaElement;
 };

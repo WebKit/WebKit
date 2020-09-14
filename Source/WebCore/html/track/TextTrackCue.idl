@@ -32,7 +32,7 @@
     SkipVTableValidation,
     LegacyFactoryFunctionEnabledBySetting=GenericCueAPI
 ] interface TextTrackCue : EventTarget {
-    [CallWith=Document, MayThrowException] constructor(double startTime, double endTime, DocumentFragment cueNode);
+    [CallWith=Document] constructor(double startTime, double endTime, DocumentFragment cueNode);
 
     readonly attribute TextTrack track;
 

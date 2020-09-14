@@ -135,8 +135,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSExposedToWorkerAndWindowConstructor::c
     auto* castedThis = jsCast<JSExposedToWorkerAndWindowConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     auto object = ExposedToWorkerAndWindow::create();
-    static_assert(decltype(object)::isRef);
-    auto jsValue = toJSNewlyCreated<IDLInterface<ExposedToWorkerAndWindow>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
+    static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
+    auto jsValue = toJSNewlyCreated<IDLInterface<ExposedToWorkerAndWindow>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    if constexpr (IsExceptionOr<decltype(object)>)
+        RETURN_IF_EXCEPTION(throwScope, { });
     setSubclassStructureIfNeeded<ExposedToWorkerAndWindow>(lexicalGlobalObject, callFrame, asObject(jsValue));
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);

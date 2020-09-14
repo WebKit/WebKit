@@ -28,7 +28,7 @@
     Exposed=(Window,Worker),
     ImplementationLacksVTable
 ] interface DOMMatrixReadOnly {
-    [CallWith=ScriptExecutionContext, MayThrowException] constructor(optional (DOMString or sequence<unrestricted double>) init);
+    [CallWith=ScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 
     [MayThrowException, NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other);
     [MayThrowException, NewObject] static DOMMatrixReadOnly fromFloat32Array(Float32Array array32);

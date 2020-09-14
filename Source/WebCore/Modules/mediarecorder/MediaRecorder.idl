@@ -30,7 +30,7 @@ enum RecordingState { "inactive", "recording", "paused" };
     EnabledBySetting=MediaRecorder,
     Exposed=Window
 ] interface MediaRecorder : EventTarget {
-    [CallWith=Document, MayThrowException] constructor(MediaStream stream, optional MediaRecorderOptions options);
+    [CallWith=Document] constructor(MediaStream stream, optional MediaRecorderOptions options);
 
     // FIXME: Implement commented out methods/attributes.
 

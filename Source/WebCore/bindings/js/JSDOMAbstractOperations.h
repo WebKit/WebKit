@@ -123,7 +123,7 @@ template<typename Functor> bool performLegacyPlatformObjectDeleteOperation(JSC::
 {
     using ReturnType = std::invoke_result_t<Functor>;
 
-    if constexpr (IsExceptionOr<ReturnType>::value) {
+    if constexpr (IsExceptionOr<ReturnType>) {
         auto result = functor();
         if (result.hasException()) {
             auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));

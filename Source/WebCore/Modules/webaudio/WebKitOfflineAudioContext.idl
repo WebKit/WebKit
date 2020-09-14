@@ -28,5 +28,5 @@
     InterfaceName=webkitOfflineAudioContext,
     JSGenerateToJSObject,
 ] interface WebKitOfflineAudioContext : WebKitAudioContext {
-    [CallWith=ScriptExecutionContext, MayThrowException] constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
+    [CallWith=ScriptExecutionContext] constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
 };

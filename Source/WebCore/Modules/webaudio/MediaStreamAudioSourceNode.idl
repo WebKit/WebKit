@@ -26,7 +26,7 @@
     Conditional=WEB_AUDIO&MEDIA_STREAM,
     JSGenerateToJSObject
 ] interface MediaStreamAudioSourceNode : AudioNode {
-    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor (AudioContext context, MediaStreamAudioSourceOptions options);
+    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (AudioContext context, MediaStreamAudioSourceOptions options);
 
     readonly attribute MediaStream mediaStream;
 };

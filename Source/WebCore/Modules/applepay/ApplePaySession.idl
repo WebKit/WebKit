@@ -29,7 +29,7 @@
     EnabledBySetting=ApplePay,
     EnabledForContext,
 ] interface ApplePaySession : EventTarget {
-    [CallWith=Document, MayThrowException] constructor(unsigned long version, ApplePayPaymentRequest paymentRequest);
+    [CallWith=Document] constructor(unsigned long version, ApplePayPaymentRequest paymentRequest);
 
     const unsigned short STATUS_SUCCESS = 0;
     const unsigned short STATUS_FAILURE = 1;

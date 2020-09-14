@@ -31,7 +31,7 @@
     ImplementationLacksVTable,
     InterfaceName=XRRigidTransform
 ] interface WebXRRigidTransform {
-    [MayThrowException] constructor(optional DOMPointInit position, optional DOMPointInit orientation);
+    constructor(optional DOMPointInit position, optional DOMPointInit orientation);
 
     [SameObject] readonly attribute DOMPointReadOnly position;
     [SameObject] readonly attribute DOMPointReadOnly orientation;

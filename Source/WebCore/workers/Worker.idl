@@ -27,7 +27,7 @@
 [
     ActiveDOMObject,
 ] interface Worker : EventTarget {
-    [CallWith=ScriptExecutionContext&RuntimeFlags, MayThrowException] constructor(USVString scriptUrl, optional WorkerOptions options);
+    [CallWith=ScriptExecutionContext&RuntimeFlags] constructor(USVString scriptUrl, optional WorkerOptions options);
 
     undefined terminate();
 

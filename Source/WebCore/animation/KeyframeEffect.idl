@@ -30,8 +30,8 @@ typedef USVString CSSOMString;
     Exposed=Window,
     JSGenerateToNativeObject,
 ] interface KeyframeEffect : AnimationEffect {
-    [CallWith=GlobalObject, MayThrowException] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options);
-    [CallWith=GlobalObject, MayThrowException] constructor(KeyframeEffect source);
+    [CallWith=GlobalObject] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options);
+    [CallWith=GlobalObject] constructor(KeyframeEffect source);
 
     attribute Element? target;
     [MayThrowException] attribute CSSOMString? pseudoElement;

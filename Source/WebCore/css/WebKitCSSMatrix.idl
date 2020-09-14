@@ -27,7 +27,7 @@
 [
     ImplementationLacksVTable,
 ] interface WebKitCSSMatrix {
-    [MayThrowException] constructor(optional DOMString cssValue);
+    constructor(optional DOMString cssValue);
 
     // These attributes are simple aliases for certain elements of the 4x4 matrix
     attribute unrestricted double a; // alias for m11

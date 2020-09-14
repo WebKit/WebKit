@@ -30,7 +30,7 @@
     ExportMacro=WEBCORE_EXPORT,
     InterfaceName=webkitAudioContext,
 ] interface WebKitAudioContext : EventTarget {
-    [CallWith=Document, MayThrowException] constructor();
+    [CallWith=Document] constructor();
 
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
     readonly attribute AudioDestinationNode destination;

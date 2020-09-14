@@ -30,7 +30,7 @@
     EnabledForContext,
     SecureContext,
 ] interface PaymentRequest : EventTarget {
-    [CallWith=Document, MayThrowException] constructor(sequence<PaymentMethodData> methodData, PaymentDetailsInit details, optional PaymentOptions options);
+    [CallWith=Document] constructor(sequence<PaymentMethodData> methodData, PaymentDetailsInit details, optional PaymentOptions options);
 
     [CallWith=Document] Promise<PaymentResponse> show(optional Promise<PaymentDetailsUpdate> detailsPromise);
     Promise<undefined> abort();

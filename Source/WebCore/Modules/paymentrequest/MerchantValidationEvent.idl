@@ -29,7 +29,7 @@
     Exposed=Window,
     SecureContext,
 ] interface MerchantValidationEvent : Event {
-    [CallWith=Document, MayThrowException] constructor(DOMString type, optional MerchantValidationEventInit eventInitDict);
+    [CallWith=Document] constructor(DOMString type, optional MerchantValidationEventInit eventInitDict);
 
     readonly attribute DOMString methodName;
     readonly attribute USVString validationURL;
