@@ -33,10 +33,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 744x36
           text run at (0,0) width 744: "Check if glyphs not in Ahem.otf can be rendered using a fallback font. If the test passes, you should see a single-quote"
           text run at (0,18) width 104: "character below:"
-      RenderBlock (anonymous) at (0,204) size 784x16
-        RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (0,0) size 16x16
-            text run at (0,0) width 16: "'"
+      RenderBlock (anonymous) at (0,204) size 784x18
+        RenderInline {SPAN} at (0,0) size 3x16
+          RenderText {#text} at (0,1) size 3x16
+            text run at (0,1) width 3: "'"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

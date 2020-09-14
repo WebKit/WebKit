@@ -1,3 +1,21 @@
+2020-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Apple Win] Migrate from CGFontGetGlyphsForUnichars() to CTFontGetGlyphsForCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=216446
+
+        Reviewed by Darin Adler.
+
+        This patch is one of the steps to moving the Apple Win port from CGFont to CTFont.
+        This patch removes the #if !PLATFORM(WIN) guard from GlyphPageCoreText.cpp and deletes
+        the old functions it used to be using.
+
+        Covered by existing tests.
+
+        * PlatformAppleWin.cmake:
+        * platform/graphics/coretext/GlyphPageCoreText.cpp:
+        * platform/graphics/win/GlyphPageTreeNodeCGWin.cpp: Removed. There's nothing left in the
+          file.
+
 2020-09-13  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Remove need for [MayThrowException] on constructors and legacy factory functions

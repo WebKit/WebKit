@@ -1,3 +1,18 @@
+2020-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Apple Win] Migrate from CGFontGetGlyphsForUnichars() to CTFontGetGlyphsForCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=216446
+
+        Reviewed by Darin Adler.
+
+        Updating tests.
+
+        * fast/text/flag-codepoint.html: The Windows emoji font draws slightly higher than the ascent.
+          Update the test to be more robust.
+        * platform/win/fast/css/font-face-opentype-expected.png: Added.
+        * platform/win/fast/css/font-face-opentype-expected.txt:
+        * platform/win/mathml/presentation/roots-expected.txt:
+
 2020-09-13  Rob Buis  <rbuis@igalia.com>
 
         Make CanvasRenderingContext2D functions parameters not default to undefined

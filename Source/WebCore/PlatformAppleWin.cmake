@@ -159,7 +159,6 @@ else ()
 
         platform/graphics/win/FontCGWin.cpp
         platform/graphics/win/FontPlatformDataCGWin.cpp
-        platform/graphics/win/GlyphPageTreeNodeCGWin.cpp
         platform/graphics/win/GraphicsContextCGWin.cpp
         platform/graphics/win/ImageCGWin.cpp
         platform/graphics/win/SimpleFontDataCGWin.cpp
