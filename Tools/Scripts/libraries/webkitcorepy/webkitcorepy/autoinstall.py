@@ -245,6 +245,7 @@ class Package(object):
                             'install',
                             '--home={}'.format(install_location),
                             '--root=/',
+                            '--prefix=',
                             '--single-version-externally-managed',
                             '--install-lib={}'.format(install_location),
                             '--install-scripts={}'.format(os.path.join(install_location, 'bin')),

@@ -1,3 +1,15 @@
+2020-09-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] AutoInstaller should work with HomeBrew Python
+        https://bugs.webkit.org/show_bug.cgi?id=216496
+        <rdar://problem/68864294>
+
+        Rubber-stamped by Brady Eidson.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.install): Set prefix to empty for HomeBrew python installs.
+
 2020-09-14  Aakash Jain  <aakash_jain@apple.com>
 
         Add unit-tests for triggered_by key in ews config
