@@ -1,3 +1,25 @@
+2020-09-14  Saam Barati  <sbarati@apple.com>
+
+        Don't assume byte code operands are uint32 JSValues
+        https://bugs.webkit.org/show_bug.cgi?id=216386
+
+        Reviewed by Yusuke Suzuki.
+
+        The slow path for enumerator_generic_pname was assuming that its input index operand
+        would always be a UInt32 JSValue boxed as int32. However, this assumption isn't true
+        because that value can have double format in the DFG, and remain in that format when
+        we exit from the DFG to baseline/LLInt code.
+        
+        This was found via the widening number fuzzing agent.
+        
+        I also audited two more places that seem like they suffer from the same issue,
+        and also switched them to using the asUInt32AsAnyInt function:
+        - enumerator_structure_pname
+        - create_rest
+
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2020-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Canonicalize "true" unicode extension type value to ""

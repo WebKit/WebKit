@@ -1,3 +1,13 @@
+2020-09-14  Saam Barati  <sbarati@apple.com>
+
+        Don't assume byte code operands are uint32 JSValues
+        https://bugs.webkit.org/show_bug.cgi?id=216386
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dont-assume-bytecode-operand-is-uint32.js: Added.
+        (async foo):
+
 2020-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Canonicalize "true" unicode extension type value to ""
