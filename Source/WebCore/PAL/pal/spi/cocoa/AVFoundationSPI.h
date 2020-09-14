@@ -40,10 +40,6 @@
 #import <AVFoundation/AVPlayerItem_Private.h>
 #import <AVFoundation/AVPlayerLayer_Private.h>
 
-#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
-#import <AVKit/AVPlayerViewController_WebKitOnly.h>
-#endif
-
 #if ENABLE(MEDIA_SOURCE)
 #import <AVFoundation/AVStreamDataParser.h>
 #endif

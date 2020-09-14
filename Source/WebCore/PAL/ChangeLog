@@ -1,5 +1,21 @@
 2020-09-14  Peng Liu  <peng.liu6@apple.com>
 
+        Clean up AVKitSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=216449
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+        Remove a duplicated AVKit header file.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+        Organize header files (and definitions) in the following order:
+        - General AVKit header files
+        - General AVKit internal header files and definitions
+        - Feature specific internal header files and definitions
+
+2020-09-14  Peng Liu  <peng.liu6@apple.com>
+
         Unreviewed, reverting r267004.
 
         The patch leads to build failures on macOS Catalina.
