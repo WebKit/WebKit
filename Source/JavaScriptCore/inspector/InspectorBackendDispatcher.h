@@ -89,8 +89,10 @@ public:
     // Note that 'unused' is a workaround so the compiler can pick the right sendResponse based on arity.
     // When <http://webkit.org/b/179847> is fixed or this class is renamed for the JSON::Object case,
     // then this alternate method with a dummy parameter can be removed in favor of the one without it.
-    void sendResponse(long requestId, Ref<JSON::Object>&& result, bool unused);
+    void sendResponse(long requestId, RefPtr<JSON::Object>&& result);
+    void sendResponse(long requestId, RefPtr<JSON::Object>&& result, bool unused);
     void sendResponse(long requestId, Ref<JSON::Object>&& result);
+    void sendResponse(long requestId, Ref<JSON::Object>&& result, bool unused);
     void sendPendingErrors();
 
     void reportProtocolError(CommonErrorCode, const String& errorMessage);

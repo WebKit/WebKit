@@ -188,6 +188,20 @@ void BackendDispatcher::dispatch(const String& message)
 }
 
 // FIXME: remove this function when legacy InspectorObject symbols are no longer needed <http://webkit.org/b/179847>.
+void BackendDispatcher::sendResponse(long requestId, RefPtr<JSON::Object>&& result)
+{
+    ASSERT(result);
+    sendResponse(requestId, result.releaseNonNull(), false);
+}
+
+// FIXME: remove this function when legacy InspectorObject symbols are no longer needed <http://webkit.org/b/179847>.
+void BackendDispatcher::sendResponse(long requestId, RefPtr<JSON::Object>&& result, bool)
+{
+    ASSERT(result);
+    sendResponse(requestId, result.releaseNonNull(), false);
+}
+
+// FIXME: remove this function when legacy InspectorObject symbols are no longer needed <http://webkit.org/b/179847>.
 void BackendDispatcher::sendResponse(long requestId, Ref<JSON::Object>&& result)
 {
     sendResponse(requestId, WTFMove(result), false);
