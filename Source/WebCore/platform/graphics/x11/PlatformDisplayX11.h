@@ -41,17 +41,17 @@ namespace WebCore {
 class PlatformDisplayX11 final : public PlatformDisplay {
 public:
     static std::unique_ptr<PlatformDisplay> create();
-    static std::unique_ptr<PlatformDisplay> create(Display*);
+    static std::unique_ptr<PlatformDisplay> create(::Display*);
 
     virtual ~PlatformDisplayX11();
 
-    Display* native() const { return m_display; }
+    ::Display* native() const { return m_display; }
     void* visual() const;
     bool supportsXComposite() const;
     bool supportsXDamage(Optional<int>& damageEventBase, Optional<int>& damageErrorBase) const;
 
 private:
-    PlatformDisplayX11(Display*, NativeDisplayOwned);
+    PlatformDisplayX11(::Display*, NativeDisplayOwned);
 
     Type type() const override { return PlatformDisplay::Type::X11; }
 
@@ -59,7 +59,7 @@ private:
     void initializeEGLDisplay() override;
 #endif
 
-    Display* m_display { nullptr };
+    ::Display* m_display { nullptr };
     mutable Optional<bool> m_supportsXComposite;
     mutable Optional<bool> m_supportsXDamage;
     mutable Optional<int> m_damageEventBase;

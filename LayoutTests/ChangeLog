@@ -1,3 +1,15 @@
+2020-09-14  Simon Fraser  <simon.fraser@apple.com>
+
+        First steps towards LFC painting in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=216466
+
+        Reviewed by Zalan Bujtas.
+
+        Now that we actually paint with LFC, some tests fail because of missing features in
+        the very basic LFC paint path. Mark these as failures for now.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Replace 'serializable' with '[Default] object toJSON()'

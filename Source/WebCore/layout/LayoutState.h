@@ -82,6 +82,7 @@ public:
     bool inLimitedQuirksMode() const { return m_quirksMode == QuirksMode::Limited; }
     bool inNoQuirksMode() const { return m_quirksMode == QuirksMode::No; }
 
+    bool hasRoot() const { return !!m_rootContainer; }
     const ContainerBox& root() const { return *m_rootContainer; }
 
     // LFC integration only. Full LFC has proper ICB access.

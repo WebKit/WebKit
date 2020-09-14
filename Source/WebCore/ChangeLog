@@ -1,3 +1,79 @@
+2020-09-14  Simon Fraser  <simon.fraser@apple.com>
+
+        First steps towards LFC painting in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=216466
+
+        Reviewed by Zalan Bujtas.
+
+        Get LFC painting in WebKit2.
+
+        Display::LayerController() is intended to be a controller object that makes layerization
+        decisions; for now, it just creates some root layers and hooks them up via attachRootGraphicsLayer().
+        It also creates a GraphicsLayerClient that paints by calling LayoutContext::paint().
+
+        Display::View is responsible for the display of an LFC-rendered document. FrameView
+        has one, and the Display::View has a Display::LayerController(). The minimal hookup points are:
+        1. Page::doAfterUpdateRendering() tells each Display::View to prepareForDisplay().
+           This is where we'll do once-per-rendering layer updating.
+        2. FrameView::flushCompositingStateForThisFrame() tells the Display::View() to flush
+           layers, which just passes through to Display::LayerController().
+
+        For now we just rely on the fact that Display::LayerController() calls attachRootGraphicsLayer()
+        after RenderLayerCompositor, replacing the root layer created by existing RenderLayerCompositor code.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::hasRoot const):
+        * layout/display/DisplayLayerController.cpp: Added.
+        (WebCore::Display::LayerController::RootLayerClient::RootLayerClient):
+        (WebCore::Display::LayerController::RootLayerClient::notifyFlushRequired):
+        (WebCore::Display::LayerController::RootLayerClient::paintContents):
+        (WebCore::Display::LayerController::LayerController):
+        (WebCore::Display::LayerController::prepareForDisplay):
+        (WebCore::Display::LayerController::flushLayers):
+        (WebCore::Display::LayerController::visibleRectForLayerFlushing const):
+        (WebCore::Display::LayerController::scheduleRenderingUpdate):
+        (WebCore::Display::LayerController::ensureRootLayer):
+        (WebCore::Display::LayerController::setupRootLayerHierarchy):
+        (WebCore::Display::LayerController::updateRootLayerGeometry):
+        (WebCore::Display::LayerController::attachRootLayer):
+        (WebCore::Display::LayerController::graphicsLayerFactory const):
+        * layout/display/DisplayLayerController.h: Added.
+        (WebCore::Display::LayerController::view const):
+        (WebCore::Display::LayerController::rootGraphicsLayer const):
+        (WebCore::Display::LayerController::contentLayer const):
+        * layout/display/DisplayView.cpp: Copied from Source/WebCore/layout/displaytree/DisplayPainter.h.
+        (WebCore::Display::View::View):
+        (WebCore::Display::View::~View):
+        (WebCore::Display::View::frame const):
+        (WebCore::Display::View::page const):
+        (WebCore::Display::View::layoutState const):
+        (WebCore::Display::View::prepareForDisplay):
+        (WebCore::Display::View::flushLayers):
+        * layout/display/DisplayView.h: Copied from Source/WebCore/layout/displaytree/DisplayPainter.h.
+        (WebCore::Display::View::frameView const):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::Painter::absoluteDisplayBox):
+        (WebCore::Display::paintSubtree):
+        (WebCore::Display::collectPaintRootsAndContentRect):
+        (WebCore::Display::absoluteDisplayBox): Deleted.
+        * layout/displaytree/DisplayPainter.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::flushCompositingStateForThisFrame):
+        (WebCore::FrameView::existingDisplayView const):
+        (WebCore::FrameView::displayView):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::doAfterUpdateRendering):
+        * platform/graphics/x11/PlatformDisplayX11.h: Denote Display as being in the global namespace.
+        * platform/graphics/x11/XErrorTrapper.h:
+        (WebCore::XErrorTrapper::XErrorTrapper):
+        * platform/graphics/x11/XUniquePtr.h:
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Replace 'serializable' with '[Default] object toJSON()'

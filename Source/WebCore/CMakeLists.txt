@@ -103,6 +103,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/layout"
     "${WEBCORE_DIR}/layout/blockformatting"
     "${WEBCORE_DIR}/layout/blockformatting/tablewrapper"
+    "${WEBCORE_DIR}/layout/display"
     "${WEBCORE_DIR}/layout/displaytree"
     "${WEBCORE_DIR}/layout/floats"
     "${WEBCORE_DIR}/layout/inlineformatting"

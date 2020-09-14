@@ -130,6 +130,7 @@
 #endif
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+#include "DisplayView.h"
 #include "LayoutContext.h"
 #endif
 
@@ -956,6 +957,14 @@ void FrameView::updateScrollingCoordinatorScrollSnapProperties() const
 
 bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush)
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
+        if (auto* view = existingDisplayView())
+            view->flushLayers();
+        return true;
+    }
+#endif
+
     RenderView* renderView = this->renderView();
     if (!renderView)
         return true; // We don't want to keep trying to update layers if we have no renderer.
@@ -5339,6 +5348,20 @@ RenderView* FrameView::renderView() const
 {
     return frame().contentRenderer();
 }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+Display::View* FrameView::existingDisplayView() const
+{
+    return m_displayView.get();
+}
+
+Display::View& FrameView::displayView()
+{
+    if (!m_displayView)
+        m_displayView = makeUnique<Display::View>(*this);
+    return *m_displayView;
+}
+#endif
 
 int FrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const
 {

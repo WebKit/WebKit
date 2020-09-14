@@ -32,6 +32,7 @@
 #include "FloatingContext.h"
 #include "InlineFormattingContext.h"
 #include "LayoutBox.h"
+#include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 
 namespace WebCore {

@@ -1234,6 +1234,24 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] fast/replaced/no-focus-ring-embed.html [ Skip ]
 [ arm64 ] fast/replaced/no-focus-ring-object.html [ Skip ]
 
+# LFC painting is work in progress
+webkit.org/b/216471 fast/layoutformattingcontext/block-only/replaced-intrinsic-width-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/empty-table-with-specified-height-quirk-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/empty-table-with-specified-height-standards-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/float-in-inline-context-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/floats-shrinking-line-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/subframe-with-display-none-html.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-cell-vertical-alignment-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-border-collapse-with-padding.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-border-collapse3.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-collapsed-row-border.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-collapsed-row-border2.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-collapsed-tbody-border.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-multiple-sections.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-row-border.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-rowspan-with-spacing.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-thead-border-ignore.html [ ImageOnlyFailure ]
+
 # rdar://66703773 (REGRESSION (20A2316-20A2348b): http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html is a constant failure)
 [ arm64 ] http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html [ Skip ]
 

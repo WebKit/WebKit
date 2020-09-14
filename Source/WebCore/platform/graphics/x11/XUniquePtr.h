@@ -32,7 +32,7 @@
 
 #if USE(GLX)
 typedef struct __GLXcontextRec* GLXContext;
-extern "C" void glXDestroyContext(Display*, GLXContext);
+extern "C" void glXDestroyContext(::Display*, GLXContext);
 #endif
 
 namespace WebCore {

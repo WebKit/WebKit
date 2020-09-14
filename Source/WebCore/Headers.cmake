@@ -693,6 +693,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
+    layout/display/DisplayLayerController.h
+    layout/display/DisplayView.h
+
     layout/displaytree/DisplayBox.h
     layout/displaytree/DisplayInlineContent.h
     layout/displaytree/DisplayInlineRect.h

@@ -141,7 +141,7 @@ static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOff
     }
 }
 
-static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layout::Box& layoutBoxToPaint)
+Box Painter::absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layout::Box& layoutBoxToPaint)
 {
     // Should never really happen but table code is way too incomplete.
     if (!layoutState.hasDisplayBox(layoutBoxToPaint))
@@ -178,7 +178,7 @@ static void paintSubtree(GraphicsContext& context, const Layout::LayoutState& la
             return;
         if (!layoutState.hasDisplayBox(layoutBox))
             return;
-        auto absoluteDisplayBox = Display::absoluteDisplayBox(layoutState, layoutBox);
+        auto absoluteDisplayBox = Painter::absoluteDisplayBox(layoutState, layoutBox);
         if (!dirtyRect.intersects(snappedIntRect(absoluteDisplayBox.rect())))
             return;
 
@@ -248,7 +248,7 @@ static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& lay
             if (isPaintRootCandidate(layoutBox))
                 appendPaintRoot(layoutBox);
             if (layoutState.hasDisplayBox(layoutBox))
-                contentRect.uniteIfNonZero(Display::absoluteDisplayBox(layoutState, layoutBox).rect());
+                contentRect.uniteIfNonZero(Painter::absoluteDisplayBox(layoutState, layoutBox).rect());
             if (!is<Layout::ContainerBox>(layoutBox) || !downcast<Layout::ContainerBox>(layoutBox).hasChild())
                 break;
             layoutBoxList.append(downcast<Layout::ContainerBox>(layoutBox).firstChild());
