@@ -73,8 +73,7 @@ CSSValuePool::CSSValuePool()
 
 CSSValuePool& CSSValuePool::singleton()
 {
-    ASSERT(isMainThread());
-    static NeverDestroyed<CSSValuePool> pool;
+    static MainThreadNeverDestroyed<CSSValuePool> pool;
     return pool;
 }
 

@@ -32,7 +32,7 @@ namespace WebCore {
 
 RenderTheme& RenderTheme::singleton()
 {
-    static NeverDestroyed<RenderThemeGtk> theme;
+    static MainThreadNeverDestroyed<RenderThemeGtk> theme;
     return theme;
 }
 

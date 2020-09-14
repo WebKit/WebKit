@@ -37,7 +37,7 @@ namespace WebCore {
 
 const CSSParserContext& strictCSSParserContext()
 {
-    static NeverDestroyed<CSSParserContext> strictContext(HTMLStandardMode);
+    static MainThreadNeverDestroyed<CSSParserContext> strictContext(HTMLStandardMode);
     return strictContext;
 }
 

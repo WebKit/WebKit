@@ -79,7 +79,7 @@ static constexpr auto mediaSliderTrackActiveColor = SRGBA<uint8_t> { 252, 252, 2
 #if !PLATFORM(GTK)
 RenderTheme& RenderTheme::singleton()
 {
-    static NeverDestroyed<RenderThemeAdwaita> theme;
+    static MainThreadNeverDestroyed<RenderThemeAdwaita> theme;
     return theme;
 }
 #endif
