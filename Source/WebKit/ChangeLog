@@ -1,3 +1,16 @@
+2020-09-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: docking buttons don't work when already docked if window is too small
+        https://bugs.webkit.org/show_bug.cgi?id=216488
+        <rdar://problem/68242717>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::attachAvailabilityChanged):
+        If Web Inspector is already attached, it can re-attach with a different configuration.
+
 2020-09-14  Dean Jackson  <dino@apple.com>
 
         Enable WebGL2 by default

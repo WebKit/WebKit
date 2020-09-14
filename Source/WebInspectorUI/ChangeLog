@@ -1,3 +1,20 @@
+2020-09-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: docking buttons don't work when already docked if window is too small
+        https://bugs.webkit.org/show_bug.cgi?id=216488
+        <rdar://problem/68242717>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WI.updateDockingAvailability):
+        (WI.updateDockedState):
+        (WI._updateDockNavigationItems):
+        Always be sure to update the docking navigation items when docking becomes unavailable
+        instead of just forcing Web Inspector to undock as if Web Inspector is already undocked
+        then none of the docking navigation items will be updated. This makes it so that the
+        docking navigation items are hidden when docking becomes unavailable while undocked.
+
 2020-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] REGRESSION(r266815): Several GTK API tests are timing out

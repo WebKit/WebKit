@@ -828,12 +828,10 @@ WI.updateDockingAvailability = function(available)
 {
     WI._dockingAvailable = available;
 
-    if (!WI._dockingAvailable) {
-        WI.updateDockedState(WI.DockConfiguration.Undocked);
-        return;
-    }
-
     WI._updateDockNavigationItems();
+
+    if (!WI._dockingAvailable)
+        WI.updateDockedState(WI.DockConfiguration.Undocked);
 };
 
 WI.updateDockedState = function(side)
@@ -874,8 +872,6 @@ WI.updateDockedState = function(side)
     }
 
     WI._updateDockNavigationItems();
-
-    WI.tabBar.resetCachedWidths();
 
     if (!WI.dockedConfigurationSupportsSplitContentBrowser() && !WI.doesCurrentTabSupportSplitContentBrowser())
         WI.hideSplitConsole();
@@ -1901,6 +1897,8 @@ WI._updateDockNavigationItems = function()
     }
 
     WI._updateTabBarDividers();
+
+    WI.tabBar.resetCachedWidths();
 };
 
 WI._tabBrowserSizeDidChange = function()
