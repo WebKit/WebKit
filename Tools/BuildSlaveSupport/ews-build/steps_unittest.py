@@ -2024,6 +2024,20 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by patch, retrying build (retry)')
         return self.runStep()
 
+    def test_clean_tree_exceed_failure_limit_with_triggered_by(self):
+        self.configureStep()
+        self.setProperty('buildername', 'iOS-13-Simulator-WK2-Tests-EWS')
+        self.setProperty('triggered_by', 'ios-13-sim-build-ews')
+        self.setProperty('first_run_failures', ['test1'])
+        self.setProperty('second_run_failures', ['test1'])
+        self.setProperty('clean_tree_results_exceed_failure_limit', True)
+        self.setProperty('clean_tree_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
+        message = 'Unable to confirm if test failures are introduced by patch, retrying build'
+        self.expectOutcome(result=SUCCESS, state_string=message)
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_summary'), message)
+        return rc
+
     def test_clean_tree_has_lot_of_failures(self):
         self.configureStep()
         self.setProperty('first_results_exceed_failure_limit', True)

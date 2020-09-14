@@ -1,3 +1,19 @@
+2020-09-14  Aakash Jain  <aakash_jain@apple.com>
+
+        Add unit-tests for triggered_by key in ews config
+        https://bugs.webkit.org/show_bug.cgi?id=216487
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        (ConfigDotJSONTest.get_config): Method to read config.json
+        (ConfigDotJSONTest.test_schduler_contains_valid_builder_name): Ensure that scheduler references a valid builder.
+        (ConfigDotJSONTest.test_single_builder_for_triggerable_scheduler): Ensure that every Triggerable scheduler references a single builder.
+        (ConfigDotJSONTest.test_incorrect_triggered_by): Ensure that triggered_by key is correct. Verify by matching that
+        the builder for the triggered_by scheduler actually triggers current builder.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestAnalyzeLayoutTestsResults.test_clean_tree_exceed_failure_limit_with_triggered_by):
+
 2020-09-14  Alex Christensen  <achristensen@webkit.org>
 
         Move cookie flushing SPI from WKProcessPool to WKHTTPCookieStore
