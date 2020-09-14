@@ -1455,7 +1455,7 @@ WebAnimationsMutableTimelinesEnabled:
 
 WebGL2Enabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "WebGL 2.0"
   humanReadableDescription: "WebGL 2 prototype"
   category: experimental

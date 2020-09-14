@@ -184,19 +184,6 @@ bool defaultWebRTCCodecsInGPUProcess()
 
 #endif // ENABLE(WEB_RTC)
 
-#if ENABLE(WEBGL2)
-
-bool defaultWebGL2Enabled()
-{
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("WebGL2");
-#endif
-
-    return false;
-}
-
-#endif // ENABLE(WEBGL2)
-
 #if ENABLE(WEBGPU)
 
 bool defaultWebGPUEnabled()

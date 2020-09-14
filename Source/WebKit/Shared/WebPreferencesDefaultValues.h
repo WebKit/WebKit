@@ -350,10 +350,6 @@ bool defaultCaptureVideoInGPUProcessEnabled();
 bool defaultWebRTCCodecsInGPUProcess();
 #endif
 
-#if ENABLE(WEBGL2)
-bool defaultWebGL2Enabled();
-#endif
-
 #if ENABLE(WEBGPU)
 bool defaultWebGPUEnabled();
 #endif

@@ -642,7 +642,7 @@ public:
         @YES, WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey,
 
 #if ENABLE(WEBGL2)
-        @NO, WebKitWebGL2EnabledPreferenceKey,
+        @YES, WebKitWebGL2EnabledPreferenceKey,
 #endif
 #if ENABLE(WEBGPU)
         @NO, WebKitWebGPUEnabledPreferenceKey,

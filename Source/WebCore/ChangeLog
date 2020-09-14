@@ -1,3 +1,16 @@
+2020-09-14  Dean Jackson  <dino@apple.com>
+
+        Enable WebGL2 by default
+        https://bugs.webkit.org/show_bug.cgi?id=216464
+        <rdar://problem/68811378>
+
+        Reviewed by Sam Weinig.
+
+        Our WebGL2 implementation is in good enough shape that we should
+        enable it by default for broader testing.
+
+        * page/RuntimeEnabledFeatures.h:
+
 2020-09-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][FFC] Introduce flex formatting context

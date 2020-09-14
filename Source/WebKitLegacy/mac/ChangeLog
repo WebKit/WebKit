@@ -1,3 +1,17 @@
+2020-09-14  Dean Jackson  <dino@apple.com>
+
+        Enable WebGL2 by default
+        https://bugs.webkit.org/show_bug.cgi?id=216464
+        <rdar://problem/68811378>
+
+        Reviewed by Sam Weinig.
+
+        Our WebGL2 implementation is in good enough shape that we should
+        enable it by default for broader testing.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2020-09-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r266842 and r266883.

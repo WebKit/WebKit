@@ -386,7 +386,7 @@ private:
     bool m_isTransformStreamAPIEnabled { false };
 
 #if ENABLE(WEBGL2)
-    bool m_isWebGL2Enabled { false };
+    bool m_isWebGL2Enabled { true };
 #endif
 
 #if ENABLE(WEBGPU)
