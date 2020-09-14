@@ -82,10 +82,8 @@ void DefaultAudioDestinationNode::uninitialize()
 
 void DefaultAudioDestinationNode::createDestination()
 {
-    float hardwareSampleRate = AudioDestination::hardwareSampleRate();
-    LOG(WebAudio, ">>>> hardwareSampleRate = %f\n", hardwareSampleRate);
-
-    m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), hardwareSampleRate);
+    ALWAYS_LOG(LOGIDENTIFIER, "contextSampleRate = ", m_sampleRate, ", hardwareSampleRate = ", AudioDestination::hardwareSampleRate());
+    m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), m_sampleRate);
 }
 
 void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)

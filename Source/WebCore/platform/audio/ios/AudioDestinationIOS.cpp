@@ -91,7 +91,7 @@ void AudioDestinationCocoa::configure()
     result = AudioUnitGetProperty(outputUnit(), kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, (void*)&streamFormat, &size);
     ASSERT(!result);
 
-    setAudioStreamBasicDescription(streamFormat, sampleRate());
+    setAudioStreamBasicDescription(streamFormat);
 
     result = AudioUnitSetProperty(outputUnit(), kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
     ASSERT(!result);

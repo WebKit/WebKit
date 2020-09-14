@@ -39,11 +39,10 @@ namespace WebCore {
 
 class SincResampler final {
     WTF_MAKE_FAST_ALLOCATED;
-public:   
+public:
     // scaleFactor == sourceSampleRate / destinationSampleRate
-    // kernelSize can be adjusted for quality (higher is better)
-    // numberOfKernelOffsets is used for interpolation and is the number of sub-sample kernel shifts.
-    SincResampler(double scaleFactor, unsigned kernelSize = 32, unsigned numberOfKernelOffsets = 32);
+    // requestFrames controls the size in frames of the buffer requested by each provideInput() call.
+    SincResampler(double scaleFactor, Optional<unsigned> requestFrames = WTF::nullopt);
     
     // Processes numberOfSourceFrames from source to produce numberOfSourceFrames / scaleFactor frames in destination.
     void process(const float* source, float* destination, unsigned numberOfSourceFrames);
@@ -54,10 +53,9 @@ public:
 protected:
     void initializeKernel();
     void consumeSource(float* buffer, unsigned numberOfSourceFrames);
+    void updateRegions(bool isSecondLoad);
     
     double m_scaleFactor;
-    unsigned m_kernelSize;
-    unsigned m_numberOfKernelOffsets;
 
     // m_kernelStorage has m_numberOfKernelOffsets kernels back-to-back, each of size m_kernelSize.
     // The kernel offsets are sub-sample shifts of a windowed sinc() shifted from 0.0 to 1.0 sample.
@@ -65,22 +63,33 @@ protected:
     
     // m_virtualSourceIndex is an index on the source input buffer with sub-sample precision.
     // It must be double precision to avoid drift.
-    double m_virtualSourceIndex;
+    double m_virtualSourceIndex { 0 };
     
     // This is the number of destination frames we generate per processing pass on the buffer.
-    unsigned m_blockSize;
+    unsigned m_requestFrames;
+
+    // The number of source frames processed per pass.
+    unsigned m_blockSize { 0 };
 
     // Source is copied into this buffer for each processing pass.
     AudioFloatArray m_inputBuffer;
 
-    const float* m_source;
-    unsigned m_sourceFramesAvailable;
+    // Pointers to the various regions inside |m_inputBuffer|. See the diagram at
+    // the top of the .cpp file for more information.
+    float* m_r0 { nullptr };
+    float* const m_r1 { nullptr };
+    float* const m_r2 { nullptr };
+    float* m_r3 { nullptr };
+    float* m_r4 { nullptr };
+
+    const float* m_source { nullptr };
+    unsigned m_sourceFramesAvailable { 0 };
     
     // m_sourceProvider is used to provide the audio input stream to the resampler.
-    AudioSourceProvider* m_sourceProvider;    
+    AudioSourceProvider* m_sourceProvider { nullptr };
 
     // The buffer is primed once at the very beginning of processing.
-    bool m_isBufferPrimed;
+    bool m_isBufferPrimed { false };
 
     RefPtr<AudioBus> m_internalBus;
 };

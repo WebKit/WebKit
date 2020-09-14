@@ -1788,9 +1788,7 @@ platform/animation/TimingFunction.cpp
 platform/audio/AudioBus.cpp
 platform/audio/AudioChannel.cpp
 platform/audio/AudioDSPKernelProcessor.cpp
-platform/audio/AudioFIFO.cpp
 platform/audio/AudioHardwareListener.cpp
-platform/audio/AudioPullFIFO.cpp
 platform/audio/AudioResampler.cpp
 platform/audio/AudioResamplerKernel.cpp
 platform/audio/AudioUtilities.cpp
@@ -1814,6 +1812,7 @@ platform/audio/MultiChannelResampler.cpp
 platform/audio/Panner.cpp
 platform/audio/PlatformMediaSession.cpp
 platform/audio/PlatformMediaSessionManager.cpp
+platform/audio/PushPullFIFO.cpp
 platform/audio/Reverb.cpp
 platform/audio/ReverbAccumulationBuffer.cpp
 platform/audio/ReverbConvolver.cpp

@@ -28,17 +28,22 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioDestination.h"
+#include "AudioIOCallback.h"
+#include "AudioSourceProvider.h"
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class AudioBus;
+class MultiChannelResampler;
+class PushPullFIFO;
 
 using CreateAudioDestinationCocoaOverride = std::unique_ptr<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
 
 // An AudioDestination using CoreAudio's default output AudioUnit
-class AudioDestinationCocoa : public AudioDestination {
+class AudioDestinationCocoa : public AudioDestination, public AudioSourceProvider {
 public:
     AudioDestinationCocoa(AudioIOCallback&, float sampleRate);
     virtual ~AudioDestinationCocoa();
@@ -49,14 +54,14 @@ protected:
     void setIsPlaying(bool);
 
     bool isPlaying() final { return m_isPlaying; }
-    float sampleRate() const final { return m_sampleRate; }
+    float sampleRate() const final { return m_contextSampleRate; }
     unsigned framesPerBuffer() const final;
     AudioUnit& outputUnit() { return m_outputUnit; }
     
     // DefaultOutputUnit callback
     static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);
 
-    void setAudioStreamBasicDescription(AudioStreamBasicDescription&, float sampleRate);
+    void setAudioStreamBasicDescription(AudioStreamBasicDescription&);
 
 private:
     void start() override;
@@ -64,6 +69,9 @@ private:
 
     friend std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
     
+    // AudioSourceProvider.
+    void provideInput(AudioBus*, size_t framesToProcess) final;
+
     void configure();
     void processBusAfterRender(AudioBus&, UInt32 numberOfFrames);
 
@@ -71,14 +79,22 @@ private:
 
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;
+
+    // To pass the data from FIFO to the audio device callback.
+    Ref<AudioBus> m_outputBus;
+
+    // To push the rendered result from WebAudio graph into the FIFO.
     Ref<AudioBus> m_renderBus;
-    Ref<AudioBus> m_spareBus;
 
-    float m_sampleRate;
+    // Resolves the buffer size mismatch between the WebAudio engine and
+    // the callback function from the actual audio device.
+    UniqueRef<PushPullFIFO> m_fifo;
+
+    std::unique_ptr<MultiChannelResampler> m_resampler;
+    AudioIOPosition m_outputTimestamp;
+
+    float m_contextSampleRate;
     bool m_isPlaying { false };
-
-    unsigned m_startSpareFrame { 0 };
-    unsigned m_endSpareFrame { 0 };
 };
 
 } // namespace WebCore

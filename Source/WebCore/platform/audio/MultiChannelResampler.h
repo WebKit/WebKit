@@ -40,7 +40,8 @@ class AudioBus;
 class MultiChannelResampler final {
     WTF_MAKE_FAST_ALLOCATED;
 public:   
-    explicit MultiChannelResampler(double scaleFactor, unsigned numberOfChannels);
+    // requestFrames constrols the size of the buffer in frames when AudioSourceProvider::provideInput() is called.
+    explicit MultiChannelResampler(double scaleFactor, unsigned numberOfChannels, Optional<unsigned> requestFrames = WTF::nullopt);
     ~MultiChannelResampler();
 
     // Process given AudioSourceProvider for streaming applications.

@@ -29,13 +29,16 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioBus.h"
-#include "AudioIOCallback.h"
 #include "AudioSession.h"
 #include "Logging.h"
+#include "MultiChannelResampler.h"
+#include "PushPullFIFO.h"
 
 namespace WebCore {
 
-const int kRenderBufferSize = 128;
+constexpr size_t kRenderBufferSize = 128;
+
+constexpr size_t fifoSize = 96 * kRenderBufferSize;
 
 CreateAudioDestinationCocoaOverride AudioDestinationCocoa::createOverride = nullptr;
 
@@ -68,14 +71,24 @@ unsigned long AudioDestination::maxChannelCount()
     return AudioSession::sharedSession().maximumNumberOfOutputChannels();
 }
 
+// FIXME: We should not be hardcoding the number of input channels.
+constexpr unsigned legacyNumberOfOutputChannels { 2 };
+
 AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, float sampleRate)
     : m_outputUnit(0)
     , m_callback(callback)
-    , m_renderBus(AudioBus::create(2, kRenderBufferSize, false).releaseNonNull())
-    , m_spareBus(AudioBus::create(2, kRenderBufferSize, true).releaseNonNull())
-    , m_sampleRate(sampleRate)
+    , m_outputBus(AudioBus::create(legacyNumberOfOutputChannels, kRenderBufferSize, false).releaseNonNull())
+    , m_renderBus(AudioBus::create(legacyNumberOfOutputChannels, kRenderBufferSize).releaseNonNull())
+    , m_fifo(makeUniqueRef<PushPullFIFO>(legacyNumberOfOutputChannels, fifoSize))
+    , m_contextSampleRate(sampleRate)
 {
     configure();
+
+    auto hardwareSampleRate = this->hardwareSampleRate();
+    if (sampleRate != hardwareSampleRate) {
+        double scaleFactor = static_cast<double>(sampleRate) / hardwareSampleRate;
+        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, legacyNumberOfOutputChannels, kRenderBufferSize);
+    }
 }
 
 AudioDestinationCocoa::~AudioDestinationCocoa()
@@ -116,11 +129,11 @@ void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
     m_callback.isPlayingDidChange();
 }
 
-void AudioDestinationCocoa::setAudioStreamBasicDescription(AudioStreamBasicDescription& streamFormat, float sampleRate)
+void AudioDestinationCocoa::setAudioStreamBasicDescription(AudioStreamBasicDescription& streamFormat)
 {
     const int bytesPerFloat = sizeof(Float32);
     const int bitsPerByte = 8;
-    streamFormat.mSampleRate = sampleRate;
+    streamFormat.mSampleRate = hardwareSampleRate();
     streamFormat.mFormatID = kAudioFormatLinearPCM;
     streamFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
     streamFormat.mBytesPerPacket = bytesPerFloat;
@@ -143,44 +156,31 @@ static void assignAudioBuffersToBus(AudioBuffer* buffers, AudioBus& bus, UInt32 
 // Pulls on our provider to get rendered audio stream.
 OSStatus AudioDestinationCocoa::render(const AudioTimeStamp* timestamp, UInt32 numberOfFrames, AudioBufferList* ioData)
 {
-    AudioIOPosition outputTimestamp;
+    if (m_fifo->length() < numberOfFrames)
+        return noErr;
+
     if (timestamp) {
-        outputTimestamp = {
-            Seconds { timestamp->mSampleTime / m_sampleRate },
+        m_outputTimestamp = {
+            Seconds { timestamp->mSampleTime / sampleRate() },
             MonotonicTime::fromMachAbsoluteTime(timestamp->mHostTime)
         };
-    }
+    } else
+        m_outputTimestamp = AudioIOPosition { };
+
     auto* buffers = ioData->mBuffers;
     UInt32 numberOfBuffers = ioData->mNumberBuffers;
-    UInt32 framesRemaining = numberOfFrames;
-    UInt32 frameOffset = 0;
-    while (framesRemaining > 0) {
-        if (m_startSpareFrame < m_endSpareFrame) {
-            ASSERT(m_startSpareFrame < m_endSpareFrame);
-            UInt32 framesThisTime = std::min<UInt32>(m_endSpareFrame - m_startSpareFrame, numberOfFrames);
-            assignAudioBuffersToBus(buffers, m_renderBus.get(), numberOfBuffers, numberOfFrames, frameOffset, framesThisTime);
-            m_renderBus->copyFromRange(m_spareBus.get(), m_startSpareFrame, m_endSpareFrame);
-            processBusAfterRender(m_renderBus.get(), framesThisTime);
-            frameOffset += framesThisTime;
-            framesRemaining -= framesThisTime;
-            m_startSpareFrame += framesThisTime;
-        }
 
-        UInt32 framesThisTime = std::min<UInt32>(kRenderBufferSize, framesRemaining);
-        assignAudioBuffersToBus(buffers, m_renderBus.get(), numberOfBuffers, numberOfFrames, frameOffset, framesThisTime);
+    // Associate the destination data array with the output bus then fill the FIFO.
+    assignAudioBuffersToBus(buffers, m_outputBus.get(), numberOfBuffers, numberOfFrames, 0, numberOfFrames);
+    size_t framesToRender = m_fifo->pull(m_outputBus.ptr(), numberOfFrames);
 
-        if (!framesThisTime)
-            break;
-        if (framesThisTime < kRenderBufferSize) {
-            m_callback.render(0, m_spareBus.ptr(), kRenderBufferSize, outputTimestamp);
-            m_renderBus->copyFromRange(m_spareBus.get(), 0, framesThisTime);
-            m_startSpareFrame = framesThisTime;
-            m_endSpareFrame = kRenderBufferSize;
-        } else
-            m_callback.render(0, m_renderBus.ptr(), framesThisTime, outputTimestamp);
-        processBusAfterRender(m_renderBus.get(), framesThisTime);
-        frameOffset += framesThisTime;
-        framesRemaining -= framesThisTime;
+    for (size_t pushedFrames = 0; pushedFrames < framesToRender; pushedFrames += kRenderBufferSize) {
+        if (m_resampler)
+            m_resampler->process(this, m_renderBus.ptr(), kRenderBufferSize);
+        else
+            m_callback.render(0, m_renderBus.ptr(), kRenderBufferSize, m_outputTimestamp);
+
+        m_fifo->push(m_renderBus.ptr());
     }
 
     return noErr;
@@ -191,6 +191,12 @@ OSStatus AudioDestinationCocoa::inputProc(void* userData, AudioUnitRenderActionF
 {
     auto* audioOutput = static_cast<AudioDestinationCocoa*>(userData);
     return audioOutput->render(timestamp, numberOfFrames, ioData);
+}
+
+void AudioDestinationCocoa::provideInput(AudioBus* bus, size_t framesToProcess)
+{
+    ASSERT_UNUSED(framesToProcess, framesToProcess == kRenderBufferSize);
+    m_callback.render(0, bus, kRenderBufferSize, m_outputTimestamp);
 }
 
 } // namespace WebCore

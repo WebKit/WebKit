@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
 #include "CaptureDevice.h"
+#include <pal/spi/cf/CoreAudioSPI.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

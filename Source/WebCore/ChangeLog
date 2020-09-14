@@ -1,3 +1,71 @@
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Add proper support for AudioContextOptions.sampleRate
+        https://bugs.webkit.org/show_bug.cgi?id=216425
+
+        Reviewed by Eric Carlson.
+
+        Add proper support for AudioContextOptions.sampleRate. Previously, our AudioContext always ran
+        at the hardware's sampleRate, no matter what value was set for AudioContextOptions.sampleRate.
+
+        This patch is based on the following Chromium changes:
+        - https://chromium-review.googlesource.com/c/chromium/src/+/1482957
+        - https://codereview.chromium.org/2549093009
+        - https://codereview.chromium.org/14189035
+
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::createDestination):
+        When creating an AudioDestination, pass the requested AudioContext sample rate
+        instead of the hardware sample rate.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/audio/AudioFIFO.cpp: Removed.
+        * platform/audio/AudioFIFO.h: Removed.
+        * platform/audio/AudioPullFIFO.cpp: Removed.
+        * platform/audio/AudioPullFIFO.h: Removed.
+        * platform/audio/PushPullFIFO.cpp: Added.
+        * platform/audio/PushPullFIFO.h: Added.
+        Replace AudioFIFO and AudioPullFIFO with a new PushPullFIFO replacement, similarly
+        to what was done in Chromium in:
+        - https://codereview.chromium.org/2549093009
+
+        * platform/audio/MultiChannelResampler.cpp:
+        (WebCore::MultiChannelResampler::MultiChannelResampler):
+        * platform/audio/MultiChannelResampler.h:
+        * platform/audio/SincResampler.cpp:
+        (WebCore::SincResampler::SincResampler):
+        (WebCore::SincResampler::updateRegions):
+        (WebCore::SincResampler::initializeKernel):
+        (WebCore::SincResampler::process):
+        * platform/audio/SincResampler.h:
+        Add parameter to MultiChannelResampler & SincResampler to allow the client to specify
+        the size of the buffer in frames when the resampler calls AudioSourceProvider::provideInput()
+        to get input data. This is necessary because our WebAudio implementation uses a static
+        buffer size of 128 frames. This is similar to what was done in Chromium in:
+        - https://codereview.chromium.org/14189035
+
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::AudioDestinationCocoa):
+        (WebCore::AudioDestinationCocoa::setAudioStreamBasicDescription):
+        (WebCore::AudioDestinationCocoa::render):
+        (WebCore::AudioDestinationCocoa::provideInput):
+        * platform/audio/cocoa/AudioDestinationCocoa.h:
+        - Adopt PushPullFIFO to resolve the buffer size mismatch between the WebAudio engine and
+          the callback function from the actual audio device, similarly to what was done in Chromium.
+        - When the context's sample rate differs from the hardware sample rate, instantiate a
+          MultiChannelResampler and use it in render() to do the resampling.
+
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationCocoa::configure):
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationCocoa::configure):
+        Drop sampleRate parameter as it is no longer needed.
+
+        * platform/mock/MockAudioDestinationCocoa.cpp:
+        (WebCore::MockAudioDestinationCocoa::tick):
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Split DOM Parsing related functions out of Element and ShadowRoot and into their own IDL files to match specs

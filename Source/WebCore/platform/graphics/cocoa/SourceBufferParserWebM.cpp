@@ -55,6 +55,9 @@ namespace WebCore {
 
 using namespace PAL;
 
+// FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
+constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
+
 static bool isWebmParserAvailable()
 {
     return !!webm::swap && RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled();

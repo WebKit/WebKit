@@ -67,7 +67,7 @@ void AudioDestinationCocoa::configure()
 
     // Set stream format
     AudioStreamBasicDescription streamFormat;
-    setAudioStreamBasicDescription(streamFormat, sampleRate());
+    setAudioStreamBasicDescription(streamFormat);
 
     result = AudioUnitSetProperty(outputUnit(), kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
     ASSERT(!result);

@@ -39,49 +39,111 @@
 #include <emmintrin.h>
 #endif
 
-// Input buffer layout, dividing the total buffer into regions (r0 - r5):
+// Initial input buffer layout, dividing into regions r0 to r4 (note: r0, r3
+// and r4 will move after the first load):
 //
 // |----------------|----------------------------------------------------------------|----------------|
 //
-//                                              blockSize + kernelSize / 2                           
+//                                              m_requestFrames
 //                   <-------------------------------------------------------------------------------->
-//                                                  r0
+//                                           r0 (during first load)
 //
 //   kernelSize / 2   kernelSize / 2                                 kernelSize / 2     kernelSize / 2 
 // <---------------> <--------------->                              <---------------> <--------------->
 //         r1                r2                                             r3                r4
 // 
-//                                              blockSize                           
-//                                     <-------------------------------------------------------------->
-//                                                  r5
+//                             m_blockSize == r4 - r2
+//                   <--------------------------------------->
+//
+//                                                  m_requestFrames
+//                                    <------------------ ... ----------------->
+//                                               r0 (during second load)
+//
+// On the second request r0 slides to the right by kernelSize / 2 and r3, r4
+// and m_blockSize are reinitialized via step (3) in the algorithm below.
+//
+// These new regions remain constant until a Flush() occurs. While complicated,
+// this allows us to reduce jitter by always requesting the same amount from the
+// provided callback.
 
 // The Algorithm:
 //
-// 1) Consume input frames into r0 (r1 is zero-initialized).
-// 2) Position kernel centered at start of r0 (r2) and generate output frames until kernel is centered at start of r4.
-//    or we've finished generating all the output frames.
-// 3) Copy r3 to r1 and r4 to r2.
-// 4) Consume input frames into r5 (zero-pad if we run out of input).
-// 5) Goto (2) until all of input is consumed.
+// 1) Allocate input_buffer of size: m_requestFrames + kernelSize; this ensures
+//    there's enough room to read m_requestFrames from the callback into region
+//    r0 (which will move between the first and subsequent passes).
+//
+// 2) Let r1, r2 each represent half the kernel centered around r0:
+//
+//        r0 = m_inputBuffer + kernelSize / 2
+//        r1 = m_inputBuffer
+//        r2 = r0
+//
+//    r0 is always m_requestFrames in size. r1, r2 are kernelSize / 2 in
+//    size. r1 must be zero initialized to avoid convolution with garbage (see
+//    step (5) for why).
+//
+// 3) Let r3, r4 each represent half the kernel right aligned with the end of
+//    r0 and choose m_blockSize as the distance in frames between r4 and r2:
+//
+//        r3 = r0 + m_requestFrames - kernelSize
+//        r4 = r0 + m_requestFrames - kernelSize / 2
+//        m_blockSize = r4 - r2 = m_requestFrames - kernelSize / 2
+//
+// 4) Consume m_requestFrames frames into r0.
+//
+// 5) Position kernel centered at start of r2 and generate output frames until
+//    the kernel is centered at the start of r4 or we've finished generating
+//    all the output frames.
+//
+// 6) Wrap left over data from the r3 to r1 and r4 to r2.
+//
+// 7) If we're on the second load, in order to avoid overwriting the frames we
+//    just wrapped from r4 we need to slide r0 to the right by the size of
+//    r4, which is kernelSize / 2:
+//
+//        r0 = r0 + kernelSize / 2 = m_inputBuffer + kernelSize
+//
+//    r3, r4, and m_blockSize then need to be reinitialized, so goto (3).
+//
+// 8) Else, if we're not on the second load, goto (4).
 //
 // note: we're glossing over how the sub-sample handling works with m_virtualSourceIndex, etc.
 
 namespace WebCore {
 
-SincResampler::SincResampler(double scaleFactor, unsigned kernelSize, unsigned numberOfKernelOffsets)
+constexpr unsigned defaultRequestFrames { 512 };
+constexpr unsigned kernelSize { 32 };
+constexpr unsigned numberOfKernelOffsets { 32 };
+
+SincResampler::SincResampler(double scaleFactor, Optional<unsigned> requestFrames)
     : m_scaleFactor(scaleFactor)
-    , m_kernelSize(kernelSize)
-    , m_numberOfKernelOffsets(numberOfKernelOffsets)
-    , m_kernelStorage(m_kernelSize * (m_numberOfKernelOffsets + 1))
-    , m_virtualSourceIndex(0)
-    , m_blockSize(512)
-    , m_inputBuffer(m_blockSize + m_kernelSize) // See input buffer layout above.
-    , m_source(0)
-    , m_sourceFramesAvailable(0)
-    , m_sourceProvider(0)
-    , m_isBufferPrimed(false)
+    , m_kernelStorage(kernelSize * (numberOfKernelOffsets + 1))
+    , m_requestFrames(requestFrames.valueOr(defaultRequestFrames))
+    , m_inputBuffer(m_requestFrames + kernelSize) // See input buffer layout above.
+    , m_r1(m_inputBuffer.data())
+    , m_r2(m_inputBuffer.data() + kernelSize / 2)
 {
+    ASSERT(m_requestFrames > 0);
+    updateRegions(false);
+    ASSERT(m_blockSize > kernelSize);
     initializeKernel();
+}
+
+void SincResampler::updateRegions(bool isSecondLoad)
+{
+    // Setup various region pointers in the buffer (see diagram above). If we're
+    // on the second load we need to slide m_r0 to the right by kernelSize / 2.
+    m_r0 = m_inputBuffer.data() + (isSecondLoad ? kernelSize : kernelSize / 2);
+    m_r3 = m_r0 + m_requestFrames - kernelSize;
+    m_r4 = m_r0 + m_requestFrames - kernelSize / 2;
+    m_blockSize = m_r4 - m_r2;
+
+    // m_r1 at the beginning of the buffer.
+    ASSERT(m_r1 == m_inputBuffer.data());
+    // m_r1 left of m_r2, m_r4 left of m_r3 and size correct.
+    ASSERT((m_r2 - m_r1) == (m_r4 - m_r3));
+    // m_r2 left of r3.
+    ASSERT(m_r2 <= m_r3);
 }
 
 void SincResampler::initializeKernel()
@@ -98,16 +160,16 @@ void SincResampler::initializeKernel()
     // The sinc function is an idealized brick-wall filter, but since we're windowing it the
     // transition from pass to stop does not happen right away. So we should adjust the
     // lowpass filter cutoff slightly downward to avoid some aliasing at the very high-end.
-    // FIXME: this value is empirical and to be more exact should vary depending on m_kernelSize.
+    // FIXME: this value is empirical and to be more exact should vary depending on kernelSize.
     sincScaleFactor *= 0.9;
 
-    int n = m_kernelSize;
+    int n = kernelSize;
     int halfSize = n / 2;
 
     // Generates a set of windowed sinc() kernels.
     // We generate a range of sub-sample offsets from 0.0 to 1.0.
-    for (unsigned offsetIndex = 0; offsetIndex <= m_numberOfKernelOffsets; ++offsetIndex) {
-        double subsampleOffset = static_cast<double>(offsetIndex) / m_numberOfKernelOffsets;
+    for (unsigned offsetIndex = 0; offsetIndex <= numberOfKernelOffsets; ++offsetIndex) {
+        double subsampleOffset = static_cast<double>(offsetIndex) / numberOfKernelOffsets;
 
         for (int i = 0; i < n; ++i) {
             // Compute the sinc() with offset.
@@ -120,7 +182,7 @@ void SincResampler::initializeKernel()
             double window = a0 - a1 * cos(2.0 * piDouble * x) + a2 * cos(4.0 * piDouble * x);
 
             // Window the sinc() function and store at the correct offset.
-            m_kernelStorage[i + offsetIndex * m_kernelSize] = sinc * window;
+            m_kernelStorage[i + offsetIndex * kernelSize] = sinc * window;
         }
     }
 }
@@ -190,7 +252,7 @@ void SincResampler::process(const float* source, float* destination, unsigned nu
     unsigned remaining = numberOfDestinationFrames;
     
     while (remaining) {
-        unsigned framesThisTime = std::min(remaining, m_blockSize);
+        unsigned framesThisTime = std::min(remaining, m_requestFrames);
         process(&sourceProvider, destination, framesThisTime);
         
         destination += framesThisTime;
@@ -200,27 +262,18 @@ void SincResampler::process(const float* source, float* destination, unsigned nu
 
 void SincResampler::process(AudioSourceProvider* sourceProvider, float* destination, size_t framesToProcess)
 {
-    bool isGood = sourceProvider && m_blockSize > m_kernelSize && m_inputBuffer.size() >= m_blockSize + m_kernelSize && !(m_kernelSize % 2);
-    ASSERT(isGood);
-    if (!isGood)
+    ASSERT(sourceProvider);
+    if (!sourceProvider)
         return;
     
     m_sourceProvider = sourceProvider;
 
     unsigned numberOfDestinationFrames = framesToProcess;
-    
-    // Setup various region pointers in the buffer (see diagram above).
-    float* r0 = m_inputBuffer.data() + m_kernelSize / 2;
-    float* r1 = m_inputBuffer.data();
-    float* r2 = r0;
-    float* r3 = r0 + m_blockSize - m_kernelSize / 2;
-    float* r4 = r0 + m_blockSize;
-    float* r5 = r0 + m_kernelSize / 2;
 
     // Step (1)
     // Prime the input buffer at the start of the input stream.
     if (!m_isBufferPrimed) {
-        consumeSource(r0, m_blockSize + m_kernelSize / 2);
+        consumeSource(m_r0, m_requestFrames);
         m_isBufferPrimed = true;
     }
     
@@ -232,14 +285,14 @@ void SincResampler::process(AudioSourceProvider* sourceProvider, float* destinat
             int sourceIndexI = static_cast<int>(m_virtualSourceIndex);
             double subsampleRemainder = m_virtualSourceIndex - sourceIndexI;
 
-            double virtualOffsetIndex = subsampleRemainder * m_numberOfKernelOffsets;
+            double virtualOffsetIndex = subsampleRemainder * numberOfKernelOffsets;
             int offsetIndex = static_cast<int>(virtualOffsetIndex);
             
-            float* k1 = m_kernelStorage.data() + offsetIndex * m_kernelSize;
-            float* k2 = k1 + m_kernelSize;
+            float* k1 = m_kernelStorage.data() + offsetIndex * kernelSize;
+            float* k2 = k1 + kernelSize;
 
             // Initialize input pointer based on quantized m_virtualSourceIndex.
-            float* inputP = r1 + sourceIndexI;
+            float* inputP = m_r1 + sourceIndexI;
 
             // We'll compute "convolutions" for the two kernels which straddle m_virtualSourceIndex
             float sum1 = 0;
@@ -249,7 +302,7 @@ void SincResampler::process(AudioSourceProvider* sourceProvider, float* destinat
             double kernelInterpolationFactor = virtualOffsetIndex - offsetIndex;
 
             // Generate a single output sample. 
-            int n = m_kernelSize;
+            int n = kernelSize;
 
 #define CONVOLVE_ONE_SAMPLE      \
             input = *inputP++;   \
@@ -455,16 +508,20 @@ void SincResampler::process(AudioSourceProvider* sourceProvider, float* destinat
         }
 
         // Wrap back around to the start.
+        ASSERT(m_virtualSourceIndex >= m_blockSize);
         m_virtualSourceIndex -= m_blockSize;
 
-        // Step (3) Copy r3 to r1 and r4 to r2.
+        // Step (3) Copy r3 to r1.
         // This wraps the last input frames back to the start of the buffer.
-        memcpy(r1, r3, sizeof(float) * (m_kernelSize / 2));
-        memcpy(r2, r4, sizeof(float) * (m_kernelSize / 2));
+        memcpy(m_r1, m_r3, sizeof(float) * kernelSize);
 
-        // Step (4)
+        // Step (4) -- Reinitialize regions if necessary.
+        if (m_r0 == m_r2)
+            updateRegions(true);
+
+        // Step (5)
         // Refresh the buffer with more input.
-        consumeSource(r5, m_blockSize);
+        consumeSource(m_r0, m_requestFrames);
     }
 }
 

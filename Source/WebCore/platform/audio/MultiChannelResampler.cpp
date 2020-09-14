@@ -92,13 +92,13 @@ private:
     size_t m_framesToProcess { 0 }; // Used to verify that all channels ask for the same amount.
 };
 
-MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned numberOfChannels)
+MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned numberOfChannels, Optional<unsigned> requestFrames)
     : m_numberOfChannels(numberOfChannels)
     , m_channelProvider(makeUnique<ChannelProvider>(m_numberOfChannels))
 {
     // Create each channel's resampler.
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-        m_kernels.append(makeUnique<SincResampler>(scaleFactor));
+        m_kernels.append(makeUnique<SincResampler>(scaleFactor, requestFrames));
 }
 
 MultiChannelResampler::~MultiChannelResampler() = default;
