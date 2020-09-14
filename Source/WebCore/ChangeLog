@@ -1,5 +1,89 @@
 2020-09-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266803. rdar://problem/68881014
+
+    [Repaint] styleWillChange may call repaint on the same renderer multiple times.
+    https://bugs.webkit.org/show_bug.cgi?id=216295
+    <rdar://problem/68538666>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    RenderElement::styleWillChange is a virtual function. This function is called whenever the associated RenderStyle changes.
+    The subclass implementation (e.g. RenderBox::styleWillChange) calls the parent class to make sure the style change is covered properly.
+    Now in certain cases,
+    1. this may trigger multiple calls to repaint() (e.g one in each ::styleWillChange implementation)
+    2. paint invalidation requires absolute coordinates
+    3. geometry does not change during styleWillChange
+    it could end up being redundant/unnecessarily expensive.
+    
+    This patch moves all the style-will-change-requires-repaint logic to one single function so that we can limit the number of repaints.
+    
+    * rendering/RenderBox.cpp:
+    (WebCore::RenderBox::styleWillChange):
+    * rendering/RenderElement.cpp:
+    (WebCore::RenderElement::issueRepaintBeforeStyleChange):
+    (WebCore::RenderElement::initializeStyle):
+    (WebCore::RenderElement::setStyle):
+    (WebCore::RenderElement::styleWillChange):
+    * rendering/RenderElement.h:
+    * rendering/RenderLayerModelObject.cpp:
+    (WebCore::RenderLayerModelObject::styleWillChange):
+    
+    LayoutTests:
+    
+    * compositing/masks/compositing-clip-path-change-no-repaint-expected.txt:
+    * compositing/shared-backing/overflow-scroll/shared-layer-repaint-expected.txt:
+    * fast/css-custom-paint/delay-repaint-expected.txt:
+    * fast/images/async-image-multiple-clients-repaint-expected.txt:
+    * fast/repaint/focus-ring-repaint-expected.txt:
+    * fast/repaint/horizontal-bt-overflow-child-expected.txt:
+    * fast/repaint/horizontal-bt-overflow-parent-expected.txt:
+    * fast/repaint/horizontal-bt-overflow-same-expected.txt:
+    * fast/repaint/mutate-non-visible-expected.txt:
+    * fast/repaint/negative-text-indent-with-overflow-hidden-expected.txt:
+    * fast/repaint/overflow-flipped-writing-mode-table-expected.txt:
+    * fast/repaint/table-row-repaint-expected.txt:
+    * fast/repaint/vertical-overflow-child-expected.txt:
+    * fast/repaint/vertical-overflow-parent-expected.txt:
+    * fast/repaint/vertical-overflow-same-expected.txt:
+    * svg/transforms/svg-transform-foreign-object-repaint-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266803 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-09  Zalan Bujtas  <zalan@apple.com>
+
+            [Repaint] styleWillChange may call repaint on the same renderer multiple times.
+            https://bugs.webkit.org/show_bug.cgi?id=216295
+            <rdar://problem/68538666>
+
+            Reviewed by Simon Fraser.
+
+            RenderElement::styleWillChange is a virtual function. This function is called whenever the associated RenderStyle changes.
+            The subclass implementation (e.g. RenderBox::styleWillChange) calls the parent class to make sure the style change is covered properly.
+            Now in certain cases,
+            1. this may trigger multiple calls to repaint() (e.g one in each ::styleWillChange implementation)
+            2. paint invalidation requires absolute coordinates
+            3. geometry does not change during styleWillChange
+            it could end up being redundant/unnecessarily expensive.
+
+            This patch moves all the style-will-change-requires-repaint logic to one single function so that we can limit the number of repaints.
+
+            * rendering/RenderBox.cpp:
+            (WebCore::RenderBox::styleWillChange):
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::issueRepaintBeforeStyleChange):
+            (WebCore::RenderElement::initializeStyle):
+            (WebCore::RenderElement::setStyle):
+            (WebCore::RenderElement::styleWillChange):
+            * rendering/RenderElement.h:
+            * rendering/RenderLayerModelObject.cpp:
+            (WebCore::RenderLayerModelObject::styleWillChange):
+
+2020-09-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266797. rdar://problem/68881018
 
     Move lazy DisplayLink tear down logic from the WebProcess to the UIProcess
