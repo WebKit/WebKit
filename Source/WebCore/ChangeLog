@@ -1,3 +1,22 @@
+2020-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MediaFoundation] r264188 introduced linker warning: LNK4199: /DELAYLOAD:mf.dll ignored; no imports found from mf.dll
+        https://bugs.webkit.org/show_bug.cgi?id=214170
+
+        Reviewed by Alex Christensen.
+
+        r264188 added the linker flag /DELAYLOAD:mf.dll to WebCore. It
+        introduced a lot of linker warnings for modules not using
+        MediaFoundation, for example WebKitWebProcess.exe,
+        MiniBrowserLib.dll, etc. The linker option should be applied only
+        to direct WebCore consumers, namely WebKit.dll, WebKit2.dll and
+        TestWebCore.exe.
+
+        Define a INTERFACE library, and link it explicitly with the direct
+        WebCore consumers.
+
+        * PlatformWinCairo.cmake:
+
 2020-09-14  Dean Jackson  <dino@apple.com>
 
         Enable WebGL2 by default

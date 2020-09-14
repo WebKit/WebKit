@@ -9,6 +9,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
     list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
         $<TARGET_OBJECTS:WebCore>
+        MediaFoundation
         OpenSSL::SSL
         mfuuid.lib
         strmiids.lib
