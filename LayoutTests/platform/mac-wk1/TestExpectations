@@ -1165,3 +1165,7 @@ webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
 # <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
 [ Mojave Catalina ] imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
+
+webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-45.html [ Pass Timeout ]
+webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-15.html [ Pass Timeout ]
+

@@ -2205,3 +2205,6 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 [ BigSur+ ] fast/images/animated-gif-loop-count.html [ ImageOnlyFailure ]
 
 webkit.org/b/216481 webanimations/accelerated-animation-easing-update-after-pause.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-20.html [ Pass Timeout ]
+webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ Pass Timeout ]
