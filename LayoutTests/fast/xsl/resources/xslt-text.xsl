@@ -5,7 +5,7 @@
 <xsl:template match="TEST">CHARACTERS IN XSLT: &lt;&lt;&lt;&amp;тест&amp;>>&gt;
 <xsl:apply-templates/><xsl:text>&#10;</xsl:text></xsl:template>
 
-<xsl:template >
+<xsl:template name="foobar">
 		<xsl:value-of select="." />
 </xsl:template>
 

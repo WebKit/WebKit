@@ -137,11 +137,10 @@ class GtkPort(Port):
             if self._should_use_jhbuild():
                 llvmpipe_libgl_path = self.host.executive.run_command(self._jhbuild_wrapper + ['printenv', 'LLVMPIPE_LIBGL_PATH'],
                                                                     ignore_errors=True).strip()
-                dri_libgl_path = os.path.join(llvmpipe_libgl_path, "dri")
             else:  # in flatpak
                 llvmpipe_libgl_path = "/usr/lib/x86_64-linux-gnu/"
-                dri_libgl_path = os.path.join(llvmpipe_libgl_path, "GL", "lib", "dri")
 
+            dri_libgl_path = os.path.join(llvmpipe_libgl_path, "dri")
             if os.path.exists(os.path.join(llvmpipe_libgl_path, "libGL.so")) and os.path.exists(os.path.join(dri_libgl_path, "swrast_dri.so")):
                 # Make sure va-api support gets disabled because it's incompatible with Mesa's softGL driver.
                 environment['LIBVA_DRIVER_NAME'] = "null"

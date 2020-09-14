@@ -1,3 +1,26 @@
+2020-09-14  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Migration to SDK 0.3 branch
+        https://bugs.webkit.org/show_bug.cgi?id=216073
+
+        Reviewed by Adrian Perez de Castro.
+
+        As this new SDK branch is based on the FDO 20.08 SDK which breaks ABI, existing WebKit
+        builds done with the 0.2 branch will no longer be usable. Developers are advised to remove
+        their WebKitBuild/{GTK,WPE} local directories after updating to 0.3.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server): Since we now ship Mesa directly in the SDK we can easily
+        configure the prefix where DRI modules are installed. This is now the same as in the JHBuild
+        sysroot.
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.__init__): Bump to 0.3 branch. Also un-hardcode host platform architecture so
+        that we can more easily add aarch64 bots later.
+        (WebkitFlatpak._get_packages): The GL extension is no longer needed because Mesa is shipped
+        directly within our SDK now. Also install the rust extension, which is useful eg when doing
+        development with gst-build.
+        * flatpak/webkit-bwrap: Add rustc path in PATH.
+
 2020-09-13  Alexey Proskuryakov  <ap@apple.com>
 
         Move block-spammers tool to python 3

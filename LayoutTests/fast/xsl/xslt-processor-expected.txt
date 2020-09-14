@@ -8,7 +8,7 @@
 <xsl:apply-templates/><xsl:text>
 </xsl:text></xsl:template>
 
-<xsl:template>
+<xsl:template name="foobar">
 		<xsl:value-of select="."/>
 </xsl:template>
 
@@ -27,7 +27,7 @@
         </html>
   </xsl:template>
 
-<xsl:template>
+<xsl:template name="foobar">
 		<xsl:value-of select="."/>
 </xsl:template>
 

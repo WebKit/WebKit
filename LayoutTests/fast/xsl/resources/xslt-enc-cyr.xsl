@@ -9,7 +9,7 @@
         </html>
   </xsl:template>
 
-<xsl:template >
+<xsl:template name="foobar">
 		<xsl:value-of select="." />
 </xsl:template>
 

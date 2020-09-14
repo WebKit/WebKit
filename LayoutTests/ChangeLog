@@ -1,3 +1,17 @@
+2020-09-14  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Migration to SDK 0.3 branch
+        https://bugs.webkit.org/show_bug.cgi?id=216073
+
+        Reviewed by Adrian Perez de Castro.
+
+        * fast/xsl/resources/xslt-enc-cyr.xsl: Add name attribute in xsl templates, as mandated by the spec.
+        * fast/xsl/resources/xslt-enc.xsl: Ditto.
+        * fast/xsl/resources/xslt-enc16.xsl: Ditto.
+        * fast/xsl/resources/xslt-text.xsl: Ditto.
+        * platform/glib/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt: Added.
+        * platform/glib/fast/xsl/xslt-processor-expected.txt: Added.
+
 2020-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Apple Win] Migrate from CGFontGetGlyphsForUnichars() to CTFontGetGlyphsForCharacters()
