@@ -1756,7 +1756,7 @@ webkit.org/b/210205 [ Debug ] fast/text/firstline/001.html [ Pass Crash ]
 
 webkit.org/b/210219 [ Debug ] http/tests/IndexedDB/collect-IDB-objects.https.html [ Pass Crash ]
 
-webkit.org/b/209189 http/tests/IndexedDB/storage-limit.https.html [ Pass Failure ]
+webkit.org/b/209189 http/tests/IndexedDB/storage-limit.https.html [ Pass Failure Timeout ]
 
 webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
 
