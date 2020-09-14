@@ -1,3 +1,27 @@
+2020-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TestRunnerShared] Make UIScriptContext not directly call UIScriptController::create which are defined in DRT and WTR
+        https://bugs.webkit.org/show_bug.cgi?id=216470
+
+        Reviewed by Simon Fraser.
+
+        UIScriptContext constructor directly called
+        UIScriptController::create which are defined in DRT and WTR. I'd
+        like to make TestRunnerShared as a stand alone library which
+        doesn't depend on DRT and WTR (Bug 216465). Make UIScriptContext
+        take a factory function to create UIScriptController.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::runUIScript):
+        * DumpRenderTree/TestRunner.h:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::UIScriptContext):
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp:
+        (WTR::UIScriptController::create): Deleted.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::runUISideScript):
+
 2020-09-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Log autoinstall details even without a logger configured

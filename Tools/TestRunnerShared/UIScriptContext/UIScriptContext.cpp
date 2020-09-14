@@ -38,11 +38,11 @@ static inline bool isPersistentCallbackID(unsigned callbackID)
     return callbackID < firstNonPersistentCallbackID;
 }
 
-UIScriptContext::UIScriptContext(UIScriptContextDelegate& delegate)
+UIScriptContext::UIScriptContext(UIScriptContextDelegate& delegate, UIScriptControllerFactory factory)
     : m_context(adopt(JSGlobalContextCreate(nullptr)))
     , m_delegate(delegate)
 {
-    m_controller = UIScriptController::create(*this);
+    m_controller = factory(*this);
 
     JSObjectRef globalObject = JSContextGetGlobalObject(m_context.get());
 
