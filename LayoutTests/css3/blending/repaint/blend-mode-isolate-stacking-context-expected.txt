@@ -19,7 +19,6 @@ Test if unsetting a parent's stacking context correctly updates its parent isola
   (rect 28 526 60 60)
   (rect 48 526 60 60)
   (rect 48 408 60 60)
-  (rect 48 408 60 60)
   (rect 48 644 60 60)
   (rect 68 644 60 60)
   (rect 48 644 60 60)

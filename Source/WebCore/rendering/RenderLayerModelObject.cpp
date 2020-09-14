@@ -113,37 +113,9 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
     if (s_hadLayer)
         s_layerWasSelfPainting = layer()->isSelfPaintingLayer();
 
-    // If our z-index changes value or our visibility changes,
-    // we need to dirty our stacking context's z-order list.
-    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    if (oldStyle) {
-        if (parent()) {
-            // Do a repaint with the old style first, e.g., for example if we go from
-            // having an outline to not having an outline.
-            if (diff == StyleDifference::RepaintLayer) {
-                layer()->repaintIncludingDescendants();
-                if (!(oldStyle->clip() == newStyle.clip()))
-                    layer()->clearClipRectsIncludingDescendants();
-            }
-        }
-
-        if (diff == StyleDifference::Layout || diff == StyleDifference::SimplifiedLayout) {
-            // When a layout hint happens, we do a repaint of the layer, since the layer could end up being destroyed.
-            if (hasLayer()) {
-                if (oldStyle->position() != newStyle.position()
-                    || oldStyle->usedZIndex() != newStyle.usedZIndex()
-                    || oldStyle->hasAutoUsedZIndex() != newStyle.hasAutoUsedZIndex()
-                    || !(oldStyle->clip() == newStyle.clip())
-                    || oldStyle->hasClip() != newStyle.hasClip()
-                    || oldStyle->opacity() != newStyle.opacity()
-                    || oldStyle->transform() != newStyle.transform()
-                    || oldStyle->filter() != newStyle.filter()
-                    )
-                layer()->repaintIncludingDescendants();
-            }
-        }
-    }
-
+    auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+    if (diff == StyleDifference::RepaintLayer && parent() && oldStyle && oldStyle->clip() != newStyle.clip())
+        layer()->clearClipRectsIncludingDescendants();
     RenderElement::styleWillChange(diff, newStyle);
 }
 
