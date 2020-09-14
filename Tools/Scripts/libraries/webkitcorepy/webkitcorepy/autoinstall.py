@@ -325,7 +325,7 @@ class AutoInstall(object):
 
     @classmethod
     def enabled(cls):
-        if os.environ.get(cls.DISABLE_ENV_VAR) not in ['0', 'FALSE', 'false', 'NO', 'no', None]:
+        if os.environ.get(cls.DISABLE_ENV_VAR) not in ['0', 'FALSE', 'False', 'false', 'NO', 'No', 'no', None]:
             return False
         return True if cls.directory else None
 
@@ -359,8 +359,8 @@ class AutoInstall(object):
             raise ValueError('{} is an invalid autoinstall directory'.format(directory))
 
         if cls.enabled() is False:
-            print('Request to set autoinstall directory to {}'.format(directory))
-            print('Environment variable {}={} overriding request'.format(
+            AutoInstall.log('Request to set autoinstall directory to {}'.format(directory))
+            AutoInstall.log('Environment variable {}={} overriding request'.format(
                 cls.DISABLE_ENV_VAR,
                 os.environ.get(cls.DISABLE_ENV_VAR),
             ))

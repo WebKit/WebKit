@@ -1,3 +1,18 @@
+2020-09-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Disable AutoInstaller with environment variable (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=216396
+        <rdar://problem/68680933>
+
+        Unreviewed follow-up fix.
+
+        r267019 accidently landed without the support of r267019.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (AutoInstall.enabled): Add False and No to the list of environment variables which resolve to 'False'.
+        (AutoInstall.set_directory): Use AutoInstall.log instead of print(...).
+
 2020-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][MediaFoundation] r264188 introduced linker warning: LNK4199: /DELAYLOAD:mf.dll ignored; no imports found from mf.dll
