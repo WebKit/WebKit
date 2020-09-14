@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.TextNavigationItem = class TextNavigationItem extends WI.NavigationItem
-{
-    constructor(identifier, label)
-    {
-        console.assert(identifier);
+.navigation-bar .item.indeterminate-progress-spinner-item {
+    width: var(--image-button-navigation-item-width);
+    padding: 1px 4px;
+}
 
-        super(identifier);
-
-        this._element.classList.add("text");
-        this._element.textContent = label || "";
-    }
-
-    // Public
-
-    get text()
-    {
-        return this._element.textContent;
-    }
-
-    set text(x)
-    {
-        this._element.textContent = x || "";
-    }
-
-    // Protected
-
-    get totalMargin()
-    {
-        return super.totalMargin + 4; /* .navigation-bar .item.text */
-    }
-};
+.navigation-bar .item.indeterminate-progress-spinner-item .indeterminate-progress-spinner {
+    margin: auto;
+}

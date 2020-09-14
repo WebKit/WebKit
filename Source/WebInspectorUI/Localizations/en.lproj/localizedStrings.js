@@ -1010,7 +1010,8 @@ localizedStrings["Record first %s frames"] = "Record first %s frames";
 localizedStrings["Recording"] = "Recording";
 localizedStrings["Recording %d"] = "Recording %d";
 localizedStrings["Recording Error: %s"] = "Recording Error: %s";
-localizedStrings["Recording Timeline Data"] = "Recording Timeline Data";
+/* Message for progress of a timeline recording. */
+localizedStrings["Recording Timeline Data @ Timeline Recording Progress"] = "Recording Timeline Data";
 /* A type of canvas recording in the Graphics Tab */
 localizedStrings["Recording Type Canvas Bitmap Renderer"] = "Bitmap Renderer";
 localizedStrings["Recording Warning: %s"] = "Recording Warning: %s";
@@ -1253,6 +1254,9 @@ localizedStrings["Stop recording"] = "Stop recording";
 localizedStrings["Stop recording (%s)"] = "Stop recording (%s)";
 localizedStrings["Stop recording canvas actions"] = "Stop recording canvas actions";
 localizedStrings["Stop recording once page loads"] = "Stop recording once page loads";
+/* Message for progress of stopping a timeline recording. */
+localizedStrings["Stopping Timeline Recording @ Timeline Recording Progress"] = "Stopping Timeline Recording";
+localizedStrings["Stopping recording"] = "Stopping recording";
 localizedStrings["Stopping the \u201C%s\u201D audit"] = "Stopping the \u201C%s\u201D audit";
 localizedStrings["Storage"] = "Storage";
 /* Name of Storage Tab */

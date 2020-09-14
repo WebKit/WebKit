@@ -38,7 +38,7 @@
 }
 
 .navigation-bar .item.button.image-only {
-    width: 26px;
+    width: var(--image-button-navigation-item-width);
 }
 
 .navigation-bar .item.button.image-and-text {

@@ -1,3 +1,51 @@
+2020-09-14  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Stop Recording in Timelines tab doesn't work reliably
+        https://bugs.webkit.org/show_bug.cgi?id=216416
+
+        Reviewed by Devin Rousso.
+
+        Improved UX surrounding stopping recordings. In the Frames view, the interface now shows a "Stopping Recording
+        Timeline Data" message and disables the Stop Recording button as soon as the user has pressed the button to stop
+        recording. For all timeline views, the Record/Continue/Stop buttons in the top-right are replaced with an
+        indeterminate progress spinner while recording is being stopped to better indicate that all work has not
+        completed yet. Lastly, the recording head now stops at the moment recording was stopped. After we have finished
+        stopping the recording, the timeline is updated one more time to account for any records we receive after the
+        moment the user requested recording to stop, instead of continously updating during the stopping phase, which
+        made it appear that recording was instead continuing.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html: Added `IndeterminateProgressSpinnerNavigationItem.css` and
+        `IndeterminateProgressSpinnerNavigationItem.js`.
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.image-only):
+        * UserInterface/Views/IndeterminateProgressSpinnerNavigationItem.css: Added.
+        (.navigation-bar .item.indeterminate-progress-spinner):
+        (.navigation-bar .item.indeterminate-progress-spinner-item .indeterminate-progress-spinner):
+        * UserInterface/Views/IndeterminateProgressSpinnerNavigationItem.js: Added.
+        (WI.IndeterminateProgressSpinnerNavigationItem):
+        * UserInterface/Views/TextNavigationItem.js: Drive-by fix for misplaced `assert`.
+        (WI.TextNavigationItem):
+        * UserInterface/Views/TimelineRecordingContentView.js: Don't advanced the recording head after the user requests
+        recording to stop.
+        (WI.TimelineRecordingContentView.prototype._updateTimes):
+        (WI.TimelineRecordingContentView.prototype._updateTimelineViewTimes):
+        * UserInterface/Views/TimelineRecordingProgressView.js: Listen to the TimelineManager to show different messages
+        for Recording and Stopping, as well as disabling the Stop Recording button.
+        (WI.TimelineRecordingProgressView):
+        (WI.TimelineRecordingProgressView.prototype.set visible):
+        (WI.TimelineRecordingProgressView.prototype._updateState):
+        (WI.TimelineRecordingProgressView.prototype._handleTimelineCapturingStateChanged):
+        * UserInterface/Views/TimelineTabContentView.js: Show a progress spinner while stopping recording.
+        (WI.TimelineTabContentView):
+        (WI.TimelineTabContentView.prototype._showRecordButton):
+        (WI.TimelineTabContentView.prototype._showRecordStoppingSpinner):
+        (WI.TimelineTabContentView.prototype._showContinueButton):
+        (WI.TimelineTabContentView.prototype._updateNavigationBarButtons):
+        (WI.TimelineTabContentView.prototype._handleTimelineCapturingStateChanged):
+        * UserInterface/Views/Variables.css: New variable for navigation items with only an icon.
+        (:root):
+
 2020-09-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: docking buttons don't work when already docked if window is too small

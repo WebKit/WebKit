@@ -31,18 +31,18 @@ WI.TimelineRecordingProgressView = class TimelineRecordingProgressView extends W
 
         this.element.classList.add("recording-progress");
 
-        let statusElement = document.createElement("div");
-        statusElement.classList.add("status");
-        statusElement.textContent = WI.UIString("Recording Timeline Data");
-        this.element.append(statusElement);
+        let statusGroup = this.element.appendChild(document.createElement("div"));
+        statusGroup.className = "status";
+
+        this._statusElement = statusGroup.appendChild(document.createElement("span"));
 
         let spinner = new WI.IndeterminateProgressSpinner;
-        statusElement.append(spinner.element);
+        statusGroup.appendChild(spinner.element);
 
         this._stopRecordingButtonElement = document.createElement("button");
         this._stopRecordingButtonElement.textContent = WI.UIString("Stop Recording");
         this._stopRecordingButtonElement.addEventListener("click", () => WI.timelineManager.stopCapturing());
-        this.element.append(this._stopRecordingButtonElement);
+        this.element.appendChild(this._stopRecordingButtonElement);
     }
 
     // Public
@@ -60,5 +60,37 @@ WI.TimelineRecordingProgressView = class TimelineRecordingProgressView extends W
         // FIXME: remove once <https://webkit.org/b/150741> is fixed.
         this._visible = x;
         this.element.classList.toggle("hidden", !this._visible);
+
+        if (this._visible) {
+            WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+            this._updateState();
+        } else
+            WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
     }
+
+    // Private
+
+    _updateState() {
+        switch (WI.timelineManager.capturingState) {
+        case WI.TimelineManager.CapturingState.Starting:
+        case WI.TimelineManager.CapturingState.Active:
+            this._statusElement.textContent = WI.UIString("Recording Timeline Data", "Recording Timeline Data @ Timeline Recording Progress", "Message for progress of a timeline recording.");
+            this._stopRecordingButtonElement.disabled = false;
+            break;
+        case WI.TimelineManager.CapturingState.Stopping:
+            this._statusElement.textContent = WI.UIString("Stopping Timeline Recording", "Stopping Timeline Recording @ Timeline Recording Progress", "Message for progress of stopping a timeline recording.");
+            this._stopRecordingButtonElement.disabled = true;
+            break;
+        case WI.TimelineManager.CapturingState.Inactive:
+            // When inactive this view should be hidden by its parent, so keep the state the same to avoid possibly
+            // flickering to a different state just before the parent hides us.
+            break;
+        }
+    }
+
+    _handleTimelineCapturingStateChanged(event)
+    {
+        this._updateState();
+    }
+
 };

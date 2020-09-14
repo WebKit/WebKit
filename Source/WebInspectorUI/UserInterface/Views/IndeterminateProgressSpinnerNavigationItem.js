@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.TextNavigationItem = class TextNavigationItem extends WI.NavigationItem
+WI.IndeterminateProgressSpinnerNavigationItem = class IndeterminateProgressSpinnerNavigationItem extends WI.NavigationItem
 {
-    constructor(identifier, label)
+    constructor(identifier, tooltip)
     {
         console.assert(identifier);
 
         super(identifier);
 
-        this._element.classList.add("text");
-        this._element.textContent = label || "";
-    }
+        this.element.classList.add("indeterminate-progress-spinner-item");
 
-    // Public
+        this._spinner = new WI.IndeterminateProgressSpinner;
+        this.element.appendChild(this._spinner.element);
 
-    get text()
-    {
-        return this._element.textContent;
-    }
-
-    set text(x)
-    {
-        this._element.textContent = x || "";
-    }
-
-    // Protected
-
-    get totalMargin()
-    {
-        return super.totalMargin + 4; /* .navigation-bar .item.text */
+        this.tooltip = tooltip ?? "";
     }
 };

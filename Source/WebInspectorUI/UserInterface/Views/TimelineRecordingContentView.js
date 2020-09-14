@@ -463,10 +463,16 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             this._startTimeNeedsReset = false;
         }
 
-        this._timelineOverview.endTime = Math.max(endTime, currentTime);
+        if (WI.timelineManager.capturingState !== WI.TimelineManager.CapturingState.Stopping) {
+            // Only update end time while not stopping, otherwise the interface contues scrolling.
+            this._timelineOverview.endTime = Math.max(endTime, currentTime);
 
-        this._currentTime = currentTime;
-        this._timelineOverview.currentTime = currentTime;
+            if (WI.timelineManager.capturingState !== WI.TimelineManager.CapturingState.Inactive) {
+                // Only update current time while active/starting or else the interface continues scrolling.
+                this._currentTime = currentTime;
+                this._timelineOverview.currentTime = currentTime;
+            }
+        }
 
         if (this.currentTimelineView)
             this._updateTimelineViewTimes(this.currentTimelineView);
@@ -849,8 +855,16 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         }
 
         timelineView.startTime = this._timelineOverview.selectionStartTime;
-        timelineView.currentTime = this._currentTime;
-        timelineView.endTime = endTime;
+
+        if (WI.timelineManager.capturingState !== WI.TimelineManager.CapturingState.Stopping) {
+            // Only update end time while not stopping, otherwise the interface contues scrolling.
+            timelineView.endTime = endTime;
+
+            if (WI.timelineManager.capturingState !== WI.TimelineManager.CapturingState.Inactive) {
+                // Only update current time while active/starting or else the interface continues scrolling.
+                timelineView.currentTime = this._currentTime;
+            }
+        }
     }
 
     _editingInstrumentsDidChange(event)

@@ -213,6 +213,8 @@
     --sorted-header-font-weight: 500;
 
     --reference-page-link-size: 20px;
+
+    --image-button-navigation-item-width: 26px;
 }
 
 body.window-inactive {
