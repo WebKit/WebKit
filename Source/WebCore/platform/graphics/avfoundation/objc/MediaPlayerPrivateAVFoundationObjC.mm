@@ -432,6 +432,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
     , m_cachedItemStatus(MediaPlayerAVPlayerItemStatusDoesNotExist)
 {
+    m_muted = player->muted();
 }
 
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
@@ -940,6 +941,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         // Clear m_muted so setMuted doesn't return without doing anything.
         m_muted = false;
         [m_avPlayer.get() setMuted:m_muted];
+
+#if HAVE(AVPLAYER_SUPRESSES_AUDIO_RENDERING)
+        m_avPlayer.get().suppressesAudioRendering = YES;
+#endif
     }
 
     if (player()->isVideoPlayer())
@@ -1324,6 +1329,10 @@ void MediaPlayerPrivateAVFoundationObjC::setMuted(bool muted)
         return;
 
     [m_avPlayer.get() setMuted:m_muted];
+#if HAVE(AVPLAYER_SUPRESSES_AUDIO_RENDERING)
+    if (!m_muted)
+        m_avPlayer.get().suppressesAudioRendering = NO;
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
