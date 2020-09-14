@@ -1,3 +1,36 @@
+2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ArraySetLength should coerce [[Value]] before descriptor validation
+        https://bugs.webkit.org/show_bug.cgi?id=158791
+
+        Reviewed by Darin Adler.
+
+        This patch:
+
+        1. Moves [[Value]] coercion before descriptor validation as per spec [1],
+           which fixes ASSERT() failure and aligns JSC with V8 & SpiderMonkey.
+
+        2. Prevents JSArray::setLengthWithArrayStorage() from throwing if the length
+           is unchanged, even if it's read-only [2].
+
+        3. Refactors JSArray::defineOwnProperty() leveraging #2 to always perform
+           setLength(), which greatly reduces the number of checks, branches,
+           and setLengthWritable() calls.
+
+        Following the ArraySetLength spec steps precisely [1] would result in
+        more difficult-to-follow code because descriptor validation [2] is inlined
+        and [[Delete]] failures are handled in setLength().
+
+        This change is performance-neutral as it doesn't affect JSArray::put(),
+        which was vetted to be spec-correct and is covered by test262 suite.
+
+        [1]: https://tc39.es/ecma262/#sec-arraysetlength (steps 3-4)
+        [2]: https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor (step 7.a.ii)
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::setLengthWithArrayStorage):
+
 2020-09-14  Saam Barati  <sbarati@apple.com>
 
         Remove bogus asserts in FTLLower that assume programs are compiled with sensible speculations

@@ -141,7 +141,7 @@ void JSArray::setLengthWritable(JSGlobalObject* globalObject, bool writable)
     map->setLengthIsReadOnly();
 }
 
-// Defined in ES5.1 15.4.5.1
+// https://tc39.es/ecma262/#sec-array-exotic-objects-defineownproperty-p-desc
 bool JSArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
     VM& vm = globalObject->vm();
@@ -149,88 +149,53 @@ bool JSArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, 
 
     JSArray* array = jsCast<JSArray*>(object);
 
-    // 3. If P is "length", then
+    // 2. If P is "length", then
+    // https://tc39.es/ecma262/#sec-arraysetlength
     if (propertyName == vm.propertyNames->length) {
-        // All paths through length definition call the default [[DefineOwnProperty]], hence:
-        // from ES5.1 8.12.9 7.a.
+        // FIXME: Nothing prevents this from being called on a RuntimeArray, and the length function will always return 0 in that case.
+        unsigned newLength = array->length();
+        if (descriptor.value()) {
+            newLength = descriptor.value().toUInt32(globalObject);
+            RETURN_IF_EXCEPTION(scope, false);
+            double valueAsNumber = descriptor.value().toNumber(globalObject);
+            RETURN_IF_EXCEPTION(scope, false);
+            if (valueAsNumber != static_cast<double>(newLength)) {
+                throwRangeError(globalObject, scope, "Invalid array length"_s);
+                return false;
+            }
+        }
+
+        // OrdinaryDefineOwnProperty (https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor) at steps 1.a, 11.a, and 15 is now performed:
+        // 4. If current.[[Configurable]] is false, then
+        // 4.a. If Desc.[[Configurable]] is present and its value is true, return false.
         if (descriptor.configurablePresent() && descriptor.configurable())
             return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeConfigurabilityError);
-        // from ES5.1 8.12.9 7.b.
+        // 4.b. If Desc.[[Enumerable]] is present and SameValue(Desc.[[Enumerable]], current.[[Enumerable]]) is false, return false.
         if (descriptor.enumerablePresent() && descriptor.enumerable())
             return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeEnumerabilityError);
-
-        // a. If the [[Value]] field of Desc is absent, then
-        // a.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", Desc, and Throw as arguments.
+        // 6. Else if SameValue(IsDataDescriptor(current), IsDataDescriptor(Desc)) is false, then
+        // 6.a. If current.[[Configurable]] is false, return false.
         if (descriptor.isAccessorDescriptor())
             return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
-        // from ES5.1 8.12.9 10.a.
-        if (!array->isLengthWritable() && descriptor.writablePresent() && descriptor.writable())
-            return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
-        // This descriptor is either just making length read-only, or changing nothing!
-        if (!descriptor.value()) {
-            if (descriptor.writablePresent())
-                array->setLengthWritable(globalObject, descriptor.writable());
-            return true;
-        }
-        
-        // b. Let newLenDesc be a copy of Desc.
-        // c. Let newLen be ToUint32(Desc.[[Value]]).
-        unsigned newLen = descriptor.value().toUInt32(globalObject);
-        RETURN_IF_EXCEPTION(scope, false);
-        // d. If newLen is not equal to ToNumber( Desc.[[Value]]), throw a RangeError exception.
-        double valueAsNumber = descriptor.value().toNumber(globalObject);
-        RETURN_IF_EXCEPTION(scope, false);
-        if (newLen != valueAsNumber) {
-            JSC::throwException(globalObject, scope, createRangeError(globalObject, "Invalid array length"_s));
-            return false;
+        // 7. Else if IsDataDescriptor(current) and IsDataDescriptor(Desc) are both true, then
+        // 7.a. If current.[[Configurable]] is false and current.[[Writable]] is false, then
+        if (!array->isLengthWritable()) {
+            // 7.a.i. If Desc.[[Writable]] is present and Desc.[[Writable]] is true, return false.
+            // This check is unaffected by steps 13-14 of ArraySetLength as they change non-writable descriptors only.
+            if (descriptor.writablePresent() && descriptor.writable())
+                return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
+            // 7.a.ii. If Desc.[[Value]] is present and SameValue(Desc.[[Value]], current.[[Value]]) is false, return false.
+            // This check also covers step 12 of ArraySetLength, which is only reachable if newLen < oldLen.
+            if (newLength != array->length())
+                return typeError(globalObject, scope, throwException, ReadonlyPropertyChangeError);
         }
 
-        // Based on SameValue check in 8.12.9, this is always okay.
-        // FIXME: Nothing prevents this from being called on a RuntimeArray, and the length function will always return 0 in that case.
-        if (newLen == array->length()) {
-            if (descriptor.writablePresent())
-                array->setLengthWritable(globalObject, descriptor.writable());
-            return true;
-        }
-
-        // e. Set newLenDesc.[[Value] to newLen.
-        // f. If newLen >= oldLen, then
-        // f.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and Throw as arguments.
-        // g. Reject if oldLenDesc.[[Writable]] is false.
-        if (!array->isLengthWritable())
-            return typeError(globalObject, scope, throwException, ReadonlyPropertyChangeError);
-        
-        // h. If newLenDesc.[[Writable]] is absent or has the value true, let newWritable be true.
-        // i. Else,
-        // i.i. Need to defer setting the [[Writable]] attribute to false in case any elements cannot be deleted.
-        // i.ii. Let newWritable be false.
-        // i.iii. Set newLenDesc.[[Writable] to true.
-        // j. Let succeeded be the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and Throw as arguments.
-        // k. If succeeded is false, return false.
-        // l. While newLen < oldLen repeat,
-        // l.i. Set oldLen to oldLen – 1.
-        // l.ii. Let deleteSucceeded be the result of calling the [[Delete]] internal method of A passing ToString(oldLen) and false as arguments.
-        // l.iii. If deleteSucceeded is false, then
-        bool success = array->setLength(globalObject, newLen, throwException);
+        // setLength() clears indices >= newLength and sets correct "length" value if [[Delete]] fails (step 17.b.i)
+        bool success = array->setLength(globalObject, newLength, throwException);
         EXCEPTION_ASSERT(!scope.exception() || !success);
-        if (!success) {
-            // 1. Set newLenDesc.[[Value] to oldLen+1.
-            // 2. If newWritable is false, set newLenDesc.[[Writable] to false.
-            // 3. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and false as arguments.
-            // 4. Reject.
-            if (descriptor.writablePresent())
-                array->setLengthWritable(globalObject, descriptor.writable());
-            return false;
-        }
-
-        // m. If newWritable is false, then
-        // i. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length",
-        //    Property Descriptor{[[Writable]]: false}, and false as arguments. This call will always
-        //    return true.
         if (descriptor.writablePresent())
             array->setLengthWritable(globalObject, descriptor.writable());
-        // n. Return true.
-        return true;
+        return success;
     }
 
     // 4. Else if P is an array index (15.4), then
@@ -266,7 +231,7 @@ bool JSArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject,
     return JSObject::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
 }
 
-// ECMA 15.4.5.1
+// https://tc39.es/ecma262/#sec-array-exotic-objects-defineownproperty-p-desc
 bool JSArray::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = globalObject->vm();
@@ -455,6 +420,8 @@ bool JSArray::setLengthWithArrayStorage(JSGlobalObject* globalObject, unsigned n
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length = storage->length();
+    if (newLength == length)
+        return true;
     
     // If the length is read only then we enter sparse mode, so should enter the following 'if'.
     ASSERT(isLengthWritable() || storage->m_sparseMap);
