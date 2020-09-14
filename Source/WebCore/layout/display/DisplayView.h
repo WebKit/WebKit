@@ -49,7 +49,7 @@ namespace Display {
 class View {
     WTF_MAKE_ISO_ALLOCATED(View);
 public:
-    View(FrameView&);
+    explicit View(FrameView&);
     ~View();
     
     void prepareForDisplay();

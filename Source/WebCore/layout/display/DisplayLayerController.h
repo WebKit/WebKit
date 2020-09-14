@@ -49,7 +49,7 @@ class View;
 class LayerController {
     WTF_MAKE_ISO_ALLOCATED(LayerController);
 public:
-    LayerController(View&);
+    explicit LayerController(View&);
     ~LayerController();
     
     void prepareForDisplay(const Layout::LayoutState&);

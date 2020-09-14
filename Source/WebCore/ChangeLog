@@ -3,6 +3,16 @@
         First steps towards LFC painting in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=216466
 
+        Address post-landing comments: make two constructors explicit.
+
+        * layout/display/DisplayLayerController.h:
+        * layout/display/DisplayView.h:
+
+2020-09-14  Simon Fraser  <simon.fraser@apple.com>
+
+        First steps towards LFC painting in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=216466
+
         Reviewed by Zalan Bujtas.
 
         Get LFC painting in WebKit2.
