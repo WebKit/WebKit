@@ -30,15 +30,15 @@
             var childCandidate = new childRTCIceCandidate();
             shouldThrow('childCandidate.toJSON();');
 
-            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMLineIndex":6,"sdpMid":"bar","usernameFragment":null}');
             candidate.newAttribute = "new value";
-            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMLineIndex":6,"sdpMid":"bar","usernameFragment":null}');
             candidate.sdpMLineIndex = "not a number";
-            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMLineIndex":6,"sdpMid":"bar","usernameFragment":null}');
             candidate.sdpMid = 7;
-            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMLineIndex":6,"sdpMid":"bar","usernameFragment":null}');
             candidate.sdpMid = null;
-            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMLineIndex":6,"sdpMid":"bar","usernameFragment":null}');
 
             debug("");
 

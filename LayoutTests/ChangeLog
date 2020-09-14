@@ -1,3 +1,17 @@
+2020-09-14  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Replace 'serializable' with '[Default] object toJSON()'
+        https://bugs.webkit.org/show_bug.cgi?id=216148
+        <rdar://problem/68668407>
+
+        Reviewed by Eric Carlson.
+
+        Update test and results to account for RTCIceCandidate.toJSON() 
+        now returning RTCIceCandidateInit.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCIceCandidate.html:
+
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
         Some WebAudio tests give different output on different machines

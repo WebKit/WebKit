@@ -63,12 +63,12 @@ public:
     double responseEnd() const;
     const Vector<Ref<PerformanceServerTiming>>& serverTiming() const { return m_serverTiming; }
 
+    Type type() const final { return Type::Resource; }
+    ASCIILiteral entryType() const final { return "resource"_s; }
+
 private:
     PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&&);
     ~PerformanceResourceTiming();
-
-    Type type() const final { return Type::Resource; }
-    ASCIILiteral entryType() const final { return "resource"_s; }
 
     double networkLoadTimeToDOMHighResTimeStamp(Seconds) const;
 

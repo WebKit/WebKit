@@ -97,5 +97,5 @@
     [MayThrowException] Float64Array toFloat64Array();
 
     [Exposed=Window, MayThrowException] stringifier;
-    serializer = { attribute };
+    [Default] object toJSON();
 };

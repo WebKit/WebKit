@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    ActiveDOMObject,
-    Conditional=PAYMENT_REQUEST,
-    EnabledBySetting=PaymentRequest,
-    Exposed=Window,
-    JSCustomMarkFunction,
-    SecureContext,
-] interface PaymentResponse : EventTarget {
-    [Default] object toJSON();
-
-    readonly attribute DOMString requestId;
-    readonly attribute DOMString methodName;
-    [CustomGetter] readonly attribute object details;
-    readonly attribute PaymentAddress? shippingAddress;
-    readonly attribute DOMString? shippingOption;
-    readonly attribute DOMString? payerName;
-    readonly attribute DOMString? payerEmail;
-    readonly attribute DOMString? payerPhone;
-
-    [NewObject] Promise<undefined> complete(optional PaymentComplete result = "unknown");
-    [NewObject] Promise<undefined> retry(optional PaymentValidationErrors errorFields);
-
-    attribute EventHandler onpayerdetailchange;
+enum TestDefaultToJSONEnum {
+    "EnumValue1",
+    "EnumValue2"
 };

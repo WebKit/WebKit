@@ -67,6 +67,15 @@ Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const Stri
     return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex, WTFMove(*fields)));
 }
 
+RTCIceCandidateInit RTCIceCandidate::toJSON() const
+{
+    RTCIceCandidateInit result;
+    result.candidate = m_candidate;
+    result.sdpMid = m_sdpMid;
+    result.sdpMLineIndex = m_sdpMLineIndex;
+    return result;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

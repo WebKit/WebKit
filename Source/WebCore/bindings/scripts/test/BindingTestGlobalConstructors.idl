@@ -10,6 +10,10 @@ partial interface TestGlobalObject {
     attribute TestClassWithJSBuiltinConstructorConstructor TestClassWithJSBuiltinConstructor;
     attribute TestConditionalIncludesConstructor TestConditionalIncludes;
     attribute TestDOMJITConstructor TestDOMJIT;
+    attribute TestDefaultToJSONConstructor TestDefaultToJSON;
+    attribute TestDefaultToJSONIndirectInheritanceConstructor TestDefaultToJSONIndirectInheritance;
+    attribute TestDefaultToJSONInheritConstructor TestDefaultToJSONInherit;
+    attribute TestDefaultToJSONInheritFinalConstructor TestDefaultToJSONInheritFinal;
     attribute TestDomainSecurityConstructor TestDomainSecurity;
     attribute TestEnabledBySettingConstructor TestEnabledBySetting;
     [EnabledForContext, SecureContext] attribute TestEnabledForContextConstructor TestEnabledForContext;
@@ -53,10 +57,6 @@ partial interface TestGlobalObject {
     attribute TestReadOnlyMapLikeConstructor TestReadOnlyMapLike;
     attribute TestReadOnlySetLikeConstructor TestReadOnlySetLike;
     attribute TestReportExtraMemoryCostConstructor TestReportExtraMemoryCost;
-    attribute TestSerializationConstructor TestSerialization;
-    attribute TestSerializationIndirectInheritanceConstructor TestSerializationIndirectInheritance;
-    attribute TestSerializationInheritConstructor TestSerializationInherit;
-    attribute TestSerializationInheritFinalConstructor TestSerializationInheritFinal;
     [Conditional=Condition1|Condition2] attribute TestSerializedScriptValueInterfaceConstructor TestSerializedScriptValueInterface;
     attribute TestSetLikeConstructor TestSetLike;
     attribute TestStringifierConstructor TestStringifier;

@@ -1594,7 +1594,6 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionallyExposed
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionallyExposedToWorkerFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionallyExposedToWindowAndWorkerFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToJSON(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -2336,7 +2335,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "conditionallyExposedToWorkerFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionConditionallyExposedToWorkerFunction), (intptr_t) (0) } },
     { "conditionallyExposedToWindowAndWorkerFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionConditionallyExposedToWindowAndWorkerFunction), (intptr_t) (0) } },
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionToString), (intptr_t) (0) } },
-    { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunctionToJSON), (intptr_t) (0) } },
 #if ENABLE(Condition1)
     { "CONDITIONAL_CONST", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(0) } },
 #else
@@ -9401,41 +9399,6 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringBody(JSC::JS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
-}
-
-JSC::JSObject* JSTestObj::serialize(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSDOMGlobalObject& globalObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());
-
-    auto createValue = jsTestObjCreateGetter(lexicalGlobalObject, thisObject);
-    throwScope.assertNoException();
-    result->putDirect(vm, Identifier::fromString(vm, "create"), createValue);
-
-    auto readOnlyStringAttrValue = jsTestObjReadOnlyStringAttrGetter(lexicalGlobalObject, thisObject);
-    throwScope.assertNoException();
-    result->putDirect(vm, Identifier::fromString(vm, "readOnlyStringAttr"), readOnlyStringAttrValue);
-
-    auto enumAttrValue = jsTestObjEnumAttrGetter(lexicalGlobalObject, thisObject);
-    throwScope.assertNoException();
-    result->putDirect(vm, Identifier::fromString(vm, "enumAttr"), enumAttrValue);
-
-    auto longAttrValue = jsTestObjLongAttrGetter(lexicalGlobalObject, thisObject);
-    throwScope.assertNoException();
-    result->putDirect(vm, Identifier::fromString(vm, "longAttr"), longAttrValue);
-
-    return result;
-}
-
-static inline EncodedJSValue jsTestObjPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestObj* thisObject)
-{
-    return JSValue::encode(JSTestObj::serialize(*lexicalGlobalObject, *thisObject, *thisObject->globalObject()));
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionToJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
 }
 
 JSC::IsoSubspace* JSTestObj::subspaceForImpl(JSC::VM& vm)

@@ -41,5 +41,5 @@ typedef double DOMHighResTimeStamp;
     readonly attribute DOMString entryType;
     readonly attribute DOMHighResTimeStamp startTime;
     readonly attribute DOMHighResTimeStamp duration;
-    serializer = { attribute };
+    [Default] object toJSON();
 };

@@ -1,3 +1,18 @@
+2020-09-14  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Replace 'serializable' with '[Default] object toJSON()'
+        https://bugs.webkit.org/show_bug.cgi?id=216148
+        <rdar://problem/68668407>
+
+        Reviewed by Eric Carlson.
+
+        Update results to account for now correctly returning DOMPoints,
+        rather than vanilla Objects, for the points in a DOMQuad when using
+        toJSON.
+
+        * web-platform-tests/css/geometry/idlharness-expected.txt:
+        * web-platform-tests/css/geometry/idlharness.worker-expected.txt:
+
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
         Some WebAudio tests give different output on different machines

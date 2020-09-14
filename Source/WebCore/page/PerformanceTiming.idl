@@ -54,5 +54,5 @@
     readonly attribute unsigned long long loadEventStart;
     readonly attribute unsigned long long loadEventEnd;
 
-    serializer = { attribute };
+    [Default] object toJSON();
 };

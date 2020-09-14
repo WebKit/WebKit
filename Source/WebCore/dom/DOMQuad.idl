@@ -41,5 +41,5 @@
     readonly attribute DOMPoint p4; // FIXME: Should be [SameObject].
     [NewObject] DOMRect getBounds();
 
-    serializer = { attribute };
+    [Default] object toJSON();
 };

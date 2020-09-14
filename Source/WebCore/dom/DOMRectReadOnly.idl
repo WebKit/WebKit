@@ -44,5 +44,5 @@
     readonly attribute unrestricted double bottom;
     readonly attribute unrestricted double left;
 
-    serializer = { attribute };
+    [Default] object toJSON();
 };

@@ -1194,50 +1194,64 @@ sub IsWrapperType
     return 0;
 }
 
-sub InheritsSerializable
+sub InterfaceHasRegularToJSONOperation
 {
     my ($object, $interface) = @_;
 
-    my $anyParentIsSerializable = 0;
-    $object->ForAllParents($interface, sub {
-        my $parentInterface = shift;
-        $anyParentIsSerializable = 1 if $parentInterface->serializable;
-    }, 0);
-
-    return $anyParentIsSerializable;
+    foreach my $operation (@{$interface->operations}) {
+        if (!$operation->isStatic && $operation->name eq "toJSON") {
+            return 1;
+        }
+    }
+    return 0;
 }
 
-sub IsSerializableType
+# https://heycam.github.io/webidl/#dfn-json-types
+sub IsJSONType
 {
     my ($object, $interface, $type) = @_;
 
-    # https://heycam.github.io/webidl/#dfn-serializable-type
-
+    return 1 if $type->name eq "object";
     return 1 if $type->name eq "boolean";
     return 1 if $object->IsNumericType($type);
-    return 1 if $object->IsEnumType($type);
-    return 1 if $object->IsStringType($type);
-    return 0 if $type->name eq "EventHandler";
-
-    if ($type->isUnion || $object->IsDictionaryType($type)) {
-        die "Serializers for union and dictionary types are not currently supported.\n";
-    }
+    return 1 if $object->IsStringOrEnumType($type);
 
     if ($object->IsSequenceOrFrozenArrayType($type)) {
         my $subtype = @{$type->subtypes}[0];
-
-        # FIXME: webkit.org/b/194439 [WebIDL] Support serializing sequences and FrozenArrays of interfaces
-        return 0 if $object->IsInterfaceType($subtype);
-
-        return $object->IsSerializableType($interface, $subtype);
+        return $object->IsJSONType($interface, $subtype);
+    }
+    if ($object->IsRecordType($type)) {
+        my $valueSubtype = @{$type->subtypes}[0];
+        return $object->IsJSONType($interface, $valueSubtype);
     }
 
-    return 0 if !$object->IsInterfaceType($type);
+    if ($object->IsInterfaceType($type)) {
+        # Special case EventHandler, since there is no real IDL for it.
+        return 0 if $type->name eq "EventHandler";
 
-    my $interfaceForType = $object->GetInterfaceForType($interface, $type);
-    if ($interfaceForType) {
-        return 1 if $interfaceForType->serializable;
-        return $object->InheritsSerializable($interfaceForType);
+        my $interface = $object->GetInterfaceForType($interface, $type);
+        if ($object->InterfaceHasRegularToJSONOperation($interface)) {
+            return 1;
+        }
+
+        my $anyParentHasRegularToJSONOperation = 0;
+        $object->ForAllParents($interface, sub {
+            my $parentInterface = shift;
+            $anyParentHasRegularToJSONOperation = 1 if $object->InterfaceHasRegularToJSONOperation($parentInterface);
+        }, 0);
+        
+        if ($anyParentHasRegularToJSONOperation) {
+            return 1;
+        }
+    }
+    
+    if ($type->isUnion) {
+        # FIXME: Union types should be supported if all the member types are JSON types.
+        die "Default toJSON is currently not supported for union types.\n";
+    }
+    if ($object->IsDictionaryType($type)) {
+        # FIXME: Dictionary types should be supported if all members declared on the dictionary and all its inherited dictionaries are JSON types.
+        die "Default toJSON is currently not supported for dictionary types.\n";
     }
 
     return 0;
@@ -1247,17 +1261,6 @@ sub hasCachedAttributeOrCustomGetterExtendedAttribute
 {
     my ($attribute) = @_;
     return $attribute->extendedAttributes->{CachedAttribute} || $attribute->extendedAttributes->{CustomGetter};
-}
-
-sub IsSerializableAttribute
-{
-    my ($object, $interface, $attribute) = @_;
-
-    if ($object->IsSequenceType($attribute->type) && hasCachedAttributeOrCustomGetterExtendedAttribute($attribute)) {
-        die "Serializers for sequence types with CachedAttribute or CustomGetter extended attributes are not currently supported.\n";
-    }
-
-    return $object->IsSerializableType($interface, $attribute->type);
 }
 
 sub GetInterfaceExtendedAttributesFromName

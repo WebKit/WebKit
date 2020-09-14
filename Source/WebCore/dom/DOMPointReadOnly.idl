@@ -45,5 +45,5 @@
 
     [MayThrowException] DOMPoint matrixTransform(optional DOMMatrixInit matrix);
 
-    serializer = { attribute };
+    [Default] object toJSON();
 };

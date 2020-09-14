@@ -21,18 +21,18 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include "JSTestSerializationInherit.h"
-#include "TestSerializationIndirectInheritance.h"
+#include "JSTestDefaultToJSONInherit.h"
+#include "TestDefaultToJSONInheritFinal.h"
 
 namespace WebCore {
 
-class JSTestSerializationIndirectInheritance : public JSTestSerializationInherit {
+class JSTestDefaultToJSONInheritFinal : public JSTestDefaultToJSONInherit {
 public:
-    using Base = JSTestSerializationInherit;
-    using DOMWrapped = TestSerializationIndirectInheritance;
-    static JSTestSerializationIndirectInheritance* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSerializationIndirectInheritance>&& impl)
+    using Base = JSTestDefaultToJSONInherit;
+    using DOMWrapped = TestDefaultToJSONInheritFinal;
+    static JSTestDefaultToJSONInheritFinal* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInheritFinal>&& impl)
     {
-        JSTestSerializationIndirectInheritance* ptr = new (NotNull, JSC::allocateCell<JSTestSerializationIndirectInheritance>(globalObject->vm().heap)) JSTestSerializationIndirectInheritance(structure, *globalObject, WTFMove(impl));
+        JSTestDefaultToJSONInheritFinal* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInheritFinal>(globalObject->vm().heap)) JSTestDefaultToJSONInheritFinal(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -56,20 +56,20 @@ public:
     }
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
-    TestSerializationIndirectInheritance& wrapped() const
+    TestDefaultToJSONInheritFinal& wrapped() const
     {
-        return static_cast<TestSerializationIndirectInheritance&>(Base::wrapped());
+        return static_cast<TestDefaultToJSONInheritFinal&>(Base::wrapped());
     }
 protected:
-    JSTestSerializationIndirectInheritance(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSerializationIndirectInheritance>&&);
+    JSTestDefaultToJSONInheritFinal(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONInheritFinal>&&);
 
     void finishCreation(JSC::VM&);
 };
 
 
-template<> struct JSDOMWrapperConverterTraits<TestSerializationIndirectInheritance> {
-    using WrapperClass = JSTestSerializationIndirectInheritance;
-    using ToWrappedReturnType = TestSerializationIndirectInheritance*;
+template<> struct JSDOMWrapperConverterTraits<TestDefaultToJSONInheritFinal> {
+    using WrapperClass = JSTestDefaultToJSONInheritFinal;
+    using ToWrappedReturnType = TestDefaultToJSONInheritFinal*;
 };
 
 } // namespace WebCore

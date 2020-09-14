@@ -144,7 +144,7 @@ PASS DOMQuad interface: new DOMQuad() must inherit property "p3" with the proper
 PASS DOMQuad interface: new DOMQuad() must inherit property "p4" with the proper type 
 PASS DOMQuad interface: new DOMQuad() must inherit property "getBounds()" with the proper type 
 PASS DOMQuad interface: new DOMQuad() must inherit property "toJSON()" with the proper type 
-FAIL DOMQuad interface: default toJSON operation on new DOMQuad() assert_true: instanceof DOMPoint expected true got false
+PASS DOMQuad interface: default toJSON operation on new DOMQuad() 
 PASS DOMMatrixReadOnly interface: existence and properties of interface object 
 PASS DOMMatrixReadOnly interface object length 
 PASS DOMMatrixReadOnly interface object name 

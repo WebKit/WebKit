@@ -1,3 +1,98 @@
+2020-09-14  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Replace 'serializable' with '[Default] object toJSON()'
+        https://bugs.webkit.org/show_bug.cgi?id=216148
+
+        Reviewed by Eric Carlson.
+
+        Replace the 'serializable' keyword, which has been removed from WebIDL,
+        with its replacement, '[Default] object toJSON()'.
+        
+        The new version is pretty similar, but has much less room for customization
+        in that you can no longer specify which attributes are included in the JSON
+        result. Rather, all attributes that qualify as having a 'JSON type' are included
+        for the interface itself and all ancestor interfaces. Interfaces that need more
+        control can provide their own toJSON operation with the [Default] extended
+        attribute.
+
+        This updates all the IDLs that used serializer to use the new [Default] except
+        RTCIceCandidate.idl, which is specified to have a custom toJSON that returns
+        a RTCIceCandidateInit, so that was implemented instead.
+
+        * css/DOMMatrixReadOnly.idl:
+        * dom/DOMPointReadOnly.idl:
+        * dom/DOMQuad.idl:
+        * dom/DOMRectReadOnly.idl:
+        * page/PerformanceEntry.idl:
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceResourceTiming.idl:
+        * page/PerformanceServerTiming.idl:
+        * page/PerformanceTiming.idl:
+        * Modules/mediastream/MediaDeviceInfo.idl:
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        * Modules/mediastream/RTCIceCandidate.h:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/paymentrequest/PaymentAddress.idl:
+        * Modules/paymentrequest/PaymentResponse.idl:
+        Update IDLs replacing all use of serializer.
+        
+        * bindings/scripts/CodeGenerator.pm:
+        (InterfaceHasRegularToJSONOperation):
+        (IsJSONType):
+        (InheritsSerializable): Deleted.
+        (IsSerializableType): Deleted.
+        (IsSerializableAttribute): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (PrototypeOperationCount):
+        (GenerateHeader):
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        (GenerateOperationDefinition):
+        (GenerateDefaultOperationDefinition):
+        (GenerateDefaultToJSONOperationDefinition):
+        (GetRuntimeEnabledStaticProperties):
+        (GenerateSerializerDefinition): Deleted.
+        * bindings/scripts/IDLParser.pm:
+        (cloneOperation):
+        (parsePartialInterfaceMember):
+        (applyMemberList):
+        (parseSerializer): Deleted.
+        (parseSerializerRest): Deleted.
+        (parseSerializationPattern): Deleted.
+        (parseSerializationAttributes): Deleted.
+        * bindings/scripts/IDLAttributes.json:
+        Add support for [Default] toJSON and remove support for serializer.
+
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+        * bindings/scripts/test/JS/JSTestDefaultToJSON.cpp: Added.
+        * bindings/scripts/test/JS/JSTestDefaultToJSON.h: Added.
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestSerialization.h: Removed.
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.h: Removed.
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestSerializationInherit.h: Removed.
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.h: Removed.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestDefaultToJSON.idl: Added.
+        * bindings/scripts/test/TestDefaultToJSONIndirectInheritance.idl: Added.
+        * bindings/scripts/test/TestDefaultToJSONInherit.idl: Added.
+        * bindings/scripts/test/TestDefaultToJSONInheritFinal.idl: Added.
+        * bindings/scripts/test/TestNode.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestSerialization.idl: Removed.
+        * bindings/scripts/test/TestSerializationIndirectInheritance.idl: Removed.
+        * bindings/scripts/test/TestSerializationInherit.idl: Removed.
+        * bindings/scripts/test/TestSerializationInheritFinal.idl: Removed.
+        Update tests.
+
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
         Some WebAudio tests give different output on different machines

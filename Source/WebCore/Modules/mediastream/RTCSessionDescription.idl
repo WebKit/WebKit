@@ -41,5 +41,5 @@
     readonly attribute RTCSdpType type;
     readonly attribute DOMString sdp;
 
-    serializer = {type, sdp};
+    [Default] object toJSON();
 };

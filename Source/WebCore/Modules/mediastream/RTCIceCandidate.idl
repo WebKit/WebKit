@@ -52,6 +52,5 @@
     readonly attribute unsigned short? relatedPort;
     readonly attribute DOMString? usernameFragment;
 
-    // FIXME 169662: add ufrag to the list
-    serializer = {candidate, sdpMid, sdpMLineIndex};
+    RTCIceCandidateInit toJSON();
 };

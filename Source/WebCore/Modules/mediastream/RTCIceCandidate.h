@@ -79,6 +79,8 @@ public:
     Optional<unsigned short> relatedPort() const { return m_fields.relatedPort; }
     String usernameFragment() const { return m_fields.usernameFragment; }
 
+    RTCIceCandidateInit toJSON() const;
+
 private:
     RTCIceCandidate(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex, Fields&&);
 

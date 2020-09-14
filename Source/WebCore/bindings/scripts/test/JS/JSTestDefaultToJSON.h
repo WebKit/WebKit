@@ -21,24 +21,24 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include "TestSerialization.h"
+#include "TestDefaultToJSON.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class JSTestSerialization : public JSDOMWrapper<TestSerialization> {
+class JSTestDefaultToJSON : public JSDOMWrapper<TestDefaultToJSON> {
 public:
-    using Base = JSDOMWrapper<TestSerialization>;
-    static JSTestSerialization* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSerialization>&& impl)
+    using Base = JSDOMWrapper<TestDefaultToJSON>;
+    static JSTestDefaultToJSON* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
     {
-        JSTestSerialization* ptr = new (NotNull, JSC::allocateCell<JSTestSerialization>(globalObject->vm().heap)) JSTestSerialization(structure, *globalObject, WTFMove(impl));
+        JSTestDefaultToJSON* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSON>(globalObject->vm().heap)) JSTestDefaultToJSON(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
-    static TestSerialization* toWrapped(JSC::VM&, JSC::JSValue);
+    static TestDefaultToJSON* toWrapped(JSC::VM&, JSC::JSValue);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -49,7 +49,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSC::JSObject* serialize(JSC::JSGlobalObject&, JSTestSerialization& thisObject, JSDOMGlobalObject&);
     template<typename, JSC::SubspaceAccess mode> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
@@ -59,36 +58,36 @@ public:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestSerialization(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSerialization>&&);
+    JSTestDefaultToJSON(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSON>&&);
 
     void finishCreation(JSC::VM&);
 };
 
-class JSTestSerializationOwner : public JSC::WeakHandleOwner {
+class JSTestDefaultToJSONOwner : public JSC::WeakHandleOwner {
 public:
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestSerialization*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestDefaultToJSON*)
 {
-    static NeverDestroyed<JSTestSerializationOwner> owner;
+    static NeverDestroyed<JSTestDefaultToJSONOwner> owner;
     return &owner.get();
 }
 
-inline void* wrapperKey(TestSerialization* wrappableObject)
+inline void* wrapperKey(TestDefaultToJSON* wrappableObject)
 {
     return wrappableObject;
 }
 
-JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestSerialization&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestSerialization* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestSerialization>&&);
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestSerialization>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestDefaultToJSON&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDefaultToJSON* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestDefaultToJSON>&&);
+inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestDefaultToJSON>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
-template<> struct JSDOMWrapperConverterTraits<TestSerialization> {
-    using WrapperClass = JSTestSerialization;
-    using ToWrappedReturnType = TestSerialization*;
+template<> struct JSDOMWrapperConverterTraits<TestDefaultToJSON> {
+    using WrapperClass = JSTestDefaultToJSON;
+    using ToWrappedReturnType = TestDefaultToJSON*;
 };
 
 } // namespace WebCore

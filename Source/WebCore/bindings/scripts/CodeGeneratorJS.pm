@@ -1844,7 +1844,6 @@ sub PrototypeOperationCount
     $count += scalar @{$interface->iterable->operations} if $interface->iterable;
     $count += scalar @{$interface->mapLike->operations} if $interface->mapLike;
     $count += scalar @{$interface->setLike->operations} if $interface->setLike;
-    $count += scalar @{$interface->serializable->operations} if $interface->serializable;
 
     return $count;
 }
@@ -2757,11 +2756,6 @@ sub GenerateHeader
         push(@headerContent, "    static JSC::JSValue getLegacyFactoryFunction(JSC::VM&, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{LegacyFactoryFunction};
     }
 
-    # Serializer function.
-    if ($interface->serializable) {
-        push(@headerContent, "    static JSC::JSObject* serialize(JSC::JSGlobalObject&, ${className}& thisObject, JSDOMGlobalObject&);\n");
-    }
-    
     my $numCustomOperations = 0;
     my $numCustomAttributes = 0;
 
@@ -3163,7 +3157,6 @@ sub GeneratePropertiesHashTable
     push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
     push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
     push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
-    push(@operations, @{$interface->serializable->operations}) if $interface->serializable;
     foreach my $operation (@operations) {
         next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
         next if ($operation->isStatic);
@@ -3971,7 +3964,6 @@ sub GenerateImplementation
     push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
     push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
     push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
-    push(@operations, @{$interface->serializable->operations}) if $interface->serializable;
 
     my @attributes = @{$interface->attributes};
     push(@attributes, @{$interface->mapLike->attributes}) if $interface->mapLike;
@@ -4650,7 +4642,6 @@ sub GenerateImplementation
     }
     
     GenerateIterableDefinition($interface) if $interface->iterable;
-    GenerateSerializerDefinition($interface, $className) if $interface->serializable;
 
     AddToImplIncludes("DOMIsoSubspaces.h");
     AddToImplIncludes("WebCoreJSClientData.h");
@@ -5400,7 +5391,10 @@ sub GenerateOperationDefinition
 
     return if IsJSBuiltin($interface, $operation);
     return if $operation->isIterable;
-    return if $operation->isSerializer;
+    
+    if ($operation->extendedAttributes->{Default}) {
+        return GenerateDefaultOperationDefinition($outputArray, $interface, $className, $operation);
+    }
 
     my $isCustom = HasCustomMethod($operation);
     my $isOverloaded = $operation->{overloads} && @{$operation->{overloads}} > 1;
@@ -5520,103 +5514,103 @@ sub GenerateOperationDefinition
     push(@$outputArray, $endAppleCopyright) if $inAppleCopyright;
 }
 
-sub GenerateSerializerDefinition
+sub GenerateDefaultOperationDefinition
 {
-    my ($interface, $className) = @_;
+    my ($outputArray, $interface, $className, $operation) = @_;
 
-    my $interfaceName = $interface->type->name;
-
-    my $parentSerializerInterface = 0;
-    if ($interface->serializable->hasInherit) {
-        $codeGenerator->ForAllParents($interface, sub {
-            my $parentInterface = shift;
-            if ($parentInterface->serializable && !$parentSerializerInterface) {
-                $parentSerializerInterface = $parentInterface;
-            }
-        }, 0);
-        die "Failed to find parent interface with \"serializer\" for \"inherit\" serializer in $interfaceName\n" if !$parentSerializerInterface;
+    if ($operation->name eq "toJSON" && $operation->type->name eq "object") {
+        return GenerateDefaultToJSONOperationDefinition($outputArray, $interface, $className, $operation);
     }
 
-    my @serializedAttributes = ();
+    die "[Default] is not support for for this operation (" . $operation->name . "). It is only currently defined for 'object toJSON();'."
+}
 
-    foreach my $attributeName (@{$interface->serializable->attributes}) {
-        my $foundAttribute = 0;
-        foreach my $attribute (@{$interface->attributes}) {
-            if ($attributeName eq $attribute->name) {
-                $foundAttribute = 1;
-                if ($codeGenerator->IsSerializableAttribute($interface, $attribute)) {
-                    push(@serializedAttributes, $attribute);                
-                    last;
-                }                    
-                die "Explicit \"serializer\" attribute \"$attributeName\" is not serializable\n" if !$interface->serializable->hasAttribute;
+sub GenerateDefaultToJSONOperationDefinition
+{
+    my ($outputArray, $interface, $className, $operation) = @_;
+
+    # https://heycam.github.io/webidl/#es-default-tojson
+
+    my @inheritenceStack = ();
+    push(@inheritenceStack, $interface);
+    $codeGenerator->ForAllParents($interface, sub {
+        my $parentInterface = shift;
+        push(@inheritenceStack, $parentInterface);
+    }, 0);
+
+    my $functionName = GetFunctionName($interface, $className, $operation);
+
+    push(@$outputArray, "static inline EncodedJSValue ${functionName}Body(JSGlobalObject* lexicalGlobalObject, CallFrame*, ${className}* castedThis)\n");
+    push(@$outputArray, "{\n");
+    push(@implContent, "    auto& vm = JSC::getVM(lexicalGlobalObject);\n");
+    push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+    push(@implContent, "    UNUSED_PARAM(throwScope);\n");
+    push(@implContent, "    auto& impl = castedThis->wrapped();\n");
+
+    AddToImplIncludes("<JavaScriptCore/ObjectConstructor.h>");
+    push(@implContent, "    auto* result = constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype());\n");
+
+     while (@inheritenceStack) {
+        my $currentInterface = pop(@inheritenceStack);
+
+        my $hasDefaultToJSONOperation = 0;
+        foreach my $operation (@{$currentInterface->operations}) {
+            if ($operation->extendedAttributes->{Default} && $operation->name eq "toJSON" && $operation->type->name eq "object") {
+                $hasDefaultToJSONOperation = 1;
                 last;
             }
         }
-        die "Failed to find \"serializer\" attribute \"$attributeName\" in $interfaceName\n" if !$foundAttribute;
-    }
+        if ($hasDefaultToJSONOperation) {
+            foreach my $attribute (@{$currentInterface->attributes}) {
+                next if $attribute->isStatic;
+                next if !$codeGenerator->IsJSONType($interface, $attribute->type);
 
-    my $serializerFunctionName = "toJSON";
-    my $serializerNativeFunctionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($serializerFunctionName);
+                assert("[CachedAttribute] is not currently support on interfaces with [Default] object toJSON();") if $attribute->extendedAttributes->{CachedAttribute};
 
-    AddToImplIncludes("<JavaScriptCore/ObjectConstructor.h>");
+                my $conditional = $attribute->extendedAttributes->{Conditional};
+                if ($conditional) {
+                    my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                    push(@$outputArray, "#if ${conditionalString}\n");;
+                }
 
-    push(@implContent, "JSC::JSObject* JS${interfaceName}::serialize(JSGlobalObject& lexicalGlobalObject, ${className}& thisObject, JSDOMGlobalObject& globalObject)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n");
-    push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+                my $attributeName = $attribute->name;
+                my $toJSExpression = "";
+                if (HasCustomGetter($attribute)) {
+                    my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->extendedAttributes->{ImplementedAs} || $attributeName);
+                    $toJSExpression = "castedThis->${implGetterFunctionName}(*lexicalGlobalObject)";
+                } else {
+                    my ($baseFunctionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $currentInterface->type->name, $attribute);
+                    my $functionName = GetFullyQualifiedImplementationCallName($currentInterface, $attribute, $baseFunctionName, "impl", $conditional);
+                    $toJSExpression = NativeToJSValue($attribute, $currentInterface, "${functionName}(" . join(", ", @arguments) . ")", "*lexicalGlobalObject", "*castedThis->globalObject()");
+                }
 
-    if ($interface->serializable->hasInherit) {
-        my $parentSerializerInterfaceName = $parentSerializerInterface->type->name;
-        push(@implContent, "    auto* result = JS${parentSerializerInterfaceName}::serialize(lexicalGlobalObject, thisObject, globalObject);\n");
-        push(@implContent, "    throwScope.assertNoException();\n");
-    } else {
-        push(@implContent, "    auto* result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());\n");
-    }
-    push(@implContent, "\n");
+                my $needsRuntimeCheck = NeedsRuntimeCheck($currentInterface, $attribute);
+                if ($needsRuntimeCheck) {
+                    my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($currentInterface, $attribute, "castedThis->globalObject()");
+                    push(@$outputArray, "    if (${runtimeEnableConditionalString}) {\n");
+                    push(@$outputArray, "        result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${toJSExpression});\n");
+                    push(@$outputArray, "    }\n");
+                } else {
+                    push(@$outputArray, "    result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${toJSExpression});\n");
+                }
 
-    foreach my $attribute (@serializedAttributes) {
-        # FIXME: Attributes that throw exceptions are not supported with serializers yet.
-
-        my $name = $attribute->name;
-        my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
-        push(@implContent, "    auto ${name}Value = ${getFunctionName}Getter(lexicalGlobalObject, thisObject);\n");
-        push(@implContent, "    throwScope.assertNoException();\n");
-
-        if ($codeGenerator->IsInterfaceType($attribute->type)) {
-            my $attributeInterfaceName = $attribute->type->name;
-            if ($attribute->type->isNullable) {
-                push(@implContent, "    if (!${name}Value.isNull()) {\n");
-                push(@implContent, "        auto* ${name}SerializedValue = JS${attributeInterfaceName}::serialize(lexicalGlobalObject, *jsCast<JS${attributeInterfaceName}*>(${name}Value), globalObject);\n");
-                push(@implContent, "        throwScope.assertNoException();\n");
-                push(@implContent, "        result->putDirect(vm, Identifier::fromString(vm, \"${name}\"), ${name}SerializedValue);\n");
-                push(@implContent, "    } else\n");
-                push(@implContent, "        result->putDirect(vm, Identifier::fromString(vm, \"${name}\"), ${name}Value);\n");
-            } else {
-                push(@implContent, "    auto* ${name}SerializedValue = JS${attributeInterfaceName}::serialize(lexicalGlobalObject, *jsCast<JS${attributeInterfaceName}*>(${name}Value), globalObject);\n");
-                push(@implContent, "    throwScope.assertNoException();\n");
-                push(@implContent, "    result->putDirect(vm, Identifier::fromString(vm, \"${name}\"), ${name}SerializedValue);\n");
+                if ($conditional) {
+                    push(@$outputArray, "#endif\n\n") ;
+                }
             }
-        } else {
-            push(@implContent, "    result->putDirect(vm, Identifier::fromString(vm, \"${name}\"), ${name}Value);\n");
         }
-
-        push(@implContent, "\n");
     }
 
-    push(@implContent, "    return result;\n");
-    push(@implContent, "}\n");
-    push(@implContent, "\n");
+    push(@$outputArray, "    return JSValue::encode(result);\n");
+    push(@$outputArray, "}\n");
+    push(@$outputArray, "\n");
 
-    push(@implContent, "static inline EncodedJSValue ${serializerNativeFunctionName}Body(JSGlobalObject* lexicalGlobalObject, CallFrame*, ${className}* thisObject)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    return JSValue::encode(JS${interfaceName}::serialize(*lexicalGlobalObject, *thisObject, *thisObject->globalObject()));\n");
-    push(@implContent, "}\n");
-    push(@implContent, "\n");
-    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${serializerNativeFunctionName}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    return IDLOperation<JS${interfaceName}>::call<${serializerNativeFunctionName}Body>(*lexicalGlobalObject, *callFrame, \"${serializerFunctionName}\");\n");
-    push(@implContent, "}\n");
-    push(@implContent, "\n");
+    my $interfaceName = $interface->type->name;
+    push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${functionName}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "    return IDLOperation<JS${interfaceName}>::call<${functionName}Body>(*lexicalGlobalObject, *callFrame, \"toJSON\");\n");
+    push(@$outputArray, "}\n");
+    push(@$outputArray, "\n");
 }
 
 sub GenerateGetCallData
@@ -7565,7 +7559,6 @@ sub GetRuntimeEnabledStaticProperties
     push(@operations, @{$interface->iterable->operations}) if IsKeyValueIterableInterface($interface);
     push(@operations, @{$interface->mapLike->operations}) if $interface->mapLike;
     push(@operations, @{$interface->setLike->operations}) if $interface->setLike;
-    push(@operations, @{$interface->serializable->operations}) if $interface->serializable;
     foreach my $operation (@operations) {
         next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
         next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;

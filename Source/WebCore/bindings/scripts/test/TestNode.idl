@@ -35,5 +35,5 @@
     [SecureContext] boolean getSecretBoolean();
     [Conditional=TEST_FEATURE, SecureContext, EnabledAtRuntime=TestFeature] boolean testFeatureGetSecretBoolean();
 
-    serializer;
+    [Default] object toJSON();
 };

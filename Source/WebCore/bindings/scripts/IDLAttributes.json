@@ -154,6 +154,9 @@
             "values": ["", "ReadDOM", "Getter"],
             "supportsConjunction": true
         },
+        "Default": {
+            "contextsAllowed": ["operation"]
+        },
         "DefaultDefineOwnProperty": {
             "contextsAllowed": ["interface"]
         },

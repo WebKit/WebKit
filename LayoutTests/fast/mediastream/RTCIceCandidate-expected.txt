@@ -17,11 +17,11 @@ PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").enumerable is true
 PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").writable is true
 PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").configurable is true
 PASS childCandidate.toJSON(); threw exception TypeError: Can only call RTCIceCandidate.toJSON on instances of RTCIceCandidate.
-PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
-PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
-PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
-PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
-PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMLineIndex\":6,\"sdpMid\":\"bar\",\"usernameFragment\":null}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMLineIndex\":6,\"sdpMid\":\"bar\",\"usernameFragment\":null}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMLineIndex\":6,\"sdpMid\":\"bar\",\"usernameFragment\":null}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMLineIndex\":6,\"sdpMid\":\"bar\",\"usernameFragment\":null}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMLineIndex\":6,\"sdpMid\":\"bar\",\"usernameFragment\":null}"
 
 Attributes are readonly
 candidate.candidate = "foo-updated"

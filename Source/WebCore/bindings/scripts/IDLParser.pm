@@ -72,7 +72,6 @@ struct( IDLInterface => {
     asyncIterable => '$', # Used for asycn iterable interfaces, of type 'IDLAsyncIterable'
     mapLike => '$', # Used for mapLike interfaces, of type 'IDLMapLike'
     setLike => '$', # Used for setLike interfaces, of type 'IDLSetLike'
-    serializable => '$', # Used for serializable interfaces, of type 'IDLSerializable'
     extendedAttributes => '$',
 });
 
@@ -94,7 +93,6 @@ struct( IDLOperation => {
     isConstructor => '$',
     isStatic => '$',
     isIterable => '$',
-    isSerializer => '$',
     isStringifier => '$',
     isMapLike => '$',
     isSetLike => '$',
@@ -152,15 +150,6 @@ struct( IDLSetLike => {
     attributes => '@', # SetLike attributes (size)
     operations => '@', # SetLike operations (entries, keys, values, forEach, has and if not readonly, delete, set and clear)
     extendedAttributes => '$',
-});
-
-# https://heycam.github.io/webidl/#idl-serializers
-struct( IDLSerializable => {
-    attributes => '@', # List of attributes to serialize
-    hasAttribute => '$', # serializer = { attribute }
-    hasInherit => '$', # serializer = { inherit }
-    hasGetter => '$', # serializer = { getter }
-    operations => '@', # toJSON operation
 });
 
 # https://heycam.github.io/webidl/#idl-constants
@@ -600,7 +589,6 @@ sub cloneOperation
     $clonedOperation->isConstructor($operation->isConstructor);
     $clonedOperation->isStatic($operation->isStatic);
     $clonedOperation->isIterable($operation->isIterable);
-    $clonedOperation->isSerializer($operation->isSerializer);
     $clonedOperation->isStringifier($operation->isStringifier);
     $clonedOperation->isMapLike($operation->isMapLike);
     $clonedOperation->isSetLike($operation->isSetLike);
@@ -652,10 +640,10 @@ my $nextSpecials_1 = '^(deleter|getter|setter)$';
 my $nextDefinitions_1 = '^(callback|dictionary|enum|interface|namespace|partial|typedef)$';
 my $nextDictionaryMember_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|required|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextCallbackInterfaceMembers_1 = '^(\(|const|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
-my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
+my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|constructor|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextMixinMembers_1 = '^(\(|attribute|ByteString|DOMString|USVString|any|boolean|byte|const|double|float|long|object|octet|readonly|sequence|short|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextNamespaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|readonly|sequence|short|symbol|undefined|unrestricted|unsigned)$';
-my $nextPartialInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
+my $nextPartialInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextSingleType_1 = '^(ByteString|DOMString|USVString|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextArgumentName_1 = '^(async|attribute|callback|const|constructor|deleter|dictionary|enum|getter|includes|inherit|interface|iterable|maplike|mixin|namespace|partial|readonly|required|setlike|setter|static|stringifier|typedef|unrestricted)$';
 my $nextConstValue_1 = '^(false|true)$';
@@ -1325,12 +1313,6 @@ sub parsePartialInterfaceMember
     if ($next->value() eq "inherit") {
         return $self->parseInheritAttribute($extendedAttributeList);
     }
-
-    # FIXME: Remove. This is no longer part of WebIDL. Replace with [Serializable].
-    if ($next->value() eq "serializer") {
-        return $self->parseSerializer($extendedAttributeList);
-    }
-
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextOperation_1/) {
         return $self->parseOperation($extendedAttributeList);
     }
@@ -1797,114 +1779,6 @@ sub parseConstructor
         return $operation;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseSerializer
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-
-    my $next = $self->nextToken();
-    if ($next->value() eq "serializer") {
-        $self->assertTokenValue($self->getToken(), "serializer", __LINE__);
-        my $next = $self->nextToken();
-        my $newDataNode;
-        if ($next->value() ne ";") {
-            $newDataNode = $self->parseSerializerRest($extendedAttributeList);
-            my $next = $self->nextToken();
-        } else {
-            $newDataNode = IDLSerializable->new();
-        }
-
-        my $toJSONOperation = IDLOperation->new();
-        $toJSONOperation->name("toJSON");
-
-        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "operation");
-        $toJSONOperation->extendedAttributes($extendedAttributeList);
-        $toJSONOperation->isSerializer(1);
-        push(@{$newDataNode->operations}, $toJSONOperation);
-
-        $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return $newDataNode;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseSerializerRest
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-
-    my $next = $self->nextToken();
-    if ($next->value() eq "=") {
-        $self->assertTokenValue($self->getToken(), "=", __LINE__);
-
-        return $self->parseSerializationPattern();
-
-    }
-    if ($next->type() == IdentifierToken || $next->value() eq "(") {
-        return $self->parseOperationRest($extendedAttributeList);
-    }
-}
-
-sub parseSerializationPattern
-{
-    my $self = shift;
-
-    my $next = $self->nextToken();
-    if ($next->value() eq "{") {
-        $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        my $newDataNode = IDLSerializable->new();
-        $self->parseSerializationAttributes($newDataNode);
-        $self->assertTokenValue($self->getToken(), "}", __LINE__);
-        return $newDataNode;
-    }
-    if ($next->value() eq "[") {
-        die "Serialization of lists pattern is not currently supported.";
-    }
-    if ($next->type() == IdentifierToken) {
-        my @attributes = ();
-        my $token = $self->getToken();
-        $self->assertTokenType($token, IdentifierToken);
-        push(@attributes, $token->value());
-
-        my $newDataNode = IDLSerializable->new();
-        $newDataNode->attributes(\@attributes);
-
-        return $newDataNode;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseSerializationAttributes
-{
-    my $self = shift;
-    my $serializable = shift;
-
-    my @attributes = ();
-    my @identifiers = $self->parseIdentifierList();
-
-    for my $identifier (@identifiers) {
-        if ($identifier eq "getter") {
-            $serializable->hasGetter(1);
-            die "Serializer getter keyword is not currently supported.";
-        }
-
-        if ($identifier eq "inherit") {
-            $serializable->hasInherit(1);
-            next;
-        }
-
-        if ($identifier eq "attribute") {
-            $serializable->hasAttribute(1);
-            # Attributes will be filled in via applyMemberList()
-            next;
-        }
-
-        push(@attributes, $identifier);
-    }
-
-    $serializable->attributes(\@attributes);
 }
 
 sub parseIdentifierList
@@ -3391,23 +3265,6 @@ sub applyMemberList
                 push(@{$interface->operations}, $item);
             }
             next;
-        }
-        if (ref($item) eq "IDLSerializable") {
-            $interface->serializable($item);
-            next;
-        }
-    }
-
-    if ($interface->serializable) {
-        my $numSerializerAttributes = @{$interface->serializable->attributes};
-        if ($interface->serializable->hasAttribute) {
-            foreach my $attribute (@{$interface->attributes}) {
-                push(@{$interface->serializable->attributes}, $attribute->name);
-            }
-        } elsif ($numSerializerAttributes == 0) {
-            foreach my $attribute (@{$interface->attributes}) {
-                push(@{$interface->serializable->attributes}, $attribute->name);
-            }
         }
     }
 }

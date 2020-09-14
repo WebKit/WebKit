@@ -435,8 +435,6 @@ enum TestConfidence { "high", "kinda-low" };
 
     stringifier attribute USVString stringifierAttribute;
 
-    serializer = {create, readOnlyStringAttr, enumAttr, longAttr};
-
     undefined bufferSourceParameter(BufferSource data);
 
     [LegacyCaller] undefined legacyCallerNamed(long param);
