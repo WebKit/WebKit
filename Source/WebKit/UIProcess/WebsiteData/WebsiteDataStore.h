@@ -238,6 +238,7 @@ public:
     void addPendingCookie(const WebCore::Cookie&);
     void removePendingCookie(const WebCore::Cookie&);
     void clearPendingCookies();
+    void flushCookies(CompletionHandler<void()>&&);
 
     void dispatchOnQueue(Function<void()>&&);
 

@@ -29,8 +29,6 @@ messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
     DidDeleteWebsiteData(WebKit::CallbackID callbackID)
     DidDeleteWebsiteDataForOrigins(WebKit::CallbackID callbackID)
 
-    DidSyncAllCookies()
-
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
     TerminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
 

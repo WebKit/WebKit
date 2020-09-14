@@ -67,7 +67,7 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
     SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () Synchronous
 
-    SyncAllCookies()
+    FlushCookies(PAL::SessionID sessionID) -> () Async
 
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
 

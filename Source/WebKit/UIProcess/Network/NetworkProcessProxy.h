@@ -198,8 +198,7 @@ public:
 
     void setIsHoldingLockedFiles(bool);
 
-    void syncAllCookies();
-    void didSyncAllCookies();
+    void flushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
     void terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier);
@@ -325,10 +324,7 @@ private:
 #endif
     ProcessThrottler m_throttler;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_syncAllCookiesActivity;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
-    
-    unsigned m_syncAllCookiesCounter { 0 };
 
 #if ENABLE(CONTENT_EXTENSIONS)
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;

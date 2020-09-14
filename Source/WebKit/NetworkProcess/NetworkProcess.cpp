@@ -275,7 +275,9 @@ void NetworkProcess::didClose(IPC::Connection&)
         networkSession.flushAndDestroyPersistentStore([callbackAggregator] { });
     });
 #endif
-    platformSyncAllCookies([callbackAggregator] { });
+    forEachNetworkSession([&] (auto& networkSession) {
+        platformFlushCookies(networkSession.sessionID(), [callbackAggregator] { });
+    });
 }
 
 void NetworkProcess::didCreateDownload()
@@ -2280,7 +2282,9 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
     WebResourceLoadStatisticsStore::suspend([callbackAggregator] { });
 #endif
 
-    platformSyncAllCookies([callbackAggregator] { });
+    forEachNetworkSession([&] (auto& networkSession) {
+        platformFlushCookies(networkSession.sessionID(), [callbackAggregator] { });
+    });
 
     for (auto& connection : m_webProcessConnections.values())
         connection->cleanupForSuspension([callbackAggregator] { });
@@ -2380,11 +2384,6 @@ void NetworkProcess::registerURLSchemeAsLocal(const String& scheme) const
 void NetworkProcess::registerURLSchemeAsNoAccess(const String& scheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsNoAccess(scheme);
-}
-
-void NetworkProcess::didSyncAllCookies()
-{
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSyncAllCookies(), 0);
 }
 
 #if ENABLE(INDEXED_DATABASE)
@@ -2612,11 +2611,12 @@ void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParam
 {
 }
 
-void NetworkProcess::syncAllCookies()
+void NetworkProcess::flushCookies(const PAL::SessionID&, CompletionHandler<void()>&& completionHandler)
 {
+    completionHandler();
 }
 
-void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::platformFlushCookies(const PAL::SessionID&, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }

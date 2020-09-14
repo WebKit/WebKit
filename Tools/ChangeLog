@@ -1,3 +1,14 @@
+2020-09-14  Alex Christensen  <achristensen@webkit.org>
+
+        Move cookie flushing SPI from WKProcessPool to WKHTTPCookieStore
+        https://bugs.webkit.org/show_bug.cgi?id=216493
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (runWebsiteDataStoreCustomPaths):
+        (TEST):
+
 2020-09-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Disable AutoInstaller with environment variable (Follow-up fix)

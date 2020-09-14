@@ -451,7 +451,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (void)_syncNetworkProcessCookies
 {
-    _processPool->syncNetworkProcessCookies();
 }
 
 - (void)_clearWebProcessCache

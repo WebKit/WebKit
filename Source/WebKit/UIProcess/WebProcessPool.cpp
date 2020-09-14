@@ -1833,9 +1833,9 @@ void WebProcessPool::terminateServiceWorkers()
 #endif
 }
 
-void WebProcessPool::syncNetworkProcessCookies()
+void WebProcessPool::flushCookies(const PAL::SessionID& sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    ensureNetworkProcess().syncAllCookies();
+    ensureNetworkProcess().flushCookies(sessionID, WTFMove(completionHandler));
 }
 
 void WebProcessPool::syncLocalStorage(CompletionHandler<void()>&& completionHandler)

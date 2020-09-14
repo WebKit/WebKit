@@ -146,4 +146,11 @@ private:
     });
 }
 
+- (void)_flushCookiesToDiskWithCompletionHandler:(void(^)(void))completionHandler
+{
+    _cookieStore->flushCookies([completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
+}
+
 @end

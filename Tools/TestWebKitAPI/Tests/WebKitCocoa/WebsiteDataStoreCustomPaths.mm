@@ -32,6 +32,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <JavaScriptCore/JSCConfig.h>
+#import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKPreferencesRef.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -148,7 +149,11 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     EXPECT_STREQ([getNextMessage().body UTF8String], "Exception: QuotaExceededError: The quota has been exceeded.");
     EXPECT_STREQ([getNextMessage().body UTF8String], "Success opening indexed database");
 
-    [[[webView configuration] processPool] _syncNetworkProcessCookies];
+    __block bool flushed = false;
+    [configuration.get().websiteDataStore.httpCookieStore _flushCookiesToDiskWithCompletionHandler:^{
+        flushed = true;
+    }];
+    TestWebKitAPI::Util::run(&flushed);
 
     // Forcibly shut down everything of WebKit that we can.
     auto pid = [webView _webProcessIdentifier];
@@ -418,7 +423,11 @@ TEST(WebKit, WebsiteDataStoreEphemeral)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebsiteDataStoreCustomPaths" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
-    [[[webView configuration] processPool] _syncNetworkProcessCookies];
+    __block bool flushed = false;
+    [configuration.get().websiteDataStore.httpCookieStore _flushCookiesToDiskWithCompletionHandler:^{
+        flushed = true;
+    }];
+    TestWebKitAPI::Util::run(&flushed);
 
     // Forcibly shut down everything of WebKit that we can.
     auto pid = [webView _webProcessIdentifier];
@@ -493,7 +502,11 @@ TEST(WebKit, WebsiteDataStoreEphemeralViaConfiguration)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebsiteDataStoreCustomPaths" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
-    [[[webView configuration] processPool] _syncNetworkProcessCookies];
+    __block bool flushed = false;
+    [configuration.get().websiteDataStore.httpCookieStore _flushCookiesToDiskWithCompletionHandler:^{
+        flushed = true;
+    }];
+    TestWebKitAPI::Util::run(&flushed);
 
     // Forcibly shut down everything of WebKit that we can.
     auto pid = [webView _webProcessIdentifier];

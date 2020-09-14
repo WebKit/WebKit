@@ -223,17 +223,16 @@ void NetworkProcess::setStorageAccessAPIEnabled(bool enabled)
     WebCore::NetworkStorageSession::setStorageAccessAPIEnabled(enabled);
 }
 
-void NetworkProcess::syncAllCookies()
+void NetworkProcess::flushCookies(const PAL::SessionID& sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    platformSyncAllCookies([this] {
-        didSyncAllCookies();
-    });
+    platformFlushCookies(sessionID, WTFMove(completionHandler));
 }
 
 #if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
 static void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(cookieStorage);
     [cookieStorage _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
         // CFNetwork may call the completion block on a background queue, so we need to redispatch to the main thread.
         RunLoop::main().dispatch(WTFMove(completionHandler));
@@ -241,21 +240,20 @@ static void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<vo
 }
 #endif
 
-void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completionHander) {
+void NetworkProcess::platformFlushCookies(const PAL::SessionID& sessionID, CompletionHandler<void()>&& completionHandler)
+{
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-
 #if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
-    RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create(WTFMove(completionHander));
-    forEachNetworkStorageSession([&] (auto& networkStorageSession) {
-        saveCookies(networkStorageSession.nsCookieStorage(), [callbackAggregator] { });
-    });
+    if (auto* networkStorageSession = storageSession(sessionID))
+        saveCookies(networkStorageSession->nsCookieStorage(), WTFMove(completionHandler));
+    else
+        completionHandler();
 #else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     _CFHTTPCookieStorageFlushCookieStores();
-    completionHander();
-#endif
-
     ALLOW_DEPRECATED_DECLARATIONS_END
+    completionHandler();
+#endif
 }
 
 void NetworkProcess::platformProcessDidTransitionToBackground()

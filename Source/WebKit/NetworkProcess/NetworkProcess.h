@@ -443,8 +443,7 @@ private:
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void setAllowsAnySSLCertificateForWebSocket(bool, CompletionHandler<void()>&&);
     
-    void syncAllCookies();
-    void didSyncAllCookies();
+    void flushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
 
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
@@ -461,7 +460,7 @@ private:
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
 #endif
 
-    void platformSyncAllCookies(CompletionHandler<void()>&&);
+    void platformFlushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
     
     void registerURLSchemeAsSecure(const String&) const;
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;

@@ -64,6 +64,7 @@ public:
     
     void deleteAllCookies(CompletionHandler<void()>&&);
     void setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
+    void flushCookies(CompletionHandler<void()>&&);
 
     class Observer {
     public:

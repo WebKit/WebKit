@@ -283,9 +283,6 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
 #endif
 
     m_activityForHoldingLockedFiles = nullptr;
-    
-    m_syncAllCookiesActivity = nullptr;
-    m_syncAllCookiesCounter = 0;
 
     m_uploadActivity = WTF::nullopt;
 
@@ -1250,27 +1247,9 @@ void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     }
 }
 
-void NetworkProcessProxy::syncAllCookies()
+void NetworkProcessProxy::flushCookies(const PAL::SessionID& sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    send(Messages::NetworkProcess::SyncAllCookies(), 0);
-    
-    ++m_syncAllCookiesCounter;
-    if (m_syncAllCookiesActivity)
-        return;
-    
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is syncing cookies", this);
-    m_syncAllCookiesActivity = throttler().backgroundActivity("Syncing cookies"_s).moveToUniquePtr();
-}
-    
-void NetworkProcessProxy::didSyncAllCookies()
-{
-    ASSERT(m_syncAllCookiesCounter);
-
-    --m_syncAllCookiesCounter;
-    if (!m_syncAllCookiesCounter) {
-        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is releasing a background assertion because the Network process is done syncing cookies", this);
-        m_syncAllCookiesActivity = nullptr;
-    }
+    sendWithAsyncReply(Messages::NetworkProcess::FlushCookies(sessionID), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::addSession(Ref<WebsiteDataStore>&& store)

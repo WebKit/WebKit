@@ -189,6 +189,11 @@ void HTTPCookieStore::setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy 
     });
 }
 
+void HTTPCookieStore::flushCookies(CompletionHandler<void()>&& completionHandler)
+{
+    m_owningDataStore->flushCookies(WTFMove(completionHandler));
+}
+
 class APIWebCookieManagerProxyObserver : public WebCookieManagerProxy::Observer {
     WTF_MAKE_FAST_ALLOCATED;
 public:

@@ -328,7 +328,7 @@ public:
     void sendNetworkProcessDidResume();
     void terminateServiceWorkers();
 
-    void syncNetworkProcessCookies();
+    void flushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
     void syncLocalStorage(CompletionHandler<void()>&& callback);
     void clearLegacyPrivateBrowsingLocalStorage(CompletionHandler<void()>&& callback);
 

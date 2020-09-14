@@ -2254,6 +2254,13 @@ void WebsiteDataStore::clearPendingCookies()
     m_pendingCookies.clear();
 }
 
+void WebsiteDataStore::flushCookies(CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto processPool : WebProcessPool::allProcessPools())
+        processPool->flushCookies(sessionID(), [callbackAggregator] { });
+}
+
 void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
 {
     m_queue->dispatch(WTFMove(function));
