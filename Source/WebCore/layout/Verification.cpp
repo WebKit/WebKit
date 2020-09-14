@@ -30,12 +30,12 @@
 
 #ifndef NDEBUG
 #include "BlockFormattingState.h"
-#include "DisplayBox.h"
 #include "InlineFormattingState.h"
 #include "InlineTextBox.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
+#include "LayoutGeometry.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
@@ -238,7 +238,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
             return displayBox.rect();
 
         // Produce a RenderBox matching margin box.
-        auto containingBlockWidth = layoutState.displayBoxForLayoutBox(layoutBox.containingBlock()).contentBoxWidth();
+        auto containingBlockWidth = layoutState.geometryForLayoutBox(layoutBox.containingBlock()).contentBoxWidth();
         auto marginStart = LayoutUnit { };
         auto& marginStartStyle = layoutBox.style().marginStart();
         if (marginStartStyle.isFixed() || marginStartStyle.isPercent() || marginStartStyle.isCalculated())
@@ -258,7 +258,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
             marginAfter = verticalMargin.nonCollapsedValues.after;
         }
         auto borderBox = displayBox.borderBox();
-        return Display::Rect {
+        return Rect {
             borderBox.top() - marginBefore,
             borderBox.left() - marginStart,
             marginStart + borderBox.width() + marginEnd,
@@ -271,11 +271,11 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
     if (renderer.isInFlowPositioned())
         frameRect.move(renderer.offsetForInFlowPosition());
 
-    auto displayBox = Display::Box { layoutState.displayBoxForLayoutBox(layoutBox) };
+    auto displayBox = Geometry { layoutState.geometryForLayoutBox(layoutBox) };
     if (layoutBox.isTableBox()) {
         // When the <table> is out-of-flow positioned, the wrapper table box has the offset
         // while the actual table box is static, inflow.
-        auto& tableWrapperDisplayBox = layoutState.displayBoxForLayoutBox(layoutBox.containingBlock());
+        auto& tableWrapperDisplayBox = layoutState.geometryForLayoutBox(layoutBox.containingBlock());
         displayBox.moveBy(tableWrapperDisplayBox.topLeft());
         // Table wrapper box has the margin values for the table.
         displayBox.setHorizontalMargin(tableWrapperDisplayBox.horizontalMargin());

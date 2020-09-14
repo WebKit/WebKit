@@ -30,7 +30,6 @@
 
 #include "BlockFormattingContext.h"
 #include "BlockFormattingState.h"
-#include "DisplayBox.h"
 #include "DisplayPainter.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
@@ -38,6 +37,7 @@
 #include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutGeometry.h"
 #include "LayoutPhase.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderStyleConstants.h"
@@ -64,7 +64,7 @@ void LayoutContext::layout(const LayoutSize& rootContentBoxSize, InvalidationSta
     // Note that we never layout the root box. It has to have an already computed geometry (in case of ICB, it's the view geometry).
     // ICB establishes the initial BFC, but it does not live in a formatting context and while a non-ICB root(subtree layout) has to have a formatting context,
     // we could not lay it out even if we wanted to since it's outside of this LayoutContext.
-    auto& displayBox = layoutState().displayBoxForRootLayoutBox();
+    auto& displayBox = layoutState().geometryForRootLayoutBox();
     displayBox.setHorizontalMargin({ });
     displayBox.setVerticalMargin({ });
     displayBox.setBorder({ });
@@ -96,7 +96,7 @@ void LayoutContext::layoutFormattingContextSubtree(const ContainerBox& formattin
         return;
 
     auto formattingContext = createFormattingContext(formattingContextRoot, layoutState());
-    auto& displayBox = layoutState().displayBoxForLayoutBox(formattingContextRoot);
+    auto& displayBox = layoutState().geometryForLayoutBox(formattingContextRoot);
 
     if (formattingContextRoot.hasInFlowOrFloatingChild()) {
         auto constraintsForInFlowContent = FormattingContext::ConstraintsForInFlowContent { { displayBox.contentBoxLeft(), displayBox.contentBoxWidth() }, { displayBox.contentBoxTop(), { } } };

@@ -30,12 +30,12 @@
 
 #include "CachedImage.h"
 #include "Color.h"
-#include "DisplayBox.h"
 #include "GraphicsContext.h"
 #include "InlineFormattingState.h"
 #include "InlineTextItem.h"
 #include "IntRect.h"
 #include "LayoutContainerBox.h"
+#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include "RenderStyle.h"
@@ -44,7 +44,8 @@
 namespace WebCore {
 namespace Display {
 
-static void paintBoxDecoration(GraphicsContext& context, const Box& absoluteDisplayBox, const RenderStyle& style, bool needsMarginPainting)
+// FIXME: Move to display box.
+static void paintBoxDecoration(GraphicsContext& context, const Layout::Geometry& absoluteDisplayBox, const RenderStyle& style, bool needsMarginPainting)
 {
     auto decorationBoxTopLeft = needsMarginPainting ? absoluteDisplayBox.rectWithMargin().topLeft() : absoluteDisplayBox.topLeft();
     auto decorationBoxSize = needsMarginPainting ? absoluteDisplayBox.rectWithMargin().size() : LayoutSize(absoluteDisplayBox.borderBoxWidth(), absoluteDisplayBox.borderBoxHeight());
@@ -141,13 +142,13 @@ static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOff
     }
 }
 
-Box Painter::absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layout::Box& layoutBoxToPaint)
+Layout::Geometry Painter::absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layout::Box& layoutBoxToPaint)
 {
     // Should never really happen but table code is way too incomplete.
     if (!layoutState.hasDisplayBox(layoutBoxToPaint))
         return { };
     if (is<Layout::InitialContainingBlock>(layoutBoxToPaint))
-        return layoutState.displayBoxForLayoutBox(layoutBoxToPaint);
+        return layoutState.geometryForLayoutBox(layoutBoxToPaint);
 
     auto paintContainer = [&] (const auto& layoutBox) {
         if (layoutBox.isTableCell()) {
@@ -157,9 +158,9 @@ Box Painter::absoluteDisplayBox(const Layout::LayoutState& layoutState, const La
         }
         return &layoutBox.containingBlock();
     };
-    auto absoluteBox = Box { layoutState.displayBoxForLayoutBox(layoutBoxToPaint) };
+    auto absoluteBox = Layout::Geometry { layoutState.geometryForLayoutBox(layoutBoxToPaint) };
     for (auto* container = paintContainer(layoutBoxToPaint); !is<Layout::InitialContainingBlock>(container); container = paintContainer(*container))
-        absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*container).topLeft());
+        absoluteBox.moveBy(layoutState.geometryForLayoutBox(*container).topLeft());
     return absoluteBox;
 }
 
@@ -234,7 +235,7 @@ static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& lay
         positiveZOrderList.append(&layoutBox);
     };
 
-    auto contentRect = LayoutRect { layoutState.displayBoxForLayoutBox(rootLayoutBox).rect() };
+    auto contentRect = LayoutRect { layoutState.geometryForLayoutBox(rootLayoutBox).rect() };
 
     // Initial BFC is always a paint root.
     appendPaintRoot(rootLayoutBox);

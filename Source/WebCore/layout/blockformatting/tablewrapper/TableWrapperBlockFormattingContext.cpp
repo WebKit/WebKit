@@ -29,10 +29,10 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
-#include "DisplayBox.h"
 #include "InvalidationState.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
+#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"

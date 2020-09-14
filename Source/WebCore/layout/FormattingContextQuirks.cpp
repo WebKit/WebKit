@@ -28,8 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
 #include "LayoutBox.h"
+#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 
 namespace WebCore {

@@ -27,9 +27,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
 #include "DisplayInlineRect.h"
 #include "InlineLine.h"
+#include "LayoutGeometry.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/WeakPtr.h>
 

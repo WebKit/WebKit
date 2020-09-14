@@ -30,12 +30,12 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DisplayBox.h"
 #include "DisplayPainter.h"
 #include "DisplayView.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "LayoutContext.h"
+#include "LayoutGeometry.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Settings.h"
@@ -85,8 +85,8 @@ void LayerController::prepareForDisplay(const Layout::LayoutState& layoutState)
 
     ASSERT(layoutState.hasDisplayBox(rootLayoutBox));
 
-    auto viewSize = layoutState.displayBoxForLayoutBox(rootLayoutBox).size();
-    auto contentSize = layoutState.displayBoxForLayoutBox(*rootLayoutBox.firstChild()).size();
+    auto viewSize = layoutState.geometryForLayoutBox(rootLayoutBox).size();
+    auto contentSize = layoutState.geometryForLayoutBox(*rootLayoutBox.firstChild()).size();
     
     // FIXME: Using the firstChild() size won't be correct until we compute overflow correctly,
     contentSize.clampToMinimumSize(viewSize);

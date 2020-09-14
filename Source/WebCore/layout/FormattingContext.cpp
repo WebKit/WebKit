@@ -28,13 +28,13 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
 #include "FormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
+#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutReplacedBox.h"
 #include "LayoutState.h"
@@ -168,7 +168,7 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
 
-const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeReason> escapeReason) const
+const Layout::Geometry& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeReason> escapeReason) const
 {
     UNUSED_PARAM(escapeReason);
 #if ASSERT_ENABLED
@@ -251,7 +251,7 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
 #endif
     ASSERT(isOkToAccessDisplayBox());
     ASSERT(layoutState().hasDisplayBox(layoutBox));
-    return layoutState().displayBoxForLayoutBox(layoutBox);
+    return layoutState().geometryForLayoutBox(layoutBox);
 }
 
 void FormattingContext::collectOutOfFlowDescendantsIfNeeded()

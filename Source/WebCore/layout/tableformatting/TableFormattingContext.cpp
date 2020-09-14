@@ -29,13 +29,13 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
-#include "DisplayBox.h"
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
+#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>

@@ -33,6 +33,7 @@ class GraphicsContext;
 class IntRect;
 
 namespace Layout {
+class Geometry;
 class LayoutState;
 }
 
@@ -43,7 +44,8 @@ public:
     static void paint(const Layout::LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
     static void paintInlineFlow(const Layout::LayoutState&, GraphicsContext&);
 
-    static Box absoluteDisplayBox(const Layout::LayoutState&, const Layout::Box&);    
+    // FIXME: Move to display box.
+    static Layout::Geometry absoluteDisplayBox(const Layout::LayoutState&, const Layout::Box&);
 };
 
 }

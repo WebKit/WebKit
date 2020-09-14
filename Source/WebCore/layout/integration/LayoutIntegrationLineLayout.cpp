@@ -28,7 +28,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
 #include "EventRegion.h"
 #include "FloatingState.h"
 #include "HitTestLocation.h"
@@ -37,6 +36,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "InvalidationState.h"
+#include "LayoutGeometry.h"
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
@@ -138,7 +138,7 @@ void LineLayout::prepareFloatingState()
         auto position = floatingObject->type() == FloatingObject::FloatRight
             ? Layout::FloatingState::FloatItem::Position::Right
             : Layout::FloatingState::FloatItem::Position::Left;
-        auto box = Display::Box { };
+        auto box = Layout::Geometry { };
         // FIXME: We are flooring here for legacy compatibility.
         //        See FloatingObjects::intervalForFloatingObject.
         auto y = rect.y().floor();

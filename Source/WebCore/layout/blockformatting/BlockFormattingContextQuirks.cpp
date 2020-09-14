@@ -29,9 +29,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
-#include "DisplayBox.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 

@@ -27,23 +27,21 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutGeometry.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-namespace Display {
-class Box;
-}
-
 namespace Layout {
 
 class Box;
 class FloatingContext;
+class Geometry;
 class LayoutState;
+class Rect;
 
 // FloatingState holds the floating boxes per formatting context.
 class FloatingState : public RefCounted<FloatingState> {
@@ -60,17 +58,17 @@ public:
 
     class FloatItem {
     public:
-        FloatItem(const Box&, Display::Box absoluteDisplayBox);
+        FloatItem(const Box&, Geometry absoluteDisplayBox);
 
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
-        FloatItem(Position, Display::Box absoluteDisplayBox);
+        FloatItem(Position, Geometry absoluteDisplayBox);
 
         bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isInFormattingContextOf(const ContainerBox& formattingContextRoot) const { return m_layoutBox->isInFormattingContextOf(formattingContextRoot); }
 
-        Display::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
-        Display::Box::HorizontalMargin horizontalMargin() const { return m_absoluteDisplayBox.horizontalMargin(); }
+        Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
+        Geometry::HorizontalMargin horizontalMargin() const { return m_absoluteDisplayBox.horizontalMargin(); }
         PositionInContextRoot bottom() const { return { m_absoluteDisplayBox.bottom() }; }
 
 #if ASSERT_ENABLED
@@ -79,7 +77,7 @@ public:
     private:
         WeakPtr<const Box> m_layoutBox;
         Position m_position;
-        Display::Box m_absoluteDisplayBox;
+        Geometry m_absoluteDisplayBox;
     };
     using FloatList = Vector<FloatItem>;
     const FloatList& floats() const { return m_floats; }

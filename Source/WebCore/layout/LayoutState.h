@@ -35,16 +35,13 @@
 
 namespace WebCore {
 
-namespace Display {
-class Box;
-}
-
 namespace Layout {
 
+class BlockFormattingState;
 class FlexFormattingState;
 class FormattingContext;
 class FormattingState;
-class BlockFormattingState;
+class Geometry;
 class InlineFormattingState;
 class TableFormattingState;
 
@@ -74,9 +71,9 @@ public:
     void deregisterFormattingContext(const FormattingContext& formattingContext) { m_formattingContextList.remove(&formattingContext); }
 #endif
 
-    Display::Box& displayBoxForRootLayoutBox();
-    Display::Box& ensureDisplayBoxForLayoutBox(const Box&);
-    const Display::Box& displayBoxForLayoutBox(const Box&) const;
+    Layout::Geometry& geometryForRootLayoutBox();
+    Layout::Geometry& ensureGeometryForLayoutBox(const Box&);
+    const Layout::Geometry& geometryForLayoutBox(const Box&) const;
 
     bool hasDisplayBox(const Box&) const;
 
@@ -96,7 +93,7 @@ public:
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
-    Display::Box& ensureDisplayBoxForLayoutBoxSlow(const Box&);
+    Layout::Geometry& ensureDisplayBoxForLayoutBoxSlow(const Box&);
 
     HashMap<const ContainerBox*, std::unique_ptr<InlineFormattingState>> m_inlineFormattingStates;
     HashMap<const ContainerBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
@@ -108,7 +105,7 @@ private:
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
 #endif
-    HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
+    HashMap<const Box*, std::unique_ptr<Layout::Geometry>> m_layoutToDisplayBox;
     QuirksMode m_quirksMode { QuirksMode::No };
 
     WeakPtr<const ContainerBox> m_rootContainer;
@@ -125,14 +122,14 @@ inline bool LayoutState::hasDisplayBox(const Box& layoutBox) const
     return m_layoutToDisplayBox.contains(&layoutBox);
 }
 
-inline Display::Box& LayoutState::ensureDisplayBoxForLayoutBox(const Box& layoutBox)
+inline Layout::Geometry& LayoutState::ensureGeometryForLayoutBox(const Box& layoutBox)
 {
     if (auto* displayBox = layoutBox.cachedDisplayBoxForLayoutState(*this))
         return *displayBox;
     return ensureDisplayBoxForLayoutBoxSlow(layoutBox);
 }
 
-inline const Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
+inline const Layout::Geometry& LayoutState::geometryForLayoutBox(const Box& layoutBox) const
 {
     if (auto* displayBox = layoutBox.cachedDisplayBoxForLayoutState(*this))
         return *displayBox;
@@ -155,7 +152,7 @@ inline bool Box::canCacheForLayoutState(const LayoutState& layoutState) const
     return !m_cachedLayoutState || m_cachedLayoutState.get() == &layoutState;
 }
 
-inline Display::Box* Box::cachedDisplayBoxForLayoutState(const LayoutState& layoutState) const
+inline Layout::Geometry* Box::cachedDisplayBoxForLayoutState(const LayoutState& layoutState) const
 {
     if (m_cachedLayoutState.get() != &layoutState)
         return nullptr;

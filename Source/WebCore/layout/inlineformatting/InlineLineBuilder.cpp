@@ -28,10 +28,10 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
 #include "FloatingContext.h"
 #include "InlineFormattingContext.h"
 #include "LayoutBox.h"
+#include "LayoutGeometry.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 

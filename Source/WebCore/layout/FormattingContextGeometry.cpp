@@ -297,7 +297,7 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     // Start with the parent since we pretend that this box is normal flow.
     for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
-        // Display::Box::top is the border box top position in its containing block's coordinate system.
+        // Layout::Geometry::top is the border box top position in its containing block's coordinate system.
         top += boxGeometry.top();
         ASSERT(!ancestor->isPositioned() || layoutBox.isFixedPositioned());
     }
@@ -319,7 +319,7 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     // Start with the parent since we pretend that this box is normal flow.
     for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
-        // Display::Box::left is the border box left position in its containing block's coordinate system.
+        // Layout::Geometry::left is the border box left position in its containing block's coordinate system.
         left += boxGeometry.left();
         ASSERT(!ancestor->isPositioned() || layoutBox.isFixedPositioned());
     }

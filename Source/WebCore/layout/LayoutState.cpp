@@ -29,12 +29,12 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
-#include "DisplayBox.h"
 #include "FlexFormattingState.h"
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutGeometry.h"
 #include "RenderBox.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TableFormattingState.h"
@@ -63,23 +63,23 @@ LayoutState::LayoutState(const Document& document, const ContainerBox& rootConta
 
 LayoutState::~LayoutState() = default;
 
-Display::Box& LayoutState::displayBoxForRootLayoutBox()
+Layout::Geometry& LayoutState::geometryForRootLayoutBox()
 {
-    return ensureDisplayBoxForLayoutBox(root());
+    return ensureGeometryForLayoutBox(root());
 }
 
-Display::Box& LayoutState::ensureDisplayBoxForLayoutBoxSlow(const Box& layoutBox)
+Layout::Geometry& LayoutState::ensureDisplayBoxForLayoutBoxSlow(const Box& layoutBox)
 {
     if (layoutBox.canCacheForLayoutState(*this)) {
         ASSERT(!layoutBox.cachedDisplayBoxForLayoutState(*this));
-        auto newBox = makeUnique<Display::Box>();
+        auto newBox = makeUnique<Layout::Geometry>();
         auto& newBoxPtr = *newBox;
         layoutBox.setCachedDisplayBoxForLayoutState(*this, WTFMove(newBox));
         return newBoxPtr;
     }
 
     return *m_layoutToDisplayBox.ensure(&layoutBox, [] {
-        return makeUnique<Display::Box>();
+        return makeUnique<Layout::Geometry>();
     }).iterator->value;
 }
 

@@ -29,7 +29,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "CachedImage.h"
-#include "DisplayBox.h"
 #include "DisplayRun.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
@@ -42,6 +41,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
+#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
@@ -426,7 +426,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
     }
 }
 
-static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Display::Box* displayBox, unsigned depth)
+static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Geometry* displayBox, unsigned depth)
 {
     unsigned printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
@@ -507,7 +507,7 @@ static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream,
         if (layoutState) {
             // Not all boxes generate display boxes.
             if (layoutState->hasDisplayBox(child))
-                outputLayoutBox(stream, child, &layoutState->displayBoxForLayoutBox(child), depth);
+                outputLayoutBox(stream, child, &layoutState->geometryForLayoutBox(child), depth);
             else
                 outputLayoutBox(stream, child, nullptr, depth);
             if (child.establishesInlineFormattingContext())
@@ -525,7 +525,7 @@ void showLayoutTree(const Box& layoutBox, const LayoutState* layoutState)
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
     auto& initialContainingBlock = layoutBox.initialContainingBlock();
-    outputLayoutBox(stream, initialContainingBlock, layoutState ? &layoutState->displayBoxForLayoutBox(initialContainingBlock) : nullptr, 0);
+    outputLayoutBox(stream, initialContainingBlock, layoutState ? &layoutState->geometryForLayoutBox(initialContainingBlock) : nullptr, 0);
     outputLayoutTree(layoutState, stream, initialContainingBlock, 1);
     WTFLogAlways("%s", stream.release().utf8().data());
 }

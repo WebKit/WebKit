@@ -61,7 +61,7 @@ public:
 
     LayoutState& layoutState() const { return m_layoutState; }
 
-    Display::Box& displayBox(const Box& layoutBox);
+    Layout::Geometry& displayBox(const Box& layoutBox);
     // Since we layout the out-of-flow boxes at the end of the formatting context layout, it's okay to store them in the formatting state -as opposed to the containing block level.
     using OutOfFlowBoxList = Vector<WeakPtr<const Box>>;
     void addOutOfFlowBox(const Box& outOfFlowBox) { m_outOfFlowBoxes.append(makeWeakPtr(outOfFlowBox)); }

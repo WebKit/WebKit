@@ -29,11 +29,11 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
-#include "DisplayBox.h"
 #include "FloatAvoider.h"
 #include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutGeometry.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -404,7 +404,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
 
 void FloatingContext::append(const Box& floatBox)
 {
-    auto absoluteDisplayBox = Display::Box(formattingContext().geometryForBox(floatBox));
+    auto absoluteDisplayBox = Geometry(formattingContext().geometryForBox(floatBox));
     absoluteDisplayBox.setTopLeft(mapTopLeftToFloatingStateRoot(floatBox));
     floatingState().append(FloatingState::FloatItem { floatBox, absoluteDisplayBox });
 }
