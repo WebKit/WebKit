@@ -711,6 +711,7 @@ $(PROJECT_DIR)/dom/DocumentType.idl
 $(PROJECT_DIR)/dom/DocumentUndoMananger.idl
 $(PROJECT_DIR)/dom/DragEvent.idl
 $(PROJECT_DIR)/dom/Element.idl
+$(PROJECT_DIR)/dom/ElementDOMParsing.idl
 $(PROJECT_DIR)/dom/ErrorEvent.idl
 $(PROJECT_DIR)/dom/Event.idl
 $(PROJECT_DIR)/dom/EventInit.idl
@@ -726,6 +727,7 @@ $(PROJECT_DIR)/dom/HashChangeEvent.idl
 $(PROJECT_DIR)/dom/IdleDeadline.idl
 $(PROJECT_DIR)/dom/IdleRequestCallback.idl
 $(PROJECT_DIR)/dom/IdleRequestOptions.idl
+$(PROJECT_DIR)/dom/InnerHTML.idl
 $(PROJECT_DIR)/dom/InputEvent.idl
 $(PROJECT_DIR)/dom/KeyboardEvent.idl
 $(PROJECT_DIR)/dom/MessageChannel.idl

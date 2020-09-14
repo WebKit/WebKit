@@ -153,11 +153,11 @@ PASS a["clientTop"] is 0
 PASS a["clientLeft"] is 0
 PASS a["clientWidth"] is 0
 PASS a["clientHeight"] is 0
-PASS a["innerHTML"] is nerget
-PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
 PASS a["oncopy"] is null
 PASS a["oncut"] is null
 PASS a["onpaste"] is null
+PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
+PASS a["innerHTML"] is nerget
 PASS a["previousElementSibling"] is [object HTMLDivElement]
 PASS a["nextElementSibling"] is [object HTMLScriptElement]
 PASS a["children"] is [object HTMLCollection]

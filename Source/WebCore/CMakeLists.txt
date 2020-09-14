@@ -793,6 +793,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DocumentUndoMananger.idl
     dom/DragEvent.idl
     dom/Element.idl
+    dom/ElementDOMParsing.idl
     dom/ErrorEvent.idl
     dom/Event.idl
     dom/EventInit.idl
@@ -805,6 +806,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/IdleDeadline.idl
     dom/IdleRequestCallback.idl
     dom/IdleRequestOptions.idl
+    dom/InnerHTML.idl
     dom/InputEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl

@@ -29,9 +29,9 @@
 ] interface ShadowRoot : DocumentFragment {
     readonly attribute ShadowRootMode mode;
     readonly attribute Element host;
-
-    // FIXME: Seems to have been dropped from the Shadow DOM API.
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString innerHTML;
+    // FIXME: Implement 'onslotchange'.
+    // attribute EventHandler onslotchange;
 };
 
 ShadowRoot includes DocumentOrShadowRoot;
+ShadowRoot includes InnerHTML;

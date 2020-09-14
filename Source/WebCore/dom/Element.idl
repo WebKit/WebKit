@@ -88,12 +88,6 @@
     readonly attribute double clientWidth; // FIXME: Should be of type long.
     readonly attribute double clientHeight; // FIXME: Should be of type long.
 
-    // Extensions to Element from DOM Parsing and Serialization specification.
-    // https://w3c.github.io/DOM-Parsing/#extensions-to-the-element-interface
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString innerHTML;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerHTML;
-    [CEReactions, MayThrowException] undefined insertAdjacentHTML(DOMString position, DOMString text);
-
     // Extensions from Full Screen API (https://fullscreen.spec.whatwg.org/#api).
     // FIXME: Should we add unprefixed versions?
     [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitRequestFullscreen, DisabledByQuirk=shouldDisableElementFullscreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.
@@ -156,3 +150,4 @@ Element includes DocumentAndElementEventHandlers;
 Element includes NonDocumentTypeChildNode;
 Element includes ParentNode;
 Element includes Slotable;
+Element includes InnerHTML;

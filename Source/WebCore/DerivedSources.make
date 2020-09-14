@@ -743,6 +743,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DocumentUndoMananger.idl \
     $(WebCore)/dom/DragEvent.idl \
     $(WebCore)/dom/Element.idl \
+    $(WebCore)/dom/ElementDOMParsing.idl \
     $(WebCore)/dom/ErrorEvent.idl \
     $(WebCore)/dom/Event.idl \
     $(WebCore)/dom/EventInit.idl \
@@ -756,6 +757,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/IdleDeadline.idl \
     $(WebCore)/dom/IdleRequestCallback.idl \
     $(WebCore)/dom/IdleRequestOptions.idl \
+    $(WebCore)/dom/InnerHTML.idl \
     $(WebCore)/dom/InputEvent.idl \
     $(WebCore)/dom/KeyboardEvent.idl \
     $(WebCore)/dom/MessageChannel.idl \

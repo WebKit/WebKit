@@ -1,3 +1,23 @@
+2020-09-14  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Split DOM Parsing related functions out of Element and ShadowRoot and into their own IDL files to match specs
+        https://bugs.webkit.org/show_bug.cgi?id=216461
+
+        Reviewed by Darin Adler.
+
+        No behavior change, just cleaning up which IDL files DOM Parsing related operations
+        live to match specs.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.idl:
+        * dom/ElementDOMParsing.idl: Added.
+        * dom/InnerHTML.idl: Added.
+        * dom/ShadowRoot.idl:
+
 2020-09-14  Chris Lord  <clord@igalia.com>
 
         CSS parsing-related singletons should only be used on the main thread
