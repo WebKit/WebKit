@@ -1,5 +1,66 @@
 2020-09-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266898. rdar://problem/68881029
+
+    Disable hardware JPEG decoding on x86 Mac
+    https://bugs.webkit.org/show_bug.cgi?id=216377
+    
+    Reviewed by Geoff Garen.
+    
+    Source/WebCore/PAL:
+    
+    Add wrappers for a new MediaToolbox SPI that allows us to disable HW JPEG decoding.
+    
+    * PAL.xcodeproj/project.pbxproj:
+    * pal/PlatformMac.cmake:
+    * pal/cocoa/MediaToolboxSoftLink.cpp:
+    * pal/cocoa/MediaToolboxSoftLink.h:
+    
+    Source/WebKit:
+    
+    In Big Sur, ImageIO uses hardware JPEG decoding automatically for certain JPEGs. This caused
+    a small regression in our battery life benchmark since the one-time setup cost for the
+    decoder (~20-30 ms per process) was higher than the per-decode win we got from the HW decoder.
+    
+    For now, we're reverting to the Catalina behavior of not using hardware JPEG on x86 Macs by
+    calling a MediaToolbox SPI. (The tradeoffs for Apple Silicon are different so we use
+    ImageIO's default heuristics on that architecture.) We plan to revisit this decision once we
+    move to a GPUProcess world.
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::platformInitializeWebProcess):
+    
+    Source/WTF:
+    
+    Add macros to disable HW JPEG decoding on x86 Macs and indicate the presence of a new MediaToolbox SPI.
+    (The latter is to prevent unnecessary dlopen/dlsym calls since we soft-link MediaToolbox.)
+    
+    * wtf/PlatformEnableCocoa.h:
+    * wtf/PlatformHave.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266898 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-10  Ben Nham  <nham@apple.com>
+
+            Disable hardware JPEG decoding on x86 Mac
+            https://bugs.webkit.org/show_bug.cgi?id=216377
+
+            Reviewed by Geoff Garen.
+
+            In Big Sur, ImageIO uses hardware JPEG decoding automatically for certain JPEGs. This caused
+            a small regression in our battery life benchmark since the one-time setup cost for the
+            decoder (~20-30 ms per process) was higher than the per-decode win we got from the HW decoder.
+
+            For now, we're reverting to the Catalina behavior of not using hardware JPEG on x86 Macs by
+            calling a MediaToolbox SPI. (The tradeoffs for Apple Silicon are different so we use
+            ImageIO's default heuristics on that architecture.) We plan to revisit this decision once we
+            move to a GPUProcess world.
+
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeWebProcess):
+
+2020-09-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266797. rdar://problem/68881018
 
     Move lazy DisplayLink tear down logic from the WebProcess to the UIProcess
