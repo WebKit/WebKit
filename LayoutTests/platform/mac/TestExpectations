@@ -2203,3 +2203,5 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 
 # rdar://68736735 (REGRESSION: [ BigSur < 20A2374 ] fast/images/animated-gif-loop-count.html is a constant image failure)
 [ BigSur+ ] fast/images/animated-gif-loop-count.html [ ImageOnlyFailure ]
+
+webkit.org/b/216481 webanimations/accelerated-animation-easing-update-after-pause.html [ Pass ImageOnlyFailure ]
