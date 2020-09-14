@@ -131,7 +131,7 @@ bool Box::establishesFlexFormattingContext() const
 bool Box::establishesIndependentFormattingContext() const
 {
     // FIXME: This is where we would check for 'contain' property.
-    return isAbsolutelyPositioned();
+    return isAbsolutelyPositioned() || isFlexItem();
 }
 
 bool Box::isRelativelyPositioned() const
@@ -313,6 +313,12 @@ bool Box::isAtomicInlineLevelBox() const
     // Inline-level boxes that are not inline boxes (such as replaced inline-level elements, inline-block elements, and inline-table elements)
     // are called atomic inline-level boxes because they participate in their inline formatting context as a single opaque box.
     return isInlineLevelBox() && !isInlineBox();
+}
+
+bool Box::isFlexItem() const
+{
+    // Each in-flow child of a flex container becomes a flex item (https://www.w3.org/TR/css-flexbox-1/#flex-items).
+    return isInFlow() && parent().isFlexBox();
 }
 
 bool Box::isBlockContainerBox() const

@@ -1,3 +1,17 @@
+2020-09-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][FFC] Each in-flow child of a flex container becomes a flex item.
+        https://bugs.webkit.org/show_bug.cgi?id=216494
+
+        Reviewed by Simon Fraser.
+
+        ...and flex items form independent formatting contexts for their content.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::establishesIndependentFormattingContext const):
+        (WebCore::Layout::Box::isFlexItem const):
+        * layout/layouttree/LayoutBox.h:
+
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
         AudioDestinationCocoa should stop hardcoding the number of output channels to 2
