@@ -41,6 +41,7 @@ struct Length;
 namespace Layout {
 
 class Box;
+class BoxGeometry;
 class ReplacedBox;
 struct ComputedHorizontalMargin;
 struct ComputedVerticalMargin;
@@ -49,7 +50,6 @@ struct ContentHeightAndMargin;
 struct ContentWidthAndMargin;
 struct Edges;
 class FormattingState;
-class Geometry;
 struct HorizontalGeometry;
 class InvalidationState;
 class LayoutState;
@@ -105,7 +105,7 @@ public:
         StrokeOverflowNeedsViewportGeometry,
         TableNeedsAccessToTableWrapper
     };
-    const Layout::Geometry& geometryForBox(const Box&, Optional<EscapeReason> = WTF::nullopt) const;
+    const BoxGeometry& geometryForBox(const Box&, Optional<EscapeReason> = WTF::nullopt) const;
     const ContainerBox& root() const { return *m_root; }
 
     LayoutState& layoutState() const;

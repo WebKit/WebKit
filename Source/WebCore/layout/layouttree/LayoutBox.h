@@ -37,7 +37,7 @@ namespace WebCore {
 namespace Layout {
 
 class ContainerBox;
-class Geometry;
+class BoxGeometry;
 class InitialContainingBlock;
 class LayoutState;
 class TreeBuilder;
@@ -170,8 +170,8 @@ public:
     void setIsAnonymous() { m_isAnonymous = true; }
 
     bool canCacheForLayoutState(const LayoutState&) const;
-    Geometry* cachedDisplayBoxForLayoutState(const LayoutState&) const;
-    void setCachedDisplayBoxForLayoutState(LayoutState&, std::unique_ptr<Geometry>) const;
+    BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
+    void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
 
 protected:
     Box(Optional<ElementAttributes>, RenderStyle&&, OptionSet<BaseTypeFlag>);
@@ -207,7 +207,7 @@ private:
     
     // First LayoutState gets a direct cache.
     mutable WeakPtr<LayoutState> m_cachedLayoutState;
-    mutable std::unique_ptr<Geometry> m_cachedDisplayBoxForLayoutState;
+    mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForLayoutState;
 
     unsigned m_baseTypeFlags : 6; // OptionSet<BaseTypeFlag>
     bool m_hasRareData : 1;

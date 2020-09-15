@@ -305,12 +305,12 @@ inline Rect::operator LayoutRect() const
 }
 
 
-class Geometry {
-    WTF_MAKE_ISO_ALLOCATED(Geometry);
+class BoxGeometry {
+    WTF_MAKE_ISO_ALLOCATED(BoxGeometry);
 public:
-    Geometry(const Geometry&);
-    Geometry() = default;
-    ~Geometry();
+    BoxGeometry(const BoxGeometry&);
+    BoxGeometry() = default;
+    ~BoxGeometry();
 
     LayoutUnit top() const;
     LayoutUnit left() const;
@@ -453,33 +453,33 @@ private:
 };
 
 #if ASSERT_ENABLED
-inline void Geometry::invalidateMargin()
+inline void BoxGeometry::invalidateMargin()
 {
     m_hasValidHorizontalMargin = false;
     m_hasValidVerticalMargin = false;
 }
 #endif
 
-inline LayoutUnit Geometry::top() const
+inline LayoutUnit BoxGeometry::top() const
 {
     ASSERT(m_hasValidTop && (m_hasPrecomputedMarginBefore || m_hasValidVerticalMargin));
     return m_topLeft.y();
 }
 
-inline LayoutUnit Geometry::left() const
+inline LayoutUnit BoxGeometry::left() const
 {
     ASSERT(m_hasValidLeft && m_hasValidHorizontalMargin);
     return m_topLeft.x();
 }
 
-inline LayoutPoint Geometry::topLeft() const
+inline LayoutPoint BoxGeometry::topLeft() const
 {
     ASSERT(m_hasValidTop && (m_hasPrecomputedMarginBefore || m_hasValidVerticalMargin));
     ASSERT(m_hasValidLeft && m_hasValidHorizontalMargin);
     return m_topLeft;
 }
 
-inline void Geometry::setTopLeft(const LayoutPoint& topLeft)
+inline void BoxGeometry::setTopLeft(const LayoutPoint& topLeft)
 {
 #if ASSERT_ENABLED
     setHasValidTop();
@@ -488,7 +488,7 @@ inline void Geometry::setTopLeft(const LayoutPoint& topLeft)
     m_topLeft = topLeft;
 }
 
-inline void Geometry::setTop(LayoutUnit top)
+inline void BoxGeometry::setTop(LayoutUnit top)
 {
 #if ASSERT_ENABLED
     setHasValidTop();
@@ -496,7 +496,7 @@ inline void Geometry::setTop(LayoutUnit top)
     m_topLeft.setY(top);
 }
 
-inline void Geometry::setLeft(LayoutUnit left)
+inline void BoxGeometry::setLeft(LayoutUnit left)
 {
 #if ASSERT_ENABLED
     setHasValidLeft();
@@ -504,7 +504,7 @@ inline void Geometry::setLeft(LayoutUnit left)
     m_topLeft.setX(left);
 }
 
-inline void Geometry::setContentBoxHeight(LayoutUnit height)
+inline void BoxGeometry::setContentBoxHeight(LayoutUnit height)
 { 
 #if ASSERT_ENABLED
     setHasValidContentHeight();
@@ -512,7 +512,7 @@ inline void Geometry::setContentBoxHeight(LayoutUnit height)
     m_contentHeight = height;
 }
 
-inline void Geometry::setContentBoxWidth(LayoutUnit width)
+inline void BoxGeometry::setContentBoxWidth(LayoutUnit width)
 { 
 #if ASSERT_ENABLED
     setHasValidContentWidth();
@@ -520,19 +520,19 @@ inline void Geometry::setContentBoxWidth(LayoutUnit width)
     m_contentWidth = width;
 }
 
-inline LayoutUnit Geometry::contentBoxHeight() const
+inline LayoutUnit BoxGeometry::contentBoxHeight() const
 {
     ASSERT(m_hasValidContentHeight);
     return m_contentHeight;
 }
 
-inline LayoutUnit Geometry::contentBoxWidth() const
+inline LayoutUnit BoxGeometry::contentBoxWidth() const
 {
     ASSERT(m_hasValidContentWidth);
     return m_contentWidth;
 }
 
-inline void Geometry::setHorizontalMargin(HorizontalMargin margin)
+inline void BoxGeometry::setHorizontalMargin(HorizontalMargin margin)
 {
 #if ASSERT_ENABLED
     setHasValidHorizontalMargin();
@@ -540,7 +540,7 @@ inline void Geometry::setHorizontalMargin(HorizontalMargin margin)
     m_horizontalMargin = margin;
 }
 
-inline void Geometry::setVerticalMargin(VerticalMargin margin)
+inline void BoxGeometry::setVerticalMargin(VerticalMargin margin)
 {
 #if ASSERT_ENABLED
     setHasValidVerticalMargin();
@@ -549,7 +549,7 @@ inline void Geometry::setVerticalMargin(VerticalMargin margin)
     m_verticalMargin = margin;
 }
 
-inline void Geometry::setBorder(Layout::Edges border)
+inline void BoxGeometry::setBorder(Layout::Edges border)
 {
 #if ASSERT_ENABLED
     setHasValidBorder();
@@ -557,7 +557,7 @@ inline void Geometry::setBorder(Layout::Edges border)
     m_border = border;
 }
 
-inline void Geometry::setPadding(Optional<Layout::Edges> padding)
+inline void BoxGeometry::setPadding(Optional<Layout::Edges> padding)
 {
 #if ASSERT_ENABLED
     setHasValidPadding();
@@ -565,7 +565,7 @@ inline void Geometry::setPadding(Optional<Layout::Edges> padding)
     m_padding = padding;
 }
 
-inline void Geometry::setVerticalPadding(Layout::VerticalEdges verticalPadding)
+inline void BoxGeometry::setVerticalPadding(Layout::VerticalEdges verticalPadding)
 {
 #if ASSERT_ENABLED
     setHasValidPadding();
@@ -573,43 +573,43 @@ inline void Geometry::setVerticalPadding(Layout::VerticalEdges verticalPadding)
     m_padding = Layout::Edges { m_padding ? m_padding->horizontal : Layout::HorizontalEdges(), verticalPadding };
 }
 
-inline Geometry::VerticalMargin Geometry::verticalMargin() const
+inline BoxGeometry::VerticalMargin BoxGeometry::verticalMargin() const
 {
     ASSERT(m_hasValidVerticalMargin);
     return m_verticalMargin;
 }
 
-inline Geometry::HorizontalMargin Geometry::horizontalMargin() const
+inline BoxGeometry::HorizontalMargin BoxGeometry::horizontalMargin() const
 {
     ASSERT(m_hasValidHorizontalMargin);
     return m_horizontalMargin;
 }
 
-inline LayoutUnit Geometry::marginBefore() const
+inline LayoutUnit BoxGeometry::marginBefore() const
 {
     ASSERT(m_hasValidVerticalMargin);
     return m_verticalMargin.before;
 }
 
-inline LayoutUnit Geometry::marginStart() const
+inline LayoutUnit BoxGeometry::marginStart() const
 {
     ASSERT(m_hasValidHorizontalMargin);
     return m_horizontalMargin.start;
 }
 
-inline LayoutUnit Geometry::marginAfter() const
+inline LayoutUnit BoxGeometry::marginAfter() const
 {
     ASSERT(m_hasValidVerticalMargin);
     return m_verticalMargin.after;
 }
 
-inline LayoutUnit Geometry::marginEnd() const
+inline LayoutUnit BoxGeometry::marginEnd() const
 {
     ASSERT(m_hasValidHorizontalMargin);
     return m_horizontalMargin.end;
 }
 
-inline Optional<LayoutUnit> Geometry::paddingTop() const
+inline Optional<LayoutUnit> BoxGeometry::paddingTop() const
 {
     ASSERT(m_hasValidPadding);
     if (!m_padding)
@@ -617,7 +617,7 @@ inline Optional<LayoutUnit> Geometry::paddingTop() const
     return m_padding->vertical.top;
 }
 
-inline Optional<LayoutUnit> Geometry::paddingLeft() const
+inline Optional<LayoutUnit> BoxGeometry::paddingLeft() const
 {
     ASSERT(m_hasValidPadding);
     if (!m_padding)
@@ -625,7 +625,7 @@ inline Optional<LayoutUnit> Geometry::paddingLeft() const
     return m_padding->horizontal.left;
 }
 
-inline Optional<LayoutUnit> Geometry::paddingBottom() const
+inline Optional<LayoutUnit> BoxGeometry::paddingBottom() const
 {
     ASSERT(m_hasValidPadding);
     if (!m_padding)
@@ -633,7 +633,7 @@ inline Optional<LayoutUnit> Geometry::paddingBottom() const
     return m_padding->vertical.bottom;
 }
 
-inline Optional<LayoutUnit> Geometry::paddingRight() const
+inline Optional<LayoutUnit> BoxGeometry::paddingRight() const
 {
     ASSERT(m_hasValidPadding);
     if (!m_padding)
@@ -641,7 +641,7 @@ inline Optional<LayoutUnit> Geometry::paddingRight() const
     return m_padding->horizontal.right;
 }
 
-inline Optional<LayoutUnit> Geometry::verticalPadding() const
+inline Optional<LayoutUnit> BoxGeometry::verticalPadding() const
 {
     auto paddingTop = this->paddingTop();
     auto paddingBottom = this->paddingBottom();
@@ -650,7 +650,7 @@ inline Optional<LayoutUnit> Geometry::verticalPadding() const
     return paddingTop.valueOr(0) + paddingBottom.valueOr(0);
 }
 
-inline Optional<LayoutUnit> Geometry::horizontalPadding() const
+inline Optional<LayoutUnit> BoxGeometry::horizontalPadding() const
 {
     auto paddingLeft = this->paddingLeft();
     auto paddingRight = this->paddingRight();
@@ -659,25 +659,25 @@ inline Optional<LayoutUnit> Geometry::horizontalPadding() const
     return paddingLeft.valueOr(0) + paddingRight.valueOr(0);
 }
 
-inline LayoutUnit Geometry::borderTop() const
+inline LayoutUnit BoxGeometry::borderTop() const
 {
     ASSERT(m_hasValidBorder);
     return m_border.vertical.top;
 }
 
-inline LayoutUnit Geometry::borderLeft() const
+inline LayoutUnit BoxGeometry::borderLeft() const
 {
     ASSERT(m_hasValidBorder);
     return m_border.horizontal.left;
 }
 
-inline LayoutUnit Geometry::borderBottom() const
+inline LayoutUnit BoxGeometry::borderBottom() const
 {
     ASSERT(m_hasValidBorder);
     return m_border.vertical.bottom;
 }
 
-inline LayoutUnit Geometry::borderRight() const
+inline LayoutUnit BoxGeometry::borderRight() const
 {
     ASSERT(m_hasValidBorder);
     return m_border.horizontal.right;

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LayoutGeometry.h"
+#include "LayoutBoxGeometry.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -33,9 +33,9 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Geometry);
+WTF_MAKE_ISO_ALLOCATED_IMPL(BoxGeometry);
 
-Geometry::Geometry(const Geometry& other)
+BoxGeometry::BoxGeometry(const BoxGeometry& other)
     : m_topLeft(other.m_topLeft)
     , m_contentWidth(other.m_contentWidth)
     , m_contentHeight(other.m_contentHeight)
@@ -58,11 +58,11 @@ Geometry::Geometry(const Geometry& other)
 {
 }
 
-Geometry::~Geometry()
+BoxGeometry::~BoxGeometry()
 {
 }
 
-Rect Geometry::marginBox() const
+Rect BoxGeometry::marginBox() const
 {
     auto borderBox = this->borderBox();
 
@@ -74,7 +74,7 @@ Rect Geometry::marginBox() const
     return marginBox;
 }
 
-Rect Geometry::borderBox() const
+Rect BoxGeometry::borderBox() const
 {
     Rect borderBox;
     borderBox.setTopLeft({ });
@@ -82,7 +82,7 @@ Rect Geometry::borderBox() const
     return borderBox;
 }
 
-Rect Geometry::paddingBox() const
+Rect BoxGeometry::paddingBox() const
 {
     auto borderBox = this->borderBox();
 
@@ -94,7 +94,7 @@ Rect Geometry::paddingBox() const
     return paddingBox;
 }
 
-Rect Geometry::contentBox() const
+Rect BoxGeometry::contentBox() const
 {
     Rect contentBox;
     contentBox.setTop(contentBoxTop());

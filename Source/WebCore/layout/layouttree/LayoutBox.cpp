@@ -28,8 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
-#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
@@ -454,11 +454,11 @@ Optional<LayoutUnit> Box::columnWidth() const
     return rareData().columnWidth;
 }
 
-void Box::setCachedDisplayBoxForLayoutState(LayoutState& layoutState, std::unique_ptr<Geometry> box) const
+void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const
 {
     ASSERT(!m_cachedLayoutState);
     m_cachedLayoutState = makeWeakPtr(layoutState);
-    m_cachedDisplayBoxForLayoutState = WTFMove(box);
+    m_cachedGeometryForLayoutState = WTFMove(geometry);
 }
 
 Box::RareDataMap& Box::rareDataMap()

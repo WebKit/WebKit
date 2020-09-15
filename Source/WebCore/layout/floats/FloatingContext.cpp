@@ -32,8 +32,8 @@
 #include "FloatAvoider.h"
 #include "FormattingContext.h"
 #include "LayoutBox.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
-#include "LayoutGeometry.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -243,19 +243,19 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     // Find the top most position where the float box fits.
     ASSERT(!isEmpty());
     auto previousFloatAbsoluteTop = floatingState().floats().last().rectWithMargin().top();
-    auto absoluteDisplayBoxCoordinates = this->absoluteDisplayBoxCoordinates(layoutBox);
-    auto absoluteTopLeft = absoluteDisplayBoxCoordinates.topLeft;
+    auto absoluteBoxGeometryCoordinates = this->absoluteBoxGeometryCoordinates(layoutBox);
+    auto absoluteTopLeft = absoluteBoxGeometryCoordinates.topLeft;
     // Incoming float cannot be placed higher than existing floats (margin box of the last float).
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-    auto& displayBox = formattingContext().geometryForBox(layoutBox);
-    if (absoluteTopLeft.y() - displayBox.marginBefore() < previousFloatAbsoluteTop)
-        absoluteTopLeft.setY(previousFloatAbsoluteTop + displayBox.marginBefore());
+    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+    if (absoluteTopLeft.y() - boxGeometry.marginBefore() < previousFloatAbsoluteTop)
+        absoluteTopLeft.setY(previousFloatAbsoluteTop + boxGeometry.marginBefore());
     auto horizontalMargin = computedHorizontalMargin(layoutBox, horizontalConstraints.logicalWidth);
-    auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { displayBox.marginBefore(), displayBox.marginAfter() } };
-    auto floatBox = FloatAvoider { layoutBox, absoluteTopLeft, displayBox.width(), margins, absoluteDisplayBoxCoordinates.containingBlockContentBox };
+    auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
+    auto floatBox = FloatAvoider { layoutBox, absoluteTopLeft, boxGeometry.width(), margins, absoluteBoxGeometryCoordinates.containingBlockContentBox };
     findAvailablePosition(floatBox, m_floatingState.floats());
     // From formatting root coordinate system back to containing block's.
-    auto containingBlockTopLeft = absoluteDisplayBoxCoordinates.containingBlockTopLeft;
+    auto containingBlockTopLeft = absoluteBoxGeometryCoordinates.containingBlockTopLeft;
     return { floatBox.left() + margins.horizontal.left - containingBlockTopLeft.x(), floatBox.top() + margins.vertical.top - containingBlockTopLeft.y() };
 }
 
@@ -269,13 +269,13 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     if (isEmpty())
         return formattingContext().geometryForBox(layoutBox).topLeft();
 
-    auto absoluteDisplayBoxCoordinates = this->absoluteDisplayBoxCoordinates(layoutBox);
-    auto& displayBox = formattingContext().geometryForBox(layoutBox);
+    auto absoluteBoxGeometryCoordinates = this->absoluteBoxGeometryCoordinates(layoutBox);
+    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     auto horizontalMargin = computedHorizontalMargin(layoutBox, horizontalConstraints.logicalWidth);
-    auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { displayBox.marginBefore(), displayBox.marginAfter() } };
-    auto floatAvoider = FloatAvoider { layoutBox, absoluteDisplayBoxCoordinates.topLeft, displayBox.width(), margins, absoluteDisplayBoxCoordinates.containingBlockContentBox };
+    auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
+    auto floatAvoider = FloatAvoider { layoutBox, absoluteBoxGeometryCoordinates.topLeft, boxGeometry.width(), margins, absoluteBoxGeometryCoordinates.containingBlockContentBox };
     findPositionForFormattingContextRoot(floatAvoider);
-    auto containingBlockTopLeft = absoluteDisplayBoxCoordinates.containingBlockTopLeft;
+    auto containingBlockTopLeft = absoluteBoxGeometryCoordinates.containingBlockTopLeft;
     return { floatAvoider.left() - containingBlockTopLeft.x(), floatAvoider.top() - containingBlockTopLeft.y() };
 }
 
@@ -404,9 +404,9 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
 
 void FloatingContext::append(const Box& floatBox)
 {
-    auto absoluteDisplayBox = Geometry(formattingContext().geometryForBox(floatBox));
-    absoluteDisplayBox.setTopLeft(mapTopLeftToFloatingStateRoot(floatBox));
-    floatingState().append(FloatingState::FloatItem { floatBox, absoluteDisplayBox });
+    auto absoluteBoxGeometry = BoxGeometry(formattingContext().geometryForBox(floatBox));
+    absoluteBoxGeometry.setTopLeft(mapTopLeftToFloatingStateRoot(floatBox));
+    floatingState().append(FloatingState::FloatItem { floatBox, absoluteBoxGeometry });
 }
 
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const
@@ -455,7 +455,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
     }
 }
 
-FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteDisplayBoxCoordinates(const Box& floatAvoider) const
+FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteBoxGeometryCoordinates(const Box& floatAvoider) const
 {
     auto& containingBlock = floatAvoider.containingBlock();
     auto& containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates);

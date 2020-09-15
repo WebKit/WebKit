@@ -1,3 +1,244 @@
+2020-09-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Layout::BoxGeometry rename, part II.
+        https://bugs.webkit.org/show_bug.cgi?id=216523
+
+        Reviewed by Simon Fraser.
+
+        Rename Layout::Geometry to Layout::BoxGeometry (so that later we can introduce Layout::LineGeometry and Layout::RunGeometry) and
+        make sure we don't use displayBox as a variable name in Layout namespace.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding):
+        (WebCore::Layout::FormattingContext::geometryForBox const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPositioned const):
+        * layout/FormattingContextQuirks.cpp:
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::boxGeometry):
+        (WebCore::Layout::FormattingState::displayBox): Deleted.
+        * layout/FormattingState.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::geometryForRootBox):
+        (WebCore::Layout::LayoutState::ensureGeometryForBoxSlow):
+        (WebCore::Layout::LayoutState::geometryForRootLayoutBox): Deleted.
+        (WebCore::Layout::LayoutState::ensureDisplayBoxForLayoutBoxSlow): Deleted.
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::hasBoxGeometry const):
+        (WebCore::Layout::LayoutState::ensureGeometryForBox):
+        (WebCore::Layout::LayoutState::geometryForBox const):
+        (WebCore::Layout::Box::cachedGeometryForLayoutState const):
+        (WebCore::Layout::LayoutState::hasDisplayBox const): Deleted.
+        (WebCore::Layout::LayoutState::ensureGeometryForLayoutBox): Deleted.
+        (WebCore::Layout::LayoutState::geometryForLayoutBox const): Deleted.
+        (WebCore::Layout::Box::cachedDisplayBoxForLayoutState const): Deleted.
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren):
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::hasClearance const):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+        * layout/display/DisplayLayerController.cpp:
+        (WebCore::Display::LayerController::prepareForDisplay):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintBoxDecoration):
+        (WebCore::Display::Painter::absoluteBoxGeometry):
+        (WebCore::Display::paintSubtree):
+        (WebCore::Display::collectPaintRootsAndContentRect):
+        (WebCore::Display::Painter::absoluteDisplayBox): Deleted.
+        * layout/displaytree/DisplayPainter.h:
+        * layout/floats/FloatAvoider.h:
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForNonFloatingFloatAvoider const):
+        (WebCore::Layout::FloatingContext::append):
+        (WebCore::Layout::FloatingContext::absoluteBoxGeometryCoordinates const):
+        (WebCore::Layout::FloatingContext::absoluteDisplayBoxCoordinates const): Deleted.
+        * layout/floats/FloatingContext.h:
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatItem::FloatItem):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::rectWithMargin const):
+        (WebCore::Layout::FloatingState::FloatItem::horizontalMargin const):
+        (WebCore::Layout::FloatingState::FloatItem::bottom const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        (WebCore::Layout::InlineFormattingContext::createDisplayBoxesForLineContent): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineLineBox.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::prepareFloatingState):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::setcachedGeometryForLayoutState const):
+        (WebCore::Layout::Box::setCachedDisplayBoxForLayoutState const): Deleted.
+        * layout/layouttree/LayoutBox.h:
+        * layout/layouttree/LayoutBoxGeometry.cpp: Renamed from Source/WebCore/layout/layouttree/LayoutGeometry.cpp.
+        (WebCore::Layout::BoxGeometry::BoxGeometry):
+        (WebCore::Layout::BoxGeometry::~BoxGeometry):
+        (WebCore::Layout::BoxGeometry::marginBox const):
+        (WebCore::Layout::BoxGeometry::borderBox const):
+        (WebCore::Layout::BoxGeometry::paddingBox const):
+        (WebCore::Layout::BoxGeometry::contentBox const):
+        * layout/layouttree/LayoutBoxGeometry.h: Renamed from Source/WebCore/layout/layouttree/LayoutGeometry.h.
+        (WebCore::Layout::Rect::expandHorizontally):
+        (WebCore::Layout::Rect::expandVertically):
+        (WebCore::Layout::Rect::intersects const):
+        (WebCore::Layout::Rect::invalidateTop):
+        (WebCore::Layout::Rect::invalidateLeft):
+        (WebCore::Layout::Rect::invalidateWidth):
+        (WebCore::Layout::Rect::invalidateHeight):
+        (WebCore::Layout::Rect::hasValidPosition const):
+        (WebCore::Layout::Rect::hasValidSize const):
+        (WebCore::Layout::Rect::hasValidGeometry const):
+        (WebCore::Layout::Rect::Rect):
+        (WebCore::Layout::Rect::invalidatePosition):
+        (WebCore::Layout::Rect::setHasValidPosition):
+        (WebCore::Layout::Rect::setHasValidSize):
+        (WebCore::Layout::Rect::top const):
+        (WebCore::Layout::Rect::left const):
+        (WebCore::Layout::Rect::bottom const):
+        (WebCore::Layout::Rect::right const):
+        (WebCore::Layout::Rect::topLeft const):
+        (WebCore::Layout::Rect::bottomRight const):
+        (WebCore::Layout::Rect::size const):
+        (WebCore::Layout::Rect::width const):
+        (WebCore::Layout::Rect::height const):
+        (WebCore::Layout::Rect::setTopLeft):
+        (WebCore::Layout::Rect::setTop):
+        (WebCore::Layout::Rect::setLeft):
+        (WebCore::Layout::Rect::setWidth):
+        (WebCore::Layout::Rect::setHeight):
+        (WebCore::Layout::Rect::setSize):
+        (WebCore::Layout::Rect::shiftLeftTo):
+        (WebCore::Layout::Rect::shiftRightTo):
+        (WebCore::Layout::Rect::shiftTopTo):
+        (WebCore::Layout::Rect::shiftBottomTo):
+        (WebCore::Layout::Rect::moveHorizontally):
+        (WebCore::Layout::Rect::moveVertically):
+        (WebCore::Layout::Rect::expand):
+        (WebCore::Layout::Rect::clone const):
+        (WebCore::Layout::Rect::operator LayoutRect const):
+        (WebCore::Layout::BoxGeometry::bottom const):
+        (WebCore::Layout::BoxGeometry::right const):
+        (WebCore::Layout::BoxGeometry::bottomRight const):
+        (WebCore::Layout::BoxGeometry::size const):
+        (WebCore::Layout::BoxGeometry::width const):
+        (WebCore::Layout::BoxGeometry::height const):
+        (WebCore::Layout::BoxGeometry::isEmpty const):
+        (WebCore::Layout::BoxGeometry::rect const):
+        (WebCore::Layout::BoxGeometry::rectWithMargin const):
+        (WebCore::Layout::BoxGeometry::hasClearance const):
+        (WebCore::Layout::BoxGeometry::verticalBorder const):
+        (WebCore::Layout::BoxGeometry::horizontalBorder const):
+        (WebCore::Layout::BoxGeometry::contentBoxTop const):
+        (WebCore::Layout::BoxGeometry::contentBoxLeft const):
+        (WebCore::Layout::BoxGeometry::contentBoxBottom const):
+        (WebCore::Layout::BoxGeometry::contentBoxRight const):
+        (WebCore::Layout::BoxGeometry::paddingBoxTop const):
+        (WebCore::Layout::BoxGeometry::paddingBoxLeft const):
+        (WebCore::Layout::BoxGeometry::paddingBoxBottom const):
+        (WebCore::Layout::BoxGeometry::paddingBoxRight const):
+        (WebCore::Layout::BoxGeometry::paddingBoxHeight const):
+        (WebCore::Layout::BoxGeometry::paddingBoxWidth const):
+        (WebCore::Layout::BoxGeometry::borderBoxHeight const):
+        (WebCore::Layout::BoxGeometry::borderBoxWidth const):
+        (WebCore::Layout::BoxGeometry::marginBoxHeight const):
+        (WebCore::Layout::BoxGeometry::marginBoxWidth const):
+        (WebCore::Layout::BoxGeometry::verticalMarginBorderAndPadding const):
+        (WebCore::Layout::BoxGeometry::horizontalMarginBorderAndPadding const):
+        (WebCore::Layout::BoxGeometry::setHasPrecomputedMarginBefore):
+        (WebCore::Layout::BoxGeometry::moveHorizontally):
+        (WebCore::Layout::BoxGeometry::moveVertically):
+        (WebCore::Layout::BoxGeometry::move):
+        (WebCore::Layout::BoxGeometry::moveBy):
+        (WebCore::Layout::BoxGeometry::setHasClearance):
+        (WebCore::Layout::BoxGeometry::invalidateBorder):
+        (WebCore::Layout::BoxGeometry::invalidatePadding):
+        (WebCore::Layout::BoxGeometry::invalidatePrecomputedMarginBefore):
+        (WebCore::Layout::BoxGeometry::setHasValidTop):
+        (WebCore::Layout::BoxGeometry::setHasValidLeft):
+        (WebCore::Layout::BoxGeometry::setHasValidVerticalMargin):
+        (WebCore::Layout::BoxGeometry::setHasValidHorizontalMargin):
+        (WebCore::Layout::BoxGeometry::setHasValidBorder):
+        (WebCore::Layout::BoxGeometry::setHasValidPadding):
+        (WebCore::Layout::BoxGeometry::setHasValidContentHeight):
+        (WebCore::Layout::BoxGeometry::setHasValidContentWidth):
+        (WebCore::Layout::BoxGeometry::invalidateMargin):
+        (WebCore::Layout::BoxGeometry::top const):
+        (WebCore::Layout::BoxGeometry::left const):
+        (WebCore::Layout::BoxGeometry::topLeft const):
+        (WebCore::Layout::BoxGeometry::setTopLeft):
+        (WebCore::Layout::BoxGeometry::setTop):
+        (WebCore::Layout::BoxGeometry::setLeft):
+        (WebCore::Layout::BoxGeometry::setContentBoxHeight):
+        (WebCore::Layout::BoxGeometry::setContentBoxWidth):
+        (WebCore::Layout::BoxGeometry::contentBoxHeight const):
+        (WebCore::Layout::BoxGeometry::contentBoxWidth const):
+        (WebCore::Layout::BoxGeometry::setHorizontalMargin):
+        (WebCore::Layout::BoxGeometry::setVerticalMargin):
+        (WebCore::Layout::BoxGeometry::setBorder):
+        (WebCore::Layout::BoxGeometry::setPadding):
+        (WebCore::Layout::BoxGeometry::setVerticalPadding):
+        (WebCore::Layout::BoxGeometry::verticalMargin const):
+        (WebCore::Layout::BoxGeometry::horizontalMargin const):
+        (WebCore::Layout::BoxGeometry::marginBefore const):
+        (WebCore::Layout::BoxGeometry::marginStart const):
+        (WebCore::Layout::BoxGeometry::marginAfter const):
+        (WebCore::Layout::BoxGeometry::marginEnd const):
+        (WebCore::Layout::BoxGeometry::paddingTop const):
+        (WebCore::Layout::BoxGeometry::paddingLeft const):
+        (WebCore::Layout::BoxGeometry::paddingBottom const):
+        (WebCore::Layout::BoxGeometry::paddingRight const):
+        (WebCore::Layout::BoxGeometry::verticalPadding const):
+        (WebCore::Layout::BoxGeometry::horizontalPadding const):
+        (WebCore::Layout::BoxGeometry::borderTop const):
+        (WebCore::Layout::BoxGeometry::borderLeft const):
+        (WebCore::Layout::BoxGeometry::borderBottom const):
+        (WebCore::Layout::BoxGeometry::borderRight const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox):
+        (WebCore::Layout::outputLayoutTree):
+        (WebCore::Layout::showLayoutTree):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        * layout/tableformatting/TableLayout.cpp:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+
 2020-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Element should not set an attribute inside its constructor

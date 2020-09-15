@@ -27,8 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
-#include "LayoutGeometry.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -38,8 +38,8 @@ namespace WebCore {
 namespace Layout {
 
 class Box;
+class BoxGeometry;
 class FloatingContext;
-class Geometry;
 class LayoutState;
 class Rect;
 
@@ -58,18 +58,18 @@ public:
 
     class FloatItem {
     public:
-        FloatItem(const Box&, Geometry absoluteDisplayBox);
+        FloatItem(const Box&, BoxGeometry absoluteBoxGeometry);
 
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
-        FloatItem(Position, Geometry absoluteDisplayBox);
+        FloatItem(Position, BoxGeometry absoluteBoxGeometry);
 
         bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isInFormattingContextOf(const ContainerBox& formattingContextRoot) const { return m_layoutBox->isInFormattingContextOf(formattingContextRoot); }
 
-        Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
-        Geometry::HorizontalMargin horizontalMargin() const { return m_absoluteDisplayBox.horizontalMargin(); }
-        PositionInContextRoot bottom() const { return { m_absoluteDisplayBox.bottom() }; }
+        Rect rectWithMargin() const { return m_absoluteBoxGeometry.rectWithMargin(); }
+        BoxGeometry::HorizontalMargin horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
+        PositionInContextRoot bottom() const { return { m_absoluteBoxGeometry.bottom() }; }
 
 #if ASSERT_ENABLED
         const Box* floatBox() const { return m_layoutBox.get(); }
@@ -77,7 +77,7 @@ public:
     private:
         WeakPtr<const Box> m_layoutBox;
         Position m_position;
-        Geometry m_absoluteDisplayBox;
+        BoxGeometry m_absoluteBoxGeometry;
     };
     using FloatList = Vector<FloatItem>;
     const FloatList& floats() const { return m_floats; }

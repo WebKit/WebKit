@@ -87,7 +87,7 @@ bool BlockFormattingContext::MarginCollapse::hasClearance(const Box& layoutBox) 
         return false;
     // FIXME: precomputedVerticalPositionForFormattingRoot logic ends up calling into this function when the layoutBox (first inflow child) has
     // not been laid out.
-    if (!layoutState().hasDisplayBox(layoutBox))
+    if (!layoutState().hasBoxGeometry(layoutBox))
         return false;
     return formattingContext().geometryForBox(layoutBox).hasClearance();
 }

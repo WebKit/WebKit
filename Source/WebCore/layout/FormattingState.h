@@ -61,7 +61,8 @@ public:
 
     LayoutState& layoutState() const { return m_layoutState; }
 
-    Layout::Geometry& displayBox(const Box& layoutBox);
+    // FIXME: We need to find a way to limit access to mutatable geometry.
+    BoxGeometry& boxGeometry(const Box& layoutBox);
     // Since we layout the out-of-flow boxes at the end of the formatting context layout, it's okay to store them in the formatting state -as opposed to the containing block level.
     using OutOfFlowBoxList = Vector<WeakPtr<const Box>>;
     void addOutOfFlowBox(const Box& outOfFlowBox) { m_outOfFlowBoxes.append(makeWeakPtr(outOfFlowBox)); }

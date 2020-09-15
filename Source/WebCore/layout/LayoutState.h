@@ -41,7 +41,7 @@ class BlockFormattingState;
 class FlexFormattingState;
 class FormattingContext;
 class FormattingState;
-class Geometry;
+class BoxGeometry;
 class InlineFormattingState;
 class TableFormattingState;
 
@@ -71,11 +71,11 @@ public:
     void deregisterFormattingContext(const FormattingContext& formattingContext) { m_formattingContextList.remove(&formattingContext); }
 #endif
 
-    Layout::Geometry& geometryForRootLayoutBox();
-    Layout::Geometry& ensureGeometryForLayoutBox(const Box&);
-    const Layout::Geometry& geometryForLayoutBox(const Box&) const;
+    BoxGeometry& geometryForRootBox();
+    BoxGeometry& ensureGeometryForBox(const Box&);
+    const BoxGeometry& geometryForBox(const Box&) const;
 
-    bool hasDisplayBox(const Box&) const;
+    bool hasBoxGeometry(const Box&) const;
 
     enum class QuirksMode { No, Limited, Yes };
     bool inQuirksMode() const { return m_quirksMode == QuirksMode::Yes; }
@@ -93,7 +93,7 @@ public:
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
-    Layout::Geometry& ensureDisplayBoxForLayoutBoxSlow(const Box&);
+    BoxGeometry& ensureGeometryForBoxSlow(const Box&);
 
     HashMap<const ContainerBox*, std::unique_ptr<InlineFormattingState>> m_inlineFormattingStates;
     HashMap<const ContainerBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
@@ -105,7 +105,7 @@ private:
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
 #endif
-    HashMap<const Box*, std::unique_ptr<Layout::Geometry>> m_layoutToDisplayBox;
+    HashMap<const Box*, std::unique_ptr<BoxGeometry>> m_layoutBoxToBoxGeometry;
     QuirksMode m_quirksMode { QuirksMode::No };
 
     WeakPtr<const ContainerBox> m_rootContainer;
@@ -115,26 +115,26 @@ private:
     bool m_isIntegratedRootBoxFirstChild { false };
 };
 
-inline bool LayoutState::hasDisplayBox(const Box& layoutBox) const
+inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const
 {
-    if (layoutBox.cachedDisplayBoxForLayoutState(*this))
+    if (layoutBox.cachedGeometryForLayoutState(*this))
         return true;
-    return m_layoutToDisplayBox.contains(&layoutBox);
+    return m_layoutBoxToBoxGeometry.contains(&layoutBox);
 }
 
-inline Layout::Geometry& LayoutState::ensureGeometryForLayoutBox(const Box& layoutBox)
+inline BoxGeometry& LayoutState::ensureGeometryForBox(const Box& layoutBox)
 {
-    if (auto* displayBox = layoutBox.cachedDisplayBoxForLayoutState(*this))
-        return *displayBox;
-    return ensureDisplayBoxForLayoutBoxSlow(layoutBox);
+    if (auto* boxGeometry = layoutBox.cachedGeometryForLayoutState(*this))
+        return *boxGeometry;
+    return ensureGeometryForBoxSlow(layoutBox);
 }
 
-inline const Layout::Geometry& LayoutState::geometryForLayoutBox(const Box& layoutBox) const
+inline const BoxGeometry& LayoutState::geometryForBox(const Box& layoutBox) const
 {
-    if (auto* displayBox = layoutBox.cachedDisplayBoxForLayoutState(*this))
-        return *displayBox;
-    ASSERT(m_layoutToDisplayBox.contains(&layoutBox));
-    return *m_layoutToDisplayBox.get(&layoutBox);
+    if (auto* boxGeometry = layoutBox.cachedGeometryForLayoutState(*this))
+        return *boxGeometry;
+    ASSERT(m_layoutBoxToBoxGeometry.contains(&layoutBox));
+    return *m_layoutBoxToBoxGeometry.get(&layoutBox);
 }
 
 #ifndef NDEBUG
@@ -152,11 +152,11 @@ inline bool Box::canCacheForLayoutState(const LayoutState& layoutState) const
     return !m_cachedLayoutState || m_cachedLayoutState.get() == &layoutState;
 }
 
-inline Layout::Geometry* Box::cachedDisplayBoxForLayoutState(const LayoutState& layoutState) const
+inline BoxGeometry* Box::cachedGeometryForLayoutState(const LayoutState& layoutState) const
 {
     if (m_cachedLayoutState.get() != &layoutState)
         return nullptr;
-    return m_cachedDisplayBoxForLayoutState.get();
+    return m_cachedGeometryForLayoutState.get();
 }
 
 }

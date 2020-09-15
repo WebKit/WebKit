@@ -74,7 +74,7 @@ private:
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
     struct AbsoluteCoordinateValuesForFloatAvoider;
-    AbsoluteCoordinateValuesForFloatAvoider absoluteDisplayBoxCoordinates(const Box&) const;
+    AbsoluteCoordinateValuesForFloatAvoider absoluteBoxGeometryCoordinates(const Box&) const;
     LayoutPoint mapTopLeftToFloatingStateRoot(const Box&) const;
     Point mapPointFromFormattingContextRootToFloatingStateRoot(Point) const;
 

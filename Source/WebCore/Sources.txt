@@ -1459,7 +1459,7 @@ layout/invalidation/InvalidationContext.cpp
 layout/invalidation/InvalidationState.cpp
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainerBox.cpp
-layout/layouttree/LayoutGeometry.cpp
+layout/layouttree/LayoutBoxGeometry.cpp
 layout/layouttree/LayoutInitialContainingBlock.cpp
 layout/layouttree/LayoutInlineTextBox.cpp
 layout/layouttree/LayoutLineBreakBox.cpp

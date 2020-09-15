@@ -42,8 +42,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "InvalidationContext.h"
 #include "InvalidationState.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
-#include "LayoutGeometry.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderDescendantIterator.h"
@@ -81,7 +81,7 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
 
     // Clean up the render tree state when we don't run RenderView::layout.
     if (renderView.needsLayout()) {
-        auto contentSize = m_layoutState->geometryForLayoutBox(*m_layoutState->root().firstChild()).size();
+        auto contentSize = m_layoutState->geometryForBox(*m_layoutState->root().firstChild()).size();
         renderView.setSize(contentSize);
         renderView.repaintViewRectangle({ 0, 0, contentSize.width(), contentSize.height() });
 

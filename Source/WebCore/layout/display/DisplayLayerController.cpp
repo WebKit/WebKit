@@ -34,8 +34,8 @@
 #include "DisplayView.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
-#include "LayoutGeometry.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Settings.h"
@@ -83,10 +83,10 @@ void LayerController::prepareForDisplay(const Layout::LayoutState& layoutState)
     if (!rootLayoutBox.firstChild())
         return;
 
-    ASSERT(layoutState.hasDisplayBox(rootLayoutBox));
+    ASSERT(layoutState.hasBoxGeometry(rootLayoutBox));
 
-    auto viewSize = layoutState.geometryForLayoutBox(rootLayoutBox).size();
-    auto contentSize = layoutState.geometryForLayoutBox(*rootLayoutBox.firstChild()).size();
+    auto viewSize = layoutState.geometryForBox(rootLayoutBox).size();
+    auto contentSize = layoutState.geometryForBox(*rootLayoutBox.firstChild()).size();
     
     // FIXME: Using the firstChild() size won't be correct until we compute overflow correctly,
     contentSize.clampToMinimumSize(viewSize);

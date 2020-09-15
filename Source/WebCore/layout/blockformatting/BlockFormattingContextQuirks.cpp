@@ -30,8 +30,8 @@
 
 #include "BlockFormattingState.h"
 #include "LayoutBox.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
-#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 

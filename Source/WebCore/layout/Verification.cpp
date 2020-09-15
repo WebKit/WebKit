@@ -33,9 +33,9 @@
 #include "InlineFormattingState.h"
 #include "InlineTextBox.h"
 #include "LayoutBox.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
-#include "LayoutGeometry.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
@@ -233,12 +233,12 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         stream.nextLine();
     };
 
-    auto renderBoxLikeMarginBox = [&] (const auto& displayBox) {
+    auto renderBoxLikeMarginBox = [&] (const auto& boxGeometry) {
         if (layoutBox.isInitialContainingBlock())
-            return displayBox.rect();
+            return boxGeometry.rect();
 
         // Produce a RenderBox matching margin box.
-        auto containingBlockWidth = layoutState.geometryForLayoutBox(layoutBox.containingBlock()).contentBoxWidth();
+        auto containingBlockWidth = layoutState.geometryForBox(layoutBox.containingBlock()).contentBoxWidth();
         auto marginStart = LayoutUnit { };
         auto& marginStartStyle = layoutBox.style().marginStart();
         if (marginStartStyle.isFixed() || marginStartStyle.isPercent() || marginStartStyle.isCalculated())
@@ -249,15 +249,15 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         if (marginEndStyle.isFixed() || marginEndStyle.isPercent() || marginEndStyle.isCalculated())
             marginEnd = valueForLength(marginEndStyle, containingBlockWidth);
 
-        auto marginBefore = displayBox.marginBefore();
-        auto marginAfter = displayBox.marginAfter();
+        auto marginBefore = boxGeometry.marginBefore();
+        auto marginAfter = boxGeometry.marginAfter();
         if (layoutBox.isBlockLevelBox()) {
             auto& formattingState = downcast<BlockFormattingState>(layoutState.formattingStateForBox(layoutBox));
             auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
             marginBefore = verticalMargin.nonCollapsedValues.before;
             marginAfter = verticalMargin.nonCollapsedValues.after;
         }
-        auto borderBox = displayBox.borderBox();
+        auto borderBox = boxGeometry.borderBox();
         return Rect {
             borderBox.top() - marginBefore,
             borderBox.left() - marginStart,
@@ -271,15 +271,15 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
     if (renderer.isInFlowPositioned())
         frameRect.move(renderer.offsetForInFlowPosition());
 
-    auto displayBox = Geometry { layoutState.geometryForLayoutBox(layoutBox) };
+    auto boxGeometry = BoxGeometry { layoutState.geometryForBox(layoutBox) };
     if (layoutBox.isTableBox()) {
         // When the <table> is out-of-flow positioned, the wrapper table box has the offset
         // while the actual table box is static, inflow.
-        auto& tableWrapperDisplayBox = layoutState.geometryForLayoutBox(layoutBox.containingBlock());
-        displayBox.moveBy(tableWrapperDisplayBox.topLeft());
+        auto& tableWrapperBoxGeometry = layoutState.geometryForBox(layoutBox.containingBlock());
+        boxGeometry.moveBy(tableWrapperBoxGeometry.topLeft());
         // Table wrapper box has the margin values for the table.
-        displayBox.setHorizontalMargin(tableWrapperDisplayBox.horizontalMargin());
-        displayBox.setVerticalMargin(tableWrapperDisplayBox.verticalMargin());
+        boxGeometry.setHorizontalMargin(tableWrapperBoxGeometry.horizontalMargin());
+        boxGeometry.setVerticalMargin(tableWrapperBoxGeometry.verticalMargin());
     }
 
     if (is<RenderTableRow>(renderer) || is<RenderTableSection>(renderer)) {
@@ -290,20 +290,20 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         if (is<RenderTableSection>(renderer) && (downcast<RenderTableSection>(renderer).table()->collapseBorders() || renderer.style().hasBorder()))
             return false;
     }
-    if (!areEssentiallyEqual(frameRect, displayBox.rect())) {
-        outputRect("frameBox", renderer.frameRect(), displayBox.rect());
+    if (!areEssentiallyEqual(frameRect, boxGeometry.rect())) {
+        outputRect("frameBox", renderer.frameRect(), boxGeometry.rect());
         return true;
     }
 
-    if (!areEssentiallyEqual(renderer.borderBoxRect(), displayBox.borderBox())) {
-        outputRect("borderBox", renderer.borderBoxRect(), displayBox.borderBox());
+    if (!areEssentiallyEqual(renderer.borderBoxRect(), boxGeometry.borderBox())) {
+        outputRect("borderBox", renderer.borderBoxRect(), boxGeometry.borderBox());
         return true;
     }
 
     // When the table row border overflows the row, padding box becomes negative and content box is incorrect.
     auto shouldCheckPaddingAndContentBox = !is<RenderTableRow>(renderer) || renderer.paddingBoxRect().width() >= 0;
-    if (shouldCheckPaddingAndContentBox && !areEssentiallyEqual(renderer.paddingBoxRect(), displayBox.paddingBox())) {
-        outputRect("paddingBox", renderer.paddingBoxRect(), displayBox.paddingBox());
+    if (shouldCheckPaddingAndContentBox && !areEssentiallyEqual(renderer.paddingBoxRect(), boxGeometry.paddingBox())) {
+        outputRect("paddingBox", renderer.paddingBoxRect(), boxGeometry.paddingBox());
         return true;
     }
 
@@ -316,21 +316,21 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         // Tables have 0 content box size for some reason when border collapsing is on.
         return !is<RenderTable>(renderer) || !downcast<RenderTable>(renderer).collapseBorders();
     }();
-    if (shouldCheckContentBox && !areEssentiallyEqual(renderer.contentBoxRect(), displayBox.contentBox())) {
-        outputRect("contentBox", renderer.contentBoxRect(), displayBox.contentBox());
+    if (shouldCheckContentBox && !areEssentiallyEqual(renderer.contentBoxRect(), boxGeometry.contentBox())) {
+        outputRect("contentBox", renderer.contentBoxRect(), boxGeometry.contentBox());
         return true;
     }
 
-    if (!areEssentiallyEqual(renderer.marginBoxRect(), renderBoxLikeMarginBox(displayBox))) {
+    if (!areEssentiallyEqual(renderer.marginBoxRect(), renderBoxLikeMarginBox(boxGeometry))) {
         // In certain cases, like out-of-flow boxes with margin auto, marginBoxRect() returns 0. It's clearly incorrect,
         // so let's check the individual margin values instead (and at this point we know that all other boxes match).
-        auto marginsMatch = displayBox.marginBefore() == renderer.marginBefore()
-            && displayBox.marginAfter() == renderer.marginAfter()
-            && displayBox.marginStart() == renderer.marginStart()
-            && displayBox.marginEnd() == renderer.marginEnd();
+        auto marginsMatch = boxGeometry.marginBefore() == renderer.marginBefore()
+            && boxGeometry.marginAfter() == renderer.marginAfter()
+            && boxGeometry.marginStart() == renderer.marginStart()
+            && boxGeometry.marginEnd() == renderer.marginEnd();
 
         if (!marginsMatch) {
-            outputRect("marginBox", renderer.marginBoxRect(), renderBoxLikeMarginBox(displayBox));
+            outputRect("marginBox", renderer.marginBoxRect(), renderBoxLikeMarginBox(boxGeometry));
             return true;
         }
     }

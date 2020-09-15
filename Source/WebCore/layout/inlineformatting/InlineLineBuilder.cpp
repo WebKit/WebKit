@@ -31,7 +31,7 @@
 #include "FloatingContext.h"
 #include "InlineFormattingContext.h"
 #include "LayoutBox.h"
-#include "LayoutGeometry.h"
+#include "LayoutBoxGeometry.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 

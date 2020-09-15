@@ -40,16 +40,16 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
-FloatingState::FloatItem::FloatItem(const Box& layoutBox, Geometry absoluteDisplayBox)
+FloatingState::FloatItem::FloatItem(const Box& layoutBox, BoxGeometry absoluteBoxGeometry)
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_position(layoutBox.isLeftFloatingPositioned() ? Position::Left : Position::Right)
-    , m_absoluteDisplayBox(absoluteDisplayBox)
+    , m_absoluteBoxGeometry(absoluteBoxGeometry)
 {
 }
 
-FloatingState::FloatItem::FloatItem(Position position, Geometry absoluteDisplayBox)
+FloatingState::FloatItem::FloatItem(Position position, BoxGeometry absoluteBoxGeometry)
     : m_position(position)
-    , m_absoluteDisplayBox(absoluteDisplayBox)
+    , m_absoluteBoxGeometry(absoluteBoxGeometry)
 {
 }
 

@@ -36,7 +36,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "InvalidationState.h"
-#include "LayoutGeometry.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
@@ -138,19 +138,19 @@ void LineLayout::prepareFloatingState()
         auto position = floatingObject->type() == FloatingObject::FloatRight
             ? Layout::FloatingState::FloatItem::Position::Right
             : Layout::FloatingState::FloatItem::Position::Left;
-        auto box = Layout::Geometry { };
+        auto boxGeometry = Layout::BoxGeometry { };
         // FIXME: We are flooring here for legacy compatibility.
         //        See FloatingObjects::intervalForFloatingObject.
         auto y = rect.y().floor();
         auto maxY = rect.maxY().floor();
-        box.setTopLeft({ rect.x(), y });
-        box.setContentBoxWidth(rect.width());
-        box.setContentBoxHeight(maxY - y);
-        box.setBorder({ });
-        box.setPadding({ });
-        box.setHorizontalMargin({ });
-        box.setVerticalMargin({ });
-        floatingState.append({ position, box });
+        boxGeometry.setTopLeft({ rect.x(), y });
+        boxGeometry.setContentBoxWidth(rect.width());
+        boxGeometry.setContentBoxHeight(maxY - y);
+        boxGeometry.setBorder({ });
+        boxGeometry.setPadding({ });
+        boxGeometry.setHorizontalMargin({ });
+        boxGeometry.setVerticalMargin({ });
+        floatingState.append({ position, boxGeometry });
     }
 }
 

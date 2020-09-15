@@ -29,7 +29,7 @@
 
 #include "DisplayInlineRect.h"
 #include "InlineLine.h"
-#include "LayoutGeometry.h"
+#include "LayoutBoxGeometry.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/WeakPtr.h>
 

@@ -38,10 +38,10 @@
 #include "InvalidationContext.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
-#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
@@ -426,7 +426,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
     }
 }
 
-static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Geometry* displayBox, unsigned depth)
+static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxGeometry* boxGeometry, unsigned depth)
 {
     unsigned printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
@@ -481,8 +481,8 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Geom
     else
         stream << "unknown box";
 
-    if (displayBox)
-        stream << " at (" << displayBox->left() << "," << displayBox->top() << ") size " << displayBox->width() << "x" << displayBox->height();
+    if (boxGeometry)
+        stream << " at (" << boxGeometry->left() << "," << boxGeometry->top() << ") size " << boxGeometry->width() << "x" << boxGeometry->height();
     stream << " (" << &layoutBox << ")";
     if (is<InlineTextBox>(layoutBox)) {
         auto textContent = downcast<InlineTextBox>(layoutBox).content();
@@ -506,8 +506,8 @@ static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream,
     for (auto& child : childrenOfType<Box>(rootContainer)) {
         if (layoutState) {
             // Not all boxes generate display boxes.
-            if (layoutState->hasDisplayBox(child))
-                outputLayoutBox(stream, child, &layoutState->geometryForLayoutBox(child), depth);
+            if (layoutState->hasBoxGeometry(child))
+                outputLayoutBox(stream, child, &layoutState->geometryForBox(child), depth);
             else
                 outputLayoutBox(stream, child, nullptr, depth);
             if (child.establishesInlineFormattingContext())
@@ -525,7 +525,7 @@ void showLayoutTree(const Box& layoutBox, const LayoutState* layoutState)
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
     auto& initialContainingBlock = layoutBox.initialContainingBlock();
-    outputLayoutBox(stream, initialContainingBlock, layoutState ? &layoutState->geometryForLayoutBox(initialContainingBlock) : nullptr, 0);
+    outputLayoutBox(stream, initialContainingBlock, layoutState ? &layoutState->geometryForBox(initialContainingBlock) : nullptr, 0);
     outputLayoutTree(layoutState, stream, initialContainingBlock, 1);
     WTFLogAlways("%s", stream.release().utf8().data());
 }

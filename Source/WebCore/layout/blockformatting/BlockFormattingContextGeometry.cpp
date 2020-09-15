@@ -31,9 +31,9 @@
 #include "BlockFormattingState.h"
 #include "FormattingContext.h"
 #include "InlineFormattingState.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
-#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutReplacedBox.h"
 #include "Logging.h"
@@ -96,8 +96,8 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
         while (inFlowChild && formattingContext().marginCollapse().marginBeforeCollapsesWithParentMarginAfter(*inFlowChild))
             inFlowChild = inFlowChild->previousInFlowSibling();
         if (inFlowChild) {
-            auto& inFlowDisplayBoxGeometry = formattingContext().geometryForBox(*inFlowChild);
-            return { inFlowDisplayBoxGeometry.top() + inFlowDisplayBoxGeometry.borderBox().height() - borderAndPaddingTop, nonCollapsedMargin };
+            auto& inFlowBoxGeometry = formattingContext().geometryForBox(*inFlowChild);
+            return { inFlowBoxGeometry.top() + inFlowBoxGeometry.borderBox().height() - borderAndPaddingTop, nonCollapsedMargin };
         }
 
         // 4. zero, otherwise

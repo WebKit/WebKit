@@ -31,10 +31,10 @@
 #include "FormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
-#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutReplacedBox.h"
 #include "LayoutState.h"
@@ -90,11 +90,11 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox,
             horizontalGeometry = minHorizontalGeometry;
     }
 
-    auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.contentWidthAndMargin.usedMargin.start);
-    displayBox.setContentBoxWidth(horizontalGeometry.contentWidthAndMargin.contentWidth);
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+    boxGeometry.setLeft(horizontalGeometry.left + horizontalGeometry.contentWidthAndMargin.usedMargin.start);
+    boxGeometry.setContentBoxWidth(horizontalGeometry.contentWidthAndMargin.contentWidth);
     auto& usedHorizontalMargin = horizontalGeometry.contentWidthAndMargin.usedMargin;
-    displayBox.setHorizontalMargin({ usedHorizontalMargin.start, usedHorizontalMargin.end });
+    boxGeometry.setHorizontalMargin({ usedHorizontalMargin.start, usedHorizontalMargin.end });
 }
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, const ConstraintsForOutOfFlowContent& constraints)
@@ -118,19 +118,19 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, c
             verticalGeometry = minVerticalGeometry;
     }
 
-    auto& displayBox = formattingState().displayBox(layoutBox);
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
     auto nonCollapsedVerticalMargin = verticalGeometry.contentHeightAndMargin.nonCollapsedMargin;
-    displayBox.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
-    displayBox.setContentBoxHeight(verticalGeometry.contentHeightAndMargin.contentHeight);
+    boxGeometry.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
+    boxGeometry.setContentBoxHeight(verticalGeometry.contentHeightAndMargin.contentHeight);
     // Margins of absolutely positioned boxes do not collapse.
-    displayBox.setVerticalMargin({ nonCollapsedVerticalMargin.before, nonCollapsedVerticalMargin.after });
+    boxGeometry.setVerticalMargin({ nonCollapsedVerticalMargin.before, nonCollapsedVerticalMargin.after });
 }
 
 void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const HorizontalConstraints& horizontalConstraint)
 {
-    auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setBorder(geometry().computedBorder(layoutBox));
-    displayBox.setPadding(geometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+    boxGeometry.setBorder(geometry().computedBorder(layoutBox));
+    boxGeometry.setPadding(geometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
 }
 
 void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState, const ConstraintsForOutOfFlowContent& constraints)
@@ -168,11 +168,11 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
 
-const Layout::Geometry& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeReason> escapeReason) const
+const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeReason> escapeReason) const
 {
     UNUSED_PARAM(escapeReason);
 #if ASSERT_ENABLED
-    auto isOkToAccessDisplayBox = [&] {
+    auto isOkToAccessBoxGeometry = [&] {
         if (!is<InitialContainingBlock>(layoutBox) && &layoutBox.formattingContextRoot() == &root()) {
             // This is the non-escape case of accessing a box's geometry information within the same formatting context.
             return true;
@@ -249,9 +249,9 @@ const Layout::Geometry& FormattingContext::geometryForBox(const Box& layoutBox, 
         return false;
     };
 #endif
-    ASSERT(isOkToAccessDisplayBox());
-    ASSERT(layoutState().hasDisplayBox(layoutBox));
-    return layoutState().geometryForLayoutBox(layoutBox);
+    ASSERT(isOkToAccessBoxGeometry());
+    ASSERT(layoutState().hasBoxGeometry(layoutBox));
+    return layoutState().geometryForBox(layoutBox);
 }
 
 void FormattingContext::collectOutOfFlowDescendantsIfNeeded()

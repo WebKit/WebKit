@@ -29,9 +29,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineFormattingState.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
-#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "TableFormattingState.h"
 

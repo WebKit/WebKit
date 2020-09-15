@@ -117,7 +117,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
                 // Inline boxes (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and padding.
                 computeBorderAndPadding(*layoutBox, constraints.horizontal);
                 computeHorizontalMargin(*layoutBox, constraints.horizontal);
-                formattingState().displayBox(*layoutBox).setVerticalMargin({ });
+                formattingState().boxGeometry(*layoutBox).setVerticalMargin({ });
             }
         } else
             ASSERT_NOT_REACHED();
@@ -150,7 +150,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : WTF::nullopt;
         auto initialLineConstraints = ConstraintsForInFlowContent { constraints.horizontal, { lineLogicalTop, makeOptional(toLayoutUnit(quirks().initialLineHeight())) } };
         auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, initialLineConstraints, isFirstLine);
-        auto lineLogicalRect = createDisplayBoxesForLineContent(lineContent, constraints.horizontal);
+        auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints.horizontal);
 
         auto lineContentRange = lineContent.inlineItemRange;
         if (!lineContentRange.isEmpty()) {
@@ -232,9 +232,9 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
         // Switch to the min/max formatting root width values before formatting the lines.
         for (auto* formattingRoot : formattingContextRootList) {
             auto intrinsicWidths = layoutState.formattingStateForBox(*formattingRoot).intrinsicWidthConstraintsForBox(*formattingRoot);
-            auto& displayBox = formattingState().displayBox(*formattingRoot);
-            auto contentWidth = (availableWidth ? intrinsicWidths->maximum : intrinsicWidths->minimum) - displayBox.horizontalMarginBorderAndPadding();
-            displayBox.setContentBoxWidth(contentWidth);
+            auto& boxGeometry = formattingState().boxGeometry(*formattingRoot);
+            auto contentWidth = (availableWidth ? intrinsicWidths->maximum : intrinsicWidths->minimum) - boxGeometry.horizontalMarginBorderAndPadding();
+            boxGeometry.setContentBoxWidth(contentWidth);
         }
         return computedIntrinsicWidthForConstraint(availableWidth);
     };
@@ -278,7 +278,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
 void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
     auto computedHorizontalMargin = geometry().computedHorizontalMargin(layoutBox, horizontalConstraints);
-    formattingState().displayBox(layoutBox).setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
+    formattingState().boxGeometry(layoutBox).setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
 }
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
@@ -308,9 +308,9 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
     if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
         contentWidthAndMargin = minWidthAndMargin;
 
-    auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
-    displayBox.setHorizontalMargin({ contentWidthAndMargin.usedMargin.start, contentWidthAndMargin.usedMargin.end });
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+    boxGeometry.setContentBoxWidth(contentWidthAndMargin.contentWidth);
+    boxGeometry.setHorizontalMargin({ contentWidthAndMargin.usedMargin.start, contentWidthAndMargin.usedMargin.end });
 }
 
 void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
@@ -338,9 +338,9 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const
         if (contentHeightAndMargin.contentHeight < minHeightAndMargin.contentHeight)
             contentHeightAndMargin = minHeightAndMargin;
     }
-    auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
-    displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin.before, contentHeightAndMargin.nonCollapsedMargin.after });
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+    boxGeometry.setContentBoxHeight(contentHeightAndMargin.contentHeight);
+    boxGeometry.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin.before, contentHeightAndMargin.nonCollapsedMargin.after });
 }
 
 void InlineFormattingContext::collectInlineContentIfNeeded()
@@ -440,7 +440,7 @@ InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::compu
     return { lineBoxOffset, logicalRect };
 }
 
-Display::InlineRect InlineFormattingContext::createDisplayBoxesForLineContent(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
+Display::InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
     auto& lineBox = lineContent.lineBox;
@@ -454,12 +454,12 @@ Display::InlineRect InlineFormattingContext::createDisplayBoxesForLineContent(co
         // Move floats to their final position.
         for (const auto& floatCandidate : lineContent.floats) {
             auto& floatBox = floatCandidate.item->layoutBox();
-            auto& displayBox = formattingState.displayBox(floatBox);
+            auto& boxGeometry = formattingState.boxGeometry(floatBox);
             // Set static position first.
             auto verticalStaticPosition = floatCandidate.isIntrusive ? lineLogicalRect.top() : lineLogicalRect.bottom();
-            displayBox.setTopLeft({ lineLogicalRect.left(), verticalStaticPosition });
+            boxGeometry.setTopLeft({ lineLogicalRect.left(), verticalStaticPosition });
             // Float it.
-            displayBox.setTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
+            boxGeometry.setTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
             floatingContext.append(floatBox);
         }
     }
@@ -506,21 +506,21 @@ Display::InlineRect InlineFormattingContext::createDisplayBoxesForLineContent(co
 
         // Create display boxes.
         // FIXME: Since <br> and <wbr> runs have associated DOM elements, we might need to construct a display box here. 
-        auto initiatesDisplayBox = lineRun.isBox() || lineRun.isContainerStart();
-        if (initiatesDisplayBox) {
-            auto& displayBox = formattingState.displayBox(layoutBox);
+        auto needsBoxGeometry = lineRun.isBox() || lineRun.isContainerStart();
+        if (needsBoxGeometry) {
+            auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             auto& inlineBox = lineBox.inlineBoxForLayoutBox(layoutBox);
             auto topLeft = inlineBox.logicalRect().topLeft();
             topLeft.move({ }, lineBoxVerticalOffset);
             if (layoutBox.isInFlowPositioned())
                 topLeft += geometry().inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
-            displayBox.setTopLeft(toLayoutPoint(topLeft));
+            boxGeometry.setTopLeft(toLayoutPoint(topLeft));
             if (lineRun.isContainerStart()) {
                 auto marginBoxWidth = inlineBox.logicalWidth();
-                auto contentBoxWidth = marginBoxWidth - (displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0));
+                auto contentBoxWidth = marginBoxWidth - (boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().valueOr(0));
                 // FIXME: Fix it for multiline.
-                displayBox.setContentBoxWidth(toLayoutUnit(contentBoxWidth));
-                displayBox.setContentBoxHeight(toLayoutUnit(inlineBox.logicalHeight()));
+                boxGeometry.setContentBoxWidth(toLayoutUnit(contentBoxWidth));
+                boxGeometry.setContentBoxHeight(toLayoutUnit(inlineBox.logicalHeight()));
             }
         }
     }

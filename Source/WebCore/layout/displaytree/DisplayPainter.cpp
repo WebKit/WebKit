@@ -34,8 +34,8 @@
 #include "InlineFormattingState.h"
 #include "InlineTextItem.h"
 #include "IntRect.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
-#include "LayoutGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include "RenderStyle.h"
@@ -45,10 +45,10 @@ namespace WebCore {
 namespace Display {
 
 // FIXME: Move to display box.
-static void paintBoxDecoration(GraphicsContext& context, const Layout::Geometry& absoluteDisplayBox, const RenderStyle& style, bool needsMarginPainting)
+static void paintBoxDecoration(GraphicsContext& context, const Layout::BoxGeometry& absoluteBoxGeometry, const RenderStyle& style, bool needsMarginPainting)
 {
-    auto decorationBoxTopLeft = needsMarginPainting ? absoluteDisplayBox.rectWithMargin().topLeft() : absoluteDisplayBox.topLeft();
-    auto decorationBoxSize = needsMarginPainting ? absoluteDisplayBox.rectWithMargin().size() : LayoutSize(absoluteDisplayBox.borderBoxWidth(), absoluteDisplayBox.borderBoxHeight());
+    auto decorationBoxTopLeft = needsMarginPainting ? absoluteBoxGeometry.rectWithMargin().topLeft() : absoluteBoxGeometry.topLeft();
+    auto decorationBoxSize = needsMarginPainting ? absoluteBoxGeometry.rectWithMargin().size() : LayoutSize(absoluteBoxGeometry.borderBoxWidth(), absoluteBoxGeometry.borderBoxHeight());
     // Background color
     if (style.hasBackground()) {
         context.fillRect({ decorationBoxTopLeft, decorationBoxSize }, style.backgroundColor());
@@ -142,13 +142,13 @@ static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOff
     }
 }
 
-Layout::Geometry Painter::absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layout::Box& layoutBoxToPaint)
+Layout::BoxGeometry Painter::absoluteBoxGeometry(const Layout::LayoutState& layoutState, const Layout::Box& layoutBoxToPaint)
 {
     // Should never really happen but table code is way too incomplete.
-    if (!layoutState.hasDisplayBox(layoutBoxToPaint))
+    if (!layoutState.hasBoxGeometry(layoutBoxToPaint))
         return { };
     if (is<Layout::InitialContainingBlock>(layoutBoxToPaint))
-        return layoutState.geometryForLayoutBox(layoutBoxToPaint);
+        return layoutState.geometryForBox(layoutBoxToPaint);
 
     auto paintContainer = [&] (const auto& layoutBox) {
         if (layoutBox.isTableCell()) {
@@ -158,9 +158,9 @@ Layout::Geometry Painter::absoluteDisplayBox(const Layout::LayoutState& layoutSt
         }
         return &layoutBox.containingBlock();
     };
-    auto absoluteBox = Layout::Geometry { layoutState.geometryForLayoutBox(layoutBoxToPaint) };
+    auto absoluteBox = Layout::BoxGeometry { layoutState.geometryForBox(layoutBoxToPaint) };
     for (auto* container = paintContainer(layoutBoxToPaint); !is<Layout::InitialContainingBlock>(container); container = paintContainer(*container))
-        absoluteBox.moveBy(layoutState.geometryForLayoutBox(*container).topLeft());
+        absoluteBox.moveBy(layoutState.geometryForBox(*container).topLeft());
     return absoluteBox;
 }
 
@@ -177,22 +177,22 @@ static void paintSubtree(GraphicsContext& context, const Layout::LayoutState& la
     auto paint = [&] (auto& layoutBox) {
         if (layoutBox.style().visibility() != Visibility::Visible)
             return;
-        if (!layoutState.hasDisplayBox(layoutBox))
+        if (!layoutState.hasBoxGeometry(layoutBox))
             return;
-        auto absoluteDisplayBox = Painter::absoluteDisplayBox(layoutState, layoutBox);
-        if (!dirtyRect.intersects(snappedIntRect(absoluteDisplayBox.rect())))
+        auto absoluteBoxGeometry = Painter::absoluteBoxGeometry(layoutState, layoutBox);
+        if (!dirtyRect.intersects(snappedIntRect(absoluteBoxGeometry.rect())))
             return;
 
         if (paintPhase == PaintPhase::Decoration) {
             if (layoutBox.isAnonymous())
                 return;
-            paintBoxDecoration(context, absoluteDisplayBox, layoutBox.style(), layoutBox.isBodyBox());
+            paintBoxDecoration(context, absoluteBoxGeometry, layoutBox.style(), layoutBox.isBodyBox());
             return;
         }
         // Only inline content for now.
         if (layoutBox.establishesInlineFormattingContext()) {
             auto& containerBox = downcast<Layout::ContainerBox>(layoutBox);
-            paintInlineContent(context, absoluteDisplayBox.topLeft(), layoutState.establishedInlineFormattingState(containerBox));
+            paintInlineContent(context, absoluteBoxGeometry.topLeft(), layoutState.establishedInlineFormattingState(containerBox));
         }
     };
 
@@ -235,7 +235,7 @@ static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& lay
         positiveZOrderList.append(&layoutBox);
     };
 
-    auto contentRect = LayoutRect { layoutState.geometryForLayoutBox(rootLayoutBox).rect() };
+    auto contentRect = LayoutRect { layoutState.geometryForBox(rootLayoutBox).rect() };
 
     // Initial BFC is always a paint root.
     appendPaintRoot(rootLayoutBox);
@@ -248,8 +248,8 @@ static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& lay
                 break;
             if (isPaintRootCandidate(layoutBox))
                 appendPaintRoot(layoutBox);
-            if (layoutState.hasDisplayBox(layoutBox))
-                contentRect.uniteIfNonZero(Painter::absoluteDisplayBox(layoutState, layoutBox).rect());
+            if (layoutState.hasBoxGeometry(layoutBox))
+                contentRect.uniteIfNonZero(Painter::absoluteBoxGeometry(layoutState, layoutBox).rect());
             if (!is<Layout::ContainerBox>(layoutBox) || !downcast<Layout::ContainerBox>(layoutBox).hasChild())
                 break;
             layoutBoxList.append(downcast<Layout::ContainerBox>(layoutBox).firstChild());
