@@ -1261,7 +1261,7 @@ fast/forms/password-scrolled-after-caps-lock-toggled.html [ Skip ]
 
 webkit.org/b/194826 [ Debug ] http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html [ Pass Timeout ]
 
-webkit.org/b/195341 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
+webkit.org/b/195341 compositing/ios/overflow-scroll-update-overlap.html [ Pass ImageOnlyFailure Crash ]
 
 webkit.org/b/196013 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html [ ImageOnlyFailure ]
 webkit.org/b/196013 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html [ ImageOnlyFailure ]
@@ -1890,4 +1890,3 @@ webkit.org/b/216292 [ Release ] imported/w3c/web-platform-tests/css/css-flexbox/
 
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Skip ]
-
