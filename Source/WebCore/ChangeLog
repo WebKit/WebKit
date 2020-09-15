@@ -1,3 +1,19 @@
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Types of Panner.setPosition() / setOrientation() parameters should not be unrestricted float
+        https://bugs.webkit.org/show_bug.cgi?id=216508
+
+        Reviewed by Darin Adler.
+
+        Types of Panner.setPosition() / setOrientation() parameters should not be unrestricted float:
+        - https://www.w3.org/TR/webaudio/#pannernode
+
+        They should use float type so that we throw when passing values that are non-finite or not a number.
+
+        Test: webaudio/panner-node-exceptions.html
+
+        * Modules/webaudio/PannerNode.idl:
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling ShadowDOM

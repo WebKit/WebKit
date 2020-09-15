@@ -1,3 +1,15 @@
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Types of Panner.setPosition() / setOrientation() parameters should not be unrestricted float
+        https://bugs.webkit.org/show_bug.cgi?id=216508
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/panner-node-exceptions-expected.txt: Added.
+        * webaudio/panner-node-exceptions.html: Added.
+
 2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION (r267002): ASSERTION FAILED:[ iOS wk2 Debug ] !HashTranslator::equal(KeyTraits::emptyValue(), key) on fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow.html

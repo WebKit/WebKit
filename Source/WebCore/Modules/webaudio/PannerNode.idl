@@ -33,8 +33,8 @@
     attribute PanningModelType panningModel;
 
     // Uses a 3D cartesian coordinate system 
-    [MayThrowException] undefined setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
-    [MayThrowException] undefined setOrientation(unrestricted float x, unrestricted float y, unrestricted float z);
+    [MayThrowException] undefined setPosition(float x, float y, float z);
+    [MayThrowException] undefined setOrientation(float x, float y, float z);
     
     // Default distance model is inverse
     attribute DistanceModelType distanceModel;
