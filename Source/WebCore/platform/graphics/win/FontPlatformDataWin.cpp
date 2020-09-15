@@ -60,7 +60,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
     RestoreDC(hdc, -1);
 }
 
-RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t table) const
 {
     HWndDC hdc(0);
     HGDIOBJ oldFont = SelectObject(hdc, hfont());
@@ -77,12 +77,5 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     SelectObject(hdc, oldFont);
     return buffer;
 }
-
-#if !LOG_DISABLED
-String FontPlatformData::description() const
-{
-    return String();
-}
-#endif
 
 }

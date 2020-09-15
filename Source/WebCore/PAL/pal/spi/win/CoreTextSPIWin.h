@@ -129,6 +129,7 @@ CGFloat CTFontGetUnderlineThickness(CTFontRef);
 CGFloat CTFontGetSize(CTFontRef);
 CTFontSymbolicTraits CTFontGetSymbolicTraits(CTFontRef);
 CFCharacterSetRef CTFontCopyCharacterSet(CTFontRef);
+CGFontRef CTFontCopyGraphicsFont(CTFontRef, CTFontDescriptorRef* attributes);
 CFStringRef CTFontCopyFamilyName(CTFontRef);
 CFStringRef CTFontCopyFullName(CTFontRef);
 CTFontRef CTFontCreateCopyWithAttributes(CTFontRef, CGFloat size, const CGAffineTransform* matrix, CTFontDescriptorRef attributes);
@@ -153,6 +154,8 @@ bool CTFontGetGlyphsForCharacters(CTFontRef, const UniChar[], CGGlyph[], CFIndex
 bool CTFontGetGlyphsForCharacterRange(CTFontRef, CGGlyph[], CFRange);
 CFDataRef CTFontCopyTable(CTFontRef, CTFontTableTag, CTFontTableOptions);
 bool CTFontGetVerticalGlyphsForCharacters(CTFontRef, const UniChar[], CGGlyph[], CFIndex count);
+
+CTFontDescriptorRef CTFontManagerCreateFontDescriptorFromData(CFDataRef);
 
 CTFontDescriptorRef CTFontDescriptorCreateWithAttributes(CFDictionaryRef);
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);

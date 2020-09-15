@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "SharedBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -33,7 +34,6 @@
 #include <wtf/text/WTFString.h>
 
 #include <cairo-win32.h>
-
 
 namespace WebCore {
 
@@ -94,6 +94,11 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return m_font == other.m_font
         && m_scaledFont == other.m_scaledFont
         && m_useGDI == other.m_useGDI;
+}
+
+RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+{
+    return platformOpenTypeTable(table);
 }
 
 }

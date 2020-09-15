@@ -35,15 +35,17 @@
 
 namespace WebCore {
 
-#if !PLATFORM(WIN)
-
 FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
 {
     ASSERT_ARG(font, font);
+#if PLATFORM(WIN)
+    m_ctFont = font;
+#else
     m_font = font;
+#endif
     m_isColorBitmapFont = CTFontGetSymbolicTraits(font) & kCTFontColorGlyphsTrait;
-    m_isSystemFont = WebCore::isSystemFont(m_font.get());
+    m_isSystemFont = WebCore::isSystemFont(font);
     auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font, kCTFontVariationAttribute)));
     m_hasVariations = variations && CFDictionaryGetCount(variations.get());
 
@@ -63,7 +65,7 @@ bool isSystemFont(CTFontRef font)
 
 CTFontRef FontPlatformData::registeredFont() const
 {
-    CTFontRef platformFont = font();
+    CTFontRef platformFont = ctFont();
     ASSERT(platformFont);
     if (platformFont && adoptCF(CTFontCopyAttribute(platformFont, kCTFontURLAttribute)))
         return platformFont;
@@ -132,11 +134,6 @@ CTFontRef FontPlatformData::ctFont() const
 
     return m_ctFont.get();
 }
-#else
-CTFontRef FontPlatformData::ctFont() const
-{
-    return font();
-}
 #endif
 
 RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
@@ -156,17 +153,17 @@ RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
 
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
-    if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(font(), table, kCTFontTableOptionNoOptions)))
+    if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(ctFont(), table, kCTFontTableOptionNoOptions)))
         return SharedBuffer::create(data.get());
 
-    return nullptr;
+    return platformOpenTypeTable(table);
 }
 
 #if !LOG_DISABLED
 
 String FontPlatformData::description() const
 {
-    String fontDescription { adoptCF(CFCopyDescription(font())).get() };
+    String fontDescription { adoptCF(CFCopyDescription(ctFont())).get() };
     return makeString(fontDescription, ' ', m_size,
         (m_syntheticBold ? " synthetic bold" : ""),
         (m_syntheticOblique ? " synthetic oblique" : ""),
@@ -177,11 +174,9 @@ String FontPlatformData::description() const
 
 String FontPlatformData::familyName() const
 {
-    if (auto platformFont = font())
+    if (auto platformFont = ctFont())
         return adoptCF(CTFontCopyFamilyName(platformFont)).get();
     return { };
 }
-
-#endif
 
 } // namespace WebCore

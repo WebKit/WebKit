@@ -34,8 +34,8 @@ namespace WebCore {
 
 FontCustomPlatformData::~FontCustomPlatformData()
 {
-    if (m_fontReference)
-        RemoveFontMemResourceEx(m_fontReference);
+    if (fontReference)
+        RemoveFontMemResourceEx(fontReference);
 }
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities)
@@ -45,7 +45,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     LOGFONT logFont;
     memset(&logFont, 0, sizeof(LOGFONT));
-    wcsncpy(logFont.lfFaceName, m_name.wideCharacters().data(), LF_FACESIZE - 1);
+    wcsncpy(logFont.lfFaceName, name.wideCharacters().data(), LF_FACESIZE - 1);
 
     logFont.lfHeight = -size;
     if (renderingMode == FontRenderingMode::Normal)

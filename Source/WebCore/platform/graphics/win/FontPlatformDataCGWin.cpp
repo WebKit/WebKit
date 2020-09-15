@@ -120,23 +120,15 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
         m_isSystemFont = !wcscmp(faceName, L"Lucida Grande");
 }
 
-FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)
+FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CTFontRef ctFont, CGFontRef cgFont, float size, bool bold, bool oblique, bool useGDI)
     : m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
     , m_size(size)
     , m_font(SharedGDIObject<HFONT>::create(WTFMove(hfont)))
-    , m_cgFont(font)
-    , m_ctFont(adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), size, nullptr, nullptr)))
+    , m_cgFont(cgFont)
+    , m_ctFont(ctFont)
     , m_useGDI(useGDI)
 {
-}
-
-FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
-    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
-{
-    m_cgFont = cgFont;
-    ASSERT(m_cgFont);
-    m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), size, nullptr, nullptr));
 }
 
 unsigned FontPlatformData::hash() const

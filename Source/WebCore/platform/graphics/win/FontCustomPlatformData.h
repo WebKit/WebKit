@@ -27,6 +27,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(CORE_TEXT)
+#include <pal/spi/win/CoreTextSPIWin.h>
+#endif
+
 typedef struct CGFont* CGFontRef;
 
 namespace WebCore {
@@ -45,8 +49,8 @@ struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
     FontCustomPlatformData(HANDLE fontReference, const String& name)
-        : m_fontReference(fontReference)
-        , m_name(name)
+        : fontReference(fontReference)
+        , name(name)
     {
     }
 
@@ -56,8 +60,11 @@ public:
 
     static bool supportsFormat(const String&);
 
-    HANDLE m_fontReference;
-    String m_name;
+    HANDLE fontReference;
+    String name;
+#if USE(CORE_TEXT)
+    RetainPtr<CTFontDescriptorRef> fontDescriptor;
+#endif
 };
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);

@@ -88,9 +88,8 @@ public:
 
 #if PLATFORM(WIN)
     FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
-#if USE(CG)
-    FontPlatformData(GDIObject<HFONT>, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
-    FontPlatformData(CGFontRef, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant, TextRenderingMode);
+#if USE(CORE_TEXT)
+    FontPlatformData(GDIObject<HFONT>, CTFontRef, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #endif
 #if USE(DIRECT2D)
     FontPlatformData(GDIObject<HFONT>&&, COMPtr<IDWriteFont>&&, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
@@ -114,18 +113,20 @@ public:
 #if USE(CG)
     CGFontRef cgFont() const { return m_cgFont.get(); }
 #endif
-#if USE(CORE_TEXT)
-    CTFontRef ctFont() const { return m_ctFont.get(); }
 #endif
-#elif USE(CORE_TEXT)
-    CTFontRef font() const { return m_font.get(); }
-    WEBCORE_EXPORT CTFontRef registeredFont() const; // Returns nullptr iff the font is not registered, such as web fonts (otherwise returns font()).
 
-    CTFontRef ctFont() const;
+#if USE(CORE_TEXT)
+    WEBCORE_EXPORT CTFontRef registeredFont() const; // Returns nullptr iff the font is not registered, such as web fonts (otherwise returns font()).
     static RetainPtr<CFTypeRef> objectForEqualityCheck(CTFontRef);
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;
-
     bool hasCustomTracking() const { return isSystemFont(); }
+
+#if PLATFORM(WIN)
+    CTFontRef ctFont() const { return m_ctFont.get(); }
+#else
+    CTFontRef font() const { return m_font.get(); }
+    CTFontRef ctFont() const;
+#endif
 #endif
 
 #if PLATFORM(WIN) || PLATFORM(COCOA)
@@ -194,6 +195,7 @@ public:
     }
 
     RefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
+    RefPtr<SharedBuffer> platformOpenTypeTable(uint32_t table) const;
 
     String description() const;
 
@@ -214,10 +216,8 @@ private:
 
 #if PLATFORM(WIN)
     RefPtr<SharedGDIObject<HFONT>> m_font; // FIXME: Delete this in favor of m_ctFont or m_dwFont or m_scaledFont.
-#if USE(CG)
-    RetainPtr<CGFontRef> m_cgFont; // FIXME: Delete this in favor of m_ctFont.
-#endif
 #if USE(CORE_TEXT)
+    RetainPtr<CGFontRef> m_cgFont; // FIXME: Delete this in favor of m_ctFont.
     RetainPtr<CTFontRef> m_ctFont;
 #endif
 #elif USE(CORE_TEXT)

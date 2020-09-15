@@ -1,3 +1,12 @@
+2020-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Apple Win] Migrate from FontPlatformDataWin.cpp to FontPlatformDataCoreText.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=216448
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/win/CoreTextSPIWin.h:
+
 2020-09-14  Peng Liu  <peng.liu6@apple.com>
 
         Clean up AVKitSPI.h

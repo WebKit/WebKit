@@ -56,4 +56,9 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return CFEqual(m_font.get(), other.m_font.get());
 }
 
+RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t) const
+{
+    return nullptr;
+}
+
 } // namespace WebCore

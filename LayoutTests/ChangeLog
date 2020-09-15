@@ -1,3 +1,15 @@
+2020-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Apple Win] Migrate from FontPlatformDataWin.cpp to FontPlatformDataCoreText.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=216448
+
+        Reviewed by Darin Adler.
+
+        These two tests are progressions.
+
+        * platform/win/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+
 2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         Added test and test expectation for constant crashes ar r267002
