@@ -67,6 +67,9 @@ public:
 
     size_t bufferSize() const { return m_bufferSize; }
 
+    ExceptionOr<void> setChannelCount(unsigned) final;
+    ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
+
 private:
     double tailTime() const override;
     double latencyTime() const override;

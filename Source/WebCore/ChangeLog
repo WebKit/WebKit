@@ -1,3 +1,21 @@
+2020-09-15  Chris Dumez  <cdumez@apple.com>
+
+        ScriptProcessorNode should throw when trying to change its channel count or channel count mode
+        https://bugs.webkit.org/show_bug.cgi?id=216583
+
+        Reviewed by Geoffrey Garen.
+
+        ScriptProcessorNode should throw when trying to change its channel count or channel count mode:
+        - https://www.w3.org/TR/webaudio/#audionode-channelcount-constraints
+        - https://www.w3.org/TR/webaudio/#audionode-channelcountmode-constraints
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::setChannelCount):
+        (WebCore::ScriptProcessorNode::setChannelCountMode):
+        * Modules/webaudio/ScriptProcessorNode.h:
+
 2020-09-15  Jer Noble  <jer.noble@apple.com>
 
         CRASH: Exception thrown from -[AVContentKeyRequest makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler:]

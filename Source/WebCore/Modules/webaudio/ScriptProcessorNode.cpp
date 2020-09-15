@@ -250,6 +250,25 @@ void ScriptProcessorNode::reset()
     }
 }
 
+ExceptionOr<void> ScriptProcessorNode::setChannelCount(unsigned channelCount)
+{
+    ASSERT(isMainThread());
+
+    if (channelCount != this->channelCount())
+        return Exception { NotSupportedError, "ScriptProcessorNode's channelCount cannot be changed"_s };
+    return { };
+}
+
+ExceptionOr<void> ScriptProcessorNode::setChannelCountMode(ChannelCountMode mode)
+{
+    ASSERT(isMainThread());
+
+    if (mode != this->channelCountMode())
+        return Exception { NotSupportedError, "ScriptProcessorNode's channelCountMode cannot be changed from 'explicit'"_s };
+
+    return { };
+}
+
 double ScriptProcessorNode::tailTime() const
 {
     return std::numeric_limits<double>::infinity();

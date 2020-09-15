@@ -241,22 +241,22 @@ PASS   script = context.createScriptProcessor(256, 3) did not throw an exception
 PASS   script.channelCount is equal to 3. 
 PASS   script.channelCountMode is equal to explicit. 
 PASS   script.channelCount = 3 did not throw an exception. 
-FAIL X ScriptProcessorNode.channelCount = 1 did not throw an exception. assert_true: expected true got false
-FAIL X ScriptProcessorNode.channelCount should not be equal to 1. Got 1. assert_true: expected true got false
-FAIL X ScriptProcessorNode.channelCount = 7 did not throw an exception. assert_true: expected true got false
-FAIL X ScriptProcessorNode.channelCount should not be equal to 7. Got 7. assert_true: expected true got false
+PASS   ScriptProcessorNode.channelCount = 1 threw NotSupportedError: "ScriptProcessorNode's channelCount cannot be changed". 
+PASS   ScriptProcessorNode.channelCount is not equal to 1. 
+PASS   ScriptProcessorNode.channelCount = 7 threw NotSupportedError: "ScriptProcessorNode's channelCount cannot be changed". 
+PASS   ScriptProcessorNode.channelCount is not equal to 7. 
 PASS   script.channelCountMode = "explicit" did not throw an exception. 
-FAIL X ScriptProcessorNode.channelCountMode = max did not throw an exception. assert_true: expected true got false
-FAIL X ScriptProcessorNode.channelCountMode should not be equal to max. Got max. assert_true: expected true got false
-FAIL X ScriptProcessorNode.channelCountMode = clamped-max did not throw an exception. assert_true: expected true got false
-FAIL X ScriptProcessorNode.channelCountMode should not be equal to clamped-max. Got clamped-max. assert_true: expected true got false
+PASS   ScriptProcessorNode.channelCountMode = max threw NotSupportedError: "ScriptProcessorNode's channelCountMode cannot be changed from 'explicit'". 
+PASS   ScriptProcessorNode.channelCountMode is not equal to max. 
+PASS   ScriptProcessorNode.channelCountMode = clamped-max threw NotSupportedError: "ScriptProcessorNode's channelCountMode cannot be changed from 'explicit'". 
+PASS   ScriptProcessorNode.channelCountMode is not equal to clamped-max. 
 PASS   script.channelCountMode = "junk" did not throw an exception. 
-FAIL < [script-processor] 8 out of 14 assertions were failed. assert_true: expected true got false
+PASS < [script-processor] All assertions passed. (total 14 assertions) 
 PASS > [misc] Miscellaneous tests 
 PASS   osc.noteOn is equal to undefined. 
 PASS   osc.noteOff is equal to undefined. 
 PASS   source.noteOn is equal to undefined. 
 PASS   source.noteOff is equal to undefined. 
 PASS < [misc] All assertions passed. (total 4 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 24 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 24 tasks were failed. assert_true: expected true got false
 
