@@ -1,3 +1,19 @@
+2020-09-14  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling ShadowDOM
+        https://bugs.webkit.org/show_bug.cgi?id=216511
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove runtime setting for enabling/disabling ShadowDOM. There is no
+        reason one need to disable it now, and it has been on by default for
+        a long enough time.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+
 2020-09-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] AutoInstaller should work with HomeBrew Python

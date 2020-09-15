@@ -311,8 +311,6 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitFetchAPIEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitShadowDOMEnabledPreferenceKey), kCFBooleanFalse);
-
     CFDictionaryAddValue(defaults, CFSTR(WebKitCustomElementsEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsEnabledPreferenceKey), kCFBooleanTrue);
@@ -2066,13 +2064,12 @@ HRESULT WebPreferences::shadowDOMEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitShadowDOMEnabledPreferenceKey);
+    *enabled = true;
     return S_OK;
 }
 
-HRESULT WebPreferences::setShadowDOMEnabled(BOOL enabled)
+HRESULT WebPreferences::setShadowDOMEnabled(BOOL)
 {
-    setBoolValue(WebKitShadowDOMEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

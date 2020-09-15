@@ -1,3 +1,24 @@
+2020-09-14  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling ShadowDOM
+        https://bugs.webkit.org/show_bug.cgi?id=216511
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove runtime setting for enabling/disabling ShadowDOM. There is no
+        reason one need to disable it now, and it has been on by default for
+        a long enough time.
+
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/Node.idl:
+        * dom/ShadowRoot.idl:
+        * dom/Slotable.idl:
+        * html/HTMLSlotElement.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setShadowDOMEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::shadowDOMEnabled const): Deleted.
+
 2020-09-14  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Async overflow scroll): Code snippets on getkirby.com appear and disappear as content is scrolled

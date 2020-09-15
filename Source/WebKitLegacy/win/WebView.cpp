@@ -5234,11 +5234,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(!!enabled);
 
-    hr = prefsPrivate->shadowDOMEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(!!enabled);
-
     hr = prefsPrivate->customElementsEnabled(&enabled);
     if (FAILED(hr))
         return hr;

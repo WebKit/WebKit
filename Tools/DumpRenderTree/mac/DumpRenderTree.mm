@@ -935,7 +935,6 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMediaSourceEnabled:YES];
     [preferences setSourceBufferChangeTypeEnabled:YES];
 
-    [preferences setShadowDOMEnabled:YES];
     [preferences setCustomElementsEnabled:YES];
 
     [preferences setDataTransferItemsEnabled:YES];

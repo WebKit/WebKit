@@ -32,7 +32,7 @@ typedef double DOMHighResTimeStamp;
     readonly attribute DOMString type;
     readonly attribute EventTarget? target;
     readonly attribute EventTarget? currentTarget;
-    [EnabledAtRuntime=ShadowDOM] sequence<EventTarget> composedPath();
+    sequence<EventTarget> composedPath();
 
     const unsigned short NONE = 0;
     const unsigned short CAPTURING_PHASE = 1;
@@ -48,7 +48,7 @@ typedef double DOMHighResTimeStamp;
     readonly attribute boolean cancelable;
     undefined preventDefault();
     readonly attribute boolean defaultPrevented;
-    [EnabledAtRuntime=ShadowDOM] readonly attribute boolean composed;
+    readonly attribute boolean composed;
 
     [LegacyUnforgeable] readonly attribute boolean isTrusted;
     [CallWith=ScriptExecutionContext, ImplementedAs=timeStampForBindings] readonly attribute DOMHighResTimeStamp timeStamp;

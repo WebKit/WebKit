@@ -631,7 +631,6 @@ public:
         @YES, WebKitMockCaptureDevicesPromptEnabledPreferenceKey,
         @YES, WebKitMediaCaptureRequiresSecureConnectionPreferenceKey,
 #endif
-        @YES, WebKitShadowDOMEnabledPreferenceKey,
         @YES, WebKitCustomElementsEnabledPreferenceKey,
         @YES, WebKitDataTransferItemsEnabledPreferenceKey,
         @NO, WebKitCustomPasteboardDataEnabledPreferenceKey,
@@ -2231,11 +2230,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:enabled forKey:WebKitAccelerated2dCanvasEnabledPreferenceKey];
 }
 
-- (void)setDiskImageCacheEnabled:(BOOL)enabled
-{
-    // Staging. Can be removed once there are no more callers.
-}
-
 - (BOOL)isFrameFlatteningEnabled
 {
     return [self _unsignedIntValueForKey:WebKitFrameFlatteningPreferenceKey] != WebKitFrameFlatteningDisabled;
@@ -2380,25 +2374,6 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isAVFoundationNSURLSessionEnabled
 {
     return [self _boolValueForKey:WebKitAVFoundationNSURLSessionEnabledKey];
-}
-
-- (void)setVideoPluginProxyEnabled:(BOOL)flag
-{
-    // No-op, left for SPI compatibility.
-}
-
-- (BOOL)isVideoPluginProxyEnabled
-{
-    return NO;
-}
-
-- (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag
-{
-}
-
-- (BOOL)isHixie76WebSocketProtocolEnabled
-{
-    return false;
 }
 
 - (BOOL)isInheritURIQueryComponentEnabled
@@ -3073,16 +3048,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitMediaCaptureRequiresSecureConnectionPreferenceKey];
 }
 
-- (BOOL)shadowDOMEnabled
-{
-    return [self _boolValueForKey:WebKitShadowDOMEnabledPreferenceKey];
-}
-
-- (void)setShadowDOMEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitShadowDOMEnabledPreferenceKey];
-}
-
 - (BOOL)customElementsEnabled
 {
     return [self _boolValueForKey:WebKitCustomElementsEnabledPreferenceKey];
@@ -3740,6 +3705,44 @@ static NSString *classIBCreatorID = nil;
     if (!IBCreatorID)
         return key;
     return [IBCreatorID stringByAppendingString:key];
+}
+
+@end
+
+@implementation WebPreferences (WebPrivateObsolete)
+
+// The preferences in this category are deprecated and have no effect. They should
+// be removed when it is considered safe to do so.
+
+- (void)setShadowDOMEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)shadowDOMEnabled
+{
+    return YES;
+}
+
+- (void)setVideoPluginProxyEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)isVideoPluginProxyEnabled
+{
+    return NO;
+}
+
+- (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)isHixie76WebSocketProtocolEnabled
+{
+    return NO;
+}
+
+- (void)setDiskImageCacheEnabled:(BOOL)enabled
+{
 }
 
 @end

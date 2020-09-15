@@ -55,9 +55,6 @@ public:
 
     bool performanceTimelineEnabled() const { return resourceTimingEnabled() || userTimingEnabled(); }
 
-    void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
-    bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
-
     void setMenuItemElementEnabled(bool isEnabled) { m_isMenuItemElementEnabled = isEnabled; }
     bool menuItemElementEnabled() const { return m_isMenuItemElementEnabled; }
 
@@ -303,7 +300,6 @@ private:
     bool m_isResourceTimingEnabled { false };
     bool m_isUserTimingEnabled { false };
     bool m_isSecureContextAttributeEnabled { false };
-    bool m_isShadowDOMEnabled { true };
     bool m_isMenuItemElementEnabled { false };
     bool m_isDirectoryUploadEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };

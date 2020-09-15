@@ -774,13 +774,6 @@ EnumeratingAllNetworkInterfacesEnabled:
   defaultValue: false
   webcoreBinding: none
 
-ShadowDOMEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "Shadow DOM"
-  humanReadableDescription: "HTML Shadow DOM prototype"
-  webcoreBinding: RuntimeEnabledFeatures
-
 FetchAPIEnabled:
   type: bool
   defaultValue: true

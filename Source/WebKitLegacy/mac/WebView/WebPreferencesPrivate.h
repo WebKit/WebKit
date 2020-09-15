@@ -361,9 +361,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)_setMinimumZoomFontSize:(float)size;
 - (float)_minimumZoomFontSize;
 
-// Deprecated. Has no effect.
-- (void)setDiskImageCacheEnabled:(BOOL)enabled;
-
 - (void)setMediaPlaybackAllowsAirPlay:(BOOL)flag;
 - (BOOL)mediaPlaybackAllowsAirPlay;
 
@@ -441,13 +438,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 - (void)setAVFoundationNSURLSessionEnabled:(BOOL)flag;
 - (BOOL)isAVFoundationNSURLSessionEnabled;
-
-// Deprecated, has no effect.
-- (void)setVideoPluginProxyEnabled:(BOOL)flag;
-- (BOOL)isVideoPluginProxyEnabled;
-
-- (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag;
-- (BOOL)isHixie76WebSocketProtocolEnabled;
 
 #if TARGET_OS_IPHONE
 - (void)_invalidateCachedPreferences;
@@ -546,9 +536,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 - (void)setMediaCaptureRequiresSecureConnection:(BOOL)flag;
 - (BOOL)mediaCaptureRequiresSecureConnection;
-
-- (void)setShadowDOMEnabled:(BOOL)flag;
-- (BOOL)shadowDOMEnabled;
 
 - (void)setCustomElementsEnabled:(BOOL)flag;
 - (BOOL)customElementsEnabled;
@@ -710,4 +697,19 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 // additionalSupportedImageTypes is an array of image UTIs.
 @property (nonatomic, retain) NSArray<NSString *> *additionalSupportedImageTypes;
 
+@end
+
+// The preferences in this category are deprecated and have no effect. They should
+// be removed when it is considered safe to do so.
+@interface WebPreferences (WebPrivateDeprecated)
+- (void)setShadowDOMEnabled:(BOOL)flag;
+- (BOOL)shadowDOMEnabled;
+
+- (void)setVideoPluginProxyEnabled:(BOOL)flag;
+- (BOOL)isVideoPluginProxyEnabled;
+
+- (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag;
+- (BOOL)isHixie76WebSocketProtocolEnabled;
+
+- (void)setDiskImageCacheEnabled:(BOOL)enabled;
 @end

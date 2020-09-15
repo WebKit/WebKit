@@ -24,7 +24,6 @@
 */
 
 [
-    EnabledAtRuntime=ShadowDOM,
     JSGenerateToJSObject
 ] interface ShadowRoot : DocumentFragment {
     readonly attribute ShadowRootMode mode;

@@ -44,9 +44,9 @@
 
     readonly attribute USVString baseURI;
 
-    [EnabledAtRuntime=ShadowDOM] readonly attribute boolean isConnected;
+    readonly attribute boolean isConnected;
     [DOMJIT=Getter] readonly attribute Document? ownerDocument;
-    [EnabledAtRuntime=ShadowDOM] Node getRootNode(optional GetRootNodeOptions options);
+    Node getRootNode(optional GetRootNodeOptions options);
     [DOMJIT=Getter] readonly attribute Node? parentNode;
     readonly attribute Element? parentElement;
     boolean hasChildNodes();

@@ -33,7 +33,7 @@
     [CEReactions, Reflect] attribute DOMString id;
     [CEReactions, Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList; // FIXME: Should be [SameObject].
-    [CEReactions, EnabledAtRuntime=ShadowDOM, Reflect, Unscopable] attribute DOMString slot;
+    [CEReactions, Reflect, Unscopable] attribute DOMString slot;
     [EnabledAtRuntime=CSSShadowParts, SameObject, PutForwards=value] readonly attribute DOMTokenList part;
 
     [DOMJIT=ReadDOM] boolean hasAttributes();
@@ -55,8 +55,8 @@
     [CEReactions, MayThrowException] Attr? setAttributeNodeNS(Attr attr);
     [CEReactions, MayThrowException] Attr removeAttributeNode(Attr attr);
 
-    [EnabledAtRuntime=ShadowDOM, MayThrowException] ShadowRoot attachShadow(ShadowRootInit init);
-    [EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=GlobalObject] readonly attribute ShadowRoot? shadowRoot;
+    [MayThrowException] ShadowRoot attachShadow(ShadowRootInit init);
+    [ImplementedAs=shadowRootForBindings, CallWith=GlobalObject] readonly attribute ShadowRoot? shadowRoot;
 
     [MayThrowException] Element? closest(DOMString selectors);
     [MayThrowException] boolean matches(DOMString selectors);
