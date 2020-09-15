@@ -1,3 +1,14 @@
+2020-09-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        preprocessor.pm: Use Cygwin::win_to_posix_path and Cygwin::posix_to_win_path instead of cygpath command
+        https://bugs.webkit.org/show_bug.cgi?id=216527
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor): Use shellwords() to split the $preprocessor.
+        Use Cygwin Perl's builtin functions instead of spawning process.
+
 2020-09-15  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the fetch API

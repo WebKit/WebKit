@@ -69,15 +69,11 @@ sub applyPreprocessor
     my $pid = 0;
     if ($Config{osname} eq "cygwin") {
         $ENV{PATH} = "$ENV{PATH}:/cygdrive/c/cygwin/bin";
-        my @preprocessorAndFlags;
-        if ($preprocessor eq "/usr/bin/gcc") {
-            @preprocessorAndFlags = split(' ', $preprocessor);
-        } else {        
-            $preprocessor =~ /"(.*)"/;
-            chomp(my $preprocessor = `cygpath -u '$1'`) if (defined $1);
-            chomp($fileName = `cygpath -w '$fileName'`);
-            @preprocessorAndFlags = ($preprocessor, "/nologo", "/EP");
+        my @preprocessorAndFlags = shellwords($preprocessor);
+        if ($preprocessorAndFlags[0] =~ "cl.exe") {
+            $fileName = Cygwin::posix_to_win_path($fileName);
         }
+        $preprocessorAndFlags[0] = Cygwin::win_to_posix_path($preprocessorAndFlags[0]);
         # This call can fail if Windows rebases cygwin, so retry a few times until it succeeds.
         for (my $tries = 0; !$pid && ($tries < 20); $tries++) {
             eval {
