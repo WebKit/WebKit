@@ -101,4 +101,11 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     return platformOpenTypeTable(table);
 }
 
+#if !LOG_DISABLED
+String FontPlatformData::description() const
+{
+    return String();
+}
+#endif
+
 }

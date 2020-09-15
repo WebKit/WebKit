@@ -1,3 +1,11 @@
+2020-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed debug build fix after r267073
+        https://bugs.webkit.org/show_bug.cgi?id=216448
+
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::description const): Added.
+
 2020-09-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Layout::BoxGeometry rename, part II.
