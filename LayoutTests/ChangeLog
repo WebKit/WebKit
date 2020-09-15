@@ -1,3 +1,13 @@
+2020-09-15  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS ] imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=216292
+
+        Unreviewed test gardening!.
+
+        * platform/mac-wk1/TestExpectations: adjustment for Debug
+        * platform/mac-wk2/TestExpectations: adjustment for Debug
+
 2020-09-15  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r267002): ASSERTION FAILED:[ iOS wk2 Debug ] !HashTranslator::equal(KeyTraits::emptyValue(), key) on compositing/ios/overflow-scroll-update-overlap.html

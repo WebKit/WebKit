@@ -1306,7 +1306,7 @@ webkit.org/b/216159 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-res
 
 webkit.org/b/216164 [ Catalina Debug ] html5lib/generated/run-template-data.html [ Pass Crash ]
 
-webkit.org/b/216292 [ Release ] imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html [ Pass Failure ]
+webkit.org/b/216292 imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html [ Pass Failure ]
 
 # App Bound Domains is for iOS only
 http/tests/resourceLoadStatistics/exemptDomains/ [ Skip ]
