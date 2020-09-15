@@ -64,7 +64,7 @@ PASS > [construct invalid options]
 PASS   node = new AnalyserNode(c, { fftSize: 33 }) threw IndexSizeError: "fftSize must be power of 2 in the range 32 to 32768.". 
 PASS   node = new AnalyserNode(c, { maxDecibels: -500 }) threw IndexSizeError: "minDecibels must be less than maxDecibels.". 
 PASS   node = new AnalyserNode(c, { minDecibels: -10 }) threw IndexSizeError: "minDecibels must be less than maxDecibels.". 
-PASS   node = new AnalyserNode(c, { smoothingTimeConstant: 2 }) threw IndexSizeError: "The index is not in the allowed range.". 
+PASS   node = new AnalyserNode(c, { smoothingTimeConstant: 2 }) threw IndexSizeError: "Smoothing time constant needs to be between 0 and 1.". 
 PASS   node = new AnalyserNode(c, { frequencyBinCount: 33 }) did not throw an exception. 
 PASS   node.frequencyBinCount is equal to 1024. 
 PASS < [construct invalid options] All assertions passed. (total 6 assertions) 

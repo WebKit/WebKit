@@ -1,5 +1,17 @@
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
+        Type of AnalyserNode's attributes should not be unrestricted double
+        https://bugs.webkit.org/show_bug.cgi?id=216505
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage.
+
+        * webaudio/analyser-exception-expected.txt:
+        * webaudio/analyser-exception.html:
+
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
         Drop non-standard AudioBuffer.gain
         https://bugs.webkit.org/show_bug.cgi?id=216510
 

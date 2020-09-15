@@ -28,12 +28,22 @@ function runTest() {
 
     // 'minDecibels' shouldn't be greater than 'maxDecibels' which defaults to -30dB.
     shouldThrowErrorName("analyser.minDecibels = -20", "IndexSizeError");
+    shouldThrowErrorName("analyser.minDecibels = NaN", "TypeError");
+    shouldThrowErrorName("analyser.minDecibels = Infinity", "TypeError");
+    shouldThrowErrorName("analyser.minDecibels = -Infinity", "TypeError");
 
     // 'maxDecibels' shouldn't be less than 'minDecibels' which defaults to -100dB.
     shouldThrowErrorName("analyser.maxDecibels = -120", "IndexSizeError");
+    shouldThrowErrorName("analyser.maxDecibels = NaN", "TypeError");
+    shouldThrowErrorName("analyser.maxDecibels = Infinity", "TypeError");
+    shouldThrowErrorName("analyser.maxDecibels = -Infinity", "TypeError");
 
     // 'smoothingTimeConstant' range is between 0 and 1.
     shouldThrowErrorName("analyser.smoothingTimeConstant = 2", "IndexSizeError");
+    shouldThrowErrorName("analyser.smoothingTimeConstant = -1", "IndexSizeError");
+    shouldThrowErrorName("analyser.smoothingTimeConstant = NaN", "TypeError");
+    shouldThrowErrorName("analyser.smoothingTimeConstant = Infinity", "TypeError");
+    shouldThrowErrorName("analyser.smoothingTimeConstant = -Infinity", "TypeError");
 
     context.oncomplete = finishJSTest;
     context.startRendering();

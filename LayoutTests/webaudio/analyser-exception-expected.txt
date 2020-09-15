@@ -3,8 +3,18 @@ Tests that AnalyserNode validates minDecibels, maxDecibels and smoothingTimeCons
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS analyser.minDecibels = -20 threw exception IndexSizeError: minDecibels must be less than maxDecibels..
+PASS analyser.minDecibels = NaN threw exception TypeError: The provided value is non-finite.
+PASS analyser.minDecibels = Infinity threw exception TypeError: The provided value is non-finite.
+PASS analyser.minDecibels = -Infinity threw exception TypeError: The provided value is non-finite.
 PASS analyser.maxDecibels = -120 threw exception IndexSizeError: maxDecibels must be greater than minDecibels..
-PASS analyser.smoothingTimeConstant = 2 threw exception IndexSizeError: The index is not in the allowed range..
+PASS analyser.maxDecibels = NaN threw exception TypeError: The provided value is non-finite.
+PASS analyser.maxDecibels = Infinity threw exception TypeError: The provided value is non-finite.
+PASS analyser.maxDecibels = -Infinity threw exception TypeError: The provided value is non-finite.
+PASS analyser.smoothingTimeConstant = 2 threw exception IndexSizeError: Smoothing time constant needs to be between 0 and 1..
+PASS analyser.smoothingTimeConstant = -1 threw exception IndexSizeError: Smoothing time constant needs to be between 0 and 1..
+PASS analyser.smoothingTimeConstant = NaN threw exception TypeError: The provided value is non-finite.
+PASS analyser.smoothingTimeConstant = Infinity threw exception TypeError: The provided value is non-finite.
+PASS analyser.smoothingTimeConstant = -Infinity threw exception TypeError: The provided value is non-finite.
 PASS successfullyParsed is true
 
 TEST COMPLETE

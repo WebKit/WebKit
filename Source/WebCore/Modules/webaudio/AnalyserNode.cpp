@@ -141,7 +141,7 @@ ExceptionOr<void> AnalyserNode::setMaxDecibels(double k)
 ExceptionOr<void> AnalyserNode::setSmoothingTimeConstant(double k)
 {
     if (k < 0 || k > 1)
-        return Exception { IndexSizeError };
+        return Exception { IndexSizeError, "Smoothing time constant needs to be between 0 and 1."_s };
 
     m_analyser.setSmoothingTimeConstant(k);
     return { };

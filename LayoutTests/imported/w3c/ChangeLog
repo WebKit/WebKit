@@ -1,5 +1,16 @@
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
+        Type of AnalyserNode's attributes should not be unrestricted double
+        https://bugs.webkit.org/show_bug.cgi?id=216505
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing WPT test now that the exception message was improved.
+
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/ctor-analyser-expected.txt:
+
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
         Drop smoothing logic from DelayDSPKernel::process()
         https://bugs.webkit.org/show_bug.cgi?id=216504
 

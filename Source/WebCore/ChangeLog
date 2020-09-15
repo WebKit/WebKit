@@ -1,5 +1,21 @@
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
+        Type of AnalyserNode's attributes should not be unrestricted double
+        https://bugs.webkit.org/show_bug.cgi?id=216505
+
+        Reviewed by Darin Adler.
+
+        Type of AnalyserNode's attributes should not be unrestricted double. They should use double type
+        so that we throw when trying to set them to NaN or infinity values.
+
+        No new tests, updated existing test.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::setSmoothingTimeConstant):
+        * Modules/webaudio/AnalyserNode.idl:
+
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
         Drop non-standard AudioBuffer.gain
         https://bugs.webkit.org/show_bug.cgi?id=216510
 
