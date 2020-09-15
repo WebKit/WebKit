@@ -1066,25 +1066,32 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
     }
 
     RetainPtr<NSData> contentIdentifier = keyIDs.first()->createNSData();
-    [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = makeWeakPtr(*this)] (NSData *contentKeyRequestData, NSError *error) mutable {
-        callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {
-            if (!weakThis)
-                return;
+    @try {
+        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = makeWeakPtr(*this)] (NSData *contentKeyRequestData, NSError *error) mutable {
+            callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {
+                if (!weakThis)
+                    return;
 
-            if (m_sessionId.isEmpty()) {
-                auto sessionID = m_group ? m_group.get().contentProtectionSessionIdentifier : m_session.get().contentProtectionSessionIdentifier;
-                sessionIdentifierChanged(sessionID);
-            }
+                if (m_sessionId.isEmpty()) {
+                    auto sessionID = m_group ? m_group.get().contentProtectionSessionIdentifier : m_session.get().contentProtectionSessionIdentifier;
+                    sessionIdentifierChanged(sessionID);
+                }
 
-            if (error && m_requestLicenseCallback)
-                m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
-            else if (m_requestLicenseCallback)
-                m_requestLicenseCallback(SharedBuffer::create(contentKeyRequestData.get()), m_sessionId, false, Succeeded);
-            else if (m_client)
-                m_client->sendMessage(CDMMessageType::LicenseRequest, SharedBuffer::create(contentKeyRequestData.get()));
-            ASSERT(!m_requestLicenseCallback);
-        });
-    }];
+                if (error && m_requestLicenseCallback)
+                    m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
+                else if (m_requestLicenseCallback)
+                    m_requestLicenseCallback(SharedBuffer::create(contentKeyRequestData.get()), m_sessionId, false, Succeeded);
+                else if (m_client)
+                    m_client->sendMessage(CDMMessageType::LicenseRequest, SharedBuffer::create(contentKeyRequestData.get()));
+                ASSERT(!m_requestLicenseCallback);
+            });
+        }];
+    } @catch(NSException *exception) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        if (m_updateLicenseCallback)
+            m_updateLicenseCallback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
+        ASSERT(!m_updateLicenseCallback);
+    }
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<RetainPtr<AVContentKeyRequest>>&& requests)
@@ -1169,16 +1176,23 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
         m_requestLicenseCallback(requestBuffer.releaseNonNull(), m_sessionId, false, Succeeded);
     });
 
-    for (auto request : m_currentRequest.value().requests) {
-        auto keyIDs = keyIDsForRequest(request.get());
-        RefPtr<SharedBuffer> keyID = WTFMove(keyIDs.first());
-        auto contentIdentifier = keyID->createNSData();
-        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator] (NSData *contentKeyRequestData, NSError *error) mutable {
-            UNUSED_PARAM(error);
-            callOnMainThread([keyID = WTFMove(keyID), aggregator = WTFMove(aggregator), contentKeyRequestData = retainPtr(contentKeyRequestData)] () mutable {
-                aggregator->requestsData.append({ WTFMove(keyID), WTFMove(contentKeyRequestData) });
-            });
-        }];
+    @try {
+        for (auto request : m_currentRequest.value().requests) {
+            auto keyIDs = keyIDsForRequest(request.get());
+            RefPtr<SharedBuffer> keyID = WTFMove(keyIDs.first());
+            auto contentIdentifier = keyID->createNSData();
+            [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator] (NSData *contentKeyRequestData, NSError *error) mutable {
+                UNUSED_PARAM(error);
+                callOnMainThread([keyID = WTFMove(keyID), aggregator = WTFMove(aggregator), contentKeyRequestData = retainPtr(contentKeyRequestData)] () mutable {
+                    aggregator->requestsData.append({ WTFMove(keyID), WTFMove(contentKeyRequestData) });
+                });
+            }];
+        }
+    } @catch(NSException *exception) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        if (m_requestLicenseCallback)
+            m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
+        ASSERT(!m_requestLicenseCallback);
     }
 }
 
@@ -1207,20 +1221,27 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
     auto keyIDs = keyIDsForRequest(m_currentRequest.value());
 
     RetainPtr<NSData> contentIdentifier = keyIDs.first()->createNSData();
-    [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = makeWeakPtr(*this)] (NSData *contentKeyRequestData, NSError *error) mutable {
-        callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {
-            if (!weakThis || !m_client || error)
-                return;
+    @try {
+        [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = makeWeakPtr(*this)] (NSData *contentKeyRequestData, NSError *error) mutable {
+            callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {
+                if (!weakThis || !m_client || error)
+                    return;
 
-            if (error && m_updateLicenseCallback)
-                m_updateLicenseCallback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
-            else if (m_updateLicenseCallback)
-                m_updateLicenseCallback(false, WTF::nullopt, WTF::nullopt, Message(MessageType::LicenseRenewal, SharedBuffer::create(contentKeyRequestData.get())), Succeeded);
-            else if (m_client)
-                m_client->sendMessage(CDMMessageType::LicenseRenewal, SharedBuffer::create(contentKeyRequestData.get()));
-            ASSERT(!m_updateLicenseCallback);
-        });
-    }];
+                if (error && m_updateLicenseCallback)
+                    m_updateLicenseCallback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
+                else if (m_updateLicenseCallback)
+                    m_updateLicenseCallback(false, WTF::nullopt, WTF::nullopt, Message(MessageType::LicenseRenewal, SharedBuffer::create(contentKeyRequestData.get())), Succeeded);
+                else if (m_client)
+                    m_client->sendMessage(CDMMessageType::LicenseRenewal, SharedBuffer::create(contentKeyRequestData.get()));
+                ASSERT(!m_updateLicenseCallback);
+            });
+        }];
+    } @catch(NSException *exception) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "exception thrown from -makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        if (m_updateLicenseCallback)
+            m_updateLicenseCallback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
+        ASSERT(!m_updateLicenseCallback);
+    }
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvidePersistableRequest(AVContentKeyRequest *request)

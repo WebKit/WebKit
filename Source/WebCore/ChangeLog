@@ -1,3 +1,19 @@
+2020-09-15  Jer Noble  <jer.noble@apple.com>
+
+        CRASH: Exception thrown from -[AVContentKeyRequest makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler:]
+        https://bugs.webkit.org/show_bug.cgi?id=216580
+        <rdar://problem/68866834>
+
+        Reviewed by Eric Carlson.
+
+        Protect against undocumented exceptions thrown from AVContentKeySession (and related) APIs by wrapping in @try/@catch blocks and firing
+        the correct failure callbacks if an exception is encountered.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+
 2020-09-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         preprocessor.pm: Use Cygwin::win_to_posix_path and Cygwin::posix_to_win_path instead of cygpath command
