@@ -1,3 +1,15 @@
+2020-09-15  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r228533.
+        warning: ‘%40s’ directive argument is null [-Wformat-overflow=]
+
+        Since gcc which has version >= 9 is stricter about passing null string
+        pointers to printf-like functions, add null string pointer check
+        to fix the warning proactively.
+
+        * jsc.cpp:
+        (runJSC):
+
 2020-09-14  Keith Miller  <keith_miller@apple.com>
 
         BytecodeParser should GetLocal op_ret's value even if it's unused by the caller

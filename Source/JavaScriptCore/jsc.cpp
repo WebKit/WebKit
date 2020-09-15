@@ -3341,8 +3341,10 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         for (auto& entry : compileTimeStats)
             compileTimeKeys.append(entry.key);
         std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
-        for (const CString& key : compileTimeKeys)
-            printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
+        for (const CString& key : compileTimeKeys) {
+            if (key.data())
+                printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
+        }
 
         if (Options::reportTotalPhaseTimes())
             logTotalPhaseTimes();
