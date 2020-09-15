@@ -1318,3 +1318,6 @@ webkit.org/b/216394 [ Release ] fast/selectors/text-field-selection-stroke-color
 
 # rdar://68743466 (REGRESSION: [ BigSur wk2 ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is a constant failure)
 [ BigSur+ ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Failure ]
+
+# <rdar://68947198> [ macOS iOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html
+[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Pass Failure ]
