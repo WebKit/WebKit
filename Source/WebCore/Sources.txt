@@ -48,7 +48,6 @@ Modules/entriesapi/FileSystemEntriesCallback.cpp
 Modules/entriesapi/FileSystemEntry.cpp
 Modules/entriesapi/FileSystemFileEntry.cpp
 Modules/entriesapi/HTMLInputElementEntriesAPI.cpp
-Modules/fetch/DOMWindowFetch.cpp
 Modules/fetch/FetchBody.cpp
 Modules/fetch/FetchBodyConsumer.cpp
 Modules/fetch/FetchBodyOwner.cpp
@@ -57,7 +56,7 @@ Modules/fetch/FetchHeaders.cpp
 Modules/fetch/FetchLoader.cpp
 Modules/fetch/FetchRequest.cpp
 Modules/fetch/FetchResponse.cpp
-Modules/fetch/WorkerGlobalScopeFetch.cpp
+Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp
 Modules/geolocation/GeoNotifier.cpp
 Modules/geolocation/Geolocation.cpp
 Modules/geolocation/GeolocationController.cpp
@@ -2816,7 +2815,6 @@ JSDOMURL.cpp
 JSDOMURLMediaSource.cpp
 JSDOMWindow.cpp
 JSDOMWindowCaches.cpp
-JSDOMWindowFetch.cpp
 JSDOMWindowIndexedDatabase.cpp
 JSDOMWindowQuota.cpp
 JSDOMWindowSpeechSynthesis.cpp
@@ -3657,10 +3655,10 @@ JSWebXRWebGLLayer.cpp
 JSWheelEvent.cpp
 JSWindowEventHandlers.cpp
 JSWindowOrWorkerGlobalScope.cpp
+JSWindowOrWorkerGlobalScopeFetch.cpp
 JSWorker.cpp
 JSWorkerGlobalScope.cpp
 JSWorkerGlobalScopeCaches.cpp
-JSWorkerGlobalScopeFetch.cpp
 JSWorkerGlobalScopeIndexedDatabase.cpp
 JSWorkerLocation.cpp
 JSWorkerNavigator.cpp

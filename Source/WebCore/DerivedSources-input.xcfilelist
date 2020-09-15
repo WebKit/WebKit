@@ -94,7 +94,6 @@ $(PROJECT_DIR)/Modules/entriesapi/FileSystemEntry.idl
 $(PROJECT_DIR)/Modules/entriesapi/FileSystemEntryCallback.idl
 $(PROJECT_DIR)/Modules/entriesapi/FileSystemFileEntry.idl
 $(PROJECT_DIR)/Modules/entriesapi/HTMLInputElementEntriesAPI.idl
-$(PROJECT_DIR)/Modules/fetch/DOMWindowFetch.idl
 $(PROJECT_DIR)/Modules/fetch/FetchBody.idl
 $(PROJECT_DIR)/Modules/fetch/FetchHeaders.idl
 $(PROJECT_DIR)/Modules/fetch/FetchReferrerPolicy.idl
@@ -105,7 +104,7 @@ $(PROJECT_DIR)/Modules/fetch/FetchRequestInit.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestMode.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestRedirect.idl
 $(PROJECT_DIR)/Modules/fetch/FetchResponse.idl
-$(PROJECT_DIR)/Modules/fetch/WorkerGlobalScopeFetch.idl
+$(PROJECT_DIR)/Modules/fetch/WindowOrWorkerGlobalScopeFetch.idl
 $(PROJECT_DIR)/Modules/gamepad/Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadButton.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl

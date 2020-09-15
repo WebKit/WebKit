@@ -265,7 +265,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/entriesapi/FileSystemFileEntry.idl
     Modules/entriesapi/HTMLInputElementEntriesAPI.idl
 
-    Modules/fetch/DOMWindowFetch.idl
     Modules/fetch/FetchBody.idl
     Modules/fetch/FetchHeaders.idl
     Modules/fetch/FetchReferrerPolicy.idl
@@ -276,7 +275,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/fetch/FetchRequestMode.idl
     Modules/fetch/FetchRequestRedirect.idl
     Modules/fetch/FetchResponse.idl
-    Modules/fetch/WorkerGlobalScopeFetch.idl
+    Modules/fetch/WindowOrWorkerGlobalScopeFetch.idl
 
     Modules/geolocation/Geolocation.idl
     Modules/geolocation/GeolocationCoordinates.idl

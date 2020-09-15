@@ -197,7 +197,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/entriesapi/FileSystemEntryCallback.idl \
     $(WebCore)/Modules/entriesapi/FileSystemFileEntry.idl \
     $(WebCore)/Modules/entriesapi/HTMLInputElementEntriesAPI.idl \
-    $(WebCore)/Modules/fetch/DOMWindowFetch.idl \
     $(WebCore)/Modules/fetch/FetchBody.idl \
     $(WebCore)/Modules/fetch/FetchHeaders.idl \
     $(WebCore)/Modules/fetch/FetchReferrerPolicy.idl \
@@ -208,7 +207,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/fetch/FetchRequestMode.idl \
     $(WebCore)/Modules/fetch/FetchRequestRedirect.idl \
     $(WebCore)/Modules/fetch/FetchResponse.idl \
-    $(WebCore)/Modules/fetch/WorkerGlobalScopeFetch.idl \
+    $(WebCore)/Modules/fetch/WindowOrWorkerGlobalScopeFetch.idl \
     $(WebCore)/Modules/gamepad/Gamepad.idl \
     $(WebCore)/Modules/gamepad/GamepadButton.idl \
     $(WebCore)/Modules/gamepad/GamepadEvent.idl \

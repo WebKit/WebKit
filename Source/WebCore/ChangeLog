@@ -1,3 +1,35 @@
+2020-09-15  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Update Fetch IDLs to use WindowOrWorkerGlobalScope partial mixin
+        https://bugs.webkit.org/show_bug.cgi?id=216524
+
+        Reviewed by Darin Adler.
+
+        Move global fetch() function definition from DOMWindowFetch.idl & WorkerGlobalScopeFetch.idl
+        to single WindowOrWorkerGlobalScopeFetch.idl, matching the spec.
+        
+        Also cleanup some comments in other Fetch related IDLs.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/fetch/DOMWindowFetch.cpp: Removed.
+        * Modules/fetch/DOMWindowFetch.h: Removed.
+        * Modules/fetch/DOMWindowFetch.idl: Removed.
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchRequestInit.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp: Added.
+        (WebCore::WindowOrWorkerGlobalScopeFetch::fetch):
+        * Modules/fetch/WindowOrWorkerGlobalScopeFetch.h: Added.
+        * Modules/fetch/WindowOrWorkerGlobalScopeFetch.idl: Added.
+        * Modules/fetch/WorkerGlobalScopeFetch.cpp: Removed.
+        * Modules/fetch/WorkerGlobalScopeFetch.h: Removed.
+        * Modules/fetch/WorkerGlobalScopeFetch.idl: Removed.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-09-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Move Layout::Rect to a dedicated file

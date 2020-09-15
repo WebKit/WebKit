@@ -57,8 +57,6 @@ dictionary FetchResponseInit {
     readonly attribute boolean ok;
     readonly attribute ByteString statusText;
     readonly attribute FetchHeaders headers; // FIXME: Should be [SameObject].
-    // FIXME: Add support for trailers.
-    // readonly attribute Promise<Headers> trailer;
 
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchResponse clone();
 };

@@ -30,8 +30,6 @@ enum FetchRequestDestination { "", "audio", "document", "embed", "font", "image"
 
 typedef (FetchRequest or USVString) RequestInfo;
 
-typedef (Blob or BufferSource or DOMFormData or URLSearchParams or ReadableStream or USVString) BodyInit;
-
 [
     ActiveDOMObject,
     EnabledAtRuntime=FetchAPI,
@@ -54,6 +52,10 @@ typedef (Blob or BufferSource or DOMFormData or URLSearchParams or ReadableStrea
     readonly attribute FetchRequestRedirect redirect;
     readonly attribute DOMString integrity;
     [EnabledAtRuntime=FetchAPIKeepAlive] readonly attribute boolean keepalive;
+    // FIXME: Implement 'isReloadNavigation'.
+    // readonly attribute boolean isReloadNavigation;
+    // FIXME: Implement 'isHistoryNavigation'.
+    // readonly attribute boolean isHistoryNavigation;
     readonly attribute AbortSignal signal;
 
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchRequest clone();

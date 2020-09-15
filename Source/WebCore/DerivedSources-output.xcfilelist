@@ -490,8 +490,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowCaches.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowCaches.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowFetch.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowFetch.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowIndexedDatabase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowIndexedDatabase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowQuota.cpp
@@ -2312,14 +2310,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScopeFetch.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScopeFetch.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScopeCaches.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScopeCaches.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScopeFetch.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScopeFetch.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScopeIndexedDatabase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerGlobalScopeIndexedDatabase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkerLocation.cpp

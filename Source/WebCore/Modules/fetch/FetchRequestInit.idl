@@ -39,6 +39,7 @@ dictionary FetchRequestInit {
     FetchRequestRedirect redirect;
     DOMString integrity;
     boolean keepalive;
+    // FIXME: 'signal' should be of type AbortSignal?.
     any signal;
     any window; // can only be set to null
 };
