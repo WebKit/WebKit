@@ -1,3 +1,18 @@
+2020-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r267002): ASSERTION FAILED:[ iOS wk2 Debug ] !HashTranslator::equal(KeyTraits::emptyValue(), key) on compositing/ios/overflow-scroll-update-overlap.html
+        https://bugs.webkit.org/show_bug.cgi?id=216520
+        <rdar://problem/68894931>
+
+        Reviewed by Tim Horton.
+
+        Avoid hash lookups with zero nodeIDs.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::isRubberBandInProgress const):
+        (WebKit::RemoteScrollingCoordinator::isUserScrollInProgress const):
+        (WebKit::RemoteScrollingCoordinator::isScrollSnapInProgress const):
+
 2020-09-15  Alex Christensen  <achristensen@webkit.org>
 
         Move WKContextClearCachedCredentials SPI to WKWebsiteDataStoreClearCachedCredentials

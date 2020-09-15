@@ -1392,7 +1392,7 @@ webkit.org/b/206934 imported/w3c/web-platform-tests/IndexedDB/key-generators/rea
 
 webkit.org/b/208585 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Pass Failure ]
 
-webkit.org/b/208587 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ Pass ImageOnlyFailure Crash ]
+webkit.org/b/208587 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
 
@@ -1890,5 +1890,3 @@ webkit.org/b/216292 [ Release ] imported/w3c/web-platform-tests/css/css-flexbox/
 
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Skip ]
-
-webkit.org/b/216520 [ Debug ] fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow.html [ Crash ]

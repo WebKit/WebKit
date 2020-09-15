@@ -1,3 +1,13 @@
+2020-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r267002): ASSERTION FAILED:[ iOS wk2 Debug ] !HashTranslator::equal(KeyTraits::emptyValue(), key) on compositing/ios/overflow-scroll-update-overlap.html
+        https://bugs.webkit.org/show_bug.cgi?id=216520
+        <rdar://problem/68894931>
+
+        Reviewed by Tim Horton.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-09-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Indefinite flex-basis percentage should cause height to be ignored
