@@ -1181,9 +1181,10 @@ void WebDriverService::newWindow(RefPtr<JSON::Object>&& parameters, Function<voi
     Optional<String> typeHint;
     if (auto value = parameters->getValue("type"_s)) {
         auto valueString = value->asString();
-        if (valueString == "window" || valueString == "tab")
-            typeHint = valueString;
-        else if (!value->isNull()) {
+        if (!!valueString) {
+            if (valueString == "window" || valueString == "tab")
+                typeHint = valueString;
+        } else if (!value->isNull()) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
             return;
         }
@@ -1761,7 +1762,7 @@ void WebDriverService::deleteCookie(RefPtr<JSON::Object>&& parameters, Function<
     if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-auto name = parameters->getString("name"_s);
+    auto name = parameters->getString("name"_s);
     if (!name) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
@@ -1853,7 +1854,7 @@ static Optional<Action> processKeyAction(const String& id, JSON::Object& actionI
             return WTF::nullopt;
         }
         auto key = keyValue->asString();
-        if (!key.isEmpty()) {
+        if (key.isEmpty()) {
             errorMessage = String("The paramater 'value' is invalid for key up/down action");
             return WTF::nullopt;
         }

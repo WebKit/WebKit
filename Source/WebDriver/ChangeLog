@@ -1,3 +1,32 @@
+2020-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r266885): WebDriver is broken since r266885
+        https://bugs.webkit.org/show_bug.cgi?id=216477
+
+        Reviewed by Devin Rousso.
+
+        There are several issues introduced in r266885, most of them related to JSValue::get methods now returning an
+        optional. In some cases of boolean values, the optional is checked instead of the contained bool or the logic is
+        inverted. JSONValue::getString() is problematic too because it doesn't use optional, when you call getString()
+        and null is returned it could be because the property is not present in the object or because the property is
+        not a string. In several cases we need to know that so we need to first get the value and then call asString(9
+        instead of calling getString() directly.
+
+        * Session.cpp:
+        (WebDriver::Session::handleUserPrompts): Check the value of isShowingJavaScriptDialog, not the optional.
+        (WebDriver::parseAutomationCookie): Check also the value of the session optional bool, not only the optional.
+        * SessionHost.cpp:
+        (WebDriver::SessionHost::dispatchMessage): Only set the responseObject if the object is not empty.
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::newWindow): Unknown values of type hint are not an error.
+        (WebDriver::WebDriverService::deleteCookie): Fix indentation.
+        (WebDriver::processKeyAction): Empty key value is an error, not the opposite.
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformValidateCapability const): Only fail if optional values are wrong type,
+        not if they are not present.
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformValidateCapability const): Ditto.
+
 2020-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed Debug build fix for WPE and WinCairo

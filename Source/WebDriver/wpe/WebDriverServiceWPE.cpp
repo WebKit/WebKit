@@ -57,18 +57,24 @@ bool WebDriverService::platformValidateCapability(const String& name, const Ref<
     if (!binary)
         return false;
 
-    auto browserArguments = browserOptions->getArray("args"_s);
-    if (!browserArguments)
-        return false;
-
-    unsigned browserArgumentsLength = browserArguments->length();
-    for (unsigned i = 0; i < browserArgumentsLength; ++i) {
-        auto argument = browserArguments->get(i)->asString();
-        if (!argument)
+    if (auto browserArgumentsValue = browserOptions->getValue("args"_s)) {
+        auto browserArguments = browserArgumentsValue->asArray();
+        if (!browserArguments)
             return false;
+
+        unsigned browserArgumentsLength = browserArguments->length();
+        for (unsigned i = 0; i < browserArgumentsLength; ++i) {
+            auto argument = browserArguments->get(i)->asString();
+            if (!argument)
+                return false;
+        }
     }
 
-    if (auto certificates = browserOptions->getArray("certificates"_s)) {
+    if (auto certificatesValue = browserOptions->getValue("certificates"_s)) {
+        auto certificates = certificatesValue->asArray();
+        if (!certificates)
+            return false;
+
         unsigned certificatesLength = certificates->length();
         for (unsigned i = 0; i < certificatesLength; ++i) {
             auto certificate = certificates->get(i)->asObject();

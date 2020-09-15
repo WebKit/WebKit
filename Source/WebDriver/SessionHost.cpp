@@ -81,8 +81,10 @@ void SessionHost::dispatchMessage(const String& message)
     if (auto errorObject = messageObject->getObject("error"_s)) {
         response.responseObject = WTFMove(errorObject);
         response.isError = true;
-    } else if (auto resultObject = messageObject->getObject("result"_s))
-        response.responseObject = WTFMove(resultObject);
+    } else if (auto resultObject = messageObject->getObject("result"_s)) {
+        if (resultObject->size())
+            response.responseObject = WTFMove(resultObject);
+    }
 
     responseHandler(WTFMove(response));
 }

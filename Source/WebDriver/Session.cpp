@@ -214,7 +214,7 @@ void Session::handleUserPrompts(Function<void (CommandResult&&)>&& completionHan
             return;
         }
 
-        if (!isShowingJavaScriptDialog) {
+        if (!isShowingJavaScriptDialog.value()) {
             completionHandler(CommandResult::success());
             return;
         }
@@ -2368,7 +2368,7 @@ static Optional<Session::Cookie> parseAutomationCookie(const JSON::Object& cooki
         cookie.httpOnly = *httpOnly;
 
     auto session = cookieObject.getBoolean("session"_s);
-    if (!session) {
+    if (!session || !*session) {
         if (auto expiry = cookieObject.getDouble("expires"_s))
             cookie.expiry = *expiry;
     }
