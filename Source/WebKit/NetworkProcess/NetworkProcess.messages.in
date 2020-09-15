@@ -63,7 +63,6 @@ messages -> NetworkProcess LegacyReceiver {
 
 #if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
-    SetStorageAccessAPIEnabled(bool enabled)
 #endif
     SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () Synchronous
 

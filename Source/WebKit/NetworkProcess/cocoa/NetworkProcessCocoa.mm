@@ -93,8 +93,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);
 #endif
 
-    WebCore::NetworkStorageSession::setStorageAccessAPIEnabled(parameters.storageAccessAPIEnabled);
-
     // FIXME: Most of what this function does for cache size gets immediately overridden by setCacheModel().
     // - memory cache size passed from UI process is always ignored;
     // - disk cache size passed from UI process is effectively a minimum size.
@@ -217,11 +215,6 @@ void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifie
     [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorageFromIdentifyingData(identifier).get()]).get()];
 }
 #endif
-
-void NetworkProcess::setStorageAccessAPIEnabled(bool enabled)
-{
-    WebCore::NetworkStorageSession::setStorageAccessAPIEnabled(enabled);
-}
 
 void NetworkProcess::flushCookies(const PAL::SessionID& sessionID, CompletionHandler<void()>&& completionHandler)
 {

@@ -69,7 +69,6 @@ struct NetworkProcessCreationParameters {
     String uiProcessBundleIdentifier;
     uint32_t uiProcessSDKVersion { 0 };
     RetainPtr<CFDataRef> networkATSContext;
-    bool storageAccessAPIEnabled;
 #endif
 
     WebsiteDataStoreParameters defaultDataStoreParameters;

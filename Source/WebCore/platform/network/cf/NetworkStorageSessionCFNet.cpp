@@ -39,8 +39,6 @@
 
 namespace WebCore {
 
-static bool storageAccessAPIEnabled;
-
 RetainPtr<CFURLStorageSessionRef> NetworkStorageSession::createCFStorageSessionForIdentifier(CFStringRef identifier)
 {
     auto storageSession = adoptCF(_CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, nullptr));
@@ -106,11 +104,6 @@ RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
     // When using NSURLConnection, we also use its shared cookie storage.
     return nullptr;
 #endif
-}
-
-void NetworkStorageSession::setStorageAccessAPIEnabled(bool enabled)
-{
-    storageAccessAPIEnabled = enabled;
 }
 
 } // namespace WebCore

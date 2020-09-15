@@ -1,5 +1,37 @@
 2020-09-15  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused plumbing for setting whether the storage access API is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=216516
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::NetworkProcess::setStorageAccessAPIEnabled): Deleted.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetStorageAccessAPIEnabled): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerSetStorageAccessAPIEnabled): Deleted.
+        * UIProcess/API/C/WKCookieManager.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _isStorageAccessAPIEnabled]): Deleted.
+        (-[WKProcessPool _setStorageAccessAPIEnabled:]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setStorageAccessAPIEnabled): Deleted.
+        * UIProcess/WebProcessPool.h:
+
+2020-09-15  Alex Christensen  <achristensen@webkit.org>
+
         Move WebSocket TLS bypass SPI from WebProcessPool to WebsiteDataStore
         https://bugs.webkit.org/show_bug.cgi?id=216509
 

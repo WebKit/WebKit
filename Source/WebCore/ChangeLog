@@ -1,3 +1,17 @@
+2020-09-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused plumbing for setting whether the storage access API is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=216516
+
+        Reviewed by Youenn Fablet.
+
+        Sending a boolean from the process pool to the network process has been superceded by a preference in WebPreferences.yaml.
+        The boolean sent to the network process was not even used any more.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::setStorageAccessAPIEnabled): Deleted.
+
 2020-09-15  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Update Fetch IDLs to use WindowOrWorkerGlobalScope partial mixin

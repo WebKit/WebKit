@@ -162,8 +162,6 @@ WK_EXPORT unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef context) WK
 WK_EXPORT void WKContextSetUsesSingleWebProcess(WKContextRef, bool);
 WK_EXPORT bool WKContextGetUsesSingleWebProcess(WKContextRef);
 
-WK_EXPORT void WKContextSetStorageAccessAPIEnabled(WKContextRef, bool enabled);
-
 WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef interval);
 WK_EXPORT void WKContextStopMemorySampler(WKContextRef context);
 

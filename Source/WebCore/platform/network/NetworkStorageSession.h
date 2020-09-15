@@ -127,7 +127,6 @@ public:
     // May be null, in which case a Foundation default should be used.
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
-    WEBCORE_EXPORT static void setStorageAccessAPIEnabled(bool);
 #elif USE(SOUP)
     WEBCORE_EXPORT explicit NetworkStorageSession(PAL::SessionID);
     ~NetworkStorageSession();

@@ -478,8 +478,6 @@ public:
 
     void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&);
 #endif
-    bool storageAccessAPIEnabled() const { return m_storageAccessAPIEnabled; }
-    void setStorageAccessAPIEnabled(bool);
 
     static uint64_t registerProcessPoolCreationListener(Function<void(WebProcessPool&)>&&);
     static void unregisterProcessPoolCreationListener(uint64_t identifier);
@@ -765,7 +763,6 @@ private:
 #if PLATFORM(COCOA)
     bool m_cookieStoragePartitioningEnabled { false };
 #endif
-    bool m_storageAccessAPIEnabled { false };
 
     struct Paths {
         String injectedBundlePath;

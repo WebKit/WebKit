@@ -64,10 +64,6 @@ void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef, void*, WKCooki
 {
 }
 
-void WKCookieManagerSetStorageAccessAPIEnabled(WKCookieManagerRef, bool)
-{
-}
-
 void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef)
 {
 }

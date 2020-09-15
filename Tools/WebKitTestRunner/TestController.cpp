@@ -1054,7 +1054,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     WKContextResetServiceWorkerFetchTimeoutForTesting(TestController::singleton().context());
 
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(websiteDataStore(), true);
-    WKContextSetStorageAccessAPIEnabled(platformContext(), true);
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
 
     clearIndexedDatabases();

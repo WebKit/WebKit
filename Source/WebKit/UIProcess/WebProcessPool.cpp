@@ -412,14 +412,6 @@ void WebProcessPool::setLegacyCustomProtocolManagerClient(std::unique_ptr<API::C
 #endif
 }
 
-void WebProcessPool::setStorageAccessAPIEnabled(bool enabled)
-{
-    m_storageAccessAPIEnabled = enabled;
-#if PLATFORM(COCOA)
-    sendToNetworkingProcess(Messages::NetworkProcess::SetStorageAccessAPIEnabled(enabled));
-#endif
-}
-
 void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& customWebContentServiceBundleIdentifier)
 {
     // Guard against API misuse.

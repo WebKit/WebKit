@@ -54,7 +54,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << uiProcessBundleIdentifier;
     encoder << uiProcessSDKVersion;
     IPC::encode(encoder, networkATSContext.get());
-    encoder << storageAccessAPIEnabled;
 #endif
     encoder << defaultDataStoreParameters;
 #if USE(SOUP)
@@ -114,8 +113,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.uiProcessSDKVersion))
         return false;
     if (!IPC::decode(decoder, result.networkATSContext))
-        return false;
-    if (!decoder.decode(result.storageAccessAPIEnabled))
         return false;
 #endif
 
