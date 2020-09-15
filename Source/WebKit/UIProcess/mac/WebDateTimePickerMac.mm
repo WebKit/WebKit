@@ -33,6 +33,7 @@
 
 constexpr CGFloat kCalendarWidth = 139;
 constexpr CGFloat kCalendarHeight = 148;
+constexpr CGFloat kCalendarCornerRadius = 10;
 constexpr NSString * kDateFormatString = @"yyyy-MM-dd";
 constexpr NSString * kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm";
 constexpr NSString * kDateTimeWithSecondsFormatString = @"yyyy-MM-dd'T'HH:mm:ss";
@@ -50,6 +51,9 @@ constexpr NSString * kDefaultTimeZoneIdentifier = @"UTC";
 @end
 
 @interface WKDateTimePickerWindow : NSWindow
+@end
+
+@interface WKDateTimePickerBackdropView : NSView
 @end
 
 namespace WebKit {
@@ -98,9 +102,8 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
 } // namespace WebKit
 
-// FIXME: Share this implementation with WKDataListSuggestionWindow.
 @implementation WKDateTimePickerWindow {
-    RetainPtr<NSVisualEffectView> _backdropView;
+    RetainPtr<WKDateTimePickerBackdropView> _backdropView;
 }
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingStoreType defer:(BOOL)defer
@@ -117,12 +120,8 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     self.backgroundColor = [NSColor clearColor];
     self.opaque = NO;
 
-    _backdropView = adoptNS([[NSVisualEffectView alloc] initWithFrame:contentRect]);
+    _backdropView = adoptNS([[WKDateTimePickerBackdropView alloc] initWithFrame:contentRect]);
     [_backdropView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [_backdropView setMaterial:NSVisualEffectMaterialMenu];
-    [_backdropView setState:NSVisualEffectStateActive];
-    [_backdropView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
-
     [self setContentView:_backdropView.get()];
 
     return self;
@@ -141,6 +140,37 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 - (NSWindowShadowOptions)shadowOptions
 {
     return NSWindowShadowSecondaryWindow;
+}
+
+@end
+
+@implementation WKDateTimePickerBackdropView
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+    [NSGraphicsContext saveGraphicsState];
+
+    [[NSColor controlBackgroundColor] setFill];
+
+    NSRect frame = self.frame;
+    NSPoint topLeft = NSMakePoint(NSMinX(frame), NSMaxY(frame));
+    NSPoint topRight = NSMakePoint(NSMaxX(frame), NSMaxY(frame));
+    NSPoint bottomRight = NSMakePoint(NSMaxX(frame), NSMinY(frame));
+    NSPoint bottomLeft = NSMakePoint(NSMinX(frame), NSMinY(frame));
+
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    [path moveToPoint:topLeft];
+    [path lineToPoint:NSMakePoint(topRight.x - kCalendarCornerRadius, topRight.y)];
+    [path curveToPoint:NSMakePoint(topRight.x, topRight.y - kCalendarCornerRadius) controlPoint1:topRight controlPoint2:topRight];
+    [path lineToPoint:NSMakePoint(bottomRight.x, bottomRight.y + kCalendarCornerRadius)];
+    [path curveToPoint:NSMakePoint(bottomRight.x - kCalendarCornerRadius, bottomRight.y) controlPoint1:bottomRight controlPoint2:bottomRight];
+    [path lineToPoint:NSMakePoint(bottomLeft.x + kCalendarCornerRadius, bottomLeft.y)];
+    [path curveToPoint:NSMakePoint(bottomLeft.x, bottomLeft.y + kCalendarCornerRadius) controlPoint1:bottomLeft controlPoint2:bottomLeft];
+    [path lineToPoint:topLeft];
+
+    [path fill];
+
+    [NSGraphicsContext restoreGraphicsState];
 }
 
 @end
@@ -173,10 +203,12 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     // used to return the date.
     NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:kDefaultTimeZoneIdentifier];
 
-    _enclosingWindow = adoptNS([[WKDateTimePickerWindow alloc] initWithContentRect:NSZeroRect styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+    _enclosingWindow = adoptNS([[WKDateTimePickerWindow alloc] initWithContentRect:NSZeroRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [_enclosingWindow setFrame:windowRect display:YES];
 
     _datePicker = adoptNS([[NSDatePicker alloc] initWithFrame:[_enclosingWindow contentView].bounds]);
+    [_datePicker setBezeled:NO];
+    [_datePicker setDrawsBackground:NO];
     [_datePicker setDatePickerStyle:NSDatePickerStyleClockAndCalendar];
     [_datePicker setDatePickerElements:NSDatePickerElementFlagYearMonthDay];
     [_datePicker setTimeZone:timeZone];
