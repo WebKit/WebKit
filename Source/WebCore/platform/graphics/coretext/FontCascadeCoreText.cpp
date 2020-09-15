@@ -51,7 +51,9 @@ bool FontCascade::isSubpixelAntialiasingAvailable()
     static bool subpixelAntialiasingEnabled;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&]() {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         subpixelAntialiasingEnabled = !CGFontRenderingGetFontSmoothingDisabled();
+        ALLOW_DEPRECATED_DECLARATIONS_END
     });
     return subpixelAntialiasingEnabled;
 #elif PLATFORM(MAC)

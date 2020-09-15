@@ -1,3 +1,11 @@
+2020-09-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the build with recent SDKs.
+        rdar://68939059
+
+        * platform/graphics/coretext/FontCascadeCoreText.cpp:
+        (WebCore::FontCascade::isSubpixelAntialiasingAvailable):
+
 2020-09-15  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling custom elements
