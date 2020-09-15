@@ -1,3 +1,14 @@
+2020-09-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update baselines and expectations after r267083.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fast/text/justify-ideograph-leading-expansion-expected.png: Updated after r267010.
+        * platform/glib/fast/text/justify-ideograph-leading-expansion-expected.txt: Renamed from LayoutTests/platform/wpe/fast/text/justify-ideograph-leading-expansion-expected.txt.
+        * platform/gtk/fast/repaint/spanner-with-margin-expected.txt: Updated after r266818.
+        * platform/gtk/fast/text/justify-ideograph-leading-expansion-expected.png: Removed.
+        * platform/gtk/fast/text/justify-ideograph-leading-expansion-expected.txt: Removed.
+
 2020-09-15  Rob Buis  <rbuis@igalia.com>
 
         Convert runtime flag to setting for lazy image loading

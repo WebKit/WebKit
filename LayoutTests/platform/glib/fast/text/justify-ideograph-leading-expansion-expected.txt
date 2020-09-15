@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x124
+      RenderBlock {DIV} at (0,0) size 784x142
         RenderBlock {DIV} at (0,0) size 106x42 [border: (3px solid #000000)]
           RenderText {#text} at (3,3) size 80x17
             text run at (3,3) width 80: "a. b. "
@@ -17,10 +17,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (3,3) size 100x35
             text run at (3,3) width 100: "a. b. i\x{306F}"
             text run at (3,21) width 56: "xxxxxxx"
-        RenderBlock {DIV} at (0,100) size 106x24 [border: (3px solid #000000)]
-          RenderText {#text} at (3,3) size 216x17
-            text run at (3,3) width 216: "xxxxxxxxxxxxxxxxxxxxx\x{FF08}\x{624B}\x{FF09}"
-      RenderBlock {DIV} at (0,132) size 784x124
+        RenderBlock {DIV} at (0,100) size 106x42 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 168x35
+            text run at (3,3) width 168: "xxxxxxxxxxxxxxxxxxxxx"
+            text run at (3,21) width 48: "\x{FF08}\x{624B}\x{FF09}"
+      RenderBlock {DIV} at (0,150) size 784x142
         RenderBlock {DIV} at (0,0) size 106x42 [border: (3px solid #000000)]
           RenderText {#text} at (3,3) size 80x17
             text run at (3,3) width 80: "a. b. "
@@ -34,6 +35,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (3,3) size 100x35
             text run at (3,3) width 100: "a. b. i\x{306F}"
             text run at (3,21) width 56: "xxxxxxx"
-        RenderBlock {DIV} at (0,100) size 106x24 [border: (3px solid #000000)]
-          RenderText {#text} at (3,3) size 216x17
-            text run at (3,3) width 216: "xxxxxxxxxxxxxxxxxxxxx\x{FF08}\x{624B}\x{FF09}"
+        RenderBlock {DIV} at (0,100) size 106x42 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 168x35
+            text run at (3,3) width 168: "xxxxxxxxxxxxxxxxxxxxx"
+            text run at (3,21) width 48: "\x{FF08}\x{624B}\x{FF09}"

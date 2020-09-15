@@ -585,6 +585,8 @@ webkit.org/b/213783 webanimations/accelerated-animation-with-easing.html [ Image
 
 webkit.org/b/215945 webanimations/accelerated-css-animation-with-easing.html [ ImageOnlyFailure ]
 
+webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-update.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAnimations-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -633,6 +635,8 @@ webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
 
 webkit.org/b/206583 [ Release ] webrtc/video-gpuProcess.html [ Failure ]
 webkit.org/b/206583 [ Debug ] webrtc/video-gpuProcess.html [ Timeout ]
+
+webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Failure ]
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
