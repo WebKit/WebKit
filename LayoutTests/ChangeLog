@@ -1,3 +1,12 @@
+2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Added test and test expectation for constant crashes ar r267002
+        https://bugs.webkit.org/show_bug.cgi?id=216520
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
         Types of Panner.setPosition() / setOrientation() parameters should not be unrestricted float
