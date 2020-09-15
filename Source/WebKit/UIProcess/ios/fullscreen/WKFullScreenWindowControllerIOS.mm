@@ -831,7 +831,7 @@ private:
 
     if (!_inPictureInPicture) {
         if (auto* videoFullscreenManager = self._videoFullscreenManager) {
-            ASSERT(videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient);
+            ASSERT(videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient || videoFullscreenManager->client() == nullptr);
             videoFullscreenManager->setClient(nullptr);
         }
     }

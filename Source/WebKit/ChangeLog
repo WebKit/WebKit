@@ -1,3 +1,19 @@
+2020-09-15  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r267053): ASSERTION FAILED: videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient in [WKFullScreenWindowController _completedExitFullScreen]
+        https://bugs.webkit.org/show_bug.cgi?id=216571
+
+        Reviewed by Jer Noble.
+
+        It is possible that an element exits fullscreen before it completely enters
+        fullscreen. In that case, the client of VideoFullscreenManagerProxy is nullptr.
+
+        No new tests, fixing an assertion failure when running
+        TestWebKitAPI.WKWebViewCloseAllMediaPresentations.ElementFullscreen.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+
 2020-09-15  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the fetch API
