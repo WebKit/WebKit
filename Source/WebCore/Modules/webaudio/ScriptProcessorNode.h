@@ -74,25 +74,24 @@ private:
 
     ScriptProcessorNode(BaseAudioContext&, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
 
-    void fireProcessEvent();
+    void fireProcessEvent(unsigned doubleBufferIndex);
 
     // Double buffering
     unsigned doubleBufferIndex() const { return m_doubleBufferIndex; }
     void swapBuffers() { m_doubleBufferIndex = 1 - m_doubleBufferIndex; }
     unsigned m_doubleBufferIndex;
-    unsigned m_doubleBufferIndexForEvent;
     Vector<RefPtr<AudioBuffer>> m_inputBuffers;
     Vector<RefPtr<AudioBuffer>> m_outputBuffers;
 
     size_t m_bufferSize;
     unsigned m_bufferReadWriteIndex;
-    volatile bool m_isRequestOutstanding;
 
     unsigned m_numberOfInputChannels;
     unsigned m_numberOfOutputChannels;
 
     RefPtr<AudioBus> m_internalInputBus;
     RefPtr<PendingActivity<ScriptProcessorNode>> m_pendingActivity;
+    Lock m_processLock;
 };
 
 } // namespace WebCore

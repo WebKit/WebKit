@@ -54,10 +54,8 @@ ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t buffe
     : AudioNode(context)
     , ActiveDOMObject(context.scriptExecutionContext())
     , m_doubleBufferIndex(0)
-    , m_doubleBufferIndexForEvent(0)
     , m_bufferSize(bufferSize)
     , m_bufferReadWriteIndex(0)
-    , m_isRequestOutstanding(false)
     , m_numberOfInputChannels(numberOfInputChannels)
     , m_numberOfOutputChannels(numberOfOutputChannels)
     , m_internalInputBus(AudioBus::create(numberOfInputChannels, AudioNode::ProcessingSizeInFrames, false))
@@ -185,63 +183,53 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     // m_bufferReadWriteIndex will wrap back around to 0 when the current input and output buffers are full.
     // When this happens, fire an event and swap buffers.
     if (!m_bufferReadWriteIndex) {
-        // Avoid building up requests on the main thread to fire process events when they're not being handled.
-        // This could be a problem if the main thread is very busy doing other things and is being held up handling previous requests.
-        if (m_isRequestOutstanding) {
-            // We're late in handling the previous request. The main thread must be very busy.
-            // The best we can do is clear out the buffer ourself here.
-            outputBuffer->zero();            
-        } else {
-            // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.
-            ref();
-            
-            // Fire the event on the main thread, not this one (which is the realtime audio thread).
-            m_doubleBufferIndexForEvent = m_doubleBufferIndex;
-            m_isRequestOutstanding = true;
+        // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.
+        auto protector = makeRef(*this);
 
-            // We only wait for script code execution when the context is an offline one for performance reasons.
-            if (context().isOfflineContext()) {
-                BinarySemaphore semaphore;
-                callOnMainThread([this, &semaphore] {
-                    fireProcessEvent();
-                    semaphore.signal();
-                });
-                semaphore.wait();
-                // De-reference to match the ref() call in process().
-                deref();
-            } else {
-                callOnMainThread([this] {
-                    fireProcessEvent();
-                    // De-reference to match the ref() call in process().
-                    deref();
-                });
+        // We only wait for script code execution when the context is an offline one for performance reasons.
+        if (context().isOfflineContext()) {
+            BinarySemaphore semaphore;
+            callOnMainThread([this, &semaphore, doubleBufferIndex = m_doubleBufferIndex] {
+                fireProcessEvent(doubleBufferIndex);
+                semaphore.signal();
+            });
+            semaphore.wait();
+        } else {
+            std::unique_lock<Lock> lock(m_processLock, std::try_to_lock);
+            if (!lock.owns_lock()) {
+                // We're late in handling the previous request. The main thread must be
+                // very busy. The best we can do is clear out the buffer ourself here.
+                outputBuffer->zero();
+                return;
             }
+
+            callOnMainThread([this, doubleBufferIndex = m_doubleBufferIndex, protector = WTFMove(protector)] {
+                auto locker = holdLock(m_processLock);
+                fireProcessEvent(doubleBufferIndex);
+            });
         }
 
         swapBuffers();
     }
 }
 
-void ScriptProcessorNode::fireProcessEvent()
+void ScriptProcessorNode::fireProcessEvent(unsigned doubleBufferIndex)
 {
-    ASSERT(isMainThread() && m_isRequestOutstanding);
+    ASSERT(isMainThread());
     
-    bool isIndexGood = m_doubleBufferIndexForEvent < 2;
+    bool isIndexGood = doubleBufferIndex < 2;
     ASSERT(isIndexGood);
     if (!isIndexGood)
         return;
         
-    AudioBuffer* inputBuffer = m_inputBuffers[m_doubleBufferIndexForEvent].get();
-    AudioBuffer* outputBuffer = m_outputBuffers[m_doubleBufferIndexForEvent].get();
+    AudioBuffer* inputBuffer = m_inputBuffers[doubleBufferIndex].get();
+    AudioBuffer* outputBuffer = m_outputBuffers[doubleBufferIndex].get();
     ASSERT(outputBuffer);
     if (!outputBuffer)
         return;
 
     // Avoid firing the event if the document has already gone away.
     if (!context().isStopped()) {
-        // Let the audio thread know we've gotten to the point where it's OK for it to make another request.
-        m_isRequestOutstanding = false;
-
         // Calculate playbackTime with the buffersize which needs to be processed each time when onaudioprocess is called.
         // The outputBuffer being passed to JS will be played after exhausting previous outputBuffer by double-buffering.
         double playbackTime = (context().currentSampleFrame() + m_bufferSize) / static_cast<double>(context().sampleRate());
