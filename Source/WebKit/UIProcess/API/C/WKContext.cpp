@@ -545,11 +545,6 @@ void WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(WKContextRef con
 #endif
 }
 
-void WKContextClearCachedCredentials(WKContextRef context)
-{
-    WebKit::toImpl(context)->clearCachedCredentials();
-}
-
 WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef)
 {
     return WebKit::toAPI(&WebKit::toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());

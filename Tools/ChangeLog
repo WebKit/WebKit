@@ -1,5 +1,15 @@
 2020-09-15  Alex Christensen  <achristensen@webkit.org>
 
+        Move WKContextClearCachedCredentials SPI to WKWebsiteDataStoreClearCachedCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=216513
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
+2020-09-15  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused plumbing for setting whether the storage access API is enabled
         https://bugs.webkit.org/show_bug.cgi?id=216516
 

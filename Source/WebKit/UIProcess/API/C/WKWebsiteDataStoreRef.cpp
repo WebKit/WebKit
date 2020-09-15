@@ -137,6 +137,11 @@ void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDa
     WebKit::toImpl(dataStore)->setAllowsAnySSLCertificateForWebSocket(allows);
 }
 
+void WKWebsiteDataStoreClearCachedCredentials(WKWebsiteDataStoreRef dataStoreRef)
+{
+    WebKit::toImpl(dataStoreRef)->clearCachedCredentials();
+}
+
 void WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(WKWebsiteDataStoreRef dataStoreRef, bool enable, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

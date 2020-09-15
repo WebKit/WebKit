@@ -2269,6 +2269,12 @@ void WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket(bool allows)
     }
 }
 
+void WebsiteDataStore::clearCachedCredentials()
+{
+    for (auto processPool : WebProcessPool::allProcessPools())
+        processPool->clearCachedCredentials(sessionID());
+}
+
 void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
 {
     m_queue->dispatch(WTFMove(function));

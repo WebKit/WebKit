@@ -45,6 +45,8 @@ WK_EXPORT WKHTTPCookieStoreRef WKWebsiteDataStoreGetHTTPCookieStore(WKWebsiteDat
 
 WK_EXPORT void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDataStoreRef dataStore, bool allows);
 
+WK_EXPORT void WKWebsiteDataStoreClearCachedCredentials(WKWebsiteDataStoreRef dataStoreRef);
+
 WK_EXPORT bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef);
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable);
 typedef void (*WKWebsiteDataStoreStatisticsEphemeralFunction)(bool isEphemeral, void* functionContext);

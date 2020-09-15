@@ -427,19 +427,13 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 #endif
 }
 
-void NetworkProcess::clearCachedCredentials()
+void NetworkProcess::clearCachedCredentials(PAL::SessionID sessionID)
 {
-    defaultStorageSession().credentialStorage().clearCredentials();
-    if (auto* networkSession = this->networkSession(PAL::SessionID::defaultSessionID()))
-        networkSession->clearCredentials();
-    else
-        ASSERT_NOT_REACHED();
-
-    forEachNetworkSession([] (auto& networkSession) {
-        if (auto storageSession = networkSession.networkStorageSession())
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* storageSession = networkSession->networkStorageSession())
             storageSession->credentialStorage().clearCredentials();
-        networkSession.clearCredentials();
-    });
+        networkSession->clearCredentials();
+    }
 }
 
 void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)

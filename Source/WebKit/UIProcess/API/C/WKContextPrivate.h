@@ -88,9 +88,6 @@ WK_EXPORT void WKContextTerminateServiceWorkers(WKContextRef);
 
 WK_EXPORT void WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(WKContextRef, bool);
 
-// Test only. Should be called before running a test.
-WK_EXPORT void WKContextClearCachedCredentials(WKContextRef context);
-
 typedef void (*WKContextInvalidMessageFunction)(WKStringRef messageName);
 WK_EXPORT void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunction invalidMessageFunction);
     

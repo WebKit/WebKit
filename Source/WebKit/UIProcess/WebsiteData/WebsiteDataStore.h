@@ -239,6 +239,7 @@ public:
     void removePendingCookie(const WebCore::Cookie&);
     void clearPendingCookies();
     void flushCookies(CompletionHandler<void()>&&);
+    void clearCachedCredentials();
 
     void setAllowsAnySSLCertificateForWebSocket(bool);
 

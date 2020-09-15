@@ -318,7 +318,7 @@ public:
     };
     static Statistics& statistics();    
 
-    void clearCachedCredentials();
+    void clearCachedCredentials(const PAL::SessionID&);
     void terminateNetworkProcess();
     void terminateAllWebContentProcesses();
     void sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&&);

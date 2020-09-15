@@ -1049,7 +1049,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
-    WKContextClearCachedCredentials(TestController::singleton().context());
+    WKWebsiteDataStoreClearCachedCredentials(websiteDataStore());
 
     WKContextResetServiceWorkerFetchTimeoutForTesting(TestController::singleton().context());
 

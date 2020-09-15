@@ -1767,10 +1767,10 @@ void WebProcessPool::sendSyncToNetworkingProcess(T&& message, U&& reply)
         m_networkProcess->sendSync(std::forward<T>(message), std::forward<U>(reply), 0);
 }
 
-void WebProcessPool::clearCachedCredentials()
+void WebProcessPool::clearCachedCredentials(const PAL::SessionID& sessionID)
 {
     if (m_networkProcess)
-        m_networkProcess->send(Messages::NetworkProcess::ClearCachedCredentials(), 0);
+        m_networkProcess->send(Messages::NetworkProcess::ClearCachedCredentials(sessionID), 0);
 }
 
 void WebProcessPool::terminateNetworkProcess()
