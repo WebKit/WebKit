@@ -2729,8 +2729,8 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
                 setNeedsCompositingGeometryUpdate();
 
                 // Scroll position can affect the location of a composited descendant (which may be a sibling in z-order),
-                // so trigger a descendant walk from the paint-order parent.
-                if (auto* paintParent = paintOrderParent())
+                // so trigger a descendant walk from the stacking context.
+                if (auto* paintParent = stackingContext())
                     paintParent->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
             }
 

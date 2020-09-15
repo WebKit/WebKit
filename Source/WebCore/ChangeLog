@@ -1,3 +1,40 @@
+2020-09-14  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Async overflow scroll): Code snippets on getkirby.com appear and disappear as content is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=216490
+        <rdar://problem/67018073>
+
+        Reviewed by Zalan Bujtas.
+        
+        The content in question had a z-order layer tree like this:
+
+            A (0,0) width=997 height=829 (layerID 20) {sc 2} RenderView 
+              + B (0,0) width=997 height=8 RenderBlock  HTML  class='no-js'
+                + C (0,0) width=997 height=829 RenderFlexibleBox  MAIN 
+                  n D (0,0) width=256 height=829 RenderFlexibleBox  NAV  class='left panel'
+                    n E (0,0) width=256 height=829 (layerID 25) {sc 3} RenderBlock  DIV  class='scroller'
+                  n F (256,0) width=741 height=829 RenderFlexibleBox  ARTICLE  class='main panel'
+                    n G (0,0) width=741 height=829 (layerID 26) {sc 4} RenderBlock  DIV  class='scroller'
+                      n H (0,-816) width=741 height=2810 RenderBlock  DIV  class='article-content'
+                + I (0,0) width=256 height=1000 (layerID 27) overlap RenderBlock (relative positioned)  DIV  class='content'
+                + J (10,300) width=721 height=202 (layerID 28) overlap RenderBlock (relative positioned)  DIV  class='relative-box'
+                + K (10,802) width=721 height=202 (layerID 29) overlap RenderBlock (relative positioned)  DIV  class='relative-box'
+                + L (10,1304) width=721 height=202 (layerID 30) overlap RenderBlock (relative positioned)  DIV  class='relative-box'
+                + M (10,1806) width=721 height=202 (layerID 31) overlap RenderBlock (relative positioned)  DIV  class='relative-box'
+                + M (10,2308) width=721 height=202 (layerID 32) overlap RenderBlock (relative positioned)  DIV  class='relative-box'
+
+        When layer 'G' is scrolled, the code would find the paint-order parent, F, which is normal-flow because it has overflow:hidden,
+        and would call setDescendantsNeedUpdateBackingAndHierarchyTraversal() on it. However, that doesn't go high enough, because
+        we need to update J-M since their ancestor clipping stacks have geometry that relies on the scroll position of G. If we don't
+        update that geometry, GraphicsLayers have an incorrect notion of what's visible, and we don't attach backing store.
+
+        The fix is to climb up to the stacking context B and call setDescendantsNeedUpdateBackingAndHierarchyTraversal() on it.
+
+        Test: compositing/scrolling/async-overflow-scrolling/nested-scrollers-backing-attachment.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
         Type of AnalyserNode's attributes should not be unrestricted double
