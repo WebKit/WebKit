@@ -1,3 +1,45 @@
+2020-09-15  Saam Barati  <sbarati@apple.com>
+
+        CustomFunctionEquivalence PropertyCondition needs to check if the structure has the property
+        https://bugs.webkit.org/show_bug.cgi?id=216575
+        <rdar://problem/68286930>
+
+        Reviewed by Yusuke Suzuki.
+
+        The CustomFunctionEquivalence PropertyCondition would only return false to
+        isStillValidAssumingImpurePropertyWatchpoint if the Structure's static
+        property table was reified or if the static property table did not contain the
+        property. However, this missed the obvious case of where we store to this
+        property in normal object storage without reifying the static property table.
+        The fix here is simple: we first check if the Structure's property table
+        has this property, and if so, return false.
+        
+        This patch also renames CustomFunctionEquivalence to HasStaticProperty to
+        better capture what we're doing.
+
+        * bytecode/ObjectPropertyCondition.h:
+        (JSC::ObjectPropertyCondition::hasStaticProperty):
+        (JSC::ObjectPropertyCondition::customFunctionEquivalence): Deleted.
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::hasOneSlotBaseCondition const):
+        (JSC::ObjectPropertyConditionSet::slotBaseCondition const):
+        (JSC::generateConditionsForPrototypePropertyHitCustom):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::dumpInContext const):
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::validityRequiresImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::isStillValid const):
+        (JSC::PropertyCondition::isWatchableWhenValid const):
+        (WTF::printInternal):
+        * bytecode/PropertyCondition.h:
+        (JSC::PropertyCondition::hasStaticProperty):
+        (JSC::PropertyCondition::hash const):
+        (JSC::PropertyCondition::operator== const):
+        (JSC::PropertyCondition::customFunctionEquivalence): Deleted.
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCreateStaticCustomValue):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Apply Intl.DateTimeFormat hour-cycle correctly when timeStyle is used

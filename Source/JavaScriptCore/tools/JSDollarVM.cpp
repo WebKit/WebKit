@@ -739,6 +739,69 @@ public:
     }
 };
 
+static EncodedJSValue testStaticValueGetter(JSGlobalObject*, EncodedJSValue, PropertyName)
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsUndefined());
+}
+
+static bool testStaticValuePutter(JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    
+    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
+    RELEASE_ASSERT(thisObject);
+
+    return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValue")), JSValue::decode(value));
+}
+
+static const struct CompactHashIndex staticCustomValueTableIndex[2] = {
+    { 0, -1 },
+    { -1, -1 },
+};
+
+static const struct HashTableValue staticCustomValueTableValues[1] = {
+    { "testStaticValue", static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutPropertySlot::PutValueFunc>(testStaticValuePutter) } },
+};
+
+static const struct HashTable staticCustomValueTable =
+    { 1, 1, true, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
+
+class StaticCustomValue : public JSNonFinalObject {
+    using Base = JSNonFinalObject;
+public:
+    StaticCustomValue(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+        DollarVMAssertScope assertScope;
+    }
+
+    DECLARE_INFO;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        DollarVMAssertScope assertScope;
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static StaticCustomValue* create(VM& vm, Structure* structure)
+    {
+        DollarVMAssertScope assertScope;
+        StaticCustomValue* accessor = new (NotNull, allocateCell<StaticCustomValue>(vm.heap)) StaticCustomValue(vm, structure);
+        accessor->finishCreation(vm);
+        return accessor;
+    }
+};
+
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
 public:
@@ -1545,6 +1608,7 @@ const ClassInfo DOMJITCheckJSCastObject::s_info = { "DOMJITCheckJSCastObject", &
 const ClassInfo JSTestCustomGetterSetter::s_info = { "JSTestCustomGetterSetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomGetterSetter) };
 
 const ClassInfo StaticCustomAccessor::s_info = { "StaticCustomAccessor", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(StaticCustomAccessor) };
+const ClassInfo StaticCustomValue::s_info = { "StaticCustomValue", &Base::s_info, &staticCustomValueTable, nullptr, CREATE_METHOD_TABLE(StaticCustomValue) };
 const ClassInfo ObjectDoingSideEffectPutWithoutCorrectSlotStatus::s_info = { "ObjectDoingSideEffectPutWithoutCorrectSlotStatus", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(ObjectDoingSideEffectPutWithoutCorrectSlotStatus) };
 
 ElementHandleOwner* Element::handleOwner()
@@ -2532,6 +2596,16 @@ static EncodedJSValue JSC_HOST_CALL functionCreateStaticCustomAccessor(JSGlobalO
     return JSValue::encode(result);
 }
 
+static EncodedJSValue JSC_HOST_CALL functionCreateStaticCustomValue(JSGlobalObject* globalObject, CallFrame*)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+    Structure* structure = StaticCustomValue::createStructure(vm, globalObject, jsNull());
+    auto* result = StaticCustomValue::create(vm, structure);
+    return JSValue::encode(result);
+}
+
 static EncodedJSValue JSC_HOST_CALL functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     DollarVMAssertScope assertScope;
@@ -3250,6 +3324,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createWasmStreamingParser", functionCreateWasmStreamingParser, 0);
 #endif
     addFunction(vm, "createStaticCustomAccessor", functionCreateStaticCustomAccessor, 0);
+    addFunction(vm, "createStaticCustomValue", functionCreateStaticCustomValue, 0);
     addFunction(vm, "createObjectDoingSideEffectPutWithoutCorrectSlotStatus", functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus, 0);
     addFunction(vm, "createEmptyFunctionWithName", functionCreateEmptyFunctionWithName, 1);
     addFunction(vm, "getPrivateProperty", functionGetPrivateProperty, 2);

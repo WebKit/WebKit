@@ -1,3 +1,14 @@
+2020-09-15  Saam Barati  <sbarati@apple.com>
+
+        CustomFunctionEquivalence PropertyCondition needs to check if the structure has the property
+        https://bugs.webkit.org/show_bug.cgi?id=216575
+        <rdar://problem/68286930>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/has-static-property-property-condition-needs-to-check-if-structure-has-property.js: Added.
+        (foo):
+
 2020-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Apply Intl.DateTimeFormat hour-cycle correctly when timeStyle is used
