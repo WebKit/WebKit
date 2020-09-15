@@ -49,6 +49,9 @@ try {
     testPassed("Exception has been thrown correctly when index is not less than numberOfChannels.");
 }
 
+shouldBeUndefined("buffer.gain");
+shouldBeUndefined("AudioBuffer.prototype.gain");
+
 shouldThrowErrorName("context.createBuffer(null, false)", "TypeError");
 
 </script>

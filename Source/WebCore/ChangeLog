@@ -1,5 +1,27 @@
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
+        Drop non-standard AudioBuffer.gain
+        https://bugs.webkit.org/show_bug.cgi?id=216510
+
+        Reviewed by Darin Adler.
+
+        Drop non-standard AudioBuffer.gain:
+        - https://www.w3.org/TR/webaudio/#AudioBuffer
+
+        Blink does not expose this attribute either.
+
+        No new tests, updated existing test.
+
+        * Modules/webaudio/AudioBuffer.h:
+        (WebCore::AudioBuffer::gain const): Deleted.
+        (WebCore::AudioBuffer::setGain): Deleted.
+        (): Deleted.
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process):
+
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
         Drop smoothing logic from DelayDSPKernel::process()
         https://bugs.webkit.org/show_bug.cgi?id=216504
 

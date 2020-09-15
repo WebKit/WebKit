@@ -42,7 +42,4 @@
     [MayThrowException] Float32Array getChannelData(unsigned long channelIndex);
     [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] undefined copyFromChannel(Float32Array destination, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
     [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] undefined copyToChannel(Float32Array source, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
-
-    // FIXME: This is not part of the specification.
-    attribute unrestricted float gain; // linear gain (default 1.0)
 };

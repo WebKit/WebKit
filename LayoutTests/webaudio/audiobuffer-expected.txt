@@ -12,6 +12,8 @@ PASS getChannelData(1) returns a Float32Array object.
 PASS getChannelData(2) returns a Float32Array object.
 PASS getChannelData(3) returns a Float32Array object.
 PASS Exception has been thrown correctly when index is not less than numberOfChannels.
+PASS buffer.gain is undefined.
+PASS AudioBuffer.prototype.gain is undefined.
 PASS context.createBuffer(null, false) threw exception TypeError: Argument 1 ('buffer') to webkitAudioContext.createBuffer must be an instance of ArrayBuffer.
 PASS successfullyParsed is true
 

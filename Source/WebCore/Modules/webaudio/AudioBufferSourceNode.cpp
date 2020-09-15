@@ -145,7 +145,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     }
 
     // Apply the gain (in-place) to the output bus.
-    float totalGain = legacyGainValue() * m_buffer->gain();
+    float totalGain = legacyGainValue();
     outputBus.copyWithGainFrom(outputBus, totalGain);
     outputBus.clearSilentFlag();
 }

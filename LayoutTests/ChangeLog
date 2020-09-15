@@ -1,3 +1,15 @@
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-standard AudioBuffer.gain
+        https://bugs.webkit.org/show_bug.cgi?id=216510
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage.
+
+        * webaudio/audiobuffer-expected.txt:
+        * webaudio/audiobuffer.html:
+
 2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         Skip 2 imported/ tests on iOS after the changes in r266817

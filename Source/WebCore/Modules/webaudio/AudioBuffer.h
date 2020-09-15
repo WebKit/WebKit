@@ -59,10 +59,6 @@ public:
     Float32Array* channelData(unsigned channelIndex);
     void zero();
 
-    // Scalar gain
-    double gain() const { return m_gain; }
-    void setGain(double gain) { m_gain = gain; }
-
     // Because an AudioBuffer has a JavaScript wrapper, which will be garbage collected, it may take a while for this object to be deleted.
     // releaseMemory() can be called when the AudioContext goes away, so we can release the memory earlier than when the garbage collection happens.
     // Careful! Only call this when the page unloads, after the AudioContext is no longer processing.
@@ -76,7 +72,6 @@ private:
 
     void invalidate();
 
-    double m_gain { 1.0 }; // scalar gain
     float m_sampleRate;
     mutable Lock m_channelsLock;
     size_t m_length;
