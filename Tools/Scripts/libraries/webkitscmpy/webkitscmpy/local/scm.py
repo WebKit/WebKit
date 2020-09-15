@@ -47,6 +47,10 @@ class Scm(object):
         raise NotImplementedError()
 
     @property
+    def default_branch(self):
+        raise NotImplementedError()
+
+    @property
     def branch(self):
         raise NotImplementedError()
 

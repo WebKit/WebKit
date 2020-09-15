@@ -62,3 +62,7 @@ class TestSvn(unittest.TestCase):
                 local.Svn(self.path).tags,
                 ['tag-1', 'tag-2'],
             )
+
+    def test_default_branch(self):
+        with mocks.local.Svn(self.path):
+            self.assertEqual(local.Svn(self.path).default_branch, 'trunk')

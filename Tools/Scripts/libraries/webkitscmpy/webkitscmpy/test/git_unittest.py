@@ -53,10 +53,10 @@ class TestGit(unittest.TestCase):
             self.assertEqual(local.Git(self.path).remote(), repo.remote)
 
     def test_branches(self):
-        with mocks.local.Git(self.path, branches=('branch-1', 'branch-2')):
+        with mocks.local.Git(self.path, branches=('branch-1', 'branch-2', 'remotes/origin/branch-3')):
             self.assertEqual(
                 local.Git(self.path).branches,
-                ['main', 'branch-1', 'branch-2'],
+                ['main', 'branch-1', 'branch-2', 'branch-3'],
             )
 
     def test_tags(self):
@@ -65,3 +65,7 @@ class TestGit(unittest.TestCase):
                 local.Git(self.path).tags,
                 ['tag-1', 'tag-2'],
             )
+
+    def test_default_branch(self):
+        with mocks.local.Git(self.path):
+            self.assertEqual(local.Git(self.path).default_branch, 'main')

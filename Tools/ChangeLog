@@ -1,3 +1,30 @@
+2020-09-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add default_branch for local SCM repositories
+        https://bugs.webkit.org/show_bug.cgi?id=216422
+        <rdar://problem/68735897>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.default_branch): Query the local checkout for the default branch.
+        (Git):
+        (Git.branches): Strip "remotes/origin/" from branch names.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.default_branch):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.default_branch): The default svn branch is always 'trunk'.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_branches):
+        (TestGit.test_tags):
+        (TestGit):
+        (TestGit.test_default_branch):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestSvn.test_tags):
+        (TestSvn):
+        (TestSvn.test_default_branch):
+
 2020-09-15  Alex Christensen  <achristensen@webkit.org>
 
         Move WKContextClearCachedCredentials SPI to WKWebsiteDataStoreClearCachedCredentials

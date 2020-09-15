@@ -54,6 +54,10 @@ class Svn(Scm):
         return self.info(cached=True).get('Working Copy Root Path')
 
     @property
+    def default_branch(self):
+        return 'trunk'
+
+    @property
     def branch(self):
         local_path = self.path[len(self.root_path):]
         if local_path:

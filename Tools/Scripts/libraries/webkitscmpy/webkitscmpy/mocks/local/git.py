@@ -97,6 +97,13 @@ nothing to commit, working tree clean
                     stdout='\n'.join(self.tags) + '\n',
                 ),
             ), mocks.Subprocess.Route(
+                local.Git.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='origin/{}\n'.format(default_branch),
+                ),
+            ), mocks.Subprocess.Route(
                 local.Git.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(

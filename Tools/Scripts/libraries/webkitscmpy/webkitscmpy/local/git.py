@@ -46,6 +46,13 @@ class Git(Scm):
         return result.stdout.rstrip()
 
     @property
+    def default_branch(self):
+        result = run([self.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD'], cwd=self.path, capture_output=True, encoding='utf-8')
+        if result.returncode:
+            return None
+        return '/'.join(result.stdout.rstrip().split('/')[1:])
+
+    @property
     def branch(self):
         status = run([self.executable, 'status'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if status.returncode:
@@ -63,7 +70,8 @@ class Git(Scm):
         branch = run([self.executable, 'branch', '-a'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if branch.returncode:
             raise self.Exception('Failed to retrieve branch list for {}'.format(self.root_path))
-        return [branch.lstrip(' *') for branch in filter(lambda branch: '->' not in branch, branch.stdout.splitlines())]
+        result = [branch.lstrip(' *') for branch in filter(lambda branch: '->' not in branch, branch.stdout.splitlines())]
+        return ['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]
 
     @property
     def tags(self):
