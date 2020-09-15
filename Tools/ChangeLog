@@ -1,3 +1,41 @@
+2020-09-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add Contributor object
+        https://bugs.webkit.org/show_bug.cgi?id=216402
+         <rdar://problem/68702680>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py: Added.
+        (Contributor): Object mapping a contributor by name to their associated email addresses.
+        (Contributor.clear): Clear the in-memory cache of Contributor objects.
+        (Contributor.from_scm_log): Find or generate a Contributor object given a commit log line from
+        an SCM tool.
+        (Contributor.__init__):
+        (Contributor.email): Return a single email for a Contributor.
+        (Contributor.__repr__):
+        (Contributor.__hash__):
+        (Contributor.__cmp__):
+        (Contributor.__eq__):
+        (Contributor.__ne__):
+        (Contributor.__lt__):
+        (Contributor.__le__):
+        (Contributor.__gt__):
+        (Contributor.__ge__):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/contributor_unittest.py: Added.
+        (TestContributor):
+        (TestContributor.test_git_log):
+        (TestContributor.test_svn_log):
+        (TestContributor.test_svn_patch_by_log):
+        (TestContributor.test_author_mapping):
+        (TestContributor.test_email_mapping):
+        (TestContributor.test_invalid_log):
+        (TestContributor.test_comparison):
+        (TestContributor.test_string_comparison):
+        (TestContributor.test_hash):
+        (TestContributor.test_sorting):
+
 2020-09-15  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling custom elements
