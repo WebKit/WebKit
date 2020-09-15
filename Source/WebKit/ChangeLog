@@ -1,3 +1,18 @@
+2020-09-14  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Do not dismiss date picker when a value is selected
+        https://bugs.webkit.org/show_bug.cgi?id=216515
+        <rdar://problem/68889944>
+
+        Reviewed by Darin Adler.
+
+        The calendar presented when activating a date input should not be
+        dismissed after the user selects a date. This matches the behavior
+        of date pickers in Calendar.app.
+
+        * UIProcess/mac/WebDateTimePickerMac.mm:
+        (WebKit::WebDateTimePickerMac::didChooseDate):
+
 2020-09-14  Peng Liu  <peng.liu6@apple.com>
 
         Returning to element fullscreen from PiP is not stable under stress tests

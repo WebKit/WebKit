@@ -94,7 +94,6 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
         return;
 
     m_page->didChooseDate(date);
-    endPicker();
 }
 
 } // namespace WebKit
