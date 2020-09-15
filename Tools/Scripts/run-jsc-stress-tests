@@ -87,15 +87,17 @@ def printCommandArray(*cmd)
     $stderr.puts ">> #{commandArray}"
 end
 
-$ignoreNextCommandExecutionExitCode = false
+class CommandExecutionFailed < Exception
+end
 
-def mysys(*cmd)
-    begin
-        printCommandArray(*cmd) if $verbosity >= 1
-        raise "Command failed: #{$?.inspect}" unless (system(*cmd) or $ignoreNextCommandExecutionExitCode)
-    ensure
-        $ignoreNextCommandExecutionExitCode = false
+def mysys(commandArray, options={})
+    printCommandArray(commandArray) if $verbosity >= 1
+    successful = system(*commandArray)
+    status = $?
+    if successful or options[:ignoreFailure]
+        return
     end
+    raise CommandExecutionFailed, "Command failed: #{status.inspect}"
 end
 
 def escapeAll(array)
@@ -2032,7 +2034,7 @@ def numberOfProcessors
 end
 
 $runnerDirMutex = Mutex.new
-def runAndMonitorTestRunnerCommand(*cmd)
+def runAndMonitorTestRunnerCommand(cmd, options={})
     numberOfTests = 0
     $runnerDirMutex.synchronize {
         Dir.chdir($runnerDir) {
@@ -2041,7 +2043,7 @@ def runAndMonitorTestRunnerCommand(*cmd)
         }
     }
     unless $progressMeter
-        mysys(cmd.join(' '))
+        mysys(cmd.join(' '), options)
     else
        running = {}
        didRun = {}
@@ -2097,7 +2099,9 @@ def runAndMonitorTestRunnerCommand(*cmd)
            }
        }
        puts
-       raise "Failed to run #{cmd}: #{$?.inspect}" unless $?.success?
+       if not $?.success? and not options[:ignoreFailure]
+           raise "Failed to run #{cmd}: #{$?.inspect}"
+       end
     end
 end
 
@@ -2109,8 +2113,8 @@ def getRemoteDirectoryIfNeeded(remoteIndex)
 end
 
 def copyBundleToRemote(remoteHost)
-    mysys("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}")
-    mysys("scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}")
+    mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}"])
+    mysys(["scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
 end
 
 def exportBaseEnvironmentVariables
@@ -2139,10 +2143,10 @@ def runTestRunner(remoteIndex=0)
         remoteScript += exportBaseEnvironmentVariables
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunnerCommand(remoteIndex)}\""
-        runAndMonitorTestRunnerCommand("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript)
+        runAndMonitorTestRunnerCommand(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
     else
         Dir.chdir($runnerDir) {
-            runAndMonitorTestRunnerCommand(testRunnerCommand)
+            runAndMonitorTestRunnerCommand(Shellwords.shellsplit(testRunnerCommand))
         }
     end
 end
@@ -2306,7 +2310,7 @@ def runTarball
     compressBundle
 end
 
-def forEachRemote(&blk)
+def forEachRemote(options={}, &blk)
     threads = []
     $remoteHosts.each_index {
         | index |
@@ -2315,7 +2319,27 @@ def forEachRemote(&blk)
             blk.call(index, remoteHost)
         }
     }
-    threads.each { |thr| thr.join }
+    failedRemotes = []
+    threads.each_index {
+        | index |
+        thread = threads[index]
+        begin
+            thread.join
+        rescue CommandExecutionFailed
+            if options[:dropOnFailure]
+                failedRemotes << index
+            else
+                raise
+            end
+        end
+    }
+    failedRemotes.reverse.each {
+        | index |
+        if $verbosity > 0
+            $stderr.puts("Dropping failed remote #{$remoteHosts[index]}")
+        end
+        $remoteHosts.delete_at(index)
+    }
 end
 
 def runRemote
@@ -2396,28 +2420,14 @@ def withGnuParallelSshLoginFile(&blk)
     }
 end
 
-
-def runSameCommandOnRemotes(cmd)
-    Tempfile.open('gnu-parallel-commands', $runnerDir) {
-        | commands |
-        commands.puts(cmd)
-        commands.flush
-        withGnuParallelSshLoginFile {
-            | slf |
-            cmd = [
-                "parallel",
-                "--nonall",
-                "-j0",
-                "--slf", slf
-            ] + ["-a", commands.path]
-            return mysys(*cmd)
-        }
-    }
-end
-
 def unpackBundleGnuParallel
-    runSameCommandOnRemotes("rm -rf #{$outputDir.basename} && " +
-                            "tar xzf #{$tarFileName}")
+    forEachRemote ({ :dropOnFailure => true }) {
+        |remoteIndex, remoteHost|
+        mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes",
+               "-p", remoteHost.port.to_s,
+               "#{remoteHost.user}@#{remoteHost.host}",
+               "cd #{Shellwords.shellescape(remoteHost.remoteDirectory)} && rm -rf #{$outputDir.basename} && tar xzf #{$tarFileName}"])
+    }
 end
 
 def runGnuParallelRunner
@@ -2445,8 +2455,7 @@ def runGnuParallelRunner
             $envVars.collect { |var | "export #{var} &&"}.join("") +
             "sh \""
         ]
-        $ignoreNextCommandExecutionExitCode = true
-        runAndMonitorTestRunnerCommand(*cmd)
+        runAndMonitorTestRunnerCommand(cmd, :ignoreFailure => true)
     }
 end
 
@@ -2455,12 +2464,19 @@ def runGnuParallel
     prepareBundle
     prepareTestRunner
     compressBundle
-    forEachRemote {
+    # If the preparatory steps fail, drop the remote host from our
+    # list. Otherwise, if it later comes up online, we'll try to run
+    # test jobs on it, possibly using a previously-unpacked unrelated
+    # bundle.
+    forEachRemote ({ :dropOnFailure => true }) {
         |remoteIndex, remoteHost|
         getRemoteDirectoryIfNeeded(remoteIndex)
         copyBundleToRemote(remoteHost)
     }
     unpackBundleGnuParallel
+    if $remoteHosts.size == 0
+        raise "All remote hosts failed, giving up"
+    end
     runGnuParallelRunner
     detectFailures
 end

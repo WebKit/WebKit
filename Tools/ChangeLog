@@ -1,3 +1,20 @@
+2020-09-15  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        run-jsc-stress-tests: handle remotes that are down on startup
+        https://bugs.webkit.org/show_bug.cgi?id=216357
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, the GNU parallel runner would needlessly fail to run if a
+        remote host was down on startup, as it used forEachRemote for the
+        preparatory steps (which would instafail on error).
+
+        Change forEachRemote to (optionally) recover from failure by removing
+        the remote host from the array. This also handles the case where a
+        remote unexpectedly comes up during a test run (by not picking it up).
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-09-15  Youenn Fablet  <youenn@apple.com>
 
         End of media capture should not be reported before 3 seconds of the start of capture
