@@ -1,3 +1,27 @@
+2020-09-15  Youenn Fablet  <youenn@apple.com>
+
+        Enable VP9 in GPUProcess if page needs it
+        https://bugs.webkit.org/show_bug.cgi?id=216472
+
+        Reviewed by Eric Carlson.
+
+        In case a page is using GPUProcess for media, send the VP9 parameters to GPUProcess.
+        GPUProcess will enable VP9 decoders based on that input.
+        Covered by LayoutTests/media/vp9.html with GPU process enabled.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::enableVP9Decoders):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::enableVP9Decoders):
+        * GPUProcess/GPUProcess.h:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::updateParameters):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling ShadowDOM

@@ -59,6 +59,10 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include <WebCore/VP9UtilitiesCocoa.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -263,6 +267,24 @@ WorkQueue& GPUProcess::audioMediaStreamTrackRendererQueue()
     if (!m_audioMediaStreamTrackRendererQueue)
         m_audioMediaStreamTrackRendererQueue = WorkQueue::create("RemoteAudioMediaStreamTrackRenderer", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive);
     return *m_audioMediaStreamTrackRendererQueue;
+}
+#endif
+
+#if ENABLE(VP9)
+void GPUProcess::enableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
+{
+    if (shouldEnableVP9Decoder && !m_enableVP9Decoder) {
+        m_enableVP9Decoder = true;
+#if PLATFORM(COCOA)
+        WebCore::registerSupplementalVP9Decoder();
+#endif
+    }
+    if (shouldEnableVP9SWDecoder && !m_enableVP9SWDecoder) {
+        m_enableVP9SWDecoder = true;
+#if PLATFORM(COCOA)
+        WebCore::registerWebKitVP9Decoder();
+#endif
+    }
 }
 #endif
 

@@ -25,13 +25,16 @@
 messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void CreateRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
     void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
-    void ClearNowPlayingInfo();
-    void SetNowPlayingInfo(bool setAsNowPlayingApplication, struct WebCore::NowPlayingInfo nowPlayingInfo);
+    void ClearNowPlayingInfo()
+    void SetNowPlayingInfo(bool setAsNowPlayingApplication, struct WebCore::NowPlayingInfo nowPlayingInfo)
 #if USE(AUDIO_SESSION)
     EnsureAudioSession() -> (struct WebKit::RemoteAudioSessionConfiguration configuration) Synchronous
 #endif
 #if PLATFORM(IOS_FAMILY)
     EnsureMediaSessionHelper()
+#endif
+#if ENABLE(VP9)
+    EnableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
 #endif
 }
 

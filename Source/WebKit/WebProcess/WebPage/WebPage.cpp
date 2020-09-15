@@ -782,6 +782,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     send(Messages::WebPageProxy::DidCreateContextForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
 #endif
 
+#if ENABLE(GPU_PROCESS)
+    if (m_page->settings().useGPUProcessForMedia())
+        WebProcess::singleton().ensureGPUProcessConnection().updateParameters(parameters);
+#endif
+
     if (parameters.shouldEnableVP9Decoder)
         WebProcess::singleton().enableVP9Decoder();
 

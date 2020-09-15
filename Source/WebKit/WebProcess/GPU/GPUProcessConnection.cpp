@@ -41,6 +41,7 @@
 #include "SampleBufferDisplayLayerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
+#include "WebPageCreationParameters.h"
 #include "WebPageMessages.h"
 #include "WebProcess.h"
 #include <WebCore/PlatformMediaSessionManager.h>
@@ -149,6 +150,18 @@ void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteC
 {
     const PlatformMediaSession::RemoteCommandArgument value { argument ? *argument : 0 };
     PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument ? &value : nullptr);
+}
+
+void GPUProcessConnection::updateParameters(const WebPageCreationParameters& parameters)
+{
+#if ENABLE(VP9)
+    if (m_enableVP9Decoder == parameters.shouldEnableVP9Decoder && m_enableVP9SWDecoder == parameters.shouldEnableVP9SWDecoder)
+        return;
+
+    m_enableVP9Decoder = parameters.shouldEnableVP9Decoder;
+    m_enableVP9SWDecoder = parameters.shouldEnableVP9SWDecoder;
+    connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(parameters.shouldEnableVP9Decoder, parameters.shouldEnableVP9SWDecoder), { });
+#endif
 }
 
 } // namespace WebKit

@@ -43,6 +43,7 @@ namespace WebKit {
 class RemoteCDMFactory;
 class RemoteMediaPlayerManager;
 class RemoteLegacyCDMFactory;
+struct WebPageCreationParameters;
 
 class GPUProcessConnection : public RefCounted<GPUProcessConnection>, IPC::Connection::Client {
 public:
@@ -73,6 +74,8 @@ public:
     RemoteLegacyCDMFactory& legacyCDMFactory();
 #endif
 
+    void updateParameters(const WebPageCreationParameters&);
+
 private:
     GPUProcessConnection(IPC::Connection::Identifier);
 
@@ -96,6 +99,10 @@ private:
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<SampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
+#endif
+#if ENABLE(VP9)
+    bool m_enableVP9Decoder { false };
+    bool m_enableVP9SWDecoder { false };
 #endif
 };
 
