@@ -33,12 +33,8 @@
 
 namespace WebCore {
 
-const float SmoothingTimeConstant = 0.020f; // 20ms
-
 DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
     : AudioDSPKernel(processor)
-    , m_writeIndex(0)
-    , m_firstTime(true)
     , m_delayTimes(AudioNode::ProcessingSizeInFrames)
 {
     ASSERT(processor && processor->sampleRate() > 0);
@@ -52,15 +48,11 @@ DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
 
     m_buffer.allocate(bufferLengthForDelay(m_maxDelayTime, processor->sampleRate()));
     m_buffer.zero();
-
-    m_smoothingRate = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, processor->sampleRate());
 }
 
 DelayDSPKernel::DelayDSPKernel(double maxDelayTime, float sampleRate)
     : AudioDSPKernel(sampleRate)
     , m_maxDelayTime(maxDelayTime)
-    , m_writeIndex(0)
-    , m_firstTime(true)
 {
     ASSERT(maxDelayTime > 0.0);
     if (maxDelayTime <= 0.0)
@@ -73,8 +65,6 @@ DelayDSPKernel::DelayDSPKernel(double maxDelayTime, float sampleRate)
 
     m_buffer.allocate(bufferLength);
     m_buffer.zero();
-
-    m_smoothingRate = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, sampleRate);
 }
 
 size_t DelayDSPKernel::bufferLengthForDelay(double maxDelayTime, double sampleRate) const
@@ -109,29 +99,17 @@ void DelayDSPKernel::process(const float* source, float* destination, size_t fra
         delayProcessor()->delayTime().calculateSampleAccurateValues(delayTimes, framesToProcess);
     else {
         delayTime = delayProcessor() ? delayProcessor()->delayTime().finalValue() : m_desiredDelayFrames / sampleRate;
-
         // Make sure the delay time is in a valid range.
-        delayTime = std::min(maxTime, delayTime);
-        delayTime = std::max(0.0, delayTime);
-
-        if (m_firstTime) {
-            m_currentDelayTime = delayTime;
-            m_firstTime = false;
-        }
+        delayTime = std::clamp(delayTime, 0.0, maxTime);
     }
 
     for (unsigned i = 0; i < framesToProcess; ++i) {
         if (sampleAccurate && shouldUseARate) {
             delayTime = delayTimes[i];
-            delayTime = std::min(maxTime, delayTime);
-            delayTime = std::max(0.0, delayTime);
-            m_currentDelayTime = delayTime;
-        } else {
-            // Approach desired delay time.
-            m_currentDelayTime += (delayTime - m_currentDelayTime) * m_smoothingRate;
+            delayTime = std::clamp(delayTime, 0.0, maxTime);
         }
 
-        double desiredDelayFrames = m_currentDelayTime * sampleRate;
+        double desiredDelayFrames = delayTime * sampleRate;
 
         double readPosition = m_writeIndex + bufferLength - desiredDelayFrames;
         if (readPosition >= bufferLength)
@@ -157,7 +135,6 @@ void DelayDSPKernel::process(const float* source, float* destination, size_t fra
 
 void DelayDSPKernel::reset()
 {
-    m_firstTime = true;
     m_buffer.zero();
 }
 

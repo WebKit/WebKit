@@ -1,5 +1,17 @@
 2020-09-14  Chris Dumez  <cdumez@apple.com>
 
+        Drop smoothing logic from DelayDSPKernel::process()
+        https://bugs.webkit.org/show_bug.cgi?id=216504
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests that are now passing or whose output has slightly changed.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-expected.txt:
+
+2020-09-14  Chris Dumez  <cdumez@apple.com>
+
         AudioDestinationCocoa should stop hardcoding the number of output channels to 2
         https://bugs.webkit.org/show_bug.cgi?id=216491
 

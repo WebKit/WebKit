@@ -13,17 +13,11 @@ PASS   testMod = new ConstantSourceNode(context) did not throw an exception.
 PASS   testMod.offset.setValueAtTime(0, 0) did not throw an exception. 
 PASS   testMod.offset.linearRampToValueAtTime(1.125, 1) did not throw an exception. 
 PASS   testMod.connect(testNode.delayTime) did not throw an exception. 
-PASS   Expected k-rate delayTime AudioParam with input is not constantly 0 (contains 6159 different values). 
-PASS   Actual k-rate delayTime AudioParam with input is not constantly 0 (contains 6159 different values). 
-FAIL X output[128, 143]: Expected 0 for all values but found 16 unexpected values: 
-	Index	Actual
-	[0]	-0.8773074150085449
-	[1]	-0.8522303104400635
-	[2]	-0.826123833656311
-	[3]	-0.7989943027496338
-	...and 12 more errors. assert_true: expected true got false
-PASS   output[144, 255] is not constantly 0 (contains 112 different values). 
+PASS   Expected k-rate delayTime AudioParam with input is not constantly 0 (contains 4656 different values). 
+PASS   Actual k-rate delayTime AudioParam with input is not constantly 0 (contains 4656 different values). 
+PASS   output[128, 143] contains only the constant 0. 
+PASS   output[144, 255] is not constantly 0 (contains 111 different values). 
 PASS   k-rate delayTime AudioParam with input equals [0,0.3311063051223755,0.6248595118522644,0.8481203317642212,0.9757022261619568,0.9932120442390442,0.898674488067627,0.7027547955513,0.4275550842285156,0.10412158071994781,-0.23105812072753906,-0.5401715040206909,-0.7883464097976685,-0.9475855827331543,-0.9999247193336487,-0.9394593238830566...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [delayTime] 1 out of 15 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS < [delayTime] All assertions passed. (total 15 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

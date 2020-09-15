@@ -51,10 +51,7 @@ public:
 private:
     AudioFloatArray m_buffer;
     double m_maxDelayTime;
-    int m_writeIndex;
-    double m_currentDelayTime;
-    double m_smoothingRate;
-    bool m_firstTime;
+    int m_writeIndex { 0 };
     double m_desiredDelayFrames;
 
     AudioFloatArray m_delayTimes;
