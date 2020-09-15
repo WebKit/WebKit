@@ -182,7 +182,6 @@
 #define WebKitDialogElementEnabledPreferenceKey @"WebKitDialogElementEnabledPreferenceKey"
 #define WebKitKeygenElementEnabledPreferenceKey @"WebKitKeygenElementEnabledPreferenceKey"
 #define WebKitCacheAPIEnabledPreferenceKey @"WebKitCacheAPIEnabled"
-#define WebKitFetchAPIEnabledPreferenceKey @"WebKitFetchAPIEnabled"
 #define WebKitWritableStreamAPIEnabledPreferenceKey @"WebKitWritableStreamAPIEnabled"
 #define WebKitReadableByteStreamAPIEnabledPreferenceKey @"WebKitReadableByteStreamAPIEnabled"
 #define WebKitTransformStreamAPIEnabledPreferenceKey @"WebKitTransformStreamAPIEnabled"
@@ -295,3 +294,4 @@
 #define WebKitShadowDOMEnabledPreferenceKey @"WebKitShadowDOMEnabled"
 #define WebKitHixie76WebSocketProtocolEnabledKey @"WebKitHixie76WebSocketProtocolEnabled"
 #define WebKitCustomElementsEnabledPreferenceKey @"WebKitCustomElementsEnabled"
+#define WebKitFetchAPIEnabledPreferenceKey @"WebKitFetchAPIEnabled"

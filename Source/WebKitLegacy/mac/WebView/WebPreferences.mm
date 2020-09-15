@@ -649,7 +649,6 @@ public:
         @YES, WebKitMaskWebGLStringsEnabledPreferenceKey,
 #endif
         @NO, WebKitCacheAPIEnabledPreferenceKey,
-        @YES, WebKitFetchAPIEnabledPreferenceKey,
 
         @NO, WebKitReadableByteStreamAPIEnabledPreferenceKey,
         @NO, WebKitWritableStreamAPIEnabledPreferenceKey,
@@ -3097,16 +3096,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitCacheAPIEnabledPreferenceKey];
 }
 
-- (BOOL)fetchAPIEnabled
-{
-    return [self _boolValueForKey:WebKitFetchAPIEnabledPreferenceKey];
-}
-
-- (void)setFetchAPIEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitFetchAPIEnabledPreferenceKey];
-}
-
 - (BOOL)readableByteStreamAPIEnabled
 {
     return [self _boolValueForKey:WebKitReadableByteStreamAPIEnabledPreferenceKey];
@@ -3702,6 +3691,16 @@ static NSString *classIBCreatorID = nil;
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (void)setFetchAPIEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)fetchAPIEnabled
+{
+    return YES;
+}
+
 
 - (void)setShadowDOMEnabled:(BOOL)flag
 {

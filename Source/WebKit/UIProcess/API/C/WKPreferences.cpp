@@ -78,6 +78,13 @@ void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef preferencesRef,
     toImpl(preferencesRef)->setInternalDebugFeatureEnabledForKey(toWTFString(internalDebugFeatureKey), value);
 }
 
+void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)
+{
+    // Currently we reset the overrides on the web process when preferencesDidChange() is called. Since WTR preferences
+    // are usually always the same (in the UI process), they are not sent to web process, not triggering the reset.
+    toImpl(preferencesRef)->forceUpdate();
+}
+
 void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferencesRef, bool javaScriptEnabled)
 {
     toImpl(preferencesRef)->setJavaScriptEnabled(javaScriptEnabled);
@@ -357,15 +364,6 @@ void WKPreferencesSetDefaultTextEncodingName(WKPreferencesRef preferencesRef, WK
 WKStringRef WKPreferencesCopyDefaultTextEncodingName(WKPreferencesRef preferencesRef)
 {
     return toCopiedAPI(toImpl(preferencesRef)->defaultTextEncodingName());
-}
-
-void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-}
-
-bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef)
-{
-    return false;
 }
 
 void WKPreferencesSetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -758,15 +756,6 @@ bool WKPreferencesGetNeedsStorageAccessFromFileURLsQuirk(WKPreferencesRef prefer
     return toImpl(preferencesRef)->needsStorageAccessFromFileURLsQuirk();
 }
 
-void WKPreferencesSetHixie76WebSocketProtocolEnabled(WKPreferencesRef, bool /*enabled*/)
-{
-}
-
-bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef)
-{
-    return false;
-}
-
 void WKPreferencesSetMediaPlaybackRequiresUserGesture(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setRequiresUserGestureForMediaPlayback(flag);
@@ -937,28 +926,6 @@ bool WKPreferencesGetWebAudioEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webAudioEnabled();
 }
 
-void WKPreferencesSetApplicationChromeModeEnabled(WKPreferencesRef, bool)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
-}
-
-bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
-    return false;
-}
-
-void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef, bool)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
-}
-
-bool WKPreferencesGetInspectorUsesWebKitUserInterface(WKPreferencesRef)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
-    return false;
-}
-
 void WKPreferencesSetSuppressesIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setSuppressesIncrementalRendering(enabled);
@@ -1057,13 +1024,6 @@ void WKPreferencesSetStorageBlockingPolicy(WKPreferencesRef preferencesRef, WKSt
 WKStorageBlockingPolicy WKPreferencesGetStorageBlockingPolicy(WKPreferencesRef preferencesRef)
 {
     return toAPI(static_cast<WebCore::SecurityOrigin::StorageBlockingPolicy>(toImpl(preferencesRef)->storageBlockingPolicy()));
-}
-
-void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)
-{
-    // Currently we reset the overrides on the web process when preferencesDidChange() is called. Since WTR preferences
-    // are usually always the same (in the UI process), they are not sent to web process, not triggering the reset.
-    toImpl(preferencesRef)->forceUpdate();
 }
 
 void WKPreferencesSetDiagnosticLoggingEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -1369,17 +1329,6 @@ bool WKPreferencesGetContentChangeObserverEnabled(WKPreferencesRef preferencesRe
     return toImpl(preferencesRef)->contentChangeObserverEnabled();
 }
 
-void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef, bool)
-{
-    // FIXME: Remove Safari call to this.
-}
-
-bool WKPreferencesGetNewBlockInsideInlineModelEnabled(WKPreferencesRef)
-{
-    // FIXME: Remove Safari call for this.
-    return false;
-}
-
 void WKPreferencesSetDeferredCSSParserEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setDeferredCSSParserEnabled(flag);
@@ -1438,15 +1387,6 @@ void WKPreferencesSetPeerConnectionEnabled(WKPreferencesRef preferencesRef, bool
 bool WKPreferencesGetPeerConnectionEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->peerConnectionEnabled();
-}
-
-void WKPreferencesSetWebRTCLegacyAPIEnabled(WKPreferencesRef, bool)
-{
-}
-
-bool WKPreferencesGetWebRTCLegacyAPIEnabled(WKPreferencesRef)
-{
-    return false;
 }
 
 void WKPreferencesSetWebRTCMDNSICECandidatesEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -1569,16 +1509,6 @@ bool WKPreferencesGetHighlightAPIEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->highlightAPIEnabled();
 }
 
-// FIXME: Remove these when possible.
-void WKPreferencesSetLongMousePressEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-}
-
-bool WKPreferencesGetLongMousePressEnabled(WKPreferencesRef preferencesRef)
-{
-    return false;
-}
-
 void WKPreferencesSetMinimumZoomFontSize(WKPreferencesRef preferencesRef, double size)
 {
     toImpl(preferencesRef)->setMinimumZoomFontSize(size);
@@ -1589,16 +1519,6 @@ double WKPreferencesGetMinimumZoomFontSize(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->minimumZoomFontSize();
 }
 
-void WKPreferencesSetAntialiasedFontDilationEnabled(WKPreferencesRef, bool)
-{
-    // Feature removed.
-}
-
-bool WKPreferencesGetAntialiasedFontDilationEnabled(WKPreferencesRef)
-{
-    return false; // Feature removed.
-}
-
 void WKPreferencesSetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef, WKDebugOverlayRegions visibleRegions)
 {
     toImpl(preferencesRef)->setVisibleDebugOverlayRegions(visibleRegions);
@@ -1607,17 +1527,6 @@ void WKPreferencesSetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef,
 WKDebugOverlayRegions WKPreferencesGetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->visibleDebugOverlayRegions();
-}
-
-void WKPreferencesSetIgnoreViewportScalingConstraints(WKPreferencesRef, bool)
-{
-    // This preference is no longer supported.
-}
-
-bool WKPreferencesGetIgnoreViewportScalingConstraints(WKPreferencesRef)
-{
-    // This preference is no longer supported.
-    return false;
 }
 
 void WKPreferencesSetMetaRefreshEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -1718,16 +1627,6 @@ void WKPreferencesSetInactiveMediaCaptureSteamRepromptIntervalInMinutes(WKPrefer
 double WKPreferencesGetInactiveMediaCaptureSteamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->inactiveMediaCaptureSteamRepromptIntervalInMinutes();
-}
-
-void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setFetchAPIEnabled(flag);
-}
-
-bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->fetchAPIEnabled();
 }
 
 void WKPreferencesSetDataTransferItemsEnabled(WKPreferencesRef preferencesRef, bool flag)
@@ -2248,4 +2147,101 @@ bool WKPreferencesGetShouldUseServiceWorkerShortTimeout(WKPreferencesRef prefere
 void WKPreferencesSetShouldUseServiceWorkerShortTimeout(WKPreferencesRef preferencesRef, bool enabled)
 {
     WebKit::toImpl(preferencesRef)->setShouldUseServiceWorkerShortTimeout(enabled);
+}
+
+
+// The following are all deprecated and do nothing. They should be removed when possible.
+
+void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetIgnoreViewportScalingConstraints(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetIgnoreViewportScalingConstraints(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetWebRTCLegacyAPIEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetWebRTCLegacyAPIEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetNewBlockInsideInlineModelEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetLongMousePressEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetLongMousePressEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetAntialiasedFontDilationEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetAntialiasedFontDilationEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetHixie76WebSocketProtocolEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetApplicationChromeModeEnabled(WKPreferencesRef, bool)
+{
+    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
+}
+
+bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef)
+{
+    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
+    return false;
+}
+
+void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef, bool)
+{
+    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
+}
+
+bool WKPreferencesGetInspectorUsesWebKitUserInterface(WKPreferencesRef)
+{
+    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
+    return false;
+}
+
+void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef)
+{
+    return true;
 }

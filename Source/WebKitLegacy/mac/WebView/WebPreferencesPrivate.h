@@ -549,9 +549,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)cacheAPIEnabled;
 - (void)setCacheAPIEnabled:(BOOL)enabled;
 
-- (void)setFetchAPIEnabled:(BOOL)flag;
-- (BOOL)fetchAPIEnabled;
-
 - (void)setReadableByteStreamAPIEnabled:(BOOL)flag;
 - (BOOL)readableByteStreamAPIEnabled;
 
@@ -696,9 +693,14 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 @end
 
+@interface WebPreferences (WebPrivateDeprecated)
+
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
-@interface WebPreferences (WebPrivateDeprecated)
+
+- (void)setFetchAPIEnabled:(BOOL)flag;
+- (BOOL)fetchAPIEnabled;
+
 - (void)setShadowDOMEnabled:(BOOL)flag;
 - (BOOL)shadowDOMEnabled;
 
@@ -712,4 +714,5 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)isHixie76WebSocketProtocolEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
+
 @end

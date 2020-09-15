@@ -93,9 +93,6 @@ public:
     void setCacheAPIEnabled(bool isEnabled) { m_isCacheAPIEnabled = isEnabled; }
     bool cacheAPIEnabled() const { return m_isCacheAPIEnabled; }
 
-    void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
-    bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
-
     void setWebSocketEnabled(bool isEnabled) { m_isWebSocketEnabled = isEnabled; }
     bool webSocketEnabled() const { return m_isWebSocketEnabled; }
 
@@ -312,7 +309,6 @@ private:
     bool m_isOffscreenCanvasEnabled { false };
 #endif
     bool m_isCacheAPIEnabled { false };
-    bool m_isFetchAPIEnabled { true };
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
     bool m_inspectorAdditionsEnabled { false };

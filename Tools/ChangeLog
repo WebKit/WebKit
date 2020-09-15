@@ -1,3 +1,20 @@
+2020-09-15  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling the fetch API
+        https://bugs.webkit.org/show_bug.cgi?id=216519
+
+        Reviewed by Alex Christensen.
+
+        Remove runtime setting for enabling/disabling the fetch API. There is no
+        reason one needs to disable it now and it has been on by default for
+        a long enough time.
+
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+
 2020-09-15  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add Contributor object

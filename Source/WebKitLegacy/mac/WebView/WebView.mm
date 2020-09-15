@@ -3337,7 +3337,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsCSSIntegrationEnabled([preferences webAnimationsCSSIntegrationEnabled]);
 
     RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled([preferences cacheAPIEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled([preferences fetchAPIEnabled]);
 
     RuntimeEnabledFeatures::sharedFeatures().setWritableStreamAPIEnabled([preferences writableStreamAPIEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setReadableByteStreamAPIEnabled([preferences readableByteStreamAPIEnabled]);

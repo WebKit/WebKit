@@ -1,3 +1,23 @@
+2020-09-15  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling the fetch API
+        https://bugs.webkit.org/show_bug.cgi?id=216519
+
+        Reviewed by Alex Christensen.
+
+        Remove runtime setting for enabling/disabling the fetch API. There is no
+        reason one needs to disable it now and it has been on by default for
+        a long enough time.
+
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/WindowOrWorkerGlobalScopeFetch.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setFetchAPIEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::fetchAPIEnabled const): Deleted.
+
 2020-09-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix the build with recent SDKs.

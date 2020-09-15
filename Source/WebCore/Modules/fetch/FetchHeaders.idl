@@ -29,7 +29,6 @@
 typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) HeadersInit;
 
 [
-    EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
     InterfaceName=Headers,

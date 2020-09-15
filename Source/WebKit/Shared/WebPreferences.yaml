@@ -774,11 +774,6 @@ EnumeratingAllNetworkInterfacesEnabled:
   defaultValue: false
   webcoreBinding: none
 
-FetchAPIEnabled:
-  type: bool
-  defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
-
 DownloadAttributeEnabled:
   type: bool
   defaultValue: true

@@ -32,7 +32,6 @@ typedef (FetchRequest or USVString) RequestInfo;
 
 [
     ActiveDOMObject,
-    EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     InterfaceName=Request,

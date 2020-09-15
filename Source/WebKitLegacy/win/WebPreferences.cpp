@@ -309,8 +309,6 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitFetchAPIEnabledPreferenceKey), kCFBooleanFalse);
-
     CFDictionaryAddValue(defaults, CFSTR(WebKitCustomElementsEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsEnabledPreferenceKey), kCFBooleanTrue);
@@ -2050,13 +2048,12 @@ HRESULT WebPreferences::fetchAPIEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitFetchAPIEnabledPreferenceKey);
+    *enabled = true;
     return S_OK;
 }
 
-HRESULT WebPreferences::setFetchAPIEnabled(BOOL enabled)
+HRESULT WebPreferences::setFetchAPIEnabled(BOOL)
 {
-    setBoolValue(WebKitFetchAPIEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

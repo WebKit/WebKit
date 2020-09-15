@@ -5229,11 +5229,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 
     // FIXME: Add preferences for the runtime enabled features.
 
-    hr = prefsPrivate->fetchAPIEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(!!enabled);
-
     hr = prefsPrivate->menuItemElementEnabled(&enabled);
     if (FAILED(hr))
         return hr;

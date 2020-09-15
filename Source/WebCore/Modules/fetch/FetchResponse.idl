@@ -39,7 +39,6 @@ dictionary FetchResponseInit {
 
 [
     ActiveDOMObject,
-    EnabledAtRuntime=FetchAPI,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     InterfaceName=Response,
