@@ -1,3 +1,90 @@
+2020-09-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Move Layout::Rect to a dedicated file
+        https://bugs.webkit.org/show_bug.cgi?id=216553
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/layouttree/LayoutBoxGeometry.h:
+        (WebCore::Layout::Rect::expandHorizontally): Deleted.
+        (WebCore::Layout::Rect::expandVertically): Deleted.
+        (WebCore::Layout::Rect::intersects const): Deleted.
+        (WebCore::Layout::Rect::invalidateTop): Deleted.
+        (WebCore::Layout::Rect::invalidateLeft): Deleted.
+        (WebCore::Layout::Rect::invalidateWidth): Deleted.
+        (WebCore::Layout::Rect::invalidateHeight): Deleted.
+        (WebCore::Layout::Rect::hasValidPosition const): Deleted.
+        (WebCore::Layout::Rect::hasValidSize const): Deleted.
+        (WebCore::Layout::Rect::hasValidGeometry const): Deleted.
+        (WebCore::Layout::Rect::Rect): Deleted.
+        (WebCore::Layout::Rect::invalidatePosition): Deleted.
+        (WebCore::Layout::Rect::setHasValidPosition): Deleted.
+        (WebCore::Layout::Rect::setHasValidSize): Deleted.
+        (WebCore::Layout::Rect::top const): Deleted.
+        (WebCore::Layout::Rect::left const): Deleted.
+        (WebCore::Layout::Rect::bottom const): Deleted.
+        (WebCore::Layout::Rect::right const): Deleted.
+        (WebCore::Layout::Rect::topLeft const): Deleted.
+        (WebCore::Layout::Rect::bottomRight const): Deleted.
+        (WebCore::Layout::Rect::size const): Deleted.
+        (WebCore::Layout::Rect::width const): Deleted.
+        (WebCore::Layout::Rect::height const): Deleted.
+        (WebCore::Layout::Rect::setTopLeft): Deleted.
+        (WebCore::Layout::Rect::setTop): Deleted.
+        (WebCore::Layout::Rect::setLeft): Deleted.
+        (WebCore::Layout::Rect::setWidth): Deleted.
+        (WebCore::Layout::Rect::setHeight): Deleted.
+        (WebCore::Layout::Rect::setSize): Deleted.
+        (WebCore::Layout::Rect::shiftLeftTo): Deleted.
+        (WebCore::Layout::Rect::shiftRightTo): Deleted.
+        (WebCore::Layout::Rect::shiftTopTo): Deleted.
+        (WebCore::Layout::Rect::shiftBottomTo): Deleted.
+        (WebCore::Layout::Rect::moveHorizontally): Deleted.
+        (WebCore::Layout::Rect::moveVertically): Deleted.
+        (WebCore::Layout::Rect::expand): Deleted.
+        (WebCore::Layout::Rect::clone const): Deleted.
+        (WebCore::Layout::Rect::operator LayoutRect const): Deleted.
+        * layout/layouttree/LayoutGeometryRect.h: Added.
+        (WebCore::Layout::Rect::expandHorizontally):
+        (WebCore::Layout::Rect::expandVertically):
+        (WebCore::Layout::Rect::intersects const):
+        (WebCore::Layout::Rect::invalidateTop):
+        (WebCore::Layout::Rect::invalidateLeft):
+        (WebCore::Layout::Rect::invalidateWidth):
+        (WebCore::Layout::Rect::invalidateHeight):
+        (WebCore::Layout::Rect::hasValidPosition const):
+        (WebCore::Layout::Rect::hasValidSize const):
+        (WebCore::Layout::Rect::hasValidGeometry const):
+        (WebCore::Layout::Rect::Rect):
+        (WebCore::Layout::Rect::invalidatePosition):
+        (WebCore::Layout::Rect::setHasValidPosition):
+        (WebCore::Layout::Rect::setHasValidSize):
+        (WebCore::Layout::Rect::top const):
+        (WebCore::Layout::Rect::left const):
+        (WebCore::Layout::Rect::bottom const):
+        (WebCore::Layout::Rect::right const):
+        (WebCore::Layout::Rect::topLeft const):
+        (WebCore::Layout::Rect::bottomRight const):
+        (WebCore::Layout::Rect::size const):
+        (WebCore::Layout::Rect::width const):
+        (WebCore::Layout::Rect::height const):
+        (WebCore::Layout::Rect::setTopLeft):
+        (WebCore::Layout::Rect::setTop):
+        (WebCore::Layout::Rect::setLeft):
+        (WebCore::Layout::Rect::setWidth):
+        (WebCore::Layout::Rect::setHeight):
+        (WebCore::Layout::Rect::setSize):
+        (WebCore::Layout::Rect::shiftLeftTo):
+        (WebCore::Layout::Rect::shiftRightTo):
+        (WebCore::Layout::Rect::shiftTopTo):
+        (WebCore::Layout::Rect::shiftBottomTo):
+        (WebCore::Layout::Rect::moveHorizontally):
+        (WebCore::Layout::Rect::moveVertically):
+        (WebCore::Layout::Rect::expand):
+        (WebCore::Layout::Rect::clone const):
+        (WebCore::Layout::Rect::operator LayoutRect const):
+
 2020-09-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Indefinite flex-basis percentage should cause height to be ignored
