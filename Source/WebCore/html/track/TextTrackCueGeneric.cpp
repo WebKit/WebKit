@@ -52,16 +52,20 @@ static constexpr int DEFAULTCAPTIONFONTSIZE = 10;
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
     WTF_MAKE_ISO_ALLOCATED_INLINE(TextTrackCueGenericBoxElement);
 public:
-    static Ref<TextTrackCueGenericBoxElement> create(Document& document, TextTrackCueGeneric& cue)
-    {
-        return adoptRef(*new TextTrackCueGenericBoxElement(document, cue));
-    }
+    static Ref<TextTrackCueGenericBoxElement> create(Document&, TextTrackCueGeneric&);
     
     void applyCSSProperties(const IntSize&) override;
     
 private:
     TextTrackCueGenericBoxElement(Document&, VTTCue&);
 };
+
+Ref<TextTrackCueGenericBoxElement> TextTrackCueGenericBoxElement::create(Document& document, TextTrackCueGeneric& cue)
+{
+    auto box = adoptRef(*new TextTrackCueGenericBoxElement(document, cue));
+    box->initialize();
+    return box;
+}
 
 TextTrackCueGenericBoxElement::TextTrackCueGenericBoxElement(Document& document, VTTCue& cue)
     : VTTCueBox(document, cue)

@@ -40,13 +40,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeDayFieldElement);
 DateTimeDayFieldElement::DateTimeDayFieldElement(Document& document, FieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 31), "--"_s)
 {
-    static MainThreadNeverDestroyed<const AtomString> dayPseudoId("-webkit-datetime-edit-day-field", AtomString::ConstructFromLiteral);
-    initialize(dayPseudoId);
 }
 
 Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
-    return adoptRef(*new DateTimeDayFieldElement(document, fieldOwner));
+    auto element = adoptRef(*new DateTimeDayFieldElement(document, fieldOwner));
+    static MainThreadNeverDestroyed<const AtomString> dayPseudoId("-webkit-datetime-edit-day-field", AtomString::ConstructFromLiteral);
+    element->initialize(dayPseudoId);
+    return element;
 }
 
 void DateTimeDayFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -65,13 +66,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeHourFieldElement);
 DateTimeHourFieldElement::DateTimeHourFieldElement(Document& document, FieldOwner& fieldOwner, int minimum, int maximum)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(minimum, maximum), "--"_s)
 {
-    static MainThreadNeverDestroyed<const AtomString> hourPseudoId("-webkit-datetime-edit-hour-field", AtomString::ConstructFromLiteral);
-    initialize(hourPseudoId);
 }
 
 Ref<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document& document, FieldOwner& fieldOwner, int minimum, int maximum)
 {
-    return adoptRef(*new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum));
+    auto element = adoptRef(*new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum));
+    static MainThreadNeverDestroyed<const AtomString> hourPseudoId("-webkit-datetime-edit-hour-field", AtomString::ConstructFromLiteral);
+    element->initialize(hourPseudoId);
+    return element;
 }
 
 void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -129,13 +131,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMeridiemFieldElement);
 DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
     : DateTimeSymbolicFieldElement(document, fieldOwner, labels)
 {
-    static MainThreadNeverDestroyed<const AtomString> meridiemPseudoId("-webkit-datetime-edit-meridiem-field", AtomString::ConstructFromLiteral);
-    initialize(meridiemPseudoId);
 }
 
 Ref<DateTimeMeridiemFieldElement> DateTimeMeridiemFieldElement::create(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
 {
-    return adoptRef(*new DateTimeMeridiemFieldElement(document, fieldOwner, labels));
+    auto element = adoptRef(*new DateTimeMeridiemFieldElement(document, fieldOwner, labels));
+    static MainThreadNeverDestroyed<const AtomString> meridiemPseudoId("-webkit-datetime-edit-meridiem-field", AtomString::ConstructFromLiteral);
+    element->initialize(meridiemPseudoId);
+    return element;
 }
 
 void DateTimeMeridiemFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -154,13 +157,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMillisecondFieldElement);
 DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document& document, FieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 999), "--"_s)
 {
-    static MainThreadNeverDestroyed<const AtomString> millisecondPseudoId("-webkit-datetime-edit-millisecond-field", AtomString::ConstructFromLiteral);
-    initialize(millisecondPseudoId);
 }
 
 Ref<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
-    return adoptRef(*new DateTimeMillisecondFieldElement(document, fieldOwner));
+    auto element = adoptRef(*new DateTimeMillisecondFieldElement(document, fieldOwner));
+    static MainThreadNeverDestroyed<const AtomString> millisecondPseudoId("-webkit-datetime-edit-millisecond-field", AtomString::ConstructFromLiteral);
+    element->initialize(millisecondPseudoId);
+    return element;
 }
 
 void DateTimeMillisecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -179,13 +183,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMinuteFieldElement);
 DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document& document, FieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 59), "--"_s)
 {
-    static MainThreadNeverDestroyed<const AtomString> minutePseudoId("-webkit-datetime-edit-minute-field", AtomString::ConstructFromLiteral);
-    initialize(minutePseudoId);
 }
 
 Ref<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
-    return adoptRef(*new DateTimeMinuteFieldElement(document, fieldOwner));
+    auto element = adoptRef(*new DateTimeMinuteFieldElement(document, fieldOwner));
+    static MainThreadNeverDestroyed<const AtomString> minutePseudoId("-webkit-datetime-edit-minute-field", AtomString::ConstructFromLiteral);
+    element->initialize(minutePseudoId);
+    return element;
 }
 
 void DateTimeMinuteFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -204,13 +209,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMonthFieldElement);
 DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document& document, FieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(1, 12), "--"_s)
 {
-    static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field", AtomString::ConstructFromLiteral);
-    initialize(monthPseudoId);
 }
 
 Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
-    return adoptRef(*new DateTimeMonthFieldElement(document, fieldOwner));
+    auto element = adoptRef(*new DateTimeMonthFieldElement(document, fieldOwner));
+    static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field", AtomString::ConstructFromLiteral);
+    element->initialize(monthPseudoId);
+    return element;
 }
 
 void DateTimeMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -230,13 +236,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeSecondFieldElement);
 DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document& document, FieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 59), "--"_s)
 {
-    static MainThreadNeverDestroyed<const AtomString> secondPseudoId("-webkit-datetime-edit-second-field", AtomString::ConstructFromLiteral);
-    initialize(secondPseudoId);
 }
 
 Ref<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
-    return adoptRef(*new DateTimeSecondFieldElement(document, fieldOwner));
+    auto element = adoptRef(*new DateTimeSecondFieldElement(document, fieldOwner));
+    static MainThreadNeverDestroyed<const AtomString> secondPseudoId("-webkit-datetime-edit-second-field", AtomString::ConstructFromLiteral);
+    element->initialize(secondPseudoId);
+    return element;
 }
 
 void DateTimeSecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -255,13 +262,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeSymbolicMonthFieldElement);
 DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
     : DateTimeSymbolicFieldElement(document, fieldOwner, labels)
 {
-    static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field", AtomString::ConstructFromLiteral);
-    initialize(monthPseudoId);
 }
 
 Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
 {
-    return adoptRef(*new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels));
+    auto element = adoptRef(*new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels));
+    static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field", AtomString::ConstructFromLiteral);
+    element->initialize(monthPseudoId);
+    return element;
 }
 
 void DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -280,13 +288,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeYearFieldElement);
 DateTimeYearFieldElement::DateTimeYearFieldElement(Document& document, FieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, Range(DateComponents::minimumYear(), DateComponents::maximumYear()), "----"_s)
 {
-    static MainThreadNeverDestroyed<const AtomString> yearPseudoId("-webkit-datetime-edit-year-field", AtomString::ConstructFromLiteral);
-    initialize(yearPseudoId);
 }
 
 Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
-    return adoptRef(*new DateTimeYearFieldElement(document, fieldOwner));
+    auto element = adoptRef(*new DateTimeYearFieldElement(document, fieldOwner));
+    static MainThreadNeverDestroyed<const AtomString> yearPseudoId("-webkit-datetime-edit-year-field", AtomString::ConstructFromLiteral);
+    element->initialize(yearPseudoId);
+    return element;
 }
 
 void DateTimeYearFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)

@@ -1,3 +1,76 @@
+2020-09-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Element should not set an attribute inside its constructor
+        https://bugs.webkit.org/show_bug.cgi?id=216507
+
+        Reviewed by Wenson Hsieh.
+
+        Moved the code to add attributes from element constructors to respective ::create functions
+        since setting attributes could run code in parseAttribute some of which may try to store
+        "this" in Ref / RefPtr, which would not be safe before adoptRef is called.
+
+        No new tests since there should be no observable behavioral change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal): Added an assertion.
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::create):
+        (WebCore::UploadButtonElement::createForMultiple):
+        (WebCore::UploadButtonElement::createInternal): Extracted.
+        (WebCore::UploadButtonElement::UploadButtonElement):
+        * html/HTMLKeygenElement.cpp:
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::DateTimeEditElement):
+        (WebCore::DateTimeEditElement::create):
+        * html/shadow/DateTimeFieldElements.cpp:
+        (WebCore::DateTimeDayFieldElement::DateTimeDayFieldElement):
+        (WebCore::DateTimeDayFieldElement::create):
+        (WebCore::DateTimeHourFieldElement::DateTimeHourFieldElement):
+        (WebCore::DateTimeHourFieldElement::create):
+        (WebCore::DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement):
+        (WebCore::DateTimeMeridiemFieldElement::create):
+        (WebCore::DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement):
+        (WebCore::DateTimeMillisecondFieldElement::create):
+        (WebCore::DateTimeMinuteFieldElement::DateTimeMinuteFieldElement):
+        (WebCore::DateTimeMinuteFieldElement::create):
+        (WebCore::DateTimeMonthFieldElement::DateTimeMonthFieldElement):
+        (WebCore::DateTimeMonthFieldElement::create):
+        (WebCore::DateTimeSecondFieldElement::DateTimeSecondFieldElement):
+        (WebCore::DateTimeSecondFieldElement::create):
+        (WebCore::DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement):
+        (WebCore::DateTimeSymbolicMonthFieldElement::create):
+        (WebCore::DateTimeYearFieldElement::DateTimeYearFieldElement):
+        (WebCore::DateTimeYearFieldElement::create):
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::create):
+        (WebCore::DetailsMarkerControl::DetailsMarkerControl):
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::create):
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement):
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        (WebCore::SpinButtonElement::create):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlPlaceholderElement::TextControlPlaceholderElement):
+        (WebCore::TextControlPlaceholderElement::create):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        (WebCore::SearchFieldCancelButtonElement::create):
+        * html/shadow/YouTubeEmbedShadowElement.cpp:
+        (WebCore::YouTubeEmbedShadowElement::create):
+        (WebCore::YouTubeEmbedShadowElement::YouTubeEmbedShadowElement):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCueBox::create): Moved from .h.
+        (WebCore::TextTrackCueBox::TextTrackCueBox):
+        (WebCore::TextTrackCueBox::initilaize): Added.
+        * html/track/TextTrackCue.h:
+        (WebCore::TextTrackCueBox::create): Moved to cpp.
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::create): Now calls initialize().
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::create): Moved from .h. Now calls initialize().
+        * html/track/VTTCue.h:
+        (WebCore::VTTCueBox::create): Moved to cpp.
+
 2020-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Apple Win] Migrate from FontPlatformDataWin.cpp to FontPlatformDataCoreText.cpp

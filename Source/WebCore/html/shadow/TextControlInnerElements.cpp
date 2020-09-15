@@ -182,14 +182,15 @@ Optional<Style::ElementStyle> TextControlInnerTextElement::resolveCustomStyle(co
 inline TextControlPlaceholderElement::TextControlPlaceholderElement(Document& document)
     : HTMLDivElement(divTag, document)
 {
-    static MainThreadNeverDestroyed<const AtomString> placeholderName("placeholder", AtomString::ConstructFromLiteral);
-    setPseudo(placeholderName);
     setHasCustomStyleResolveCallbacks();
 }
 
 Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Document& document)
 {
-    return adoptRef(*new TextControlPlaceholderElement(document));
+    auto element = adoptRef(*new TextControlPlaceholderElement(document));
+    static MainThreadNeverDestroyed<const AtomString> placeholderName("placeholder", AtomString::ConstructFromLiteral);
+    element->setPseudo(placeholderName);
+    return element;
 }
 
 Optional<Style::ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
@@ -255,21 +256,20 @@ bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
 inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document& document)
     : HTMLDivElement(divTag, document)
 {
-    static MainThreadNeverDestroyed<const AtomString> webkitSearchCancelButtonName("-webkit-search-cancel-button", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
-
     setHasCustomStyleResolveCallbacks();
-
-    setPseudo(webkitSearchCancelButtonName);
-#if !PLATFORM(IOS_FAMILY)
-    setAttributeWithoutSynchronization(aria_labelAttr, AXSearchFieldCancelButtonText());
-#endif
-    setAttributeWithoutSynchronization(roleAttr, buttonName);
 }
 
 Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Document& document)
 {
-    return adoptRef(*new SearchFieldCancelButtonElement(document));
+    auto element = adoptRef(*new SearchFieldCancelButtonElement(document));
+    static MainThreadNeverDestroyed<const AtomString> webkitSearchCancelButtonName("-webkit-search-cancel-button", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
+    element->setPseudo(webkitSearchCancelButtonName);
+#if !PLATFORM(IOS_FAMILY)
+    element->setAttributeWithoutSynchronization(aria_labelAttr, AXSearchFieldCancelButtonText());
+#endif
+    element->setAttributeWithoutSynchronization(roleAttr, buttonName);
+    return element;
 }
 
 Optional<Style::ElementStyle> SearchFieldCancelButtonElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)

@@ -92,11 +92,22 @@ static const QualifiedName& cueBackgroundAttributName()
     return cueBackgroundTag;
 }
 
+Ref<TextTrackCueBox> TextTrackCueBox::create(Document& document, TextTrackCue& cue)
+{
+    auto box = adoptRef(*new TextTrackCueBox(document, cue));
+    box->initialize();
+    return box;
+}
+
 TextTrackCueBox::TextTrackCueBox(Document& document, TextTrackCue& cue)
     : HTMLElement(HTMLNames::divTag, document)
     , m_cue(makeWeakPtr(cue))
 {
     setHasCustomStyleResolveCallbacks();
+}
+
+void TextTrackCueBox::initialize()
+{
     setPseudo(TextTrackCue::cueBoxShadowPseudoId());
 }
 

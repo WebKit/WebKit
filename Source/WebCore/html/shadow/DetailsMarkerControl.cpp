@@ -43,14 +43,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DetailsMarkerControl);
 
 Ref<DetailsMarkerControl> DetailsMarkerControl::create(Document& document)
 {
-    return adoptRef(*new DetailsMarkerControl(document));
+    auto control = adoptRef(*new DetailsMarkerControl(document));
+    static MainThreadNeverDestroyed<const AtomString> webkitDetailsMarkerName("-webkit-details-marker", AtomString::ConstructFromLiteral);
+    control->setPseudo(webkitDetailsMarkerName);
+    return control;
 }
 
 DetailsMarkerControl::DetailsMarkerControl(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document)
 {
-    static MainThreadNeverDestroyed<const AtomString> webkitDetailsMarkerName("-webkit-details-marker", AtomString::ConstructFromLiteral);
-    setPseudo(webkitDetailsMarkerName);
 }
 
 RenderPtr<RenderElement> DetailsMarkerControl::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

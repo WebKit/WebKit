@@ -180,8 +180,6 @@ DateTimeEditElement::DateTimeEditElement(Document& document, EditControlOwner& e
     : HTMLDivElement(divTag, document)
     , m_editControlOwner(makeWeakPtr(editControlOwner))
 {
-    static MainThreadNeverDestroyed<const AtomString> dateTimeEditPseudoId("-webkit-datetime-edit", AtomString::ConstructFromLiteral);
-    setPseudo(dateTimeEditPseudoId);
 }
 
 DateTimeEditElement::~DateTimeEditElement() = default;
@@ -222,7 +220,10 @@ DateTimeFieldElement* DateTimeEditElement::focusedFieldElement() const
 
 Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, EditControlOwner& editControlOwner)
 {
-    return adoptRef(*new DateTimeEditElement(document, editControlOwner));
+    auto element = adoptRef(*new DateTimeEditElement(document, editControlOwner));
+    static MainThreadNeverDestroyed<const AtomString> dateTimeEditPseudoId("-webkit-datetime-edit", AtomString::ConstructFromLiteral);
+    element->setPseudo(dateTimeEditPseudoId);
+    return element;
 }
 
 void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)

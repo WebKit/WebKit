@@ -52,10 +52,7 @@ class WebVTTCueData;
 class VTTCueBox : public TextTrackCueBox {
     WTF_MAKE_ISO_ALLOCATED(VTTCueBox);
 public:
-    static Ref<VTTCueBox> create(Document& document, VTTCue& cue)
-    {
-        return adoptRef(*new VTTCueBox(document, cue));
-    }
+    static Ref<VTTCueBox> create(Document&, VTTCue&);
 
     void applyCSSProperties(const IntSize&) override;
 

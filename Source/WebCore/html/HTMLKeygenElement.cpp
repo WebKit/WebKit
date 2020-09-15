@@ -50,15 +50,16 @@ class KeygenSelectElement final : public HTMLSelectElement {
 public:
     static Ref<KeygenSelectElement> create(Document& document)
     {
-        return adoptRef(*new KeygenSelectElement(document));
+        auto element = adoptRef(*new KeygenSelectElement(document));
+        static MainThreadNeverDestroyed<const AtomString> pseudoId("-webkit-keygen-select", AtomString::ConstructFromLiteral);
+        element->setPseudo(pseudoId);
+        return element;
     }
 
 private:
     KeygenSelectElement(Document& document)
         : HTMLSelectElement(selectTag, document, 0)
     {
-        static MainThreadNeverDestroyed<const AtomString> pseudoId("-webkit-keygen-select", AtomString::ConstructFromLiteral);
-        setPseudo(pseudoId);
     }
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) override

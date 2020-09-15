@@ -67,6 +67,8 @@ using namespace HTMLNames;
 Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document, HTMLMediaElement& mediaElement)
 {
     auto element = adoptRef(*new MediaControlTextTrackContainerElement(document, mediaElement));
+    static MainThreadNeverDestroyed<const AtomString> webkitMediaTextTrackContainerName("-webkit-media-text-track-container", AtomString::ConstructFromLiteral);
+    element->setPseudo(webkitMediaTextTrackContainerName);
     element->hide();
     return element;
 }
@@ -75,8 +77,6 @@ MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Doc
     : HTMLDivElement(divTag, document)
     , m_mediaElement(makeWeakPtr(&element))
 {
-    static MainThreadNeverDestroyed<const AtomString> webkitMediaTextTrackContainerName("-webkit-media-text-track-container", AtomString::ConstructFromLiteral);
-    setPseudo(webkitMediaTextTrackContainerName);
 }
 
 RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

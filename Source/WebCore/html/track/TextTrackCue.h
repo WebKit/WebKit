@@ -46,15 +46,14 @@ class TextTrackCue;
 class TextTrackCueBox : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(TextTrackCueBox);
 public:
-    static Ref<TextTrackCueBox> create(Document& document, TextTrackCue& cue)
-    {
-        return adoptRef(*new TextTrackCueBox(document, cue));
-    }
+    static Ref<TextTrackCueBox> create(Document&, TextTrackCue&);
 
     TextTrackCue* getCue() const;
     virtual void applyCSSProperties(const IntSize&) { }
 
 protected:
+    void initialize();
+
     TextTrackCueBox(Document&, TextTrackCue&);
     ~TextTrackCueBox() { }
 

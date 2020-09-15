@@ -55,14 +55,15 @@ inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner&
     , m_pressStartingState(Indeterminate)
     , m_repeatingTimer(*this, &SpinButtonElement::repeatingTimerFired)
 {
-    static MainThreadNeverDestroyed<const AtomString> webkitInnerSpinButtonName("-webkit-inner-spin-button", AtomString::ConstructFromLiteral);
     setHasCustomStyleResolveCallbacks();
-    setPseudo(webkitInnerSpinButtonName);
 }
 
 Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
 {
-    return adoptRef(*new SpinButtonElement(document, spinButtonOwner));
+    auto element = adoptRef(*new SpinButtonElement(document, spinButtonOwner));
+    static MainThreadNeverDestroyed<const AtomString> webkitInnerSpinButtonName("-webkit-inner-spin-button", AtomString::ConstructFromLiteral);
+    element->setPseudo(webkitInnerSpinButtonName);
+    return element;
 }
 
 void SpinButtonElement::willDetachRenderers()

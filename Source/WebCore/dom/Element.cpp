@@ -1734,6 +1734,8 @@ void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const Atom
 
 inline void Element::setAttributeInternal(unsigned index, const QualifiedName& name, const AtomString& newValue, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
+    ASSERT_WITH_MESSAGE(refCount() || parentNode(), "Attribute must not be set on an element before adoptRef");
+
     if (newValue.isNull()) {
         if (index != ElementData::attributeNotFound)
             removeAttributeInternal(index, inSynchronizationOfLazyAttribute);

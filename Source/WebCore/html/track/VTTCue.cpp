@@ -125,6 +125,13 @@ static const String& verticalGrowingRightKeyword()
 
 // ----------------------------
 
+Ref<VTTCueBox> VTTCueBox::create(Document& document, VTTCue& cue)
+{
+    auto box = adoptRef(*new VTTCueBox(document, cue));
+    box->initialize();
+    return box;
+}
+
 VTTCueBox::VTTCueBox(Document& document, VTTCue& cue)
     : TextTrackCueBox(document, cue)
 {
