@@ -85,27 +85,26 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtens
         keyLocaleData.append({ });
 
         UErrorCode status = U_ZERO_ERROR;
-        UEnumeration* enumeration = ucol_getKeywordValuesForLocale("collation", locale.utf8().data(), false, &status);
+        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucol_getKeywordValuesForLocale("collation", locale.utf8().data(), false, &status));
         if (U_SUCCESS(status)) {
             const char* collation;
-            while ((collation = uenum_next(enumeration, nullptr, &status)) && U_SUCCESS(status)) {
+            while ((collation = uenum_next(enumeration.get(), nullptr, &status)) && U_SUCCESS(status)) {
                 // 10.2.3 "The values "standard" and "search" must not be used as elements in any [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co array."
                 if (!strcmp(collation, "standard") || !strcmp(collation, "search"))
                     continue;
 
                 // Map keyword values to BCP 47 equivalents.
                 if (!strcmp(collation, "dictionary"))
-                    collation = "dict";
+                    keyLocaleData.append("dict"_s);
                 else if (!strcmp(collation, "gb2312han"))
-                    collation = "gb2312";
+                    keyLocaleData.append("gb2312"_s);
                 else if (!strcmp(collation, "phonebook"))
-                    collation = "phonebk";
+                    keyLocaleData.append("phonebk"_s);
                 else if (!strcmp(collation, "traditional"))
-                    collation = "trad";
-
-                keyLocaleData.append(collation);
+                    keyLocaleData.append("trad"_s);
+                else
+                    keyLocaleData.append(collation);
             }
-            uenum_close(enumeration);
         }
         break;
     }
@@ -178,6 +177,18 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
+    {
+        String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, nullptr, nullptr);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (!collation.isNull()) {
+            if (!isUnicodeLocaleIdentifierType(collation)) {
+                throwRangeError(globalObject, scope, "collation is not a well-formed collation value"_s);
+                return;
+            }
+            localeOptions[static_cast<unsigned>(RelevantExtensionKey::Co)] = WTFMove(collation);
+        }
+    }
+
     TriState numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric);
     RETURN_IF_EXCEPTION(scope, void());
     if (numeric != TriState::Indeterminate)
@@ -220,16 +231,20 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     CString dataLocaleWithExtensions;
     switch (m_usage) {
     case Usage::Sort:
-        dataLocaleWithExtensions = m_locale.utf8();
+        if (collation.isNull())
+            dataLocaleWithExtensions = resolved.dataLocale.utf8();
+        else
+            dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-", m_collation).utf8();
         break;
     case Usage::Search:
         // searchLocaleData filters out "co" unicode extension. However, we need to pass "co" to ICU when Usage::Search is specified.
         // So we need to pass "co" unicode extension through locale. Since the other relevant extensions are handled via ucol_setAttribute,
         // we can just use dataLocale
+        // Since searchLocaleData filters out "co" unicode extension, "collation" option is just ignored.
         dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-search").utf8();
         break;
     }
-    dataLogLnIf(IntlCollatorInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions, ")");
+    dataLogLnIf(IntlCollatorInternal::verbose, "locale:(", resolved.locale, "),dataLocaleWithExtensions:(", dataLocaleWithExtensions, ")");
 
     UErrorCode status = U_ZERO_ERROR;
     m_collator = std::unique_ptr<UCollator, UCollatorDeleter>(ucol_open(dataLocaleWithExtensions.data(), &status));

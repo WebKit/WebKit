@@ -1,3 +1,13 @@
+2020-09-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl.Collator should take collation option
+        https://bugs.webkit.org/show_bug.cgi?id=216529
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-collator-co-extension.js:
+        (shouldThrow):
+
 2020-09-14  Keith Miller  <keith_miller@apple.com>
 
         BytecodeParser should GetLocal op_ret's value even if it's unused by the caller

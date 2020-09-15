@@ -1,3 +1,22 @@
+2020-09-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl.Collator should take collation option
+        https://bugs.webkit.org/show_bug.cgi?id=216529
+
+        Reviewed by Ross Kirsling.
+
+        This patch adds "collation" option to Intl.Collator. We are already getting consensus[1], and will be integrated into the spec.
+        Previously, passing "collation" is only available through "-u-co-" unicode extension in the passed locale. The proposal exposes
+        collation option as an option to Intl.Collator so that we can set it easily.
+        "collation" is used only when "usage" is "sort". "search" usage will filter out collation options since "search" itself is one of
+        the "collation" option.
+
+        [1]: https://github.com/tc39/ecma402/pull/459
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::sortLocaleData):
+        (JSC::IntlCollator::initializeCollator):
+
 2020-09-15  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r228533.
