@@ -814,10 +814,6 @@ AnimatedImageAsyncDecodingEnabled:
   type: bool
   defaultValue: true
 
-CustomElementsEnabled:
-  type: bool
-  defaultValue: true
-
 MenuItemElementEnabled:
   type: bool
   defaultValue: false

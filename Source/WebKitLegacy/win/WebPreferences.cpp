@@ -2077,13 +2077,12 @@ HRESULT WebPreferences::customElementsEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitCustomElementsEnabledPreferenceKey);
+    *enabled = true;
     return S_OK;
 }
 
-HRESULT WebPreferences::setCustomElementsEnabled(BOOL enabled)
+HRESULT WebPreferences::setCustomElementsEnabled(BOOL)
 {
-    setBoolValue(WebKitCustomElementsEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

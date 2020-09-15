@@ -935,8 +935,6 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMediaSourceEnabled:YES];
     [preferences setSourceBufferChangeTypeEnabled:YES];
 
-    [preferences setCustomElementsEnabled:YES];
-
     [preferences setDataTransferItemsEnabled:YES];
     [preferences setCustomPasteboardDataEnabled:YES];
     [preferences setDialogElementEnabled:YES];

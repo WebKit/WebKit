@@ -950,8 +950,7 @@ void Document::childrenChanged(const ChildChange& change)
 
 static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, const QualifiedName& name)
 {
-    if (!document.settings().customElementsEnabled()
-        || Document::validateCustomElementName(name.localName()) != CustomElementNameValidationStatus::Valid)
+    if (Document::validateCustomElementName(name.localName()) != CustomElementNameValidationStatus::Valid)
         return HTMLUnknownElement::create(name, document);
 
     auto element = HTMLElement::create(name, document);

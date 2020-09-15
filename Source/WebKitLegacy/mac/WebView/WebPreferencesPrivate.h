@@ -537,9 +537,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setMediaCaptureRequiresSecureConnection:(BOOL)flag;
 - (BOOL)mediaCaptureRequiresSecureConnection;
 
-- (void)setCustomElementsEnabled:(BOOL)flag;
-- (BOOL)customElementsEnabled;
-
 - (void)setDataTransferItemsEnabled:(BOOL)flag;
 - (BOOL)dataTransferItemsEnabled;
 
@@ -704,6 +701,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @interface WebPreferences (WebPrivateDeprecated)
 - (void)setShadowDOMEnabled:(BOOL)flag;
 - (BOOL)shadowDOMEnabled;
+
+- (void)setCustomElementsEnabled:(BOOL)flag;
+- (BOOL)customElementsEnabled;
 
 - (void)setVideoPluginProxyEnabled:(BOOL)flag;
 - (BOOL)isVideoPluginProxyEnabled;

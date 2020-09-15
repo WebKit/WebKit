@@ -1,3 +1,20 @@
+2020-09-15  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=216518
+
+        Reviewed by Tim Horton.
+
+        Remove runtime setting for enabling/disabling custom elements. There is no
+        reason one need to disable it now, and it has been on by default for
+        a long enough time.
+
+        * dom/CustomElementRegistry.idl:
+        * dom/Document.cpp:
+        (WebCore::createUpgradeCandidateElement):
+        * page/DOMWindow.idl:
+        * page/Settings.yaml:
+
 2020-09-15  Chris Dumez  <cdumez@apple.com>
 
         Improve thread-safety in ScriptProcessorNode implementation

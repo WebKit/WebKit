@@ -631,7 +631,6 @@ public:
         @YES, WebKitMockCaptureDevicesPromptEnabledPreferenceKey,
         @YES, WebKitMediaCaptureRequiresSecureConnectionPreferenceKey,
 #endif
-        @YES, WebKitCustomElementsEnabledPreferenceKey,
         @YES, WebKitDataTransferItemsEnabledPreferenceKey,
         @NO, WebKitCustomPasteboardDataEnabledPreferenceKey,
         @NO, WebKitDialogElementEnabledPreferenceKey,
@@ -3048,16 +3047,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitMediaCaptureRequiresSecureConnectionPreferenceKey];
 }
 
-- (BOOL)customElementsEnabled
-{
-    return [self _boolValueForKey:WebKitCustomElementsEnabledPreferenceKey];
-}
-
-- (void)setCustomElementsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitCustomElementsEnabledPreferenceKey];
-}
-
 - (BOOL)dataTransferItemsEnabled
 {
     return [self _boolValueForKey:WebKitDataTransferItemsEnabledPreferenceKey];
@@ -3719,6 +3708,15 @@ static NSString *classIBCreatorID = nil;
 }
 
 - (BOOL)shadowDOMEnabled
+{
+    return YES;
+}
+
+- (void)setCustomElementsEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)customElementsEnabled
 {
     return YES;
 }

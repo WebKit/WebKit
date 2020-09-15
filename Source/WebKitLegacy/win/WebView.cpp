@@ -5234,11 +5234,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(!!enabled);
 
-    hr = prefsPrivate->customElementsEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings.setCustomElementsEnabled(!!enabled);
-
     hr = prefsPrivate->menuItemElementEnabled(&enabled);
     if (FAILED(hr))
         return hr;

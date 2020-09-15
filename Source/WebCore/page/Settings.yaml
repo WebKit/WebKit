@@ -1002,9 +1002,6 @@ lazyImageLoadingEnabled:
 referrerPolicyAttributeEnabled:
   initial: true
 
-customElementsEnabled:
-  initial: true
-
 dataTransferItemsEnabled:
   initial: false
 

@@ -177,7 +177,6 @@
 #define WebKitHighlightAPIEnabledPreferenceKey @"WebKitHighlightAPIEnabled"
 #define WebKitServiceControlsEnabledPreferenceKey @"WebKitServiceControlsEnabled"
 #define WebKitMediaKeysStorageDirectoryKey @"WebKitMediaKeysStorageDirectory"
-#define WebKitCustomElementsEnabledPreferenceKey @"WebKitCustomElementsEnabled"
 #define WebKitDataTransferItemsEnabledPreferenceKey @"WebKitDataTransferItemsEnabled"
 #define WebKitCustomPasteboardDataEnabledPreferenceKey @"WebKitCustomPasteboardDataEnabled"
 #define WebKitDialogElementEnabledPreferenceKey @"WebKitDialogElementEnabledPreferenceKey"
@@ -295,3 +294,4 @@
 // be removed when it is considered safe to do so.
 #define WebKitShadowDOMEnabledPreferenceKey @"WebKitShadowDOMEnabled"
 #define WebKitHixie76WebSocketProtocolEnabledKey @"WebKitHixie76WebSocketProtocolEnabled"
+#define WebKitCustomElementsEnabledPreferenceKey @"WebKitCustomElementsEnabled"

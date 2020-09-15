@@ -3325,7 +3325,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     RuntimeEnabledFeatures::sharedFeatures().setHighlightAPIEnabled([preferences highlightAPIEnabled]);
 
-    settings.setCustomElementsEnabled([preferences customElementsEnabled]);
     settings.setDataTransferItemsEnabled([preferences dataTransferItemsEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setCustomPasteboardDataEnabled([preferences customPasteboardDataEnabled]);
 

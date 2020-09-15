@@ -1,3 +1,19 @@
+2020-09-15  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=216518
+
+        Reviewed by Tim Horton.
+
+        Remove runtime setting for enabling/disabling custom elements. There is no
+        reason one need to disable it now, and it has been on by default for
+        a long enough time.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+
 2020-09-15  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add default_branch for local SCM repositories
