@@ -202,13 +202,16 @@ public:
     {
         ASSERT(hasStructures() && !structures.isEmpty());
         m_structures = structures;
+        m_structuresForMaterialization = structures;
         return *this;
     }
 
-    Allocation& mergeStructures(const RegisteredStructureSet& structures)
+    Allocation& mergeStructures(const Allocation& other)
     {
-        ASSERT(hasStructures() || structures.isEmpty());
-        m_structures.merge(structures);
+        ASSERT(hasStructures() || (other.structuresForMaterialization().isEmpty() && other.structures().isEmpty()));
+        m_structures.filter(other.structures());
+        m_structuresForMaterialization.merge(other.structuresForMaterialization());
+        ASSERT(m_structures.isSubsetOf(m_structuresForMaterialization));
         return *this;
     }
 
@@ -216,6 +219,7 @@ public:
     {
         ASSERT(hasStructures());
         m_structures.filter(structures);
+        m_structuresForMaterialization.filter(structures);
         RELEASE_ASSERT(!m_structures.isEmpty());
         return *this;
     }
@@ -223,6 +227,11 @@ public:
     const RegisteredStructureSet& structures() const
     {
         return m_structures;
+    }
+
+    const RegisteredStructureSet& structuresForMaterialization() const
+    {
+        return m_structuresForMaterialization;
     }
 
     Node* identifier() const { return m_identifier; }
@@ -264,7 +273,8 @@ public:
         return m_identifier == other.m_identifier
             && m_kind == other.m_kind
             && m_fields == other.m_fields
-            && m_structures == other.m_structures;
+            && m_structures == other.m_structures
+            && m_structuresForMaterialization == other.m_structuresForMaterialization;
     }
 
     bool operator!=(const Allocation& other) const
@@ -317,10 +327,10 @@ public:
             break;
         }
         out.print("Allocation(");
-        if (!m_structures.isEmpty())
-            out.print(inContext(m_structures.toStructureSet(), context));
+        if (!m_structuresForMaterialization.isEmpty())
+            out.print(inContext(m_structuresForMaterialization.toStructureSet(), context));
         if (!m_fields.isEmpty()) {
-            if (!m_structures.isEmpty())
+            if (!m_structuresForMaterialization.isEmpty())
                 out.print(", ");
             out.print(mapDump(m_fields, " => #", ", "));
         }
@@ -331,7 +341,14 @@ private:
     Node* m_identifier; // This is the actual node that created the allocation
     Kind m_kind;
     Fields m_fields;
+
+    // This set of structures is the intersection of structures seen at control flow edges. It's used
+    // for checks and speculation since it can't be widened.
     RegisteredStructureSet m_structures;
+
+    // The second set of structures is the union of the structures at control flow edges. It's used
+    // for materializations, where we need to generate code for all possible incoming structures.
+    RegisteredStructureSet m_structuresForMaterialization;
 };
 
 class LocalHeap {
@@ -503,7 +520,7 @@ public:
                     toEscape.addVoid(fieldEntry.value);
             } else {
                 mergePointerSets(allocationEntry.value.fields(), allocationIter->value.fields(), toEscape);
-                allocationEntry.value.mergeStructures(allocationIter->value.structures());
+                allocationEntry.value.mergeStructures(allocationIter->value);
             }
         }
 
@@ -1446,7 +1463,6 @@ private:
         if (DFGObjectAllocationSinkingPhaseInternal::verbose)
             dataLog("Candidates: ", listDump(m_sinkCandidates), "\n");
 
-
         // Create the materialization nodes.
         forEachEscapee([&] (HashMap<Node*, Allocation>& escapees, Node* where) {
             placeMaterializations(WTFMove(escapees), where);
@@ -1681,7 +1697,7 @@ private:
             return m_graph.addNode(
                 allocation.identifier()->prediction(), Node::VarArg, MaterializeNewObject,
                 where->origin.withSemantic(allocation.identifier()->origin.semantic),
-                OpInfo(m_graph.addStructureSet(allocation.structures())), OpInfo(data), 0, 0);
+                OpInfo(m_graph.addStructureSet(allocation.structuresForMaterialization())), OpInfo(data), 0, 0);
         }
 
         case Allocation::Kind::AsyncGeneratorFunction:
@@ -2476,7 +2492,7 @@ private:
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
             Vector<RegisteredStructure> structures;
-            for (RegisteredStructure structure : allocation.structures()) {
+            for (RegisteredStructure structure : allocation.structuresForMaterialization()) {
                 // This structure set is conservative. This set can include Structure which does not have a legit property.
                 // We filter out such an apparently inappropriate structures here since MultiPutByOffset assumes all the structures
                 // have valid corresponding offset for the given property.

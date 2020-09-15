@@ -1,3 +1,15 @@
+2020-09-15  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Object allocation sinking forgets escaped nodes when structure changes
+        https://bugs.webkit.org/show_bug.cgi?id=216214
+        <rdar://problem/68518460>
+
+        Reviewed by Saam Barati.
+
+        * stress/allocation-sinking-changing-structures.js: Added.
+        (main.v4.get v4):
+        (main):
+
 2020-09-15  Saam Barati  <sbarati@apple.com>
 
         CustomFunctionEquivalence PropertyCondition needs to check if the structure has the property

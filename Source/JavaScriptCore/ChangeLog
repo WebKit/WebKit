@@ -1,3 +1,65 @@
+2020-09-15  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Object allocation sinking forgets escaped nodes when structure changes
+        https://bugs.webkit.org/show_bug.cgi?id=216214
+        <rdar://problem/68518460>
+
+        Reviewed by Saam Barati.
+
+        Consider the following program:
+            bb0:
+                a: NewObject
+                b: CreateActivation()
+                _: Branch(bb2, bb1)
+            bb1:
+                _: PutByOffset(a, 'x', 42)
+                _: PutStrucute(a, {x: 0})
+                _: Branch(bb2, bb1)
+            bb2:
+                _: CheckStructure(a, {x: 0})
+                _: PutClosureVar(b, 0, Kill:a)
+                _: Branch(bb3, bb2)
+            bb3:
+                c: GetClosureVar(b, 0)
+                _: PutByOffset(global, 'y', c)
+                _: Return
+
+        Due to the order we visit the program, we'll visit bb2 before bb1. The first time we visit bb2, heapAtHead will be:
+            #@a: ObjectAllocation({})
+            #@b: ActivationAllocation()
+            @a => #@a
+            @b => #@b
+
+        Now CheckStructure would always fail, so it will escape @a and heapAtTail will be:
+            #@a: EscapedAllocation()
+            #@b: ActivationAllocation()
+            @a => #@a
+            @b => #@b
+
+        And after pruning:
+            #@b: ActivationAllocation()
+            @b => #@b
+
+        Now, we'll visit bb3 and then bb1. When we visit bb1 we'll set the structure {x: 0} for the #@a and eventually visit bb2 again. This time around CheckStructure will no longer escape @a, since the allocation has the right structure, and heapAtTail will be:
+            #@a: ObjectAllocation({x: 0})
+            #@b: ActivationAllocation(0: #@a)
+            @b => #@b
+
+        However, we now have to merge into bb3, which has heapAtHead:
+            #@b: ActivationAllocation()
+            @b => #@b
+
+        Since we can't add the extra field to the activation, we'll end up escaping @a at the edge and therefore pruning #@b, which will leave the heap for bb3 unchanged.
+        That's a problem, since PutClosureVar didn't see the escaped object, but GetClosureVar thinks it's escaped. The materialization for @a will be placed after the
+        PutClosureVar, at end of bb2, when the node is already dead. When computing the SSA defs, the PutByOffset at bb3 will then see @a (which at this point will be a
+        PhantomNewObject) instead of its materialization.
+
+        The issue happens because we don't allow allocations to add extra fields while merging, but we do allow adding new structures. This results in different decisions
+        being made about what escapes in CheckStructure and MultiGetByOffset. To avoid this problem, we track two sets of structures: structures and structuresForMaterialization.
+        The first is used for checks and should never grow while the second is used for materialization and is allowed to grow.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2020-09-15  Saam Barati  <sbarati@apple.com>
 
         CustomFunctionEquivalence PropertyCondition needs to check if the structure has the property
