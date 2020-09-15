@@ -1887,3 +1887,7 @@ http/tests/resourceLoadStatistics/exemptDomains/ [ Pass ]
 webkit.org/b/216492 [ Debug ] imported/w3c/web-platform-tests/selection/extend-20.html [ Pass Timeout ]
 
 webkit.org/b/216292 [ Release ] imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html [ Pass Failure ]
+
+webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Skip ]
+webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Skip ]
+

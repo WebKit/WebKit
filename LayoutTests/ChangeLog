@@ -1,5 +1,14 @@
 2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
 
+        Skip 2 imported/ tests on iOS after the changes in r266817
+        https://bugs.webkit.org/show_bug.cgi?id=186045
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-09-14  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ macOS iOS wk2 ] http/tests/IndexedDB/storage-limit.https.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=209189
 
