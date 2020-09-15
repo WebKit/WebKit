@@ -451,7 +451,7 @@ void TestController::setAllowStorageQuotaIncrease(bool value)
 void TestController::setAllowsAnySSLCertificate(bool allows)
 {
     m_allowsAnySSLCertificate = allows;
-    WKContextSetAllowsAnySSLCertificateForWebSocketTesting(platformContext(), allows);
+    WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(websiteDataStore(), allows);
     [globalWebsiteDataStoreDelegateClient setAllowAnySSLCertificate: allows];
 }
 

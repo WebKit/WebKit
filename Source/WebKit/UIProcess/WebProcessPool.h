@@ -318,8 +318,6 @@ public:
     };
     static Statistics& statistics();    
 
-    void setAllowsAnySSLCertificateForWebSocket(bool);
-
     void clearCachedCredentials();
     void terminateNetworkProcess();
     void terminateAllWebContentProcesses();

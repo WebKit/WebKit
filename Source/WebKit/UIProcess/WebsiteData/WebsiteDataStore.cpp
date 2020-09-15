@@ -2261,6 +2261,14 @@ void WebsiteDataStore::flushCookies(CompletionHandler<void()>&& completionHandle
         processPool->flushCookies(sessionID(), [callbackAggregator] { });
 }
 
+void WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket(bool allows)
+{
+    for (auto processPool : WebProcessPool::allProcessPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->sendSync(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket::Reply(), 0);
+    }
+}
+
 void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
 {
     m_queue->dispatch(WTFMove(function));

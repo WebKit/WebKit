@@ -1775,11 +1775,6 @@ void WebProcessPool::sendSyncToNetworkingProcess(T&& message, U&& reply)
         m_networkProcess->sendSync(std::forward<T>(message), std::forward<U>(reply), 0);
 }
 
-void WebProcessPool::setAllowsAnySSLCertificateForWebSocket(bool allows)
-{
-    sendSyncToNetworkingProcess(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket::Reply());
-}
-
 void WebProcessPool::clearCachedCredentials()
 {
     if (m_networkProcess)

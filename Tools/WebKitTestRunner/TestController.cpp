@@ -1328,7 +1328,7 @@ const char* TestController::networkProcessName()
 void TestController::setAllowsAnySSLCertificate(bool allows)
 {
     m_allowsAnySSLCertificate = allows;
-    WKContextSetAllowsAnySSLCertificateForWebSocketTesting(platformContext(), allows);
+    WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(websiteDataStore(), allows);
 }
 #endif
 

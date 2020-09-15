@@ -240,6 +240,8 @@ public:
     void clearPendingCookies();
     void flushCookies(CompletionHandler<void()>&&);
 
+    void setAllowsAnySSLCertificateForWebSocket(bool);
+
     void dispatchOnQueue(Function<void()>&&);
 
 #if USE(CURL)

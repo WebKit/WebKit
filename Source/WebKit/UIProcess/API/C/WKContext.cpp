@@ -543,11 +543,6 @@ void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef contextRef,
     WebKit::toImpl(contextRef)->setJavaScriptGarbageCollectorTimerEnabled(enable);
 }
 
-void WKContextSetAllowsAnySSLCertificateForWebSocketTesting(WKContextRef context, bool allows)
-{
-    WebKit::toImpl(context)->setAllowsAnySSLCertificateForWebSocket(allows);
-}
-
 void WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(WKContextRef context, bool allows)
 {
 #if ENABLE(SERVICE_WORKER)

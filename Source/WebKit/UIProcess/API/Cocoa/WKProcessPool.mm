@@ -625,11 +625,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace(protectionSpace));
 }
 
-- (void)_allowAnyTLSCertificateForWebSocketTesting
-{
-    _processPool->setAllowsAnySSLCertificateForWebSocket(true);
-}
-
 - (void)_seedResourceLoadStatisticsForTestingWithFirstParty:(NSURL *)firstPartyURL thirdParty:(NSURL *)thirdPartyURL shouldScheduleNotification:(BOOL)shouldScheduleNotification completionHandler:(void(^)(void))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

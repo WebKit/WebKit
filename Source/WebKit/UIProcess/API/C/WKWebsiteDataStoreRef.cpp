@@ -132,6 +132,11 @@ WKHTTPCookieStoreRef WKWebsiteDataStoreGetHTTPCookieStore(WKWebsiteDataStoreRef 
     return WebKit::toAPI(&WebKit::toImpl(dataStoreRef)->cookieStore());
 }
 
+void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDataStoreRef dataStore, bool allows)
+{
+    WebKit::toImpl(dataStore)->setAllowsAnySSLCertificateForWebSocket(allows);
+}
+
 void WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(WKWebsiteDataStoreRef dataStoreRef, bool enable, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
