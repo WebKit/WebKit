@@ -1,3 +1,41 @@
+2020-09-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Apple Win] Migrate the first part of SimpleFontData{CG}Win.cpp to FontCoreText.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=216525
+
+        Reviewed by Dean Jackson.
+
+        This migrates:
+        - Font::isProbablyOnlyUsedToRenderIcons()
+        - Font::platformSupportsCodePoint()
+        - Font::determinePitch()
+        - Font::platformBoundsForGlyph()
+        - Font::platformPathForGlyph()
+        - Font::applyTransforms()
+
+        from the old Windows CG codepath to the Core Text codepath. This patch unifies these functions
+        between the Apple Windows port and the macOS / iOS ports.
+
+        Covered by existing tests.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::variantCapsSupportsCharacterForSynthesis const):
+        (WebCore::Font::platformSupportsCodePoint const): Deleted.
+        * platform/graphics/coretext/FontCoreText.cpp:
+        (WebCore::Font::platformWidthForGlyph const): Move this up into the #if !PLATFORM(WIN) section.
+        We don't want to migrate this one just yet because it causes a significant number of test failures,
+        which require more investigation.
+        (WebCore::Font::determinePitch):
+        (WebCore::Font::isProbablyOnlyUsedToRenderIcons const):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::Font::platformBoundsForGlyph const): Deleted.
+        (WebCore::Font::platformPathForGlyph const): Deleted.
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::Font::determinePitch): The WinCairo port is the only port still using the non-CG Windows
+        implementation of this function, so we can just move it directly into the CairoWin-specific file.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::Font::determinePitch): Deleted.
+
 2020-09-15  Chris Dumez  <cdumez@apple.com>
 
         ScriptProcessorNode should throw when trying to change its channel count or channel count mode

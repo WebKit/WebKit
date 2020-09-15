@@ -135,27 +135,6 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescripti
     return Font::create(FontPlatformData(WTFMove(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), origin());
 }
 
-void Font::determinePitch()
-{
-    if (origin() == Origin::Remote) {
-        m_treatAsFixedPitch = false;
-        return;
-    }
-
-    // TEXTMETRICS have this.  Set m_treatAsFixedPitch based off that.
-    HWndDC dc(0);
-    SaveDC(dc);
-    SelectObject(dc, m_platformData.hfont());
-
-    // Yes, this looks backwards, but the fixed pitch bit is actually set if the font
-    // is *not* fixed pitch.  Unbelievable but true.
-    TEXTMETRIC tm;
-    GetTextMetrics(dc, &tm);
-    m_treatAsFixedPitch = ((tm.tmPitchAndFamily & TMPF_FIXED_PITCH) == 0);
-
-    RestoreDC(dc, -1);
-}
-
 FloatRect Font::boundsForGDIGlyph(Glyph glyph) const
 {
     HWndDC hdc(0);

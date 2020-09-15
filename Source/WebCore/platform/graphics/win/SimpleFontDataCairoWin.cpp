@@ -95,4 +95,30 @@ void Font::platformInit()
     RestoreDC(dc, -1);
 }
 
+void Font::determinePitch()
+{
+    if (origin() == Origin::Remote) {
+        m_treatAsFixedPitch = false;
+        return;
+    }
+
+    // TEXTMETRICS have this. Set m_treatAsFixedPitch based off that.
+    HWndDC dc(0);
+    SaveDC(dc);
+    SelectObject(dc, m_platformData.hfont());
+
+    // Yes, this looks backwards, but the fixed pitch bit is actually set if the font
+    // is *not* fixed pitch. Unbelievable but true!
+    TEXTMETRIC tm;
+    GetTextMetrics(dc, &tm);
+    m_treatAsFixedPitch = !(tm.tmPitchAndFamily & TMPF_FIXED_PITCH);
+
+    RestoreDC(dc, -1);
+}
+
+bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variation) const
+{
+    return variation ? false : glyphForCharacter(character);
+}
+
 }

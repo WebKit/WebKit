@@ -112,25 +112,6 @@ void Font::platformInit()
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
 }
 
-FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
-{
-    if (!platformData().size())
-        return FloatRect();
-
-    if (m_platformData.useGDI())
-        return boundsForGDIGlyph(glyph);
-
-    CGRect box;
-    CGFontGetGlyphBBoxes(m_platformData.cgFont(), &glyph, 1, &box);
-    float pointSize = m_platformData.size();
-    CGFloat scale = pointSize / fontMetrics().unitsPerEm();
-    FloatRect boundingBox = CGRectApplyAffineTransform(box, CGAffineTransformMakeScale(scale, -scale));
-    if (m_syntheticBoldOffset)
-        boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
-
-    return boundingBox;
-}
-
 float Font::platformWidthForGlyph(Glyph glyph) const
 {
     if (!platformData().size())
@@ -148,21 +129,6 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     FontCascade::getPlatformGlyphAdvances(font, m, m_platformData.isSystemFont(), isPrinterFont, glyph, advance);
 
     return advance.width + m_syntheticBoldOffset;
-}
-
-Path Font::platformPathForGlyph(Glyph glyph) const
-{
-    auto ctFont = adoptCF(CTFontCreateWithGraphicsFont(platformData().cgFont(), platformData().size(), nullptr, nullptr));
-    auto result = adoptCF(CTFontCreatePathForGlyph(ctFont.get(), glyph, nullptr));
-    auto syntheticBoldOffset = this->syntheticBoldOffset();
-    if (syntheticBoldOffset) {
-        auto newPath = adoptCF(CGPathCreateMutable());
-        CGPathAddPath(newPath.get(), nullptr, result.get());
-        auto translation = CGAffineTransformMakeTranslation(syntheticBoldOffset, 0);
-        CGPathAddPath(newPath.get(), &translation, result.get());
-        return newPath;
-    }
-    return adoptCF(CGPathCreateMutableCopy(result.get()));
 }
 
 }

@@ -474,7 +474,7 @@ const Font& Font::brokenIdeographFont() const
     return *derivedFontData.brokenIdeographFont;
 }
 
-#if !USE(CORE_TEXT) || PLATFORM(WIN)
+#if !USE(CORE_TEXT)
 
 bool Font::isProbablyOnlyUsedToRenderIcons() const
 {
@@ -511,7 +511,7 @@ RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, floa
     return platformCreateScaledFont(fontDescription, scaleFactor);
 }
 
-#if !USE(CORE_TEXT) || PLATFORM(WIN)
+#if !USE(CORE_TEXT)
 void Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool, bool, const AtomString&, StringView, TextDirection) const
 {
 }
@@ -646,11 +646,6 @@ bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantC
         // Synthesis only supports the variant-caps values listed above.
         return true;
     }
-}
-
-bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variation) const
-{
-    return variation ? false : glyphForCharacter(character);
 }
 #endif
 

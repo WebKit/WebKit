@@ -51,12 +51,12 @@
 
 namespace WebCore {
 
-#if !PLATFORM(WIN)
-
 static inline bool caseInsensitiveCompare(CFStringRef a, CFStringRef b)
 {
     return a && CFStringCompare(a, b, kCFCompareCaseInsensitive) == kCFCompareEqualTo;
 }
+
+#if !PLATFORM(WIN)
 
 static bool fontHasVerticalGlyphs(CTFontRef font)
 {
@@ -561,6 +561,28 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
     return createDerivativeFont(scaledFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique());
 }
 
+float Font::platformWidthForGlyph(Glyph glyph) const
+{
+    CGSize advance = CGSizeZero;
+
+    if (platformData().size()) {
+        bool horizontal = platformData().orientation() == FontOrientation::Horizontal;
+        CTFontOrientation orientation = horizontal || m_isBrokenIdeographFallback ? kCTFontOrientationHorizontal : kCTFontOrientationVertical;
+#if USE(CTFONTGETADVANCES_WORKAROUND)
+        CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
+        if (!CTFontIsAppleColorEmoji(m_platformData.ctFont()) && !m_platformData.hasVariations())
+            CTFontGetUnsummedAdvancesForGlyphsAndStyle(m_platformData.ctFont(), orientation, style, &glyph, &advance, 1);
+        else
+#endif
+        {
+            CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), orientation, &glyph, &advance, 1);
+        }
+    }
+    return advance.width + m_syntheticBoldOffset;
+}
+
+#endif
+
 void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
 {
     UNUSED_PARAM(requiresShaping);
@@ -646,7 +668,7 @@ static int extractNumber(CFNumberRef number)
 
 void Font::determinePitch()
 {
-    CTFontRef ctFont = m_platformData.font();
+    CTFontRef ctFont = m_platformData.ctFont();
     ASSERT(ctFont);
 
     // Special case Osaka-Mono.
@@ -664,7 +686,7 @@ void Font::determinePitch()
     auto fullName = adoptCF(CTFontCopyFullName(ctFont));
     auto familyName = adoptCF(CTFontCopyFamilyName(ctFont));
 
-    int fixedPitch = extractNumber(adoptCF(static_cast<CFNumberRef>(CTFontCopyAttribute(m_platformData.font(), kCTFontFixedAdvanceAttribute))).get());
+    int fixedPitch = extractNumber(adoptCF(static_cast<CFNumberRef>(CTFontCopyAttribute(m_platformData.ctFont(), kCTFontFixedAdvanceAttribute))).get());
     m_treatAsFixedPitch = (CTFontGetSymbolicTraits(ctFont) & kCTFontMonoSpaceTrait) || fixedPitch || (caseInsensitiveCompare(fullName.get(), CFSTR("Osaka-Mono")) || caseInsensitiveCompare(fullName.get(), CFSTR("MS-PGothic")) || caseInsensitiveCompare(fullName.get(), CFSTR("MonotypeCorsiva")));
 #if PLATFORM(IOS_FAMILY)
     if (familyName && caseInsensitiveCompare(familyName.get(), CFSTR("Courier New"))) {
@@ -683,26 +705,6 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
 
     return boundingBox;
-}
-
-float Font::platformWidthForGlyph(Glyph glyph) const
-{
-    CGSize advance = CGSizeZero;
-
-    if (platformData().size()) {
-        bool horizontal = platformData().orientation() == FontOrientation::Horizontal;
-        CTFontOrientation orientation = horizontal || m_isBrokenIdeographFallback ? kCTFontOrientationHorizontal : kCTFontOrientationVertical;
-#if USE(CTFONTGETADVANCES_WORKAROUND)
-        CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
-        if (!CTFontIsAppleColorEmoji(m_platformData.ctFont()) && !m_platformData.hasVariations())
-            CTFontGetUnsummedAdvancesForGlyphsAndStyle(m_platformData.ctFont(), orientation, style, &glyph, &advance, 1);
-        else
-#endif
-        {
-            CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), orientation, &glyph, &advance, 1);
-        }
-    }
-    return advance.width + m_syntheticBoldOffset;
 }
 
 Path Font::platformPathForGlyph(Glyph glyph) const
@@ -733,7 +735,7 @@ bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variat
 
 bool Font::isProbablyOnlyUsedToRenderIcons() const
 {
-    auto platformFont = platformData().font();
+    auto platformFont = platformData().ctFont();
     if (!platformFont)
         return false;
 
@@ -769,7 +771,5 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
         return !CGRectIsEmpty(rect);
     });
 }
-
-#endif
 
 } // namespace WebCore
