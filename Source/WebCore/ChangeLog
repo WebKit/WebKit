@@ -1,3 +1,18 @@
+2020-09-15  Youenn Fablet  <youenn@apple.com>
+
+        End of media capture should not be reported before 3 seconds of the start of capture
+        https://bugs.webkit.org/show_bug.cgi?id=216415
+
+        Reviewed by Eric Carlson.
+
+        Add a timer that allows taking a function and a delay as parameter.
+        Covered by added API test.
+
+        * platform/Timer.h:
+        (WebCore::DeferrableTaskTimer::fired):
+        (WebCore::DeferrableTaskTimer::doTask):
+        (WebCore::DeferrableTaskTimer::cancel):
+
 2020-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed debug build fix after r267073

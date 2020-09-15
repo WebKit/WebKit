@@ -1,3 +1,20 @@
+2020-09-15  Youenn Fablet  <youenn@apple.com>
+
+        End of media capture should not be reported before 3 seconds of the start of capture
+        https://bugs.webkit.org/show_bug.cgi?id=216415
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[GetUserMediaUIDelegate _webView:mediaCaptureStateDidChange:]):
+        Add a notCapturing boolean and wait for the notification before going back to the capturing page.
+        Decrease delay to 1 second to make the test run faster.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        Make sure to set media capture state delay to zero.
+
 2020-09-14  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling ShadowDOM

@@ -1449,12 +1449,15 @@ public:
 
     bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducer::IsPlayingAudio); }
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t);
+    void updateReportedMediaCaptureState();
+
     void updatePlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags);
     bool isCapturingAudio() const { return m_mediaState & WebCore::MediaProducer::AudioCaptureMask; }
     bool isCapturingVideo() const { return m_mediaState & WebCore::MediaProducer::VideoCaptureMask; }
     bool hasActiveAudioStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveAudioCaptureDevice; }
     bool hasActiveVideoStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveVideoCaptureDevice; }
     WebCore::MediaProducer::MediaStateFlags mediaStateFlags() const { return m_mediaState; }
+    WebCore::MediaProducer::MediaStateFlags reportedMediaCaptureState() const { return m_reportedMediaCaptureState; }
     WebCore::MediaProducer::MutedStateFlags mutedStateFlags() const { return m_mutedState; }
 
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>);
@@ -1820,6 +1823,9 @@ public:
     void pdfSaveToPDF(PDFPluginIdentifier);
     void pdfOpenWithPreview(PDFPluginIdentifier);
 #endif
+
+    Seconds mediaCaptureReportingDelay() const { return m_mediaCaptureReportingDelay; }
+    void setMediaCaptureReportingDelay(Seconds captureReportingDelay) { m_mediaCaptureReportingDelay = captureReportingDelay; }
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2755,6 +2761,13 @@ private:
     Vector<CallbackID> m_nextActivityStateChangeCallbacks;
 
     WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };
+
+    // To make sure capture indicators are visible long enough, m_reportedMediaCaptureState is the same as m_mediaState except that we might delay a bit transition from capturing to not-capturing.
+    WebCore::MediaProducer::MediaStateFlags m_reportedMediaCaptureState { WebCore::MediaProducer::IsNotPlaying };
+    WebCore::DeferrableTaskTimer m_delayStopCapturingReportingTimer;
+    bool m_delayStopCapturingReporting { false };
+    static constexpr Seconds DefaultMediaCaptureReportingDelay { 3_s };
+    Seconds m_mediaCaptureReportingDelay { DefaultMediaCaptureReportingDelay };
 
     bool m_hasHadSelectionChangesFromUserInteraction { false };
 

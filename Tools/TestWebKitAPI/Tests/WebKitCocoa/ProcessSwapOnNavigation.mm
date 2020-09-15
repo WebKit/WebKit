@@ -6396,6 +6396,7 @@ TEST(ProcessSwap, LoadAlternativeHTML)
 #if ENABLE(MEDIA_STREAM)
 
 static bool isCapturing = false;
+static bool isNotCapturing = false;
 @interface GetUserMediaUIDelegate : NSObject<WKUIDelegate>
 - (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler;
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
@@ -6416,6 +6417,7 @@ static bool isCapturing = false;
 - (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state
 {
     isCapturing = state == _WKMediaCaptureStateActiveCamera;
+    isNotCapturing = !state;
 }
 @end
 
@@ -6448,6 +6450,7 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    webView.get()._mediaCaptureReportingDelayForTesting = 1;
 
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
@@ -6472,14 +6475,17 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
     done = false;
 
     auto pid2 = [webView _webProcessIdentifier];
+    TestWebKitAPI::Util::run(&isNotCapturing);
 
     EXPECT_FALSE(isCapturing);
     EXPECT_FALSE(pid1 == pid2);
 
     isCapturing = false;
     [webView goBack];
+
     TestWebKitAPI::Util::run(&isCapturing);
     isCapturing = false;
+    isNotCapturing = true;
 }
 
 #endif

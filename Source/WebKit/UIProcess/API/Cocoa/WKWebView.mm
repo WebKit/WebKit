@@ -2951,7 +2951,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (_WKMediaCaptureState)_mediaCaptureState
 {
-    return WebKit::toWKMediaCaptureState(_page->mediaStateFlags());
+    return WebKit::toWKMediaCaptureState(_page->reportedMediaCaptureState());
 }
 
 - (void)_setMediaCaptureEnabled:(BOOL)enabled

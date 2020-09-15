@@ -36,6 +36,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
@@ -124,6 +125,8 @@ TEST(WebKit2, CaptureMute)
     auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
     webView.UIDelegate = delegate.get();
 
+    webView._mediaCaptureReportingDelayForTesting = 0;
+
     [webView loadTestPageNamed:@"getUserMedia"];
     EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
 
@@ -199,6 +202,43 @@ TEST(WebKit2, CaptureStop)
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
     TestWebKitAPI::Util::run(&wasPrompted);
     wasPrompted = false;
+}
+
+TEST(WebKit2, CaptureIndicatorDelay)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mediaDevicesEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    webView._mediaCaptureReportingDelayForTesting = 2;
+
+    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    webView.UIDelegate = delegate.get();
+
+    wasPrompted = false;
+
+    [webView loadTestPageNamed:@"getUserMedia"];
+    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+
+    TestWebKitAPI::Util::run(&wasPrompted);
+    wasPrompted = false;
+
+    [webView stringByEvaluatingJavaScript:@"stop()"];
+
+    // We wait 1 second, we should still see camera be reported.
+    sleep(1_s);
+    EXPECT_EQ([webView _mediaCaptureState], _WKMediaCaptureStateActiveCamera);
+
+    // One additional second should allow us to go back to no capture being reported.
+    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateNone));
+
 }
 
 TEST(WebKit2, GetCapabilities)

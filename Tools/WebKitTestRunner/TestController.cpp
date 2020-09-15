@@ -1074,6 +1074,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageSetMockCameraOrientation(m_mainWebView->page(), 0);
     resetMockMediaDevices();
+    WKPageSetMediaCaptureReportingDelayForTesting(m_mainWebView->page(), 0);
 
     // FIXME: This function should also ensure that there is only one page open.
 

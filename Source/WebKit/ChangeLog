@@ -1,5 +1,45 @@
 2020-09-15  Youenn Fablet  <youenn@apple.com>
 
+        End of media capture should not be reported before 3 seconds of the start of capture
+        https://bugs.webkit.org/show_bug.cgi?id=216415
+        <rdar://problem/68512358>
+
+        Reviewed by Eric Carlson.
+
+        Add support for delaying of end of capture notification to the application.
+        This allows to ensure that a capture indicator stays for long enough for the user to notice it.
+        A capture indicator should be visible to the user for at least three seconds.
+
+        A timer is scheduled when starting a capture and there is no ongoing capture.
+        As long as the timer is active, the capture state cannot be transitioned to no capture.
+        Other transitions are allowed.
+        Once the timer kicks in, any capture state update is done synchronously.
+        Ensure to update the capture state when the timer kicks in.
+
+        Note that even navigations will not allow transitioning the capture state sooner.
+        This is done to ensure a page does not try to capture one frame before navigating to another page.
+        In practice, very few pages should navigate quickly after starting capture.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetMediaState):
+        (WKPageSetMediaCaptureReportingDelayForTesting):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mediaCaptureState]):
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _mediaCaptureReportingDelayForTesting]):
+        (-[WKWebView _setMediaCaptureReportingDelayForTesting:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+        (WebKit::WebPageProxy::updateReportedMediaCaptureState):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::reportedMediaCaptureState const):
+        (WebKit::WebPageProxy::mediaCaptureReportingDelay const):
+        (WebKit::WebPageProxy::setMediaCaptureReportingDelay):
+
+2020-09-15  Youenn Fablet  <youenn@apple.com>
+
         Enable VP9 in GPUProcess if page needs it
         https://bugs.webkit.org/show_bug.cgi?id=216472
 

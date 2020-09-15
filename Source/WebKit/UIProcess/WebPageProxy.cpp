@@ -9037,7 +9037,8 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
 
 #if ENABLE(MEDIA_STREAM)
     if (oldMediaCaptureState != newMediaCaptureState) {
-        m_uiClient->mediaCaptureStateDidChange(m_mediaState);
+        updateReportedMediaCaptureState();
+
         ASSERT(m_userMediaPermissionRequestManager);
         if (m_userMediaPermissionRequestManager)
             m_userMediaPermissionRequestManager->captureStateChanged(oldMediaCaptureState, newMediaCaptureState);
@@ -9054,6 +9055,29 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
         videoControlsManagerDidChange();
 
     m_process->updateAudibleMediaAssertions();
+}
+
+void WebPageProxy::updateReportedMediaCaptureState()
+{
+    if (m_reportedMediaCaptureState == m_mediaState)
+        return;
+
+    bool haveReportedCapture = m_reportedMediaCaptureState & MediaProducer::MediaCaptureMask;
+    bool willReportCapture = m_mediaState & MediaProducer::MediaCaptureMask;
+
+    if (haveReportedCapture && !willReportCapture && m_delayStopCapturingReportingTimer.isActive())
+        return;
+
+    if (!haveReportedCapture && willReportCapture) {
+        m_delayStopCapturingReporting = true;
+        m_delayStopCapturingReportingTimer.doTask([this] {
+            m_delayStopCapturingReporting = false;
+            updateReportedMediaCaptureState();
+        }, m_mediaCaptureReportingDelay);
+    }
+
+    m_reportedMediaCaptureState = m_mediaState;
+    m_uiClient->mediaCaptureStateDidChange(m_mediaState);
 }
 
 void WebPageProxy::videoControlsManagerDidChange()

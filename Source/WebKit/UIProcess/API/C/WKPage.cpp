@@ -2862,7 +2862,7 @@ bool WKPageIsPlayingAudio(WKPageRef page)
 
 WKMediaState WKPageGetMediaState(WKPageRef page)
 {
-    WebCore::MediaProducer::MediaStateFlags coreState = toImpl(page)->mediaStateFlags();
+    WebCore::MediaProducer::MediaStateFlags coreState = toImpl(page)->reportedMediaCaptureState();
     WKMediaState state = kWKMediaIsNotPlaying;
 
     if (coreState & WebCore::MediaProducer::IsPlayingAudio)
@@ -2996,4 +2996,9 @@ void WKPageClearLoadedSubresourceDomains(WKPageRef page)
 #else
     UNUSED_PARAM(page);
 #endif
+}
+
+void WKPageSetMediaCaptureReportingDelayForTesting(WKPageRef page, double delay)
+{
+    toImpl(page)->setMediaCaptureReportingDelay(Seconds(delay));
 }
