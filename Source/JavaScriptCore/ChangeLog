@@ -1,3 +1,38 @@
+2020-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Apply Intl.DateTimeFormat hour-cycle correctly when timeStyle is used
+        https://bugs.webkit.org/show_bug.cgi?id=216521
+
+        Reviewed by Ross Kirsling.
+
+        When specifying timeStyle in Intl.DateTimeFormat, we need to check that the generated format also follows to the hourCycle / hour12 options
+        specified in the constructor. Because dayPeriod can be included automatically, just replacing symbols after generating a pattern can dump strange result.
+        For example, the generated one is something like "02:12:47 PM Coordinated Universal Time". And we adjust the pattern to make it "14:12:47 PM Coordinated Universal Time"
+        when hourCycle H23 / H24 is specified. But this looks strange since dayPeriod "PM" should not exist when using H23 / H24.
+
+        In this patch, we revise our hour-cycle handling in Intl.DateTimeFormat. We align our behavior to SpiderMonkey's one[1] rather than the spec's one: when hour12 is specified,
+        we will just use 'H' or 'h' skeleton and do not enforce hour-cycle after generating pattern in hour12 case. If hour12 is not specified, then we use 'h' or 'H' skeleton
+        symbols based on hour-cycle, and later we modify the pattern based on hour-cycle. If both are not offered, we use 'j' which allows ICU to pick preferable one.
+        This is slightly different behavior to the spec (hcDefault etc.) but the spec's behavior can cause a bit surprising result[2,3], and SpiderMonkey like behavior will be
+        integrated into the spec eventually[4].
+
+        [1]: https://github.com/tc39/ecma402/issues/402#issuecomment-623628320
+        [2]: https://github.com/tc39/ecma402/issues/402
+        [3]: https://bugs.chromium.org/p/chromium/issues/detail?id=1045791
+        [4]: https://github.com/tc39/ecma402/pull/436
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::setFormatsFromPattern):
+        (JSC::IntlDateTimeFormat::parseHourCycle):
+        (JSC::IntlDateTimeFormat::hourCycleFromPattern):
+        (JSC::IntlDateTimeFormat::replaceHourCycleInSkeleton):
+        (JSC::IntlDateTimeFormat::replaceHourCycleInPattern):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::hourCycleString):
+        (JSC::IntlDateTimeFormat::resolvedOptions const):
+        (JSC::IntlDateTimeFormat::createDateIntervalFormatIfNecessary):
+        * runtime/IntlDateTimeFormat.h:
+
 2020-09-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Intl.Collator should take collation option

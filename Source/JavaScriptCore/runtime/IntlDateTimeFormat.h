@@ -78,6 +78,7 @@ private:
 
     UDateIntervalFormat* createDateIntervalFormatIfNecessary(JSGlobalObject*);
 
+    enum class HourCycle : uint8_t { None, H11, H12, H23, H24 };
     enum class Weekday : uint8_t { None, Narrow, Short, Long };
     enum class Era : uint8_t { None, Narrow, Short, Long };
     enum class Year : uint8_t { None, TwoDigit, Numeric };
@@ -91,6 +92,7 @@ private:
     enum class DateTimeStyle : uint8_t { None, Full, Long, Medium, Short };
 
     void setFormatsFromPattern(const StringView&);
+    static ASCIILiteral hourCycleString(HourCycle);
     static ASCIILiteral weekdayString(Weekday);
     static ASCIILiteral eraString(Era);
     static ASCIILiteral yearString(Year);
@@ -102,6 +104,12 @@ private:
     static ASCIILiteral secondString(Second);
     static ASCIILiteral timeZoneNameString(TimeZoneName);
     static ASCIILiteral formatStyleString(DateTimeStyle);
+
+    static HourCycle hourCycleFromSymbol(UChar);
+    static HourCycle parseHourCycle(const String&);
+    static HourCycle hourCycleFromPattern(const Vector<UChar, 32>&);
+    static void replaceHourCycleInSkeleton(Vector<UChar, 32>&, bool hour12);
+    static void replaceHourCycleInPattern(Vector<UChar, 32>&, HourCycle);
 
     using UDateFormatDeleter = ICUDeleter<udat_close>;
     using UDateIntervalFormatDeleter = ICUDeleter<udtitvfmt_close>;
@@ -115,7 +123,7 @@ private:
     String m_calendar;
     String m_numberingSystem;
     String m_timeZone;
-    String m_hourCycle;
+    HourCycle m_hourCycle { HourCycle::None };
     Weekday m_weekday { Weekday::None };
     Era m_era { Era::None };
     Year m_year { Year::None };

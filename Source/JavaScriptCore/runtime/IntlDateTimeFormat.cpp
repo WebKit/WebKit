@@ -329,18 +329,6 @@ void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
             ++i;
         }
 
-        // If hourCycle was null, this sets it to the locale default.
-        if (m_hourCycle.isNull()) {
-            if (currentCharacter == 'h')
-                m_hourCycle = "h12"_s;
-            else if (currentCharacter == 'H')
-                m_hourCycle = "h23"_s;
-            else if (currentCharacter == 'k')
-                m_hourCycle = "h24"_s;
-            else if (currentCharacter == 'K')
-                m_hourCycle = "h11"_s;
-        }
-
         switch (currentCharacter) {
         case 'G':
             if (count <= 3)
@@ -398,12 +386,21 @@ void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
         case 'h':
         case 'H':
         case 'k':
-        case 'K':
+        case 'K': {
+            // Populate hourCycle from actually generated patterns. It is possible that locale or option is specifying hourCycle explicitly,
+            // but the generated pattern does not include related part since the pattern does not include hours.
+            // This is tested in test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-dateStyle.js and our stress tests.
+            // Example:
+            //     new Intl.DateTimeFormat(`de-u-hc-h11`, {
+            //         dateStyle: "full"
+            //     }).resolvedOptions().hourCycle === undefined
+            m_hourCycle = hourCycleFromSymbol(currentCharacter);
             if (count == 1)
                 m_hour = Hour::Numeric;
             else if (count == 2)
                 m_hour = Hour::TwoDigit;
             break;
+        }
         case 'm':
             if (count == 1)
                 m_minute = Minute::Numeric;
@@ -426,6 +423,96 @@ void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
             break;
         case 'S':
             m_fractionalSecondDigits = count;
+            break;
+        }
+    }
+}
+
+IntlDateTimeFormat::HourCycle IntlDateTimeFormat::parseHourCycle(const String& hourCycle)
+{
+    if (hourCycle == "h11"_s)
+        return HourCycle::H11;
+    if (hourCycle == "h12"_s)
+        return HourCycle::H12;
+    if (hourCycle == "h23"_s)
+        return HourCycle::H23;
+    if (hourCycle == "h24"_s)
+        return HourCycle::H24;
+    return HourCycle::None;
+}
+
+inline IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromSymbol(UChar symbol)
+{
+    switch (symbol) {
+    case 'K':
+        return HourCycle::H11;
+    case 'h':
+        return HourCycle::H12;
+    case 'H':
+        return HourCycle::H23;
+    case 'k':
+        return HourCycle::H24;
+    }
+    return HourCycle::None;
+}
+
+inline IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromPattern(const Vector<UChar, 32>& pattern)
+{
+    for (auto character : pattern) {
+        switch (character) {
+        case 'K':
+        case 'h':
+        case 'H':
+        case 'k':
+            return hourCycleFromSymbol(character);
+        }
+    }
+    return HourCycle::None;
+}
+
+inline void IntlDateTimeFormat::replaceHourCycleInSkeleton(Vector<UChar, 32>& skeleton, bool isHour12)
+{
+    UChar skeletonCharacter = 'H';
+    if (isHour12)
+        skeletonCharacter = 'h';
+    for (auto& character : skeleton) {
+        switch (character) {
+        case 'h':
+        case 'H':
+        case 'j':
+            character = skeletonCharacter;
+            break;
+        }
+    }
+}
+
+inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<UChar, 32>& pattern, HourCycle hourCycle)
+{
+    UChar hourFromHourCycle = 'H';
+    switch (hourCycle) {
+    case HourCycle::H11:
+        hourFromHourCycle = 'K';
+        break;
+    case HourCycle::H12:
+        hourFromHourCycle = 'h';
+        break;
+    case HourCycle::H23:
+        hourFromHourCycle = 'H';
+        break;
+    case HourCycle::H24:
+        hourFromHourCycle = 'k';
+        break;
+    case HourCycle::None:
+        return;
+    }
+
+    for (auto& character : pattern) {
+        switch (character) {
+        case 'K':
+        case 'h':
+        case 'H':
+        case 'k':
+            character = hourFromHourCycle;
             break;
         }
     }
@@ -470,17 +557,17 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     TriState hour12 = intlBooleanOption(globalObject, options, vm.propertyNames->hour12);
     RETURN_IF_EXCEPTION(scope, void());
-    bool isHour12Undefined = (hour12 == TriState::Indeterminate);
 
-    String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11", "h12", "h23", "h24" }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\"", nullptr);
+    HourCycle hourCycle = intlOption<HourCycle>(globalObject, options, vm.propertyNames->hourCycle, { { "h11"_s, HourCycle::H11 }, { "h12"_s, HourCycle::H12 }, { "h23"_s, HourCycle::H23 }, { "h24"_s, HourCycle::H24 } }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\""_s, HourCycle::None);
     RETURN_IF_EXCEPTION(scope, void());
-    if (isHour12Undefined) {
-        // Set hour12 here to simplify hour logic later.
-        hour12 = triState(hourCycle == "h11" || hourCycle == "h12");
-        if (!hourCycle.isNull())
-            localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = hourCycle;
-    } else
+    if (hour12 == TriState::Indeterminate) {
+        if (hourCycle != HourCycle::None)
+            localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String(hourCycleString(hourCycle));
+    } else {
+        // If there is hour12, hourCycle is ignored.
+        // We are setting null String explicitly here (localeOptions' entries are Optional<String>). This leads us to use HourCycle::None later.
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String();
+    }
 
     const HashSet<String>& availableLocales = intlDateTimeFormatAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Ca, RelevantExtensionKey::Hc, RelevantExtensionKey::Nu }, localeData);
@@ -499,7 +586,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     else if (m_calendar == "ethioaa")
         m_calendar = "ethiopic-amete-alem"_s;
 
-    m_hourCycle = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Hc)];
+    hourCycle = parseHourCycle(resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Hc)]);
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
     m_dataLocale = resolved.dataLocale;
     CString dataLocaleWithExtensions = makeString(m_dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem).utf8();
@@ -609,25 +696,51 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     Hour hour = intlOption<Hour>(globalObject, options, vm.propertyNames->hour, { { "2-digit"_s, Hour::TwoDigit }, { "numeric"_s, Hour::Numeric } }, "hour must be \"2-digit\" or \"numeric\""_s, Hour::None);
     RETURN_IF_EXCEPTION(scope, void());
-    switch (hour) {
-    case Hour::TwoDigit:
-        if (isHour12Undefined && m_hourCycle.isNull())
-            skeletonBuilder.appendLiteral("jj");
-        else if (hour12 == TriState::True)
-            skeletonBuilder.appendLiteral("hh");
-        else
-            skeletonBuilder.appendLiteral("HH");
-        break;
-    case Hour::Numeric:
-        if (isHour12Undefined && m_hourCycle.isNull())
-            skeletonBuilder.append('j');
-        else if (hour12 == TriState::True)
-            skeletonBuilder.append('h');
-        else
-            skeletonBuilder.append('H');
-        break;
-    case Hour::None:
-        break;
+    {
+        // Specifically, this hour-cycle / hour12 behavior is slightly different from the spec.
+        // But the spec behavior is known to cause surprising behaviors, and the spec change is ongoing.
+        // We implement SpiderMonkey's behavior.
+        //
+        //     > No option present: "j"
+        //     > hour12 = true: "h"
+        //     > hour12 = false: "H"
+        //     > hourCycle = h11: "h", plus modifying the resolved pattern to use the hour symbol "K".
+        //     > hourCycle = h12: "h", plus modifying the resolved pattern to use the hour symbol "h".
+        //     > hourCycle = h23: "H", plus modifying the resolved pattern to use the hour symbol "H".
+        //     > hourCycle = h24: "H", plus modifying the resolved pattern to use the hour symbol "k".
+        //
+        UChar skeletonCharacter = 'j';
+        if (hour12 == TriState::Indeterminate) {
+            switch (hourCycle) {
+            case HourCycle::None:
+                break;
+            case HourCycle::H11:
+            case HourCycle::H12:
+                skeletonCharacter = 'h';
+                break;
+            case HourCycle::H23:
+            case HourCycle::H24:
+                skeletonCharacter = 'H';
+                break;
+            }
+        } else {
+            if (hour12 == TriState::True)
+                skeletonCharacter = 'h';
+            else
+                skeletonCharacter = 'H';
+        }
+
+        switch (hour) {
+        case Hour::TwoDigit:
+            skeletonBuilder.append(skeletonCharacter);
+            skeletonBuilder.append(skeletonCharacter);
+            break;
+        case Hour::Numeric:
+            skeletonBuilder.append(skeletonCharacter);
+            break;
+        case Hour::None:
+            break;
+        }
     }
 
     if (Options::useIntlDateTimeFormatDayPeriod()) {
@@ -701,7 +814,18 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     m_timeStyle = intlOption<DateTimeStyle>(globalObject, options, vm.propertyNames->timeStyle, { { "full"_s, DateTimeStyle::Full }, { "long"_s, DateTimeStyle::Long }, { "medium"_s, DateTimeStyle::Medium }, { "short"_s, DateTimeStyle::Short } }, "timeStyle must be \"full\", \"long\", \"medium\", or \"short\""_s, DateTimeStyle::None);
     RETURN_IF_EXCEPTION(scope, void());
 
-    bool canIncludeHour = true;
+
+    auto patternFromSkeleton = [&](const UChar* skeleton, unsigned skeletonSize, Vector<UChar, 32>& patternBuffer, UErrorCode& status) {
+        // Always use ICU date format generator, rather than our own pattern list and matcher.
+        auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(dataLocaleWithExtensions.data(), &status));
+        if (U_FAILURE(status))
+            return;
+
+        status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(), skeleton, skeletonSize, UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer);
+        if (U_FAILURE(status))
+            return;
+    };
+
     Vector<UChar, 32> patternBuffer;
     if (m_dateStyle != DateTimeStyle::None || m_timeStyle != DateTimeStyle::None) {
         // 30. For each row in Table 1, except the header row, do
@@ -712,12 +836,6 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits != 0 || timeZoneName != TimeZoneName::None) {
             throwTypeError(globalObject, scope, "dateStyle and timeStyle may not be used with other DateTimeFormat options"_s);
             return;
-        }
-
-        // If timeStyle is not specified, m_hourCycle does not matter. Let's skip enforcing step.
-        if (m_timeStyle == DateTimeStyle::None) {
-            canIncludeHour = false;
-            m_hourCycle = String();
         }
 
         auto parseUDateFormatStyle = [](DateTimeStyle style) {
@@ -738,7 +856,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
         // We cannot use this UDateFormat directly yet because we need to enforce specified hourCycle.
         // First, we create UDateFormat via dateStyle and timeStyle. And then convert it to pattern string.
-        // After updating this pattern string with m_hourCycle, we create a final UDateFormat with the updated pattern string.
+        // After updating this pattern string with hourCycle, we create a final UDateFormat with the updated pattern string.
         UErrorCode status = U_ZERO_ERROR;
         StringView timeZoneView(m_timeZone);
         auto dateFormatFromStyle = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(parseUDateFormatStyle(m_timeStyle), parseUDateFormatStyle(m_dateStyle), dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), nullptr, -1, &status));
@@ -752,82 +870,59 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
             return;
         }
-    } else {
-        // If hour is not specified, m_hourCycle does not matter. Let's skip enforcing step.
-        if (hour == Hour::None) {
-            canIncludeHour = false;
-            m_hourCycle = String();
-        }
 
-        // Always use ICU date format generator, rather than our own pattern list and matcher.
-        UErrorCode status = U_ZERO_ERROR;
-        auto* generator = udatpg_open(dataLocaleWithExtensions.data(), &status);
-        if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
-            return;
-        }
+        // It is possible that timeStyle includes dayPeriod, which is sensitive to hour-cycle.
+        // If dayPeriod is included, just replacing hour based on hourCycle / hour12 produces strange results.
+        // Let's consider about the example. The formatted result looks like "02:12:47 PM Coordinated Universal Time"
+        // If we simply replace 02 to 14, this becomes "14:12:47 PM Coordinated Universal Time", this looks strange since "PM" is unnecessary!
+        //
+        // If the generated pattern's hour12 does not match against the option's one, we retrieve skeleton from the pattern, enforcing hour-cycle,
+        // and re-generating the best pattern from the modified skeleton. ICU will look into the generated skeleton, and pick the best format for the request.
+        // We do not care about h11 vs. h12 and h23 vs. h24 difference here since this will be later adjusted by replaceHourCycleInPattern.
+        //
+        // test262/test/intl402/DateTimeFormat/prototype/format/timedatestyle-en.js includes the test for this behavior.
+        if (m_timeStyle != DateTimeStyle::None && (hourCycle != HourCycle::None || hour12 != TriState::Indeterminate)) {
+            auto isHour12 = [](HourCycle hourCycle) {
+                return hourCycle == HourCycle::H11 || hourCycle == HourCycle::H12;
+            };
+            bool specifiedHour12 = false;
+            // If hour12 is specified, we prefer it and ignore hourCycle.
+            if (hour12 != TriState::Indeterminate)
+                specifiedHour12 = hour12 == TriState::True;
+            else
+                specifiedHour12 = isHour12(hourCycle);
+            HourCycle extractedHourCycle = hourCycleFromPattern(patternBuffer);
+            if (extractedHourCycle != HourCycle::None && isHour12(extractedHourCycle) != specifiedHour12) {
+                Vector<UChar, 32> skeleton;
+                auto status = callBufferProducingFunction(udatpg_getSkeleton, nullptr, patternBuffer.data(), patternBuffer.size(), skeleton);
+                if (U_FAILURE(status)) {
+                    throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
+                    return;
+                }
+                replaceHourCycleInSkeleton(skeleton, specifiedHour12);
+                dataLogLnIf(IntlDateTimeFormatInternal::verbose, "replaced:(", StringView(skeleton.data(), skeleton.size()), ")");
 
-        String skeleton = skeletonBuilder.toString();
-        StringView skeletonView(skeleton);
-        status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator, skeletonView.upconvertedCharacters().get(), skeletonView.length(), UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer);
-        udatpg_close(generator);
-        if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
-            return;
-        }
-    }
-
-    // Enforce our hourCycle, replacing hour characters in pattern. ICU can pick format which does not agree with specified hourCycle.
-    // This step modifies generated pattern to use specified hourCycle, and it is specified in 1.1.1 InitializeDateTimeFormat step 33.
-    // FIXME: We should cache `hourCycleDefault` value obtained by generating "jjmm" pattern from UDateTimePatternGenerator.
-    // https://bugs.webkit.org/show_bug.cgi?id=213459
-    if (canIncludeHour) {
-        bool hasHour = false;
-        if (!m_hourCycle.isNull() || !isHour12Undefined) {
-            UChar hourFromHourCycle = 'H'; // H23
-            if (m_hourCycle == "h11")
-                hourFromHourCycle = 'K';
-            else if (m_hourCycle == "h12")
-                hourFromHourCycle = 'h';
-            else if (m_hourCycle == "h24")
-                hourFromHourCycle = 'k';
-
-            bool isEscaped = false;
-            for (auto& c : patternBuffer) {
-                if (c == '\'')
-                    isEscaped = !isEscaped;
-                else if (!isEscaped && (c == 'h' || c == 'H' || c == 'k' || c == 'K')) {
-                    switch (c) {
-                    case 'K':
-                    case 'H': {
-                        if (isHour12Undefined)
-                            c = hourFromHourCycle;
-                        else if (hour12 == TriState::True)
-                            c = 'K';
-                        else
-                            c = 'H';
-                        break;
-                    }
-                    case 'h':
-                    case 'k': {
-                        if (isHour12Undefined)
-                            c = hourFromHourCycle;
-                        else if (hour12 == TriState::True)
-                            c = 'h';
-                        else
-                            c = 'k';
-                        break;
-                    }
-                    default:
-                        ASSERT_NOT_REACHED();
-                    }
-                    hasHour = true;
+                patternBuffer.clear();
+                patternFromSkeleton(skeleton.data(), skeleton.size(), patternBuffer, status);
+                if (U_FAILURE(status)) {
+                    throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
+                    return;
                 }
             }
         }
-        if (!hasHour)
-            m_hourCycle = String();
+    } else {
+        UErrorCode status = U_ZERO_ERROR;
+        String skeleton = skeletonBuilder.toString();
+        patternFromSkeleton(StringView(skeleton).upconvertedCharacters().get(), skeleton.length(), patternBuffer, status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
+            return;
+        }
     }
+
+    // After generating pattern from skeleton, we need to change h11 vs. h12 and h23 vs. h24 if hourCycle is specified.
+    if (hourCycle != HourCycle::None)
+        replaceHourCycleInPattern(patternBuffer, hourCycle);
 
     StringView pattern(patternBuffer.data(), patternBuffer.size());
     setFormatsFromPattern(pattern);
@@ -846,6 +941,25 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     // Failure here means unsupported calendar, and can safely be ignored.
     UCalendar* cal = const_cast<UCalendar*>(udat_getCalendar(m_dateFormat.get()));
     ucal_setGregorianChange(cal, minECMAScriptTime, &status);
+}
+
+ASCIILiteral IntlDateTimeFormat::hourCycleString(HourCycle hourCycle)
+{
+    switch (hourCycle) {
+    case HourCycle::H11:
+        return "h11"_s;
+    case HourCycle::H12:
+        return "h12"_s;
+    case HourCycle::H23:
+        return "h23"_s;
+    case HourCycle::H24:
+        return "h24"_s;
+    case HourCycle::None:
+        ASSERT_NOT_REACHED();
+        return ASCIILiteral::null();
+    }
+    ASSERT_NOT_REACHED();
+    return ASCIILiteral::null();
 }
 
 ASCIILiteral IntlDateTimeFormat::weekdayString(Weekday weekday)
@@ -1040,9 +1154,9 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
     options->putDirect(vm, vm.propertyNames->numberingSystem, jsNontrivialString(vm, m_numberingSystem));
     options->putDirect(vm, vm.propertyNames->timeZone, jsNontrivialString(vm, m_timeZone));
 
-    if (!m_hourCycle.isNull()) {
-        options->putDirect(vm, vm.propertyNames->hourCycle, jsNontrivialString(vm, m_hourCycle));
-        options->putDirect(vm, vm.propertyNames->hour12, jsBoolean(m_hourCycle == "h11" || m_hourCycle == "h12"));
+    if (m_hourCycle != HourCycle::None) {
+        options->putDirect(vm, vm.propertyNames->hourCycle, jsNontrivialString(vm, hourCycleString(m_hourCycle)));
+        options->putDirect(vm, vm.propertyNames->hour12, jsBoolean(m_hourCycle == HourCycle::H11 || m_hourCycle == HourCycle::H12));
     }
 
     if (m_weekday != Weekday::None)
@@ -1267,8 +1381,8 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     // We need to enforce HourCycle by setting "hc" extension if it is specified.
     StringBuilder localeBuilder;
     localeBuilder.append(m_dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem);
-    if (!m_hourCycle.isNull())
-        localeBuilder.append("-hc-", m_hourCycle);
+    if (m_hourCycle != HourCycle::None)
+        localeBuilder.append("-hc-", hourCycleString(m_hourCycle));
     CString dataLocaleWithExtensions = localeBuilder.toString().utf8();
 
     UErrorCode status = U_ZERO_ERROR;
