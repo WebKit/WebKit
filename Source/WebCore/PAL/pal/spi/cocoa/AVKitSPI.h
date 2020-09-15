@@ -31,10 +31,30 @@
 #import <QuartzCore/QuartzCore.h>
 #endif
 
+#if !PLATFORM(WATCHOS) && USE(APPLE_INTERNAL_SDK)
+#import <AVKit/AVValueTiming.h>
+#else
+NS_ASSUME_NONNULL_BEGIN
+
+@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
+@end
+
+@interface AVValueTiming ()
++ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
+@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
+@property (NS_NONATOMIC_IOSONLY, readonly) double rate;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSTimeInterval anchorTimeStamp;
+@property (NS_NONATOMIC_IOSONLY, readonly) double anchorValue;
+
++ (NSTimeInterval)currentTimeStamp;
+- (double)valueForTimeStamp:(NSTimeInterval)timeStamp;
+@end
+
+NS_ASSUME_NONNULL_END
+#endif
+
 
 #if USE(APPLE_INTERNAL_SDK)
-
-#import <AVKit/AVValueTiming.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <AVKit/AVPlayerController.h>
@@ -107,24 +127,6 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #else
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
-@end
-
-@interface AVValueTiming ()
-+ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
-@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
-@property (NS_NONATOMIC_IOSONLY, readonly) double rate;
-@property (NS_NONATOMIC_IOSONLY, readonly) NSTimeInterval anchorTimeStamp;
-@property (NS_NONATOMIC_IOSONLY, readonly) double anchorValue;
-
-+ (NSTimeInterval)currentTimeStamp;
-- (double)valueForTimeStamp:(NSTimeInterval)timeStamp;
-@end
-
-NS_ASSUME_NONNULL_END
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIResponder.h>

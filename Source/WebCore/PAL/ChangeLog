@@ -3,6 +3,15 @@
         Clean up AVKitSPI.h
         https://bugs.webkit.org/show_bug.cgi?id=216449
 
+        Unreviewed, a follow-up patch to fix build failures on watchOS.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+
+2020-09-14  Peng Liu  <peng.liu6@apple.com>
+
+        Clean up AVKitSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=216449
+
         Reviewed by Darin Adler.
 
         * pal/spi/cocoa/AVFoundationSPI.h:
