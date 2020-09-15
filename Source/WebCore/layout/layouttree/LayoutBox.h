@@ -101,13 +101,17 @@ public:
 
     bool isAnonymous() const { return m_isAnonymous; }
 
+    // Block level elements generate block level boxes.
     bool isBlockLevelBox() const;
+    // A block-level box that is also a block container.
+    bool isBlockBox() const;
+    // A block-level box is also a block container box unless it is a table box or the principal box of a replaced element.
+    bool isBlockContainer() const;
     bool isInlineLevelBox() const;
     bool isInlineBox() const;
     bool isAtomicInlineLevelBox() const;
     bool isInlineBlockBox() const;
     bool isInlineTableBox() const;
-    bool isBlockContainerBox() const;
     bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }
 
     bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }

@@ -81,17 +81,21 @@ bool Box::establishesBlockFormattingContext() const
     if (isTableWrapperBox())
         return true;
 
+    // A block box that establishes an independent formatting context establishes a new block formatting context for its contents.
+    if (isBlockBox() && establishesIndependentFormattingContext())
+        return true;
+
     // 9.4.1 Block formatting contexts
     // Floats, absolutely positioned elements, block containers (such as inline-blocks, table-cells, and table-captions)
     // that are not block boxes, and block boxes with 'overflow' other than 'visible' (except when that value has been propagated to the viewport)
     // establish new block formatting contexts for their contents.
-    if (isFloatingPositioned() || isAbsolutelyPositioned()) {
+    if (isFloatingPositioned()) {
         // Not all floating or out-of-positioned block level boxes establish BFC.
         // See [9.7 Relationships between 'display', 'position', and 'float'] for details.
         return style().display() == DisplayType::Block;
     }
 
-    if (isBlockContainerBox() && !isBlockLevelBox())
+    if (isBlockContainer() && !isBlockLevelBox())
         return true;
 
     if (isBlockLevelBox() && !isOverflowVisible())
@@ -104,7 +108,7 @@ bool Box::establishesInlineFormattingContext() const
 {
     // 9.4.2 Inline formatting contexts
     // An inline formatting context is established by a block container box that contains no block-level boxes.
-    if (!isBlockContainerBox())
+    if (!isBlockContainer())
         return false;
 
     if (!isContainerBox())
@@ -204,7 +208,7 @@ const ContainerBox& Box::containingBlock() const
     if (!isPositioned() || isInFlowPositioned()) {
         auto* ancestor = &parent();
         for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
-            if (ancestor->isBlockContainerBox() || ancestor->establishesFormattingContext())
+            if (ancestor->isBlockContainer() || ancestor->establishesFormattingContext())
                 return *ancestor;
         }
         return *ancestor;
@@ -294,6 +298,12 @@ bool Box::isBlockLevelBox() const
     return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::Table;
 }
 
+bool Box::isBlockBox() const
+{
+    // A block-level box that is also a block container.
+    return isBlockLevelBox() && isBlockContainer();
+}
+
 bool Box::isInlineLevelBox() const
 {
     // Inline level elements generate inline level boxes.
@@ -321,7 +331,7 @@ bool Box::isFlexItem() const
     return isInFlow() && parent().isFlexBox();
 }
 
-bool Box::isBlockContainerBox() const
+bool Box::isBlockContainer() const
 {
     auto display = m_style.display();
     return display == DisplayType::Block || display == DisplayType::ListItem || isInlineBlockBox() || isTableCell() || isTableCaption(); // TODO && !replaced element
