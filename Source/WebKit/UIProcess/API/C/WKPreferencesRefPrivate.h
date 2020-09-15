@@ -615,10 +615,6 @@ WK_EXPORT bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesR
 WK_EXPORT void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetReferrerPolicyAttributeEnabled(WKPreferencesRef);
 
-// Defaults to false
-WK_EXPORT void WKPreferencesSetLazyImageLoadingEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetLazyImageLoadingEnabled(WKPreferencesRef);
-
 #ifdef __cplusplus
 }
 #endif
