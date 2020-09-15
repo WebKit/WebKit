@@ -1,3 +1,13 @@
+2020-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, skip construct-return-early-from-infinite-loop-for-fuzzer.js when JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=216406
+
+        We are not supporting returnEarlyFromInfiniteLoopsForFuzzing option for CLoop.
+
+        * stress/construct-return-early-from-infinite-loop-for-fuzzer.js:
+        (vm.useJIT):
+
 2020-09-15  Tadeu Zagallo  <tzagallo@apple.com>
 
         Object allocation sinking forgets escaped nodes when structure changes
