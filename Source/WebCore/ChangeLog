@@ -1,3 +1,17 @@
+2020-09-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Indefinite flex-basis percentage should cause height to be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=210077
+
+        Reviewed by Darin Adler.
+
+        If flex-basis is a percentage of an indefinite height we should ignore
+        what height specifies and treat it and as height:auto.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::cacheChildMainSize): Cache the intrinsic height of the child when
+        flex-basis is a percentage of an indefinite length.
+
 2020-09-15  Rob Buis  <rbuis@igalia.com>
 
         Convert runtime flag to setting for lazy image loading

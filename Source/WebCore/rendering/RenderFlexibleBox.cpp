@@ -847,9 +847,13 @@ void RenderFlexibleBox::cacheChildMainSize(const RenderBox& child)
 {
     ASSERT(!child.needsLayout());
     LayoutUnit mainSize;
-    if (hasOrthogonalFlow(child))
-        mainSize = child.logicalHeight();
-    else
+    if (hasOrthogonalFlow(child)) {
+        auto flexBasis = flexBasisForChild(child);
+        if (flexBasis.isPercentOrCalculated() && !mainAxisLengthIsDefinite(child, flexBasis))
+            mainSize = cachedChildIntrinsicContentLogicalHeight(child) + child.borderAndPaddingLogicalHeight() + child.scrollbarLogicalHeight();
+        else
+            mainSize = child.logicalHeight();
+    } else
         mainSize = child.maxPreferredLogicalWidth();
     m_intrinsicSizeAlongMainAxis.set(&child, mainSize);
     m_relaidOutChildren.add(&child);
