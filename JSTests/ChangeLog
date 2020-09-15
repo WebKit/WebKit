@@ -1,3 +1,14 @@
+2020-09-14  Keith Miller  <keith_miller@apple.com>
+
+        BytecodeParser should GetLocal op_ret's value even if it's unused by the caller
+        https://bugs.webkit.org/show_bug.cgi?id=216506
+
+        Reviewed by Mark Lam.
+
+        * stress/osr-availability-should-see-unused-return-as-available.js: Added.
+        (foo):
+        (set isFinite):
+
 2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Proxy's "ownKeys" trap result should not be sorted

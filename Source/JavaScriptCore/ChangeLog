@@ -1,3 +1,18 @@
+2020-09-14  Keith Miller  <keith_miller@apple.com>
+
+        BytecodeParser should GetLocal op_ret's value even if it's unused by the caller
+        https://bugs.webkit.org/show_bug.cgi?id=216506
+
+        Reviewed by Mark Lam.
+
+        We have to unconditionally GetLocal operands each bytecode claims to use
+        regardless of true liveness. This is important to keep OSRAvailability simple.
+        However, op_ret would only GetLocal the return value if we knew the value
+        was going to be used by an inline caller.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2020-09-14  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Proxy's "ownKeys" trap result should not be sorted

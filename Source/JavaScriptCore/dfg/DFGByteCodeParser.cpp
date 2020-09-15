@@ -6520,16 +6520,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_ret: {
             auto bytecode = currentInstruction->as<OpRet>();
             ASSERT(!m_currentBlock->terminal());
+            // We have to get the return here even if we know the caller won't use it because the GetLocal may
+            // be the only thing keeping m_value alive for OSR.
+            auto returnValue = get(bytecode.m_value);
+
             if (!inlineCallFrame()) {
                 // Simple case: we are just producing a return
-                addToGraph(Return, get(bytecode.m_value));
+                addToGraph(Return, returnValue);
                 flushForReturn();
                 LAST_OPCODE(op_ret);
             }
 
             flushForReturn();
             if (m_inlineStackTop->m_returnValue.isValid())
-                setDirect(m_inlineStackTop->m_returnValue, get(bytecode.m_value), ImmediateSetWithFlush);
+                setDirect(m_inlineStackTop->m_returnValue, returnValue, ImmediateSetWithFlush);
 
             if (!m_inlineStackTop->m_continuationBlock && m_currentIndex.offset() + currentInstruction->size() != m_inlineStackTop->m_codeBlock->instructions().size()) {
                 // This is an early return from an inlined function and we do not have a continuation block, so we must allocate one.
