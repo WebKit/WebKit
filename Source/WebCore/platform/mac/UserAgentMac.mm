@@ -35,6 +35,9 @@ namespace WebCore {
 String standardUserAgentWithApplicationName(const String& applicationName, const String&, UserAgentType)
 {
     String osVersion = systemMarketingVersionForUserAgentString();
+    if (!osVersion.startsWith("10"))
+        osVersion = "10_15_6"_s;
+    
     String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
 
     return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X ", osVersion, ") AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
