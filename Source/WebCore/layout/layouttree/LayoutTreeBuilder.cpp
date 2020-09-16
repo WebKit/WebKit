@@ -255,7 +255,9 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
                     childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
                 } else
                     childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
-            } else if (displayType == DisplayType::Inline)
+            } else if (displayType == DisplayType::Flex)
+                childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
+            else if (displayType == DisplayType::Inline)
                 childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
             else if (displayType == DisplayType::InlineBlock)
                 childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
