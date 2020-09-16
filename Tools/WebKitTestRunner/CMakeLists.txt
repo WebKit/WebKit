@@ -20,7 +20,7 @@ set(WebKitTestRunner_SOURCES
     TestController.cpp
     TestInvocation.cpp
     TestOptions.cpp
-    UIScriptController.cpp
+    UIScriptControllerCommon.cpp
     WebNotificationProvider.cpp
     WorkQueueManager.cpp
 )

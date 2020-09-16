@@ -25,13 +25,13 @@
 
 #pragma once
 
-#import "UIScriptController.h"
+#import "UIScriptControllerCommon.h"
 
 OBJC_CLASS TestRunnerWKWebView;
 
 namespace WTR {
 
-class UIScriptControllerCocoa : public UIScriptController {
+class UIScriptControllerCocoa : public UIScriptControllerCommon {
 public:
     void setViewScale(double) override;
     void setMinimumEffectiveWidth(double) override;

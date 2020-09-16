@@ -188,8 +188,8 @@ public:
 
     virtual void replaceTextAtRange(JSStringRef, int location, int length) { notImplemented(); }
 
-    virtual bool windowIsKey() const;
-    virtual void setWindowIsKey(bool);
+    virtual bool windowIsKey() const { notImplemented(); return false; }
+    virtual void setWindowIsKey(bool) { notImplemented(); }
 
     // Stylus
 

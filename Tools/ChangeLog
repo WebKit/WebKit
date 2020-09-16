@@ -1,3 +1,40 @@
+2020-09-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TestRunnerShared] Add a new class UIScriptControllerCommon to implement UIScriptController::windowIsKey and UIScriptController::setWindowIsKey
+        https://bugs.webkit.org/show_bug.cgi?id=216469
+
+        Reviewed by Darin Adler.
+
+        Even though UIScriptController class is defined in
+        TestRunnerShared, UIScriptController::windowIsKey and
+        UIScriptController::setWindowIsKey methods were defined in the
+        client modules DRT and WTR. I'd like to make TestRunnerShared a
+        stand-alone library which doesn't depend on DRT and WTR (Bug
+        216465).
+
+        Add a new class UIScriptControllerCommon to host the common
+        methods by renaming UIScriptController.cpp.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::windowIsKey const):
+        (WTR::UIScriptController::setWindowIsKey):
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/UIScriptControllerCommon.cpp: Renamed from Tools/WebKitTestRunner/UIScriptController.cpp.
+        (WTR::UIScriptControllerCommon::windowIsKey const):
+        (WTR::UIScriptControllerCommon::setWindowIsKey):
+        * WebKitTestRunner/UIScriptControllerCommon.h: Added.
+        (WTR::UIScriptControllerCommon::UIScriptControllerCommon):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::UIScriptControllerCocoa):
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.h:
+        (WTR::UIScriptControllerGtk::UIScriptControllerGtk):
+        * WebKitTestRunner/win/UIScriptControllerWin.h:
+        (WTR::UIScriptControllerWin::UIScriptControllerWin):
+        * WebKitTestRunner/wpe/UIScriptControllerWPE.h:
+
 2020-09-15  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the fetch API

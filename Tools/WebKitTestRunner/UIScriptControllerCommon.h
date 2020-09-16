@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
+
 #include "UIScriptController.h"
 
 namespace WTR {
 
-void UIScriptController::setWindowIsKey(bool)
-{
-    notImplemented();
-}
+class UIScriptControllerCommon : public UIScriptController {
+public:
+    explicit UIScriptControllerCommon(UIScriptContext& context)
+        : UIScriptController(context)
+    {
+    }
 
-bool UIScriptController::windowIsKey() const
-{
-    notImplemented();
-    return false;
-}
+    bool windowIsKey() const override;
+    void setWindowIsKey(bool) override;
+};
 
 } // namespace WTR

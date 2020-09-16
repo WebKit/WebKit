@@ -24,19 +24,19 @@
  */
 
 #include "config.h"
-#include "UIScriptController.h"
+#include "UIScriptControllerCommon.h"
 
 #include "PlatformWebView.h"
 #include "TestController.h"
 
 namespace WTR {
 
-bool UIScriptController::windowIsKey() const
+bool UIScriptControllerCommon::windowIsKey() const
 {
     return TestController::singleton().mainWebView()->windowIsKey();
 }
 
-void UIScriptController::setWindowIsKey(bool isKey)
+void UIScriptControllerCommon::setWindowIsKey(bool isKey)
 {
     TestController::singleton().mainWebView()->setWindowIsKey(isKey);
 }

@@ -160,7 +160,6 @@
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
 		F4010B7B24DA201F00A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7924DA200E00A876E2 /* PoseAsClass.mm */; };
 		F445C68624B2789D00790440 /* UIScriptControllerShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F445C68524B2788F00790440 /* UIScriptControllerShared.cpp */; };
-		F445C68924B278EC00790440 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F445C68824B278EC00790440 /* UIScriptController.cpp */; };
 		F44A531D21B89A4D00DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531A21B89A4400DBB99C /* ClassMethodSwizzler.mm */; };
 		F44A531E21B89A5000DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531C21B89A4500DBB99C /* InstanceMethodSwizzler.mm */; };
 		F484C223237B27D600BF77D0 /* UIScriptControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F484C222237B27D600BF77D0 /* UIScriptControllerCocoa.mm */; };
@@ -438,7 +437,6 @@
 		F4010B7924DA200E00A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PoseAsClass.mm; sourceTree = "<group>"; };
 		F4010B7A24DA200E00A876E2 /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoseAsClass.h; sourceTree = "<group>"; };
 		F445C68524B2788F00790440 /* UIScriptControllerShared.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptControllerShared.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp; sourceTree = "<group>"; };
-		F445C68824B278EC00790440 /* UIScriptController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIScriptController.cpp; sourceTree = "<group>"; };
 		F44A531921B89A4400DBB99C /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		F44A531A21B89A4400DBB99C /* ClassMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClassMethodSwizzler.mm; sourceTree = "<group>"; };
 		F44A531B21B89A4400DBB99C /* ClassMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassMethodSwizzler.h; sourceTree = "<group>"; };
@@ -544,7 +542,6 @@
 				0F6A0E001D6E0F8A00F1C9A8 /* mac */,
 				0F18E6E81D6B9C070027E547 /* UIScriptContext.cpp */,
 				0F18E6E91D6B9C070027E547 /* UIScriptContext.h */,
-				F445C68824B278EC00790440 /* UIScriptController.cpp */,
 				0F18E6EB1D6B9C070027E547 /* UIScriptController.h */,
 				F445C68524B2788F00790440 /* UIScriptControllerShared.cpp */,
 			);
@@ -1259,7 +1256,6 @@
 				BCA18B490C9B02C400114369 /* TextInputControllerMac.m in Sources */,
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				0F18E6EC1D6B9C070027E547 /* UIScriptContext.cpp in Sources */,
-				F445C68924B278EC00790440 /* UIScriptController.cpp in Sources */,
 				F484C223237B27D600BF77D0 /* UIScriptControllerCocoa.mm in Sources */,
 				0F18E70D1D6BAC8C0027E547 /* UIScriptControllerIOS.mm in Sources */,
 				0F18E70F1D6BACB60027E547 /* UIScriptControllerMac.mm in Sources */,

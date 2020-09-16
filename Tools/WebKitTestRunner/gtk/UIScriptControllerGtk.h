@@ -27,15 +27,15 @@
 
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include "UIScriptController.h"
+#include "UIScriptControllerCommon.h"
 #include <WebKit/WKViewPrivate.h>
 
 namespace WTR {
 
-class UIScriptControllerGtk : public UIScriptController {
+class UIScriptControllerGtk : public UIScriptControllerCommon {
 public:
     explicit UIScriptControllerGtk(UIScriptContext& context)
-        : UIScriptController(context)
+        : UIScriptControllerCommon(context)
     {
     }
 

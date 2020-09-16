@@ -27,14 +27,14 @@
 
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include "UIScriptController.h"
+#include "UIScriptControllerCommon.h"
 
 namespace WTR {
 
-class UIScriptControllerWin : public UIScriptController {
+class UIScriptControllerWin : public UIScriptControllerCommon {
 public:
     explicit UIScriptControllerWin(UIScriptContext& context)
-        : UIScriptController(context)
+        : UIScriptControllerCommon(context)
     {
     }
 

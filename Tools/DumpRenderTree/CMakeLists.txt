@@ -23,7 +23,6 @@ set(DumpRenderTree_SOURCES
     PixelDumpSupport.cpp
     TestOptions.cpp
     TestRunner.cpp
-    UIScriptController.cpp
     WorkQueue.cpp
 )
 

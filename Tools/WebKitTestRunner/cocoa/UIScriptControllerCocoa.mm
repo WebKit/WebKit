@@ -43,7 +43,7 @@
 namespace WTR {
 
 UIScriptControllerCocoa::UIScriptControllerCocoa(UIScriptContext& context)
-    : UIScriptController(context)
+    : UIScriptControllerCommon(context)
 {
 }
 
