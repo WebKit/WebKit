@@ -78,6 +78,9 @@ public:
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     WorkQueue& audioMediaStreamTrackRendererQueue();
 #endif
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+    WorkQueue& libWebRTCCodecsQueue();
+#endif
 
 #if ENABLE(VP9)
     void enableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
@@ -123,6 +126,9 @@ private:
 #if PLATFORM(COCOA)
     RefPtr<WorkQueue> m_audioMediaStreamTrackRendererQueue;
 #endif
+#endif
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+    RefPtr<WorkQueue> m_libWebRTCCodecsQueue;
 #endif
 
     struct GPUSession {

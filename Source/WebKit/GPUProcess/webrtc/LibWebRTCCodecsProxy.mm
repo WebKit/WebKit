@@ -31,6 +31,7 @@
 #import "DataReference.h"
 #import "GPUConnectionToWebProcess.h"
 #import "LibWebRTCCodecsMessages.h"
+#import "LibWebRTCCodecsProxyMessages.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/LibWebRTCMacros.h>
 #import <WebCore/RemoteVideoSample.h>
@@ -42,15 +43,31 @@ namespace WebKit {
 
 LibWebRTCCodecsProxy::LibWebRTCCodecsProxy(GPUConnectionToWebProcess& connection)
     : m_gpuConnectionToWebProcess(connection)
+    , m_queue(connection.gpuProcess().libWebRTCCodecsQueue())
 {
+    m_gpuConnectionToWebProcess.connection().addThreadMessageReceiver(Messages::LibWebRTCCodecsProxy::messageReceiverName(), this);
 }
 
 LibWebRTCCodecsProxy::~LibWebRTCCodecsProxy()
 {
-    for (auto decoder : m_decoders.values())
-        webrtc::releaseLocalDecoder(decoder);
-    for (auto encoder : m_encoders.values())
-        webrtc::releaseLocalEncoder(encoder);
+    m_gpuConnectionToWebProcess.connection().removeThreadMessageReceiver(Messages::LibWebRTCCodecsProxy::messageReceiverName());
+}
+
+void LibWebRTCCodecsProxy::dispatchToThread(Function<void()>&& function)
+{
+    m_queue->dispatch(WTFMove(function));
+}
+
+void LibWebRTCCodecsProxy::close()
+{
+    dispatchToThread([this, protectedThis = makeRef(*this)] {
+        auto decoders = WTFMove(m_decoders);
+        for (auto decoder : decoders.values())
+            webrtc::releaseLocalDecoder(decoder);
+        auto encoders = WTFMove(m_encoders);
+        for (auto encoder : encoders.values())
+            webrtc::releaseLocalEncoder(encoder);
+    });
 }
 
 void LibWebRTCCodecsProxy::createH264Decoder(RTCDecoderIdentifier identifier)

@@ -112,9 +112,6 @@ private:
 #if ENABLE(WEB_AUDIO)
     RemoteAudioDestinationManager& remoteAudioDestinationManager();
 #endif
-#if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    LibWebRTCCodecsProxy& libWebRTCCodecsProxy();
-#endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
 #if HAVE(AVASSETWRITERDELEGATE)
@@ -170,6 +167,9 @@ private:
     std::unique_ptr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
     std::unique_ptr<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
     PAL::SessionID m_sessionID;
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    Ref<LibWebRTCCodecsProxy> m_libWebRTCCodecsProxy;
+#endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
     Ref<RemoteAudioMediaStreamTrackRendererManager> m_audioTrackRendererManager;
@@ -182,9 +182,6 @@ private:
     bool m_allowsAudioCapture { false };
     bool m_allowsVideoCapture { false };
     bool m_allowsDisplayCapture { false };
-#endif
-#if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    std::unique_ptr<LibWebRTCCodecsProxy> m_libWebRTCCodecsProxy;
 #endif
 
     using RemoteRenderingBackendProxyMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackendProxy>>;

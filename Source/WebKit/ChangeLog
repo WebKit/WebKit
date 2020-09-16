@@ -1,3 +1,32 @@
+2020-09-16  Youenn Fablet  <youenn@apple.com>
+
+        Move LibWebRTCCodecsProxy message handling out of the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=216531
+
+        Reviewed by Eric Carlson.
+
+        Use a process wide work queue to process all LibWebRTCCodecsProxy messages in a background thread.
+        This queue is shared by all LibWebRTCCodecsProxy objects, which are per web process.
+        Covered by webrtc/video.html with GPU process enabled.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::~GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::libWebRTCCodecsProxy): Deleted.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::libWebRTCCodecsQueue):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        (WebKit::LibWebRTCCodecsProxy::create):
+        (WebKit::LibWebRTCCodecsProxy::didReceiveMessageFromWebProcess): Deleted.
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::LibWebRTCCodecsProxy):
+        (WebKit::LibWebRTCCodecsProxy::~LibWebRTCCodecsProxy):
+        (WebKit::LibWebRTCCodecsProxy::dispatchToThread):
+        (WebKit::LibWebRTCCodecsProxy::close):
+
 2020-09-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early September 2020 edition

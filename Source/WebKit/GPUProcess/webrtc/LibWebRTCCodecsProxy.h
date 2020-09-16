@@ -27,7 +27,7 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
-#include "MessageReceiver.h"
+#include "Connection.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
 #include <WebCore/ImageTransferSessionVT.h>
@@ -51,15 +51,20 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 
-class LibWebRTCCodecsProxy : private IPC::MessageReceiver {
+class LibWebRTCCodecsProxy : public IPC::Connection::ThreadMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
+    static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess& process) { return adoptRef(*new LibWebRTCCodecsProxy(process)); }
     ~LibWebRTCCodecsProxy();
 
-    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void close();
 
 private:
+    explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
+
+    // IPC::Connection::ThreadMessageReceiver
+    void dispatchToThread(Function<void()>&&) final;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void createH264Decoder(RTCDecoderIdentifier);
@@ -79,6 +84,7 @@ private:
     HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders;
     HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders;
 
+    Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
 };
 
