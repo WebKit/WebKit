@@ -295,7 +295,7 @@ bool Box::isBlockLevelBox() const
 {
     // Block level elements generate block level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::Table;
+    return display == DisplayType::Block || display == DisplayType::ListItem || display == DisplayType::Table || display == DisplayType::Flex;
 }
 
 bool Box::isBlockBox() const

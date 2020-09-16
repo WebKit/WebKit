@@ -1,5 +1,17 @@
 2020-09-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][FFC] 'display: flex' generates a flex container box that is block-level when placed in flow layout
+        https://bugs.webkit.org/show_bug.cgi?id=216596
+
+        Reviewed by Simon Fraser.
+
+        See https://www.w3.org/TR/css-flexbox-1/#flex-containers.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isBlockLevelBox const):
+
+2020-09-15  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Use isBlockBox() in Box::establishesBlockFormattingContext
         https://bugs.webkit.org/show_bug.cgi?id=216595
 
