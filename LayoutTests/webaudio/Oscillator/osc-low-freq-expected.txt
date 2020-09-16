@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "low-freq-oscillator" 
+PASS Audit report 
+PASS > [low-freq-oscillator]  
+PASS   SNR of 1 Hz sine wave is greater than or equal to 130. 
+PASS < [low-freq-oscillator] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

@@ -334,6 +334,10 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interf
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain.html [ Pass Failure ]
+webaudio/Oscillator/no-dezippering.html [ Pass Failure ]
+webaudio/Oscillator/osc-440hz.html [ Pass Failure ]
+webaudio/Oscillator/osc-negative-freq.html [ Pass Failure ]
+webaudio/Oscillator/osc-sweep-snr-triangle.html [ Pass Failure ]
 
 # one-pole subtest is flakily failing.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iirfilter.html [ Pass Failure ]

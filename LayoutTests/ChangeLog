@@ -1,3 +1,46 @@
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Import OscillatorNode layout tests from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=216569
+
+        Reviewed by Eric Carlson.
+
+        Import OscillatorNode layout tests from Blink.
+
+        * webaudio/Oscillator/no-dezippering-expected.txt: Added.
+        * webaudio/Oscillator/no-dezippering.html: Added.
+        * webaudio/Oscillator/osc-440hz-expected.txt: Added.
+        * webaudio/Oscillator/osc-440hz.html: Added.
+        * webaudio/Oscillator/osc-low-freq-expected.txt: Added.
+        * webaudio/Oscillator/osc-low-freq.html: Added.
+        * webaudio/Oscillator/osc-negative-freq-expected.txt: Added.
+        * webaudio/Oscillator/osc-negative-freq.html: Added.
+        * webaudio/Oscillator/osc-sweep-snr-custom-expected.txt: Added.
+        * webaudio/Oscillator/osc-sweep-snr-custom.html: Added.
+        * webaudio/Oscillator/osc-sweep-snr-sawtooth-expected.txt: Added.
+        * webaudio/Oscillator/osc-sweep-snr-sawtooth.html: Added.
+        * webaudio/Oscillator/osc-sweep-snr-sine-expected.txt: Added.
+        * webaudio/Oscillator/osc-sweep-snr-sine.html: Added.
+        * webaudio/Oscillator/osc-sweep-snr-square-expected.txt: Added.
+        * webaudio/Oscillator/osc-sweep-snr-square.html: Added.
+        * webaudio/Oscillator/osc-sweep-snr-triangle-expected.txt: Added.
+        * webaudio/Oscillator/osc-sweep-snr-triangle.html: Added.
+        * webaudio/Oscillator/oscillator-basic-expected.txt: Added.
+        * webaudio/Oscillator/oscillator-basic.html: Added.
+        * webaudio/Oscillator/oscillator-ended-expected.txt: Added.
+        * webaudio/Oscillator/oscillator-ended.html: Added.
+        * webaudio/Oscillator/oscillator-late-start-expected.txt: Added.
+        * webaudio/Oscillator/oscillator-late-start.html: Added.
+        * webaudio/Oscillator/start-sampling-expected.txt: Added.
+        * webaudio/Oscillator/start-sampling.html: Added.
+        * webaudio/oscillator-basic-expected.txt: Removed.
+        * webaudio/oscillator-basic.html: Removed.
+        * webaudio/oscillator-ended-expected.txt: Removed.
+        * webaudio/oscillator-ended.html: Removed.
+        * webaudio/resources/audio-file-utils.js: Added.
+        * webaudio/resources/oscillator-testing.js:
+        * webaudio/resources/start-stop-exceptions.js: Added.
+
 2020-09-16  Aditya Keerthi  <akeerthi@apple.com>
 
         [Cocoa] Use OTF font features instead of AAT font features when possible

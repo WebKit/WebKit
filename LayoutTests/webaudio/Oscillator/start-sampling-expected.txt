@@ -1,0 +1,25 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "basic test small" 
+PASS Executing "basic test big" 
+PASS Executing "diff big offset" 
+PASS Executing "diff small offset" 
+PASS Audit report 
+PASS > [basic test small] Start oscillator slightly past a sample frame 
+PASS   Oscillator.start(1.25 frames) equals [0,0,0.08628636579792338,0.20022300402084467,0.3115057926840881,0.41865973753742813,0.5202645699620939,0.6149735718768643,0.7015314257708557,0.7787908532703041,0.8457278217039732,0.9014551171122457,0.9452341037968682,0.9764845145447687,0.9947921417617265,0.999914327574007...] with an element-wise tolerance of {"absoluteThreshold":0.0001088,"relativeThreshold":0}. 
+PASS   Oscillator.start(1.25 frames): SNR (dB) is greater than or equal to 84.054. 
+PASS < [basic test small] All assertions passed. (total 2 assertions) 
+PASS > [basic test big] Start oscillator slightly before a sample frame 
+PASS   Oscillator.start(1.75 frames) equals [0,0,0.02879395236826347,0.14349262199117932,0.25628937313299666,0.3656891447750543,0.47024190105748226,0.5685618507342639,0.659345815100069,0.7413905009317421,0.813608449500787,0.8750424502611525,0.9248782281665496,0.9624552364536474,0.9872754118385365,0.9990097760809875...] with an element-wise tolerance of {"absoluteThreshold":0.00010844,"relativeThreshold":0}. 
+PASS   Oscillator.start(1.75 frames): SNR (dB) is greater than or equal to 84.056. 
+PASS < [basic test big] All assertions passed. (total 2 assertions) 
+PASS > [diff big offset] Test sampling with start offset greater than 1/2 sampling frame 
+PASS   Sample rate 24000: Delayed cosine oscillator equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.9991225600242615,0.9876880049705505...] with an element-wise tolerance of {"absoluteThreshold":0.0000019521,"relativeThreshold":0}. 
+PASS   Sample rate 24000: Delayed cosine oscillator: SNR (dB) is greater than or equal to 128.12. 
+PASS < [diff big offset] All assertions passed. (total 2 assertions) 
+PASS > [diff small offset] Test sampling with start offset less than 1/2 sampling frame 
+PASS   Sample rate 48000: Delayed cosine oscillator equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.0000019521,"relativeThreshold":0}. 
+PASS   Sample rate 48000: Delayed cosine oscillator: SNR (dB) is greater than or equal to 122.92. 
+PASS < [diff small offset] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+

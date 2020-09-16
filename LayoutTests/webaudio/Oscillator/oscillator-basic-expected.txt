@@ -1,0 +1,30 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "basic osc tests" 
+PASS Executing "start/stop exceptions" 
+PASS Audit report 
+PASS > [basic osc tests]  
+PASS   osc.type = 'sine' is equal to sine. 
+PASS   osc.type = 'square' is equal to square. 
+PASS   osc.type = 'sawtooth' is equal to sawtooth. 
+PASS   osc.type = 'triangle' is equal to triangle. 
+PASS   osc.type = 'custom' threw InvalidStateError: "OscillatorNode.type cannot be changed to 'custom'". 
+PASS   osc.setPeriodicWave(wave) did not throw an exception. 
+PASS   After setting periodicWave, osc.type is equal to custom. 
+PASS   osc.type = 0 is not equal to 0. 
+PASS   osc.type is equal to custom. 
+PASS < [basic osc tests] All assertions passed. (total 9 assertions) 
+PASS > [start/stop exceptions]  
+PASS   start(NaN) threw TypeError: "The provided value is non-finite". 
+PASS   start(Infinity) threw TypeError: "The provided value is non-finite". 
+PASS   start(-Infinity) threw TypeError: "The provided value is non-finite". 
+PASS   Calling stop() before start() threw InvalidStateError: "The object is in an invalid state.". 
+PASS   start(-1) threw RangeError: "when value should be positive". 
+PASS   Calling start() twice threw InvalidStateError: "The object is in an invalid state.". 
+PASS   stop(-1) threw RangeError: "when value should be positive". 
+PASS   stop(NaN) threw TypeError: "The provided value is non-finite". 
+PASS   stop(Infinity) threw TypeError: "The provided value is non-finite". 
+PASS   stop(-Infinity) threw TypeError: "The provided value is non-finite". 
+PASS < [start/stop exceptions] All assertions passed. (total 10 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+

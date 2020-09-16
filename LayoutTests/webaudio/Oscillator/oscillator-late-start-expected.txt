@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+PASS Executing "test-late-start" 
+PASS Audit report 
+PASS > [initialize]  
+PASS   Creating offline context for testing did not throw an exception. 
+PASS   Creating graph for testing did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 2 assertions) 
+PASS > [test-late-start]  
+PASS   The index (4481) of first non-zero output value is greater than or equal to 4352. 
+PASS   Output[0:4351] contains only the constant 0. 
+PASS < [test-late-start] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+
