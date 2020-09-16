@@ -1,3 +1,20 @@
+2020-09-15  Saam Barati  <sbarati@apple.com>
+
+        JSImmutableButterfly::get needs to return jsDoubleNumber for double arrays
+        https://bugs.webkit.org/show_bug.cgi?id=216589
+        <rdar://problem/68061245>
+
+        Reviewed by Yusuke Suzuki.
+
+        We are using JSImmutableButterfly::get in AI to constant fold GetByVal,
+        but we were failing to always return a boxed double value for double loads.
+        We were calling jsNumber instead of jsDooubleNumber. This is in contrast to
+        the runtime, which always returns a double boxed value. This would lead AI
+        to disagree with the runtime, and miscompile code.
+
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::get const):
+
 2020-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Cache UDateTimePatternGenerator
