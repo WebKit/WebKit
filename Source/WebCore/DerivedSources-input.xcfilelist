@@ -1019,6 +1019,7 @@ $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/Navigator.idl
+$(PROJECT_DIR)/page/NavigatorCookies.idl
 $(PROJECT_DIR)/page/NavigatorID.idl
 $(PROJECT_DIR)/page/NavigatorIsLoggedIn.idl
 $(PROJECT_DIR)/page/NavigatorLanguage.idl

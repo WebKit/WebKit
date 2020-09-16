@@ -1230,6 +1230,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorBeacon.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorBeacon.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorClipboard.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorClipboard.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCookies.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCookies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCredentials.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCredentials.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorEME.cpp

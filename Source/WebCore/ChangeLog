@@ -1,3 +1,20 @@
+2020-09-16  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Move navigator.cookieEnabled to its own interface mixin, matching the spec
+        https://bugs.webkit.org/show_bug.cgi?id=216590
+
+        Reviewed by Youenn Fablet.
+
+        Adds NavigatorCookies interface mixin and includes it in Navigator.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Navigator.idl:
+        * page/NavigatorCookies.idl: Added.
+
 2020-09-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early September 2020 edition

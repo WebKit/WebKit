@@ -21,19 +21,19 @@
     GenerateIsReachable=ReachableFromDOMWindow,
     JSCustomMarkFunction,
 ] interface Navigator {
-    // FIXME: This is specified to be in it's own mixin called NavigatorCookies.
-    // https://html.spec.whatwg.org/multipage/system-state.html#navigatorcookies
-    readonly attribute boolean cookieEnabled;
-
+    // Non-standard.
     [Conditional=NAVIGATOR_STANDALONE] readonly attribute boolean standalone;
 
-    undefined getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
+    // Non-standard.
+    // FIXME: Remove this. WebKit is the only engine that still has this.
+    undefined getStorageUpdates();
 };
 
 Navigator includes NavigatorID;
 Navigator includes NavigatorLanguage;
 Navigator includes NavigatorMaxTouchPoints;
 Navigator includes NavigatorOnLine;
+Navigator includes NavigatorCookies;
 Navigator includes NavigatorPlugins;
 Navigator includes NavigatorServiceWorker;
 Navigator includes NavigatorShare;

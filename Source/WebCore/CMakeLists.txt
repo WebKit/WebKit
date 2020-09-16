@@ -1043,6 +1043,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/IntersectionObserverEntry.idl
     page/Location.idl
     page/Navigator.idl
+    page/NavigatorCookies.idl
     page/NavigatorID.idl
     page/NavigatorLanguage.idl
     page/NavigatorOnLine.idl
