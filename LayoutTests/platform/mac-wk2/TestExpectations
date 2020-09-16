@@ -1324,3 +1324,6 @@ fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass Ima
 
 #<rdar://68952824> [ macOS iOS wk2 ] media/media-continues-playing-after-replace-source.html is a flaky failure
 [ BigSur+ ] media/media-continues-playing-after-replace-source.html [ Pass Failure ]
+
+#<rdar://68957215> [ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html is a constant failure/timeout
+[ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Failure Timeout ]

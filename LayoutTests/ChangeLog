@@ -1,5 +1,14 @@
 2020-09-15  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html is a constant failure/timeout
+        <rdar://68957215> 
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-09-15  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ macOS iOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html: Correction for test expectations
         <rdar://68947198> 
 
