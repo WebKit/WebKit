@@ -28,7 +28,7 @@
 #include "IntlNumberFormatPrototype.h"
 
 #include "BuiltinNames.h"
-#include "IntlNumberFormat.h"
+#include "IntlNumberFormatInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 

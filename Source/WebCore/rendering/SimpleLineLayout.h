@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderStyleConstants.h"
 #include "SimpleLineLayoutCoverage.h"
 #include "TextFlags.h"
 #include <wtf/RefCounted.h>

@@ -1,3 +1,17 @@
+2020-09-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early September 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=216599
+
+        Unreviewed build fix.
+
+        Largely based on a patch by Lauro Moura <lmoura@igalia.com>
+
+        * runtime/IntlCache.cpp: Add missing wtf/Vector.h include.
+        * runtime/IntlCache.h: Add missing wtf/text/CString.h include.
+        * runtime/IntlNumberFormatPrototype.cpp: Replace IntlNumberFormat.h
+        include with IntlNumberFormatInlines.h to fix linking.
+
 2020-09-15  Saam Barati  <sbarati@apple.com>
 
         JSImmutableButterfly::get needs to return jsDoubleNumber for double arrays

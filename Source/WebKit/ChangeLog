@@ -1,3 +1,24 @@
+2020-09-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early September 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=216599
+
+        Unreviewed build fix.
+
+        Largely based on a patch by Lauro Moura <lmoura@igalia.com>
+
+        * GPUProcess/media/RemoteCDMProxy.cpp: Add missing WebCore/SharedBuffer.h include.
+        * GPUProcess/media/RemoteMediaResourceLoader.cpp: Add missing WebCore/ResourceError.h
+        include.
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp: Add missing DataReference.h include.
+        * UIProcess/gtk/WebDataListSuggestionsDropdownGtk.cpp:
+        (WebKit::WebDataListSuggestionsDropdownGtk::show): Add missing namespace to
+        WebCore::monitorWorkArea() call.
+        * WebProcess/Network/WebSocketChannelManager.cpp: Add missing
+        WebCore/WebSocketIdentifier.h include.
+        (WebKit::WebSocketChannelManager::didReceiveMessage): Add missing namespace to
+        WebCore::WebSocketIdentifierType usage.
+
 2020-09-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r266677): ASSERTION FAILED in PaintFrequencyTracker::end()

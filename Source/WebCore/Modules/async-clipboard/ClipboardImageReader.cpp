@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ClipboardImageReader.h"
 
+#include "Document.h"
 #include "NotImplemented.h"
 
 namespace WebCore {

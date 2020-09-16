@@ -30,58 +30,10 @@
 #include "config.h"
 #include "CSSSelectorParser.h"
 
-#include "CSSParserContext.h"
-#include "CSSParserSelector.h"
-#include "CSSParserTokenRange.h"
-#include "CSSSelectorList.h"
-#include "StyleSheetContents.h"
 #include <memory>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
-
-class CSSSelectorParser {
-public:
-    CSSSelectorParser(const CSSParserContext&, StyleSheetContents*);
-
-    CSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
-
-    static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&);
-
-private:
-    CSSSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
-
-    std::unique_ptr<CSSParserSelector> consumeComplexSelector(CSSParserTokenRange&);
-    std::unique_ptr<CSSParserSelector> consumeCompoundSelector(CSSParserTokenRange&);
-
-    // This doesn't include element names, since they're handled specially.
-    std::unique_ptr<CSSParserSelector> consumeSimpleSelector(CSSParserTokenRange&);
-
-    bool consumeName(CSSParserTokenRange&, AtomString& name, AtomString& namespacePrefix);
-
-    // These will return nullptr when the selector is invalid.
-    std::unique_ptr<CSSParserSelector> consumeId(CSSParserTokenRange&);
-    std::unique_ptr<CSSParserSelector> consumeClass(CSSParserTokenRange&);
-    std::unique_ptr<CSSParserSelector> consumePseudo(CSSParserTokenRange&);
-    std::unique_ptr<CSSParserSelector> consumeAttribute(CSSParserTokenRange&);
-
-    CSSSelector::RelationType consumeCombinator(CSSParserTokenRange&);
-    CSSSelector::Match consumeAttributeMatch(CSSParserTokenRange&);
-    CSSSelector::AttributeMatchType consumeAttributeFlags(CSSParserTokenRange&);
-
-    const AtomString& defaultNamespace() const;
-    const AtomString& determineNamespace(const AtomString& prefix);
-    void prependTypeSelectorIfNeeded(const AtomString& namespacePrefix, const AtomString& elementName, CSSParserSelector&);
-    static std::unique_ptr<CSSParserSelector> splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSParserContext&);
-    static bool containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector);
-
-    class DisallowPseudoElementsScope;
-
-    const CSSParserContext& m_context;
-    const RefPtr<StyleSheetContents> m_styleSheet;
-    bool m_failedParsing { false };
-    bool m_disallowPseudoElements { false };
-};
 
 class CSSSelectorParser::DisallowPseudoElementsScope {
 public:

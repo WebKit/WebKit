@@ -33,6 +33,7 @@
 #include "RemoteCDMInstanceProxy.h"
 #include <WebCore/CDMKeySystemConfiguration.h>
 #include <WebCore/CDMPrivate.h>
+#include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 

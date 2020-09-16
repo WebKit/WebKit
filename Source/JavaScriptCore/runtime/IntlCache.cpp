@@ -26,6 +26,8 @@
 #include "config.h"
 #include "IntlCache.h"
 
+#include <wtf/Vector.h>
+
 namespace JSC {
 
 UDateTimePatternGenerator* IntlCache::cacheSharedPatternGenerator(const CString& locale, UErrorCode& status)

@@ -31,6 +31,7 @@
 #include "ExtensionsGL.h"
 #include "RuntimeEnabledFeatures.h"
 #include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

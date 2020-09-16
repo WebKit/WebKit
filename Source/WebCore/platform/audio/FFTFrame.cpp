@@ -33,6 +33,7 @@
 #include "FFTFrame.h"
 
 #include "Logging.h"
+#include "VectorMath.h"
 #include <complex>
 #include <wtf/MathExtras.h>
 

@@ -1,3 +1,39 @@
+2020-09-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early September 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=216599
+
+        Unreviewed build fix.
+
+        Largely based on a patch by Lauro Moura <lmoura@igalia.com>
+
+        * Modules/async-clipboard/ClipboardImageReader.cpp: Add missing Document.h include.
+        * Modules/async-clipboard/ClipboardImageReader.h: Add missing forward declaration
+        for Document.
+        * Modules/fetch/FetchBodyConsumer.cpp: Add missing includes for DOMFormData.h,
+        HTTPParsers.h, and JSDOMFormData.h.
+        * css/parser/CSSSelectorParser.cpp: Move CSSSelectorParser declaration to header.
+        * css/parser/CSSSelectorParser.h: Ditto.
+        * css/parser/CSSSupportsParser.cpp: Add missing CSSSelectorParser.h include.
+        * dom/DataTransferItemList.cpp: Add missing includes for ContextDestructionObserver.h
+        and Document.h.
+        * html/HTMLMetaElement.cpp: Add missing includes for Settings.h and
+        wtf/IsoMallocInlines.h.
+        * html/canvas/EXTBlendMinMax.cpp: Add missing wtf/IsoMallocInlines.h include.
+        * html/canvas/EXTColorBufferFloat.cpp: Ditto.
+        * html/canvas/OESElementIndexUint.cpp: Ditto.
+        * html/canvas/WebGLCompressedTextureASTC.cpp: Ditto.
+        * html/canvas/WebGLCompressedTextureATC.cpp: Ditto.
+        * html/canvas/WebGLCompressedTextureETC.cpp: Ditto.
+        * inspector/InspectorFrontendHost.cpp: Add missing Settings.h include.
+        * layout/display/DisplayLayerController.cpp: Add missing LayoutState.h include.
+        * layout/displaytree/DisplayPainter.h: Add missing LayoutBox.h include.
+        * layout/inlineformatting/InlineLineBox.cpp: Add missing InlineFormattingContext.h
+        include.
+        * platform/audio/FFTFrame.cpp: Add missing VectorMath.h include.
+        * platform/audio/SincResampler.h: Add missing wtf/Optional.h include.
+        * rendering/SimpleLineLayout.h: Add missing RenderStyleConstants.h include.
+
 2020-09-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][FFC] Create a Layout::ContainerBox for flex container

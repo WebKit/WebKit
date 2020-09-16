@@ -26,7 +26,9 @@
 #include "config.h"
 #include "DataTransferItemList.h"
 
+#include "ContextDestructionObserver.h"
 #include "DataTransferItem.h"
+#include "Document.h"
 #include "FileList.h"
 #include "Pasteboard.h"
 #include "RuntimeEnabledFeatures.h"

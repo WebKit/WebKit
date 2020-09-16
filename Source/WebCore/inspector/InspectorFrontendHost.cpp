@@ -55,6 +55,7 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "ScriptState.h"
+#include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/ScriptFunctionCall.h>
 #include <pal/system/Sound.h>

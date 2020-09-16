@@ -29,8 +29,11 @@
 #include "config.h"
 #include "FetchBodyConsumer.h"
 
+#include "DOMFormData.h"
 #include "HTTPHeaderField.h"
+#include "HTTPParsers.h"
 #include "JSBlob.h"
+#include "JSDOMFormData.h"
 #include "ReadableStreamChunk.h"
 #include "TextResourceDecoder.h"
 #include <wtf/StringExtras.h>

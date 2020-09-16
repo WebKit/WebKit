@@ -27,6 +27,7 @@
 
 #include <unicode/udatpg.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/CString.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {

@@ -36,6 +36,7 @@
 #include "FrameView.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
+#include "LayoutState.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Settings.h"

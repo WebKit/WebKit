@@ -26,6 +26,8 @@
 #include "config.h"
 #include "InlineLineBox.h"
 
+#include "InlineFormattingContext.h"
+
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 namespace WebCore {

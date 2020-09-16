@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "LibWebRTCSocketClient.h"
 #include "Logging.h"

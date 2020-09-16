@@ -29,6 +29,7 @@
 #include "EXTColorBufferFloat.h"
 
 #include "ExtensionsGL.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

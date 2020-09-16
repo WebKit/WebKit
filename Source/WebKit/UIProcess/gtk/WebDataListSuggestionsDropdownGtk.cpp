@@ -165,7 +165,7 @@ void WebDataListSuggestionsDropdownGtk::show(WebCore::DataListSuggestionInformat
     auto* monitor = gdk_display_get_monitor_at_window(display, gtk_widget_get_window(m_webView));
 #endif
     GdkRectangle area;
-    monitorWorkArea(monitor, &area);
+    WebCore::monitorWorkArea(monitor, &area);
     int width = std::min(information.elementRect.width(), area.width);
     size_t itemCount = std::min<size_t>(information.suggestions.size(), (area.height / 3) / itemHeight);
 
