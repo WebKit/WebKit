@@ -366,6 +366,12 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+void MediaSessionManagerCocoa::audioOutputDeviceChanged()
+{
+    AudioSession::sharedSession().audioOutputDeviceChanged();
+    updateSessionState();
+}
+
 } // namespace WebCore
 
 #endif // USE(AUDIO_SESSION) && PLATFORM(COCOA)

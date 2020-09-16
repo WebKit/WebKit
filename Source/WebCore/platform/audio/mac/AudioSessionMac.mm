@@ -54,6 +54,28 @@ static AudioDeviceID defaultDevice()
     return deviceID;
 }
 
+#if ENABLE(ROUTING_ARBITRATION)
+static Optional<bool> isPlayingToBluetoothOverride;
+
+static float defaultDeviceTransportIsBluetooth()
+{
+    if (isPlayingToBluetoothOverride)
+        return *isPlayingToBluetoothOverride;
+
+    static const AudioObjectPropertyAddress audioDeviceTransportTypeProperty = {
+        kAudioDevicePropertyTransportType,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster,
+    };
+    UInt32 transportType = kAudioDeviceTransportTypeUnknown;
+    UInt32 transportSize = sizeof(transportType);
+    if (AudioObjectGetPropertyData(defaultDevice(), &audioDeviceTransportTypeProperty, 0, 0, &transportSize, &transportType))
+        return false;
+
+    return transportType == kAudioDeviceTransportTypeBluetooth || transportType == kAudioDeviceTransportTypeBluetoothLE;
+}
+#endif
+
 class AudioSessionPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -62,6 +84,8 @@ public:
     AudioSession::CategoryType category { AudioSession::None };
 #if ENABLE(ROUTING_ARBITRATION)
     bool setupArbitrationOngoing { false };
+    Optional<bool> playingToBluetooth;
+    Optional<bool> playingToBluetoothOverride;
 #endif
     AudioSession::CategoryType m_categoryOverride;
     bool inRoutingArbitration { false };
@@ -79,11 +103,32 @@ AudioSession::CategoryType AudioSession::category() const
     return m_private->category;
 }
 
+void AudioSession::audioOutputDeviceChanged()
+{
+#if ENABLE(ROUTING_ARBITRATION)
+    if (!m_private->playingToBluetooth || *m_private->playingToBluetooth == defaultDeviceTransportIsBluetooth())
+        return;
+
+    m_private->playingToBluetooth = WTF::nullopt;
+#endif
+}
+
+void AudioSession::setIsPlayingToBluetoothOverride(Optional<bool> value)
+{
+#if ENABLE(ROUTING_ARBITRATION)
+    isPlayingToBluetoothOverride = value;
+#else
+    UNUSED_PARAM(value);
+#endif
+}
+
 void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
 {
 #if ENABLE(ROUTING_ARBITRATION)
-    if (category == m_private->category)
+    bool playingToBluetooth = defaultDeviceTransportIsBluetooth();
+    if (category == m_private->category && m_private->playingToBluetooth && *m_private->playingToBluetooth == playingToBluetooth)
         return;
+
     m_private->category = category;
 
     if (m_private->setupArbitrationOngoing) {
@@ -105,6 +150,7 @@ void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
     using RoutingArbitrationError = AudioSessionRoutingArbitrationClient::RoutingArbitrationError;
     using DefaultRouteChanged = AudioSessionRoutingArbitrationClient::DefaultRouteChanged;
 
+    m_private->playingToBluetooth = playingToBluetooth;
     m_private->setupArbitrationOngoing = true;
     m_routingArbitrationClient->beginRoutingArbitrationWithCategory(m_private->category, [this] (RoutingArbitrationError error, DefaultRouteChanged defaultRouteChanged) {
         m_private->setupArbitrationOngoing = false;
