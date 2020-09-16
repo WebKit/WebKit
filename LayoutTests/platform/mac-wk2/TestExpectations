@@ -1324,3 +1324,6 @@ webkit.org/b/216394 [ Release ] fast/selectors/text-field-selection-stroke-color
 
 # rdar://68947260 (REGRESSION (r266634): [ BigSur wk2 ] fast/selectors/text-field-selection-window-inactive-stroke-color.html is a flaky image failure)
 fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
+
+#<rdar://68952824> [ macOS iOS wk2 ] media/media-continues-playing-after-replace-source.html is a flaky failure
+[ BigSur+ ] media/media-continues-playing-after-replace-source.html [ Pass Failure ]
