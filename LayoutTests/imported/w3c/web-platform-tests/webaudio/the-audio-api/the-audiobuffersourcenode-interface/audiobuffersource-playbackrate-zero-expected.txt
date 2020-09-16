@@ -7,20 +7,8 @@ PASS > [synthesize-verify]
 PASS   The zero playbackRate held the sample value correctly 
 PASS < [synthesize-verify] All assertions passed. (total 1 assertions) 
 PASS > [subsample start with playback rate 0]  
-FAIL X output[0:27]: Expected 0 for all values but found 28 unexpected values: 
-	Index	Actual
-	[0]	5
-	[1]	5
-	[2]	5
-	[3]	5
-	...and 24 more errors. assert_true: expected true got false
-FAIL X output[28:]: Expected 5 for all values but found 28 unexpected values: 
-	Index	Actual
-	[72]	0
-	[73]	0
-	[74]	0
-	[75]	0
-	...and 24 more errors. assert_true: expected true got false
-FAIL < [subsample start with playback rate 0] 2 out of 2 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
+PASS   output[0:27] contains only the constant 0. 
+PASS   output[28:] contains only the constant 5. 
+PASS < [subsample start with playback rate 0] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

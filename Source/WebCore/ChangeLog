@@ -1,5 +1,23 @@
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
+        AudioBufferSourceNode.start() ignores 'when' parameter when pitch rate is 0
+        https://bugs.webkit.org/show_bug.cgi?id=216623
+
+        Reviewed by Eric Carlson.
+
+        AudioBufferSourceNode::renderFromBuffer() has special logic when pitch rate is 0 since
+        the output value is constant. However, that logic was wrongly always writing to the
+        begining of the destination buffer, ignoring the computed writeIndex. As a result,
+        instead of having silence at the beginning of the destination buffer, we would have
+        it at the end.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
         AudioBufferSourceNode.start() behavior is incorrect when offset is past the end of the buffer
         https://bugs.webkit.org/show_bug.cgi?id=216622
 

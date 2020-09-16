@@ -325,7 +325,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
 
         for (unsigned i = 0; i < numberOfChannels; ++i)
-            std::fill_n(destinationChannels[i], framesToProcess, sourceChannels[i][readIndex]);
+            std::fill_n(destinationChannels[i] + writeIndex, framesToProcess, sourceChannels[i][readIndex]);
     } else if (reverse) {
         unsigned maxFrame = static_cast<unsigned>(virtualMaxFrame);
         unsigned minFrame = static_cast<unsigned>(floorf(virtualMinFrame));

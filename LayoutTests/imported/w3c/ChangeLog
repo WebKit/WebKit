@@ -1,5 +1,16 @@
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
+        AudioBufferSourceNode.start() ignores 'when' parameter when pitch rate is 0
+        https://bugs.webkit.org/show_bug.cgi?id=216623
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-zero-expected.txt:
+
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
         AudioBufferSourceNode.start() behavior is incorrect when offset is past the end of the buffer
         https://bugs.webkit.org/show_bug.cgi?id=216622
 
