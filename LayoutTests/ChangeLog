@@ -7,6 +7,15 @@
 
         * platform/mac-wk2/TestExpectations:
 
+2020-09-15  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: [ BigSur wk2 rosetta ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html is a flaky failure
+        rdar://68957822
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectationsRosetta:
+
 2020-09-15  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html: Correction for test expectations

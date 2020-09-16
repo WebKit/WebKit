@@ -29,3 +29,6 @@
 
 # webkit.org/b/207150 [ BigSur+ wk2 ]
 [ BigSur+ ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure ]
+
+# rdar://68957822 (REGRESSION: [ GoldenGate wk2 rosetta ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html is a flaky failure)
+[ BigSur+ ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html  [ Pass Failure ]
