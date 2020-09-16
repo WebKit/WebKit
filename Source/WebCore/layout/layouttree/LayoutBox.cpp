@@ -95,10 +95,10 @@ bool Box::establishesBlockFormattingContext() const
         return style().display() == DisplayType::Block;
     }
 
-    if (isBlockContainer() && !isBlockLevelBox())
+    if (isBlockContainer() && !isBlockBox())
         return true;
 
-    if (isBlockLevelBox() && !isOverflowVisible())
+    if (isBlockBox() && !isOverflowVisible())
         return true;
 
     return false;

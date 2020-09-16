@@ -1,3 +1,15 @@
+2020-09-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Use isBlockBox() in Box::establishesBlockFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=216595
+
+        Reviewed by Simon Fraser.
+
+        Let's use the Box::isBlockBox() function (now that we have it) to check if a box establishes a new BFC (this matches spec language now).
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::establishesBlockFormattingContext const):
+
 2020-09-15  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date pickers should respect the document's color scheme
