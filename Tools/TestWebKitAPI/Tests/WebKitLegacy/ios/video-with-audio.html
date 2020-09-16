@@ -2,8 +2,6 @@
 <html>
 <head>
     <script>
-    var timeout;
-
     function go() {
         var video = document.getElementsByTagName('video')[0];
         video.play().then(playing).catch(notPlaying);
@@ -27,6 +25,16 @@
         try {
             window.webkit.messageHandlers.testHandler.postMessage('not playing');
         } catch(e) { }
+    }
+
+    function pause() {
+        let video = document.getElementsByTagName('video')[0];
+        video.addEventListener("pause", paused, { once: true });
+        video.pause();
+    }
+
+    function play() {
+        go();
     }
 
     document.addEventListener('pageshow', go);

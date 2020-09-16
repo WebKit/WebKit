@@ -178,6 +178,7 @@ void AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory(Web
 {
     m_category = category;
     m_arbitrationStatus = ArbitrationStatus::Pending;
+    m_arbitrationUpdateTime = WallTime::now();
     SharedArbitrator::sharedInstance().beginRoutingArbitrationForArbitrator(*this, [weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
         if (weakThis)
             weakThis->m_arbitrationStatus = error == RoutingArbitrationError::None ? ArbitrationStatus::Active : ArbitrationStatus::None;

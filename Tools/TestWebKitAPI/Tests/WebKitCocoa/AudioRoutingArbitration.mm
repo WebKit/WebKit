@@ -33,6 +33,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <wtf/WallTime.h>
 
 class AudioRoutingArbitration : public testing::Test {
 public:
@@ -41,6 +42,8 @@ public:
     void SetUp() final
     {
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+        configuration.get().processPool = (WKProcessPool *)context.get();
         configuration.get()._mediaDataLoadsAutomatically = YES;
         configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
         webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
@@ -56,7 +59,7 @@ public:
         [webView _close];
     }
 
-    void statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatus status)
+    void statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatus status, const char* message)
     {
         int tries = 0;
         do {
@@ -66,54 +69,86 @@ public:
             TestWebKitAPI::Util::sleep(0.1);
         } while (++tries <= 100);
 
-        EXPECT_EQ(status, [webView _audioRoutingArbitrationStatus]);
+        EXPECT_EQ(status, [webView _audioRoutingArbitrationStatus]) << message;
     }
 };
 
 TEST_F(AudioRoutingArbitration, Basic)
 {
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Basic");
 }
 
 TEST_F(AudioRoutingArbitration, Mute)
 {
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Mute 1");
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').muted = true"];
 
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone, "Mute 2");
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').muted = false"];
 
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Mute 3");
 }
 
 TEST_F(AudioRoutingArbitration, Navigation)
 {
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Navigation 1");
 
     [webView synchronouslyLoadHTMLString:@"<html>no contents</html>"];
 
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone, "Navigation 2");
 }
 
 TEST_F(AudioRoutingArbitration, Deletion)
 {
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Deletion 1");
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').parentNode.innerHTML = ''"];
 
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone, "Deletion 2");
 }
 
 TEST_F(AudioRoutingArbitration, Close)
 {
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Close 1");
 
     [webView _close];
 
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone);
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone, "Close 2");
 }
 
+TEST_F(AudioRoutingArbitration, Updating)
+{
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Updating 1");
+
+    [webView evaluateJavaScript:@"document.querySelector('video').pause()" completionHandler:nil];
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Updating 2");
+
+    auto start = WallTime::now().secondsSinceEpoch().seconds();
+    auto arbitrationUpdateTime = [webView _audioRoutingArbitrationUpdateTime];
+    ASSERT_TRUE(arbitrationUpdateTime < start);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
+    EXPECT_EQ(arbitrationUpdateTime, [webView _audioRoutingArbitrationUpdateTime]) << "Arbitration was unexpectedly updated";
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusActive, "Updating 3");
+
+    [webView evaluateJavaScript:@"document.querySelector('video').pause()" completionHandler:nil];
+    [webView stringByEvaluatingJavaScript:@"window.internals.setIsPlayingToBluetoothOverride(true)"];
+
+    [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
+
+    int tries = 0;
+    do {
+        if ([webView _audioRoutingArbitrationUpdateTime] > arbitrationUpdateTime)
+            break;
+
+        TestWebKitAPI::Util::sleep(0.1);
+    } while (++tries <= 100);
+
+    EXPECT_LT(arbitrationUpdateTime, [webView _audioRoutingArbitrationUpdateTime]) << "Arbitration was not updated";
+
+    [webView stringByEvaluatingJavaScript:@"window.internals.setIsPlayingToBluetoothOverride()"];
+}
 
 #endif
