@@ -5,7 +5,7 @@ PASS Audit report
 PASS > [test] Test setTargetAtTime with start time in the past 
 PASS   Test[0:127] contains only the constant 1. 
 PASS   Reference[0:127] contains only the constant 1. 
-PASS   Test[128:] is identical to the array [1,0.9994508624076843,0.9989020228385925,0.9983535408973694,0.9978054165840149,0.9972575902938843,0.9967101216316223,0.9961629509925842,0.9956161379814148,0.995069682598114,0.9945235252380371,0.9939777255058289,0.9934322237968445,0.9928870797157288,0.9923422932624817,0.9917978048324585...]. 
+PASS   Test[128:] is identical to the array [expected array]. 
 PASS < [test] All assertions passed. (total 3 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

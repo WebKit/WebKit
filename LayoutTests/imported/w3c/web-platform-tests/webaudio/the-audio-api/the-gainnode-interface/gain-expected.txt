@@ -6,8 +6,8 @@ PASS Audit report
 PASS > [create context] Create context for test 
 PASS < [create context] All assertions passed. (total 0 assertions) 
 PASS > [test] GainNode functionality 
-PASS   Left output from gain node equals [0,0.16793829202651978,0.3311063051223755,0.48486924171447754,0.6248595118522644,0.7471005916595459,0.8481203317642212,0.9250492453575134,0.9757021069526672,0.998640239238739,0.9932119250297546,0.9595715403556824,0.898674488067627,0.8122506141662598,0.7027547359466553,0.5732971429824829...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1877e-7}. 
-PASS   Right output from gain node equals [0,0.16793829202651978,0.3311063051223755,0.48486924171447754,0.6248595118522644,0.7471005916595459,0.8481203317642212,0.9250492453575134,0.9757021069526672,0.998640239238739,0.9932119250297546,0.9595715403556824,0.898674488067627,0.8122506141662598,0.7027547359466553,0.5732971429824829...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1877e-7}. 
+PASS   Left output from gain node equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1877e-7}. 
+PASS   Right output from gain node equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1877e-7}. 
 PASS   Left SNR (in dB) is greater than or equal to 148.71. 
 PASS   Right SNR (in dB) is greater than or equal to 148.71. 
 PASS < [test] All assertions passed. (total 4 assertions) 

@@ -8,21 +8,21 @@ PASS Audit report
 PASS > [frequency] Test Oscillator frequency has no dezippering 
 PASS   Oscillator period in frames (128) is an integer is true. 
 PASS   Oscillator period in frames (128) is a multiple of 128 is true. 
-PASS   Part 0 (sine wave at 128 Hz) equals [0,0.049067676067352295,0.0980171412229538,0.1467304676771164,0.19509032368659973,0.24298018217086792,0.290284663438797,0.3368898630142212,0.3826834261417389,0.4275550842285156,0.4713967442512512,0.5141027569770813,0.5555702447891235,0.5956993103027344,0.6343932747840881,0.6715589761734009...] with an element-wise tolerance of {"absoluteThreshold":1.1921e-7,"relativeThreshold":0}. 
-PASS   Part 1 (sine wave at 440 Hz) equals [0,0.16793829202651978,0.3311063051223755,0.48486924171447754,0.6248595118522644,0.7471005916595459,0.8481203317642212,0.9250492453575134,0.9757021069526672,0.998640239238739,0.9932119250297546,0.9595715403556824,0.898674488067627,0.8122506141662598,0.7027547359466553,0.5732971429824829...] with an element-wise tolerance of {"absoluteThreshold":1.7882e-7,"relativeThreshold":0}. 
+PASS   Part 0 (sine wave at 128 Hz) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.1921e-7,"relativeThreshold":0}. 
+PASS   Part 1 (sine wave at 440 Hz) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.7882e-7,"relativeThreshold":0}. 
 PASS < [frequency] All assertions passed. (total 4 assertions) 
 PASS > [detune] Test Oscillator detune has no dezippering 
 PASS   Oscillator period in frames (256) is an integer is true. 
 PASS   Oscillator period in frames (256) is a multiple of 128 is true. 
-PASS   Part 0 (sine wave at 64 Hz) equals [0,0.024541229009628296,0.049067676067352295,0.0735645666718483,0.0980171412229538,0.12241067737340927,0.1467304676771164,0.1709618866443634,0.19509032368659973,0.21910123527050018,0.24298018217086792,0.2667127549648285,0.290284663438797,0.3136817514896393,0.3368898630142212,0.3598950505256653...] with an element-wise tolerance of {"absoluteThreshold":1.1921e-7,"relativeThreshold":0}. 
-PASS   Part 1 (sine wave at 90.5096664428711 Hz) equals [0,0.034703053534030914,0.06936430186033249,0.10394198447465897,0.13839446008205414,0.17268021404743195,0.20675794780254364,0.24058659374713898,0.27412542700767517,0.3073340356349945,0.3401724100112915,0.3726009726524353,0.404580682516098,0.4360730051994324,0.4670400321483612,0.49744442105293274...] with an element-wise tolerance of {"absoluteThreshold":0.0000036657,"relativeThreshold":0}. 
+PASS   Part 0 (sine wave at 64 Hz) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.1921e-7,"relativeThreshold":0}. 
+PASS   Part 1 (sine wave at 90.5096664428711 Hz) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000036657,"relativeThreshold":0}. 
 PASS < [detune] All assertions passed. (total 4 assertions) 
 PASS > [setValueAtTime] Test Oscillator value setter against setValueAtTime 
-PASS   Output from .value setter is identical to the array [0,0.03834006190299988,0.07662391662597656,0.1147947758436203,0.1527971774339676,0.1905745416879654,0.22807209193706512,0.26523369550704956,0.30200591683387756,0.3383333683013916,0.3741641342639923,0.40944361686706543,0.4441220462322235,0.478146493434906,0.5114689469337463,0.5440378189086914...]. 
+PASS   Output from .value setter is identical to the array [expected array]. 
 PASS   Output from .value setter matches setValueAtTime output is true. 
 PASS < [setValueAtTime] All assertions passed. (total 2 assertions) 
 PASS > [modulation] Test Oscillator value setter against setValueAtTime with modulation 
-PASS   With modulation: Output from .value setter is identical to the array [0,0.3741641342639923,0.7690301537513733,0.9967087507247925,0.809208869934082,0.19033576548099518,-0.5062388777732849,-0.9185906052589417,-0.9939113259315491,-0.8710334300994873,-0.6783736348152161,-0.47712284326553345,-0.28314170241355896,-0.09241572767496109,0.10596371442079544,0.32369282841682434...]. 
+PASS   With modulation: Output from .value setter is identical to the array [expected array]. 
 PASS   With modulation: Output from .value setter matches setValueAtTime output is true. 
 PASS < [modulation] All assertions passed. (total 2 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 

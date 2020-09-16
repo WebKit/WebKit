@@ -5,7 +5,7 @@ PASS Audit report
 PASS > [test] Test exponentialRampToValue with end time in the past 
 PASS   Test[0:127] contains only the constant 1. 
 PASS   Reference[0:127] contains only the constant 1. 
-PASS   Test[128:] is identical to the array [0.10000000149011612,0.10001351684331894,0.10002703964710236,0.10004056245088577,0.10005408525466919,0.1000676080584526,0.10008113831281662,0.10009466856718063,0.10010819882154465,0.10012172907590866,0.10013526678085327,0.10014880448579788,0.10016234219074249,0.1001758798956871,0.10018942505121231,0.10020297020673752...]. 
+PASS   Test[128:] is identical to the array [expected array]. 
 PASS < [test] All assertions passed. (total 3 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

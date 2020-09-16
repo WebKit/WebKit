@@ -8,8 +8,8 @@ PASS   DelayNode: k-rate node: delayTime.setValueAtTime(0,0) did not throw an ex
 PASS   DelayNode: k-rate node: delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception. 
 PASS   DelayNode: a-rate node:delayTime.setValueAtTime(0,0) did not throw an exception. 
 PASS   DelayNode: a-rate node:delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception. 
-PASS   DelayNode: Output of k-rate DelayNode is identical to the array [0,0.3387375771999359,0.6374233961105347,0.8607417941093445,0.9822861552238464,0.9876875877380371,0.8763060569763184,0.6613110303878784,0.36812421679496765,0.03141055256128311,-0.30901673436164856,-0.6129070520401001,-0.8443272113800049,-0.975915789604187,-0.9921145439147949,-0.8910053968429565...]. 
-PASS   DelayNode: Output of a-rate DelayNode is identical to the array [0,0.16936877369880676,0.3387375473976135,0.4880804717540741,0.6374233961105347,0.749082624912262,0.8607417941093445,0.9215139746665955,0.9822861552238464,0.9849869012832642,0.9876875877380371,0.9319968223571777,0.8763060569763184,0.7688085436820984,0.6613110899925232,0.5147175788879395...]. 
+PASS   DelayNode: Output of k-rate DelayNode is identical to the array [expected array]. 
+PASS   DelayNode: Output of a-rate DelayNode is identical to the array [expected array]. 
 PASS   DelayNode: Difference between a-rate and k-rate DelayNode is not constantly 0 (contains 7937 different values). 
 PASS < [Test k-rate DelayNode] All assertions passed. (total 8 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 

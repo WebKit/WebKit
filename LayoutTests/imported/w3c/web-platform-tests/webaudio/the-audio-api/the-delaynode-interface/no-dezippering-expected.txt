@@ -10,11 +10,11 @@ PASS   output[64:127] is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,1
 PASS   output[128:] is identical to the array [113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128...]. 
 PASS < [test0] All assertions passed. (total 3 assertions) 
 PASS > [test1] Test value setter and setValueAtTime 
-PASS   .value setter output equals [0,0,0,0,0.15114451944828033,0.3147895038127899,0.46949297189712524,0.6108604669570923,0.7348763346672058,0.8380182981491089,0.9173562526702881,0.970636785030365,0.9963464140892029,0.9937548637390137,0.9629355669021606,0.9047641754150391...] with an element-wise tolerance of {"absoluteThreshold":0.000065819,"relativeThreshold":0}. 
+PASS   .value setter output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000065819,"relativeThreshold":0}. 
 PASS   .value setter output matches setValueAtTime output is true. 
 PASS < [test1] All assertions passed. (total 2 assertions) 
 PASS > [test2] Test value setter and modulation 
-PASS   With modulation: .value setter output equals [0,0,0,0,0,0,0,0,0,0.998640239238739,0.9932120442390442,0.9595715403556824,0.898674488067627,0.8122506141662598,0.7027547359466553,0.5732971429824829...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   With modulation: .value setter output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   With modulation: .value setter output matches setValueAtTime output is true. 
 PASS < [test2] All assertions passed. (total 2 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 

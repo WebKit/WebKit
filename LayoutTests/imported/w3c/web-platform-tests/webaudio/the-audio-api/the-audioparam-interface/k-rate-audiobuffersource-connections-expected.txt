@@ -14,7 +14,7 @@ PASS   playbackRate: mod.offset.linearRampToValueAtTime(1, 0.25) did not throw a
 PASS   playbackRate: mod.connect(tstNode[playbackRate]) did not throw an exception. 
 PASS   Expected k-rate playbackRate AudioParam with input is not constantly 0 (contains 1491 different values). 
 PASS   Actual k-rate playbackRate AudioParam with input is not constantly 0 (contains 1491 different values). 
-PASS   k-rate playbackRate AudioParam with input equals [0,0.0005000000237487257,0.0010000000474974513,0.001500000013038516,0.0020000000949949026,0.0024999999441206455,0.003000000026077032,0.0035000001080334187,0.004000000189989805,0.0044999998062849045,0.004999999888241291,0.005499999970197678,0.006000000052154064,0.006500000134110451,0.007000000216066837,0.007499999832361937...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate playbackRate AudioParam with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [playbackRate] All assertions passed. (total 11 assertions) 
 PASS > [detune] AudioBufferSource detune 
 PASS   detune: refNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception. 
@@ -27,7 +27,7 @@ PASS   detune: mod.offset.linearRampToValueAtTime(1200, 0.25) did not throw an e
 PASS   detune: mod.connect(tstNode[detune]) did not throw an exception. 
 PASS   Expected k-rate detune AudioParam with input is not constantly 0 (contains 1961 different values). 
 PASS   Actual k-rate detune AudioParam with input is not constantly 0 (contains 1961 different values). 
-PASS   k-rate detune AudioParam with input equals [0,0.0002500000118743628,0.0005000000237487257,0.000750000006519258,0.0010000000474974513,0.0012499999720603228,0.001500000013038516,0.0017500000540167093,0.0020000000949949026,0.0022499999031424522,0.0024999999441206455,0.002749999985098839,0.003000000026077032,0.0032500000670552254,0.0035000001080334187,0.003750000149011612...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate detune AudioParam with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [detune] All assertions passed. (total 11 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

@@ -8,12 +8,12 @@ PASS   Creating context for testing did not throw an exception.
 PASS   Fetching expected audio resolved correctly. 
 PASS < [initialize] All assertions passed. (total 2 assertions) 
 PASS > [test] AudioBufferSource with 5.1 buffer 
-PASS   Rendered audio for channel 0 equals [0,0.0626220703125,0.125030517578125,0.18695068359375,0.24810791015625,0.308319091796875,0.3673095703125,0.42486572265625,0.480743408203125,0.53472900390625,0.58660888671875,0.636199951171875,0.68328857421875,0.727691650390625,0.76922607421875,0.8077392578125...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 1 equals [0,0.125030517578125,0.24810791015625,0.3673095703125,0.480743408203125,0.58660888671875,0.68328857421875,0.76922607421875,0.84307861328125,0.903717041015625,0.950164794921875,0.981689453125,0.997802734375,0.99822998046875,0.983001708984375,0.952362060546875...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 2 equals [0,0.18695068359375,0.3673095703125,0.53472900390625,0.68328857421875,0.8077392578125,0.903717041015625,0.96783447265625,0.997802734375,0.992584228515625,0.952362060546875,0.8785400390625,0.77374267578125,0.641693115234375,0.486968994140625,0.315093994140625...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 3 equals [0,0.24810791015625,0.480743408203125,0.68328857421875,0.84307861328125,0.950164794921875,0.997802734375,0.983001708984375,0.90673828125,0.77374267578125,0.592376708984375,0.373931884765625,0.132110595703125,-0.11798095703125,-0.3607177734375,-0.58087158203125...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 4 equals [0,0.308319091796875,0.58660888671875,0.8077392578125,0.950164794921875,0.999969482421875,0.952362060546875,0.811920166015625,0.592376708984375,0.315093994140625,0.007110595703125,-0.30157470703125,-0.58087158203125,-0.803558349609375,-0.94793701171875,-0.999969482421875...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 5 equals [0,0.3673095703125,0.68328857421875,0.903717041015625,0.997802734375,0.952362060546875,0.77374267578125,0.486968994140625,0.132110595703125,-0.241241455078125,-0.58087158203125,-0.839263916015625,-0.980316162109375,-0.98431396484375,-0.8507080078125,-0.598114013671875...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
+PASS   Rendered audio for channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
+PASS   Rendered audio for channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
+PASS   Rendered audio for channel 2 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
+PASS   Rendered audio for channel 3 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
+PASS   Rendered audio for channel 4 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
+PASS   Rendered audio for channel 5 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
 PASS < [test] All assertions passed. (total 6 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

@@ -3,7 +3,7 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "440 Hz Osc" 
 PASS Audit report 
 PASS > [440 Hz Osc]  
-PASS   Test oscillator output equals [0,0.057564035058021545,0.1149371787905693,0.17192906141281128,0.22835084795951843,0.2840152382850647,0.3387378752231598,0.39233696460723877,0.4446350038051605,0.4954586327075958,0.5446387529373169,0.5920131206512451,0.6374238133430481,0.6807207465171814,0.7217600345611572,0.7604058980941772...] with an element-wise tolerance of {"absoluteThreshold":0.001564,"relativeThreshold":0}. 
+PASS   Test oscillator output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.001564,"relativeThreshold":0}. 
 PASS   SNR is greater than or equal to 59.28. 
 PASS < [440 Hz Osc] All assertions passed. (total 2 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 

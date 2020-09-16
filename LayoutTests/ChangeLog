@@ -1,3 +1,29 @@
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Update WPT test harness so that webaudio tests output results that are consistent across different machines
+        https://bugs.webkit.org/show_bug.cgi?id=216332
+
+        Reviewed by Geoffrey Garen.
+
+        Unskip tests that should now pass on all platforms.
+
+        * TestExpectations:
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback):
+        Our webaudio implementation uses single precision for floating point audio values. However, the tests were
+        printing out those values with 16 digits, even when the checks were passing. We had to skip those tests
+        because digits after the 6th one may differ across machines and we were getting TEXT diffs. To address the
+        issue we now strip arrays from PASS lines in webaudio tests output and replace them with the string
+        '[expected array]'. As long as the check is passing, the actual value in the array does not really matter.
+
+        * webaudio/Oscillator/no-dezippering-expected.txt:
+        * webaudio/Oscillator/osc-440hz-expected.txt:
+        * webaudio/Oscillator/osc-negative-freq-expected.txt:
+        * webaudio/Oscillator/start-sampling-expected.txt:
+        * webaudio/audioparam-cancel-and-hold-expected.txt:
+        * webaudio/convolvernode-unmodified-buffer-expected.txt:
+        Rebaseline tests.
+
 2020-09-16  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the isSecureContext API?

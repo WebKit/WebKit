@@ -17,7 +17,7 @@ PASS   Expected k-rate delayTime AudioParam with input is not constantly 0 (cont
 PASS   Actual k-rate delayTime AudioParam with input is not constantly 0 (contains 4656 different values). 
 PASS   output[128, 143] contains only the constant 0. 
 PASS   output[144, 255] is not constantly 0 (contains 111 different values). 
-PASS   k-rate delayTime AudioParam with input equals [0,0.3311062753200531,0.6248594522476196,0.8481202721595764,0.9757021069526672,0.9932120442390442,0.898674488067627,0.7027547359466553,0.4275550842285156,0.1041216179728508,-0.2310580611228943,-0.5401714444160461,-0.7883463501930237,-0.9475855827331543,-0.9999246597290039,-0.9394592046737671...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate delayTime AudioParam with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [delayTime] All assertions passed. (total 15 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

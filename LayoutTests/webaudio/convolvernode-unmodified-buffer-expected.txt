@@ -3,7 +3,7 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "test" 
 PASS Audit report 
 PASS > [test] Convolver buffer is unchanged 
-PASS   Convolver response after construction equals [0,0.16090205311775208,0.31761112809181213,0.46604347229003906,0.6023311018943787,0.7229224443435669,0.8246749639511108,0.9049370884895325,0.9616172313690186,0.9932383298873901,0.9989764094352722,0.9786819815635681,0.9328837394714355,0.8627753257751465,0.7701836228370667,0.6575215458869934...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   Convolver response after construction equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [test] All assertions passed. (total 1 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

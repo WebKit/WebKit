@@ -8,8 +8,8 @@ PASS   GainNode: k-rate node: gain.setValueAtTime(1,0) did not throw an exceptio
 PASS   GainNode: k-rate node: gain.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS   GainNode: a-rate node:gain.setValueAtTime(1,0) did not throw an exception. 
 PASS   GainNode: a-rate node:gain.linearRampToValueAtTime(0,1) did not throw an exception. 
-PASS   GainNode: Output of k-rate GainNode is identical to the array [0,0.3387375771999359,0.6374233961105347,0.8607417941093445,0.9822861552238464,0.9876875877380371,0.8763060569763184,0.6613110303878784,0.36812421679496765,0.03141055256128311,-0.30901673436164856,-0.6129070520401001,-0.8443272113800049,-0.975915789604187,-0.9921145439147949,-0.8910053968429565...]. 
-PASS   GainNode: Output of a-rate GainNode is identical to the array [0,0.338695228099823,0.63726407289505,0.8604190349578857,0.9817950129508972,0.9870702624320984,0.8756487965583801,0.6607323884963989,0.36775609850883484,0.0313752181828022,-0.30863046646118164,-0.6120643019676208,-0.8430607318878174,-0.974329948425293,-0.9903783798217773,-0.8893347978591919...]. 
+PASS   GainNode: Output of k-rate GainNode is identical to the array [expected array]. 
+PASS   GainNode: Output of a-rate GainNode is identical to the array [expected array]. 
 PASS   GainNode: Difference between a-rate and k-rate GainNode is not constantly 0 (contains 7937 different values). 
 PASS < [Test k-rate GainNode] All assertions passed. (total 8 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 

@@ -20,8 +20,8 @@ PASS   Panner: positionX: Channel 1 output[128, 255] contains only the constant 
 PASS   Panner: positionX: Channel 1 output[256, 383] contains only the constant 0.04127275571227074. 
 PASS   Panner: positionX: Channel 1 output[384, 511] contains only the constant 0.03552864491939545. 
 PASS   Panner: positionX: Channel 1 output[512, 639] contains only the constant 0.030223894864320755. 
-PASS   Panner: positionX: Actual output channel 0 equals [0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668,0.017871389165520668...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Panner: positionX: Actual output channel 1 equals [0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389,0.03648621588945389...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   Panner: positionX: Actual output channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   Panner: positionX: Actual output channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Panner x] All assertions passed. (total 14 assertions) 
 PASS > [Panner y] k-rate input 
 PASS   Panner: positionY: Expected output channel 0 is not constantly 0.039904240518808365 (contains 512 different values). 
@@ -36,8 +36,8 @@ PASS   Panner: positionY: Channel 1 output[128, 255] contains only the constant 
 PASS   Panner: positionY: Channel 1 output[256, 383] contains only the constant 0.042775362730026245. 
 PASS   Panner: positionY: Channel 1 output[384, 511] contains only the constant 0.031203117221593857. 
 PASS   Panner: positionY: Channel 1 output[512, 639] contains only the constant 0.0242818221449852. 
-PASS   Panner: positionY: Actual output channel 0 equals [0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Panner: positionY: Actual output channel 1 equals [0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   Panner: positionY: Actual output channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   Panner: positionY: Actual output channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Panner y] All assertions passed. (total 14 assertions) 
 PASS > [Panner z] k-rate input 
 PASS   Panner: positionZ: Expected output channel 0 is not constantly 0.014136482030153275 (contains 512 different values). 
@@ -52,8 +52,8 @@ PASS   Panner: positionZ: Channel 1 output[128, 255] contains only the constant 
 PASS   Panner: positionZ: Channel 1 output[256, 383] contains only the constant 0.031430669128894806. 
 PASS   Panner: positionZ: Channel 1 output[384, 511] contains only the constant 0.025715911760926247. 
 PASS   Panner: positionZ: Channel 1 output[512, 639] contains only the constant 0.021292630583047867. 
-PASS   Panner: positionZ: Actual output channel 0 equals [0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275,0.014136482030153275...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Panner: positionZ: Actual output channel 1 equals [0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604,0.054120492190122604...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   Panner: positionZ: Actual output channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   Panner: positionZ: Actual output channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Panner z] All assertions passed. (total 14 assertions) 
 PASS > [Listener x] k-rate input 
 PASS   Listener: positionX: Channel 0 output[0, 127] contains only the constant 0.016617124900221825. 

@@ -11,7 +11,7 @@ PASS   k-rate offset: k-rate node: offset.linearRampToValueAtTime(10,0.064) did 
 PASS   k-rate offset: a-rate node:offset.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate offset: a-rate node:offset.linearRampToValueAtTime(10,0.064) did not throw an exception. 
 PASS   k-rate offset: Output of k-rate ConstantSourceNode is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   k-rate offset: Output of a-rate ConstantSourceNode is identical to the array [0,0.01953125,0.0390625,0.05859375,0.078125,0.09765625,0.1171875,0.13671875,0.15625,0.17578125,0.1953125,0.21484375,0.234375,0.25390625,0.2734375,0.29296875...]. 
+PASS   k-rate offset: Output of a-rate ConstantSourceNode is identical to the array [expected array]. 
 PASS   k-rate offset: Difference between a-rate and k-rate ConstantSourceNode is not constantly 0 (contains 508 different values). 
 PASS   k-rate offset k-rate output [0: 127] contains only the constant 0. 
 PASS   k-rate offset k-rate output [128: 255] contains only the constant 2.5. 
