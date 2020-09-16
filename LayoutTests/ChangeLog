@@ -1,3 +1,14 @@
+2020-09-15  Rob Buis  <rbuis@igalia.com>
+
+        Fix lazy image load painting
+        https://bugs.webkit.org/show_bug.cgi?id=216554
+
+        Reviewed by Darin Adler.
+
+        The test image-loading-subpixel-clip.html now passes.
+
+        * TestExpectations:
+
 2020-09-15  Karl Rackler  <rackler@apple.com>
 
         Change test expectation description

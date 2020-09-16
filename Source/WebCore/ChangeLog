@@ -1,3 +1,22 @@
+2020-09-15  Rob Buis  <rbuis@igalia.com>
+
+        Fix lazy image load painting
+        https://bugs.webkit.org/show_bug.cgi?id=216554
+
+        Reviewed by Darin Adler.
+
+        Fix lazy image load painting, when LoadImmediately was introduced, it correctly
+        triggered the immediate load but after finishing the load there was no transition
+        to the finished lazy load state, causing the logic in RenderImage::paint to not
+        paint the finished load. This was not detected before since most lazy load WPT tests are
+        not pixel tests but rather test correct load events etc. (image-loading-subpixel-clip.html
+        is an exception since it is a reftest).
+
+        Test: imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-subpixel-clip.html
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+
 2020-09-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][FFC] 'display: flex' generates a flex container box that is block-level when placed in flow layout

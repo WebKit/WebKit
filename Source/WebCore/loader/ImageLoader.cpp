@@ -328,7 +328,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
     ASSERT(m_failedLoadURL.isEmpty());
     ASSERT_UNUSED(resource, &resource == m_image.get());
 
-    if (m_lazyImageLoadState == LazyImageLoadState::Deferred) {
+    if (isDeferred()) {
         LazyLoadImageObserver::unobserve(element(), element().document());
         m_lazyImageLoadState = LazyImageLoadState::FullImage;
     }
