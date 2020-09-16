@@ -31,6 +31,7 @@
 #include <gio/gio.h>
 #include <mutex>
 #include <wtf/SHA1.h>
+#include <wtf/glib/GUniquePtr.h>
 
 #define INSPECTOR_BACKEND_COMMANDS_PATH "/org/webkit/inspector/UserInterface/Protocol/InspectorBackendCommands.js"
 
@@ -41,7 +42,16 @@ GRefPtr<GBytes> backendCommands()
 #if PLATFORM(WPE)
     static std::once_flag flag;
     std::call_once(flag, [] {
-        GModule* resourcesModule = g_module_open(PKGLIBDIR G_DIR_SEPARATOR_S "libWPEWebInspectorResources.so", G_MODULE_BIND_LAZY);
+        const char* libDir = PKGLIBDIR;
+#if ENABLE(DEVELOPER_MODE)
+        // Probably no need for a specific env var here. Assume the inspector resources.so file is
+        // in the same directory as the injected bundle lib, for developer builds.
+        const char* path = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
+        if (path && g_file_test(path, G_FILE_TEST_IS_DIR))
+            libDir = path;
+#endif
+        GUniquePtr<char> bundleFilename(g_build_filename(libDir, "libWPEWebInspectorResources.so", nullptr));
+        GModule* resourcesModule = g_module_open(bundleFilename.get(), G_MODULE_BIND_LAZY);
         if (!resourcesModule) {
             WTFLogAlways("Error loading libWPEWebInspectorResources.so: %s", g_module_error());
             return;

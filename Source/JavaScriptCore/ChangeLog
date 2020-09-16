@@ -1,3 +1,16 @@
+2020-09-16  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK][WPE] Launching the remote inspector kills MB
+        https://bugs.webkit.org/show_bug.cgi?id=213899
+
+        Reviewed by Adrian Perez de Castro.
+
+        Load inspector resources from developer build artefacts, when the inspector server is
+        running in this configuration. Fall back to system libraries loading mechanism otherwise.
+
+        * inspector/remote/glib/RemoteInspectorUtils.cpp:
+        (Inspector::backendCommands):
+
 2020-09-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early September 2020 edition
