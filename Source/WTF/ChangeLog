@@ -1,3 +1,37 @@
+2020-09-15  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit should support building with clang ThreadSanitizer enabled
+        <https://webkit.org/b/216318>
+        <rdar://problem/31615729>
+
+        Reviewed by Darin Adler.
+
+        This patch doesn't attempt to resolve every potential false
+        positive, but makes it easy to build WebKit with TSan enabled.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        - Add ThreadSanitizerSupport.h to the project.
+
+        * wtf/Compiler.h:
+        - Define TSAN_ENABLED and SUPPRESS_TSAN macros.
+
+        * wtf/Locker.h:
+        (WTF::Locker::~Locker):
+        (WTF::Locker::unlockEarly):
+        (WTF::Locker::operator=):
+        (WTF::Locker::lock):
+        - Instrument lock/unlock methods for ThreadSanitizer.
+
+        * wtf/ThreadSanitizerSupport.h: Add.
+        (AnnotateHappensBefore):
+        (AnnotateHappensAfter):
+        - Declare TSan runtime functions needed to annotate WTF::Locker.
+        (TSAN_ANNOTATE_HAPPENS_BEFORE):
+        (TSAN_ANNOTATE_HAPPENS_AFTER):
+        - Define macros used to call TSan runtime functions if TSan is
+          enabled.
+
 2020-09-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS Big Sur] CGFontRenderingGetFontSmoothingDisabled() is no longer useful

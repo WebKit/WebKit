@@ -1,3 +1,17 @@
+2020-09-15  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit should support building with clang ThreadSanitizer enabled
+        <https://webkit.org/b/216318>
+        <rdar://problem/31615729>
+
+        Reviewed by Darin Adler.
+
+        This patch doesn't attempt to resolve every potential false
+        positive, but makes it easy to build WebKit with TSan enabled.
+
+        * Makefile.shared:
+        - Update to work with `make [args] TSAN=YES`.
+
 2020-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [PlayStation] Enable ENABLE_SVG_FONTS

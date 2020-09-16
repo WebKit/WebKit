@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2005-2019 Apple Inc.  All rights reserved.
+# Copyright (C) 2005-2020 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 use strict;
 use warnings;
+use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
@@ -39,6 +40,7 @@ Usage: $programName [options]
   --64-bit                           Set the default architecture to 64-bit
   --[no-]asan                        Enable or disable clang address sanitizer
   --[no-]coverage                    Enable or disable LLVM Source-based Code Coverage
+  --[no-]tsan                        Enable or disable clang thread sanitizer
   --force-optimization-level=<level> Optimization level: O3, O2, O1, O0, Os, Ofast, Og, or none
   --lto-mode=<mode>                  Set LTO mode: full, thin, or none
   --debug                            Set the default configuration to debug
@@ -52,6 +54,8 @@ my $enableASAN = checkForArgumentAndRemoveFromARGV("--asan");
 my $disableASAN = checkForArgumentAndRemoveFromARGV("--no-asan");
 my $enableCoverage = checkForArgumentAndRemoveFromARGV("--coverage");
 my $disableCoverage = checkForArgumentAndRemoveFromARGV("--no-coverage");
+my $enableTSAN = checkForArgumentAndRemoveFromARGV("--tsan");
+my $disableTSAN = checkForArgumentAndRemoveFromARGV("--no-tsan");
 my $ltoMode;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
     $ltoMode="";
@@ -80,15 +84,18 @@ if (checkForArgumentAndRemoveFromARGV("--reset")) {
     unlink "$baseProductDir/Configuration";
     unlink "$baseProductDir/Architecture";
     unlink "$baseProductDir/ASan";
-    unlink "$baseProductDir/ForceOptimizationLevel";
     unlink "$baseProductDir/Coverage";
+    unlink File::Spec->catfile($baseProductDir, "TSan");
+    unlink "$baseProductDir/ForceOptimizationLevel";
     unlink "$baseProductDir/LTO";
     exit 0;
 }
 
-if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$enableCoverage && !$disableCoverage && !$ltoMode && !$forceOptimizationLevel)
+if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$enableCoverage && !$disableCoverage && !$enableTSAN && !$disableTSAN && !$ltoMode && !$forceOptimizationLevel)
     || ($enableASAN && $disableASAN)
-    || ($enableCoverage && $disableCoverage)) {
+    || ($enableCoverage && $disableCoverage)
+    || ($enableTSAN && $disableTSAN)
+    ) {
     print STDERR $usage;
     exit 1;
 }
@@ -141,6 +148,14 @@ if ($enableCoverage) {
     close Coverage;
 } elsif ($disableCoverage) {
     unlink "$baseProductDir/Coverage";
+}
+
+if ($enableTSAN) {
+    open TSAN, ">", File::Spec->catfile($baseProductDir, "TSan") or die;
+    print TSAN "YES";
+    close TSAN;
+} elsif ($disableTSAN) {
+    unlink File::Spec->catfile($baseProductDir, "TSan");
 }
 
 if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {

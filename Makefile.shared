@@ -70,6 +70,14 @@ ASAN_OPTION=--no-asan
 endif
 endif
 
+ifeq ($(TSAN),YES)
+TSAN_OPTION=--tsan
+else
+ifeq ($(TSAN),NO)
+TSAN_OPTION=--no-tsan
+endif
+endif
+
 ifeq ($(WK_LTO_MODE),full)
 WK_LTO_OPTION=--lto-mode=full
 else ifeq ($(WK_LTO_MODE),thin)
@@ -84,36 +92,39 @@ export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
 # See <rdar://problem/16466196>.
 export PATH = $(shell getconf PATH)
 
-all: set_asan_configuration
+all: set_sanitizer_configuration
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)' | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 debug d development dev develop: force
-	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(WK_LTO_OPTION)
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION)
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)' | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 release r deployment dep deploy: force
-	$(SCRIPTS_PATH)/set-webkit-configuration --release $(ASAN_OPTION) $(WK_LTO_OPTION)
+	$(SCRIPTS_PATH)/set-webkit-configuration --release $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION)
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)' | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 release+assert ra: force
-	$(SCRIPTS_PATH)/set-webkit-configuration --release $(ASAN_OPTION) $(WK_LTO_OPTION)
+	$(SCRIPTS_PATH)/set-webkit-configuration --release $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION)
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) ASSERT_ENABLED=1 $$(inherited)' | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 testing t: force
-	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(WK_LTO_OPTION) --force-optimization-level=O3
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION) --force-optimization-level=O3
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)' | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 analyze:
-	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(WK_LTO_OPTION)
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION)
 ifndef PATH_TO_SCAN_BUILD
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)' RUN_CLANG_STATIC_ANALYZER=YES | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 else
 	( $(SET_COLOR_DIAGNOSTICS_ARG); $(PATH_TO_SCAN_BUILD) xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)' | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 endif
 
-set_asan_configuration:
+set_sanitizer_configuration:
 ifneq (,$(ASAN_OPTION))
 	$(SCRIPTS_PATH)/set-webkit-configuration $(ASAN_OPTION)
+endif
+ifneq (,$(TSAN_OPTION))
+	$(SCRIPTS_PATH)/set-webkit-configuration $(TSAN_OPTION)
 endif
 
 clean:

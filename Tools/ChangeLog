@@ -1,3 +1,31 @@
+2020-09-15  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit should support building with clang ThreadSanitizer enabled
+        <https://webkit.org/b/216318>
+        <rdar://problem/31615729>
+
+        Reviewed by Darin Adler.
+
+        This patch doesn't attempt to resolve every potential false
+        positive, but makes it easy to build WebKit with TSan enabled.
+
+        * Scripts/set-webkit-configuration:
+        - Add support for --[no-]tsan switches.
+        * Scripts/webkitdirs.pm:
+        (determineTSanIsEnabled):
+        (tsanIsEnabled):
+        (XcodeOptions):
+        (generateBuildSystemFromCMakeProject):
+        - Add support for building with TSan enabled.
+
+        * asan/asan.xcconfig: Rename to sanitizer/asan.xcconfig.
+        * sanitizer/asan.xcconfig: Rename from asan/asan.xcconfig.
+        - Extract common variables to sanitizer.xcconfig.
+        * sanitizer/sanitizer.xcconfig: Add.
+        - Extract common variables from asan.xcconfig.
+        * sanitizer/tsan.xcconfig: Add.
+        - Add support for TSan.
+
 2020-09-15  Alex Christensen  <achristensen@webkit.org>
 
         Move local storage sync SPI from WebProcessPool to WebsiteDataStore

@@ -1,4 +1,4 @@
-# Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2020 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
@@ -130,6 +130,7 @@ our @EXPORT_OK;
 my $architecture;
 my %nativeArchitectureMap = ();
 my $asanIsEnabled;
+my $tsanIsEnabled;
 my $forceOptimizationLevel;
 my $coverageIsEnabled;
 my $ltoMode;
@@ -443,6 +444,22 @@ sub determineASanIsEnabled
         close ASAN;
         chomp $asanConfigurationValue;
         $asanIsEnabled = 1 if $asanConfigurationValue eq "YES";
+    }
+}
+
+sub determineTSanIsEnabled
+{
+    return if defined $tsanIsEnabled;
+    determineBaseProductDir();
+
+    $tsanIsEnabled = 0;
+    my $tsanConfigurationValue;
+
+    if (open TSAN, "$baseProductDir/TSan") {
+        $tsanConfigurationValue = <TSAN>;
+        close TSAN;
+        chomp $tsanConfigurationValue;
+        $tsanIsEnabled = 1 if $tsanConfigurationValue eq "YES";
     }
 }
 
@@ -885,6 +902,12 @@ sub asanIsEnabled()
     return $asanIsEnabled;
 }
 
+sub tsanIsEnabled()
+{
+    determineTSanIsEnabled();
+    return $tsanIsEnabled;
+}
+
 sub forceOptimizationLevel()
 {
     determineForceOptimizationLevel();
@@ -939,6 +962,7 @@ sub XcodeOptions
     determineConfiguration();
     determineArchitecture();
     determineASanIsEnabled();
+    determineTSanIsEnabled();
     determineForceOptimizationLevel();
     determineCoverageIsEnabled();
     determineLTOMode();
@@ -948,7 +972,13 @@ sub XcodeOptions
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, "-ShowBuildOperationDuration=YES";
     push @options, ("-configuration", $configuration);
-    push @options, ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") if $asanIsEnabled;
+    if ($asanIsEnabled) {
+        push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "asan.xcconfig"));
+        my $asanIgnorePath = File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "webkit-asan-ignore.txt");
+        push @options, "ASAN_IGNORE=$asanIgnorePath" if -e $asanIgnorePath;
+    } elsif ($tsanIsEnabled) {
+        push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "tsan.xcconfig"));
+    }
     push @options, ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig") if $coverageIsEnabled;
     push @options, ("GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel") if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
@@ -960,7 +990,8 @@ sub XcodeOptions
     # treats errors as non-fatal when it encounters missing symbols related to coverage.
     appendToEnvironmentVariableList("WEBKIT_COVERAGE_BUILD", "1") if $coverageIsEnabled;
 
-    die "cannot enable both ASAN and Coverage at this time\n" if $coverageIsEnabled && $asanIsEnabled;
+    die "Cannot enable both ASAN and TSAN at the same time\n" if $asanIsEnabled && $tsanIsEnabled;
+    die "Cannot enable both (ASAN or TSAN) and Coverage at this time\n" if $coverageIsEnabled && ($asanIsEnabled || $tsanIsEnabled);
 
     if (willUseIOSDeviceSDK() || willUseWatchDeviceSDK() || willUseAppleTVDeviceSDK()) {
         push @options, "ENABLE_BITCODE=NO";
@@ -2433,6 +2464,7 @@ sub generateBuildSystemFromCMakeProject
     }
 
     push @args, "-DENABLE_SANITIZERS=address" if asanIsEnabled();
+    push @args, "-DENABLE_SANITIZERS=thread" if tsanIsEnabled();
 
     push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
 

@@ -156,6 +156,20 @@
 #define SUPPRESS_ASAN
 #endif
 
+/* TSAN_ENABLED and SUPPRESS_TSAN */
+
+#ifdef __SANITIZE_THREAD__
+#define TSAN_ENABLED 1
+#else
+#define TSAN_ENABLED COMPILER_HAS_CLANG_FEATURE(thread_sanitizer)
+#endif
+
+#if TSAN_ENABLED
+#define SUPPRESS_TSAN __attribute__((no_sanitize_thread))
+#else
+#define SUPPRESS_TSAN
+#endif
+
 /* ==== Compiler-independent macros for various compiler features, in alphabetical order ==== */
 
 /* ALWAYS_INLINE */

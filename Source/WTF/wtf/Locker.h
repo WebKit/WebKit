@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ThreadSanitizerSupport.h>
 
 namespace WTF {
 
@@ -67,8 +68,10 @@ public:
     ~Locker()
     {
         compilerFence();
-        if (m_lockable)
+        if (m_lockable) {
+            TSAN_ANNOTATE_HAPPENS_BEFORE(m_lockable);
             m_lockable->unlock();
+        }
     }
     
     static Locker tryLock(T& lockable)
@@ -85,8 +88,9 @@ public:
     
     void unlockEarly()
     {
+        TSAN_ANNOTATE_HAPPENS_BEFORE(m_lockable);
         m_lockable->unlock();
-        m_lockable = 0;
+        m_lockable = nullptr;
     }
     
     // It's great to be able to pass lockers around. It enables custom locking adaptors like
@@ -99,8 +103,10 @@ public:
     
     Locker& operator=(Locker&& other)
     {
-        if (m_lockable)
+        if (m_lockable) {
+            TSAN_ANNOTATE_HAPPENS_BEFORE(m_lockable);
             m_lockable->unlock();
+        }
         m_lockable = other.m_lockable;
         other.m_lockable = nullptr;
         return *this;
@@ -109,8 +115,10 @@ public:
 private:
     void lock()
     {
-        if (m_lockable)
+        if (m_lockable) {
             m_lockable->lock();
+            TSAN_ANNOTATE_HAPPENS_AFTER(m_lockable);
+        }
         compilerFence();
     }
     

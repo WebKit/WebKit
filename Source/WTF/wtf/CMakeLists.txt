@@ -260,6 +260,7 @@ set(WTF_PUBLIC_HEADERS
     ThreadGroup.h
     ThreadMessage.h
     ThreadSafeRefCounted.h
+    ThreadSanitizerSupport.h
     ThreadSpecific.h
     Threading.h
     ThreadingPrimitives.h
