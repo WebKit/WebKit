@@ -104,9 +104,9 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
         return { 0, nonCollapsedMargin };
     };
 
-    // 10.6.7 'Auto' heights for block formatting context roots
+    // 10.6.7 'Auto' heights for block-level formatting context boxes.
     auto isAutoHeight = !overrideVerticalValues.height && !computedHeight(layoutBox);
-    if (isAutoHeight && layoutBox.establishesBlockFormattingContext())
+    if (isAutoHeight && (layoutBox.establishesFormattingContext() && !layoutBox.establishesInlineFormattingContext()))
         return compute( OverrideVerticalValues { contentHeightForFormattingContextRoot(layoutBox) });
     return compute(overrideVerticalValues);
 }

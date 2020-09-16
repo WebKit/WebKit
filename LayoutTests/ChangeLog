@@ -1,3 +1,13 @@
+2020-09-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][FFC] Add basic flex item sizing and positioning
+        https://bugs.webkit.org/show_bug.cgi?id=216613
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/flex-box-simple-expected.html: Added.
+        * fast/layoutformattingcontext/flex-box-simple.html: Added.
+
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
         Merge PeriodicWave improvements from Blink

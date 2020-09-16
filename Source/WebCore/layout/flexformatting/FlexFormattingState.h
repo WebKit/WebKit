@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayLine.h"
 #include "FormattingState.h"
 #include <wtf/IsoMalloc.h>
 
@@ -38,6 +39,13 @@ class FlexFormattingState : public FormattingState {
 public:
     FlexFormattingState(Ref<FloatingState>&&, LayoutState&);
     ~FlexFormattingState();
+
+    using FlexLines = Vector<Display::Line>;
+    const FlexLines& lines() const { return m_lines; }
+    void addLine(const Display::Line& line) { m_lines.append(line); }
+
+private:
+    FlexLines m_lines;
 };
 
 }

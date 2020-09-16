@@ -29,6 +29,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FlexFormattingState.h"
+#include "InvalidationState.h"
+#include "LayoutChildIterator.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -41,13 +43,69 @@ FlexFormattingContext::FlexFormattingContext(const ContainerBox& formattingConte
 {
 }
 
-void FlexFormattingContext::layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&)
+void FlexFormattingContext::layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent& constraints)
 {
+    computeIntrinsicWidthConstraintsForFlexItems();
+    sizeAndPlaceFlexItems(constraints);
 }
 
 FormattingContext::IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraints()
 {
     return { };
+}
+
+void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowContent& constraints)
+{
+    auto& formattingState = this->formattingState();
+    auto geometry = this->geometry();
+    auto flexItemMainAxisStart = constraints.horizontal.logicalLeft;
+    auto flexItemMainAxisEnd = flexItemMainAxisStart;
+    auto flexItemCrosAxisStart = constraints.vertical.logicalTop;
+    auto flexItemCrosAxisEnd = flexItemCrosAxisStart;
+    for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
+        ASSERT(flexItem.establishesFormattingContext());
+        // FIXME: This is just a simple, let's layout the flex items and place them next to each other setup.
+        auto intrinsicWidths = formattingState.intrinsicWidthConstraintsForBox(flexItem);
+        auto flexItemLogicalWidth = std::min(std::max(intrinsicWidths->minimum, constraints.horizontal.logicalWidth), intrinsicWidths->maximum);
+        auto flexItemConstraints = ConstraintsForInFlowContent { { { }, flexItemLogicalWidth }, { } };
+
+        auto invalidationState = InvalidationState { };
+        LayoutContext::createFormattingContext(flexItem, layoutState())->layoutInFlowContent(invalidationState, flexItemConstraints);
+
+        auto computeFlexItemGeometry = [&] {
+            auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
+
+            flexItemGeometry.setTopLeft(LayoutPoint { flexItemMainAxisEnd, flexItemCrosAxisStart });
+
+            flexItemGeometry.setBorder(geometry.computedBorder(flexItem));
+            flexItemGeometry.setPadding(geometry.computedPadding(flexItem, constraints.horizontal.logicalWidth));
+
+            auto computedHorizontalMargin = geometry.computedHorizontalMargin(flexItem, constraints.horizontal);
+            flexItemGeometry.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) });
+
+            auto computedVerticalMargin = geometry.computedVerticalMargin(flexItem, constraints.horizontal);
+            flexItemGeometry.setVerticalMargin({ computedVerticalMargin.before.valueOr(0_lu), computedVerticalMargin.after.valueOr(0_lu) });
+
+            flexItemGeometry.setContentBoxHeight(geometry.contentHeightForFormattingContextRoot(flexItem));
+            flexItemGeometry.setContentBoxWidth(flexItemLogicalWidth);
+            flexItemMainAxisEnd= flexItemGeometry.right();
+            flexItemCrosAxisEnd = std::max(flexItemCrosAxisEnd, flexItemGeometry.bottom());
+        };
+        computeFlexItemGeometry();
+    }
+    auto flexLine = Display::InlineRect { flexItemCrosAxisStart, flexItemMainAxisStart, flexItemMainAxisEnd - flexItemMainAxisStart, flexItemCrosAxisEnd - flexItemCrosAxisStart };
+    formattingState.addLine({ flexLine, flexLine, flexLine, { } });
+}
+
+void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
+{
+    auto& formattingState = this->formattingState();
+    auto geometry = this->geometry();
+    for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
+        if (formattingState.intrinsicWidthConstraintsForBox(flexItem))
+            continue;
+        formattingState.setIntrinsicWidthConstraintsForBox(flexItem, geometry.intrinsicWidthConstraints(flexItem));
+    }
 }
 
 }

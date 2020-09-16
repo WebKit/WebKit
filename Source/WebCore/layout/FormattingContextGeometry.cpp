@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
+#include "FlexFormattingState.h"
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutContext.h"
@@ -195,6 +196,11 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
     if (formattingRootContainer.establishesInlineFormattingContext()) {
         auto& lines = layoutState.establishedInlineFormattingState(formattingRootContainer).displayInlineContent()->lines;
         // Even empty containers generate one line. 
+        ASSERT(!lines.isEmpty());
+        top = lines.first().top();
+        bottom = lines.last().bottom();
+    } else if (formattingRootContainer.establishesFlexFormattingContext()) {
+        auto& lines = layoutState.establishedFlexFormattingState(formattingRootContainer).lines();
         ASSERT(!lines.isEmpty());
         top = lines.first().top();
         bottom = lines.last().bottom();

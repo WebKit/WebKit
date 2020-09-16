@@ -251,7 +251,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
 
         auto marginBefore = boxGeometry.marginBefore();
         auto marginAfter = boxGeometry.marginAfter();
-        if (layoutBox.isBlockLevelBox()) {
+        if (layoutBox.formattingContextRoot().establishesBlockFormattingContext()) {
             auto& formattingState = downcast<BlockFormattingState>(layoutState.formattingStateForBox(layoutBox));
             auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
             marginBefore = verticalMargin.nonCollapsedValues.before;

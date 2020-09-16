@@ -46,9 +46,29 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
 private:
+    // This class implements positioning and sizing for flex items.
+    class Geometry : public FormattingContext::Geometry {
+    public:
+        Geometry(const FlexFormattingContext&);
+
+        IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&);
+
+    private:
+        const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingContext::Geometry::formattingContext()); }
+    };
+    FlexFormattingContext::Geometry geometry() const { return Geometry(*this); }
+
+    void sizeAndPlaceFlexItems(const ConstraintsForInFlowContent&);
+    void computeIntrinsicWidthConstraintsForFlexItems();
+
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
 };
+
+inline FlexFormattingContext::Geometry::Geometry(const FlexFormattingContext& flexFormattingContext)
+    : FormattingContext::Geometry(flexFormattingContext)
+{
+}
 
 }
 }
