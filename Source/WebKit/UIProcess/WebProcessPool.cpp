@@ -1815,19 +1815,6 @@ void WebProcessPool::flushCookies(const PAL::SessionID& sessionID, CompletionHan
     ensureNetworkProcess().flushCookies(sessionID, WTFMove(completionHandler));
 }
 
-void WebProcessPool::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
-{
-    sendSyncToNetworkingProcess(Messages::NetworkProcess::SyncLocalStorage(), Messages::NetworkProcess::SyncLocalStorage::Reply());
-    completionHandler();
-}
-
-void WebProcessPool::clearLegacyPrivateBrowsingLocalStorage(CompletionHandler<void()>&& completionHandler)
-{
-    if (m_networkProcess)
-        m_networkProcess->send(Messages::NetworkProcess::ClearLegacyPrivateBrowsingLocalStorage(), 0);
-    completionHandler();
-}
-
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
     ensureNetworkProcess();

@@ -301,7 +301,6 @@ public:
 #endif
 
     void syncLocalStorage(CompletionHandler<void()>&&);
-    void clearLegacyPrivateBrowsingLocalStorage();
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
     void renameOriginInWebsiteData(PAL::SessionID, const URL&, const URL&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);

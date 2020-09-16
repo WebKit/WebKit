@@ -325,8 +325,6 @@ public:
     void terminateServiceWorkers();
 
     void flushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
-    void syncLocalStorage(CompletionHandler<void()>&& callback);
-    void clearLegacyPrivateBrowsingLocalStorage(CompletionHandler<void()>&& callback);
 
     void setShouldMakeNextWebProcessLaunchFailForTesting(bool value) { m_shouldMakeNextWebProcessLaunchFailForTesting = value; }
     bool shouldMakeNextWebProcessLaunchFailForTesting() const { return m_shouldMakeNextWebProcessLaunchFailForTesting; }

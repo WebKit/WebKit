@@ -137,6 +137,14 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsDebugMode(WKWebsiteDataStoreRef 
     WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsDebugMode(enable);
 }
 
+void WKWebsiteDataStoreSyncLocalStorage(WKWebsiteDataStoreRef dataStore, void* context, WKWebsiteDataStoreSyncLocalStorageCallback callback)
+{
+    WebKit::toImpl(dataStore)->syncLocalStorage([context, callback] {
+        if (callback)
+            callback(context);
+    });
+}
+
 WKHTTPCookieStoreRef WKWebsiteDataStoreGetHTTPCookieStore(WKWebsiteDataStoreRef dataStoreRef)
 {
     return WebKit::toAPI(&WebKit::toImpl(dataStoreRef)->cookieStore());

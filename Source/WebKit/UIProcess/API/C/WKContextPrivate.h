@@ -104,12 +104,6 @@ WK_EXPORT void WKContextClearSupportedPlugins(WKContextRef context);
 
 WK_EXPORT void WKContextClearCurrentModifierStateForTesting(WKContextRef context);
 
-typedef void (*WKContextSyncLocalStorageCallback)(void* functionContext);
-WK_EXPORT void WKContextSyncLocalStorage(WKContextRef contextRef, void* context, WKContextSyncLocalStorageCallback callback);
-
-typedef void (*WKContextClearLegacyPrivateBrowsingLocalStorageCallback)(void* functionContext);
-WK_EXPORT void WKContextClearLegacyPrivateBrowsingLocalStorage(WKContextRef contextRef, void* context, WKContextClearLegacyPrivateBrowsingLocalStorageCallback callback);
-
 WK_EXPORT void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef context, bool forceServiceWorkerProcess);
 
 WK_EXPORT void WKContextSetPrimaryWebsiteDataStore(WKContextRef context, WKWebsiteDataStoreRef websiteDataStore);

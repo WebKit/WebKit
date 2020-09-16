@@ -3361,16 +3361,12 @@ void TestController::clearLocalStorage()
     StorageVoidCallbackContext context(*this);
     WKWebsiteDataStoreRemoveLocalStorage(websiteDataStore(), &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
-
-    StorageVoidCallbackContext legacyContext(*this);
-    WKContextClearLegacyPrivateBrowsingLocalStorage(platformContext(), &legacyContext, StorageVoidCallback);
-    runUntil(legacyContext.done, noTimeout);
 }
 
 void TestController::syncLocalStorage()
 {
     StorageVoidCallbackContext context(*this);
-    WKContextSyncLocalStorage(platformContext(), &context, StorageVoidCallback);
+    WKWebsiteDataStoreSyncLocalStorage(TestController::websiteDataStore(), &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 

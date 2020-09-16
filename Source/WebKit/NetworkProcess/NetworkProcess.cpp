@@ -2448,12 +2448,6 @@ void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHand
     completionHandler();
 }
 
-void NetworkProcess::clearLegacyPrivateBrowsingLocalStorage()
-{
-    if (m_storageManagerSet->contains(PAL::SessionID::legacyPrivateSessionID()))
-        m_storageManagerSet->deleteLocalStorageModifiedSince(PAL::SessionID::legacyPrivateSessionID(), -WallTime::infinity(), []() { });
-}
-
 void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     LockHolder locker(m_sessionStorageQuotaManagersLock);

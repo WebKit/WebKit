@@ -1,5 +1,16 @@
 2020-09-15  Alex Christensen  <achristensen@webkit.org>
 
+        Move local storage sync SPI from WebProcessPool to WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=216581
+
+        Reviewed by Geoffrey Garen.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::clearLocalStorage):
+        (WTR::TestController::syncLocalStorage):
+
+2020-09-15  Alex Christensen  <achristensen@webkit.org>
+
         Move service worker testing timeout setting from WebProcessPool to WebsiteDataStore
         https://bugs.webkit.org/show_bug.cgi?id=216578
 

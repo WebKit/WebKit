@@ -190,6 +190,9 @@ WK_EXPORT void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef data
 
 WK_EXPORT void WKWebsiteDataStoreReinitializeAppBoundDomains(WKWebsiteDataStoreRef dataStoreRef);
 
+typedef void (*WKWebsiteDataStoreSyncLocalStorageCallback)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreSyncLocalStorage(WKWebsiteDataStoreRef dataStore, void* context, WKWebsiteDataStoreSyncLocalStorageCallback callback);
+
 typedef void (*WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcessFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess(WKWebsiteDataStoreRef dataStoreRef, WKStringRef bundleIdentifier, void* context, WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcessFunction completionHandler);
 

@@ -164,8 +164,7 @@ messages -> NetworkProcess LegacyReceiver {
 
     SetCacheStorageParameters(PAL::SessionID sessionID, String cacheStorageDirectory, WebKit::SandboxExtension::Handle handle);
 
-    SyncLocalStorage() -> () Synchronous
-    ClearLegacyPrivateBrowsingLocalStorage()
+    SyncLocalStorage() -> () Async
 
     StoreAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution adClickAttribution)
     DumpAdClickAttribution(PAL::SessionID sessionID) -> (String adClickAttributionState) Async

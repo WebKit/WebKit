@@ -1,5 +1,34 @@
 2020-09-15  Alex Christensen  <achristensen@webkit.org>
 
+        Move local storage sync SPI from WebProcessPool to WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=216581
+
+        Reviewed by Geoffrey Garen.
+
+        This move is needed for https://bugs.webkit.org/show_bug.cgi?id=216041
+        We no longer need to sync the legacy private browsing storage because it is no longer used by WebKitTestRunner.  Thank goodness.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::clearLegacyPrivateBrowsingLocalStorage): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSyncLocalStorage): Deleted.
+        (WKContextClearLegacyPrivateBrowsingLocalStorage): Deleted.
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSyncLocalStorage):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::syncLocalStorage): Deleted.
+        (WebKit::WebProcessPool::clearLegacyPrivateBrowsingLocalStorage): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::syncLocalStorage):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
+2020-09-15  Alex Christensen  <achristensen@webkit.org>
+
         Move service worker testing timeout setting from WebProcessPool to WebsiteDataStore
         https://bugs.webkit.org/show_bug.cgi?id=216578
 

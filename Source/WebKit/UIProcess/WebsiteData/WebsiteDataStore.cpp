@@ -1984,6 +1984,15 @@ void WebsiteDataStore::setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
+void WebsiteDataStore::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->sendWithAsyncReply(Messages::NetworkProcess::SyncLocalStorage(), [callbackAggregator] { });
+    }
+}
+
 void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
