@@ -1,3 +1,15 @@
+2020-09-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Cocoa] Use OTF font features instead of AAT font features when possible
+        https://bugs.webkit.org/show_bug.cgi?id=182845
+        <rdar://problem/33046942>
+
+        Reviewed by Myles C. Maxfield.
+
+        * css3/font-feature-settings-stylistic-set-expected-mismatch.html: Added.
+        * css3/font-feature-settings-stylistic-set.html: Added.
+        * platform/win/TestExpectations:
+
 2020-09-15  Rob Buis  <rbuis@igalia.com>
 
         Fix lazy image load painting

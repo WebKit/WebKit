@@ -536,6 +536,7 @@ fast/css/draggable-region-parser.html [ Skip ]
 
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html [ Skip ]
+css3/font-feature-settings-stylistic-set.html [ ImageOnlyFailure ]
 
 webkit.org/b/149771 css3/font-feature-settings-font-face-rendering.html [ Skip ] # WontFix
 webkit.org/b/149771 css3/font-variant-font-face-override.html [ Skip ] # WontFix

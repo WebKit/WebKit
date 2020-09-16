@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-static inline void appendRawTrueTypeFeature(CFMutableArrayRef features, int type, int selector)
+static inline void appendTrueTypeFeature(CFMutableArrayRef features, int type, int selector)
 {
     auto typeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &type));
     auto selectorNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &selector));
@@ -59,85 +59,6 @@ static inline void appendRawTrueTypeFeature(CFMutableArrayRef features, int type
 static inline bool tagEquals(FontTag tag, const char comparison[4])
 {
     return equalIgnoringASCIICase(tag.data(), comparison, 4);
-}
-
-static inline void appendTrueTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
-{
-    if (tagEquals(feature.tag(), "liga") || tagEquals(feature.tag(), "clig")) {
-        if (feature.enabled()) {
-            appendRawTrueTypeFeature(features, kLigaturesType, kCommonLigaturesOnSelector);
-            appendRawTrueTypeFeature(features, kLigaturesType, kContextualLigaturesOnSelector);
-        } else {
-            appendRawTrueTypeFeature(features, kLigaturesType, kCommonLigaturesOffSelector);
-            appendRawTrueTypeFeature(features, kLigaturesType, kContextualLigaturesOffSelector);
-        }
-    } else if (tagEquals(feature.tag(), "dlig")) {
-        if (feature.enabled())
-            appendRawTrueTypeFeature(features, kLigaturesType, kRareLigaturesOnSelector);
-        else
-            appendRawTrueTypeFeature(features, kLigaturesType, kRareLigaturesOffSelector);
-    } else if (tagEquals(feature.tag(), "hlig")) {
-        if (feature.enabled())
-            appendRawTrueTypeFeature(features, kLigaturesType, kHistoricalLigaturesOnSelector);
-        else
-            appendRawTrueTypeFeature(features, kLigaturesType, kHistoricalLigaturesOffSelector);
-    } else if (tagEquals(feature.tag(), "calt")) {
-        if (feature.enabled())
-            appendRawTrueTypeFeature(features, kContextualAlternatesType, kContextualAlternatesOnSelector);
-        else
-            appendRawTrueTypeFeature(features, kContextualAlternatesType, kContextualAlternatesOffSelector);
-    } else if (tagEquals(feature.tag(), "subs") && feature.enabled())
-        appendRawTrueTypeFeature(features, kVerticalPositionType, kInferiorsSelector);
-    else if (tagEquals(feature.tag(), "sups") && feature.enabled())
-        appendRawTrueTypeFeature(features, kVerticalPositionType, kSuperiorsSelector);
-    else if (tagEquals(feature.tag(), "smcp") && feature.enabled())
-        appendRawTrueTypeFeature(features, kLowerCaseType, kLowerCaseSmallCapsSelector);
-    else if (tagEquals(feature.tag(), "c2sc") && feature.enabled())
-        appendRawTrueTypeFeature(features, kUpperCaseType, kUpperCaseSmallCapsSelector);
-    else if (tagEquals(feature.tag(), "pcap") && feature.enabled())
-        appendRawTrueTypeFeature(features, kLowerCaseType, kLowerCasePetiteCapsSelector);
-    else if (tagEquals(feature.tag(), "c2pc") && feature.enabled())
-        appendRawTrueTypeFeature(features, kUpperCaseType, kUpperCasePetiteCapsSelector);
-    else if (tagEquals(feature.tag(), "unic") && feature.enabled())
-        appendRawTrueTypeFeature(features, kLetterCaseType, 14);
-    else if (tagEquals(feature.tag(), "titl") && feature.enabled())
-        appendRawTrueTypeFeature(features, kStyleOptionsType, kTitlingCapsSelector);
-    else if (tagEquals(feature.tag(), "lnum") && feature.enabled())
-        appendRawTrueTypeFeature(features, kNumberCaseType, kUpperCaseNumbersSelector);
-    else if (tagEquals(feature.tag(), "onum") && feature.enabled())
-        appendRawTrueTypeFeature(features, kNumberCaseType, kLowerCaseNumbersSelector);
-    else if (tagEquals(feature.tag(), "pnum") && feature.enabled())
-        appendRawTrueTypeFeature(features, kNumberSpacingType, kProportionalNumbersSelector);
-    else if (tagEquals(feature.tag(), "tnum") && feature.enabled())
-        appendRawTrueTypeFeature(features, kNumberSpacingType, kMonospacedNumbersSelector);
-    else if (tagEquals(feature.tag(), "frac") && feature.enabled())
-        appendRawTrueTypeFeature(features, kFractionsType, kDiagonalFractionsSelector);
-    else if (tagEquals(feature.tag(), "afrc") && feature.enabled())
-        appendRawTrueTypeFeature(features, kFractionsType, kVerticalFractionsSelector);
-    else if (tagEquals(feature.tag(), "ordn") && feature.enabled())
-        appendRawTrueTypeFeature(features, kVerticalPositionType, kOrdinalsSelector);
-    else if (tagEquals(feature.tag(), "zero") && feature.enabled())
-        appendRawTrueTypeFeature(features, kTypographicExtrasType, kSlashedZeroOnSelector);
-    else if (tagEquals(feature.tag(), "hist") && feature.enabled())
-        appendRawTrueTypeFeature(features, kLigaturesType, kHistoricalLigaturesOnSelector);
-    else if (tagEquals(feature.tag(), "jp78") && feature.enabled())
-        appendRawTrueTypeFeature(features, kCharacterShapeType, kJIS1978CharactersSelector);
-    else if (tagEquals(feature.tag(), "jp83") && feature.enabled())
-        appendRawTrueTypeFeature(features, kCharacterShapeType, kJIS1983CharactersSelector);
-    else if (tagEquals(feature.tag(), "jp90") && feature.enabled())
-        appendRawTrueTypeFeature(features, kCharacterShapeType, kJIS1990CharactersSelector);
-    else if (tagEquals(feature.tag(), "jp04") && feature.enabled())
-        appendRawTrueTypeFeature(features, kCharacterShapeType, kJIS2004CharactersSelector);
-    else if (tagEquals(feature.tag(), "smpl") && feature.enabled())
-        appendRawTrueTypeFeature(features, kCharacterShapeType, kSimplifiedCharactersSelector);
-    else if (tagEquals(feature.tag(), "trad") && feature.enabled())
-        appendRawTrueTypeFeature(features, kCharacterShapeType, kTraditionalCharactersSelector);
-    else if (tagEquals(feature.tag(), "fwid") && feature.enabled())
-        appendRawTrueTypeFeature(features, kTextSpacingType, kMonospacedTextSelector);
-    else if (tagEquals(feature.tag(), "pwid") && feature.enabled())
-        appendRawTrueTypeFeature(features, kTextSpacingType, kProportionalTextSelector);
-    else if (tagEquals(feature.tag(), "ruby") && feature.enabled())
-        appendRawTrueTypeFeature(features, kRubyKanaType, kRubyKanaOnSelector);
 }
 
 static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
@@ -658,10 +579,17 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         auto featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
         for (auto& p : featuresToBeApplied) {
             auto feature = FontFeature(p.key, p.value);
-            if (fontType.aatShaping)
-                appendTrueTypeFeature(featureArray.get(), feature);
-            if (fontType.openTypeShaping)
-                appendOpenTypeFeature(featureArray.get(), feature);
+
+            // CoreText does not map hlig and hist for TrueType fonts.
+            if (fontType.aatShaping && (tagEquals(feature.tag(), "hlig") || tagEquals(feature.tag(), "hist"))) {
+                if (feature.enabled())
+                    appendTrueTypeFeature(featureArray.get(), kLigaturesType, kHistoricalLigaturesOnSelector);
+                else if (tagEquals(feature.tag(), "hlig"))
+                    appendTrueTypeFeature(featureArray.get(), kLigaturesType, kHistoricalLigaturesOffSelector);
+                continue;
+            }
+
+            appendOpenTypeFeature(featureArray.get(), feature);
         }
         CFDictionaryAddValue(attributes.get(), kCTFontFeatureSettingsAttribute, featureArray.get());
     }

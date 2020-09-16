@@ -1,3 +1,25 @@
+2020-09-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Cocoa] Use OTF font features instead of AAT font features when possible
+        https://bugs.webkit.org/show_bug.cgi?id=182845
+        <rdar://problem/33046942>
+
+        Reviewed by Myles C. Maxfield.
+
+        Using OTF font features instead of AAT font features allows WebKit to
+        leverage CoreText's mapping between OTF and AAT features. This prevents us
+        from having to maintain our own mapping, and adds support for previously
+        missing features (for AAT fonts), such as stylistic alternatives.
+
+        Note that the hlig and hist features are not mapped by CoreText for AAT
+        fonts, in which case we handle the mapping to an AAT font feature ourselves.
+
+        Test: css3/font-feature-settings-stylistic-set.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::appendTrueTypeFeature):
+        (WebCore::preparePlatformFont):
+
 2020-09-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][1.18] Regressions
