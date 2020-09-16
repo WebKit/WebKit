@@ -181,7 +181,6 @@ String contextMenuItemTagExitVideoEnhancedFullscreen()
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
 
-#if ENABLE(METER_ELEMENT)
 String AXMeterGaugeRegionOptimumText()
 {
     return WEB_UI_STRING("optimal value", "The optimum value description for a meter element.");
@@ -196,7 +195,6 @@ String AXMeterGaugeRegionLessGoodText()
 {
     return WEB_UI_STRING("critical value", "The less good value description for a meter element.");
 }
-#endif // ENABLE(METER_ELEMENT)
 
 String builtInPDFPluginName()
 {

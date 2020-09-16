@@ -1464,14 +1464,12 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (isWebArea())
         return false;
     
-#if ENABLE(METER_ELEMENT)
     // The render tree of meter includes a RenderBlock (meter) and a RenderMeter (div).
     // We expose the latter and thus should ignore the former. However, if the author
     // includes a title attribute on the element, hasAttributesRequiredForInclusion()
     // will return true, potentially resulting in a redundant accessible object.
     if (is<HTMLMeterElement>(node))
         return true;
-#endif
 
     // Using the presence of an accessible name to decide an element's visibility is not
     // as definitive as previous checks, so this should remain as one of the last.

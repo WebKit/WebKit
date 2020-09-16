@@ -414,9 +414,6 @@ my @features = (
     { option => "memory-sampler", desc => "Toggle Memory Sampler support",
       define => "ENABLE_MEMORY_SAMPLER", value => \$memorySamplerSupport },
 
-    { option => "meter-element", desc => "Toggle Meter Element support",
-      define => "ENABLE_METER_ELEMENT", value => \$meterElementSupport },
-
     { option => "mhtml", desc => "Toggle MHTML support",
       define => "ENABLE_MHTML", value => \$mhtmlSupport },
 

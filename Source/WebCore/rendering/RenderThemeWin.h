@@ -124,12 +124,10 @@ public:
     String mediaControlsScript() override;
 #endif
 
-#if ENABLE(METER_ELEMENT)
     IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const override;
     bool supportsMeter(ControlPart) const override;
     void adjustMeterStyle(RenderStyle&, const Element*) const override;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
-#endif
 
 private:
     enum ControlSubPart {

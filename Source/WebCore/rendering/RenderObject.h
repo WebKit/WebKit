@@ -216,9 +216,7 @@ public:
     virtual bool isListMarker() const { return false; }
     virtual bool isMedia() const { return false; }
     virtual bool isMenuList() const { return false; }
-#if ENABLE(METER_ELEMENT)
     virtual bool isMeter() const { return false; }
-#endif
     virtual bool isSnapshottedPlugIn() const { return false; }
     virtual bool isProgress() const { return false; }
     virtual bool isRenderButton() const { return false; }

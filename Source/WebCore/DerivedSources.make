@@ -1515,9 +1515,7 @@ endif
 
 USER_AGENT_STYLE_SHEETS += $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css
 
-ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_METER_ELEMENT)
-	USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/meterElementShadow.css
-endif
+USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/meterElementShadow.css
 
 UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)

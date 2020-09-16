@@ -1072,7 +1072,6 @@ output {
     height: 16px;
 }
 
-#if defined(ENABLE_METER_ELEMENT) && ENABLE_METER_ELEMENT
 /* meter */
 
 meter {
@@ -1083,8 +1082,6 @@ meter {
     width: 5em;
     vertical-align: -0.2em;
 }
-
-#endif
 
 /* progress */
 

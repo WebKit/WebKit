@@ -24,10 +24,8 @@
 
 namespace WebCore {
 
-#if ENABLE(METER_ELEMENT)
 class HTMLMeterElement;
 class RenderMeter;
-#endif
 
 class HTMLProgressElement;
 class RenderProgress;
@@ -35,9 +33,7 @@ class RenderProgress;
 class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
 public:
     static Ref<AccessibilityProgressIndicator> create(RenderProgress*);
-#if ENABLE(METER_ELEMENT)
     static Ref<AccessibilityProgressIndicator> create(RenderMeter*);
-#endif
     Element* element() const override;
 
 private:
@@ -48,9 +44,7 @@ private:
     bool isAccessibilityProgressIndicatorInstance() const final { return true; }
 
     String valueDescription() const override;
-#if ENABLE(METER_ELEMENT)
     String gaugeRegionValueDescription() const;
-#endif
     float valueForRange() const override;
     float maxValueForRange() const override;
     float minValueForRange() const override;
@@ -58,10 +52,8 @@ private:
     explicit AccessibilityProgressIndicator(RenderProgress*);
     HTMLProgressElement* progressElement() const;
 
-#if ENABLE(METER_ELEMENT)
     explicit AccessibilityProgressIndicator(RenderMeter*);
     HTMLMeterElement* meterElement() const;
-#endif
     
     bool computeAccessibilityIsIgnored() const override;
 };

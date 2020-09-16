@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-#if ENABLE(METER_ELEMENT)
 #include "RenderMeter.h"
 
 #include "HTMLMeterElement.h"
@@ -78,5 +77,3 @@ void RenderMeter::updateFromElement()
 }
 
 } // namespace WebCore
-
-#endif

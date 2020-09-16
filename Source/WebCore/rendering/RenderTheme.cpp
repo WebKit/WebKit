@@ -34,10 +34,12 @@
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
+#include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderMeter.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
@@ -48,10 +50,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
-#if ENABLE(METER_ELEMENT)
-#include "HTMLMeterElement.h"
-#include "RenderMeter.h"
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"
@@ -250,14 +248,12 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         return adjustSearchFieldResultsButtonStyle(style, element);
     case ProgressBarPart:
         return adjustProgressBarStyle(style, element);
-#if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
         return adjustMeterStyle(style, element);
-#endif
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
         break;
@@ -347,14 +343,12 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 #endif
     case MenulistPart:
         return paintMenuList(box, paintInfo, devicePixelSnappedRect);
-#if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
         return paintMeter(box, paintInfo, integralSnappedRect);
-#endif
     case ProgressBarPart:
         return paintProgressBar(box, paintInfo, integralSnappedRect);
     case SliderHorizontalPart:
@@ -473,13 +467,11 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
     case DefaultButtonPart:
     case ButtonPart:
     case MenulistPart:
-#if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
-#endif
     case ProgressBarPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
@@ -536,13 +528,11 @@ bool RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
         return paintSliderThumbDecorations(box, paintInfo, integralSnappedRect);
     case SearchFieldPart:
         return paintSearchFieldDecorations(box, paintInfo, integralSnappedRect);
-#if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
-#endif
     case ProgressBarPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
@@ -984,8 +974,6 @@ void RenderTheme::adjustMenuListStyle(RenderStyle&, const Element*) const
 {
 }
 
-#if ENABLE(METER_ELEMENT)
-
 void RenderTheme::adjustMeterStyle(RenderStyle& style, const Element*) const
 {
     style.setBoxShadow(nullptr);
@@ -1005,8 +993,6 @@ bool RenderTheme::paintMeter(const RenderObject&, const PaintInfo&, const IntRec
 {
     return true;
 }
-
-#endif // METER_ELEMENT
 
 void RenderTheme::adjustCapsLockIndicatorStyle(RenderStyle&, const Element*) const
 {

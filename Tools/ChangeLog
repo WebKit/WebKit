@@ -1,3 +1,15 @@
+2020-09-16  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Remove ENABLE_METER_ELEMENT
+        https://bugs.webkit.org/show_bug.cgi?id=216582
+
+        Reviewed by Fujii Hironori.
+
+        With PlayStation finally planning to turn this on,
+        no ports had this disabled, so remove the enable flag.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2020-09-16  Aakash Jain  <aakash_jain@apple.com>
 
         EWS emails to bot watchers about build failures should be grouped properly

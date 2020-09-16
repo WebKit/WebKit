@@ -224,10 +224,8 @@ public:
     virtual LayoutPoint volumeSliderOffsetFromMuteButton(const RenderBox&, const LayoutSize&) const;
 #endif
 
-#if ENABLE(METER_ELEMENT)
     virtual IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const;
     virtual bool supportsMeter(ControlPart) const;
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
     // Returns the threshold distance for snapping to a slider tick mark.
@@ -336,10 +334,8 @@ protected:
     virtual bool paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintSquareButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-#if ENABLE(METER_ELEMENT)
     virtual void adjustMeterStyle(RenderStyle&, const Element*) const;
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&);
-#endif
 
     virtual void adjustCapsLockIndicatorStyle(RenderStyle&, const Element*) const;
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&);

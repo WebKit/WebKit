@@ -21,8 +21,6 @@
 #include "config.h"
 #include "HTMLMeterElement.h"
 
-#if ENABLE(METER_ELEMENT)
-
 #include "Attribute.h"
 #include "ElementIterator.h"
 #include "HTMLDivElement.h"
@@ -252,4 +250,3 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 }
 
 } // namespace
-#endif

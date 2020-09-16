@@ -810,12 +810,8 @@ bool AccessibilityObject::isMeter() const
     if (ariaRoleAttribute() == AccessibilityRole::Meter)
         return true;
 
-#if ENABLE(METER_ELEMENT)
     RenderObject* renderer = this->renderer();
     return renderer && renderer->isMeter();
-#else
-    return false;
-#endif
 }
 
 IntPoint AccessibilityObject::clickPoint()

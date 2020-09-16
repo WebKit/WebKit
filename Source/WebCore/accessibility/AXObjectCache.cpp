@@ -567,10 +567,9 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
         if (is<RenderAttachment>(cssBox))
             return AccessibilityAttachment::create(&downcast<RenderAttachment>(cssBox));
 #endif
-#if ENABLE(METER_ELEMENT)
+
         if (is<RenderMeter>(cssBox))
             return AccessibilityProgressIndicator::create(&downcast<RenderMeter>(cssBox));
-#endif
 
         // input type=range
         if (is<RenderSlider>(cssBox))
@@ -666,10 +665,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*node->parentElement()).first();
     bool isHidden = isNodeAriaVisible(node);
 
-    bool insideMeterElement = false;
-#if ENABLE(METER_ELEMENT)
-    insideMeterElement = is<HTMLMeterElement>(*node->parentElement());
-#endif
+    bool insideMeterElement = is<HTMLMeterElement>(*node->parentElement());
     
     if (!inCanvasSubtree && !isHidden && !insideMeterElement)
         return nullptr;

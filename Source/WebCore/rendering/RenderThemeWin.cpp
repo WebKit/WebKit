@@ -1095,7 +1095,6 @@ String RenderThemeWin::mediaControlsScript()
 }
 #endif
 
-#if ENABLE(METER_ELEMENT)
 void RenderThemeWin::adjustMeterStyle(RenderStyle& style, const Element*) const
 {
     style.setBoxShadow(nullptr);
@@ -1139,8 +1138,6 @@ bool RenderThemeWin::paintMeter(const RenderObject& renderObject, const PaintInf
 
     return true;
 }
-
-#endif
 
 
 }

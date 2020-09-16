@@ -17,9 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    Conditional=METER_ELEMENT
-] interface HTMLMeterElement : HTMLElement {
+interface HTMLMeterElement : HTMLElement {
     [CEReactions=NotNeeded] attribute double value;
     [CEReactions=NotNeeded] attribute double min;
     [CEReactions=NotNeeded] attribute double max;

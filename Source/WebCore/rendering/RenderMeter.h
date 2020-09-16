@@ -20,8 +20,6 @@
 
 #pragma once
 
-#if ENABLE(METER_ELEMENT)
-
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
@@ -48,5 +46,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMeter, isMeter())
-
-#endif // ENABLE(METER_ELEMENT)

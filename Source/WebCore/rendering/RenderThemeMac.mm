@@ -40,6 +40,7 @@
 #import "HTMLAttachmentElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMediaElement.h"
+#import "HTMLMeterElement.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInImageElement.h"
 #import "Icon.h"
@@ -54,6 +55,7 @@
 #import "RenderAttachment.h"
 #import "RenderLayer.h"
 #import "RenderMedia.h"
+#import "RenderMeter.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
 #import "RenderSnapshottedPlugIn.h"
@@ -82,11 +84,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
-
-#if ENABLE(METER_ELEMENT)
-#import "RenderMeter.h"
-#import "HTMLMeterElement.h"
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 
@@ -1249,8 +1246,6 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
     return false;
 }
 
-#if ENABLE(METER_ELEMENT)
-
 IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const IntRect& bounds) const
 {
     if (NoControlPart == renderMeter.style().appearance())
@@ -1349,8 +1344,6 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter& rende
 
     return cell;
 }
-
-#endif
 
 const IntSize* RenderThemeMac::progressBarSizes() const
 {

@@ -45,7 +45,6 @@ Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(Rende
     return adoptRef(*new AccessibilityProgressIndicator(renderer));
 }
     
-#if ENABLE(METER_ELEMENT)
 AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderMeter* renderer)
     : AccessibilityRenderObject(renderer)
 {
@@ -55,7 +54,6 @@ Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(Rende
 {
     return adoptRef(*new AccessibilityProgressIndicator(renderer));
 }
-#endif
 
 bool AccessibilityProgressIndicator::computeAccessibilityIsIgnored() const
 {
@@ -69,7 +67,6 @@ String AccessibilityProgressIndicator::valueDescription() const
     if (!description.isEmpty())
         return description;
 
-#if ENABLE(METER_ELEMENT)
     if (!m_renderer->isMeter())
         return description;
 
@@ -89,7 +86,6 @@ String AccessibilityProgressIndicator::valueDescription() const
     String gaugeRegionValue = gaugeRegionValueDescription();
     if (!gaugeRegionValue.isEmpty())
         description = description.isEmpty() ? gaugeRegionValue : description + ", " + gaugeRegionValue;
-#endif
 
     return description;
 }
@@ -105,12 +101,10 @@ float AccessibilityProgressIndicator::valueForRange() const
             return narrowPrecisionToFloat(progress->value());
     }
 
-#if ENABLE(METER_ELEMENT)
     if (m_renderer->isMeter()) {
         if (HTMLMeterElement* meter = meterElement())
             return narrowPrecisionToFloat(meter->value());
     }
-#endif
 
     // Indeterminate progress bar should return 0.
     return 0.0;
@@ -126,12 +120,10 @@ float AccessibilityProgressIndicator::maxValueForRange() const
             return narrowPrecisionToFloat(progress->max());
     }
     
-#if ENABLE(METER_ELEMENT)
     if (m_renderer->isMeter()) {
         if (HTMLMeterElement* meter = meterElement())
             return narrowPrecisionToFloat(meter->max());
     }
-#endif
 
     return 0.0;
 }
@@ -144,22 +136,18 @@ float AccessibilityProgressIndicator::minValueForRange() const
     if (m_renderer->isProgress())
         return 0.0;
     
-#if ENABLE(METER_ELEMENT)
     if (m_renderer->isMeter()) {
         if (HTMLMeterElement* meter = meterElement())
             return narrowPrecisionToFloat(meter->min());
     }
-#endif
     
     return 0.0;
 }
     
 AccessibilityRole AccessibilityProgressIndicator::roleValue() const
 {
-#if ENABLE(METER_ELEMENT)
     if (meterElement())
         return AccessibilityRole::Meter;
-#endif
     return AccessibilityRole::ProgressIndicator;
 }
 
@@ -171,7 +159,6 @@ HTMLProgressElement* AccessibilityProgressIndicator::progressElement() const
     return downcast<RenderProgress>(*m_renderer).progressElement();
 }
 
-#if ENABLE(METER_ELEMENT)
 HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
 {
     if (!is<RenderMeter>(*m_renderer))
@@ -205,17 +192,14 @@ String AccessibilityProgressIndicator::gaugeRegionValueDescription() const
 #endif
     return String();
 }
-#endif
 
 Element* AccessibilityProgressIndicator::element() const
 {
     if (m_renderer->isProgress())
         return progressElement();
 
-#if ENABLE(METER_ELEMENT)
     if (m_renderer->isMeter())
         return meterElement();
-#endif
 
     return AccessibilityObject::element();
 }

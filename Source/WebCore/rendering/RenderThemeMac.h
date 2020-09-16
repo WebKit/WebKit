@@ -83,11 +83,9 @@ public:
 
     bool popsMenuByArrowKeys() const final { return true; }
 
-#if ENABLE(METER_ELEMENT)
     IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
     bool supportsMeter(ControlPart) const final;
-#endif
 
     // Returns the repeat interval of the animation for the progress bar.
     Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const final;
@@ -230,10 +228,8 @@ private:
     NSCell *listButton() const;
 #endif
 
-#if ENABLE(METER_ELEMENT)
     NSLevelIndicatorStyle levelIndicatorStyleFor(ControlPart) const;
     NSLevelIndicatorCell *levelIndicatorFor(const RenderMeter&) const;
-#endif
 
     int minimumProgressBarHeight(const RenderStyle&) const;
     const IntSize* progressBarSizes() const;

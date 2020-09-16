@@ -20,8 +20,6 @@
 
 #pragma once
 
-#if ENABLE(METER_ELEMENT)
-
 #include "LabelableElement.h"
 
 namespace WebCore {
@@ -82,5 +80,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(METER_ELEMENT)

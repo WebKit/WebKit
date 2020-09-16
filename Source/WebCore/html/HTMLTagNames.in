@@ -86,7 +86,7 @@ marquee
 menu
 menuitem interfaceName=HTMLMenuItemElement, runtimeEnabled=menuItemElement
 meta
-meter interfaceName=HTMLMeterElement, conditional=METER_ELEMENT
+meter interfaceName=HTMLMeterElement
 nav interfaceName=HTMLElement
 nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement

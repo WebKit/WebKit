@@ -202,11 +202,9 @@ namespace WebCore {
     String AXListItemActionVerb();
 
 #if PLATFORM(COCOA)
-#if ENABLE(METER_ELEMENT)
     String AXMeterGaugeRegionOptimumText();
     String AXMeterGaugeRegionSuboptimalText();
     String AXMeterGaugeRegionLessGoodText();
-#endif
 #endif
 #if ENABLE(APPLE_PAY)
     String AXApplePayPlainLabel();

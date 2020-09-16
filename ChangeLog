@@ -1,3 +1,21 @@
+2020-09-16  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Remove ENABLE_METER_ELEMENT
+        https://bugs.webkit.org/show_bug.cgi?id=216582
+
+        Reviewed by Fujii Hironori.
+
+        With PlayStation finally planning to turn this on,
+        no ports had this disabled, so remove the enable flag.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2020-09-15  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should support building with clang ThreadSanitizer enabled
