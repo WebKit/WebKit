@@ -56,8 +56,6 @@ bool FontCascade::isSubpixelAntialiasingAvailable()
         ALLOW_DEPRECATED_DECLARATIONS_END
     });
     return subpixelAntialiasingEnabled;
-#elif PLATFORM(MAC)
-    return true;
 #else
     return false;
 #endif
