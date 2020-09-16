@@ -1,11 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.16.2.tar.xz
-  ref: f1cb7aa2389569a5343661aae473f0a940a90b872001824bc47fa8072a041e74
-- kind: patch
-  path: patches/gst-plugins-bad-0001-h264parse-Post-a-WARNING-when-data-is-broken.patch
-
+  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.0.tar.xz
+  ref: f382ab1caddd64aaa7acb7c4787487f63fd39bd0fde9c757655cbaa457c1185f
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
@@ -40,6 +37,7 @@ variables:
     -Dintrospection=disabled
     -Dexamples=disabled
     -Dassrender=disabled
+    -Davtp=disabled
     -Dbluez=disabled
     -Dbs2b=disabled
     -Dchromaprint=disabled
@@ -52,6 +50,7 @@ variables:
     -Ddecklink=disabled
     -Ddirectfb=disabled
     -Ddirectsound=disabled
+    -Ddoc=disabled
     -Ddts=disabled
     -Ddvb=disabled
     -Dfaac=disabled
@@ -66,6 +65,8 @@ variables:
     -Dlibde265=disabled
     -Dlibmms=disabled
     -Dlv2=disabled
+    -Dmagicleap=disabled
+    -Dmicrodns=disabled
     -Dmodplug=disabled
     -Dmpeg2enc=disabled
     -Dmplex=disabled
@@ -83,7 +84,6 @@ variables:
     -Dopenmpt=disabled
     -Dopenni2=disabled
     -Dopensles=disabled
-    -Dopensles=disabled
     -Dresindvd=disabled
     -Drsvg=disabled
     -Drtmp=disabled
@@ -92,15 +92,18 @@ variables:
     -Dsoundtouch=disabled
     -Dspandsp=disabled
     -Dsrt=disabled
+    -Dsvthevcenc=disabled
     -Dteletext=disabled
     -Dtinyalsa=disabled
     -Dttml=disabled
+    -Dva=disabled
     -Dvaacenc=disabled
     -Dvdpau=disabled
     -Dvoaacenc=disabled
     -Dvoamrwbenc=disabled
     -Dvulkan=disabled
     -Dwasapi=disabled
+    -Dwasapi2=disabled
     -Dwebp=disabled
     -Dwebrtcdsp=disabled
     -Dwildmidi=disabled
@@ -109,7 +112,8 @@ variables:
     -Dwpe=disabled
     -Dx265=disabled
     -Dzbar=disabled
-    
+    -Dzxing=disabled
+
 public:
   bst:
     split-rules:

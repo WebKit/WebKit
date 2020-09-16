@@ -1,3 +1,28 @@
+2020-09-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Update Flatpak SDK to 1.18.0
+        https://bugs.webkit.org/show_bug.cgi?id=216270
+
+        Reviewed by Žan Doberšek.
+
+        Update to GStreamer 1.18.0, removing the patches now being shipped in this release.
+
+        * buildstream/elements/sdk/gst-libav.bst:
+        * buildstream/elements/sdk/gst-plugins-bad.bst:
+        * buildstream/elements/sdk/gst-plugins-base.bst:
+        * buildstream/elements/sdk/gst-plugins-good.bst:
+        * buildstream/elements/sdk/gst-plugins-ugly.bst:
+        * buildstream/elements/sdk/gstreamer.bst:
+        * buildstream/patches/gst-libav-stop-caching-codecs.patch: Removed.
+        * buildstream/patches/gst-plugins-bad-0001-h264parse-Post-a-WARNING-when-data-is-broken.patch: Removed.
+        * buildstream/patches/gst-plugins-base-0001-glupload-Fix-fallback-from-direct-dmabuf-to-dmabuf-u.patch: Removed.
+        * buildstream/patches/gst-plugins-base-0001-oggstream-Workaround-for-broken-PAR-in-VP8-BOS.patch: Removed.
+        * buildstream/patches/gst-plugins-base-0001-playbin-Handle-error-message-with-redirection-indica.patch: Removed.
+        * buildstream/patches/gst-plugins-base-0002-glupload-fix-segfault.patch: Removed.
+        * buildstream/patches/gst-plugins-base-0003-glbasefilter-add-support-for-changing-the-display.patch: Removed.
+        * buildstream/patches/gst-plugins-good-qtdemux-Specify-REDIRECT-information-in-error-messag.patch: Removed.
+        * buildstream/patches/libav-0001-gstavviddec-Limit-default-number-of-decoder-threads.patch: Removed.
+
 2020-09-15  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should support building with clang ThreadSanitizer enabled

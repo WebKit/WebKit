@@ -1,9 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-ugly/gst-plugins-ugly-1.16.2.tar.xz
-  ref: 5500415b865e8b62775d4742cbb9f37146a50caecfc0e7a6fc0160d3c560fbca
-
+  url: gst_downloads:gst-plugins-ugly/gst-plugins-ugly-1.18.0.tar.xz
+  ref: 686644e45e08258ae240c4519376668ad8d34ea6d0f6ab556473c317bfb7e082
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
