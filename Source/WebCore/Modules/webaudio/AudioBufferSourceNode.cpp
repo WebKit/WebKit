@@ -225,10 +225,6 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     // Do some sanity checking.
     if (maxFrame > bufferLength)
         maxFrame = bufferLength;
-    if (reverse && m_virtualReadIndex <= 0)
-        m_virtualReadIndex = maxFrame - 1;
-    else if (!reverse && m_virtualReadIndex >= maxFrame)
-        m_virtualReadIndex = 0; // reset to start
 
     // If the .loop attribute is true, then values of m_loopStart == 0 && m_loopEnd == 0 implies
     // that we should use the entire buffer as the loop, otherwise use the loop values in m_loopStart and m_loopEnd.
@@ -498,18 +494,13 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
     m_startTime = when;
 
     if (buffer()) {
-        if (m_isGrain) {
-            // Do sanity checking of grain parameters versus buffer size.
-            double bufferDuration = buffer()->duration();
+        // Do sanity checking of grain parameters versus buffer size.
+        double bufferDuration = buffer()->duration();
 
-            m_grainOffset = std::min(bufferDuration, grainOffset);
+        m_grainOffset = std::min(bufferDuration, grainOffset);
 
-            double maxDuration = bufferDuration - m_grainOffset;
-            m_grainDuration = std::min(maxDuration, grainDuration);
-        } else {
-            m_grainOffset = 0.0;
-            m_grainDuration = buffer()->duration();
-        }
+        double maxDuration = bufferDuration - m_grainOffset;
+        m_grainDuration = std::min(maxDuration, grainDuration);
 
         // We call timeToSampleFrame here since at playbackRate == 1 we don't want to go through linear interpolation
         // at a sub-sample position since it will degrade the quality.

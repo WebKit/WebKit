@@ -1,3 +1,25 @@
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
+        AudioBufferSourceNode.start() behavior is incorrect when offset is past the end of the buffer
+        https://bugs.webkit.org/show_bug.cgi?id=216622
+
+        Reviewed by Geoffrey Garen.
+
+        AudioBufferSourceNode.start() behavior is incorrect when offset is past the end of the buffer. We
+        are supposed to output silence. However, in order implementation, we were just resetting the offset
+        to 0, playing the buffer from the beginning.
+
+        To address the issue, I have dropped the logic that would reset the read offset if past the end of
+        the buffer.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+
+        (WebCore::AudioBufferSourceNode::startPlaying):
+        Drop dead code since m_isGrain is always true in this function.
+
 2020-09-16  Stephan Szabo  <stephan.szabo@sony.com>
 
         Remove ENABLE_METER_ELEMENT

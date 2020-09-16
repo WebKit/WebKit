@@ -15,24 +15,12 @@ PASS   Case 4: start(when, 4_frames, 4_frames): play with explicit non-zero offs
 PASS   Case 4: start(when, 4_frames, 4_frames): play with explicit non-zero offset and duration: tail contains only the constant 0. 
 PASS   Case 5: start(when, 7_frames): play with explicit non-zero offset near end of buffer is identical to the array [7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
 PASS   Case 5: start(when, 7_frames): play with explicit non-zero offset near end of buffer: tail contains only the constant 0. 
-FAIL X Case 6: start(when, 8_frames): play with explicit offset at end of buffer expected to be equal to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] but differs in 7 places:
-	Index	Actual			Expected
-	[1]	1.0000000000000000e+0	0.0000000000000000e+0
-	[2]	2.0000000000000000e+0	0.0000000000000000e+0
-	[3]	3.0000000000000000e+0	0.0000000000000000e+0
-	[4]	4.0000000000000000e+0	0.0000000000000000e+0
-	...and 3 more errors. assert_true: expected true got false
+PASS   Case 6: start(when, 8_frames): play with explicit offset at end of buffer is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
 PASS   Case 6: start(when, 8_frames): play with explicit offset at end of buffer: tail contains only the constant 0. 
-FAIL X Case 7: start(when, 9_frames): play with explicit offset past end of buffer expected to be equal to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] but differs in 7 places:
-	Index	Actual			Expected
-	[1]	1.0000000000000000e+0	0.0000000000000000e+0
-	[2]	2.0000000000000000e+0	0.0000000000000000e+0
-	[3]	3.0000000000000000e+0	0.0000000000000000e+0
-	[4]	4.0000000000000000e+0	0.0000000000000000e+0
-	...and 3 more errors. assert_true: expected true got false
+PASS   Case 7: start(when, 9_frames): play with explicit offset past end of buffer is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
 PASS   Case 7: start(when, 9_frames): play with explicit offset past end of buffer: tail contains only the constant 0. 
 PASS   Case 8: start(when, 0, 15_frames): play with whole buffer, with long duration (clipped) is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...]. 
 PASS   Case 8: start(when, 0, 15_frames): play with whole buffer, with long duration (clipped): tail contains only the constant 0. 
-FAIL < [Tests AudioBufferSourceNode start()] 2 out of 18 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS < [Tests AudioBufferSourceNode start()] All assertions passed. (total 18 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 
