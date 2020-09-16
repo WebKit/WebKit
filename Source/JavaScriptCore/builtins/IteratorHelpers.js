@@ -31,8 +31,14 @@ function performIteration(iterable)
     // https://tc39.github.io/ecma262/#sec-runtime-semantics-arrayaccumulation
 
     var result = [];
+    if (@isUndefinedOrNull(iterable))
+        @throwTypeError('Spread syntax requires ...iterable not be null or undefined');
+    
+    var iteratorMethod = iterable.@@iterator;
+    if (!@isCallable(iteratorMethod))
+        @throwTypeError('Spread syntax requires ...iterable[Symbol.iterator] to be a function');
 
-    var iterator = iterable.@@iterator();
+    var iterator = iteratorMethod.@call(iterable);
     var next = iterator.next;
     var item;
     var index = 0;

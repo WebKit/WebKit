@@ -1,3 +1,13 @@
+2020-09-15  HyeockJin Kim  <kherootz@gmail.com>
+
+        Check whether the iterator is callable in spread
+        https://bugs.webkit.org/show_bug.cgi?id=215974
+
+        Reviewed by Darin Adler.
+
+        * builtins/IteratorHelpers.js:
+        (performIteration):
+
 2020-09-15  Tadeu Zagallo  <tzagallo@apple.com>
 
         Object allocation sinking forgets escaped nodes when structure changes
