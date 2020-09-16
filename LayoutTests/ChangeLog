@@ -1,3 +1,14 @@
+2020-09-16  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS Debug ] imported/w3c/web-platform-tests/selection/*: 4 tests marked as slow
+        https://bugs.webkit.org/show_bug.cgi?id=216492
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
         Update WPT test harness so that webaudio tests output results that are consistent across different machines
