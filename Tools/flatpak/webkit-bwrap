@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
+import itertools
 import shlex
 import sys
 import tempfile
@@ -53,19 +54,20 @@ def main(args: list) -> int:
 
     bwrap_args = ["bwrap", ]
     for dst, src in bind_mounts.items():
-        bwrap_args.extend(["--bind", src, dst])
+        bwrap_args.extend(("--bind", src, dst))
 
     for dst, src in try_bind_mounts.items():
-        bwrap_args.extend(["--bind-try", src, dst])
+        bwrap_args.extend(("--bind-try", src, dst))
 
     for env in os.environ.keys():
         if env.startswith("LC_") or env == "LANGUAGE":
-            bwrap_args.extend(["--unsetenv", env])
-    bwrap_args.extend(["--setenv", "LANG", "en_US.UTF-8"])
+            bwrap_args.extend(("--unsetenv", env))
+    bwrap_args.extend(("--setenv", "LANG", "en_US.UTF-8"))
 
-    bwrap_args.extend((["--setenv", "PATH", "/usr/bin:/usr/lib/sdk/rust-stable/bin/"]))
+    bwrap_args.extend(("--setenv", "PATH", "/usr/bin:/usr/lib/sdk/rust-stable/bin/"))
 
-    command_line = ' '.join(shlex.quote(a) for a in bwrap_args + args)
+    command_line = ' '.join(map(shlex.quote, itertools.chain(bwrap_args, args)))
+
     # os.system return code behaves like os.wait. A 16 bit number with the
     # signal in the lower byte and, if the signal is zero, the exit code in
     # the high byte.

@@ -1,5 +1,14 @@
 2020-09-16  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak] webkit-bwrap drive-by cleanups
+
+        Rubber-stamped by Adrian Perez de Castro.
+
+        * flatpak/webkit-bwrap: Extend lists with tuples, use itertools and map to build the final
+        command line.
+
+2020-09-16  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Cherry-pick Mesa use-after-free fixes
         https://bugs.webkit.org/show_bug.cgi?id=216532
 
