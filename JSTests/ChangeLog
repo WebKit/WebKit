@@ -1,3 +1,14 @@
+2020-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Cache UDateTimePatternGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=213454
+
+        Reviewed by Ross Kirsling.
+
+        * microbenchmarks/date-to-locale-date-string.js: Added.
+        * microbenchmarks/date-to-locale-string.js: Added.
+        * microbenchmarks/date-to-locale-time-string.js: Added.
+
 2020-09-15  HyeockJin Kim  <kherootz@gmail.com>
 
         Check whether the iterator is callable in spread

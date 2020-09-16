@@ -1,3 +1,37 @@
+2020-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Cache UDateTimePatternGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=213454
+
+        Reviewed by Ross Kirsling.
+
+        ICU udatpg_open function is particularly slow. As a result, 80~% of time is used by this function when calling Date#toLocaleString.
+        We should have last-used cache in VM, which covers major cases like, "One locale (possibly default locale) is used and continuously
+        use toLocaleString with that locale".
+
+        This significantly improves toLocaleString / toLocaleDateString / toLocaleTimeString performance.
+
+                                                   ToT                     Patched
+
+            date-to-locale-string           392.0092+-0.6811     ^     87.3196+-3.1598        ^ definitely 4.4894x faster
+            date-to-locale-date-string      377.9117+-7.8701     ^     70.4155+-3.6661        ^ definitely 5.3669x faster
+            date-to-locale-time-string      373.1970+-3.0142     ^     67.3790+-2.8952        ^ definitely 5.5388x faster
+
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/IntlCache.cpp: Added.
+        (JSC::IntlCache::cacheSharedPatternGenerator):
+        (JSC::IntlCache::getBestDateTimePattern):
+        * runtime/IntlCache.h: Added.
+        (JSC::IntlCache::getSharedPatternGenerator):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::intlCache):
+
 2020-09-15  HyeockJin Kim  <kherootz@gmail.com>
 
         Check whether the iterator is callable in spread

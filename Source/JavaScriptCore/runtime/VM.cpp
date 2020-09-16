@@ -65,6 +65,7 @@
 #include "HeapProfiler.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
+#include "IntlCache.h"
 #include "IntlCollator.h"
 #include "IntlDateTimeFormat.h"
 #include "IntlDisplayNames.h"
@@ -398,6 +399,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 #endif
     , m_stackPointerAtVMEntry(nullptr)
     , m_codeCache(makeUnique<CodeCache>())
+    , m_intlCache(makeUnique<IntlCache>())
     , m_builtinExecutables(makeUnique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
     , m_primitiveGigacageEnabled(IsWatched)

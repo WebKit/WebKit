@@ -27,12 +27,12 @@
 #include "config.h"
 #include "IntlDateTimeFormat.h"
 
+#include "IntlCache.h"
 #include "IntlObjectInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include <unicode/ucal.h>
-#include <unicode/udatpg.h>
 #include <unicode/uenum.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -814,18 +814,6 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     m_timeStyle = intlOption<DateTimeStyle>(globalObject, options, vm.propertyNames->timeStyle, { { "full"_s, DateTimeStyle::Full }, { "long"_s, DateTimeStyle::Long }, { "medium"_s, DateTimeStyle::Medium }, { "short"_s, DateTimeStyle::Short } }, "timeStyle must be \"full\", \"long\", \"medium\", or \"short\""_s, DateTimeStyle::None);
     RETURN_IF_EXCEPTION(scope, void());
 
-
-    auto patternFromSkeleton = [&](const UChar* skeleton, unsigned skeletonSize, Vector<UChar, 32>& patternBuffer, UErrorCode& status) {
-        // Always use ICU date format generator, rather than our own pattern list and matcher.
-        auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(dataLocaleWithExtensions.data(), &status));
-        if (U_FAILURE(status))
-            return;
-
-        status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(), skeleton, skeletonSize, UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer);
-        if (U_FAILURE(status))
-            return;
-    };
-
     Vector<UChar, 32> patternBuffer;
     if (m_dateStyle != DateTimeStyle::None || m_timeStyle != DateTimeStyle::None) {
         // 30. For each row in Table 1, except the header row, do
@@ -902,8 +890,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
                 replaceHourCycleInSkeleton(skeleton, specifiedHour12);
                 dataLogLnIf(IntlDateTimeFormatInternal::verbose, "replaced:(", StringView(skeleton.data(), skeleton.size()), ")");
 
-                patternBuffer.clear();
-                patternFromSkeleton(skeleton.data(), skeleton.size(), patternBuffer, status);
+                patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, skeleton.data(), skeleton.size(), status);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
                     return;
@@ -913,7 +900,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     } else {
         UErrorCode status = U_ZERO_ERROR;
         String skeleton = skeletonBuilder.toString();
-        patternFromSkeleton(StringView(skeleton).upconvertedCharacters().get(), skeleton.length(), patternBuffer, status);
+        patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, StringView(skeleton).upconvertedCharacters().get(), skeleton.length(), status);
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
             return;
