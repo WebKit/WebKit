@@ -1,3 +1,21 @@
+2020-09-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Date pickers should respect the document's color scheme
+        https://bugs.webkit.org/show_bug.cgi?id=216514
+        <rdar://problem/68889548>
+
+        Reviewed by Tim Horton.
+
+        Added the useDarkAppearance property to DateTimeChooserParameters, which
+        is based on Document::useDarkAppearance and the associated element's
+        computed style.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        * platform/DateTimeChooserParameters.h:
+        (WebCore::DateTimeChooserParameters::encode const):
+        (WebCore::DateTimeChooserParameters::decode):
+
 2020-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Delete LocaleToScriptMappingICU.cpp since it is no longer used

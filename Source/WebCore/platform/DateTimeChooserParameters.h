@@ -49,6 +49,7 @@ struct DateTimeChooserParameters {
     double stepBase;
     bool required;
     bool isAnchorElementRTL;
+    bool useDarkAppearance;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<DateTimeChooserParameters> decode(Decoder&);
@@ -70,6 +71,7 @@ void DateTimeChooserParameters::encode(Encoder& encoder) const
     encoder << stepBase;
     encoder << required;
     encoder << isAnchorElementRTL;
+    encoder << useDarkAppearance;
 }
 
 template<class Decoder>
@@ -127,7 +129,11 @@ Optional<DateTimeChooserParameters> DateTimeChooserParameters::decode(Decoder& d
     if (!decoder.decode(isAnchorElementRTL))
         return WTF::nullopt;
 
-    return {{ WTFMove(type), anchorRectInRootView, WTFMove(locale), WTFMove(currentValue), WTFMove(suggestionValues), WTFMove(localizedSuggestionValues), WTFMove(suggestionLabels), minimum, maximum, step, stepBase, required, isAnchorElementRTL }};
+    bool useDarkAppearance;
+    if (!decoder.decode(useDarkAppearance))
+        return WTF::nullopt;
+
+    return {{ WTFMove(type), anchorRectInRootView, WTFMove(locale), WTFMove(currentValue), WTFMove(suggestionValues), WTFMove(localizedSuggestionValues), WTFMove(suggestionLabels), minimum, maximum, step, stepBase, required, isAnchorElementRTL, useDarkAppearance }};
 }
 
 } // namespace WebCore

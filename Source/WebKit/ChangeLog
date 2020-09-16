@@ -1,3 +1,17 @@
+2020-09-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Date pickers should respect the document's color scheme
+        https://bugs.webkit.org/show_bug.cgi?id=216514
+        <rdar://problem/68889548>
+
+        Reviewed by Tim Horton.
+
+        Use the appearance property of NSWindow to ensure the appearance of the
+        contained NSDatePicker matches the value encoded in DateTimeChooserParameters.
+
+        * UIProcess/mac/WebDateTimePickerMac.mm:
+        (-[WKDateTimePicker initWithParams:inView:]):
+
 2020-09-15  Alex Christensen  <achristensen@webkit.org>
 
         Move local storage sync SPI from WebProcessPool to WebsiteDataStore

@@ -248,6 +248,8 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     [_datePicker setMinDate:[NSDate dateWithTimeIntervalSince1970:_params.minimum / 1000.0]];
     [_datePicker setMaxDate:[NSDate dateWithTimeIntervalSince1970:_params.maximum / 1000.0]];
+
+    [_enclosingWindow setAppearance:[NSAppearance appearanceNamed:_params.useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua]];
 }
 
 - (void)invalidate
