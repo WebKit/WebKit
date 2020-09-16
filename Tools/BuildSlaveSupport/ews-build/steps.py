@@ -26,6 +26,7 @@ from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNI
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
+from datetime import date
 from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
@@ -1546,7 +1547,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
             if logs:
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
-            send_email_to_bot_watchers(email_subject, email_text)
+            send_email_to_bot_watchers(email_subject, email_text, 'preexisting-build-failure-{}-{}'.format(builder_name, date.today().strftime("%Y-%d-%m")))
         except Exception as e:
             print('Error in sending email for build failure: {}'.format(e))
 

@@ -1,3 +1,13 @@
+2020-09-16  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS emails to bot watchers about build failures should be grouped properly
+        https://bugs.webkit.org/show_bug.cgi?id=216495
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_preexisting_build_failure): Set email headers appropriately.
+
 2020-09-16  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the isSecureContext API?
