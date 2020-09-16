@@ -1,3 +1,12 @@
+2020-09-15  Karl Rackler  <rackler@apple.com>
+
+        Change test expectation description
+        rdar://68957822
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectationsRosetta:
+
 2020-09-15  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html is a constant failure/timeout
