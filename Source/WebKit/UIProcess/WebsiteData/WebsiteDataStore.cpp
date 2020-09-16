@@ -1178,6 +1178,22 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     callbackAggregator->callIfNeeded();
 }
 
+void WebsiteDataStore::setServiceWorkerTimeoutForTesting(Seconds seconds)
+{
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->sendSync(Messages::NetworkProcess::SetServiceWorkerFetchTimeoutForTesting(seconds), Messages::NetworkProcess::SetServiceWorkerFetchTimeoutForTesting::Reply(), 0);
+    }
+}
+
+void WebsiteDataStore::resetServiceWorkerTimeoutForTesting()
+{
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->sendSync(Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting(), Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting::Reply(), 0);
+    }
+}
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebsiteDataStore::setMaxStatisticsEntries(size_t maximumEntryCount, CompletionHandler<void()>&& completionHandler)
 {

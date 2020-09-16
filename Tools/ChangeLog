@@ -1,3 +1,14 @@
+2020-09-15  Alex Christensen  <achristensen@webkit.org>
+
+        Move service worker testing timeout setting from WebProcessPool to WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=216578
+
+        Reviewed by Geoffrey Garen.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::setServiceWorkerFetchTimeoutForTesting):
+
 2020-09-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TestRunnerShared] Add a new class UIScriptControllerCommon to implement UIScriptController::windowIsKey and UIScriptController::setWindowIsKey

@@ -1051,7 +1051,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKWebsiteDataStoreClearCachedCredentials(websiteDataStore());
 
-    WKContextResetServiceWorkerFetchTimeoutForTesting(TestController::singleton().context());
+    WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(websiteDataStore());
 
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(websiteDataStore(), true);
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
@@ -4034,7 +4034,7 @@ void TestController::sendDisplayConfigurationChangedMessageForTesting()
 
 void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
 {
-    WKContextSetServiceWorkerFetchTimeoutForTesting(platformContext(), seconds);
+    WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting(websiteDataStore(), seconds);
 }
 
 struct AdClickAttributionStringResultCallbackContext {

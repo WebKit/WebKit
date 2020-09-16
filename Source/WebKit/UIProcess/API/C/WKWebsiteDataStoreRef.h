@@ -43,6 +43,9 @@ WK_EXPORT WKWebsiteDataStoreRef WKWebsiteDataStoreCreateWithConfiguration(WKWebs
 
 WK_EXPORT WKHTTPCookieStoreRef WKWebsiteDataStoreGetHTTPCookieStore(WKWebsiteDataStoreRef dataStoreRef);
 
+WK_EXPORT void WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataStoreRef dataStore, double seconds);
+WK_EXPORT void WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataStoreRef dataStore);
+
 WK_EXPORT void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDataStoreRef dataStore, bool allows);
 
 WK_EXPORT void WKWebsiteDataStoreClearCachedCredentials(WKWebsiteDataStoreRef dataStoreRef);

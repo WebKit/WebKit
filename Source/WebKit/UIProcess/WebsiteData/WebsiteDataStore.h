@@ -141,6 +141,8 @@ public:
 
     void getLocalStorageDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
     void setCacheModelSynchronouslyForTesting(CacheModel);
+    void setServiceWorkerTimeoutForTesting(Seconds);
+    void resetServiceWorkerTimeoutForTesting();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&&);

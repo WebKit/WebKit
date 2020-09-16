@@ -403,16 +403,6 @@ void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef
     WebKit::toImpl(contextRef)->setCustomWebContentServiceBundleIdentifier(WebKit::toImpl(name)->string());
 }
 
-void WKContextSetServiceWorkerFetchTimeoutForTesting(WKContextRef contextRef, double seconds)
-{
-    WebKit::toImpl(contextRef)->setServiceWorkerTimeoutForTesting((Seconds)seconds);
-}
-
-void WKContextResetServiceWorkerFetchTimeoutForTesting(WKContextRef contextRef)
-{
-    WebKit::toImpl(contextRef)->resetServiceWorkerTimeoutForTesting();
-}
-
 void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef, bool)
 {
 }

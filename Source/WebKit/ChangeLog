@@ -1,3 +1,29 @@
+2020-09-15  Alex Christensen  <achristensen@webkit.org>
+
+        Move service worker testing timeout setting from WebProcessPool to WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=216578
+
+        Reviewed by Geoffrey Garen.
+
+        This is needed for https://bugs.webkit.org/show_bug.cgi?id=216041
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetServiceWorkerFetchTimeoutForTesting): Deleted.
+        (WKContextResetServiceWorkerFetchTimeoutForTesting): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting):
+        (WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setServiceWorkerTimeoutForTesting): Deleted.
+        (WebKit::WebProcessPool::resetServiceWorkerTimeoutForTesting): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setServiceWorkerTimeoutForTesting):
+        (WebKit::WebsiteDataStore::resetServiceWorkerTimeoutForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-09-15  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r267053): ASSERTION FAILED: videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient in [WKFullScreenWindowController _completedExitFullScreen]

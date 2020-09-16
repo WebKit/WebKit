@@ -1536,16 +1536,6 @@ void WebProcessPool::activePagesOriginsInWebProcessForTesting(ProcessID pid, Com
     completionHandler({ });
 }
 
-void WebProcessPool::setServiceWorkerTimeoutForTesting(Seconds seconds)
-{
-    sendSyncToNetworkingProcess(Messages::NetworkProcess::SetServiceWorkerFetchTimeoutForTesting(seconds), Messages::NetworkProcess::SetServiceWorkerFetchTimeoutForTesting::Reply());
-}
-
-void WebProcessPool::resetServiceWorkerTimeoutForTesting()
-{
-    sendSyncToNetworkingProcess(Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting(), Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting::Reply());
-}
-
 void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
     m_alwaysUsesComplexTextCodePath = alwaysUseComplexText;

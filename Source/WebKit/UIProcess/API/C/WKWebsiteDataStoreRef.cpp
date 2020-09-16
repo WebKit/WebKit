@@ -97,6 +97,16 @@ void WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabase(WKWebsiteDataStoreR
 #endif
 }
 
+void WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataStoreRef dataStore, double seconds)
+{
+    WebKit::toImpl(dataStore)->setServiceWorkerTimeoutForTesting(Seconds(seconds));
+}
+
+void WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataStoreRef dataStore)
+{
+    WebKit::toImpl(dataStore)->resetServiceWorkerTimeoutForTesting();
+}
+
 void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable)
 {
     auto* websiteDataStore = WebKit::toImpl(dataStoreRef);
