@@ -591,9 +591,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setIntersectionObserverEnabled:(BOOL)flag;
 - (BOOL)intersectionObserverEnabled;
 
-- (void)setIsSecureContextAttributeEnabled:(BOOL)flag;
-- (BOOL)isSecureContextAttributeEnabled;
-
 - (void)setServerTimingEnabled:(BOOL)flag;
 - (BOOL)serverTimingEnabled;
 
@@ -697,6 +694,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (void)setIsSecureContextAttributeEnabled:(BOOL)flag;
+- (BOOL)isSecureContextAttributeEnabled;
 
 - (void)setFetchAPIEnabled:(BOOL)flag;
 - (BOOL)fetchAPIEnabled;

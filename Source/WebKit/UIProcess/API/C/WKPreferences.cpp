@@ -1889,16 +1889,6 @@ WKStringRef WKPreferencesCopyMediaContentTypesRequiringHardwareSupport(WKPrefere
     return toCopiedAPI(toImpl(preferencesRef)->mediaContentTypesRequiringHardwareSupport());
 }
 
-void WKPreferencesSetIsSecureContextAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setIsSecureContextAttributeEnabled(flag);
-}
-
-bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->isSecureContextAttributeEnabled();
-}
-
 bool WKPreferencesGetLegacyEncryptedMediaAPIEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->legacyEncryptedMediaAPIEnabled();
@@ -2242,6 +2232,15 @@ void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef)
+{
+    return true;
+}
+
+void WKPreferencesSetIsSecureContextAttributeEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef)
 {
     return true;
 }

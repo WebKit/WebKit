@@ -1265,11 +1265,6 @@ LinkPreloadEnabled:
   type: bool
   defaultValue: true
 
-IsSecureContextAttributeEnabled:
-  type: bool
-  defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
-
 SourceBufferChangeTypeEnabled:
   type: bool
   defaultValue: true

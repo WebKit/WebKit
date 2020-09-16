@@ -78,7 +78,6 @@ struct TestOptions {
     bool enablePointerLock { false };
     bool enableWebAuthentication { true };
     bool enableWebAuthenticationLocalAuthenticator { true };
-    bool enableIsSecureContextAttribute { true };
     bool enableInspectorAdditions { false };
     bool shouldShowTouches { false };
     bool dumpJSConsoleLogInStdErr { false };
@@ -141,7 +140,6 @@ struct TestOptions {
             || enablePointerLock != options.enablePointerLock
             || enableWebAuthentication != options.enableWebAuthentication
             || enableWebAuthenticationLocalAuthenticator != options.enableWebAuthenticationLocalAuthenticator
-            || enableIsSecureContextAttribute != options.enableIsSecureContextAttribute
             || enableInspectorAdditions != options.enableInspectorAdditions
             || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr
             || applicationManifest != options.applicationManifest

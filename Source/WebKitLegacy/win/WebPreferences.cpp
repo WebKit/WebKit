@@ -329,8 +329,6 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPreloadingEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitIsSecureContextAttributeEnabledPreferenceKey), kCFBooleanFalse);
-
     CFDictionaryAddValue(defaults, CFSTR(WebKitDataTransferItemsEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitInspectorAdditionsEnabledPreferenceKey), kCFBooleanFalse);
@@ -2206,9 +2204,8 @@ HRESULT WebPreferences::switchNetworkLoaderToNewTestingSession()
     return S_OK;
 }
 
-HRESULT WebPreferences::setIsSecureContextAttributeEnabled(BOOL enabled)
+HRESULT WebPreferences::setIsSecureContextAttributeEnabled(BOOL)
 {
-    setBoolValue(WebKitIsSecureContextAttributeEnabledPreferenceKey, enabled);
     return S_OK;
 }
 
@@ -2216,7 +2213,7 @@ HRESULT WebPreferences::isSecureContextAttributeEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitIsSecureContextAttributeEnabledPreferenceKey);
+    *enabled = true;
     return S_OK;
 }
 

@@ -45,8 +45,15 @@ typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
 // https://html.spec.whatwg.org/multipage/webappapis.html#windoworworkerglobalscope-mixin
 interface mixin WindowOrWorkerGlobalScope {
     [Replaceable] readonly attribute USVString origin;
+    readonly attribute boolean isSecureContext;
+    // FIXME: Implement 'crossOriginIsolated'.
+    // readonly attribute boolean crossOriginIsolated;
+ 
+    // Base64 utility methods.
+    [MayThrowException] DOMString atob(DOMString string);
+    [MayThrowException] DOMString btoa(DOMString string);
 
-    // Timers
+    // Timers.
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
     [CallWith=GlobalObject, MayThrowException] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
     undefined clearTimeout(optional long handle = 0);
@@ -54,14 +61,8 @@ interface mixin WindowOrWorkerGlobalScope {
     [CallWith=GlobalObject, MayThrowException] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
     undefined clearInterval(optional long handle = 0);
 
+    // microtask queuing.
     [Custom] undefined queueMicrotask(VoidCallback callback);
-
-    // Base64 utility methods.
-    [MayThrowException] DOMString atob(DOMString string);
-    [MayThrowException] DOMString btoa(DOMString string);
-
-    // Secure Contexts
-    [EnabledAtRuntime=IsSecureContextAttribute] readonly attribute boolean isSecureContext;
 
     // ImageBitmap.
     [EnabledAtRuntime=ImageBitmap] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options);

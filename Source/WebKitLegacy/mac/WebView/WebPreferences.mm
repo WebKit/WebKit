@@ -689,7 +689,6 @@ public:
         @NO, WebKitUserTimingEnabledPreferenceKey,
         @NO, WebKitResourceTimingEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
-        @NO, WebKitIsSecureContextAttributeEnabledPreferenceKey,
         @YES, WebKitLegacyEncryptedMediaAPIEnabledKey,
         @NO, WebKitEncryptedMediaAPIEnabledKey,
         @YES, WebKitViewportFitEnabledPreferenceKey,
@@ -3328,16 +3327,6 @@ static NSString *classIBCreatorID = nil;
     [self _setStringValue:value forKey:WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey];
 }
 
-- (BOOL)isSecureContextAttributeEnabled
-{
-    return [self _boolValueForKey:WebKitIsSecureContextAttributeEnabledPreferenceKey];
-}
-
-- (void)setIsSecureContextAttributeEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitIsSecureContextAttributeEnabledPreferenceKey];
-}
-
 - (BOOL)legacyEncryptedMediaAPIEnabled
 {
     return [self _boolValueForKey:WebKitLegacyEncryptedMediaAPIEnabledKey];
@@ -3692,6 +3681,15 @@ static NSString *classIBCreatorID = nil;
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
 
+- (void)setIsSecureContextAttributeEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)isSecureContextAttributeEnabled
+{
+    return YES;
+}
+
 - (void)setFetchAPIEnabled:(BOOL)flag
 {
 }
@@ -3700,7 +3698,6 @@ static NSString *classIBCreatorID = nil;
 {
     return YES;
 }
-
 
 - (void)setShadowDOMEnabled:(BOOL)flag
 {

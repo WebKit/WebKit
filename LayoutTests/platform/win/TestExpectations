@@ -90,7 +90,6 @@ webkit.org/b/178337 fast/replaced/width100percent-image.html [ Skip ]
 ################################################################################
 
 # FIXME: Implement test options parsing (<!-- webkit-test-runner [ ... ] -->).
-webkit.org/b/173281 security/isSecureContext-disabled.html [ Skip ]
 webkit.org/b/173281 http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html [ Skip ]
 webkit.org/b/173281 http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials.html [ Skip ]
 webkit.org/b/173281 http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https.html [ Skip ]

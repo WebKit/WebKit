@@ -1,3 +1,23 @@
+2020-09-16  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling the isSecureContext API?
+        https://bugs.webkit.org/show_bug.cgi?id=216562
+
+        Reviewed by Darin Adler.
+
+        Remove runtime setting for enabling/disabling the the isSecureContext attribute. 
+        on window and the worker global scope. There is no known reason one would need 
+        to disable it.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setIsSecureContextAttributeEnabled:]):
+        (-[WebPreferences isSecureContextAttributeEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2020-09-15  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the fetch API

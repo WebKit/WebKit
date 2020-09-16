@@ -118,8 +118,6 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableDragDestinationActionLoad = parseBooleanTestHeaderValue(value);
         else if (key == "layerBackedWebView")
             layerBackedWebView = parseBooleanTestHeaderValue(value);
-        else if (key == "enableIsSecureContextAttribute")
-            enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
         else if (key == "enableInspectorAdditions")
             enableInspectorAdditions = parseBooleanTestHeaderValue(value);
         else if (key == "dumpJSConsoleLogInStdErr")

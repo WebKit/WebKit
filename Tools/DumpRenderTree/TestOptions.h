@@ -40,7 +40,6 @@ struct TestOptions {
     bool enablePointerLock { false };
     bool enableDragDestinationActionLoad { false };
     bool layerBackedWebView { false };
-    bool enableIsSecureContextAttribute { true };
     bool enableInspectorAdditions { false };
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
