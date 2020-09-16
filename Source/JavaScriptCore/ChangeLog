@@ -1,3 +1,22 @@
+2020-09-16  Saam Barati  <sbarati@apple.com>
+
+        Don't IC a null custom accessor/value setter
+        https://bugs.webkit.org/show_bug.cgi?id=216620
+        <rdar://problem/68976066>
+
+        Reviewed by Mark Lam.
+
+        Our runtime allows CustomGetterSetter objects setter field to not contain an
+        actual C function to call. In such a scenario, the runtime just does nothing
+        except return false to the ::put code (which may result in throwing an
+        exception in strict mode code). 
+        
+        However, our IC code never considered whether this function could be nullptr.
+        The fix here is simple: don't IC such custom accessor/value setters.
+
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::isCacheableCustom const):
+
 2020-09-16  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK][WPE] Launching the remote inspector kills MB

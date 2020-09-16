@@ -1,3 +1,13 @@
+2020-09-16  Saam Barati  <sbarati@apple.com>
+
+        Don't IC a null custom accessor/value setter
+        https://bugs.webkit.org/show_bug.cgi?id=216620
+        <rdar://problem/68976066>
+
+        Reviewed by Mark Lam.
+
+        * stress/dont-ic-null-custom-setter.js: Added.
+
 2020-09-15  Saam Barati  <sbarati@apple.com>
 
         JSImmutableButterfly::get needs to return jsDoubleNumber for double arrays
