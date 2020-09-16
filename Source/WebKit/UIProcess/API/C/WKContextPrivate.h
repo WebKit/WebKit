@@ -68,7 +68,7 @@ WK_EXPORT void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef co
 
 WK_EXPORT void WKContextSetIconDatabasePath(WKContextRef context, WKStringRef iconDatabasePath);
 
-WK_EXPORT void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef context, WKCertificateInfoRef certificate, WKStringRef host);
+WK_EXPORT void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef context, WKCertificateInfoRef certificate, WKStringRef host) WK_C_API_DEPRECATED;
 
 // FIXME: This is a workaround for testing purposes only and should be removed once a better
 // solution has been found for testing.

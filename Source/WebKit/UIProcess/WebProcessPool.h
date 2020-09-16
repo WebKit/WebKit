@@ -333,8 +333,6 @@ public:
 
     void reportWebContentCPUTime(Seconds cpuTime, uint64_t activityState);
 
-    void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
-
     WebProcessProxy& processForRegistrableDomain(WebsiteDataStore&, WebPageProxy*, const WebCore::RegistrableDomain&); // Will return an existing one if limit is met or due to caching.
 
     void prewarmProcess();

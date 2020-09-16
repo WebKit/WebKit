@@ -48,7 +48,7 @@
 
 @property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
 
-- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
+- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebsiteDataStore._allowTLSCertificateChain:forHost:", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.fastServerTrustEvaluationEnabled", macos(10.11, WK_MAC_TBA), ios(9.0, WK_IOS_TBA));
 - (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy WK_API_DEPRECATED_WITH_REPLACEMENT("WKHTTPCookieStore._setCookieAcceptPolicy:completionHandler:", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 

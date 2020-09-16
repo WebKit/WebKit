@@ -269,11 +269,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return toAPI(_processPool.get());
 }
 
-- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
-{
-    _processPool->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain)).ptr(), host);
-}
-
 #if PLATFORM(IOS_FAMILY)
 - (WKGeolocationProviderIOS *)_geolocationProvider
 {

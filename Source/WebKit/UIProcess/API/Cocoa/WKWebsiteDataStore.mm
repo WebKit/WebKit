@@ -633,6 +633,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return wrapper(_websiteDataStore->configuration().copy());
 }
 
+- (void)_allowTLSCertificateChain:(NSArray *)certificateChain forHost:(NSString *)host
+{
+    _websiteDataStore->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain)).ptr(), host);
+}
+
 - (void)_appBoundDomains:(void (^)(NSArray<NSString *> *))completionHandler
 {
 #if ENABLE(APP_BOUND_DOMAINS)

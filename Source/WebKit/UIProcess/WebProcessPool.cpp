@@ -1815,12 +1815,6 @@ void WebProcessPool::flushCookies(const PAL::SessionID& sessionID, CompletionHan
     ensureNetworkProcess().flushCookies(sessionID, WTFMove(completionHandler));
 }
 
-void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
-{
-    ensureNetworkProcess();
-    m_networkProcess->send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
-}
-
 void WebProcessPool::updateAutomationCapabilities() const
 {
 #if ENABLE(REMOTE_INSPECTOR)

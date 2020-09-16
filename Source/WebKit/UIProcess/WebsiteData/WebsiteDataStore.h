@@ -76,6 +76,7 @@ class AuthenticatorManager;
 class SecKeyProxyStore;
 class DeviceIdHashSaltStorage;
 class SOAuthorizationCoordinator;
+class WebCertificateInfo;
 class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
@@ -229,6 +230,8 @@ public:
     const String& resolvedServiceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
     const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration->resourceLoadStatisticsDirectory(); }
     const String& resolvedHSTSStorageDirectory() const { return m_resolvedConfiguration->hstsStorageDirectory(); }
+
+    void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
     DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
 

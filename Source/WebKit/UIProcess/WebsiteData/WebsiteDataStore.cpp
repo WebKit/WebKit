@@ -2082,6 +2082,12 @@ static String computeMediaKeyFile(const String& mediaKeyDirectory)
     return FileSystem::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist");
 }
 
+void WebsiteDataStore::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
+{
+    for (auto& processPool : processPools())
+        processPool->ensureNetworkProcess().send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
+}
+
 Vector<WebCore::SecurityOriginData> WebsiteDataStore::mediaKeyOrigins(const String& mediaKeysStorageDirectory)
 {
     ASSERT(!mediaKeysStorageDirectory.isEmpty());

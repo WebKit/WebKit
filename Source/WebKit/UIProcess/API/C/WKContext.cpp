@@ -475,9 +475,8 @@ void WKContextSetIconDatabasePath(WKContextRef, WKStringRef)
 {
 }
 
-void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef contextRef, WKCertificateInfoRef certificateRef, WKStringRef hostRef)
+void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef, WKCertificateInfoRef, WKStringRef)
 {
-    WebKit::toImpl(contextRef)->allowSpecificHTTPSCertificateForHost(WebKit::toImpl(certificateRef), WebKit::toImpl(hostRef)->string());
 }
 
 void WKContextDisableProcessTermination(WKContextRef contextRef)
