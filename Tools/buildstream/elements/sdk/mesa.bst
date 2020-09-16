@@ -109,3 +109,9 @@ sources:
   ref: mesa-20.1.5-0-g3ba7f954b8a4ca6a8754fec06b8c0d179f2db64a
 - kind: patch
   path: patches/mesa/mesa_libdrm_deps.patch
+- kind: patch
+  path: patches/mesa/0001-mesa-rename-_mesa_free_errors_data.patch
+- kind: patch
+  path: patches/mesa/0002-mesa-add-bool-param-to-_mesa_free_context_data.patch
+- kind: patch
+  path: patches/mesa/0003-mesa-st-release-debug_output-after-destroying-the-co.patch

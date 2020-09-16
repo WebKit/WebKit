@@ -1,0 +1,53 @@
+From 25baceafd3dfbc288fe05876c7c088549e46d9d4 Mon Sep 17 00:00:00 2001
+From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Date: Tue, 7 Jul 2020 11:08:50 +0200
+Subject: [PATCH 3/3] mesa/st: release debug_output after destroying the
+ context
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Closes: https://gitlab.freedesktop.org/mesa/mesa/-/issues/3230
+Closes: https://gitlab.freedesktop.org/mesa/mesa/-/issues/2218
+Reviewed-by: Marek Olšák <marek.olsak@amd.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5789>
+---
+ src/mesa/state_tracker/st_context.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/mesa/state_tracker/st_context.c b/src/mesa/state_tracker/st_context.c
+index 3b1fb862891..490e959d6da 100644
+--- a/src/mesa/state_tracker/st_context.c
++++ b/src/mesa/state_tracker/st_context.c
+@@ -29,6 +29,7 @@
+ #include "main/accum.h"
+ #include "main/api_exec.h"
+ #include "main/context.h"
++#include "main/debug_output.h"
+ #include "main/glthread.h"
+ #include "main/samplerobj.h"
+ #include "main/shaderobj.h"
+@@ -1103,13 +1104,19 @@ st_destroy_context(struct st_context *st)
+ 
+    st_destroy_program_variants(st);
+ 
+-   _mesa_free_context_data(ctx, true);
++   /* Do not release debug_output yet because it might be in use by other threads.
++    * These threads will be terminated by _mesa_free_context_data and
++    * st_destroy_context_priv.
++    */
++   _mesa_free_context_data(ctx, false);
+ 
+    /* This will free the st_context too, so 'st' must not be accessed
+     * afterwards. */
+    st_destroy_context_priv(st, true);
+    st = NULL;
+ 
++   _mesa_destroy_debug_output(ctx);
++
+    free(ctx);
+ 
+    if (save_ctx == ctx) {
+-- 
+2.26.2
+

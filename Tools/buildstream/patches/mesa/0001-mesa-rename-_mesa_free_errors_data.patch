@@ -1,0 +1,61 @@
+From e6f7b4312f5f924c8da74d8989ef4ebec7466240 Mon Sep 17 00:00:00 2001
+From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Date: Tue, 7 Jul 2020 11:00:58 +0200
+Subject: [PATCH 1/3] mesa: rename _mesa_free_errors_data
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use the _mesa_init_XXX / _mesa_destroy_XXX pattern to clearly associate
+the 2 functions.
+
+Reviewed-by: Marek Olšák <marek.olsak@amd.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5789>
+---
+ src/mesa/main/context.c      | 2 +-
+ src/mesa/main/debug_output.c | 2 +-
+ src/mesa/main/debug_output.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/mesa/main/context.c b/src/mesa/main/context.c
+index be2e7df5824..d1949ada746 100644
+--- a/src/mesa/main/context.c
++++ b/src/mesa/main/context.c
+@@ -1386,7 +1386,7 @@ _mesa_free_context_data(struct gl_context *ctx)
+    /* needs to be after freeing shared state */
+    _mesa_free_display_list_data(ctx);
+ 
+-   _mesa_free_errors_data(ctx);
++   _mesa_destroy_debug_output(ctx);
+ 
+    free((void *)ctx->Extensions.String);
+ 
+diff --git a/src/mesa/main/debug_output.c b/src/mesa/main/debug_output.c
+index 3f1ca8bf340..6d4c8e72ee3 100644
+--- a/src/mesa/main/debug_output.c
++++ b/src/mesa/main/debug_output.c
+@@ -1281,7 +1281,7 @@ _mesa_init_debug_output(struct gl_context *ctx)
+ 
+ 
+ void
+-_mesa_free_errors_data(struct gl_context *ctx)
++_mesa_destroy_debug_output(struct gl_context *ctx)
+ {
+    if (ctx->Debug) {
+       debug_destroy(ctx->Debug);
+diff --git a/src/mesa/main/debug_output.h b/src/mesa/main/debug_output.h
+index 8a5eedc21f0..e467b087b5e 100644
+--- a/src/mesa/main/debug_output.h
++++ b/src/mesa/main/debug_output.h
+@@ -43,7 +43,7 @@ void
+ _mesa_init_debug_output(struct gl_context *ctx);
+ 
+ void
+-_mesa_free_errors_data(struct gl_context *ctx);
++_mesa_destroy_debug_output(struct gl_context *ctx);
+ 
+ void
+ _mesa_debug_get_id(GLuint *id);
+-- 
+2.26.2
+

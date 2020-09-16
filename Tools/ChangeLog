@@ -1,5 +1,22 @@
 2020-09-16  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Cherry-pick Mesa use-after-free fixes
+        https://bugs.webkit.org/show_bug.cgi?id=216532
+
+        Reviewed by Žan Doberšek.
+
+        These patches are not in any stable Mesa release yet. The crash is happening on various
+        tests on both WPE and GTK test bots.
+
+        Upstream MR: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5789
+
+        * buildstream/elements/sdk/mesa.bst:
+        * buildstream/patches/mesa/0001-mesa-rename-_mesa_free_errors_data.patch: Added.
+        * buildstream/patches/mesa/0002-mesa-add-bool-param-to-_mesa_free_context_data.patch: Added.
+        * buildstream/patches/mesa/0003-mesa-st-release-debug_output-after-destroying-the-co.patch: Added.
+
+2020-09-16  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] Update Flatpak SDK to 1.18.0
         https://bugs.webkit.org/show_bug.cgi?id=216270
 

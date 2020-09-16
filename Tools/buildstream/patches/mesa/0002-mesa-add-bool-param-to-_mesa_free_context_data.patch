@@ -1,0 +1,200 @@
+From 7f0b6a5df8e360e52a97f59948dda927fe9df15e Mon Sep 17 00:00:00 2001
+From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Date: Tue, 7 Jul 2020 11:06:21 +0200
+Subject: [PATCH 2/3] mesa: add bool param to _mesa_free_context_data
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The param controls whether _mesa_destroy_debug_output should be called or not.
+No functional changes; this will be used by the next commit.
+
+Reviewed-by: Marek Olšák <marek.olsak@amd.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5789>
+---
+ src/mesa/drivers/dri/i915/intel_context.c           | 2 +-
+ src/mesa/drivers/dri/i965/brw_context.c             | 2 +-
+ src/mesa/drivers/dri/nouveau/nouveau_context.c      | 2 +-
+ src/mesa/drivers/dri/radeon/radeon_common_context.c | 2 +-
+ src/mesa/drivers/osmesa/osmesa.c                    | 8 ++++----
+ src/mesa/drivers/x11/xm_api.c                       | 4 ++--
+ src/mesa/main/context.c                             | 7 ++++---
+ src/mesa/main/context.h                             | 2 +-
+ src/mesa/state_tracker/st_context.c                 | 2 +-
+ 9 files changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/src/mesa/drivers/dri/i915/intel_context.c b/src/mesa/drivers/dri/i915/intel_context.c
+index 73165418dc5..c9426db67b3 100644
+--- a/src/mesa/drivers/dri/i915/intel_context.c
++++ b/src/mesa/drivers/dri/i915/intel_context.c
+@@ -598,7 +598,7 @@ intelDestroyContext(__DRIcontext * driContextPriv)
+       driDestroyOptionCache(&intel->optionCache);
+ 
+       /* free the Mesa context */
+-      _mesa_free_context_data(&intel->ctx);
++      _mesa_free_context_data(&intel->ctx, true);
+ 
+       _math_matrix_dtr(&intel->ViewportMatrix);
+ 
+diff --git a/src/mesa/drivers/dri/i965/brw_context.c b/src/mesa/drivers/dri/i965/brw_context.c
+index 6ca20f24b94..e8ec66b98f1 100644
+--- a/src/mesa/drivers/dri/i965/brw_context.c
++++ b/src/mesa/drivers/dri/i965/brw_context.c
+@@ -1242,7 +1242,7 @@ intelDestroyContext(__DRIcontext * driContextPriv)
+    driDestroyOptionCache(&brw->optionCache);
+ 
+    /* free the Mesa context */
+-   _mesa_free_context_data(&brw->ctx);
++   _mesa_free_context_data(&brw->ctx, true);
+ 
+    ralloc_free(brw);
+    driContextPriv->driverPrivate = NULL;
+diff --git a/src/mesa/drivers/dri/nouveau/nouveau_context.c b/src/mesa/drivers/dri/nouveau/nouveau_context.c
+index a63e0a19ddd..c97fc0f23a5 100644
+--- a/src/mesa/drivers/dri/nouveau/nouveau_context.c
++++ b/src/mesa/drivers/dri/nouveau/nouveau_context.c
+@@ -217,7 +217,7 @@ nouveau_context_deinit(struct gl_context *ctx)
+ 	nouveau_object_del(&nctx->hw.chan);
+ 
+ 	nouveau_scratch_destroy(ctx);
+-	_mesa_free_context_data(ctx);
++	_mesa_free_context_data(ctx, true);
+ }
+ 
+ void
+diff --git a/src/mesa/drivers/dri/radeon/radeon_common_context.c b/src/mesa/drivers/dri/radeon/radeon_common_context.c
+index 416d2d988fe..622b38ecc36 100644
+--- a/src/mesa/drivers/dri/radeon/radeon_common_context.c
++++ b/src/mesa/drivers/dri/radeon/radeon_common_context.c
+@@ -270,7 +270,7 @@ void radeonDestroyContext(__DRIcontext *driContextPriv )
+ 
+ 	/* free atom list */
+ 	/* free the Mesa context data */
+-	_mesa_free_context_data(&radeon->glCtx);
++	_mesa_free_context_data(&radeon->glCtx, true);
+ 
+ 	/* free the option cache */
+ 	driDestroyOptionCache(&radeon->optionCache);
+diff --git a/src/mesa/drivers/osmesa/osmesa.c b/src/mesa/drivers/osmesa/osmesa.c
+index dea5ae1fe94..a831b71f257 100644
+--- a/src/mesa/drivers/osmesa/osmesa.c
++++ b/src/mesa/drivers/osmesa/osmesa.c
+@@ -857,7 +857,7 @@ OSMesaCreateContextAttribs(const int *attribList, OSMesaContext sharelist)
+       osmesa->gl_buffer = _mesa_create_framebuffer(osmesa->gl_visual);
+       if (!osmesa->gl_buffer) {
+          _mesa_destroy_visual( osmesa->gl_visual );
+-         _mesa_free_context_data(&osmesa->mesa);
++         _mesa_free_context_data(&osmesa->mesa, true);
+          free(osmesa);
+          return NULL;
+       }
+@@ -894,7 +894,7 @@ OSMesaCreateContextAttribs(const int *attribList, OSMesaContext sharelist)
+              !_tnl_CreateContext( ctx ) ||
+              !_swsetup_CreateContext( ctx )) {
+             _mesa_destroy_visual(osmesa->gl_visual);
+-            _mesa_free_context_data(ctx);
++            _mesa_free_context_data(ctx, true);
+             free(osmesa);
+             return NULL;
+          }
+@@ -922,7 +922,7 @@ OSMesaCreateContextAttribs(const int *attribList, OSMesaContext sharelist)
+ 
+          if (ctx->Version < version_major * 10 + version_minor) {
+             _mesa_destroy_visual(osmesa->gl_visual);
+-            _mesa_free_context_data(ctx);
++            _mesa_free_context_data(ctx, true);
+             free(osmesa);
+             return NULL;
+          }
+@@ -958,7 +958,7 @@ OSMesaDestroyContext( OSMesaContext osmesa )
+       _mesa_destroy_visual( osmesa->gl_visual );
+       _mesa_reference_framebuffer( &osmesa->gl_buffer, NULL );
+ 
+-      _mesa_free_context_data(&osmesa->mesa);
++      _mesa_free_context_data(&osmesa->mesa, true);
+       free( osmesa );
+    }
+ }
+diff --git a/src/mesa/drivers/x11/xm_api.c b/src/mesa/drivers/x11/xm_api.c
+index 0011a842fb0..a3990d2048b 100644
+--- a/src/mesa/drivers/x11/xm_api.c
++++ b/src/mesa/drivers/x11/xm_api.c
+@@ -943,7 +943,7 @@ XMesaContext XMesaCreateContext( XMesaVisual v, XMesaContext share_list )
+        !_vbo_CreateContext( mesaCtx, false ) ||
+        !_tnl_CreateContext( mesaCtx ) ||
+        !_swsetup_CreateContext( mesaCtx )) {
+-      _mesa_free_context_data(&c->mesa);
++      _mesa_free_context_data(&c->mesa, true);
+       free(c);
+       return NULL;
+    }
+@@ -980,7 +980,7 @@ void XMesaDestroyContext( XMesaContext c )
+    _swrast_DestroyContext( mesaCtx );
+    _tnl_DestroyContext( mesaCtx );
+    _vbo_DestroyContext( mesaCtx );
+-   _mesa_free_context_data(mesaCtx);
++   _mesa_free_context_data(mesaCtx, true);
+    free( c );
+ }
+ 
+diff --git a/src/mesa/main/context.c b/src/mesa/main/context.c
+index d1949ada746..d72a9dfc94e 100644
+--- a/src/mesa/main/context.c
++++ b/src/mesa/main/context.c
+@@ -1317,7 +1317,7 @@ fail:
+  * \sa _mesa_initialize_context() and init_attrib_groups().
+  */
+ void
+-_mesa_free_context_data(struct gl_context *ctx)
++_mesa_free_context_data(struct gl_context *ctx, bool destroy_debug_output)
+ {
+    if (!_mesa_get_current_context()){
+       /* No current context, but we may need one in order to delete
+@@ -1386,7 +1386,8 @@ _mesa_free_context_data(struct gl_context *ctx)
+    /* needs to be after freeing shared state */
+    _mesa_free_display_list_data(ctx);
+ 
+-   _mesa_destroy_debug_output(ctx);
++   if (destroy_debug_output)
++      _mesa_destroy_debug_output(ctx);
+ 
+    free((void *)ctx->Extensions.String);
+ 
+@@ -1420,7 +1421,7 @@ void
+ _mesa_destroy_context( struct gl_context *ctx )
+ {
+    if (ctx) {
+-      _mesa_free_context_data(ctx);
++      _mesa_free_context_data(ctx, true);
+       free( (void *) ctx );
+    }
+ }
+diff --git a/src/mesa/main/context.h b/src/mesa/main/context.h
+index d5b97ac4fc7..e00149aabef 100644
+--- a/src/mesa/main/context.h
++++ b/src/mesa/main/context.h
+@@ -118,7 +118,7 @@ _mesa_initialize_context( struct gl_context *ctx,
+                           const struct dd_function_table *driverFunctions);
+ 
+ extern void
+-_mesa_free_context_data(struct gl_context *ctx);
++_mesa_free_context_data(struct gl_context *ctx, bool destroy_debug_output);
+ 
+ extern void
+ _mesa_destroy_context( struct gl_context *ctx );
+diff --git a/src/mesa/state_tracker/st_context.c b/src/mesa/state_tracker/st_context.c
+index 2fc4ffe6728..3b1fb862891 100644
+--- a/src/mesa/state_tracker/st_context.c
++++ b/src/mesa/state_tracker/st_context.c
+@@ -1103,7 +1103,7 @@ st_destroy_context(struct st_context *st)
+ 
+    st_destroy_program_variants(st);
+ 
+-   _mesa_free_context_data(ctx);
++   _mesa_free_context_data(ctx, true);
+ 
+    /* This will free the st_context too, so 'st' must not be accessed
+     * afterwards. */
+-- 
+2.26.2
+
