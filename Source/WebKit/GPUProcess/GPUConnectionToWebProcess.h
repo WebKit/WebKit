@@ -117,7 +117,6 @@ private:
 #if HAVE(AVASSETWRITERDELEGATE)
     RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
-    RemoteSampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
 #endif
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
@@ -173,10 +172,10 @@ private:
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
     Ref<RemoteAudioMediaStreamTrackRendererManager> m_audioTrackRendererManager;
+    Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #if HAVE(AVASSETWRITERDELEGATE)
     std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #endif
-    std::unique_ptr<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #endif
 #if ENABLE(MEDIA_STREAM)
     bool m_allowsAudioCapture { false };

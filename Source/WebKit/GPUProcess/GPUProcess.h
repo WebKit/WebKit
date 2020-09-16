@@ -77,6 +77,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     WorkQueue& audioMediaStreamTrackRendererQueue();
+    WorkQueue& videoMediaStreamTrackRendererQueue();
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     WorkQueue& libWebRTCCodecsQueue();
@@ -123,8 +124,9 @@ private:
         bool allowDisplayCapture { false };
     };
     HashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
-#if PLATFORM(COCOA)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     RefPtr<WorkQueue> m_audioMediaStreamTrackRendererQueue;
+    RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
 #endif
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)

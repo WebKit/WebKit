@@ -268,6 +268,12 @@ WorkQueue& GPUProcess::audioMediaStreamTrackRendererQueue()
         m_audioMediaStreamTrackRendererQueue = WorkQueue::create("RemoteAudioMediaStreamTrackRenderer", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive);
     return *m_audioMediaStreamTrackRendererQueue;
 }
+WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
+{
+    if (!m_videoMediaStreamTrackRendererQueue)
+        m_videoMediaStreamTrackRendererQueue = WorkQueue::create("RemoteVideoMediaStreamTrackRenderer", WorkQueue::Type::Serial, WorkQueue::QOS::UserInitiated);
+    return *m_videoMediaStreamTrackRendererQueue;
+}
 #endif
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)

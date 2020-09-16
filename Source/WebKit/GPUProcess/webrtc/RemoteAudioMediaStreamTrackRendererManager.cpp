@@ -63,21 +63,15 @@ void RemoteAudioMediaStreamTrackRendererManager::dispatchToThread(Function<void(
     m_queue->dispatch(WTFMove(callback));
 }
 
-void RemoteAudioMediaStreamTrackRendererManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+bool RemoteAudioMediaStreamTrackRendererManager::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (!decoder.destinationID()) {
-        if (decoder.messageName() == Messages::RemoteAudioMediaStreamTrackRendererManager::CreateRenderer::name()) {
-            IPC::handleMessage<Messages::RemoteAudioMediaStreamTrackRendererManager::CreateRenderer>(decoder, this, &RemoteAudioMediaStreamTrackRendererManager::createRenderer);
-            return;
-        }
-        if (decoder.messageName() == Messages::RemoteAudioMediaStreamTrackRendererManager::ReleaseRenderer::name()) {
-            IPC::handleMessage<Messages::RemoteAudioMediaStreamTrackRendererManager::ReleaseRenderer>(decoder, this, &RemoteAudioMediaStreamTrackRendererManager::releaseRenderer);
-            return;
-        }
-        return;
-    }
-    if (auto* renderer = m_renderers.get(makeObjectIdentifier<AudioMediaStreamTrackRendererIdentifierType>(decoder.destinationID())))
+    if (!decoder.destinationID())
+        return false;
+
+    auto identifier = makeObjectIdentifier<AudioMediaStreamTrackRendererIdentifierType>(decoder.destinationID());
+    if (auto* renderer = m_renderers.get(identifier))
         renderer->didReceiveMessage(connection, decoder);
+    return true;
 }
 
 void RemoteAudioMediaStreamTrackRendererManager::createRenderer(AudioMediaStreamTrackRendererIdentifier identifier)

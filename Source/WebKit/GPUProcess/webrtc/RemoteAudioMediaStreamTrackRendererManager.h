@@ -63,6 +63,7 @@ private:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
     void createRenderer(AudioMediaStreamTrackRendererIdentifier);
     void releaseRenderer(AudioMediaStreamTrackRendererIdentifier);
 

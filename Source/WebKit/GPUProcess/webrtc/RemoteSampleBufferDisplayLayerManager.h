@@ -27,14 +27,13 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
-#include "MessageReceiver.h"
+#include "Connection.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessagesReplies.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include <WebCore/IntSize.h>
 #include <wtf/HashMap.h>
 
 namespace IPC {
-class Connection;
 class Decoder;
 }
 
@@ -44,26 +43,34 @@ class IntSize;
 
 namespace WebKit {
 
+class GPUConnectionToWebProcess;
 class RemoteSampleBufferDisplayLayer;
 
-class RemoteSampleBufferDisplayLayerManager final : private IPC::MessageReceiver {
+class RemoteSampleBufferDisplayLayerManager final : public IPC::Connection::ThreadMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RemoteSampleBufferDisplayLayerManager(Ref<IPC::Connection>&&);
+    static Ref<RemoteSampleBufferDisplayLayerManager> create(GPUConnectionToWebProcess& connection) { return adoptRef(*new RemoteSampleBufferDisplayLayerManager(connection)); }
     ~RemoteSampleBufferDisplayLayerManager();
 
-    void didReceiveLayerMessage(IPC::Connection&, IPC::Decoder&);
-    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void close();
 
 private:
+    explicit RemoteSampleBufferDisplayLayerManager(GPUConnectionToWebProcess&);
+
+    // IPC::Connection::ThreadMessageReceiver
+    void dispatchToThread(Function<void()>&&) final;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
     using LayerCreationCallback = CompletionHandler<void(Optional<LayerHostingContextID>)>&&;
     void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, LayerCreationCallback);
     void releaseLayer(SampleBufferDisplayLayerIdentifier);
 
+    GPUConnectionToWebProcess& m_connectionToWebProcess;
     Ref<IPC::Connection> m_connection;
+    Ref<WorkQueue> m_queue;
     HashMap<SampleBufferDisplayLayerIdentifier, std::unique_ptr<RemoteSampleBufferDisplayLayer>> m_layers;
 };
 

@@ -23,7 +23,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
-messages -> RemoteSampleBufferDisplayLayerManager NotRefCounted {
+messages -> RemoteSampleBufferDisplayLayerManager WantsAsyncDispatchMessage {
     CreateLayer(WebKit::SampleBufferDisplayLayerIdentifier id, bool hideRootLayer, WebCore::IntSize size) -> (Optional<WebKit::LayerHostingContextID> contextID) Async
     ReleaseLayer(WebKit::SampleBufferDisplayLayerIdentifier id)
 }

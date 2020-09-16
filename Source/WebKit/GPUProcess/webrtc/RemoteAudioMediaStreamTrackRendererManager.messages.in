@@ -23,7 +23,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
-messages -> RemoteAudioMediaStreamTrackRendererManager NotRefCounted {
+messages -> RemoteAudioMediaStreamTrackRendererManager WantsAsyncDispatchMessage {
     CreateRenderer(WebKit::AudioMediaStreamTrackRendererIdentifier id)
     ReleaseRenderer(WebKit::AudioMediaStreamTrackRendererIdentifier id)
 }

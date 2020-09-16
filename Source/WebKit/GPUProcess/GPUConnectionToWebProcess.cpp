@@ -159,6 +159,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     , m_audioTrackRendererManager(RemoteAudioMediaStreamTrackRendererManager::create(*this))
+    , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
 #endif
 {
     RELEASE_ASSERT(RunLoop::isMain());
@@ -173,6 +174,7 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     m_audioTrackRendererManager->close();
+    m_sampleBufferDisplayLayerManager->close();
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     m_libWebRTCCodecsProxy->close();
@@ -249,14 +251,6 @@ RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
     return *m_remoteMediaRecorderManager;
 }
 #endif
-
-RemoteSampleBufferDisplayLayerManager& GPUConnectionToWebProcess::sampleBufferDisplayLayerManager()
-{
-    if (!m_sampleBufferDisplayLayerManager)
-        m_sampleBufferDisplayLayerManager = makeUnique<RemoteSampleBufferDisplayLayerManager>(m_connection.copyRef());
-
-    return *m_sampleBufferDisplayLayerManager;
-}
 #endif //  PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -375,14 +369,6 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif // HAVE(AVASSETWRITERDELEGATE)
-    if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName()) {
-        sampleBufferDisplayLayerManager().didReceiveMessageFromWebProcess(connection, decoder);
-        return true;
-    }
-    if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayer::messageReceiverName()) {
-        sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
-        return true;
-    }
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMFactoryProxy::messageReceiverName()) {

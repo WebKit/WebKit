@@ -29,36 +29,75 @@
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "Decoder.h"
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteSampleBufferDisplayLayer.h"
+#include "RemoteSampleBufferDisplayLayerManagerMessages.h"
+#include "RemoteSampleBufferDisplayLayerMessages.h"
 #include <WebCore/IntSize.h>
 
 namespace WebKit {
 
-RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager(Ref<IPC::Connection>&& connection)
-    : m_connection(WTFMove(connection))
+RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+    : m_connectionToWebProcess(gpuConnectionToWebProcess)
+    , m_connection(gpuConnectionToWebProcess.connection())
+    , m_queue(gpuConnectionToWebProcess.gpuProcess().videoMediaStreamTrackRendererQueue())
 {
+    m_connectionToWebProcess.connection().addThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), this);
+    m_connectionToWebProcess.connection().addThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), this);
 }
 
-RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager() = default;
-
-void RemoteSampleBufferDisplayLayerManager::didReceiveLayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager()
 {
-    if (auto* layer = m_layers.get(makeObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID())))
+    m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
+    m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
+}
+
+void RemoteSampleBufferDisplayLayerManager::close()
+{
+    dispatchToThread([this, protectedThis = makeRef(*this)] {
+        callOnMainThread([layers = WTFMove(m_layers)] { });
+    });
+}
+
+void RemoteSampleBufferDisplayLayerManager::dispatchToThread(Function<void()>&& callback)
+{
+    m_queue->dispatch(WTFMove(callback));
+}
+
+bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (!decoder.destinationID())
+        return false;
+
+    auto identifier = makeObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID());
+    if (auto* layer = m_layers.get(identifier))
         layer->didReceiveMessage(connection, decoder);
+    return true;
 }
 
 void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayerIdentifier identifier, bool hideRootLayer, WebCore::IntSize size, LayerCreationCallback&& callback)
 {
-    ASSERT(!m_layers.contains(identifier));
-    auto layer = RemoteSampleBufferDisplayLayer::create(identifier, m_connection.copyRef());
-    layer->initialize(hideRootLayer, size, WTFMove(callback));
-    m_layers.add(identifier, WTFMove(layer));
+    callOnMainThread([this, protectedThis = makeRef(*this), identifier, hideRootLayer, size, callback = WTFMove(callback)]() mutable {
+        auto layer = RemoteSampleBufferDisplayLayer::create(identifier, m_connection.copyRef());
+        auto& layerReference = *layer;
+        layerReference.initialize(hideRootLayer, size, [this, protectedThis = makeRef(*this), callback = WTFMove(callback), identifier, layer = WTFMove(layer)](auto layerId) mutable {
+            dispatchToThread([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {
+                ASSERT(!m_layers.contains(identifier));
+                m_layers.add(identifier, WTFMove(layer));
+                callback(WTFMove(layerId));
+            });
+        });
+    });
 }
 
 void RemoteSampleBufferDisplayLayerManager::releaseLayer(SampleBufferDisplayLayerIdentifier identifier)
 {
-    ASSERT(m_layers.contains(identifier));
-    m_layers.remove(identifier);
+    callOnMainThread([this, protectedThis = makeRef(*this), identifier]() mutable {
+        dispatchToThread([this, protectedThis = WTFMove(protectedThis), identifier] {
+            ASSERT(m_layers.contains(identifier));
+            callOnMainThread([layer = m_layers.take(identifier)] { });
+        });
+    });
 }
 
 }

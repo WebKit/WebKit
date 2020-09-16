@@ -1,3 +1,44 @@
+2020-09-16  Youenn Fablet  <youenn@apple.com>
+
+        RemoteSampleBufferDisplayLayer should process its IPC messages from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=216475
+
+        Reviewed by Eric Carlson.
+
+        Use a process wide work queue to process all track video renderer messages in a background thread.
+        This queue is shared by all RemoteSampleBufferDisplayLayerManager and RemoteSampleBufferDisplayLayer objects, which are per web process.
+        Since LocalSampleBufferDisplayLayer must currently be created in main thread, hop to main thread to create/delete renderers.
+
+        We update messages.py to support WantsAsyncDispatchMessage, which removes the sync handling with dispatchMessage.
+        This allows RemoteSampleBufferDisplayLayerManager to also handle messages from RemoteSampleBufferDisplayLayer.
+        Update RemoteSampleBufferDisplayLayerManager accordingly as well.
+
+        Covered by webrtc/video.html with GPU process enabled.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::videoMediaStreamTrackRendererQueue):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::dispatchMessage):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::close):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::dispatchToThread):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::dispatchMessage):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::releaseLayer):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in:
+        * Scripts/webkit/messages.py:
+        * SourcesCocoa.txt:
+
 2020-09-16  Alex Christensen  <achristensen@webkit.org>
 
         Move TLS certificate bypass SPI from WebProcessPool to WebsiteDataStore
