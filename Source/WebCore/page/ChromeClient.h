@@ -460,8 +460,6 @@ public:
 
     virtual bool shouldUseTiledBackingForFrameView(const FrameView&) const { return false; }
 
-    virtual MonotonicTime timestampForPaintFrequencyTracking() const { return MonotonicTime::now(); }
-
     virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags, uint64_t) { }
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 

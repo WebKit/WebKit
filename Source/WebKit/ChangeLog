@@ -1,3 +1,23 @@
+2020-09-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r266677): ASSERTION FAILED in PaintFrequencyTracker::end()
+        https://bugs.webkit.org/show_bug.cgi?id=216591
+        <rdar://problem/68635418>
+
+        Reviewed by Simon Fraser.
+
+        timestampForPaintFrequencyTracking() do not have to be in ChromeClient.
+        RenderLayer can access it through its page(). No need to special case
+        isSVGImageChromeClient() because we are going to track the painting that
+        goes through Page::updateRendering(). This means all the painting of the
+        SVG image RenderLayers will be tracked by the same timestamp. Currently 
+        we do not support compositing inside the SVG image which means there is
+        only one RenderLayer per SVG image.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::timestampForPaintFrequencyTracking const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2020-09-15  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date pickers should respect the document's color scheme

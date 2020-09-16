@@ -775,7 +775,7 @@ public:
     bool hasBeenNotifiedToInjectUserScripts() const { return m_hasBeenNotifiedToInjectUserScripts; }
     WEBCORE_EXPORT void notifyToInjectUserScripts();
 
-    MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
+    MonotonicTime renderingUpdateTimestamp() const { return m_renderingUpdateTimestamp; }
 
 private:
     struct Navigation {
@@ -1072,7 +1072,7 @@ private:
     ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
 
-    MonotonicTime m_lastRenderingUpdateTimestamp;
+    MonotonicTime m_renderingUpdateTimestamp;
 };
 
 inline PageGroup& Page::group()

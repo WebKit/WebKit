@@ -1442,13 +1442,12 @@ void Page::updateRendering()
         return;
     }
 
-    m_lastRenderingUpdateTimestamp = MonotonicTime::now();
+    SetForScope<bool> inUpdateRendering(m_inUpdateRendering, true);
+    SetForScope<MonotonicTime> renderingUpdateTimestamp(m_renderingUpdateTimestamp, MonotonicTime::now());
 
     bool isSVGImagePage = chrome().client().isSVGImageChromeClient();
     if (!isSVGImagePage)
         tracePoint(RenderingUpdateStart);
-
-    SetForScope<bool> change(m_inUpdateRendering, true);
 
     layoutIfNeeded();
 

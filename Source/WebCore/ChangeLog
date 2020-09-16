@@ -1,3 +1,30 @@
+2020-09-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r266677): ASSERTION FAILED in PaintFrequencyTracker::end()
+        https://bugs.webkit.org/show_bug.cgi?id=216591
+        <rdar://problem/68635418>
+
+        Reviewed by Simon Fraser.
+
+        Make RenderLayer track the painting which is scheduled through
+        RenderingUpdateScheduler only. We can do this by (1) reseting Page::
+        m_renderingUpdateTimestamp at the end of Page::updateRendering() and (2)
+        making SinglePaintFrequencyTracking track the painting only if the 
+        timestamp is not zero.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::timestampForPaintFrequencyTracking const): Deleted.
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        * page/Page.h:
+        (WebCore::Page::renderingUpdateTimestamp const):
+        (WebCore::Page::lastRenderingUpdateTimestamp const): Deleted.
+        * rendering/PaintFrequencyTracker.h:
+        (WebCore::SinglePaintFrequencyTracking::SinglePaintFrequencyTracking):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2020-09-15  Rob Buis  <rbuis@igalia.com>
 
         Fix lazy image load painting

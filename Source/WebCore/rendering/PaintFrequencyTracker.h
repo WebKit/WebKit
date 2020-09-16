@@ -85,9 +85,9 @@ private:
 class SinglePaintFrequencyTracking {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SinglePaintFrequencyTracking(PaintFrequencyTracker& paintFrequencyTracker, MonotonicTime timestamp, bool track = true)
+    SinglePaintFrequencyTracking(PaintFrequencyTracker& paintFrequencyTracker, MonotonicTime timestamp)
         : m_paintFrequencyTracker(paintFrequencyTracker)
-        , m_track(track)
+        , m_track(timestamp)
     {
         if (m_track)
             m_paintFrequencyTracker.begin(timestamp);
