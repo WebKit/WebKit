@@ -1,3 +1,13 @@
+2020-09-16  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Improve failure summary string for AnalyzeCompileWebKitResults step
+        https://bugs.webkit.org/show_bug.cgi?id=216566
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.analyzeResults): Move self.finished() after setting self.descriptionDone.
+
 2020-09-16  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] webkit-bwrap drive-by cleanups

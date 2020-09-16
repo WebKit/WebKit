@@ -1438,20 +1438,20 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
         compile_without_patch_result = self.getStepResult(compile_without_patch_step)
 
         if compile_without_patch_result == FAILURE:
-            self.finished(FAILURE)
             message = 'Unable to build WebKit without patch, retrying build'
             self.descriptionDone = message
             self.send_email_for_preexisting_build_failure()
+            self.finished(FAILURE)
             self.build.buildFinished([message], RETRY)
             return defer.succeed(None)
 
-        self.finished(FAILURE)
         self.build.results = FAILURE
         patch_id = self.getProperty('patch_id', '')
         message = 'Patch {} does not build'.format(patch_id)
         self.send_email_for_new_build_failure()
 
         self.descriptionDone = message
+        self.finished(FAILURE)
         self.setProperty('build_finish_summary', message)
         if self.getProperty('buildername', '').lower() == 'commit-queue':
             self.setProperty('bugzilla_comment_text', message)
