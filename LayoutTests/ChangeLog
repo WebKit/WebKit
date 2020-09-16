@@ -1,3 +1,71 @@
+2020-09-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, land baselines for rdar://67764580 and rdar://68372418.
+
+        * platform/mac-bigsur/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac-bigsur/fast/css/text-overflow-input-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/button-sizes-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/input-button-sizes-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/listbox-bidi-align-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Removed.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug2479-3-expected.txt: Removed.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug33855-expected.txt: Removed.
+        * platform/mac-catalina/fast/block/margin-collapse/103-expected.txt: Copied from LayoutTests/platform/mac-bigsur/fast/block/margin-collapse/103-expected.txt.
+        * platform/mac-catalina/fast/css/continuationCrash-expected.txt: Copied from LayoutTests/platform/mac/fast/css/continuationCrash-expected.txt.
+        * platform/mac-catalina/fast/css/text-overflow-input-expected.txt: Copied from LayoutTests/platform/mac/fast/css/text-overflow-input-expected.txt.
+        * platform/mac-catalina/fast/forms/button-positioned-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-positioned-expected.txt.
+        * platform/mac-catalina/fast/forms/button-sizes-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-sizes-expected.txt.
+        * platform/mac-catalina/fast/forms/button-table-styles-expected.txt: Copied from LayoutTests/platform/mac-bigsur/fast/forms/button-table-styles-expected.txt.
+        * platform/mac-catalina/fast/forms/input-button-sizes-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-button-sizes-expected.txt.
+        * platform/mac-catalina/fast/forms/input-disabled-color-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-disabled-color-expected.txt.
+        * platform/mac-catalina/fast/forms/input-readonly-dimmed-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-readonly-dimmed-expected.txt.
+        * platform/mac-catalina/fast/forms/input-text-word-wrap-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-word-wrap-expected.txt.
+        * platform/mac-catalina/fast/forms/listbox-bidi-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/listbox-bidi-align-expected.txt.
+        * platform/mac-catalina/fast/forms/plaintext-mode-2-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/plaintext-mode-2-expected.txt.
+        * platform/mac-catalina/fast/forms/select-change-popup-to-listbox-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt.
+        * platform/mac-catalina/fast/forms/select-selected-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-selected-expected.txt.
+        * platform/mac-catalina/fast/forms/select/optgroup-rendering-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select/optgroup-rendering-expected.txt.
+        * platform/mac-catalina/fast/parser/document-write-option-expected.txt: Copied from LayoutTests/platform/mac/fast/parser/document-write-option-expected.txt.
+        * platform/mac-catalina/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt.
+        * platform/mac-catalina/tables/mozilla/bugs/bug2479-3-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-3-expected.txt.
+        * platform/mac-catalina/tables/mozilla/bugs/bug33855-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug33855-expected.txt.
+        * platform/mac-catalina/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt.
+        * platform/mac-mojave/fast/block/margin-collapse/103-expected.txt: Copied from LayoutTests/platform/mac-bigsur/fast/block/margin-collapse/103-expected.txt.
+        * platform/mac-mojave/fast/css/continuationCrash-expected.txt: Copied from LayoutTests/platform/mac/fast/css/continuationCrash-expected.txt.
+        * platform/mac-mojave/fast/css/text-overflow-input-expected.txt: Copied from LayoutTests/platform/mac/fast/css/text-overflow-input-expected.txt.
+        * platform/mac-mojave/fast/forms/button-positioned-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-positioned-expected.txt.
+        * platform/mac-mojave/fast/forms/button-sizes-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-sizes-expected.txt.
+        * platform/mac-mojave/fast/forms/button-table-styles-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/fast/forms/button-table-styles-expected.txt.
+        * platform/mac-mojave/fast/forms/input-button-sizes-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-button-sizes-expected.txt.
+        * platform/mac-mojave/fast/forms/input-disabled-color-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-disabled-color-expected.txt.
+        * platform/mac-mojave/fast/forms/input-readonly-dimmed-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-readonly-dimmed-expected.txt.
+        * platform/mac-mojave/fast/forms/input-text-word-wrap-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-word-wrap-expected.txt.
+        * platform/mac-mojave/fast/forms/listbox-bidi-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/listbox-bidi-align-expected.txt.
+        * platform/mac-mojave/fast/forms/select-change-popup-to-listbox-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt.
+        * platform/mac-mojave/fast/forms/select-selected-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-selected-expected.txt.
+        * platform/mac-mojave/fast/forms/select/optgroup-rendering-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select/optgroup-rendering-expected.txt.
+        * platform/mac-mojave/fast/parser/document-write-option-expected.txt: Copied from LayoutTests/platform/mac/fast/parser/document-write-option-expected.txt.
+        * platform/mac-mojave/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt.
+        * platform/mac-mojave/tables/mozilla/bugs/bug2479-3-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-3-expected.txt.
+        * platform/mac-mojave/tables/mozilla/bugs/bug33855-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug33855-expected.txt.
+        * platform/mac/fast/css/continuationCrash-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/button-positioned-expected.txt:
+        * platform/mac/fast/forms/button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac/fast/forms/input-text-word-wrap-expected.txt:
+        * platform/mac/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/mac/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/mac/fast/forms/select-selected-expected.txt:
+        * platform/mac/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/mac/fast/parser/document-write-option-expected.txt:
+        * platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug33855-expected.txt:
+
 2020-09-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r266901. rdar://problem/68881000

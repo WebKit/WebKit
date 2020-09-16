@@ -148,10 +148,10 @@ layer at (513,73) size 141x13 scrollWidth 289
   RenderBlock {DIV} at (0,0) size 141x13
     RenderText {#text} at (0,0) size 288x13
       text run at (0,0) width 288: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (13,96) size 141x13 scrollWidth 386
+layer at (13,96) size 141x13 scrollWidth 282
   RenderBlock {DIV} at (0,0) size 141x13
-    RenderText {#text} at (0,0) size 385x13
-      text run at (0,0) width 385: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
+    RenderText {#text} at (0,0) size 282x13
+      text run at (0,0) width 282: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (13,119) size 140x13 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 140x13 [color=#A9A9A9]
     RenderText {#text} at (-147,0) size 288x13
@@ -172,10 +172,10 @@ layer at (521,119) size 140x13 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (-147,0) size 288x13
       text run at (-147,0) width 287: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (13,142) size 140x13 scrollX 245 scrollWidth 385
+layer at (13,142) size 140x13 scrollX 141 scrollWidth 281
   RenderBlock {DIV} at (0,0) size 140x13
-    RenderText {#text} at (-244,0) size 385x13
-      text run at (-244,0) width 384 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
+    RenderText {#text} at (-141,0) size 282x13
+      text run at (-141,0) width 281 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (13,199) size 141x13 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 141x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 288x13
@@ -196,10 +196,10 @@ layer at (513,199) size 141x13 scrollWidth 289
   RenderBlock {DIV} at (0,0) size 141x13
     RenderText {#text} at (0,0) size 288x13
       text run at (0,0) width 288: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (13,222) size 141x13 scrollWidth 386
+layer at (13,222) size 141x13 scrollWidth 282
   RenderBlock {DIV} at (0,0) size 141x13
-    RenderText {#text} at (0,0) size 385x13
-      text run at (0,0) width 385: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
+    RenderText {#text} at (0,0) size 282x13
+      text run at (0,0) width 282: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (13,245) size 140x13 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 140x13 [color=#A9A9A9]
     RenderText {#text} at (-147,0) size 288x13
@@ -220,10 +220,10 @@ layer at (521,245) size 140x13 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (-147,0) size 288x13
       text run at (-147,0) width 287: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (13,268) size 140x13 scrollX 245 scrollWidth 385
+layer at (13,268) size 140x13 scrollX 141 scrollWidth 281
   RenderBlock {DIV} at (0,0) size 140x13
-    RenderText {#text} at (-244,0) size 385x13
-      text run at (-244,0) width 384 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
+    RenderText {#text} at (-141,0) size 282x13
+      text run at (-141,0) width 281 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (259,325) size 141x13 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 141x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 288x13
