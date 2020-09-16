@@ -279,9 +279,6 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
     if (type == PseudoElementHighlight && !RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled())
         return PseudoElementUnknown;
 
-    if (type == PseudoElementPart && !RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
-        return PseudoElementUnknown;
-
     return type;
 }
 

@@ -3381,7 +3381,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setLinkPreloadResponsiveImagesEnabled([preferences linkPreloadResponsiveImagesEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setDialogElementEnabled([preferences dialogElementEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setKeygenElementEnabled([preferences keygenElementEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setCSSShadowPartsEnabled([preferences cssShadowPartsEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setLayoutFormattingContextIntegrationEnabled([preferences layoutFormattingContextIntegrationEnabled]);
     settings.setIsInAppBrowserPrivacyEnabled([preferences isInAppBrowserPrivacyEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setWebSQLDisabled(![preferences webSQLEnabled]);

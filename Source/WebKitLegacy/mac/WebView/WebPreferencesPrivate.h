@@ -621,9 +621,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag;
 - (BOOL)linkPreloadResponsiveImagesEnabled;
 
-- (void)setCSSShadowPartsEnabled:(BOOL)flag;
-- (BOOL)cssShadowPartsEnabled;
-
 - (void)setLayoutFormattingContextIntegrationEnabled:(BOOL)flag;
 - (BOOL)layoutFormattingContextIntegrationEnabled;
 
@@ -694,6 +691,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (void)setCSSShadowPartsEnabled:(BOOL)flag;
+- (BOOL)cssShadowPartsEnabled;
 
 - (void)setIsSecureContextAttributeEnabled:(BOOL)flag;
 - (BOOL)isSecureContextAttributeEnabled;

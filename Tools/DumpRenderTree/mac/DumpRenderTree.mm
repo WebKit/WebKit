@@ -836,7 +836,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setMediaRecorderEnabled:YES];
     [preferences setReferrerPolicyAttributeEnabled:YES];
     [preferences setLinkPreloadResponsiveImagesEnabled:YES];
-    [preferences setCSSShadowPartsEnabled:YES];
     [preferences setAspectRatioOfImgFromWidthAndHeightEnabled:YES];
     [preferences setCSSOMViewSmoothScrollingEnabled:YES];
 }

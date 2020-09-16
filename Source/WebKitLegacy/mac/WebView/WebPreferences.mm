@@ -711,7 +711,6 @@ public:
         @NO, WebKitRequestIdleCallbackEnabledPreferenceKey,
         @NO, WebKitAsyncClipboardAPIEnabledPreferenceKey,
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
-        @YES, WebKitCSSShadowPartsEnabledPreferenceKey,
         @NO, WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey,
         @NO, WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey,
         @(webSQLEnabled), WebKitWebSQLEnabledPreferenceKey,
@@ -3587,16 +3586,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey];
 }
 
-- (BOOL)cssShadowPartsEnabled
-{
-    return [self _boolValueForKey:WebKitCSSShadowPartsEnabledPreferenceKey];
-}
-
-- (void)setCSSShadowPartsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitCSSShadowPartsEnabledPreferenceKey];
-}
-
 - (BOOL)layoutFormattingContextIntegrationEnabled
 {
     return [self _boolValueForKey:WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey];
@@ -3680,6 +3669,15 @@ static NSString *classIBCreatorID = nil;
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (void)setCSSShadowPartsEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)cssShadowPartsEnabled
+{
+    return YES;
+}
 
 - (void)setIsSecureContextAttributeEnabled:(BOOL)flag
 {

@@ -1,3 +1,16 @@
+2020-09-16  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling CSS shadow parts
+        https://bugs.webkit.org/show_bug.cgi?id=216567
+
+        Reviewed by Tim Horton.
+
+        Remove runtime setting for enabling/disabling CSS shadow parts. It is
+        on by default and there is no known reason one would need to disable it.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+
 2020-09-16  Stephan Szabo  <stephan.szabo@sony.com>
 
         Remove ENABLE_METER_ELEMENT

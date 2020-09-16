@@ -252,9 +252,6 @@ public:
     bool pageAtRuleSupportEnabled() const { return m_pageAtRuleSupportEnabled; }
     void setPageAtRuleSupportEnabled(bool isEnabled) { m_pageAtRuleSupportEnabled = isEnabled; }
 
-    void setCSSShadowPartsEnabled(bool isEnabled) { m_isCSSShadowPartsEnabled = isEnabled; }
-    bool cssShadowPartsEnabled() const { return m_isCSSShadowPartsEnabled; }
-
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
@@ -409,7 +406,6 @@ private:
 #endif
 
     bool m_secureContextChecksEnabled { true };
-    bool m_isCSSShadowPartsEnabled { true };
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };

@@ -34,7 +34,7 @@
     [CEReactions, Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList; // FIXME: Should be [SameObject].
     [CEReactions, Reflect, Unscopable] attribute DOMString slot;
-    [EnabledAtRuntime=CSSShadowParts, SameObject, PutForwards=value] readonly attribute DOMTokenList part;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList part;
 
     [DOMJIT=ReadDOM] boolean hasAttributes();
     readonly attribute NamedNodeMap attributes; // FIXME: Should be [SameObject].

@@ -301,9 +301,6 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
 
 void Invalidator::invalidateShadowParts(ShadowRoot& shadowRoot)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
-        return;
-
     if (shadowRoot.mode() == ShadowRootMode::UserAgent)
         return;
 

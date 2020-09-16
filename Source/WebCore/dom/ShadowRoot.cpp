@@ -309,9 +309,6 @@ static Optional<std::pair<AtomString, AtomString>> parsePartMapping(StringView m
 
 static ShadowRoot::PartMappings parsePartMappingsList(StringView mappingsListString)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
-        return { };
-
     ShadowRoot::PartMappings mappings;
 
     const auto end = mappingsListString.length();

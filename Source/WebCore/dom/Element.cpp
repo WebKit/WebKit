@@ -1881,9 +1881,6 @@ void Element::classAttributeChanged(const AtomString& newClassString)
 
 void Element::partAttributeChanged(const AtomString& newValue)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
-        return;
-
     bool hasParts = isNonEmptyTokenList(newValue);
     if (hasParts || !partNames().isEmpty()) {
         auto newParts = hasParts ? SpaceSplitString(newValue, false) : SpaceSplitString();

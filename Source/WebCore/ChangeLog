@@ -1,3 +1,26 @@
+2020-09-16  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling CSS shadow parts
+        https://bugs.webkit.org/show_bug.cgi?id=216567
+
+        Reviewed by Tim Horton.
+
+        Remove runtime setting for enabling/disabling CSS shadow parts. It is
+        on by default and there is no known reason one would need to disable it.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::parsePseudoElementType):
+        * dom/Element.cpp:
+        (WebCore::Element::partAttributeChanged):
+        * dom/Element.idl:
+        * dom/ShadowRoot.cpp:
+        (WebCore::parsePartMappingsList):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCSSShadowPartsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::cssShadowPartsEnabled const): Deleted.
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::invalidateShadowParts):
+
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
         AudioBufferSourceNode.start() ignores 'when' parameter when pitch rate is 0

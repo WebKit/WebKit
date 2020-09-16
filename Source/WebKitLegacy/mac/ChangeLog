@@ -1,5 +1,24 @@
 2020-09-16  Sam Weinig  <weinig@apple.com>
 
+        Remove runtime setting for enabling/disabling CSS shadow parts
+        https://bugs.webkit.org/show_bug.cgi?id=216567
+
+        Reviewed by Tim Horton.
+
+        Remove runtime setting for enabling/disabling CSS shadow parts. It is
+        on by default and there is no known reason one would need to disable it.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setCSSShadowPartsEnabled:]):
+        (-[WebPreferences cssShadowPartsEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
+2020-09-16  Sam Weinig  <weinig@apple.com>
+
         Remove runtime setting for enabling/disabling the isSecureContext API?
         https://bugs.webkit.org/show_bug.cgi?id=216562
 

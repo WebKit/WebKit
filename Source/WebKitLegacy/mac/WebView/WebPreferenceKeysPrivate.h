@@ -205,7 +205,6 @@
 #define WebKitPunchOutWhiteBackgroundsInDarkModePreferenceKey @"WebKitPunchOutWhiteBackgroundsInDarkMode"
 #define WebKitFetchAPIKeepAliveEnabledPreferenceKey @"WebKitFetchAPIKeepAliveEnabled"
 #define WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey @"WebKitWebAnimationsCSSIntegrationEnabled"
-#define WebKitCSSShadowPartsEnabledPreferenceKey @"WebKitCSSShadowPartsEnabled"
 #define WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey @"WebKitLayoutFormattingContextIntegrationEnabled"
 #define WebKitWebSQLEnabledPreferenceKey @"WebKitWebSQLEnabled"
 #define WebKitUserGesturePromisePropagationEnabledPreferenceKey @"WebKitUserGesturePromisePropagationEnabled"
@@ -295,3 +294,4 @@
 #define WebKitCustomElementsEnabledPreferenceKey @"WebKitCustomElementsEnabled"
 #define WebKitFetchAPIEnabledPreferenceKey @"WebKitFetchAPIEnabled"
 #define WebKitIsSecureContextAttributeEnabledPreferenceKey @"WebKitIsSecureContextAttributeEnabled"
+#define WebKitCSSShadowPartsEnabledPreferenceKey @"WebKitCSSShadowPartsEnabled"

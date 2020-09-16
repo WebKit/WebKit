@@ -1563,14 +1563,6 @@ FetchAPIKeepAliveEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: fetchAPIKeepAliveEnabled
 
-CSSShadowPartsEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "CSS Shadow Parts"
-  humanReadableDescription: "Enable CSS Shadow Parts"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-
 GenericCueAPIEnabled:
   type: bool
   defaultValue: true
