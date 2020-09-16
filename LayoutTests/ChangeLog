@@ -1,3 +1,12 @@
+2020-09-16  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Correction to test expectation for imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html
+        webkit.org/b/207891
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
         OfflineAudioContext should support up to 32 channels

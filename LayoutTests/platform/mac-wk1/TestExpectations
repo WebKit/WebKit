@@ -915,7 +915,8 @@ webkit.org/b/207568 inspector/page/overrideUserAgent.html [ Pass Failure ]
 
 webkit.org/b/207857 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Timeout ]
 
-webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass Failure ]
+webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass ImageOnlyFailure ]
+
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
 webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.php [ Pass Failure ]
