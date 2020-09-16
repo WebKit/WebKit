@@ -91,7 +91,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox,
     }
 
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    boxGeometry.setLeft(horizontalGeometry.left + horizontalGeometry.contentWidthAndMargin.usedMargin.start);
+    boxGeometry.setLogicalLeft(horizontalGeometry.left + horizontalGeometry.contentWidthAndMargin.usedMargin.start);
     boxGeometry.setContentBoxWidth(horizontalGeometry.contentWidthAndMargin.contentWidth);
     auto& usedHorizontalMargin = horizontalGeometry.contentWidthAndMargin.usedMargin;
     boxGeometry.setHorizontalMargin({ usedHorizontalMargin.start, usedHorizontalMargin.end });
@@ -120,7 +120,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, c
 
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
     auto nonCollapsedVerticalMargin = verticalGeometry.contentHeightAndMargin.nonCollapsedMargin;
-    boxGeometry.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
+    boxGeometry.setLogicalTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
     boxGeometry.setContentBoxHeight(verticalGeometry.contentHeightAndMargin.contentHeight);
     // Margins of absolutely positioned boxes do not collapse.
     boxGeometry.setVerticalMargin({ nonCollapsedVerticalMargin.before, nonCollapsedVerticalMargin.after });
@@ -297,7 +297,7 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
         if (layoutBox.isOutOfFlowPositioned() && !layoutBox.isReplacedBox()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
             auto containingBlockHeight = containingBlockGeometry.contentBoxHeight();
-            ASSERT(boxGeometry.top() + boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + boxGeometry.contentBoxHeight()
+            ASSERT(boxGeometry.logicalTop() + boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + boxGeometry.contentBoxHeight()
                 + boxGeometry.paddingBottom().valueOr(0) + boxGeometry.borderBottom() + boxGeometry.marginAfter() == containingBlockHeight);
         }
     }

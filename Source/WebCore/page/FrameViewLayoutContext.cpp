@@ -81,7 +81,7 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
 
     // Clean up the render tree state when we don't run RenderView::layout.
     if (renderView.needsLayout()) {
-        auto contentSize = m_layoutState->geometryForBox(*m_layoutState->root().firstChild()).size();
+        auto contentSize = m_layoutState->geometryForBox(*m_layoutState->root().firstChild()).logicalSize();
         renderView.setSize(contentSize);
         renderView.repaintViewRectangle({ 0, 0, contentSize.width(), contentSize.height() });
 

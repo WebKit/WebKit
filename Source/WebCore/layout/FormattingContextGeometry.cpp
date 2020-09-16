@@ -208,8 +208,8 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         if (formattingRootContainer.hasInFlowChild()) {
             auto& firstBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.firstInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
             auto& lastBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.lastInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
-            top = firstBoxGeometry.rectWithMargin().top();
-            bottom = lastBoxGeometry.rectWithMargin().bottom();
+            top = firstBoxGeometry.logicalRectWithMargin().top();
+            bottom = lastBoxGeometry.logicalRectWithMargin().bottom();
         }
     } else
         ASSERT_NOT_REACHED();
@@ -294,7 +294,7 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
         auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(previousInFlowSibling));
         auto usedVerticalMarginForPreviousBox = formattingState.usedVerticalMargin(previousInFlowSibling);
 
-        top += previousInFlowBoxGeometry.bottom() + usedVerticalMarginForPreviousBox.nonCollapsedValues.after;
+        top += previousInFlowBoxGeometry.logicalBottom() + usedVerticalMarginForPreviousBox.nonCollapsedValues.after;
     } else
         top = formattingContext.geometryForBox(layoutBox.parent(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxTop();
 
@@ -304,7 +304,7 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // BoxGeometry::top is the border box top position in its containing block's coordinate system.
-        top += boxGeometry.top();
+        top += boxGeometry.logicalTop();
         ASSERT(!ancestor->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
@@ -326,7 +326,7 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // BoxGeometry::left is the border box left position in its containing block's coordinate system.
-        left += boxGeometry.left();
+        left += boxGeometry.logicalLeft();
         ASSERT(!ancestor->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
@@ -947,7 +947,7 @@ ContentHeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargi
         height = replacedBox.intrinsicHeight();
     } else if (heightIsAuto && replacedBox.hasIntrinsicRatio()) {
         // #3
-        auto usedWidth = formattingContext.geometryForBox(replacedBox).width();
+        auto usedWidth = formattingContext.geometryForBox(replacedBox).logicalWidth();
         height = usedWidth / replacedBox.intrinsicRatio();
     } else if (heightIsAuto && replacedBox.hasIntrinsicHeight()) {
         // #4

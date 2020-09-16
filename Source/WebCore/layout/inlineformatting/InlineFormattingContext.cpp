@@ -457,9 +457,9 @@ Display::InlineRect InlineFormattingContext::computeGeometryForLineContent(const
             auto& boxGeometry = formattingState.boxGeometry(floatBox);
             // Set static position first.
             auto verticalStaticPosition = floatCandidate.isIntrusive ? lineLogicalRect.top() : lineLogicalRect.bottom();
-            boxGeometry.setTopLeft({ lineLogicalRect.left(), verticalStaticPosition });
+            boxGeometry.setLogicalTopLeft({ lineLogicalRect.left(), verticalStaticPosition });
             // Float it.
-            boxGeometry.setTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
+            boxGeometry.setLogicalTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
             floatingContext.append(floatBox);
         }
     }
@@ -514,7 +514,7 @@ Display::InlineRect InlineFormattingContext::computeGeometryForLineContent(const
             topLeft.move({ }, lineBoxVerticalOffset);
             if (layoutBox.isInFlowPositioned())
                 topLeft += geometry().inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
-            boxGeometry.setTopLeft(toLayoutPoint(topLeft));
+            boxGeometry.setLogicalTopLeft(toLayoutPoint(topLeft));
             if (lineRun.isContainerStart()) {
                 auto marginBoxWidth = inlineBox.logicalWidth();
                 auto contentBoxWidth = marginBoxWidth - (boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().valueOr(0));

@@ -1,5 +1,110 @@
 2020-09-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Box geometry is all logical
+        https://bugs.webkit.org/show_bug.cgi?id=216614
+
+        Reviewed by Simon Fraser.
+
+        Rename top/left/bottom/right/width/height to logical*. These coordinates are in the Layout namespace, therefore they are all logical.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::usedAvailableWidthForFloatAvoider):
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::verticalPositionWithMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticVerticalPosition const):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+        * layout/display/DisplayLayerController.cpp:
+        (WebCore::Display::LayerController::prepareForDisplay):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintBoxDecoration):
+        (WebCore::Display::Painter::absoluteBoxGeometry):
+        (WebCore::Display::paintSubtree):
+        (WebCore::Display::collectPaintRootsAndContentRect):
+        * layout/flexformatting/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::sizeAndPlaceFlexItems):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForNonFloatingFloatAvoider const):
+        (WebCore::Layout::FloatingContext::append):
+        (WebCore::Layout::FloatingContext::mapTopLeftToFloatingStateRoot const):
+        (WebCore::Layout::FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot const):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::rectWithMargin const):
+        (WebCore::Layout::FloatingState::FloatItem::bottom const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::inlineItemWidth const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::prepareFloatingState):
+        * layout/layouttree/LayoutBoxGeometry.cpp:
+        (WebCore::Layout::BoxGeometry::borderBox const):
+        * layout/layouttree/LayoutBoxGeometry.h:
+        (WebCore::Layout::BoxGeometry::logicalBottom const):
+        (WebCore::Layout::BoxGeometry::logicalRight const):
+        (WebCore::Layout::BoxGeometry::logicalBottomRight const):
+        (WebCore::Layout::BoxGeometry::logicalSize const):
+        (WebCore::Layout::BoxGeometry::logicalWidth const):
+        (WebCore::Layout::BoxGeometry::logicalHeight const):
+        (WebCore::Layout::BoxGeometry::isEmpty const):
+        (WebCore::Layout::BoxGeometry::logicalRect const):
+        (WebCore::Layout::BoxGeometry::logicalRectWithMargin const):
+        (WebCore::Layout::BoxGeometry::logicalTop const):
+        (WebCore::Layout::BoxGeometry::logicalLeft const):
+        (WebCore::Layout::BoxGeometry::logicalTopLeft const):
+        (WebCore::Layout::BoxGeometry::setLogicalTopLeft):
+        (WebCore::Layout::BoxGeometry::setLogicalTop):
+        (WebCore::Layout::BoxGeometry::setLogicalLeft):
+        (WebCore::Layout::BoxGeometry::bottom const): Deleted.
+        (WebCore::Layout::BoxGeometry::right const): Deleted.
+        (WebCore::Layout::BoxGeometry::bottomRight const): Deleted.
+        (WebCore::Layout::BoxGeometry::size const): Deleted.
+        (WebCore::Layout::BoxGeometry::width const): Deleted.
+        (WebCore::Layout::BoxGeometry::height const): Deleted.
+        (WebCore::Layout::BoxGeometry::rect const): Deleted.
+        (WebCore::Layout::BoxGeometry::rectWithMargin const): Deleted.
+        (WebCore::Layout::BoxGeometry::top const): Deleted.
+        (WebCore::Layout::BoxGeometry::left const): Deleted.
+        (WebCore::Layout::BoxGeometry::topLeft const): Deleted.
+        (WebCore::Layout::BoxGeometry::setTopLeft): Deleted.
+        (WebCore::Layout::BoxGeometry::setTop): Deleted.
+        (WebCore::Layout::BoxGeometry::setLeft): Deleted.
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::cellHeigh const):
+        * layout/tableformatting/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedVerticalSpace):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+
+2020-09-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][FFC] Add basic flex item sizing and positioning
         https://bugs.webkit.org/show_bug.cgi?id=216613
 

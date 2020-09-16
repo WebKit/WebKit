@@ -47,8 +47,8 @@ namespace Display {
 // FIXME: Move to display box.
 static void paintBoxDecoration(GraphicsContext& context, const Layout::BoxGeometry& absoluteBoxGeometry, const RenderStyle& style, bool needsMarginPainting)
 {
-    auto decorationBoxTopLeft = needsMarginPainting ? absoluteBoxGeometry.rectWithMargin().topLeft() : absoluteBoxGeometry.topLeft();
-    auto decorationBoxSize = needsMarginPainting ? absoluteBoxGeometry.rectWithMargin().size() : LayoutSize(absoluteBoxGeometry.borderBoxWidth(), absoluteBoxGeometry.borderBoxHeight());
+    auto decorationBoxTopLeft = needsMarginPainting ? absoluteBoxGeometry.logicalRectWithMargin().topLeft() : absoluteBoxGeometry.logicalTopLeft();
+    auto decorationBoxSize = needsMarginPainting ? absoluteBoxGeometry.logicalRectWithMargin().size() : LayoutSize(absoluteBoxGeometry.borderBoxWidth(), absoluteBoxGeometry.borderBoxHeight());
     // Background color
     if (style.hasBackground()) {
         context.fillRect({ decorationBoxTopLeft, decorationBoxSize }, style.backgroundColor());
@@ -160,7 +160,7 @@ Layout::BoxGeometry Painter::absoluteBoxGeometry(const Layout::LayoutState& layo
     };
     auto absoluteBox = Layout::BoxGeometry { layoutState.geometryForBox(layoutBoxToPaint) };
     for (auto* container = paintContainer(layoutBoxToPaint); !is<Layout::InitialContainingBlock>(container); container = paintContainer(*container))
-        absoluteBox.moveBy(layoutState.geometryForBox(*container).topLeft());
+        absoluteBox.moveBy(layoutState.geometryForBox(*container).logicalTopLeft());
     return absoluteBox;
 }
 
@@ -180,7 +180,7 @@ static void paintSubtree(GraphicsContext& context, const Layout::LayoutState& la
         if (!layoutState.hasBoxGeometry(layoutBox))
             return;
         auto absoluteBoxGeometry = Painter::absoluteBoxGeometry(layoutState, layoutBox);
-        if (!dirtyRect.intersects(snappedIntRect(absoluteBoxGeometry.rect())))
+        if (!dirtyRect.intersects(snappedIntRect(absoluteBoxGeometry.logicalRect())))
             return;
 
         if (paintPhase == PaintPhase::Decoration) {
@@ -192,7 +192,7 @@ static void paintSubtree(GraphicsContext& context, const Layout::LayoutState& la
         // Only inline content for now.
         if (layoutBox.establishesInlineFormattingContext()) {
             auto& containerBox = downcast<Layout::ContainerBox>(layoutBox);
-            paintInlineContent(context, absoluteBoxGeometry.topLeft(), layoutState.establishedInlineFormattingState(containerBox));
+            paintInlineContent(context, absoluteBoxGeometry.logicalTopLeft(), layoutState.establishedInlineFormattingState(containerBox));
         }
     };
 
@@ -235,7 +235,7 @@ static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& lay
         positiveZOrderList.append(&layoutBox);
     };
 
-    auto contentRect = LayoutRect { layoutState.geometryForBox(rootLayoutBox).rect() };
+    auto contentRect = LayoutRect { layoutState.geometryForBox(rootLayoutBox).logicalRect() };
 
     // Initial BFC is always a paint root.
     appendPaintRoot(rootLayoutBox);
@@ -249,7 +249,7 @@ static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& lay
             if (isPaintRootCandidate(layoutBox))
                 appendPaintRoot(layoutBox);
             if (layoutState.hasBoxGeometry(layoutBox))
-                contentRect.uniteIfNonZero(Painter::absoluteBoxGeometry(layoutState, layoutBox).rect());
+                contentRect.uniteIfNonZero(Painter::absoluteBoxGeometry(layoutState, layoutBox).logicalRect());
             if (!is<Layout::ContainerBox>(layoutBox) || !downcast<Layout::ContainerBox>(layoutBox).hasChild())
                 break;
             layoutBoxList.append(downcast<Layout::ContainerBox>(layoutBox).firstChild());

@@ -143,7 +143,7 @@ void LineLayout::prepareFloatingState()
         //        See FloatingObjects::intervalForFloatingObject.
         auto y = rect.y().floor();
         auto maxY = rect.maxY().floor();
-        boxGeometry.setTopLeft({ rect.x(), y });
+        boxGeometry.setLogicalTopLeft({ rect.x(), y });
         boxGeometry.setContentBoxWidth(rect.width());
         boxGeometry.setContentBoxHeight(maxY - y);
         boxGeometry.setBorder({ });

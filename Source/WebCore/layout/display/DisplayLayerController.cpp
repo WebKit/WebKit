@@ -86,8 +86,8 @@ void LayerController::prepareForDisplay(const Layout::LayoutState& layoutState)
 
     ASSERT(layoutState.hasBoxGeometry(rootLayoutBox));
 
-    auto viewSize = layoutState.geometryForBox(rootLayoutBox).size();
-    auto contentSize = layoutState.geometryForBox(*rootLayoutBox.firstChild()).size();
+    auto viewSize = layoutState.geometryForBox(rootLayoutBox).logicalSize();
+    auto contentSize = layoutState.geometryForBox(*rootLayoutBox.firstChild()).logicalSize();
     
     // FIXME: Using the firstChild() size won't be correct until we compute overflow correctly,
     contentSize.clampToMinimumSize(viewSize);

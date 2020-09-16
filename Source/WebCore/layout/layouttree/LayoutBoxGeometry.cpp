@@ -78,7 +78,7 @@ Rect BoxGeometry::borderBox() const
 {
     Rect borderBox;
     borderBox.setTopLeft({ });
-    borderBox.setSize({ width(), height() });
+    borderBox.setSize({ logicalWidth(), logicalHeight() });
     return borderBox;
 }
 

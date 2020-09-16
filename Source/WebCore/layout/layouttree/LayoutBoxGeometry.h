@@ -41,20 +41,20 @@ public:
     BoxGeometry() = default;
     ~BoxGeometry();
 
-    LayoutUnit top() const;
-    LayoutUnit left() const;
-    LayoutUnit bottom() const { return top() + height(); }
-    LayoutUnit right() const { return left() + width(); }
+    LayoutUnit logicalTop() const;
+    LayoutUnit logicalLeft() const;
+    LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
+    LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
-    LayoutPoint topLeft() const;
-    LayoutPoint bottomRight() const { return { right(), bottom() }; }
+    LayoutPoint logicalTopLeft() const;
+    LayoutPoint logicalBottomRight() const { return { logicalRight(), logicalBottom() }; }
 
-    LayoutSize size() const { return { width(), height() }; }
-    LayoutUnit width() const { return borderLeft() + paddingBoxWidth() + borderRight(); }
-    LayoutUnit height() const { return borderTop() + paddingBoxHeight() + borderBottom(); }
-    bool isEmpty() const { return size().isEmpty(); }
-    Rect rect() const { return { top(), left(), width(), height() }; }
-    Rect rectWithMargin() const { return { top() - marginBefore(), left() - marginStart(), marginStart() + width() + marginEnd(), marginBefore() + height() + marginAfter() }; }
+    LayoutSize logicalSize() const { return { logicalWidth(), logicalHeight() }; }
+    LayoutUnit logicalWidth() const { return borderLeft() + paddingBoxWidth() + borderRight(); }
+    LayoutUnit logicalHeight() const { return borderTop() + paddingBoxHeight() + borderBottom(); }
+    bool isEmpty() const { return logicalSize().isEmpty(); }
+    Rect logicalRect() const { return { logicalTop(), logicalLeft(), logicalWidth(), logicalHeight() }; }
+    Rect logicalRectWithMargin() const { return { logicalTop() - marginBefore(), logicalLeft() - marginStart(), marginStart() + logicalWidth() + marginEnd(), marginBefore() + logicalHeight() + marginAfter() }; }
 
     struct VerticalMargin {
         LayoutUnit before;
@@ -118,9 +118,9 @@ public:
     void setHasPrecomputedMarginBefore() { m_hasPrecomputedMarginBefore = true; }
 #endif
 
-    void setTopLeft(const LayoutPoint&);
-    void setTop(LayoutUnit);
-    void setLeft(LayoutUnit);
+    void setLogicalTopLeft(const LayoutPoint&);
+    void setLogicalTop(LayoutUnit);
+    void setLogicalLeft(LayoutUnit);
     void moveHorizontally(LayoutUnit offset) { m_topLeft.move(offset, 0_lu); }
     void moveVertically(LayoutUnit offset) { m_topLeft.move(0_lu, offset); }
     void move(const LayoutSize& size) { m_topLeft.move(size); }
@@ -189,26 +189,26 @@ inline void BoxGeometry::invalidateMargin()
 }
 #endif
 
-inline LayoutUnit BoxGeometry::top() const
+inline LayoutUnit BoxGeometry::logicalTop() const
 {
     ASSERT(m_hasValidTop && (m_hasPrecomputedMarginBefore || m_hasValidVerticalMargin));
     return m_topLeft.y();
 }
 
-inline LayoutUnit BoxGeometry::left() const
+inline LayoutUnit BoxGeometry::logicalLeft() const
 {
     ASSERT(m_hasValidLeft && m_hasValidHorizontalMargin);
     return m_topLeft.x();
 }
 
-inline LayoutPoint BoxGeometry::topLeft() const
+inline LayoutPoint BoxGeometry::logicalTopLeft() const
 {
     ASSERT(m_hasValidTop && (m_hasPrecomputedMarginBefore || m_hasValidVerticalMargin));
     ASSERT(m_hasValidLeft && m_hasValidHorizontalMargin);
     return m_topLeft;
 }
 
-inline void BoxGeometry::setTopLeft(const LayoutPoint& topLeft)
+inline void BoxGeometry::setLogicalTopLeft(const LayoutPoint& topLeft)
 {
 #if ASSERT_ENABLED
     setHasValidTop();
@@ -217,7 +217,7 @@ inline void BoxGeometry::setTopLeft(const LayoutPoint& topLeft)
     m_topLeft = topLeft;
 }
 
-inline void BoxGeometry::setTop(LayoutUnit top)
+inline void BoxGeometry::setLogicalTop(LayoutUnit top)
 {
 #if ASSERT_ENABLED
     setHasValidTop();
@@ -225,7 +225,7 @@ inline void BoxGeometry::setTop(LayoutUnit top)
     m_topLeft.setY(top);
 }
 
-inline void BoxGeometry::setLeft(LayoutUnit left)
+inline void BoxGeometry::setLogicalLeft(LayoutUnit left)
 {
 #if ASSERT_ENABLED
     setHasValidLeft();

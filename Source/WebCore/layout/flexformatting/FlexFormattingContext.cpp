@@ -75,7 +75,7 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
         auto computeFlexItemGeometry = [&] {
             auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
 
-            flexItemGeometry.setTopLeft(LayoutPoint { flexItemMainAxisEnd, flexItemCrosAxisStart });
+            flexItemGeometry.setLogicalTopLeft(LayoutPoint { flexItemMainAxisEnd, flexItemCrosAxisStart });
 
             flexItemGeometry.setBorder(geometry.computedBorder(flexItem));
             flexItemGeometry.setPadding(geometry.computedPadding(flexItem, constraints.horizontal.logicalWidth));
@@ -88,8 +88,8 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
 
             flexItemGeometry.setContentBoxHeight(geometry.contentHeightForFormattingContextRoot(flexItem));
             flexItemGeometry.setContentBoxWidth(flexItemLogicalWidth);
-            flexItemMainAxisEnd= flexItemGeometry.right();
-            flexItemCrosAxisEnd = std::max(flexItemCrosAxisEnd, flexItemGeometry.bottom());
+            flexItemMainAxisEnd= flexItemGeometry.logicalRight();
+            flexItemCrosAxisEnd = std::max(flexItemCrosAxisEnd, flexItemGeometry.logicalBottom());
         };
         computeFlexItemGeometry();
     }

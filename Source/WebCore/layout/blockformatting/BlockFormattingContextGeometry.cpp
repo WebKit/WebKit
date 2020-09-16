@@ -87,7 +87,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
         auto& lastInFlowChild = *layoutContainer.lastInFlowChild();
         if (!formattingContext().marginCollapse().marginAfterCollapsesWithParentMarginAfter(lastInFlowChild)) {
             auto& lastInFlowBoxGeometry = formattingContext().geometryForBox(lastInFlowChild);
-            auto bottomEdgeOfBottomMargin = lastInFlowBoxGeometry.bottom() + lastInFlowBoxGeometry.marginAfter(); 
+            auto bottomEdgeOfBottomMargin = lastInFlowBoxGeometry.logicalBottom() + lastInFlowBoxGeometry.marginAfter(); 
             return { bottomEdgeOfBottomMargin - borderAndPaddingTop, nonCollapsedMargin };
         }
 
@@ -97,7 +97,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
             inFlowChild = inFlowChild->previousInFlowSibling();
         if (inFlowChild) {
             auto& inFlowBoxGeometry = formattingContext().geometryForBox(*inFlowChild);
-            return { inFlowBoxGeometry.top() + inFlowBoxGeometry.borderBox().height() - borderAndPaddingTop, nonCollapsedMargin };
+            return { inFlowBoxGeometry.logicalTop() + inFlowBoxGeometry.borderBox().height() - borderAndPaddingTop, nonCollapsedMargin };
         }
 
         // 4. zero, otherwise
@@ -237,7 +237,7 @@ LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const Box& l
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
         auto& previousInFlowBoxGeometry = formattingContext().geometryForBox(*previousInFlowSibling);
-        return previousInFlowBoxGeometry.bottom() + previousInFlowBoxGeometry.marginAfter();
+        return previousInFlowBoxGeometry.logicalBottom() + previousInFlowBoxGeometry.marginAfter();
     }
     return verticalConstraints.logicalTop;
 }

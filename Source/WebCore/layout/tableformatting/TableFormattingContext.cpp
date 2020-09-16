@@ -82,8 +82,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
             // While the grid is a continuous flow of rows, in the display tree they are relative to their sections.
             sectionOffset = rowList[cell->startRow()].logicalTop();
         }
-        cellBoxGeometry.setTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
-        cellBoxGeometry.setLeft(columnList[cell->startColumn()].logicalLeft());
+        cellBoxGeometry.setLogicalTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
+        cellBoxGeometry.setLogicalLeft(columnList[cell->startColumn()].logicalLeft());
         auto availableVerticalSpace = rowList[cell->startRow()].logicalHeight();
         for (size_t rowIndex = cell->startRow() + 1; rowIndex < cell->endRow(); ++rowIndex)
             availableVerticalSpace += rowList[rowIndex].logicalHeight();
@@ -196,8 +196,8 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             // This row is in a different section.
             rowLogicalTop = { };
         }
-        rowBoxGeometry.setTop(rowLogicalTop);
-        rowBoxGeometry.setLeft({ });
+        rowBoxGeometry.setLogicalTop(rowLogicalTop);
+        rowBoxGeometry.setLogicalLeft({ });
 
         rowLogicalTop += row.logicalHeight() + grid.verticalSpacing();
         previousRow = &rowBox;
@@ -245,15 +245,15 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         auto sectionContentHeight = LayoutUnit { };
         size_t rowCount = 0;
         for (auto& rowBox : childrenOfType<ContainerBox>(sectionBox)) {
-            sectionContentHeight += geometryForBox(rowBox).height();
+            sectionContentHeight += geometryForBox(rowBox).logicalHeight();
             ++rowCount;
         }
         sectionContentHeight += verticalSpacing * (rowCount - 1);
         sectionBoxGeometry.setContentBoxHeight(sectionContentHeight);
-        sectionBoxGeometry.setLeft(constraints.horizontal.logicalLeft);
-        sectionBoxGeometry.setTop(logicalTop);
+        sectionBoxGeometry.setLogicalLeft(constraints.horizontal.logicalLeft);
+        sectionBoxGeometry.setLogicalTop(logicalTop);
 
-        logicalTop += sectionBoxGeometry.height();
+        logicalTop += sectionBoxGeometry.logicalHeight();
     }
 }
 

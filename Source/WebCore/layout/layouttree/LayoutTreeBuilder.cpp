@@ -484,7 +484,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
         stream << "unknown box";
 
     if (boxGeometry)
-        stream << " at (" << boxGeometry->left() << "," << boxGeometry->top() << ") size " << boxGeometry->width() << "x" << boxGeometry->height();
+        stream << " at (" << boxGeometry->logicalLeft() << "," << boxGeometry->logicalTop() << ") size " << boxGeometry->logicalWidth() << "x" << boxGeometry->logicalHeight();
     stream << " (" << &layoutBox << ")";
     if (is<InlineTextBox>(layoutBox)) {
         auto textContent = downcast<InlineTextBox>(layoutBox).content();

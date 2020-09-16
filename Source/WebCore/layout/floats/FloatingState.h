@@ -67,9 +67,9 @@ public:
         bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isInFormattingContextOf(const ContainerBox& formattingContextRoot) const { return m_layoutBox->isInFormattingContextOf(formattingContextRoot); }
 
-        Rect rectWithMargin() const { return m_absoluteBoxGeometry.rectWithMargin(); }
+        Rect rectWithMargin() const { return m_absoluteBoxGeometry.logicalRectWithMargin(); }
         BoxGeometry::HorizontalMargin horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
-        PositionInContextRoot bottom() const { return { m_absoluteBoxGeometry.bottom() }; }
+        PositionInContextRoot bottom() const { return { m_absoluteBoxGeometry.logicalBottom() }; }
 
 #if ASSERT_ENABLED
         const Box* floatBox() const { return m_layoutBox.get(); }

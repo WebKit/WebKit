@@ -270,7 +270,7 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         return boxGeometry.marginBoxWidth();
 
     if (layoutBox.isReplacedBox())
-        return boxGeometry.width();
+        return boxGeometry.logicalWidth();
 
     if (inlineItem.isContainerStart())
         return boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().valueOr(0);
@@ -279,7 +279,7 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         return boxGeometry.marginEnd() + boxGeometry.borderRight() + boxGeometry.paddingRight().valueOr(0);
 
     // Non-replaced inline box (e.g. inline-block)
-    return boxGeometry.width();
+    return boxGeometry.logicalWidth();
 }
 
 LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const FloatingContext& floatingContext, const ContainerBox& formattingContextRoot, const InlineItems& inlineItems)
