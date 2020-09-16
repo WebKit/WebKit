@@ -48,7 +48,7 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
     // FIXME: Add support for workers.
     if (!is<Document>(context))
         return Exception { NotSupportedError };
-    if (!numberOfChannels || numberOfChannels > 10)
+    if (!numberOfChannels || numberOfChannels > maxNumberOfChannels())
         return Exception { SyntaxError, "Number of channels is not in range"_s };
     if (!length)
         return Exception { SyntaxError, "length cannot be 0"_s };

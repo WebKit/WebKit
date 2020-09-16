@@ -1,3 +1,18 @@
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext should support up to 32 channels
+        https://bugs.webkit.org/show_bug.cgi?id=216587
+
+        Reviewed by Darin Adler.
+
+        OfflineAudioContext should support up to 32 channels. It previously had
+        an artificial limit of 10.
+
+        No new tests, updated existing test.
+
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::create):
+
 2020-09-16  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Limit reported macOS release to 10.15 series

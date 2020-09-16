@@ -1,5 +1,16 @@
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
+        OfflineAudioContext should support up to 32 channels
+        https://bugs.webkit.org/show_bug.cgi?id=216587
+
+        Reviewed by Darin Adler.
+
+        Update test that is now passing.
+
+        * webaudio/dom-exceptions-expected.txt:
+
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
         OfflineAudioContext constructor should not throw when given a bad buffer length
         https://bugs.webkit.org/show_bug.cgi?id=216584
 
