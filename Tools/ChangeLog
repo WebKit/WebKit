@@ -1,3 +1,18 @@
+2020-09-16  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r266844) [ BigSur ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=216619
+
+        Reviewed by Chris Dumez.
+
+        In r266844, we adopted an API which would cause audio decoding to be supressed when a media element is initially muted. WebKitTestRunner
+        calls a WebKit SPI to artificially mute all media elements within the page (because listening to LayoutTest beeps and boops is annoying)
+        which causes this code path to be hit for all media elements. Rather than muting the page, WKTR should do the same as DRT, and set the
+        output volume to zero.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2020-09-16  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Improve failure summary string for AnalyzeCompileWebKitResults step

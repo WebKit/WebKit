@@ -1316,9 +1316,6 @@ webkit.org/b/216394 [ Release ] fast/selectors/text-field-selection-stroke-color
 # rdar://68740987 (REGRESSION: [ BigSur wk2 ] http/tests/media/video-no-content-length-stall.html is a constant failure)
 [ BigSur+ ] http/tests/media/video-no-content-length-stall.html [ Failure ]
 
-# rdar://68743466 (REGRESSION: [ BigSur wk2 ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is a constant failure)
-[ BigSur+ ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Failure ]
-
 # rdar://68947260 (REGRESSION (r266634): [ BigSur wk2 ] fast/selectors/text-field-selection-window-inactive-stroke-color.html is a flaky image failure)
 fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 

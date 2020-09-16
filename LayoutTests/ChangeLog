@@ -1,3 +1,12 @@
+2020-09-16  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r266844) [ BigSur ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=216619
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][FFC] Add basic flex item sizing and positioning

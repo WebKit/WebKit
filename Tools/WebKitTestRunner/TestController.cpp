@@ -1099,7 +1099,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageClearWheelEventTestMonitor(m_mainWebView->page());
 
-    WKPageSetMuted(m_mainWebView->page(), true);
+    WKPageSetMediaVolume(m_mainWebView->page(), 0);
 
     WKPageClearUserMediaState(m_mainWebView->page());
 
