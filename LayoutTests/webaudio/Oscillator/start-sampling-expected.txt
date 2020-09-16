@@ -14,7 +14,7 @@ PASS   Oscillator.start(1.75 frames) equals [0,0,0.02879395236826347,0.143492621
 PASS   Oscillator.start(1.75 frames): SNR (dB) is greater than or equal to 84.056. 
 PASS < [basic test big] All assertions passed. (total 2 assertions) 
 PASS > [diff big offset] Test sampling with start offset greater than 1/2 sampling frame 
-PASS   Sample rate 24000: Delayed cosine oscillator equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.9991225600242615,0.9876880049705505...] with an element-wise tolerance of {"absoluteThreshold":0.0000019521,"relativeThreshold":0}. 
+PASS   Sample rate 24000: Delayed cosine oscillator equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.9991217255592346,0.9876875877380371...] with an element-wise tolerance of {"absoluteThreshold":0.0000019521,"relativeThreshold":0}. 
 PASS   Sample rate 24000: Delayed cosine oscillator: SNR (dB) is greater than or equal to 128.12. 
 PASS < [diff big offset] All assertions passed. (total 2 assertions) 
 PASS > [diff small offset] Test sampling with start offset less than 1/2 sampling frame 

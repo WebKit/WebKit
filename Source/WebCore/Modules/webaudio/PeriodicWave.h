@@ -66,7 +66,7 @@ public:
     // Returns the scalar multiplier to the oscillator frequency to calculate wave table phase increment.
     float rateScale() const { return m_rateScale; }
 
-    unsigned periodicWaveSize() const { return m_periodicWaveSize; }
+    unsigned periodicWaveSize() const;
     float sampleRate() const { return m_sampleRate; }
 
 private:
@@ -82,7 +82,6 @@ private:
     void generateBasicWaveform(Type);
 
     float m_sampleRate;
-    unsigned m_periodicWaveSize;
     unsigned m_numberOfRanges;
     float m_centsPerRange;
 

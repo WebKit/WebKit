@@ -337,7 +337,7 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/
 webaudio/Oscillator/no-dezippering.html [ Pass Failure ]
 webaudio/Oscillator/osc-440hz.html [ Pass Failure ]
 webaudio/Oscillator/osc-negative-freq.html [ Pass Failure ]
-webaudio/Oscillator/osc-sweep-snr-triangle.html [ Pass Failure ]
+webaudio/Oscillator/start-sampling.html [ Pass Failure ]
 
 # one-pole subtest is flakily failing.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iirfilter.html [ Pass Failure ]

@@ -3,8 +3,8 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "test" 
 PASS Audit report 
 PASS > [test]  
-FAIL X SNR is not greater than or equal to 129.66. Got -3.0034679697481415. assert_true: expected true got false
-FAIL X Maximum difference is not less than or equal to 0.0000030995. Got 0.5732725858688354. assert_true: expected true got false
-FAIL < [test] 2 out of 2 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   SNR is greater than or equal to 129.66. 
+PASS   Maximum difference is less than or equal to 0.0000030995. 
+PASS < [test] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

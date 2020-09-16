@@ -17,23 +17,13 @@ PASS > [sawtooth]
 PASS   Sum of positive and negative frequency sawtooth oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000011506,"relativeThreshold":0}. 
 PASS < [sawtooth] All assertions passed. (total 1 assertions) 
 PASS > [triangle]  
-FAIL X Sum of positive and negative frequency triangle oscillators does not equal [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000010133,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	1.9422854185104370e+0	0.0000000000000000e+0	1.9422854185104370e+0	Infinity	1.0132999999999999e-5
-	[1]	1.7968833446502686e+0	0.0000000000000000e+0	1.7968833446502686e+0	Infinity	1.0132999999999999e-5
-	[2]	1.5523982048034668e+0	0.0000000000000000e+0	1.5523982048034668e+0	Infinity	1.0132999999999999e-5
-	[3]	1.3420724868774414e+0	0.0000000000000000e+0	1.3420724868774414e+0	Infinity	1.0132999999999999e-5
-	[4]	1.1211903095245361e+0	0.0000000000000000e+0	1.1211903095245361e+0	Infinity	1.0132999999999999e-5
-	...and 1591 more errors.
-	Max AbsError of 1.9422854185104370e+0 at index of 0.
-	Max RelError of Infinity at index of 0.
- assert_true: expected true got false
-FAIL < [triangle] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   Sum of positive and negative frequency triangle oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000010133,"relativeThreshold":0}. 
+PASS < [triangle] All assertions passed. (total 1 assertions) 
 PASS > [auto-sawtooth]  
 PASS   Sum of positive and negative frequency-ramped sawtooth oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.0000012368,"relativeThreshold":0}. 
 PASS < [auto-sawtooth] All assertions passed. (total 1 assertions) 
 PASS > [periodic-wave]  
-PASS   Sum of positive and negative frequency custom oscillators equals [1.4588953256607056,1.7774125337600708,1.9604302644729614,1.9942171573638916,1.8802270889282227,1.6347700357437134,1.2869906425476074,0.8754240870475769,0.44351619482040405,0.03464028611779213,-0.31280070543289185,-0.5696210861206055,-0.7189439535140991,-0.7578020095825195,-0.6970459222793579,-0.559600830078125...] with an element-wise tolerance of {"absoluteThreshold":0.0000022352,"relativeThreshold":0}. 
+PASS   Sum of positive and negative frequency custom oscillators equals [1.4588969945907593,1.7774109840393066,1.9604281187057495,1.994219183921814,1.8802263736724854,1.6347687244415283,1.2869917154312134,0.8754249215126038,0.4435175061225891,0.034640971571207047,-0.31279951333999634,-0.5696179270744324,-0.7189434170722961,-0.7578015923500061,-0.697043776512146,-0.5596005916595459...] with an element-wise tolerance of {"absoluteThreshold":0.0000022352,"relativeThreshold":0}. 
 PASS < [periodic-wave] All assertions passed. (total 1 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 6 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
 

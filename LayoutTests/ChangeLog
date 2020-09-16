@@ -1,3 +1,17 @@
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Merge PeriodicWave improvements from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=216576
+
+        Reviewed by Darin Adler.
+
+        Rebaseline tests that are now passing.
+
+        * webaudio/Oscillator/no-dezippering-expected.txt:
+        * webaudio/Oscillator/osc-negative-freq-expected.txt:
+        * webaudio/Oscillator/osc-sweep-snr-triangle-expected.txt:
+        * webaudio/Oscillator/start-sampling-expected.txt:
+
 2020-09-16  Hector Lopez  <hector_i_lopez@apple.com>
 
         Correction to test expectation for imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html
