@@ -533,6 +533,8 @@ private:
     Optional<bool> m_hasTaintedOrigin { WTF::nullopt };
 
     GRefPtr<GstElement> m_fpsSink { nullptr };
+    uint64_t m_totalVideoFrames { 0 };
+    uint64_t m_droppedVideoFrames { 0 };
 
 private:
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)

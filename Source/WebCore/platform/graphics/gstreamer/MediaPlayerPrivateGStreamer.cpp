@@ -3388,7 +3388,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
     }
 
     GstElement* videoSink = nullptr;
-    if (!webkitGstCheckVersion(1, 17, 0)) {
+    if (!webkitGstCheckVersion(1, 18, 0)) {
         m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
         if (m_fpsSink) {
             g_object_set(m_fpsSink.get(), "silent", TRUE , nullptr);
@@ -3434,12 +3434,12 @@ void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume
 
 Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPlaybackQualityMetrics()
 {
-    if (!webkitGstCheckVersion(1, 17, 0) && !m_fpsSink)
+    if (!webkitGstCheckVersion(1, 18, 0) && !m_fpsSink)
         return WTF::nullopt;
 
     uint64_t totalVideoFrames = 0;
     uint64_t droppedVideoFrames = 0;
-    if (webkitGstCheckVersion(1, 17, 0)) {
+    if (webkitGstCheckVersion(1, 18, 0)) {
         GUniqueOutPtr<GstStructure> stats;
         g_object_get(m_videoSink.get(), "stats", &stats.outPtr(), nullptr);
 
@@ -3454,6 +3454,17 @@ Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPlayback
         totalVideoFrames = renderedFrames;
         droppedVideoFrames = droppedFrames;
     }
+
+    // Cache or reuse cached statistics. Caching is required so that metrics queries performed
+    // after EOS still return valid values.
+    if (totalVideoFrames)
+        m_totalVideoFrames = totalVideoFrames;
+    else if (m_totalVideoFrames)
+        totalVideoFrames = m_totalVideoFrames;
+    if (droppedVideoFrames)
+        m_droppedVideoFrames = droppedVideoFrames;
+    else if (m_droppedVideoFrames)
+        droppedVideoFrames = m_droppedVideoFrames;
 
     uint32_t corruptedVideoFrames = 0;
     double totalFrameDelay = 0;

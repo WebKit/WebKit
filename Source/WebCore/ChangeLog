@@ -1,3 +1,25 @@
+2020-09-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][1.18] Regressions
+        https://bugs.webkit.org/show_bug.cgi?id=216558
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The most significant change here is the added support for video rendering stats caching.
+        This was caught by
+        imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html
+
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (webKitGLVideoSinkGetProperty): Fix 1.18 version runtime check. 1.17 was the development version of 1.18.
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::isAVC1CodecSupported const): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSink): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::videoPlaybackQualityMetrics): Cache or reuse cached
+        statistics. Caching is required so that metrics queries performed after EOS still return
+        valid values.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2020-09-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r266677): ASSERTION FAILED in PaintFrequencyTracker::end()

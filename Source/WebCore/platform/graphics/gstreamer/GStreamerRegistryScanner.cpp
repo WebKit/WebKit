@@ -421,7 +421,7 @@ bool GStreamerRegistryScanner::isAVC1CodecSupported(const String& codec, bool sh
         return checkH264Caps(makeString("video/x-h264, level=(string)", maxLevelString).utf8().data());
     }
 
-    if (webkitGstCheckVersion(1, 17, 0)) {
+    if (webkitGstCheckVersion(1, 18, 0)) {
         GST_DEBUG("Checking video decoders for constrained caps");
         return checkH264Caps(makeString("video/x-h264, level=(string)", level, ", profile=(string)", profile).utf8().data());
     }

@@ -187,7 +187,7 @@ static void webKitGLVideoSinkGetProperty(GObject* object, guint propertyId, GVal
 
     switch (propertyId) {
     case PROP_STATS:
-        if (webkitGstCheckVersion(1, 17, 0)) {
+        if (webkitGstCheckVersion(1, 18, 0)) {
             GUniqueOutPtr<GstStructure> stats;
             g_object_get(sink->priv->appSink.get(), "stats", &stats.outPtr(), nullptr);
             gst_value_set_structure(value, stats.get());
