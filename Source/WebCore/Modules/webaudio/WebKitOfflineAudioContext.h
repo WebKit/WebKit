@@ -32,9 +32,13 @@ class WebKitOfflineAudioContext final : public WebKitAudioContext {
     WTF_MAKE_ISO_ALLOCATED(WebKitOfflineAudioContext);
 public:
     static ExceptionOr<Ref<WebKitOfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+    ~WebKitOfflineAudioContext();
 
 private:
-    WebKitOfflineAudioContext(Document&, AudioBuffer* renderTarget);
+    WebKitOfflineAudioContext(Document&, Ref<AudioBuffer>&& renderTarget);
+
+    // ActiveDOMObject API.
+    const char* activeDOMObjectName() const final;
 };
 
 } // namespace WebCore

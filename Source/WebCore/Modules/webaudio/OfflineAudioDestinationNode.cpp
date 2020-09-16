@@ -41,13 +41,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
     
 const size_t OfflineAudioDestinationNode::renderQuantumSize = 128;
 
-OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& context, AudioBuffer* renderTarget)
+OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& context, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
     : AudioDestinationNode(context)
-    , m_renderTarget(renderTarget)
-    , m_framesToProcess(renderTarget->length())
+    , m_numberOfChannels(numberOfChannels)
+    , m_renderTarget(WTFMove(renderTarget))
+    , m_framesToProcess(m_renderTarget ? m_renderTarget->length() : 0)
 {
-    m_renderBus = AudioBus::create(renderTarget->numberOfChannels(), renderQuantumSize);
-    initializeDefaultNodeOptions(renderTarget->numberOfChannels(), ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
+    m_renderBus = AudioBus::create(numberOfChannels, renderQuantumSize);
+    initializeDefaultNodeOptions(numberOfChannels, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
 }
 
 OfflineAudioDestinationNode::~OfflineAudioDestinationNode()
@@ -57,7 +58,7 @@ OfflineAudioDestinationNode::~OfflineAudioDestinationNode()
 
 unsigned OfflineAudioDestinationNode::maxChannelCount() const
 {
-    return m_renderTarget->numberOfChannels();
+    return m_numberOfChannels;
 }
 
 void OfflineAudioDestinationNode::initialize()

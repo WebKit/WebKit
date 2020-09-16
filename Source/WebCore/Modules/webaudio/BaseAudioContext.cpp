@@ -152,7 +152,7 @@ BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions
 }
 
 // Constructor for offline (non-realtime) rendering.
-BaseAudioContext::BaseAudioContext(Document& document, AudioBuffer* renderTarget)
+BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -160,12 +160,12 @@ BaseAudioContext::BaseAudioContext(Document& document, AudioBuffer* renderTarget
 #endif
     , m_isOfflineContext(true)
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
-    , m_renderTarget(renderTarget)
+    , m_renderTarget(WTFMove(renderTarget))
 {
     constructCommon();
 
     // Create a new destination for offline rendering.
-    m_destinationNode = OfflineAudioDestinationNode::create(*this, m_renderTarget.get());
+    m_destinationNode = OfflineAudioDestinationNode::create(*this, numberOfChannels, m_renderTarget.copyRef());
 }
 
 void BaseAudioContext::constructCommon()

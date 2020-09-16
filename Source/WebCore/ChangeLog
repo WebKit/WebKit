@@ -1,3 +1,27 @@
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext constructor should not throw when given a bad buffer length
+        https://bugs.webkit.org/show_bug.cgi?id=216584
+
+        Reviewed by Youenn Fablet.
+
+        OfflineAudioContext constructor should not throw when given a bad buffer length. We should
+        instead throw later on when trying to start rendering.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::OfflineAudioContext):
+        (WebCore::OfflineAudioContext::create):
+        (WebCore::OfflineAudioContext::startOfflineRendering):
+        * Modules/webaudio/OfflineAudioContext.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::maxChannelCount const):
+
 2020-09-16  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Move navigator.cookieEnabled to its own interface mixin, matching the spec

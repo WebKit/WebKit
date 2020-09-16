@@ -72,7 +72,7 @@ public:
     };
 
 private:
-    OfflineAudioContext(Document&, AudioBuffer* renderTarget);
+    OfflineAudioContext(Document&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
 
     void didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&&) final;
     void didSuspendRendering(size_t frame) final;

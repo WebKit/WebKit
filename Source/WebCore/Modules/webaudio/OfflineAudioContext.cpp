@@ -38,8 +38,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioContext);
 
-inline OfflineAudioContext::OfflineAudioContext(Document& document, AudioBuffer* renderTarget)
-    : BaseAudioContext(document, renderTarget)
+inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
+    : BaseAudioContext(document, numberOfChannels, WTFMove(renderTarget))
 {
 }
 
@@ -54,11 +54,9 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
         return Exception { SyntaxError, "length cannot be 0"_s };
     if (!isSupportedSampleRate(sampleRate))
         return Exception { SyntaxError, "sampleRate is not in range"_s };
-    auto renderTarget = AudioBuffer::create(numberOfChannels, length, sampleRate);
-    if (!renderTarget)
-        return Exception { SyntaxError, "Unable to create AudioBuffer"_s };
 
-    auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), renderTarget.get()));
+    auto renderTarget = AudioBuffer::create(numberOfChannels, length, sampleRate);
+    auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), numberOfChannels, WTFMove(renderTarget)));
     audioContext->suspendIfNeeded();
     return audioContext;
 }
@@ -103,6 +101,11 @@ void OfflineAudioContext::startOfflineRendering(Ref<DeferredPromise>&& promise)
 
     if (!willBeginPlayback()) {
         promise->reject(Exception { InvalidStateError, "Refusing to start rendering for security reasons" });
+        return;
+    }
+
+    if (!renderTarget()) {
+        promise->reject(Exception { InvalidStateError, "Failed to create audio buffer"_s });
         return;
     }
 

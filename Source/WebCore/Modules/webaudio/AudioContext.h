@@ -59,7 +59,6 @@ public:
 
 private:
     AudioContext(Document&, const AudioContextOptions&);
-    AudioContext(Document&, AudioBuffer* renderTarget);
 };
 
 } // WebCore

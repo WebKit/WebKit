@@ -16,7 +16,7 @@ PASS Executing "audioparam"
 PASS Executing "biquad" 
 PASS Executing "offline-audio-context" 
 PASS Executing "invalid-offline-audio-context-parameters" 
-FAIL Executing "invalid-frame-length" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'testContext.startRendering')"
+PASS Executing "invalid-frame-length" 
 PASS Executing "waveshaper" 
 PASS Executing "audio-buffer-source" 
 PASS Executing "oscillator" 
@@ -143,7 +143,9 @@ PASS   new OfflineAudioContext(1, 100, 1e6) threw SyntaxError: "sampleRate is no
 PASS   new OfflineAudioContext(1, 0, 44100) threw SyntaxError: "length cannot be 0". 
 PASS < [invalid-offline-audio-context-parameters] All assertions passed. (total 5 assertions) 
 PASS > [invalid-frame-length]  
-FAIL X testContext = new OfflineAudioContext(1, -88200000000000, 44100) incorrectly threw SyntaxError: "Unable to create AudioBuffer". assert_true: expected true got false
+PASS   testContext = new OfflineAudioContext(1, -88200000000000, 44100) did not throw an exception. 
+PASS   testContext.startRendering() rejected correctly with InvalidStateError: Failed to create audio buffer. 
+PASS < [invalid-frame-length] All assertions passed. (total 2 assertions) 
 PASS > [waveshaper]  
 PASS   node.oversample = "9x" did not throw an exception. 
 PASS   node.oversample is equal to none. 
@@ -258,5 +260,5 @@ PASS   osc.noteOff is equal to undefined.
 PASS   source.noteOn is equal to undefined. 
 PASS   source.noteOff is equal to undefined. 
 PASS < [misc] All assertions passed. (total 4 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 24 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 24 tasks were failed. assert_true: expected true got false
 

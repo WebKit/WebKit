@@ -37,9 +37,9 @@ class AudioContext;
 class OfflineAudioDestinationNode final : public AudioDestinationNode {
     WTF_MAKE_ISO_ALLOCATED(OfflineAudioDestinationNode);
 public:
-    static Ref<OfflineAudioDestinationNode> create(BaseAudioContext& context, AudioBuffer* renderTarget)
+    static Ref<OfflineAudioDestinationNode> create(BaseAudioContext& context, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
     {
-        return adoptRef(*new OfflineAudioDestinationNode(context, renderTarget));
+        return adoptRef(*new OfflineAudioDestinationNode(context, numberOfChannels, WTFMove(renderTarget)));
     }
 
     virtual ~OfflineAudioDestinationNode();
@@ -57,7 +57,7 @@ public:
     static const size_t renderQuantumSize;
 
 private:
-    OfflineAudioDestinationNode(BaseAudioContext&, AudioBuffer* renderTarget);
+    OfflineAudioDestinationNode(BaseAudioContext&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
 
     enum class OfflineRenderResult { Failure, Suspended, Complete };
     OfflineRenderResult offlineRender();
@@ -66,6 +66,8 @@ private:
     bool requiresTailProcessing() const final { return false; }
 
     unsigned maxChannelCount() const final;
+
+    unsigned m_numberOfChannels;
 
     // This AudioNode renders into this AudioBuffer.
     RefPtr<AudioBuffer> m_renderTarget;

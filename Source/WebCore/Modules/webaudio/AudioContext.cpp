@@ -99,12 +99,6 @@ AudioContext::AudioContext(Document& document, const AudioContextOptions& contex
 {
 }
 
-// Constructor for offline (non-realtime) rendering.
-AudioContext::AudioContext(Document& document, AudioBuffer* renderTarget)
-    : BaseAudioContext(document, renderTarget)
-{
-}
-
 double AudioContext::baseLatency()
 {
     lazyInitialize();

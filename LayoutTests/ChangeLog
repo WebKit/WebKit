@@ -1,5 +1,16 @@
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
+        OfflineAudioContext constructor should not throw when given a bad buffer length
+        https://bugs.webkit.org/show_bug.cgi?id=216584
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline test now that more checks are passing.
+
+        * webaudio/dom-exceptions-expected.txt:
+
+2020-09-16  Chris Dumez  <cdumez@apple.com>
+
         Import OscillatorNode layout tests from Blink
         https://bugs.webkit.org/show_bug.cgi?id=216569
 

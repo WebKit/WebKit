@@ -84,8 +84,8 @@ WebKitAudioContext::WebKitAudioContext(Document& document)
 }
 
 // Constructor for offline (non-realtime) rendering.
-WebKitAudioContext::WebKitAudioContext(Document& document, AudioBuffer* renderTarget)
-    : BaseAudioContext(document, renderTarget)
+WebKitAudioContext::WebKitAudioContext(Document& document, Ref<AudioBuffer>&& renderTarget)
+    : BaseAudioContext(document, renderTarget->numberOfChannels(), WTFMove(renderTarget))
 {
 }
 
