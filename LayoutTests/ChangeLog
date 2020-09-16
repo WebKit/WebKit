@@ -1,3 +1,15 @@
+2020-09-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        4 webaudio/oscillator tests missing expected results
+        https://bugs.webkit.org/show_bug.cgi?id=216625
+
+        Unreviewed test gardening.
+
+        * webaudio/oscillator-custom-expected.txt: Added.
+        * webaudio/oscillator-sawtooth-expected.txt: Added.
+        * webaudio/oscillator-square-expected.txt: Added.
+        * webaudio/oscillator-triangle-expected.txt: Added.
+
 2020-09-16  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS Debug ] imported/w3c/web-platform-tests/selection/*: 4 tests marked as slow
