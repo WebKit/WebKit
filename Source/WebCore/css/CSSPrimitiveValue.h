@@ -80,6 +80,7 @@ public:
     static bool isLength(CSSUnitType);
     static bool isResolution(CSSUnitType);
     static bool isViewportPercentageLength(CSSUnitType type) { return type >= CSSUnitType::CSS_VW && type <= CSSUnitType::CSS_VMAX; }
+    static double computeDegrees(CSSUnitType, double angle);
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Those that use primitiveUnitType() are broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
@@ -313,6 +314,23 @@ template<typename T> inline CSSPrimitiveValue::CSSPrimitiveValue(Ref<T>&& value)
     : CSSValue(PrimitiveClass)
 {
     init(WTFMove(value));
+}
+
+inline double CSSPrimitiveValue::computeDegrees(CSSUnitType type, double angle)
+{
+    switch (type) {
+    case CSSUnitType::CSS_DEG:
+        return angle;
+    case CSSUnitType::CSS_RAD:
+        return rad2deg(angle);
+    case CSSUnitType::CSS_GRAD:
+        return grad2deg(angle);
+    case CSSUnitType::CSS_TURN:
+        return turn2deg(angle);
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 }
 
 } // namespace WebCore

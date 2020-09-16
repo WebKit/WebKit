@@ -108,12 +108,16 @@ Color CSSParser::parseColor(const String& string, bool strict)
     return primitiveValue.color();
 }
 
-Color CSSParser::parseColorWorkerSafe(StringView string)
+Color CSSParser::parseColorWorkerSafe(const String& string)
 {
     if (auto color = CSSParserFastPaths::parseSimpleColor(string))
         return *color;
-    // FIXME: This function does not parse many types of valid CSS color syntax, such as color with non-sRGB color spaces.
-    return { };
+
+    CSSTokenizer tokenizer(string);
+    CSSParserTokenRange range(tokenizer.tokenRange());
+    range.consumeWhitespace();
+
+    return CSSPropertyParserHelpers::consumeColorWorkerSafe(range, HTMLStandardMode);
 }
 
 Color CSSParser::parseSystemColor(StringView string)

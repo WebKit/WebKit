@@ -55,14 +55,21 @@ CSSParserTokenRange consumeFunction(CSSParserTokenRange&);
 enum class UnitlessQuirk { Allow, Forbid };
 enum class AllowXResolutionUnit { Allow, Forbid };
 
+struct Angle {
+    CSSUnitType type;
+    double value;
+};
+
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
 bool consumeNumberRaw(CSSParserTokenRange&, double& result);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
+Optional<double> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRangeAll);
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
 RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
+Optional<Angle> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk);
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&, AllowXResolutionUnit = AllowXResolutionUnit::Forbid);
@@ -77,6 +84,7 @@ RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
 StringView consumeUrlAsStringView(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange&);
 
+Color consumeColorWorkerSafe(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, CSSParserMode, bool acceptQuirkyColors = false);
 
 enum class PositionSyntax {

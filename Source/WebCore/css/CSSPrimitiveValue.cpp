@@ -526,19 +526,7 @@ void CSSPrimitiveValue::cleanup()
 
 double CSSPrimitiveValue::computeDegrees() const
 {
-    switch (primitiveType()) {
-    case CSSUnitType::CSS_DEG:
-        return doubleValue();
-    case CSSUnitType::CSS_RAD:
-        return rad2deg(doubleValue());
-    case CSSUnitType::CSS_GRAD:
-        return grad2deg(doubleValue());
-    case CSSUnitType::CSS_TURN:
-        return turn2deg(doubleValue());
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
+    return computeDegrees(primitiveType(), doubleValue());
 }
 
 template<> int CSSPrimitiveValue::computeLength(const CSSToLengthConversionData& conversionData) const

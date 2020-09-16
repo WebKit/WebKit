@@ -1,3 +1,124 @@
+2020-09-16  Chris Lord  <clord@igalia.com>
+
+        Enable full CSS color parsing within a worker for OffscreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=204575
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing OffscreenCanvas tests now that full CSS color
+        parsing is available.
+
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-5-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-5.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-6-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-6.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-7-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-7.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-8-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-8.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-9-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsl-9.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-5-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-5.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-6-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-6.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-7-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-7.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-8-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-8.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-9-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-hsla-9.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-5-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-5.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-6-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgb-6.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-5-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-5.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-6-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.css-color-4-rgba-6.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-5-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-5.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-6-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-6.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsl-clamp-4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-5-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-5.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-6-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.hsla-clamp-6.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgb-eof-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgb-eof.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-eof-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-eof.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-num-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-num-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-num-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-num-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-solid-1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-solid-1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-solid-2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-solid-2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-solid-3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-solid-3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-solid-4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.rgba-solid-4.worker-expected.txt:
+
 2020-09-16  Chris Dumez  <cdumez@apple.com>
 
         Merge PeriodicWave improvements from Blink

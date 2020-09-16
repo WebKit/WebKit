@@ -1,5 +1,5 @@
 2d.fillStyle.parse.hsl-6
 
 
-FAIL OffscreenCanvas test: 2d.fillStyle.parse.hsl-6 assert_equals: Red channel of the pixel at (50, 25) expected 0 but got 255
+PASS OffscreenCanvas test: 2d.fillStyle.parse.hsl-6 
 

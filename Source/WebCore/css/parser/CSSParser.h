@@ -86,7 +86,7 @@ public:
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 
     WEBCORE_EXPORT static Color parseColor(const String&, bool strict = false);
-    static Color parseColorWorkerSafe(StringView);
+    static Color parseColorWorkerSafe(const String&);
     static Color parseSystemColor(StringView);
     static Optional<SRGBA<uint8_t>> parseNamedColor(StringView);
     static Optional<SRGBA<uint8_t>> parseHexColor(StringView);

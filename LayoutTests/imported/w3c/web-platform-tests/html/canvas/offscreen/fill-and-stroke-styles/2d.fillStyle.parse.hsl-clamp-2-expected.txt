@@ -1,5 +1,5 @@
 2d.fillStyle.parse.hsl-clamp-2
 
 
-FAIL OffscreenCanvas test: 2d.fillStyle.parse.hsl-clamp-2 assert_equals: Red channel of the pixel at (50, 25) expected 127 but got 255
+PASS OffscreenCanvas test: 2d.fillStyle.parse.hsl-clamp-2 
 
