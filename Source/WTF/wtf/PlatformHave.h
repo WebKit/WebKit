@@ -326,11 +326,6 @@
 #define HAVE_SEC_KEY_PROXY 1
 #endif
 
-/* FIXME: Should this be enabled or IOS_FAMILY, not just IOS? */
-#if PLATFORM(MAC) || PLATFORM(IOS)
-#define HAVE_FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER 1
-#endif
-
 /* FIXME: Should this be enabled for IOS_FAMILY, not just IOS? */
 #if PLATFORM(MAC) || PLATFORM(IOS)
 #define HAVE_FOUNDATION_WITH_SAME_SITE_COOKIE_SUPPORT 1

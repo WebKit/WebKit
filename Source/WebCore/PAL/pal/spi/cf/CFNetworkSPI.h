@@ -145,9 +145,7 @@ CF_ENUM(CFHTTPCookieStorageAcceptPolicy)
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
 - (void)_saveCookies;
-#if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
 - (void)_saveCookies:(dispatch_block_t) completionHandler;
-#endif
 #if HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY)
 @property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
 #endif
@@ -336,7 +334,6 @@ CFIndex CFURLCacheMemoryCapacity(CFURLCacheRef);
 void CFURLCacheSetDiskCapacity(CFURLCacheRef, CFIndex);
 CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
 void CFHTTPCookieStorageDeleteAllCookies(CFHTTPCookieStorageRef);
-void _CFHTTPCookieStorageFlushCookieStores();
 CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
 
 extern CFStringRef const kCFHTTPCookieLocalFileDomain;

@@ -1,3 +1,16 @@
+2020-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unneeded HAVE_FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER
+        https://bugs.webkit.org/show_bug.cgi?id=216572
+
+        Reviewed by Youenn Fablet.
+
+        It's available everywhere we support.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::saveCookies):
+        (WebKit::NetworkProcess::platformFlushCookies):
+
 2020-09-16  Youenn Fablet  <youenn@apple.com>
 
         Move LibWebRTCCodecsProxy message handling out of the main thread

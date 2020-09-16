@@ -221,7 +221,6 @@ void NetworkProcess::flushCookies(const PAL::SessionID& sessionID, CompletionHan
     platformFlushCookies(sessionID, WTFMove(completionHandler));
 }
 
-#if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
 static void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -231,22 +230,14 @@ static void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<vo
         RunLoop::main().dispatch(WTFMove(completionHandler));
     }).get()];
 }
-#endif
 
 void NetworkProcess::platformFlushCookies(const PAL::SessionID& sessionID, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-#if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
     if (auto* networkStorageSession = storageSession(sessionID))
         saveCookies(networkStorageSession->nsCookieStorage(), WTFMove(completionHandler));
     else
         completionHandler();
-#else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    _CFHTTPCookieStorageFlushCookieStores();
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    completionHandler();
-#endif
 }
 
 void NetworkProcess::platformProcessDidTransitionToBackground()
