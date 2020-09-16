@@ -97,6 +97,9 @@ public:
     void addMutedStateObserver(MutedStateObserver*);
     void removeMutedStateObserver(MutedStateObserver*);
 
+    void audioOutputDeviceChanged();
+    void setIsPlayingToBluetoothOverride(Optional<bool>);
+
     virtual bool isMuted() const;
     virtual void handleMutedStateChange();
 

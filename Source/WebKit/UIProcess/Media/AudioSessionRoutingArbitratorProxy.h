@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/AudioSession.h>
+#include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -59,6 +60,7 @@ public:
     };
 
     ArbitrationStatus arbitrationStatus() const { return m_arbitrationStatus; }
+    WallTime arbitrationUpdateTime() const { return m_arbitrationUpdateTime; }
 
 private:
     // IPC::MessageReceiver
@@ -71,6 +73,7 @@ private:
     WebProcessProxy& m_process;
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::None };
     ArbitrationStatus m_arbitrationStatus { ArbitrationStatus::None };
+    WallTime m_arbitrationUpdateTime;
 };
 
 }
