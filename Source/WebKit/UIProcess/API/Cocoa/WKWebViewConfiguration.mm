@@ -825,18 +825,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     _pageConfiguration->setLimitsNavigationsToAppBoundDomains(limitsToAppBoundDomains);
 }
+#endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_ignoresAppBoundDomains
 {
+#if PLATFORM(IOS_FAMILY)
     return _pageConfiguration->ignoresAppBoundDomains();
+#else
+    return NO;
+#endif
 }
 
 - (void)_setIgnoresAppBoundDomains:(BOOL)ignoresAppBoundDomains
 {
+#if PLATFORM(IOS_FAMILY)
     _pageConfiguration->setIgnoresAppBoundDomains(ignoresAppBoundDomains);
+#endif
 }
-
-#endif // PLATFORM(IOS_FAMILY)
 
 - (BOOL)_invisibleAutoplayNotPermitted
 {
