@@ -1,3 +1,19 @@
+2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update JSModuleNamespaceObject::defineOwnProperty
+        https://bugs.webkit.org/show_bug.cgi?id=216640
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements spec update of JSModuleNamespaceObject::defineOwnProperty.
+        We implement https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-defineownproperty-p-desc precisely.
+
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlotCommon):
+        (JSC::JSModuleNamespaceObject::deleteProperty):
+        (JSC::JSModuleNamespaceObject::getOwnPropertyNames):
+        (JSC::JSModuleNamespaceObject::defineOwnProperty):
+
 2020-09-17  Mark Lam  <mark.lam@apple.com>
 
         Add some pointer sanity checks to speculationFromCell().

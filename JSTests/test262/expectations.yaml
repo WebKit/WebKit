@@ -2458,12 +2458,6 @@ test/language/expressions/dynamic-import/catch/nested-async-gen-return-await-eva
 test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
-test/language/expressions/dynamic-import/namespace/await-ns-define-own-property.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: No change requested, Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: No change requested, Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
-test/language/expressions/dynamic-import/namespace/promise-then-ns-define-own-property.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: No change requested, Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: No change requested, Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
 test/language/expressions/function/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/function/scope-body-lex-distinct.js:
@@ -2983,8 +2977,6 @@ test/language/literals/regexp/u-astral-char-class-invert.js:
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
 test/language/module-code/export-default-asyncgenerator-declaration-binding.js:
   module: "SyntaxError: Exported binding 'starDefault' needs to refer to a top-level declared variable."
-test/language/module-code/namespace/internals/define-own-property.js:
-  module: 'Test262Error: Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
 test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:

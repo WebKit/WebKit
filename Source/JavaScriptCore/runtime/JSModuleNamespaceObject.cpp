@@ -123,7 +123,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(JSGlobalObject* globalObj
     // If the property name is a symbol, we don't look into the imported bindings.
     // It may return the descriptor with writable: true, but namespace objects does not allow it in [[Set]] / [[DefineOwnProperty]] side.
     if (propertyName.isSymbol())
-        return JSObject::getOwnPropertySlot(this, globalObject, propertyName, slot);
+        return Base::getOwnPropertySlot(this, globalObject, propertyName, slot);
 
     slot.setIsTaintedByOpaqueObject();
 
@@ -212,7 +212,7 @@ bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, JSGlobalObject* globa
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-delete-p
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
     if (propertyName.isSymbol())
-        return JSObject::deleteProperty(thisObject, globalObject, propertyName, slot);
+        return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 
     return !thisObject->m_exports.contains(propertyName.uid());
 }
@@ -233,18 +233,75 @@ void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject
         }
         propertyNames.add(name.impl());
     }
-    JSObject::getOwnPropertyNames(thisObject, globalObject, propertyNames, mode);
+    Base::getOwnPropertyNames(thisObject, globalObject, propertyNames, mode);
 }
 
-bool JSModuleNamespaceObject::defineOwnProperty(JSObject*, JSGlobalObject* globalObject, PropertyName, const PropertyDescriptor&, bool shouldThrow)
+bool JSModuleNamespaceObject::defineOwnProperty(JSObject* cell, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-defineownproperty-p-desc
-    if (shouldThrow)
-        throwTypeError(globalObject, scope, NonExtensibleObjectPropertyDefineError);
-    return false;
+    // https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-defineownproperty-p-desc
+
+    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+
+    // 1. If Type(P) is Symbol, return OrdinaryDefineOwnProperty(O, P, Desc).
+    if (propertyName.isSymbol())
+        return Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
+
+    // 2. Let current be ? O.[[GetOwnProperty]](P).
+    PropertyDescriptor current;
+    bool isCurrentDefined = thisObject->getOwnPropertyDescriptor(globalObject, propertyName, current);
+    RETURN_IF_EXCEPTION(scope, false);
+
+    // 3. If current is undefined, return false.
+    if (!isCurrentDefined) {
+        if (shouldThrow)
+            throwTypeError(globalObject, scope, NonExtensibleObjectPropertyDefineError);
+        return false;
+    }
+
+    // 4. If IsAccessorDescriptor(Desc) is true, return false.
+    if (descriptor.isAccessorDescriptor()) {
+        if (shouldThrow)
+            throwTypeError(globalObject, scope, "Cannot change module namespace object's binding to accessor"_s);
+        return false;
+    }
+
+    // 5. If Desc.[[Writable]] is present and has value false, return false.
+    if (descriptor.writablePresent() && !descriptor.writable()) {
+        if (shouldThrow)
+            throwTypeError(globalObject, scope, "Cannot change module namespace object's binding to non-writable attribute"_s);
+        return false;
+    }
+
+    // 6. If Desc.[[Enumerable]] is present and has value false, return false.
+    if (descriptor.enumerablePresent() && !descriptor.enumerable()) {
+        if (shouldThrow)
+            throwTypeError(globalObject, scope, "Cannot replace module namespace object's binding with non-enumerable attribute"_s);
+        return false;
+    }
+
+    // 7. If Desc.[[Configurable]] is present and has value true, return false.
+    if (descriptor.configurablePresent() && descriptor.configurable()) {
+        if (shouldThrow)
+            throwTypeError(globalObject, scope, "Cannot replace module namespace object's binding with configurable attribute"_s);
+        return false;
+    }
+
+    // 8. If Desc.[[Value]] is present, return SameValue(Desc.[[Value]], current.[[Value]]).
+    if (descriptor.value()) {
+        bool result = sameValue(globalObject, descriptor.value(), current.value());
+        RETURN_IF_EXCEPTION(scope, false);
+        if (!result) {
+            if (shouldThrow)
+                throwTypeError(globalObject, scope, "Cannot replace module namespace object's binding's value"_s);
+            return false;
+        }
+    }
+
+    // 9. Return true.
+    return true;
 }
 
 } // namespace JSC
