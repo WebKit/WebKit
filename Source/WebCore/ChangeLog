@@ -1,3 +1,20 @@
+2020-09-17  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] YouTube does not route video to AirPlay the first time
+        https://bugs.webkit.org/show_bug.cgi?id=216626
+        <rdar://problem/62222846>
+
+        Reviewed by Eric Carlson.
+
+        Difficult to test this, since it requires an live AppleTV device.
+
+        During a refactor, the order of a couple calls changed. A MediaPlaybackTarget needs to be in place before the MediaPlayer can
+        be told to start playing to that target. Once the target is in-place, subsequent requests to start playing to that target succeed,
+        which explains the "only initial AirPlay fails" behavior.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::activeVideoRouteDidChange):
+
 2020-09-17  Antti Koivisto  <antti@apple.com>
 
         Style::Change should be enum class
