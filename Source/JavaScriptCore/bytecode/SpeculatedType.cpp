@@ -548,17 +548,45 @@ SpeculatedType speculationFromStructure(Structure* structure)
     return filteredResult;
 }
 
+ALWAYS_INLINE static bool isSanePointer(const void* pointer)
+{
+    // FIXME: rdar://69036888: remove this when no longer needed.
+#if CPU(ADDRESS64)
+    uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
+    uintptr_t canonicalPointerBits = pointerAsInt << 16;
+    uintptr_t nonCanonicalPointerBits = pointerAsInt >> 48;
+    return !nonCanonicalPointerBits && canonicalPointerBits;
+#else
+    UNUSED_PARAM(pointer);
+    return true;
+#endif
+}
+
 SpeculatedType speculationFromCell(JSCell* cell)
 {
+    if (UNLIKELY(!isSanePointer(cell))) {
+        ASSERT_NOT_REACHED();
+        return SpecNone;
+    }
     if (cell->isString()) {
         JSString* string = jsCast<JSString*>(cell);
         if (const StringImpl* impl = string->tryGetValueImpl()) {
+            if (UNLIKELY(!isSanePointer(impl))) {
+                ASSERT_NOT_REACHED();
+                return SpecNone;
+            }
             if (impl->isAtom())
                 return SpecStringIdent;
         }
         return SpecString;
     }
-    return speculationFromStructure(cell->structure());
+    // FIXME: rdar://69036888: undo this when no longer needed.
+    auto* structure = cell->vm().tryGetStructure(cell->structureID());
+    if (UNLIKELY(!isSanePointer(structure))) {
+        ASSERT_NOT_REACHED();
+        return SpecNone;
+    }
+    return speculationFromStructure(structure);
 }
 
 SpeculatedType speculationFromValue(JSValue value)

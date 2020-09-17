@@ -94,6 +94,10 @@ public:
 
     ALWAYS_INLINE void validate(StructureID);
 
+    // FIXME: rdar://69036888: remove this when no longer needed.
+    // This is only used for a special case mitigation. It is not for general use.
+    Structure* tryGet(StructureID);
+
     Structure* get(StructureID);
     void deallocateID(Structure*, StructureID);
     StructureID allocateID(Structure*);
@@ -178,6 +182,15 @@ inline Structure* StructureIDTable::get(StructureID structureID)
     return decode(table()[structureIndex].encodedStructureBits, structureID);
 }
 
+// FIXME: rdar://69036888: remove this function when no longer needed.
+inline Structure* StructureIDTable::tryGet(StructureID structureID)
+{
+    uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
+    if (structureIndex >= m_capacity)
+        return nullptr;
+    return decode(table()[structureIndex].encodedStructureBits, structureID);
+}
+
 ALWAYS_INLINE void StructureIDTable::validate(StructureID structureID)
 {
     uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
@@ -193,6 +206,8 @@ class StructureIDTable {
 public:
     StructureIDTable() = default;
 
+    // FIXME: rdar://69036888: remove this function when no longer needed.
+    Structure* tryGet(StructureID structureID) { return structureID; }
     Structure* get(StructureID structureID) { return structureID; }
     void deallocateID(Structure*, StructureID) { }
     StructureID allocateID(Structure* structure)

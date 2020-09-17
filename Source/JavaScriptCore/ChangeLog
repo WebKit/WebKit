@@ -1,3 +1,28 @@
+2020-09-17  Mark Lam  <mark.lam@apple.com>
+
+        Add some pointer sanity checks to speculationFromCell().
+        https://bugs.webkit.org/show_bug.cgi?id=216638
+        rdar://23226333
+
+        Reviewed by Yusuke Suzuki.
+
+        Add some sanity checks to mitigate against some potential pointer corruptions
+        from profiling data.  The goal here is not to exhaustively filter out all possible
+        bad pointers, but simply to filter out as many as possible to reduce crashes from
+        such bad pointers, and to do so with the least possible performance impact.
+
+        It is OK to do such filtering here because we're only trying to compute a
+        SpeculatedType from the pointer.  If the pointer is bad, we can just return
+        SpecNone indicating that we don't have any info to speculate on.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::isSanePointer):
+        (JSC::speculationFromCell):
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::tryGet):
+        * runtime/VM.h:
+        (JSC::VM::tryGetStructure):
+
 2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Support export namespace `export * as ns`

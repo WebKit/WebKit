@@ -890,7 +890,13 @@ public:
     {
         return heap.structureIDTable().get(decontaminate(id));
     }
-    
+
+    // FIXME: rdar://69036888: remove this function when no longer needed.
+    ALWAYS_INLINE Structure* tryGetStructure(StructureID id)
+    {
+        return heap.structureIDTable().tryGet(decontaminate(id));
+    }
+
     void* stackPointerAtVMEntry() const { return m_stackPointerAtVMEntry; }
     void setStackPointerAtVMEntry(void*);
 
