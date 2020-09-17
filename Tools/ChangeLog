@@ -1,3 +1,9 @@
+2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed gardening. API test WebKitWebInspectorServer/test-page-list is flaky.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-09-17  Antoine Quint  <graouts@webkit.org>
 
         Remove the legacy animation code
