@@ -1,5 +1,13 @@
 2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed gardening. Update baselines after r20056.
+
+        * platform/glib/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt: Updated after r266510.
+        * platform/wpe/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash-expected.txt: Updated after r266399.
+
+2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewwed test gardening. Update baselines after WPT update in r267167.
 
         * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
