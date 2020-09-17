@@ -1326,3 +1326,4 @@ fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass Ima
 #<rdar://68957215> [ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html is a constant failure/timeout
 [ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Failure Timeout ]
 
+webkit.org/b/216634 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Pass Failure ]

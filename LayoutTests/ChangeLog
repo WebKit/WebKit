@@ -1,5 +1,14 @@
 2020-09-16  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ macOS wk2 ] imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=216634
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-09-16  Hector Lopez  <hector_i_lopez@apple.com>
+
         Added fast/selectors/selection-window-inactive-stroke-color.html to bug and changed expectations
         https://bugs.webkit.org/show_bug.cgi?id=216394
 
