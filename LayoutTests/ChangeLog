@@ -1,3 +1,11 @@
+2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewwed test gardening. Update baselines after WPT update in r267167.
+
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt:
+
 2020-09-17  Antoine Quint  <graouts@webkit.org>
 
         Remove the legacy animation code

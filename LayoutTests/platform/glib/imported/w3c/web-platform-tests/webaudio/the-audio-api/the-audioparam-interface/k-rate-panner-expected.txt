@@ -21,8 +21,8 @@ PASS   k-rate positionX: k-rate node: positionX.setValueAtTime(0,0) did not thro
 PASS   k-rate positionX: k-rate node: positionX.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
 PASS   k-rate positionX: a-rate node:positionX.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate positionX: a-rate node:positionX.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
-PASS   k-rate positionX: Output of k-rate PannerNode is identical to the array [0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652...]. 
-PASS   k-rate positionX: Output of a-rate PannerNode is identical to the array [0.00005495094956131652,0.07824615389108658,0.06072939559817314,0.0456632636487484,0.03603517264127731,0.029616545885801315,0.02508825622498989,0.021739641204476357,0.019169362261891365,0.017137136310338974,0.015491393394768238,0.01413218304514885,0.01299106702208519,0.012019680812954903,0.011182935908436775,0.010454746894538403...]. 
+PASS   k-rate positionX: Output of k-rate PannerNode is identical to the array [expected array]. 
+PASS   k-rate positionX: Output of a-rate PannerNode is identical to the array [expected array]. 
 PASS   k-rate positionX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 635 different values). 
 PASS   k-rate positionX k-rate output [0: 127] contains only the constant 0.00005495094956131652. 
 PASS   k-rate positionX k-rate output [128: 255] contains only the constant 0.0012474509421736002. 
@@ -36,8 +36,8 @@ PASS   k-rate positionY: k-rate node: positionY.setValueAtTime(0,0) did not thro
 PASS   k-rate positionY: k-rate node: positionY.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
 PASS   k-rate positionY: a-rate node:positionY.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate positionY: a-rate node:positionY.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
-PASS   k-rate positionY: Output of k-rate PannerNode is identical to the array [0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686...]. 
-PASS   k-rate positionY: Output of a-rate PannerNode is identical to the array [0.15397992730140686,0.052883081138134,0.03359358385205269,0.0257780309766531,0.020881211385130882,0.01750437170267105,0.015046179294586182,0.01318277232348919,0.011724472045898438,0.010553551837801933,0.009593425318598747,0.008792280219495296,0.008113890886306763,0.007532191462814808,0.007027978077530861,0.006586793810129166...]. 
+PASS   k-rate positionY: Output of k-rate PannerNode is identical to the array [expected array]. 
+PASS   k-rate positionY: Output of a-rate PannerNode is identical to the array [expected array]. 
 PASS   k-rate positionY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 637 different values). 
 PASS   k-rate positionY k-rate output [0: 127] contains only the constant 0.15397992730140686. 
 PASS   k-rate positionY k-rate output [128: 255] contains only the constant 0.0008113961666822433. 
@@ -51,8 +51,8 @@ PASS   k-rate orientationX: k-rate node: orientationX.setValueAtTime(1,0) did no
 PASS   k-rate orientationX: k-rate node: orientationX.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationX: a-rate node:orientationX.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationX: a-rate node:orientationX.linearRampToValueAtTime(10,0.08) did not throw an exception. 
-PASS   k-rate orientationX: Output of k-rate PannerNode is identical to the array [0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696,0.00004145194179727696...]. 
-PASS   k-rate orientationX: Output of a-rate PannerNode is identical to the array [0.00004145194179727696,0.000793023849837482,0.001577909803017974,0.0023536905646324158,0.0031244209967553616,0.0038864966481924057,0.004642166662961245,0.005390639882534742,0.006131631787866354,0.006865708157420158,0.007592291571199894,0.008312128484249115,0.009024947881698608,0.009730719029903412,0.010429740883409977,0.011122064664959908...]. 
+PASS   k-rate orientationX: Output of k-rate PannerNode is identical to the array [expected array]. 
+PASS   k-rate orientationX: Output of a-rate PannerNode is identical to the array [expected array]. 
 PASS   k-rate orientationX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 637 different values). 
 PASS   k-rate orientationX k-rate output [0: 127] contains only the constant 0.00004145194179727696. 
 PASS   k-rate orientationX k-rate output [128: 255] contains only the constant 0.05854203552007675. 
@@ -66,8 +66,8 @@ PASS   k-rate orientationY: k-rate node: orientationY.setValueAtTime(1,0) did no
 PASS   k-rate orientationY: k-rate node: orientationY.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationY: a-rate node:orientationY.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationY: a-rate node:orientationY.linearRampToValueAtTime(10,0.08) did not throw an exception. 
-PASS   k-rate orientationY: Output of k-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
-PASS   k-rate orientationY: Output of a-rate PannerNode is identical to the array [0.07389305531978607,0.07389718294143677,0.07390934973955154,0.07392928004264832,0.07395651191473007,0.0739908292889595,0.07403187453746796,0.07407934963703156,0.07413297146558762,0.07419241219758987,0.07425744831562042,0.07432779669761658,0.07440316677093506,0.07448334991931915,0.07456807047128677,0.07465710490942001...]. 
+PASS   k-rate orientationY: Output of k-rate PannerNode is identical to the array [expected array]. 
+PASS   k-rate orientationY: Output of a-rate PannerNode is identical to the array [expected array]. 
 PASS   k-rate orientationY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 635 different values). 
 PASS   k-rate orientationY k-rate output [0: 127] contains only the constant 0.07389305531978607. 
 PASS   k-rate orientationY k-rate output [128: 255] contains only the constant 0.08894404023885727. 
@@ -81,8 +81,8 @@ PASS   k-rate orientationZ: k-rate node: orientationZ.setValueAtTime(1,0) did no
 PASS   k-rate orientationZ: k-rate node: orientationZ.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationZ: a-rate node:orientationZ.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationZ: a-rate node:orientationZ.linearRampToValueAtTime(10,0.08) did not throw an exception. 
-PASS   k-rate orientationZ: Output of k-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
-PASS   k-rate orientationZ: Output of a-rate PannerNode is identical to the array [0.07389305531978607,0.07389718294143677,0.07390934973955154,0.07392928004264832,0.07395651191473007,0.0739908292889595,0.07403187453746796,0.07407934963703156,0.07413297146558762,0.07419241219758987,0.07425744831562042,0.07432779669761658,0.07440316677093506,0.07448334991931915,0.07456807047128677,0.07465710490942001...]. 
+PASS   k-rate orientationZ: Output of k-rate PannerNode is identical to the array [expected array]. 
+PASS   k-rate orientationZ: Output of a-rate PannerNode is identical to the array [expected array]. 
 PASS   k-rate orientationZ: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 635 different values). 
 PASS   k-rate orientationZ k-rate output [0: 127] contains only the constant 0.07389305531978607. 
 PASS   k-rate orientationZ k-rate output [128: 255] contains only the constant 0.08894404023885727. 
