@@ -524,8 +524,15 @@ IsNSURLSessionWebSocketEnabled:
 LazyImageLoadingEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Lazy Image Loading"
-  humanReadableDescription: "Enable Lazy Image Loading support"
+  humanReadableName: "Lazy image loading"
+  humanReadableDescription: "Enable lazy image loading support"
+  category: experimental
+
+LazyIframeLoadingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Lazy iframe loading"
+  humanReadableDescription: "Enable lazy iframe loading support"
   category: experimental
 
 IsThirdPartyCookieBlockingDisabled:

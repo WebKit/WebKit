@@ -1,3 +1,17 @@
+2020-09-17  Rob Buis  <rbuis@igalia.com>
+
+        Clean up lazy frame loading
+        https://bugs.webkit.org/show_bug.cgi?id=216560
+
+        Reviewed by Youenn Fablet.
+
+        Remove WPT specific custom code to set the
+        lazy frame loading setting, not needed since
+        experimental features will be enabled for WPT
+        runs and that will set this setting.
+
+        * resources/testharnessreport.js:
+
 2020-09-15  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Remove flexbox's specific computePreferredLogicalWidths()

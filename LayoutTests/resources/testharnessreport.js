@@ -33,8 +33,6 @@ if (self.testRunner) {
         if (self.internals) {
             // Use 44100 sample rate by default instead of the hardware sample rate so that we get consistent results across machines.
             internals.settings.setDefaultAudioContextSampleRate(44100);
-
-            internals.settings.setLazyIframeLoadingEnabled(location.pathname.indexOf('iframe-loading-lazy') !== -1);
         }
     }
 
