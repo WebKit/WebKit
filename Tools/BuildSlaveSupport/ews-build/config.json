@@ -355,7 +355,8 @@
       "platform": "gtk",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "aperez-gtk-ews"]
+      "triggers": ["api-tests-gtk-ews"],
+      "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "aperez-gtk-ews"]
     },
     {
       "name": "GTK-WK2-Tests-EWS",
@@ -753,9 +754,8 @@
       ]
     },
     {
-      "type": "Try_Userpass",
-      "name": "api-tests-gtk-ews-disabled",
-      "port": 5559,
+      "type": "Triggerable",
+      "name": "api-tests-gtk-ews",
       "builderNames": [
         "API-Tests-GTK-EWS"
       ]

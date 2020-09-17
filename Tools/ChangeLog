@@ -1,5 +1,18 @@
 2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
 
+        [ews] Re-enable api-gtk queue
+        https://bugs.webkit.org/show_bug.cgi?id=216647
+
+        Reviewed by Aakash Jain.
+
+        The queue was disabled temporarily in r266956.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+        * BuildSlaveSupport/ews-build/config.json:
+
+2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed gardening. API test WebKitWebInspectorServer/test-page-list is flaky.
 
         * TestWebKitAPI/glib/TestExpectations.json:
