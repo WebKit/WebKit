@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (c) 2017 Apple Inc. All rights reserved.
+# Copyright (c) 2017, 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -95,7 +95,6 @@ class Preference
   attr_accessor :defaultValue
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
-  attr_accessor :category
   attr_accessor :webcoreBinding
   attr_accessor :condition
   attr_accessor :hidden
@@ -106,7 +105,6 @@ class Preference
     @defaultValue = opts["defaultValue"]
     @humanReadableName = '"' + (opts["humanReadableName"] || "") + '"'
     @humanReadableDescription = '"' + (opts["humanReadableDescription"] || "") + '"'
-    @category = opts["category"]
     @getter = opts["getter"]
     @webcoreBinding = opts["webcoreBinding"]
     @webcoreName = opts["webcoreName"]
@@ -163,24 +161,37 @@ class Preferences
     @outputDirectory = outputDirectory
 
     @preferences = []
+    @preferencesNotDebug = []
+    @preferencesDebug = []
+    @experimentalFeatures = []
+    @internalDebugFeatures = []
+
     parsedBasePreferences.each do |name, options|
-      @preferences << Preference.new(name, options)
+      preference = Preference.new(name, options)
+      @preferences << preference
+      @preferencesNotDebug << preference
     end
     parsedDebugPreferences.each do |name, options|
-      @preferences << Preference.new(name, options)
+      preference = Preference.new(name, options)
+      @preferences << preference
+      @preferencesDebug << preference
     end
     parsedExperimentalPreferences.each do |name, options|
-      @preferences << Preference.new(name, options)
+      preference = Preference.new(name, options)
+      @preferences << preference
+      @experimentalFeatures << preference
     end
     parsedInternalPreferences.each do |name, options|
-      @preferences << Preference.new(name, options)
+      preference = Preference.new(name, options)
+      @preferences << preference
+      @internalDebugFeatures << preference
     end
-    @preferences.sort! { |x, y| x.name <=> y.name }
 
-    @preferencesNotDebug = @preferences.select { |p| !p.category }
-    @preferencesDebug = @preferences.select { |p| p.category == "debug" }
-    @experimentalFeatures = @preferences.select { |p| p.category == "experimental" }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
-    @internalDebugFeatures = @preferences.select { |p| p.category == "internal" }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
+    @preferences.sort! { |x, y| x.name <=> y.name }
+    @preferencesNotDebug.sort! { |x, y| x.name <=> y.name }
+    @preferencesDebug.sort! { |x, y| x.name <=> y.name }
+    @experimentalFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
+    @internalDebugFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }

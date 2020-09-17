@@ -26,85 +26,70 @@
 AcceleratedDrawingEnabled:
   type: bool
   defaultValue: true
-  category: debug
 
 SubpixelAntialiasedLayerTextEnabled:
   type: bool
   defaultValue: DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED
-  category: debug
 
 DisplayListDrawingEnabled:
   type: bool
   defaultValue: false
-  category: debug
 
 CompositingBordersVisible:
   type: bool
   defaultValue: false
-  category: debug
   webcoreName: showDebugBorders
 
 CompositingRepaintCountersVisible:
   type: bool
   defaultValue: false
-  category: debug
   webcoreName: showRepaintCounter
 
 TiledScrollingIndicatorVisible:
   type: bool
   defaultValue: false
-  category: debug
   webcoreName: showTiledScrollingIndicator
 
 DisableScreenSizeOverride:
   type: bool
   defaultValue: false
-  category: debug
   condition: PLATFORM(IOS_FAMILY)
 
 SimpleLineLayoutDebugBordersEnabled:
   type: bool
   defaultValue: false
-  category: debug
 
 DeveloperExtrasEnabled:
   type: bool
   defaultValue: false
-  category: debug
 
 LogsPageMessagesToSystemConsoleEnabled:
   type: bool
   defaultValue: false
-  category: debug
 
 ForceAlwaysUserScalable:
   type: bool
   defaultValue: false
-  category: debug
   webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)
 
 ResourceUsageOverlayVisible:
   type: bool
   defaultValue: false
-  category: debug
   condition: ENABLE(RESOURCE_USAGE)
 
 VisibleDebugOverlayRegions:
   type: uint32_t
   defaultValue: 0
-  category: debug
 
 IsInAppBrowserPrivacyEnabled:
   type: bool
   defaultValue: defaultInAppBrowserPrivacy()
   humanReadableName: "In-App Browser Privacy"
   humanReadableDescription: "Enable In-App Browser Privacy"
-  category: debug
 
 NeedsInAppBrowserPrivacyQuirks:
   type: bool
   defaultValue: false
   humanReadableName: "Needs In-App Browser Privacy Quirks"
   humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
-  category: debug

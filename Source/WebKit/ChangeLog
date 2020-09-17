@@ -1,3 +1,18 @@
+2020-09-17  Sam Weinig  <weinig@apple.com>
+
+        We shouldn't need to specify a category for preferences now that they are split into separate files
+        https://bugs.webkit.org/show_bug.cgi?id=216648
+
+        Reviewed by Tim Horton.
+
+        Remove need / ability to specify a category in the yaml, rather, infer the category
+        from which file it is in.
+
+        * Scripts/GeneratePreferences.rb:
+        * Shared/WebPreferencesDebug.yaml:
+        * Shared/WebPreferencesExperimental.yaml:
+        * Shared/WebPreferencesInternal.yaml:
+
 2020-09-17  Antoine Quint  <graouts@webkit.org>
 
         Remove the legacy animation code
