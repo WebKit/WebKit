@@ -1153,6 +1153,13 @@ webkit.org/b/213233 fast/images/imagemap-focus-ring-zoom-style.html [ ImageOnlyF
 
 webkit.org/b/213717 fast/scrolling/overflow-scrollable-after-back.html [ Pass Timeout ]
 
+webkit.org/b/216650 fast/events/mouse-cursor-multiframecur.html [ Failure Pass ]
+webkit.org/b/216650 fast/events/mouse-cursor.html [ Failure Pass ]
+webkit.org/b/216650 fast/events/mouse-drag-from-frame-to-other-frame.html [ Failure Pass ]
+webkit.org/b/216650 fast/events/mouse-drag-from-frame.html [ Failure Pass ]
+webkit.org/b/216650 fast/events/mouse-focus-imagemap.html [ Failure Pass ]
+webkit.org/b/216650 fast/events/mouse-moved-remove-frame-crash.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

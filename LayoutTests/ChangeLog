@@ -1,5 +1,13 @@
 2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed gardening. Several fast/events/mouse-* tests are flaky after r264117.
+
+        The test started failing somewhere between r264103-r264117.
+
+        * platform/wpe/TestExpectations:
+
+2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed gardening. Update baselines after r20056.
 
         * platform/glib/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt:
