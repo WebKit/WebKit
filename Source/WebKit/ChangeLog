@@ -1,3 +1,23 @@
+2020-09-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Enable ITP in WKWebViews for apps with the full browser entitlement who are not linked to iOS 14.0
+        https://bugs.webkit.org/show_bug.cgi?id=216655
+        <rdar://problem/69081227>
+
+        Reviewed by Brent Fulgham.
+
+        Apps with the full browser entitlement who are not linked to iOS 14.0
+        should have ITP enabled in WKWebViews by default.
+
+        No new tests, no way currently to test apps with different iOS
+        versions. Tested manually.
+
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::determineITPStateInternal):
+        Ignore the early return for the linked-on-or-after check if the
+        app has the default browser entitlement so we still enable ITP based
+        on the user's preference.
+
 2020-09-17  David Kilzer  <ddkilzer@apple.com>
 
         WebKit::XPCServiceEventHandler block should call exit() on the main thread

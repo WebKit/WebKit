@@ -106,7 +106,7 @@ static bool determineITPStateInternal(bool appWasLinkedOnOrAfter, const String& 
     ASSERT(!RunLoop::isMain());
     ASSERT(!isInWebKitChildProcess());
 
-    if (!appWasLinkedOnOrAfter)
+    if (!appWasLinkedOnOrAfter && !isFullWebBrowser(bundleIdentifier))
         return false;
 
     if (!isFullWebBrowser(bundleIdentifier) && !hasRequestedCrossWebsiteTrackingPermission())
