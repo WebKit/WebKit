@@ -1,0 +1,11 @@
+Test IndexedDB IDBKeyRange when we are Out of Memory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS exceptionString == undefined || exceptionString === 'DataError: Provided data is inadequate.' is true
+PASS IDBKeyRange.only didn't crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

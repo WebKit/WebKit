@@ -1,3 +1,17 @@
+2020-09-17  Michael Saboff  <msaboff@apple.com>
+
+        Segfault in WebCore::IDBKey::createBinary
+        https://bugs.webkit.org/show_bug.cgi?id=216501
+
+        Reviewed by Youenn Fablet.
+
+        New test.  Since this test is looking for the out of memory condition, the test is written
+        to avoid false failures in the case we can't achieve out of memory.  That is when the
+        expected exception is not thrown.
+
+        * storage/indexeddb/IDBKey-create-array-buffer-view-oom-expected.txt: Added.
+        * storage/indexeddb/IDBKey-create-array-buffer-view-oom.html: Added.
+
 2020-09-17  Chris Dumez  <cdumez@apple.com>
 
         Regression(r267144) 4 webaudio/oscillator tests are broken

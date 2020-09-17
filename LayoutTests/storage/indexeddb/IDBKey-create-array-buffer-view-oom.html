@@ -1,0 +1,49 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test IndexedDB IDBKeyRange when we are Out of Memory.");
+
+// Since we are low on memory, it is difficult to use the exception test helpers.
+let exceptionString = undefined;
+
+const a = [];
+a.length = 2**30;
+a.__proto__ = {};
+Object.defineProperty(a, 0, { get: foo });
+function foo() {
+    new Uint8Array(a);
+}
+
+try {
+    foo();
+} catch { }
+
+try {
+    while(1)
+        new ArrayBuffer(2**20);
+} catch { }
+
+let u8 = new Uint8Array();
+
+try {
+    IDBKeyRange.only(u8);
+} catch(e) {
+    exceptionString = e.toString();
+}
+
+// Try to free up some memory to check our exception
+u8 = undefined;
+gc();
+
+// Since we can't reliably produce an out of memory everytime, no exception is also a pass.
+shouldBeTrue("exceptionString == undefined || exceptionString === 'DataError: Provided data is inadequate.'");
+
+testPassed("IDBKeyRange.only didn't crash");
+</script>
+</body>
+</html>

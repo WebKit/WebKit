@@ -1,3 +1,19 @@
+2020-09-17  Michael Saboff  <msaboff@apple.com>
+
+        Segfault in WebCore::IDBKey::createBinary
+        https://bugs.webkit.org/show_bug.cgi?id=216501
+
+        Reviewed by Youenn Fablet.
+
+        If we can't get a copy of the JSBufferView, return an invalid IDBKey.
+        This can happen if we are low on memory.  The existing calling code already
+        handles the case where we might produce an invalid IDBKey.
+
+        Test: storage/indexeddb/IDBKey-create-array-buffer-view-oom.html
+
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::createBinary):
+
 2020-09-17  Antoine Quint  <graouts@webkit.org>
 
         Remove AnimationTimeline::animationsForElement() and the CSS Transitions and CSS Animations accessors on ElementAnimationRareData
