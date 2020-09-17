@@ -47,10 +47,6 @@ namespace Display {
 struct InlineContent;
 }
 
-namespace Layout {
-class LayoutTreeContent;
-}
-
 namespace LayoutIntegration {
 
 class LineLayout {

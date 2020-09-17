@@ -40,7 +40,7 @@ class Page;
 
 namespace Layout {
 class LayoutState;
-class LayoutTreeContent;
+class LayoutTree;
 }
 
 namespace Display {

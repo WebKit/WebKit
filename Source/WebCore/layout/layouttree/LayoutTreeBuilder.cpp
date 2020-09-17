@@ -67,20 +67,9 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutTreeContent);
-LayoutTreeContent::LayoutTreeContent(const RenderBox& rootRenderer, std::unique_ptr<ContainerBox> rootLayoutBox)
-    : m_rootRenderer(rootRenderer)
-    , m_rootLayoutBox(WTFMove(rootLayoutBox))
+WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutTree);
+LayoutTree::LayoutTree()
 {
-}
-
-LayoutTreeContent::~LayoutTreeContent() = default;
-
-
-void LayoutTreeContent::addLayoutBoxForRenderer(const RenderObject& renderer, Box& layoutBox)
-{
-    m_renderObjectToLayoutBox.add(&renderer, &layoutBox);
-    m_layoutBoxToRenderObject.add(&layoutBox, &renderer);
 }
 
 static void appendChild(ContainerBox& parent, Box& newChild)
@@ -123,34 +112,32 @@ static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontC
     return true;
 }
 
-std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTree(const RenderView& renderView)
+std::unique_ptr<Layout::LayoutTree> TreeBuilder::buildLayoutTree(const RenderView& renderView)
 {
     PhaseScope scope(Phase::Type::TreeBuilding);
 
-    auto style = RenderStyle::clone(renderView.style());
-    style.setLogicalWidth(Length(renderView.width(), Fixed));
-    style.setLogicalHeight(Length(renderView.height(), Fixed));
+    auto rootStyle = RenderStyle::clone(renderView.style());
+    rootStyle.setLogicalWidth(Length(renderView.width(), Fixed));
+    rootStyle.setLogicalHeight(Length(renderView.height(), Fixed));
 
-    auto layoutTreeContent = makeUnique<LayoutTreeContent>(renderView, makeUnique<InitialContainingBlock>(WTFMove(style)));
-    TreeBuilder(*layoutTreeContent).buildTree();
-    return layoutTreeContent;
+    auto rootLayoutBox = makeUnique<InitialContainingBlock>(WTFMove(rootStyle));
+    auto& rootContainer = *rootLayoutBox;
+    auto layoutTree = makeUnique<LayoutTree>();
+    layoutTree->append(WTFMove(rootLayoutBox));
+    TreeBuilder(*layoutTree).buildSubTree(renderView, rootContainer);
+    return layoutTree;
 }
 
-TreeBuilder::TreeBuilder(LayoutTreeContent& layoutTreeContent)
-    : m_layoutTreeContent(layoutTreeContent)
+TreeBuilder::TreeBuilder(LayoutTree& layoutTree)
+    : m_layoutTree(layoutTree)
 {
-}
-
-void TreeBuilder::buildTree()
-{
-    buildSubTree(m_layoutTreeContent.rootRenderer(), m_layoutTreeContent.rootLayoutBox());
 }
 
 Box& TreeBuilder::createReplacedBox(Optional<Box::ElementAttributes> elementAttributes, RenderStyle&& style)
 {
     auto newBox = makeUnique<ReplacedBox>(elementAttributes, WTFMove(style));
     auto& box = *newBox;
-    m_layoutTreeContent.addBox(WTFMove(newBox));
+    m_layoutTree.append(WTFMove(newBox));
     return box;
 }
 
@@ -158,7 +145,7 @@ Box& TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring,
 {
     auto newBox = makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, WTFMove(style));
     auto& box = *newBox;
-    m_layoutTreeContent.addBox(WTFMove(newBox));
+    m_layoutTree.append(WTFMove(newBox));
     return box;
 }
 
@@ -166,7 +153,7 @@ Box& TreeBuilder::createLineBreakBox(bool isOptional, RenderStyle&& style)
 {
     auto newBox = makeUnique<Layout::LineBreakBox>(isOptional, WTFMove(style));
     auto& box = *newBox;
-    m_layoutTreeContent.addBox(WTFMove(newBox));
+    m_layoutTree.append(WTFMove(newBox));
     return box;
 }
 
@@ -174,7 +161,7 @@ ContainerBox& TreeBuilder::createContainer(Optional<Box::ElementAttributes> elem
 {
     auto newContainer = makeUnique<ContainerBox>(elementAttributes, WTFMove(style));
     auto& container = *newContainer;
-    m_layoutTreeContent.addContainer(WTFMove(newContainer));
+    m_layoutTree.append(WTFMove(newContainer));
     return container;
 }
 
@@ -299,7 +286,6 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
         if (childRenderer.isAnonymous())
             childLayoutBox->setIsAnonymous();
     }
-    m_layoutTreeContent.addLayoutBoxForRenderer(childRenderer, *childLayoutBox);
     return childLayoutBox;
 }
 
@@ -547,8 +533,8 @@ void printLayoutTreeForLiveDocuments()
         fprintf(stderr, "%s\n", document->url().string().utf8().data());
         // FIXME: Need to find a way to output geometry without layout context.
         auto& renderView = *document->renderView();
-        auto layoutTreeContent = TreeBuilder::buildLayoutTree(renderView);
-        auto layoutState = LayoutState { *document, layoutTreeContent->rootLayoutBox() };
+        auto layoutTree = TreeBuilder::buildLayoutTree(renderView);
+        auto layoutState = LayoutState { *document, layoutTree->root() };
 
         auto& layoutRoot = layoutState.root();
         auto invalidationState = InvalidationState { };

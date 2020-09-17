@@ -296,17 +296,6 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
     auto oldStyle = RenderStyle::clone(renderer.style());
     renderer.setStyle(WTFMove(newStyle), minimalStyleDifference);
     m_builder.normalizeTreeAfterStyleChange(renderer, oldStyle);
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
-        if (!m_document.view() || !m_document.view()->layoutContext().layoutTreeContent())
-            return;
-        auto& layoutContext = m_document.view()->layoutContext();
-        if (minimalStyleDifference >= StyleDifference::LayoutPositionedMovementOnly || renderer.needsLayout())
-            layoutContext.invalidateLayoutState();
-        if (auto* layoutBox = layoutContext.layoutTreeContent()->layoutBoxForRenderer(renderer))
-            layoutBox->updateStyle(renderer.style());
-    }
-#endif
 }
 
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)

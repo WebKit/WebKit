@@ -307,11 +307,6 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     repaintOrMarkForLayout(imageSizeChange, rect);
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(element());
-
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
-        view().frameView().layoutContext().invalidateLayoutTreeContent();
-#endif
 }
 
 void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)

@@ -44,48 +44,26 @@ namespace Layout {
 
 class LayoutState;
 
-class LayoutTreeContent : public CanMakeWeakPtr<LayoutTreeContent> {
-    WTF_MAKE_ISO_ALLOCATED(LayoutTreeContent);
+class LayoutTree {
+    WTF_MAKE_ISO_ALLOCATED(LayoutTree);
 public:
-    LayoutTreeContent(const RenderBox&, std::unique_ptr<ContainerBox>);
-    ~LayoutTreeContent();
+    LayoutTree();
+    ~LayoutTree() = default;
 
-    const ContainerBox& rootLayoutBox() const { return *m_rootLayoutBox; }
-    ContainerBox& rootLayoutBox() { return *m_rootLayoutBox; }
-    const RenderBox& rootRenderer() const { return m_rootRenderer; }
-
-    void addBox(std::unique_ptr<Box> box)
-    {
-        ASSERT(!box->isContainerBox());
-        m_boxes.add(WTFMove(box));
-    }
-    void addContainer(std::unique_ptr<ContainerBox> container) { m_containers.add(WTFMove(container)); }
-
-    Box* layoutBoxForRenderer(const RenderObject& renderer) { return m_renderObjectToLayoutBox.get(&renderer); }
-    const Box* layoutBoxForRenderer(const RenderObject& renderer) const { return m_renderObjectToLayoutBox.get(&renderer); }
-
-    const RenderObject* rendererForLayoutBox(const Box& box) const { return m_layoutBoxToRenderObject.get(&box); }
-
-    void addLayoutBoxForRenderer(const RenderObject&, Box&);
+    const ContainerBox& root() const { return downcast<ContainerBox>(*m_layoutBoxes[0]); }
+    void append(std::unique_ptr<Box> box) { m_layoutBoxes.append(WTFMove(box)); }
 
 private:
-    const RenderBox& m_rootRenderer;
-    std::unique_ptr<ContainerBox> m_rootLayoutBox;
-    HashSet<std::unique_ptr<Box>> m_boxes;
-    HashSet<std::unique_ptr<ContainerBox>> m_containers;
-
-    HashMap<const RenderObject*, Box*> m_renderObjectToLayoutBox;
-    HashMap<const Box*, const RenderObject*> m_layoutBoxToRenderObject;
+    Vector<std::unique_ptr<Box>> m_layoutBoxes;
 };
 
 class TreeBuilder {
 public:
-    static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTree(const RenderView&);
+    static std::unique_ptr<Layout::LayoutTree> buildLayoutTree(const RenderView&);
 
 private:
-    TreeBuilder(LayoutTreeContent&);
+    TreeBuilder(LayoutTree&);
 
-    void buildTree();
     void buildSubTree(const RenderElement& parentRenderer, ContainerBox& parentContainer);
     void buildTableStructure(const RenderTable& tableRenderer, ContainerBox& tableWrapperBox);
     Box* createLayoutBox(const ContainerBox& parentContainer, const RenderObject& childRenderer);
@@ -95,7 +73,7 @@ private:
     Box& createLineBreakBox(bool isOptional, RenderStyle&&);
     ContainerBox& createContainer(Optional<Box::ElementAttributes>, RenderStyle&&);
 
-    LayoutTreeContent& m_layoutTreeContent;
+    LayoutTree& m_layoutTree;
 };
 
 #if ENABLE(TREE_DEBUGGING)

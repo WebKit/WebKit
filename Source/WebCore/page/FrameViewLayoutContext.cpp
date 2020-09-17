@@ -60,20 +60,13 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
         return;
-
     // FrameView::setContentsSize temporary disables layout.
     if (m_disableSetNeedsLayoutCount)
         return;
 
     auto& renderView = *this->renderView();
-    if (!m_layoutTreeContent) {
-        m_layoutTreeContent = Layout::TreeBuilder::buildLayoutTree(renderView);
-        // FIXME: New layout tree requires a new state for now.
-        m_layoutState = nullptr;
-    }
-    if (!m_layoutState)
-        m_layoutState = makeUnique<Layout::LayoutState>(*document(), m_layoutTreeContent->rootLayoutBox());
-
+    m_layoutTree = Layout::TreeBuilder::buildLayoutTree(renderView);
+    m_layoutState = makeUnique<Layout::LayoutState>(*document(), m_layoutTree->root());
     // FIXME: This is not the real invalidation yet.
     auto invalidationState = Layout::InvalidationState { };
     auto layoutContext = Layout::LayoutContext { *m_layoutState };
@@ -89,20 +82,9 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
             descendant.clearNeedsLayout();
         renderView.clearNeedsLayout();
     }
-
 #ifndef NDEBUG
     Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree(*m_layoutState, renderView);
 #endif
-}
-
-void FrameViewLayoutContext::invalidateLayoutTreeContent()
-{
-    m_layoutTreeContent = nullptr;
-}
-
-void FrameViewLayoutContext::invalidateLayoutState()
-{
-    m_layoutState = nullptr;
 }
 #endif
 

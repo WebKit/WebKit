@@ -1,3 +1,54 @@
+2020-09-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Remove partial invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=216631
+
+        Reviewed by Simon Fraser.
+
+        Invalidation fails when the LayoutTree does not match the RenderTree structures (e.g. table wrapper box).
+        Since incremental layouts are not supported yet, it has a very little value. Let's remove it for now.
+
+        * layout/display/DisplayView.h:
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::LayoutTree::LayoutTree):
+        (WebCore::Layout::TreeBuilder::buildLayoutTree):
+        (WebCore::Layout::TreeBuilder::TreeBuilder):
+        (WebCore::Layout::TreeBuilder::createReplacedBox):
+        (WebCore::Layout::TreeBuilder::createTextBox):
+        (WebCore::Layout::TreeBuilder::createLineBreakBox):
+        (WebCore::Layout::TreeBuilder::createContainer):
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        (WebCore::Layout::LayoutTreeContent::LayoutTreeContent): Deleted.
+        (WebCore::Layout::LayoutTreeContent::addLayoutBoxForRenderer): Deleted.
+        (WebCore::Layout::TreeBuilder::buildTree): Deleted.
+        * layout/layouttree/LayoutTreeBuilder.h:
+        (WebCore::Layout::LayoutTree::root const):
+        (WebCore::Layout::LayoutTree::append):
+        (WebCore::Layout::LayoutTreeContent::rootLayoutBox const): Deleted.
+        (WebCore::Layout::LayoutTreeContent::rootLayoutBox): Deleted.
+        (WebCore::Layout::LayoutTreeContent::rootRenderer const): Deleted.
+        (WebCore::Layout::LayoutTreeContent::addBox): Deleted.
+        (WebCore::Layout::LayoutTreeContent::addContainer): Deleted.
+        (WebCore::Layout::LayoutTreeContent::layoutBoxForRenderer): Deleted.
+        (WebCore::Layout::LayoutTreeContent::layoutBoxForRenderer const): Deleted.
+        (WebCore::Layout::LayoutTreeContent::rendererForLayoutBox const): Deleted.
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+        (WebCore::FrameViewLayoutContext::invalidateLayoutTreeContent): Deleted.
+        (WebCore::FrameViewLayoutContext::invalidateLayoutState): Deleted.
+        * page/FrameViewLayoutContext.h:
+        (WebCore::FrameViewLayoutContext::layoutFormattingState const):
+        (WebCore::FrameViewLayoutContext::layoutTreeContent const): Deleted.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::attachToRenderElementInternal):
+        (WebCore::RenderTreeBuilder::detachFromRenderElement):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRendererStyle):
+
 2020-09-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         MutationObserverRegistration should be ref counted
