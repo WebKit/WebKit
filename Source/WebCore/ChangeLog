@@ -1,3 +1,64 @@
+2020-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        MutationObserverRegistration should be ref counted
+        https://bugs.webkit.org/show_bug.cgi?id=216528
+
+        Reviewed by Darin Adler.
+
+        This patch makes MutationObserverRegistration ref counted so that the transient registry can store
+        Ref<MutationObserverRegistration> instead of a raw pointer. It also merges NodeMutationObserverData
+        into NodeRareData now that NodeRareData is actually rare after r266714 and r266769.
+
+        Before this patch, MutationObserverRegistration had to be kept alive by the originally observed node
+        using m_nodeKeptAlive whenever a transient observation occurs (i.e. observation of a node which used
+        to be a part of the subtree of the observed node). With this patch, this complexity is eliminated.
+
+        No new tests since there should be no behavioral difference.
+
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::disconnect): Skip any node for which the observed node had been deleted.
+        This means that the registration is alive for transient nodes (i.e. a node which used to be a part of
+        the subtree of the observed node).
+        (WebCore::MutationObserver::observationStarted): Converted debug assert to a release assert.
+        (WebCore::MutationObserver::observationEnded): Ditto.
+        (WebCore::MutationObserver::deliver): Simplified logic a bit using WTF::map.
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::create): Added.
+        (WebCore::MutationObserverRegistration::MutationObserverRegistration): Create a WeakPtr for m_node.
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach): Deleted the code for
+        m_nodeKeptAlive since the observed node is no longer responsible for keeping this
+        MutationObserverRegistration alive while transient observarion takes place.
+        (WebCore::MutationObserverRegistration::takeTransientRegistrations): Ditto.
+        (WebCore::MutationObserverRegistration::shouldReceiveMutationFrom const):
+        (WebCore::MutationObserverRegistration::addRegistrationNodesToSet const): Skip m_node if it has been
+        deleted. This is possible during transient observations.
+        * dom/MutationObserverRegistration.h:
+        (WebCore::MutationObserverRegistration): This class is now ref counted. Also made m_node WeakPtr.
+        (WebCore::MutationObserverRegistration::node):
+        * dom/Node.cpp:
+        (WebCore::Node::clearRareData):
+        (WebCore::Node::moveNodeToNewDocument):
+        (WebCore::Node::mutationObserverRegistry): Deleted.
+        (WebCore::Node::transientMutationObserverRegistry): Deleted.
+        (WebCore::collectMatchingObserversForMutation): Now takes a reference to registry.
+        (WebCore::Node::registeredMutationObservers):
+        (WebCore::Node::registerMutationObserver):
+        (WebCore::Node::unregisterMutationObserver): Converted debug assertions to release assertions. With
+        script execution forbidden during tree mutations, this should never happen now.
+        (WebCore::Node::registerTransientMutationObserver):
+        (WebCore::Node::unregisterTransientMutationObserver): Ditto.
+        (WebCore::Node::notifyMutationObserversNodeWillDetach):
+        * dom/Node.h:
+        * dom/NodeRareData.cpp:
+        * dom/NodeRareData.h:
+        (WebCore::NodeMutationObserverData): Merged into NodeRareData.
+        (WebCore::NodeRareData::mutationObserverData): Deleted.
+        (WebCore::NodeRareData::ensureMutationObserverData): Deleted.
+        (WebCore::NodeRareData::mutationObserverRegistry): Added.
+        (WebCore::NodeRareData::mutationObserverRegistryIfExists): Added.
+        (WebCore::NodeRareData::transientMutationObserverRegistry): Added.
+        (WebCore::NodeRareData::useTypes const):
+
 2020-09-16  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling CSS shadow parts

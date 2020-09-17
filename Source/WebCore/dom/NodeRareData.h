@@ -229,15 +229,6 @@ private:
     CollectionCacheMap m_cachedCollections;
 };
 
-class NodeMutationObserverData {
-    WTF_MAKE_NONCOPYABLE(NodeMutationObserverData); WTF_MAKE_FAST_ALLOCATED;
-public:
-    Vector<std::unique_ptr<MutationObserverRegistration>> registry;
-    HashSet<MutationObserverRegistration*> transientRegistry;
-
-    NodeMutationObserverData() { }
-};
-
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NodeRareData);
 class NodeRareData {
     WTF_MAKE_NONCOPYABLE(NodeRareData);
@@ -284,12 +275,21 @@ public:
         return *m_nodeLists;
     }
 
-    NodeMutationObserverData* mutationObserverData() { return m_mutationObserverData.get(); }
-    NodeMutationObserverData& ensureMutationObserverData()
+    using MutationObserverRegistryVector = Vector<Ref<MutationObserverRegistration>, 4>;
+
+    MutationObserverRegistryVector& mutationObserverRegistry()
     {
-        if (!m_mutationObserverData)
-            m_mutationObserverData = makeUnique<NodeMutationObserverData>();
-        return *m_mutationObserverData;
+        if (!m_mutationObserverRegistry)
+            m_mutationObserverRegistry = makeUnique<MutationObserverRegistryVector>();
+        return *m_mutationObserverRegistry;
+    }
+    MutationObserverRegistryVector* mutationObserverRegistryIfExists()
+    {
+        return m_mutationObserverRegistry.get();
+    }
+    HashSet<Ref<MutationObserverRegistration>>& transientMutationObserverRegistry()
+    {
+        return m_transientMutationObserverRegistry;
     }
 
 #if DUMP_NODE_STATISTICS
@@ -298,7 +298,7 @@ public:
         OptionSet<UseType> result;
         if (m_nodeLists)
             result.add(UseType::NodeList);
-        if (m_mutationObserverData)
+        if (m_mutationObserverRegistry || m_transientMutationObserverRegistry.capacity())
             result.add(UseType::MutationObserver);
         return result;
     }
@@ -313,7 +313,8 @@ private:
     bool m_isElementRareData;
 
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
-    std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
+    std::unique_ptr<MutationObserverRegistryVector> m_mutationObserverRegistry;
+    HashSet<Ref<MutationObserverRegistration>> m_transientMutationObserverRegistry;
 };
 
 template<> struct NodeListTypeIdentifier<NameNodeList> {

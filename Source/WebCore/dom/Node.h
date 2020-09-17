@@ -699,9 +699,6 @@ private:
     void trackForDebugging();
     void materializeRareData();
 
-    Vector<std::unique_ptr<MutationObserverRegistration>>* mutationObserverRegistry();
-    HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
-
     void adjustStyleValidity(Style::Validity, Style::InvalidationMode);
 
     void* opaqueRootSlow() const;

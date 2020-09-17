@@ -120,21 +120,26 @@ void MutationObserver::disconnect()
 {
     m_pendingTargets.clear();
     m_records.clear();
-    HashSet<MutationObserverRegistration*> registrations(m_registrations);
-    for (auto* registration : registrations)
-        registration->node().unregisterMutationObserver(*registration);
+    auto registrationAndNodeList = WTF::compactMap(m_registrations, [](auto* registration) -> Optional<std::pair<Ref<Node>, Ref<MutationObserverRegistration>>> {
+        auto node = makeRefPtr(registration->node());
+        if (!node)
+            return WTF::nullopt;
+        return { { node.releaseNonNull(), makeRef(*registration) } };
+    });
+    for (auto& registrationAndNode : registrationAndNodeList)
+        registrationAndNode.first->unregisterMutationObserver(registrationAndNode.second.get());
 }
 
 void MutationObserver::observationStarted(MutationObserverRegistration& registration)
 {
-    ASSERT(!m_registrations.contains(&registration));
-    m_registrations.add(&registration);
+    auto result = m_registrations.add(&registration);
+    RELEASE_ASSERT(result.isNewEntry);
 }
 
 void MutationObserver::observationEnded(MutationObserverRegistration& registration)
 {
-    ASSERT(m_registrations.contains(&registration));
-    m_registrations.remove(&registration);
+    auto removed = m_registrations.remove(&registration);
+    RELEASE_ASSERT(removed);
 }
 
 void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
@@ -186,18 +191,14 @@ void MutationObserver::deliver()
 {
     ASSERT(canDeliver());
 
-    // Calling takeTransientRegistrations() can modify m_registrations, so it's necessary
-    // to make a copy of the transient registrations before operating on them.
-    Vector<MutationObserverRegistration*, 1> transientRegistrations;
     Vector<std::unique_ptr<HashSet<GCReachableRef<Node>>>, 1> nodesToKeepAlive;
     HashSet<GCReachableRef<Node>> pendingTargets;
     pendingTargets.swap(m_pendingTargets);
-    for (auto* registration : m_registrations) {
+    auto registrations = WTF::map(m_registrations, [](auto* registration) { return makeRef(*registration); });
+    for (auto& registration : registrations) {
         if (registration->hasTransientRegistrations())
-            transientRegistrations.append(registration);
+            nodesToKeepAlive.append(registration->takeTransientRegistrations());
     }
-    for (auto& registration : transientRegistrations)
-        nodesToKeepAlive.append(registration->takeTransientRegistrations());
 
     if (m_records.isEmpty()) {
         ASSERT(m_pendingTargets.isEmpty());
