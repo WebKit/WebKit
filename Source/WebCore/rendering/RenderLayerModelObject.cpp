@@ -250,27 +250,6 @@ void RenderLayerModelObject::computeRepaintLayoutRects(const RenderLayerModelObj
         setRepaintLayoutRects(RepaintLayoutRects(*this, repaintContainer, geometryMap));
 }
 
-bool RenderLayerModelObject::startTransition(double timeOffset, CSSPropertyID propertyId, const RenderStyle* fromStyle, const RenderStyle* toStyle)
-{
-    if (!layer() || !layer()->backing())
-        return false;
-    return layer()->backing()->startTransition(timeOffset, propertyId, fromStyle, toStyle);
-}
-
-void RenderLayerModelObject::transitionPaused(double timeOffset, CSSPropertyID propertyId)
-{
-    if (!layer() || !layer()->backing())
-        return;
-    layer()->backing()->transitionPaused(timeOffset, propertyId);
-}
-
-void RenderLayerModelObject::transitionFinished(CSSPropertyID propertyId)
-{
-    if (!layer() || !layer()->backing())
-        return;
-    layer()->backing()->transitionFinished(propertyId);
-}
-
 bool RenderLayerModelObject::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)
 {
     if (!layer() || !layer()->backing())

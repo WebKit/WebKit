@@ -796,7 +796,6 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setVisualViewportAPIEnabled(TRUE);
     prefsPrivate->setCSSOMViewScrollingAPIEnabled(TRUE);
     prefsPrivate->setResizeObserverEnabled(TRUE);
-    prefsPrivate->setWebAnimationsEnabled(TRUE);
     prefsPrivate->setWebAnimationsCompositeOperationsEnabled(TRUE);
     prefsPrivate->setWebAnimationsMutableTimelinesEnabled(TRUE);
     prefsPrivate->setCSSCustomPropertiesAndValuesEnabled(TRUE);
@@ -909,7 +908,6 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
 {
     COMPtr<IWebPreferencesPrivate8> prefsPrivate { Query, preferences };
 
-    prefsPrivate->setWebAnimationsCSSIntegrationEnabled(options.enableWebAnimationsCSSIntegration);
     prefsPrivate->setMenuItemElementEnabled(options.enableMenuItemElement);
     prefsPrivate->setKeygenElementEnabled(options.enableKeygenElement);
     prefsPrivate->setModernMediaControlsEnabled(options.enableModernMediaControls);

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FrameViewLayoutContext.h"
 
-#include "CSSAnimationController.h"
 #include "DebugPageOverlays.h"
 #include "Document.h"
 #include "FrameView.h"
@@ -186,7 +185,6 @@ void FrameViewLayoutContext::layout()
     LayoutScope layoutScope(*this);
     TraceScope tracingScope(LayoutStart, LayoutEnd);
     InspectorInstrumentation::willLayout(view().frame());
-    AnimationUpdateBlock animationUpdateBlock(&view().frame().legacyAnimation());
     WeakPtr<RenderElement> layoutRoot;
     
     m_layoutTimer.stop();

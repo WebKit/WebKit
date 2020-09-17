@@ -135,8 +135,6 @@ public:
     static void setPictureInPictureAPIEnabled(bool);
     static void setFetchAPIKeepAliveEnabled(bool);
 
-    static bool webAnimationsCSSIntegrationEnabled();
-
     void setShouldDeactivateAudioSession(bool);
     
     void setStorageAccessAPIPerPageScopeEnabled(bool);

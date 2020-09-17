@@ -814,7 +814,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setMediaPreloadingEnabled:YES];
     // FIXME: InputEvents
     [preferences setFetchAPIKeepAliveEnabled:YES];
-    [preferences setWebAnimationsEnabled:YES];
     [preferences setWebAnimationsCompositeOperationsEnabled:YES];
     [preferences setWebAnimationsMutableTimelinesEnabled:YES];
     [preferences setCSSCustomPropertiesAndValuesEnabled:YES];
@@ -977,7 +976,6 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
     preferences.inspectorAdditionsEnabled = options.enableInspectorAdditions;
     preferences.allowCrossOriginSubresourcesToAskForCredentials = options.allowCrossOriginSubresourcesToAskForCredentials;
-    preferences.webAnimationsCSSIntegrationEnabled = options.enableWebAnimationsCSSIntegration;
     preferences.colorFilterEnabled = options.enableColorFilter;
     preferences.selectionAcrossShadowBoundariesEnabled = options.enableSelectionAcrossShadowBoundaries;
     preferences.webGPUEnabled = options.enableWebGPU;

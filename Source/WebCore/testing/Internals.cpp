@@ -37,7 +37,6 @@
 #include "BackForwardCache.h"
 #include "BackForwardController.h"
 #include "BitmapImage.h"
-#include "CSSAnimationController.h"
 #include "CSSKeyframesRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPropertyParser.h"
@@ -1072,9 +1071,7 @@ bool Internals::animationWithIdExists(const String& id) const
 
 unsigned Internals::numberOfActiveAnimations() const
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        return frame()->document()->timeline().numberOfActiveAnimationsForTesting();
-    return frame()->legacyAnimation().numberOfActiveAnimations(frame()->document());
+    return frame()->document()->timeline().numberOfActiveAnimationsForTesting();
 }
 
 ExceptionOr<bool> Internals::animationsAreSuspended() const
@@ -1083,9 +1080,7 @@ ExceptionOr<bool> Internals::animationsAreSuspended() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        return document->ensureTimelinesController().animationsAreSuspended();
-    return document->frame()->legacyAnimation().animationsAreSuspendedForDocument(document);
+    return document->ensureTimelinesController().animationsAreSuspended();
 }
 
 double Internals::animationsInterval() const
@@ -1094,15 +1089,9 @@ double Internals::animationsInterval() const
     if (!document)
         return INFINITY;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto timeline = document->existingTimeline())
-            return timeline->animationInterval().seconds();
-        return INFINITY;
-    }
-
-    if (!document->frame())
-        return INFINITY;
-    return document->frame()->legacyAnimation().animationInterval().value();
+    if (auto timeline = document->existingTimeline())
+        return timeline->animationInterval().seconds();
+    return INFINITY;
 }
 
 ExceptionOr<void> Internals::suspendAnimations() const
@@ -1111,19 +1100,10 @@ ExceptionOr<void> Internals::suspendAnimations() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        document->ensureTimelinesController().suspendAnimations();
-        for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
-            if (Document* document = frame->document())
-                document->ensureTimelinesController().suspendAnimations();
-        }
-    } else {
-        document->frame()->legacyAnimation().suspendAnimationsForDocument(document);
-
-        for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
-            if (Document* document = frame->document())
-                frame->legacyAnimation().suspendAnimationsForDocument(document);
-        }
+    document->ensureTimelinesController().suspendAnimations();
+    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document* document = frame->document())
+            document->ensureTimelinesController().suspendAnimations();
     }
 
     return { };
@@ -1135,73 +1115,17 @@ ExceptionOr<void> Internals::resumeAnimations() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        document->ensureTimelinesController().resumeAnimations();
-        for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
-            if (Document* document = frame->document())
-                document->ensureTimelinesController().resumeAnimations();
-        }
-    } else {
-        document->frame()->legacyAnimation().resumeAnimationsForDocument(document);
-
-        for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
-            if (Document* document = frame->document())
-                frame->legacyAnimation().resumeAnimationsForDocument(document);
-        }
+    document->ensureTimelinesController().resumeAnimations();
+    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document* document = frame->document())
+            document->ensureTimelinesController().resumeAnimations();
     }
 
     return { };
 }
 
-ExceptionOr<bool> Internals::pauseAnimationAtTimeOnElement(const String& animationName, double pauseTime, Element& element)
-{
-    if (pauseTime < 0)
-        return Exception { InvalidAccessError };
-    return frame()->legacyAnimation().pauseAnimationAtTime(element, AtomString(animationName), pauseTime);
-}
-
-ExceptionOr<bool> Internals::pauseAnimationAtTimeOnPseudoElement(const String& animationName, double pauseTime, Element& element, const String& pseudoId)
-{
-    if (pauseTime < 0)
-        return Exception { InvalidAccessError };
-
-    if (pseudoId != "before" && pseudoId != "after")
-        return Exception { InvalidAccessError };
-
-    PseudoElement* pseudoElement = pseudoId == "before" ? element.beforePseudoElement() : element.afterPseudoElement();
-    if (!pseudoElement)
-        return Exception { InvalidAccessError };
-
-    return frame()->legacyAnimation().pauseAnimationAtTime(*pseudoElement, AtomString(animationName), pauseTime);
-}
-
-ExceptionOr<bool> Internals::pauseTransitionAtTimeOnElement(const String& propertyName, double pauseTime, Element& element)
-{
-    if (pauseTime < 0)
-        return Exception { InvalidAccessError };
-    return frame()->legacyAnimation().pauseTransitionAtTime(element, propertyName, pauseTime);
-}
-
-ExceptionOr<bool> Internals::pauseTransitionAtTimeOnPseudoElement(const String& property, double pauseTime, Element& element, const String& pseudoId)
-{
-    if (pauseTime < 0)
-        return Exception { InvalidAccessError };
-
-    if (pseudoId != "before" && pseudoId != "after")
-        return Exception { InvalidAccessError };
-
-    PseudoElement* pseudoElement = pseudoId == "before" ? element.beforePseudoElement() : element.afterPseudoElement();
-    if (!pseudoElement)
-        return Exception { InvalidAccessError };
-
-    return frame()->legacyAnimation().pauseTransitionAtTime(*pseudoElement, property, pauseTime);
-}
-
 Vector<Internals::AcceleratedAnimation> Internals::acceleratedAnimationsForElement(Element& element)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        return { };
-
     Vector<Internals::AcceleratedAnimation> animations;
     for (const auto& animationAsPair : element.document().timeline().acceleratedAnimationsForElement(element))
         animations.append({ animationAsPair.first, animationAsPair.second });
@@ -1210,9 +1134,7 @@ Vector<Internals::AcceleratedAnimation> Internals::acceleratedAnimationsForEleme
 
 unsigned Internals::numberOfAnimationTimelineInvalidations() const
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        return frame()->document()->timeline().numberOfAnimationTimelineInvalidationsForTesting();
-    return 0;
+    return frame()->document()->timeline().numberOfAnimationTimelineInvalidationsForTesting();
 }
 
 double Internals::timeToNextAnimationTick(WebAnimation& animation) const

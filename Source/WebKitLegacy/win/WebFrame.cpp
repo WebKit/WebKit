@@ -58,7 +58,6 @@
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
-#include <WebCore/CSSAnimationController.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
@@ -1177,64 +1176,6 @@ HRESULT WebFrame::elementDoesAutoComplete(_In_opt_ IDOMElement *element, _Out_ B
     return S_OK;
 }
 
-HRESULT WebFrame::resumeAnimations()
-{
-    Frame* frame = core(this);
-    if (!frame)
-        return E_UNEXPECTED;
-
-    frame->legacyAnimation().resumeAnimations();
-    return S_OK;
-}
-
-HRESULT WebFrame::suspendAnimations()
-{
-    Frame* frame = core(this);
-    if (!frame)
-        return E_UNEXPECTED;
-
-    frame->legacyAnimation().suspendAnimations();
-    return S_OK;
-}
-
-HRESULT WebFrame::pauseAnimation(_In_ BSTR animationName, _In_opt_ IDOMNode* node, double secondsFromNow, _Out_ BOOL* animationWasRunning)
-{
-    if (!node || !animationWasRunning)
-        return E_POINTER;
-
-    *animationWasRunning = FALSE;
-
-    Frame* frame = core(this);
-    if (!frame)
-        return E_UNEXPECTED;
-
-    COMPtr<DOMNode> domNode(Query, node);
-    if (!domNode)
-        return E_FAIL;
-
-    *animationWasRunning = frame->legacyAnimation().pauseAnimationAtTime(downcast<Element>(*domNode->node()), String(animationName, SysStringLen(animationName)), secondsFromNow);
-    return S_OK;
-}
-
-HRESULT WebFrame::pauseTransition(_In_ BSTR propertyName, _In_opt_ IDOMNode* node, double secondsFromNow, _Out_ BOOL* transitionWasRunning)
-{
-    if (!node || !transitionWasRunning)
-        return E_POINTER;
-
-    *transitionWasRunning = FALSE;
-
-    Frame* frame = core(this);
-    if (!frame)
-        return E_UNEXPECTED;
-
-    COMPtr<DOMNode> domNode(Query, node);
-    if (!domNode)
-        return E_FAIL;
-
-    *transitionWasRunning = frame->legacyAnimation().pauseTransitionAtTime(downcast<Element>(*domNode->node()), String(propertyName, SysStringLen(propertyName)), secondsFromNow);
-    return S_OK;
-}
-
 HRESULT WebFrame::visibleContentRect(_Out_ RECT* rect)
 {
     if (!rect)
@@ -1250,21 +1191,6 @@ HRESULT WebFrame::visibleContentRect(_Out_ RECT* rect)
         return E_FAIL;
 
     *rect = view->visibleContentRect();
-    return S_OK;
-}
-
-HRESULT WebFrame::numberOfActiveAnimations(_Out_ UINT* number)
-{
-    if (!number)
-        return E_POINTER;
-
-    *number = 0;
-
-    Frame* frame = core(this);
-    if (!frame)
-        return E_UNEXPECTED;
-
-    *number = frame->legacyAnimation().numberOfActiveAnimations(frame->document());
     return S_OK;
 }
 

@@ -1430,16 +1430,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->videoQualityIncludesDisplayCompositingEnabled();
 }
 
-- (void)_setWebAnimationsCSSIntegrationEnabled:(BOOL)enabled
-{
-    _preferences->setWebAnimationsCSSIntegrationEnabled(enabled);
-}
-
-- (BOOL)_webAnimationsCSSIntegrationEnabled
-{
-    return _preferences->webAnimationsCSSIntegrationEnabled();
-}
-
 - (void)_setDeviceOrientationEventEnabled:(BOOL)enabled
 {
 #if ENABLE(DEVICE_ORIENTATION)

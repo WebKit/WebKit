@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledAtRuntime=WebAnimations,
     ExportMacro=WEBCORE_EXPORT,
     CustomToJSObject
 ] interface AnimationTimeline {

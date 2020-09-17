@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledAtRuntime=WebAnimations,
     Exposed=Window,
 ] interface AnimationPlaybackEvent : Event {
     constructor(DOMString type, optional AnimationPlaybackEventInit eventInitDict);

@@ -66,7 +66,6 @@ class TextStream;
 
 namespace WebCore {
 
-class CSSAnimationController;
 class Color;
 class DOMWindow;
 class Document;
@@ -174,8 +173,6 @@ public:
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
     FrameTree& tree() const;
-    CSSAnimationController& legacyAnimation() { return m_animationController; }
-    const CSSAnimationController& legacyAnimation() const { return m_animationController; }
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
 
@@ -345,7 +342,6 @@ private:
     RefPtr<Document> m_doc;
 
     UniqueRef<ScriptController> m_script;
-    UniqueRef<CSSAnimationController> m_animationController;
 
 #if ENABLE(DATA_DETECTION)
     RetainPtr<NSArray> m_dataDetectionResults;

@@ -441,6 +441,7 @@ animation/AnimationEventBase.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
+animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
 animation/DeclarativeAnimation.cpp
 animation/DocumentTimeline.cpp
@@ -1676,12 +1677,6 @@ page/WheelEventTestMonitor.cpp
 page/WindowFeatures.cpp
 page/WindowFocusAllowedIndicator.cpp
 page/WorkerNavigator.cpp
-page/animation/AnimationBase.cpp
-page/animation/CSSAnimationController.cpp
-page/animation/CSSPropertyAnimation.cpp
-page/animation/CompositeAnimation.cpp
-page/animation/ImplicitAnimation.cpp
-page/animation/KeyframeAnimation.cpp
 page/csp/ContentSecurityPolicy.cpp
 page/csp/ContentSecurityPolicyClient.cpp
 page/csp/ContentSecurityPolicyDirective.cpp

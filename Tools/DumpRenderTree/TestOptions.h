@@ -29,7 +29,6 @@
 
 struct TestOptions {
     bool enableAttachmentElement { false };
-    bool enableWebAnimationsCSSIntegration { true };
     bool useAcceleratedDrawing { false };
     bool enableIntersectionObserver { false };
     bool useEphemeralSession { false };

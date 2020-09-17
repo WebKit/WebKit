@@ -1,3 +1,24 @@
+2020-09-17  Antoine Quint  <graouts@webkit.org>
+
+        Remove the legacy animation code
+        https://bugs.webkit.org/show_bug.cgi?id=216608
+
+        Reviewed by Dean Jackson.
+
+        Since we now have a single animation engine, the runtime flags to optionally enable the Web Animations engine are
+        not needed anymore and are now removed.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences webAnimationsEnabled]): Deleted.
+        (-[WebPreferences setWebAnimationsEnabled:]): Deleted.
+        (-[WebPreferences webAnimationsCSSIntegrationEnabled]): Deleted.
+        (-[WebPreferences setWebAnimationsCSSIntegrationEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2020-09-16  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling CSS shadow parts

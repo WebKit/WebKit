@@ -1029,11 +1029,6 @@ void InternalSettings::setForcedSupportsHighDynamicRangeValue(InternalSettings::
     settings().setForcedSupportsHighDynamicRangeValue(internalSettingsToSettingsValue(value));
 }
 
-bool InternalSettings::webAnimationsCSSIntegrationEnabled()
-{
-    return RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled();
-}
-
 void InternalSettings::setShouldDeactivateAudioSession(bool should)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

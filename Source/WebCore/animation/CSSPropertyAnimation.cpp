@@ -672,9 +672,9 @@ public:
 
     bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
-       if (a == b)
-           return true;
-       if (!a || !b)
+        if (a == b)
+            return true;
+        if (!a || !b)
             return false;
 
         StyleImage* imageA = (a->*m_getter)();
@@ -978,15 +978,13 @@ enum MaybeInvalidColorTag { MaybeInvalidColor };
 class PropertyWrapperVisitedAffectedColor : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
-        const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
+    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : AnimationPropertyWrapperBase(prop)
         , m_wrapper(makeUnique<PropertyWrapperColor>(prop, getter, setter))
         , m_visitedWrapper(makeUnique<PropertyWrapperColor>(prop, visitedGetter, visitedSetter))
     {
     }
-    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, MaybeInvalidColorTag, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&),
-        const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
+    PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, MaybeInvalidColorTag, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : AnimationPropertyWrapperBase(prop)
         , m_wrapper(makeUnique<PropertyWrapperMaybeInvalidColor>(prop, getter, setter))
         , m_visitedWrapper(makeUnique<PropertyWrapperMaybeInvalidColor>(prop, visitedGetter, visitedSetter))
@@ -1204,9 +1202,9 @@ public:
 
     bool equals(const FillLayer* a, const FillLayer* b) const override
     {
-       if (a == b)
-           return true;
-       if (!a || !b)
+        if (a == b)
+            return true;
+        if (!a || !b)
             return false;
 
         StyleImage* imageA = (a->*m_getter)();

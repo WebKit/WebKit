@@ -187,12 +187,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     }
 #endif
 
-    if (preference == "WebKitWebAnimationsEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
-
-    if (preference == "WebKitWebAnimationsCSSIntegrationEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsCSSIntegrationEnabled(enabled);
-
     if (preference == "WebKitCacheAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled(enabled);
 
@@ -582,16 +576,6 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(WebPageGroup
 void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)
 {
     page->corePage()->setTabKeyCyclesThroughElements(enabled);
-}
-
-void InjectedBundle::setWebAnimationsEnabled(bool enabled)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
-}
-
-void InjectedBundle::setWebAnimationsCSSIntegrationEnabled(bool enabled)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsCSSIntegrationEnabled(enabled);
 }
 
 void InjectedBundle::setAccessibilityIsolatedTreeEnabled(bool enabled)

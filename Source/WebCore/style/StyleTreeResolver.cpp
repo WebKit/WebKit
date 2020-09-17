@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StyleTreeResolver.h"
 
-#include "CSSAnimationController.h"
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
@@ -54,6 +53,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Text.h"
+#include "WebAnimationTypes.h"
 
 namespace WebCore {
 
@@ -312,26 +312,23 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
 
     OptionSet<AnimationImpact> animationImpact;
 
-    // New code path for CSS Animations and CSS Transitions.
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
-        // on the document timeline. Note that we get timeline() on the Document here because we need a timeline created
-        // in case no Web Animations have been created through the JS API.
-        if (element.document().backForwardCacheState() == Document::NotInBackForwardCache && !element.document().renderView()->printing()) {
-            if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
-                m_document.timeline().updateCSSTransitionsForElement(element, *oldStyle, *newStyle);
+    // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
+    // on the document timeline. Note that we get timeline() on the Document here because we need a timeline created
+    // in case no Web Animations have been created through the JS API.
+    if (element.document().backForwardCacheState() == Document::NotInBackForwardCache && !element.document().renderView()->printing()) {
+        if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
+            m_document.timeline().updateCSSTransitionsForElement(element, *oldStyle, *newStyle);
 
-            // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
-            // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
-            // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
-            if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations()) {
-                // FIXME: Remove this hack and pass the parent style via updateCSSAnimationsForElement.
-                scope().resolver.setParentElementStyleForKeyframes(&parent().style);
+        // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
+        // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
+        // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
+        if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations()) {
+            // FIXME: Remove this hack and pass the parent style via updateCSSAnimationsForElement.
+            scope().resolver.setParentElementStyleForKeyframes(&parent().style);
 
-                m_document.timeline().updateCSSAnimationsForElement(element, oldStyle, *newStyle);
+            m_document.timeline().updateCSSAnimationsForElement(element, oldStyle, *newStyle);
 
-                scope().resolver.setParentElementStyleForKeyframes(nullptr);
-            }
+            scope().resolver.setParentElementStyleForKeyframes(nullptr);
         }
     }
 
@@ -346,17 +343,6 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         newStyle = WTFMove(animatedStyle);
     } else
         element.setLastStyleChangeEventStyle(nullptr);
-
-    // Old code path for CSS Animations and CSS Transitions.
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        auto& animationController = m_document.frame()->legacyAnimation();
-
-        auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
-        animationImpact.add(animationUpdate.impact);
-
-        if (animationUpdate.style)
-            newStyle = WTFMove(animationUpdate.style);
-    }
 
     if (animationImpact)
         Adjuster::adjustAnimatedStyle(*newStyle, parentBoxStyle(), animationImpact);

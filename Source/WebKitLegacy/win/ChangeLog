@@ -1,3 +1,33 @@
+2020-09-17  Antoine Quint  <graouts@webkit.org>
+
+        Remove the legacy animation code
+        https://bugs.webkit.org/show_bug.cgi?id=216608
+
+        Reviewed by Dean Jackson.
+
+        Since we now have a single animation engine, the runtime flags to optionally enable the Web Animations engine are
+        not needed anymore and are now removed.
+
+        * Interfaces/IWebFramePrivate.idl:
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::resumeAnimations): Deleted.
+        (WebFrame::suspendAnimations): Deleted.
+        (WebFrame::pauseAnimation): Deleted.
+        (WebFrame::pauseTransition): Deleted.
+        (WebFrame::numberOfActiveAnimations): Deleted.
+        * WebFrame.h:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::webAnimationsCSSIntegrationEnabled): Deleted.
+        (WebPreferences::setWebAnimationsCSSIntegrationEnabled): Deleted.
+        (WebPreferences::setWebAnimationsEnabled): Deleted.
+        (WebPreferences::webAnimationsEnabled): Deleted.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2020-09-16  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the isSecureContext API?

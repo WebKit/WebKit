@@ -1,3 +1,91 @@
+2020-09-17  Antoine Quint  <graouts@webkit.org>
+
+        Remove the legacy animation code
+        https://bugs.webkit.org/show_bug.cgi?id=216608
+
+        Reviewed by Dean Jackson.
+
+        Remove any use of now-removed testing methods and some runtime flags from layout tests.
+
+        * animations/legacy-encoding-timing-function.html:
+        * animations/resources/animation-test-helpers.js:
+        (pauseAnimationAtTimeOnElement):
+        * http/tests/contentextensions/css-display-none-keyframe.html:
+        * imported/blink/transitions/resources/opacity-transform-transitions-inside-iframe-inner.html: Removed.
+        * transitions/background-position-transitions.html:
+        * transitions/background-transitions.html:
+        * transitions/blendmode-transitions.html:
+        * transitions/border-radius-transition.html:
+        * transitions/clip-path-path-transitions.html:
+        * transitions/clip-path-transitions.html:
+        * transitions/clip-transition.html:
+        * transitions/color-transition-all.html:
+        * transitions/color-transition-premultiplied.html:
+        * transitions/color-transition-rounding.html:
+        * transitions/cross-fade-background-image.html:
+        * transitions/cross-fade-border-image.html:
+        * transitions/cubic-bezier-overflow-color.html:
+        * transitions/cubic-bezier-overflow-length.html:
+        * transitions/cubic-bezier-overflow-shadow.html:
+        * transitions/cubic-bezier-overflow-svg-length.html:
+        * transitions/cubic-bezier-overflow-transform.html:
+        * transitions/default-timing-function.html:
+        * transitions/delay.html:
+        * transitions/flex-transitions.html:
+        * transitions/font-family-during-transition.html:
+        * transitions/frames-timing-function.html:
+        * transitions/interrupted-all-transition.html:
+        * transitions/longhand-vs-shorthand-initial.html:
+        * transitions/mask-transitions.html:
+        * transitions/min-max-width-height-transitions.html:
+        * transitions/mismatched-shadow-styles.html:
+        * transitions/mismatched-shadow-transitions.html:
+        * transitions/mixed-type.html:
+        * transitions/move-after-transition.html:
+        * transitions/multiple-background-size-transitions.html:
+        * transitions/multiple-background-transitions.html:
+        * transitions/multiple-mask-transitions.html:
+        * transitions/multiple-shadow-transitions.html:
+        * transitions/negative-delay.html:
+        * transitions/opacity-transition-zindex.html:
+        * transitions/resources/transition-test-helpers.js:
+        * transitions/shape-outside-transitions.html:
+        * transitions/shorthand-border-transitions.html:
+        * transitions/shorthand-transitions.html:
+        * transitions/steps-timing-function.html:
+        * transitions/svg-layout-transition.html:
+        * transitions/svg-text-shadow-transition.html:
+        * transitions/svg-transitions.html:
+        * transitions/text-indent-transition.html:
+        * transitions/transform-op-list-match.html:
+        * transitions/transform-op-list-no-match.html:
+        * transitions/transition-end-event-rendering.html:
+        * transitions/transition-hit-test-transform.html:
+        * transitions/transition-hit-test.html:
+        * transitions/transition-in-delay-phase.html:
+        * transitions/transition-on-element-with-content.html:
+        * transitions/transition-shorthand-delay.html:
+        * transitions/transition-timing-function.html:
+        * transitions/transition-to-from-auto.html:
+        * transitions/transition-to-from-undefined.html:
+        * transitions/visited-link-color.html:
+        * transitions/zero-duration-in-list.html:
+        * transitions/zero-duration-with-non-zero-delay-start.html:
+        * webanimations/accelerated-animation-interruption-display-none.html:
+        * webanimations/accelerated-animation-removal-upon-transition-completion.html:
+        * webanimations/accelerated-animation-suspension.html:
+        * webanimations/accelerated-transition-by-removing-property.html:
+        * webanimations/accessing-current-time-after-clearing-css-animation-effect.html:
+        * webanimations/accessing-current-time-after-finished-css-animation-target-removal.html:
+        * webanimations/css-animation-effect-target-change-and-animation-removal-crash.html:
+        * webanimations/css-animation-effect-target-change-and-get-keyframes-crash.html:
+        * webanimations/css-animations.html:
+        * webanimations/css-transition-in-flight-reversal-accelerated.html:
+        * webanimations/empty-keyframes-crash.html:
+        * webanimations/partly-accelerated-transition-by-removing-property.html:
+        * webanimations/setting-css-animation-none-after-clearing-effect.html:
+        * webanimations/setting-css-animation-timing-property-via-style-after-clearing-effect.html:
+
 2020-09-17  Rob Buis  <rbuis@igalia.com>
 
         Clean up lazy frame loading

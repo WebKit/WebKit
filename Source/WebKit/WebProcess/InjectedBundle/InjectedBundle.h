@@ -142,8 +142,6 @@ public:
 
     void setTabKeyCyclesThroughElements(WebPage*, bool enabled);
     void setSerialLoadingEnabled(bool);
-    void setWebAnimationsEnabled(bool);
-    void setWebAnimationsCSSIntegrationEnabled(bool);
     void setAccessibilityIsolatedTreeEnabled(bool);
     void dispatchPendingLoadRequests();
 

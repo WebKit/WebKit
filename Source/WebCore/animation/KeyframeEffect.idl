@@ -26,7 +26,6 @@
 typedef USVString CSSOMString;
 
 [
-    EnabledAtRuntime=WebAnimations,
     Exposed=Window,
     JSGenerateToNativeObject,
 ] interface KeyframeEffect : AnimationEffect {

@@ -30,7 +30,6 @@
 #include "config.h"
 #include "StyleAdjuster.h"
 
-#include "AnimationBase.h"
 #include "CSSFontSelector.h"
 #include "DOMWindow.h"
 #include "Element.h"
@@ -57,6 +56,7 @@
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "Text.h"
+#include "WebAnimationTypes.h"
 
 namespace WebCore {
 namespace Style {

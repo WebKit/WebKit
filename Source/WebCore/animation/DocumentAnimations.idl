@@ -24,8 +24,6 @@
  */
 
 // https://drafts.csswg.org/web-animations-1/#extensions-to-the-document-interface
-[
-    EnabledAtRuntime=WebAnimations
-] partial interface Document {
+partial interface Document {
     readonly attribute DocumentTimeline timeline;
 };

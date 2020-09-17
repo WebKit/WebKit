@@ -29,7 +29,6 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "AttributeChangeInvalidation.h"
-#include "CSSAnimationController.h"
 #include "CSSParser.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -119,6 +118,7 @@
 #include "TouchAction.h"
 #include "VoidCallback.h"
 #include "WebAnimation.h"
+#include "WebAnimationTypes.h"
 #include "WheelEvent.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
@@ -2284,9 +2284,6 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     RefPtr<Frame> frame = document().frame();
     if (auto* timeline = document().existingTimeline())
         timeline->elementWasRemoved(*this);
-
-    if (frame)
-        frame->legacyAnimation().cancelAnimations(*this);
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     if (frame && frame->page()) {

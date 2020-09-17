@@ -28,7 +28,6 @@
 #include "RenderLayerBacking.h"
 
 #include "BitmapImage.h"
-#include "CSSAnimationController.h"
 #include "CanvasRenderingContext.h"
 #include "CSSPropertyNames.h"
 #include "CachedImage.h"
@@ -1251,11 +1250,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     const auto deviceScaleFactor = this->deviceScaleFactor();
 
     bool isRunningAcceleratedTransformAnimation = false;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* timeline = renderer().documentTimeline())
-            isRunningAcceleratedTransformAnimation = timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
-    } else
-        isRunningAcceleratedTransformAnimation = renderer().legacyAnimation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
+    if (auto* timeline = renderer().documentTimeline())
+        isRunningAcceleratedTransformAnimation = timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
 
     updateTransform(style);
     updateOpacity(style);
@@ -3648,97 +3644,8 @@ void RenderLayerBacking::animationFinished(const String& animationName)
     m_owningLayer.setNeedsCompositingGeometryUpdate();
 }
 
-bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID property, const RenderStyle* fromStyle, const RenderStyle* toStyle)
+void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const String&, MonotonicTime)
 {
-    bool didAnimate = false;
-
-    ASSERT(property != CSSPropertyInvalid);
-
-    if (property == CSSPropertyOpacity) {
-        const Animation* opacityAnim = toStyle->transitionForProperty(CSSPropertyOpacity);
-        if (opacityAnim && !opacityAnim->isEmptyOrZeroDuration()) {
-            KeyframeValueList opacityVector(AnimatedPropertyOpacity);
-            opacityVector.insert(makeUnique<FloatAnimationValue>(0, compositingOpacity(fromStyle->opacity())));
-            opacityVector.insert(makeUnique<FloatAnimationValue>(1, compositingOpacity(toStyle->opacity())));
-            // The boxSize param is only used for transform animations (which can only run on RenderBoxes), so we pass an empty size here.
-            if (m_graphicsLayer->addAnimation(opacityVector, FloatSize(), opacityAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyOpacity), timeOffset)) {
-                // To ensure that the correct opacity is visible when the animation ends, also set the final opacity.
-                updateOpacity(*toStyle);
-                didAnimate = true;
-            }
-        }
-    }
-
-    if (property == CSSPropertyTransform && m_owningLayer.hasTransform()) {
-        const Animation* transformAnim = toStyle->transitionForProperty(CSSPropertyTransform);
-        if (transformAnim && !transformAnim->isEmptyOrZeroDuration()) {
-            KeyframeValueList transformVector(AnimatedPropertyTransform);
-            transformVector.insert(makeUnique<TransformAnimationValue>(0, fromStyle->transform()));
-            transformVector.insert(makeUnique<TransformAnimationValue>(1, toStyle->transform()));
-            if (m_graphicsLayer->addAnimation(transformVector, snappedIntRect(renderBox()->borderBoxRect()).size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyTransform), timeOffset)) {
-                // To ensure that the correct transform is visible when the animation ends, also set the final transform.
-                updateTransform(*toStyle);
-                didAnimate = true;
-            }
-        }
-    }
-
-    if (property == CSSPropertyFilter && m_owningLayer.hasFilter()) {
-        const Animation* filterAnim = toStyle->transitionForProperty(CSSPropertyFilter);
-        if (filterAnim && !filterAnim->isEmptyOrZeroDuration()) {
-            KeyframeValueList filterVector(AnimatedPropertyFilter);
-            filterVector.insert(makeUnique<FilterAnimationValue>(0, fromStyle->filter()));
-            filterVector.insert(makeUnique<FilterAnimationValue>(1, toStyle->filter()));
-            if (m_graphicsLayer->addAnimation(filterVector, FloatSize(), filterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyFilter), timeOffset)) {
-                // To ensure that the correct filter is visible when the animation ends, also set the final filter.
-                updateFilters(*toStyle);
-                didAnimate = true;
-            }
-        }
-    }
-
-#if ENABLE(FILTERS_LEVEL_2)
-    if (property == CSSPropertyWebkitBackdropFilter && m_owningLayer.hasBackdropFilter()) {
-        const Animation* backdropFilterAnim = toStyle->transitionForProperty(CSSPropertyWebkitBackdropFilter);
-        if (backdropFilterAnim && !backdropFilterAnim->isEmptyOrZeroDuration()) {
-            KeyframeValueList backdropFilterVector(AnimatedPropertyWebkitBackdropFilter);
-            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(0, fromStyle->backdropFilter()));
-            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(1, toStyle->backdropFilter()));
-            if (m_graphicsLayer->addAnimation(backdropFilterVector, FloatSize(), backdropFilterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitBackdropFilter), timeOffset)) {
-                // To ensure that the correct backdrop filter is visible when the animation ends, also set the final backdrop filter.
-                updateBackdropFilters(*toStyle);
-                didAnimate = true;
-            }
-        }
-    }
-#endif
-
-    if (didAnimate)
-        m_owningLayer.setNeedsPostLayoutCompositingUpdate();
-
-    return didAnimate;
-}
-
-void RenderLayerBacking::transitionPaused(double timeOffset, CSSPropertyID property)
-{
-    AnimatedPropertyID animatedProperty = cssToGraphicsLayerProperty(property);
-    if (animatedProperty != AnimatedPropertyInvalid)
-        m_graphicsLayer->pauseAnimation(GraphicsLayer::animationNameForTransition(animatedProperty), timeOffset);
-}
-
-void RenderLayerBacking::transitionFinished(CSSPropertyID property)
-{
-    AnimatedPropertyID animatedProperty = cssToGraphicsLayerProperty(property);
-    if (animatedProperty != AnimatedPropertyInvalid) {
-        m_graphicsLayer->removeAnimation(GraphicsLayer::animationNameForTransition(animatedProperty));
-        m_owningLayer.setNeedsPostLayoutCompositingUpdate();
-    }
-}
-
-void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const String&, MonotonicTime time)
-{
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        renderer().legacyAnimation().notifyAnimationStarted(renderer(), time);
 }
 
 void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer*)

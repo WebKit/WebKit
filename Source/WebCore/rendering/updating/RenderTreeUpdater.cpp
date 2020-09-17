@@ -27,7 +27,6 @@
 #include "RenderTreeUpdater.h"
 
 #include "AXObjectCache.h"
-#include "CSSAnimationController.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "Document.h"
@@ -545,7 +544,6 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
 
     auto& document = root.document();
     auto* timeline = document.existingTimeline();
-    auto& animationController = document.frame()->legacyAnimation();    
 
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {
@@ -564,7 +562,6 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                     else if (teardownType == TeardownType::RendererUpdateCancelingAnimations)
                         timeline->cancelDeclarativeAnimationsForElement(element, WebAnimation::Silently::No);
                 }
-                animationController.cancelAnimations(element);
                 break;
             case TeardownType::RendererUpdate:
                 if (timeline)

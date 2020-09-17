@@ -486,26 +486,6 @@ bool WKPreferencesGetAccelerated2DCanvasEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->accelerated2dCanvasEnabled();
 }
 
-void WKPreferencesSetWebAnimationsEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setWebAnimationsEnabled(flag);
-}
-
-bool WKPreferencesGetWebAnimationsEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->webAnimationsEnabled();
-}
-
-void WKPreferencesSetWebAnimationsCSSIntegrationEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setWebAnimationsCSSIntegrationEnabled(flag);
-}
-
-bool WKPreferencesGetWebAnimationsCSSIntegrationEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->webAnimationsCSSIntegrationEnabled();
-}
-
 void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setNeedsSiteSpecificQuirks(flag);

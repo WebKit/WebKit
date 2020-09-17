@@ -28,7 +28,6 @@
 #include "RenderLayerCompositor.h"
 
 #include "AsyncScrollingCoordinator.h"
-#include "CSSAnimationController.h"
 #include "CSSPropertyNames.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
@@ -560,9 +559,6 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         return;
     }
 
-    auto& frameView = m_renderView.frameView();
-    AnimationUpdateBlock animationUpdateBlock(&frameView.frame().legacyAnimation());
-
     ASSERT(!m_flushingLayers);
     {
         SetForScope<bool> flushingLayersScope(m_flushingLayers, true);
@@ -818,8 +814,6 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     }
 
     ++m_compositingUpdateCount;
-
-    AnimationUpdateBlock animationUpdateBlock(&m_renderView.frameView().frame().legacyAnimation());
 
     SetForScope<bool> postLayoutChange(m_inPostLayoutUpdate, true);
 
@@ -2977,17 +2971,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
         }
     }
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        return false;
-
-    auto& animController = renderer.legacyAnimation();
-    return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity)
-        && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
-        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyFilter)
-#if ENABLE(FILTERS_LEVEL_2)
-        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitBackdropFilter)
-#endif
-        || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
+    return false;
 }
 
 bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObject& renderer) const
@@ -3515,10 +3499,7 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
             return effectsStack->isCurrentlyAffectingProperty(CSSPropertyTransform);
     }
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        return false;
-
-    return renderer.legacyAnimation().isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
+    return false;
 }
 
 // If an element has composited negative z-index children, those children render in front of the

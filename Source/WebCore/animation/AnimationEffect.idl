@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledAtRuntime=WebAnimations,
     Exposed=Window,
     CustomToJSObject
 ] interface AnimationEffect {

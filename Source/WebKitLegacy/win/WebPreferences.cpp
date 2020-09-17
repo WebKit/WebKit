@@ -311,13 +311,9 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitCustomElementsEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsEnabledPreferenceKey), kCFBooleanTrue);
-
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey), kCFBooleanFalse);
-
-    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey), kCFBooleanFalse);
 
@@ -2136,20 +2132,6 @@ HRESULT WebPreferences::modernMediaControlsEnabled(_Out_ BOOL* enabled)
     return S_OK;
 }
 
-HRESULT WebPreferences::webAnimationsCSSIntegrationEnabled(_Out_ BOOL* enabled)
-{
-    if (!enabled)
-        return E_POINTER;
-    *enabled = boolValueForKey(WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey);
-    return S_OK;
-}
-
-HRESULT WebPreferences::setWebAnimationsCSSIntegrationEnabled(BOOL enabled)
-{
-    setBoolValue(WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey, enabled);
-    return S_OK;
-}
-
 HRESULT WebPreferences::fetchAPIKeepAliveEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
@@ -2334,20 +2316,6 @@ HRESULT WebPreferences::setApplicationId(BSTR applicationId)
 #if USE(CF)
     m_applicationId = String(applicationId).createCFString();
 #endif
-    return S_OK;
-}
-
-HRESULT WebPreferences::setWebAnimationsEnabled(BOOL enabled)
-{
-    setBoolValue(WebKitWebAnimationsEnabledPreferenceKey, enabled);
-    return S_OK;
-}
-
-HRESULT WebPreferences::webAnimationsEnabled(_Out_ BOOL* enabled)
-{
-    if (!enabled)
-        return E_POINTER;
-    *enabled = boolValueForKey(WebKitWebAnimationsEnabledPreferenceKey);
     return S_OK;
 }
 

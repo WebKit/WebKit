@@ -28,7 +28,6 @@
 #include "config.h"
 #include "PseudoElement.h"
 
-#include "CSSAnimationController.h"
 #include "ContentData.h"
 #include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
@@ -93,9 +92,6 @@ void PseudoElement::clearHostElement()
     if (auto* timeline = document().existingTimeline())
         timeline->elementWasRemoved(*this);
     
-    if (auto* frame = document().frame())
-        frame->legacyAnimation().cancelAnimations(*this);
-
     m_hostElement = nullptr;
 }
 

@@ -46,7 +46,6 @@ class TextStream;
 namespace WebCore {
 
 class AffineTransform;
-class CSSAnimationController;
 class Color;
 class Cursor;
 class Document;
@@ -704,7 +703,6 @@ public:
     void imageChanged(CachedImage*, const IntRect* = nullptr) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
-    CSSAnimationController& legacyAnimation() const;
     DocumentTimeline* documentTimeline() const;
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
@@ -969,11 +967,6 @@ inline Page& RenderObject::page() const
     // so it's safe to assume Frame::page() is non-null as long as there are live RenderObjects.
     ASSERT(frame().page());
     return *frame().page();
-}
-
-inline CSSAnimationController& RenderObject::legacyAnimation() const
-{
-    return frame().legacyAnimation();
 }
 
 inline DocumentTimeline* RenderObject::documentTimeline() const

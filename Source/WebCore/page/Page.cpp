@@ -28,7 +28,6 @@
 #include "BackForwardCache.h"
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
-#include "CSSAnimationController.h"
 #include "CacheStorageProvider.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -1648,9 +1647,6 @@ void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
     m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::LowPowerMode;
     renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        mainFrame().legacyAnimation().updateThrottlingState();
-
     updateDOMTimerAlignmentInterval();
 }
 
@@ -2185,13 +2181,10 @@ void Page::setIsVisibleInternal(bool isVisible)
             view->show();
 
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
-            if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-                forEachDocument([] (Document& document) {
-                    if (auto* timelines = document.timelinesController())
-                        timelines->resumeAnimations();
-                });
-            } else
-                mainFrame().legacyAnimation().resumeAnimations();
+            forEachDocument([] (Document& document) {
+                if (auto* timelines = document.timelinesController())
+                    timelines->resumeAnimations();
+            });
         }
 
         forEachDocument([] (Document& document) {
@@ -2209,13 +2202,10 @@ void Page::setIsVisibleInternal(bool isVisible)
 
     if (!isVisible) {
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
-            if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-                forEachDocument([] (Document& document) {
-                    if (auto* timelines = document.timelinesController())
-                        timelines->suspendAnimations();
-                });
-            } else
-                mainFrame().legacyAnimation().suspendAnimations();
+            forEachDocument([] (Document& document) {
+                if (auto* timelines = document.timelinesController())
+                    timelines->suspendAnimations();
+            });
         }
 
         forEachDocument([] (Document& document) {
@@ -2560,21 +2550,14 @@ void Page::resetSeenMediaEngines()
 void Page::hiddenPageCSSAnimationSuspensionStateChanged()
 {
     if (!isVisible()) {
-        if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-            forEachDocument([&] (Document& document) {
-                if (auto* timelines = document.timelinesController()) {
-                    if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-                        timelines->suspendAnimations();
-                    else
-                        timelines->resumeAnimations();
-                }
-            });
-        } else {
-            if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-                mainFrame().legacyAnimation().suspendAnimations();
-            else
-                mainFrame().legacyAnimation().resumeAnimations();
-        }
+        forEachDocument([&] (Document& document) {
+            if (auto* timelines = document.timelinesController()) {
+                if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
+                    timelines->suspendAnimations();
+                else
+                    timelines->resumeAnimations();
+            }
+        });
     }
 }
 

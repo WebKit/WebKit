@@ -636,7 +636,6 @@ public:
         @NO, WebKitDialogElementEnabledPreferenceKey,
         @NO, WebKitHighlightAPIEnabledPreferenceKey,
         @YES, WebKitModernMediaControlsEnabledPreferenceKey,
-        @YES, WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey,
         @YES, WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey,
 
 #if ENABLE(WEBGL2)
@@ -658,7 +657,6 @@ public:
         @NO, WebKitDownloadAttributeEnabledPreferenceKey,
 #endif
         @NO, WebKitDirectoryUploadEnabledPreferenceKey,
-        @YES, WebKitWebAnimationsEnabledPreferenceKey,
         @YES, WebKitSyntheticEditingCommandsEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
@@ -3174,16 +3172,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey];
 }
 
-- (BOOL)webAnimationsEnabled
-{
-    return [self _boolValueForKey:WebKitWebAnimationsEnabledPreferenceKey];
-}
-
-- (void)setWebAnimationsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitWebAnimationsEnabledPreferenceKey];
-}
-
 - (BOOL)webAnimationsCompositeOperationsEnabled
 {
     return [self _boolValueForKey:WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey];
@@ -3242,16 +3230,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setModernMediaControlsEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitModernMediaControlsEnabledPreferenceKey];
-}
-
-- (BOOL)webAnimationsCSSIntegrationEnabled
-{
-    return [self _boolValueForKey:WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey];
-}
-
-- (void)setWebAnimationsCSSIntegrationEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey];
 }
 
 - (BOOL)intersectionObserverEnabled

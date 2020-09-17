@@ -1,3 +1,138 @@
+2020-09-17  Antoine Quint  <graouts@webkit.org>
+
+        Remove the legacy animation code
+        https://bugs.webkit.org/show_bug.cgi?id=216608
+
+        Reviewed by Dean Jackson.
+
+        We remove the legacy animation code found in Source/WebCore/page/animation/, save for CSSPropertyAnimation which
+        is also used by the new Web Animations engine and now moved to Source/WebCore/animation/. Since we now have a single
+        animation engine, the runtime flags to optionally enable the Web Animations engine are not needed anymore and removed
+        as well.
+
+        We also remove some testing utilities and some RenderLayerBacking methods specific to accelerated transitions which
+        the new animation engine does not use.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/Animatable.idl:
+        * animation/AnimationEffect.idl:
+        * animation/AnimationPlaybackEvent.idl:
+        * animation/AnimationPlaybackEventInit.idl:
+        * animation/AnimationTimeline.idl:
+        * animation/CSSAnimation.idl:
+        * animation/CSSPropertyAnimation.cpp: Renamed from Source/WebCore/page/animation/CSSPropertyAnimation.cpp.
+        (WebCore::PropertyWrapperVisitedAffectedColor::PropertyWrapperVisitedAffectedColor):
+        * animation/CSSPropertyAnimation.h: Renamed from Source/WebCore/page/animation/CSSPropertyAnimation.h.
+        * animation/CSSTransition.idl:
+        * animation/DocumentAnimations.idl:
+        * animation/DocumentOrShadowRootAnimations.idl:
+        * animation/DocumentTimeline.idl:
+        * animation/KeyframeEffect.idl:
+        * animation/WebAnimation.idl:
+        * animation/WebAnimationTypes.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computeRenderStyleForProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::willBeRemovedFromFrame):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::resume):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::destroy):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::clearTimers):
+        (WebCore::Frame::resumeActiveDOMObjectsAndAnimations):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didDestroyRenderTree):
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layout):
+        * page/Page.cpp:
+        (WebCore::Page::handleLowModePowerChange):
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::hiddenPageCSSAnimationSuspensionStateChanged):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebAnimationsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webAnimationsEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setWebAnimationsCSSIntegrationEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webAnimationsCSSIntegrationEnabled const): Deleted.
+        * page/animation/AnimationBase.cpp: Removed.
+        * page/animation/AnimationBase.h: Removed.
+        * page/animation/CSSAnimationController.cpp: Removed.
+        * page/animation/CSSAnimationController.h: Removed.
+        * page/animation/CSSAnimationControllerPrivate.h: Removed.
+        * page/animation/CompositeAnimation.cpp: Removed.
+        * page/animation/CompositeAnimation.h: Removed.
+        * page/animation/ImplicitAnimation.cpp: Removed.
+        * page/animation/ImplicitAnimation.h: Removed.
+        * page/animation/KeyframeAnimation.cpp: Removed.
+        * page/animation/KeyframeAnimation.h: Removed.
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::isKeyframe):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::animatedStyle):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::startTransition): Deleted.
+        (WebCore::RenderElement::transitionPaused): Deleted.
+        (WebCore::RenderElement::transitionFinished): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::notifyAnimationStarted):
+        (WebCore::RenderLayerBacking::startTransition): Deleted.
+        (WebCore::RenderLayerBacking::transitionPaused): Deleted.
+        (WebCore::RenderLayerBacking::transitionFinished): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation const):
+        (WebCore::RenderLayerCompositor::isRunningTransformAnimation const):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::startTransition): Deleted.
+        (WebCore::RenderLayerModelObject::transitionPaused): Deleted.
+        (WebCore::RenderLayerModelObject::transitionFinished): Deleted.
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::legacyAnimation const): Deleted.
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        * style/StyleAdjuster.cpp:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::webAnimationsCSSIntegrationEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfActiveAnimations const):
+        (WebCore::Internals::animationsAreSuspended const):
+        (WebCore::Internals::animationsInterval const):
+        (WebCore::Internals::suspendAnimations const):
+        (WebCore::Internals::resumeAnimations const):
+        (WebCore::Internals::acceleratedAnimationsForElement):
+        (WebCore::Internals::numberOfAnimationTimelineInvalidations const):
+        (WebCore::Internals::pauseAnimationAtTimeOnElement): Deleted.
+        (WebCore::Internals::pauseAnimationAtTimeOnPseudoElement): Deleted.
+        (WebCore::Internals::pauseTransitionAtTimeOnElement): Deleted.
+        (WebCore::Internals::pauseTransitionAtTimeOnPseudoElement): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-09-17  Jer Noble  <jer.noble@apple.com>
 
         Unified build fix for "redefinition of 'kCMVideoCodecType_VP9"

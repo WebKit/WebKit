@@ -117,8 +117,6 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     [MayThrowException] undefined setShouldManageAudioSessionCategory(boolean should);
     [MayThrowException] undefined setCustomPasteboardDataEnabled(boolean enabled);
 
-    [EnabledAtRuntime=WebAnimations] boolean webAnimationsCSSIntegrationEnabled();
-
     undefined setShouldDeactivateAudioSession(boolean shouldDeactivate);
     
     undefined setStorageAccessAPIPerPageScopeEnabled(boolean enabled);

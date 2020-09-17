@@ -32,7 +32,6 @@
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
-#include "CSSAnimationController.h"
 #include "CSSFontSelector.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
@@ -1962,7 +1961,6 @@ void Document::resolveStyle(ResolveStyleType type)
     TraceScope tracingScope(StyleRecalcStart, StyleRecalcEnd);
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
-    AnimationUpdateBlock animationUpdateBlock(&m_frame->legacyAnimation());
 
     // FIXME: Do this update per tree scope.
     {
@@ -2422,19 +2420,13 @@ void Document::didBecomeCurrentDocumentInFrame()
     // be out of sync if the DOM suspension state changed while the document was not in the frame (possibly in the
     // back/forward cache, or simply newly created).
     if (m_frame->activeDOMObjectsAndAnimationsSuspended()) {
-        if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-            if (m_timelinesController)
-                m_timelinesController->suspendAnimations();
-        } else
-            m_frame->legacyAnimation().suspendAnimationsForDocument(this);
+        if (m_timelinesController)
+            m_timelinesController->suspendAnimations();
         suspendScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
     } else {
         resumeScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
-        if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-            if (m_timelinesController)
-                m_timelinesController->resumeAnimations();
-        } else
-            m_frame->legacyAnimation().resumeAnimationsForDocument(this);
+        if (m_timelinesController)
+            m_timelinesController->resumeAnimations();
     }
 }
 
@@ -2527,9 +2519,6 @@ void Document::willBeRemovedFromFrame()
 {
     if (m_hasPreparedForDestruction)
         return;
-
-    if (m_frame)
-        m_frame->legacyAnimation().detachFromDocument(this);
 
 #if USE(LIBWEBRTC)
     // FIXME: This should be moved to Modules/mediastream.
@@ -3065,8 +3054,6 @@ void Document::implicitClose()
 
         if (auto* documentLoader = loader())
             documentLoader->startIconLoading();
-
-        f->legacyAnimation().startAnimationsIfNotSuspended(this);
 
         // FIXME: We shouldn't be dispatching pending events globally on all Documents here.
         // For now, only do this when there is a Frame, otherwise this could cause JS reentrancy
@@ -5454,11 +5441,8 @@ void Document::resume(ReasonForSuspension reason)
 
     ASSERT(m_frame);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (m_timelinesController)
-            m_timelinesController->resumeAnimations();  
-    } else
-        m_frame->legacyAnimation().resumeAnimationsForDocument(this);
+    if (m_timelinesController)
+        m_timelinesController->resumeAnimations();
 
     resumeScheduledTasks(reason);
 

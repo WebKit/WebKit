@@ -124,8 +124,6 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
         else if (key == "allowCrossOriginSubresourcesToAskForCredentials")
             allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
-        else if (key == "experimental:WebAnimationsCSSIntegrationEnabled")
-            enableWebAnimationsCSSIntegration = parseBooleanTestHeaderValue(value);
         else if (key == "internal:selectionAcrossShadowBoundariesEnabled")
             enableSelectionAcrossShadowBoundaries = parseBooleanTestHeaderValue(value);
         else if (key == "enableColorFilter")
@@ -165,6 +163,5 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
 bool TestOptions::webViewIsCompatibleWithOptions(const TestOptions& other) const
 {
     return other.layerBackedWebView == layerBackedWebView
-        && other.jscOptions == jscOptions
-        && other.enableWebAnimationsCSSIntegration == enableWebAnimationsCSSIntegration;
+        && other.jscOptions == jscOptions;
 }

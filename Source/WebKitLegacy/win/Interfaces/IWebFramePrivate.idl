@@ -84,10 +84,6 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT elementDoesAutoComplete([in] IDOMElement* element, [out, retval] BOOL* result);
 
-    HRESULT pauseAnimation([in] BSTR animationName, [in] IDOMNode* node, [in] double secondsFromNow, [out, retval] BOOL* animationWasRunning);
-    HRESULT pauseTransition([in] BSTR propertyName, [in] IDOMNode* node, [in] double secondsFromNow, [out, retval] BOOL* transitionWasRunning);
-    HRESULT numberOfActiveAnimations([out, retval] UINT* number);
-
     HRESULT isDisplayingStandaloneImage([out, retval] BOOL* result);
 
     HRESULT allowsFollowingLink([in] BSTR url, [out, retval] BOOL* result);
@@ -109,9 +105,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] HDC deviceContext);
 
     HRESULT unused5();
-
-    HRESULT suspendAnimations();
-    HRESULT resumeAnimations(); 
 
     HRESULT loadPlainTextString([in] BSTR string, [in] BSTR url);
 

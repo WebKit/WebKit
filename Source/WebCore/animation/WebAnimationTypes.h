@@ -50,6 +50,11 @@ struct WebAnimationsMarkableDoubleTraits {
     }
 };
 
+enum class AnimationImpact {
+    RequiresRecomposite     = 1 << 0,
+    ForcesStackingContext   = 1 << 1
+};
+
 using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
 
 using AnimationCollection = ListHashSet<RefPtr<WebAnimation>>;

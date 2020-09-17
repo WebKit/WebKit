@@ -33,7 +33,6 @@
 #include "ApplyStyleCommand.h"
 #include "BackForwardCache.h"
 #include "BackForwardController.h"
-#include "CSSAnimationController.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CachedCSSStyleSheet.h"
@@ -156,7 +155,6 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_ownerElement(ownerElement)
     , m_script(makeUniqueRef<ScriptController>(*this))
-    , m_animationController(makeUniqueRef<CSSAnimationController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
@@ -737,11 +735,8 @@ void Frame::clearTimers(FrameView *view, Document *document)
 {
     if (view) {
         view->layoutContext().unscheduleLayout();
-        if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-            if (auto* timelines = document->timelinesController())
-                timelines->suspendAnimations();
-        } else
-            view->frame().legacyAnimation().suspendAnimationsForDocument(document);
+        if (auto* timelines = document->timelinesController())
+            timelines->suspendAnimations();
         view->frame().eventHandler().stopAutoscrollTimer();
     }
 }
@@ -1029,11 +1024,8 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
 
     // Frame::clearTimers() suspended animations and pending relayouts.
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* timelines = m_doc->timelinesController())
-            timelines->resumeAnimations();
-    } else
-        legacyAnimation().resumeAnimationsForDocument(m_doc.get());
+    if (auto* timelines = m_doc->timelinesController())
+        timelines->resumeAnimations();
     if (m_view)
         m_view->layoutContext().scheduleLayout();
 }

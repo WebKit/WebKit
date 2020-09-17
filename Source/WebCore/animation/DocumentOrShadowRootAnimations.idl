@@ -24,8 +24,6 @@
  */
 
 // https://drafts.csswg.org/web-animations-1/#extensions-to-the-documentorshadowroot-interface-mixin
-[
-    EnabledAtRuntime=WebAnimations
-] partial interface mixin DocumentOrShadowRoot {
+partial interface mixin DocumentOrShadowRoot {
     sequence<WebAnimation> getAnimations();
 };

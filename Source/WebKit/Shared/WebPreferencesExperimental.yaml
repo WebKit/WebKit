@@ -280,22 +280,6 @@ CSSOMViewSmoothScrollingEnabled:
   humanReadableDescription: "Enable DOM API and CSS property for 'smooth' scroll behavior"
   category: experimental
 
-WebAnimationsEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "Web Animations"
-  humanReadableDescription: "Web Animations prototype"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-
-WebAnimationsCSSIntegrationEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "CSS Animations via Web Animations"
-  humanReadableDescription: "Expose CSS Animations and CSS Transitions through getAnimations()"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-
 WebAnimationsCompositeOperationsEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED

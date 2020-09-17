@@ -67,12 +67,6 @@ public:
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
-    void setWebAnimationsEnabled(bool areEnabled) { m_areWebAnimationsEnabled = areEnabled; }
-    bool webAnimationsEnabled() const { return m_areWebAnimationsEnabled; }
-
-    void setWebAnimationsCSSIntegrationEnabled(bool isEnabled) { m_isWebAnimationsCSSIntegrationEnabled = isEnabled; }
-    bool webAnimationsCSSIntegrationEnabled() const { return m_areWebAnimationsEnabled && m_isWebAnimationsCSSIntegrationEnabled; }
-
     void setWebAnimationsCompositeOperationsEnabled(bool areEnabled) { m_areWebAnimationsCompositeOperationsEnabled = areEnabled; }
     bool webAnimationsCompositeOperationsEnabled() const { return m_areWebAnimationsCompositeOperationsEnabled; }
 
@@ -293,8 +287,6 @@ private:
     bool m_isMenuItemElementEnabled { false };
     bool m_isDirectoryUploadEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };
-    bool m_areWebAnimationsEnabled { true };
-    bool m_isWebAnimationsCSSIntegrationEnabled { true };
     bool m_areWebAnimationsCompositeOperationsEnabled { false };
     bool m_areWebAnimationsMutableTimelinesEnabled { false };
     bool m_isImageBitmapEnabled { true };

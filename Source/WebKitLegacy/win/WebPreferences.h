@@ -236,13 +236,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setCustomElementsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE modernMediaControlsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setModernMediaControlsEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE webAnimationsCSSIntegrationEnabled(_Out_ BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setWebAnimationsCSSIntegrationEnabled(BOOL);
     
     // IWebPreferencesPrivate4
     virtual HRESULT STDMETHODCALLTYPE setApplicationId(BSTR);
-    virtual HRESULT STDMETHODCALLTYPE webAnimationsEnabled(_Out_ BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setWebAnimationsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE userTimingEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setUserTimingEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE resourceTimingEnabled(_Out_ BOOL*);

@@ -564,9 +564,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setDirectoryUploadEnabled:(BOOL)flag;
 - (BOOL)directoryUploadEnabled;
 
-- (void)setWebAnimationsEnabled:(BOOL)flag;
-- (BOOL)webAnimationsEnabled;
-
 - (void)setWebAnimationsCompositeOperationsEnabled:(BOOL)flag;
 - (BOOL)webAnimationsCompositeOperationsEnabled;
 
@@ -584,9 +581,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 - (void)setModernMediaControlsEnabled:(BOOL)flag;
 - (BOOL)modernMediaControlsEnabled;
-
-- (void)setWebAnimationsCSSIntegrationEnabled:(BOOL)flag;
-- (BOOL)webAnimationsCSSIntegrationEnabled;
 
 - (void)setIntersectionObserverEnabled:(BOOL)flag;
 - (BOOL)intersectionObserverEnabled;

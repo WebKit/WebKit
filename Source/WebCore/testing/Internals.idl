@@ -315,13 +315,7 @@ enum ContentSizeCategory {
     [MayThrowException] undefined suspendAnimations();
     [MayThrowException] undefined resumeAnimations();
     [MayThrowException] boolean animationsAreSuspended();
-    [MayThrowException] boolean pauseAnimationAtTimeOnElement(DOMString animationName, unrestricted double pauseTime, Element element);
-    [MayThrowException] boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, unrestricted double pauseTime, Element element, DOMString pseudoId);
     readonly attribute double animationsInterval;
-
-    // CSS Transition testing.
-    [MayThrowException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, unrestricted double pauseTime, Element element);
-    [MayThrowException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, unrestricted double pauseTime, Element element, DOMString pseudoId);
 
     // Web Animations testing.
     sequence<AcceleratedAnimation> acceleratedAnimationsForElement(Element element);
