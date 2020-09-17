@@ -1,5 +1,18 @@
 2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Async generator default-export is not handled
+        https://bugs.webkit.org/show_bug.cgi?id=216643
+
+        Reviewed by Ross Kirsling.
+
+        * modules/async-generator-default.js: Added.
+        (from.string_appeared_here.import.test.from.string_appeared_here.async test2):
+        * modules/async-generator-default/module.js: Added.
+        (export.default.async test):
+        * test262/expectations.yaml:
+
+2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Update JSModuleNamespaceObject::defineOwnProperty
         https://bugs.webkit.org/show_bug.cgi?id=216640
 

@@ -1,5 +1,18 @@
 2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Async generator default-export is not handled
+        https://bugs.webkit.org/show_bug.cgi?id=216643
+
+        Reviewed by Ross Kirsling.
+
+        `export default async function * test() { }` syntax should be correctly handled.
+        This patch adds the code retrieving "test" name from the above declaration correctly.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+
+2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Update JSModuleNamespaceObject::defineOwnProperty
         https://bugs.webkit.org/show_bug.cgi?id=216640
 

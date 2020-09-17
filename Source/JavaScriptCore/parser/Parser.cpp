@@ -3563,9 +3563,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
     }
 
     case DEFAULT: {
-        // export default HoistableDeclaration[Default]
-        // export default ClassDeclaration[Default]
-        // export default [lookahead not-in {function, class}] AssignmentExpression[In] ;
+        // export default HoistableDeclaration[~Yield, ~Await, +Default]
+        // export default ClassDeclaration[~Yield, ~Await, +Default]
+        // export default [lookahead not-in { function, async [no LineTerminator here] function, class }] AssignmentExpression[+In, ~Yield, ~Await]
 
         next();
 
@@ -3586,10 +3586,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
                 localName = m_token.m_data.ident;
             restoreSavePoint(context, savePoint);
         } else if (matchContextualKeyword(m_vm.propertyNames->async)) {
+            // export default async function xxx() { }
+            // export default async function * yyy() { }
             SavePoint savePoint = createSavePoint(context);
             next();
             if (match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken()) {
                 next();
+                // Async Generators
+                if (match(TIMES))
+                    next();
                 if (match(IDENT))
                     localName = m_token.m_data.ident;
                 isFunctionOrClassDeclaration = true;

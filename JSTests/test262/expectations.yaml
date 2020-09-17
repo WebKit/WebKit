@@ -2975,8 +2975,6 @@ test/language/identifiers/start-unicode-13.0.0.js:
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
-test/language/module-code/export-default-asyncgenerator-declaration-binding.js:
-  module: "SyntaxError: Exported binding 'starDefault' needs to refer to a top-level declared variable."
 test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:
