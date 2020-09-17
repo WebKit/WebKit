@@ -4,13 +4,13 @@
 <script src="../../resources/js-test-pre.js"></script>
 <script src="../../resources/ui-helper.js"></script>
 <script>
+function attachmentThumbnailInfo() {
+    return window.internals.attachmentThumbnailInfo(document.getElementsByTagName("attachment")[0]);
+}
+
 async function runTest() {
     await UIHelper.activateAt(10, 10);
     await UIHelper.insertAttachmentForFilePath("resources/400x200-circle.png", "image/png");
-
-    function attachmentThumbnailInfo() {
-        return window.internals.attachmentThumbnailInfo(document.getElementsByTagName("attachment")[0]);
-    }
 
     try {
         attachmentThumbnailInfo();
