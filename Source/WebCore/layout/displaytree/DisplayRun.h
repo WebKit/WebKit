@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayInlineRect.h"
+#include "InlineRect.h"
 #include "LayoutBox.h"
 #include "RenderStyle.h"
 #include "TextFlags.h"
@@ -64,10 +64,10 @@ struct Run {
     };
 
     struct Expansion;
-    Run(size_t lineIndex, const Layout::Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, Optional<TextContent> = WTF::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, Optional<TextContent> = WTF::nullopt);
 
-    const InlineRect& rect() const { return m_rect; }
-    const InlineRect& inkOverflow() const { return m_inkOverflow; }
+    const Layout::InlineRect& rect() const { return m_rect; }
+    const Layout::InlineRect& inkOverflow() const { return m_inkOverflow; }
 
     InlineLayoutPoint topLeft() const { return m_rect.topLeft(); }
     InlineLayoutUnit left() const { return m_rect.left(); }
@@ -103,13 +103,13 @@ private:
     const size_t m_lineIndex;
     WeakPtr<const Layout::Box> m_layoutBox;
     CachedImage* m_cachedImage { nullptr };
-    InlineRect m_rect;
-    InlineRect m_inkOverflow;
+    Layout::InlineRect m_rect;
+    Layout::InlineRect m_inkOverflow;
     Expansion m_expansion;
     Optional<TextContent> m_textContent;
 };
 
-inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& rect, const InlineRect& inkOverflow, Expansion expansion, Optional<TextContent> textContent)
+inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const Layout::InlineRect& rect, const Layout::InlineRect& inkOverflow, Expansion expansion, Optional<TextContent> textContent)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_rect(rect)

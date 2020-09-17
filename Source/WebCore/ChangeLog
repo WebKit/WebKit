@@ -1,5 +1,73 @@
 2020-09-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Move InlineRect from Display to Layout namespace
+        https://bugs.webkit.org/show_bug.cgi?id=216633
+
+        Reviewed by Simon Fraser.
+
+        Let's move the Display type over to Layout namespace. Display tree needs a different set of data types.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/displaytree/DisplayLine.h:
+        (WebCore::Display::Line::rect const):
+        (WebCore::Display::Line::scrollableOverflow const):
+        (WebCore::Display::Line::inkOverflow const):
+        (WebCore::Display::Line::Line):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::rect const):
+        (WebCore::Display::Run::inkOverflow const):
+        (WebCore::Display::Run::Run):
+        * layout/flexformatting/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::sizeAndPlaceFlexItems):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedLineLogicalRect const):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::InlineBox::InlineBox):
+        (WebCore::Layout::LineBox::logicalRectForTextRun const):
+        (WebCore::Layout::LineBox::constructInlineBoxes):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::InlineBox::logicalRect const):
+        * layout/inlineformatting/InlineRect.h: Renamed from Source/WebCore/layout/displaytree/DisplayInlineRect.h.
+        (WebCore::Layout::InlineRect::expandHorizontally):
+        (WebCore::Layout::InlineRect::expandVertically):
+        (WebCore::Layout::InlineRect::invalidateTop):
+        (WebCore::Layout::InlineRect::invalidateLeft):
+        (WebCore::Layout::InlineRect::invalidateWidth):
+        (WebCore::Layout::InlineRect::invalidateHeight):
+        (WebCore::Layout::InlineRect::hasValidPosition const):
+        (WebCore::Layout::InlineRect::hasValidSize const):
+        (WebCore::Layout::InlineRect::hasValidGeometry const):
+        (WebCore::Layout::InlineRect::InlineRect):
+        (WebCore::Layout::InlineRect::invalidatePosition):
+        (WebCore::Layout::InlineRect::setHasValidPosition):
+        (WebCore::Layout::InlineRect::setHasValidSize):
+        (WebCore::Layout::InlineRect::top const):
+        (WebCore::Layout::InlineRect::left const):
+        (WebCore::Layout::InlineRect::bottom const):
+        (WebCore::Layout::InlineRect::right const):
+        (WebCore::Layout::InlineRect::topLeft const):
+        (WebCore::Layout::InlineRect::size const):
+        (WebCore::Layout::InlineRect::width const):
+        (WebCore::Layout::InlineRect::height const):
+        (WebCore::Layout::InlineRect::setTopLeft):
+        (WebCore::Layout::InlineRect::setTop):
+        (WebCore::Layout::InlineRect::setBottom):
+        (WebCore::Layout::InlineRect::setLeft):
+        (WebCore::Layout::InlineRect::setWidth):
+        (WebCore::Layout::InlineRect::setHeight):
+        (WebCore::Layout::InlineRect::moveHorizontally):
+        (WebCore::Layout::InlineRect::moveVertically):
+        (WebCore::Layout::InlineRect::moveBy):
+        (WebCore::Layout::InlineRect::expand):
+        (WebCore::Layout::InlineRect::expandToContain):
+        (WebCore::Layout::InlineRect::expandVerticallyToContain):
+        (WebCore::Layout::InlineRect::inflate):
+        (WebCore::Layout::InlineRect::operator InlineLayoutRect const):
+
+2020-09-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Remove partial invalidation
         https://bugs.webkit.org/show_bug.cgi?id=216631
 

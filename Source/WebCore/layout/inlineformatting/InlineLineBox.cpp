@@ -119,7 +119,7 @@ static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList&
     return { };
 }
 
-LineBox::InlineBox::InlineBox(const Box& layoutBox, const Display::InlineRect& rect, InlineLayoutUnit baseline, InlineLayoutUnit descent)
+LineBox::InlineBox::InlineBox(const Box& layoutBox, const InlineRect& rect, InlineLayoutUnit baseline, InlineLayoutUnit descent)
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect(rect)
     , m_baseline(baseline)
@@ -145,7 +145,7 @@ LineBox::LineBox(const InlineFormattingContext& inlineFormattingContext, InlineL
     alignInlineBoxesVerticallyAndComputeLineBoxHeight();
 }
 
-Display::InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
+InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
 {
     ASSERT(run.isText() || run.isLineBreak());
     auto& parentInlineBox = inlineBoxForLayoutBox(run.layoutBox().parent());
@@ -241,7 +241,7 @@ void LineBox::constructInlineBoxes(const Line::RunList& runs)
                 auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
                 baseline = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
             }
-            auto rect = Display::InlineRect { { }, logicalLeft, run.logicalWidth(), logicalHeight };
+            auto rect = InlineRect { { }, logicalLeft, run.logicalWidth(), logicalHeight };
             auto inlineBox = makeUnique<InlineBox>(inlineLevelBox, rect, baseline, InlineLayoutUnit { });
             m_inlineBoxRectMap.set(&inlineLevelBox, inlineBox.get());
             m_inlineBoxList.append(WTFMove(inlineBox));

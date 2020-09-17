@@ -30,7 +30,7 @@
 #include "LayoutUnits.h"
 
 namespace WebCore {
-namespace Display {
+namespace Layout {
 
 class InlineRect {
 public:

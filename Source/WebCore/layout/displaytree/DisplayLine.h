@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayInlineRect.h"
+#include "InlineRect.h"
 
 namespace WebCore {
 namespace Display {
@@ -35,11 +35,11 @@ namespace Display {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(const InlineRect&, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, InlineLayoutUnit baseline);
+    Line(const Layout::InlineRect&, const Layout::InlineRect& scrollableOverflow, const Layout::InlineRect& inkOverflow, InlineLayoutUnit baseline);
 
-    const InlineRect& rect() const { return m_rect; }
-    const InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
-    const InlineRect& inkOverflow() const { return m_inkOverflow; }
+    const Layout::InlineRect& rect() const { return m_rect; }
+    const Layout::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
+    const Layout::InlineRect& inkOverflow() const { return m_inkOverflow; }
 
     InlineLayoutUnit left() const { return m_rect.left(); }
     InlineLayoutUnit right() const { return m_rect.right(); }
@@ -54,13 +54,13 @@ public:
     InlineLayoutUnit baseline() const { return m_baseline; }
 
 private:
-    InlineRect m_rect;
-    InlineRect m_scrollableOverflow;
-    InlineRect m_inkOverflow;
+    Layout::InlineRect m_rect;
+    Layout::InlineRect m_scrollableOverflow;
+    Layout::InlineRect m_inkOverflow;
     InlineLayoutUnit m_baseline { 0 };
 };
 
-inline Line::Line(const InlineRect& rect, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, InlineLayoutUnit baseline)
+inline Line::Line(const Layout::InlineRect& rect, const Layout::InlineRect& scrollableOverflow, const Layout::InlineRect& inkOverflow, InlineLayoutUnit baseline)
     : m_rect(rect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_inkOverflow(inkOverflow)

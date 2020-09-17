@@ -27,8 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayInlineRect.h"
 #include "InlineLine.h"
+#include "InlineRect.h"
 #include "LayoutBoxGeometry.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/WeakPtr.h>
@@ -59,11 +59,11 @@ public:
     struct InlineBox {
         WTF_MAKE_ISO_ALLOCATED_INLINE(InlineBox);
     public:
-        InlineBox(const Box&, const Display::InlineRect&, InlineLayoutUnit baseline, InlineLayoutUnit descent);
+        InlineBox(const Box&, const InlineRect&, InlineLayoutUnit baseline, InlineLayoutUnit descent);
         InlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         InlineBox() = default;
 
-        const Display::InlineRect& logicalRect() const { return m_logicalRect; }
+        const InlineRect& logicalRect() const { return m_logicalRect; }
         InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
         InlineLayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
         InlineLayoutUnit logicalLeft() const { return m_logicalRect.left(); }
@@ -91,7 +91,7 @@ public:
         void setLineSpacing(InlineLayoutUnit lineSpacing) { m_lineSpacing = lineSpacing; }
 
         WeakPtr<const Box> m_layoutBox;
-        Display::InlineRect m_logicalRect;
+        InlineRect m_logicalRect;
         InlineLayoutUnit m_baseline { 0 };
         Optional<InlineLayoutUnit> m_descent;
         Optional<InlineLayoutUnit> m_lineSpacing;
@@ -110,7 +110,7 @@ public:
     bool isLineVisuallyEmpty() const { return m_isLineVisuallyEmpty; }
 
     const InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineBoxRectMap.get(&layoutBox); }
-    Display::InlineRect logicalRectForTextRun(const Line::Run&) const;
+    InlineRect logicalRectForTextRun(const Line::Run&) const;
 
     using InlineBoxMap = HashMap<const Box*, InlineBox*>;
     auto inlineBoxList() const { return m_inlineBoxRectMap.values(); }

@@ -434,20 +434,20 @@ InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::compu
     } else
         lineLogicalHeight = rootStyle.computedLineHeight();
 
-    auto logicalRect = Display::InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineLogicalHeight};
+    auto logicalRect = InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineLogicalHeight};
     // Inline tree height is all integer based.
     auto lineBoxOffset = floorf((lineLogicalHeight - lineBoxLogicalHeight) / 2);
     return { lineBoxOffset, logicalRect };
 }
 
-Display::InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
+InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
     auto& lineBox = lineContent.lineBox;
     auto lineRectAndLineBoxOffset = computedLineLogicalRect(lineContent);
     auto lineLogicalRect = lineRectAndLineBoxOffset.logicalRect;
     auto lineBoxVerticalOffset = lineRectAndLineBoxOffset.lineBoxVerticalOffset;
-    auto scrollableOverflow = Display::InlineRect { lineLogicalRect.topLeft(), std::max(lineLogicalRect.width(), lineBox.logicalWidth()), std::max(lineLogicalRect.height(), lineBoxVerticalOffset + lineBox.logicalHeight()) };
+    auto scrollableOverflow = InlineRect { lineLogicalRect.topLeft(), std::max(lineLogicalRect.width(), lineBox.logicalWidth()), std::max(lineLogicalRect.height(), lineBoxVerticalOffset + lineBox.logicalHeight()) };
 
     if (!lineContent.floats.isEmpty()) {
         auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };

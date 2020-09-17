@@ -86,10 +86,10 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectInlineContentIfNeeded();
-    Display::InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const HorizontalConstraints&);
+    InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const HorizontalConstraints&);
     struct LineRectAndLineBoxOffset {
         InlineLayoutUnit lineBoxVerticalOffset;
-        Display::InlineRect logicalRect;
+        InlineRect logicalRect;
     };
     LineRectAndLineBoxOffset computedLineLogicalRect(const LineBuilder::LineContent&) const;
     void invalidateFormattingState(const InvalidationState&);
