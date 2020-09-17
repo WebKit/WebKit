@@ -6,5 +6,6 @@ if (ENABLE_WEBKIT_LEGACY)
 endif ()
 
 if (ENABLE_WEBKIT)
+    add_subdirectory(TestRunnerShared)
     add_subdirectory(WebKitTestRunner)
 endif ()

@@ -6,13 +6,6 @@ set(WebKitTestRunner_UISCRIPTCONTEXT_DIR "${TOOLS_DIR}/TestRunnerShared/UIScript
 file(MAKE_DIRECTORY ${DumpRenderTree_DERIVED_SOURCES_DIR})
 
 set(DumpRenderTree_SOURCES
-    ${WebKitTestRunner_SHARED_DIR}/ReftestFunctions.cpp
-    ${WebKitTestRunner_SHARED_DIR}/Bindings/JSBasics.cpp
-    ${WebKitTestRunner_SHARED_DIR}/Bindings/JSWrapper.cpp
-
-    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
-    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptControllerShared.cpp
-
     AccessibilityController.cpp
     AccessibilityTextMarker.cpp
     AccessibilityUIElement.cpp
@@ -27,6 +20,7 @@ set(DumpRenderTree_SOURCES
 )
 
 set(DumpRenderTree_LIBRARIES
+    TestRunnerShared
     WebKit::WebCoreTestSupport
     WebKit::JavaScriptCore
 )
@@ -45,21 +39,6 @@ list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
     ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
 )
-
-set(DumpRenderTree_IDL_FILES
-    "${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
-)
-
-GENERATE_BINDINGS(DumpRenderTreeBindings
-    OUTPUT_SOURCE DumpRenderTree_SOURCES
-    INPUT_FILES ${DumpRenderTree_IDL_FILES}
-    BASE_DIR ${DumpRenderTree_BINDINGS_DIR}
-    IDL_INCLUDES Bindings
-    FEATURES ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
-    DESTINATION ${DumpRenderTree_DERIVED_SOURCES_DIR}
-    GENERATOR DumpRenderTree)
-
-set(DumpRenderTree_DEPENDENCIES DumpRenderTreeBindings)
 
 WEBKIT_EXECUTABLE_DECLARE(DumpRenderTree)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

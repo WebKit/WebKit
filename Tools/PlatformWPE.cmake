@@ -4,6 +4,7 @@ endif ()
 
 if (DEVELOPER_MODE)
     add_subdirectory(ImageDiff)
+    add_subdirectory(TestRunnerShared)
     add_subdirectory(WebKitTestRunner)
 
     if (ENABLE_API_TESTS)

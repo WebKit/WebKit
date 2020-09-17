@@ -1,3 +1,23 @@
+2020-09-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake] Add a new library target TestRunnerShared
+        https://bugs.webkit.org/show_bug.cgi?id=216465
+
+        Reviewed by Don Olmstead.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/PlatformWin.cmake:
+        * PlatformFTW.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * TestRunnerShared/CMakeLists.txt: Added.
+        * TestRunnerShared/config/config.h: Added.
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/PlatformFTW.cmake:
+        * WebKitTestRunner/PlatformWin.cmake:
+
 2020-09-16  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling CSS shadow parts

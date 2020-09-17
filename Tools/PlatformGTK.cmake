@@ -1,4 +1,5 @@
 if (DEVELOPER_MODE)
+    add_subdirectory(TestRunnerShared)
     add_subdirectory(WebKitTestRunner)
     add_subdirectory(ImageDiff)
 

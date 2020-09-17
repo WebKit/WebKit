@@ -7,12 +7,6 @@ file(MAKE_DIRECTORY ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle)
 file(MAKE_DIRECTORY ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext)
 
 set(WebKitTestRunner_SOURCES
-    ${WebKitTestRunner_BINDINGS_DIR}/JSBasics.cpp
-    ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp
-
-    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
-    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptControllerShared.cpp
-
     CyclicRedundancyCheck.cpp
     GeolocationProviderMock.cpp
     Options.cpp
@@ -26,6 +20,7 @@ set(WebKitTestRunner_SOURCES
 )
 
 set(WebKitTestRunner_LIBRARIES
+    TestRunnerShared
     WebCoreTestSupport
     WebKit::JavaScriptCore
     WebKit::WebKit
@@ -48,11 +43,6 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 set(WebKitTestRunnerInjectedBundle_SOURCES
-    ${WebKitTestRunner_SHARED_DIR}/ReftestFunctions.cpp
-
-    ${WebKitTestRunner_BINDINGS_DIR}/JSBasics.cpp
-    ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp
-
     InjectedBundle/AccessibilityController.cpp
     InjectedBundle/AccessibilityTextMarker.cpp
     InjectedBundle/AccessibilityTextMarkerRange.cpp
@@ -80,6 +70,7 @@ list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
 )
 
 set(WebKitTestRunnerInjectedBundle_LIBRARIES
+    TestRunnerShared
     WebKit::WebCoreTestSupport
     WebKit::WebKit
 )
@@ -95,13 +86,8 @@ set(WebKitTestRunnerInjectedBundle_IDL_FILES
     "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/TextInputController.idl"
 )
 
-set(WebKitTestRunner_IDL_FILES
-    "${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
-)
-
 set(WebKitTestRunner_DEPENDENCIES
     TestRunnerInjectedBundle
-    WebKitTestRunnerBindings
 )
 
 GENERATE_BINDINGS(WebKitTestRunnerInjectedBundleBindings
@@ -111,15 +97,6 @@ GENERATE_BINDINGS(WebKitTestRunnerInjectedBundleBindings
     IDL_INCLUDES ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
     FEATURES ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
     DESTINATION ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
-    GENERATOR TestRunner)
-
-GENERATE_BINDINGS(WebKitTestRunnerBindings
-    OUTPUT_SOURCE WebKitTestRunner_SOURCES
-    INPUT_FILES ${WebKitTestRunner_IDL_FILES}
-    BASE_DIR ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
-    IDL_INCLUDES ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
-    FEATURES ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
-    DESTINATION ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext
     GENERATOR TestRunner)
 
 WEBKIT_EXECUTABLE_DECLARE(WebKitTestRunner)
