@@ -168,7 +168,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         if (is<Text>(node)) {
             auto& text = downcast<Text>(node);
             auto* textUpdate = m_styleUpdate->textUpdate(text);
-            bool didCreateParent = parent().updates && parent().updates->update.change == Style::Detach;
+            bool didCreateParent = parent().updates && parent().updates->update.change == Style::Change::Renderer;
             bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text.data().isAllSpecialCharacters<isHTMLSpace>();
             if (didCreateParent || textUpdate || mayNeedUpdateWhitespaceOnlyRenderer)
                 updateTextRenderer(text, textUpdate);
@@ -265,7 +265,7 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
 
     m_builder.updateAfterDescendants(*renderer);
 
-    if (element.hasCustomStyleResolveCallbacks() && updates && updates->update.change == Style::Detach)
+    if (element.hasCustomStyleResolveCallbacks() && updates && updates->update.change == Style::Change::Renderer)
         element.didAttachRenderers();
 }
 
@@ -303,7 +303,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     ContentChangeObserver::StyleChangeScope observingScope(m_document, element);
 #endif
 
-    bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.hasDisplayContents());
+    bool shouldTearDownRenderers = update.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
     if (shouldTearDownRenderers) {
         if (!element.renderer()) {
             // We may be tearing down a descendant renderer cached in renderTreePosition.
@@ -342,7 +342,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         return;
     }
 
-    if (update.change == Style::NoChange) {
+    if (update.change == Style::Change::None) {
         if (pseudoStyleCacheIsInvalid(&renderer, update.style.get())) {
             updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifference::Equal);
             return;

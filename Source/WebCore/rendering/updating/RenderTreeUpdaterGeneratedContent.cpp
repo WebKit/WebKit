@@ -111,7 +111,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         return;
     }
 
-    if (update->change == Style::NoChange)
+    if (update->change == Style::Change::None)
         return;
 
     pseudoElement = &current.ensurePseudoElement(pseudoId);
@@ -136,7 +136,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (!pseudoElementRenderer)
         return;
 
-    if (update->change == Style::Detach)
+    if (update->change == Style::Change::Renderer)
         createContentRenderers(m_updater.m_builder, *pseudoElementRenderer, *update->style);
     else
         updateStyleForContentRenderers(*pseudoElementRenderer, *update->style);

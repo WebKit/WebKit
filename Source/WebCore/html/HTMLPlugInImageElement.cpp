@@ -223,7 +223,7 @@ bool HTMLPlugInImageElement::childShouldCreateRenderer(const Node& child) const
 void HTMLPlugInImageElement::willRecalcStyle(Style::Change change)
 {
     // Make sure style recalcs scheduled by a child shadow tree don't trigger reconstruction and cause flicker.
-    if (change == Style::NoChange && styleValidity() == Style::Validity::Valid)
+    if (change == Style::Change::None && styleValidity() == Style::Validity::Valid)
         return;
 
     // FIXME: There shoudn't be need to force render tree reconstruction here.

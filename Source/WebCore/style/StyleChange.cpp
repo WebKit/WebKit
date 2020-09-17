@@ -34,29 +34,29 @@ namespace Style {
 Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
 {
     if (s1.display() != s2.display())
-        return Detach;
+        return Change::Renderer;
     if (s1.hasPseudoStyle(PseudoId::FirstLetter) != s2.hasPseudoStyle(PseudoId::FirstLetter))
-        return Detach;
+        return Change::Renderer;
     // We just detach if a renderer acquires or loses a column-span, since spanning elements
     // typically won't contain much content.
     if (s1.columnSpan() != s2.columnSpan())
-        return Detach;
+        return Change::Renderer;
     if (!s1.contentDataEquivalent(&s2))
-        return Detach;
+        return Change::Renderer;
     // When text-combine property has been changed, we need to prepare a separate renderer object.
     // When text-combine is on, we use RenderCombineText, otherwise RenderText.
     // https://bugs.webkit.org/show_bug.cgi?id=55069
     if (s1.hasTextCombine() != s2.hasTextCombine())
-        return Detach;
+        return Change::Renderer;
 
     if (!s1.inheritedEqual(s2))
-        return Inherit;
+        return Change::Inherited;
 
     if (!s1.descendantAffectingNonInheritedPropertiesEqual(s2))
-        return Inherit;
+        return Change::Inherited;
 
     if (s1 != s2)
-        return NoInherit;
+        return Change::NonInherited;
 
     // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
     // because setStyle will do the right thing with anything else.
@@ -65,15 +65,15 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
             if (s1.hasPseudoStyle(pseudoId)) {
                 RenderStyle* ps2 = s2.getCachedPseudoStyle(pseudoId);
                 if (!ps2)
-                    return NoInherit;
+                    return Change::NonInherited;
                 RenderStyle* ps1 = s1.getCachedPseudoStyle(pseudoId);
                 if (!ps1 || *ps1 != *ps2)
-                    return NoInherit;
+                    return Change::NonInherited;
             }
         }
     }
 
-    return NoChange;
+    return Change::None;
 }
 
 }

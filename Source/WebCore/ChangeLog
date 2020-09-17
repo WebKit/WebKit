@@ -1,3 +1,38 @@
+2020-09-17  Antti Koivisto  <antti@apple.com>
+
+        Style::Change should be enum class
+        https://bugs.webkit.org/show_bug.cgi?id=216644
+
+        Reviewed by Sam Weinig.
+
+        Also improve the names of the values.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::willRecalcStyle):
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::updateStyle):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+        (WebCore::RenderTreeUpdater::updateAfterDescendants):
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::RenderTreeUpdater::GeneratedContent::updatePseudoElement):
+        * style/StyleChange.cpp:
+        (WebCore::Style::determineChange):
+        * style/StyleChange.h:
+        (): Deleted.
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::computeDescendantsToResolve):
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        * style/StyleTreeResolver.h:
+        * style/StyleUpdate.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::willRecalcStyle):
+
 2020-09-17  Antoine Quint  <graouts@webkit.org>
 
         Remove the legacy animation code

@@ -31,7 +31,12 @@ class RenderStyle;
 
 namespace Style {
 
-enum Change { NoChange, NoInherit, Inherit, Detach };
+enum class Change {
+    None,
+    NonInherited,
+    Inherited,
+    Renderer
+};
 
 Change determineChange(const RenderStyle&, const RenderStyle&);
 

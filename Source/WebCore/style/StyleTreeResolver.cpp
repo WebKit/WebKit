@@ -182,13 +182,13 @@ static DescendantsToResolve computeDescendantsToResolve(Change change, Validity 
     if (validity >= Validity::SubtreeInvalid)
         return DescendantsToResolve::All;
     switch (change) {
-    case NoChange:
+    case Change::None:
         return DescendantsToResolve::None;
-    case NoInherit:
+    case Change::NonInherited:
         return DescendantsToResolve::ChildrenWithExplicitInherit;
-    case Inherit:
+    case Change::Inherited:
         return DescendantsToResolve::Children;
-    case Detach:
+    case Change::Renderer:
         return DescendantsToResolve::All;
     };
     ASSERT_NOT_REACHED();
@@ -224,7 +224,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
         scope().resolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
-        if (update.change != NoChange && existingStyle && existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
+        if (update.change != Change::None && existingStyle && existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
             // In practice this is rare.
             scope().resolver.invalidateMatchedDeclarationsCache();
@@ -240,7 +240,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     // FIXME: These elements should not change renderer based on appearance property.
     if (element.hasTagName(HTMLNames::meterTag) || is<HTMLProgressElement>(element)) {
         if (existingStyle && update.style->appearance() != existingStyle->appearance()) {
-            update.change = Detach;
+            update.change = Change::Renderer;
             descendantsToResolve = DescendantsToResolve::All;
         }
     }
@@ -352,11 +352,11 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     if (oldStyle)
         newStyle->deduplicateInheritedCustomProperties(*oldStyle);
 
-    auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Detach;
+    auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Change::Renderer;
 
     auto validity = element.styleValidity();
-    if (validity >= Validity::SubtreeAndRenderersInvalid || parentChange == Detach)
-        change = Detach;
+    if (validity >= Validity::SubtreeAndRenderersInvalid || parentChange == Change::Renderer)
+        change = Change::Renderer;
 
     bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element.styleResolutionShouldRecompositeLayer();
     return { WTFMove(newStyle), change, shouldRecompositeLayer };
@@ -492,7 +492,7 @@ void TreeResolver::resolveComposedTree()
         if (is<Text>(node)) {
             auto& text = downcast<Text>(node);
             
-            if ((text.styleValidity() >= Validity::SubtreeAndRenderersInvalid && parent.change != Detach) || parent.style.display() == DisplayType::Contents) {
+            if ((text.styleValidity() >= Validity::SubtreeAndRenderersInvalid && parent.change != Change::Renderer) || parent.style.display() == DisplayType::Contents) {
                 TextUpdate textUpdate;
                 textUpdate.inheritedDisplayContentsStyle = createInheritedDisplayContentsStyleIfNeeded(parent.style, parentBoxStyle());
 
@@ -513,7 +513,7 @@ void TreeResolver::resolveComposedTree()
         }
 
         auto* style = element.renderOrDisplayContentsStyle();
-        auto change = NoChange;
+        auto change = Change::None;
         auto descendantsToResolve = DescendantsToResolve::None;
 
         bool shouldResolve = shouldResolveElement(element, parent.descendantsToResolve);

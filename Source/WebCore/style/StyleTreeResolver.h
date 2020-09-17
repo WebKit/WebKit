@@ -79,7 +79,7 @@ private:
     struct Parent {
         Element* element;
         const RenderStyle& style;
-        Change change { NoChange };
+        Change change { Change::None };
         DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
         bool didPushScope { false };
 

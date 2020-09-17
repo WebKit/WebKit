@@ -185,7 +185,7 @@ void SVGElement::willRecalcStyle(Style::Change change)
         return;
     // If the style changes because of a regular property change (not induced by SMIL animations themselves)
     // reset the "computed style without SMIL style properties", so the base value change gets reflected.
-    if (change > Style::NoChange || needsStyleRecalc())
+    if (change > Style::Change::None || needsStyleRecalc())
         m_svgRareData->setNeedsOverrideComputedStyleUpdate();
 }
 

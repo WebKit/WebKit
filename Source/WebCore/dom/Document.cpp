@@ -2006,7 +2006,7 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentStyle.fontCascade().update(&fontSelector());
 
             auto documentChange = Style::determineChange(documentStyle, m_renderView->style());
-            if (documentChange != Style::NoChange)
+            if (documentChange != Style::Change::None)
                 renderView()->setStyle(WTFMove(documentStyle));
 
             if (auto* documentElement = this->documentElement())
