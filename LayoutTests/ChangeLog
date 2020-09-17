@@ -1,3 +1,13 @@
+2020-09-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] canPlayType('audio/mpeg; codecs="mp3"') returns ""
+        https://bugs.webkit.org/show_bug.cgi?id=147309
+
+        Reviewed by Darin Adler.
+
+        * media/media-can-play-mp3-expected.txt: Added.
+        * media/media-can-play-mp3.html: Added.
+
 2020-09-17  Michael Saboff  <msaboff@apple.com>
 
         Segfault in WebCore::IDBKey::createBinary

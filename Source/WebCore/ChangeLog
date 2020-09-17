@@ -1,3 +1,24 @@
+2020-09-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] canPlayType('audio/mpeg; codecs="mp3"') returns ""
+        https://bugs.webkit.org/show_bug.cgi?id=147309
+
+        Reviewed by Darin Adler.
+        
+        'audio/mpeg; codecs="mp3"' is not an RFC 3003 compliant MIME type but some big
+        web sites use it. AVFoundation says the type is not supported, but MediaPlayerPrivateMediaSourceAVFObjC
+        previously returned "maybe" for all extended types where the container type is
+        supported. This bug was fixed when we moved the MIME type logic from MediaPlayerPrivateMediaSourceAVFObjC
+        to MIMETypeCache, so add a mechanism to override extended types and use it to
+        support 'audio/mpeg; codecs="mp3"'.
+
+        Test: media/media-can-play-mp3.html
+
+        * platform/graphics/MIMETypeCache.cpp:
+        (WebCore::MIMETypeCache::canDecodeType):
+        (WebCore::MIMETypeCache::overrideExtendedType):
+        * platform/graphics/MIMETypeCache.h:
+
 2020-09-17  Michael Saboff  <msaboff@apple.com>
 
         Segfault in WebCore::IDBKey::createBinary

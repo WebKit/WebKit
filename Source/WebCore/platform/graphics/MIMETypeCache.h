@@ -57,6 +57,7 @@ public:
 private:
     virtual void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&);
     virtual bool canDecodeExtendedType(const ContentType&);
+    bool shouldOverrideExtendedType(const ContentType&);
 
     Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypes;
     Optional<HashMap<String, MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>> m_cachedResults;
