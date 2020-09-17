@@ -1,3 +1,25 @@
+2020-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r267144) 4 webaudio/oscillator tests are broken
+        https://bugs.webkit.org/show_bug.cgi?id=216625
+        <rdar://problem/69024624>
+
+        Reviewed by Darin Adler.
+
+        * webaudio/oscillator-custom.html:
+        * webaudio/oscillator-sawtooth.html:
+        * webaudio/oscillator-sine.html:
+        * webaudio/oscillator-square.html:
+        * webaudio/oscillator-triangle.html:
+        Update tests to use oscillator-testing-legacy.js since they are not compatible
+        with the newer oscillator-testing.js that was resync'd from Blink.
+
+        * webaudio/oscillator-triangle-expected.wav:
+        Rebaseline test that has different output due to the fix in r267153.
+
+        * webaudio/resources/oscillator-testing-legacy.js: Added.
+        Restore old copy of oscillator-testing.js and rename it to oscillator-testing-legacy.js.
+
 2020-09-17  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed gardening. Several fast/events/mouse-* tests are flaky after r264117.
