@@ -1,3 +1,17 @@
+2020-09-17  Hoa Dinh  <dvh@apple.com>
+
+        Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks to clarify what this enum value is for.
+        https://bugs.webkit.org/show_bug.cgi?id=216651
+
+        Reviewed by Alex Christensen.
+
+        Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks and reflects the change where it's used.
+
+        Source/WebCore:
+        * loader/FrameLoaderTypes.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+
 2020-09-17  Chris Dumez  <cdumez@apple.com>
 
         AnalyserNode.getFloatFrequencyData() should fill array with -Infinity when input is silent

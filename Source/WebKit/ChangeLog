@@ -1,3 +1,25 @@
+2020-09-17  Hoa Dinh  <dvh@apple.com>
+
+        Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks to clarify what this enum value is for.
+        https://bugs.webkit.org/show_bug.cgi?id=216651
+
+        Reviewed by Alex Christensen.
+
+        Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks and reflects the change where it's used.
+
+        Source/WebKit:
+        * Shared/SessionState.cpp:
+        (WebKit::isValidEnum):
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/API/glib/WebKitWebViewSessionState.cpp:
+        (toExternalURLsPolicy):
+        (toWebCoreExternalURLsPolicy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeSessionHistoryEntry):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+
 2020-09-17  Sam Weinig  <weinig@apple.com>
 
         We shouldn't need to specify a category for preferences now that they are split into separate files
