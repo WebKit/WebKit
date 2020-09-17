@@ -4217,6 +4217,9 @@
 		7C2413041AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentExtensionStoreInternal.h; sourceTree = "<group>"; };
 		7C2413061AACFCB400A58C15 /* WKUserContentExtensionStoreRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserContentExtensionStoreRef.cpp; sourceTree = "<group>"; };
 		7C2413071AACFCB400A58C15 /* WKUserContentExtensionStoreRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentExtensionStoreRef.h; sourceTree = "<group>"; };
+		7C2E0BE12512C5CB005F3C87 /* WebPreferencesInternal.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = WebPreferencesInternal.yaml; sourceTree = "<group>"; };
+		7C2E0BE32512C846005F3C87 /* WebPreferencesExperimental.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = WebPreferencesExperimental.yaml; sourceTree = "<group>"; };
+		7C2E0BE52512CAFE005F3C87 /* WebPreferencesDebug.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = WebPreferencesDebug.yaml; sourceTree = "<group>"; };
 		7C361D6F1927FA360036A59D /* WebScriptMessageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebScriptMessageHandler.cpp; sourceTree = "<group>"; };
 		7C361D701927FA360036A59D /* WebScriptMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptMessageHandler.h; sourceTree = "<group>"; };
 		7C361D751928028B0036A59D /* WebUserContentControllerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebUserContentControllerProxy.messages.in; sourceTree = "<group>"; };
@@ -6159,6 +6162,9 @@
 				BC5744ED12638FB3006F0F12 /* WebPopupItem.cpp */,
 				BC5744EE12638FB3006F0F12 /* WebPopupItem.h */,
 				7CDE739F1F9DA37A00390312 /* WebPreferences.yaml */,
+				7C2E0BE52512CAFE005F3C87 /* WebPreferencesDebug.yaml */,
+				7C2E0BE32512C846005F3C87 /* WebPreferencesExperimental.yaml */,
+				7C2E0BE12512C5CB005F3C87 /* WebPreferencesInternal.yaml */,
 				3110ED6220127CB300350B20 /* WebPreferencesDefaultValues.cpp */,
 				7CDE73A01F9DA37B00390312 /* WebPreferencesDefaultValues.h */,
 				BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */,

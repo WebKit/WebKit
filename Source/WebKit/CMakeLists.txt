@@ -507,11 +507,17 @@ set(WebKit_WEB_PREFERENCES_TEMPLATES
     ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb
 )
 
+set(WebKit_WEB_PREFERENCES_CATEGORIES
+    ${WEBKIT_DIR}/Shared/WebPreferencesDebug.yaml
+    ${WEBKIT_DIR}/Shared/WebPreferencesExperimental.yaml
+    ${WEBKIT_DIR}/Shared/WebPreferencesInternal.yaml
+)
+
 add_custom_command(
     OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/WebPageUpdatePreferences.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesExperimentalFeatures.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesInternalDebugFeatures.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.h ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesStoreDefaultsMap.cpp
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Shared/WebPreferences.yaml
-    DEPENDS ${WebKit_WEB_PREFERENCES_TEMPLATES}
-    COMMAND ${RUBY_EXECUTABLE} ${WEBKIT_DIR}/Scripts/GeneratePreferences.rb --input ${WEBKIT_DIR}/Shared/WebPreferences.yaml --outputDir "${WebKit_DERIVED_SOURCES_DIR}"
+    DEPENDS ${WebKit_WEB_PREFERENCES_TEMPLATES} ${WebKit_WEB_PREFERENCES_CATEGORIES}
+    COMMAND ${RUBY_EXECUTABLE} ${WEBKIT_DIR}/Scripts/GeneratePreferences.rb --base ${WEBKIT_DIR}/Shared/WebPreferences.yaml --debug ${WEBKIT_DIR}/Shared/WebPreferencesDebug.yaml --experimental ${WEBKIT_DIR}/Shared/WebPreferencesExperimental.yaml --internal ${WEBKIT_DIR}/Shared/WebPreferencesInternal.yaml --outputDir "${WebKit_DERIVED_SOURCES_DIR}"
     VERBATIM)
 
 list(APPEND WebKit_HEADERS

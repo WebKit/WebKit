@@ -82,6 +82,9 @@ $(PROJECT_DIR)/Shared/HTTPSUpgrade/HTTPSUpgradeList.txt
 $(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/Shared/WebPreferences.yaml
+$(PROJECT_DIR)/Shared/WebPreferencesDebug.yaml
+$(PROJECT_DIR)/Shared/WebPreferencesExperimental.yaml
+$(PROJECT_DIR)/Shared/WebPreferencesInternal.yaml
 $(PROJECT_DIR)/UIProcess/Automation/Automation.json
 $(PROJECT_DIR)/UIProcess/Automation/WebAutomationSession.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in

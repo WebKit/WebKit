@@ -343,6 +343,12 @@ WEB_PREFERENCES_INPUT_FILES = \
 #
 WEB_PREFERENCES_COMBINED_INPUT_FILE = WebPreferencesCombined.yaml
 
+WEB_PREFERENCES_CATEGORY_INPUT_FILES = \
+    $(WebKit2)/Shared/WebPreferencesDebug.yaml \
+    $(WebKit2)/Shared/WebPreferencesExperimental.yaml \
+    $(WebKit2)/Shared/WebPreferencesInternal.yaml \
+#
+
 WEB_PREFERENCES_TEMPLATES = \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb \
@@ -360,8 +366,8 @@ all : $(WEB_PREFERENCES_FILES) $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
 $(WEB_PREFERENCES_COMBINED_INPUT_FILE) : $(WEB_PREFERENCES_INPUT_FILES)
 	cat $^ > $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
 
-$(WEB_PREFERENCES_PATTERNS) : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
-	$(RUBY) $< --input $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
+$(WEB_PREFERENCES_PATTERNS) : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES_COMBINED_INPUT_FILE) $(WEB_PREFERENCES_CATEGORY_INPUT_FILES)
+	$(RUBY) $< --base $(WEB_PREFERENCES_COMBINED_INPUT_FILE) --debug $(WebKit2)/Shared/WebPreferencesDebug.yaml --experimental $(WebKit2)/Shared/WebPreferencesExperimental.yaml --internal $(WebKit2)/Shared/WebPreferencesInternal.yaml
 
 # FIXME: We should switch to the internal HTTPSUpgradeList.txt once the feature is ready.
 # VPATH += $(WebKit2)/Shared/HTTPSUpgrade/

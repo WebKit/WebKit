@@ -1,3 +1,21 @@
+2020-09-16  Sam Weinig  <weinig@apple.com>
+
+        WebPreferences.yaml is overwhelming, what if we split it up a bit
+        https://bugs.webkit.org/show_bug.cgi?id=216627
+
+        Reviewed by Tim Horton.
+
+        Split out experimental, internal and debug preferences into their own
+        yaml files to add a bit of order.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDebug.yaml: Copied from Source/WebKit/Shared/WebPreferences.yaml.
+        * Shared/WebPreferencesExperimental.yaml: Copied from Source/WebKit/Shared/WebPreferences.yaml.
+        * Shared/WebPreferencesInternal.yaml: Copied from Source/WebKit/Shared/WebPreferences.yaml.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-09-16  Kate Cheney  <katherine_cheney@apple.com>
 
         Revert _setIgnoresAppBoundDomains SPI to compile for macOS

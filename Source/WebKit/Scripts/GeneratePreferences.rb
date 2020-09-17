@@ -29,7 +29,10 @@ require 'optparse'
 require 'yaml'
 
 options = {
-  :input => nil,
+  :basePreferences => nil,
+  :debugPreferences => nil,
+  :experimentalPreferences => nil,
+  :internalPreferences => nil,
   :outputDirectory => nil
 }
 optparse = OptionParser.new do |opts|
@@ -37,13 +40,16 @@ optparse = OptionParser.new do |opts|
 
     opts.separator ""
 
-    opts.on("--input input", "file to generate settings from") { |input| options[:input] = input }
+    opts.on("--base input", "file to generate preferences from") { |basePreferences| options[:basePreferences] = basePreferences }
+    opts.on("--debug input", "file to generate debug preferences from") { |debugPreferences| options[:debugPreferences] = debugPreferences }
+    opts.on("--experimental input", "file to generate experimental preferences from") { |experimentalPreferences| options[:experimentalPreferences] = experimentalPreferences }
+    opts.on("--internal input", "file to generate internal preferences from") { |internalPreferences| options[:internalPreferences] = internalPreferences }
     opts.on("--outputDir output", "directory to generate file in") { |output| options[:outputDirectory] = output }
 end
 
 optparse.parse!
 
-if !options[:input]
+if !options[:basePreferences] || !options[:debugPreferences] || !options[:experimentalPreferences] || !options[:internalPreferences]
   puts optparse
   exit -1
 end
@@ -54,12 +60,34 @@ end
 
 FileUtils.mkdir_p(options[:outputDirectory])
 
-parsedPreferences = begin
-  YAML.load_file(options[:input])
+parsedBasePreferences = begin
+  YAML.load_file(options[:basePreferences])
 rescue ArgumentError => e
   puts "Could not parse input file: #{e.message}"
   exit(-1)
 end
+
+parsedDebugPreferences = begin
+  YAML.load_file(options[:debugPreferences])
+rescue ArgumentError => e
+  puts "Could not parse input file: #{e.message}"
+  exit(-1)
+end
+
+parsedExperimentalPreferences = begin
+  YAML.load_file(options[:experimentalPreferences])
+rescue ArgumentError => e
+  puts "Could not parse input file: #{e.message}"
+  exit(-1)
+end
+
+parsedInternalPreferences = begin
+  YAML.load_file(options[:internalPreferences])
+rescue ArgumentError => e
+  puts "Could not parse input file: #{e.message}"
+  exit(-1)
+end
+
 
 class Preference
   attr_accessor :name
@@ -131,11 +159,20 @@ end
 class Preferences
   attr_accessor :preferences
 
-  def initialize(hash, outputDirectory)
+  def initialize(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, outputDirectory)
     @outputDirectory = outputDirectory
 
     @preferences = []
-    hash.each do |name, options|
+    parsedBasePreferences.each do |name, options|
+      @preferences << Preference.new(name, options)
+    end
+    parsedDebugPreferences.each do |name, options|
+      @preferences << Preference.new(name, options)
+    end
+    parsedExperimentalPreferences.each do |name, options|
+      @preferences << Preference.new(name, options)
+    end
+    parsedInternalPreferences.each do |name, options|
       @preferences << Preference.new(name, options)
     end
     @preferences.sort! { |x, y| x.name <=> y.name }
@@ -162,7 +199,7 @@ class Preferences
   end
 end
 
-preferences = Preferences.new(parsedPreferences, options[:outputDirectory])
+preferences = Preferences.new(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, options[:outputDirectory])
 preferences.renderTemplate("WebPreferencesDefinitions.h")
 preferences.renderTemplate("WebPageUpdatePreferences.cpp")
 preferences.renderTemplate("WebPreferencesKeys.h")
