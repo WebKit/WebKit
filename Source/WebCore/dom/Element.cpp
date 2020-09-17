@@ -3852,24 +3852,10 @@ OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyl
     return impact;
 }
 
-const AnimationCollection* Element::webAnimations() const
+const AnimationCollection* Element::animations() const
 {
     if (auto* animationData = animationRareData())
-        return &animationData->webAnimations();
-    return nullptr;
-}
-
-const AnimationCollection* Element::cssAnimations() const
-{
-    if (auto* animationData = animationRareData())
-        return &animationData->cssAnimations();
-    return nullptr;
-}
-
-const AnimationCollection* Element::transitions() const
-{
-    if (auto* animationData = animationRareData())
-        return &animationData->transitions();
+        return &animationData->animations();
     return nullptr;
 }
 
@@ -3894,19 +3880,9 @@ bool Element::hasRunningTransitions() const
     return false;
 }
 
-AnimationCollection& Element::ensureWebAnimations()
+AnimationCollection& Element::ensureAnimations()
 {
-    return ensureAnimationRareData().webAnimations();
-}
-
-AnimationCollection& Element::ensureCSSAnimations()
-{
-    return ensureAnimationRareData().cssAnimations();
-}
-
-AnimationCollection& Element::ensureTransitions()
-{
-    return ensureAnimationRareData().transitions();
+    return ensureAnimationRareData().animations();
 }
 
 CSSAnimationCollection& Element::animationsCreatedByMarkup()
@@ -4566,10 +4542,10 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(Optional<GetAnimationsOption
     document().updateStyleIfNeeded();
 
     Vector<RefPtr<WebAnimation>> animations;
-    if (auto timeline = document().existingTimeline()) {
-        for (auto& animation : timeline->animationsForElement(*this, AnimationTimeline::Ordering::Sorted)) {
-            if (animation->isRelevant())
-                animations.append(animation);
+    if (keyframeEffectStack()) {
+        for (auto& effect : keyframeEffectStack()->sortedEffects()) {
+            if (effect->animation()->isRelevant())
+                animations.append(effect->animation());
         }
     }
     return animations;

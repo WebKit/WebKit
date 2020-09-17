@@ -97,12 +97,7 @@ Optional<double> AnimationTimeline::bindingsCurrentTime()
 
 void AnimationTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)
 {
-    if (is<CSSTransition>(animation) && downcast<CSSTransition>(animation).owningElement() == &element)
-        element.ensureTransitions().add(&animation);
-    else if (is<CSSAnimation>(animation) && downcast<CSSAnimation>(animation).owningElement() == &element)
-        element.ensureCSSAnimations().add(&animation);
-    else
-        element.ensureWebAnimations().add(&animation);
+    element.ensureAnimations().add(&animation);
 }
 
 static inline bool removeCSSTransitionFromMap(CSSTransition& transition, PropertyToTransitionMap& cssTransitionsByProperty)
@@ -117,9 +112,7 @@ static inline bool removeCSSTransitionFromMap(CSSTransition& transition, Propert
 
 void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, Element& element)
 {
-    element.ensureTransitions().remove(&animation);
-    element.ensureCSSAnimations().remove(&animation);
-    element.ensureWebAnimations().remove(&animation);
+    element.ensureAnimations().remove(&animation);
 
     // Now, if we're dealing with a CSS Transition, we remove it from the m_elementToRunningCSSTransitionByCSSPropertyID map.
     // We don't need to do this for CSS Animations because their timing can be set via CSS to end, which would cause this
@@ -138,27 +131,6 @@ void AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement(WebA
         if (!removeCSSTransitionFromMap(transition, element.ensureRunningTransitionsByProperty()))
             removeCSSTransitionFromMap(transition, element.ensureCompletedTransitionsByProperty());
     }
-}
-
-Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element, Ordering ordering) const
-{
-    Vector<RefPtr<WebAnimation>> animations;
-
-    if (ordering == Ordering::Sorted) {
-        if (element.hasKeyframeEffects()) {
-            for (auto& effect : element.ensureKeyframeEffectStack().sortedEffects())
-                animations.append(effect->animation());
-        }
-    } else {
-        if (auto* cssTransitions = element.transitions())
-            animations.appendRange(cssTransitions->begin(), cssTransitions->end());
-        if (auto* cssAnimations = element.cssAnimations())
-            animations.appendRange(cssAnimations->begin(), cssAnimations->end());
-        if (auto* webAnimations = element.webAnimations())
-            animations.appendRange(webAnimations->begin(), webAnimations->end());
-    }
-
-    return animations;
 }
 
 void AnimationTimeline::removeCSSAnimationCreatedByMarkup(Element& element, CSSAnimation& cssAnimation)
@@ -191,22 +163,21 @@ void AnimationTimeline::elementWasRemoved(Element& element)
 
 void AnimationTimeline::willChangeRendererForElement(Element& element)
 {
-    for (auto& animation : animationsForElement(element))
-        animation->willChangeRenderer();
+    if (auto* animations = element.animations()) {
+        for (const auto& animation : *animations)
+            animation->willChangeRenderer();
+    }
 }
 
 void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element, WebAnimation::Silently silently)
 {
-    if (auto* transitions = element.transitions()) {
-        for (auto& cssTransition : *transitions)
-            cssTransition->cancel(silently);
-    }
-
-    if (auto* cssAnimations = element.cssAnimations()) {
-        for (auto& cssAnimation : *cssAnimations) {
-            if (is<CSSAnimation>(cssAnimation))
-                removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
-            cssAnimation->cancel(silently);
+    if (auto* animations = element.animations()) {
+        for (auto& animation : *animations) {
+            if (is<DeclarativeAnimation>(animation)) {
+                if (is<CSSAnimation>(animation))
+                    removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*animation));
+                animation->cancel(silently);
+            }
         }
     }
 }

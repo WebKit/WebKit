@@ -495,15 +495,11 @@ public:
     bool hasKeyframeEffects() const;
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle&);
 
-    const AnimationCollection* webAnimations() const;
-    const AnimationCollection* cssAnimations() const;
-    const AnimationCollection* transitions() const;
+    const AnimationCollection* animations() const;
     bool hasCompletedTransitionsForProperty(CSSPropertyID) const;
     bool hasRunningTransitionsForProperty(CSSPropertyID) const;
     bool hasRunningTransitions() const;
-    AnimationCollection& ensureWebAnimations();
-    AnimationCollection& ensureCSSAnimations();
-    AnimationCollection& ensureTransitions();
+    AnimationCollection& ensureAnimations();
     PropertyToTransitionMap& ensureCompletedTransitionsByProperty();
     PropertyToTransitionMap& ensureRunningTransitionsByProperty();
     CSSAnimationCollection& animationsCreatedByMarkup();

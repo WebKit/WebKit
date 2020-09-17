@@ -1,3 +1,49 @@
+2020-09-17  Antoine Quint  <graouts@webkit.org>
+
+        Remove AnimationTimeline::animationsForElement() and the CSS Transitions and CSS Animations accessors on ElementAnimationRareData
+        https://bugs.webkit.org/show_bug.cgi?id=216654
+
+        Reviewed by Simon Fraser.
+
+        Before we implemented the correct way to sort animations using KeyframeEffectStack, we relied on distinct animation collections
+        for CSS Transtions and CSS Animations and remaining Web Animations on ElementAnimationRareData. We don't need those anymore and
+        we can use a single collection which we can now name animations() for all animations.
+
+        Additionally, the AnimationTimeline::animationsForElement() method where these collections were used when requesting unsorted
+        animations was unnecessary and an incorrect design. Animations do not belong to a given timeline, so we now use the accessors
+        on ElementAnimationRareData directly to get the sorted list of effects or the single animations collection.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationWasAddedToElement):
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement):
+        (WebCore::AnimationTimeline::willChangeRendererForElement):
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForElement):
+        (WebCore::AnimationTimeline::animationsForElement const): Deleted.
+        * animation/AnimationTimeline.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::animationCanBeRemoved):
+        (WebCore::DocumentTimeline::computeExtentOfAnimation const):
+        (WebCore::DocumentTimeline::isRunningAnimationOnRenderer const):
+        (WebCore::DocumentTimeline::isRunningAcceleratedAnimationOnRenderer const):
+        (WebCore::DocumentTimeline::animatedStyleForRenderer):
+        (WebCore::DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement):
+        * animation/ElementAnimationRareData.h:
+        (WebCore::ElementAnimationRareData::animations):
+        (WebCore::ElementAnimationRareData::webAnimations): Deleted.
+        (WebCore::ElementAnimationRareData::cssAnimations): Deleted.
+        (WebCore::ElementAnimationRareData::transitions): Deleted.
+        * dom/Element.cpp:
+        (WebCore::Element::animations const):
+        (WebCore::Element::ensureAnimations):
+        (WebCore::Element::getAnimations):
+        (WebCore::Element::webAnimations const): Deleted.
+        (WebCore::Element::cssAnimations const): Deleted.
+        (WebCore::Element::transitions const): Deleted.
+        (WebCore::Element::ensureWebAnimations): Deleted.
+        (WebCore::Element::ensureCSSAnimations): Deleted.
+        (WebCore::Element::ensureTransitions): Deleted.
+        * dom/Element.h:
+
 2020-09-17  Hoa Dinh  <dvh@apple.com>
 
         Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks to clarify what this enum value is for.

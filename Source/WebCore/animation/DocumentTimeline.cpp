@@ -232,7 +232,15 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         return false;
 
     HashSet<CSSPropertyID> propertiesToMatch = keyframeEffect->animatedProperties();
-    auto animations = animationsForElement(*target, AnimationTimeline::Ordering::Sorted);
+
+    Vector<RefPtr<WebAnimation>> animations;
+    if (auto* keyframeEffectStack = target->keyframeEffectStack()) {
+        for (auto& effect : keyframeEffectStack->sortedEffects()) {
+            if (effect->animation()->isRelevant())
+                animations.append(effect->animation());
+        }
+    }
+
     for (auto& animationWithHigherCompositeOrder : WTF::makeReversedRange(animations)) {
         if (&animation == animationWithHigherCompositeOrder)
             break;
@@ -326,8 +334,12 @@ bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutR
     if (!renderer.element())
         return true;
 
+    auto* animations = renderer.element()->animations();
+    if (!animations)
+        return false;
+
     KeyframeEffect* matchingEffect = nullptr;
-    for (const auto& animation : animationsForElement(*renderer.element())) {
+    for (const auto& animation : *animations) {
         auto* effect = animation->effect();
         if (is<KeyframeEffect>(effect)) {
             auto* keyframeEffect = downcast<KeyframeEffect>(effect);
@@ -347,7 +359,11 @@ bool DocumentTimeline::isRunningAnimationOnRenderer(RenderElement& renderer, CSS
     if (!renderer.element())
         return false;
 
-    for (const auto& animation : animationsForElement(*renderer.element())) {
+    auto* animations = renderer.element()->animations();
+    if (!animations)
+        return false;
+
+    for (const auto& animation : *animations) {
         auto playState = animation->playState();
         if (playState != WebAnimation::PlayState::Running && playState != WebAnimation::PlayState::Paused)
             continue;
@@ -364,7 +380,11 @@ bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& re
     if (!renderer.element())
         return false;
 
-    for (const auto& animation : animationsForElement(*renderer.element())) {
+    auto* animations = renderer.element()->animations();
+    if (!animations)
+        return false;
+
+    for (const auto& animation : *animations) {
         auto playState = animation->playState();
         if (playState != WebAnimation::PlayState::Running && playState != WebAnimation::PlayState::Paused)
             continue;
@@ -381,13 +401,18 @@ bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& re
 
 std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderElement& renderer)
 {
-    std::unique_ptr<RenderStyle> result;
+    auto* element = renderer.element();
+    if (!element)
+        return RenderStyle::clonePtr(renderer.style());
 
-    if (auto* element = renderer.element()) {
-        for (const auto& animation : animationsForElement(*element)) {
-            if (is<KeyframeEffect>(animation->effect()))
-                downcast<KeyframeEffect>(animation->effect())->getAnimatedStyle(result);
-        }
+    auto* animations = renderer.element()->animations();
+    if (!animations)
+        return RenderStyle::clonePtr(renderer.style());
+
+    std::unique_ptr<RenderStyle> result;
+    for (const auto& animation : *animations) {
+        if (is<KeyframeEffect>(animation->effect()))
+            downcast<KeyframeEffect>(animation->effect())->getAnimatedStyle(result);
     }
 
     if (!result)
@@ -425,14 +450,13 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
 
 void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element& element)
 {
-    auto animations = animationsForElement(element);
-
-    if (animations.isEmpty()) {
+    auto* animations = element.animations();
+    if (!animations || animations->isEmpty()) {
         m_elementsWithRunningAcceleratedAnimations.remove(&element);
         return;
     }
 
-    for (const auto& animation : animations) {
+    for (const auto& animation : *animations) {
         if (!animation->isRunningAccelerated()) {
             m_elementsWithRunningAcceleratedAnimations.remove(&element);
             return;

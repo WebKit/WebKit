@@ -61,9 +61,6 @@ public:
     Optional<double> bindingsCurrentTime();
     virtual Optional<Seconds> currentTime() { return m_currentTime; }
 
-    enum class Ordering : uint8_t { Sorted, Unsorted };
-    Vector<RefPtr<WebAnimation>> animationsForElement(Element&, Ordering = Ordering::Unsorted) const;
-
     void elementWasRemoved(Element&);
 
     void willChangeRendererForElement(Element&);
