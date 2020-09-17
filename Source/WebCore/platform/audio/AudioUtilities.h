@@ -47,6 +47,18 @@ enum class SampleFrameRounding {
 
 // Convert the time to a sample frame at the given sample rate.
 size_t timeToSampleFrame(double time, double sampleRate, SampleFrameRounding = SampleFrameRounding::Nearest);
+
+inline float linearToDecibels(float linear)
+{
+    ASSERT(linear >= 0);
+    return 20 * log10f(linear);
+}
+
+inline float decibelsToLinear(float decibels)
+{
+    return powf(10, 0.05f * decibels);
+}
+
 } // AudioUtilites
 
 } // WebCore

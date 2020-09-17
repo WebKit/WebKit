@@ -33,22 +33,6 @@ namespace WebCore {
 
 namespace AudioUtilities {
 
-float decibelsToLinear(float decibels)
-{
-    return powf(10, 0.05f * decibels);
-}
-
-float linearToDecibels(float linear)
-{
-    // It's not possible to calculate decibels for a zero linear value since it would be -Inf.
-    // -1000.0 dB represents a very tiny linear value in case we ever reach this case.
-    ASSERT(linear);
-    if (!linear)
-        return -1000;
-        
-    return 20 * log10f(linear);
-}
-
 double discreteTimeConstantForSampleRate(double timeConstant, double sampleRate)
 {
     return 1 - exp(-1 / (sampleRate * timeConstant));

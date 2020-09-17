@@ -1,3 +1,3 @@
 
-FAIL Test AnalyserNode when the input is silent Error: assert_true: silent input process -Infinity in decibel bins expected true got false
+PASS Test AnalyserNode when the input is silent 
 

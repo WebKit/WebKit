@@ -1,3 +1,21 @@
+2020-09-17  Chris Dumez  <cdumez@apple.com>
+
+        AnalyserNode.getFloatFrequencyData() should fill array with -Infinity when input is silent
+        https://bugs.webkit.org/show_bug.cgi?id=216629
+
+        Reviewed by Youenn Fablet.
+
+        AnalyserNode.getFloatFrequencyData() should fill array with -Infinity when input is silent.
+        This behavior is consistent with Gecko and Blink. Previously, we'd use AnalyserNode.minDecibels
+        instead.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::getFloatFrequencyData):
+        * platform/audio/AudioUtilities.cpp:
+        (WebCore::AudioUtilities::linearToDecibels):
+
 2020-09-17  Jer Noble  <jer.noble@apple.com>
 
         [iOS] YouTube does not route video to AirPlay the first time
