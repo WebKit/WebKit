@@ -1,3 +1,35 @@
+2020-09-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r266772. rdar://problem/69087333
+
+    [ iOS wk2 ] fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html is a constant failure
+    https://bugs.webkit.org/show_bug.cgi?id=216300
+    <rdar://problem/68542670>
+    
+    Reviewed by Wenson Hsieh.
+    
+    * fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html:
+    shouldBecomeDifferent only works if both of the strings it evals are evaluable in the global scope.
+    
+    * platform/ios-wk2/TestExpectations:
+    Remove the failure expectation.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266772 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-08  Tim Horton  <timothy_horton@apple.com>
+
+            [ iOS wk2 ] fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html is a constant failure
+            https://bugs.webkit.org/show_bug.cgi?id=216300
+            <rdar://problem/68542670>
+
+            Reviewed by Wenson Hsieh.
+
+            * fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html:
+            shouldBecomeDifferent only works if both of the strings it evals are evaluable in the global scope.
+
+            * platform/ios-wk2/TestExpectations:
+            Remove the failure expectation.
+
 2020-09-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, land baselines for rdar://67764580 and rdar://68372418.
