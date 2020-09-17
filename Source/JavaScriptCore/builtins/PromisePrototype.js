@@ -71,43 +71,25 @@ function finally(onFinally)
         thenFinally = onFinally;
         catchFinally = onFinally;
     } else {
-        thenFinally = @getThenFinally(onFinally, constructor);
-        catchFinally = @getCatchFinally(onFinally, constructor);
+        thenFinally = (0, /* prevent function name inference */ (value) => {
+            @assert(@isCallable(onFinally));
+            var result = onFinally();
+
+            @assert(@isConstructor(constructor));
+            var promise = @promiseResolve(constructor, result);
+
+            return promise.then(() => value);
+        });
+        catchFinally = (0, /* prevent function name inference */ (reason) => {
+            @assert(@isCallable(onFinally));
+            var result = onFinally();
+
+            @assert(@isConstructor(constructor));
+            var promise = @promiseResolve(constructor, result);
+
+            return promise.then(() => { throw reason; });
+        });
     }
 
     return this.then(thenFinally, catchFinally);
-}
-
-@globalPrivate
-function getThenFinally(onFinally, constructor)
-{
-    "use strict";
-
-    return (value) =>
-    {
-        @assert(@isCallable(onFinally));
-        var result = onFinally();
-
-        @assert(@isConstructor(constructor));
-        var promise = @promiseResolve(constructor, result);
-
-        return promise.then(() => value);
-    }
-}
-
-@globalPrivate
-function getCatchFinally(onFinally, constructor)
-{
-    "use strict";
-
-    return (reason) =>
-    {
-        @assert(@isCallable(onFinally));
-        var result = onFinally();
-
-        @assert(@isConstructor(constructor));
-        var promise = @promiseResolve(constructor, result);
-
-        return promise.then(() => { throw reason; });
-    }
 }

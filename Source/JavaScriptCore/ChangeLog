@@ -1,3 +1,18 @@
+2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize Promise#finally by avoiding creating multiple environments
+        https://bugs.webkit.org/show_bug.cgi?id=216637
+
+        Reviewed by Ross Kirsling.
+
+        Let's just create functions inside Promise#finally. This avoids creating
+        multiple lexical environments that are captured by each function.
+
+        * builtins/PromisePrototype.js:
+        (finally):
+        (globalPrivate.getThenFinally): Deleted.
+        (globalPrivate.getCatchFinally): Deleted.
+
 2020-09-16  Saam Barati  <sbarati@apple.com>
 
         Don't IC a null custom accessor/value setter
