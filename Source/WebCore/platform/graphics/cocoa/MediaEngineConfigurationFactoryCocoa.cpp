@@ -38,9 +38,6 @@
 
 namespace WebCore {
 
-// FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
-constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
-
 static CMVideoCodecType videoCodecTypeFromRFC4281Type(String type)
 {
     if (type.startsWith("mp4v"))
@@ -49,8 +46,10 @@ static CMVideoCodecType videoCodecTypeFromRFC4281Type(String type)
         return kCMVideoCodecType_H264;
     if (type.startsWith("hvc1") || type.startsWith("hev1"))
         return kCMVideoCodecType_HEVC;
+#if ENABLE(VP9)
     if (type.startsWith("vp09"))
         return kCMVideoCodecType_VP9;
+#endif
     return 0;
 }
 
@@ -97,12 +96,14 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
                 callback({{ }, WTFMove(configuration)});
                 return;
             }
+#if ENABLE(VP9)
         } else if (videoCodecType == kCMVideoCodecType_VP9) {
             auto codecConfiguration = parseVPCodecParameters(codec);
             if (!codecConfiguration || !validateVPParameters(*codecConfiguration, info, videoConfiguration)) {
                 callback({{ }, WTFMove(configuration)});
                 return;
             }
+#endif
         } else {
             if (alphaChannel || hdrSupported) {
                 callback({{ }, WTFMove(configuration)});

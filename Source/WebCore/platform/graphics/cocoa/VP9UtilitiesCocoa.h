@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if ENABLE(VP9) && PLATFORM(COCOA)
 
 #include "VP9Utilities.h"
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "VP9UtilitiesCocoa.h"
 
-#if PLATFORM(COCOA)
+#if ENABLE(VP9) && PLATFORM(COCOA)
 
 #import "FourCC.h"
 #import "LibWebRTCProvider.h"
@@ -35,15 +35,13 @@
 #import "ScreenProperties.h"
 #import "SystemBattery.h"
 #import "VideoConfiguration.h"
+#import <CoreMedia/CMFormatDescription.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import "VideoToolboxSoftLink.h"
 
 namespace WebCore {
-
-// FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
-constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
 
 static bool hardwareVP9DecoderDisabledForTesting { false };
 

@@ -633,6 +633,9 @@ Internals::Internals(Document& document)
 #if PLATFORM(COCOA)
     setOverrideSystemHasBatteryForTesting(WTF::nullopt);
     setOverrideSystemHasACForTesting(WTF::nullopt);
+#endif
+
+#if ENABLE(VP9) && PLATFORM(COCOA)
     setOverrideVP9HardwareDecoderDisabledForTesting(false);
     resetOverrideVP9ScreenSizeAndScaleForTesting();
 #endif
@@ -5945,7 +5948,7 @@ void Internals::setSystemHasACForTesting(bool hasAC)
 
 void Internals::setHardwareVP9DecoderDisabledForTesting(bool disabled)
 {
-#if PLATFORM(COCOA)
+#if ENABLE(VP9) && PLATFORM(COCOA)
     WebCore::setOverrideVP9HardwareDecoderDisabledForTesting(disabled);
 #else
     UNUSED_PARAM(disabled);
@@ -5954,7 +5957,7 @@ void Internals::setHardwareVP9DecoderDisabledForTesting(bool disabled)
 
 void Internals::setVP9ScreenSizeAndScaleForTesting(double width, double height, double scale)
 {
-#if PLATFORM(COCOA)
+#if ENABLE(VP9) && PLATFORM(COCOA)
     WebCore::setOverrideVP9ScreenSizeAndScaleForTesting(width, height, scale);
 #else
     UNUSED_PARAM(width);

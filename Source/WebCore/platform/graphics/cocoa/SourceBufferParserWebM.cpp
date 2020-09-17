@@ -244,6 +244,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
     if (!codecsParameter)
         return MediaPlayerEnums::SupportsType::MayBeSupported;
 
+#if ENABLE(VP9)
     auto splitResults = StringView(codecsParameter).split(',');
     for (auto split : splitResults) {
         if (split.startsWith("vp09")) {
@@ -261,6 +262,9 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
         return MediaPlayerEnums::SupportsType::IsNotSupported;
     }
     return MediaPlayerEnums::SupportsType::IsSupported;
+#else
+    return MediaPlayerEnums::SupportsType::IsNotSupported;
+#endif
 }
 
 SourceBufferParserWebM::SourceBufferParserWebM()
@@ -516,6 +520,8 @@ webm::Status SourceBufferParserWebM::OnBlockGroupEnd(const webm::ElementMetadata
     UNUSED_PARAM(blockGroup);
     return Status(Status::kOkCompleted);
 }
+
+#if ENABLE(VP9)
 
 static uint8_t convertToColorPrimaries(const Primaries& coefficients)
 {
@@ -798,6 +804,7 @@ static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderPar
         return nullptr;
     return adoptCF(formatDescription);
 }
+#endif
 
 webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Reader* reader, uint64_t* bytesRemaining)
 {
@@ -825,12 +832,12 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
     if (!trackData)
         return Status(Status::kInvalidElementId);
     auto& track = trackData->track;
-    auto& headerParser = trackData->headerParser;
 
     uint64_t duration = 0;
     if (track.default_duration.is_present())
         duration = track.default_duration.value() * m_timescale / 1000000000;
 
+#if ENABLE(VP9)
     if (track.codec_id.is_present() && track.codec_id.value() == "V_VP9") {
         if (!trackData->currentBlockBuffer) {
             CMBlockBufferRef rawBlockBuffer = nullptr;
@@ -867,6 +874,7 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
         if (noErr != CMBlockBufferGetDataPointer(trackData->currentBlockBuffer.get(), 0, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData))
             return Skip(reader, bytesRemaining);
 
+        auto& headerParser = trackData->headerParser;
         if (!headerParser.ParseUncompressedHeader(blockBufferData, segmentSizeAtPosition))
             return Skip(reader, bytesRemaining);
 
@@ -909,8 +917,8 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
             auto mediaSample = MediaSampleAVFObjC::create(sampleBuffer.get(), trackID);
             m_didProvideMediaDataCallback(WTFMove(mediaSample), trackID, emptyString());
         });
-
     }
+#endif
 
     return Skip(reader, bytesRemaining);
 }

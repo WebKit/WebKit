@@ -1972,6 +1972,7 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 }
 #endif
 
+#if ENABLE(VP9)
 void WebProcess::enableVP9Decoder()
 {
     if (m_vp9DecoderEnabled)
@@ -1994,6 +1995,7 @@ void WebProcess::enableVP9SWDecoder()
     WebCore::registerWebKitVP9Decoder();
 #endif
 }
+#endif
 
 } // namespace WebKit
 
