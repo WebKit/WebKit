@@ -1,3 +1,25 @@
+2020-09-17  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::XPCServiceEventHandler block should call exit() on the main thread
+        <https://webkit.org/b/216594>
+        <rdar://problem/68053217>
+
+        Reviewed by Chris Dumez.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        - Call exit() on the main thread. I chose dispatch_sync() here
+          so that if other crashes occur on the main thread, we will
+          know if this background thread is waiting to call exit() at
+          the same time. Also, if a different background thread calls
+          exit() in the future with this block running on the main
+          thread, we'll know where the block came from since the XPC
+          handler thread will be waiting for the dispatch_sync() to
+          return (instead of having a mysterious block calling exit() on
+          the main thread and not knowing where it came from).
+        - Add logging (including simulated crash logs) when either of
+          these exit() code paths is taken.
+
 2020-09-17  Hoa Dinh  <dvh@apple.com>
 
         Rename ShouldAllowExternalSchemes to ShouldAllowExternalSchemesButNotAppLinks to clarify what this enum value is for.

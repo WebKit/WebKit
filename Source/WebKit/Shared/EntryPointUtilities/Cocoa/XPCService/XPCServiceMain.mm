@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "HandleXPCEndpointMessages.h"
+#import "Logging.h"
 #import "WKCrashReporter.h"
 #import "XPCServiceEntryPoint.h"
 #import <CoreFoundation/CoreFoundation.h>
@@ -47,8 +48,11 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
         xpc_type_t type = xpc_get_type(event);
         if (type == XPC_TYPE_ERROR) {
             if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
+                RELEASE_LOG_FAULT(IPC, "Exiting: Received XPC event type: %s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
                 // FIXME: Handle this case more gracefully.
-                exit(EXIT_FAILURE);
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    exit(EXIT_FAILURE);
+                });
             }
         } else {
             assert(type == XPC_TYPE_DICTIONARY);
@@ -72,8 +76,10 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t, xpc_object_t);
                 InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
-                    NSLog(@"Unable to find entry point in WebKit.framework with name: %@", (__bridge NSString *)entryPointFunctionName);
-                    exit(EXIT_FAILURE);
+                    RELEASE_LOG_FAULT(IPC, "Exiting: Unable to find entry point in WebKit.framework with name: %s", [(__bridge NSString *)entryPointFunctionName UTF8String]);
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        exit(EXIT_FAILURE);
+                    });
                 }
 
                 auto reply = adoptOSObject(xpc_dictionary_create_reply(event));
