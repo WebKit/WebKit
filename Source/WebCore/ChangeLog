@@ -1,3 +1,17 @@
+2020-09-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Remove flexbox's specific computePreferredLogicalWidths()
+        https://bugs.webkit.org/show_bug.cgi?id=216577
+
+        Reviewed by Darin Adler.
+
+        Remove the flexbox override of computePreferredLogicalWidths() because it's essentially the same as RenderBlock's
+        but worst because it was missing some cases that were properly handled in the superclass.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidths): Deleted.
+        * rendering/RenderFlexibleBox.h: Ditto.
+
 2020-09-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move InlineRect from Display to Layout namespace

@@ -135,38 +135,6 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     minLogicalWidth += scrollbarWidth;
 }
 
-void RenderFlexibleBox::computePreferredLogicalWidths()
-{
-    ASSERT(preferredLogicalWidthsDirty());
-
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
-
-    const RenderStyle& styleToUse = style();
-    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for width.
-    if (styleToUse.logicalWidth().isFixed() && styleToUse.logicalWidth().value() > 0)
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalWidth().value());
-    else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-
-    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for min-width.
-    if (styleToUse.logicalMinWidth().isFixed() && styleToUse.logicalMinWidth().value() > 0) {
-        m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMinWidth().value()));
-        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMinWidth().value()));
-    }
-
-    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for maxWidth.
-    if (styleToUse.logicalMaxWidth().isFixed()) {
-        m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth().value()));
-        m_minPreferredLogicalWidth = std::min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth().value()));
-    }
-
-    LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
-    m_minPreferredLogicalWidth += borderAndPadding;
-    m_maxPreferredLogicalWidth += borderAndPadding;
-
-    setPreferredLogicalWidthsDirty(false);
-}
-
 static int synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
 {
     return (direction == HorizontalLine ? box.size().height() : box.size().width()).toInt();
