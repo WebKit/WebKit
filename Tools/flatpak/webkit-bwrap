@@ -52,6 +52,11 @@ def main(args: list) -> int:
     if coredumps_dir:
         try_bind_mounts[coredumps_dir] = coredumps_dir
 
+    xdg_runtime_dir = os.environ.get("XDG_RUNTIME_DIR")
+    if xdg_runtime_dir:
+        pw_socket = os.path.join(xdg_runtime_dir, "pipewire-0")
+        try_bind_mounts[pw_socket] = pw_socket
+
     bwrap_args = ["bwrap", ]
     for dst, src in bind_mounts.items():
         bwrap_args.extend(("--bind", src, dst))
