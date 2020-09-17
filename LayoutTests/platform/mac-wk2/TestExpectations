@@ -1312,6 +1312,7 @@ webkit.org/b/216292 imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-
 http/tests/resourceLoadStatistics/exemptDomains/ [ Skip ]
 
 webkit.org/b/216394 [ Release ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
+webkit.org/b/216394 [ Release ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 
 # rdar://68740987 (REGRESSION: [ BigSur wk2 ] http/tests/media/video-no-content-length-stall.html is a constant failure)
 [ BigSur+ ] http/tests/media/video-no-content-length-stall.html [ Failure ]
@@ -1324,3 +1325,4 @@ fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass Ima
 
 #<rdar://68957215> [ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html is a constant failure/timeout
 [ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Failure Timeout ]
+
