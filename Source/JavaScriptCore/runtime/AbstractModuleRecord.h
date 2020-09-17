@@ -54,11 +54,13 @@ public:
     struct ExportEntry {
         enum class Type {
             Local,
-            Indirect
+            Indirect,
+            Namespace,
         };
 
         static ExportEntry createLocal(const Identifier& exportName, const Identifier& localName);
         static ExportEntry createIndirect(const Identifier& exportName, const Identifier& importName, const Identifier& moduleName);
+        static ExportEntry createNamespace(const Identifier& exportName, const Identifier& moduleName);
 
         Type type;
         Identifier exportName;
@@ -136,7 +138,7 @@ protected:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;
+    void setModuleEnvironment(JSGlobalObject*, JSModuleEnvironment*);
 
 private:
     struct ResolveQuery;
@@ -176,6 +178,8 @@ private:
     WriteBarrier<JSMap> m_dependenciesMap;
     
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
+
+    WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;
 
     // We assume that all the AbstractModuleRecord are retained by JSModuleLoader's registry.
     // So here, we don't visit each object for GC. The resolution cache map caches the once

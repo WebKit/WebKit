@@ -75,6 +75,10 @@ void JSWebAssemblyModule::finishCreation(VM& vm)
     // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
     SymbolTable* exportSymbolTable = SymbolTable::create(vm);
     const Wasm::ModuleInformation& moduleInformation = m_module->moduleInformation();
+    {
+        auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
+        exportSymbolTable->set(NoLockingNecessary, vm.propertyNames->starNamespacePrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
+    }
     for (auto& exp : moduleInformation.exports) {
         auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
         String field = String::fromUTF8(exp.field);

@@ -135,6 +135,14 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(JSGlobalObject* globalObj
     switch (slot.internalMethodType()) {
     case PropertySlot::InternalMethodType::GetOwnProperty:
     case PropertySlot::InternalMethodType::Get: {
+        if (exportEntry.localName == vm.propertyNames->starNamespacePrivateName) {
+            // https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-get-p-receiver
+            // 10. If binding.[[BindingName]] is "*namespace*", then
+            //     a. Return ? GetModuleNamespace(targetModule).
+            // We call getModuleNamespace() to ensure materialization. And after that, looking up the value from the scope to encourage module namespace object IC.
+            exportEntry.moduleRecord->getModuleNamespace(globalObject);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
         JSModuleEnvironment* environment = exportEntry.moduleRecord->moduleEnvironment();
         ScopeOffset scopeOffset;
         JSValue value = getValue(environment, exportEntry.localName, scopeOffset);

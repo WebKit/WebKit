@@ -519,7 +519,9 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
             m_startFunction.set(vm, this, function);
         }
     }
-    m_moduleEnvironment.set(vm, this, moduleEnvironment);
+
+    scope.release();
+    setModuleEnvironment(globalObject, moduleEnvironment);
 }
 
 template <typename Scope, typename M, typename N, typename ...Args>

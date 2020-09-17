@@ -213,7 +213,7 @@ String JSFunction::name(VM& vm)
         return executable->name();
     }
     const Identifier identifier = jsExecutable()->name();
-    if (identifier == vm.propertyNames->builtinNames().starDefaultPrivateName())
+    if (identifier == vm.propertyNames->starDefaultPrivateName)
         return emptyString();
     return identifier.string();
 }
@@ -794,7 +794,7 @@ void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject)
     // https://tc39.github.io/ecma262/#sec-exports-runtime-semantics-evaluation
     // When the ident is "*default*", we need to set "default" for the ecma name.
     // This "*default*" name is never shown to users.
-    if (ecmaName == vm.propertyNames->builtinNames().starDefaultPrivateName())
+    if (ecmaName == vm.propertyNames->starDefaultPrivateName)
         name = vm.propertyNames->defaultKeyword.string();
     else
         name = ecmaName.string();

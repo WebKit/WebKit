@@ -3531,13 +3531,33 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
     switch (m_token.m_type) {
     case TIMES: {
         // export * FromClause ;
+        // export * as IdentifierName FromClause ;
         next();
+
+        const Identifier* exportedName = nullptr;
+        JSTokenLocation specifierLocation;
+        if (matchContextualKeyword(m_vm.propertyNames->as)) {
+            next();
+            specifierLocation = JSTokenLocation(tokenLocation());
+            failIfFalse(matchIdentifierOrKeyword(), "Expected an exported name for the export declaration");
+            exportedName = m_token.m_data.ident;
+            next();
+        }
 
         failIfFalse(matchContextualKeyword(m_vm.propertyNames->from), "Expected 'from' before exported module name");
         next();
         auto moduleName = parseModuleName(context);
         failIfFalse(moduleName, "Cannot parse the 'from' clause");
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
+
+        if (exportedName) {
+            semanticFailIfFalse(exportName(*exportedName), "Cannot export a duplicate name '", exportedName->impl(), "'");
+            auto specifierList = context.createExportSpecifierList();
+            auto localName = &m_vm.propertyNames->starNamespacePrivateName;
+            auto specifier = context.createExportSpecifier(specifierLocation, *localName, *exportedName);
+            context.appendExportSpecifier(specifierList, specifier);
+            return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName);
+        }
 
         return context.createExportAllDeclaration(exportLocation, moduleName);
     }

@@ -70,6 +70,14 @@ checkModuleSyntax(String.raw`
 export * from "mod";
 `);
 
+checkModuleSyntax(String.raw`
+export * as b from "Cocoa"
+`);
+
+checkModuleSyntax(String.raw`
+export * as delete from "Cocoa"
+`);
+
 // semicolon is not needed.
 checkModuleSyntax(String.raw`
 export default function () { } 40;

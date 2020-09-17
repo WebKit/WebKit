@@ -85,7 +85,14 @@ void ExportNamedDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
             //
             // In this case, no local variable names are imported into the current module.
             // "v" indirectly points the binding in "mod".
-            analyzer.moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createIndirect(specifier->exportedName(), specifier->localName(), m_moduleName->moduleName()));
+            //
+            // export * as v from "mod"
+            //
+            // If it is namespace export, we should use createNamespace.
+            if (specifier->localName() == analyzer.vm().propertyNames->starNamespacePrivateName)
+                analyzer.moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createNamespace(specifier->exportedName(), m_moduleName->moduleName()));
+            else
+                analyzer.moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createIndirect(specifier->exportedName(), specifier->localName(), m_moduleName->moduleName()));
         }
     }
 }

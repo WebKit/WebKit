@@ -199,12 +199,29 @@ export a
 `, `SyntaxError: Unexpected identifier 'a'. Expected either a declaration or a variable statement.:2`);
 
 checkModuleSyntaxError(String.raw`
-export * as b from "Cocoa"
-`, `SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name.:2`);
+export { * as b } from "Cocoa"
+`, `SyntaxError: Unexpected token '*'. Expected a variable name for the export declaration.:2`);
+
+checkModuleSyntaxError(String.raw`
+export * as b
+`, `SyntaxError: Unexpected end of script:3`);
+
+checkModuleSyntaxError(String.raw`
+export * as 42 from "Cocoa"
+`, `SyntaxError: Unexpected number '42'. Expected an exported name for the export declaration.:2`);
+
+checkModuleSyntaxError(String.raw`
+export const b = 42;
+export * as b from "mod"
+`, `SyntaxError: Cannot export a duplicate name 'b'.:4`);
 
 checkModuleSyntaxError(String.raw`
 export * "Cocoa"
 `, `SyntaxError: Unexpected string literal "Cocoa". Expected 'from' before exported module name.:2`);
+
+checkModuleSyntaxError(String.raw`
+export *
+`, `SyntaxError: Unexpected end of script:3`);
 
 checkModuleSyntaxError(String.raw`
 export const a;

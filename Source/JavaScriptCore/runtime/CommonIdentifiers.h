@@ -295,6 +295,7 @@
     macro(generatorFrame) \
     macro(meta) \
     macro(starDefault) \
+    macro(starNamespace) \
     macro(undefined) \
 
 namespace JSC {

@@ -1,5 +1,45 @@
 2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Support export namespace `export * as ns`
+        https://bugs.webkit.org/show_bug.cgi?id=214379
+
+        Reviewed by Ross Kirsling.
+
+        This patch supports `export * as ns from "module"` syntax. If it is used, we expose "module"'s namespace object as "ns".
+        For each module environment, we create *namespace* (starNamespace) private symbol scope variable. And we fill it later
+        with module namespace object. This way allows us to use module namespace object IC and super fast imported module binding
+        lookup though environment variable lookup mechanism.
+
+        * builtins/BuiltinNames.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * parser/NodesAnalyzeModule.cpp:
+        (JSC::ExportNamedDeclarationNode::analyzeModule):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::ExportEntry::createNamespace):
+        (JSC::AbstractModuleRecord::resolveExportImpl):
+        (JSC::AbstractModuleRecord::getModuleNamespace):
+        (JSC::AbstractModuleRecord::setModuleEnvironment):
+        (JSC::AbstractModuleRecord::dump):
+        * runtime/AbstractModuleRecord.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::name):
+        (JSC::JSFunction::reifyName):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlotCommon):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        (JSC::JSModuleRecord::evaluate):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::finishCreation):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
+2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Optimize Promise#finally by avoiding creating multiple environments
         https://bugs.webkit.org/show_bug.cgi?id=216637
 

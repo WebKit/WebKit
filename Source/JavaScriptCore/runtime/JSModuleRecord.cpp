@@ -111,7 +111,11 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
     // When we see this type of ambiguity for the indirect exports here, throw a syntax error.
     for (const auto& pair : exportEntries()) {
         const ExportEntry& exportEntry = pair.value;
-        if (exportEntry.type == JSModuleRecord::ExportEntry::Type::Indirect) {
+        switch (exportEntry.type) {
+        case ExportEntry::Type::Local:
+        case ExportEntry::Type::Namespace:
+            break;
+        case ExportEntry::Type::Indirect: {
             Resolution resolution = resolveExport(globalObject, exportEntry.exportName);
             RETURN_IF_EXCEPTION(scope, void());
             switch (resolution.type) {
@@ -130,24 +134,29 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
             case Resolution::Type::Resolved:
                 break;
             }
+            break;
+        }
         }
     }
 
-    // http://www.ecma-international.org/ecma-262/6.0/#sec-moduledeclarationinstantiation
-    // section 15.2.1.16.4 step 12.
+    // https://tc39.es/ecma262/#sec-source-text-module-record-initialize-environment step 8
     // Instantiate namespace objects and initialize the bindings with them if required.
     // And ensure that all the imports correctly resolved to unique bindings.
     for (const auto& pair : importEntries()) {
         const ImportEntry& importEntry = pair.value;
         AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, importEntry.moduleRequest);
         RETURN_IF_EXCEPTION(scope, void());
-        if (importEntry.type == AbstractModuleRecord::ImportEntryType::Namespace) {
+        switch (importEntry.type) {
+        case AbstractModuleRecord::ImportEntryType::Namespace: {
             JSModuleNamespaceObject* namespaceObject = importedModule->getModuleNamespace(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
             bool putResult = false;
             symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, importEntry.localName, namespaceObject, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
             RETURN_IF_EXCEPTION(scope, void());
-        } else {
+            break;
+        }
+
+        case AbstractModuleRecord::ImportEntryType::Single: {
             Resolution resolution = importedModule->resolveExport(globalObject, importEntry.importName);
             RETURN_IF_EXCEPTION(scope, void());
             switch (resolution.type) {
@@ -163,9 +172,16 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
                 throwSyntaxError(globalObject, scope, makeString("Importing binding name 'default' cannot be resolved by star export entries."));
                 return;
 
-            case Resolution::Type::Resolved:
+            case Resolution::Type::Resolved: {
+                if (vm.propertyNames->starNamespacePrivateName == resolution.localName) {
+                    resolution.moduleRecord->getModuleNamespace(globalObject); // Force module namespace object materialization.
+                    RETURN_IF_EXCEPTION(scope, void());
+                }
                 break;
             }
+            }
+            break;
+        }
         }
     }
 
@@ -215,7 +231,8 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
         RETURN_IF_EXCEPTION(scope, void());
     }
 
-    m_moduleEnvironment.set(vm, this, moduleEnvironment);
+    scope.release();
+    setModuleEnvironment(globalObject, moduleEnvironment);
 }
 
 JSValue JSModuleRecord::evaluate(JSGlobalObject* globalObject)
@@ -225,7 +242,7 @@ JSValue JSModuleRecord::evaluate(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     ModuleProgramExecutable* executable = m_moduleProgramExecutable.get();
     m_moduleProgramExecutable.clear();
-    return vm.interpreter->executeModuleProgram(executable, globalObject, m_moduleEnvironment.get());
+    return vm.interpreter->executeModuleProgram(executable, globalObject, moduleEnvironment());
 }
 
 } // namespace JSC

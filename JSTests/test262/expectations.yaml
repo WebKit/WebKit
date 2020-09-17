@@ -2461,25 +2461,9 @@ test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yie
 test/language/expressions/dynamic-import/namespace/await-ns-define-own-property.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: No change requested, Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: No change requested, Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
-test/language/expressions/dynamic-import/namespace/await-ns-get-nested-namespace-dflt-direct.js:
-  default: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-  strict mode: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/expressions/dynamic-import/namespace/await-ns-get-nested-namespace-dflt-indirect.js:
-  module: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/expressions/dynamic-import/namespace/await-ns-get-nested-namespace-props-nrml.js:
-  default: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-  strict mode: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/expressions/dynamic-import/namespace/promise-then-ns-define-own-property.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: No change requested, Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: No change requested, Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
-test/language/expressions/dynamic-import/namespace/promise-then-ns-get-nested-namespace-dflt-direct.js:
-  default: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-  strict mode: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/expressions/dynamic-import/namespace/promise-then-ns-get-nested-namespace-dflt-indirect.js:
-  module: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/expressions/dynamic-import/namespace/promise-then-ns-get-nested-namespace-props-nrml.js:
-  default: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-  strict mode: "Test262:AsyncTestFailure:SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/expressions/function/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/function/scope-body-lex-distinct.js:
@@ -2997,28 +2981,10 @@ test/language/identifiers/start-unicode-13.0.0.js:
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
-test/language/module-code/eval-rqstd-once.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/eval-rqstd-order.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/eval-self-once.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/export-default-asyncgenerator-declaration-binding.js:
   module: "SyntaxError: Exported binding 'starDefault' needs to refer to a top-level declared variable."
-test/language/module-code/export-star-as-dflt.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/instn-once.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/instn-star-as-props-dflt-skip.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/instn-star-props-nrml.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/namespace/internals/define-own-property.js:
   module: 'Test262Error: Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
-test/language/module-code/namespace/internals/get-nested-namespace-dflt-skip.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/namespace/internals/get-nested-namespace-props-nrml.js:
-  module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:

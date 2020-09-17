@@ -118,6 +118,11 @@ auto AbstractModuleRecord::ExportEntry::createIndirect(const Identifier& exportN
     return ExportEntry { Type::Indirect, exportName, moduleName, importName, Identifier() };
 }
 
+auto AbstractModuleRecord::ExportEntry::createNamespace(const Identifier& exportName, const Identifier& moduleName) -> ExportEntry
+{
+    return ExportEntry { Type::Namespace, exportName, moduleName, Identifier(), Identifier() };
+}
+
 auto AbstractModuleRecord::Resolution::notFound() -> Resolution
 {
     return Resolution { Type::NotFound, nullptr, Identifier() };
@@ -631,6 +636,18 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
                 pendingTasks.append(Task { ResolveQuery(importedModuleRecord, exportEntry.importName), Type::Query });
                 continue;
             }
+
+            case ExportEntry::Type::Namespace: {
+                AbstractModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(globalObject, exportEntry.moduleName);
+                RETURN_IF_EXCEPTION(scope, Resolution::error());
+
+                Resolution resolution { Resolution::Type::Resolved, importedModuleRecord, vm.propertyNames->starNamespacePrivateName };
+                //  2. A module that has resolved a module namespace binding is always cacheable.
+                cacheResolutionForQuery(query, resolution);
+                if (!mergeToCurrentTop(resolution))
+                    return Resolution::ambiguous();
+                continue;
+            }
             }
             break;
         }
@@ -757,8 +774,35 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject
 
     auto* moduleNamespaceObject = JSModuleNamespaceObject::create(globalObject, globalObject->moduleNamespaceObjectStructure(), this, WTFMove(resolutions));
     RETURN_IF_EXCEPTION(scope, nullptr);
+
+    // Materialize *namespace* slot with module namespace object unless the module environment is not yet materialized, in which case we'll do it in setModuleEnvironment
+    if (m_moduleEnvironment) {
+        bool putResult = false;
+        constexpr bool shouldThrowReadOnlyError = false;
+        constexpr bool ignoreReadOnlyErrors = true;
+        symbolTablePutTouchWatchpointSet(m_moduleEnvironment.get(), globalObject, vm.propertyNames->starNamespacePrivateName, moduleNamespaceObject, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
+
     return moduleNamespaceObject;
+}
+
+void AbstractModuleRecord::setModuleEnvironment(JSGlobalObject* globalObject, JSModuleEnvironment* moduleEnvironment)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(!m_moduleEnvironment);
+    // If module namespace object is materialized, we will materialize *namespace* slot too.
+    if (m_moduleNamespaceObject) {
+        bool putResult = false;
+        constexpr bool shouldThrowReadOnlyError = false;
+        constexpr bool ignoreReadOnlyErrors = true;
+        symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, vm.propertyNames->starNamespacePrivateName, m_moduleNamespaceObject.get(), shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+    m_moduleEnvironment.set(vm, this, moduleEnvironment);
 }
 
 void AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
@@ -822,6 +866,10 @@ void AbstractModuleRecord::dump()
 
         case ExportEntry::Type::Indirect:
             dataLog("      [Indirect] ", "export(", printableName(exportEntry.exportName), "), import(", printableName(exportEntry.importName), "), module(", printableName(exportEntry.moduleName), ")\n");
+            break;
+
+        case ExportEntry::Type::Namespace:
+            dataLog("      [Namespace] ", "export(", printableName(exportEntry.exportName), "), module(", printableName(exportEntry.moduleName), ")\n");
             break;
         }
     }
