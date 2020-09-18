@@ -679,6 +679,29 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-
 
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html  [ ImageOnlyFailure ]
 
+# LFC painting is work in progress.
+webkit.org/b/216471 fast/layoutformattingcontext/block-only/absolute-position-left-right-margin.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/block-only/replaced-intrinsic-width-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/empty-table-with-specified-height-quirk-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/empty-table-with-specified-height-standards-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/fit-content-width-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/float-in-inline-context-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/floats-shrinking-line-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/inline-max-width-height-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/simple-table-with-empty-td.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-cell-vertical-alignment-simple.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-border-collapse-with-padding.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-border-collapse3.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-collapsed-row-border.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-collapsed-row-border2.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-collapsed-tbody-border.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-multiple-sections.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-row-border.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-rowspan-with-spacing.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/table-simple-thead-border-ignore.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/vertical-align-middle-nested.html [ ImageOnlyFailure ]
+webkit.org/b/216471 fast/layoutformattingcontext/vertical-align-middle-simple.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
