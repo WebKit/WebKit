@@ -857,6 +857,9 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         if (!m_renderView.frame().isMainFrame())
             scrollingTreeState.parentNodeID = frameHostingNodeForFrame(m_renderView.frame());
 
+        auto* scrollingCoordinator = this->scrollingCoordinator();
+        bool hadSubscrollers = scrollingCoordinator ? scrollingCoordinator->hasSubscrollers() : false;
+
         UpdateBackingTraversalState traversalState;
         Vector<Ref<GraphicsLayer>> childList;
         updateBackingAndHierarchy(*updateRoot, childList, traversalState, scrollingTreeState);
@@ -872,6 +875,9 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
             destroyRootLayer();
         else if (m_rootContentsLayer)
             m_rootContentsLayer->setChildren(WTFMove(childList));
+
+        if (scrollingCoordinator && scrollingCoordinator->hasSubscrollers() != hadSubscrollers)
+            invalidateEventRegionForAllFrames();
     }
 
 #if !LOG_DISABLED
@@ -2370,6 +2376,14 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
             m_legacyScrollingLayerCoordinator->unregisterAllScrollingLayers();
         }
 #endif
+    }
+}
+
+void RenderLayerCompositor::invalidateEventRegionForAllFrames()
+{
+    for (auto* frame = &page().mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* view = frame->contentRenderer())
+            view->compositor().invalidateEventRegionForAllLayers();
     }
 }
 

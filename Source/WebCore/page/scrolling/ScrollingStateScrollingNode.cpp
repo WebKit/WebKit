@@ -36,6 +36,7 @@ namespace WebCore {
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
     : ScrollingStateNode(nodeType, stateTree, nodeID)
 {
+    scrollingStateTree().scrollingNodeAdded();
 }
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
@@ -59,6 +60,8 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 #endif
     , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
 {
+    scrollingStateTree().scrollingNodeAdded();
+
     if (hasChangedProperty(ScrollContainerLayer))
         setScrollContainerLayer(stateNode.scrollContainerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
@@ -72,7 +75,10 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
         setHorizontalScrollbarLayer(stateNode.horizontalScrollbarLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 }
 
-ScrollingStateScrollingNode::~ScrollingStateScrollingNode() = default;
+ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
+{
+    scrollingStateTree().scrollingNodeRemoved();
+}
 
 void ScrollingStateScrollingNode::setPropertyChangedBitsAfterReattach()
 {

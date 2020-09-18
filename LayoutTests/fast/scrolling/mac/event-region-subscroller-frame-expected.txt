@@ -1,0 +1,88 @@
+ 
+Before adding scrollable content to frame:
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+After adding scrollable content to frame:
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 212.00 104.00)
+          (bounds 104.00 104.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (children 2
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 85.00 100.00)
+                  (event region
+                    (rect (0,0) width=85 height=100)
+                  )
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (children 1
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 85.00 216.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 85.00 216.00)
+                              (drawsContent 1)
+                              (children 1
+                                (GraphicsLayer
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+                (GraphicsLayer
+                  (position 85.00 0.00)
+                  (bounds 15.00 100.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
+        )
+      )
+    )
+  )
+)
+
