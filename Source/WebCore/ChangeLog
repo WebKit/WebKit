@@ -1,5 +1,48 @@
 2020-09-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266232. rdar://problem/68178664
+
+    Step animations invalidate style on every rendering update whether or not they need to
+    https://bugs.webkit.org/show_bug.cgi?id=215229
+    <rdar://problem/66636153>
+    
+    Reviewed by Antoine Quint.
+    
+    Source/WebCore:
+    
+    Step timing functions with transforms try and fail to start accelerated which causes them to repeatedly schedule unnecessary rendering updates.
+    
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::updateAcceleratedActions):
+    
+    Step timing functions are never accelerated so don't bother trying to start them in accelerated state.
+    This is similar to treatmeant of unaccelerated properties.
+    
+    LayoutTests:
+    
+    * animations/steps-transform-rendering-updates-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266232 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-27  Antti Koivisto  <antti@apple.com>
+
+            Step animations invalidate style on every rendering update whether or not they need to
+            https://bugs.webkit.org/show_bug.cgi?id=215229
+            <rdar://problem/66636153>
+
+            Reviewed by Antoine Quint.
+
+            Step timing functions with transforms try and fail to start accelerated which causes them to repeatedly schedule unnecessary rendering updates.
+
+            * animation/KeyframeEffect.cpp:
+            (WebCore::KeyframeEffect::updateAcceleratedActions):
+
+            Step timing functions are never accelerated so don't bother trying to start them in accelerated state.
+            This is similar to treatmeant of unaccelerated properties.
+
+2020-09-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267057. rdar://problem/69101182
 
     [Cocoa,HDR] HLS streams with HDR variants will not select HDR.
