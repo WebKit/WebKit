@@ -60,7 +60,11 @@ public:
     
     PlatformDisplayID displayID() const { return m_displayID; }
 
-    bool shouldBeTerminated() const { return !m_scheduled; }
+    bool shouldBeTerminated() const
+    {
+        const int maxInactiveFireCount = 20;
+        return !m_scheduled && m_unscheduledFireCount > maxInactiveFireCount;
+    }
 
     static RefPtr<DisplayRefreshMonitor> createDefaultDisplayRefreshMonitor(PlatformDisplayID);
 
@@ -90,6 +94,7 @@ private:
     HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified { nullptr };
     Lock m_mutex;
     PlatformDisplayID m_displayID { 0 };
+    int m_unscheduledFireCount { 0 }; // Number of times the display link has fired with no clients.
     bool m_active { true };
     bool m_scheduled { false };
     bool m_previousFrameDone { true };
