@@ -1860,3 +1860,5 @@ webkit.org/b/215581 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCRtpRecei
 webkit.org/b/215583 media/track/track-in-band-style.html [ Pass Timeout ]
 
 webkit.org/b/215706 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-parse-error-external-classic.html [ Pass Failure ]
+
+webkit.org/b/215773 http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
