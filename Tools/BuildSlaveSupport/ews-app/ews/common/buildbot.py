@@ -92,13 +92,18 @@ class Buildbot():
         config_data = util.fetch_data_from_url(config_url)
         if not config_data:
             return {}
-        return config_data.json()
+        try:
+            return config_data.json()
+        except Exception as e:
+            _log.error('Error in fetching {}. Error: {}'.format(config_url, e))
+            return {}
 
     @classmethod
     def update_icons_for_queues_mapping(cls):
         config = cls.fetch_config()
         if not config:
             _log.warn('Unable to fetch buildbot config.json')
+            return
         for builder in config.get('builders', []):
             shortname = builder.get('shortname')
             Buildbot.icons_for_queues_mapping[shortname] = builder.get('icon')
