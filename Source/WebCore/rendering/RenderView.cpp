@@ -138,7 +138,7 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
     if (document().isPluginDocument() && frameView().useFixedLayout())
         return frameView().fixedLayoutSize().height();
 #endif
-    return isHorizontalWritingMode() ? frameView().visibleHeight() : frameView().visibleWidth();
+    return isHorizontalWritingMode() ? frameView().layoutSize().height() : frameView().layoutSize().width();
 }
 
 bool RenderView::isChildAllowed(const RenderObject& child, const RenderStyle&) const
