@@ -1,3 +1,19 @@
+2020-09-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove unneeded respondsToSelector staging for keyboard.
+        https://bugs.webkit.org/show_bug.cgi?id=216421
+
+        Staging needed for dual work in UIKit in 2019, no longer needed.
+
+        Reviewed by Tim Horton.
+
+        No behavior change, covered by existing tests.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView insertText:]):
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]):
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+
 2020-09-18  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r266634): fast/selectors/text-field-selection-stroke-color.html and fast/selectors/text-field-selection-window-inactive-stroke-color.html are flaky failures with pixel noise
