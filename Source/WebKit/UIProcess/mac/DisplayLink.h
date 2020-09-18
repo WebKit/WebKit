@@ -48,7 +48,6 @@ public:
     void addObserver(IPC::Connection&, DisplayLinkObserverID);
     void removeObserver(IPC::Connection&, DisplayLinkObserverID);
     void removeObservers(IPC::Connection&);
-    bool hasObservers() const;
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     
@@ -60,11 +59,13 @@ public:
 
 private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
-    
+    void notifyObserversDisplayWasRefreshed();
+
     CVDisplayLinkRef m_displayLink { nullptr };
     Lock m_observersLock;
     HashMap<RefPtr<IPC::Connection>, Vector<DisplayLinkObserverID>> m_observers;
     WebCore::PlatformDisplayID m_displayID;
+    unsigned m_fireCountWithoutObservers { 0 };
     static bool shouldSendIPCOnBackgroundQueue;
 };
 
