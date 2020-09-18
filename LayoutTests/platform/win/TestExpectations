@@ -4553,3 +4553,5 @@ webkit.org/b/215636  fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
 webkit.org/b/215636  fast/text/emoji-gender.html [ ImageOnlyFailure ]
 
 webkit.org/b/215930 webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Skip ]
+webkit.org/b/216313 webanimations/accelerated-animation-easing-update-after-pause.html [ Skip ]
+webkit.org/b/216313 webanimations/accelerated-animation-easing-update-steps-after-pause.html [ Skip ]

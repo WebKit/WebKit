@@ -181,6 +181,7 @@ private:
     void didChangeTargetElementOrPseudoElement(Element*);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
+    bool canBeAccelerated() const;
     void updateAcceleratedActions();
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
