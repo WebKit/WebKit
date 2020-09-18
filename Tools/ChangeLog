@@ -1,3 +1,43 @@
+2020-09-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r267162. rdar://problem/69104937
+
+    REGRESSION(r266844) [ BigSur ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is a constant failure
+    https://bugs.webkit.org/show_bug.cgi?id=216619
+    
+    Reviewed by Chris Dumez.
+    
+    Tools:
+    
+    In r266844, we adopted an API which would cause audio decoding to be supressed when a media element is initially muted. WebKitTestRunner
+    calls a WebKit SPI to artificially mute all media elements within the page (because listening to LayoutTest beeps and boops is annoying)
+    which causes this code path to be hit for all media elements. Rather than muting the page, WKTR should do the same as DRT, and set the
+    output volume to zero.
+    
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::resetStateToConsistentValues):
+    
+    LayoutTests:
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267162 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-16  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION(r266844) [ BigSur ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is a constant failure
+            https://bugs.webkit.org/show_bug.cgi?id=216619
+
+            Reviewed by Chris Dumez.
+
+            In r266844, we adopted an API which would cause audio decoding to be supressed when a media element is initially muted. WebKitTestRunner
+            calls a WebKit SPI to artificially mute all media elements within the page (because listening to LayoutTest beeps and boops is annoying)
+            which causes this code path to be hit for all media elements. Rather than muting the page, WKTR should do the same as DRT, and set the
+            output volume to zero.
+
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::resetStateToConsistentValues):
+
 2020-09-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r266121. rdar://problem/68949237
