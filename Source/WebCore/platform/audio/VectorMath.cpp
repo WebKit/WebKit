@@ -264,17 +264,40 @@ void vsadd(const float* sourceP, int sourceStride, const float* scalar, float* d
 
 #if CPU(X86_SSE2)
     if (sourceStride == 1 && destStride == 1) {
-        __m128* pSource;
-        __m128 scalarVector = _mm_set_ps1(*scalar);
+        // If the sourceP address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
+        while ((reinterpret_cast<size_t>(sourceP) & 0x0F) && n) {
+            *destP = *sourceP + *scalar;
+            sourceP++;
+            destP++;
+            n--;
+        }
 
+        // Now the sourceP address is aligned and start to apply SSE.
         int group = n / 4;
-        while (group--) {
-            pSource = reinterpret_cast<__m128*>(const_cast<float*>(sourceP));
-            __m128 dest = _mm_add_ps(*pSource, scalarVector);
-            _mm_storeu_ps(destP, dest);
+        __m128 mScalar = _mm_set_ps1(*scalar);
+        __m128* pSource;
+        __m128* pDest;
+        __m128 dest;
 
-            sourceP += 4;
-            destP += 4;
+        bool destAligned = !(reinterpret_cast<size_t>(destP) & 0x0F);
+        if (destAligned) { // all aligned
+            while (group--) {
+                pSource = reinterpret_cast<__m128*>(const_cast<float*>(sourceP));
+                pDest = reinterpret_cast<__m128*>(destP);
+                *pDest = _mm_add_ps(*pSource, mScalar);
+
+                sourceP += 4;
+                destP += 4;
+            }
+        } else {
+            while (group--) {
+                pSource = reinterpret_cast<__m128*>(const_cast<float*>(sourceP));
+                dest = _mm_add_ps(*pSource, mScalar);
+                _mm_storeu_ps(destP, dest);
+
+                sourceP += 4;
+                destP += 4;
+            }
         }
 
         // Non-SSE handling for remaining frames which is less than 4.
