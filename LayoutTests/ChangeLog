@@ -1,3 +1,15 @@
+2020-09-18  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r266634): fast/selectors/text-field-selection-stroke-color.html and fast/selectors/text-field-selection-window-inactive-stroke-color.html are flaky failures with pixel noise
+        https://bugs.webkit.org/show_bug.cgi?id=216394
+        <rdar://problem/68679551>
+
+        Reviewed by Tim Horton.
+
+        Update test expectations as tests should be passing.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-18  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date/time inputs should focus the next editable component when entering a separator key

@@ -3002,3 +3002,8 @@ void WKPageSetMediaCaptureReportingDelayForTesting(WKPageRef page, double delay)
 {
     toImpl(page)->setMediaCaptureReportingDelay(Seconds(delay));
 }
+
+void WKPageDispatchActivityStateUpdateForTesting(WKPageRef page)
+{
+    toImpl(page)->dispatchActivityStateUpdateForTesting();
+}

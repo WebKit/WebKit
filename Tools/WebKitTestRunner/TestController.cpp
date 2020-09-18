@@ -1161,6 +1161,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     clearAppBoundSession();
     clearAdClickAttribution();
 
+    WKPageDispatchActivityStateUpdateForTesting(m_mainWebView->page());
+
     m_didReceiveServerRedirectForProvisionalNavigation = false;
     m_serverTrustEvaluationCallbackCallsCount = 0;
     m_shouldDismissJavaScriptAlertsAsynchronously = false;

@@ -200,6 +200,8 @@ WK_EXPORT void WKPageClearLoadedSubresourceDomains(WKPageRef page);
 
 WK_EXPORT void WKPageSetMediaCaptureReportingDelayForTesting(WKPageRef page, double delay);
 
+WK_EXPORT void WKPageDispatchActivityStateUpdateForTesting(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif

@@ -10311,6 +10311,13 @@ void WebPageProxy::willPerformPasteCommand()
 
 #endif
 
+void WebPageProxy::dispatchActivityStateUpdateForTesting()
+{
+    RunLoop::current().dispatch([protectedThis = makeRef(*this)] {
+        protectedThis->dispatchActivityStateChange();
+    });
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED
