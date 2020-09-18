@@ -1,3 +1,16 @@
+2020-09-18  Paulo Matos  <pmatos@igalia.com>
+
+        Unified build fixes from ARMv7 build failures
+        https://bugs.webkit.org/show_bug.cgi?id=216698
+
+        Reviewed by Adrian Perez de Castro.
+
+        * llint/LLIntThunks.cpp:
+        * runtime/FileBasedFuzzerAgent.cpp:
+        * runtime/FunctionExecutableDump.cpp:
+        * runtime/NativeExecutable.cpp:
+        * runtime/WeakMapImpl.cpp:
+
 2020-09-17  Mark Lam  <mark.lam@apple.com>
 
         Use OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) in speculationFromCell()'s isSanePointer().

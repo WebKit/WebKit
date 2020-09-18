@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "FuzzerPredictions.h"
+#include "JSCellInlines.h"
 #include <wtf/AnsiColors.h>
 
 namespace JSC {

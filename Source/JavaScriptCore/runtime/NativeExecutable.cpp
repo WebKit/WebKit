@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NativeExecutable.h"
 
+#include "ExecutableBaseInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {
