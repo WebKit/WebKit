@@ -1,5 +1,21 @@
 2020-09-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Move computedLineLogicalRect to InlineFormattingContext::Geometry
+        https://bugs.webkit.org/show_bug.cgi?id=216680
+
+        Reviewed by Simon Fraser.
+
+        This function computes line geometry. It belongs in InlineFormattingContext::Geometry. 
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        (WebCore::Layout::InlineFormattingContext::computedLineLogicalRect const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::computedLineLogicalRect const):
+
+2020-09-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Move inline box constructing and alignment logic to LineBoxBuilder
         https://bugs.webkit.org/show_bug.cgi?id=216678
 

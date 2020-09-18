@@ -407,6 +407,53 @@ LineBox InlineFormattingContext::Geometry::lineBoxForLineContent(const LineBuild
     return LineBoxBuilder(formattingContext()).build(lineContent);
 }
 
+InlineFormattingContext::Geometry::LineRectAndLineBoxOffset InlineFormattingContext::Geometry::computedLineLogicalRect(const LineBox& lineBox, const RenderStyle& rootStyle, const LineBuilder::LineContent& lineContent) const
+{
+    // Compute the line height and the line box vertical offset.
+    // The line height is either the line-height value (negative value means line height is not set) or the font metrics's line spacing/line box height.
+    // The line box is then positioned using the half leading centering.
+    //   ___________________________________________  line
+    // |                    ^                       |
+    // |                    | line spacing          |
+    // |                    v                       |
+    // | -------------------------------------------|---------  LineBox
+    // ||    ^                                      |         |
+    // ||    | line box height                      |         |
+    // ||----v--------------------------------------|-------- | alignment baseline
+    // | -------------------------------------------|---------
+    // |                    ^                       |   ^
+    // |                    | line spacing          |   |
+    // |____________________v_______________________|  scrollable overflow
+    //
+    if (lineContent.runs.isEmpty() || lineBox.isLineVisuallyEmpty())
+        return { { }, { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, { } } };
+
+    auto lineBoxLogicalHeight = lineBox.logicalHeight();
+    auto lineLogicalHeight = InlineLayoutUnit { };
+    if (rootStyle.lineHeight().isNegative()) {
+        // Negative line height value means the line height is driven by the content.
+        auto usedLineSpacing = [&] {
+            auto logicalTopWithLineSpacing = InlineLayoutUnit { };
+            auto logicalBottomWithLineSpacing = lineBoxLogicalHeight;
+            for (auto& inlineBox : lineBox.inlineBoxList()) {
+                if (auto lineSpacing = inlineBox->lineSpacing()) {
+                    // FIXME: check if line spacing is distributed evenly.
+                    logicalTopWithLineSpacing = std::min(logicalTopWithLineSpacing, inlineBox->logicalTop() - *lineSpacing / 2);
+                    logicalBottomWithLineSpacing = std::max(logicalBottomWithLineSpacing, inlineBox->logicalBottom() + *lineSpacing / 2);
+                }
+            }
+            return -logicalTopWithLineSpacing + (logicalBottomWithLineSpacing - lineBoxLogicalHeight);
+        };
+        lineLogicalHeight = lineBox.logicalHeight() + usedLineSpacing();
+    } else
+        lineLogicalHeight = rootStyle.computedLineHeight();
+
+    auto logicalRect = InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineLogicalHeight};
+    // Inline tree height is all integer based.
+    auto lineBoxOffset = floorf((lineLogicalHeight - lineBoxLogicalHeight) / 2);
+    return { lineBoxOffset, logicalRect };
+}
+
 ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverrideHorizontalValues& overrideHorizontalValues)
 {
     ASSERT(formattingContextRoot.isInFlow());

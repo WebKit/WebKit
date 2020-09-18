@@ -65,6 +65,12 @@ private:
     class Geometry : public FormattingContext::Geometry {
     public:
         LineBox lineBoxForLineContent(const LineBuilder::LineContent&);
+        struct LineRectAndLineBoxOffset {
+            InlineLayoutUnit lineBoxVerticalOffset;
+            InlineRect logicalRect;
+        };
+        LineRectAndLineBoxOffset computedLineLogicalRect(const LineBox&, const RenderStyle& rootStyle, const LineBuilder::LineContent&) const;
+
         ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
         ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
@@ -88,11 +94,6 @@ private:
 
     void collectInlineContentIfNeeded();
     InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const HorizontalConstraints&);
-    struct LineRectAndLineBoxOffset {
-        InlineLayoutUnit lineBoxVerticalOffset;
-        InlineRect logicalRect;
-    };
-    LineRectAndLineBoxOffset computedLineLogicalRect(const LineBox&, const LineBuilder::LineContent&) const;
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
