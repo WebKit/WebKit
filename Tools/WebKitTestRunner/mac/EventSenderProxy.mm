@@ -746,6 +746,12 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
         keyCode = 0x0E;
     else if ([character isEqualToString:@"\x1b"])
         keyCode = 0x1B;
+    else if ([character isEqualToString:@":"])
+        keyCode = 0x29;
+    else if ([character isEqualToString:@";"])
+        keyCode = 0x29;
+    else if ([character isEqualToString:@","])
+        keyCode = 0x2B;
 
     KeyMappingEntry table[] = {
         {0x2F, 0x41, '.', nil},

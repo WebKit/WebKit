@@ -85,13 +85,15 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
         return;
 
     auto key = keyboardEvent.keyIdentifier();
+    auto code = keyboardEvent.code();
 
     if (key == "Left" && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if (key == "Right" && m_fieldOwner && m_fieldOwner->focusOnNextField(*this)) {
+    if ((key == "Right" || code == "Comma" || code == "Minus" || code == "Period" || code == "Space" || code == "Slash" || code == "Semicolon")
+        && m_fieldOwner && m_fieldOwner->focusOnNextField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
     }

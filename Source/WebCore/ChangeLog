@@ -1,3 +1,18 @@
+2020-09-18  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Date/time inputs should focus the next editable component when entering a separator key
+        https://bugs.webkit.org/show_bug.cgi?id=216661
+        <rdar://problem/69091856>
+
+        Reviewed by Wenson Hsieh.
+
+        NSDatePicker focuses the next editable field when entering a separator
+        key. We should match this behavior to be consistent with the rest of
+        the system.
+
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::defaultKeyboardEventHandler):
+
 2020-09-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r267137): PaintFrequencyTracker needs to track all the painting

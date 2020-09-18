@@ -93,6 +93,37 @@ addEventListener("load", async () => {
     shouldBe("changeEventsFired", "5");
     shouldBe("inputEventsFired", "5");
 
+    beginTest("Advance field keys", "01:28");              // [01]:28 AM
+    UIHelper.keyDown(" ");                                 // -> 01:[28] AM
+    UIHelper.keyDown("2");                                 // -> 01:[02] AM
+    shouldBeEqualToString("input.value", "01:02");
+    UIHelper.keyDown("leftArrow");                         // -> [01]:02 AM
+    UIHelper.keyDown("/");                                 // -> 01:[02] AM
+    UIHelper.keyDown("3");                                 // -> 01:[03] AM
+    shouldBeEqualToString("input.value", "01:03");
+    UIHelper.keyDown("leftArrow");                         // -> [01]:03 AM
+    UIHelper.keyDown("-");                                 // -> 01:[03] AM
+    UIHelper.keyDown("4");                                 // -> 01:[04] AM
+    shouldBeEqualToString("input.value", "01:04");
+    UIHelper.keyDown("leftArrow");                         // -> [01]:04 AM
+    UIHelper.keyDown(".");                                 // -> 01:[04] AM
+    UIHelper.keyDown("5");                                 // -> 01:[05] AM
+    shouldBeEqualToString("input.value", "01:05");
+    UIHelper.keyDown("leftArrow");                         // -> [01]:05 AM
+    UIHelper.keyDown(":");                                 // -> 01:[05] AM
+    UIHelper.keyDown("6");                                 // -> 01:[06] AM
+    shouldBeEqualToString("input.value", "01:06");
+    UIHelper.keyDown("leftArrow");                         // -> [01]:06 AM
+    UIHelper.keyDown(";");                                 // -> 01:[06] AM
+    UIHelper.keyDown("7");                                 // -> 01:[07] AM
+    shouldBeEqualToString("input.value", "01:07");
+    UIHelper.keyDown("leftArrow");                         // -> [01]:07 AM
+    UIHelper.keyDown(",");                                 // -> 01:[07] AM
+    UIHelper.keyDown("8");                                 // -> 01:[08] AM
+    shouldBeEqualToString("input.value", "01:08");
+    shouldBe("changeEventsFired", "7");
+    shouldBe("inputEventsFired", "7");
+
     beginTest("Up/Down arrow keys", "23:59");              // [11]:59 PM
     UIHelper.keyDown("upArrow");                           // -> [12]:59 PM
     shouldBeEqualToString("input.value", "12:59");
