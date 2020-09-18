@@ -17,7 +17,7 @@ if (window.testRunner)
     testRunner.execCommand("MoveToEndOfLine");
 shouldBe('getSelection().toString()', "''");
 getSelection().empty();
-getSelection().setPosition(span, 5);
+getSelection().setPosition(span, 1);
 getSelection().modify("extend", "backward", "line");
 if (window.testRunner)
     testRunner.execCommand("MoveToBeginningOfLine");

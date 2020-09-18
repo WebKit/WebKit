@@ -33,7 +33,6 @@ public:
     static ptrdiff_t dataMemoryOffset() { return OBJECT_OFFSETOF(CharacterData, m_data); }
 
     WEBCORE_EXPORT void setData(const String&);
-    virtual void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     unsigned length() const { return m_data.length(); }
     WEBCORE_EXPORT ExceptionOr<String> substringData(unsigned offset, unsigned count);
     WEBCORE_EXPORT void appendData(const String&);
@@ -59,6 +58,9 @@ protected:
         m_data = data;
     }
     void dispatchModifiedEvent(const String& oldValue);
+
+    enum class UpdateLiveRanges : bool { No, Yes };
+    virtual void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges = UpdateLiveRanges::Yes);
 
 private:
     String nodeValue() const final;

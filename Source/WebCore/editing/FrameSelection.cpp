@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008, 2009, 2010, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,8 +149,7 @@ static inline bool shouldAlwaysUseDirectionalSelection(Document* document)
 }
 
 FrameSelection::FrameSelection(Document* document)
-    : m_document(document)
-    , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation())
+    : m_document(makeWeakPtr(document))
     , m_granularity(TextGranularity::CharacterGranularity)
 #if ENABLE(TEXT_CARET)
     , m_caretBlinkTimer(*this, &FrameSelection::caretBlinkTimerFired)
@@ -169,7 +168,7 @@ FrameSelection::FrameSelection(Document* document)
     , m_caretBlinks(true)
 #endif
 {
-    if (shouldAlwaysUseDirectionalSelection(m_document))
+    if (shouldAlwaysUseDirectionalSelection(m_document.get()))
         m_selection.setIsDirectional(true);
 
     bool activeAndFocused = isFocusedAndActive();
@@ -248,7 +247,7 @@ void DragCaretController::setCaretPosition(const VisiblePosition& position)
     if (m_position.isNull() || m_position.isOrphan())
         clearCaretRect();
     else
-        updateCaretRect(document, m_position);
+        updateCaretRect(*document, m_position);
 }
 
 static void adjustEndpointsAtBidiBoundary(VisiblePosition& visibleBase, VisiblePosition& visibleExtent)
@@ -292,7 +291,7 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     EndPointsAdjustmentMode endpointsAdjustmentMode)
 {
     VisibleSelection newSelection = passedNewSelection;
-    bool isDirectional = shouldAlwaysUseDirectionalSelection(m_document) || newSelection.isDirectional();
+    bool isDirectional = shouldAlwaysUseDirectionalSelection(m_document.get()) || newSelection.isDirectional();
 
     VisiblePosition base = m_originalBase.isNotNull() ? m_originalBase : newSelection.visibleBase();
     VisiblePosition newBase = base;
@@ -314,7 +313,6 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     newSelection.setIsDirectional(isDirectional); // Adjusting base and extent will make newSelection always directional
     if (m_selection == newSelection || !shouldChangeSelection(newSelection))
         return;
-
     
     AXTextStateChangeIntent intent;
     if (AXObjectCache::accessibilityEnabled() && newSelection.isCaret())
@@ -330,11 +328,12 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     bool shouldClearTypingStyle = options.contains(ClearTypingStyle);
 
     VisibleSelection newSelection = newSelectionPossiblyWithoutDirection;
-    if (shouldAlwaysUseDirectionalSelection(m_document))
+    if (shouldAlwaysUseDirectionalSelection(m_document.get()))
         newSelection.setIsDirectional(true);
 
     if (!m_document || !m_document->frame()) {
         m_selection = newSelection;
+        updateAssociatedLiveRange();
         return false;
     }
 
@@ -368,6 +367,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
         m_document->editor().selectionWillChange();
 
     m_selection = newSelection;
+    updateAssociatedLiveRange();
 
     // Selection offsets should increase when LF is inserted before the caret in InsertLineBreakCommand. See <https://webkit.org/b/56061>.
     if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(newSelection.start()))
@@ -390,7 +390,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
-    m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation();
+    m_xPosForVerticalArrowNavigation = WTF::nullopt;
     selectFrameElementInParentIfFullySelected();
     m_document->editor().respondToChangedSelection(oldSelection, options);
     // https://www.w3.org/TR/selection-api/#selectionchange-event
@@ -404,7 +404,7 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
 {
     LOG_WITH_STREAM(Selection, stream << "FrameSelection::setSelection " << selection);
 
-    RefPtr<Document> protector(m_document);
+    auto protectedDocument = makeRefPtr(m_document.get());
     if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
         return;
 
@@ -419,17 +419,17 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     m_selectionRevealIntent = intent;
     m_pendingSelectionUpdate = true;
 
-    if (m_document->hasPendingStyleRecalc())
+    if (protectedDocument->hasPendingStyleRecalc())
         return;
 
-    FrameView* frameView = m_document->view();
+    auto frameView = protectedDocument->view();
     if (frameView && frameView->layoutContext().isLayoutPending())
         return;
 
     updateAndRevealSelection(intent);
 
     if (options & IsUserTriggered) {
-        if (auto* client = m_document->editor().client())
+        if (auto* client = protectedDocument->editor().client())
             client->didEndUserTriggeredSelectionChanges();
     }
 }
@@ -804,10 +804,10 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
         pos = nextSentencePosition(pos);
         break;
     case TextGranularity::LineGranularity:
-        pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
+        pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
+        pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
         break;
     case TextGranularity::DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -917,11 +917,11 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity,
         // to leave the selection at that line start (no need to call nextLinePosition!)
         pos = currentPosition;
         if (!isRange() || !isStartOfLine(pos))
-            pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(START));
+            pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Start));
         break;
     }
     case TextGranularity::ParagraphGranularity:
-        pos = nextParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(START));
+        pos = nextParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
         break;
     case TextGranularity::DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -1025,10 +1025,10 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         pos = previousSentencePosition(pos);
         break;
     case TextGranularity::LineGranularity:
-        pos = previousLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
+        pos = previousLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = previousParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
+        pos = previousParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
         break;
     case TextGranularity::SentenceBoundary:
         pos = startOfSentence(startForPlatform());
@@ -1133,10 +1133,10 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
         pos = previousSentencePosition(currentPosition);
         break;
     case TextGranularity::LineGranularity:
-        pos = previousLinePosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(START));
+        pos = previousLinePosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = previousParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(START));
+        pos = previousParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
         break;
     case TextGranularity::SentenceBoundary:
         pos = startOfSentence(currentPosition);
@@ -1378,10 +1378,10 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
 
     // Some of the above operations set an xPosForVerticalArrowNavigation.
     // Setting a selection will clear it, so save it to possibly restore later.
-    // Note: the START position type is arbitrary because it is unused, it would be
+    // Note: the Start position type is arbitrary because it is unused, it would be
     // the requested position type if there were no xPosForVerticalArrowNavigation set.
-    LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(START);
-    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document) || alter == AlterationExtend);
+    LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(Start);
+    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == AlterationExtend);
 
     switch (alter) {
     case AlterationMove:
@@ -1459,12 +1459,12 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     switch (alter) {
     case AlterationMove:
         pos = VisiblePosition(direction == DirectionUp ? m_selection.start() : m_selection.end(), m_selection.affinity());
-        xPos = lineDirectionPointForBlockDirectionNavigation(direction == DirectionUp ? START : END);
+        xPos = lineDirectionPointForBlockDirectionNavigation(direction == DirectionUp ? Start : End);
         m_selection.setAffinity(direction == DirectionUp ? Affinity::Upstream : Affinity::Downstream);
         break;
     case AlterationExtend:
         pos = VisiblePosition(m_selection.extent(), m_selection.affinity());
-        xPos = lineDirectionPointForBlockDirectionNavigation(EXTENT);
+        xPos = lineDirectionPointForBlockDirectionNavigation(Extent);
         m_selection.setAffinity(Affinity::Downstream);
         break;
     }
@@ -1514,47 +1514,43 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     if (userTriggered == UserTriggered)
         m_granularity = TextGranularity::CharacterGranularity;
 
-    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document) || alter == AlterationExtend);
+    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == AlterationExtend);
 
     return true;
 }
 
-LayoutUnit FrameSelection::lineDirectionPointForBlockDirectionNavigation(EPositionType type)
+LayoutUnit FrameSelection::lineDirectionPointForBlockDirectionNavigation(PositionType type)
 {
-    LayoutUnit x;
-
     if (isNone())
-        return x;
+        return 0;
 
-    Position pos;
+    // FIXME: Can we use visibleStart/End/Extent?
+    Position position;
     switch (type) {
-    case START:
-        pos = m_selection.start();
+    case Start:
+        position = m_selection.start();
         break;
-    case END:
-        pos = m_selection.end();
+    case End:
+        position = m_selection.end();
         break;
-    case BASE:
-        pos = m_selection.base();
-        break;
-    case EXTENT:
-        pos = m_selection.extent();
+    case Extent:
+        position = m_selection.extent();
         break;
     }
 
-    Frame* frame = pos.anchorNode()->document().frame();
-    if (!frame)
-        return x;
-        
-    if (m_xPosForVerticalArrowNavigation == NoXPosForVerticalArrowNavigation()) {
-        VisiblePosition visiblePosition(pos, m_selection.affinity());
-        // VisiblePosition creation can fail here if a node containing the selection becomes visibility:hidden
-        // after the selection is created and before this function is called.
-        x = visiblePosition.isNotNull() ? visiblePosition.lineDirectionPointForBlockDirectionNavigation() : 0;
-        m_xPosForVerticalArrowNavigation = x;
-    } else
-        x = m_xPosForVerticalArrowNavigation;
-        
+    // FIXME: Why is this check needed? What's the harm in doing a little more work without a frame?
+    if (!position.anchorNode()->document().frame())
+        return 0;
+
+    // FIXME: Can we do this before getting the position from the selection?
+    if (m_xPosForVerticalArrowNavigation)
+        return *m_xPosForVerticalArrowNavigation;
+
+    // VisiblePosition creation can fail here if a node containing the selection becomes
+    // visibility:hidden after the selection is created and before this function is called.
+    VisiblePosition visiblePosition(position, m_selection.affinity());
+    auto x = visiblePosition.isNotNull() ? visiblePosition.lineDirectionPointForBlockDirectionNavigation() : 0;
+    m_xPosForVerticalArrowNavigation = { x };
     return x;
 }
 
@@ -1626,9 +1622,9 @@ void CaretBase::clearCaretRect()
     m_caretLocalRect = LayoutRect();
 }
 
-bool CaretBase::updateCaretRect(Document* document, const VisiblePosition& caretPosition)
+bool CaretBase::updateCaretRect(Document& document, const VisiblePosition& caretPosition)
 {
-    document->updateLayoutIgnorePendingStylesheets();
+    document.updateLayoutIgnorePendingStylesheets();
     m_caretRectNeedsUpdate = false;
     RenderBlock* renderer;
     m_caretLocalRect = localCaretRectInRendererForCaretPainting(caretPosition, renderer);
@@ -1687,7 +1683,7 @@ bool FrameSelection::recomputeCaretRect()
             clearCaretRect();
         else {
             VisiblePosition visibleStart = m_selection.visibleStart();
-            if (updateCaretRect(m_document, visibleStart)) {
+            if (updateCaretRect(*m_document, visibleStart)) {
                 caretNode = visibleStart.deepEquivalent().deprecatedNode();
                 m_absCaretBoundsDirty = true;
             }
@@ -2126,7 +2122,7 @@ void FrameSelection::updateAppearance()
 
     // If the caret moved, stop the blink timer so we can restart with a
     // black caret in the new location.
-    if (caretRectChangedOrCleared || !shouldBlink || shouldStopBlinkingDueToTypingCommand(m_document))
+    if (caretRectChangedOrCleared || !shouldBlink || shouldStopBlinkingDueToTypingCommand(m_document.get()))
         m_caretBlinkTimer.stop();
 
     // Start blinking with a black caret. Be sure not to restart if we're
@@ -2776,21 +2772,78 @@ void FrameSelection::setCaretColor(const Color& caretColor)
             invalidateCaretRect();
     }
 }
+
 #endif // PLATFORM(IOS_FAMILY)
+
+static bool containsEndpoints(const WeakPtr<Document>& document, const Optional<SimpleRange>& range)
+{
+    return document && range && document->contains(range->start.container) && document->contains(range->end.container);
+}
+
+static bool containsEndpoints(const WeakPtr<Document>& document, const Range& liveRange)
+{
+    // Only need to check the start container because live ranges enforce the invariant that start and end have a common ancestor.
+    return document && document->contains(liveRange.startContainer());
+}
+
+RefPtr<Range> FrameSelection::associatedLiveRange()
+{
+    if (!m_associatedLiveRange) {
+        if (auto range = m_selection.firstRange(); containsEndpoints(m_document, range)) {
+            m_associatedLiveRange = createLiveRange(*range);
+            m_associatedLiveRange->didAssociateWithSelection();
+        }
+    }
+    return m_associatedLiveRange;
+}
+
+void FrameSelection::disassociateLiveRange()
+{
+    if (auto previouslyAssociatedLiveRange = std::exchange(m_associatedLiveRange, nullptr))
+        previouslyAssociatedLiveRange->didDisassociateFromSelection();
+    // FIXME: Need additional code to keep the live range object's wrapper alive to preserve any JavaScript properties on it.
+}
+
+void FrameSelection::associateLiveRange(Range& liveRange)
+{
+    disassociateLiveRange();
+    m_associatedLiveRange = &liveRange;
+    liveRange.didAssociateWithSelection();
+    updateFromAssociatedLiveRange();
+}
+
+void FrameSelection::updateFromAssociatedLiveRange()
+{
+    ASSERT(m_associatedLiveRange);
+    if (!containsEndpoints(m_document, *m_associatedLiveRange))
+        disassociateLiveRange();
+    else
+        setSelection(makeSimpleRange(*m_associatedLiveRange));
+    // FIXME: Normalization done by setSelection will be visible next time updateAssociatedLiveRange is called. Instead the Selection API specification calls for allowing non-normalized selection ranges.
+}
+
+void FrameSelection::updateAssociatedLiveRange()
+{
+    auto range = m_selection.firstRange();
+    if (!containsEndpoints(m_document, range))
+        disassociateLiveRange();
+    else if (m_associatedLiveRange)
+        m_associatedLiveRange->updateFromSelection(*range);
+}
 
 }
 
 #if ENABLE(TREE_DEBUGGING)
 
-void showTree(const WebCore::FrameSelection& sel)
+void showTree(const WebCore::FrameSelection& selection)
 {
-    sel.showTreeForThis();
+    selection.showTreeForThis();
 }
 
-void showTree(const WebCore::FrameSelection* sel)
+void showTree(const WebCore::FrameSelection* selection)
 {
-    if (sel)
-        sel->showTreeForThis();
+    if (selection)
+        selection->showTreeForThis();
 }
 
 #endif

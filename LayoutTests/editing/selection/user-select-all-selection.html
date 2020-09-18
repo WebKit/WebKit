@@ -49,7 +49,7 @@ function selectionShouldBeRelativeToUserSelectAllElement(str) {
 
 function placeCaretBeforeUserSelectAllElement(){
     var userSelectAllElement = document.getElementById("allArea");
-    execSetSelectionCommand(userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length, userSelectAllElement.previousSibling, userSelectAllElement.previousSibling.textContent.length);
+    execSetSelectionCommand(userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length, userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length);
 }
 
 function mouseMoveFromTo(fromX, toX){

@@ -1,3 +1,20 @@
+2020-09-16  Darin Adler  <darin@apple.com>
+
+        Selection API: Introduce LiveRangeSelectionEnabled, off by default
+        https://bugs.webkit.org/show_bug.cgi?id=216656
+
+        Reviewed by Sam Weinig.
+
+        * editing/selection/move-to-line-boundary-clear-selection.html: Fix test that accidentally
+        relied on our non-standard behavior of clamping a too-high offset to a valid value. This
+        was not what we were trying to test. Without this change, the test fails in the new mode.
+        The offset was "5", which seems to be a character count, rather than "1", meaning "after
+        the text node".
+        * editing/selection/toString-1.html: Ditto. The offset here was 3, but the HTML element
+        has only 2 children, the head and the body.
+        * editing/selection/user-select-all-selection.html: Ditto. The code was passing the wrong
+        container by acccident, the parent of the text node rather than the text node.
+
 2020-09-17  Chris Dumez  <cdumez@apple.com>
 
         Vectorize SetTargetAtTime processing in AudioParamTimeline

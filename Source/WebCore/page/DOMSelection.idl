@@ -41,34 +41,34 @@
     readonly attribute boolean isCollapsed;
     readonly attribute unsigned long rangeCount;
 
-    undefined collapse(Node? node, optional unsigned long offset = 0);
-    [MayThrowException] undefined collapseToEnd();
-    [MayThrowException] undefined collapseToStart();
-
-    [CEReactions] undefined deleteFromDocument();
-    boolean containsNode(Node node, optional boolean allowPartial = false);
-    undefined selectAllChildren(Node node);
-
-    [MayThrowException] undefined extend(Node node, optional unsigned long offset = 0);
-
-    [MayThrowException] Range getRangeAt(unsigned long index);
-    undefined removeAllRanges();
-    undefined addRange(Range range);
-
-    [NotEnumerable] DOMString toString();
-
     readonly attribute DOMString type;
 
-    undefined setBaseAndExtent(Node? baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
-    undefined setPosition(Node? node, optional unsigned long offset = 0);
+    [MayThrowException] Range getRangeAt(unsigned long index);
+    undefined addRange(Range range);
+    [EnabledBySetting=LiveRangeSelection, MayThrowException] undefined removeRange(Range range);
+    undefined removeAllRanges();
 
     undefined empty();
 
-    // FIXME: The following operation should be implemented.
-    // undefined removeRange(Range range);
+    [MayThrowException] undefined collapse(Node? node, optional unsigned long offset = 0);
+    [MayThrowException] undefined setPosition(Node? node, optional unsigned long offset = 0);
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    undefined modify(optional DOMString alter = "undefined", optional DOMString direction = "undefined", optional DOMString granularity = "undefined");
+    [MayThrowException] undefined collapseToStart();
+    [MayThrowException] undefined collapseToEnd();
+
+    [MayThrowException] undefined extend(Node node, optional unsigned long offset = 0);
+
+    [MayThrowException] undefined setBaseAndExtent(Node? baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
+    undefined selectAllChildren(Node node);
+
+    [CEReactions] undefined deleteFromDocument();
+    boolean containsNode(Node node, optional boolean allowPartialContainment = false);
+
+    [NotEnumerable] DOMString toString();
+
+    // Non-standard methods and attributes.
+
+    undefined modify(optional DOMString alter, optional DOMString direction, optional DOMString granularity);
 
     readonly attribute Node? baseNode;
     readonly attribute unsigned long baseOffset;

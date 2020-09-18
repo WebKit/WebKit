@@ -99,6 +99,12 @@ public:
     void textNodesMerged(NodeWithIndex& oldNode, unsigned offset);
     void textNodeSplit(Text& oldNode);
 
+    void didAssociateWithSelection() { m_isAssociatedWithSelection = true; }
+    void didDisassociateFromSelection() { m_isAssociatedWithSelection = false; }
+    void updateFromSelection(const SimpleRange&);
+
+    static ExceptionOr<Node*> checkNodeOffsetPair(Node&, unsigned offset);
+
 #if ENABLE(TREE_DEBUGGING)
     String debugDescription() const;
 #endif
@@ -109,12 +115,13 @@ private:
     explicit Range(Document&);
 
     void updateDocument();
-    ExceptionOr<Node*> checkNodeOffsetPair(Node&, unsigned offset) const;
+    void updateAssociatedSelection();
     ExceptionOr<RefPtr<DocumentFragment>> processContents(ActionType);
 
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;
     RangeBoundaryPoint m_end;
+    bool m_isAssociatedWithSelection { false };
 };
 
 WEBCORE_EXPORT SimpleRange makeSimpleRange(const Range&);

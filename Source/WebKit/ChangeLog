@@ -1,3 +1,12 @@
+2020-09-16  Darin Adler  <darin@apple.com>
+
+        Selection API: Introduce LiveRangeSelectionEnabled, off by default
+        https://bugs.webkit.org/show_bug.cgi?id=216656
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesInternal.yaml: Added LiveRangeSelectionEnabled.
+
 2020-09-17  Tim Horton  <timothy_horton@apple.com>
 
         Per-app accent color overrides are broken

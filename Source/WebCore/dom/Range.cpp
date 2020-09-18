@@ -3,7 +3,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,35 +29,25 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DocumentFragment.h"
-#include "Editing.h"
 #include "Event.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "HTMLBodyElement.h"
-#include "HTMLElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
-#include "RenderBlock.h"
-#include "RenderBoxModelObject.h"
-#include "RenderText.h"
-#include "RenderView.h"
 #include "ScopedEventQueue.h"
 #include "TextIterator.h"
-#include "VisiblePosition.h"
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-
-#if PLATFORM(IOS_FAMILY)
-#include "SelectionRect.h"
-#endif
 
 namespace WebCore {
 
@@ -90,6 +80,8 @@ Ref<Range> Range::create(Document& ownerDocument)
 
 Range::~Range()
 {
+    ASSERT(!m_isAssociatedWithSelection);
+
     m_ownerDocument->detachRange(*this);
 
 #ifndef NDEBUG
@@ -97,11 +89,18 @@ Range::~Range()
 #endif
 }
 
+void Range::updateAssociatedSelection()
+{
+    if (m_isAssociatedWithSelection)
+        m_ownerDocument->selection().updateFromAssociatedLiveRange();
+}
+
 void Range::updateDocument()
 {
     auto& document = startContainer().document();
     if (m_ownerDocument.ptr() == &document)
         return;
+    ASSERT(!m_isAssociatedWithSelection);
     m_ownerDocument->detachRange(*this);
     m_ownerDocument = document;
     m_ownerDocument->attachRange(*this);
@@ -116,6 +115,7 @@ ExceptionOr<void> Range::setStart(Ref<Node>&& container, unsigned offset)
     m_start.set(WTFMove(container), offset, childNode.releaseReturnValue());
     if (!is_lteq(documentOrder(makeBoundaryPoint(m_start), makeBoundaryPoint(m_end))))
         m_end = m_start;
+    updateAssociatedSelection();
     updateDocument();
     return { };
 }
@@ -129,6 +129,7 @@ ExceptionOr<void> Range::setEnd(Ref<Node>&& container, unsigned offset)
     m_end.set(WTFMove(container), offset, childNode.releaseReturnValue());
     if (!is_lteq(documentOrder(makeBoundaryPoint(m_start), makeBoundaryPoint(m_end))))
         m_start = m_end;
+    updateAssociatedSelection();
     updateDocument();
     return { };
 }
@@ -139,6 +140,7 @@ void Range::collapse(bool toStart)
         m_end = m_start;
     else
         m_start = m_end;
+    updateAssociatedSelection();
 }
 
 ExceptionOr<bool> Range::isPointInRange(Node& container, unsigned offset)
@@ -368,7 +370,7 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
             if (result.hasException())
                 return result.releaseException();
         }
-        m_end = m_start;
+        collapse(true);
     }
 
     // Now add leftContents, stuff in between, and rightContents to the fragment
@@ -695,29 +697,28 @@ ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(const String&
     return WebCore::createContextualFragment(*element, markup, AllowScriptingContentAndDoNotMarkAlreadyStarted);
 }
 
-ExceptionOr<Node*> Range::checkNodeOffsetPair(Node& node, unsigned offset) const
+ExceptionOr<Node*> Range::checkNodeOffsetPair(Node& node, unsigned offset)
 {
     switch (node.nodeType()) {
-        case Node::DOCUMENT_TYPE_NODE:
-            return Exception { InvalidNodeTypeError };
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::TEXT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-            if (offset > downcast<CharacterData>(node).length())
-                return Exception { IndexSizeError };
+    case Node::DOCUMENT_TYPE_NODE:
+        return Exception { InvalidNodeTypeError };
+    case Node::CDATA_SECTION_NODE:
+    case Node::COMMENT_NODE:
+    case Node::TEXT_NODE:
+    case Node::PROCESSING_INSTRUCTION_NODE:
+        if (offset > downcast<CharacterData>(node).length())
+            return Exception { IndexSizeError };
+        return nullptr;
+    case Node::ATTRIBUTE_NODE:
+    case Node::DOCUMENT_FRAGMENT_NODE:
+    case Node::DOCUMENT_NODE:
+    case Node::ELEMENT_NODE:
+        if (!offset)
             return nullptr;
-        case Node::ATTRIBUTE_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE:
-        case Node::DOCUMENT_NODE:
-        case Node::ELEMENT_NODE: {
-            if (!offset)
-                return nullptr;
-            Node* childBefore = node.traverseToChildAt(offset - 1);
-            if (!childBefore)
-                return Exception { IndexSizeError };
-            return childBefore;
-        }
+        auto childBefore = node.traverseToChildAt(offset - 1);
+        if (!childBefore)
+            return Exception { IndexSizeError };
+        return childBefore;
     }
     ASSERT_NOT_REACHED();
     return Exception { InvalidNodeTypeError };
@@ -771,9 +772,10 @@ ExceptionOr<void> Range::selectNodeContents(Node& node)
 {
     if (node.isDocumentTypeNode())
         return Exception { InvalidNodeTypeError };
-
     m_start.setToBeforeContents(node);
     m_end.setToAfterContents(node);
+    updateAssociatedSelection();
+    updateDocument();
     return { };
 }
 
@@ -1032,6 +1034,22 @@ Ref<DOMRect> Range::getBoundingClientRect() const
     return DOMRect::create(unionRectIgnoringZeroRects(RenderObject::clientBorderAndTextRects(makeSimpleRange(*this))));
 }
 
+static void setBothEndpoints(Range& range, const SimpleRange& value)
+{
+    auto startContainer = value.start.container;
+    range.setStart(WTFMove(startContainer), value.start.offset);
+    auto endContainer = value.end.container;
+    range.setEnd(WTFMove(endContainer), value.end.offset);
+}
+
+void Range::updateFromSelection(const SimpleRange& value)
+{
+    ASSERT(m_isAssociatedWithSelection);
+    m_isAssociatedWithSelection = false;
+    setBothEndpoints(*this, value);
+    m_isAssociatedWithSelection = true;
+}
+
 SimpleRange makeSimpleRange(const Range& range)
 {
     return { { range.startContainer(), range.startOffset() }, { range.endContainer(), range.endOffset() } };
@@ -1057,10 +1075,7 @@ Optional<SimpleRange> makeSimpleRange(const RefPtr<Range>& range)
 Ref<Range> createLiveRange(const SimpleRange& range)
 {
     auto result = Range::create(range.start.document());
-    auto startContainer = range.start.container;
-    result->setStart(WTFMove(startContainer), range.start.offset);
-    auto endContainer = range.end.container;
-    result->setEnd(WTFMove(endContainer), range.end.offset);
+    setBothEndpoints(result, range);
     return result;
 }
 

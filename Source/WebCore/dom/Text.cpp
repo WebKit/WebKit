@@ -245,11 +245,12 @@ String Text::debugDescription() const
     return builder.toString();
 }
 
-void Text::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength)
+void Text::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges updateLiveRanges)
 {
     auto oldData = data();
-    CharacterData::setDataAndUpdate(newData, offsetOfReplacedData, oldLength, newLength);
+    CharacterData::setDataAndUpdate(newData, offsetOfReplacedData, oldLength, newLength, updateLiveRanges);
 
+    // FIXME: Does not seem correct to do this for 0 offset only.
     if (!offsetOfReplacedData) {
         auto* textManipulationController = document().textManipulationControllerIfExists();
         if (UNLIKELY(textManipulationController && oldData != newData))

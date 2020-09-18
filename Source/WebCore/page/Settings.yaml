@@ -1072,7 +1072,6 @@ legacyEncryptedMediaAPIEnabled:
 legacyBeforeLoadEventEnabled:
   initial: false
 
-
 isPostLoadCPUUsageMeasurementEnabled:
   initial: defaultPostLoadCPUUsageMeasurementEnabled
 
@@ -1087,6 +1086,9 @@ isPostBackgroundingMemoryUsageMeasurementEnabled:
 
 isPerActivityStateCPUUsageMeasurementEnabled:
   initial: defaultPerActivityStateCPUUsageMeasurementEnabled
+
+liveRangeSelectionEnabled:
+  initial: false
 
 # Deprecated
 

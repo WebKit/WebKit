@@ -1,3 +1,187 @@
+2020-09-16  Darin Adler  <darin@apple.com>
+
+        Selection API: Introduce LiveRangeSelectionEnabled, off by default
+        https://bugs.webkit.org/show_bug.cgi?id=216656
+
+        Reviewed by Sam Weinig.
+
+        For interoperability, the Selection API requires behavior that is quite different
+        from how our Selection object has behaves historically. Specifically, the range
+        returned is a live range that update as the selection updates and the selection,
+        in turn, is updated if the returned range is modified.
+
+        This significant change will have compatibility impact on websites and other
+        content that assumes the legacy  WebKit behavior, so we are developing it behind
+        a feature flag, LiveRangeSelectionEnabled.
+
+        This patch introduces the live range selection behind the flag, but leaves one
+        significant area unresolved, changing selection to keep track of the original
+        endpoints rather than only canonicalized endpoints, and a couple of loose ends,
+        lifetime of ride-along properties on the live range object, and updating test
+        expectations for the new behavior.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData): Fixed timing of call to Document::textRemoved
+        by letting setDataAndUpdate do it; otherwise it can be called after the selection
+        has been updated, and the range gets updated twice.
+        (WebCore::CharacterData::appendData): Pass UpdateLiveRanges::No to setDataAndUpdate,
+        to preserve the existing "don't update ranges" behavior for now at least.
+        (WebCore::CharacterData::insertData): Fixed timing of call to Document::textInserted
+        by letting setDataAndUpdate do it, for the same reason as above.
+        (WebCore::CharacterData::deleteData): Ditto, for textRemoved.
+        (WebCore::CharacterData::replaceData): Ditto, for textRemoved and textInserted.
+        (WebCore::CharacterData::setDataAndUpdate): Added UpdateLiveRanges argument and
+        calls to textRemoved and textInserted, after setting data, but before other updates.
+
+        * dom/CharacterData.h: Made setDataAndUpdate protected and added UpdateLiveRanges.
+
+        * dom/Document.h: Added optimized version of the Node::contains function. When the
+        node in question is the document we can just check treeScope and isConnected
+        rather than walking up the tree.
+
+        * dom/Node.cpp:
+        (WebCore::Node::isDescendantOf const): Moved special case for document to the top
+        of the function; seems a more important special case than disconnected nodes and
+        nodes with no children.
+        (WebCore::Node::isDescendantOrShadowDescendantOf const): Reworded the FIXME for clarity.
+        (WebCore::Node::contains const): Changed this to toke a reference instead of a pointer.
+        The pointer flavor is now inlined in the header.
+
+        * dom/Node.h: Added an overload of contains that takes a reference, analogous to what
+        we already have for isDescendantOf.
+
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Removed too-strict assertions. When we start using
+        positions to represent arbitrary DOM positions for things outside editing we won't
+        want these assertions any more, and we hit them when we use Position in a more
+        straightforward way, like some cases in this patch.
+        (WebCore::Position::primaryDirection const): Added a missing null check. This case
+        is hit in some test cases in the new mode.
+
+        * dom/Range.cpp: Removed some, but probably not all, of the unneeded headers.
+        (WebCore::Range::~Range): Added an assertion.
+        (WebCore::Range::updateAssociatedSelection): Added. Tells FrameSelection to update
+        the selection when this is the live range associated with the selection.
+        (WebCore::Range::updateDocument): Added an assertion.
+        (WebCore::Range::setStart): Call updateAssociatedSelection.
+        (WebCore::Range::setEnd): Ditto.
+        (WebCore::Range::collapse): Ditto.
+        (WebCore::Range::processContents): Call collapse here to share slightly more
+        code so we don't have to call updateAssociatedSelection here.
+        (WebCore::Range::checkNodeOffsetPair): Made this a static function so it can
+        be used outside the Range class. Also fixed indentation of the switch statement.
+        (WebCore::Range::selectNodeContents): Call updateAssociatedSelection and
+        updateDocument.
+        (WebCore::setBothEndpoints): Added.
+        (WebCore::Range::updateFromSelection): Added. Uses setBothEndpoints.
+        (WebCore::createLiveRange): Refactored to call setBothEndpoints.
+
+        * dom/Range.h: Added didAssociateWithSelection, didDisassociateFromSelection,
+        updateFromSelection, updateAssociatedSelection, and m_isAssociatedWithSelection.
+        Also made checkNodeOffsetPair a public static member function instead of a
+        private non-static member function.
+
+        * dom/Text.cpp:
+        (WebCore::Text::setDataAndUpdate): Update to pass along UpdateLiveRanges argument.
+        * dom/Text.h: Ditto. Also made the override of setDataAndUpdate private.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance): Call
+        updateAssociatedLiveRange after updating the selection.
+        (WebCore::containsEndpoints): Added. Used to check if a live range still has the
+        document as its root node so it can remain associated this with the selection.
+        (WebCore::FrameSelection::associatedLiveRange): Added.
+        (WebCore::FrameSelection::disassociateLiveRange): Added.
+        (WebCore::FrameSelection::associateLiveRange): Added.
+        (WebCore::FrameSelection::updateFromAssociatedLiveRange): Added.
+        (WebCore::FrameSelection::updateAssociatedLiveRange): Added.
+
+        * editing/FrameSelection.h: Added associatedLiveRange, associateLiveRange,
+        disassociateLiveRange, updateFromAssociatedLiveRange, updateAssociatedLiveRange,
+        and m_associatedLiveRange. Also change m_document to a WeakPtr and do some
+        tidying up.
+
+        * page/DOMSelection.cpp:
+        (WebCore::selectionShadowAncestor): Assert the live range setting is false,
+        since this code is not used in that case. Changed the return type to RefPtr.
+        Address the FIXME here by getting the document in a simpler way.
+        (WebCore::DOMSelection::create): Moved here from the header.
+        (WebCore::DOMSelection::frame const): Added. Returns a RefPtr. This gets rid
+        of the need for various instances of the "protector" pattern in this file.
+        (WebCore::DOMSelection::range const): Added. Returns the selected range, but
+        checks for the shadow tree case and returns null in that case.
+        (WebCore::DOMSelection::anchorPosition const): Redid as a member function.
+        (WebCore::DOMSelection::focusPosition const): Ditto.
+        (WebCore::DOMSelection::basePosition const): Ditto.
+        (WebCore::DOMSelection::extentPosition const): Ditto.
+        (WebCore::DOMSelection::anchorNode const): Rewrote to be simpler using the
+        functions above.
+        (WebCore::DOMSelection::anchorOffset const): Ditto.
+        (WebCore::DOMSelection::focusNode const): Ditto.
+        (WebCore::DOMSelection::focusOffset const): Ditto.
+        (WebCore::DOMSelection::baseNode const): Ditto.
+        (WebCore::DOMSelection::baseOffset const): Ditto.
+        (WebCore::DOMSelection::extentNode const): Ditto.
+        (WebCore::DOMSelection::extentOffset const): Ditto.
+        (WebCore::DOMSelection::isCollapsed const): Rewrote using DOMSelection::range
+        and SimpleRange::collapsed.
+        (WebCore::DOMSelection::type const): Updated since frame returns RefPtr.
+        (WebCore::DOMSelection::rangeCount const): Ditto.
+        (WebCore::DOMSelection::collapse): Added new corrected checking for special
+        cases, guarded by the setting.
+        (WebCore::DOMSelection::collapseToEnd): Updated since frame returns RefPtr.
+        way to do protection. Added a call to disassociateLiveRange. No need to put
+        under a setting guard since it does nothing if feature is not enabled.
+        (WebCore::DOMSelection::collapseToStart): Ditto.
+        (WebCore::DOMSelection::empty): Call removeAllRanges so we don't have two
+        copies of the same function to maintain.
+        (WebCore::DOMSelection::setBaseAndExtent): Use makeRefPtr, added corrected
+        checking for special cases guarded by the setting.
+        (WebCore::DOMSelection::setPosition): Call collapse so we don't have two
+        copies of the same function to maintain.
+        (WebCore::DOMSelection::modify): Updated since frame returns RefPtr.
+        (WebCore::DOMSelection::extend): Ditto. Also added corrected checking for
+        special cases guarded by the setting.
+        (WebCore::DOMSelection::getRangeAt): Added a version of this function that
+        simply returns the associated live range, creating one if needed, guarded
+        by the setting.
+        (WebCore::DOMSelection::removeAllRanges): Updated since frame returns RefPtr.
+        (WebCore::DOMSelection::addRange): Added a version of this function that
+        matches the specification, guarded by the setting.
+        (WebCore::DOMSelection::removeRange): Added.
+        (WebCore::DOMSelection::deleteFromDocument): Added a version of this
+        function that simply calls deleteContents on the associated live range,
+        guarded by the setting.
+        (WebCore::DOMSelection::containsNode const): Put the text node workaround
+        inside a setting check. I also figured out why workaround was added: it
+        works around unwanted range canonicalization in various tests, but also
+        introduces incorrect behavior. Also rewrote to use DOMSelection::range.
+        (WebCore::DOMSelection::toString): Use DOMSelection::range, guarded by
+        the setting, so we return empty string when selection is in the shadow tree.
+        (WebCore::DOMSelection::shadowAdjustedNode const): When the live range
+        setting is enabled, adjust by changing the node to nullptr, not finding an
+        ancestor in the document.
+        (WebCore::DOMSelection::shadowAdjustedOffset const): Ditto, but offset 0.
+        (WebCore::DOMSelection::isValidForPosition const): Assert that the live range
+        selection setting is disabled, because this incorrect check should only be
+        used to preserve legacy behavior until we are ready to turn it on.
+
+        * page/DOMSelection.h: Updated since setBaseAndExtent, setPosition, and
+        collapse can raise exceptions, although they only do so when the live range
+        selection setting is on. Added removeRange. Moved the create function
+        out of the class definition into the .cpp file. Made return values of
+        baseNode, extentNode, anchorNode, focusNode, and shadowAdjustedNode RefPtr.
+        Made toString const. Added frame, range, anchorPosition, focusPosition,
+        basePosition, and extentPosition private functions. Removed visibleSelection.
+
+        * page/DOMSelection.idl: Updated file to match a recent draft of the
+        Selection standard, reordering things to match the order they appear there.
+        Added removeRange, guarded by the setting. Also got rid of the
+        unncecessary "undefined" string defaults for the arguments to the modify
+        method since they have no effect on observed behavior anyway.
+
+        * page/Settings.yaml: Added liveRangeSelectionEnabled.
+
 2020-09-17  Chris Dumez  <cdumez@apple.com>
 
         Vectorize SetTargetAtTime processing in AudioParamTimeline

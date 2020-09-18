@@ -400,3 +400,10 @@ UseGPUProcessForMedia:
   humanReadableName: "Media in GPU Process"
   humanReadableDescription: "Do all media loading and playback in the GPU Process"
   webcoreName: useGPUProcessForMedia
+
+LiveRangeSelectionEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Live Ranges in Selection"
+  humanReadableDescription: "Live range behavior for ranges in the Selection object"
+  category: internal
