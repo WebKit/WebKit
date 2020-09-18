@@ -1,3 +1,13 @@
+2020-09-18  Noam Rosenthal  <noam@webkit.org>
+
+        Enable paint timing by default
+        https://bugs.webkit.org/show_bug.cgi?id=211736
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesExperimental.yaml:
+                PaintTimingEnabled default to true.
+
 2020-09-18  Youenn Fablet  <youenn@apple.com>
 
         XHR.timeout is affected by long tasks
