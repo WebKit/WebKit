@@ -33,9 +33,11 @@
 #include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>

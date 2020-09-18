@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include <WebCore/FloatPoint.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/SimpleRange.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS DDActionContext;
