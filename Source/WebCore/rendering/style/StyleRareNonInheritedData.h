@@ -144,7 +144,7 @@ public:
     RefPtr<AnimationList> animations;
     RefPtr<AnimationList> transitions;
 
-    FillLayer mask;
+    DataRef<FillLayer> mask;
     NinePieceImage maskBoxImage;
 
     LengthSize pageSize;

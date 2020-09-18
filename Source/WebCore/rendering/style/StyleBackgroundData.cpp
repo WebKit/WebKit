@@ -28,7 +28,7 @@
 namespace WebCore {
 
 StyleBackgroundData::StyleBackgroundData()
-    : background(FillLayerType::Background)
+    : background(FillLayer::create(FillLayerType::Background))
     , color(RenderStyle::initialBackgroundColor())
 {
 }
@@ -62,7 +62,7 @@ bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& oth
 
 void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
-    if (behavior == DumpStyleValues::All || background != FillLayer(FillLayerType::Background))
+    if (behavior == DumpStyleValues::All || *background != FillLayer::create(FillLayerType::Background).get())
         ts.dumpProperty("background-image", background);
     if (behavior == DumpStyleValues::All || color != RenderStyle::initialBackgroundColor())
         ts.dumpProperty("background-color", color);

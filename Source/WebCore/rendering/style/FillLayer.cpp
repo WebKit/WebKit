@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-struct SameSizeAsFillLayer {
+struct SameSizeAsFillLayer : RefCounted<SameSizeAsFillLayer> {
     FillLayer* next;
 
     RefPtr<StyleImage> image;
@@ -42,6 +42,16 @@ struct SameSizeAsFillLayer {
 };
 
 COMPILE_ASSERT(sizeof(FillLayer) == sizeof(SameSizeAsFillLayer), FillLayer_should_stay_small);
+
+Ref<FillLayer> FillLayer::create(FillLayerType type)
+{
+    return adoptRef(*new FillLayer(type));
+}
+
+Ref<FillLayer> FillLayer::create(const FillLayer& layer)
+{
+    return adoptRef(*new FillLayer(layer));
+}
 
 FillLayer::FillLayer(FillLayerType type)
     : m_image(FillLayer::initialFillImage(type))
@@ -76,8 +86,7 @@ FillLayer::FillLayer(FillLayerType type)
 }
 
 FillLayer::FillLayer(const FillLayer& o)
-    : m_next(o.m_next ? makeUnique<FillLayer>(*o.m_next) : nullptr)
-    , m_image(o.m_image)
+    : m_image(o.m_image)
     , m_xPosition(o.m_xPosition)
     , m_yPosition(o.m_yPosition)
     , m_sizeLength(o.m_sizeLength)
@@ -107,18 +116,22 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_maskSourceTypeSet(o.m_maskSourceTypeSet)
     , m_type(o.m_type)
 {
+    if (o.m_next)
+        m_next = create(*o.m_next);
 }
 
 FillLayer::~FillLayer()
 {
     // Delete the layers in a loop rather than allowing recursive calls to the destructors.
-    for (std::unique_ptr<FillLayer> next = WTFMove(m_next); next; next = WTFMove(next->m_next)) { }
+    for (auto next = WTFMove(m_next); next; next = WTFMove(next->m_next)) { }
 }
 
 FillLayer& FillLayer::operator=(const FillLayer& o)
 {
-    m_next = o.m_next ? makeUnique<FillLayer>(*o.m_next) : nullptr;
-
+    if (o.m_next)
+        m_next = create(*o.m_next);
+    else
+        m_next = nullptr;
     m_image = o.m_image;
     m_xPosition = o.m_xPosition;
     m_yPosition = o.m_yPosition;
