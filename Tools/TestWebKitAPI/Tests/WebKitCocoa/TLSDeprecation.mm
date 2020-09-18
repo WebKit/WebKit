@@ -164,6 +164,7 @@ TEST(TLSVersion, DefaultBehavior)
 
 TEST(TLSVersion, NetworkSession)
 {
+    HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);
     static auto delegate = adoptNS([TestNavigationDelegate new]);
     auto makeWebViewWith = [&] (WKWebsiteDataStore *store) {
         WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
@@ -177,21 +178,16 @@ TEST(TLSVersion, NetworkSession)
         return webView;
     };
     {
-        TCPServer server(TCPServer::Protocol::HTTPS, TCPServer::respondWithOK, tls1_1);
         auto webView = makeWebViewWith([WKWebsiteDataStore defaultDataStore]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFinishNavigation];
     }
     {
-        TCPServer server(TCPServer::Protocol::HTTPS, TCPServer::respondWithOK, tls1_1);
         auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFinishNavigation];
     }
     {
-        TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
-            EXPECT_FALSE(ssl);
-        }, tls1_1);
         auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
         [configuration setLegacyTLSEnabled:NO];
         auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
@@ -201,17 +197,11 @@ TEST(TLSVersion, NetworkSession)
     }
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:defaultsKey];
     {
-        TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
-            EXPECT_FALSE(ssl);
-        }, tls1_1);
         auto webView = makeWebViewWith([WKWebsiteDataStore defaultDataStore]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFailProvisionalNavigation];
     }
     {
-        TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
-            EXPECT_FALSE(ssl);
-        }, tls1_1);
         auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFailProvisionalNavigation];

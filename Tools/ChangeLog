@@ -1,3 +1,21 @@
+2020-09-18  Alex Christensen  <achristensen@webkit.org>
+
+        Make TLSVersion.NetworkSession API test more robust
+        https://bugs.webkit.org/show_bug.cgi?id=216704
+        <rdar://problem/68643674>
+
+        Reviewed by Tim Horton.
+
+        r265573 made preconnect attempts to legacy TLS servers fail.
+        This caused the TLSVersion.NetworkSession to assert because the first connection attempt would fail
+        (and the second would succeed if it was supposed to succeed with the conditions in the test).
+        The test calls waitForDidFailProvisionalNavigation in cases where it is supposed to fail and
+        waitForDidFinishNavigation in cases where it supposed to succeed.
+        Like I did in r266100 with another test, use HTTPServer which allows a variable number of connection attempts.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-09-18  Aakash Jain  <aakash_jain@apple.com>
 
         Make ews-app robust against config.json issues
