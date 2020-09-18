@@ -33,7 +33,11 @@
 
 namespace WebKit {
 
-RemoteAudioMediaStreamTrackRendererManager::RemoteAudioMediaStreamTrackRendererManager() = default;
+
+RemoteAudioMediaStreamTrackRendererManager::RemoteAudioMediaStreamTrackRendererManager(GPUConnectionToWebProcess& connectionToWebProcess)
+    : m_connectionToWebProcess(connectionToWebProcess)
+{
+}
 
 RemoteAudioMediaStreamTrackRendererManager::~RemoteAudioMediaStreamTrackRendererManager() = default;
 
@@ -46,7 +50,7 @@ void RemoteAudioMediaStreamTrackRendererManager::didReceiveRendererMessage(IPC::
 void RemoteAudioMediaStreamTrackRendererManager::createRenderer(AudioMediaStreamTrackRendererIdentifier identifier)
 {
     ASSERT(!m_renderers.contains(identifier));
-    m_renderers.add(identifier, makeUnique<RemoteAudioMediaStreamTrackRenderer>());
+    m_renderers.add(identifier, makeUnique<RemoteAudioMediaStreamTrackRenderer>(*this));
 }
 
 void RemoteAudioMediaStreamTrackRendererManager::releaseRenderer(AudioMediaStreamTrackRendererIdentifier identifier)

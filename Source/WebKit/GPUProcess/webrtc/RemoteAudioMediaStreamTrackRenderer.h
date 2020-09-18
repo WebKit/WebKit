@@ -31,21 +31,23 @@
 #include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <wtf/MediaTime.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 class AudioMediaStreamTrackRenderer;
 class CARingBuffer;
+class WebAudioBufferList;
 }
 
 namespace WebKit {
 
-class GPUConnectionToWebProcess;
+class RemoteAudioMediaStreamTrackRendererManager;
 class SharedRingBufferStorage;
 
 class RemoteAudioMediaStreamTrackRenderer final : private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteAudioMediaStreamTrackRenderer();
+    explicit RemoteAudioMediaStreamTrackRenderer(RemoteAudioMediaStreamTrackRendererManager&);
     ~RemoteAudioMediaStreamTrackRenderer();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -61,10 +63,11 @@ private:
 
     SharedRingBufferStorage& storage();
 
+    RemoteAudioMediaStreamTrackRendererManager& m_manager;
     std::unique_ptr<WebCore::AudioMediaStreamTrackRenderer> m_renderer;
-
     WebCore::CAAudioStreamDescription m_description;
-    std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+    UniqueRef<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
 };
 
 }
