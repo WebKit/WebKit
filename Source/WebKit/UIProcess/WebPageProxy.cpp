@@ -1145,7 +1145,9 @@ void WebPageProxy::close()
 
     m_process->processPool().backForwardCache().removeEntriesForPage(*this);
 
-    send(Messages::WebPage::Close());
+    RunLoop::current().dispatch([destinationID = messageSenderDestinationID(), protectedProcess = m_process.copyRef(), preventProcessShutdownScope = m_process->shutdownPreventingScope()] {
+        protectedProcess->send(Messages::WebPage::Close(), destinationID);
+    });
     m_process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
@@ -3305,7 +3307,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         Optional<SandboxExtension::Handle> optionalHandle;
         if (shouldProcessSwap) {
             // Make sure the process to be used for the navigation does not get shutDown now due to destroying SuspendedPageProxy or ProvisionalPageProxy objects.
-            auto preventNavigationProcessShutdown = processForNavigation->makeScopePreventingShutdown();
+            auto preventNavigationProcessShutdown = processForNavigation->shutdownPreventingScope();
 
             ASSERT(!destinationSuspendedPage || navigation->targetItem());
             auto suspendedPage = destinationSuspendedPage ? backForwardCache().takeSuspendedPage(*navigation->targetItem()) : nullptr;

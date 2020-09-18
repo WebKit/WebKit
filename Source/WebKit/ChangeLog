@@ -1,3 +1,29 @@
+2020-09-18  Sihui Liu  <sihui_liu@apple.com>
+
+        Webpages flash when getting closed
+        https://bugs.webkit.org/show_bug.cgi?id=216131
+        <rdar://problem/62264106>
+
+        Reviewed by Chris Dumez.
+
+        Closing a page in web process will detach root CA layer and clears content in view immediately. If this happens
+        in web process before transaction, which contains view hierachy change or layer change, is committed in UI 
+        process, we would see a white flash. To try fixing this issue, we explicitly delay sending the close message
+        to next runloop cycle.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::m_shutdownPreventingScopeCounter):
+        (WebKit::WebProcessProxy::canTerminateAuxiliaryProcess):
+        * UIProcess/WebProcessProxy.h: remove class ScopePreventingShutdown and use RefCounter to prevent process 
+        shutdown.
+        (WebKit::WebProcessProxy::shutdownPreventingScope):
+        (WebKit::WebProcessProxy::ScopePreventingShutdown::ScopePreventingShutdown): Deleted.
+        (WebKit::WebProcessProxy::ScopePreventingShutdown::~ScopePreventingShutdown): Deleted.
+        (WebKit::WebProcessProxy::makeScopePreventingShutdown): Deleted.
+
 2020-09-18  Youenn Fablet  <youenn@apple.com>
 
         Add internal flag to enable/disable H264 hardware encoder

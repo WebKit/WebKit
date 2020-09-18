@@ -294,26 +294,9 @@ public:
     // Will potentially cause the WebProcessProxy object to be freed.
     void shutDown();
 
-    class ScopePreventingShutdown {
-    public:
-        explicit ScopePreventingShutdown(WebProcessProxy& process)
-            : m_process(process)
-        {
-            ++(m_process->m_shutdownPreventingScopeCount);
-        }
-
-        ~ScopePreventingShutdown()
-        {
-            ASSERT(m_process->m_shutdownPreventingScopeCount);
-            if (!--(m_process->m_shutdownPreventingScopeCount))
-                m_process->maybeShutDown();
-        }
-
-    private:
-        Ref<WebProcessProxy> m_process;
-    };
-
-    ScopePreventingShutdown makeScopePreventingShutdown() { return ScopePreventingShutdown { *this }; }
+    enum ShutdownPreventingScopeType { };
+    using ShutdownPreventingScopeCounter = RefCounter<ShutdownPreventingScopeType>;
+    ShutdownPreventingScopeCounter::Token shutdownPreventingScope() { return m_shutdownPreventingScopeCounter.count(); }
 
     void didStartProvisionalLoadForMainFrame(const URL&);
 
@@ -586,7 +569,7 @@ private:
 #endif
 
     unsigned m_suspendedPageCount { 0 };
-    unsigned m_shutdownPreventingScopeCount { 0 };
+
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
@@ -625,6 +608,8 @@ private:
         WebProcessWithAudibleMediaToken token;
     };
     Optional<AudibleMediaActivity> m_audibleMediaActivity;
+
+    ShutdownPreventingScopeCounter m_shutdownPreventingScopeCounter;
 };
 
 } // namespace WebKit
