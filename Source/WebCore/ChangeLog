@@ -1,5 +1,23 @@
 2020-09-18  Chris Dumez  <cdumez@apple.com>
 
+        [macOS Big Sur] ASSERTION FAILED: !m_gamepadMap.get(device)./platform/gamepad/mac/HIDGamepadProvider.mm(233) under WebCore::HIDGamepadProvider::deviceAdded
+        https://bugs.webkit.org/show_bug.cgi?id=216665
+        <rdar://problem/68641574>
+
+        Reviewed by Alex Christensen.
+
+        On macOS Big Sur, it appears we get notified multiple times that the Shenzhen Longshengwei Technology Gamepad
+        is getting added during Gamepad.GCFVersusHID API test. This was causing an assertion to be hit under
+        HIDGamepadProvider::deviceAdded() where we expected the device not not already be in the map. In this patch,
+        we work around this HID quirk on Big Sur by ignoring the notification if we already know about the device.
+
+        No new tests, fixes existing API test.
+
+        * platform/gamepad/mac/HIDGamepadProvider.mm:
+        (WebCore::HIDGamepadProvider::deviceAdded):
+
+2020-09-18  Chris Dumez  <cdumez@apple.com>
+
         Vectorize SetTargetAtTime processing in AudioParamTimeline
         https://bugs.webkit.org/show_bug.cgi?id=216673
         <rdar://problem/69111432>

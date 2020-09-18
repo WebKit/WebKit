@@ -230,7 +230,9 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
     }
 #endif
 
-    ASSERT(!m_gamepadMap.get(device));
+    // HID sometimes notifies us multiple times for the same device.
+    if (m_gamepadMap.contains(device))
+        return;
 
     LOG(Gamepad, "HIDGamepadProvider device %p added", device);
 
