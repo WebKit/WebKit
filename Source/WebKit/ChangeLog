@@ -1,3 +1,19 @@
+2020-09-17  Tim Horton  <timothy_horton@apple.com>
+
+        Per-app accent color overrides are broken
+        https://bugs.webkit.org/show_bug.cgi?id=216674
+        <rdar://problem/67745464>
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests; I've no idea how to write a test that would have caught this;
+        any test I can imagine would have also written to _accentColor and worked fine.
+
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::accentColor):
+        AppKit changed the meaning of the IPI. Use the correct version.
+        We still write to _accentColor; it is now purely an override.
+
 2020-09-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable ITP in WKWebViews for apps with the full browser entitlement who are not linked to iOS 14.0
