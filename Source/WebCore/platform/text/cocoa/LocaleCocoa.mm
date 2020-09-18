@@ -44,30 +44,9 @@
 
 namespace WebCore {
 
-static inline String languageFromLocale(const String& locale)
-{
-    String normalizedLocale = locale;
-    normalizedLocale.replace('-', '_');
-    size_t separatorPosition = normalizedLocale.find('_');
-    if (separatorPosition == notFound)
-        return normalizedLocale;
-    return normalizedLocale.left(separatorPosition);
-}
-
-static RetainPtr<NSLocale> determineLocale(const String& locale)
-{
-    RetainPtr<NSLocale> currentLocale = [NSLocale currentLocale];
-    String currentLocaleLanguage = languageFromLocale(String([currentLocale.get() localeIdentifier]));
-    String localeLanguage = languageFromLocale(locale);
-    if (equalIgnoringASCIICase(currentLocaleLanguage, localeLanguage))
-        return currentLocale;
-    // It seems initWithLocaleIdentifier accepts dash-separated locale identifier.
-    return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale]);
-}
-
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
-    return makeUnique<LocaleCocoa>(determineLocale(locale.string()).get());
+    return makeUnique<LocaleCocoa>(locale);
 }
 
 static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCalendar* calendar, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)
@@ -81,8 +60,8 @@ static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCa
     return adoptNS(formatter);
 }
 
-LocaleCocoa::LocaleCocoa(NSLocale* locale)
-    : m_locale(locale)
+LocaleCocoa::LocaleCocoa(const AtomString& locale)
+    : m_locale(adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale]))
     , m_gregorianCalendar(adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]))
     , m_didInitializeNumberData(false)
 {

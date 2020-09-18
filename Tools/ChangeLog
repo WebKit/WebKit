@@ -1,5 +1,22 @@
 2020-09-18  Aditya Keerthi  <akeerthi@apple.com>
 
+        Date/time inputs should not use user-specified formats
+        https://bugs.webkit.org/show_bug.cgi?id=216484
+        <rdar://problem/68864815>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test which sets a custom date format using "defaults write"
+        and verifies that the width is indistinguishable from the default
+        format.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DateInputTests.mm: Added.
+        (createWebViewForTest):
+        (DateInputsTests.IgnoresUserEditsToLocale):
+
+2020-09-18  Aditya Keerthi  <akeerthi@apple.com>
+
         [macOS] Date/time inputs should focus the next editable component when entering a separator key
         https://bugs.webkit.org/show_bug.cgi?id=216661
         <rdar://problem/69091856>

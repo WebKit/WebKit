@@ -1,5 +1,28 @@
 2020-09-18  Aditya Keerthi  <akeerthi@apple.com>
 
+        Date/time inputs should not use user-specified formats
+        https://bugs.webkit.org/show_bug.cgi?id=216484
+        <rdar://problem/68864815>
+
+        Reviewed by Wenson Hsieh.
+
+        On macOS, users can specify custom date and time formats through System
+        Preferences. These formats can be different from the default for the
+        user’s current locale. Using these formats when rendering date and time
+        inputs is a potential fingerprinting vector, as sites can apply CSS to
+        components of the input, and measure the size of the input.
+
+        To fix, we create a new NSLocale even if the identifier matches
+        [NSLocale currentLocale]. This ensures that m_locale does not contain
+        the user's changes to the locale.
+
+        * platform/text/cocoa/LocaleCocoa.h:
+        * platform/text/cocoa/LocaleCocoa.mm:
+        (WebCore::Locale::create):
+        (WebCore::LocaleCocoa::LocaleCocoa):
+
+2020-09-18  Aditya Keerthi  <akeerthi@apple.com>
+
         [macOS] Date/time inputs should focus the next editable component when entering a separator key
         https://bugs.webkit.org/show_bug.cgi?id=216661
         <rdar://problem/69091856>
