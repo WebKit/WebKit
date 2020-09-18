@@ -1442,7 +1442,7 @@ void Page::updateRendering()
     }
 
     SetForScope<bool> inUpdateRendering(m_inUpdateRendering, true);
-    SetForScope<MonotonicTime> renderingUpdateTimestamp(m_renderingUpdateTimestamp, MonotonicTime::now());
+    m_lastRenderingUpdateTimestamp = MonotonicTime::now();
 
     bool isSVGImagePage = chrome().client().isSVGImageChromeClient();
     if (!isSVGImagePage)

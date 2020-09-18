@@ -87,21 +87,17 @@ class SinglePaintFrequencyTracking {
 public:
     SinglePaintFrequencyTracking(PaintFrequencyTracker& paintFrequencyTracker, MonotonicTime timestamp)
         : m_paintFrequencyTracker(paintFrequencyTracker)
-        , m_track(timestamp)
     {
-        if (m_track)
-            m_paintFrequencyTracker.begin(timestamp);
+        m_paintFrequencyTracker.begin(timestamp ? timestamp : MonotonicTime::now());
     }
 
     ~SinglePaintFrequencyTracking()
     {
-        if (m_track)
-            m_paintFrequencyTracker.end();
+        m_paintFrequencyTracker.end();
     }
 
 private:
     PaintFrequencyTracker& m_paintFrequencyTracker;
-    bool m_track;
 };
 
 }

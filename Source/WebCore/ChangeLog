@@ -1,3 +1,36 @@
+2020-09-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r267137): PaintFrequencyTracker needs to track all the painting
+        https://bugs.webkit.org/show_bug.cgi?id=216677
+
+        Reviewed by Simon Fraser.
+
+        r267137 removed all the optimizations which the Design test got from
+        r230544 because it resets the renderingUpdateTimestamp to zero when it
+        exists. This makes RenderLayer always retrieves this timestamp with value
+        equal to zero. There is no direct call from Page::updateRendering() to
+        RenderLayer::paintLayerContents(). Painting has to be scheduled to the
+        next run-loop. Because SinglePaintFrequencyTracking tracks only the painting
+        whose timestamp is not zero, SinglePaintFrequencyTracking has not been
+        tracking any painting.
+
+        The solution is to track all the painting. When renderingUpdateTimestamp()
+        is zero, SinglePaintFrequencyTracking will use MonotonicTime::now() instead.
+        This will happen in cases like calling updateControlTints() before calling
+        Page::updateRendering().
+
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        * page/Page.h:
+        (WebCore::Page::lastRenderingUpdateTimestamp const):
+        (WebCore::Page::renderingUpdateTimestamp const): Deleted.
+        * rendering/PaintFrequencyTracker.h:
+        (WebCore::SinglePaintFrequencyTracking::SinglePaintFrequencyTracking):
+        (WebCore::SinglePaintFrequencyTracking::~SinglePaintFrequencyTracking):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2020-09-18  Chris Dumez  <cdumez@apple.com>
 
         webaudio/Analyser/handle-silent-inputs.html test is failing
