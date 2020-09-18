@@ -1,3 +1,14 @@
+2020-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Add an env var to force single process model
+
+        WEBKIT_USE_SINGLE_WEB_PROCESS=1 can be used to force the single process model when PSON is disabled. This is a
+        temporary solution for applications still depending on the single process mode behavior. It will be only
+        available in 2.28 series.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+
 2020-09-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.30.0 release

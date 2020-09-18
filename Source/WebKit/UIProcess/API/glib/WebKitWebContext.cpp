@@ -395,6 +395,12 @@ static void webkitWebContextConstructed(GObject* object)
     configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
 #if PLATFORM(GTK)
     configuration.setProcessSwapsOnNavigation(priv->psonEnabled);
+    if (!priv->psonEnabled) {
+        const char* useSingleWebProcess = getenv("WEBKIT_USE_SINGLE_WEB_PROCESS");
+        if (useSingleWebProcess && strcmp(useSingleWebProcess, "0"))
+            configuration.setUsesSingleWebProcess(true);
+    }
+
 #if !USE(GTK4)
     configuration.setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
 #endif
