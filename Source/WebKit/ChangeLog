@@ -1,5 +1,16 @@
 2020-09-18  Youenn Fablet  <youenn@apple.com>
 
+        Add internal flag to enable/disable H264 hardware encoder
+        https://bugs.webkit.org/show_bug.cgi?id=216534
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferencesInternal.yaml:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2020-09-18  Youenn Fablet  <youenn@apple.com>
+
         Hash deviceIds in WebProcess instead of UIProcess to allow audio output device IDs in WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=216693
 

@@ -3780,6 +3780,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if USE(LIBWEBRTC)
     m_page->libWebRTCProvider().setH265Support(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
     m_page->libWebRTCProvider().setVP9Support(RuntimeEnabledFeatures::sharedFeatures().webRTCVP9CodecEnabled());
+    LibWebRTCProvider::setH264HardwareEncoderAllowed(store.getBoolValueForKey(WebPreferencesKey::webRTCH264HardwareEncoderEnabledKey()));
 #endif
 
 #if ENABLE(GPU_PROCESS)

@@ -1,5 +1,27 @@
 2020-09-18  Youenn Fablet  <youenn@apple.com>
 
+        Add internal flag to enable/disable H264 hardware encoder
+        https://bugs.webkit.org/show_bug.cgi?id=216534
+
+        Reviewed by Eric Carlson.
+
+        Update process-wide hardware H264 boolean flag based on internal feature flag.
+        No change of behavior.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::setH264HardwareEncoderAllowed):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProvider::setH264HardwareEncoderAllowed):
+        (WebCore::LibWebRTCProviderCocoa::~LibWebRTCProviderCocoa):
+        (WebCore::LibWebRTCProviderCocoa::setH264HardwareEncoderAllowed): Deleted.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setH264HardwareEncoderAllowed):
+
+2020-09-18  Youenn Fablet  <youenn@apple.com>
+
         Hash deviceIds in WebProcess instead of UIProcess to allow audio output device IDs in WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=216693
 

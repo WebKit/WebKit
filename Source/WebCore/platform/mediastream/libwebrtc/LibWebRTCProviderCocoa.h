@@ -46,8 +46,6 @@ public:
 private:
     void setActive(bool) final;
     std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() final;
-
-    void setH264HardwareEncoderAllowed(bool allowed) final;
 };
 
 } // namespace WebCore

@@ -563,7 +563,7 @@ void Internals::resetToConsistentState(Page& page)
     auto& rtcProvider = page.libWebRTCProvider();
     WebCore::useRealRTCPeerConnectionFactory(rtcProvider);
     rtcProvider.disableNonLocalhostConnections();
-    rtcProvider.setH264HardwareEncoderAllowed(true);
+    LibWebRTCProvider::setH264HardwareEncoderAllowed(true);
     RuntimeEnabledFeatures::sharedFeatures().setWebRTCH265CodecEnabled(true);
     page.settings().setWebRTCEncryptionEnabled(true);
 #endif
@@ -5179,10 +5179,7 @@ bool Internals::isPageActive() const
 #if ENABLE(WEB_RTC)
 void Internals::setH264HardwareEncoderAllowed(bool allowed)
 {
-    auto* document = contextDocument();
-    if (!document || !document->page())
-        return;
-    document->page()->libWebRTCProvider().setH264HardwareEncoderAllowed(allowed);
+    LibWebRTCProvider::setH264HardwareEncoderAllowed(allowed);
 }
 #endif
 

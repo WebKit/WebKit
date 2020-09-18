@@ -69,6 +69,10 @@ bool LibWebRTCProvider::webRTCAvailable()
 void LibWebRTCProvider::registerWebKitVP9Decoder()
 {
 }
+
+void LibWebRTCProvider::setH264HardwareEncoderAllowed(bool)
+{
+}
 #endif
 
 void LibWebRTCProvider::setActive(bool)

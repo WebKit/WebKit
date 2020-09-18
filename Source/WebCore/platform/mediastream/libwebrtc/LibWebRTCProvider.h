@@ -73,10 +73,9 @@ public:
 
     static bool webRTCAvailable();
     static void registerWebKitVP9Decoder();
+    static void setH264HardwareEncoderAllowed(bool);
 
     virtual void setActive(bool);
-
-    virtual void setH264HardwareEncoderAllowed(bool) { }
 
     using IPAddressOrError = Expected<String, MDNSRegisterError>;
     using MDNSNameOrError = Expected<String, MDNSRegisterError>;

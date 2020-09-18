@@ -55,6 +55,15 @@ WebRTCH264SimulcastEnabled:
   humanReadableName: "WebRTC H264 Simulcast"
   humanReadableDescription: "Enable WebRTC H264 Simulcast"
 
+WebRTCH264HardwareEncoderEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: none
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC H264 Hardware encoder"
+  humanReadableDescription: "Enable H264 Hardware encoder"
+  category: internal
+
 WebRTCMDNSICECandidatesEnabled:
   type: bool
   defaultValue: true

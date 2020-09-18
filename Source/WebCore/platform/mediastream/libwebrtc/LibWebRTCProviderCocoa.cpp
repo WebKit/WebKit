@@ -46,13 +46,13 @@ UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
     return makeUniqueRef<LibWebRTCProviderCocoa>();
 }
 
-LibWebRTCProviderCocoa::~LibWebRTCProviderCocoa()
-{
-}
-
-void LibWebRTCProviderCocoa::setH264HardwareEncoderAllowed(bool allowed)
+void LibWebRTCProvider::setH264HardwareEncoderAllowed(bool allowed)
 {
     webrtc::setH264HardwareEncoderAllowed(allowed);
+}
+
+LibWebRTCProviderCocoa::~LibWebRTCProviderCocoa()
+{
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderCocoa::createDecoderFactory()
