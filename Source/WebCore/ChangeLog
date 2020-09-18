@@ -1,3 +1,17 @@
+2020-09-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::shouldResetFocusNavigationStartingNode()
+        https://bugs.webkit.org/show_bug.cgi?id=216714
+        <rdar://problem/68132047>
+
+        Reviewed by Darin Adler.
+
+        Protect anchorElement in FrameView::scrollToFragmentInternal() to make sure
+        it stays alive until the time we pass it to setFocusNavigationStartingNode().
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragmentInternal):
+
 2020-09-18  Aditya Keerthi  <akeerthi@apple.com>
 
         Date/time inputs should not use user-specified formats
