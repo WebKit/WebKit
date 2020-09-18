@@ -63,10 +63,12 @@ private:
 
     void process(size_t framesToProcess) final;
     void reset() final;
+    void updatePullStatus() final;
 
-    double tailTime() const final { return 0; }
+    double tailTime() const final;
     double latencyTime() const final { return 0; }
     bool requiresTailProcessing() const final;
+    bool propagatesSilence() const final;
 
     RealtimeAnalyser m_analyser;
 };

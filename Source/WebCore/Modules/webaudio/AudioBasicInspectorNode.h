@@ -36,13 +36,14 @@ class AudioBasicInspectorNode : public AudioNode {
 public:
     explicit AudioBasicInspectorNode(BaseAudioContext&);
 
+protected:
+    bool m_needAutomaticPull { false }; // When setting to true, AudioBasicInspectorNode will be pulled automatically by AudioContext before the end of each render quantum.
+
 private:
     void pullInputs(size_t framesToProcess) override;
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;
 
-    void updatePullStatus() final;
-
-    bool m_needAutomaticPull { false }; // When setting to true, AudioBasicInspectorNode will be pulled automatically by AudioContext before the end of each render quantum.
+    void updatePullStatus() override;
 };
 
 } // namespace WebCore

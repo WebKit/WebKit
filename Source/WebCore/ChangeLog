@@ -1,3 +1,23 @@
+2020-09-18  Chris Dumez  <cdumez@apple.com>
+
+        webaudio/Analyser/handle-silent-inputs.html test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=216708
+
+        Reviewed by Geoffrey Garen.
+
+        Merge the following fix to AnalyserNode from Blink so that webaudio/Analyser/handle-silent-inputs.html
+        layout test starts passing:
+        - https://codereview.chromium.org/2666063003
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::process):
+        (WebCore::AnalyserNode::updatePullStatus):
+        (WebCore::AnalyserNode::tailTime const):
+        * Modules/webaudio/AnalyserNode.h:
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+
 2020-09-18  Youenn Fablet  <youenn@apple.com>
 
         Add internal flag to enable/disable H264 hardware encoder

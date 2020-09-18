@@ -1,3 +1,14 @@
+2020-09-18  Chris Dumez  <cdumez@apple.com>
+
+        webaudio/Analyser/handle-silent-inputs.html test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=216708
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline test that is now passing.
+
+        * webaudio/Analyser/handle-silent-inputs-expected.txt:
+
 2020-09-18  Youenn Fablet  <youenn@apple.com>
 
         Hash deviceIds in WebProcess instead of UIProcess to allow audio output device IDs in WebProcess
