@@ -1154,7 +1154,7 @@ SLOW_PATH_DECL(slow_path_enumerator_structure_pname)
     BEGIN();
     auto bytecode = pc->as<OpEnumeratorStructurePname>();
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue().asCell());
-    uint32_t index = GET(bytecode.m_index).jsValue().asUInt32();
+    uint32_t index = GET(bytecode.m_index).jsValue().asUInt32AsAnyInt();
 
     JSString* propertyName = nullptr;
     if (index < enumerator->endStructurePropertyIndex())
@@ -1167,7 +1167,7 @@ SLOW_PATH_DECL(slow_path_enumerator_generic_pname)
     BEGIN();
     auto bytecode = pc->as<OpEnumeratorGenericPname>();
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue().asCell());
-    uint32_t index = GET(bytecode.m_index).jsValue().asUInt32();
+    uint32_t index = GET(bytecode.m_index).jsValue().asUInt32AsAnyInt();
 
     JSString* propertyName = nullptr;
     if (enumerator->endStructurePropertyIndex() <= index && index < enumerator->endGenericPropertyIndex())
@@ -1284,7 +1284,7 @@ SLOW_PATH_DECL(slow_path_create_rest)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateRest>();
-    unsigned arraySize = GET_C(bytecode.m_arraySize).jsValue().asUInt32();
+    unsigned arraySize = GET_C(bytecode.m_arraySize).jsValue().asUInt32AsAnyInt();
     Structure* structure = globalObject->restParameterStructure();
     unsigned numParamsToSkip = bytecode.m_numParametersToSkip;
     JSValue* argumentsToCopyRegion = callFrame->addressOfArgumentsStart() + numParamsToSkip;
