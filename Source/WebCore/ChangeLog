@@ -1,5 +1,115 @@
 2020-09-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266677. rdar://problem/68740521
+
+    [MotionMark] RenderLayer::paintLayerContents spends ~5% of the time in MonotonicTime::now() in Multiply
+    https://bugs.webkit.org/show_bug.cgi?id=216190
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    In several of MotionMark's subtests (for instance, Multiply), we spent a large amount of time underneath
+    `RenderLayer::paintLayerContents` due to both the large number of layers and the need to frequently repaint
+    each layer (all of which are constantly being animated). Underneath this method, a nontrivial amount of time
+    (~5%) is then spent grabbing the system time via `MonotonicTime::now()`.
+    
+    We can avoid this extra work by instead using the timestamp of the last rendering update (before we started
+    painting), which we keep track of using a new member variable on `Page`. See below for more details, as well as
+    the WebKit2 ChangeLog.
+    
+    * page/ChromeClient.h:
+    (WebCore::ChromeClient::timestampForPaintFrequencyTracking const):
+    
+    Add a client hook to fetch the timestamp to use when tracking painting frequency. See the WebKit2 ChangeLog for
+    more details.
+    
+    * page/Page.cpp:
+    (WebCore::Page::updateRendering):
+    
+    Update `m_lastRenderingUpdateTimestamp`.
+    
+    * page/Page.h:
+    (WebCore::Page::lastRenderingUpdateTimestamp const):
+    * rendering/PaintFrequencyTracker.h:
+    
+    Drive-by cleanup: narrow the `PaintFrequency` enum to `bool` width.
+    
+    (WebCore::PaintFrequencyTracker::begin):
+    (WebCore::SinglePaintFrequencyTracking::SinglePaintFrequencyTracking):
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::paintLayerContents):
+    
+    Call out to the client layer to return a timestamp for tracking painting frequency. By default, this is simply
+    the current time (`MonotonicTime::now()`), but ports (namely, WebKit2) may opt for a coarser granularity.
+    
+    (WebCore::RenderLayer::simulateFrequentPaint):
+    * rendering/RenderLayer.h:
+    
+    Source/WebKit:
+    
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::timestampForPaintFrequencyTracking const):
+    
+    In WebKit2, we can assume (with the exception of SVG pages) that we must've performed a rendering update prior
+    to tracking painting frequencies. As such, we can use the page's rendering update timestamp instead of the real
+    current time (`MonotonicTime::now()`).
+    
+    Note that in WebKit1, it is possible for any client to force a synchronous paint of the page before the page has
+    performed a rendering update, which triggers assertions in `SinglePaintFrequencyTracking::end()`. As such, we
+    stick with `MonotonicTime::now()` in WebKit1.
+    
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266677 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [MotionMark] RenderLayer::paintLayerContents spends ~5% of the time in MonotonicTime::now() in Multiply
+            https://bugs.webkit.org/show_bug.cgi?id=216190
+
+            Reviewed by Darin Adler.
+
+            In several of MotionMark's subtests (for instance, Multiply), we spent a large amount of time underneath
+            `RenderLayer::paintLayerContents` due to both the large number of layers and the need to frequently repaint
+            each layer (all of which are constantly being animated). Underneath this method, a nontrivial amount of time
+            (~5%) is then spent grabbing the system time via `MonotonicTime::now()`.
+
+            We can avoid this extra work by instead using the timestamp of the last rendering update (before we started
+            painting), which we keep track of using a new member variable on `Page`. See below for more details, as well as
+            the WebKit2 ChangeLog.
+
+            * page/ChromeClient.h:
+            (WebCore::ChromeClient::timestampForPaintFrequencyTracking const):
+
+            Add a client hook to fetch the timestamp to use when tracking painting frequency. See the WebKit2 ChangeLog for
+            more details.
+
+            * page/Page.cpp:
+            (WebCore::Page::updateRendering):
+
+            Update `m_lastRenderingUpdateTimestamp`.
+
+            * page/Page.h:
+            (WebCore::Page::lastRenderingUpdateTimestamp const):
+            * rendering/PaintFrequencyTracker.h:
+
+            Drive-by cleanup: narrow the `PaintFrequency` enum to `bool` width.
+
+            (WebCore::PaintFrequencyTracker::begin):
+            (WebCore::SinglePaintFrequencyTracking::SinglePaintFrequencyTracking):
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::paintLayerContents):
+
+            Call out to the client layer to return a timestamp for tracking painting frequency. By default, this is simply
+            the current time (`MonotonicTime::now()`), but ports (namely, WebKit2) may opt for a coarser granularity.
+
+            (WebCore::RenderLayer::simulateFrequentPaint):
+            * rendering/RenderLayer.h:
+
+2020-09-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266232. rdar://problem/68178664
 
     Step animations invalidate style on every rendering update whether or not they need to
