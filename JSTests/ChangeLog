@@ -1,3 +1,14 @@
+2020-09-18  Keith Miller  <keith_miller@apple.com>
+
+        DFG should ensure there are PhantomLocals for the taken block of op_jneq_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=216669
+
+        Reviewed by Saam Barati.
+
+        * stress/jneq-ptr-opcode-variable-only-live-on-taken-branch.js: Added.
+        (bar):
+        (foo):
+
 2020-09-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         Inconsistent loop exit assertion in B3ReduceLoopStrength

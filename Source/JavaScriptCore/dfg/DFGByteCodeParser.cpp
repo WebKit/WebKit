@@ -7165,6 +7165,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
                 LAST_OPCODE(op_jneq_ptr);
             }
+
+            // We need to phantom any local that is live on the taken block but not live on the not-taken block. i.e. `set of locals
+            // live at head of taken` - `set of locals live at head of not-taken`. Otherwise, there are no "uses" to preserve the
+            // those locals for OSR after this point. Since computing this precisely is somewhat non-trivial, we instead Phantom
+            // everything live at the head of the taken block.
+            auto addFlushDirect = [&] (InlineCallFrame* inlineCallFrame, Operand operand) {
+                // We don't need to flush anything here since that should be handled by the terminal of the not-taken block.
+                UNUSED_PARAM(inlineCallFrame);
+                ASSERT_UNUSED(operand, unmapOperand(inlineCallFrame, operand).isArgument() || operand == m_graph.m_codeBlock->scopeRegister());
+            };
+            auto addPhantomLocalDirect = [&] (InlineCallFrame*, Operand operand) { phantomLocalDirect(operand); };
+            // The addPhantomLocalDirect part of flushForTerminal happens to be exactly what we want so let's just call that.
+            flushForTerminalImpl(CodeOrigin(BytecodeIndex(m_currentIndex.offset() + relativeOffset), inlineCallFrame()), addFlushDirect, addPhantomLocalDirect);
+
             addToGraph(CheckIsConstant, OpInfo(frozenPointer), child);
             NEXT_OPCODE(op_jneq_ptr);
         }

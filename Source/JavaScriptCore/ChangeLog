@@ -1,3 +1,17 @@
+2020-09-18  Keith Miller  <keith_miller@apple.com>
+
+        DFG should ensure there are PhantomLocals for the taken block of op_jneq_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=216669
+
+        Reviewed by Saam Barati.
+
+        Right now, if there is a local that is live on the taken branch but dead on
+        not-taken branch then nothing will preserve it for OSR exit. This patch simply
+        adds a PhantomLocal for each live operand for the first bytecode of the taken block.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2020-09-18  Paulo Matos  <pmatos@igalia.com>
 
         Unified build fixes from ARMv7 build failures
