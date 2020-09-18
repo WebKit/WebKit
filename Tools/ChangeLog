@@ -1,3 +1,16 @@
+2020-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Epiphany does not make connections in Incognito Mode after clearing .cache
+        https://bugs.webkit.org/show_bug.cgi?id=216430
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add unit test to check we can start downloads in ephemeral sessions before a web view is created.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (testDownloadEphemeralContext):
+        (beforeAll):
+
 2020-09-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for rdar://57029120.

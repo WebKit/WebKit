@@ -1674,7 +1674,7 @@ void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
 
 DownloadProxy& WebProcessPool::createDownloadProxy(WebsiteDataStore& dataStore, const ResourceRequest& request, WebPageProxy* originatingPage, const FrameInfoData& frameInfo)
 {
-    return ensureNetworkProcess().createDownloadProxy(dataStore, request, frameInfo, originatingPage);
+    return ensureNetworkProcess(&dataStore).createDownloadProxy(dataStore, request, frameInfo, originatingPage);
 }
 
 void WebProcessPool::synthesizeAppIsBackground(bool background)
