@@ -2094,9 +2094,9 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     _page->close();
 }
 
-- (void)_tryClose
+- (BOOL)_tryClose
 {
-    _page->tryClose();
+    return _page->tryClose();
 }
 
 - (BOOL)_isClosed

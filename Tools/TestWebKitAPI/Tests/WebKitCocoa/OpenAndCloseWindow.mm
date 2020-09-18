@@ -26,10 +26,11 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWindowFeaturesPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -338,4 +339,13 @@ TEST(WebKit, OpenFileURLWithHost)
 
     while (![[[webView URL] absoluteString] hasPrefix:@"file:///"])
         TestWebKitAPI::Util::spinRunLoop();
+}
+
+TEST(WebKit, TryClose)
+{
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"load something"];
+    EXPECT_TRUE([webView _tryClose]);
+    [webView synchronouslyLoadHTMLString:@"<body onunload='runScriptThatDoesNotNeedToExist()'/>"];
+    EXPECT_FALSE([webView _tryClose]);
 }

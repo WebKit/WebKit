@@ -199,7 +199,7 @@ for this property.
 @property (nonatomic, readonly, getter=_isShowingNavigationGestureSnapshot) BOOL _showingNavigationGestureSnapshot;
 
 - (void)_close;
-- (void)_tryClose WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (BOOL)_tryClose WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (BOOL)_isClosed WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies WK_API_DEPRECATED_WITH_REPLACEMENT("-_updateWebpagePreferences:", macos(10.13, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));

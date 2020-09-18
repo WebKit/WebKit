@@ -1,5 +1,15 @@
 2020-09-18  Alex Christensen  <achristensen@webkit.org>
 
+        WKWebView._tryClose should return whether it succeeded or not
+        https://bugs.webkit.org/show_bug.cgi?id=216660
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/OpenAndCloseWindow.mm:
+        (TEST):
+
+2020-09-18  Alex Christensen  <achristensen@webkit.org>
+
         Make TLSVersion.NetworkSession API test more robust
         https://bugs.webkit.org/show_bug.cgi?id=216704
         <rdar://problem/68643674>
