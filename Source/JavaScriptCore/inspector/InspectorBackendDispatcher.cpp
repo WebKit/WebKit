@@ -187,21 +187,21 @@ void BackendDispatcher::dispatch(const String& message)
     }
 }
 
-// FIXME: remove this function when legacy InspectorObject symbols are no longer needed <http://webkit.org/b/179847>.
+// FIXME: <http://webkit.org/b/179847> remove this function when legacy InspectorObject symbols are no longer needed.
 void BackendDispatcher::sendResponse(long requestId, RefPtr<JSON::Object>&& result)
 {
     ASSERT(result);
     sendResponse(requestId, result.releaseNonNull(), false);
 }
 
-// FIXME: remove this function when legacy InspectorObject symbols are no longer needed <http://webkit.org/b/179847>.
+// FIXME: <http://webkit.org/b/179847> remove this function when legacy InspectorObject symbols are no longer needed.
 void BackendDispatcher::sendResponse(long requestId, RefPtr<JSON::Object>&& result, bool)
 {
     ASSERT(result);
     sendResponse(requestId, result.releaseNonNull(), false);
 }
 
-// FIXME: remove this function when legacy InspectorObject symbols are no longer needed <http://webkit.org/b/179847>.
+// FIXME: <http://webkit.org/b/179847> remove this function when legacy InspectorObject symbols are no longer needed.
 void BackendDispatcher::sendResponse(long requestId, Ref<JSON::Object>&& result)
 {
     sendResponse(requestId, WTFMove(result), false);
@@ -320,17 +320,23 @@ Optional<bool> BackendDispatcher::getBoolean(JSON::Object* params, const String&
 
 Optional<int> BackendDispatcher::getInteger(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<Optional<int>>(params, name, required, &JSON::Value::asInteger, "Integer");
+    // FIXME: <http://webkit.org/b/179847> simplify this when legacy InspectorObject symbols are no longer needed.
+    Optional<int> (JSON::Value::*asInteger)() const = &JSON::Value::asInteger;
+    return getPropertyValue<Optional<int>>(params, name, required, asInteger, "Integer");
 }
 
 Optional<double> BackendDispatcher::getDouble(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<Optional<double>>(params, name, required, &JSON::Value::asDouble, "Number");
+    // FIXME: <http://webkit.org/b/179847> simplify this when legacy InspectorObject symbols are no longer needed.
+    Optional<double> (JSON::Value::*asDouble)() const = &JSON::Value::asDouble;
+    return getPropertyValue<Optional<double>>(params, name, required, asDouble, "Number");
 }
 
 String BackendDispatcher::getString(JSON::Object* params, const String& name, bool required)
 {
-    return getPropertyValue<String>(params, name, required, &JSON::Value::asString, "String");
+    // FIXME: <http://webkit.org/b/179847> simplify this when legacy InspectorObject symbols are no longer needed.
+    String (JSON::Value::*asString)() const = &JSON::Value::asString;
+    return getPropertyValue<String>(params, name, required, asString, "String");
 }
 
 RefPtr<JSON::Value> BackendDispatcher::getValue(JSON::Object* params, const String& name, bool required)

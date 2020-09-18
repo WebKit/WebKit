@@ -785,5 +785,79 @@ size_t ArrayBase::memoryCost() const
     return memoryCost;
 }
 
+// FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
+
+bool Value::asDouble(double& output) const
+{
+    auto x = asDouble();
+    if (!x)
+        return false;
+    output = *x;
+    return true;
+}
+
+bool Value::asInteger(int& output) const
+{
+    auto x = asInteger();
+    if (!x)
+        return false;
+    output = *x;
+    return true;
+}
+
+bool Value::asString(String& output) const
+{
+    auto x = asString();
+    if (!x)
+        return false;
+    output = x;
+    return true;
+}
+
+bool ObjectBase::getBoolean(const String& name, bool& output) const
+{
+    auto x = getBoolean(name);
+    if (!x)
+        return false;
+    output = *x;
+    return true;
+}
+
+bool ObjectBase::getString(const String& name, String& output) const
+{
+    auto x = getString(name);
+    if (!x)
+        return false;
+    output = x;
+    return true;
+}
+
+bool ObjectBase::getObject(const String& name, RefPtr<Object>& output) const
+{
+    auto x = getObject(name);
+    if (!x)
+        return false;
+    output = x.releaseNonNull();
+    return true;
+}
+
+bool ObjectBase::getArray(const String& name, RefPtr<Array>& output) const
+{
+    auto x = getArray(name);
+    if (!x)
+        return false;
+    output = x.releaseNonNull();
+    return true;
+}
+
+bool ObjectBase::getValue(const String& name, RefPtr<Value>& output) const
+{
+    auto x = getValue(name);
+    if (!x)
+        return false;
+    output = x.releaseNonNull();
+    return true;
+}
+
 } // namespace JSONImpl
 } // namespace WTF

@@ -108,6 +108,11 @@ public:
 
     virtual size_t memoryCost() const;
 
+    // FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
+    bool asDouble(double&) const;
+    bool asInteger(int&) const;
+    bool asString(String&) const;
+
 protected:
     Value()
         : m_type { Type::Null }
@@ -209,6 +214,13 @@ protected:
     const_iterator end() const { return m_map.end(); }
 
     unsigned size() const { return m_map.size(); }
+
+    // FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
+    bool getBoolean(const String& name, bool& output) const;
+    bool getString(const String& name, String& output) const;
+    bool getObject(const String& name, RefPtr<Object>& output) const;
+    bool getArray(const String& name, RefPtr<Array>& output) const;
+    bool getValue(const String& name, RefPtr<Value>& output) const;
 
 protected:
     ObjectBase();

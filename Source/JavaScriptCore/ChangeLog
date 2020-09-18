@@ -1,3 +1,17 @@
+2020-09-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r266885): fix open source build
+        https://bugs.webkit.org/show_bug.cgi?id=216675
+
+        Reviewed by Timothy Hatcher.
+
+        Add back methods used by `WebInspector.framework`.
+
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::getInteger): Added.
+        (Inspector::BackendDispatcher::getDouble): Added.
+        (Inspector::BackendDispatcher::getString): Added.
+
 2020-09-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         Inconsistent loop exit assertion in B3ReduceLoopStrength
