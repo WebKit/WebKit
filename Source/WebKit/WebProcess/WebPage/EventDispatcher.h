@@ -68,10 +68,6 @@ public:
 
     void initializeConnection(IPC::Connection*);
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    void notifyScrollingTreesDisplayWasRefreshed(WebCore::PlatformDisplayID);
-#endif
-
 private:
     EventDispatcher();
 
