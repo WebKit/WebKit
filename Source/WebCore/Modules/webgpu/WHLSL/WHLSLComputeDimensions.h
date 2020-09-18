@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLPrepare.h"
 #include <wtf/Optional.h>
@@ -48,4 +48,4 @@ Optional<ComputeDimensions> computeDimensions(Program&, AST::FunctionDefinition&
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

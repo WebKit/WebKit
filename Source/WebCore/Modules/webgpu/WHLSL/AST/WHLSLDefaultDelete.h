@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include <type_traits>
 
@@ -53,4 +53,4 @@
         }; \
     } \
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLGatherEntryPointItems.h"
 #include "WHLSLPipelineDescriptor.h"
@@ -62,4 +62,4 @@ Optional<MatchedComputeSemantics> matchSemantics(Program&, ComputePipelineDescri
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

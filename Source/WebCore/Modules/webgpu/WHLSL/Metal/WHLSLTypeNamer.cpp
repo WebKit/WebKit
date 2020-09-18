@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLTypeNamer.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAddressSpace.h"
 #include "WHLSLArrayReferenceType.h"
@@ -360,4 +360,4 @@ void TypeNamer::emitMetalTypes(StringBuilder& stringBuilder)
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLResourceSemantic.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAddressSpace.h"
 #include "WHLSLArrayType.h"
@@ -86,4 +86,4 @@ bool ResourceSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection di
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

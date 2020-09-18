@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLPropertyResolver.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 #include "WHLSLProgram.h"
@@ -279,4 +279,4 @@ void resolveProperties(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLStatement.h"
@@ -63,4 +63,4 @@ DEFINE_DEFAULT_DELETE(Fallthrough)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(Fallthrough, isFallthrough())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

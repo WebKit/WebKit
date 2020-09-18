@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLGatherEntryPointItems.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLArrayReferenceType.h"
 #include "WHLSLArrayType.h"
@@ -190,4 +190,4 @@ Expected<EntryPointItems, Error> gatherEntryPointItems(const Intrinsics& intrins
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

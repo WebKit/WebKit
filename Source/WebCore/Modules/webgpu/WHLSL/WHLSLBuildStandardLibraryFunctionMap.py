@@ -62,7 +62,7 @@ outfile.write("""
 #include "config.h"
 #include "WHLSLStandardLibraryFunctionMap.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 namespace WebCore {
 

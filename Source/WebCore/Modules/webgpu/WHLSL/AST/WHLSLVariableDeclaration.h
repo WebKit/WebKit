@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLExpression.h"
 #include "WHLSLQualifier.h"
@@ -114,4 +114,4 @@ using VariableDeclarations = Vector<UniqueRef<VariableDeclaration>>;
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLPropertyAccessExpression.h"
@@ -77,4 +77,4 @@ DEFINE_DEFAULT_DELETE(IndexExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(IndexExpression, isIndexExpression())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

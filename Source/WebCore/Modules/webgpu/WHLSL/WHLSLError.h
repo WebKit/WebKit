@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include <wtf/text/StringConcatenate.h>
@@ -61,4 +61,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLLexer.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 namespace WebCore {
 
@@ -1739,4 +1739,4 @@ void Lexer::skipWhitespaceAndComments()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLComputeDimensions.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLFunctionDeclaration.h"
 #include "WHLSLPrepare.h"
@@ -69,4 +69,4 @@ Optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDef
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

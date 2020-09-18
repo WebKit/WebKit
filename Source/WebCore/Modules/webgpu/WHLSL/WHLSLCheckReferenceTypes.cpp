@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLCheckReferenceTypes.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 #include "WHLSLVisitor.h"
@@ -95,4 +95,4 @@ Expected<void, Error> checkReferenceTypes(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

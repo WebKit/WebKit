@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLFunctionStageChecker.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCallExpression.h"
 #include "WHLSLEntryPointType.h"
@@ -82,4 +82,4 @@ Expected<void, Error> checkFunctionStages(Program& program)
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

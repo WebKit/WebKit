@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLProgram.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 namespace WebCore {
 
@@ -56,4 +56,4 @@ bool Program::isValidVectorProperty(String property)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

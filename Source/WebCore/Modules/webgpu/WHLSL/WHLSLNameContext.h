@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLError.h"
 #include "WHLSLNameSpace.h"
@@ -92,4 +92,4 @@ private:
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

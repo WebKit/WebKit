@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLNumThreadsFunctionAttribute.h"
 #include <wtf/Variant.h>
@@ -46,4 +46,4 @@ using AttributeBlock = Vector<FunctionAttribute>;
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLConstantExpression.h"
@@ -73,4 +73,4 @@ using EnumerationMembers = Vector<EnumerationMember>;
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

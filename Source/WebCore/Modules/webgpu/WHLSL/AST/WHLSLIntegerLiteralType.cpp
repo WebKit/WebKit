@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLIntegerLiteralType.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLInferTypes.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -83,4 +83,4 @@ IntegerLiteralType IntegerLiteralType::clone() const
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

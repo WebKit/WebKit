@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLEntryPointType.h"
@@ -111,4 +111,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \
     static bool isType(const WebCore::WHLSL::AST::FunctionDeclaration& type) { return type.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

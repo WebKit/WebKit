@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLStageInOutSemantic.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLArrayType.h"
 #include "WHLSLEnumerationDefinition.h"
@@ -76,4 +76,4 @@ bool StageInOutSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection 
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

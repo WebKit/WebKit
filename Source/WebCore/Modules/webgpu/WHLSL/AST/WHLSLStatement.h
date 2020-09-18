@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLDefaultDelete.h"
@@ -113,4 +113,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WHLSL::AST::ToValueTypeName) \
     static bool isType(const WebCore::WHLSL::AST::Statement& statement) { return statement.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

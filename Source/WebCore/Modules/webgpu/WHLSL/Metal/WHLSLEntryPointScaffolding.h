@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLMangledNames.h"
 #include "WHLSLPipelineDescriptor.h"
@@ -189,4 +189,4 @@ private:
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

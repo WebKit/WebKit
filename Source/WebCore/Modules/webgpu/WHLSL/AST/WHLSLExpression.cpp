@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLExpression.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 
@@ -210,4 +210,4 @@ bool Expression::mayBeEffectful() const
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

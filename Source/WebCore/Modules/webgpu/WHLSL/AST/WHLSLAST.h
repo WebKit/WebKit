@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAddressSpace.h"
 #include "WHLSLArrayReferenceType.h"
@@ -100,4 +100,4 @@
 #include "WHLSLVariableReference.h"
 #include "WHLSLWhileLoop.h"
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

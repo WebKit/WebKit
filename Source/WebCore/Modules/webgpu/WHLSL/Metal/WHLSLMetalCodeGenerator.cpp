@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLMetalCodeGenerator.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLFunctionWriter.h"
 #include "WHLSLTypeNamer.h"
@@ -149,4 +149,4 @@ ComputeMetalCode generateMetalCode(Program& program, MatchedComputeSemantics&& m
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

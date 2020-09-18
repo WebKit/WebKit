@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 namespace WebCore {
 
@@ -39,4 +39,4 @@ void preserveVariableLifetimes(Program&);
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

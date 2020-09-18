@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLResolvingType.h"
 #include "WHLSLTypeArgument.h"
@@ -59,4 +59,4 @@ bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::r
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

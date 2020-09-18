@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLSemanticMatcher.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLBuiltInSemantic.h"
 #include "WHLSLFunctionDefinition.h"
@@ -333,4 +333,4 @@ Optional<MatchedComputeSemantics> matchSemantics(Program& program, ComputePipeli
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

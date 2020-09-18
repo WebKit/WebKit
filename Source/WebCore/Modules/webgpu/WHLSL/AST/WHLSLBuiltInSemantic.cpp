@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLBuiltInSemantic.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLFunctionDefinition.h"
 #include "WHLSLInferTypes.h"
@@ -141,4 +141,4 @@ bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection dir
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

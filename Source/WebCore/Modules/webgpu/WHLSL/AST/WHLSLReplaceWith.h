@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 namespace WebCore {
 
@@ -44,4 +44,4 @@ ALWAYS_INLINE New* replaceWith(Old& old, Args&&... args)
 
 } } } // namespace WebCore::WHLSL::AST
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

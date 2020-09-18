@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLStatement.h"
@@ -68,4 +68,4 @@ DEFINE_DEFAULT_DELETE(Block)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(Block, isBlock())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

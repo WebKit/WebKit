@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLNativeTypeWriter.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLNamedType.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -178,4 +178,4 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

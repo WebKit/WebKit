@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLMangledNames.h"
 
@@ -53,4 +53,4 @@ void inlineNativeFunction(StringBuilder&, AST::NativeFunctionDeclaration&, const
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

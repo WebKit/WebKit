@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLNativeFunctionWriter.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "NotImplemented.h"
 #include "WHLSLAddressSpace.h"
@@ -642,4 +642,4 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

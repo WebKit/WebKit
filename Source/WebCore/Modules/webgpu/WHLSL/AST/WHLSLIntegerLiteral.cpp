@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLIntegerLiteral.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLTypeReference.h"
@@ -50,4 +50,4 @@ int64_t IntegerLiteral::valueForSelectedType() const
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

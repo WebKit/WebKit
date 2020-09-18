@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLRecursiveTypeChecker.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLStructureDefinition.h"
 #include "WHLSLTypeDefinition.h"
@@ -116,4 +116,4 @@ Expected<void, Error> checkRecursiveTypes(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

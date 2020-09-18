@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLStatement.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 
@@ -138,4 +138,4 @@ void Statement::destruct(Statement& statement)
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLSynthesizeEnumerationFunctions.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAddressSpace.h"
 #include "WHLSLProgram.h"
@@ -77,4 +77,4 @@ Expected<void, Error> synthesizeEnumerationFunctions(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

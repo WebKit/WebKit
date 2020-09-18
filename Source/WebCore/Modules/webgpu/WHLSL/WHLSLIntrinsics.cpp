@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLIntrinsics.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLConstantExpression.h"
 #include "WHLSLTypeArgument.h"
@@ -291,4 +291,4 @@ void Intrinsics::add(AST::NativeTypeDeclaration& nativeTypeDeclaration)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

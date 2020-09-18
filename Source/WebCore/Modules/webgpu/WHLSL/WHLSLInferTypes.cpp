@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLInferTypes.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLArrayReferenceType.h"
 #include "WHLSLArrayType.h"
@@ -224,4 +224,4 @@ bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::r
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

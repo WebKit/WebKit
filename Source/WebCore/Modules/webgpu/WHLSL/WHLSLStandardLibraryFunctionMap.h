@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
@@ -48,4 +48,4 @@ unsigned firstFunctionOffsetInStandardLibrary();
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

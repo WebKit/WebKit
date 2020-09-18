@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLNameContext.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLEnumerationDefinition.h"
 #include "WHLSLFunctionDefinition.h"
@@ -262,4 +262,4 @@ AST::VariableDeclaration* NameContext::localExists(String& name) const
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

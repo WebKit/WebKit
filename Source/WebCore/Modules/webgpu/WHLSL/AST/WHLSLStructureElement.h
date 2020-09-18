@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLQualifier.h"
@@ -78,4 +78,4 @@ using StructureElements = Vector<StructureElement>;
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

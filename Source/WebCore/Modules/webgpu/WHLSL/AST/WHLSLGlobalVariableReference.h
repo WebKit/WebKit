@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLStructureElement.h"
 #include <wtf/FastMalloc.h>
@@ -69,4 +69,4 @@ DEFINE_DEFAULT_DELETE(GlobalVariableReference)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(GlobalVariableReference, isGlobalVariableReference())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLTypeReference.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLNativeTypeDeclaration.h"
 #include <wtf/UniqueRef.h>
@@ -53,4 +53,4 @@ Ref<TypeReference> TypeReference::wrap(CodeLocation location, NamedType& resolve
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

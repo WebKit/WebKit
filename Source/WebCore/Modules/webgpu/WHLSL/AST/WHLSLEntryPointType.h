@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include <cstdint>
 
@@ -59,4 +59,4 @@ ALWAYS_INLINE StringView toString(EntryPointType type)
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

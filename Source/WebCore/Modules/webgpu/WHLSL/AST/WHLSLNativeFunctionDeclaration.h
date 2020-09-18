@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLFunctionDeclaration.h"
 #include <wtf/FastMalloc.h>
@@ -62,4 +62,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_FUNCTION_DECLARATION(NativeFunctionDeclaration, isNativeFunctionDeclaration())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLCheckDuplicateFunctions.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLArrayReferenceType.h"
 #include "WHLSLArrayType.h"
@@ -178,4 +178,4 @@ Expected<void, Error> checkDuplicateFunctions(const Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

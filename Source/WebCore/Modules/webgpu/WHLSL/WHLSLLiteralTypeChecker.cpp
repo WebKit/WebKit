@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLLiteralTypeChecker.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLIntegerLiteralType.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -88,4 +88,4 @@ void checkLiteralTypes(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

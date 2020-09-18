@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLVertexBufferIndexCalculator.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 namespace WebCore {
 
@@ -46,4 +46,4 @@ unsigned calculateVertexBufferIndex(unsigned index)
 
 }
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

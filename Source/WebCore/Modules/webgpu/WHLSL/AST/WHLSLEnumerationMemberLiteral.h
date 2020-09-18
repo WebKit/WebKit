@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include <wtf/FastMalloc.h>
@@ -120,4 +120,4 @@ DEFINE_DEFAULT_DELETE(EnumerationMemberLiteral)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(EnumerationMemberLiteral, isEnumerationMemberLiteral())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

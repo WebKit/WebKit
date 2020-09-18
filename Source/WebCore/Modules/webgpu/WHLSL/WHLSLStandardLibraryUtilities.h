@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLError.h"
 #include <wtf/Expected.h>
@@ -44,4 +44,4 @@ Expected<void, Error> includeStandardLibrary(Program&, Parser&, bool parseFullSt
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

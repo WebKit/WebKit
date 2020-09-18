@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLRecursionChecker.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCallExpression.h"
 #include "WHLSLFunctionDefinition.h"
@@ -89,4 +89,4 @@ Expected<void, Error> checkRecursion(Program& program)
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

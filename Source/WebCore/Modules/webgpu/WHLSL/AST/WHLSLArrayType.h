@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLTypeArgument.h"
@@ -94,4 +94,4 @@ DEFINE_DEFAULT_DELETE(ArrayType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(ArrayType, isArrayType())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

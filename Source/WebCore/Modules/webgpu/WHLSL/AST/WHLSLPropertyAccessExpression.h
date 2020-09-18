@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLExpression.h"
 #include "WHLSLFunctionDeclaration.h"
@@ -69,4 +69,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(PropertyAccessExpression, isPropertyAccessExpression())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

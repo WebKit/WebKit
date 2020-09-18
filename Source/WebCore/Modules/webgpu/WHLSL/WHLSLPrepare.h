@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLError.h"
 #include "WHLSLMangledNames.h"
@@ -85,4 +85,4 @@ Expected<ComputePrepareResult, String> prepare(const ShaderModule&, ComputePipel
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

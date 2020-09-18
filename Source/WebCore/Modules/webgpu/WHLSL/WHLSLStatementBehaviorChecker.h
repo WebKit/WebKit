@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLError.h"
 #include <wtf/Expected.h>
@@ -42,4 +42,4 @@ Expected<void, Error> checkStatementBehavior(Program&);
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

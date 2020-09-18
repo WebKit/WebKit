@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLParser.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAddressSpace.h"
 #include "WHLSLEntryPointType.h"
@@ -2085,4 +2085,4 @@ auto Parser::parseTerm() -> Expected<UniqueRef<AST::Expression>, Error>
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

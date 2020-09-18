@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLBaseFunctionAttribute.h"
 #include <wtf/FastMalloc.h>
@@ -68,4 +68,4 @@ private:
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLResolveOverloadImpl.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLFunctionDeclaration.h"
 #include "WHLSLFunctionDefinition.h"
@@ -117,4 +117,4 @@ AST::NamedType* resolveTypeOverloadImpl(Vector<std::reference_wrapper<AST::Named
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

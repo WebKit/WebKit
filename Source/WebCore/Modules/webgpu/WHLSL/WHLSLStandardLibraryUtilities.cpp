@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLStandardLibraryUtilities.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCallExpression.h"
 #include "WHLSLParser.h"
@@ -136,4 +136,4 @@ Expected<void, Error> includeStandardLibrary(Program& program, Parser& parser, b
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

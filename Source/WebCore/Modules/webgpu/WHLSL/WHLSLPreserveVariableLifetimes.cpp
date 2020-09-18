@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLPreserveVariableLifetimes.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 #include "WHLSLASTDumper.h"
@@ -295,4 +295,4 @@ void preserveVariableLifetimes(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

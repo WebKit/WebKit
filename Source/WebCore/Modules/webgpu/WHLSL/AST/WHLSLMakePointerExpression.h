@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAddressEscapeMode.h"
 #include "WHLSLExpression.h"
@@ -72,4 +72,4 @@ DEFINE_DEFAULT_DELETE(MakePointerExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(MakePointerExpression, isMakePointerExpression())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

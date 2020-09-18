@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include <wtf/text/WTFString.h>
 
@@ -49,4 +49,4 @@ String writeNativeType(AST::NativeTypeDeclaration&);
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

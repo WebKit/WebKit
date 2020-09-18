@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLPrepare.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLASTDumper.h"
 #include "WHLSLCheckDuplicateFunctions.h"
@@ -331,4 +331,4 @@ Expected<ComputePrepareResult, String> prepare(const ShaderModule& shaderModule,
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

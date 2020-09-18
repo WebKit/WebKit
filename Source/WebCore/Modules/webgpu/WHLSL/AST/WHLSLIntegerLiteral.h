@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLExpression.h"
 #include "WHLSLIntegerLiteralType.h"
@@ -85,4 +85,4 @@ DEFINE_DEFAULT_DELETE(IntegerLiteral)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(IntegerLiteral, isIntegerLiteral())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

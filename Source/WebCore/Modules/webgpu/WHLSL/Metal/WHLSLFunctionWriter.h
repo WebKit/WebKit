@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLMangledNames.h"
 #include "WHLSLSemanticMatcher.h"
@@ -57,4 +57,4 @@ ComputeMetalFunctionEntryPoints emitMetalFunctions(StringBuilder&, Program&, Typ
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

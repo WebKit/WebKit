@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLResolvingType.h"
 #include "WHLSLTypeArgument.h"
@@ -52,4 +52,4 @@ AST::NamedType* resolveTypeOverloadImpl(Vector<std::reference_wrapper<AST::Named
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

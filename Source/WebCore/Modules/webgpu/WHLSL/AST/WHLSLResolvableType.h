@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLType.h"
 #include "WHLSLUnnamedType.h"
@@ -92,4 +92,4 @@ DEFINE_DEFAULT_DELETE(ResolvableType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(ResolvableType, isResolvableType())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

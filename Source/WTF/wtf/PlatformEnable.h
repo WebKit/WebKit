@@ -867,6 +867,10 @@
 #error "ENABLE(WEBGL2) requires ENABLE(WEBGL)"
 #endif
 
+#if ENABLE(WHLSL_COMPILER) && !ENABLE(WEBGPU)
+#error "ENABLE(WHLSL_COMPILER) requires ENABLE(WEBGPU)"
+#endif
+
 #if CPU(ARM64) && CPU(ADDRESS64)
 #define USE_JUMP_ISLANDS 1
 #endif

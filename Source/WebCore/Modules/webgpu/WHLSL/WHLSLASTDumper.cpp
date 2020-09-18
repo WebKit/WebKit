@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLASTDumper.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 #include "WHLSLProgram.h"
@@ -669,4 +669,4 @@ void ASTDumper::visit(AST::VariableReference& variableReference)
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

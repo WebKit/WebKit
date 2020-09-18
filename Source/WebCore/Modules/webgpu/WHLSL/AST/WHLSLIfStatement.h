@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLExpression.h"
 #include "WHLSLStatement.h"
@@ -75,4 +75,4 @@ DEFINE_DEFAULT_DELETE(IfStatement)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(IfStatement, isIfStatement())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

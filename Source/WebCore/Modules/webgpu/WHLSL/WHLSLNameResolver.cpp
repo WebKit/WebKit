@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLNameResolver.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLDoWhileLoop.h"
 #include "WHLSLDotExpression.h"
@@ -291,4 +291,4 @@ Expected<void, Error> resolveTypeNamesInFunctions(Program& program, NameResolver
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

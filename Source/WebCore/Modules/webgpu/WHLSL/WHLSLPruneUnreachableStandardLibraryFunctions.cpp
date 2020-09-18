@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLPruneUnreachableStandardLibraryFunctions.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 #include "WHLSLProgram.h"
@@ -83,4 +83,4 @@ void pruneUnreachableStandardLibraryFunctions(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

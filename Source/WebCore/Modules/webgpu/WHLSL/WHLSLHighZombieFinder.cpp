@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLHighZombieFinder.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 #include "WHLSLVisitor.h"
@@ -71,4 +71,4 @@ void findHighZombies(Program& program)
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

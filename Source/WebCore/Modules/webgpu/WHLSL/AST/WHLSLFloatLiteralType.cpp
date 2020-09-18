@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLFloatLiteralType.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLInferTypes.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -83,4 +83,4 @@ FloatLiteralType FloatLiteralType::clone() const
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

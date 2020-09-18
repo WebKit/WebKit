@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLEntryPointType.h"
@@ -74,4 +74,4 @@ private:
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

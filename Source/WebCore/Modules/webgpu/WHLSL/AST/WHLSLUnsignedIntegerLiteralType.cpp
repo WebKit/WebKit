@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLUnsignedIntegerLiteralType.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLInferTypes.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -86,4 +86,4 @@ UnsignedIntegerLiteralType UnsignedIntegerLiteralType::clone() const
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

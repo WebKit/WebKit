@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLExpression.h"
 #include "WHLSLVariableDeclaration.h"
@@ -142,4 +142,4 @@ DEFINE_DEFAULT_DELETE(ReadModifyWriteExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(ReadModifyWriteExpression, isReadModifyWriteExpression())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

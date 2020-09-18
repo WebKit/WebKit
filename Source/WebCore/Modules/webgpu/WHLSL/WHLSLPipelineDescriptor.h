@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include <wtf/OptionSet.h>
 #include <wtf/Variant.h>
@@ -155,4 +155,4 @@ using PipelineDescriptor = Variant<RenderPipelineDescriptor, ComputePipelineDesc
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

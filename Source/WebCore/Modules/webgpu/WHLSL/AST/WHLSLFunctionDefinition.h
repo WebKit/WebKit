@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLBlock.h"
 #include "WHLSLFunctionDeclaration.h"
@@ -67,4 +67,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_FUNCTION_DECLARATION(FunctionDefinition, isFunctionDefinition())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

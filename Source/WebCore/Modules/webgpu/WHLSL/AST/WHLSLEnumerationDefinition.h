@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLEnumerationMember.h"
@@ -98,4 +98,4 @@ DEFINE_DEFAULT_DELETE(EnumerationDefinition)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(EnumerationDefinition, isEnumerationDefinition())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLChecker.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLArrayReferenceType.h"
 #include "WHLSLArrayType.h"
@@ -1453,4 +1453,4 @@ Expected<void, Error> check(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

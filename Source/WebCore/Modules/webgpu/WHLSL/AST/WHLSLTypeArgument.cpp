@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLTypeArgument.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLConstantExpression.h"
 #include "WHLSLTypeReference.h"
@@ -62,4 +62,4 @@ TypeArgument clone(const TypeArgument& typeArgument)
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

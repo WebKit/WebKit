@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLConstantExpression.h"
 #include <wtf/UniqueRef.h>
@@ -52,4 +52,4 @@ TypeArguments clone(const TypeArguments&);
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

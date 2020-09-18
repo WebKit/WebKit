@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLBuiltInSemantic.h"
 #include "WHLSLResourceSemantic.h"
@@ -47,4 +47,4 @@ using Semantic = Variant<BuiltInSemantic, ResourceSemantic, SpecializationConsta
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

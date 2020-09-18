@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLSpecializationConstantSemantic.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLTypeReference.h"
@@ -58,4 +58,4 @@ bool SpecializationConstantSemantic::isAcceptableForShaderItemDirection(ShaderIt
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

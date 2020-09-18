@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLVisitor.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 #include "WHLSLProgram.h"
@@ -573,4 +573,4 @@ void Visitor::visit(AST::VariableReference&)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

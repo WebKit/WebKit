@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLError.h"
 #include "WHLSLNameContext.h"
@@ -75,4 +75,4 @@ Expected<void, Error> resolveTypeNamesInFunctions(Program&, NameResolver&);
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

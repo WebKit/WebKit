@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLBlock.h"
 #include "WHLSLCodeLocation.h"
@@ -73,4 +73,4 @@ DEFINE_DEFAULT_DELETE(SwitchCase)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_STATEMENT(SwitchCase, isSwitchCase())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

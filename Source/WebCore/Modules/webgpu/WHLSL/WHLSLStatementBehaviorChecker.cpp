@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLStatementBehaviorChecker.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLBlock.h"
 #include "WHLSLBreak.h"
@@ -244,4 +244,4 @@ Expected<void, Error> checkStatementBehavior(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLPropertyAccessExpression.h"
 #include <wtf/FastMalloc.h>
@@ -71,4 +71,4 @@ DEFINE_DEFAULT_DELETE(DotExpression)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_EXPRESSION(DotExpression, isDotExpression())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

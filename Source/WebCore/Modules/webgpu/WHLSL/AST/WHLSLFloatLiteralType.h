@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLResolvableType.h"
 #include <wtf/FastMalloc.h>
@@ -79,4 +79,4 @@ DEFINE_DEFAULT_DELETE(FloatLiteralType)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(FloatLiteralType, isFloatLiteralType())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

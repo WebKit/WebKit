@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLNamedType.h"
@@ -76,4 +76,4 @@ DEFINE_DEFAULT_DELETE(TypeDefinition)
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(TypeDefinition, isTypeDefinition())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

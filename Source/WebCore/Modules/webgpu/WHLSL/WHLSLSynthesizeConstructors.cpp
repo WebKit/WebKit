@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLSynthesizeConstructors.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLArrayType.h"
 #include "WHLSLArrayReferenceType.h"
@@ -167,4 +167,4 @@ Expected<void, Error> synthesizeConstructors(Program& program)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

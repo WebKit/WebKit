@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLType.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLAST.h"
 
@@ -195,4 +195,4 @@ String UnnamedType::toString() const
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

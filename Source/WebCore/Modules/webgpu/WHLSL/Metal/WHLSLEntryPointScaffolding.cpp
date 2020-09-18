@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLEntryPointScaffolding.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLBuiltInSemantic.h"
 #include "WHLSLFunctionDefinition.h"
@@ -625,4 +625,4 @@ void ComputeEntryPointScaffolding::emitPack(StringBuilder&, MangledVariableName,
 
 }
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLUnnamedType.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLArrayReferenceType.h"
 #include "WHLSLArrayType.h"
@@ -80,4 +80,4 @@ bool UnnamedType::operator==(const UnnamedType& other) const
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

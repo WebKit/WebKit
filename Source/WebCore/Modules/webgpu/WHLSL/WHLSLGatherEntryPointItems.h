@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLError.h"
 #include "WHLSLSemantic.h"
@@ -69,4 +69,4 @@ Expected<EntryPointItems, Error> gatherEntryPointItems(const Intrinsics&, AST::F
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WHLSL_COMPILER)

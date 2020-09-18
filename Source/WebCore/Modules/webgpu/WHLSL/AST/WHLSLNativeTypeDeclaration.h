@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLCodeLocation.h"
 #include "WHLSLNamedType.h"
@@ -167,4 +167,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_WHLSL_TYPE(NativeTypeDeclaration, isNativeTypeDeclaration())
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)

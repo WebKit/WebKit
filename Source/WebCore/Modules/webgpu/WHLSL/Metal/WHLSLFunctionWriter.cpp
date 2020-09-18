@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WHLSLFunctionWriter.h"
 
-#if ENABLE(WEBGPU)
+#if ENABLE(WHLSL_COMPILER)
 
 #include "NotImplemented.h"
 #include "WHLSLAST.h"
@@ -967,4 +967,4 @@ ComputeMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder,
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(WHLSL_COMPILER)
