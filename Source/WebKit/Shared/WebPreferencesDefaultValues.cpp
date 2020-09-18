@@ -263,6 +263,17 @@ bool defaultWebMParserEnabled()
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+bool defaultMediaRecorderEnabled()
+{
+#if PLATFORM(MAC) && HAVE(AVASSETWRITERDELEGATE)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 #if ENABLE(WEB_RTC)
 bool defaultWebRTCH264LowLatencyEncoderEnabled()
 {

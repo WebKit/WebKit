@@ -1,3 +1,15 @@
+2020-09-18  Youenn Fablet  <youenn@apple.com>
+
+        Enable MediaRecorder by default on MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=216663
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultMediaRecorderEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/WebPreferencesExperimental.yaml:
+
 2020-09-17  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the UserTiming and ResourceTiming APIs

@@ -373,6 +373,10 @@ bool defaultVP9SWDecoderEnabledOnBattery();
 bool defaultWebMParserEnabled();
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+bool defaultMediaRecorderEnabled();
+#endif
+
 #if ENABLE(WEB_RTC)
 bool defaultWebRTCH264LowLatencyEncoderEnabled();
 #endif

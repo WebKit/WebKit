@@ -87,7 +87,7 @@ RequestIdleCallbackEnabled:
 
 MediaRecorderEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: defaultMediaRecorderEnabled()
   condition: ENABLE(MEDIA_STREAM)
   humanReadableName: "MediaRecorder"
   humanReadableDescription: "MediaRecorder"
