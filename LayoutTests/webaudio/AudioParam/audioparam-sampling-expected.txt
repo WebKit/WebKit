@@ -1,0 +1,35 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "linearRamp:task0" 
+PASS Executing "linearRamp:short:task1" 
+PASS Executing "linearRamp:long:task2" 
+PASS Executing "exponentialRamp:task3" 
+PASS Executing "exponentialRamp:short:task4" 
+PASS Executing "exponentialRamp:long:task5" 
+PASS Audit report 
+PASS > [linearRamp:task0]  
+PASS   linearRamp: Sample 1 is 0.99296875 within an error of 1.201e-8. 
+PASS   linearRamp: Sample 128 is 0.0007812499999998446 within an error of 0.00001526. 
+PASS < [linearRamp:task0] All assertions passed. (total 2 assertions) 
+PASS > [linearRamp:short:task1]  
+PASS   linearRamp:short: Sample 1 is 0.82 within an error of 8.723e-9. 
+PASS   linearRamp:short: Sample 5 is 0.020000000000000018 within an error of 9.537e-7. 
+PASS < [linearRamp:short:task1] All assertions passed. (total 2 assertions) 
+PASS > [linearRamp:long:task2]  
+PASS   linearRamp:long: Sample 1 is 0.9955 within an error of 2.827e-8. 
+PASS   linearRamp:long: Sample 200 is 0.0004999999999999449 within an error of 0.00004674. 
+PASS < [linearRamp:long:task2] All assertions passed. (total 2 assertions) 
+PASS > [exponentialRamp:task3]  
+PASS   exponentialRamp: Sample 1 is 0.9222395651044235 within an error of 2.505e-8. 
+PASS   exponentialRamp: Sample 128 is 0.00001009035044841447 within an error of 1.484e-7. 
+PASS < [exponentialRamp:task3] All assertions passed. (total 2 assertions) 
+PASS > [exponentialRamp:short:task4]  
+PASS   exponentialRamp:short: Sample 1 is 0.12589254117941664 within an error of 5.027e-8. 
+PASS   exponentialRamp:short: Sample 5 is 0.00001258925411794166 within an error of 3.821e-7. 
+PASS < [exponentialRamp:short:task4] All assertions passed. (total 2 assertions) 
+PASS > [exponentialRamp:long:task5]  
+PASS   exponentialRamp:long: Sample 1 is 0.9495109992021982 within an error of 8.035e-9. 
+PASS   exponentialRamp:long: Sample 200 is 0.000010057730630017378 within an error of 0.000001337. 
+PASS < [exponentialRamp:long:task5] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+

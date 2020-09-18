@@ -1,0 +1,32 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "validate" 
+PASS Executing "playbackrate+detune" 
+PASS Executing "panner-k-rate" 
+PASS Audit report 
+PASS > [validate] Validate test parameters 
+PASS   eventTime is less than 0.042666666666666665. 
+PASS < [validate] All assertions passed. (total 1 assertions) 
+PASS > [playbackrate+detune] Test k-rate AudioBufferSourceNode AudioParams 
+PASS   Final node.detune.value is equal to 0.75. 
+PASS   Final node.playbackRate.value is equal to 0.5. 
+PASS < [playbackrate+detune] All assertions passed. (total 2 assertions) 
+PASS > [panner-k-rate] Test k-rate PannerNode and AudioListenerNode AudioParams 
+PASS   Final panner.orientationX.value is equal to 2.5. 
+PASS   Final panner.orientationY.value is equal to 2.5. 
+PASS   Final panner.orientationZ.value is equal to 2.5. 
+PASS   Final panner.positionX.value is equal to 11. 
+PASS   Final panner.positionY.value is equal to 11. 
+PASS   Final panner.positionZ.value is equal to 11. 
+PASS   Final context.listener.forwardX.value is equal to 3. 
+PASS   Final context.listener.forwardY.value is equal to 3. 
+PASS   Final context.listener.forwardZ.value is equal to 3. 
+PASS   Final context.listener.positionX.value is equal to 0.5. 
+PASS   Final context.listener.positionY.value is equal to 0.5. 
+PASS   Final context.listener.positionZ.value is equal to 0.5. 
+PASS   Final context.listener.upX.value is equal to 4. 
+PASS   Final context.listener.upY.value is equal to 4. 
+PASS   Final context.listener.upZ.value is equal to 4. 
+PASS < [panner-k-rate] All assertions passed. (total 15 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+

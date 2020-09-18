@@ -1,0 +1,104 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "Listener setPosition X error" 
+PASS Executing "Listener setPosition X no error" 
+PASS Executing "Listener setPosition Y error" 
+PASS Executing "Listener setPosition Y no error" 
+PASS Executing "Listener setPosition Z error" 
+PASS Executing "Listener setPosition Z no error" 
+PASS Executing "Listener setOrientation forward X error" 
+PASS Executing "Listener setOrientation forward X no error" 
+PASS Executing "Listener setOrientation forward Y error" 
+PASS Executing "Listener setOrientation forward Y no error" 
+PASS Executing "Listener setOrientation forward Z error" 
+PASS Executing "Listener setOrientation forward Z no error" 
+PASS Executing "Listener setOrientation up X error" 
+PASS Executing "Listener setOrientation up X no error" 
+PASS Executing "Listener setOrientation up Y error" 
+PASS Executing "Listener setOrientation up Y no error" 
+PASS Executing "Listener setOrientation up Z error" 
+PASS Executing "Listener setOrientation up Z no error" 
+PASS Audit report 
+PASS > [Listener setPosition X error]  
+PASS   Listener setPosition X error: Node under test is an AudioLIstener is true. 
+PASS   listener.positionX.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setPosition(1,1,1) for positionX threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setPosition X error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setPosition X no error]  
+PASS   Listener setPosition X no error: Node under test is an AudioLIstener is true. 
+PASS   listener.positionX.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setPosition X no error] All assertions passed. (total 2 assertions) 
+PASS > [Listener setPosition Y error]  
+PASS   Listener setPosition Y error: Node under test is an AudioLIstener is true. 
+PASS   listener.positionY.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setPosition(1,1,1) for positionY threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setPosition Y error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setPosition Y no error]  
+PASS   Listener setPosition Y no error: Node under test is an AudioLIstener is true. 
+PASS   listener.positionY.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setPosition Y no error] All assertions passed. (total 2 assertions) 
+PASS > [Listener setPosition Z error]  
+PASS   Listener setPosition Z error: Node under test is an AudioLIstener is true. 
+PASS   listener.positionZ.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setPosition(1,1,1) for positionZ threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setPosition Z error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setPosition Z no error]  
+PASS   Listener setPosition Z no error: Node under test is an AudioLIstener is true. 
+PASS   listener.positionZ.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setPosition Z no error] All assertions passed. (total 2 assertions) 
+PASS > [Listener setOrientation forward X error]  
+PASS   Listener setOrientation forward X error: Node under test is an AudioLIstener is true. 
+PASS   listener.forwardX.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setOrientation(1,1,1,1,1,1) for forwardX threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setOrientation forward X error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setOrientation forward X no error]  
+PASS   Listener setOrientation forward X no error: Node under test is an AudioLIstener is true. 
+PASS   listener.forwardX.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setOrientation forward X no error] All assertions passed. (total 2 assertions) 
+PASS > [Listener setOrientation forward Y error]  
+PASS   Listener setOrientation forward Y error: Node under test is an AudioLIstener is true. 
+PASS   listener.forwardY.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setOrientation(1,1,1,1,1,1) for forwardY threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setOrientation forward Y error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setOrientation forward Y no error]  
+PASS   Listener setOrientation forward Y no error: Node under test is an AudioLIstener is true. 
+PASS   listener.forwardY.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setOrientation forward Y no error] All assertions passed. (total 2 assertions) 
+PASS > [Listener setOrientation forward Z error]  
+PASS   Listener setOrientation forward Z error: Node under test is an AudioLIstener is true. 
+PASS   listener.forwardZ.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setOrientation(1,1,1,1,1,1) for forwardZ threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setOrientation forward Z error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setOrientation forward Z no error]  
+PASS   Listener setOrientation forward Z no error: Node under test is an AudioLIstener is true. 
+PASS   listener.forwardZ.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setOrientation forward Z no error] All assertions passed. (total 2 assertions) 
+PASS > [Listener setOrientation up X error]  
+PASS   Listener setOrientation up X error: Node under test is an AudioLIstener is true. 
+PASS   listener.upX.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setOrientation(1,1,1,1,1,1) for upX threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setOrientation up X error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setOrientation up X no error]  
+PASS   Listener setOrientation up X no error: Node under test is an AudioLIstener is true. 
+PASS   listener.upX.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setOrientation up X no error] All assertions passed. (total 2 assertions) 
+PASS > [Listener setOrientation up Y error]  
+PASS   Listener setOrientation up Y error: Node under test is an AudioLIstener is true. 
+PASS   listener.upY.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setOrientation(1,1,1,1,1,1) for upY threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setOrientation up Y error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setOrientation up Y no error]  
+PASS   Listener setOrientation up Y no error: Node under test is an AudioLIstener is true. 
+PASS   listener.upY.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setOrientation up Y no error] All assertions passed. (total 2 assertions) 
+PASS > [Listener setOrientation up Z error]  
+PASS   Listener setOrientation up Z error: Node under test is an AudioLIstener is true. 
+PASS   listener.upZ.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   listener.setOrientation(1,1,1,1,1,1) for upZ threw NotSupportedError: "Events are overlapping". 
+PASS < [Listener setOrientation up Z error] All assertions passed. (total 3 assertions) 
+PASS > [Listener setOrientation up Z no error]  
+PASS   Listener setOrientation up Z no error: Node under test is an AudioLIstener is true. 
+PASS   listener.upZ.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Listener setOrientation up Z no error] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 18 tasks ran successfully. 
+

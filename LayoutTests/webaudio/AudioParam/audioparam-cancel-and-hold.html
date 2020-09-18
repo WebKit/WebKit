@@ -4,11 +4,11 @@
     <title>
       Test CancelValuesAndHoldAtTime
     </title>
-    <script src="../imported/w3c/web-platform-tests/resources/testharness.js"></script>
-    <script src="../resources/testharnessreport.js"></script>
-    <script src="resources/audio-param.js"></script>
-    <script src="resources/audit-util.js"></script>
-    <script src="resources/audit.js"></script>
+    <script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../resources/audio-param.js"></script>
+    <script src="../resources/audit-util.js"></script>
+    <script src="../resources/audit.js"></script>
   </head>
   <body>
     <script id="layout-test-code">
@@ -27,7 +27,7 @@
           function(task, should) {
             cancelTest(should, linearRampTest('linearRampToValueAtTime'), {
               valueThreshold: 8.3998e-5,
-              curveThreshold: 8.3998e-5
+              curveThreshold: 0
             }).then(task.done.bind(task));
           });
 
@@ -96,7 +96,7 @@
               };
             }, {
               valueThreshold: 4.5267e-7,  // 1.1317e-7,
-              curveThreshold: 4.5267e-7
+              curveThreshold: 0
             }).then(task.done.bind(task));
           });
 
@@ -216,7 +216,7 @@
               };
             }, {
               valueThreshold: 1.2320e-6,
-              curveThreshold: 1.2320e-6
+              curveThreshold: 0
             }).then(task.done.bind(task));
           });
 
@@ -237,7 +237,7 @@
             cancelTest(
                 should,
                 linearRampTest('Post cancellation linearRampToValueAtTime'),
-                {valueThreshold: 8.3998e-5, curveThreshold: 8.3998e-5},
+                {valueThreshold: 8.3998e-5, curveThreshold: 0},
                 function(g, cancelTime, expectedConstant) {
                   // Schedule the linear ramp on g[0], and do the same for g[2],
                   // using the starting point given by expectedConstant.
@@ -266,7 +266,7 @@
             cancelTest(
                 should,
                 linearRampTest('Post cancel exponentialRampToValueAtTime'),
-                {valueThreshold: 8.3998e-5, curveThreshold: 8.3998e-5},
+                {valueThreshold: 8.3998e-5, curveThreshold: 0},
                 function(g, cancelTime, expectedConstant) {
                   // Schedule the exponential ramp on g[0], and do the same for
                   // g[2], using the starting point given by expectedConstant.
@@ -288,7 +288,7 @@
         // Then schedule a setValueCurve after the cancellation.
         cancelTest(
             should, linearRampTest('Post cancel setValueCurveAtTime'),
-            {valueThreshold: 8.3998e-5, curveThreshold: 8.3998e-5},
+            {valueThreshold: 8.3998e-5, curveThreshold: 0},
             function(g, cancelTime, expectedConstant) {
               // Schedule the exponential ramp on g[0], and do the same for
               // g[2], using the starting point given by expectedConstant.
@@ -313,7 +313,7 @@
         // Then schedule a setTarget after the cancellation.
         cancelTest(
             should, linearRampTest('Post cancel setTargetAtTime'),
-            {valueThreshold: 8.3998e-5, curveThreshold: 8.3998e-5},
+            {valueThreshold: 8.3998e-5, curveThreshold: 0},
             function(g, cancelTime, expectedConstant) {
               // Schedule the exponential ramp on g[0], and do the same for
               // g[2], using the starting point given by expectedConstant.
@@ -338,7 +338,7 @@
         // Then schedule a setTarget after the cancellation.
         cancelTest(
             should, linearRampTest('Post cancel setValueAtTime'),
-            {valueThreshold: 8.3998e-5, curveThreshold: 8.3998e-5},
+            {valueThreshold: 8.3998e-5, curveThreshold: 0},
             function(g, cancelTime, expectedConstant) {
               // Schedule the exponential ramp on g[0], and do the same for
               // g[2], using the starting point given by expectedConstant.

@@ -1,0 +1,31 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "setValue" 
+PASS Executing "linear" 
+PASS Executing "exponential" 
+PASS Executing "setTarget" 
+PASS Executing "setValueCurve" 
+PASS Audit report 
+PASS > [setValue]  
+PASS   setValue: Output[0-127] contains only the constant 0. 
+PASS   setValue: Output[128-1023] contains only the constant 1. 
+PASS < [setValue] All assertions passed. (total 2 assertions) 
+PASS > [linear]  
+PASS   linear: Output[0-127] contains only the constant 1. 
+PASS   linear: Output[128-1023] contains only the constant 0.5. 
+PASS < [linear] All assertions passed. (total 2 assertions) 
+PASS > [exponential]  
+PASS   exponential: Output[0-127] contains only the constant 1. 
+PASS   exponential: Output[128-1023] contains only the constant 0.5. 
+PASS < [exponential] All assertions passed. (total 2 assertions) 
+PASS > [setTarget]  
+PASS   setTarget: Output[0-127] contains only the constant 1. 
+PASS   setTarget: Output[128] is equal to 1. 
+PASS   Output[129-1023] contains only positive values is equal to true. 
+PASS < [setTarget] All assertions passed. (total 3 assertions) 
+PASS > [setValueCurve]  
+PASS   setValueCurve: Output[0-127] contains only the constant 1. 
+PASS   setValueCurve: Output[128-1023] is equal to true. 
+PASS < [setValueCurve] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+

@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "Reconnect graph to DynamicsCompressor before end of tail" 
+PASS Executing "Reconnect graph to Biquad before end of tail" 
+PASS Audit report 
+PASS > [Reconnect graph to DynamicsCompressor before end of tail]  
+PASS   Oscillator start time is greater than or equal to 1.689. 
+PASS   Output of DynamicsCompressorNode is not constantly 0 (contains 15903 different values). 
+PASS < [Reconnect graph to DynamicsCompressor before end of tail] All assertions passed. (total 2 assertions) 
+PASS > [Reconnect graph to Biquad before end of tail]  
+PASS   Oscillator start time is greater than or equal to 0.12691650390625. 
+PASS   Output of BiquadFilterNode is not constantly 0 (contains 8191 different values). 
+PASS < [Reconnect graph to Biquad before end of tail] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+

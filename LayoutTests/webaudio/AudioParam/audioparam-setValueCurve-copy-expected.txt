@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test-copy" 
+PASS Audit report 
+PASS > [test-copy]  
+PASS   setValueCurve output is identical to the array [expected array]. 
+PASS < [test-copy] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

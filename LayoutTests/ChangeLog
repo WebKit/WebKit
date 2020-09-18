@@ -1,5 +1,116 @@
 2020-09-18  Chris Dumez  <cdumez@apple.com>
 
+        Import AudioContext / AudioListener / AudioNode / AudioParam layout tests from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=216706
+
+        Reviewed by Eric Carlson.
+
+        Import AudioContext / AudioListener / AudioNode / AudioParam layout tests from Blink.
+
+        * webaudio/AudioContext/audiocontext-close-basic-expected.txt: Added.
+        * webaudio/AudioContext/audiocontext-close-basic.html: Added.
+        * webaudio/AudioContext/audiocontext-listener-should-not-crash-expected.txt: Added.
+        * webaudio/AudioContext/audiocontext-listener-should-not-crash.html: Added.
+        * webaudio/AudioListener/audiolistener-automation-position-expected.txt: Added.
+        * webaudio/AudioListener/audiolistener-automation-position.html: Added.
+        * webaudio/AudioListener/audiolistener-set-position-expected.txt: Added.
+        * webaudio/AudioListener/audiolistener-set-position.html: Added.
+        * webaudio/AudioNode/tail-connections-expected.txt: Added.
+        * webaudio/AudioNode/tail-connections.html: Added.
+        * webaudio/AudioNode/tail-processing-expected.txt: Added.
+        * webaudio/AudioNode/tail-processing.html: Added.
+        * webaudio/AudioParam/audioparam-automation-clamping-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-automation-clamping.html: Added.
+        * webaudio/AudioParam/audioparam-cancel-and-hold-expected.txt: Renamed from LayoutTests/webaudio/audioparam-cancel-and-hold-expected.txt.
+        * webaudio/AudioParam/audioparam-cancel-and-hold.html: Renamed from LayoutTests/webaudio/audioparam-cancel-and-hold.html.
+        * webaudio/AudioParam/audioparam-clamp-time-to-current-time-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-clamp-time-to-current-time.html: Added.
+        * webaudio/AudioParam/audioparam-initial-event-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-initial-event.html: Added.
+        * webaudio/AudioParam/audioparam-k-rate-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-k-rate.html: Added.
+        * webaudio/AudioParam/audioparam-linearRamp-value-attribute-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-linearRamp-value-attribute.html: Added.
+        * webaudio/AudioParam/audioparam-negative-exponentialRamp-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-negative-exponentialRamp.html: Added.
+        * webaudio/AudioParam/audioparam-nominal-range-expected.txt: Renamed from LayoutTests/webaudio/audioparam-nominal-range-expected.txt.
+        * webaudio/AudioParam/audioparam-nominal-range.html: Renamed from LayoutTests/webaudio/audioparam-nominal-range.html.
+        * webaudio/AudioParam/audioparam-processing-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-processing.html: Added.
+        * webaudio/AudioParam/audioparam-sampling-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-sampling.html: Added.
+        * webaudio/AudioParam/audioparam-setTarget-timeConstant-0-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setTarget-timeConstant-0.html: Added.
+        * webaudio/AudioParam/audioparam-setTargetAtTime-continuous-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setTargetAtTime-continuous.html: Added.
+        * webaudio/AudioParam/audioparam-setTargetAtTime-limit-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setTargetAtTime-limit.html: Added.
+        * webaudio/AudioParam/audioparam-setTargetAtTime-sampling-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setTargetAtTime-sampling.html: Added.
+        * webaudio/AudioParam/audioparam-setValueCurve-copy-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setValueCurve-copy.html: Added.
+        * webaudio/AudioParam/audioparam-setValueCurve-duration-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setValueCurve-duration.html: Added.
+        * webaudio/AudioParam/audioparam-setValueCurve-end-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setValueCurve-end.html: Added.
+        * webaudio/AudioParam/audioparam-setValueCurve-exceptions-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setValueCurveAtTime-interpolation-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-setValueCurveAtTime-interpolation.html: Added.
+        * webaudio/AudioParam/audioparam-update-value-attribute-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-update-value-attribute.html: Added.
+        * webaudio/AudioParam/audioparam-value-setter-error-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-value-setter-error.html: Added.
+        * webaudio/AudioParam/cancel-values-crash-913217-expected.txt: Added.
+        * webaudio/AudioParam/cancel-values-crash-913217.html: Added.
+        * webaudio/AudioParam/value-setter-warnings-expected.txt: Added.
+        * webaudio/AudioParam/value-setter-warnings.html: Added.
+        * webaudio/AudioParam/worklet-warnings-expected.txt: Added.
+        * webaudio/AudioParam/worklet-warnings.html: Added.
+        * webaudio/audioparam-exponentialRampToValueAtTime.html:
+        * webaudio/audioparam-linearRampToValueAtTime.html:
+        * webaudio/audioparam-setValueAtTime.html:
+        * webaudio/resources/audioparam-testing-legacy.js: Copied from LayoutTests/webaudio/resources/audioparam-testing.js.
+        (renderLength):
+        (createConstantBuffer):
+        (createConstantArray):
+        (createLinearRampArray):
+        (createExponentialRampArray):
+        (discreteTimeConstantForSampleRate):
+        (createExponentialApproachArray):
+        (createSineWaveArray):
+        (endValueDelta):
+        (valueUpdate):
+        (comparePartialSignals):
+        (verifyDiscontinuities):
+        (compareSignals):
+        (checkResultFunction):
+        (doAutomation):
+        (createAudioGraphAndTest):
+        * webaudio/resources/audioparam-testing.js:
+        (renderLength):
+        (createConstantArray):
+        (getStartEndFrames):
+        (createLinearRampArray):
+        (createExponentialRampArray):
+        (discreteTimeConstantForSampleRate):
+        (createExponentialApproachArray):
+        (createReferenceSineArray):
+        (createSineWaveArray):
+        (endValueDelta):
+        (relativeErrorMetric):
+        (differenceErrorMetric):
+        (valueUpdate):
+        (comparePartialSignals):
+        (verifyDiscontinuities):
+        (compareSignals):
+        (checkResultFunction):
+        (doAutomation):
+        (createAudioGraphAndTest):
+        * webaudio/resources/set-position-vs-curve-test.js: Added.
+        (testPositionSetterVsCurve):
+
+2020-09-18  Chris Dumez  <cdumez@apple.com>
+
         webaudio/Analyser/handle-silent-inputs.html test is failing
         https://bugs.webkit.org/show_bug.cgi?id=216708
 

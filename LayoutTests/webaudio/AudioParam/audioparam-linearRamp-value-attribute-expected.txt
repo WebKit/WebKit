@@ -1,0 +1,72 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "propagate" 
+PASS Audit report 
+PASS > [propagate]  
+PASS   gain.gain.value at frame 127 is equal to 0.031005859375. 
+PASS   gain.gain.value at frame 255 is equal to 0.062255859375. 
+PASS   gain.gain.value at frame 383 is equal to 0.093505859375. 
+PASS   gain.gain.value at frame 511 is equal to 0.124755859375. 
+PASS   gain.gain.value at frame 639 is equal to 0.156005859375. 
+PASS   gain.gain.value at frame 767 is equal to 0.187255859375. 
+PASS   gain.gain.value at frame 895 is equal to 0.218505859375. 
+PASS   gain.gain.value at frame 1023 is equal to 0.249755859375. 
+PASS   gain.gain.value at frame 1151 is equal to 0.281005859375. 
+PASS   gain.gain.value at frame 1279 is equal to 0.312255859375. 
+PASS   gain.gain.value at frame 1407 is equal to 0.343505859375. 
+PASS   gain.gain.value at frame 1535 is equal to 0.374755859375. 
+PASS   gain.gain.value at frame 1663 is equal to 0.406005859375. 
+PASS   gain.gain.value at frame 1791 is equal to 0.437255859375. 
+PASS   gain.gain.value at frame 1919 is equal to 0.468505859375. 
+PASS   gain.gain.value at frame 2047 is equal to 0.499755859375. 
+PASS   gain.gain.value at frame 2175 is equal to 0.531005859375. 
+PASS   gain.gain.value at frame 2303 is equal to 0.562255859375. 
+PASS   gain.gain.value at frame 2431 is equal to 0.593505859375. 
+PASS   gain.gain.value at frame 2559 is equal to 0.624755859375. 
+PASS   gain.gain.value at frame 2687 is equal to 0.656005859375. 
+PASS   gain.gain.value at frame 2815 is equal to 0.687255859375. 
+PASS   gain.gain.value at frame 2943 is equal to 0.718505859375. 
+PASS   gain.gain.value at frame 3071 is equal to 0.749755859375. 
+PASS   gain.gain.value at frame 3199 is equal to 0.781005859375. 
+PASS   gain.gain.value at frame 3327 is equal to 0.812255859375. 
+PASS   gain.gain.value at frame 3455 is equal to 0.843505859375. 
+PASS   gain.gain.value at frame 3583 is equal to 0.874755859375. 
+PASS   gain.gain.value at frame 3711 is equal to 0.906005859375. 
+PASS   gain.gain.value at frame 3839 is equal to 0.937255859375. 
+PASS   gain.gain.value at frame 3967 is equal to 0.968505859375. 
+PASS   gain.gain.value at frame 4095 is equal to 0.999755859375. 
+PASS   gain.gain.value at frame 4223 is equal to 1. 
+PASS   gain.gain.value at frame 4351 is equal to 1. 
+PASS   gain.gain.value at frame 4479 is equal to 1. 
+PASS   gain.gain.value at frame 4607 is equal to 1. 
+PASS   gain.gain.value at frame 4735 is equal to 1. 
+PASS   gain.gain.value at frame 4863 is equal to 1. 
+PASS   gain.gain.value at frame 4991 is equal to 1. 
+PASS   gain.gain.value at frame 5119 is equal to 1. 
+PASS   gain.gain.value at frame 5247 is equal to 1. 
+PASS   gain.gain.value at frame 5375 is equal to 1. 
+PASS   gain.gain.value at frame 5503 is equal to 1. 
+PASS   gain.gain.value at frame 5631 is equal to 1. 
+PASS   gain.gain.value at frame 5759 is equal to 1. 
+PASS   gain.gain.value at frame 5887 is equal to 1. 
+PASS   gain.gain.value at frame 6015 is equal to 1. 
+PASS   gain.gain.value at frame 6143 is equal to 1. 
+PASS   gain.gain.value at frame 6271 is equal to 1. 
+PASS   gain.gain.value at frame 6399 is equal to 1. 
+PASS   gain.gain.value at frame 6527 is equal to 1. 
+PASS   gain.gain.value at frame 6655 is equal to 1. 
+PASS   gain.gain.value at frame 6783 is equal to 1. 
+PASS   gain.gain.value at frame 6911 is equal to 1. 
+PASS   gain.gain.value at frame 7039 is equal to 1. 
+PASS   gain.gain.value at frame 7167 is equal to 1. 
+PASS   gain.gain.value at frame 7295 is equal to 1. 
+PASS   gain.gain.value at frame 7423 is equal to 1. 
+PASS   gain.gain.value at frame 7551 is equal to 1. 
+PASS   gain.gain.value at frame 7679 is equal to 1. 
+PASS   gain.gain.value at frame 7807 is equal to 1. 
+PASS   gain.gain.value at frame 7935 is equal to 1. 
+PASS   gain.gain.value at frame 8063 is equal to 1. 
+PASS   linearRampToValue properly set the AudioParam value 
+PASS < [propagate] All assertions passed. (total 64 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

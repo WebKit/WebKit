@@ -1,0 +1,13 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "waveshaper-tail" 
+PASS Audit report 
+PASS > [waveshaper-tail]  
+PASS   WaveShaper tail frame (256) is greater than 0. 
+PASS   WaveShaper Tail output[0:255] is identical to the array [expected array]. 
+PASS   WaveShaper output[0:127] is not constantly 0 (contains 127 different values). 
+PASS   WaveShaper output[128:255] is not constantly 0 (contains 128 different values). 
+PASS   WaveShaper output[256:] contains only the constant 0. 
+PASS < [waveshaper-tail] All assertions passed. (total 5 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

@@ -1,0 +1,80 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "BiquadFilterNode" 
+PASS Executing "DelayNode" 
+PASS Executing "DynamicsCompressorNode" 
+PASS Executing "GainNode" 
+PASS Executing "PannerNode" 
+PASS Executing "StereoPannerNode" 
+PASS Executing "AudioListener" 
+PASS Audit report 
+PASS > [BiquadFilterNode]  
+PASS   BiquadFilterNode.Q ramp final value is not equal to 1. 
+FAIL X BiquadFilterNode.Q.value is not equal to 5. Got 1. assert_true: expected true got false
+PASS   BiquadFilterNode.detune ramp final value is not equal to 0. 
+FAIL X BiquadFilterNode.detune.value is not equal to 0.5. Got 0. assert_true: expected true got false
+PASS   BiquadFilterNode.frequency ramp final value is not equal to 350. 
+FAIL X BiquadFilterNode.frequency.value is not equal to 100. Got 350. assert_true: expected true got false
+PASS   BiquadFilterNode.gain ramp final value is not equal to 0. 
+FAIL X BiquadFilterNode.gain.value is not equal to 3. Got 0. assert_true: expected true got false
+FAIL < [BiquadFilterNode] 4 out of 8 assertions were failed. assert_true: expected true got false
+PASS > [DelayNode]  
+PASS   DelayNode.delayTime ramp final value is not equal to 0. 
+FAIL X DelayNode.delayTime.value is not equal to 0.5. Got 0. assert_true: expected true got false
+FAIL < [DelayNode] 1 out of 2 assertions were failed. assert_true: expected true got false
+PASS > [DynamicsCompressorNode]  
+PASS   DynamicsCompressorNode.attack ramp final value is not equal to 0.003000000026077032. 
+FAIL X DynamicsCompressorNode.attack.value is not equal to 0.5. Got 0.003000000026077032. assert_true: expected true got false
+PASS   DynamicsCompressorNode.knee ramp final value is not equal to 30. 
+FAIL X DynamicsCompressorNode.knee.value is not equal to 25. Got 30. assert_true: expected true got false
+PASS   DynamicsCompressorNode.ratio ramp final value is not equal to 12. 
+FAIL X DynamicsCompressorNode.ratio.value is not equal to 15. Got 12. assert_true: expected true got false
+PASS   DynamicsCompressorNode.release ramp final value is not equal to 0.25. 
+FAIL X DynamicsCompressorNode.release.value is not equal to 0.75. Got 0.25. assert_true: expected true got false
+PASS   DynamicsCompressorNode.threshold ramp final value is not equal to -24. 
+FAIL X DynamicsCompressorNode.threshold.value is not equal to -10. Got -24. assert_true: expected true got false
+FAIL < [DynamicsCompressorNode] 5 out of 10 assertions were failed. assert_true: expected true got false
+PASS > [GainNode]  
+PASS   GainNode.gain ramp final value is not equal to 1. 
+FAIL X GainNode.gain.value is not equal to 0.5. Got 1. assert_true: expected true got false
+FAIL < [GainNode] 1 out of 2 assertions were failed. assert_true: expected true got false
+PASS > [PannerNode]  
+PASS   PannerNode.positionX ramp final value is not equal to 0. 
+FAIL X PannerNode.positionX.value is not equal to 0.5. Got 0. assert_true: expected true got false
+PASS   PannerNode.positionY ramp final value is not equal to 0. 
+FAIL X PannerNode.positionY.value is not equal to 30. Got 0. assert_true: expected true got false
+PASS   PannerNode.positionZ ramp final value is not equal to 0. 
+FAIL X PannerNode.positionZ.value is not equal to 15. Got 0. assert_true: expected true got false
+PASS   PannerNode.orientationX ramp final value is not equal to 1. 
+FAIL X PannerNode.orientationX.value is not equal to 0.5. Got 1. assert_true: expected true got false
+PASS   PannerNode.orientationY ramp final value is not equal to 0. 
+FAIL X PannerNode.orientationY.value is not equal to 30. Got 0. assert_true: expected true got false
+PASS   PannerNode.orientationZ ramp final value is not equal to 0. 
+FAIL X PannerNode.orientationZ.value is not equal to 15. Got 0. assert_true: expected true got false
+FAIL < [PannerNode] 6 out of 12 assertions were failed. assert_true: expected true got false
+PASS > [StereoPannerNode]  
+PASS   StereoPannerNode.pan ramp final value is not equal to 0. 
+FAIL X StereoPannerNode.pan.value is not equal to 0.5. Got 0. assert_true: expected true got false
+FAIL < [StereoPannerNode] 1 out of 2 assertions were failed. assert_true: expected true got false
+PASS > [AudioListener]  
+PASS   AudioListener.positionX ramp final value is not equal to 0. 
+FAIL X AudioListener.positionX.value is not equal to 100. Got 0. assert_true: expected true got false
+PASS   AudioListener.positionY ramp final value is not equal to 0. 
+FAIL X AudioListener.positionY.value is not equal to 200. Got 0. assert_true: expected true got false
+PASS   AudioListener.positionZ ramp final value is not equal to 0. 
+FAIL X AudioListener.positionZ.value is not equal to 300. Got 0. assert_true: expected true got false
+PASS   AudioListener.forwardX ramp final value is not equal to 0. 
+FAIL X AudioListener.forwardX.value is not equal to -100. Got 0. assert_true: expected true got false
+PASS   AudioListener.forwardY ramp final value is not equal to 0. 
+FAIL X AudioListener.forwardY.value is not equal to -200. Got 0. assert_true: expected true got false
+PASS   AudioListener.forwardZ ramp final value is not equal to -1. 
+FAIL X AudioListener.forwardZ.value is not equal to -300. Got -1. assert_true: expected true got false
+PASS   AudioListener.upX ramp final value is not equal to 0. 
+FAIL X AudioListener.upX.value is not equal to 99. Got 0. assert_true: expected true got false
+PASS   AudioListener.upY ramp final value is not equal to 1. 
+FAIL X AudioListener.upY.value is not equal to 42. Got 1. assert_true: expected true got false
+PASS   AudioListener.upZ ramp final value is not equal to 0. 
+FAIL X AudioListener.upZ.value is not equal to 137. Got 0. assert_true: expected true got false
+FAIL < [AudioListener] 9 out of 18 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 7 out of 7 tasks were failed. assert_true: expected true got false
+

@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "long duration" 
+PASS Audit report 
+PASS > [long duration]  
+PASS   Max amplitude of setValueCurve([0,1], 0, 18446744073709552000) is less than or equal to 1.1293772630057337e-21. 
+PASS < [long duration] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+
