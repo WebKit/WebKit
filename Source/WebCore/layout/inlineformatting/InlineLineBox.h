@@ -37,6 +37,7 @@ namespace WebCore {
 namespace Layout {
 
 class InlineFormattingContext;
+class LineBoxBuilder;
 
 // LineBox contains all the inline boxes both horizontally and vertically. It only has width and height geometry.
 //
@@ -59,7 +60,7 @@ public:
     struct InlineBox {
         WTF_MAKE_ISO_ALLOCATED_INLINE(InlineBox);
     public:
-        InlineBox(const Box&, const InlineRect&, InlineLayoutUnit baseline, InlineLayoutUnit descent);
+        InlineBox(const Box&, const InlineRect&, InlineLayoutUnit baseline);
         InlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         InlineBox() = default;
 
@@ -81,7 +82,7 @@ public:
         const Box& layoutBox() const { return *m_layoutBox; }
 
     private:
-        friend class LineBox;
+        friend class LineBoxBuilder;
 
         void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
         void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
@@ -98,9 +99,8 @@ public:
         bool m_isEmpty { true };
     };
 
-    enum class IsLastLineWithInlineContent { No, Yes };
     enum class IsLineVisuallyEmpty { No, Yes };
-    LineBox(const InlineFormattingContext&, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, const Line::RunList&, IsLineVisuallyEmpty, IsLastLineWithInlineContent);
+    LineBox(InlineLayoutUnit logicalWidth, IsLineVisuallyEmpty);
 
     InlineLayoutUnit logicalWidth() const { return m_logicalSize.width(); }
     InlineLayoutUnit logicalHeight() const { return m_logicalSize.height(); }
@@ -115,29 +115,32 @@ public:
     using InlineBoxMap = HashMap<const Box*, InlineBox*>;
     auto inlineBoxList() const { return m_inlineBoxRectMap.values(); }
 
-    InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox.logicalTop() + m_rootInlineBox.baseline(); }
+    InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox->logicalTop() + m_rootInlineBox->baseline(); }
 
 private:
-    void constructInlineBoxes(const Line::RunList&);
-    void computeInlineBoxesLogicalHeight();
-    void alignInlineBoxesVerticallyAndComputeLineBoxHeight();
+    friend class LineBoxBuilder;
+
+    void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalSize.setHeight(logicalHeight); }
+    void setHorizontalAlignmentOffset(InlineLayoutUnit horizontalAlignmentOffset) { m_horizontalAlignmentOffset = horizontalAlignmentOffset; }
+
+    void addRootInlineBox(std::unique_ptr<InlineBox>&&);
+    void addInlineBox(std::unique_ptr<InlineBox>&&);
+
+    InlineBox& rootInlineBox() { return *m_rootInlineBox; }
+    using InlineBoxList = Vector<std::unique_ptr<InlineBox>>;
+    const InlineBoxList& nonRootInlineBoxes() const { return m_nonRootInlineBoxList; }
 
     InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) { return *m_inlineBoxRectMap.get(&layoutBox); }
 
-    const InlineFormattingContext& formattingContext() const;
-    const Box& root() const;
-    LayoutState& layoutState() const;
-
 private:
     InlineLayoutSize m_logicalSize;
+    Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     bool m_isLineVisuallyEmpty { true };
 
-    InlineBox m_rootInlineBox;
+    std::unique_ptr<InlineBox> m_rootInlineBox;
+    InlineBoxList m_nonRootInlineBoxList;
 
-    Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     InlineBoxMap m_inlineBoxRectMap;
-    Vector<std::unique_ptr<InlineBox>> m_inlineBoxList;
-    const InlineFormattingContext& m_inlineFormattingContext;
 };
 
 }

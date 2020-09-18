@@ -1,3 +1,66 @@
+2020-09-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move inline box constructing and alignment logic to LineBoxBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=216678
+
+        Reviewed by Simon Fraser.
+
+        Move the LineBox related logic out of the LineBox class to InlineFormattingContext::Geometry::LineBoxBuilder.
+        This makes the LineBox class a light, box like class that we can cache in the InlineFormattingState.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedLineLogicalRect const):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::formattingContext const):
+        (WebCore::Layout::LineBoxBuilder::root const):
+        (WebCore::Layout::LineBoxBuilder::layoutState const):
+        (WebCore::Layout::HangingContent::width const):
+        (WebCore::Layout::HangingContent::isConditional const):
+        (WebCore::Layout::HangingContent::setIsConditional):
+        (WebCore::Layout::HangingContent::expand):
+        (WebCore::Layout::HangingContent::reset):
+        (WebCore::Layout::collectHangingContent):
+        (WebCore::Layout::horizontalAlignmentOffset):
+        (WebCore::Layout::LineBoxBuilder::LineBoxBuilder):
+        (WebCore::Layout::LineBoxBuilder::build):
+        (WebCore::Layout::LineBoxBuilder::constructInlineBoxes):
+        (WebCore::Layout::LineBoxBuilder::computeInlineBoxesLogicalHeight):
+        (WebCore::Layout::LineBoxBuilder::alignInlineBoxesVerticallyAndComputeLineBoxHeight):
+        (WebCore::Layout::InlineFormattingContext::Geometry::lineBoxForLineContent):
+        * layout/inlineformatting/InlineLine.cpp:
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::InlineBox::InlineBox):
+        (WebCore::Layout::LineBox::LineBox):
+        (WebCore::Layout::m_isLineVisuallyEmpty):
+        (WebCore::Layout::LineBox::addRootInlineBox):
+        (WebCore::Layout::LineBox::addInlineBox):
+        (WebCore::Layout::HangingContent::width const): Deleted.
+        (WebCore::Layout::HangingContent::isConditional const): Deleted.
+        (WebCore::Layout::HangingContent::setIsConditional): Deleted.
+        (WebCore::Layout::HangingContent::expand): Deleted.
+        (WebCore::Layout::HangingContent::reset): Deleted.
+        (WebCore::Layout::collectHangingContent): Deleted.
+        (WebCore::Layout::horizontalAlignmentOffset): Deleted.
+        (WebCore::Layout::m_inlineFormattingContext): Deleted.
+        (WebCore::Layout::LineBox::constructInlineBoxes): Deleted.
+        (WebCore::Layout::LineBox::computeInlineBoxesLogicalHeight): Deleted.
+        (WebCore::Layout::LineBox::alignInlineBoxesVerticallyAndComputeLineBoxHeight): Deleted.
+        (WebCore::Layout::LineBox::formattingContext const): Deleted.
+        (WebCore::Layout::LineBox::root const): Deleted.
+        (WebCore::Layout::LineBox::layoutState const): Deleted.
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::alignmentBaseline const):
+        (WebCore::Layout::LineBox::setLogicalHeight):
+        (WebCore::Layout::LineBox::setHorizontalAlignmentOffset):
+        (WebCore::Layout::LineBox::rootInlineBox):
+        (WebCore::Layout::LineBox::nonRootInlineBoxes const):
+        (WebCore::Layout::LineBox::inlineBoxForLayoutBox):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::layoutInlineContent):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2020-09-18  Youenn Fablet  <youenn@apple.com>
 
         XHR.timeout is affected by long tasks

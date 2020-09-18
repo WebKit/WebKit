@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineLine.h"
-#include "InlineLineBox.h"
 #include "InlineLineBreaker.h"
 
 namespace WebCore {
@@ -63,7 +62,9 @@ public:
         bool hasIntrusiveFloat { false };
         InlineLayoutPoint logicalTopLeft;
         InlineLayoutUnit lineLogicalWidth;
-        const LineBox lineBox;
+        InlineLayoutUnit lineContentLogicalWidth;
+        bool isLineVisuallyEmpty { true };
+        bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;
     };
     LineContent layoutInlineContent(const InlineItemRange&, Optional<unsigned> partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialLineConstraints, bool isFirstLine);

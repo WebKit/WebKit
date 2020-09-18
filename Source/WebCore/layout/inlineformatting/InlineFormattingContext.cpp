@@ -391,7 +391,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     }
 }
 
-InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::computedLineLogicalRect(const LineBuilder::LineContent& lineContent) const
+InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::computedLineLogicalRect(const LineBox& lineBox, const LineBuilder::LineContent& lineContent) const
 {
     // Compute the line height and the line box vertical offset.
     // The line height is either the line-height value (negative value means line height is not set) or the font metrics's line spacing/line box height.
@@ -409,7 +409,6 @@ InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::compu
     // |                    | line spacing          |   |
     // |____________________v_______________________|  scrollable overflow
     //
-    auto& lineBox = lineContent.lineBox;
     if (lineContent.runs.isEmpty() || lineBox.isLineVisuallyEmpty())
         return { { }, { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, { } } };
 
@@ -443,8 +442,8 @@ InlineFormattingContext::LineRectAndLineBoxOffset InlineFormattingContext::compu
 InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
-    auto& lineBox = lineContent.lineBox;
-    auto lineRectAndLineBoxOffset = computedLineLogicalRect(lineContent);
+    const auto lineBox = geometry().lineBoxForLineContent(lineContent);
+    auto lineRectAndLineBoxOffset = computedLineLogicalRect(lineBox, lineContent);
     auto lineLogicalRect = lineRectAndLineBoxOffset.logicalRect;
     auto lineBoxVerticalOffset = lineRectAndLineBoxOffset.lineBoxVerticalOffset;
     auto scrollableOverflow = InlineRect { lineLogicalRect.topLeft(), std::max(lineLogicalRect.width(), lineBox.logicalWidth()), std::max(lineLogicalRect.height(), lineBoxVerticalOffset + lineBox.logicalHeight()) };

@@ -301,13 +301,13 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 
     auto lineLogicalTopLeft = InlineLayoutPoint { usedConstraints.logicalLeft, initialConstraints.vertical.logicalTop };
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContent.hasValue());
-    auto lineIsVisuallyEmpty = m_line.isVisuallyEmpty() ? LineBox::IsLineVisuallyEmpty::Yes : LineBox::IsLineVisuallyEmpty::No;
     return LineContent { committedContent.partialTrailingContent, committedRange, m_floats, m_contentIsConstrainedByFloat
         , lineLogicalTopLeft
         , m_line.horizontalConstraint()
-        , LineBox { formattingContext(), m_line.horizontalConstraint(), m_line.contentLogicalWidth(), m_line.runs(), lineIsVisuallyEmpty
-        , isLastLine ? LineBox::IsLastLineWithInlineContent::Yes : LineBox::IsLastLineWithInlineContent::No }
-        , m_line.runs() };
+        , m_line.contentLogicalWidth()
+        , m_line.isVisuallyEmpty()
+        , isLastLine
+        , m_line.runs()};
 }
 
 LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth)
