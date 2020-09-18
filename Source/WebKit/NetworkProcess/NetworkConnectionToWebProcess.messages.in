@@ -32,6 +32,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     PrefetchDNS(String hostname)
     SendH2Ping(WebKit::NetworkResourceLoadParameters parameters) -> (Expected<Seconds, WebCore::ResourceError> result) Async
     PreconnectTo(Optional<uint64_t> preconnectionIdentifier, WebKit::NetworkResourceLoadParameters loadParameters);
+    IsResourceLoadFinished(uint64_t resourceLoadIdentifier) -> (bool isFinished) Async
 
     StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, enum:bool Optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedName)
     ConvertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response, enum:bool Optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)

@@ -57,6 +57,7 @@ namespace WebCore {
 
         void cancel() override;
         virtual void setDefersLoading(bool);
+        void computeIsDone() final;
 
         friend CrossOriginPreflightChecker;
         friend class InspectorInstrumentation;

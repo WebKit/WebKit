@@ -1,3 +1,17 @@
+2020-09-18  Youenn Fablet  <youenn@apple.com>
+
+        XHR.timeout is affected by long tasks
+        https://bugs.webkit.org/show_bug.cgi?id=216266
+        <rdar://problem/68908150>
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/xhr/xhr-timeout-longtask.any-expected.txt: Added.
+        * web-platform-tests/xhr/xhr-timeout-longtask.any.html: Added.
+        * web-platform-tests/xhr/xhr-timeout-longtask.any.js: Added.
+        * web-platform-tests/xhr/xhr-timeout-longtask.any.worker-expected.txt: Added.
+        * web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html: Added.
+
 2020-09-17  Chris Dumez  <cdumez@apple.com>
 
         Vectorize SetTargetAtTime processing in AudioParamTimeline

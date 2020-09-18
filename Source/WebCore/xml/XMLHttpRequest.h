@@ -159,6 +159,7 @@ private:
     void didReceiveData(const char* data, int dataLength) override;
     void didFinishLoading(unsigned long identifier) override;
     void didFail(const ResourceError&) override;
+    void notifyIsDone(bool) final;
 
     bool responseIsXML() const;
 
@@ -183,6 +184,8 @@ private:
     void clearRequest();
 
     ExceptionOr<void> createRequest();
+
+    void timeoutTimerFired();
 
     void genericError();
     void networkError();

@@ -79,6 +79,12 @@ public:
             m_client->didFinishLoading(identifier);
     }
 
+    void notifyIsDone(bool isDone)
+    {
+        if (m_client)
+            m_client->notifyIsDone(isDone);
+    }
+
     void didFail(const ResourceError& error)
     {
         m_done = true;

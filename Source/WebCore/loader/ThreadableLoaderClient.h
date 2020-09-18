@@ -46,6 +46,7 @@ namespace WebCore {
         virtual void didFinishLoading(unsigned long /*identifier*/) { }
         virtual void didFail(const ResourceError&) { }
         virtual void didFinishTiming(const ResourceTiming&) { }
+        virtual void notifyIsDone(bool) { ASSERT_NOT_REACHED(); }
 
     protected:
         ThreadableLoaderClient() = default;

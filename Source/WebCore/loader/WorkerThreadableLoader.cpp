@@ -85,6 +85,11 @@ void WorkerThreadableLoader::cancel()
     m_bridge.cancel();
 }
 
+void WorkerThreadableLoader::computeIsDone()
+{
+    m_bridge.computeIsDone();
+}
+
 struct LoaderTaskOptions {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
@@ -180,6 +185,24 @@ void WorkerThreadableLoader::MainThreadBridge::cancel()
     ResourceError error(ResourceError::Type::Cancellation);
     protectedWorkerClientWrapper->didFail(error);
     protectedWorkerClientWrapper->clearClient();
+}
+
+void WorkerThreadableLoader::MainThreadBridge::computeIsDone()
+{
+    m_loaderProxy.postTaskToLoader([this](auto&) {
+        if (!m_mainThreadLoader) {
+            notifyIsDone(true);
+            return;
+        }
+        m_mainThreadLoader->computeIsDone();
+    });
+}
+
+void WorkerThreadableLoader::MainThreadBridge::notifyIsDone(bool isDone)
+{
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), isDone](auto&) {
+        protectedWorkerClientWrapper->notifyIsDone(isDone);
+    }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::clearClientWrapper()

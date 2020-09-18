@@ -268,6 +268,19 @@ void DocumentThreadableLoader::cancel()
     m_client = nullptr;
 }
 
+void DocumentThreadableLoader::computeIsDone()
+{
+    if (!m_async || m_preflightChecker || !m_resource) {
+        if (m_client)
+            m_client->notifyIsDone(m_async && !m_preflightChecker && !m_resource);
+        return;
+    }
+    platformStrategies()->loaderStrategy()->isResourceLoadFinished(*m_resource, [this, protectedThis = makeRef(*this)](bool isDone) {
+        if (m_client)
+            m_client->notifyIsDone(isDone);
+    });
+}
+
 void DocumentThreadableLoader::setDefersLoading(bool value)
 {
     if (m_resource)

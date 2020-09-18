@@ -60,6 +60,8 @@ namespace WebCore {
 
         bool done() const { return m_workerClientWrapper->done(); }
 
+        void notifyIsDone(bool isDone);
+
         using RefCounted<WorkerThreadableLoader>::ref;
         using RefCounted<WorkerThreadableLoader>::deref;
 
@@ -92,6 +94,7 @@ namespace WebCore {
             MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy&, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerGlobalScope&);
             void cancel();
             void destroy();
+            void computeIsDone();
 
         private:
             // Executed on the worker context's thread.
@@ -104,6 +107,7 @@ namespace WebCore {
             void didFinishLoading(unsigned long identifier) override;
             void didFail(const ResourceError&) override;
             void didFinishTiming(const ResourceTiming&) override;
+            void notifyIsDone(bool isDone) final;
 
             // Only to be used on the main thread.
             RefPtr<ThreadableLoader> m_mainThreadLoader;
@@ -123,6 +127,8 @@ namespace WebCore {
         };
 
         WorkerThreadableLoader(WorkerGlobalScope&, ThreadableLoaderClient&, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& referrer);
+
+        void computeIsDone() final;
 
         Ref<WorkerGlobalScope> m_workerGlobalScope;
         Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;

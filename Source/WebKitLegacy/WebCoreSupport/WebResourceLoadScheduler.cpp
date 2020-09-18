@@ -25,6 +25,7 @@
 #include "WebResourceLoadScheduler.h"
 
 #include "PingHandle.h"
+#include <WebCore/CachedResource.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FetchOptions.h>
@@ -201,6 +202,15 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     }
 #endif
     scheduleServePendingRequests();
+}
+
+void WebResourceLoadScheduler::isResourceLoadFinished(CachedResource& resource, CompletionHandler<void(bool)>&& callback)
+{
+    if (!resource.loader()) {
+        callback(true);
+        return;
+    }
+    callback(!hostForURL(resource.loader()->url()));
 }
 
 void WebResourceLoadScheduler::setDefersLoading(ResourceLoader& loader, bool defers)

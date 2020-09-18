@@ -88,6 +88,8 @@ public:
     virtual Vector<NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
     virtual NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
 
+    virtual void isResourceLoadFinished(CachedResource&, CompletionHandler<void(bool)>&& callback) = 0;
+
     // Used for testing only.
     virtual Vector<uint64_t> ongoingLoads() const { return { }; }
 

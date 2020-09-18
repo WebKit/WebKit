@@ -781,6 +781,15 @@ void WebLoaderStrategy::addOnlineStateChangeListener(Function<void(bool)>&& list
     m_onlineStateChangeListeners.append(WTFMove(listener));
 }
 
+void WebLoaderStrategy::isResourceLoadFinished(CachedResource& resource, CompletionHandler<void(bool)>&& callback)
+{
+    if (!resource.loader()) {
+        callback(true);
+        return;
+    }
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsResourceLoadFinished(resource.loader()->identifier()), WTFMove(callback), 0);
+}
+
 void WebLoaderStrategy::setOnLineState(bool isOnLine)
 {
     if (m_isOnLine == isOnLine)

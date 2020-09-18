@@ -118,7 +118,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_readyState(static_cast<unsigned>(UNSENT))
     , m_responseType(static_cast<unsigned>(ResponseType::EmptyString))
     , m_progressEventThrottle(*this)
-    , m_timeoutTimer(*this, &XMLHttpRequest::didReachTimeout)
+    , m_timeoutTimer(*this, &XMLHttpRequest::timeoutTimerFired)
 {
 #ifndef NDEBUG
     xmlHttpRequestCounter.increment();
@@ -1101,6 +1101,20 @@ void XMLHttpRequest::dispatchErrorEvents(const AtomString& type)
     }
     m_progressEventThrottle.dispatchProgressEvent(type);
     m_progressEventThrottle.dispatchProgressEvent(eventNames().loadendEvent);
+}
+
+void XMLHttpRequest::timeoutTimerFired()
+{
+    if (!m_loadingActivity)
+        return;
+    m_loadingActivity->loader->computeIsDone();
+}
+
+void XMLHttpRequest::notifyIsDone(bool isDone)
+{
+    if (isDone)
+        return;
+    didReachTimeout();
 }
 
 void XMLHttpRequest::didReachTimeout()

@@ -593,6 +593,11 @@ void NetworkConnectionToWebProcess::preconnectTo(Optional<uint64_t> preconnectio
     completionHandler(internalError(loadParameters.request.url()));
 }
 
+void NetworkConnectionToWebProcess::isResourceLoadFinished(uint64_t loadIdentifier, CompletionHandler<void(bool)>&& callback)
+{
+    callback(!m_networkResourceLoaders.contains(loadIdentifier));
+}
+
 void NetworkConnectionToWebProcess::didFinishPreconnection(uint64_t preconnectionIdentifier, const ResourceError& error)
 {
     if (!m_connection->isValid())

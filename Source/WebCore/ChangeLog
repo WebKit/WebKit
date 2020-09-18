@@ -1,3 +1,39 @@
+2020-09-18  Youenn Fablet  <youenn@apple.com>
+
+        XHR.timeout is affected by long tasks
+        https://bugs.webkit.org/show_bug.cgi?id=216266
+        <rdar://problem/68908150>
+
+        Reviewed by Alex Christensen.
+
+        Long tasks may block the main thread, which may block IPC processing of load messages.
+        In that case, even though the load is finished, WebProcess did not know that yet and will cancel the load.
+        To prevent that, in case of XHR timeout, do an explicit check to compute the done flag.
+        https://fetch.spec.whatwg.org/#done-flag
+
+        Tests: imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html
+               imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::computeIsDone):
+        * loader/DocumentThreadableLoader.h:
+        * loader/LoaderStrategy.h:
+        * loader/ThreadableLoader.h:
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::notifyIsDone):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::notifyIsDone):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::computeIsDone):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::computeIsDone):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::notifyIsDone):
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::loaderProxy):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didReachTimeout):
+        (WebCore::XMLHttpRequest::notifyIsDone):
+        * xml/XMLHttpRequest.h:
+
 2020-09-17  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the UserTiming and ResourceTiming APIs

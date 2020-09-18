@@ -1,3 +1,13 @@
+2020-09-18  Youenn Fablet  <youenn@apple.com>
+
+        XHR.timeout is affected by long tasks
+        https://bugs.webkit.org/show_bug.cgi?id=216266
+        <rdar://problem/68908150>
+
+        Reviewed by Alex Christensen.
+
+        platform/mac-wk1/TestExpectations: Skip WK1 test.
+
 2020-09-16  Darin Adler  <darin@apple.com>
 
         Selection API: Introduce LiveRangeSelectionEnabled, off by default

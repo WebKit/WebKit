@@ -269,6 +269,8 @@ http/tests/xmlhttprequest/range-test.html [ Skip ]
 
 # WK1 does not support sync XHR redirections as does WK2
 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-sync-xhr-in-main-frame.html [ Skip ]
+# WK1 networking is blocked by JS
+imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html
 
 webkit.org/b/187230 editing/mac/pasteboard/can-copy-url-without-title.html [ Skip ]
 webkit.org/b/187230 editing/mac/style/do-not-crash-when-showing-font-panel.html [ Skip ]

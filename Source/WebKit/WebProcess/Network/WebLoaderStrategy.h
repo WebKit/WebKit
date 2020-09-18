@@ -112,6 +112,8 @@ private:
     bool shouldPerformSecurityChecks() const final;
     bool havePerformedSecurityChecks(const WebCore::ResourceResponse&) const final;
 
+    void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;
+
     Vector<uint64_t> ongoingLoads() const final
     {
         return WTF::map(m_webResourceLoaders, [](auto&& keyValue) -> uint64_t {
