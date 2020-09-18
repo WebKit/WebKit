@@ -1,5 +1,5 @@
 PASS count is 0
-FAIL count < 6 should be true. Was false.
+PASS count < 6 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
