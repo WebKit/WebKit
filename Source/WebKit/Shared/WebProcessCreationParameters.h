@@ -200,7 +200,7 @@ struct WebProcessCreationParameters {
     Optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
     
 #if PLATFORM(IOS)
-    Optional<SandboxExtension::Handle> compilerServiceExtensionHandle;
+    SandboxExtension::HandleArray compilerServiceExtensionHandles;
 #endif
 
     Optional<SandboxExtension::Handle> containerManagerExtensionHandle;
