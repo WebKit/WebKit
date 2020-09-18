@@ -1,3 +1,19 @@
+2020-09-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [ews] Set only one worker for JSC ARMv7 builder and tester queues
+        https://bugs.webkit.org/show_bug.cgi?id=216476
+
+        Reviewed by Aakash Jain.
+
+        Currently many builds are failing in EWS JSC ARMv7 tester queue due to
+        a linking error in libicu.  The problem lies on the boards that are
+        used to run the tests which have different system libraries.
+
+        Temporarily use one single builder and tester producing binaries compatible
+        with the boards.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Epiphany does not make connections in Incognito Mode after clearing .cache

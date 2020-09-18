@@ -576,7 +576,7 @@
       "configuration": "release",
       "architectures": ["armv7"],
       "triggers": ["jsc-tests-armv7-tests-ews"],
-      "workernames": ["igalia-jsc32-armv7-ews", "igalia-jsc32-armv7-ews-03"]
+      "workernames": ["igalia-jsc32-armv7-ews"]
     },
     {
       "name": "JSC-ARMv7-32bits-Tests-EWS",
@@ -586,7 +586,7 @@
       "platform": "jsc-only",
       "configuration": "release",
       "architectures": ["armv7"],
-      "workernames": ["igalia-jsc32-armv7-ews", "igalia-jsc32-armv7-ews-02"],
+      "workernames": ["igalia-jsc32-armv7-ews"],
       "remotes": "../../EWS-test-devices.json"
     },
     {
