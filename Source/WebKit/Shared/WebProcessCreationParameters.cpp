@@ -192,6 +192,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(GTK)
     encoder << useSystemAppearanceForScrollbars;
 #endif
+
+#if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
+    encoder << overrideUserInterfaceIdiomAndScale;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -515,6 +519,14 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!useSystemAppearanceForScrollbars)
         return false;
     parameters.useSystemAppearanceForScrollbars = WTFMove(*useSystemAppearanceForScrollbars);
+#endif
+
+#if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
+    Optional<std::pair<int64_t, double>> overrideUserInterfaceIdiomAndScale;
+    decoder >> overrideUserInterfaceIdiomAndScale;
+    if (!overrideUserInterfaceIdiomAndScale)
+        return false;
+    parameters.overrideUserInterfaceIdiomAndScale = WTFMove(*overrideUserInterfaceIdiomAndScale);
 #endif
 
     return true;

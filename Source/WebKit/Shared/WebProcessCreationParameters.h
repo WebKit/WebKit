@@ -235,6 +235,10 @@ struct WebProcessCreationParameters {
 #if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars { false };
 #endif
+
+#if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
+    std::pair<int64_t, double> overrideUserInterfaceIdiomAndScale;
+#endif
 };
 
 } // namespace WebKit

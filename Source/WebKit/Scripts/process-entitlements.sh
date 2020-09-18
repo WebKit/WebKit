@@ -110,6 +110,7 @@ function maccatalyst_process_webcontent_entitlements()
     then
         plistbuddy Add :com.apple.pac.shared_region_id string WebContent
         plistbuddy Add :com.apple.private.pac.exception bool YES
+        plistbuddy Add :com.apple.UIKit.view-service-wants-custom-idiom-and-scale bool YES
     fi
 }
 
