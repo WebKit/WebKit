@@ -553,8 +553,8 @@ ALWAYS_INLINE static bool isSanePointer(const void* pointer)
     // FIXME: rdar://69036888: remove this when no longer needed.
 #if CPU(ADDRESS64)
     uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
-    uintptr_t canonicalPointerBits = pointerAsInt << 16;
-    uintptr_t nonCanonicalPointerBits = pointerAsInt >> 48;
+    uintptr_t canonicalPointerBits = pointerAsInt << (64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH));
+    uintptr_t nonCanonicalPointerBits = pointerAsInt >> OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
     return !nonCanonicalPointerBits && canonicalPointerBits;
 #else
     UNUSED_PARAM(pointer);
