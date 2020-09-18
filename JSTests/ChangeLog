@@ -1,3 +1,15 @@
+2020-09-18  Caio Lima  <ticaiolima@gmail.com>
+
+        [ARMv7][MIPS] Test gaderning September version
+        https://bugs.webkit.org/show_bug.cgi?id=216699
+
+        Unreviewed test gardening.
+
+        * stress/array-species-create-should-handle-masquerader.js:
+        * stress/compare-eq-should-use-known-other-use.js:
+        * stress/ftl-reflect-get-prototype-of.js:
+        * stress/typedarray-access-neutered.js:
+
 2020-09-18  Keith Miller  <keith_miller@apple.com>
 
         DFG should ensure there are PhantomLocals for the taken block of op_jneq_ptr
