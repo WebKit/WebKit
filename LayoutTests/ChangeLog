@@ -1,5 +1,43 @@
 2020-09-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266972. rdar://problem/69101020
+
+    REGRESSION (r255383): Transition from email to password field on login.live.com stutters after going back and forth
+    https://bugs.webkit.org/show_bug.cgi?id=216368
+    <rdar://problem/67019460>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Ensure we repaint before disconnecting from the backing provider layer.
+    
+    Test: compositing/animation/repaint-after-clearing-shared-backing.html
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::updateBacking):
+    
+    LayoutTests:
+    
+    * compositing/animation/repaint-after-clearing-shared-backing-expected.html: Added.
+    * compositing/animation/repaint-after-clearing-shared-backing.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266972 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-11  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION (r255383): Transition from email to password field on login.live.com stutters after going back and forth
+            https://bugs.webkit.org/show_bug.cgi?id=216368
+            <rdar://problem/67019460>
+
+            Reviewed by Simon Fraser.
+
+            * compositing/animation/repaint-after-clearing-shared-backing-expected.html: Added.
+            * compositing/animation/repaint-after-clearing-shared-backing.html: Added.
+
+2020-09-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266827. rdar://problem/69101047
 
     [CG] REGRESSION (Big Sur): A GIF image with a finite loopCount loops an extra cycle
