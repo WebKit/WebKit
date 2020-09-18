@@ -768,6 +768,32 @@ static void testDownloadUserAgent(DownloadTest* test, gconstpointer)
     test->checkDestinationAndDeleteFile(download.get(), expectedFilename.get());
 }
 
+static void testDownloadEphemeralContext(Test* test, gconstpointer)
+{
+    GRefPtr<WebKitWebsiteDataManager> manager = adoptGRef(webkit_website_data_manager_new_ephemeral());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(manager.get()));
+    GRefPtr<WebKitWebContext> context = adoptGRef(webkit_web_context_new_with_website_data_manager(manager.get()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_true(webkit_web_context_is_ephemeral(context.get()));
+
+    GRefPtr<GMainLoop> mainLoop = adoptGRef(g_main_loop_new(nullptr, TRUE));
+    GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_context_download_uri(context.get(), kServer->getURIForPath("/test.pdf").data()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
+    g_signal_connect(download.get(), "decide-destination", G_CALLBACK(+[](WebKitDownload* download, const gchar* suggestedFilename, gpointer) {
+        GUniquePtr<char> destination(g_build_filename(Test::dataDirectory(), suggestedFilename, nullptr));
+        GUniquePtr<char> destinationURI(g_filename_to_uri(destination.get(), nullptr, nullptr));
+        webkit_download_set_destination(download, destinationURI.get());
+    }), nullptr);
+    g_signal_connect(download.get(), "finished", G_CALLBACK(+[](WebKitDownload*, GMainLoop* loop) {
+        g_main_loop_quit(loop);
+    }), mainLoop.get());
+
+    g_main_loop_run(mainLoop.get());
+
+    GRefPtr<GFile> destFile = adoptGRef(g_file_new_for_uri(webkit_download_get_destination(download.get())));
+    g_file_delete(destFile.get(), nullptr, nullptr);
+}
+
 #if PLATFORM(GTK)
 static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpointer)
 {
@@ -853,6 +879,7 @@ void beforeAll()
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download-cancel", testPolicyResponseDownloadCancel);
     DownloadTest::add("Downloads", "mime-type", testDownloadMIMEType);
     DownloadTest::add("Downloads", "user-agent", testDownloadUserAgent);
+    Test::add("Downloads", "ephemeral-context", testDownloadEphemeralContext);
     // FIXME: Implement keyStroke in WPE.
 #if PLATFORM(GTK)
 #if !USE(GTK4)
