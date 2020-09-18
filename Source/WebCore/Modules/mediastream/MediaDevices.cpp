@@ -57,7 +57,7 @@ inline MediaDevices::MediaDevices(Document& document)
     : ActiveDOMObject(document)
     , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
     , m_eventNames(eventNames())
-    , m_idHashSalt(createCanonicalUUIDString())
+    , m_groupIdHashSalt(createCanonicalUUIDString())
 {
     suspendIfNeeded();
 
@@ -76,7 +76,6 @@ void MediaDevices::stop()
         if (controller)
             controller->removeDeviceChangeObserver(m_deviceChangeToken);
     }
-    m_devices.clear();
     m_scheduledEventTimer.stop();
 }
 
@@ -192,15 +191,16 @@ static inline MediaDeviceInfo::Kind toMediaDeviceInfoKind(CaptureDevice::DeviceT
     return MediaDeviceInfo::Kind::Audioinput;
 }
 
-void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
+void MediaDevices::exposeDevices(const Vector<CaptureDevice>& newDevices, const String& deviceIDHashSalt, EnumerateDevicesPromise&& promise)
 {
-    auto* document = this->document();
-    if (!document)
+    if (isContextStopped())
         return;
 
-    bool canAccessCamera = checkCameraAccess(*document);
-    bool canAccessMicrophone = checkMicrophoneAccess(*document);
-    bool canAccessSpeaker = checkSpeakerAccess(*document);
+    auto& document = *this->document();
+
+    bool canAccessCamera = checkCameraAccess(document);
+    bool canAccessMicrophone = checkMicrophoneAccess(document);
+    bool canAccessSpeaker = checkSpeakerAccess(document);
 
     Vector<Ref<MediaDeviceInfo>> devices;
     for (auto& newDevice : newDevices) {
@@ -211,19 +211,12 @@ void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
         if (!canAccessSpeaker && newDevice.type() == CaptureDevice::DeviceType::Speaker)
             continue;
 
-        auto deviceKind = toMediaDeviceInfoKind(newDevice.type());
-        auto index = m_devices.findMatching([deviceKind, &newDevice](auto& oldDevice) {
-            return oldDevice->deviceId() == newDevice.persistentId() && oldDevice->kind() == deviceKind;
-        });
-        if (index != notFound) {
-            devices.append(m_devices[index].copyRef());
-            continue;
-        }
+        auto deviceId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(newDevice.persistentId(), deviceIDHashSalt);
+        auto groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(newDevice.groupId(), m_groupIdHashSalt);
 
-        auto groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(newDevice.groupId(), m_idHashSalt);
-        devices.append(MediaDeviceInfo::create(newDevice.label(), newDevice.persistentId(), WTFMove(groupId), deviceKind));
+        devices.append(MediaDeviceInfo::create(newDevice.label(), WTFMove(deviceId), WTFMove(groupId), toMediaDeviceInfoKind(newDevice.type())));
     }
-    m_devices = WTFMove(devices);
+    promise.resolve(devices);
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
@@ -245,12 +238,9 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
     }
 
     controller->enumerateMediaDevices(*document, [this, weakThis = makeWeakPtr(this), promise = WTFMove(promise)](const auto& newDevices, const auto& deviceIDHashSalt) mutable {
-        if (!weakThis || isContextStopped())
+        if (!weakThis)
             return;
-
-        this->document()->setDeviceIDHashSalt(deviceIDHashSalt);
-        refreshDevices(newDevices);
-        promise.resolve(m_devices);
+        exposeDevices(newDevices, deviceIDHashSalt, WTFMove(promise));
     });
 }
 

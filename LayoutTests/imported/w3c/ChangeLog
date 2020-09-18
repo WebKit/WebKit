@@ -1,3 +1,12 @@
+2020-09-18  Youenn Fablet  <youenn@apple.com>
+
+        Hash deviceIds in WebProcess instead of UIProcess to allow audio output device IDs in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=216693
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-streams/MediaDevices-enumerateDevices-returned-objects.https-expected.txt:
+
 2020-09-18  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r254031): Captions fail to load on jw.org

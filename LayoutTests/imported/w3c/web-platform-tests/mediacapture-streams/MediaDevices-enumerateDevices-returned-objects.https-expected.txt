@@ -1,4 +1,4 @@
 
-FAIL enumerateDevices returns new objects in case device-info permission is not granted assert_not_equals: got disallowed value object "[object MediaDeviceInfo]"
-FAIL enumerateDevices returns new objects in case device-info permission is granted assert_not_equals: got disallowed value object "[object MediaDeviceInfo]"
+PASS enumerateDevices returns new objects in case device-info permission is not granted 
+PASS enumerateDevices returns new objects in case device-info permission is granted 
 

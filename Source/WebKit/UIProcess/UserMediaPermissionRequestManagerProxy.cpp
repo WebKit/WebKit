@@ -605,7 +605,7 @@ static inline bool haveMicrophoneDevice(const Vector<WebCore::CaptureDevice>& de
     });
 }
 
-Vector<CaptureDevice> UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool revealIdsAndLabels, const String& deviceIDHashSalt)
+Vector<CaptureDevice> UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool revealIdsAndLabels)
 {
     static const int defaultMaximumCameraCount = 1;
     static const int defaultMaximumMicrophoneCount = 1;
@@ -632,16 +632,7 @@ Vector<CaptureDevice> UserMediaPermissionRequestManagerProxy::computeFilteredDev
                 continue;
         }
 
-        auto label = emptyString();
-        auto id = emptyString();
-        auto groupId = emptyString();
-        if (revealIdsAndLabels) {
-            label = device.label();
-            id = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(device.persistentId(), deviceIDHashSalt);
-            groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(device.groupId(), deviceIDHashSalt);
-        }
-
-        filteredDevices.append(CaptureDevice(id, device.type(), label, groupId));
+        filteredDevices.append(revealIdsAndLabels ? device : CaptureDevice({ }, device.type(), { }, { }));
     }
 
     m_hasFilteredDeviceList = !revealIdsAndLabels;
@@ -699,7 +690,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(Frame
             bool revealIdsAndLabels = originHasPersistentAccess || wasGrantedVideoOrAudioAccess(frameID, userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get());
 
             callCompletionHandler.release();
-            completionHandler(computeFilteredDeviceList(revealIdsAndLabels, deviceIDHashSalt), deviceIDHashSalt);
+            completionHandler(computeFilteredDeviceList(revealIdsAndLabels), deviceIDHashSalt);
         });
     };
 

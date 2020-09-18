@@ -32,7 +32,9 @@
         let devices2 = await navigator.mediaDevices.enumerateDevices();
 
         assert_true(!!devices.length, "check there are some devices");
-        assert_array_equals(devices, devices2);
+        assert_equals(devices.length, devices2.length, "devices length");
+        assert_not_equals(devices[0], devices2[0], "devices are different");
+        assert_equals(devices[0].deviceId, devices2[0].deviceId, "same deviceIds");
 
         testRunner.clearMockMediaDevices();
         await new Promise((resolve, reject) => {
