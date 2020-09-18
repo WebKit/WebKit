@@ -757,12 +757,15 @@ void IDBServer::stopDatabaseActivitiesOnMainThread()
     ASSERT(isMainThread());
     ASSERT(m_lock.isHeld());
 
-    // Only stop non-ephemeral IDBServers that can hold locked database files.
+    // Only stop non-ephemeral IDBServer that can hold database file lock.
     if (m_sessionID.isEphemeral())
         return;
 
-    for (auto& database : m_uniqueIDBDatabaseMap.values())
-        database->abortActiveTransactions();
+    for (auto& database : m_uniqueIDBDatabaseMap.values()) {
+        // Only stop databases with non-ephemeral backing store that can hold database file lock.
+        if (!database->identifier().isTransient())
+            database->abortActiveTransactions();
+    }
 }
 
 } // namespace IDBServer
