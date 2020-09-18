@@ -37,6 +37,9 @@
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
 
+// FIXME: Re-enable this test once rdar://57029120 is resolved.
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 140000)
+
 static bool receivedScriptMessage;
 static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
@@ -111,3 +114,4 @@ TEST(IndexedDB, StructuredCloneBackwardCompatibility)
 
     EXPECT_STREQ([getNextMessage().body UTF8String], "Pass");
 }
+#endif
