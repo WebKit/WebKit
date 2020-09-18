@@ -143,8 +143,15 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Han
 
 void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
 {
-    if (!m_buffer)
+    if (!m_buffer) {
+        RELEASE_LOG_ERROR(WebRTC, "buffer for audio source %llu is null", m_source->identifier().toUInt64());
         return;
+    }
+
+    if (!WebAudioBufferList::isSupportedDescription(m_description, numberOfFrames)) {
+        RELEASE_LOG_ERROR(WebRTC, "Unable to support description with given number of frames for audio source %llu", m_source->identifier().toUInt64());
+        return;
+    }
 
     m_buffer->setSampleCount(numberOfFrames);
 
