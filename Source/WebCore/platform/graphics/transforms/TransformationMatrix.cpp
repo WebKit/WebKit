@@ -751,20 +751,70 @@ LayoutRect TransformationMatrix::mapRect(const LayoutRect& r) const
 
 FloatRect TransformationMatrix::mapRect(const FloatRect& r) const
 {
-    if (isIdentityOrTranslation()) {
+    auto type = this->type();
+    if (type == Type::IdentityOrTranslation) {
         FloatRect mappedRect(r);
         mappedRect.move(static_cast<float>(m_matrix[3][0]), static_cast<float>(m_matrix[3][1]));
         return mappedRect;
     }
 
-    FloatQuad result;
-
+    float minX = r.x();
+    float minY = r.y();
     float maxX = r.maxX();
     float maxY = r.maxY();
-    result.setP1(internalMapPoint(FloatPoint(r.x(), r.y())));
-    result.setP2(internalMapPoint(FloatPoint(maxX, r.y())));
+
+    if (type == Type::Affine) {
+        double a = m11();
+        double b = m12();
+        double c = m21();
+        double d = m22();
+
+        double minResultX;
+        double minResultY;
+        double maxResultX;
+        double maxResultY;
+
+        if (a > 0) {
+            maxResultX = a * maxX;
+            minResultX = a * minX;
+        } else {
+            maxResultX = a * minX;
+            minResultX = a * maxX;
+        }
+
+        if (b > 0) {
+            maxResultY = b * maxX;
+            minResultY = b * minX;
+        } else {
+            maxResultY = b * minX;
+            minResultY = b * maxX;
+        }
+
+        if (c > 0) {
+            maxResultX += c * maxY;
+            minResultX += c * minY;
+        } else {
+            maxResultX += c * minY;
+            minResultX += c * maxY;
+        }
+
+        if (d > 0) {
+            maxResultY += d * maxY;
+            minResultY += d * minY;
+        } else {
+            maxResultY += d * minY;
+            minResultY += d * maxY;
+        }
+
+        return FloatRect(minResultX + m41(), minResultY + m42(), maxResultX - minResultX, maxResultY - minResultY);
+    }
+
+    FloatQuad result;
+
+    result.setP1(internalMapPoint(FloatPoint(minX, minY)));
+    result.setP2(internalMapPoint(FloatPoint(maxX, minY)));
     result.setP3(internalMapPoint(FloatPoint(maxX, maxY)));
-    result.setP4(internalMapPoint(FloatPoint(r.x(), maxY)));
+    result.setP4(internalMapPoint(FloatPoint(minX, maxY)));
 
     return result.boundingBox();
 }
