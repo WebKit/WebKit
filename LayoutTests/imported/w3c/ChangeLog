@@ -1,3 +1,9 @@
+2020-09-18  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, rebaseline test after r266816 changed wptserve output.
+
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing-expected.txt:
+
 2020-09-18  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/webaudio from upstream
