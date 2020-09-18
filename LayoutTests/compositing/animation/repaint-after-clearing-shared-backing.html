@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .background {
+                position: absolute;
+                top: 50px;
+                left: 50px;
+                width: 140px;
+                height: 140px;
+                background: blue;
+                will-change: transform;
+            }
+
+            .container {
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                height: 500px;
+                width: 500px;
+                padding: 10px;
+                background-color: orange;
+            }
+
+            .content {
+                height: 200px;
+                background-color: rgba(255, 255, 255, 0.5);
+            }
+
+            .fade-in {
+                animation-name: fade-in;
+                animation-duration: 1ms;
+            }
+
+            @keyframes fade-in {
+                from { opacity: 1 }
+                to { opacity: 1 }
+            }
+
+            .fade-out {
+                margin: 50px;
+                animation-name: fade-out;
+                animation-duration: 10s;
+            }
+
+            @keyframes fade-out {
+                from { opacity: 1 }
+                to { opacity: 1 }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="background">fixed</div>
+        <div class="container">
+            container
+            <div class="content fade-in">fader</div>
+        </div>
+        <script>
+
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            document.querySelector(".content").addEventListener("animationend", event => {
+                setTimeout(() => {
+                    event.target.classList.remove("fade-in");
+                    event.target.classList.add("fade-out");
+
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+            }, { once: true });
+
+        </script>
+    </body>
+</html>
