@@ -1,0 +1,10 @@
+
+RUN(internals.setOverridePreferredDynamicRangeMode(video, "Standard"))
+RUN(video.src = "../resources/hls/hdr.m3u8")
+video became equal to 255,0,0,255 OK
+RUN(internals.setOverridePreferredDynamicRangeMode(video, "DolbyVisionPQ"))
+video became equal to 0,255,0,255 OK
+RUN(internals.setOverridePreferredDynamicRangeMode(video, "Standard"))
+video became equal to 255,0,0,255 OK
+END OF TEST
+

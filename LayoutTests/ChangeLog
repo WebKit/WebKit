@@ -1,5 +1,54 @@
 2020-09-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267057. rdar://problem/69101182
+
+    [Cocoa,HDR] HLS streams with HDR variants will not select HDR.
+    https://bugs.webkit.org/show_bug.cgi?id=216203
+    <rdar://problem/67438626>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Test: http/tests/media/hls/hls-hdr-switch.html
+    
+    In r264710, we adopted a new API to set the preferred HDR mode for every AVPlayer created by an HTMLMediaElement. The
+    MediaPlayerPrivateAVFoundationObjC object will query its parent when it creates an AVPlayer, or the MediaPlayer will
+    tell the MediaPlayerPrivate... that the HDR mode changes if the AVPlayer is already created. However, in r264710, we
+    neglected to cache the new value of the preferred HDR mode, so subsequent queries will just return "Standard". This means
+    HDR mode will correctly be applied if it changes after the AVPlayer has been created, but not initially.
+    
+    * platform/graphics/MediaPlayer.cpp:
+    (WebCore::MediaPlayer::setPreferredDynamicRangeMode):
+    
+    LayoutTests:
+    
+    * http/tests/media/hls/hls-hdr-switch-expected.txt: Added.
+    * http/tests/media/hls/hls-hdr-switch.html: Added.
+    * http/tests/media/resources/hls/green-bip.ts: Added.
+    * http/tests/media/resources/hls/hdr.m3u8: Added.
+    * http/tests/media/resources/hls/red-bip.ts: Added.
+    * http/tests/media/resources/hls/test-live.php:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267057 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-14  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa,HDR] HLS streams with HDR variants will not select HDR.
+            https://bugs.webkit.org/show_bug.cgi?id=216203
+            <rdar://problem/67438626>
+
+            Reviewed by Darin Adler.
+
+            * http/tests/media/hls/hls-hdr-switch-expected.txt: Added.
+            * http/tests/media/hls/hls-hdr-switch.html: Added.
+            * http/tests/media/resources/hls/green-bip.ts: Added.
+            * http/tests/media/resources/hls/hdr.m3u8: Added.
+            * http/tests/media/resources/hls/red-bip.ts: Added.
+            * http/tests/media/resources/hls/test-live.php:
+
+2020-09-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266972. rdar://problem/69101020
 
     REGRESSION (r255383): Transition from email to password field on login.live.com stutters after going back and forth

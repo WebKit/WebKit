@@ -10,7 +10,16 @@ header("Content-Type: application/x-mpegurl");
 header("Content-Length: " . filesize(__FILE__));
 
 $chunkDuration = 6.0272;
+if (array_key_exists("duration", $_GET)) 
+    $chunkDuration = floatval($_GET["duration"]);
+
 $chunkCount = 4;
+if (array_key_exists("count", $_GET)) 
+    $chunkCount = intval($_GET["count"]);
+
+$chunkURL = "test.ts";
+if (array_key_exists("url", $_GET)) 
+    $chunkURL = $_GET["url"];
 
 function println($string) { return print($string . PHP_EOL); }
 println("#EXTM3U");
@@ -22,8 +31,8 @@ $time = time();
 $time = $time - $time % $chunkDuration;
 
 for ($i = 0; $i < $chunkCount; ++$i) {
-	$time += 6;
+	$time += $chunkDuration;
 	println("#EXT-X-PROGRAM-DATE-TIME:" . gmdate("c", $time));
 	println("#EXTINF:" . $chunkDuration . ",");
-	println("test.ts");
+	println($chunkURL);
 }
