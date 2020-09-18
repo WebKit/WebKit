@@ -480,6 +480,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
             startObservingPreferenceChanges();
     }
 #endif
+
+#if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
+    parameters.overrideUserInterfaceIdiomAndScale = { _UIApplicationCatalystUserInterfaceIdiom(), _UIApplicationCatalystScaleFactor() };
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
