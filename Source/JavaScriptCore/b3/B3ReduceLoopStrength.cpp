@@ -305,8 +305,11 @@ public:
 
             for (BasicBlock* predecessor : loopPostfooter->predecessors()) {
                 if (loopInnerBlocks.contains(predecessor)) {
-                    // There is only one loop exit.
-                    RELEASE_ASSERT(!loopFoot);
+                    if (loopFoot) {
+                        if (verbose)
+                            dataLogLn("Loop has more than one exit point");
+                        return;
+                    }
                     loopFoot = predecessor;
                 }
             }

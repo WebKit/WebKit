@@ -1,3 +1,20 @@
+2020-09-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Inconsistent loop exit assertion in B3ReduceLoopStrength
+        https://bugs.webkit.org/show_bug.cgi?id=216274
+        <rdar://problem/68513573>
+
+        Reviewed by Keith Miller.
+
+        On B3ReduceLoopStrength, we first calculate where the loop exits to, and ensure there's only
+        one exit target. Later on, we compute how many places within the loop exit to that single exit
+        target. Currently, we assume that having a single target implies that we'll only ever have one
+        exit point, which is incorrect. To fix it, instead of asserting there should only be one exit
+        point, we just bail if we find more than one.
+
+        * b3/B3ReduceLoopStrength.cpp:
+        (JSC::B3::ReduceLoopStrength::reduceByteCopyLoopsToMemcpy):
+
 2020-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Async generator default-export is not handled
