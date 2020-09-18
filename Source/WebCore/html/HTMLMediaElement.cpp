@@ -6039,6 +6039,9 @@ void HTMLMediaElement::exitFullscreen()
 void HTMLMediaElement::prepareForVideoFullscreenStandby()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (!document().page())
+        return;
+
     document().page()->chrome().client().prepareForVideoFullscreen();
 #endif
 }
