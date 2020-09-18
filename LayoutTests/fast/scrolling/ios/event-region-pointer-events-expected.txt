@@ -9,7 +9,31 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 3
+      (children 4
+        (GraphicsLayer
+          (position 8.00 213.00)
+          (bounds 50.00 50.00)
+          (event region
+            (rect (0,0) width=50 height=50)
+          )
+          (children 1
+            (GraphicsLayer
+              (bounds 50.00 50.00)
+              (event region
+                (rect (0,0) width=50 height=50)
+              )
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 50.00 100.00)
+                  (event region
+                    (rect (0,0) width=50 height=100)
+                  )
+                )
+              )
+            )
+          )
+        )
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 200.00 200.00)
@@ -33,12 +57,36 @@ After setting 'pointer-events:auto':
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 673.00)
+  (bounds 800.00 1059.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 673.00)
+      (bounds 800.00 1059.00)
       (contentsOpaque 1)
-      (children 3
+      (children 4
+        (GraphicsLayer
+          (position 8.00 213.00)
+          (bounds 50.00 50.00)
+          (event region
+            (rect (0,0) width=50 height=50)
+          )
+          (children 1
+            (GraphicsLayer
+              (bounds 50.00 50.00)
+              (event region
+                (rect (0,0) width=50 height=50)
+              )
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 50.00 100.00)
+                  (event region
+                    (rect (0,0) width=50 height=100)
+                  )
+                )
+              )
+            )
+          )
+        )
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 200.00 200.00)
@@ -71,12 +119,36 @@ After setting 'pointer-events:none':
 
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 1205.00)
+  (bounds 800.00 1927.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 1205.00)
+      (bounds 800.00 1927.00)
       (contentsOpaque 1)
-      (children 3
+      (children 4
+        (GraphicsLayer
+          (position 8.00 213.00)
+          (bounds 50.00 50.00)
+          (event region
+            (rect (0,0) width=50 height=50)
+          )
+          (children 1
+            (GraphicsLayer
+              (bounds 50.00 50.00)
+              (event region
+                (rect (0,0) width=50 height=50)
+              )
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 50.00 100.00)
+                  (event region
+                    (rect (0,0) width=50 height=100)
+                  )
+                )
+              )
+            )
+          )
+        )
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 200.00 200.00)

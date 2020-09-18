@@ -175,6 +175,7 @@ public:
     virtual bool isScrollSnapInProgress(ScrollingNodeID) const { return false; }
     virtual void updateScrollSnapPropertiesWithFrameView(const FrameView&) { }
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) { }
+    virtual bool hasSubscrollers() const { return false; }
 
     // Generated a unique id for scrolling nodes.
     ScrollingNodeID uniqueScrollingNodeID();

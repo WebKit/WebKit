@@ -1723,6 +1723,9 @@ bool RenderLayerBacking::maintainsEventRegion() const
     if (!settings.asyncFrameScrollingEnabled() && !settings.asyncOverflowScrollingEnabled())
         return false;
 
+    if (!m_owningLayer.page().scrollingCoordinator()->hasSubscrollers())
+        return false;
+
     return true;
 }
 

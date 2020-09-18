@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<style>
+.testdiv {
+    display: inline-block;
+    box-sizing: border-box;
+    border: 2px solid blue;
+    position: relative;
+    height: 200px;
+    width: 200px;
+    will-change: transform;
+}
+</style>
+<script>
+window.onload = function () {
+    if (!window.testRunner)
+        return;
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    results.innerText = "Before adding scrollable content to frame:\n\n"
+    results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+
+    frame.onload = () => {
+        results.innerText += "After adding scrollable content to frame:\n\n"
+        results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+        testRunner.notifyDone();
+    }
+
+    frame.setAttribute("srcdoc", "<body style='height:200px'>");
+}
+</script>
+<body>
+<div class="testdiv">
+</div>
+<iframe id="frame" width=100 height=100></iframe>
+
+<pre id="results"></pre>
+</body>
+</html>

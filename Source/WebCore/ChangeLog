@@ -1,5 +1,119 @@
 2020-09-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266846. rdar://problem/68740511
+
+    Don't create event regions when the page has no subscrollers
+    https://bugs.webkit.org/show_bug.cgi?id=216355
+    <rdar://problem/67900642>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Tests: fast/scrolling/mac/event-region-subscroller-frame.html
+           fast/scrolling/mac/event-region-subscroller-overflow.html
+    
+    Unless the page uses features like touch-action we don't need event regions for plain main frame scrolling.
+    
+    * page/scrolling/AsyncScrollingCoordinator.cpp:
+    (WebCore::AsyncScrollingCoordinator::hasSubscrollers const):
+    * page/scrolling/AsyncScrollingCoordinator.h:
+    * page/scrolling/ScrollingCoordinator.h:
+    (WebCore::ScrollingCoordinator::hasSubscrollers const):
+    * page/scrolling/ScrollingStateScrollingNode.cpp:
+    (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+    (WebCore::ScrollingStateScrollingNode::~ScrollingStateScrollingNode):
+    * page/scrolling/ScrollingStateTree.h:
+    (WebCore::ScrollingStateTree::scrollingNodeCount const):
+    (WebCore::ScrollingStateTree::scrollingNodeAdded):
+    (WebCore::ScrollingStateTree::scrollingNodeRemoved):
+    
+    Count scrolling nodes in the state tree. It is updated during updateCompositingLayers, before event region generation.
+    
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::maintainsEventRegion const):
+    
+    Don't maintain event region if there are no subscrollers and none of the other reasons were hit.
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::updateCompositingLayers):
+    
+    Invalidate event regions if a subscroller appears.
+    
+    (WebCore::RenderLayerCompositor::invalidateEventRegionForAllFrames):
+    * rendering/RenderLayerCompositor.h:
+    
+    LayoutTests:
+    
+    Add overflow scrollers to some existing tests so they still generate event regions.
+    
+    * fast/scrolling/ios/border-radius-event-region-expected.txt:
+    * fast/scrolling/ios/border-radius-event-region.html:
+    * fast/scrolling/ios/event-region-float-expected.txt:
+    * fast/scrolling/ios/event-region-float.html:
+    * fast/scrolling/ios/event-region-pointer-events-expected.txt:
+    * fast/scrolling/ios/event-region-pointer-events.html:
+    * fast/scrolling/ios/event-region-scale-transform-shared-expected.txt:
+    * fast/scrolling/ios/event-region-scale-transform-shared.html:
+    * fast/scrolling/ios/event-region-translate-transform-shared-expected.txt:
+    * fast/scrolling/ios/event-region-translate-transform-shared.html:
+    * fast/scrolling/ios/event-region-visibility-hidden-expected.txt:
+    * fast/scrolling/ios/event-region-visibility-hidden.html:
+    * fast/scrolling/mac/border-radius-event-region-expected.txt:
+    * fast/scrolling/mac/border-radius-event-region.html:
+    * fast/scrolling/mac/event-region-subscroller-frame-expected.txt: Added.
+    * fast/scrolling/mac/event-region-subscroller-frame.html: Added.
+    * fast/scrolling/mac/event-region-subscroller-overflow-expected.txt: Added.
+    * fast/scrolling/mac/event-region-subscroller-overflow.html: Copied from LayoutTests/fast/scrolling/ios/event-region-visibility-hidden.html.
+    * fast/scrolling/mac/event-region-visibility-hidden-expected.txt:
+    * fast/scrolling/mac/event-region-visibility-hidden.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266846 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-10  Antti Koivisto  <antti@apple.com>
+
+            Don't create event regions when the page has no subscrollers
+            https://bugs.webkit.org/show_bug.cgi?id=216355
+            <rdar://problem/67900642>
+
+            Reviewed by Simon Fraser.
+
+            Tests: fast/scrolling/mac/event-region-subscroller-frame.html
+                   fast/scrolling/mac/event-region-subscroller-overflow.html
+
+            Unless the page uses features like touch-action we don't need event regions for plain main frame scrolling.
+
+            * page/scrolling/AsyncScrollingCoordinator.cpp:
+            (WebCore::AsyncScrollingCoordinator::hasSubscrollers const):
+            * page/scrolling/AsyncScrollingCoordinator.h:
+            * page/scrolling/ScrollingCoordinator.h:
+            (WebCore::ScrollingCoordinator::hasSubscrollers const):
+            * page/scrolling/ScrollingStateScrollingNode.cpp:
+            (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+            (WebCore::ScrollingStateScrollingNode::~ScrollingStateScrollingNode):
+            * page/scrolling/ScrollingStateTree.h:
+            (WebCore::ScrollingStateTree::scrollingNodeCount const):
+            (WebCore::ScrollingStateTree::scrollingNodeAdded):
+            (WebCore::ScrollingStateTree::scrollingNodeRemoved):
+
+            Count scrolling nodes in the state tree. It is updated during updateCompositingLayers, before event region generation.
+
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::maintainsEventRegion const):
+
+            Don't maintain event region if there are no subscrollers and none of the other reasons were hit.
+
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::updateCompositingLayers):
+
+            Invalidate event regions if a subscroller appears.
+
+            (WebCore::RenderLayerCompositor::invalidateEventRegionForAllFrames):
+            * rendering/RenderLayerCompositor.h:
+
+2020-09-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266677. rdar://problem/68740521
 
     [MotionMark] RenderLayer::paintLayerContents spends ~5% of the time in MonotonicTime::now() in Multiply
