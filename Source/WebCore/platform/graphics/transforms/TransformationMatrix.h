@@ -435,6 +435,23 @@ private:
         return FloatPoint3D(static_cast<float>(resultX), static_cast<float>(resultY), static_cast<float>(resultZ));
     }
 
+    enum class Type : uint8_t {
+        IdentityOrTranslation,
+        Affine,
+        Other
+    };
+
+    Type type() const
+    {
+        if (!m13() && !m14() && !m23() && !m24() && !m34() && !m31() && !m32() && m33() == 1 && m44() == 1) {
+            if (!m12() && !m21() && m11() == 1 && m22() == 1)
+                return Type::IdentityOrTranslation;
+            if (!m43())
+                return Type::Affine;
+        }
+        return Type::Other;
+    }
+
     Matrix4 m_matrix;
 };
 
