@@ -1,0 +1,13 @@
+ 
+
+PASS removed frame 
+PASS navigated frame 
+PASS frame in removed frame 
+PASS frame in navigated frame 
+PASS frame in removed remote-site frame 
+PASS frame in navigated remote-site frame 
+PASS removed frame in remote-site frame 
+PASS navigated frame in remote-site frame 
+PASS frame in removed remote-site frame in remote-site frame 
+PASS frame in navigated remote-site frame in remote-site frame 
+

@@ -1,0 +1,12 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test0" 
+PASS Audit report 
+PASS > [test0] Test delay of 3 frames 
+PASS   Creating ConstantSourceNode(context) and DelayNode(context) did not throw an exception. 
+PASS   Setting delayTime to 3 frames did not throw an exception. 
+PASS   output[0:2] contains only the constant 0. 
+PASS   output[3:127] contains only the constant 1. 
+PASS < [test0] All assertions passed. (total 4 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

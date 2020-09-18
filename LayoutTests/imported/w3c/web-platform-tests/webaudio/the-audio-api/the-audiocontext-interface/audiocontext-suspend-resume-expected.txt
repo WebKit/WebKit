@@ -26,9 +26,9 @@ PASS   offlineContext.resume() rejected correctly with InvalidStateError: Cannot
 PASS < [test-after-close] All assertions passed. (total 4 assertions) 
 PASS > [resume-running-context] Test resuming a running context 
 PASS   Create online context did not throw an exception. 
-FAIL X context.state is not equal to running. Got suspended. assert_true: expected true got false
+PASS   context.state is equal to suspended. 
 PASS   context.resume resolved correctly. 
 PASS   context.state after resume is equal to running. 
-FAIL < [resume-running-context] 1 out of 4 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 4 tasks were failed. assert_true: expected true got false
+PASS < [resume-running-context] All assertions passed. (total 4 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
 

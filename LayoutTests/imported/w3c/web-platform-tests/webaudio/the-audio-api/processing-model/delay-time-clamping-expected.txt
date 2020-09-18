@@ -1,3 +1,3 @@
 
-FAIL Test that a DelayNode allows a feedback loop of a single rendering quantum Can't find variable: Audiobuffer
+FAIL Test that a DelayNode allows a feedback loop of a single rendering quantum assert_equals: Silent audio found instead of a delayed impulse expected 1 but got 0
 

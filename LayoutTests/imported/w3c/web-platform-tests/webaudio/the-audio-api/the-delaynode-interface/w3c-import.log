@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/ctor-delay.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/delay-test.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/delaynode-channel-count-1.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/delaynode-max-default-delay.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/delaynode-max-nondefault-delay.html
