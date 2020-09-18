@@ -47,19 +47,8 @@ PASS   Linear+SetTarget: setValueAtTime(100, 0.015625) did not throw an exceptio
 PASS   Linear+SetTarget: setTargetAtTime(0, 0.015625, 0.1) did not throw an exception. 
 PASS   Linear+SetTarget: At time 0.01556396484375 (frame 255) output is 2.9921875 within an error of 0. 
 PASS   Linear+SetTarget: At time 0.015625 (frame 256) output is equal to 100. 
-FAIL X Linear+SetTarget: At time 0.015625 (frame 256) and later does not equal [100,99.93898010253906,99.87800598144531,99.81706237792969,99.75615692138672,99.6952896118164,99.63446044921875,99.57366180419922,99.51290893554688,99.45218658447266,99.39151000976562,99.33086395263672,99.27025604248047,99.20968627929688,99.1491470336914,99.08865356445312...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.7807e-7}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[173]	8.9979255676269531e+1	8.9979278564453125e+1	2.2888183593750000e-5	2.5437171712101412e-7	1.6022610133972168e-5
-	[175]	8.9869483947753906e+1	8.9869506835937500e+1	2.2888183593750000e-5	2.5468242120805040e-7	1.6003063082275391e-5
-	[178]	8.9705078125000000e+1	8.9705101013183594e+1	2.2888183593750000e-5	2.5514918700538800e-7	1.5973787337417605e-5
-	[180]	8.9595642089843750e+1	8.9595664978027344e+1	2.2888183593750000e-5	2.5546083730014343e-7	1.5954300062637328e-5
-	[189]	8.9104827880859375e+1	8.9104850769042969e+1	2.2888183593750000e-5	2.5686798638017438e-7	1.5866900776443484e-5
-	...and 18 more errors.
-	Max AbsError of 2.2888183593750000e-5 at index of 173.
-	Max RelError of 2.6693747176580118e-7 at index of 252.
-	[252]	8.5743591308593750e+1	8.5743614196777344e+1	2.2888183593750000e-5	2.6693747176580118e-7	1.5268365380020141e-5
- assert_true: expected true got false
-FAIL < [Linear + SetTarget] 1 out of 7 assertions were failed. assert_true: expected true got false
+PASS   Linear+SetTarget: At time 0.015625 (frame 256) and later equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.7807e-7}. 
+PASS < [Linear + SetTarget] All assertions passed. (total 7 assertions) 
 PASS > [Multiple linear ramps at the same time] Verify output 
 PASS   Multiple linear ramps: setValueAtTime(1, 0) did not throw an exception. 
 PASS   Multiple linear ramps: linearRampToValueAtTime(2, 0.00390625) did not throw an exception. 
@@ -76,5 +65,5 @@ PASS   Multiple exponential ramps: exponentialRampToValueAtTime(10, 0.00390625) 
 PASS   Multiple exponential ramps: Output at frame 63 is 1.978456026387951 within an error of 5.3924e-7. 
 PASS   Multiple exponential ramps: Output at frame 64 (0.00390625 sec) is equal to 10. 
 PASS < [Multiple exponential ramps at the same time] All assertions passed. (total 6 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 6 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
 

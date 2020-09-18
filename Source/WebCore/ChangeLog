@@ -1,3 +1,33 @@
+2020-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Vectorize SetTargetAtTime processing in AudioParamTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=216673
+
+        Reviewed by Sam Weinig.
+
+        Vectorize SetTargetAtTime processing in AudioParamTimeline.
+
+        The patch is based on the Blink implementation at:
+        - https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/modules/webaudio/audio_param_timeline.cc
+
+        I have however added the USE(ACCELERATE) and HAVE(ARM_NEON_INTRINSICS) implementations
+        for DARWIN and non-SSE platforms.
+
+        This allows us to pass some more tests that we were failing merely due to precision
+        issues. Now that our implemention matches Blink's, our results are consistent
+        with Blink.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        (WebCore::AudioParamTimeline::processSetTarget):
+        * Modules/webaudio/AudioParamTimeline.h:
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::vsadd):
+        (WebCore::VectorMath::vsmul):
+        * platform/audio/VectorMath.h:
+
 2020-09-17  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] canPlayType('audio/mpeg; codecs="mp3"') returns ""

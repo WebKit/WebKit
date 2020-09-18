@@ -494,7 +494,6 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
                 float timeConstant = event.timeConstant();
                 float discreteTimeConstant = static_cast<float>(AudioUtilities::discreteTimeConstantForSampleRate(timeConstant, controlRate));
 
-
                 // Set the starting value correctly. This is only needed when the
                 // current time is "equal" to the start time of this event. This is
                 // to get the sampling correct if the start time of this automation
@@ -507,7 +506,7 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
                 if (rampStartFrame <= currentFrame && currentFrame < rampStartFrame + 1)
                     value = target + (value - target) * exp(-(currentFrame * samplingPeriod - time1.value()) / timeConstant);
                 else {
-                    // Otherwise, need to compute a new value bacause |value| is the
+                    // Otherwise, need to compute a new value because |value| is the
                     // last computed value of SetTarget. Time has progressed by one
                     // frame, so we need to update the value for the new frame.
                     value += (target - value) * discreteTimeConstant;
@@ -521,15 +520,7 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
                         values[writeIndex] = target;
                     value = target;
                 } else {
-                    // Serially process remaining values.
-                    for (; writeIndex < fillToFrame; ++writeIndex) {
-                        values[writeIndex] = value;
-                        value += (target - value) * discreteTimeConstant;
-                    }
-                    // The previous loops may have updated |value| one extra time.
-                    // Reset it to the last computed value.
-                    if (writeIndex >= 1)
-                        value = values[writeIndex - 1];
+                    processSetTarget(values, writeIndex, fillToFrame, value, target, discreteTimeConstant);
                     currentFrame = fillToEndFrame;
                 }
 
@@ -637,6 +628,49 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
         values[writeIndex] = value;
 
     return value;
+}
+
+void AudioParamTimeline::processSetTarget(float* values, unsigned& writeIndex, unsigned fillToFrame, float& value, float target, float discreteTimeConstant)
+{
+    if (fillToFrame > writeIndex) {
+        // Resolve recursion by expanding constants to achieve a 4-step loop unrolling.
+        //
+        // v1 = v0 + (t - v0) * c
+        // v2 = v1 + (t - v1) * c
+        // v2 = v0 + (t - v0) * c + (t - (v0 + (t - v0) * c)) * c
+        // v2 = v0 + (t - v0) * c + (t - v0) * c - (t - v0) * c * c
+        // v2 = v0 + (t - v0) * c * (2 - c)
+        // Thus c0 = c, c1 = c*(2-c). The same logic applies to c2 and c3.
+        const float c0 = discreteTimeConstant;
+        const float c1 = c0 * (2 - c0);
+        const float c2 = c0 * ((c0 - 3) * c0 + 3);
+        const float c3 = c0 * (c0 * ((4 - c0) * c0 - 6) + 4);
+        float delta;
+
+        // Process 4 loop steps.
+        unsigned fillToFrameTrunc = writeIndex + ((fillToFrame - writeIndex) / 4) * 4;
+        const float cVector[4] = { 0, c0, c1, c2 };
+
+        for (; writeIndex < fillToFrameTrunc; writeIndex += 4) {
+            delta = target - value;
+
+            VectorMath::vsmul(&cVector[0], 1, &delta, &values[writeIndex], 1, 4);
+            VectorMath::vsadd(&values[writeIndex], 1, &value, &values[writeIndex], 1, 4);
+
+            value += delta * c3;
+        }
+    }
+
+    // Serially process remaining values.
+    for (; writeIndex < fillToFrame; ++writeIndex) {
+        values[writeIndex] = value;
+        value += (target - value) * discreteTimeConstant;
+    }
+
+    // The previous loops may have updated |value| one extra time.
+    // Reset it to the last computed value.
+    if (writeIndex >= 1)
+        value = values[writeIndex - 1];
 }
 
 float AudioParamTimeline::linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2)

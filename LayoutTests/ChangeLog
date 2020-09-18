@@ -1,3 +1,19 @@
+2020-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Vectorize SetTargetAtTime processing in AudioParamTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=216673
+
+        Reviewed by Sam Weinig.
+
+        * webaudio/audioparam-cancel-and-hold-expected.txt:
+        Rebaseline test now that one more subtest is passing.
+
+        * webaudio/audioparam-setTargetAtTime-expected.txt: Removed.
+        * webaudio/audioparam-setTargetAtTime.html: Removed.
+        Remove outdated test now that it was upstreamed to WPT. The updated
+        copy resides at:
+        imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setTargetAtTime.html
+
 2020-09-17  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] canPlayType('audio/mpeg; codecs="mp3"') returns ""

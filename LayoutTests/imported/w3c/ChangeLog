@@ -1,5 +1,18 @@
 2020-09-17  Chris Dumez  <cdumez@apple.com>
 
+        Vectorize SetTargetAtTime processing in AudioParamTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=216673
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setTargetAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/test-constantsourcenode-expected.txt:
+
+2020-09-17  Chris Dumez  <cdumez@apple.com>
+
         AnalyserNode.getFloatFrequencyData() should fill array with -Infinity when input is silent
         https://bugs.webkit.org/show_bug.cgi?id=216629
 

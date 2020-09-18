@@ -4,5 +4,5 @@ PASS ConstantSourceNode stop and start
 PASS ConstantSourceNode onended event 
 PASS ConstantSourceNode start and stop when work 
 PASS ConstantSourceNode with no automation 
-FAIL ConstantSourceNode with automation assert_true: sample 1464 should equal 0.24925357103347778 expected true got false
+PASS ConstantSourceNode with automation 
 

@@ -29,7 +29,7 @@ PASS   Expected value for cancelling exponentialRampToValue(0.001, 0.5) at time 
 PASS < [exponential] All assertions passed. (total 3 assertions) 
 PASS > [setTarget] Cancel setTargetAtTime 
 PASS   setTargetAtTime(0, 0.01, 0.05) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.5267e-7,"relativeThreshold":0}. 
-PASS   Cancelling setTargetAtTime(0, 0.01, 0.05) at time 0.25 contains only the constant 0.008229749277234077. 
+PASS   Cancelling setTargetAtTime(0, 0.01, 0.05) at time 0.25 contains only the constant 0.008229751139879227. 
 PASS   Expected value for cancelling setTargetAtTime(0, 0.01, 0.05) at time 0.25 is 0.008229747414588928 within an error of 4.5267e-7. 
 PASS < [setTarget] All assertions passed. (total 3 assertions) 
 PASS > [setValueCurve] Cancel setValueCurveAtTime 
@@ -44,9 +44,9 @@ PASS   Expected value for cancelling setValueCurveAtTime([1,0], 0.01, 0.11499999
 PASS < [setValueCurve after end] All assertions passed. (total 3 assertions) 
 PASS > [initial setTarget] Cancel with initial setTargetAtTime 
 PASS   setTargetAtTime(0, 0.01, 0.1) up to time 0.25 equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0.000001232,"relativeThreshold":0}. 
-PASS   Cancelling setTargetAtTime(0, 0.01, 0.1) at time 0.25 contains only the constant 0.09071767330169678. 
-FAIL X Expected value for cancelling setTargetAtTime(0, 0.01, 0.1) at time 0.25 is not close to 0.09071795642375946 within a relative error of 0.000001232 (RelErr=0.000003120904326378261). Got 0.09071767330169678. assert_true: expected true got false
-FAIL < [initial setTarget] 1 out of 3 assertions were failed. assert_true: expected true got false
+PASS   Cancelling setTargetAtTime(0, 0.01, 0.1) at time 0.25 contains only the constant 0.0907178446650505. 
+PASS   Expected value for cancelling setTargetAtTime(0, 0.01, 0.1) at time 0.25 is 0.09071795642375946 within an error of 0.000001232. 
+PASS < [initial setTarget] All assertions passed. (total 3 assertions) 
 PASS > [post cancel: Linear] LinearRamp after cancelling 
 PASS   Post cancellation linearRampToValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000083998,"relativeThreshold":0}. 
 PASS   Cancelling Post cancellation linearRampToValueAtTime: linearRampToValue(0, 0.5) at time 0.25 contains only the constant 0.5102040767669678. 
@@ -109,5 +109,5 @@ PASS   Cancelling 2nd linearRamp(2, 0.5) at time 0.375 contains only the constan
 PASS   Expected value for cancelling 2nd linearRamp(2, 0.5) at time 0.375 is 1.2551020383834839 within an error of 0. 
 PASS   3rd linearRamp(0, 0.5) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 FAIL < [linear, cancel, linear, cancel, linear] 1 out of 7 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 16 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 16 tasks were failed. assert_true: expected true got false
 

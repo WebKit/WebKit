@@ -60,6 +60,11 @@ void vadd(const float* source1P, int sourceStride1, const float* source2P, int s
     vDSP_vadd(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
 }
 
+void vsadd(const float* sourceP, int sourceStride, const float* scalar, float* destP, int destStride, size_t framesToProcess)
+{
+    vDSP_vsadd(sourceP, sourceStride, scalar, destP, destStride, framesToProcess);
+}
+
 void vmul(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
 {
     vDSP_vmul(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
@@ -245,6 +250,60 @@ void vsmul(const float* sourceP, int sourceStride, const float* scale, float* de
     float k = *scale;
     while (n--) {
         *destP = k * *sourceP;
+        sourceP += sourceStride;
+        destP += destStride;
+    }
+#if CPU(X86_SSE2)
+    }
+#endif
+}
+
+void vsadd(const float* sourceP, int sourceStride, const float* scalar, float* destP, int destStride, size_t framesToProcess)
+{
+    int n = framesToProcess;
+
+#if CPU(X86_SSE2)
+    if (sourceStride == 1 && destStride == 1) {
+        __m128* pSource;
+        __m128 scalarVector = _mm_set_ps1(*scalar);
+
+        int group = n / 4;
+        while (group--) {
+            pSource = reinterpret_cast<__m128*>(const_cast<float*>(sourceP));
+            __m128 dest = _mm_add_ps(*pSource, scalarVector);
+            _mm_storeu_ps(destP, dest);
+
+            sourceP += 4;
+            destP += 4;
+        }
+
+        // Non-SSE handling for remaining frames which is less than 4.
+        n %= 4;
+        while (n) {
+            *destP = *sourceP + *scalar;
+            sourceP++;
+            destP++;
+            n--;
+        }
+    } else { // if strides are not 1, rollback to normal algorithm
+#elif HAVE(ARM_NEON_INTRINSICS)
+    if (sourceStride == 1 && destStride == 1) {
+        int tailFrames = n % 4;
+        const float* endP = destP + n - tailFrames;
+        float32x4_t scalarVector = vdupq_n_f32(*scalar);
+
+        while (destP < endP) {
+            float32x4_t source = vld1q_f32(sourceP);
+            vst1q_f32(destP, vaddq_f32(source, scalarVector));
+
+            sourceP += 4;
+            destP += 4;
+        }
+        n = tailFrames;
+    }
+#endif
+    while (n--) {
+        *destP = *sourceP + *scalar;
         sourceP += sourceStride;
         destP += destStride;
     }
