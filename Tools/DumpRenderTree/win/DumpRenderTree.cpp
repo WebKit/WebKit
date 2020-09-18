@@ -896,8 +896,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 
     preferences->setFontSmoothing(FontSmoothingTypeStandard);
 
-    prefsPrivate->setResourceTimingEnabled(TRUE);
-    prefsPrivate->setUserTimingEnabled(TRUE);
     prefsPrivate->setDataTransferItemsEnabled(TRUE);
     prefsPrivate->clearNetworkLoaderSession();
 

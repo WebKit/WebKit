@@ -37,28 +37,31 @@ typedef double DOMHighResTimeStamp;
     Exposed=(Window,Worker),
     GenerateIsReachable=ImplScriptExecutionContext,
 ] interface Performance : EventTarget {
-
     DOMHighResTimeStamp now();
+    // FIXME: Implement 'timeOrigin'.
+    // readonly attribute DOMHighResTimeStamp timeOrigin;
+    // FIXME: Implement 'toJSON'.
+    // [Default] object toJSON();
 
     // https://w3c.github.io/navigation-timing/
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;
 
     // https://w3c.github.io/performance-timeline/
-    [EnabledAtRuntime=PerformanceTimeline] PerformanceEntryList getEntries();
-    [EnabledAtRuntime=PerformanceTimeline] PerformanceEntryList getEntriesByType(DOMString entryType);
-    [EnabledAtRuntime=PerformanceTimeline] PerformanceEntryList getEntriesByName(DOMString name, optional DOMString entryType);
+    PerformanceEntryList getEntries();
+    PerformanceEntryList getEntriesByType(DOMString entryType);
+    PerformanceEntryList getEntriesByName(DOMString name, optional DOMString entryType);
 
     // https://w3c.github.io/resource-timing/
-    [EnabledAtRuntime=ResourceTiming] undefined clearResourceTimings();
-    [EnabledAtRuntime=ResourceTiming] undefined setResourceTimingBufferSize(unsigned long maxSize);
-    [EnabledAtRuntime=ResourceTiming] attribute EventHandler onresourcetimingbufferfull;
+    undefined clearResourceTimings();
+    undefined setResourceTimingBufferSize(unsigned long maxSize);
+    attribute EventHandler onresourcetimingbufferfull;
 
     // https://w3c.github.io/user-timing/
-    [EnabledAtRuntime=UserTiming, MayThrowException] undefined mark(DOMString markName);
-    [EnabledAtRuntime=UserTiming] undefined clearMarks(optional DOMString markName);
-    [EnabledAtRuntime=UserTiming, MayThrowException] undefined measure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
-    [EnabledAtRuntime=UserTiming] undefined clearMeasures(optional DOMString measureName);
+    [MayThrowException] undefined mark(DOMString markName);
+    undefined clearMarks(optional DOMString markName);
+    [MayThrowException] undefined measure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
+    undefined clearMeasures(optional DOMString measureName);
 };
 
 typedef sequence<PerformanceEntry> PerformanceEntryList;

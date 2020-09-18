@@ -1,3 +1,23 @@
+2020-09-17  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling the UserTiming and ResourceTiming APIs
+        https://bugs.webkit.org/show_bug.cgi?id=216556
+
+        Reviewed by Darin Adler.
+
+        Remove runtime setting for enabling/disabling UserTiming and ResourceTiming 
+        APIs. They have both been on for a while in WebKit2 and there aren't any
+        known uses cases for disabling them. In addition to removing the setting, 
+        they are now enabled in LegacyWebKit as well.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetUserTimingEnabled):
+        (WKPreferencesGetUserTimingEnabled):
+        (WKPreferencesSetResourceTimingEnabled):
+        (WKPreferencesGetResourceTimingEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2020-09-16  Darin Adler  <darin@apple.com>
 
         Selection API: Introduce LiveRangeSelectionEnabled, off by default

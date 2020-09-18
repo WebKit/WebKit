@@ -640,8 +640,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL intersectionObserverEnabled;
 @property (nonatomic) BOOL menuItemElementEnabled;
 @property (nonatomic) BOOL keygenElementEnabled;
-@property (nonatomic) BOOL userTimingEnabled;
-@property (nonatomic) BOOL resourceTimingEnabled;
 @property (nonatomic) BOOL linkPreloadEnabled;
 @property (nonatomic) BOOL mediaUserGestureInheritsFromDocument;
 @property (nonatomic) BOOL isSecureContextAttributeEnabled;
@@ -685,6 +683,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+@property (nonatomic) BOOL userTimingEnabled;
+@property (nonatomic) BOOL resourceTimingEnabled;
 
 - (void)setCSSShadowPartsEnabled:(BOOL)flag;
 - (BOOL)cssShadowPartsEnabled;

@@ -684,8 +684,6 @@ public:
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
 #endif
-        @NO, WebKitUserTimingEnabledPreferenceKey,
-        @NO, WebKitResourceTimingEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
         @YES, WebKitLegacyEncryptedMediaAPIEnabledKey,
         @NO, WebKitEncryptedMediaAPIEnabledKey,
@@ -3252,26 +3250,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitMenuItemElementEnabledPreferenceKey];
 }
 
-- (BOOL)userTimingEnabled
-{
-    return [self _boolValueForKey:WebKitUserTimingEnabledPreferenceKey];
-}
-
-- (void)setUserTimingEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitUserTimingEnabledPreferenceKey];
-}
-
-- (BOOL)resourceTimingEnabled
-{
-    return [self _boolValueForKey:WebKitResourceTimingEnabledPreferenceKey];
-}
-
-- (void)setResourceTimingEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitResourceTimingEnabledPreferenceKey];
-}
-
 - (BOOL)mediaUserGestureInheritsFromDocument
 {
     return [self _boolValueForKey:WebKitMediaUserGestureInheritsFromDocument];
@@ -3647,6 +3625,24 @@ static NSString *classIBCreatorID = nil;
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (void)setUserTimingEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)userTimingEnabled
+{
+    return YES;
+}
+
+- (void)setResourceTimingEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)resourceTimingEnabled
+{
+    return YES;
+}
 
 - (void)setCSSShadowPartsEnabled:(BOOL)flag
 {

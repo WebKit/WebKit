@@ -1,3 +1,46 @@
+2020-09-17  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling the UserTiming and ResourceTiming APIs
+        https://bugs.webkit.org/show_bug.cgi?id=216556
+
+        Reviewed by Darin Adler.
+
+        Remove runtime setting for enabling/disabling UserTiming and ResourceTiming 
+        APIs. They have both been on for a while in WebKit2 and there aren't any
+        known uses cases for disabling them. In addition to removing the setting, 
+        they are now enabled in LegacyWebKit as well.
+
+        In addition to removing UserTiming and ResourceTiming, we can also remove the
+        checks for PerformanceTimelineEnabled, as that was defined entirely in terms
+        of the former.
+
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::startPreflight):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+        (WebCore::ResourceTimingInformation::storeResourceTimingInitiatorInformation):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::reportResourceTiming):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        * page/Performance.idl:
+        * page/PerformanceEntry.cpp:
+        (WebCore::PerformanceEntry::parseEntryTypeString):
+        * page/PerformanceEntry.idl:
+        * page/PerformanceObserver.idl:
+        * page/PerformanceObserverEntryList.idl:
+        * page/PerformanceResourceTiming.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setResourceTimingEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::resourceTimingEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setUserTimingEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::userTimingEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::performanceTimelineEnabled const): Deleted.
+
 2020-09-16  Darin Adler  <darin@apple.com>
 
         Selection API: Introduce LiveRangeSelectionEnabled, off by default

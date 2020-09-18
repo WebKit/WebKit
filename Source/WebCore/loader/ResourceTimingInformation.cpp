@@ -58,7 +58,6 @@ bool ResourceTimingInformation::shouldAddResourceTiming(CachedResource& resource
 
 void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Document& document, ResourceTiming&& resourceTiming)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
     if (!ResourceTimingInformation::shouldAddResourceTiming(resource))
         return;
 
@@ -89,7 +88,6 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
 
 void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorName, Frame* frame)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
     ASSERT(resource.get());
 
     if (resource->type() == CachedResource::Type::MainResource) {

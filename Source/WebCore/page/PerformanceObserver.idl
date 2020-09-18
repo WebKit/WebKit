@@ -27,7 +27,6 @@
 
 [
     CustomIsReachable,
-    EnabledAtRuntime=PerformanceTimeline,
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
     JSCustomMarkFunction,

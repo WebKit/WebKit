@@ -677,20 +677,6 @@ ModernMediaControlsEnabled:
   humanReadableDescription: "Use modern media controls look"
   webcoreBinding: RuntimeEnabledFeatures
 
-ResourceTimingEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "Resource Timing"
-  humanReadableDescription: "Enable ResourceTiming API"
-  webcoreBinding: RuntimeEnabledFeatures
-
-UserTimingEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "User Timing"
-  humanReadableDescription: "Enable UserTiming API"
-  webcoreBinding: RuntimeEnabledFeatures
-
 BeaconAPIEnabled:
   type: bool
   defaultValue: true

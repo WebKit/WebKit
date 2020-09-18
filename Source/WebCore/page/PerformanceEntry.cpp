@@ -52,17 +52,13 @@ Optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(const St
     if (entryType == "navigation")
         return Optional<Type>(Type::Navigation);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().userTimingEnabled()) {
-        if (entryType == "mark")
-            return Optional<Type>(Type::Mark);
-        if (entryType == "measure")
-            return Optional<Type>(Type::Measure);
-    }
+    if (entryType == "mark")
+        return Optional<Type>(Type::Mark);
+    if (entryType == "measure")
+        return Optional<Type>(Type::Measure);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
-        if (entryType == "resource")
-            return Optional<Type>(Type::Resource);
-    }
+    if (entryType == "resource")
+        return Optional<Type>(Type::Resource);
 
     if (RuntimeEnabledFeatures::sharedFeatures().paintTimingEnabled()) {
         if (entryType == "paint")

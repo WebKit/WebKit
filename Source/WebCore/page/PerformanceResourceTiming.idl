@@ -33,7 +33,6 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    EnabledAtRuntime=ResourceTiming,
     Exposed=(Window,Worker),
 ] interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMString initiatorType;

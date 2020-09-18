@@ -958,7 +958,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
             memoryCache.resourceAccessed(*resource);
 
-            if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled() && document() && !resource->isLoading()) {
+            if (document() && !resource->isLoading()) {
                 auto resourceTiming = ResourceTiming::fromCache(url, request.initiatorName(), loadTiming, resource->response(), *request.origin());
                 if (initiatorContext == InitiatorContext::Worker) {
                     ASSERT(is<CachedRawResource>(resource.get()));
@@ -1042,8 +1042,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     memoryCache.remove(resource);
     memoryCache.add(*newResource);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, newResource->initiatorName(), frame());
+    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, newResource->initiatorName(), frame());
 
     return newResource;
 }
@@ -1061,8 +1060,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
     if (resource->allowsCaching())
         memoryCache.add(*resource);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorName(), frame());
+    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorName(), frame());
 
     return resource;
 }

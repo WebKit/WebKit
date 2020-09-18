@@ -1689,16 +1689,6 @@ bool WKPreferencesGetMenuItemElementEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->menuItemElementEnabled();
 }
 
-void WKPreferencesSetUserTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setUserTimingEnabled(flag);
-}
-
-bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->userTimingEnabled();
-}
-
 void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setPaintTimingEnabled(flag);
@@ -1709,15 +1699,6 @@ bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->paintTimingEnabled();
 }
 
-void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setResourceTimingEnabled(flag);
-}
-
-bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->resourceTimingEnabled();
-}
 
 void WKPreferencesSetIsNSURLSessionWebSocketEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
@@ -2221,6 +2202,24 @@ void WKPreferencesSetIsSecureContextAttributeEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef)
+{
+    return true;
+}
+
+void WKPreferencesSetUserTimingEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef)
+{
+    return true;
+}
+
+void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef)
 {
     return true;
 }

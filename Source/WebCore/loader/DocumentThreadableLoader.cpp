@@ -548,8 +548,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
 
         request.setAllowCookies(m_options.storedCredentialsPolicy == StoredCredentialsPolicy::Use);
         CachedResourceRequest newRequest(WTFMove(request), options);
-        if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-            newRequest.setInitiator(m_options.initiator);
+        newRequest.setInitiator(m_options.initiator);
         newRequest.setOrigin(securityOrigin());
 
         ASSERT(!m_resource);
@@ -639,20 +638,18 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     if (data)
         didReceiveData(identifier, data->data(), data->size());
 
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
-        const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
-        Optional<NetworkLoadMetrics> empty;
-        if (!timing) {
-            empty.emplace();
-            timing = &empty.value();
-        }
-        auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, *timing, response, securityOrigin());
-        if (options().initiatorContext == InitiatorContext::Worker)
-            finishedTimingForWorkerLoad(resourceTiming);
-        else {
-            if (auto* window = document().domWindow())
-                window->performance().addResourceTiming(WTFMove(resourceTiming));
-        }
+    const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
+    Optional<NetworkLoadMetrics> empty;
+    if (!timing) {
+        empty.emplace();
+        timing = &empty.value();
+    }
+    auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, *timing, response, securityOrigin());
+    if (options().initiatorContext == InitiatorContext::Worker)
+        finishedTimingForWorkerLoad(resourceTiming);
+    else {
+        if (auto* window = document().domWindow())
+            window->performance().addResourceTiming(WTFMove(resourceTiming));
     }
 
     didFinishLoading(identifier);

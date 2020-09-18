@@ -44,16 +44,8 @@ namespace WebCore {
 class RuntimeEnabledFeatures {
     WTF_MAKE_NONCOPYABLE(RuntimeEnabledFeatures);
 public:
-    void setResourceTimingEnabled(bool isEnabled) { m_isResourceTimingEnabled = isEnabled; }
-    bool resourceTimingEnabled() const { return m_isResourceTimingEnabled; }
-
-    void setUserTimingEnabled(bool isEnabled) { m_isUserTimingEnabled = isEnabled; }
-    bool userTimingEnabled() const { return m_isUserTimingEnabled; }
-
     void setPaintTimingEnabled(bool isEnabled) { m_isPaintTimingEnabled = isEnabled; }
     bool paintTimingEnabled() const { return m_isPaintTimingEnabled; }
-
-    bool performanceTimelineEnabled() const { return resourceTimingEnabled() || userTimingEnabled(); }
 
     void setMenuItemElementEnabled(bool isEnabled) { m_isMenuItemElementEnabled = isEnabled; }
     bool menuItemElementEnabled() const { return m_isMenuItemElementEnabled; }
@@ -282,8 +274,6 @@ private:
 
     bool m_areModernMediaControlsEnabled { false };
     bool m_isPaintTimingEnabled { false };
-    bool m_isResourceTimingEnabled { false };
-    bool m_isUserTimingEnabled { false };
     bool m_isMenuItemElementEnabled { false };
     bool m_isDirectoryUploadEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };

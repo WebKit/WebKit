@@ -951,8 +951,6 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setLargeImageAsyncDecodingEnabled:NO];
 
     [preferences setModernMediaControlsEnabled:YES];
-    [preferences setResourceTimingEnabled:YES];
-    [preferences setUserTimingEnabled:YES];
 
     [preferences setCacheAPIEnabled:NO];
     preferences.mediaCapabilitiesEnabled = YES;

@@ -865,9 +865,6 @@ void SubresourceLoader::releaseResources()
 
 void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLoadMetrics)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        return;
-
     if (!ResourceTimingInformation::shouldAddResourceTiming(*m_resource))
         return;
 

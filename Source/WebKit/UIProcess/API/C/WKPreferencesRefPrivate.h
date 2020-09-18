@@ -461,16 +461,8 @@ WK_EXPORT void WKPreferencesSetWebShareEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetWebShareEnabled(WKPreferencesRef);
 
 // Defaults to false
-WK_EXPORT void WKPreferencesSetUserTimingEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef);
-
-// Defaults to false
 WK_EXPORT void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef);
-
-// Defaults to false
-WK_EXPORT void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef);
 
 // Defaults to false
 WK_EXPORT void WKPreferencesSetFetchAPIKeepAliveEnabled(WKPreferencesRef, bool flag);
@@ -595,6 +587,10 @@ WK_EXPORT void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef, bool) WK_C_API_
 WK_EXPORT bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetIsSecureContextAttributeEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPreferencesSetUserTimingEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

@@ -1,3 +1,22 @@
+2020-09-17  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling the UserTiming and ResourceTiming APIs
+        https://bugs.webkit.org/show_bug.cgi?id=216556
+
+        Reviewed by Darin Adler.
+
+        Remove runtime setting for enabling/disabling UserTiming and ResourceTiming 
+        APIs. They have both been on for a while in WebKit2 and there aren't any
+        known uses cases for disabling them. In addition to removing the setting, 
+        they are now enabled in LegacyWebKit as well.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2020-09-17  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [Flatpak SDK] bwrap: add pipewire socket as bind mount

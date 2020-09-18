@@ -317,10 +317,6 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitUserTimingEnabledPreferenceKey), kCFBooleanFalse);
-
-    CFDictionaryAddValue(defaults, CFSTR(WebKitResourceTimingEnabledPreferenceKey), kCFBooleanFalse);
-
     CFDictionaryAddValue(defaults, CFSTR(WebKitLinkPreloadEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPreloadingEnabledPreferenceKey), kCFBooleanFalse);
@@ -2361,9 +2357,8 @@ HRESULT WebPreferences::CSSCustomPropertiesAndValuesEnabled(_Out_ BOOL* enabled)
     return S_OK;
 }
     
-HRESULT WebPreferences::setUserTimingEnabled(BOOL enabled)
+HRESULT WebPreferences::setUserTimingEnabled(BOOL)
 {
-    setBoolValue(WebKitUserTimingEnabledPreferenceKey, enabled);
     return S_OK;
 }
 
@@ -2371,13 +2366,12 @@ HRESULT WebPreferences::userTimingEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitUserTimingEnabledPreferenceKey);
+    *enabled = true;
     return S_OK;
 }
 
-HRESULT WebPreferences::setResourceTimingEnabled(BOOL enabled)
+HRESULT WebPreferences::setResourceTimingEnabled(BOOL)
 {
-    setBoolValue(WebKitResourceTimingEnabledPreferenceKey, enabled);
     return S_OK;
 }
 
@@ -2385,7 +2379,7 @@ HRESULT WebPreferences::resourceTimingEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitResourceTimingEnabledPreferenceKey);
+    *enabled = true;
     return S_OK;
 }
 

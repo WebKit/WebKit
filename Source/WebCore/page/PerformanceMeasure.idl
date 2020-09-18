@@ -26,7 +26,6 @@
 // https://w3c.github.io/user-timing/
 
 [
-    EnabledAtRuntime=UserTiming,
     Exposed=(Window,Worker),
 ] interface PerformanceMeasure : PerformanceEntry {
 };

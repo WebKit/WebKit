@@ -3365,8 +3365,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setIntersectionObserverEnabled(preferences.intersectionObserverEnabled);
 #endif
 
-    RuntimeEnabledFeatures::sharedFeatures().setUserTimingEnabled(preferences.userTimingEnabled);
-    RuntimeEnabledFeatures::sharedFeatures().setResourceTimingEnabled(preferences.resourceTimingEnabled);
     settings.setLinkPreloadEnabled(preferences.linkPreloadEnabled);
     settings.setMediaPreloadingEnabled(preferences.mediaPreloadingEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setDirectoryUploadEnabled([preferences directoryUploadEnabled]);

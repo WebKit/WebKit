@@ -956,8 +956,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetIsNSURLSessionWebSocketEnabled(preferences, false);
 
     WKPreferencesSetFetchAPIKeepAliveEnabled(preferences, true);
-    WKPreferencesSetResourceTimingEnabled(preferences, true);
-    WKPreferencesSetUserTimingEnabled(preferences, true);
     WKPreferencesSetMediaPreloadingEnabled(preferences, true);
     WKPreferencesSetExposeSpeakersEnabled(preferences, true);
     WKPreferencesSetMediaPlaybackAllowsInline(preferences, true);

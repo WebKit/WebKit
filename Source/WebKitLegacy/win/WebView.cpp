@@ -5259,16 +5259,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setCSSCustomPropertiesAndValuesEnabled(!!enabled);
 
-    hr = prefsPrivate->userTimingEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setUserTimingEnabled(!!enabled);
-
-    hr = prefsPrivate->resourceTimingEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setResourceTimingEnabled(!!enabled);
-
     hr = prefsPrivate->linkPreloadEnabled(&enabled);
     if (FAILED(hr))
         return hr;
