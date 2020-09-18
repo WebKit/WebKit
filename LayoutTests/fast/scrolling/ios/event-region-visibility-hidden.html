@@ -20,6 +20,15 @@
     left: 150px;
     top: 150px;
 }
+.scroller {
+    overflow: scroll;
+    height: 50px;
+    width: 50px;
+}
+.scrollcontent {
+    height: 100px;
+    width: 50px;
+}
 </style>
 <script>
 window.onload = function () {
@@ -49,6 +58,7 @@ window.onload = function () {
 <div class="testdiv" style="visibility:hidden">
     <div class="inner positioned" id="test4"></div>
 </div>
+<div class="scroller"><div class="scrollcontent"></div></div>
 <pre id="results"></pre>
 </body>
 </html>

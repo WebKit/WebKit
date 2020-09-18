@@ -1,13 +1,37 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 1661.00)
+  (bounds 800.00 1719.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 1661.00)
+      (bounds 800.00 1719.00)
       (contentsOpaque 1)
-      (children 24
+      (children 25
         (GraphicsLayer
-          (position 8.00 13.00)
+          (position 8.00 8.00)
+          (bounds 50.00 50.00)
+          (event region
+            (rect (0,0) width=50 height=50)
+          )
+          (children 1
+            (GraphicsLayer
+              (bounds 50.00 50.00)
+              (event region
+                (rect (0,0) width=50 height=50)
+              )
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 50.00 100.00)
+                  (event region
+                    (rect (0,0) width=50 height=100)
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 71.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -15,7 +39,7 @@
           )
         )
         (GraphicsLayer
-          (position 208.00 13.00)
+          (position 208.00 71.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -24,7 +48,7 @@
           )
         )
         (GraphicsLayer
-          (position 408.00 13.00)
+          (position 408.00 71.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -35,7 +59,7 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 218.00)
+          (position 8.00 276.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -53,7 +77,7 @@
           )
         )
         (GraphicsLayer
-          (position 208.00 218.00)
+          (position 208.00 276.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -63,7 +87,7 @@
           )
         )
         (GraphicsLayer
-          (position 408.00 218.00)
+          (position 408.00 276.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -72,7 +96,7 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 423.00)
+          (position 8.00 481.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -80,7 +104,7 @@
           )
         )
         (GraphicsLayer
-          (position 208.00 423.00)
+          (position 208.00 481.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -89,7 +113,7 @@
           )
         )
         (GraphicsLayer
-          (position 408.00 423.00)
+          (position 408.00 481.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -100,7 +124,7 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 628.00)
+          (position 8.00 686.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -118,7 +142,7 @@
           )
         )
         (GraphicsLayer
-          (position 208.00 628.00)
+          (position 208.00 686.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -128,7 +152,7 @@
           )
         )
         (GraphicsLayer
-          (position 408.00 628.00)
+          (position 408.00 686.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -137,7 +161,7 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 833.00)
+          (position 8.00 891.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -145,7 +169,7 @@
           )
         )
         (GraphicsLayer
-          (position 208.00 833.00)
+          (position 208.00 891.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -154,7 +178,7 @@
           )
         )
         (GraphicsLayer
-          (position 408.00 833.00)
+          (position 408.00 891.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -165,7 +189,7 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 1038.00)
+          (position 8.00 1096.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -183,7 +207,7 @@
           )
         )
         (GraphicsLayer
-          (position 208.00 1038.00)
+          (position 208.00 1096.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -193,7 +217,7 @@
           )
         )
         (GraphicsLayer
-          (position 408.00 1038.00)
+          (position 408.00 1096.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -202,7 +226,7 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 1243.00)
+          (position 8.00 1301.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -210,7 +234,7 @@
           )
         )
         (GraphicsLayer
-          (position 208.00 1243.00)
+          (position 208.00 1301.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -219,7 +243,7 @@
           )
         )
         (GraphicsLayer
-          (position 408.00 1243.00)
+          (position 408.00 1301.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -230,7 +254,7 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 1448.00)
+          (position 8.00 1506.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -248,7 +272,7 @@
           )
         )
         (GraphicsLayer
-          (position 208.00 1448.00)
+          (position 208.00 1506.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
@@ -258,7 +282,7 @@
           )
         )
         (GraphicsLayer
-          (position 408.00 1448.00)
+          (position 408.00 1506.00)
           (bounds 200.00 200.00)
           (drawsContent 1)
           (event region

@@ -1,5 +1,5 @@
- 
-  
+ Before adding scroller:
+
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -7,9 +7,28 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 5
+      (children 1
         (GraphicsLayer
-          (position 8.00 424.00)
+          (position 8.00 8.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+After adding scroller:
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 603.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 603.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 212.00)
           (bounds 50.00 50.00)
           (event region
             (rect (0,0) width=50 height=50)
@@ -23,9 +42,10 @@
               (children 1
                 (GraphicsLayer
                   (anchor 0.00 0.00)
-                  (bounds 50.00 100.00)
+                  (bounds 35.00 100.00)
+                  (drawsContent 1)
                   (event region
-                    (rect (0,0) width=50 height=100)
+                    (rect (0,0) width=35 height=100)
                   )
                 )
               )
@@ -54,34 +74,10 @@
         )
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 204.00 204.00)
+          (bounds 200.00 200.00)
           (drawsContent 1)
           (event region
-            (rect (2,2) width=50 height=50)
-          )
-        )
-        (GraphicsLayer
-          (position 216.00 8.00)
-          (bounds 204.00 204.00)
-          (drawsContent 1)
-          (event region
-            (rect (2,2) width=50 height=50)
-          )
-        )
-        (GraphicsLayer
-          (position 424.00 8.00)
-          (bounds 204.00 204.00)
-          (drawsContent 1)
-          (event region
-            (rect (152,152) width=50 height=50)
-          )
-        )
-        (GraphicsLayer
-          (position 8.00 216.00)
-          (bounds 204.00 204.00)
-          (drawsContent 1)
-          (event region
-            (rect (152,152) width=50 height=50)
+            (rect (0,0) width=200 height=200)
           )
         )
       )
