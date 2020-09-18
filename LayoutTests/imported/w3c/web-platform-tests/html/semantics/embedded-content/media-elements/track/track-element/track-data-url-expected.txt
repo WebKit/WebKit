@@ -1,5 +1,9 @@
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
 
 FAIL track element data: URL No CORS null is not an object (evaluating 't.track.cues.length')
-FAIL track element data: URL anonymous null is not an object (evaluating 't.track.cues.length')
-FAIL track element data: URL use-credentials null is not an object (evaluating 't.track.cues.length')
+FAIL track element data: URL anonymous assert_unreached: got error event Reached unreachable code
+FAIL track element data: URL use-credentials assert_unreached: got error event Reached unreachable code
 

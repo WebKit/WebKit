@@ -6,8 +6,8 @@
 <meta http-equiv="Content-Security-Policy" content="media-src http://127.0.0.1:8000/resources/redirect.php http://localhost:8000/this-path-should-be-ignored-when-matching-a-redirected-request">
 </head>
 <body>
-<video crossorigin="anonymous">
-    <track src="http://127.0.0.1:8000/resources/redirect.php?code=307&url=http%3A%2F%2Flocalhost%3A8000/security/contentSecurityPolicy/resources/track.php" kind="captions" onload="alertAndDone('PASS')" onerror="alertAndDone('FAIL')">
+<video>
+    <track src="http://127.0.0.1:8000/resources/redirect.php?code=307&url=http%3A%2F%2Flocalhost%3A8000/security/contentSecurityPolicy/resources/track.vtt" kind="captions" onload="alertAndDone('PASS')" onerror="alertAndDone('FAIL')">
 </video>
 <script>
 document.querySelector("track").track.mode = "hidden"; // Load the track

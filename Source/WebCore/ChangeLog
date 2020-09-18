@@ -1,3 +1,16 @@
+2020-09-18  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r254031): Captions fail to load on jw.org
+        https://bugs.webkit.org/show_bug.cgi?id=216672
+        <rdar://problem/69016059>
+
+        Reviewed by Eric Carlson.
+
+        Revert r254031.
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::load):
+
 2020-09-18  Chris Dumez  <cdumez@apple.com>
 
         [macOS Big Sur] ASSERTION FAILED: !m_gamepadMap.get(device)./platform/gamepad/mac/HIDGamepadProvider.mm(233) under WebCore::HIDGamepadProvider::deviceAdded
