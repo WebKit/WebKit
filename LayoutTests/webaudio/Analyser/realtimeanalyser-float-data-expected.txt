@@ -1,0 +1,89 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "short and long vector" 
+PASS Executing "fftSize 32" 
+PASS Executing "fftSize 64" 
+PASS Executing "fftSize 128" 
+PASS Executing "fftSize 256" 
+PASS Executing "fftSize 512" 
+PASS Executing "fftSize 1024" 
+PASS Executing "fftSize 2048" 
+PASS Executing "fftSize 4096" 
+PASS Executing "fftSize 8192" 
+PASS Executing "fftSize 16384" 
+PASS Executing "fftSize 32768" 
+PASS Executing "initial zeroes" 
+PASS Audit report 
+PASS > [short and long vector]  
+PASS   8-element time domain data is identical to the array [97,98,99,100,101,102,103,104]. 
+PASS   longData.subarray(0, 32) is identical to the array [97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112...]. 
+PASS   Unfilled elements longData.subarray(32) contains only the constant Infinity. 
+PASS < [short and long vector] All assertions passed. (total 3 assertions) 
+PASS > [fftSize 32]  
+PASS   32-point analyser time domain data is identical to the array [32737,32738,32739,32740,32741,32742,32743,32744,32745,32746,32747,32748,32749,32750,32751,32752...]. 
+PASS < [fftSize 32] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 64]  
+PASS   64-point analyser time domain data is identical to the array [32705,32706,32707,32708,32709,32710,32711,32712,32713,32714,32715,32716,32717,32718,32719,32720...]. 
+PASS < [fftSize 64] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 128]  
+PASS   128-point analyser time domain data is identical to the array [32641,32642,32643,32644,32645,32646,32647,32648,32649,32650,32651,32652,32653,32654,32655,32656...]. 
+PASS < [fftSize 128] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 256]  
+PASS   256-point analyser time domain data is identical to the array [32513,32514,32515,32516,32517,32518,32519,32520,32521,32522,32523,32524,32525,32526,32527,32528...]. 
+PASS < [fftSize 256] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 512]  
+PASS   512-point analyser time domain data is identical to the array [32257,32258,32259,32260,32261,32262,32263,32264,32265,32266,32267,32268,32269,32270,32271,32272...]. 
+PASS < [fftSize 512] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 1024]  
+PASS   1024-point analyser time domain data is identical to the array [31745,31746,31747,31748,31749,31750,31751,31752,31753,31754,31755,31756,31757,31758,31759,31760...]. 
+PASS < [fftSize 1024] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 2048]  
+PASS   2048-point analyser time domain data is identical to the array [30721,30722,30723,30724,30725,30726,30727,30728,30729,30730,30731,30732,30733,30734,30735,30736...]. 
+PASS < [fftSize 2048] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 4096]  
+PASS   4096-point analyser time domain data is identical to the array [28673,28674,28675,28676,28677,28678,28679,28680,28681,28682,28683,28684,28685,28686,28687,28688...]. 
+PASS < [fftSize 4096] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 8192]  
+PASS   8192-point analyser time domain data is identical to the array [24577,24578,24579,24580,24581,24582,24583,24584,24585,24586,24587,24588,24589,24590,24591,24592...]. 
+PASS < [fftSize 8192] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 16384]  
+PASS   16384-point analyser time domain data is identical to the array [16385,16386,16387,16388,16389,16390,16391,16392,16393,16394,16395,16396,16397,16398,16399,16400...]. 
+PASS < [fftSize 16384] All assertions passed. (total 1 assertions) 
+PASS > [fftSize 32768]  
+PASS   32768-point analyser time domain data is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS < [fftSize 32768] All assertions passed. (total 1 assertions) 
+PASS > [initial zeroes]  
+PASS   At frame 127: data.subarray(0, 1920) contains only the constant 0. 
+PASS   At frame 127: data.subarray(1920, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 255: data.subarray(0, 1792) contains only the constant 0. 
+PASS   At frame 255: data.subarray(1792, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 383: data.subarray(0, 1664) contains only the constant 0. 
+PASS   At frame 383: data.subarray(1664, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 511: data.subarray(0, 1536) contains only the constant 0. 
+PASS   At frame 511: data.subarray(1536, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 639: data.subarray(0, 1408) contains only the constant 0. 
+PASS   At frame 639: data.subarray(1408, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 767: data.subarray(0, 1280) contains only the constant 0. 
+PASS   At frame 767: data.subarray(1280, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 895: data.subarray(0, 1152) contains only the constant 0. 
+PASS   At frame 895: data.subarray(1152, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 1023: data.subarray(0, 1024) contains only the constant 0. 
+PASS   At frame 1023: data.subarray(1024, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 1151: data.subarray(0, 896) contains only the constant 0. 
+PASS   At frame 1151: data.subarray(896, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 1279: data.subarray(0, 768) contains only the constant 0. 
+PASS   At frame 1279: data.subarray(768, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 1407: data.subarray(0, 640) contains only the constant 0. 
+PASS   At frame 1407: data.subarray(640, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 1535: data.subarray(0, 512) contains only the constant 0. 
+PASS   At frame 1535: data.subarray(512, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 1663: data.subarray(0, 384) contains only the constant 0. 
+PASS   At frame 1663: data.subarray(384, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 1791: data.subarray(0, 256) contains only the constant 0. 
+PASS   At frame 1791: data.subarray(256, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 1919: data.subarray(0, 128) contains only the constant 0. 
+PASS   At frame 1919: data.subarray(128, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   At frame 2047: data.subarray(0, 2048) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS < [initial zeroes] All assertions passed. (total 31 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 13 tasks ran successfully. 
+

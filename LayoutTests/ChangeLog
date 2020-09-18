@@ -1,3 +1,108 @@
+2020-09-18  Chris Dumez  <cdumez@apple.com>
+
+        Import Analyser / AudioBuffer / AudioBufferSource layout tests from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=216649
+
+        Reviewed by Eric Carlson.
+
+        Import Analyser / AudioBuffer / AudioBufferSource layout tests from Blink to extend
+        webaudio test coverage.
+
+        * webaudio/Analyser/automatic-pull-node-expected.txt: Added.
+        * webaudio/Analyser/automatic-pull-node.html: Added.
+        * webaudio/Analyser/handle-silent-inputs-expected.txt: Added.
+        * webaudio/Analyser/handle-silent-inputs.html: Added.
+        * webaudio/Analyser/realtimeanalyser-byte-data-expected.txt: Added.
+        * webaudio/Analyser/realtimeanalyser-byte-data.html: Added.
+        * webaudio/Analyser/realtimeanalyser-downmix-expected.txt: Added.
+        * webaudio/Analyser/realtimeanalyser-downmix.html: Added.
+        * webaudio/Analyser/realtimeanalyser-fftsize-reset-expected.txt: Added.
+        * webaudio/Analyser/realtimeanalyser-fftsize-reset.html: Added.
+        * webaudio/Analyser/realtimeanalyser-float-data-expected.txt: Added.
+        * webaudio/Analyser/realtimeanalyser-float-data.html: Added.
+        * webaudio/Analyser/realtimeanalyser-freq-data-expected.txt: Added.
+        * webaudio/Analyser/realtimeanalyser-freq-data-smoothing-expected.txt: Added.
+        * webaudio/Analyser/realtimeanalyser-freq-data-smoothing.html: Added.
+        * webaudio/Analyser/realtimeanalyser-freq-data.html: Added.
+        * webaudio/Analyser/realtimeanalyser-multiple-calls-expected.txt: Added.
+        * webaudio/Analyser/realtimeanalyser-multiple-calls.html: Added.
+        * webaudio/Analyser/realtimeanalyser-zero-expected.txt: Added.
+        * webaudio/Analyser/realtimeanalyser-zero.html: Added.
+        * webaudio/AudioBuffer/audiobuffer-resample-expected.txt: Added.
+        * webaudio/AudioBuffer/audiobuffer-resample.html: Added.
+        * webaudio/AudioBuffer/huge-buffer-expected.txt: Added.
+        * webaudio/AudioBuffer/huge-buffer.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-detune-modulated-impulse-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-detune-modulated-impulse.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-detune-modulation-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-detune-modulation.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-late-start-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-late-start.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-loop-comprehensive-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-loop-comprehensive.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-loop-grain-no-duration-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-loop-grain-no-duration.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-loop-points-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-loop-points.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-playbackrate-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-playbackrate-modulated-impulse-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-playbackrate-modulated-impulse.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-playbackrate-modulation-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-playbackrate-modulation.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-playbackrate.html: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-premature-loop-stop-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-premature-loop-stop.html: Added.
+        * webaudio/AudioBufferSource/resources/audiobuffersource-detune-modulation-expected.wav: Added.
+        * webaudio/AudioBufferSource/resources/audiobuffersource-loop-points-expected.wav: Added.
+        * webaudio/AudioBufferSource/resources/audiobuffersource-playbackrate-modulation-expected.wav: Added.
+        * webaudio/audiobuffersource-loop-comprehensive-expected.txt: Removed.
+        * webaudio/audiobuffersource-loop-comprehensive.html: Removed.
+        * webaudio/audiobuffersource-loop-points-expected.wav: Removed.
+        * webaudio/audiobuffersource-loop-points.html: Removed.
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-loop.html:
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated.html:
+        * webaudio/audiobuffersource-negative-playbackrate-loop.html:
+        * webaudio/audiobuffersource-negative-playbackrate.html:
+        * webaudio/audiobuffersource-playbackrate-expected.wav: Removed.
+        * webaudio/audiobuffersource-start.html:
+        * webaudio/resources/audiobuffersource-testing-legacy.js: Copied from LayoutTests/webaudio/resources/audiobuffersource-testing.js.
+        (createTestBuffer):
+        (createRamp):
+        (checkSingleTest):
+        (checkAllTests):
+        * webaudio/resources/audiobuffersource-testing.js:
+        (createTestBuffer):
+        (checkSingleTest):
+        (checkAllTests):
+        (createSawtoothWithModulation):
+        * webaudio/resources/buffer-loader.js:
+        (BufferLoader):
+        (request.onload):
+        (request.onerror):
+        (BufferLoader.prototype.loadBuffer):
+        (BufferLoader.prototype.load):
+        * webaudio/resources/fft.js: Added.
+        (FFT):
+        (this.toString):
+        (FFT.prototype.FFTException):
+        (FFT.prototype.FFTRadix2Core):
+        (FFT.prototype.fft):
+        (FFT.prototype.iFFTRadix2Core):
+        (FFT.prototype.ifft):
+        (FFT.prototype.ifftScale):
+        (FFT.prototype.RFFTRadix2CoreStage1):
+        (FFT.prototype.rfft):
+        * webaudio/resources/realtimeanalyser-testing.js: Added.
+        (createGraph):
+        (applyWindow):
+        (computeFFTMagnitude):
+        (dbToLinear):
+        (linearToDb):
+        (clipMagnitude):
+        (compareFloatFreq):
+        (smoothFFT):
+        (convertFloatToByte):
+
 2020-09-18  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r254031): Captions fail to load on jw.org

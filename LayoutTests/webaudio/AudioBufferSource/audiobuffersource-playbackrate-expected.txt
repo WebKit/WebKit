@@ -1,0 +1,23 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "playbackrate-test" 
+PASS Audit report 
+PASS > [playbackrate-test]  
+PASS   SNR is greater than or equal to 97.215. 
+PASS   0: Maximum difference (in ulp units (16-bits)) is less than or equal to 0.6446. 
+PASS   0: Number of differences between results is less than or equal to 0. 
+PASS   SNR is greater than or equal to 97.212. 
+PASS   1: Maximum difference (in ulp units (16-bits)) is less than or equal to 0.6446. 
+PASS   1: Number of differences between results is less than or equal to 0. 
+PASS   SNR is greater than or equal to 97.217. 
+PASS   2: Maximum difference (in ulp units (16-bits)) is less than or equal to 0.6446. 
+PASS   2: Number of differences between results is less than or equal to 0. 
+PASS   SNR is greater than or equal to 97.196. 
+PASS   3: Maximum difference (in ulp units (16-bits)) is less than or equal to 0.6485. 
+PASS   3: Number of differences between results is less than or equal to 0. 
+PASS   SNR is greater than or equal to 97.074. 
+PASS   4: Maximum difference (in ulp units (16-bits)) is less than or equal to 0.6915. 
+PASS   4: Number of differences between results is less than or equal to 0. 
+PASS < [playbackrate-test] All assertions passed. (total 15 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

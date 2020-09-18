@@ -1,0 +1,11 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "premature-loop-stop" 
+PASS Audit report 
+PASS > [premature-loop-stop]  
+PASS   Region #1 contains only the constant 1. 
+PASS   Region #2 (looped) contains only the constant 2. 
+PASS   Region #3 contains only the constant 3. 
+PASS < [premature-loop-stop] All assertions passed. (total 3 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

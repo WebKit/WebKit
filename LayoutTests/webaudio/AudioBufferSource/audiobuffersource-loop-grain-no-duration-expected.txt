@@ -1,0 +1,19 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "loop-count" 
+PASS Executing "delayed-start" 
+PASS Audit report 
+PASS > [loop-count]  
+PASS   The output of actual and expected loops is identical to the array [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,0,0.125,0.25,0.375,0.5,0.625,0.75,0.875...]. 
+PASS < [loop-count] All assertions passed. (total 1 assertions) 
+PASS > [delayed-start]  
+FAIL X The content of the left and right channel expected to be equal to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] but differs in 8128 places:
+	Index	Actual			Expected
+	[8193]	7.8125000000000000e-3	0.0000000000000000e+0
+	[8194]	1.5625000000000000e-2	0.0000000000000000e+0
+	[8195]	2.3437500000000000e-2	0.0000000000000000e+0
+	[8196]	3.1250000000000000e-2	0.0000000000000000e+0
+	...and 8124 more errors. assert_true: expected true got false
+FAIL < [delayed-start] 1 out of 1 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
+

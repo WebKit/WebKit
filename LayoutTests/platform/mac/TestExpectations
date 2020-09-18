@@ -470,7 +470,6 @@ webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 webaudio/mediastreamaudiosourcenode.html [ Skip ]
 webaudio/codec-tests/vorbis/ [ WontFix ]
-webkit.org/b/119467 webaudio/audiobuffersource-loop-points.html [ Skip ]
 
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping

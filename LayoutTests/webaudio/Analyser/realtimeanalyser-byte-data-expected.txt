@@ -1,0 +1,13 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "byte-data" 
+PASS Audit report 
+PASS > [byte-data]  
+PASS   Index of first sample greater than +1 is greater than or equal to 0. 
+PASS   Index of first sample less than -1 is greater than or equal to 0. 
+PASS   Clip  1.01149: byteData[43] is equal to 255. 
+PASS   Clip -1.42637: byteData[56] is equal to 0. 
+PASS   Byte data is identical to the array [128,130,135,136,140,143,145,149,152,153,159,160,163,167,168,173...]. 
+PASS < [byte-data] All assertions passed. (total 5 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+
