@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -59,13 +60,15 @@ public:
         [webView _close];
     }
 
-    void statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatus status, const char* message)
+    void statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatus status, const char* message, bool forceGC = false)
     {
         int tries = 0;
         do {
             if ([webView _audioRoutingArbitrationStatus] == status)
                 break;
 
+            if (forceGC)
+                [webView.get().configuration.processPool _garbageCollectJavaScriptObjectsForTesting];
             TestWebKitAPI::Util::sleep(0.1);
         } while (++tries <= 100);
 
@@ -106,7 +109,7 @@ TEST_F(AudioRoutingArbitration, Deletion)
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').parentNode.innerHTML = ''"];
 
-    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone, "Deletion 2");
+    statusShouldBecomeEqualTo(WKWebViewAudioRoutingArbitrationStatusNone, "Deletion 2", true);
 }
 
 TEST_F(AudioRoutingArbitration, Close)
