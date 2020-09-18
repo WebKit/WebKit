@@ -1,5 +1,46 @@
 2020-09-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r266182. rdar://problem/66950074
+
+    TestWebKitAPI.AudioRoutingArbitration.Deletion is a constant failure
+    https://bugs.webkit.org/show_bug.cgi?id=215856
+    <rdar://problem/66950074>
+    
+    Reviewed by Jer Noble.
+    
+    This test deletes a video element by removing it from the DOM, and verifies that
+    arbitration status changes appropriately. Arbitration status isn't changed until
+    the element's destructor runs, and that doesn't happen until it is garbage collected
+    so force GC while waiting for the status to change.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/AudioRoutingArbitration.mm:
+    (AudioRoutingArbitration::statusShouldBecomeEqualTo): Add optional parameter to force
+    GC while waiting for status to change.
+    (TEST_F):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266182 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-26  Eric Carlson  <eric.carlson@apple.com>
+
+            TestWebKitAPI.AudioRoutingArbitration.Deletion is a constant failure
+            https://bugs.webkit.org/show_bug.cgi?id=215856
+            <rdar://problem/66950074>
+
+            Reviewed by Jer Noble.
+
+            This test deletes a video element by removing it from the DOM, and verifies that
+            arbitration status changes appropriately. Arbitration status isn't changed until
+            the element's destructor runs, and that doesn't happen until it is garbage collected
+            so force GC while waiting for the status to change.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/AudioRoutingArbitration.mm:
+            (AudioRoutingArbitration::statusShouldBecomeEqualTo): Add optional parameter to force
+            GC while waiting for status to change.
+            (TEST_F):
+
+2020-09-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r267162. rdar://problem/69104937
 
     REGRESSION(r266844) [ BigSur ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html is a constant failure
