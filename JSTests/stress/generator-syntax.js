@@ -166,3 +166,7 @@ function* gen(b) {
     const b = 1;
 }
 `, `SyntaxError: Cannot declare a const variable twice: 'b'.`);
+
+testSyntaxError(`
+if (false) function* gen() {}
+`, `SyntaxError: Unexpected token '*'. Cannot use generator function declaration in single-statement context.`);

@@ -624,7 +624,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSingleFu
     TreeStatement statement = 0;
     switch (m_token.m_type) {
     case FUNCTION:
-        statement = parseFunctionDeclaration(context, ExportType::NotExported, DeclarationDefaultContext::Standard, functionConstructorParametersEndPosition);
+        statement = parseFunctionDeclaration(context, FunctionDeclarationType::Declaration, ExportType::NotExported, DeclarationDefaultContext::Standard, functionConstructorParametersEndPosition);
         break;
     case IDENT:
         if (*m_token.m_data.ident == m_vm.propertyNames->async && !m_token.m_data.escaped) {
@@ -1911,8 +1911,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         shouldSetPauseLocation = true;
         break;
     case FUNCTION: {
-        const bool isAsync = false;
-        result = parseFunctionDeclarationStatement(context, isAsync, parentAllowsFunctionDeclarationAsStatement);
+        result = parseFunctionDeclarationStatement(context, parentAllowsFunctionDeclarationAsStatement);
         break;
     }
     case SEMICOLON: {
@@ -2023,7 +2022,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclarationStatement(TreeBuilder& context, bool isAsync, bool parentAllowsFunctionDeclarationAsStatement)
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclarationStatement(TreeBuilder& context, bool parentAllowsFunctionDeclarationAsStatement)
 {
     semanticFailIfTrue(strictMode(), "Function declarations are only allowed inside blocks or switch statements in strict mode");
     failIfFalse(parentAllowsFunctionDeclarationAsStatement, "Function declarations are only allowed inside block statements or at the top level of a program");
@@ -2033,9 +2032,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=155813
         DepthManager statementDepth(&m_statementDepth);
         m_statementDepth = 1;
-        if (isAsync)
-            return parseAsyncFunctionDeclaration(context);
-        return parseFunctionDeclaration(context);
+        return parseFunctionDeclaration(context, FunctionDeclarationType::Statement);
     }
 
     // Any function declaration that isn't in a block is a syntax error unless it's
@@ -2055,11 +2052,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     JSTokenLocation location(tokenLocation());
     int start = tokenLine();
 
-    TreeStatement function = 0;
-    if (!isAsync)
-        function = parseFunctionDeclaration(context);
-    else
-        function = parseAsyncFunctionDeclaration(context);
+    TreeStatement function = parseFunctionDeclaration(context, FunctionDeclarationType::Statement);
     propagateError();
     failIfFalse(function, "Expected valid function statement after 'function' keyword");
     TreeSourceElements sourceElements = context.createSourceElements();
@@ -2679,15 +2672,18 @@ static NO_RETURN_DUE_TO_CRASH FunctionMetadataNode* getMetadata(ParserFunctionIn
 static FunctionMetadataNode* getMetadata(ParserFunctionInfo<ASTBuilder>& info) { return info.body; }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclaration(TreeBuilder& context, ExportType exportType, DeclarationDefaultContext declarationDefaultContext, Optional<int> functionConstructorParametersEndPosition)
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclaration(TreeBuilder& context, FunctionDeclarationType declarationType, ExportType exportType, DeclarationDefaultContext declarationDefaultContext, Optional<int> functionConstructorParametersEndPosition)
 {
     ASSERT(match(FUNCTION));
     JSTokenLocation location(tokenLocation());
     unsigned functionKeywordStart = tokenStart();
     next();
     SourceParseMode parseMode = SourceParseMode::NormalFunctionMode;
-    if (consume(TIMES))
+    if (match(TIMES)) {
+        failIfTrue(declarationType == FunctionDeclarationType::Statement, "Cannot use generator function declaration in single-statement context");
+        next();
         parseMode = SourceParseMode::GeneratorWrapperFunctionMode;
+    }
 
     ParserFunctionInfo<TreeBuilder> functionInfo;
     FunctionNameRequirements requirements = FunctionNameRequirements::Named;
@@ -3610,7 +3606,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
                 ASSERT(match(FUNCTION));
                 DepthManager statementDepth(&m_statementDepth);
                 m_statementDepth = 1;
-                result = parseFunctionDeclaration(context, ExportType::NotExported, DeclarationDefaultContext::ExportDefault);
+                result = parseFunctionDeclaration(context, FunctionDeclarationType::Declaration, ExportType::NotExported, DeclarationDefaultContext::ExportDefault);
             } else if (match(CLASSTOKEN)) {
                 result = parseClassDeclaration(context, ExportType::NotExported, DeclarationDefaultContext::ExportDefault);
             } else {
@@ -3727,7 +3723,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         case FUNCTION: {
             DepthManager statementDepth(&m_statementDepth);
             m_statementDepth = 1;
-            result = parseFunctionDeclaration(context, ExportType::Exported);
+            result = parseFunctionDeclaration(context, FunctionDeclarationType::Declaration, ExportType::Exported);
             break;
         }
 

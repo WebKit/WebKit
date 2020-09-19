@@ -3270,22 +3270,12 @@ test/language/statements/generators/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/statements/if/if-gen-else-gen.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-gen-else-stmt.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-gen-no-else.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/if/if-stmt-else-gen.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/decl-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/decl-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/labeled/decl-gen.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/value-await-non-module-escaped.js:
