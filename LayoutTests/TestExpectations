@@ -1071,6 +1071,8 @@ inspector/formatting/source-map-javascript-2.html [ Slow ]
 [ Debug ] inspector/debugger/breakpoints [ Skip ]
 [ Release ] inspector/debugger/breakpoints [ Slow ]
 
+inspector/console/console-oom.html [ Slow ]
+
 webkit.org/b/129639 inspector/dom/dom-search-crash.html [ Skip ]
 
 webkit.org/b/134982 inspector/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure Pass ]

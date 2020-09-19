@@ -56,6 +56,14 @@ public:
     bool getFirstArgumentAsString(String& result) const;
     bool isEqual(const ScriptArguments&) const;
 
+    static String truncateStringForConsoleMessage(const String& message)
+    {
+        constexpr size_t maxMessageLength = 10000;
+        if (message.length() <= maxMessageLength)
+            return message;
+        return makeString(message.substring(0, maxMessageLength), "..."_s);
+    }
+
 private:
     ScriptArguments(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 

@@ -1,3 +1,27 @@
+2020-09-18  Saam Barati  <sbarati@apple.com>
+
+        console APIs shouldn't crash making a string that's too long for a console warning when using user provided labels
+        https://bugs.webkit.org/show_bug.cgi?id=216709
+        <rdar://problem/68275357>
+
+        Reviewed by Mark Lam and Devin Rousso.
+
+        Various console APIs send warnings when a label can't be found. These warnings
+        include the label itself. If this label has a long enough length, when we make
+        these warning strings, we can crash, because we exceed max string length.
+        This patch fixes this by truncating the label everywhere it's used if it
+        exceeds a length of 10000.
+
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::profile):
+        * inspector/ScriptArguments.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::startTiming):
+        (Inspector::InspectorConsoleAgent::logTiming):
+        (Inspector::InspectorConsoleAgent::stopTiming):
+        (Inspector::InspectorConsoleAgent::count):
+        (Inspector::InspectorConsoleAgent::countReset):
+
 2020-09-18  Keith Miller  <keith_miller@apple.com>
 
         DFG should ensure there are PhantomLocals for the taken block of op_jneq_ptr
