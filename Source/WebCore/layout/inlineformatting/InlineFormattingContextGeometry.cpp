@@ -244,8 +244,8 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
                 //     -----|-|-|---------- <- baseline
                 //
                 auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(inlineLevelBox));
-                auto& lastLine = formattingState.displayInlineContent()->lines.last();
-                auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
+                auto& lastLine = formattingState.lines().last();
+                auto inlineBlockBaseline = lastLine.logicalTop() + lastLine.baseline();
                 baseline = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
             }
             auto rect = InlineRect { { }, logicalLeft, run.logicalWidth(), logicalHeight };

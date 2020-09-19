@@ -129,10 +129,11 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                     formattingState.boxGeometry(*child).moveVertically(intrinsicPaddingTop);
                 }
                 if (cellBox.establishesInlineFormattingContext()) {
-                    auto& displayContent = layoutState().establishedInlineFormattingState(cellBox).ensureDisplayInlineContent();
+                    auto& inlineFormattingStatee = layoutState().establishedInlineFormattingState(cellBox);
+                    auto& displayContent = inlineFormattingStatee.ensureDisplayInlineContent();
                     for (auto& run : displayContent.runs)
                         run.moveVertically(intrinsicPaddingTop);
-                    for (auto& line : displayContent.lines)
+                    for (auto& line : inlineFormattingStatee.lines())
                         line.moveVertically(intrinsicPaddingTop);
                 }
             };

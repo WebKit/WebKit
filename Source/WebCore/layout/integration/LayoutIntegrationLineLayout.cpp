@@ -156,8 +156,8 @@ void LineLayout::prepareFloatingState()
 
 LayoutUnit LineLayout::contentLogicalHeight() const
 {
-    auto& lines = displayInlineContent()->lines;
-    return LayoutUnit { lines.last().bottom() - lines.first().top() };
+    auto& lines = m_inlineFormattingState.lines();
+    return LayoutUnit { lines.last().logicalBottom() - lines.first().logicalTop() };
 }
 
 size_t LineLayout::lineCount() const
@@ -167,31 +167,31 @@ size_t LineLayout::lineCount() const
         return 0;
     if (inlineContent->runs.isEmpty())
         return 0;
-    return inlineContent->lines.size();
+    return m_inlineFormattingState.lines().size();
 }
 
 LayoutUnit LineLayout::firstLineBaseline() const
 {
-    auto* inlineContent = displayInlineContent();
-    if (!inlineContent) {
+    auto& lines = m_inlineFormattingState.lines();
+    if (lines.isEmpty()) {
         ASSERT_NOT_REACHED();
         return 0_lu;
     }
 
-    auto& firstLine = inlineContent->lines.first();
-    return Layout::toLayoutUnit(firstLine.top() + firstLine.baseline());
+    auto& firstLine = lines.first();
+    return Layout::toLayoutUnit(firstLine.logicalTop() + firstLine.baseline());
 }
 
 LayoutUnit LineLayout::lastLineBaseline() const
 {
-    auto* inlineContent = displayInlineContent();
-    if (!inlineContent) {
+    auto& lines = m_inlineFormattingState.lines();
+    if (lines.isEmpty()) {
         ASSERT_NOT_REACHED();
         return 0_lu;
     }
 
-    auto& lastLine = inlineContent->lines.last();
-    return Layout::toLayoutUnit(lastLine.top() + lastLine.baseline());
+    auto& lastLine = lines.last();
+    return Layout::toLayoutUnit(lastLine.logicalTop() + lastLine.baseline());
 }
 
 void LineLayout::collectOverflow(RenderBlockFlow& flow)
@@ -300,13 +300,13 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
 
         auto& line = inlineContent.lineForRun(run);
-        auto baseline = paintOffset.y() + line.top() + line.baseline();
+        auto baseline = paintOffset.y() + line.rect().y() + line.baseline();
         auto expansion = run.expansion();
 
         String textWithHyphen;
         if (textContent.needsHyphen())
             textWithHyphen = makeString(textContent.content(), style.hyphenString());
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), run.left() - line.left(), expansion.horizontalExpansion, expansion.behavior };
+        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), run.left() - line.rect().x(), expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };
 

@@ -406,11 +406,11 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
                 return false;
 
             auto isConsideredEmpty = [&] {
-                auto& formattingState = layoutState.establishedInlineFormattingState(containerBox);
-                if (auto* inlineContent = formattingState.displayInlineContent(); inlineContent && !inlineContent->lines.isEmpty())
+                auto& inlineFormattingState = layoutState.establishedInlineFormattingState(containerBox);
+                if (!inlineFormattingState.lines().isEmpty())
                     return false;
                 // Any float box in this formatting context prevents collapsing through.
-                auto& floats = formattingState.floatingState().floats();
+                auto& floats = inlineFormattingState.floatingState().floats();
                 for (auto& floatItem : floats) {
                     if (floatItem.isInFormattingContextOf(containerBox))
                         return false;

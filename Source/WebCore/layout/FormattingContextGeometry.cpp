@@ -194,16 +194,17 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
     auto bottom = borderAndPaddingTop;
     auto& formattingRootContainer = downcast<ContainerBox>(layoutBox);
     if (formattingRootContainer.establishesInlineFormattingContext()) {
-        auto& lines = layoutState.establishedInlineFormattingState(formattingRootContainer).displayInlineContent()->lines;
+        auto& lines = layoutState.establishedInlineFormattingState(formattingRootContainer).lines();
         // Even empty containers generate one line. 
         ASSERT(!lines.isEmpty());
-        top = lines.first().top();
-        bottom = lines.last().bottom();
+        top = lines.first().logicalTop();
+        bottom = lines.last().logicalBottom();
     } else if (formattingRootContainer.establishesFlexFormattingContext()) {
         auto& lines = layoutState.establishedFlexFormattingState(formattingRootContainer).lines();
         ASSERT(!lines.isEmpty());
-        top = lines.first().top();
-        bottom = lines.last().bottom();
+        // FIXME: Move flex over to layout geometry.
+        top = lines.first().rect().y();
+        bottom = lines.last().rect().maxY();
     } else if (formattingRootContainer.establishesBlockFormattingContext() || formattingRootContainer.establishesTableFormattingContext() || formattingRootContainer.isDocumentBox()) {
         if (formattingRootContainer.hasInFlowChild()) {
             auto& firstBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.firstInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);

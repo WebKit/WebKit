@@ -32,6 +32,7 @@
 #include "InlineFormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutState.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 

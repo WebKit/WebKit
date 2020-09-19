@@ -27,12 +27,13 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineFormattingState.h"
 #include "InlineItem.h"
 #include "LayoutInlineTextBox.h"
 
 namespace WebCore {
 namespace Layout {
+
+using InlineItems = Vector<InlineItem>;
 
 class InlineTextItem : public InlineItem {
 public:

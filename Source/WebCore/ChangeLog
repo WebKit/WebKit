@@ -1,5 +1,81 @@
 2020-09-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Do not use Display::Line geometry in layout
+        https://bugs.webkit.org/show_bug.cgi?id=216711
+
+        Reviewed by Simon Fraser.
+
+        This patch introduces Layout::LineGeometry.
+        LineGeometry is used to hold the logical geometry of line and it is input to subsequent layouts.
+        This patch is also in preparation for moving out the "displayInlineItem" construction from Layout::InlineFormattingContext.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const):
+        * layout/displaytree/DisplayLine.h:
+        (WebCore::Display::Line::rect const):
+        (WebCore::Display::Line::scrollableOverflow const):
+        (WebCore::Display::Line::inkOverflow const):
+        (WebCore::Display::Line::baseline const):
+        (WebCore::Display::Line::Line):
+        (WebCore::Display::Line::left const): Deleted.
+        (WebCore::Display::Line::right const): Deleted.
+        (WebCore::Display::Line::top const): Deleted.
+        (WebCore::Display::Line::bottom const): Deleted.
+        (WebCore::Display::Line::width const): Deleted.
+        (WebCore::Display::Line::height const): Deleted.
+        (WebCore::Display::Line::moveVertically): Deleted.
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        (WebCore::Layout::InlineFormattingContext::invalidateFormattingState):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::constructInlineBoxes):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::lines const):
+        (WebCore::Layout::InlineFormattingState::lines):
+        (WebCore::Layout::InlineFormattingState::addLine):
+        (WebCore::Layout::InlineFormattingState::clearLineAndRuns):
+        (WebCore::Layout::InlineFormattingState::shrinkDisplayInlineContent):
+        (WebCore::Layout::InlineFormattingState::clearDisplayInlineContent): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        * layout/inlineformatting/InlineLineBuilder.h:
+        * layout/inlineformatting/InlineLineGeometry.h: Added.
+        (WebCore::Layout::InlineLineGeometry::logicalLeft const):
+        (WebCore::Layout::InlineLineGeometry::logicalRight const):
+        (WebCore::Layout::InlineLineGeometry::logicalTop const):
+        (WebCore::Layout::InlineLineGeometry::logicalBottom const):
+        (WebCore::Layout::InlineLineGeometry::logicalWidth const):
+        (WebCore::Layout::InlineLineGeometry::logicalHeight const):
+        (WebCore::Layout::InlineLineGeometry::logicalRect const):
+        (WebCore::Layout::InlineLineGeometry::lineBoxLogicalRect const):
+        (WebCore::Layout::InlineLineGeometry::baseline const):
+        (WebCore::Layout::InlineLineGeometry::moveVertically):
+        (WebCore::Layout::InlineLineGeometry::InlineLineGeometry):
+        * layout/inlineformatting/InlineTextItem.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::contentLogicalHeight const):
+        (WebCore::LayoutIntegration::LineLayout::lineCount const):
+        (WebCore::LayoutIntegration::LineLayout::firstLineBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::lastLineBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::usedBaselineForCell):
+
+2020-09-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][FFC] Add flex box/item to showLayoutTree
         https://bugs.webkit.org/show_bug.cgi?id=216694
 

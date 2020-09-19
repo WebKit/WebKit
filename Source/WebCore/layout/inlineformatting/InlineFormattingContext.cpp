@@ -141,7 +141,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     };
     Optional<PreviousLine> previousLine;
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
-    auto isFirstLine = !formattingState().displayInlineContent() || formattingState().displayInlineContent()->lines.isEmpty();
+    auto isFirstLine = formattingState().lines().isEmpty();
 
     auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
     while (!needsLayoutRange.isEmpty()) {
@@ -399,8 +399,14 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto lineRectAndLineBoxOffset = geometry.computedLineLogicalRect(lineBox, root().style(), lineContent);
     auto lineLogicalRect = lineRectAndLineBoxOffset.logicalRect;
     auto lineBoxVerticalOffset = lineRectAndLineBoxOffset.lineBoxVerticalOffset;
-    auto scrollableOverflow = InlineRect { lineLogicalRect.topLeft(), std::max(lineLogicalRect.width(), lineBox.logicalWidth()), std::max(lineLogicalRect.height(), lineBoxVerticalOffset + lineBox.logicalHeight()) };
 
+    auto constructLineGeometry = [&] {
+        auto lineBoxLogicalRect = InlineRect { lineLogicalRect.top() + lineBoxVerticalOffset, lineLogicalRect.left() + lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineBox.logicalWidth(), lineBox.logicalHeight() };
+        formattingState.addLine({ lineLogicalRect, lineBoxLogicalRect, lineBoxVerticalOffset + lineBox.alignmentBaseline() });
+    };
+    constructLineGeometry();
+
+    auto scrollableOverflow = InlineRect { lineLogicalRect.topLeft(), std::max(lineLogicalRect.width(), lineBox.logicalWidth()), std::max(lineLogicalRect.height(), lineBoxVerticalOffset + lineBox.logicalHeight()) };
     if (!lineContent.floats.isEmpty()) {
         auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };
         // Move floats to their final position.
@@ -492,7 +498,7 @@ void InlineFormattingContext::invalidateFormattingState(const InvalidationState&
 {
     // Find out what we need to invalidate. This is where we add some smarts to do partial line layout.
     // For now let's just clear the runs.
-    formattingState().clearDisplayInlineContent();
+    formattingState().clearLineAndRuns();
     // FIXME: This is also where we would delete inline items if their content changed.
 }
 

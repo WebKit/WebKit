@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,33 +27,42 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FloatRect.h"
+#include "InlineRect.h"
 
 namespace WebCore {
-namespace Display {
+namespace Layout {
 
-class Line {
+class InlineLineGeometry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(const FloatRect&, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline);
+    InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineRect& lineBoxLogicalRect, InlineLayoutUnit aligmentBaseline);
 
-    const FloatRect& rect() const { return m_rect; }
-    const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
-    const FloatRect& inkOverflow() const { return m_inkOverflow; }
-    float baseline() const { return m_baseline; }
+    InlineLayoutUnit logicalLeft() const { return logicalRect().left(); };
+    InlineLayoutUnit logicalRight() const { return logicalRect().right(); };
+
+    InlineLayoutUnit logicalTop() const { return logicalRect().top(); };
+    InlineLayoutUnit logicalBottom() const { return logicalRect().bottom(); };
+
+    InlineLayoutUnit logicalWidth() const { return logicalRect().width(); };
+    InlineLayoutUnit logicalHeight() const { return logicalRect().height(); };
+
+    const InlineRect& logicalRect() const { return m_logicalRect; }
+    const InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
+
+    InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
+
+    void moveVertically(InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
 
 private:
-    FloatRect m_rect;
-    FloatRect m_scrollableOverflow;
-    FloatRect m_inkOverflow;
-    float m_baseline { 0 };
+    InlineRect m_logicalRect;
+    InlineRect m_lineBoxLogicalRect;
+    InlineLayoutUnit m_aligmentBaseline { 0 };
 };
 
-inline Line::Line(const FloatRect& rect, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline)
-    : m_rect(rect)
-    , m_scrollableOverflow(scrollableOverflow)
-    , m_inkOverflow(inkOverflow)
-    , m_baseline(baseline)
+inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineRect& lineBoxLogicalRect, InlineLayoutUnit aligmentBaseline)
+    : m_logicalRect(lineLogicalRect)
+    , m_lineBoxLogicalRect(lineBoxLogicalRect)
+    , m_aligmentBaseline(aligmentBaseline)
 {
 }
 

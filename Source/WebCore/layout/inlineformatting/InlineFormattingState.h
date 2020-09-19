@@ -30,12 +30,14 @@
 #include "DisplayInlineContent.h"
 #include "FormattingState.h"
 #include "InlineItem.h"
+#include "InlineLineGeometry.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
 using InlineItems = Vector<InlineItem>;
+using InlineLines = Vector<InlineLineGeometry>;
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
@@ -48,15 +50,20 @@ public:
     const InlineItems& inlineItems() const { return m_inlineItems; }
     void addInlineItem(InlineItem&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
 
+    const InlineLines& lines() const { return m_lines; }
+    InlineLines& lines() { return m_lines; }
+    void addLine(const InlineLineGeometry& line) { m_lines.append(line); }
+
     const Display::InlineContent* displayInlineContent() const { return m_displayInlineContent.get(); }
     Display::InlineContent& ensureDisplayInlineContent();
 
-    void clearDisplayInlineContent() { m_displayInlineContent = nullptr; }
+    void clearLineAndRuns();
     void shrinkDisplayInlineContent();
 
 private:
     // Cacheable input to line layout.
     InlineItems m_inlineItems;
+    InlineLines m_lines;
 
     RefPtr<Display::InlineContent> m_displayInlineContent;
 };
@@ -68,8 +75,15 @@ inline Display::InlineContent& InlineFormattingState::ensureDisplayInlineContent
     return *m_displayInlineContent;
 }
 
+inline void InlineFormattingState::clearLineAndRuns()
+{
+    m_displayInlineContent = nullptr;
+    m_lines.clear();
+}
+
 inline void InlineFormattingState::shrinkDisplayInlineContent()
 {
+    m_lines.shrinkToFit();
     if (!m_displayInlineContent)
         return;
     m_displayInlineContent->runs.shrinkToFit();
