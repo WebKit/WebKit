@@ -430,7 +430,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
     else if (layoutBox.isBodyBox())
         stream << "BODY";
     else if (layoutBox.isTableWrapperBox())
-        stream << "TABLE principal";
+        stream << "TABLE wrapper box";
     else if (layoutBox.isTableBox())
         stream << "TABLE";
     else if (layoutBox.isTableCaption())
@@ -449,6 +449,10 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
         stream << "TD";
     else if (layoutBox.isTableRow())
         stream << "TR";
+    else if (layoutBox.isFlexBox())
+        stream << "Flex box";
+    else if (layoutBox.isFlexItem())
+        stream << "Flex item";
     else if (layoutBox.isInlineLevelBox()) {
         if (layoutBox.isAnonymous())
             stream << "anonymous inline box";

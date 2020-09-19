@@ -1,3 +1,13 @@
+2020-09-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][FFC] Add flex box/item to showLayoutTree
+        https://bugs.webkit.org/show_bug.cgi?id=216694
+
+        Reviewed by Sam Weinig.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox): 'Table principal' -> 'Table wrapper box' for consistency sake.
+
 2020-09-18  Saam Barati  <sbarati@apple.com>
 
         console APIs shouldn't crash making a string that's too long for a console warning when using user provided labels
