@@ -1,3 +1,9 @@
+2020-09-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] API test /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check is crashing
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-09-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] REGRESSION (r265702): System Services receive 0 bytes when extracting selected content as rich text data

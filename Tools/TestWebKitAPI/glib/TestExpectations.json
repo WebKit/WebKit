@@ -287,5 +287,12 @@
 				"expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/216189"}}
 			}
 		}
-	}
+	},
+	"TestUIClient": {
+		"subtests": {
+			"/webkit/WebKitWebView/usermedia-enumeratedevices-permission-check": {
+				"expected": {"gtk": {"status": ["CRASH"], "bug": "webkit.org/b/216727"}}
+			}
+		}
+   }
 }
