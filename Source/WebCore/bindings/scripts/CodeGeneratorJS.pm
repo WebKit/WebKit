@@ -1989,6 +1989,14 @@ sub NeedsRuntimeCheck
         || $context->extendedAttributes->{CustomEnabled};
 }
 
+sub NeedsRuntimeReadWriteCheck
+{
+    my ($interface, $context) = @_;
+    
+    return $context->extendedAttributes->{RuntimeConditionallyReadWrite}
+        || $context->extendedAttributes->{SettingsConditionallyReadWrite}
+}
+
 # https://heycam.github.io/webidl/#es-operations
 sub OperationShouldBeOnInstance
 {
@@ -3404,7 +3412,7 @@ sub GeneratePropertiesHashTable
         $readWriteConditionals->{$name} = $readWriteConditional if $readWriteConditional;
 
         my $needsRuntimeCheck = NeedsRuntimeCheck($interface, $attribute);
-        my $needsRuntimeReadWriteCheck = $attribute->extendedAttributes->{RuntimeConditionallyReadWrite};
+        my $needsRuntimeReadWriteCheck = NeedsRuntimeReadWriteCheck($interface, $attribute);
         
         if ($needsRuntimeCheck && $needsRuntimeReadWriteCheck) {
             die "Being both runtime enabled and runtime conditionally read-write is not yet supported (used on the '${name}' attribute of '${interfaceName}').\n";
@@ -4038,6 +4046,20 @@ sub GenerateRuntimeEnableConditionalString
         }
     }
 
+    if ($context->extendedAttributes->{SettingsConditionallyReadWrite}) {
+        assert("Must specify value for SettingsConditionallyReadWrite.") if $context->extendedAttributes->{SettingsConditionallyReadWrite} eq "VALUE_IS_MISSING";
+
+        AddToImplIncludes("Document.h");
+        AddToImplIncludes("Settings.h");
+
+        assert("SettingsConditionallyReadWrite can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
+
+        my @flags = split(/&/, $context->extendedAttributes->{SettingsConditionallyReadWrite});
+        foreach my $flag (@flags) {
+            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settings()." . ToMethodName($flag) . "Enabled()");
+        }
+    }
+
     if ($context->extendedAttributes->{CustomEnabled}) {
         assert("CustomEnabled can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
 
@@ -4551,7 +4573,7 @@ sub GenerateImplementation
         }
 
         foreach my $attribute (@runtimeEnabledAttributes) {
-            if ($attribute->extendedAttributes->{RuntimeConditionallyReadWrite}) {
+            if (NeedsRuntimeReadWriteCheck($interface, $attribute)) {
                 AddToImplIncludes("WebCoreJSClientData.h");
                 my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $attribute);
 

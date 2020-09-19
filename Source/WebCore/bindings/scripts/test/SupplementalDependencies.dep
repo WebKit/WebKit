@@ -49,6 +49,9 @@ JSTestConditionalIncludes.h: TestMixinInterface.idl
 DOMTestConditionalIncludes.h: TestMixinInterface.idl
 WebDOMTestConditionalIncludes.h: TestMixinInterface.idl
 TestMixinInterface.idl:
+JSTestConditionallyReadWrite.h: 
+DOMTestConditionallyReadWrite.h: 
+WebDOMTestConditionallyReadWrite.h: 
 JSTestDOMJIT.h: 
 DOMTestDOMJIT.h: 
 WebDOMTestDOMJIT.h: 

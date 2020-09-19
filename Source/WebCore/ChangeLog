@@ -1,5 +1,34 @@
 2020-09-19  Sam Weinig  <weinig@apple.com>
 
+        Add support for Settings equivilent of RuntimeConditionallyReadWrite
+        https://bugs.webkit.org/show_bug.cgi?id=216697
+
+        Reviewed by Darin Adler.
+
+        Adds a new extended attribute, [SettingsConditionallyReadWrite] to allow users of 
+        [RuntimeConditionallyReadWrite] to convert from RuntimeEnabledFeatures to Settings.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsRuntimeReadWriteCheck):
+        (GeneratePropertiesHashTable):
+        (GenerateRuntimeEnableConditionalString):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.json:
+        Adds new extended attribute.
+        
+        * bindings/scripts/test/DOMWindowConstructors.idl:
+        * bindings/scripts/test/JS/JSDOMWindow.cpp:
+        * bindings/scripts/test/JS/JSTestConditionallyReadWrite.cpp: Added.
+        * bindings/scripts/test/JS/JSTestConditionallyReadWrite.h: Added.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestConditionallyReadWrite.idl: Added.
+        * bindings/scripts/test/TestObj.idl:
+        Move conditionally read-write tests to a new test, TestConditionallyReadWrite.idl and
+        update results.
+
+2020-09-19  Sam Weinig  <weinig@apple.com>
+
         Remove runtime setting for enabling/disabling the CrossOriginResourcePolicy API
         https://bugs.webkit.org/show_bug.cgi?id=216561
 

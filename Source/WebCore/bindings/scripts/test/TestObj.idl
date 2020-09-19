@@ -444,14 +444,6 @@ enum TestConfidence { "high", "kinda-low" };
     Node testReturnValueOptimization([ReturnValue] Node a, Node b);
     [MayThrowException] Node testReturnValueOptimizationWithException([ReturnValue] Node a, Node b);
 
-    [ConditionallyReadWrite=CONDITION] attribute Node conditionallyReadWriteAttribute;
-    [Conditional=CONDITION2, ConditionallyReadWrite=CONDITION] attribute Node conditionalAndConditionallyReadWriteAttribute;
-
-    [RuntimeConditionallyReadWrite=TestFeature] attribute Node runtimeConditionallyReadWriteAttribute;
-    [RuntimeConditionallyReadWrite=TestFeature, LegacyUnforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeable;
-    [RuntimeConditionallyReadWrite=TestFeature, PrivateIdentifier, LegacyUnforgeable] attribute Node runtimeConditionallyReadWriteAttributeUnforgeablePrivate;
-    [RuntimeConditionallyReadWrite=TestFeature] attribute Promise<double> runtimeConditionallyReadWriteAttributePromise;
-
     [Exposed=Window] attribute long conditionallyExposedToWindowAttribute;
     [Exposed=Worker] attribute long conditionallyExposedToWorkerAttribute;
     [Exposed=(Worker, Window)] attribute long conditionallyExposedToWindowAndWorkerAttribute;

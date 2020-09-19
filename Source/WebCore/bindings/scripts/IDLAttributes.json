@@ -487,6 +487,11 @@
             "values": ["ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow"],
             "supportsConjunction": true
         },
+        "SettingsConditionallyReadWrite": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
         "SkipCallbackInvokeCheck": {
             "contextsAllowed": ["operation", "callback-function"]
         },

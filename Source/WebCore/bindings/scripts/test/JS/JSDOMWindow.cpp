@@ -29,6 +29,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
 #include "JSExposedToWorkerAndWindow.h"
+#include "JSTestConditionallyReadWrite.h"
 #include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "JSTestPromiseRejectionEvent.h"
@@ -53,6 +54,8 @@ JSC::EncodedJSValue jsDOMWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSV
 bool setJSDOMWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsDOMWindowExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSDOMWindowExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsDOMWindowTestConditionallyReadWriteConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSDOMWindowTestConditionallyReadWriteConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsDOMWindowTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSDOMWindowTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsDOMWindowTestObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -64,16 +67,24 @@ using JSDOMWindowConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
 /* Hash table */
 
-static const struct CompactHashIndex JSDOMWindowTableIndex[10] = {
+static const struct CompactHashIndex JSDOMWindowTableIndex[18] = {
     { -1, -1 },
-    { 0, 8 },
+    { 0, 16 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { 3, -1 },
     { -1, -1 },
-    { 1, 9 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { 1, 17 },
     { 2, -1 },
 };
 
@@ -81,12 +92,13 @@ static const struct CompactHashIndex JSDOMWindowTableIndex[10] = {
 static const HashTableValue JSDOMWindowTableValues[] =
 {
     { "ExposedToWorkerAndWindow", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowExposedToWorkerAndWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowExposedToWorkerAndWindowConstructor) } },
+    { "TestConditionallyReadWrite", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestConditionallyReadWriteConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestConditionallyReadWriteConstructor) } },
     { "TestNode", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestNodeConstructor) } },
     { "TestObject", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestObjectConstructor) } },
     { "TestPromiseRejectionEvent", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestPromiseRejectionEventConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestPromiseRejectionEventConstructor) } },
 };
 
-static const HashTable JSDOMWindowTable = { 4, 7, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
+static const HashTable JSDOMWindowTable = { 5, 15, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
 template<> JSValue JSDOMWindowConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
@@ -193,6 +205,29 @@ static inline bool setJSDOMWindowExposedToWorkerAndWindowConstructorSetter(JSGlo
 bool setJSDOMWindowExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowExposedToWorkerAndWindowConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "ExposedToWorkerAndWindow");
+}
+
+static inline JSValue jsDOMWindowTestConditionallyReadWriteConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestConditionallyReadWrite::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+EncodedJSValue jsDOMWindowTestConditionallyReadWriteConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSDOMWindow>::get<jsDOMWindowTestConditionallyReadWriteConstructorGetter>(*lexicalGlobalObject, thisValue, "TestConditionallyReadWrite");
+}
+
+static inline bool setJSDOMWindowTestConditionallyReadWriteConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestConditionallyReadWrite"), strlen("TestConditionallyReadWrite")), value);
+}
+
+bool setJSDOMWindowTestConditionallyReadWriteConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowTestConditionallyReadWriteConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestConditionallyReadWrite");
 }
 
 static inline JSValue jsDOMWindowTestNodeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)
