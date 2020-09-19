@@ -54,6 +54,8 @@ public:
     
     void prepareForDisplay();
     void flushLayers();
+    
+    void setIsInWindow(bool);
 
     Page* page() const;
     FrameView& frameView() const { return m_frameView; }

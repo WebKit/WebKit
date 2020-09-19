@@ -1,3 +1,28 @@
+2020-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERTION FAILED: &formattingContextRoot == m_rootContainer.get() in WebCore::Layout::LayoutState::establishedInlineFormattingState
+        https://bugs.webkit.org/show_bug.cgi?id=216668
+
+        Reviewed by Zalan Bujtas.
+
+        Display::View didn't unparent the GraphicsLayers when Document::documentWillBecomeInactive() was called,
+        so a layer pointing to an old LayoutState would try to paint.
+
+        Fix by plumbing setIsInWindow() through to Display::View and using it to detach the root layer.
+
+        * dom/Document.cpp:
+        (WebCore::Document::documentWillBecomeInactive): The ASSERT_IMPLIES() is there to ensure that this isn't
+        a behavior change; we used to go to RenderView directly, and now go via FrameView.
+        * layout/display/DisplayLayerController.cpp:
+        (WebCore::Display::LayerController::detachRootLayer):
+        (WebCore::Display::LayerController::setIsInWindow):
+        * layout/display/DisplayLayerController.h:
+        * layout/display/DisplayView.cpp:
+        (WebCore::Display::View::setIsInWindow):
+        * layout/display/DisplayView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setIsInWindow):
+
 2020-09-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not use Display::Line geometry in layout

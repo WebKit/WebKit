@@ -5373,8 +5373,9 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 
 void Document::documentWillBecomeInactive()
 {
-    if (renderView())
-        renderView()->setIsInWindow(false);
+    ASSERT_IMPLIES(renderView(), view());
+    if (auto* frameView = view())
+        frameView->setIsInWindow(false);
 }
 
 void Document::suspend(ReasonForSuspension reason)

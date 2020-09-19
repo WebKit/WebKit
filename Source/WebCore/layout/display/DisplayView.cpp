@@ -80,7 +80,10 @@ void View::flushLayers()
     m_layerController.flushLayers();
 }
 
-
+void View::setIsInWindow(bool isInWindow)
+{
+    m_layerController.setIsInWindow(isInWindow);
+}
 
 } // namespace Display
 } // namespace WebCore

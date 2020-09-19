@@ -55,11 +55,14 @@ public:
     void prepareForDisplay(const Layout::LayoutState&);
     void flushLayers();
 
+    void setIsInWindow(bool);
+
     const View& view() const { return m_view; }
 
 private:
     void ensureRootLayer(LayoutSize viewSize, LayoutSize contentSize);
     void attachRootLayer();
+    void detachRootLayer();
     void setupRootLayerHierarchy();
     void updateRootLayerGeometry(LayoutSize viewSize, LayoutSize contentSize);
     void scheduleRenderingUpdate();

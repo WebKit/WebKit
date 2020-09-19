@@ -191,6 +191,23 @@ void LayerController::attachRootLayer()
     page->chrome().client().attachRootGraphicsLayer(m_view.frame(), rootGraphicsLayer());
 }
 
+void LayerController::detachRootLayer()
+{
+    auto page = m_view.page();
+    if (!page)
+        return;
+
+    page->chrome().client().attachRootGraphicsLayer(m_view.frame(), nullptr);
+}
+
+void LayerController::setIsInWindow(bool isInWindow)
+{
+    if (isInWindow)
+        attachRootLayer();
+    else
+        detachRootLayer();
+}
+
 GraphicsLayerFactory* LayerController::graphicsLayerFactory() const
 {
     auto page = m_view.page();

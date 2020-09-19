@@ -1165,6 +1165,11 @@ void FrameView::setIsInWindow(bool isInWindow)
 {
     if (RenderView* renderView = this->renderView())
         renderView->setIsInWindow(isInWindow);
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* view = existingDisplayView())
+        view->setIsInWindow(isInWindow);
+#endif
 }
 
 void FrameView::forceLayoutParentViewIfNeeded()
