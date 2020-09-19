@@ -82,6 +82,7 @@ public:
 private:
     void prepareLayoutState();
     void prepareFloatingState();
+    void constructDisplayContent();
 
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();

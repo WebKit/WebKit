@@ -399,6 +399,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto lineRectAndLineBoxOffset = geometry.computedLineLogicalRect(lineBox, root().style(), lineContent);
     auto lineLogicalRect = lineRectAndLineBoxOffset.logicalRect;
     auto lineBoxVerticalOffset = lineRectAndLineBoxOffset.lineBoxVerticalOffset;
+    auto lineIndex = formattingState.lines().size();
 
     auto constructLineGeometry = [&] {
         auto lineBoxLogicalRect = InlineRect { lineLogicalRect.top() + lineBoxVerticalOffset, lineLogicalRect.left() + lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineBox.logicalWidth(), lineBox.logicalHeight() };
@@ -406,7 +407,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     };
     constructLineGeometry();
 
-    auto scrollableOverflow = InlineRect { lineLogicalRect.topLeft(), std::max(lineLogicalRect.width(), lineBox.logicalWidth()), std::max(lineLogicalRect.height(), lineBoxVerticalOffset + lineBox.logicalHeight()) };
     if (!lineContent.floats.isEmpty()) {
         auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };
         // Move floats to their final position.
@@ -429,8 +429,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     } else
         initialContaingBlockSize = geometryForBox(root().initialContainingBlock(), EscapeReason::StrokeOverflowNeedsViewportGeometry).contentBox().size();
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
-    auto lineIndex = inlineContent.lines.size();
-    auto lineInkOverflow = scrollableOverflow;
     // Compute final box geometry.
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
@@ -457,9 +455,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             // Inline boxes are relative to the line box while final Display::Runs need to be relative to the parent Display:Box
             // FIXME: Shouldn't we just leave them be relative to the line box?
             logicalRect.moveBy({ lineLogicalRect.left(), lineLogicalRect.top() + lineBoxVerticalOffset });
-            auto inkOverflow = computedInkOverflow(logicalRect);
-            lineInkOverflow.expandToContain(inkOverflow);
-            inlineContent.runs.append({ lineIndex, layoutBox, logicalRect, inkOverflow, lineRun.expansion(), lineRun.textContent() });
+            inlineContent.runs.append({ lineIndex, layoutBox, logicalRect, computedInkOverflow(logicalRect), lineRun.expansion(), lineRun.textContent() });
         }
 
         // Create display boxes.
@@ -482,15 +478,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             }
         }
     }
-    auto constructDisplayLine = [&] {
-        // FIXME: This is where the logical to physical translate should happen.
-        if (auto horizontalAlignmentOffset = lineBox.horizontalAlignmentOffset()) {
-            // Painting code (specifically TextRun's xPos) needs the aligned offset to be able to compute tab positions.
-            lineLogicalRect.moveHorizontally(*horizontalAlignmentOffset);
-        }
-        inlineContent.lines.append({ lineLogicalRect, scrollableOverflow, lineInkOverflow, lineBoxVerticalOffset + lineBox.alignmentBaseline() });
-    };
-    constructDisplayLine();
     return lineLogicalRect;
 }
 

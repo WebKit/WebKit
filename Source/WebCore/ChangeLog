@@ -1,3 +1,23 @@
+2020-09-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineFormattingContext::computeGeometryForLineContent should not construct Display::Lines
+        https://bugs.webkit.org/show_bug.cgi?id=216723
+
+        Reviewed by Antti Koivisto.
+
+        Display::Lines construction should live in the display builder. However currently we don't yet have a real builder, so let's
+        just use the integration layer.
+        This is also in preparation for removing all the Display::InlineContent code from the Layout namespace.
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        (WebCore::LayoutIntegration::LineLayout::constructDisplayContent):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+
 2020-09-18  Darin Adler  <darin@apple.com>
 
         Selection API: Extend lifetime of selection live range to preserve expando properties

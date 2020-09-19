@@ -117,6 +117,36 @@ void LineLayout::layout()
     auto verticalConstraints = Layout::VerticalConstraints { m_flow.borderAndPaddingBefore(), { } };
 
     inlineFormattingContext.layoutInFlowContent(invalidationState, { horizontalConstraints, verticalConstraints });
+    constructDisplayContent();
+}
+
+void LineLayout::constructDisplayContent()
+{
+    // FIXME: Move Display::Run construction over here.
+    auto constructDisplayLine = [&] {
+        auto& displayInlineContent = m_inlineFormattingState.ensureDisplayInlineContent();
+        auto& lines = m_inlineFormattingState.lines();
+        auto& runs = displayInlineContent.runs;
+        size_t runIndex = 0;
+        for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
+            auto& line = lines[lineIndex];
+            auto& lineBoxLogicalRect = line.lineBoxLogicalRect();
+            // FIXME: This is where the logical to physical translate should happen.
+            auto overflowWidth = std::max(line.logicalWidth(), lineBoxLogicalRect.width());
+            auto lineBoxLogicalBottom = (lineBoxLogicalRect.top() - line.logicalTop()) + lineBoxLogicalRect.height();
+            auto overflowHeight = std::max(line.logicalHeight(), lineBoxLogicalBottom);
+            auto scrollableOverflowRect = FloatRect { line.logicalLeft(), line.logicalTop(), overflowWidth, overflowHeight };
+
+            auto lineInkOverflowRect = scrollableOverflowRect;
+            while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
+                lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
+            auto lineRect = FloatRect { line.logicalRect() };
+            // Painting code (specifically TextRun's xPos) needs the line box offset to be able to compute tab positions.
+            lineRect.setX(lineBoxLogicalRect.left());
+            displayInlineContent.lines.append({ lineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline() });
+        }
+    };
+    constructDisplayLine();
     m_inlineFormattingState.shrinkDisplayInlineContent();
 }
 
