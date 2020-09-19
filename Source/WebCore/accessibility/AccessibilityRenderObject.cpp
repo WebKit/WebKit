@@ -341,13 +341,16 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
 
     // Case 4: This node has no previous siblings, but its parent is an inline,
     // and is another node's inline continutation. Follow the continuation chain.
-    else if (is<RenderInline>(*m_renderer->parent()) && (startOfConts = startOfContinuations(*m_renderer->parent())))
+    else if (is<RenderInline>(m_renderer->parent()) && (startOfConts = startOfContinuations(*m_renderer->parent())))
         previousSibling = childBeforeConsideringContinuations(startOfConts, m_renderer->parent()->firstChild());
 
     if (!previousSibling)
         return nullptr;
-    
-    return axObjectCache()->getOrCreate(previousSibling);
+
+    if (auto* objectCache = axObjectCache())
+        return objectCache->getOrCreate(previousSibling);
+
+    return nullptr;
 }
 
 static inline bool lastChildHasContinuation(RenderElement& renderer)
@@ -410,13 +413,17 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 
     if (!nextSibling)
         return nullptr;
-    
-    // Make sure next sibling has the same parent.
-    AccessibilityObject* nextObj = axObjectCache()->getOrCreate(nextSibling);
-    if (nextObj && nextObj->parentObject() != this->parentObject())
+
+    auto* objectCache = axObjectCache();
+    if (!objectCache)
         return nullptr;
-    
-    return nextObj;
+
+    // Make sure next sibling has the same parent.
+    auto* nextObject = objectCache->getOrCreate(nextSibling);
+    if (nextObject && nextObject->parentObject() != this->parentObject())
+        return nullptr;
+
+    return nextObject;
 }
 
 static RenderBoxModelObject* nextContinuation(RenderObject& renderer)

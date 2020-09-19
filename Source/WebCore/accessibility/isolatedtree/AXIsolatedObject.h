@@ -541,8 +541,8 @@ private:
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
     AXCoreObject* firstChild() const override;
     AXCoreObject* lastChild() const override;
-    AXCoreObject* previousSibling() const override;
-    AXCoreObject* nextSibling() const override;
+    AXCoreObject* previousSibling() const override { return objectAttributeValue(AXPropertyName::PreviousSibling); }
+    AXCoreObject* nextSibling() const override { return objectAttributeValue(AXPropertyName::NextSibling); }
     AXCoreObject* nextSiblingUnignored(int limit) const override;
     AXCoreObject* previousSiblingUnignored(int limit) const override;
     AXCoreObject* parentObjectIfExists() const override;

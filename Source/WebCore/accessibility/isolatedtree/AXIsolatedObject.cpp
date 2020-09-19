@@ -206,7 +206,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::AutoCompleteValue, object.autoCompleteValue());
     setProperty(AXPropertyName::SpeakAs, object.speakAsProperty());
     setProperty(AXPropertyName::StringValue, object.stringValue().isolatedCopy());
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     setProperty(AXPropertyName::CaretBrowsingEnabled, object.caretBrowsingEnabled());
 #endif
     setObjectProperty(AXPropertyName::FocusableAncestor, object.focusableAncestor());
@@ -229,7 +229,9 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::HasPlainText, object.hasPlainText());
     setProperty(AXPropertyName::HasUnderline, object.hasUnderline());
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
-    
+    setObjectProperty(AXPropertyName::NextSibling, object.nextSibling());
+    setObjectProperty(AXPropertyName::PreviousSibling, object.previousSibling());
+
     if (object.isTable()) {
         setProperty(AXPropertyName::IsTable, true);
         setProperty(AXPropertyName::IsExposable, object.isExposable());
@@ -1418,18 +1420,6 @@ AXCoreObject* AXIsolatedObject::firstChild() const
 }
 
 AXCoreObject* AXIsolatedObject::lastChild() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-AXCoreObject* AXIsolatedObject::previousSibling() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-AXCoreObject* AXIsolatedObject::nextSibling() const
 {
     ASSERT_NOT_REACHED();
     return nullptr;
