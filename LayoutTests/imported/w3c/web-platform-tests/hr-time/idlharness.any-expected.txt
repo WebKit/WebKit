@@ -1,7 +1,6 @@
-High Resolution Time IDL tests
 
-
-PASS Test driver 
+PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined 
 PASS Partial interface mixin WindowOrWorkerGlobalScope: member names are unique 
 PASS Partial interface Window: member names are unique 
@@ -21,13 +20,13 @@ PASS Performance interface: existence and properties of interface prototype obje
 PASS Performance interface: operation now() 
 FAIL Performance interface: attribute timeOrigin assert_true: The prototype object must have a property "timeOrigin" expected true got false
 FAIL Performance interface: operation toJSON() assert_own_property: interface prototype object missing non-static operation expected property "toJSON" missing
-PASS Performance must be primary interface of window.performance 
-PASS Stringification of window.performance 
-PASS Performance interface: window.performance must inherit property "now()" with the proper type 
-FAIL Performance interface: window.performance must inherit property "timeOrigin" with the proper type assert_inherits: property "timeOrigin" not found in prototype chain
-FAIL Performance interface: window.performance must inherit property "toJSON()" with the proper type assert_inherits: property "toJSON" not found in prototype chain
-FAIL Performance interface: default toJSON operation on window.performance memberHolderObject.toJSON is not a function. (In 'memberHolderObject.toJSON()', 'memberHolderObject.toJSON' is undefined)
+PASS Performance must be primary interface of performance 
+PASS Stringification of performance 
+PASS Performance interface: performance must inherit property "now()" with the proper type 
+FAIL Performance interface: performance must inherit property "timeOrigin" with the proper type assert_inherits: property "timeOrigin" not found in prototype chain
+FAIL Performance interface: performance must inherit property "toJSON()" with the proper type assert_inherits: property "toJSON" not found in prototype chain
+FAIL Performance interface: default toJSON operation on performance memberHolderObject.toJSON is not a function. (In 'memberHolderObject.toJSON()', 'memberHolderObject.toJSON' is undefined)
 PASS Window interface: attribute performance 
-PASS Window interface: window must inherit property "performance" with the proper type 
+PASS Window interface: self must inherit property "performance" with the proper type 
 PASS WorkerGlobalScope interface: existence and properties of interface object 
 

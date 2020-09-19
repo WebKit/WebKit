@@ -1,5 +1,5 @@
 
-FAIL Window timeOrigin is close to Date.now() when there is no system clock adjustment. assert_greater_than_equal: Date.now() should be at least as large as the window timeOrigin. expected a number greater than or equal to undefined but got 1505770311148
+FAIL Window timeOrigin is close to Date.now() when there is no system clock adjustment. assert_greater_than_equal: Date.now() should be at least as large as the window timeOrigin. expected a number greater than or equal to undefined but got 1600483452223
 FAIL Window and worker timeOrigins are close when created one after another. assert_greater_than_equal: Worker timeOrigin should be greater than the window timeOrigin. expected a number but got a "undefined"
 FAIL Window and worker timeOrigins differ when worker is created after a delay. assert_greater_than_equal: We waited 200ms to spawn the second worker, so its timeOrigin should be greater than that of the window. expected a number greater than or equal to 200 but got NaN
 

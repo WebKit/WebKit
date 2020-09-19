@@ -1214,7 +1214,7 @@ webkit.org/b/168094 imported/w3c/web-platform-tests/media-source/SourceBuffer-ab
 webkit.org/b/167975 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Pass Failure ]
 webkit.org/b/187911 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html [ Pass Failure ]
 
-[ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.any.html [ Slow ]
 
 webkit.org/b/168503 editing/pasteboard/drag-drop-copy-content.html [ Failure ]
 

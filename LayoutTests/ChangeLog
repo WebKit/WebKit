@@ -1,3 +1,14 @@
+2020-09-19  Sam Weinig  <weinig@apple.com>
+
+        Resync web-platform-tests/hr-time from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=216724
+
+        Reviewed by Darin Adler.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        Update paths in expectations.
+
 2020-09-18  Darin Adler  <darin@apple.com>
 
         Selection API: Extend lifetime of selection live range to preserve expando properties

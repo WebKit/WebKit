@@ -1,0 +1,3 @@
+
+FAIL Test performance.toJSON() assert_equals: expected "function" but got "undefined"
+
