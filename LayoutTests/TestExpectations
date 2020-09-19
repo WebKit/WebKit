@@ -4532,3 +4532,6 @@ webkit.org/b/215531 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 
 # Cocoa-only
 http/tests/media/hls/hls-hdr-switch.html [ Skip ]
+
+# These tests rely on webkit-test-runner flags that aren't implemented for DumpRenderTree, so they will fail under legacy WebKit.
+editing/selection/expando.html [ Failure ]

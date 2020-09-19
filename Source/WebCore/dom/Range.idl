@@ -19,6 +19,7 @@
  */
 
 [
+    GenerateIsReachable=ReachableFromDOMWindow,
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
 ] interface Range {

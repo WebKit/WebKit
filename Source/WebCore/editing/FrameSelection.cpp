@@ -2801,7 +2801,6 @@ void FrameSelection::disassociateLiveRange()
 {
     if (auto previouslyAssociatedLiveRange = std::exchange(m_associatedLiveRange, nullptr))
         previouslyAssociatedLiveRange->didDisassociateFromSelection();
-    // FIXME: Need additional code to keep the live range object's wrapper alive to preserve any JavaScript properties on it.
 }
 
 void FrameSelection::associateLiveRange(Range& liveRange)
@@ -2825,10 +2824,13 @@ void FrameSelection::updateFromAssociatedLiveRange()
 void FrameSelection::updateAssociatedLiveRange()
 {
     auto range = m_selection.firstRange();
-    if (!containsEndpoints(m_document, range))
+    if (!containsEndpoints(m_document, range)) {
+        // The selection was cleared or is now within a shadow tree.
         disassociateLiveRange();
-    else if (m_associatedLiveRange)
-        m_associatedLiveRange->updateFromSelection(*range);
+    } else {
+        if (m_associatedLiveRange)
+            m_associatedLiveRange->updateFromSelection(*range);
+    }
 }
 
 }

@@ -1,3 +1,23 @@
+2020-09-18  Darin Adler  <darin@apple.com>
+
+        Selection API: Extend lifetime of selection live range to preserve expando properties
+        https://bugs.webkit.org/show_bug.cgi?id=216721
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/selection/expando.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::window): Added. Returns window if range is associated with selection.
+        * dom/Range.h: Added window.
+        * dom/Range.idl: Added GenerateIsReachable=ReachableFromDOMWindow.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::disassociateLiveRange): Removed a FIXME comment about the
+        need for this fix.
+        (WebCore::FrameSelection::updateAssociatedLiveRange): Added a comment explaining
+        why an associated live range might not be contained in the document.
+
 2020-09-19  Sam Weinig  <weinig@apple.com>
 
         Add support for Settings equivilent of RuntimeConditionallyReadWrite

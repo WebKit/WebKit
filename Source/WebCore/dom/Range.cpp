@@ -1050,6 +1050,11 @@ void Range::updateFromSelection(const SimpleRange& value)
     m_isAssociatedWithSelection = true;
 }
 
+DOMWindow* Range::window() const
+{
+    return m_isAssociatedWithSelection ? m_ownerDocument->domWindow() : nullptr;
+}
+
 SimpleRange makeSimpleRange(const Range& range)
 {
     return { { range.startContainer(), range.startOffset() }, { range.endContainer(), range.endOffset() } };

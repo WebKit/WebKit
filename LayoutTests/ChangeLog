@@ -1,3 +1,17 @@
+2020-09-18  Darin Adler  <darin@apple.com>
+
+        Selection API: Extend lifetime of selection live range to preserve expando properties
+        https://bugs.webkit.org/show_bug.cgi?id=216721
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/expando-expected.txt: Added.
+        * editing/selection/expando.html: Added.
+
+        * TestExpectations: Skip the new test since DumpRenderTree doesn't support enabling
+        internal properties.
+        * platform/wk2/TestExpectations: Unskip the new test since WebKitTestRunner does.
+
 2020-09-18  Chris Dumez  <cdumez@apple.com>
 
         Import remaining webaudio layout tests from Blink

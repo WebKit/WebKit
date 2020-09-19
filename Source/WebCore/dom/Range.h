@@ -30,6 +30,7 @@ namespace WebCore {
 
 class DOMRect;
 class DOMRectList;
+class DOMWindow;
 class DocumentFragment;
 class NodeWithIndex;
 class Text;
@@ -102,6 +103,9 @@ public:
     void didAssociateWithSelection() { m_isAssociatedWithSelection = true; }
     void didDisassociateFromSelection() { m_isAssociatedWithSelection = false; }
     void updateFromSelection(const SimpleRange&);
+
+    // For use by garbage collection. Returns nullptr for ranges not assocated with selection.
+    DOMWindow* window() const;
 
     static ExceptionOr<Node*> checkNodeOffsetPair(Node&, unsigned offset);
 

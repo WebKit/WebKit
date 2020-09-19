@@ -1,0 +1,13 @@
+PASS expandoCount(createSelectionWithExpando) is 20
+PASS expandoCount(setUpSelectionAndAttachExpando) is 20
+PASS expandoCount(collapseOvewritingRange) is 0
+PASS expandoCount(setPositionOvewritingRange) is 0
+PASS expandoCount(extendOvewritingRange) is 0
+PASS expandoCount(setBaseAndExtentOvewritingRange) is 0
+PASS expandoCount(selectAllChildrenOvewritingRange) is 0
+PASS expandoCount(deleteFromDocumentMutatingRange) is 20
+PASS expandoCount(mutateRangeAfterAttaching) is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

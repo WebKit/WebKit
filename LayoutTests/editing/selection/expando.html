@@ -1,0 +1,103 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:LiveRangeSelectionEnabled=true ] -->
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/gc.js"></script>
+</head>
+<body>
+<script>
+
+const repetitions = 20;
+const expectedCount = "" + repetitions;
+
+function expandoCount(createExpando)
+{
+    let count = 0;
+    for (let i = 0; i < repetitions; ++i) {
+        createExpando();
+        gc();
+        if (getSelection().getRangeAt(0).expando == 1)
+            ++count;
+    }
+    return count;
+}
+
+function createSelectionWithExpando()
+{
+    getSelection().removeAllRanges();
+    let range = document.createRange();
+    range.setStart(document, 0);
+    range.setEnd(document, 1);
+    range.expando = 1;
+    getSelection().addRange(range);
+    return range;
+}
+
+function attachExpandoToExistingSelectionRange()
+{
+    getSelection().getRangeAt(0).expando = 1;
+}
+
+function setUpSelectionAndAttachExpando()
+{
+    getSelection().setBaseAndExtent(document, 0, document, 1);
+    attachExpandoToExistingSelectionRange();
+}
+
+function collapseOvewritingRange()
+{
+    setUpSelectionAndAttachExpando();
+    getSelection().collapse(document);
+}
+
+function setPositionOvewritingRange()
+{
+    setUpSelectionAndAttachExpando();
+    getSelection().setPosition(document);
+}
+
+function extendOvewritingRange()
+{
+    setUpSelectionAndAttachExpando();
+    getSelection().extend(document);
+}
+
+function setBaseAndExtentOvewritingRange()
+{
+    setUpSelectionAndAttachExpando();
+    getSelection().setBaseAndExtent(document, 0, document, 1);
+}
+
+function selectAllChildrenOvewritingRange()
+{
+    setUpSelectionAndAttachExpando();
+    getSelection().selectAllChildren(document);
+}
+
+function deleteFromDocumentMutatingRange()
+{
+    let textNode = document.createTextNode("x");
+    document.body.appendChild(textNode);
+    getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
+    attachExpandoToExistingSelectionRange();
+    getSelection().deleteFromDocument();
+}
+
+function mutateRangeAfterAttaching()
+{
+    createSelectionWithExpando().setEnd(document, 0);
+}
+
+shouldBe("expandoCount(createSelectionWithExpando)", expectedCount);
+shouldBe("expandoCount(setUpSelectionAndAttachExpando)", expectedCount);
+shouldBe("expandoCount(collapseOvewritingRange)", "0");
+shouldBe("expandoCount(setPositionOvewritingRange)", "0");
+shouldBe("expandoCount(extendOvewritingRange)", "0");
+shouldBe("expandoCount(setBaseAndExtentOvewritingRange)", "0");
+shouldBe("expandoCount(selectAllChildrenOvewritingRange)", "0");
+shouldBe("expandoCount(deleteFromDocumentMutatingRange)", expectedCount);
+shouldBe("expandoCount(mutateRangeAfterAttaching)", expectedCount);
+
+var successfullyParsed = true;
+
+</script>
+</body>
