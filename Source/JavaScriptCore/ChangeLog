@@ -1,3 +1,22 @@
+2020-09-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] PreciseAllocation's isNewlyAllocated flag should be propagated from isMarked at GC begin phase to make isLive correct
+        https://bugs.webkit.org/show_bug.cgi?id=216717
+
+        Reviewed by Mark Lam.
+
+        When starting full GC, at beginMarking, PreciseAllocation's mark bit is cleared to be usable for upcoming marking.
+        However, this means that HeapCell::isLive will see this object as dead until it is marked.
+        Let's consider that this object is not newly allocated one. Then, its isNewlyAllocated is false. And now mark bit
+        is also cleared. Since PreciseAllocation::isLive is isNewlyAllocated || isMarked, then it looks dead, while it is live.
+        This confuses HeapCell:isLive function and makes some of watchpoints perform wrong decisions (e.g. this condition is
+        no longer valid, let's just discard it).
+        At the beginning of full collection, we should propagate the old mark bit to isNewlyAllocated so that it looks live
+        during marking. This is similar trick to MarkedBlock::aboutToMark.
+
+        * heap/PreciseAllocation.cpp:
+        (JSC::PreciseAllocation::flip):
+
 2020-09-18  Saam Barati  <sbarati@apple.com>
 
         console APIs shouldn't crash making a string that's too long for a console warning when using user provided labels
