@@ -1,3 +1,18 @@
+2020-09-19  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling the CrossOriginResourcePolicy API
+        https://bugs.webkit.org/show_bug.cgi?id=216561
+
+        Reviewed by Darin Adler.
+
+        Remove runtime setting for enabling/disabling CrossOriginResourcePolicy. It has been
+        enabled by default for a while and there are no known reasons one would need to
+        disable it.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCrossOriginResourcePolicyEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::crossOriginResourcePolicyEnabled const): Deleted.
+
 2020-09-19  Simon Fraser  <simon.fraser@apple.com>
 
         ASSERTION FAILED: &formattingContextRoot == m_rootContainer.get() in WebCore::Layout::LayoutState::establishedInlineFormattingState

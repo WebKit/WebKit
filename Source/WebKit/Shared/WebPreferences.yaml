@@ -923,11 +923,6 @@ SubresourceIntegrityEnabled:
   type: bool
   defaultValue: true
 
-CrossOriginResourcePolicyEnabled:
-  type: bool
-  defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
-
 DisabledAdaptationsMetaTagEnabled:
   type: bool
   defaultValue: DISABLED_ADAPTATIONS_META_TAG_ENABLED

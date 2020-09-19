@@ -105,9 +105,6 @@ public:
     void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
     bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
 
-    void setCrossOriginResourcePolicyEnabled(bool isEnabled) { m_crossOriginResourcePolicyEnabled = isEnabled; }
-    bool crossOriginResourcePolicyEnabled() const { return m_crossOriginResourcePolicyEnabled; }
-
     void setServerTimingEnabled(bool isEnabled) { m_isServerTimingEnabled = isEnabled; }
     bool serverTimingEnabled() const { return m_isServerTimingEnabled; }
 
@@ -294,7 +291,6 @@ private:
     bool m_ariaReflectionEnabled { true };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
-    bool m_crossOriginResourcePolicyEnabled { true };
     bool m_isServerTimingEnabled { false };
     bool m_experimentalPlugInSandboxProfilesEnabled { false };
     bool m_attrStyleEnabled { false };

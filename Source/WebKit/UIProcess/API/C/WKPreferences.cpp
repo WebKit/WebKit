@@ -1960,16 +1960,6 @@ bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferenc
     return toImpl(preferencesRef)->allowCrossOriginSubresourcesToAskForCredentials();
 }
 
-void WKPreferencesSetCrossOriginResourcePolicyEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setCrossOriginResourcePolicyEnabled(flag);
-}
-
-bool WKPreferencesGetCrossOriginResourcePolicyEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->crossOriginResourcePolicyEnabled();
-}
-
 void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setRestrictedHTTPResponseAccess(flag);
@@ -2220,6 +2210,15 @@ void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef)
+{
+    return true;
+}
+
+void WKPreferencesSetCrossOriginResourcePolicyEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetCrossOriginResourcePolicyEnabled(WKPreferencesRef)
 {
     return true;
 }

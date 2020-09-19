@@ -1,3 +1,22 @@
+2020-09-19  Sam Weinig  <weinig@apple.com>
+
+        Remove runtime setting for enabling/disabling the CrossOriginResourcePolicy API
+        https://bugs.webkit.org/show_bug.cgi?id=216561
+
+        Reviewed by Darin Adler.
+
+        Remove runtime setting for enabling/disabling CrossOriginResourcePolicy. It has been
+        enabled by default for a while and there are no known reasons one would need to
+        disable it.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCrossOriginResourcePolicyEnabled):
+        (WKPreferencesGetCrossOriginResourcePolicyEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+
 2020-09-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] REGRESSION (r265702): System Services receive 0 bytes when extracting selected content as rich text data
