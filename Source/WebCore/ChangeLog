@@ -1,3 +1,21 @@
+2020-09-19  Sam Weinig  <weinig@apple.com>
+
+        Performance and PerformanceNavigation interfaces are missing toJSON operations
+        https://bugs.webkit.org/show_bug.cgi?id=216728
+
+        Reviewed by Darin Adler.
+
+        Add missing toJSON operations to Performance and PerformanceNavigation and update
+        comments in related IDLs.
+        
+        Updates results for existing tests, more of which now pass.
+
+        * page/Performance.idl:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.idl:
+        * page/PerformanceNavigation.idl:
+        * page/PerformanceTiming.idl:
+
 2020-09-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] InlineFormattingContext::computeGeometryForLineContent should not construct Display::Lines

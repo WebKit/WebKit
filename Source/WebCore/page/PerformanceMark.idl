@@ -23,9 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://w3c.github.io/user-timing/
-
+// https://w3c.github.io/user-timing/#performancemark
 [
     Exposed=(Window,Worker),
 ] interface PerformanceMark : PerformanceEntry {
+    // FIXME: Implement constructor.
+    // constructor(DOMString markName, optional PerformanceMarkOptions markOptions = {});
+    // FIXME: Implement 'detail'.
+    // readonly attribute any detail;
 };

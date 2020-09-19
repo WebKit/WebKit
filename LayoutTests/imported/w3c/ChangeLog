@@ -1,5 +1,18 @@
 2020-09-19  Sam Weinig  <weinig@apple.com>
 
+        Performance and PerformanceNavigation interfaces are missing toJSON operations
+        https://bugs.webkit.org/show_bug.cgi?id=216728
+
+        Reviewed by Darin Adler.
+
+        Update results now that we pass more subtests.
+
+        * web-platform-tests/hr-time/idlharness.any-expected.txt:
+        * web-platform-tests/hr-time/idlharness.any.worker-expected.txt:
+        * web-platform-tests/hr-time/performance-tojson-expected.txt:
+
+2020-09-19  Sam Weinig  <weinig@apple.com>
+
         Resync web-platform-tests/hr-time from upstream
         https://bugs.webkit.org/show_bug.cgi?id=216724
 

@@ -38,28 +38,29 @@ typedef double DOMHighResTimeStamp;
     GenerateIsReachable=ImplScriptExecutionContext,
 ] interface Performance : EventTarget {
     DOMHighResTimeStamp now();
-    // FIXME: Implement 'timeOrigin'.
+    // FIXME: Implement 'timeOrigin' - https://webkit.org/b/174862
     // readonly attribute DOMHighResTimeStamp timeOrigin;
-    // FIXME: Implement 'toJSON'.
-    // [Default] object toJSON();
+    [Default] object toJSON();
 
-    // https://w3c.github.io/navigation-timing/
+    // https://w3c.github.io/navigation-timing/#extensions-to-the-performance-interface
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;
 
-    // https://w3c.github.io/performance-timeline/
+    // https://w3c.github.io/performance-timeline/#extensions-to-the-performance-interface
     PerformanceEntryList getEntries();
     PerformanceEntryList getEntriesByType(DOMString entryType);
     PerformanceEntryList getEntriesByName(DOMString name, optional DOMString entryType);
 
-    // https://w3c.github.io/resource-timing/
+    // https://w3c.github.io/resource-timing/#sec-extensions-performance-interface
     undefined clearResourceTimings();
     undefined setResourceTimingBufferSize(unsigned long maxSize);
     attribute EventHandler onresourcetimingbufferfull;
 
-    // https://w3c.github.io/user-timing/
+    // https://w3c.github.io/user-timing/#extensions-performance-interface
+    // FIXME: 'mark' should return a PerformanceMark.
     [MayThrowException] undefined mark(DOMString markName);
     undefined clearMarks(optional DOMString markName);
+    // FIXME: 'measure' should return a PerformanceMeasure.
     [MayThrowException] undefined measure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
     undefined clearMeasures(optional DOMString measureName);
 };
