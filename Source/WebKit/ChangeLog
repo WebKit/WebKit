@@ -1,3 +1,20 @@
+2020-09-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] REGRESSION (r265702): System Services receive 0 bytes when extracting selected content as rich text data
+        https://bugs.webkit.org/show_bug.cgi?id=216718
+        <rdar://problem/69150358>
+
+        Reviewed by Tim Horton.
+
+        Test: CopyHTML.WriteRichTextSelectionToPasteboard
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+
+        After r265702, the `IPCHandle` received in the UI process was always being converted into a buffer of size 0,
+        due to using the `size` local variable (which is no longer set as an outparam of the sync IPC message). Instead,
+        use `ipcHandle.dataSize`.
+
 2020-09-18  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unneeded respondsToSelector staging for keyboard.

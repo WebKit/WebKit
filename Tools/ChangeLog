@@ -1,3 +1,16 @@
+2020-09-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] REGRESSION (r265702): System Services receive 0 bytes when extracting selected content as rich text data
+        https://bugs.webkit.org/show_bug.cgi?id=216718
+        <rdar://problem/69150358>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to verify that we get non-empty web archive data when using
+        `-writeSelectionToPasteboard:types:` to grab selected content as rich text data.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+
 2020-09-18  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r266634): fast/selectors/text-field-selection-stroke-color.html and fast/selectors/text-field-selection-window-inactive-stroke-color.html are flaky failures with pixel noise
