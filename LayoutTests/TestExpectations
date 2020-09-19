@@ -320,6 +320,9 @@ imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_acti
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-routing.html [ Skip ]
 
+# This webaudio test has been timing out since its import from Blink.
+webaudio/MediaStreamAudioSource/mediastreamaudiosourcenode.html [ Skip ]
+
 # Webaudio tests that are flaky.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner.html [ Pass Failure ]
@@ -1010,12 +1013,6 @@ webkit.org/b/76280 media/W3C/video/networkState/networkState_during_progress.htm
 # This test is somewhat heavy and better skipped for debug
 [ Debug ] fast/css/many-rules.html [ Skip ]
 
-webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode.html [ Pass Failure ]
-webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode.html [ Skip ]
-webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Failure ]
-webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode-upmix2-8channel-input.html [ Skip ]
-webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode-downmix8-2channel-input.html [ Pass Failure ]
-webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode-downmix8-2channel-input.html [ Skip ]
 webkit.org/b/112521 [ Release ] webaudio/audioprocessingevent.html [ Pass Failure ]
 webkit.org/b/112521 [ Debug ] webaudio/audioprocessingevent.html [ Skip ]
 webkit.org/b/137359 webaudio/distance-linear.html [ Pass Failure ]

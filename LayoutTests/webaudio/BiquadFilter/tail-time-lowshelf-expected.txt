@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "lowshelf-complex-roots" 
+PASS Executing "lowshelf-repeated-roots" 
+PASS Audit report 
+PASS > [lowshelf-complex-roots] complex roots 
+PASS   Lowshelf complex roots: Biquad({"type":"lowshelf","gain":40,"frequency":2048}): Actual Tail Frame 256 is greater than or equal to 76. 
+PASS   Lowshelf complex roots: Biquad({"type":"lowshelf","gain":40,"frequency":2048}): output[0:127] is not constantly 0 (contains 128 different values). 
+PASS   Lowshelf complex roots: Biquad({"type":"lowshelf","gain":40,"frequency":2048}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [lowshelf-complex-roots] All assertions passed. (total 3 assertions) 
+PASS > [lowshelf-repeated-roots] repeated real root 
+PASS   Lowshelf repeated roots: Biquad({"type":"lowshelf","Q":0.05,"gain":40,"frequency":0}): Actual Tail Frame 1 is greater than or equal to 1. 
+PASS   Lowshelf repeated roots: Biquad({"type":"lowshelf","Q":0.05,"gain":40,"frequency":0}): output[0:127] is not constantly 0 (contains 1 different value). 
+PASS   Lowshelf repeated roots: Biquad({"type":"lowshelf","Q":0.05,"gain":40,"frequency":0}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [lowshelf-repeated-roots] All assertions passed. (total 3 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+

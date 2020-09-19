@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test" 
+PASS Audit report 
+PASS > [test] 2x WaveShaperNode oversampling 
+PASS   2x WaveshaperNode oversampling error (in dBFS) is less than -75.3. 
+PASS < [test] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

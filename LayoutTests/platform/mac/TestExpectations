@@ -468,7 +468,6 @@ webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyF
 # Interferes with the tests that should pass
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
-webaudio/mediastreamaudiosourcenode.html [ Skip ]
 webaudio/codec-tests/vorbis/ [ WontFix ]
 
 # Skip tests in fast/text/shaping

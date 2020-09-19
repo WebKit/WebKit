@@ -1,0 +1,13 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test" 
+PASS Audit report 
+PASS > [test] Signaling of statechange event 
+PASS   context.state is equal to running. 
+PASS   context.state is equal to closed. 
+PASS   Context rendering resolved correctly. 
+PASS   stateChangeCount is equal to 2. 
+PASS   After rendering context.state is equal to closed. 
+PASS < [test] All assertions passed. (total 5 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

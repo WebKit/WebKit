@@ -1,0 +1,19 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+PASS Executing "invalid constructor" 
+PASS Executing "constructor options" 
+PASS Audit report 
+PASS > [initialize]  
+PASS   context = new AudioContext() did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [invalid constructor]  
+PASS   new MediaStreamAudioSourceNode() threw TypeError: "Not enough arguments". 
+PASS   new MediaStreamAudioSourceNode(1) threw TypeError: "Not enough arguments". 
+PASS   new MediaStreamAudioSourceNode(context, 42) threw TypeError: "Type error". 
+PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
+PASS > [constructor options]  
+PASS   node = new MediaStreamAudioSourceNode(context, {"mediaStream":{}}) threw InvalidStateError: "Media stream has no audio tracks". 
+PASS < [constructor options] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+

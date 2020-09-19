@@ -1,0 +1,5 @@
+
+FAIL MediaStreamAudioDestinationNode creation in closed iframe throws error assert_throws_dom: function "() => {
+    let stream = iframe_ac.createMediaStreamDestination();
+  }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NotAllowedError: property "code" is equal to 11, expected 0
+

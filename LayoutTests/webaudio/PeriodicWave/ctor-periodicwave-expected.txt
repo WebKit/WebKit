@@ -1,0 +1,72 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+PASS Executing "invalid constructor" 
+PASS Executing "default constructor" 
+PASS Executing "constructor with options" 
+PASS Executing "1: real periodicwave test" 
+PASS Executing "2: real periodicwave test" 
+PASS Executing "3: real periodicwave test" 
+PASS Executing "1: imag periodicwave test" 
+PASS Executing "2: imag periodicwave test" 
+PASS Executing "3: imag periodicwave test" 
+PASS Executing "1: real/imag periodicwave test" 
+PASS Executing "2: real/imag periodicwave test" 
+PASS Executing "3: real/imag periodicwave test" 
+PASS Executing "default wave" 
+PASS Executing "default wave (with dict)" 
+PASS Audit report 
+PASS > [initialize]  
+PASS   context = new OfflineAudioContext(...) did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [invalid constructor]  
+PASS   new PeriodicWave() threw TypeError: "Not enough arguments". 
+PASS   new PeriodicWave(1) threw TypeError: "Argument 1 ('context') to the PeriodicWave constructor must be an instance of BaseAudioContext". 
+PASS   new PeriodicWave(context, 42) threw TypeError: "Type error". 
+PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
+PASS > [default constructor]  
+PASS   node = new PeriodicWave(context) did not throw an exception. 
+PASS < [default constructor] All assertions passed. (total 1 assertions) 
+PASS > [constructor with options]  
+PASS   node = new PeriodicWave(context, {"real":[1,1]}) did not throw an exception. 
+PASS   node1 instanceof PeriodicWave is equal to true. 
+PASS   node2 = new PeriodicWave(context, {"imag":[1,1]}) did not throw an exception. 
+PASS   node2 instanceof PeriodicWave is equal to true. 
+PASS   node3 = new PeriodicWave(context, {"real":[1,2],"imag":[1,1]}) did not throw an exception. 
+PASS   node3 instanceof PeriodicWave is equal to true. 
+PASS < [constructor with options] All assertions passed. (total 6 assertions) 
+PASS > [1: real periodicwave test]  
+PASS   Oscillator with periodicWave {real: [0,2]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027143,"relativeThreshold":0}. 
+PASS < [1: real periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [2: real periodicwave test]  
+PASS   Oscillator with periodicWave {disableNormalization: false, real: [0,2]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027143,"relativeThreshold":0}. 
+PASS < [2: real periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [3: real periodicwave test]  
+PASS   Oscillator with periodicWave {disableNormalization: true, real: [0,2]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000054285,"relativeThreshold":0}. 
+PASS < [3: real periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [1: imag periodicwave test]  
+PASS   Oscillator with periodicWave {imag: [0,2]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027262,"relativeThreshold":0}. 
+PASS < [1: imag periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [2: imag periodicwave test]  
+PASS   Oscillator with periodicWave {disableNormalization: false, imag: [0,2]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027262,"relativeThreshold":0}. 
+PASS < [2: imag periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [3: imag periodicwave test]  
+PASS   Oscillator with periodicWave {disableNormalization: true, imag: [0,2]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.4523999999999999,"relativeThreshold":0}. 
+PASS < [3: imag periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [1: real/imag periodicwave test]  
+PASS   Oscillator with periodicWave {real: [0,1], imag: [0,1]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000038371,"relativeThreshold":0}. 
+PASS < [1: real/imag periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [2: real/imag periodicwave test]  
+PASS   Oscillator with periodicWave {disableNormalization: false, real: [0,1], imag: [0,1]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027225,"relativeThreshold":0}. 
+PASS < [2: real/imag periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [3: real/imag periodicwave test]  
+PASS   Oscillator with periodicWave {disableNormalization: true, real: [0,1], imag: [0,1]} equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000038501,"relativeThreshold":0}. 
+PASS < [3: real/imag periodicwave test] All assertions passed. (total 1 assertions) 
+PASS > [default wave]  
+PASS   new PeriodicWave(context) output is identical to the array [expected array]. 
+PASS < [default wave] All assertions passed. (total 1 assertions) 
+PASS > [default wave (with dict)]  
+PASS   new PeriodicWave(context, {foo: 42}) output is identical to the array [expected array]. 
+PASS < [default wave (with dict)] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 15 tasks ran successfully. 
+

@@ -1,177 +1,189 @@
-var context;
-var lengthInSeconds = 2;
+let context;
+let lengthInSeconds = 2;
 
 // Skip this many frames before comparing against reference to allow
 // a steady-state to be reached in the up-sampling filters.
-var filterStabilizeSkipFrames = 2048;
+let filterStabilizeSkipFrames = 2048;
 
-var numberOfCurveFrames = 65536;
-var waveShapingCurve;
+let numberOfCurveFrames = 65536;
+let waveShapingCurve;
 
-var waveshaper;
+let waveshaper;
 
 // FIXME: test at more frequencies.
-// When using the up-sampling filters (2x, 4x) any significant aliasing components
-// should be at very high frequencies near Nyquist.  These tests could be improved
-// to allow for a higher acceptable amount of aliasing near Nyquist, but then
-// become more stringent for lower frequencies.
+// When using the up-sampling filters (2x, 4x) any significant aliasing
+// components should be at very high frequencies near Nyquist.  These tests
+// could be improved to allow for a higher acceptable amount of aliasing near
+// Nyquist, but then become more stringent for lower frequencies.
 
 // These test parameters are set in runWaveShaperOversamplingTest().
-var sampleRate;
-var nyquist;
-var oversample;
-var fundamentalFrequency;
-var acceptableAliasingThresholdDecibels;
+let sampleRate;
+let nyquist;
+let oversample;
+let fundamentalFrequency;
+let acceptableAliasingThresholdDecibels;
 
-var kScale = 0.25;
+let kScale = 0.25;
 
 // Chebyshev Polynomials.
-// Given an input sinusoid, returns an output sinusoid of the given frequency multiple.
-function T0(x) { return 1; }
-function T1(x) { return x; }
-function T2(x) { return 2*x*x - 1; }
-function T3(x) { return 4*x*x*x - 3*x; }
-function T4(x) { return 8*x*x*x*x - 8*x*x + 1; }
-
-function generateWaveShapingCurve() {
-    var n = 65536;
-    var n2 = n / 2;
-    var curve = new Float32Array(n);
-
-    // The shaping curve uses Chebyshev Polynomial such that an input sinusoid
-    // at frequency f will generate an output of four sinusoids of frequencies:
-    // f, 2*f, 3*f, 4*f
-    // each of which is scaled.
-    for (var i = 0; i < n; ++i) {
-        var x = (i - n2) / n2;
-        var y = kScale * (T1(x) + T2(x) + T3(x) + T4(x));
-        curve[i] = y;
-    }
-
-    return curve;
+// Given an input sinusoid, returns an output sinusoid of the given frequency
+// multiple.
+function T0(x) {
+  return 1;
+}
+function T1(x) {
+  return x;
+}
+function T2(x) {
+  return 2 * x * x - 1;
+}
+function T3(x) {
+  return 4 * x * x * x - 3 * x;
+}
+function T4(x) {
+  return 8 * x * x * x * x - 8 * x * x + 1;
 }
 
-function checkShapedCurve(event) {
-    var buffer = event.renderedBuffer;
+function generateWaveShapingCurve() {
+  let n = 65536;
+  let n2 = n / 2;
+  let curve = new Float32Array(n);
 
-    var outputData = buffer.getChannelData(0);
-    var n = buffer.length;
+  // The shaping curve uses Chebyshev Polynomial such that an input sinusoid
+  // at frequency f will generate an output of four sinusoids of frequencies:
+  // f, 2*f, 3*f, 4*f
+  // each of which is scaled.
+  for (let i = 0; i < n; ++i) {
+    let x = (i - n2) / n2;
+    let y = kScale * (T1(x) + T2(x) + T3(x) + T4(x));
+    curve[i] = y;
+  }
 
-    // The WaveShaperNode will have a processing latency if oversampling is used,
-    // so we should account for it.
+  return curve;
+}
 
-    // FIXME: .latency should be exposed as an attribute of the node
-    // var waveShaperLatencyFrames = waveshaper.latency * sampleRate;
-    // But for now we'll use the hard-coded values corresponding to the actual latencies:
-    var waveShaperLatencyFrames = 0;
-    if (oversample == "2x")
-        waveShaperLatencyFrames = 128;
-    else if (oversample == "4x")
-        waveShaperLatencyFrames = 192;
+function checkShapedCurve(buffer, should) {
+  let outputData = buffer.getChannelData(0);
+  let n = buffer.length;
 
-    var worstDeltaInDecibels = -1000;
+  // The WaveShaperNode will have a processing latency if oversampling is used,
+  // so we should account for it.
 
-    for (var i = waveShaperLatencyFrames; i < n; ++i) {
-        var actual = outputData[i];
+  // FIXME: .latency should be exposed as an attribute of the node
+  // var waveShaperLatencyFrames = waveshaper.latency * sampleRate;
+  // But for now we'll use the hard-coded values corresponding to the actual
+  // latencies:
+  let waveShaperLatencyFrames = 0;
+  if (oversample == '2x')
+    waveShaperLatencyFrames = 128;
+  else if (oversample == '4x')
+    waveShaperLatencyFrames = 192;
 
-        // Account for the expected processing latency.
-        var j = i - waveShaperLatencyFrames;
+  let worstDeltaInDecibels = -1000;
 
-        // Compute reference sinusoids.
-        var phaseInc = 2 * Math.PI * fundamentalFrequency / sampleRate;
+  for (let i = waveShaperLatencyFrames; i < n; ++i) {
+    let actual = outputData[i];
 
-        // Generate an idealized reference based on the four generated frequencies truncated
-        // to the Nyquist rate.  Ideally, we'd like the waveshaper's oversampling to perfectly
-        // remove all frequencies above Nyquist to avoid aliasing.  In reality the oversampling filters are not
-        // quite perfect, so there will be a (hopefully small) amount of aliasing.  We should
-        // be close to the ideal.
-        var reference = 0;
+    // Account for the expected processing latency.
+    let j = i - waveShaperLatencyFrames;
 
-        // Sum in fundamental frequency.
-        if (fundamentalFrequency < nyquist)
-            reference += Math.sin(phaseInc * j);
+    // Compute reference sinusoids.
+    let phaseInc = 2 * Math.PI * fundamentalFrequency / sampleRate;
 
-        // Note that the phase of each of the expected generated harmonics is different.
-        if (fundamentalFrequency * 2 < nyquist)
-            reference += -Math.cos(phaseInc * j * 2);
-        if (fundamentalFrequency * 3 < nyquist)
-            reference += -Math.sin(phaseInc * j * 3);
-        if (fundamentalFrequency * 4 < nyquist)
-            reference += Math.cos(phaseInc * j * 4);
+    // Generate an idealized reference based on the four generated frequencies
+    // truncated to the Nyquist rate.  Ideally, we'd like the waveshaper's
+    // oversampling to perfectly remove all frequencies above Nyquist to avoid
+    // aliasing.  In reality the oversampling filters are not quite perfect, so
+    // there will be a (hopefully small) amount of aliasing.  We should be close
+    // to the ideal.
+    let reference = 0;
 
-        // Scale the reference the same as the waveshaping curve itself.
-        reference *= kScale;
+    // Sum in fundamental frequency.
+    if (fundamentalFrequency < nyquist)
+      reference += Math.sin(phaseInc * j);
 
-        var delta = Math.abs(actual - reference);
-        var deltaInDecibels = delta > 0 ? 20 * Math.log(delta)/Math.log(10) : -200;
+    // Note that the phase of each of the expected generated harmonics is
+    // different.
+    if (fundamentalFrequency * 2 < nyquist)
+      reference += -Math.cos(phaseInc * j * 2);
+    if (fundamentalFrequency * 3 < nyquist)
+      reference += -Math.sin(phaseInc * j * 3);
+    if (fundamentalFrequency * 4 < nyquist)
+      reference += Math.cos(phaseInc * j * 4);
 
-        if (j >= filterStabilizeSkipFrames) {
-            if (deltaInDecibels > worstDeltaInDecibels) {
-                worstDeltaInDecibels = deltaInDecibels;
-            }
-        }
+    // Scale the reference the same as the waveshaping curve itself.
+    reference *= kScale;
+
+    let delta = Math.abs(actual - reference);
+    let deltaInDecibels =
+        delta > 0 ? 20 * Math.log(delta) / Math.log(10) : -200;
+
+    if (j >= filterStabilizeSkipFrames) {
+      if (deltaInDecibels > worstDeltaInDecibels) {
+        worstDeltaInDecibels = deltaInDecibels;
+      }
     }
+  }
 
-    // console.log("worstDeltaInDecibels: " + worstDeltaInDecibels);
+  // console.log("worstDeltaInDecibels: " + worstDeltaInDecibels);
 
-    var success = worstDeltaInDecibels < acceptableAliasingThresholdDecibels;
-
-    if (success) {
-        testPassed(oversample + " WaveShaperNode oversampling within acceptable tolerance.");
-    } else {
-        testFailed(oversample + " WaveShaperNode oversampling not within acceptable tolerance.  Error = " + worstDeltaInDecibels + " dBFS");
-    }
-
-    finishJSTest();
+  should(
+      worstDeltaInDecibels,
+      oversample + ' WaveshaperNode oversampling error (in dBFS)')
+      .beLessThan(acceptableAliasingThresholdDecibels);
 }
 
 function createImpulseBuffer(context, sampleFrameLength) {
-    var audioBuffer = context.createBuffer(1, sampleFrameLength, context.sampleRate);
-    var n = audioBuffer.length;
-    var dataL = audioBuffer.getChannelData(0);
+  let audioBuffer =
+      context.createBuffer(1, sampleFrameLength, context.sampleRate);
+  let n = audioBuffer.length;
+  let dataL = audioBuffer.getChannelData(0);
 
-    for (var k = 0; k < n; ++k)
-        dataL[k] = 0;
+  for (let k = 0; k < n; ++k)
+    dataL[k] = 0;
 
-    dataL[0] = 1;
+  dataL[0] = 1;
 
-    return audioBuffer;
+  return audioBuffer;
 }
 
-window.OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-
 function runWaveShaperOversamplingTest(testParams) {
-    sampleRate = testParams.sampleRate;
-    nyquist = 0.5 * sampleRate;
-    oversample = testParams.oversample;
-    fundamentalFrequency = testParams.fundamentalFrequency;
-    acceptableAliasingThresholdDecibels = testParams.acceptableAliasingThresholdDecibels;
+  sampleRate = testParams.sampleRate;
+  nyquist = 0.5 * sampleRate;
+  oversample = testParams.oversample;
+  fundamentalFrequency = testParams.fundamentalFrequency;
+  acceptableAliasingThresholdDecibels =
+      testParams.acceptableAliasingThresholdDecibels;
 
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
+  let audit = Audit.createTaskRunner();
 
-    window.jsTestIsAsync = true;
+  audit.define(
+      {label: 'test', description: testParams.description},
+      function(task, should) {
 
-    // Create offline audio context.
-    var numberOfRenderFrames = sampleRate * lengthInSeconds;
-    context = new OfflineAudioContext(1, numberOfRenderFrames, sampleRate);
+        // Create offline audio context.
+        let numberOfRenderFrames = sampleRate * lengthInSeconds;
+        context = new OfflineAudioContext(1, numberOfRenderFrames, sampleRate);
 
-    // source -> waveshaper -> destination
-    var source = context.createBufferSource();
-    source.buffer = createToneBuffer(context, fundamentalFrequency, lengthInSeconds, 1);
+        // source -> waveshaper -> destination
+        let source = context.createBufferSource();
+        source.buffer =
+            createToneBuffer(context, fundamentalFrequency, lengthInSeconds, 1);
 
-    // Apply a non-linear distortion curve.
-    waveshaper = context.createWaveShaper();
-    waveshaper.curve = generateWaveShapingCurve();
-    waveshaper.oversample = oversample;
+        // Apply a non-linear distortion curve.
+        waveshaper = context.createWaveShaper();
+        waveshaper.curve = generateWaveShapingCurve();
+        waveshaper.oversample = oversample;
 
-    source.connect(waveshaper);
-    waveshaper.connect(context.destination);
+        source.connect(waveshaper);
+        waveshaper.connect(context.destination);
 
-    source.start(0);
+        source.start(0);
 
-    context.oncomplete = checkShapedCurve;
-    context.startRendering();
+        context.startRendering()
+            .then(buffer => checkShapedCurve(buffer, should))
+            .then(() => task.done());
+      });
+
+  audit.run();
 }

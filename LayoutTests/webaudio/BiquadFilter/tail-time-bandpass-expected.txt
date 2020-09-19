@@ -1,0 +1,57 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "bpf-complex-roots" 
+PASS Executing "bpf-real-distinct-roots" 
+PASS Executing "bpf-repeated-roots" 
+PASS Audit report 
+PASS > [bpf-complex-roots] complex roots 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): Actual Tail Frame 2176 is greater than or equal to 2039. 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[128:255] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[256:383] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[384:511] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[512:639] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[640:767] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[768:895] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[896:1023] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[1024:1151] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[1152:1279] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[1280:1407] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[1408:1535] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[1536:1663] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[1664:1791] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[1792:1919] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[1920:2047] is not constantly 0 (contains 128 different values). 
+PASS   BPF complex roots: Biquad({"type":"bandpass","Q":200,"frequency":4096}): output[2304:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [bpf-complex-roots] All assertions passed. (total 18 assertions) 
+PASS > [bpf-real-distinct-roots] real distinct roots 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): Actual Tail Frame 2688 is greater than or equal to 2437. 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[128:255] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[256:383] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[384:511] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[512:639] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[640:767] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[768:895] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[896:1023] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[1024:1151] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[1152:1279] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[1280:1407] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[1408:1535] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[1536:1663] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[1664:1791] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[1792:1919] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[1920:2047] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[2048:2175] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[2176:2303] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[2304:2431] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[2432:2559] is not constantly 0 (contains 128 different values). 
+PASS   BPF real distinct roots: Biquad({"type":"bandpass","Q":0.001,"frequency":4096}): output[2816:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [bpf-real-distinct-roots] All assertions passed. (total 22 assertions) 
+PASS > [bpf-repeated-roots] repeated real root 
+PASS   BPF repeated roots: Biquad({"type":"bandpass","Q":0.5,"frequency":2048}): Actual Tail Frame 106 is greater than or equal to 16. 
+PASS   BPF repeated roots: Biquad({"type":"bandpass","Q":0.5,"frequency":2048}): output[0:127] is not constantly 0 (contains 106 different values). 
+PASS   BPF repeated roots: Biquad({"type":"bandpass","Q":0.5,"frequency":2048}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [bpf-repeated-roots] All assertions passed. (total 3 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+

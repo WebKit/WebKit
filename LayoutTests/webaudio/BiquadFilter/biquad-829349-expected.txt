@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "Peaking filter tailtime" 
+PASS Audit report 
+PASS > [Peaking filter tailtime]  
+PASS   Filter output is not constantly 0 (contains 1023 different values). 
+PASS < [Peaking filter tailtime] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

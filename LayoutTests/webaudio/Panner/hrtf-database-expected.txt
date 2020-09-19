@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "loadfiles" 
+PASS Executing "verify-flac" 
+PASS Audit report 
+PASS > [loadfiles] Load HRTF database files 
+PASS   Number of buffers loaded is equal to 2. 
+PASS < [loadfiles] All assertions passed. (total 1 assertions) 
+PASS > [verify-flac] Verify FLAC-encoded HRTF database matches original 
+PASS   Number of FLAC channels is equal to 2. 
+PASS   FLAC-encoded HRTF database channel 0 is identical to the array [expected array]. 
+PASS   FLAC-encoded HRTF database channel 1 is identical to the array [expected array]. 
+PASS < [verify-flac] All assertions passed. (total 3 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+

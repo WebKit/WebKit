@@ -1,9 +1,0 @@
-Tests 4x WaveShaperNode oversampling.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS 4x WaveShaperNode oversampling within acceptable tolerance.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

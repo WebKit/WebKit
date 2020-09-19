@@ -1,0 +1,71 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "Panner setPosition X error" 
+PASS Executing "Panner setPosition X no error" 
+PASS Executing "Panner setPosition Y error" 
+PASS Executing "Panner setPosition Y no error" 
+PASS Executing "Panner setPosition Z error" 
+PASS Executing "Panner setPosition Z no error" 
+PASS Executing "Panner setOrientation X error" 
+PASS Executing "Panner setOrientation X no error" 
+PASS Executing "Panner setOrientation Y error" 
+PASS Executing "Panner setOrientation Y no error" 
+PASS Executing "Panner setOrientation Z error" 
+PASS Executing "Panner setOrientation Z no error" 
+PASS Audit report 
+PASS > [Panner setPosition X error]  
+PASS   Panner setPosition X error: Node under test is a PannerNode is true. 
+PASS   panner.positionX.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   panner.setPosition(1,1,1) for positionX threw NotSupportedError: "Events are overlapping". 
+PASS < [Panner setPosition X error] All assertions passed. (total 3 assertions) 
+PASS > [Panner setPosition X no error]  
+PASS   Panner setPosition X no error: Node under test is a PannerNode is true. 
+PASS   panner.positionX.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Panner setPosition X no error] All assertions passed. (total 2 assertions) 
+PASS > [Panner setPosition Y error]  
+PASS   Panner setPosition Y error: Node under test is a PannerNode is true. 
+PASS   panner.positionY.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   panner.setPosition(1,1,1) for positionY threw NotSupportedError: "Events are overlapping". 
+PASS < [Panner setPosition Y error] All assertions passed. (total 3 assertions) 
+PASS > [Panner setPosition Y no error]  
+PASS   Panner setPosition Y no error: Node under test is a PannerNode is true. 
+PASS   panner.positionY.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Panner setPosition Y no error] All assertions passed. (total 2 assertions) 
+PASS > [Panner setPosition Z error]  
+PASS   Panner setPosition Z error: Node under test is a PannerNode is true. 
+PASS   panner.positionZ.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   panner.setPosition(1,1,1) for positionZ threw NotSupportedError: "Events are overlapping". 
+PASS < [Panner setPosition Z error] All assertions passed. (total 3 assertions) 
+PASS > [Panner setPosition Z no error]  
+PASS   Panner setPosition Z no error: Node under test is a PannerNode is true. 
+PASS   panner.positionZ.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Panner setPosition Z no error] All assertions passed. (total 2 assertions) 
+PASS > [Panner setOrientation X error]  
+PASS   Panner setOrientation X error: Node under test is a PannerNode is true. 
+PASS   panner.orientationX.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   panner.setOrientation(1,1,1) for orientationX threw NotSupportedError: "Events are overlapping". 
+PASS < [Panner setOrientation X error] All assertions passed. (total 3 assertions) 
+PASS > [Panner setOrientation X no error]  
+PASS   Panner setOrientation X no error: Node under test is a PannerNode is true. 
+PASS   panner.orientationX.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Panner setOrientation X no error] All assertions passed. (total 2 assertions) 
+PASS > [Panner setOrientation Y error]  
+PASS   Panner setOrientation Y error: Node under test is a PannerNode is true. 
+PASS   panner.orientationY.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   panner.setOrientation(1,1,1) for orientationY threw NotSupportedError: "Events are overlapping". 
+PASS < [Panner setOrientation Y error] All assertions passed. (total 3 assertions) 
+PASS > [Panner setOrientation Y no error]  
+PASS   Panner setOrientation Y no error: Node under test is a PannerNode is true. 
+PASS   panner.orientationY.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Panner setOrientation Y no error] All assertions passed. (total 2 assertions) 
+PASS > [Panner setOrientation Z error]  
+PASS   Panner setOrientation Z error: Node under test is a PannerNode is true. 
+PASS   panner.orientationZ.setValueCurve(..., 0, 0.016) did not throw an exception. 
+PASS   panner.setOrientation(1,1,1) for orientationZ threw NotSupportedError: "Events are overlapping". 
+PASS < [Panner setOrientation Z error] All assertions passed. (total 3 assertions) 
+PASS > [Panner setOrientation Z no error]  
+PASS   Panner setOrientation Z no error: Node under test is a PannerNode is true. 
+PASS   panner.orientationZ.setValueCurve(..., 0, 0.0005) did not throw an exception. 
+PASS < [Panner setOrientation Z no error] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 12 tasks ran successfully. 
+

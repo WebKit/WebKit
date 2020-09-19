@@ -1,0 +1,45 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "0:192khz-test-1" 
+PASS Executing "1:192khz-test-2" 
+PASS Executing "2:192khz-test-3" 
+PASS Executing "3:48khz-test-1" 
+PASS Executing "4:48khz-test-2" 
+PASS Executing "5:48khz-test-3" 
+PASS Executing "6:48khz-test-4" 
+PASS Executing "7:24khz-test-1" 
+PASS Executing "8:24khz-test-2" 
+PASS Executing "9:24khz-test-3" 
+PASS Audit report 
+PASS > [0:192khz-test-1]  
+PASS   At 192 kHz, PeriodicWave with 8192 coefficients vs 2048: are different is equal to true. 
+PASS < [0:192khz-test-1] All assertions passed. (total 1 assertions) 
+PASS > [1:192khz-test-2]  
+PASS   At 192 kHz, PeriodicWave with 2049 coefficients vs 2048: are different is equal to true. 
+PASS < [1:192khz-test-2] All assertions passed. (total 1 assertions) 
+PASS > [2:192khz-test-3]  
+PASS   At 192 kHz, PeriodicWave with 8192 coefficients vs 8191: are different is equal to true. 
+PASS < [2:192khz-test-3] All assertions passed. (total 1 assertions) 
+PASS > [3:48khz-test-1]  
+PASS   At 48 kHz, PeriodicWave with 8192 coefficients vs 2048: are identical is equal to true. 
+PASS < [3:48khz-test-1] All assertions passed. (total 1 assertions) 
+PASS > [4:48khz-test-2]  
+PASS   At 48 kHz, PeriodicWave with 2049 coefficients vs 2048: are identical is equal to true. 
+PASS < [4:48khz-test-2] All assertions passed. (total 1 assertions) 
+PASS > [5:48khz-test-3]  
+PASS   At 48 kHz, PeriodicWave with 2064 coefficients vs 2048: are identical is equal to true. 
+PASS < [5:48khz-test-3] All assertions passed. (total 1 assertions) 
+PASS > [6:48khz-test-4]  
+PASS   At 48 kHz, PeriodicWave with 2048 coefficients vs 2046: are different is equal to true. 
+PASS < [6:48khz-test-4] All assertions passed. (total 1 assertions) 
+PASS > [7:24khz-test-1]  
+PASS   At 24 kHz, PeriodicWave with 8192 coefficients vs 1024: are identical is equal to true. 
+PASS < [7:24khz-test-1] All assertions passed. (total 1 assertions) 
+PASS > [8:24khz-test-2]  
+PASS   At 24 kHz, PeriodicWave with 1025 coefficients vs 1024: are identical is equal to true. 
+PASS < [8:24khz-test-2] All assertions passed. (total 1 assertions) 
+PASS > [9:24khz-test-3]  
+PASS   At 24 kHz, PeriodicWave with 1024 coefficients vs 1022: are different is equal to true. 
+PASS < [9:24khz-test-3] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 10 tasks ran successfully. 
+

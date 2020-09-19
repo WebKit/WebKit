@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "highshelf-complex-roots" 
+PASS Executing "highshelf-repeated-roots" 
+PASS Audit report 
+PASS > [highshelf-complex-roots] complex roots 
+PASS   Highshelf complex roots: Biquad({"type":"highshelf","gain":40,"frequency":2048}): Actual Tail Frame 110 is greater than or equal to 19. 
+PASS   Highshelf complex roots: Biquad({"type":"highshelf","gain":40,"frequency":2048}): output[0:127] is not constantly 0 (contains 110 different values). 
+PASS   Highshelf complex roots: Biquad({"type":"highshelf","gain":40,"frequency":2048}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [highshelf-complex-roots] All assertions passed. (total 3 assertions) 
+PASS > [highshelf-repeated-roots] repeated real root 
+PASS   Highshelf repeated roots: Biquad({"type":"highshelf","gain":40,"frequency":0}): Actual Tail Frame 1 is greater than or equal to 1. 
+PASS   Highshelf repeated roots: Biquad({"type":"highshelf","gain":40,"frequency":0}): output[0:127] is not constantly 0 (contains 1 different value). 
+PASS   Highshelf repeated roots: Biquad({"type":"highshelf","gain":40,"frequency":0}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [highshelf-repeated-roots] All assertions passed. (total 3 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+

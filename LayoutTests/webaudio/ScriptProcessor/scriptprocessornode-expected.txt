@@ -1,0 +1,26 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test" 
+PASS Audit report 
+PASS > [test] Basic ScriptProcessorNode properties 
+PASS   createScriptProcessor(512, 0, 0) threw NotSupportedError: "The operation is not supported.". 
+PASS   context.createScriptProcessor(512, 1, 0) did not throw an exception. 
+PASS   context.createScriptProcessor(512, 2, 0) did not throw an exception. 
+PASS   context.createScriptProcessor(512, 0, 1) did not throw an exception. 
+PASS   context.createScriptProcessor(512, 0, 2) did not throw an exception. 
+PASS   context.createScriptProcessor(511, 1, 1) threw IndexSizeError: "The index is not in the allowed range.". 
+PASS   context.createScriptProcessor(256, 1, 1) did not throw an exception. 
+PASS   context.createScriptProcessor(512, 1, 1) did not throw an exception. 
+PASS   context.createScriptProcessor(1024, 1, 1) did not throw an exception. 
+PASS   context.createScriptProcessor(2048, 1, 1) did not throw an exception. 
+PASS   context.createScriptProcessor(4096, 1, 1) did not throw an exception. 
+PASS   context.createScriptProcessor(8192, 1, 1) did not throw an exception. 
+PASS   context.createScriptProcessor(16384, 1, 1) did not throw an exception. 
+PASS   playbackTime is 0.020317460317460317 within an error of 1e-7. 
+PASS   Number of output channels is equal to 6. 
+PASS   Length of buffer is equal to 512. 
+PASS   Left channel contains only the constant -1. 
+PASS   Right channel contains only the constant 1. 
+PASS < [test] All assertions passed. (total 18 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

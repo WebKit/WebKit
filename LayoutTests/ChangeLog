@@ -1,3 +1,185 @@
+2020-09-18  Chris Dumez  <cdumez@apple.com>
+
+        Import remaining webaudio layout tests from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=216719
+
+        Reviewed by Darin Adler.
+
+        Import remaining webaudio tests from Blink that we had not imported yet.
+
+        * TestExpectations:
+        * webaudio/BiquadFilter/biquad-829349-expected.txt: Added.
+        * webaudio/BiquadFilter/biquad-829349.html: Added.
+        * webaudio/BiquadFilter/tail-time-allpass-expected.txt: Added.
+        * webaudio/BiquadFilter/tail-time-allpass.html: Added.
+        * webaudio/BiquadFilter/tail-time-bandpass-expected.txt: Added.
+        * webaudio/BiquadFilter/tail-time-bandpass.html: Added.
+        * webaudio/BiquadFilter/tail-time-highpass-expected.txt: Added.
+        * webaudio/BiquadFilter/tail-time-highpass.html: Added.
+        * webaudio/BiquadFilter/tail-time-highshelf-expected.txt: Added.
+        * webaudio/BiquadFilter/tail-time-highshelf.html: Added.
+        * webaudio/BiquadFilter/tail-time-lowpass-expected.txt: Added.
+        * webaudio/BiquadFilter/tail-time-lowpass.html: Added.
+        * webaudio/BiquadFilter/tail-time-lowshelf-expected.txt: Added.
+        * webaudio/BiquadFilter/tail-time-lowshelf.html: Added.
+        * webaudio/BiquadFilter/tail-time-notch-expected.txt: Added.
+        * webaudio/BiquadFilter/tail-time-notch.html: Added.
+        * webaudio/BiquadFilter/tail-time-peaking-expected.txt: Added.
+        * webaudio/BiquadFilter/tail-time-peaking.html: Added.
+        * webaudio/BiquadFilter/test-tail-time.js: Added.
+        (testTailTime):
+        * webaudio/BiquadFilter/unstable-filter-warning-expected.txt: Added.
+        * webaudio/BiquadFilter/unstable-filter-warning.html: Added.
+        * webaudio/ChannelMerger/audiochannelmerger-cycle-expected.txt: Added.
+        * webaudio/ChannelMerger/audiochannelmerger-cycle.html: Added.
+        * webaudio/Convolver/unmmodified-buffer-expected.txt: Copied from LayoutTests/webaudio/convolvernode-unmodified-buffer-expected.txt.
+        * webaudio/Convolver/unmmodified-buffer.html: Renamed from LayoutTests/webaudio/convolvernode-unmodified-buffer.html.
+        * webaudio/DynamicsCompressor/dynamicscompressor-clear-internal-state-expected.txt: Added.
+        * webaudio/DynamicsCompressor/dynamicscompressor-clear-internal-state.html: Added.
+        * webaudio/DynamicsCompressor/dynamicscompressor-simple-expected.txt: Added.
+        * webaudio/DynamicsCompressor/dynamicscompressor-simple.html: Added.
+        * webaudio/IIRFilter/iir-tail-time-expected.txt: Added.
+        * webaudio/IIRFilter/iir-tail-time.html: Added.
+        * webaudio/IIRFilter/iir-unstable-expected.txt: Added.
+        * webaudio/IIRFilter/iir-unstable.html: Added.
+        * webaudio/IIRFilter/unstable-filter-warning-expected.txt: Added.
+        * webaudio/IIRFilter/unstable-filter-warning.html: Added.
+        * webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-expected.txt: Added.
+        * webaudio/MediaElementAudioSource/mediaelementaudiosourcenode.html: Added.
+        * webaudio/MediaElementAudioSource/resampling-crash-expected.txt: Added.
+        * webaudio/MediaElementAudioSource/resampling-crash.html: Added.
+        * webaudio/MediaStreamAudioDestination/create-in-destroyed-context-expected.txt: Added.
+        * webaudio/MediaStreamAudioDestination/create-in-destroyed-context.html: Added.
+        * webaudio/MediaStreamAudioDestination/mediastreamaudiodestinationnode-expected.txt: Added.
+        * webaudio/MediaStreamAudioDestination/mediastreamaudiodestinationnode.html: Added.
+        * webaudio/MediaStreamAudioSource/ctor-mediastreamaudiosource-expected.txt: Added.
+        * webaudio/MediaStreamAudioSource/ctor-mediastreamaudiosource.html: Added.
+        * webaudio/MediaStreamAudioSource/mediastreamaudiosourcenode-expected.txt: Added.
+        * webaudio/MediaStreamAudioSource/mediastreamaudiosourcenode.html: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-constructor-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-constructor.html: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-event-listener-gc-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-event-listener-gc.html: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-promise-basic-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-promise-basic.html: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-promise-expected.txt: Copied from LayoutTests/webaudio/convolvernode-unmodified-buffer-expected.txt.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-promise.html: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-basic-expected.txt: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-basic-expected.txt.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-basic.html: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-basic.html.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-eventhandler-expected.txt: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-eventhandler-expected.txt.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-eventhandler.html: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-eventhandler.html.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-graph-manipulation-expected.txt: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-graph-manipulation-expected.txt.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-graph-manipulation.html: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-graph-manipulation.html.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-promise-expected.txt: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-promise-expected.txt.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-promise.html: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-promise.html.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-sequence-expected.txt: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-sequence-expected.txt.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-suspend-resume-sequence.html: Renamed from LayoutTests/webaudio/offlineaudiocontext-suspend-resume-sequence.html.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-thread-smoke-test-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-thread-smoke-test.html: Added.
+        * webaudio/OfflineAudioContext/onstatechange-expected.txt: Added.
+        * webaudio/OfflineAudioContext/onstatechange.html: Added.
+        * webaudio/Panner/hrtf-database-expected.txt: Added.
+        * webaudio/Panner/hrtf-database.html: Added.
+        * webaudio/Panner/panner-loop-expected.txt: Copied from LayoutTests/webaudio/convolvernode-unmodified-buffer-expected.txt.
+        * webaudio/Panner/panner-loop.html: Added.
+        * webaudio/Panner/panner-set-position-expected.txt: Added.
+        * webaudio/Panner/panner-set-position.html: Added.
+        * webaudio/PeriodicWave/ctor-periodicwave-expected.txt: Added.
+        * webaudio/PeriodicWave/ctor-periodicwave.html: Added.
+        * webaudio/PeriodicWave/periodicwave-contexts-expected.txt: Added.
+        * webaudio/PeriodicWave/periodicwave-contexts.html: Added.
+        * webaudio/PeriodicWave/periodicwave-exceptions-expected.txt: Added.
+        * webaudio/PeriodicWave/periodicwave-exceptions.html: Added.
+        * webaudio/PeriodicWave/periodicwave-lengths-expected.txt: Added.
+        * webaudio/PeriodicWave/periodicwave-lengths.html: Added.
+        * webaudio/PeriodicWave/periodicwave-normalization-expected.txt: Added.
+        * webaudio/PeriodicWave/periodicwave-normalization.html: Added.
+        * webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext-expected.txt: Added.
+        * webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-0-output-channels-expected.txt: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-0-output-channels.html: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-downmix8-2channel-input-expected.txt: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-downmix8-2channel-input.html: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-expected.txt: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-upmix2-8channel-input-expected.txt: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-upmix2-8channel-input.html: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-zero-input-channels-expected.txt: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode-zero-input-channels.html: Added.
+        * webaudio/ScriptProcessor/scriptprocessornode.html: Added.
+        * webaudio/WaveShaper/waveshaper-364379-expected.txt: Added.
+        * webaudio/WaveShaper/waveshaper-364379.html: Added.
+        * webaudio/WaveShaper/waveshaper-oversample-2x-expected.txt: Copied from LayoutTests/webaudio/convolvernode-unmodified-buffer-expected.txt.
+        * webaudio/WaveShaper/waveshaper-oversample-2x.html: Added.
+        * webaudio/WaveShaper/waveshaper-oversample-4x-expected.txt: Renamed from LayoutTests/webaudio/convolvernode-unmodified-buffer-expected.txt.
+        * webaudio/WaveShaper/waveshaper-oversample-4x.html: Added.
+        * webaudio/audio-scheduled-source-basic-expected.txt: Added.
+        * webaudio/audio-scheduled-source-basic.html: Added.
+        * webaudio/javascriptaudionode-downmix8-2channel-input-expected.txt: Removed.
+        * webaudio/javascriptaudionode-downmix8-2channel-input.html: Removed.
+        * webaudio/javascriptaudionode-expected.txt: Removed.
+        * webaudio/javascriptaudionode-upmix2-8channel-input-expected.txt: Removed.
+        * webaudio/javascriptaudionode-upmix2-8channel-input.html: Removed.
+        * webaudio/javascriptaudionode-zero-input-channels-expected.txt: Removed.
+        * webaudio/javascriptaudionode-zero-input-channels.html: Removed.
+        * webaudio/javascriptaudionode.html: Removed.
+        * webaudio/mediastreamaudiodestinationnode-expected.txt: Removed.
+        * webaudio/mediastreamaudiodestinationnode.html: Removed.
+        * webaudio/mediastreamaudiosourcenode-expected.txt: Removed.
+        * webaudio/mediastreamaudiosourcenode.html: Removed.
+        * webaudio/offlineaudiocontext-constructor-expected.txt: Removed.
+        * webaudio/offlineaudiocontext-constructor.html: Removed.
+        * webaudio/panner-loop-expected.txt: Removed.
+        * webaudio/panner-loop.html: Removed.
+        * webaudio/periodicwave-lengths-expected.txt: Removed.
+        * webaudio/periodicwave-lengths.html: Removed.
+        * webaudio/resources/audionodeoptions.js: Added.
+        (testAudioNodeOptions):
+        (initializeContext):
+        (testInvalidConstructor):
+        (testDefaultConstructor):
+        (testDefaultAttributes):
+        * webaudio/resources/biquad-filters.js: Added.
+        (createLowpassFilter):
+        (createHighpassFilter):
+        (normalizeFilterCoefficients):
+        (createBandpassFilter):
+        (createLowShelfFilter):
+        (createHighShelfFilter):
+        (createPeakingFilter):
+        (createNotchFilter):
+        (createAllpassFilter):
+        (filterData):
+        (createFilter):
+        * webaudio/resources/hrtf/Composite.flac: Added.
+        * webaudio/resources/hrtf/Composite.wav: Added.
+        * webaudio/resources/hrtf/README: Added.
+        * webaudio/resources/scriptprocessornode-testing-audit.js: Added.
+        (createBuffer):
+        (processAudioData):
+        (fillData):
+        (checkStereoOnlyData):
+        (runJSNodeTest):
+        * webaudio/resources/scriptprocessornode-testing.js: Added.
+        (createBuffer):
+        (processAudioData):
+        (fillData):
+        (checkStereoOnlyData):
+        (runJSNodeTest):
+        * webaudio/resources/waveshaper-testing.js:
+        (T0):
+        (T1):
+        (T2):
+        (T3):
+        (T4):
+        (generateWaveShapingCurve):
+        (checkShapedCurve):
+        (createImpulseBuffer):
+        (runWaveShaperOversamplingTest):
+        * webaudio/waveshaper-oversample-2x-expected.txt: Removed.
+        * webaudio/waveshaper-oversample-2x.html: Removed.
+        * webaudio/waveshaper-oversample-4x-expected.txt: Removed.
+        * webaudio/waveshaper-oversample-4x.html: Removed.
+
 2020-09-18  Saam Barati  <sbarati@apple.com>
 
         console APIs shouldn't crash making a string that's too long for a console warning when using user provided labels

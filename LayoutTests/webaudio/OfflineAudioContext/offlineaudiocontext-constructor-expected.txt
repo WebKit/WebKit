@@ -1,0 +1,37 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test" 
+PASS Audit report 
+PASS > [test] OfflineAudioContext constructor 
+PASS   new OfflineAudioContext(1, 0, 44100) threw SyntaxError: "length cannot be 0". 
+PASS   context0 = new OfflineAudioContext(2, 512, 2999) threw SyntaxError: "sampleRate is not in range". 
+PASS   context1 = new OfflineAudioContext(2, 512, 3000) did not throw an exception. 
+PASS   context1.length is equal to 512. 
+PASS   context2 = new OfflineAudioContext(2, 1024, 384000) did not throw an exception. 
+PASS   context2.length is equal to 1024. 
+PASS   context3 = new OfflineAudioContext(2, 1024, 384001) threw SyntaxError: "sampleRate is not in range". 
+PASS   context4 = new OfflineAudioContext(2, 2048, 8000) did not throw an exception. 
+PASS   context4.length is equal to 2048. 
+PASS   context5 = new OfflineAudioContext(2, 4096, 11025) did not throw an exception. 
+PASS   context5.length is equal to 4096. 
+PASS   context6 = new OfflineAudioContext(2, 512, 22050) did not throw an exception. 
+PASS   context6.length is equal to 512. 
+PASS   context7 = new OfflineAudioContext(2, 512, 44100) did not throw an exception. 
+PASS   context7.length is equal to 512. 
+PASS   context8 = new OfflineAudioContext(2, 512, 48000) did not throw an exception. 
+PASS   context8.length is equal to 512. 
+PASS   context9 = new OfflineAudioContext(2, 512, 88200) did not throw an exception. 
+PASS   context9.length is equal to 512. 
+PASS   context9.length = 99 did not throw an exception. 
+PASS   context9.length after illegal setter value is equal to 512. 
+PASS   context10 = new OfflineAudioContext(2, 512, 96000) did not throw an exception. 
+PASS   context11 = new OfflineAudioContext(1, 0, NaN) threw TypeError: "The provided value is non-finite". 
+PASS   context12 = new OfflineAudioContext(1, 0, Infinity) threw TypeError: "The provided value is non-finite". 
+PASS   context13 = new OfflineAudioContext(7, 512, 48000) did not throw an exception. 
+PASS   context13.destination.channelCount is equal to 7. 
+PASS   context13.destination.maxChannelCount is equal to 7. 
+PASS   context13.destination.channelCountMode is equal to explicit. 
+PASS   context13.destination.channelInterpretation is equal to speakers. 
+PASS < [test] All assertions passed. (total 29 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

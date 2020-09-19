@@ -1,0 +1,10 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "merger-cyclic-graph" 
+PASS Audit report 
+PASS > [merger-cyclic-graph]  
+PASS   Left channel is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...]. 
+PASS   Right channel is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
+PASS < [merger-cyclic-graph] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+
