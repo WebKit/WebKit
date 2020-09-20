@@ -2757,9 +2757,6 @@ webkit.org/b/158205 applicationmanifest/ [ Skip ]
 
 webkit.org/b/178785 perf/object-keys.html [ Pass Failure ]
 
-# There is a bug in the test
-imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Failure ]
-
 webkit.org/b/183390 http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html [ Pass Failure ]
 
 webkit.org/b/172243 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-createObjectStore-exception-order.htm [ Pass Failure ]

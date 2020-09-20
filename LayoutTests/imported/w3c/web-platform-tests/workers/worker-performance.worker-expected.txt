@@ -9,8 +9,8 @@ PASS Can use clearMarks and clearMeasures in workers
 PASS Resource timing seems to work in workers 
 PASS performance.clearResourceTimings in workers 
 PASS performance.setResourceTimingBufferSize in workers 
-FAIL performance.timing is not available in workers assert_equals: performance.timing is undefined expected "undefined" but got "object"
-FAIL performance.navigation is not available in workers assert_equals: performance.navigation is undefined expected "undefined" but got "object"
-FAIL performance.toJSON is available in workers assert_equals: performance.toJSON is a function expected "function" but got "undefined"
+PASS performance.timing is not available in workers 
+PASS performance.navigation is not available in workers 
+PASS performance.toJSON is available in workers 
 PASS There are no navigation type performance entries in workers 
 

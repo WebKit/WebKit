@@ -1,5 +1,15 @@
 2020-09-20  Sam Weinig  <weinig@apple.com>
 
+        Performance.navigation and Performance.timing are incorrectly exposed to workers
+        https://bugs.webkit.org/show_bug.cgi?id=216732
+
+        Reviewed by Simon Fraser.
+
+        * page/Performance.idl:
+        Only expose Performance.navigation and Performance.timing to the Window.
+
+2020-09-20  Sam Weinig  <weinig@apple.com>
+
         Using [Exposed=Window] with [Default] object toJSON() doesn't work
         https://bugs.webkit.org/show_bug.cgi?id=216731
 

@@ -1,3 +1,15 @@
+2020-09-20  Sam Weinig  <weinig@apple.com>
+
+        Performance.navigation and Performance.timing are incorrectly exposed to workers
+        https://bugs.webkit.org/show_bug.cgi?id=216732
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        Remove flaky annotation for imported/w3c/web-platform-tests/workers/worker-performance.worker.html. The
+        test was fixed in upstream WPT as dab9c45, and has since been updated in the WebKit tree as well.
+        It now also passes.
+
 2020-09-20  Darin Adler  <darin@apple.com>
 
         Selection API: Further improvements to VisibleSelection, FrameSelection, and DOMSelection to preserve anchor and focus

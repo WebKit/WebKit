@@ -43,8 +43,8 @@ typedef double DOMHighResTimeStamp;
     [Default] object toJSON();
 
     // https://w3c.github.io/navigation-timing/#extensions-to-the-performance-interface
-    readonly attribute PerformanceNavigation navigation;
-    readonly attribute PerformanceTiming timing;
+    [Exposed=Window] readonly attribute PerformanceNavigation navigation;
+    [Exposed=Window] readonly attribute PerformanceTiming timing;
 
     // https://w3c.github.io/performance-timeline/#extensions-to-the-performance-interface
     PerformanceEntryList getEntries();

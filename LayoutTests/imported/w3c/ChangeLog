@@ -1,3 +1,14 @@
+2020-09-20  Sam Weinig  <weinig@apple.com>
+
+        Performance.navigation and Performance.timing are incorrectly exposed to workers
+        https://bugs.webkit.org/show_bug.cgi?id=216732
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/workers/worker-performance.worker-expected.txt:
+        Update results now that Performance.navigation and Performance.timing are no longer
+        exposed to workers.
+
 2020-09-19  Sam Weinig  <weinig@apple.com>
 
         Performance and PerformanceNavigation interfaces are missing toJSON operations
