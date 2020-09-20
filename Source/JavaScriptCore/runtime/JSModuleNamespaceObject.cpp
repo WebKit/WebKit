@@ -247,7 +247,7 @@ bool JSModuleNamespaceObject::defineOwnProperty(JSObject* cell, JSGlobalObject* 
 
     // 1. If Type(P) is Symbol, return OrdinaryDefineOwnProperty(O, P, Desc).
     if (propertyName.isSymbol())
-        return Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
+        RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow));
 
     // 2. Let current be ? O.[[GetOwnProperty]](P).
     PropertyDescriptor current;

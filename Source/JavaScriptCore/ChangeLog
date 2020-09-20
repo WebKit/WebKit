@@ -1,3 +1,12 @@
+2020-09-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, use RELEASE_AND_RETURN to suppress exception verification failure
+        https://bugs.webkit.org/show_bug.cgi?id=216686
+        <rdar://problem/69157632>
+
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::defineOwnProperty):
+
 2020-09-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Generator declaration should not be allowed in single statement context
