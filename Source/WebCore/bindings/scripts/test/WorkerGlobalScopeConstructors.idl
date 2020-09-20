@@ -1,5 +1,6 @@
 partial interface WorkerGlobalScope {
     attribute ExposedToWorkerAndWindowConstructor ExposedToWorkerAndWindow;
+    attribute TestDefaultToJSONFilteredByExposedConstructor TestDefaultToJSONFilteredByExposed;
     attribute TestNodeConstructor TestNode;
     attribute TestObjConstructor TestObject;
     attribute TestPromiseRejectionEventConstructor TestPromiseRejectionEvent;

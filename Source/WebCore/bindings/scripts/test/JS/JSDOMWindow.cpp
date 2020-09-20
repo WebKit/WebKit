@@ -30,6 +30,7 @@
 #include "JSDOMWrapperCache.h"
 #include "JSExposedToWorkerAndWindow.h"
 #include "JSTestConditionallyReadWrite.h"
+#include "JSTestDefaultToJSONFilteredByExposed.h"
 #include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "JSTestPromiseRejectionEvent.h"
@@ -56,6 +57,8 @@ JSC::EncodedJSValue jsDOMWindowExposedToWorkerAndWindowConstructor(JSC::JSGlobal
 bool setJSDOMWindowExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsDOMWindowTestConditionallyReadWriteConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSDOMWindowTestConditionallyReadWriteConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsDOMWindowTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSDOMWindowTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsDOMWindowTestObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -67,7 +70,7 @@ using JSDOMWindowConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
 /* Hash table */
 
-static const struct CompactHashIndex JSDOMWindowTableIndex[18] = {
+static const struct CompactHashIndex JSDOMWindowTableIndex[19] = {
     { -1, -1 },
     { 0, 16 },
     { -1, -1 },
@@ -77,15 +80,16 @@ static const struct CompactHashIndex JSDOMWindowTableIndex[18] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 3, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
     { 4, -1 },
     { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 5, -1 },
+    { -1, -1 },
     { 1, 17 },
-    { 2, -1 },
+    { 2, 18 },
+    { 3, -1 },
 };
 
 
@@ -93,12 +97,13 @@ static const HashTableValue JSDOMWindowTableValues[] =
 {
     { "ExposedToWorkerAndWindow", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowExposedToWorkerAndWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowExposedToWorkerAndWindowConstructor) } },
     { "TestConditionallyReadWrite", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestConditionallyReadWriteConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestConditionallyReadWriteConstructor) } },
+    { "TestDefaultToJSONFilteredByExposed", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestDefaultToJSONFilteredByExposedConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructor) } },
     { "TestNode", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestNodeConstructor) } },
     { "TestObject", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestObjectConstructor) } },
     { "TestPromiseRejectionEvent", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTestPromiseRejectionEventConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDOMWindowTestPromiseRejectionEventConstructor) } },
 };
 
-static const HashTable JSDOMWindowTable = { 5, 15, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
+static const HashTable JSDOMWindowTable = { 6, 15, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
 template<> JSValue JSDOMWindowConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
@@ -228,6 +233,29 @@ static inline bool setJSDOMWindowTestConditionallyReadWriteConstructorSetter(JSG
 bool setJSDOMWindowTestConditionallyReadWriteConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowTestConditionallyReadWriteConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestConditionallyReadWrite");
+}
+
+static inline JSValue jsDOMWindowTestDefaultToJSONFilteredByExposedConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestDefaultToJSONFilteredByExposed::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+EncodedJSValue jsDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSDOMWindow>::get<jsDOMWindowTestDefaultToJSONFilteredByExposedConstructorGetter>(*lexicalGlobalObject, thisValue, "TestDefaultToJSONFilteredByExposed");
+}
+
+static inline bool setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestDefaultToJSONFilteredByExposed"), strlen("TestDefaultToJSONFilteredByExposed")), value);
+}
+
+bool setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestDefaultToJSONFilteredByExposed");
 }
 
 static inline JSValue jsDOMWindowTestNodeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDOMWindow& thisObject)

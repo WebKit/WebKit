@@ -1,3 +1,40 @@
+2020-09-20  Sam Weinig  <weinig@apple.com>
+
+        Using [Exposed=Window] with [Default] object toJSON() doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=216731
+
+        Reviewed by Simon Fraser.
+
+        Fixes filtering an attribute out of [Default] toJSON operation based
+        on which which global objects it is exposed to by ensuring we always
+        pass a global object pointer accessor function to 
+        GenerateRuntimeEnableConditionalStringForExposed. For good measure,
+        we now always pass the global object object pointer to 
+        GenerateRuntimeEnableConditionalString as well so that it is always
+        explicit.
+        
+        This is needed to support filtering out Performance.navigation and
+        Performance.timing from the Performance interface's toJSON implementation
+        which will be addressed in a separate change.
+ 
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateRuntimeEnableConditionalStringForExposed):
+        (GenerateRuntimeEnableConditionalString):
+        Remove implicit global object accessor string construction by always
+        requiring it to be passed.
+
+        * bindings/scripts/test/DOMWindowConstructors.idl:
+        * bindings/scripts/test/JS/JSDOMWindow.cpp:
+        * bindings/scripts/test/JS/JSTestDefaultToJSONFilteredByExposed.cpp: Added.
+        * bindings/scripts/test/JS/JSTestDefaultToJSONFilteredByExposed.h: Added.
+        * bindings/scripts/test/JS/JSWorkerGlobalScope.cpp:
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestDefaultToJSONFilteredByExposed.idl: Added.
+        * bindings/scripts/test/WorkerGlobalScopeConstructors.idl:
+        Add new test for updated behavior. I couldn't add it to the existing
+        TestDefaultToJSON.idl test as that test requires the interface only be exposed
+        to Window to support testing EnabledBySetting.
+
 2020-09-20  Darin Adler  <darin@apple.com>
 
         Selection API: Further improvements to VisibleSelection, FrameSelection, and DOMSelection to preserve anchor and focus
