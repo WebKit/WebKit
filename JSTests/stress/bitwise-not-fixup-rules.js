@@ -1,4 +1,4 @@
-//@ if $jitTests then runBigIntEnabled else skip end
+//@ skip unless $jitTests
 
 function assert(a, e) {
     if (a !== e)

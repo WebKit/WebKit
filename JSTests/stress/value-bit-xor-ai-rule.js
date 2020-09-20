@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function assert(a, e) {
     if (a !== e)
         throw new Error("Expected: " + e + " bug got: " + a);

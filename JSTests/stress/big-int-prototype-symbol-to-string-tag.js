@@ -1,4 +1,3 @@
-//@ runBigIntEnabled
 // Original test from test262/test/built-ins/BigInt/prototype/Symbol.toStringTag.js
 
 function assert(a) {

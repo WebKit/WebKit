@@ -1,5 +1,3 @@
-//@ runDefault("--useBigInt=1")
-
 let expectedThis;
 
 function applyHandler(target, thisValue) {

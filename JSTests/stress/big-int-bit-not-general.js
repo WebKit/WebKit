@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license below.
 //

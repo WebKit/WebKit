@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function assert(v, e) {
     if (v !== e)
         throw new Error("Expected value: " + e + " but got: " + v)

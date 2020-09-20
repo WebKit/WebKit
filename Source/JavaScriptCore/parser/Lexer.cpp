@@ -1575,7 +1575,7 @@ ALWAYS_INLINE auto Lexer<T>::parseHex() -> Optional<NumberParseResult>
         shift();
     }
 
-    if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
+    if (UNLIKELY(m_current == 'n'))
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
     
     return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 16) };
@@ -1626,7 +1626,7 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> Optional<NumberParseResult>
         shift();
     }
 
-    if (UNLIKELY(Options::useBigInt() && m_current == 'n'))
+    if (UNLIKELY(m_current == 'n'))
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
@@ -1682,7 +1682,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
         shift();
     }
 
-    if (UNLIKELY(Options::useBigInt() && m_current == 'n') && !isLegacyLiteral)
+    if (UNLIKELY(m_current == 'n') && !isLegacyLiteral)
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
@@ -1742,7 +1742,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
         shift();
     }
     
-    if (UNLIKELY(Options::useBigInt() && m_current == 'n' && !isLegacyLiteral))
+    if (UNLIKELY(m_current == 'n' && !isLegacyLiteral))
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     return WTF::nullopt;

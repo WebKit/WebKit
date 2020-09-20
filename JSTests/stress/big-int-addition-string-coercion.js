@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function assert(input, expected) {
     if (input !== expected)
         throw new Error("Bad!");

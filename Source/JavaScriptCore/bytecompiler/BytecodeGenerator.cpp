@@ -1705,7 +1705,7 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
                 OpIsCellWithType::emit(this, dst, op.m_value, SymbolType);
                 return true;
             }
-            if (Options::useBigInt() && value == "bigint") {
+            if (value == "bigint") {
                 rewind();
 #if USE(BIGINT32)
                 OpIsBigInt::emit(this, dst, op.m_value);

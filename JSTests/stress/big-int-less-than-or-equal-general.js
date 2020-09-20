@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // Copyright (C) 2017 Robin Templeton. All rights reserved.
 // Copyright (C) 2018 Igalia, S.L. All rights reserved.

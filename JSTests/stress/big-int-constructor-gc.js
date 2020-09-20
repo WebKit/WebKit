@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function assert(expected, value) {
     if (expected !== value)
         throw new Error("Bad assertion. Expected: " + expected + " and value was: " + value);

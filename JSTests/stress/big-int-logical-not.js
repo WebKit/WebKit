@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function assert(a, e, n) {
     if (a !== e) {
         throw new Error("Bad logical negation for " + n);

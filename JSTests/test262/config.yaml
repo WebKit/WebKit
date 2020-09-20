@@ -1,7 +1,6 @@
 
 ---
 flags:
-  BigInt: useBigInt
   WeakRef: useWeakRefs
   FinalizationRegistry: useWeakRefs
   class-fields-public: usePublicClassFields

@@ -136,7 +136,7 @@ constexpr bool typeExposedByDefault = true;
 #define FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     macro(String, string, stringObject, StringObject, String, object, typeExposedByDefault) \
     macro(JSPromise, promise, promise, JSPromise, Promise, object, typeExposedByDefault) \
-    macro(BigInt, bigInt, bigIntObject, BigIntObject, BigInt, object, Options::useBigInt()) \
+    macro(BigInt, bigInt, bigIntObject, BigIntObject, BigInt, object, typeExposedByDefault) \
     macro(WeakObjectRef, weakObjectRef, weakObjectRef, JSWeakObjectRef, WeakRef, object, Options::useWeakRefs()) \
     macro(FinalizationRegistry, finalizationRegistry, finalizationRegistry, JSFinalizationRegistry, FinalizationRegistry, object, Options::useWeakRefs()) \
 

@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function fooAdd()
 {
     return (1n+1n) / 1;

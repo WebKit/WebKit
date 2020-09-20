@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function shouldNotThrow(script) {
   eval(script);
 }

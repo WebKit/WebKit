@@ -1,4 +1,4 @@
-//@ runDefault("--useBigInt=true", "--useDFGJIT=false")
+//@ runDefault("--useDFGJIT=false")
 
 function assert(a, message) {
     if (!a)

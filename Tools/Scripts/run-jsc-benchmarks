@@ -1763,10 +1763,6 @@ class BigIntBenchBenchmark
   def emitRunCode(plan)
     emitBenchRunCode(fullname, plan, SingleFileTimedBenchmarkParameters.new(ensureFile("BigIntBench-#{@name}", "#{BIGINTBENCH_PATH}/#{@name}.js")))
   end
-
-  def environment
-    {"JSC_useBigInt" => "true"}
-  end
 end
 
 class PrivateFieldsBenchmark

@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 let assert = {
     sameValue: function(i, e) {
         if (i !== e)

@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`expected ${expected} but got ${actual}`);

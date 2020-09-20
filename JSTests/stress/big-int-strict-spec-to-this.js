@@ -1,4 +1,4 @@
-//@ runDefault("--useBigInt=true", "--useConcurrentJIT=false")
+//@ runDefault("--useConcurrentJIT=false")
 
 function assert(a) {
     if (!a)

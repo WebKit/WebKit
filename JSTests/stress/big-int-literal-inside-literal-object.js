@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 var assert = {
     sameValue: function (input, expected) {
         if (input !== expected)

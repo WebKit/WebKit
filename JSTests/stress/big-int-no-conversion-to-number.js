@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 let message;
 try {
   1n + 1;

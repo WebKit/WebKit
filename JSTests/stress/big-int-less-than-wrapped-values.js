@@ -1,5 +1,3 @@
-//@ runBigIntEnabled
-
 function assert(v, e, m) {
     if (v !== e)
         throw new Error(m);

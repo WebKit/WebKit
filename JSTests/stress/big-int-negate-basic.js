@@ -1,4 +1,3 @@
-//@ runBigIntEnabled
 // Original tests from https://github.com/tc39/test262/blob/master/test/language/expressions/unary-minus/bigint.js
 
 function assert(a, b, message) {

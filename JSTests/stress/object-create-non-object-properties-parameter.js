@@ -1,5 +1,3 @@
-//@ requireOptions('--useBigInt=1')
-
 let toObjectablePrimitives = [true, false, 1, 2, "", Symbol(), BigInt(1)];
 
 for (let primitive of toObjectablePrimitives)
