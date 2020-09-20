@@ -1,3 +1,9 @@
+2020-09-19  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-09-19  Darin Adler  <darin@apple.com>
 
         Selection API: Update some more tests so they don't accidentally rely on flaws in WebKit's old implementation

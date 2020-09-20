@@ -233,7 +233,7 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Ti
 webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Release ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Pass Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Debug ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Crash ]
-webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Crash Pass ]
+webkit.org/b/216716 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Pass ]
 webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Failure Pass ]
 webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout ]
 webkit.org/b/210385 fast/mediastream/getUserMedia-default.html [ Crash Pass ]
@@ -796,6 +796,16 @@ webkit.org/b/216359 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# XML-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/216740 imported/w3c/web-platform-tests/domparsing/insert_adjacent_html-xhtml.xhtml [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of XML-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
