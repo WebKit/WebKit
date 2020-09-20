@@ -49,50 +49,35 @@ VisibleSelection::VisibleSelection()
 {
 }
 
-VisibleSelection::VisibleSelection(const Position& position, Affinity affinity, bool isDirectional)
-    : m_base(position)
-    , m_extent(position)
+VisibleSelection::VisibleSelection(const Position& anchor, const Position& focus, Affinity affinity, bool isDirectional)
+    : m_anchor(anchor)
+    , m_focus(focus)
     , m_affinity(affinity)
     , m_isDirectional(isDirectional)
 {
     validate();
 }
 
-VisibleSelection::VisibleSelection(const Position& base, const Position& extent, Affinity affinity, bool isDirectional)
-    : m_base(base)
-    , m_extent(extent)
-    , m_affinity(affinity)
-    , m_isDirectional(isDirectional)
+VisibleSelection::VisibleSelection(const Position& position, Affinity affinity, bool isDirectional)
+    : VisibleSelection(position, position, affinity, isDirectional)
 {
-    validate();
 }
 
 VisibleSelection::VisibleSelection(const VisiblePosition& position, bool isDirectional)
-    : m_base(position.deepEquivalent())
-    , m_extent(position.deepEquivalent())
-    , m_affinity(position.affinity())
-    , m_isDirectional(isDirectional)
+    : VisibleSelection(position.deepEquivalent(), position.affinity(), isDirectional)
 {
-    validate();
+    // FIXME: Wasteful that this re-canonicalizes, but risky to change since the VisiblePosition object could be from before a mutation and its position may no longer be canonical.
 }
 
-VisibleSelection::VisibleSelection(const VisiblePosition& base, const VisiblePosition& extent, bool isDirectional)
-    : m_base(base.deepEquivalent())
-    , m_extent(extent.deepEquivalent())
-    , m_affinity(base.affinity())
-    , m_isDirectional(isDirectional)
+VisibleSelection::VisibleSelection(const VisiblePosition& anchor, const VisiblePosition& focus, bool isDirectional)
+    : VisibleSelection(anchor.deepEquivalent(), focus.deepEquivalent(), anchor.affinity(), isDirectional)
 {
-    validate();
+    // FIXME: Wasteful that this re-canonicalizes, but risky to change since the VisiblePosition objects could be from before a mutation and their positions may no longer be canonical.
 }
 
 VisibleSelection::VisibleSelection(const SimpleRange& range, Affinity affinity, bool isDirectional)
-    : m_base(createLegacyEditingPosition(&range.startContainer(), range.startOffset()))
-    , m_extent(createLegacyEditingPosition(&range.endContainer(), range.endOffset()))
-    , m_affinity(affinity)
-    , m_isDirectional(isDirectional)
+    : VisibleSelection(makeDeprecatedLegacyPosition(range.start), makeDeprecatedLegacyPosition(range.end), affinity, isDirectional)
 {
-    ASSERT(&range.startContainer().treeScope() == &range.endContainer().treeScope());
-    validate();
 }
 
 VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
@@ -101,28 +86,51 @@ VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
     return VisibleSelection(firstPositionInNode(node), lastPositionInNode(node));
 }
 
+Position VisibleSelection::anchor() const
+{
+    return m_anchor;
+}
+
+Position VisibleSelection::focus() const
+{
+    return m_focus;
+}
+
+Position VisibleSelection::uncanonicalizedStart() const
+{
+    return m_baseIsFirst ? m_anchor : m_focus;
+}
+
+Position VisibleSelection::uncanonicalizedEnd() const
+{
+    return m_baseIsFirst ? m_focus : m_anchor;
+}
+
+Optional<SimpleRange> VisibleSelection::range() const
+{
+    return makeSimpleRange(uncanonicalizedStart().parentAnchoredEquivalent(), uncanonicalizedEnd().parentAnchoredEquivalent());
+}
+
 void VisibleSelection::setBase(const Position& position)
 {
-    m_base = position;
+    m_anchor = position;
     validate();
 }
 
 void VisibleSelection::setBase(const VisiblePosition& visiblePosition)
 {
-    m_base = visiblePosition.deepEquivalent();
-    validate();
+    setBase(visiblePosition.deepEquivalent());
 }
 
 void VisibleSelection::setExtent(const Position& position)
 {
-    m_extent = position;
+    m_focus = position;
     validate();
 }
 
 void VisibleSelection::setExtent(const VisiblePosition& visiblePosition)
 {
-    m_extent = visiblePosition.deepEquivalent();
-    validate();
+    setExtent(visiblePosition.deepEquivalent());
 }
 
 Optional<SimpleRange> VisibleSelection::firstRange() const
@@ -210,39 +218,24 @@ void VisibleSelection::appendTrailingWhitespace()
 
 void VisibleSelection::setBaseAndExtentToDeepEquivalents()
 {
-    // Move the selection to rendered positions, if possible.
-    bool baseAndExtentEqual = m_base == m_extent;
-    if (m_base.isNotNull()) {
-        m_base = VisiblePosition(m_base, m_affinity).deepEquivalent();
-        if (baseAndExtentEqual)
-            m_extent = m_base;
-    }
-    if (m_extent.isNotNull() && !baseAndExtentEqual)
-        m_extent = VisiblePosition(m_extent, m_affinity).deepEquivalent();
+    // If only one of anchor and focus is null, convert to a caret selection.
+    // FIXME: Seems like a better rule would be to convert to no selection.
+    if (m_anchor.isNull())
+        m_anchor = m_focus;
+    if (m_focus.isNull())
+        m_focus = m_anchor;
 
-    // Make sure we do not have a dangling base or extent.
-    if (m_base.isNull() && m_extent.isNull())
-        m_baseIsFirst = true;
-    else if (m_base.isNull()) {
-        m_base = m_extent;
-        m_baseIsFirst = true;
-    } else if (m_extent.isNull()) {
+    m_base = VisiblePosition(m_anchor, m_affinity).deepEquivalent();
+    if (m_anchor == m_focus)
         m_extent = m_base;
-        m_baseIsFirst = true;
-    } else
-        m_baseIsFirst = m_base <= m_extent;
+    else
+        m_extent = VisiblePosition(m_focus, m_affinity).deepEquivalent();
+
+    m_baseIsFirst = m_base <= m_extent;
 }
 
-void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(TextGranularity granularity)
+void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity granularity)
 {
-    if (m_baseIsFirst) {
-        m_start = m_base;
-        m_end = m_extent;
-    } else {
-        m_start = m_extent;
-        m_end = m_base;
-    }
-
     switch (granularity) {
         case TextGranularity::CharacterGranularity:
             // Don't do any expansion.
@@ -286,19 +279,16 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             }
                 
             m_end = end.deepEquivalent();
+
             // End must not be before start.
-            if (m_start.deprecatedNode() == m_end.deprecatedNode() && m_start.deprecatedEditingOffset() > m_end.deprecatedEditingOffset()) {
-                Position swap(m_start);
-                m_start = m_end;    
-                m_end = swap;    
-            }
+            if (m_start.deprecatedNode() == m_end.deprecatedNode() && m_start.deprecatedEditingOffset() > m_end.deprecatedEditingOffset())
+                std::swap(m_start, m_end);
             break;
         }
-        case TextGranularity::SentenceGranularity: {
+        case TextGranularity::SentenceGranularity:
             m_start = startOfSentence(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfSentence(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
-        }
         case TextGranularity::LineGranularity: {
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             VisiblePosition end = endOfLine(VisiblePosition(m_end, m_affinity));
@@ -384,27 +374,47 @@ void VisibleSelection::updateSelectionType()
 void VisibleSelection::validate(TextGranularity granularity)
 {
     setBaseAndExtentToDeepEquivalents();
-    setStartAndEndFromBaseAndExtentRespectingGranularity(granularity);
+
+    m_start = m_baseIsFirst ? m_base : m_extent;
+    m_end = m_baseIsFirst ? m_extent : m_base;
+
+    auto startBeforeAdjustments = m_start;
+    auto endBeforeAdjustments = m_end;
+
+    adjustSelectionRespectingGranularity(granularity);
     adjustSelectionToAvoidCrossingShadowBoundaries();
     adjustSelectionToAvoidCrossingEditingBoundaries();
     updateSelectionType();
+
+    bool shouldUpdateAnchor = m_start != startBeforeAdjustments;
+    bool shouldUpdateFocus = m_end != endBeforeAdjustments;
 
     if (isRange()) {
         // "Constrain" the selection to be the smallest equivalent range of nodes.
         // This is a somewhat arbitrary choice, but experience shows that it is
         // useful to make to make the selection "canonical" (if only for
         // purposes of comparing selections). This is an ideal point of the code
-        // to do this operation, since all selection changes that result in a RANGE 
+        // to do this operation, since all selection changes that result in a RANGE
         // come through here before anyone uses it.
         // FIXME: Canonicalizing is good, but haven't we already done it (when we
         // set these two positions to VisiblePosition deepEquivalent()s above)?
         m_start = m_start.downstream();
         m_end = m_end.upstream();
 
-        // FIXME: Position::downstream() or Position::upStream() might violate editing boundaries
-        // if an anchor node has a Shadow DOM. So we adjust selection to avoid crossing editing
-        // boundaries again. See https://bugs.webkit.org/show_bug.cgi?id=87463
+        // Position::downstream() or Position::upstream() might violate editing boundaries
+        // if an anchor node has a Shadow DOM even though they should not. But because this
+        // happens in practice, adjust selection to avoid crossing editing boundaries again.
+        // See https://bugs.webkit.org/show_bug.cgi?id=87463.
         adjustSelectionToAvoidCrossingEditingBoundaries();
+    }
+
+    if (shouldUpdateAnchor) {
+        m_anchor = m_baseIsFirst ? m_start : m_end;
+        m_base = m_anchor;
+    }
+    if (shouldUpdateFocus) {
+        m_focus = m_baseIsFirst ? m_end : m_start;
+        m_extent = m_focus;
     }
 }
 
@@ -416,9 +426,10 @@ void VisibleSelection::validate(TextGranularity granularity)
 // class for editing to use that can manipulate selections that are not currently valid.
 void VisibleSelection::setWithoutValidation(const Position& base, const Position& extent)
 {
-    ASSERT(!base.isNull());
-    ASSERT(!extent.isNull());
+    ASSERT(base.isNull() == extent.isNull());
     ASSERT(m_affinity == Affinity::Downstream);
+    m_anchor = base;
+    m_focus = extent;
     m_base = base;
     m_extent = extent;
     m_baseIsFirst = base <= extent;
@@ -486,7 +497,7 @@ static bool isInUserAgentShadowRootOrHasEditableShadowAncestor(Node& node)
 
 void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
 {
-    if (m_base.isNull() || m_start.isNull() || m_end.isNull())
+    if (m_start.isNull() || m_end.isNull())
         return;
 
     auto startNode = makeRef(*m_start.anchorNode());
@@ -500,6 +511,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
             return;
     }
 
+    // Correct the focus if necessary.
     if (m_baseIsFirst) {
         m_extent = adjustPositionForEnd(m_end, m_start.containerNode());
         m_end = m_extent;
@@ -507,11 +519,12 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
         m_extent = adjustPositionForStart(m_start, m_end.containerNode());
         m_start = m_extent;
     }
+    m_focus = m_extent;
 }
 
 void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
 {
-    if (m_base.isNull() || m_start.isNull() || m_end.isNull())
+    if (m_start.isNull() || m_end.isNull())
         return;
 
     // Early return in the caret case (the state hasn't actually been set yet, so we can't use isCaret()) to avoid the
@@ -575,12 +588,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
             VisiblePosition previous(p);
 
             if (previous.isNull()) {
-                // The selection crosses an Editing boundary.  This is a
-                // programmer error in the editing code.  Happy debugging!
-                ASSERT_NOT_REACHED();
-                m_base = Position();
-                m_extent = Position();
-                validate();
+                *this = { };
                 return;
             }
             m_end = previous.deepEquivalent();
@@ -604,21 +612,18 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
             VisiblePosition next(p);
             
             if (next.isNull()) {
-                // The selection crosses an Editing boundary.  This is a
-                // programmer error in the editing code.  Happy debugging!
-                ASSERT_NOT_REACHED();
-                m_base = Position();
-                m_extent = Position();
-                validate();
+                *this = { };
                 return;
             }
             m_start = next.deepEquivalent();
         }
     }
     
-    // Correct the extent if necessary.
-    if (baseEditableAncestor != lowestEditableAncestor(m_extent.containerNode()))
+    // Correct the focus if necessary.
+    if (baseEditableAncestor != lowestEditableAncestor(m_extent.containerNode())) {
         m_extent = m_baseIsFirst ? m_end : m_start;
+        m_focus = m_extent;
+    }
 }
 
 bool VisibleSelection::isContentEditable() const

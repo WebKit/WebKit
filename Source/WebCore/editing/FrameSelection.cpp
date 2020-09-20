@@ -2786,10 +2786,15 @@ static bool containsEndpoints(const WeakPtr<Document>& document, const Range& li
     return document && document->contains(liveRange.startContainer());
 }
 
+bool FrameSelection::isInDocumentTree() const
+{
+    return containsEndpoints(m_document, m_selection.range());
+}
+
 RefPtr<Range> FrameSelection::associatedLiveRange()
 {
     if (!m_associatedLiveRange) {
-        if (auto range = m_selection.firstRange(); containsEndpoints(m_document, range)) {
+        if (auto range = m_selection.range(); containsEndpoints(m_document, range)) {
             m_associatedLiveRange = createLiveRange(*range);
             m_associatedLiveRange->didAssociateWithSelection();
         }
@@ -2816,14 +2821,17 @@ void FrameSelection::updateFromAssociatedLiveRange()
     ASSERT(m_associatedLiveRange);
     if (!containsEndpoints(m_document, *m_associatedLiveRange))
         disassociateLiveRange();
-    else
-        setSelection(makeSimpleRange(*m_associatedLiveRange));
-    // FIXME: Normalization done by setSelection will be visible next time updateAssociatedLiveRange is called. Instead the Selection API specification calls for allowing non-normalized selection ranges.
+    else {
+        // Don't use VisibleSelection's constructor that takes a SimpleRange, because it uses makeDeprecatedLegacyPosition instead of makeContainerOffsetPosition.
+        auto start = makeContainerOffsetPosition(&m_associatedLiveRange->startContainer(), m_associatedLiveRange->startOffset());
+        auto end = makeContainerOffsetPosition(&m_associatedLiveRange->endContainer(), m_associatedLiveRange->endOffset());
+        setSelection({ start, end });
+    }
 }
 
 void FrameSelection::updateAssociatedLiveRange()
 {
-    auto range = m_selection.firstRange();
+    auto range = m_selection.range();
     if (!containsEndpoints(m_document, range)) {
         // The selection was cleared or is now within a shadow tree.
         disassociateLiveRange();

@@ -39,27 +39,40 @@ public:
 
     static constexpr auto defaultAffinity = VisiblePosition::defaultAffinity;
 
+    VisibleSelection(const Position& anchor, const Position& focus, Affinity = defaultAffinity, bool isDirectional = false);
+
     VisibleSelection(const Position&, Affinity, bool isDirectional = false);
-    VisibleSelection(const Position&, const Position&, Affinity = defaultAffinity, bool isDirectional = false);
     WEBCORE_EXPORT VisibleSelection(const SimpleRange&, Affinity = defaultAffinity, bool isDirectional = false);
     WEBCORE_EXPORT VisibleSelection(const VisiblePosition&, bool isDirectional = false);
-    WEBCORE_EXPORT VisibleSelection(const VisiblePosition&, const VisiblePosition&, bool isDirectional = false);
+    WEBCORE_EXPORT VisibleSelection(const VisiblePosition& anchor, const VisiblePosition& focus, bool isDirectional = false);
 
     WEBCORE_EXPORT static VisibleSelection selectionFromContentsOfNode(Node*);
 
     void setAffinity(Affinity affinity) { m_affinity = affinity; }
     Affinity affinity() const { return m_affinity; }
 
+    // FIXME: Move to the terms "focus" and "anchor" instead of "base" and "extent".
+
     void setBase(const Position&);
     void setBase(const VisiblePosition&);
     void setExtent(const Position&);
     void setExtent(const VisiblePosition&);
 
+    // These functions return the values that were passed in, without the canonicalization done by VisiblePosition.
+    // FIXME: When we expand granularity, we canonicalize as a side effect, so expanded values have been made canonical.
+    // FIXME: Replace start/range/base/end/firstRange with these, renaming these to the shorter names.
+    Position uncanonicalizedStart() const;
+    Position uncanonicalizedEnd() const;
+    Position anchor() const;
+    Position focus() const;
+    WEBCORE_EXPORT Optional<SimpleRange> range() const;
+
+    // FIXME: Rename these to include the word "canonical" or remove.
     Position base() const { return m_base; }
     Position extent() const { return m_extent; }
     Position start() const { return m_start; }
     Position end() const { return m_end; }
-    
+
     VisiblePosition visibleStart() const { return VisiblePosition(m_start, isRange() ? Affinity::Downstream : affinity()); }
     VisiblePosition visibleEnd() const { return VisiblePosition(m_end, isRange() ? Affinity::Upstream : affinity()); }
     VisiblePosition visibleBase() const { return VisiblePosition(m_base, isRange() ? (isBaseFirst() ? Affinity::Upstream : Affinity::Downstream) : affinity()); }
@@ -84,17 +97,19 @@ public:
 
     WEBCORE_EXPORT bool expandUsingGranularity(TextGranularity granularity);
 
+    // FIXME: Rename to include the word "canonical" and remove the word "first" or remove.
     // We don't yet support multi-range selections, so we only ever have one range to return.
     WEBCORE_EXPORT Optional<SimpleRange> firstRange() const;
 
-    // FIXME: Most callers probably don't want this function, and should use firstRange instead.
-    // toNormalizedRange is like firstRange, but contracts the range around text and moves the caret upstream before returning the range.
+    // FIXME: Most callers probably don't want this function, and should use range instead.
+    // This function contracts the range around text and moves the caret upstream before returning the range.
     WEBCORE_EXPORT Optional<SimpleRange> toNormalizedRange() const;
 
     WEBCORE_EXPORT Element* rootEditableElement() const;
     WEBCORE_EXPORT bool isContentEditable() const;
     WEBCORE_EXPORT bool hasEditableStyle() const;
     WEBCORE_EXPORT bool isContentRichlyEditable() const;
+
     // Returns a shadow tree node for legacy shadow trees, a child of the
     // ShadowRoot node for new shadow trees, or 0 for non-shadow trees.
     Node* nonBoundaryShadowTreeRootNode() const;
@@ -117,20 +132,24 @@ private:
 
     // Support methods for validate()
     void setBaseAndExtentToDeepEquivalents();
-    void setStartAndEndFromBaseAndExtentRespectingGranularity(TextGranularity);
+    void adjustSelectionRespectingGranularity(TextGranularity);
     void adjustSelectionToAvoidCrossingShadowBoundaries();
     void adjustSelectionToAvoidCrossingEditingBoundaries();
     void updateSelectionType();
 
-    // We store these as Positions because VisibleSelection is used to store values in
+    // We store only Positions because VisibleSelection is used to store values in
     // editing commands for use when undoing the command. We need to be able to store
     // a selection that, while currently invalid, will be valid once the changes are undone.
 
-    Position m_base; // Where the first click happened.
-    Position m_extent; // Where the end click happened.
-
-    Position m_start; // Leftmost position when expanded to respect granularity.
-    Position m_end; // Rightmost position when expanded to respect granularity.
+    // FIXME: Consider doing canonicalization only as part of editing operations, and keeping all selection endpoints non-canonical outside of that code.
+    // FIXME: Rename m_base to m_canonicalAnchor.
+    // FIXME: Rename m_extent to m_canonicalFocus.
+    Position m_anchor; // Where the first click happened.
+    Position m_focus; // Where the end click/release happened.
+    Position m_base; // Anchor, canonical, not yet expended to respect granularity.
+    Position m_extent; // Focus, canonical, but not expended to respect granularity.
+    Position m_start; // First of anchor and focus, caonicalized and expanded to respect granularity.
+    Position m_end; // Last of anchor and focus, caonicalized and expanded to respect granularity.
 
     Affinity m_affinity { defaultAffinity };
 

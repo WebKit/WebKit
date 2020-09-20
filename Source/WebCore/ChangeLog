@@ -1,3 +1,103 @@
+2020-09-20  Darin Adler  <darin@apple.com>
+
+        Selection API: Further improvements to VisibleSelection, FrameSelection, and DOMSelection to preserve anchor and focus
+        https://bugs.webkit.org/show_bug.cgi?id=216739
+
+        Reviewed by Ryosuke Niwa.
+
+        If done correctly, these changes should have almost no effect unless live range selection
+        is enabled. This adds a feature where VisibleSelection tracks the original points,
+        before the VisiblePosition-style canonicalization. It also starts a transition from
+        the base/extent terminology to the slightly-easier-to-understand anchor/focus terminology
+        that is used in the selection specification. New functions name them anchor and focus,
+        even though we still have some old ones that call them base and extent. In addition,
+        made some other small related improvements to live range selection mode, without changing
+        behavior when not in that mode. Have been testing these locally by turning on that mode
+        and running various tests.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::isInDocumentTree const): Added. Used by DOMSelection to
+        correctly handle cases where the selection is in a shadow tree without requiring it
+        actually create the associated live range just to query.
+        (WebCore::FrameSelection::associatedLiveRange): Use the new VisibleSelection::range,
+        which gives us non-canonicalized points, rather than the deprecated
+        VisibleSelection::firstRange, which we will eventually be renaming or deleting.
+        (WebCore::FrameSelection::updateFromAssociatedLiveRange): Use
+        makeContainerOffsetPosition instead of implicitly using makeDeprecatedLegacyPosition.
+        Also removed the FIXME about normalization of endpoints, which is what this patch
+        mostly addresses; no need to track with a comment now.
+        (WebCore::FrameSelection::updateAssociatedLiveRange): Use VisibleSelection::range
+        for the same reason as above.
+
+        * editing/FrameSelection.h: Added isInDocumentTree.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::VisibleSelection): Updated the primary constructor to set
+        m_anchor/focus and let the validate function set m_base/extent/start/end/baseIsFirst.
+        Changed most other constructors to call that primary one.
+        (WebCore::VisibleSelection::anchor const): Added. This is a non-canonicalized position.
+        (WebCore::VisibleSelection::focus const): Ditto.
+        (WebCore::VisibleSelection::uncanonicalizedStart const): Added. This non-canonicalized
+        version of start is used by new DOMSelection code, but eventually should be used
+        elsewhere as well, and we may eventually eliminate the canonicalized version.
+        (WebCore::VisibleSelection::uncanonicalizedEnd const): Ditto.
+        (WebCore::VisibleSelection::range const): Added. This non-canonicalized version of
+        firstRange has many of the same considerations as the other four functions above.
+        (WebCore::VisibleSelection::setBase): Set m_anchor instead of m_base. Eventually we
+        will want to rename this function, too, but there is no need to do that now.
+        (WebCore::VisibleSelection::setExtent): Ditto.
+        (WebCore::VisibleSelection::setBaseAndExtentToDeepEquivalents): Rewrote to take
+        m_anchor and m_focus as inputs and now m_base and m_extent are pure outputs.
+        May want to rename this later, because "deep equivalents" is a funny way to say
+        that this function sets base and extent to canonicalized values.
+        (WebCore::VisibleSelection::adjustSelectionRespectingGranularity): Renamed from
+        setStartAndEndFromBaseAndExtentRespectingGranularity. This now takes m_start/end
+        as input as well as output, because the validate function needs to check
+        if the function changes m_start/end so it can update m_anchor/focus. Also did a tiny
+        bit of refactoring to use std::swap.
+        (WebCore::VisibleSelection::validate): Refined the code to handle canonicalization
+        differently from expanding due to granularity. Canonicalization is done preserving
+        the original m_anchor/focus as it mostly always has been. But expansion due to
+        granularity now changes m_anchor/focus/base/extent rather than just m_start/end.
+        This makes sense because granularity changes actually affect what is selected,
+        while canonicalization just changes how the selection is expressed and tracked.
+        (WebCore::VisibleSelection::setWithoutValidation): Set m_anchor/focus. In the future,
+        we can probably get rid of this eventually, because the "validation" talked about
+        here is the unwanted canonicalization. But that's a refinement for the future.
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries):
+        Update m_focus, not just m_extent, if we have to adjust. Also removed an unnnecessary
+        null check from the start of the function.
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries): Ditto.
+        Also removed the assertions because these situations can indeed arise and it's not
+        necessarily an indication of a bug in editing code.
+
+        * editing/VisibleSelection.h: Rearranged constructors to make it slightly more clear
+        which is the main one and that the others are simply convenience shorthands. Might
+        want to come back later and remove some unused ones. Added uncanonicalizedStart,
+        uncanonicalizedEnd, anchor, focus, and range. Renamed the private function called
+        setStartAndEndFromBaseAndExtentRespectingGranularity to the new name
+        adjustSelectionRespectingGranularity. Added m_anchor and m_focus and refined the
+        comments about the position data members. We should eventually be able to cut down
+        on the number of these again, but it's fine to have two more for now.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::range const): Use range rather than firstRange when live
+        range selection is enabled, for proper round-tripping of selection endpoints,
+        unaffected by canonicalization. The other changes below are for the same reason.
+        (WebCore::DOMSelection::anchorPosition const): Use anchor.
+        (WebCore::DOMSelection::focusPosition const): Use focus.
+        (WebCore::DOMSelection::basePosition const): Use anchor.
+        (WebCore::DOMSelection::extentPosition const): Use focus.
+        (WebCore::DOMSelection::type const): Use isInDocumentTree and range rather than
+        isNone/isCaret/isRange when live range selection is enabled, because this needs
+        to report "Caret" when the range is not collapsed, even if the canonicalized
+        range is collapsed and "None" when the selection is in a shadow tree.
+        (WebCore::DOMSelection::rangeCount const): Use isInDocumentTree to check if
+        there is a selection rather than isNone to correctly handle the shadow tree case.
+        (WebCore::DOMSelection::collapseToEnd): Use uncanonicalizedEnd.
+        (WebCore::DOMSelection::collapseToStart): Use uncanonicalizedStart.
+        (WebCore::DOMSelection::containsNode const): Updated the comment for clarity.
+
 2020-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         [LFC Display] Move LFC Display infrastructure files into a new 'display' directory

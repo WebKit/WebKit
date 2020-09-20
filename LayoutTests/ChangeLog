@@ -1,3 +1,18 @@
+2020-09-20  Darin Adler  <darin@apple.com>
+
+        Selection API: Further improvements to VisibleSelection, FrameSelection, and DOMSelection to preserve anchor and focus
+        https://bugs.webkit.org/show_bug.cgi?id=216739
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/execCommand/insert-list-nested-with-orphaned-expected.txt: This test
+        result reflected incorrrect behavior where the selection changed from a range
+        to a caret in a certain unusual case. The new behavior of leaving the text
+        selected is consistent with how the command works in normal cases, and was an
+        accidental progression from the improvements to the selection code. Was able
+        to reproduce this all in Safari and after experimenting with different
+        selections, it's clear this is an improvement.
+
 2020-09-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] InlineFormattingState should not store display lines and runs

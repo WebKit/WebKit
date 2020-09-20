@@ -251,6 +251,7 @@ public:
     bool shouldShowBlockCursor() const { return m_shouldShowBlockCursor; }
     void setShouldShowBlockCursor(bool);
 
+    bool isInDocumentTree() const;
     RefPtr<Range> associatedLiveRange();
     void associateLiveRange(Range&);
     void disassociateLiveRange();

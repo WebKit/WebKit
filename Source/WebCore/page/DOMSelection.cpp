@@ -69,7 +69,9 @@ Optional<SimpleRange> DOMSelection::range() const
     auto frame = this->frame();
     if (!frame)
         return WTF::nullopt;
-    auto range = frame->selection().selection().firstRange();
+    auto range = frame->settings().liveRangeSelectionEnabled()
+        ? frame->selection().selection().range()
+        : frame->selection().selection().firstRange();
     if (!range || range->start.container->isInShadowTree())
         return WTF::nullopt;
     return range;
@@ -80,6 +82,8 @@ Position DOMSelection::anchorPosition() const
     auto frame = this->frame();
     if (!frame)
         return { };
+    if (frame->settings().liveRangeSelectionEnabled())
+        return frame->selection().selection().anchor().parentAnchoredEquivalent();
     auto& selection = frame->selection().selection();
     return (selection.isBaseFirst() ? selection.start() : selection.end()).parentAnchoredEquivalent();
 }
@@ -89,23 +93,31 @@ Position DOMSelection::focusPosition() const
     auto frame = this->frame();
     if (!frame)
         return { };
+    if (frame->settings().liveRangeSelectionEnabled())
+        return frame->selection().selection().focus().parentAnchoredEquivalent();
     auto& selection = frame->selection().selection();
     return (selection.isBaseFirst() ? selection.end() : selection.start()).parentAnchoredEquivalent();
 }
 
 Position DOMSelection::basePosition() const
 {
+    // FIXME: Remove this once liveRangeSelectionEnabled is always on, since base and anchor should be the same thing.
     auto frame = this->frame();
     if (!frame)
         return { };
+    if (frame->settings().liveRangeSelectionEnabled())
+        return frame->selection().selection().anchor().parentAnchoredEquivalent();
     return frame->selection().selection().base().parentAnchoredEquivalent();
 }
 
 Position DOMSelection::extentPosition() const
 {
+    // FIXME: Remove this once liveRangeSelectionEnabled is always on, since extent and focus should be the same thing.
     auto frame = this->frame();
     if (!frame)
         return { };
+    if (frame->settings().liveRangeSelectionEnabled())
+        return frame->selection().selection().focus().parentAnchoredEquivalent();
     return frame->selection().selection().extent().parentAnchoredEquivalent();
 }
 
@@ -164,6 +176,8 @@ String DOMSelection::type() const
     if (!frame)
         return "None"_s;
     auto& selection = frame->selection();
+    if (frame->settings().liveRangeSelectionEnabled())
+        return !selection.isInDocumentTree() ? "None"_s : range()->collapsed() ? "Caret"_s : "Range"_s;
     if (selection.isNone())
         return "None"_s;
     if (selection.isCaret())
@@ -174,6 +188,8 @@ String DOMSelection::type() const
 unsigned DOMSelection::rangeCount() const
 {
     auto frame = this->frame();
+    if (frame->settings().liveRangeSelectionEnabled())
+        return frame && frame->selection().isInDocumentTree();
     return !frame || frame->selection().isNone() ? 0 : 1;
 }
 
@@ -210,8 +226,11 @@ ExceptionOr<void> DOMSelection::collapseToEnd()
     auto& selection = frame->selection();
     if (selection.isNone())
         return Exception { InvalidStateError };
-    selection.disassociateLiveRange();
-    selection.moveTo(selection.selection().end(), Affinity::Downstream);
+    if (frame->settings().liveRangeSelectionEnabled()) {
+        selection.disassociateLiveRange();
+        selection.moveTo(selection.selection().uncanonicalizedEnd(), Affinity::Downstream);
+    } else
+        selection.moveTo(selection.selection().end(), Affinity::Downstream);
     return { };
 }
 
@@ -223,8 +242,11 @@ ExceptionOr<void> DOMSelection::collapseToStart()
     auto& selection = frame->selection();
     if (selection.isNone())
         return Exception { InvalidStateError };
-    selection.disassociateLiveRange();
-    selection.moveTo(selection.selection().start(), Affinity::Downstream);
+    if (frame->settings().liveRangeSelectionEnabled()) {
+        selection.disassociateLiveRange();
+        selection.moveTo(selection.selection().uncanonicalizedStart(), Affinity::Downstream);
+    } else
+        selection.moveTo(selection.selection().start(), Affinity::Downstream);
     return { };
 }
 
@@ -405,7 +427,7 @@ void DOMSelection::deleteFromDocument()
 
 bool DOMSelection::containsNode(Node& node, bool allowPartial) const
 {
-    // FIXME: This is wrong, and was added to work around anomalies caused when we canonicalize selection endpoints. We should fix that and remove this.
+    // FIXME: The rule implemented here for text nodes is wrong, and was added to work around anomalies caused when we canonicalize selection endpoints.
     if (node.isTextNode() && !node.document().settings().liveRangeSelectionEnabled())
         allowPartial = true;
     auto range = this->range();
