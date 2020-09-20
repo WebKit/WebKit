@@ -1,3 +1,26 @@
+2020-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        [LFC Display] Move LFC Display infrastructure files into a new 'display' directory
+        https://bugs.webkit.org/show_bug.cgi?id=216747
+
+        Reviewed by Zalan Bujtas.
+
+        WebCore/Source/display will become the home for all the LFC painting code; move
+        DisplayView and DisplayLayerController into it.
+        
+        Also fix some unified build include issues.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/DisplayLayerController.cpp: Renamed from Source/WebCore/layout/display/DisplayLayerController.cpp.
+        * display/DisplayLayerController.h: Renamed from Source/WebCore/layout/display/DisplayLayerController.h.
+        * display/DisplayView.cpp: Renamed from Source/WebCore/layout/display/DisplayView.cpp.
+        * display/DisplayView.h: Renamed from Source/WebCore/layout/display/DisplayView.h.
+        * layout/flexformatting/FlexFormattingContext.cpp:
+        * layout/inlineformatting/InlineLineBox.cpp:
+
 2020-09-20  Darin Adler  <darin@apple.com>
 
         Selection API: Fix selectAllChilden to return InvalidNodeTypeError when passed a DocumentType node

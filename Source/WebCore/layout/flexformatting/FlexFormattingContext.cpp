@@ -31,6 +31,7 @@
 #include "FlexFormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutChildIterator.h"
+#include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

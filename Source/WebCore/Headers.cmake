@@ -361,6 +361,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSParserToken.h
     css/parser/CSSParserTokenRange.h
 
+    display/DisplayLayerController.h
+    display/DisplayView.h
+
     dom/ActiveDOMCallback.h
     dom/ActiveDOMObject.h
     dom/Attr.h
@@ -692,9 +695,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     layout/LayoutUnits.h
     layout/MarginTypes.h
-
-    layout/display/DisplayLayerController.h
-    layout/display/DisplayView.h
 
     layout/displaytree/DisplayBox.h
     layout/displaytree/DisplayInlineContent.h
