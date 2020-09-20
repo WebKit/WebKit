@@ -37,7 +37,7 @@ function Constructor(executor) {
     assert.sameValue(values[1], "p2-fulfill", "values[1]");
     assert.sameValue(values[2], "p3-fulfill", "values[2]");
   }
-  executor(resolve, $ERROR);
+  executor(resolve, Test262Error.thrower);
 }
 Constructor.resolve = function(v) {
   return v;

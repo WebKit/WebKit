@@ -29,8 +29,6 @@ for (var i = 2; i <= 36; i++) {
       num = num + (i + (k0 - k) - 1) * pow;
       pow = pow * i;
     }
-    if (parseInt(str, i) !== num) {
-      $ERROR('#' + i + '.' + j + ' : ');
-    }
+    assert.sameValue(parseInt(str, i), num, 'parseInt("str + R_digit2[k - 2], i) must return the value of num');
   }
 }

@@ -10,10 +10,10 @@ locale: [en-US]
 
 const date = new Date("1886-05-01T14:12:47Z");
 const dateOptions = [
-  ["full", "Saturday, May 1, 1886", " at "],
-  ["long", "May 1, 1886", " at "],
-  ["medium", "May 1, 1886", ", "],
-  ["short", "5/1/86", ", "],
+  ["full", "Saturday, May 1, 1886"],
+  ["long", "May 1, 1886"],
+  ["medium", "May 1, 1886"],
+  ["short", "5/1/86"],
 ];
 
 const timeOptions = [
@@ -84,18 +84,20 @@ for (const [timeStyle, expected12, expected24] of timeOptions) {
   }
 }
 
-for (const [dateStyle, expectedDate, connector] of dateOptions) {
+for (const [dateStyle, expectedDate] of dateOptions) {
   for (const [timeStyle, expectedTime] of timeOptions) {
     const dtf = new Intl.DateTimeFormat("en-US", {
       dateStyle,
       timeStyle,
       timeZone: "UTC",
     });
+    const result1 = [expectedDate, ", ", expectedTime].join("");
+    const result2 = [expectedDate, " at ", expectedTime].join("");
 
     const dateString = dtf.format(date);
     assert.sameValue(
-      dateString,
-      [expectedDate, connector, expectedTime].join(""),
+      [result1, result2].includes(dateString),
+      true,
       `Result for date=${dateStyle} and time=${timeStyle}`
     );
   }

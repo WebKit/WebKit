@@ -1,5 +1,12 @@
 2020-09-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Test262 update
+        https://bugs.webkit.org/show_bug.cgi?id=216753
+
+        Reviewed by Darin Adler.
+
+2020-09-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Drop Options::useBigInt
         https://bugs.webkit.org/show_bug.cgi?id=216743
 

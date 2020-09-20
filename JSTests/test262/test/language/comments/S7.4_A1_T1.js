@@ -8,34 +8,27 @@ description: Create comments with any code
 ---*/
 
 //CHECK#1
-// $ERROR('#1: Correct interpretation single line comments');
+// Test262Error.thrower('#1: Correct interpretation single line comments');
 
 //CHECK#2
 var x = 0;
-// x = 1;
-if (x !== 0) {
-  $ERROR('#2: var x = 0; // x = 1; x === 0. Actual: ' + (x));
-}
+assert.sameValue(x, 0, 'The value of `x` is 0');
 
 //CHECK#3
 var // y = 1; 
 y;
-if (y !== undefined) {
-  $ERROR('#3: var // y = 1; \\n y; y === undefined. Actual: ' + (y));
-}  
+assert.sameValue(y, undefined, 'The value of `y` is expected to equal `undefined`');
 
 //CHECK#4
-//$ERROR('#4: Correct interpretation single line comments') //$ERROR('#4: Correct interpretation single line comments'); //
+//Test262Error.thrower('#4: Correct interpretation single line comments') //Test262Error.thrower('#4: Correct interpretation single line comments'); //
 
 ////CHECK#5
 //var x = 1;
 //if (x === 1) {
-//  $ERROR('#5: Correct interpretation single line comments');
+//  Test262Error.thrower('#5: Correct interpretation single line comments');
 //}
 
 //CHECK#6
 //var this.y = 1; 
 this.y++;
-if (isNaN(y) !== true) {
-  $ERROR('#6: //var this.y = 1; \\n this.y++; y === Not-a-Number. Actual: ' + (y));
-}
+assert.sameValue(isNaN(y), true, 'isNaN(y) returns true');

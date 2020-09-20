@@ -7,12 +7,9 @@ esid: sec-parseint-string-radix
 description: Checking for undefined and null
 ---*/
 
-//CHECK#1
-if (parseInt("11", undefined) !== parseInt("11", 10)) {
-  $ERROR('#1: parseInt("11", undefined) === parseInt("11", 10). Actual: ' + (parseInt("11", undefined)));
-}
-
-//CHECK#2
-if (parseInt("11", null) !== parseInt("11", 10)) {
-  $ERROR('#2: parseInt("11", null) === parseInt("11", 10). Actual: ' + (parseInt("11", null)));
-}
+assert.sameValue(
+  parseInt("11", undefined),
+  parseInt("11", 10),
+  'parseInt("11", undefined) must return the same value returned by parseInt("11", 10)'
+);
+assert.sameValue(parseInt("11", null), parseInt("11", 10), 'parseInt("11", null) must return the same value returned by parseInt("11", 10)');

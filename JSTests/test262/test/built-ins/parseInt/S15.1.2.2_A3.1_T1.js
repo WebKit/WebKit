@@ -7,10 +7,7 @@ esid: sec-parseint-string-radix
 description: Checking for boolean primitive
 ---*/
 
-//CHECK#1
-if (parseInt("11", false) !== parseInt("11", 10)) {
-  $ERROR('#1: parseInt("11", false) === parseInt("11", 10). Actual: ' + (parseInt("11", false)));
-}
+assert.sameValue(parseInt("11", false), parseInt("11", 10), 'parseInt("11", false) must return the same value returned by parseInt("11", 10)');
 
 //CHECK#2
-assert.sameValue(parseInt("11", true), NaN);
+assert.sameValue(parseInt("11", true), NaN, 'parseInt("11", true) must return NaN');

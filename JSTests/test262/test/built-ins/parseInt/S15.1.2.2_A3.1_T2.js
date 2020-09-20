@@ -7,17 +7,6 @@ esid: sec-parseint-string-radix
 description: Checking for string primitive
 ---*/
 
-//CHECK#1
-if (parseInt("11", "2") !== parseInt("11", 2)) {
-  $ERROR('#1: parseInt("11", "2") === parseInt("11", 2). Actual: ' + (parseInt("11", "2")));
-}
-
-//CHECK#2
-if (parseInt("11", "0") !== parseInt("11", 10)) {
-  $ERROR('#2: parseInt("11", "0") === parseInt("11", 10). Actual: ' + (parseInt("11", "0")));
-}
-
-//CHECK#3
-if (parseInt("11", "") !== parseInt("11", 10)) {
-  $ERROR('#3: parseInt("11", "") === parseInt("11", 10). Actual: ' + (parseInt("11", "")));
-}
+assert.sameValue(parseInt("11", "2"), parseInt("11", 2), 'parseInt("11", "2") must return the same value returned by parseInt("11", 2)');
+assert.sameValue(parseInt("11", "0"), parseInt("11", 10), 'parseInt("11", "0") must return the same value returned by parseInt("11", 10)');
+assert.sameValue(parseInt("11", ""), parseInt("11", 10), 'parseInt("11", "") must return the same value returned by parseInt("11", 10)');

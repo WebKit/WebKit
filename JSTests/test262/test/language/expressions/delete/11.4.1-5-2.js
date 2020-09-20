@@ -2,19 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es5id: 11.4.1-5-2
+esid: sec-delete-operator-runtime-semantics-evaluation
 description: >
     delete operator returns false when deleting a direct reference to
     a function argument
 flags: [noStrict]
 ---*/
 
-  function foo(a,b) {
-  
-    // Now, deleting 'a' directly should fail
-    // because 'a' is direct reference to a function argument;
-    var d = delete a;
-    return (d === false && a === 1);
-  }
+function foo(a, b) {
+  // Now, deleting 'a' directly should fail
+  // because 'a' is direct reference to a function argument;
+  var d = delete a;
+  return d === false && a === 1;
+}
 
-assert(foo(1,2), 'foo(1,2) !== true');
+assert(foo(1, 2), 'foo(1,2) !== true');

@@ -18,7 +18,7 @@ info: |
 function resolveFunction() {}
 
 function Constructor(executor) {
-  executor(resolveFunction, $ERROR);
+  executor(resolveFunction, Test262Error.thrower);
 }
 Constructor.resolve = function(v) {
   return v;

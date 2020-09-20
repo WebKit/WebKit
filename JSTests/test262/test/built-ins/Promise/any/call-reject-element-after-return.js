@@ -19,7 +19,7 @@ let callCount = 0;
 let errorArray;
 
 function Constructor(executor) {
-  executor($ERROR, (error) => {
+  executor(Test262Error.thrower, (error) => {
     callCount++;
     errorArray = error.errors;
   });

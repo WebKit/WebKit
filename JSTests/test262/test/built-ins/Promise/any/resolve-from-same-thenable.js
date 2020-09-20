@@ -16,7 +16,7 @@ function Constructor(executor) {
     callCount += 1;
     sequence.push(value);
   }
-  executor(resolve, $ERROR);
+  executor(resolve, Test262Error.thrower);
 }
 Constructor.resolve = function(v) {
   return v;

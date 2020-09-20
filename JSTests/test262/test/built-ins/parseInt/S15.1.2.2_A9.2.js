@@ -7,19 +7,9 @@ esid: sec-parseint-string-radix
 description: Checking use hasOwnProperty, delete
 ---*/
 
-//CHECK#1
-if (parseInt.hasOwnProperty('length') !== true) {
-  $ERROR('#1: parseInt.hasOwnProperty(\'length\') === true. Actual: ' + (parseInt.hasOwnProperty('length')));
-}
+assert.sameValue(parseInt.hasOwnProperty('length'), true, 'parseInt.hasOwnProperty(\'length\') must return true');
 
 delete parseInt.length;
 
-//CHECK#2
-if (parseInt.hasOwnProperty('length') !== false) {
-  $ERROR('#2: delete parseInt.length; parseInt.hasOwnProperty(\'length\') === false. Actual: ' + (parseInt.hasOwnProperty('length')));
-}
-
-//CHECK#3
-if (parseInt.length === undefined) {
-  $ERROR('#3: delete parseInt.length; parseInt.length !== undefined');
-}
+assert.sameValue(parseInt.hasOwnProperty('length'), false, 'parseInt.hasOwnProperty(\'length\') must return false');
+assert.notSameValue(parseInt.length, undefined, 'The value of parseInt.length is expected to not equal ``undefined``');

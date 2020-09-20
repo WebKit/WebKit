@@ -29,7 +29,7 @@ Promise.resolve.call(function(executor) {
     thisValue = this;
     args = arguments;
   }
-  executor(resolve, $ERROR);
+  executor(resolve, Test262Error.thrower);
   assert.sameValue(callCount, 0, "callCount before returning from constructor");
 }, object);
 

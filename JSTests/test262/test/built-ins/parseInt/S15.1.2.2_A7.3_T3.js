@@ -7,102 +7,63 @@ esid: sec-parseint-string-radix
 description: Checking algorithm for R = 10
 ---*/
 
-//CHECK#1
-if (parseInt("-1", 10) !== -1) {
-  $ERROR('#1: parseInt("-1", 10) === -1. Actual: ' + (parseInt("-1", 10)));
-}
+assert.sameValue(parseInt("-1", 10), -1, 'parseInt("-1", 10) must return -1');
+assert.sameValue(parseInt("-10", 10), -10, 'parseInt("-10", 10) must return -10');
+assert.sameValue(parseInt("-100", 10), -100, 'parseInt("-100", 10) must return -100');
+assert.sameValue(parseInt("-1000", 10), -1000, 'parseInt("-1000", 10) must return -1000');
+assert.sameValue(parseInt("-10000", 10), -10000, 'parseInt("-10000", 10) must return -10000');
+assert.sameValue(parseInt("-100000", 10), -100000, 'parseInt("-100000", 10) must return -100000');
+assert.sameValue(parseInt("-1000000", 10), -1000000, 'parseInt("-1000000", 10) must return -1000000');
+assert.sameValue(parseInt("-10000000", 10), -10000000, 'parseInt("-10000000", 10) must return -10000000');
+assert.sameValue(parseInt("-100000000", 10), -100000000, 'parseInt("-100000000", 10) must return -100000000');
+assert.sameValue(parseInt("-1000000000", 10), -1000000000, 'parseInt("-1000000000", 10) must return -1000000000');
+assert.sameValue(parseInt("-10000000000", 10), -10000000000, 'parseInt("-10000000000", 10) must return -10000000000');
+assert.sameValue(parseInt("-100000000000", 10), -100000000000, 'parseInt("-100000000000", 10) must return -100000000000');
 
-//CHECK#2
-if (parseInt("-10", 10) !== -10) {
-  $ERROR('#2: parseInt("-10", 10) === -10. Actual: ' + (parseInt("-10", 10)));
-}
+assert.sameValue(
+  parseInt("-1000000000000", 10),
+  -1000000000000,
+  'parseInt("-1000000000000", 10) must return -1000000000000'
+);
 
-//CHECK#3
-if (parseInt("-100", 10) !== -100) {
-  $ERROR('#3: parseInt("-100", 10) === -100. Actual: ' + (parseInt("-100", 10)));
-}
+assert.sameValue(
+  parseInt("-10000000000000", 10),
+  -10000000000000,
+  'parseInt("-10000000000000", 10) must return -10000000000000'
+);
 
-//CHECK#4
-if (parseInt("-1000", 10) !== -1000) {
-  $ERROR('#4: parseInt("-1000", 10) === -1000. Actual: ' + (parseInt("-1000", 10)));
-}
+assert.sameValue(
+  parseInt("-100000000000000", 10),
+  -100000000000000,
+  'parseInt("-100000000000000", 10) must return -100000000000000'
+);
 
-//CHECK#5
-if (parseInt("-10000", 10) !== -10000) {
-  $ERROR('#5: parseInt("-10000", 10) === -10000. Actual: ' + (parseInt("-10000", 10)));
-}
+assert.sameValue(
+  parseInt("-1000000000000000", 10),
+  -1000000000000000,
+  'parseInt("-1000000000000000", 10) must return -1000000000000000'
+);
 
-//CHECK#6
-if (parseInt("-100000", 10) !== -100000) {
-  $ERROR('#6: parseInt("-100000", 10) === -100000. Actual: ' + (parseInt("-100000", 10)));
-}
+assert.sameValue(
+  parseInt("-10000000000000000", 10),
+  -10000000000000000,
+  'parseInt("-10000000000000000", 10) must return -10000000000000000'
+);
 
-//CHECK#7
-if (parseInt("-1000000", 10) !== -1000000) {
-  $ERROR('#7: parseInt("-1000000", 10) === -1000000. Actual: ' + (parseInt("-1000000", 10)));
-}
+assert.sameValue(
+  parseInt("-100000000000000000", 10),
+  -100000000000000000,
+  'parseInt("-100000000000000000", 10) must return -100000000000000000'
+);
 
-//CHECK#8
-if (parseInt("-10000000", 10) !== -10000000) {
-  $ERROR('#8: parseInt("-10000000", 10) === -10000000. Actual: ' + (parseInt("-10000000", 10)));
-}
+assert.sameValue(
+  parseInt("-1000000000000000000", 10),
+  -1000000000000000000,
+  'parseInt("-1000000000000000000", 10) must return -1000000000000000000'
+);
 
-//CHECK#9
-if (parseInt("-100000000", 10) !== -100000000) {
-  $ERROR('#9: parseInt("-100000000", 10) === -100000000. Actual: ' + (parseInt("-100000000", 10)));
-}
-
-//CHECK#10
-if (parseInt("-1000000000", 10) !== -1000000000) {
-  $ERROR('#10: parseInt("-1000000000", 10) === -1000000000. Actual: ' + (parseInt("-1000000000", 10)));
-}
-
-//CHECK#10
-if (parseInt("-10000000000", 10) !== -10000000000) {
-  $ERROR('#10: parseInt("-10000000000", 10) === -10000000000. Actual: ' + (parseInt("-10000000000", 10)));
-}
-
-//CHECK#12
-if (parseInt("-100000000000", 10) !== -100000000000) {
-  $ERROR('#12: parseInt("-100000000000", 10) === -100000000000. Actual: ' + (parseInt("-100000000000", 10)));
-}
-
-//CHECK#13
-if (parseInt("-1000000000000", 10) !== -1000000000000) {
-  $ERROR('#13: parseInt("-1000000000000", 10) === -1000000000000. Actual: ' + (parseInt("-1000000000000", 10)));
-}
-
-//CHECK#14
-if (parseInt("-10000000000000", 10) !== -10000000000000) {
-  $ERROR('#14: parseInt("-10000000000000", 10) === -10000000000000. Actual: ' + (parseInt("-10000000000000", 10)));
-}
-
-//CHECK#15
-if (parseInt("-100000000000000", 10) !== -100000000000000) {
-  $ERROR('#15: parseInt("-100000000000000", 10) === -100000000000000. Actual: ' + (parseInt("-100000000000000", 10)));
-}
-
-//CHECK#10
-if (parseInt("-1000000000000000", 10) !== -1000000000000000) {
-  $ERROR('#10: parseInt("-1000000000000000", 10) === -1000000000000000. Actual: ' + (parseInt("-1000000000000000", 10)));
-}
-
-//CHECK#17
-if (parseInt("-10000000000000000", 10) !== -10000000000000000) {
-  $ERROR('#17: parseInt("-10000000000000000", 10) === -10000000000000000. Actual: ' + (parseInt("-10000000000000000", 10)));
-}
-
-//CHECK#18
-if (parseInt("-100000000000000000", 10) !== -100000000000000000) {
-  $ERROR('#18: parseInt("-100000000000000000", 10) === -100000000000000000. Actual: ' + (parseInt("-100000000000000000", 10)));
-}
-
-//CHECK#19
-if (parseInt("-1000000000000000000", 10) !== -1000000000000000000) {
-  $ERROR('#19: parseInt("-1000000000000000000", 10) === -1000000000000000000. Actual: ' + (parseInt("-1000000000000000000", 10)));
-}
-
-//CHECK#20
-if (parseInt("-10000000000000000000", 10) !== -10000000000000000000) {
-  $ERROR('#20: parseInt("-10000000000000000000", 10) === -10000000000000000000. Actual: ' + (parseInt("-10000000000000000000", 10)));
-}
+assert.sameValue(
+  parseInt("-10000000000000000000", 10),
+  -10000000000000000000,
+  'parseInt("-10000000000000000000", 10) must return -10000000000000000000'
+);

@@ -3,7 +3,7 @@
 
 /*---
 info: If the property has the DontDelete attribute, return false
-es5id: 11.4.1_A3.1
+esid: sec-delete-operator-runtime-semantics-evaluation
 description: Checking declared variable
 flags: [noStrict]
 ---*/
@@ -21,7 +21,7 @@ if (delete this.y !== false) {
 }
 
 //CHECK#3
-function MyFunction(){};
+function MyFunction() {}
 if (delete MyFunction !== false) {
   $ERROR('#3: function MyFunction(){}; delete MyFunction === false');
 }
@@ -29,5 +29,7 @@ if (delete MyFunction !== false) {
 //CHECK#4
 var MyObject = new MyFunction();
 if (delete MyObject !== false) {
-  $ERROR('#4: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false');
+  $ERROR(
+    '#4: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false'
+  );
 }

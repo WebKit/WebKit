@@ -5,7 +5,7 @@
 info: |
     "Delete" operator removes property, which is reference to the object, not
     the object
-es5id: 11.4.1_A4
+esid: sec-delete-operator-runtime-semantics-evaluation
 description: Checking two reference by one object
 flags: [noStrict]
 ---*/
@@ -14,6 +14,9 @@ flags: [noStrict]
 var obj = new Object();
 var ref = obj;
 delete ref;
-if (typeof obj !== "object") {
-  $ERROR('#1: obj = new Object(); ref = obj; delete ref; typeof obj === "object". Actual: ' + (typeof obj));
+if (typeof obj !== 'object') {
+  $ERROR(
+    '#1: obj = new Object(); ref = obj; delete ref; typeof obj === "object". Actual: ' +
+    typeof obj
+  );
 }

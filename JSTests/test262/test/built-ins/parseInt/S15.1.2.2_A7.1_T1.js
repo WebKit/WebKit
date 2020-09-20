@@ -9,5 +9,5 @@ description: Complex test. R in [2, 36]
 
 //CHECK#
 for (var i = 2; i <= 36; i++) {
-  assert.sameValue(parseInt("$string", i), NaN);
+  assert.sameValue(parseInt("$string", i), NaN, 'parseInt("$string", i) must return NaN');
 }

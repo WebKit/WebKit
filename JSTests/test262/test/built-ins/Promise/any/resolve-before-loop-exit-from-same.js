@@ -46,7 +46,7 @@ function Constructor(executor) {
     assert.sameValue(error.errors[2], "p3-rejection", "error.errors[2] === 'p3-rejection'");
     assert(error instanceof AggregateError, "error instanceof AggregateError");
   }
-  executor($ERROR, reject);
+  executor(Test262Error.thrower, reject);
 }
 Constructor.resolve = function(v) {
   return v;

@@ -7,8 +7,8 @@ esid: sec-parseint-string-radix
 description: x is not a radix-R digit
 ---*/
 
-assert.sameValue(parseInt("$0x"), NaN, "$0x");
-assert.sameValue(parseInt("$0X"), NaN, "$0X");
-assert.sameValue(parseInt("$$$"), NaN, "$$$");
-assert.sameValue(parseInt(""), NaN, "the empty string");
-assert.sameValue(parseInt(" "), NaN, "a string with a single space");
+assert.sameValue(parseInt("$0x"), NaN, 'parseInt("$0x") must return NaN');
+assert.sameValue(parseInt("$0X"), NaN, 'parseInt("$0X") must return NaN');
+assert.sameValue(parseInt("$$$"), NaN, 'parseInt("$$$") must return NaN');
+assert.sameValue(parseInt(""), NaN, 'parseInt("") must return NaN');
+assert.sameValue(parseInt(" "), NaN, 'parseInt(" ") must return NaN');

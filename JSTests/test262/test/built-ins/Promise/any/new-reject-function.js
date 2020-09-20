@@ -20,7 +20,7 @@ features: [Promise.any]
 function rejectFunction() {}
 
 function Constructor(executor) {
-  executor(rejectFunction, $ERROR);
+  executor(rejectFunction, Test262Error.thrower);
 }
 Constructor.resolve = function(v) {
   return v;

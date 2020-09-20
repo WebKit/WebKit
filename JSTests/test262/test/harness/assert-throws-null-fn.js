@@ -13,7 +13,7 @@ try {
 } catch(err) {
   threw = true;
   if (err.constructor !== Test262Error) {
-    $ERROR(
+    throw new Error(
       'Expected a Test262Error, but a "' + err.constructor.name +
       '" was thrown.'
     );
@@ -21,7 +21,7 @@ try {
 }
 
 if (threw === false) {
-  $ERROR('Expected a Test262Error, but no error was thrown.');
+  throw new Error('Expected a Test262Error, but no error was thrown.');
 }
 
 threw = false;
@@ -31,7 +31,7 @@ try {
 } catch(err) {
   threw = true;
   if (err.constructor !== Test262Error) {
-    $ERROR(
+    throw new Error(
       'Expected a Test262Error, but a "' + err.constructor.name +
       '" was thrown.'
     );
@@ -39,7 +39,7 @@ try {
 }
 
 if (threw === false) {
-  $ERROR('Expected a Test262Error, but no error was thrown.');
+  throw new Error('Expected a Test262Error, but no error was thrown.');
 }
 
 threw = false;
@@ -49,7 +49,7 @@ try {
 } catch(err) {
   threw = true;
   if (err.constructor !== Test262Error) {
-    $ERROR(
+    throw new Error(
       'Expected a Test262Error, but a "' + err.constructor.name +
       '" was thrown.'
     );
@@ -57,5 +57,5 @@ try {
 }
 
 if (threw === false) {
-  $ERROR('Expected a Test262Error, but no error was thrown.');
+  throw new Error('Expected a Test262Error, but no error was thrown.');
 }

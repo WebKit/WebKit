@@ -8,5 +8,5 @@ includes: [compareArray.js]
 ---*/
 
 if (compareArray([], []) !== true) {
-  $ERROR('Empty arrays are equivalent.');
+  throw new Error('Empty arrays are equivalent.');
 }

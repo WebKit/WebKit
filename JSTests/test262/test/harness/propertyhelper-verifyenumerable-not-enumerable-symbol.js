@@ -28,5 +28,5 @@ try {
 }
 
 if (threw === false) {
-  $ERROR('Expected a Test262Error, but no error was thrown.');
+  throw new Error('Expected a Test262Error, but no error was thrown.');
 }

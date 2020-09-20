@@ -25,7 +25,7 @@ function Constructor(executor) {
     assert.sameValue(error.errors[0], "expectedValue-p1", "error.errors[0]");
     assert.sameValue(error.errors[1], "expectedValue-p2", "error.errors[1]");
   }
-  executor($ERROR, reject);
+  executor(Test262Error.thrower, reject);
 }
 Constructor.resolve = function(v) {
   return v;

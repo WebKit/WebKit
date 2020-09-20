@@ -10,47 +10,17 @@ esid: sec-parseint-string-radix
 description: Complex test. Radix-R notation in [0..9]
 ---*/
 
-//CHECK#2
-if (parseInt("0123456789", 2) !== 1) {
-  $ERROR('#2: parseInt("0123456789", 2) === 1. Actual: ' + (parseInt("0123456789", 2)));
-}
+assert.sameValue(parseInt("0123456789", 2), 1, 'parseInt("0123456789", 2) must return 1');
+assert.sameValue(parseInt("01234567890", 3), 5, 'parseInt("01234567890", 3) must return 5');
+assert.sameValue(parseInt("01234567890", 4), 27, 'parseInt("01234567890", 4) must return 27');
+assert.sameValue(parseInt("01234567890", 5), 194, 'parseInt("01234567890", 5) must return 194');
+assert.sameValue(parseInt("01234567890", 6), 1865, 'parseInt("01234567890", 6) must return 1865');
+assert.sameValue(parseInt("01234567890", 7), 22875, 'parseInt("01234567890", 7) must return 22875');
+assert.sameValue(parseInt("01234567890", 8), 342391, 'parseInt("01234567890", 8) must return 342391');
+assert.sameValue(parseInt("01234567890", 9), 6053444, 'parseInt("01234567890", 9) must return 6053444');
 
-//CHECK#3
-if (parseInt("01234567890", 3) !== 5) {
-  $ERROR('#3: parseInt("01234567890", 3) === 5. Actual: ' + (parseInt("01234567890", 3)));
-}
-
-//CHECK#4
-if (parseInt("01234567890", 4) !== 27) {
-  $ERROR('#4: parseInt("01234567890", 4) === 27. Actual: ' + (parseInt("01234567890", 4)));
-}
-
-//CHECK#5
-if (parseInt("01234567890", 5) !== 194) {
-  $ERROR('#5: parseInt("01234567890", 5) === 194. Actual: ' + (parseInt("01234567890", 5)));
-}
-
-//CHECK#6
-if (parseInt("01234567890", 6) !== 1865) {
-  $ERROR('#6: parseInt("01234567890", 6) === 1865. Actual: ' + (parseInt("01234567890", 6)));
-}
-
-//CHECK#7
-if (parseInt("01234567890", 7) !== 22875) {
-  $ERROR('#7: parseInt("01234567890", 7) === 22875. Actual: ' + (parseInt("01234567890", 7)));
-}
-
-//CHECK#8
-if (parseInt("01234567890", 8) !== 342391) {
-  $ERROR('#8: parseInt("01234567890", 8) === 342391. Actual: ' + (parseInt("01234567890", 8)));
-}
-
-//CHECK#9
-if (parseInt("01234567890", 9) !== 6053444) {
-  $ERROR('#9: parseInt("01234567890", 9) === 6053444. Actual: ' + (parseInt("01234567890", 9)));
-}
-
-//CHECK#10
-if (parseInt("01234567890", 10) !== Number(1234567890)) {
-  $ERROR('#10: parseInt("01234567890", 10) === Number(1234567890). Actual: ' + (parseInt("01234567890", 10)));
-}
+assert.sameValue(
+  parseInt("01234567890", 10),
+  Number(1234567890),
+  'parseInt("01234567890", 10) must return the same value returned by Number(1234567890)'
+);

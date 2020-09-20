@@ -12,5 +12,5 @@ var first = [0, 1, '', 's', null, undefined, obj];
 var second = [0, 1, '', 's', undefined, null, obj];
 
 if (compareArray(first, second) !== false) {
-  $ERROR('Arrays containing the same elements in different order are not equivalent.');
+  throw new Error('Arrays containing the same elements in different order are not equivalent.');
 }

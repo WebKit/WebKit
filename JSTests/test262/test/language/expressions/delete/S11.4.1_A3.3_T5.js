@@ -3,16 +3,19 @@
 
 /*---
 info: If the property doesn't have the DontDelete attribute, remove the property
-es5id: 11.4.1_A3.3_T5
+esid: sec-delete-operator-runtime-semantics-evaluation
 description: Checking declared variable
 flags: [noStrict]
 ---*/
 
 //CHECK#1
-function MyFunction(){};
+function MyFunction() {}
 MyObjectNotVar = new MyFunction();
 MyObjectNotVar.prop = 1;
 delete MyObjectNotVar.prop;
 if (MyObjectNotVar.prop !== undefined) {
-  $ERROR('#1: function MyFunction(){}; MyObjectNotVar = new MyFunction(); MyFunction.prop = 1; delete MyObjectNotVar.prop; MyObjectNotVar.prop === undefined. Actual: ' + (MyObjectNotVar.prop));
+  $ERROR(
+    '#1: function MyFunction(){}; MyObjectNotVar = new MyFunction(); MyFunction.prop = 1; delete MyObjectNotVar.prop; MyObjectNotVar.prop === undefined. Actual: ' +
+    MyObjectNotVar.prop
+  );
 }

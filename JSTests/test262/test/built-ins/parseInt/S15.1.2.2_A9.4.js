@@ -7,7 +7,4 @@ esid: sec-parseint-string-radix
 description: parseInt.length === 2
 ---*/
 
-//CHECK#1
-if (parseInt.length !== 2) {
-  $ERROR('#1: parseInt.length === 2. Actual: ' + (parseInt.length));
-}
+assert.sameValue(parseInt.length, 2, 'The value of parseInt.length is 2');

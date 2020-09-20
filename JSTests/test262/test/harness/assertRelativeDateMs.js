@@ -26,9 +26,9 @@ try {
   thrown = err;
 }
 if (!thrown) {
-  $ERROR('Expected error, but no error was thrown.');
+  throw new Error('Expected error, but no error was thrown.');
 } else if (thrown.constructor !== Test262Error) {
-  $ERROR('Expected error of type Test262Error.');
+  throw new Error('Expected error of type Test262Error.');
 }
 
 thrown = null;
@@ -38,9 +38,9 @@ try {
   thrown = err;
 }
 if (!thrown) {
-  $ERROR('Expected error, but no error was thrown.');
+  throw new Error('Expected error, but no error was thrown.');
 } else if (thrown.constructor !== Test262Error) {
-  $ERROR('Expected error of type Test262Error.');
+  throw new Error('Expected error of type Test262Error.');
 }
 
 thrown = null;
@@ -50,9 +50,9 @@ try {
   thrown = err;
 }
 if (!thrown) {
-  $ERROR('Expected error, but no error was thrown.');
+  throw new Error('Expected error, but no error was thrown.');
 } else if (thrown.constructor !== Test262Error) {
-  $ERROR('Expected error of type Test262Error.');
+  throw new Error('Expected error of type Test262Error.');
 }
 
 thrown = null;
@@ -62,9 +62,9 @@ try {
   thrown = err;
 }
 if (!thrown) {
-  $ERROR('Expected error, but no error was thrown.');
+  throw new Error('Expected error, but no error was thrown.');
 } else if (thrown.constructor !== Test262Error) {
-  $ERROR('Expected error of type Test262Error.');
+  throw new Error('Expected error of type Test262Error.');
 }
 
 thrown = null;
@@ -74,7 +74,7 @@ try {
   thrown = err;
 }
 if (!thrown) {
-  $ERROR('Expected error, but no error was thrown.');
+  throw new Error('Expected error, but no error was thrown.');
 } else if (thrown.constructor !== Test262Error) {
-  $ERROR('Expected error of type Test262Error.');
+  throw new Error('Expected error of type Test262Error.');
 }

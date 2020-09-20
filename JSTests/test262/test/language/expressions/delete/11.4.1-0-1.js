@@ -5,17 +5,14 @@
 info: |
     This test is actually testing the [[Delete]] internal method (8.12.8). Since the
     language provides no way to directly exercise [[Delete]], the tests are placed here.
-es5id: 11.4.1-0-1
+esid: sec-delete-operator-runtime-semantics-evaluation
 description: delete operator as UnaryExpression
 flags: [noStrict]
 ---*/
 
-function testcase() {
-  var x = 1;
-  var y = 2;
-  var z = 3;
+var x = 1;
+var y = 2;
+var z = 3;
 
-  assert((!delete x || delete y), '(!delete x || delete y)');
-  assert(delete delete z, 'delete delete z');
- }
-testcase();
+assert((!delete x || delete y), '(!delete x || delete y)');
+assert(delete delete z, 'delete delete z');

@@ -3,8 +3,7 @@
 
 /*---
 esid: sec-intl.segmenter
-description: >
-    Return abrupt completion from GetOption granularity
+description: Return abrupt completion from GetOption granularity
 
 info: |
     Intl.Segmenter ([ locales [ , options ]])

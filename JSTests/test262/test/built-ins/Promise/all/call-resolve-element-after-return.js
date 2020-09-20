@@ -25,7 +25,7 @@ function Constructor(executor) {
     assert.sameValue(values.length, 1, "values.length");
     assert.sameValue(values[0], "expectedValue", "values[0]");
   }
-  executor(resolve, $ERROR);
+  executor(resolve, Test262Error.thrower);
 }
 Constructor.resolve = function(v) {
   return v;

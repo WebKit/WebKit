@@ -7,26 +7,7 @@ esid: sec-parseint-string-radix
 description: Checking for number primitive
 ---*/
 
-//CHECK#1
-if (parseInt(-1) !== parseInt("-1")) {
-  $ERROR('#1: parseInt(-1) === parseInt("-1"). Actual: ' + (parseInt(-1)));
-}
-
-//CHECK#2
-if (String(parseInt(Infinity)) !== "NaN") {
-  $ERROR('#2: String(parseInt(Infinity)) === "NaN". Actual: ' + (String(parseInt(Infinity))));
-}
-
-//CHECK#3
-if (String(parseInt(NaN)) !== "NaN") {
-  $ERROR('#3: String(parseInt(NaN)) === "NaN". Actual: ' + (String(parseInt(NaN))));
-}
-
-//CHECK#4
-if (parseInt(-0) !== 0) {
-  $ERROR('#4: parseInt(-0) === 0. Actual: ' + (parseInt(-0)));
-} else {
-  if (1 / parseInt(-0) !== Number.POSITIVE_INFINITY) {
-    $ERROR('#4: parseInt(-0) === +0. Actual: ' + (parseInt(-0)));
-  }
-}
+assert.sameValue(parseInt(-1), parseInt("-1"), 'parseInt(-1) must return the same value returned by parseInt("-1")');
+assert.sameValue(String(parseInt(Infinity)), "NaN", 'String(parseInt(Infinity)) must return "NaN"');
+assert.sameValue(String(parseInt(NaN)), "NaN", 'String(parseInt(NaN)) must return "NaN"');
+assert.sameValue(parseInt(-0), 0, 'parseInt(-0) must return 0');

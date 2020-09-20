@@ -3,14 +3,16 @@
 
 /*---
 info: If the property doesn't have the DontDelete attribute, return true
-es5id: 11.4.1_A3.2_T3
+esid: sec-delete-operator-runtime-semantics-evaluation
 description: Checking declared variable
 ---*/
 
 //CHECK#1
-function MyFunction(){};
+function MyFunction() {}
 var MyObject = new MyFunction();
 MyObject.prop = 1;
 if (delete MyObject.prop !== true) {
-  $ERROR('#1: function MyFunction(){}; var MyObject = new MyFunction(); MyFunction.prop = 1; delete MyObject.prop === true');
+  $ERROR(
+    '#1: function MyFunction(){}; var MyObject = new MyFunction(); MyFunction.prop = 1; delete MyObject.prop === true'
+  );
 }

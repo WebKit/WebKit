@@ -7,20 +7,21 @@ esid: sec-parseint-string-radix
 description: ToInt32 use modulo
 ---*/
 
-//CHECK#1
-if (parseInt("11", 4294967298) !== parseInt("11", 2)) {
-  $ERROR('#1: parseInt("11", 4294967298) === parseInt("11", 2). Actual: ' + (parseInt("11", 4294967298)));
-}
+assert.sameValue(
+  parseInt("11", 4294967298),
+  parseInt("11", 2),
+  'parseInt("11", 4294967298) must return the same value returned by parseInt("11", 2)'
+);
+assert.sameValue(
+  parseInt("11", 4294967296),
+  parseInt("11", 10),
+  'parseInt("11", 4294967296) must return the same value returned by parseInt("11", 10)'
+);
 
-//CHECK#2
-if (parseInt("11", 4294967296) !== parseInt("11", 10)) {
-  $ERROR('#2: parseInt("11", 4294967296) === parseInt("11", 10). Actual: ' + (parseInt("11", 4294967296)));
-}
+assert.sameValue(parseInt("11", -2147483650), NaN, 'parseInt("11", -2147483650) must return NaN');
 
-//CHECK#3
-assert.sameValue(parseInt("11", -2147483650), NaN, "-2147483650");
-
-//CHECK#4
-if (parseInt("11", -4294967294) !== parseInt("11", 2)) {
-  $ERROR('#4: parseInt("11", -4294967294) === parseInt("11", 2). Actual: ' + (parseInt("11", -4294967294)));
-}
+assert.sameValue(
+  parseInt("11", -4294967294),
+  parseInt("11", 2),
+  'parseInt("11", -4294967294) must return the same value returned by parseInt("11", 2)'
+);

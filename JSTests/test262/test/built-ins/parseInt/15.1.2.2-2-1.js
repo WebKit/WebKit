@@ -8,4 +8,4 @@ description: >
     contain any such characters
 ---*/
 
-assert.sameValue(parseInt(""), NaN, 'parseInt("")');
+assert.sameValue(parseInt(""), NaN, 'parseInt("") must return NaN');

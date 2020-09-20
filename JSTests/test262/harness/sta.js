@@ -18,10 +18,11 @@ Test262Error.prototype.toString = function () {
   return "Test262Error: " + this.message;
 };
 
-var $ERROR;
-$ERROR = function $ERROR(message) {
-  throw new Test262Error(message);
+Test262Error.thrower = (...args) => {
+  throw new Test262Error(...args);
 };
+
+var $ERROR = Test262Error.thrower;
 
 function $DONOTEVALUATE() {
   throw "Test262: This statement should not be evaluated.";
