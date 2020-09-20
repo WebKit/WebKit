@@ -110,6 +110,7 @@ void LineLayout::layout()
     prepareLayoutState();
     prepareFloatingState();
 
+    m_displayInlineContent = nullptr;
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
 
     auto invalidationState = Layout::InvalidationState { };
@@ -122,9 +123,46 @@ void LineLayout::layout()
 
 void LineLayout::constructDisplayContent()
 {
-    // FIXME: Move Display::Run construction over here.
+    auto& displayInlineContent = ensureDisplayInlineContent();
+
+    auto constructDisplayLineRuns = [&] {
+        auto initialContaingBlockSize = m_layoutState.viewportSize();
+        for (auto& lineRun : m_inlineFormattingState.lineRuns()) {
+            auto& layoutBox = lineRun.layoutBox();
+            auto computedInkOverflow = [&] (const auto& logicalRect) {
+                // FIXME: Add support for non-text ink overflow.
+                if (!lineRun.text())
+                    return logicalRect;
+                auto& style = layoutBox.style();
+                auto inkOverflow = logicalRect;
+                auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
+                inkOverflow.inflate(strokeOverflow);
+
+                auto letterSpacing = style.fontCascade().letterSpacing();
+                if (letterSpacing < 0) {
+                    // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
+                    inkOverflow.expand(-letterSpacing, { });
+                }
+                return inkOverflow;
+            };
+            auto logicalRect = FloatRect { lineRun.logicalRect() };
+            // Inline boxes are relative to the line box while final Display::Runs need to be relative to the parent Display:Box
+            // FIXME: Shouldn't we just leave them be relative to the line box?
+            auto lineIndex = lineRun.lineIndex();
+            auto& lineBoxLogicalRect = m_inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect();
+            logicalRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
+
+            WTF::Optional<Display::Run::TextContent> textContent;
+            if (auto text = lineRun.text())
+                textContent = Display::Run::TextContent { text->start(), text->length(), text->content(), text->needsHyphen() };
+            auto expansion = Display::Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
+            auto displayRun = Display::Run { lineIndex, layoutBox, logicalRect, computedInkOverflow(logicalRect), expansion, textContent };
+            displayInlineContent.runs.append(displayRun);
+        }
+    };
+    constructDisplayLineRuns();
+
     auto constructDisplayLine = [&] {
-        auto& displayInlineContent = m_inlineFormattingState.ensureDisplayInlineContent();
         auto& lines = m_inlineFormattingState.lines();
         auto& runs = displayInlineContent.runs;
         size_t runIndex = 0;
@@ -143,11 +181,12 @@ void LineLayout::constructDisplayContent()
             auto lineRect = FloatRect { line.logicalRect() };
             // Painting code (specifically TextRun's xPos) needs the line box offset to be able to compute tab positions.
             lineRect.setX(lineBoxLogicalRect.left());
-            displayInlineContent.lines.append({ lineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline() });
+            displayInlineContent.lines.append({ lineRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
         }
     };
     constructDisplayLine();
-    m_inlineFormattingState.shrinkDisplayInlineContent();
+    displayInlineContent.shrinkToFit();
+    m_inlineFormattingState.shrinkToFit();
 }
 
 void LineLayout::prepareLayoutState()
@@ -235,9 +274,11 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
     }
 }
 
-const Display::InlineContent* LineLayout::displayInlineContent() const
+Display::InlineContent& LineLayout::ensureDisplayInlineContent()
 {
-    return m_inlineFormattingState.displayInlineContent();
+    if (!m_displayInlineContent)
+        m_displayInlineContent = adoptRef(*new Display::InlineContent);
+    return *m_displayInlineContent;
 }
 
 LineLayoutTraversal::TextBoxIterator LineLayout::textBoxesFor(const RenderText& renderText) const
@@ -336,7 +377,10 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         String textWithHyphen;
         if (textContent.needsHyphen())
             textWithHyphen = makeString(textContent.content(), style.hyphenString());
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), run.left() - line.rect().x(), expansion.horizontalExpansion, expansion.behavior };
+        // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
+        // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
+        auto xPos = rect.x() - (line.rect().x() + line.horizontalAlignmentOffset());
+        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), xPos, expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };
 

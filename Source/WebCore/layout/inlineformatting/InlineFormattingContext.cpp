@@ -32,6 +32,7 @@
 #include "FontCascade.h"
 #include "InlineFormattingState.h"
 #include "InlineLineBox.h"
+#include "InlineLineRun.h"
 #include "InlineTextItem.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
@@ -402,8 +403,8 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto lineIndex = formattingState.lines().size();
 
     auto constructLineGeometry = [&] {
-        auto lineBoxLogicalRect = InlineRect { lineLogicalRect.top() + lineBoxVerticalOffset, lineLogicalRect.left() + lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineBox.logicalWidth(), lineBox.logicalHeight() };
-        formattingState.addLine({ lineLogicalRect, lineBoxLogicalRect, lineBoxVerticalOffset + lineBox.alignmentBaseline() });
+        auto lineBoxLogicalRect = InlineRect { lineLogicalRect.top() + lineBoxVerticalOffset, lineLogicalRect.left(), lineBox.logicalWidth(), lineBox.logicalHeight() };
+        formattingState.addLine({ lineLogicalRect, lineBoxLogicalRect, lineBoxVerticalOffset + lineBox.alignmentBaseline(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }) });
     };
     constructLineGeometry();
 
@@ -422,43 +423,15 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
         }
     }
 
-    auto initialContaingBlockSize = LayoutSize { };
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        // ICB is not the real ICB when lyoutFormattingContextIntegrationEnabled is on.
-        initialContaingBlockSize = layoutState().viewportSize();
-    } else
-        initialContaingBlockSize = geometryForBox(root().initialContainingBlock(), EscapeReason::StrokeOverflowNeedsViewportGeometry).contentBox().size();
-    auto& inlineContent = formattingState.ensureDisplayInlineContent();
-    // Compute final box geometry.
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
         // Inline level containers (<span>) don't generate display runs and neither do completely collapsed runs.
         auto initiatesInlineRun = lineRun.isText() || lineRun.isLineBreak() || lineRun.isBox();
         if (initiatesInlineRun) {
-            auto computedInkOverflow = [&] (const auto& logicalRect) {
-                // FIXME: Add support for non-text ink overflow.
-                if (!lineRun.isText())
-                    return logicalRect;
-                auto& style = lineRun.style();
-                auto inkOverflow = logicalRect;
-                auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
-                inkOverflow.inflate(strokeOverflow);
-
-                auto letterSpacing = style.fontCascade().letterSpacing();
-                if (letterSpacing < 0) {
-                    // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
-                    inkOverflow.expandHorizontally(-letterSpacing);
-                }
-                return inkOverflow;
-            };
             auto logicalRect = lineRun.isBox() ? lineBox.inlineBoxForLayoutBox(layoutBox).logicalRect() : lineBox.logicalRectForTextRun(lineRun);
-            // Inline boxes are relative to the line box while final Display::Runs need to be relative to the parent Display:Box
-            // FIXME: Shouldn't we just leave them be relative to the line box?
-            logicalRect.moveBy({ lineLogicalRect.left(), lineLogicalRect.top() + lineBoxVerticalOffset });
-            inlineContent.runs.append({ lineIndex, layoutBox, logicalRect, computedInkOverflow(logicalRect), lineRun.expansion(), lineRun.textContent() });
+            formattingState.addLineRun({ lineIndex, layoutBox, logicalRect, lineRun.expansion(), lineRun.textContent() });
         }
 
-        // Create display boxes.
         // FIXME: Since <br> and <wbr> runs have associated DOM elements, we might need to construct a display box here. 
         auto needsBoxGeometry = lineRun.isBox() || lineRun.isContainerStart();
         if (needsBoxGeometry) {

@@ -113,31 +113,21 @@ static void paintBoxDecoration(GraphicsContext& context, const Layout::BoxGeomet
 
 static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOffset, const Layout::InlineFormattingState& formattingState)
 {
-    auto* displayInlineContent = formattingState.displayInlineContent();
-    if (!displayInlineContent)
-        return;
-
-    auto& displayRuns = displayInlineContent->runs;
-    if (displayRuns.isEmpty())
-        return;
-
-    for (auto& run : displayRuns) {
-        if (auto& textContent = run.textContent()) {
-            auto& style = run.style();
+    for (auto& run : formattingState.lineRuns()) {
+        auto& runRect = run.logicalRect();
+        if (auto& textContent = run.text()) {
+            auto& style = run.layoutBox().style();
             context.setStrokeColor(style.color());
             context.setFillColor(style.color());
 
-            auto absoluteLeft = absoluteOffset.x() + run.left();
+            auto absoluteLeft = absoluteOffset.x() + runRect.left();
             // FIXME: Add non-baseline align painting
-            auto baseline = absoluteOffset.y() + run.top() + style.fontMetrics().ascent();
+            auto baseline = absoluteOffset.y() + runRect.top() + style.fontMetrics().ascent();
             auto expansion = run.expansion();
             // FIXME: The final painter should have access to the current line to offset the runs.
-            auto textRun = TextRun { textContent->content(), run.left(), expansion.horizontalExpansion, expansion.behavior };
+            auto textRun = TextRun { textContent->content(), runRect.left(), expansion.horizontalExpansion, expansion.behavior };
             textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
             context.drawText(style.fontCascade(), textRun, { absoluteLeft, baseline });
-        } else if (auto* cachedImage = run.image()) {
-            auto runAbsoluteRect = FloatRect { absoluteOffset.x() + run.left(), absoluteOffset.y() + run.top(), run.width(), run.height() };
-            context.drawImage(*cachedImage->image(), runAbsoluteRect);
         }
     }
 }

@@ -381,11 +381,6 @@ void TreeBuilder::buildSubTree(const RenderElement& parentRenderer, ContainerBox
 static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState, const ContainerBox& inlineFormattingRoot, unsigned depth)
 {
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
-    auto* displayInlineContent = inlineFormattingState.displayInlineContent();
-    if (!displayInlineContent)
-        return;
-
-    auto& displayRuns = displayInlineContent->runs;
     auto& lines = inlineFormattingState.lines();
 
     unsigned printedCharacters = 0;
@@ -398,18 +393,18 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
         stream << "[" << line.logicalLeft() << "," << line.logicalTop() << " " << line.logicalWidth() << "x" << line.logicalHeight() << "][baseline: " << line.baseline() << "]";
     stream.nextLine();
 
-    for (auto& displayRun : displayRuns) {
+    for (auto& run : inlineFormattingState.lineRuns()) {
         unsigned printedCharacters = 0;
         while (++printedCharacters <= depth * 2)
             stream << " ";
         stream << "  ";
-        if (displayRun.textContent())
+        if (run.text())
             stream << "inline text box";
         else
             stream << "inline box";
-        stream << " at (" << displayRun.left() << "," << displayRun.top() << ") size " << displayRun.width() << "x" << displayRun.height();
-        if (displayRun.textContent())
-            stream << " run(" << displayRun.textContent()->start() << ", " << displayRun.textContent()->end() << ")";
+        stream << " at (" << run.logicalLeft() << "," << run.logicalTop() << ") size " << run.logicalWidth() << "x" << run.logicalHeight();
+        if (run.text())
+            stream << " run(" << run.text()->start() << ", " << run.text()->end() << ")";
         stream.nextLine();
     }
 }

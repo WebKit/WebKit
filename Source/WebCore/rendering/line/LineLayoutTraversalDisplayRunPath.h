@@ -108,7 +108,7 @@ private:
 inline FloatRect DisplayRunPath::rect() const
 {
     auto rect = run().rect();
-    auto position = linePosition(rect.left(), rect.top());
+    auto position = linePosition(rect.x(), rect.y());
     return { position, rect.size() };
 }
 

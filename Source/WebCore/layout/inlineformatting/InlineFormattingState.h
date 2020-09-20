@@ -27,10 +27,10 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayInlineContent.h"
 #include "FormattingState.h"
 #include "InlineItem.h"
 #include "InlineLineGeometry.h"
+#include "InlineLineRun.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -38,6 +38,7 @@ namespace Layout {
 
 using InlineItems = Vector<InlineItem>;
 using InlineLines = Vector<InlineLineGeometry>;
+using InlineLineRuns = Vector<LineRun>;
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
@@ -54,40 +55,30 @@ public:
     InlineLines& lines() { return m_lines; }
     void addLine(const InlineLineGeometry& line) { m_lines.append(line); }
 
-    const Display::InlineContent* displayInlineContent() const { return m_displayInlineContent.get(); }
-    Display::InlineContent& ensureDisplayInlineContent();
+    const InlineLineRuns& lineRuns() const { return m_lineRuns; }
+    InlineLineRuns& lineRuns() { return m_lineRuns; }
+    void addLineRun(const LineRun& run) { m_lineRuns.append(run); }
 
     void clearLineAndRuns();
-    void shrinkDisplayInlineContent();
+    void shrinkToFit();
 
 private:
     // Cacheable input to line layout.
     InlineItems m_inlineItems;
     InlineLines m_lines;
-
-    RefPtr<Display::InlineContent> m_displayInlineContent;
+    InlineLineRuns m_lineRuns;
 };
-
-inline Display::InlineContent& InlineFormattingState::ensureDisplayInlineContent()
-{
-    if (!m_displayInlineContent)
-        m_displayInlineContent = adoptRef(*new Display::InlineContent);
-    return *m_displayInlineContent;
-}
 
 inline void InlineFormattingState::clearLineAndRuns()
 {
-    m_displayInlineContent = nullptr;
     m_lines.clear();
+    m_lineRuns.clear();
 }
 
-inline void InlineFormattingState::shrinkDisplayInlineContent()
+inline void InlineFormattingState::shrinkToFit()
 {
     m_lines.shrinkToFit();
-    if (!m_displayInlineContent)
-        return;
-    m_displayInlineContent->runs.shrinkToFit();
-    m_displayInlineContent->lines.shrinkToFit();
+    m_lineRuns.shrinkToFit();
 }
 
 }

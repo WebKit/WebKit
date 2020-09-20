@@ -27,8 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayRun.h"
 #include "InlineItem.h"
+#include "InlineLineRun.h"
 #include "InlineTextItem.h"
 
 namespace WebCore {
@@ -71,13 +71,13 @@ public:
 
         const Box& layoutBox() const { return *m_layoutBox; }
         const RenderStyle& style() const { return m_layoutBox->style(); }
-        const Optional<Display::Run::TextContent>& textContent() const { return m_textContent; }
+        const Optional<LineRun::Text>& textContent() const { return m_textContent; }
 
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
         InlineLayoutUnit logicalLeft() const { return m_logicalLeft; }
         InlineLayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
-        const Display::Run::Expansion& expansion() const { return m_expansion; }
+        const LineRun::Expansion& expansion() const { return m_expansion; }
         bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }
         ExpansionBehavior expansionBehavior() const;
         unsigned expansionOpportunityCount() const { return m_expansionOpportunityCount; }
@@ -121,8 +121,8 @@ public:
         InlineLayoutUnit m_logicalWidth { 0 };
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
-        Optional<Display::Run::TextContent> m_textContent;
-        Display::Run::Expansion m_expansion;
+        Optional<LineRun::Text> m_textContent;
+        LineRun::Expansion m_expansion;
         unsigned m_expansionOpportunityCount { 0 };
     };
     using RunList = Vector<Run, 10>;

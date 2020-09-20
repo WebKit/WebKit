@@ -69,7 +69,7 @@ public:
 
     void collectOverflow(RenderBlockFlow&);
 
-    const Display::InlineContent* displayInlineContent() const;
+    const Display::InlineContent* displayInlineContent() const { return m_displayInlineContent.get(); }
 
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
@@ -83,6 +83,7 @@ private:
     void prepareLayoutState();
     void prepareFloatingState();
     void constructDisplayContent();
+    Display::InlineContent& ensureDisplayInlineContent();
 
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
@@ -93,6 +94,7 @@ private:
     BoxTree m_boxTree;
     Layout::LayoutState m_layoutState;
     Layout::InlineFormattingState& m_inlineFormattingState;
+    RefPtr<Display::InlineContent> m_displayInlineContent;
 };
 
 }

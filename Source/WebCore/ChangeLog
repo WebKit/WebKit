@@ -1,3 +1,90 @@
+2020-09-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineFormattingState should not store display lines and runs
+        https://bugs.webkit.org/show_bug.cgi?id=216742
+
+        Reviewed by Antti Koivisto.
+
+        In this patch,
+        1. Display related structures are completely moved out from Layout namespace
+          - InlineFormattingContext does not generate display structures.
+          - InlineFormattingState only stores layout data.
+          - Layout tree verification works on layout geometry.
+          - Layout structures do not embed Display types.
+        2. LayoutIntegration creates and maintains the required Display structures for painting and hittesting.
+        3. Display::Run does not use Layout types (InlineLayoutRect, InlineLayoutUnit).
+
+        FIXME: We need to start constructing display content for the Display::Painter.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingSimpleLineInformationIfNeeded):
+        (WebCore::Layout::checkForMatchingNonTextRuns):
+        (WebCore::Layout::checkForMatchingTextRuns):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+        * layout/displaytree/DisplayInlineContent.h:
+        (WebCore::Display::InlineContent::shrinkToFit):
+        * layout/displaytree/DisplayLine.h:
+        (WebCore::Display::Line::horizontalAlignmentOffset const):
+        (WebCore::Display::Line::Line):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::TextContent::start const):
+        (WebCore::Display::Run::TextContent::end const):
+        (WebCore::Display::Run::TextContent::length const):
+        (WebCore::Display::Run::TextContent::content const):
+        (WebCore::Display::Run::TextContent::needsHyphen const):
+        (WebCore::Display::Run::rect const):
+        (WebCore::Display::Run::inkOverflow const):
+        (WebCore::Display::Run::Run):
+        (WebCore::Display::Run::TextContent::TextContent):
+        (WebCore::Display::Run::TextContent::setNeedsHyphen): Deleted.
+        (WebCore::Display::Run::TextContent::expand): Deleted.
+        (WebCore::Display::Run::TextContent::shrink): Deleted.
+        (WebCore::Display::Run::topLeft const): Deleted.
+        (WebCore::Display::Run::left const): Deleted.
+        (WebCore::Display::Run::right const): Deleted.
+        (WebCore::Display::Run::top const): Deleted.
+        (WebCore::Display::Run::bottom const): Deleted.
+        (WebCore::Display::Run::width const): Deleted.
+        (WebCore::Display::Run::height const): Deleted.
+        (WebCore::Display::Run::moveVertically): Deleted.
+        * layout/flexformatting/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::sizeAndPlaceFlexItems):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::lineRuns const):
+        (WebCore::Layout::InlineFormattingState::lineRuns):
+        (WebCore::Layout::InlineFormattingState::addLineRun):
+        (WebCore::Layout::InlineFormattingState::clearLineAndRuns):
+        (WebCore::Layout::InlineFormattingState::shrinkToFit):
+        (WebCore::Layout::InlineFormattingState::displayInlineContent const): Deleted.
+        (WebCore::Layout::InlineFormattingState::ensureDisplayInlineContent): Deleted.
+        (WebCore::Layout::InlineFormattingState::shrinkDisplayInlineContent): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::textContent const):
+        (WebCore::Layout::Line::Run::expansion const):
+        * layout/inlineformatting/InlineLineGeometry.h:
+        (WebCore::Layout::InlineLineGeometry::horizontalAlignmentOffset const):
+        (WebCore::Layout::InlineLineGeometry::InlineLineGeometry):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        (WebCore::LayoutIntegration::LineLayout::constructDisplayContent):
+        (WebCore::LayoutIntegration::LineLayout::ensureDisplayInlineContent):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::displayInlineContent const): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        (WebCore::LayoutIntegration::LineLayout::displayInlineContent const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        * rendering/line/LineLayoutTraversalDisplayRunPath.h:
+        (WebCore::LineLayoutTraversal::DisplayRunPath::rect const):
+
 2020-09-19  Andres Gonzalez  <andresg_22@apple.com>
 
         Implementation for AXIsolatedObject::nextSibling and previousSibling.

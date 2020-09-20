@@ -4535,3 +4535,5 @@ http/tests/media/hls/hls-hdr-switch.html [ Skip ]
 
 # These tests rely on webkit-test-runner flags that aren't implemented for DumpRenderTree, so they will fail under legacy WebKit.
 editing/selection/expando.html [ Failure ]
+
+fast/layoutformattingcontext/ [ ImageOnlyFailure ]

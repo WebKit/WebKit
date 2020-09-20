@@ -1,3 +1,18 @@
+2020-09-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineFormattingState should not store display lines and runs
+        https://bugs.webkit.org/show_bug.cgi?id=216742
+
+        Reviewed by Antti Koivisto.
+
+        This directory is about verifying layout correctness
+        by calling LayoutContext::verifyAndOutputMismatchingLayoutTree on every layout frame
+        and assert in case of mismatching trees.
+        The test coverage does not suffer by [ ImageOnlyFailure ] it.
+        (We need to start generating display boxes for the Display::Painter.)
+
+        * TestExpectations:
+
 2020-09-19  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Unreviewed gardening.

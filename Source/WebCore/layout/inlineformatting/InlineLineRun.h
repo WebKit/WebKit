@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,27 +29,28 @@
 
 #include "InlineRect.h"
 #include "LayoutBox.h"
-#include "RenderStyle.h"
 #include "TextFlags.h"
 
 namespace WebCore {
+namespace Layout {
 
-class CachedImage;
-
-namespace Display {
-
-struct Run {
+struct LineRun {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    struct TextContent {
+    struct Text {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        TextContent(size_t position, size_t length, const String&, bool needsHyphen);
+        Text(size_t position, size_t length, const String&, bool needsHyphen);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
-        StringView content() const { return StringView(m_contentString).substring(m_start, m_length); }
+        String content() const { return m_contentString; }
+
         bool needsHyphen() const { return m_needsHyphen; }
+        void setNeedsHyphen() { m_needsHyphen = true; }
+
+        void expand(size_t delta) { m_length += delta; }
+        void shrink(size_t delta) { m_length -= delta; }
 
     private:
         size_t m_start { 0 };
@@ -59,15 +60,21 @@ struct Run {
     };
 
     struct Expansion;
-    Run(size_t lineIndex, const Layout::Box&, const FloatRect&, const FloatRect& inkOverflow, Expansion, Optional<TextContent> = WTF::nullopt);
+    LineRun(size_t lineIndex, const Box&, const InlineRect&, Expansion, Optional<Text> = WTF::nullopt);
 
-    const FloatRect& rect() const { return m_rect; }
-    const FloatRect& inkOverflow() const { return m_inkOverflow; }
+    const InlineRect& logicalRect() const { return m_logicalRect; }
 
-    Optional<TextContent>& textContent() { return m_textContent; }
-    const Optional<TextContent>& textContent() const { return m_textContent; }
-    // FIXME: This information should be preserved at Run construction time.
-    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContent() && textContent()->content() == "\n" && style().preserveNewline()); }
+    InlineLayoutUnit logicalTop() const { return logicalRect().top(); }
+    InlineLayoutUnit logicalBottom() const { return logicalRect().bottom(); }
+    InlineLayoutUnit logicalLeft() const { return logicalRect().left(); }
+    InlineLayoutUnit logicalRight() const { return logicalRect().right(); }
+
+    InlineLayoutUnit logicalWidth() const { return logicalRect().width(); }
+    InlineLayoutUnit logicalHeight() const { return logicalRect().height(); }
+
+    void moveVertically(InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+    Optional<Text>& text() { return m_text; }
+    const Optional<Text>& text() const { return m_text; }
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
@@ -75,35 +82,27 @@ struct Run {
     };
     Expansion expansion() const { return m_expansion; }
 
-    CachedImage* image() const { return m_cachedImage; }
-
-    const Layout::Box& layoutBox() const { return *m_layoutBox; }
-    const RenderStyle& style() const { return m_layoutBox->style(); }
-
+    const Box& layoutBox() const { return *m_layoutBox; }
     size_t lineIndex() const { return m_lineIndex; }
 
 private:
-    // FIXME: Find out the Display::Run <-> paint style setup.
     const size_t m_lineIndex;
     WeakPtr<const Layout::Box> m_layoutBox;
-    CachedImage* m_cachedImage { nullptr };
-    FloatRect m_rect;
-    FloatRect m_inkOverflow;
+    InlineRect m_logicalRect;
     Expansion m_expansion;
-    Optional<TextContent> m_textContent;
+    Optional<Text> m_text;
 };
 
-inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, const FloatRect& inkOverflow, Expansion expansion, Optional<TextContent> textContent)
+inline LineRun::LineRun(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& logicalRect, Expansion expansion, Optional<Text> text)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
-    , m_rect(rect)
-    , m_inkOverflow(inkOverflow)
+    , m_logicalRect(logicalRect)
     , m_expansion(expansion)
-    , m_textContent(textContent)
+    , m_text(text)
 {
 }
 
-inline Run::TextContent::TextContent(size_t start, size_t length, const String& contentString, bool needsHyphen)
+inline LineRun::Text::Text(size_t start, size_t length, const String& contentString, bool needsHyphen)
     : m_start(start)
     , m_length(length)
     , m_needsHyphen(needsHyphen)
