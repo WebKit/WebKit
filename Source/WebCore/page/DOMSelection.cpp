@@ -412,10 +412,11 @@ bool DOMSelection::containsNode(Node& node, bool allowPartial) const
     return range && (allowPartial ? intersects(*range, node) : contains(*range, node));
 }
 
-void DOMSelection::selectAllChildren(Node& node)
+ExceptionOr<void> DOMSelection::selectAllChildren(Node& node)
 {
-    // This doesn't (and shouldn't) select text node characters.
-    setBaseAndExtent(&node, 0, &node, node.countChildNodes());
+    // This doesn't (and shouldn't) select the characters in a node if passed a text node.
+    // Selection API specification seems to have this wrong: https://github.com/w3c/selection-api/issues/125
+    return setBaseAndExtent(&node, 0, &node, node.countChildNodes());
 }
 
 String DOMSelection::toString() const

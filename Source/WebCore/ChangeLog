@@ -1,3 +1,21 @@
+2020-09-20  Darin Adler  <darin@apple.com>
+
+        Selection API: Fix selectAllChilden to return InvalidNodeTypeError when passed a DocumentType node
+        https://bugs.webkit.org/show_bug.cgi?id=216741
+
+        Reviewed by Ryosuke Niwa.
+
+        This is covered by tests, but the fix itself is only testable when live range
+        selection is enabled. So for now the other tests are simply checking that no
+        regression or behavior change was introduced by accident.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::selectAllChildren): Return the value returned by
+        setBaseAndExtent so we don't discard any exception it might throw. In
+        practice, that's only this one.
+        * page/DOMSelection.h: Updated return type so we can throw an exception.
+        * page/DOMSelection.idl: Added MayThrowException.
+
 2020-09-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] InlineFormattingState should not store display lines and runs

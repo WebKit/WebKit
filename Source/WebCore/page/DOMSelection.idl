@@ -59,7 +59,7 @@
     [MayThrowException] undefined extend(Node node, optional unsigned long offset = 0);
 
     [MayThrowException] undefined setBaseAndExtent(Node? baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
-    undefined selectAllChildren(Node node);
+    [MayThrowException] undefined selectAllChildren(Node node);
 
     [CEReactions] undefined deleteFromDocument();
     boolean containsNode(Node node, optional boolean allowPartialContainment = false);

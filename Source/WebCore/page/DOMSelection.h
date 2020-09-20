@@ -76,7 +76,7 @@ public:
     ExceptionOr<void> removeRange(Range&);
     void deleteFromDocument();
     bool containsNode(Node&, bool partlyContained) const;
-    void selectAllChildren(Node&);
+    ExceptionOr<void> selectAllChildren(Node&);
 
     String toString() const;
 
