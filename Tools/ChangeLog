@@ -1,3 +1,13 @@
+2020-09-19  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Merge API test expectations
+
+        Unreviewed test gardening.
+
+        Two TestUIClient sections were causing the first one to be ignored.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-09-18  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] API test /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check is crashing
