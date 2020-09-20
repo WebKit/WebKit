@@ -1,3 +1,9 @@
+2020-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Sort the project file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-09-19  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the CrossOriginResourcePolicy API
