@@ -4,14 +4,14 @@ if (window.testRunner)
     window.testRunner.dumpAsText();
 edit = document.getElementById("edit");
 var s = window.getSelection();
-s.setPosition(edit, 3);
+s.setPosition(edit, 1);
 document.execCommand("InsertText", false, " ");
 s.setBaseAndExtent(edit.firstChild, 0, edit.firstChild, 3);
 document.execCommand("Copy");
 document.execCommand("InsertText", false, "def");
 s.setBaseAndExtent(edit.firstChild, 0, edit.firstChild, 3);
 document.execCommand("Paste");
-s.setPosition(edit, 4);
+s.setPosition(edit, 1);
 document.execCommand("Undo");
 document.body.innerHTML = "<div>This tests an assertion failure when undoing a paste operation when the caret is outside of the range to be undone. This test should not crash with debug build.</div>";
 </script>

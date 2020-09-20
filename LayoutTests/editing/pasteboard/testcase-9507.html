@@ -33,7 +33,7 @@ foo
 
 Markup.description(document.getElementById('description').textContent);
 
-setSelectionCommand(document.getElementById("test"),0,document.getElementById("test"),5);
+setSelectionCommand(document.getElementById("test"),0,document.getElementById("test"),document.getElementById("test").childNodes.length);
 copyCommand();
 Markup.dump('root', 'After copy');
 

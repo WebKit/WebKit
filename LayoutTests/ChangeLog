@@ -1,3 +1,66 @@
+2020-09-19  Darin Adler  <darin@apple.com>
+
+        Selection API: Update some more tests so they don't accidentally rely on flaws in WebKit's old implementation
+        https://bugs.webkit.org/show_bug.cgi?id=216737
+
+        Reviewed by Sam Weinig.
+
+        Like the three tests I modified in r267220, these tests are accidentally
+        depending on the fact that our selection object implementation currently
+        allows invalid indexes. It's clear that these are mistakes in the tests,
+        not intentional, and fixing these does not change the test expectations,
+        only the tests themselves.
+
+        * accessibility/mac/select-text-should-match-whole-words.html: Set the selection
+        with separate calls to the collapse function. The old code tried to reuse the
+        same range to set the selection back to an old value, but that won't work if
+        the selection updates the range (as it is supposed to do).
+
+        * editing/execCommand/indent-selection.html: Pass a valid index, 1, instead of
+        an invalid one, 2.
+        * editing/pasteboard/paste-visible-script.html: Ditto.
+
+        * editing/pasteboard/replacement-fragment-remove-unrendered-node-crash.html:
+        Pass a valid index, 0, instead of an invalid one, 10500000000. Also fixed line
+        endings in this file, which were all Windows-style CR/LF pairs to be Unix-style
+        LF like most of our other files.
+
+        * editing/pasteboard/testcase-9507.html: Use childNodes.length to compute a
+        valid index instead of passing 5, which was an invalid one.
+
+        * editing/style/apply-style-crash2.html: Pass a valid index, 0, instead of
+        an invalid one, 4.
+        * editing/style/query-typing-style.html: Pass a valid index, 0, instead of
+        an invalid one, 1.
+        * editing/undo/undo-paste-when-caret-is-not-in-range.html: Pass valid index
+        1 instead of invalid ones, 3 and 4.
+        * fast/block/float/float-list-changed-before-layout-crash.html: Pass a valid
+        index, 0, instead of an invalid one, 1.
+
+        * fast/dynamic/checkbox-selection-crash.html: Use childNodes.length to compute
+        a valid index instead of passing 1000, which was an invalid one.
+
+        * fast/repaint/selection-gap-absolute-child.html: Pass a valid index, 0, instead
+        of an invalid one, 1.
+        * fast/repaint/selection-gap-fixed-child.html: Ditto.
+        * fast/repaint/selection-gap-flipped-absolute-child.html: Ditto.
+        * fast/repaint/selection-gap-flipped-fixed-child.html: Ditto.
+        * fast/repaint/selection-gap-transformed-absolute-child.html: Ditto.
+        * fast/repaint/selection-gap-transformed-fixed-child.html: Ditto.
+
+        * fast/replaced/selection-rect.html: Select the image with a range in its
+        parent node with valid indices instead of relying WebKit's quirky way of
+        expressing selections of replaced elements, which involves an invalid index
+        of 1 for an image element with no children. This test has nothing to do with
+        the particular selection range technique used, so it's fine to change it.
+
+        * http/tests/security/resources/foreign-domain-iframe-for-selection-test.html:
+        Use childNodes.length to compute a valid index instead of passing 10, which was
+        an invalid one.
+
+        * imported/blink/editing/apply-inline-style-to-element-with-no-renderer-crash.html:
+        Use a valid index, 0, instead of an invalid one, 4.
+
 2020-09-19  Sam Weinig  <weinig@apple.com>
 
         Resync web-platform-tests/hr-time from upstream

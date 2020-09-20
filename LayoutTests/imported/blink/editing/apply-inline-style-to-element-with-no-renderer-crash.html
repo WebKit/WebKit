@@ -16,7 +16,7 @@ onload = function() {
 
     input=document.createElement('input');
     textPath.parentNode.insertBefore(input, textPath);
-    window.getSelection().setBaseAndExtent(input, 4, input, 4);
+    window.getSelection().setBaseAndExtent(input, 0, input, 0);
 
     document.designMode='on';
     document.execCommand('Transpose');

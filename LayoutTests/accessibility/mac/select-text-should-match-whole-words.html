@@ -21,14 +21,8 @@
         // A matching range before the selection should be selected when searching for closest match.
         document.getElementById("text").focus();
 
-        // First find the range before the current selection.
-        var range = document.createRange();
-        range.setStart(document.getElementById("text").firstChild, 0);
-        range.setEnd(document.getElementById("text").firstChild, 0);
-        windowSelection.removeAllRanges();
-        windowSelection.addRange(range);
-      
         // Try to select a partial word, it should fail.
+        windowSelection.collapse(document.getElementById("text").firstChild, 0);
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jump");
         shouldBe("result", "''");
         shouldBe("windowSelection.getRangeAt(0).startOffset", "0");
@@ -39,16 +33,14 @@
         shouldBe("result", "'jumped'");
         shouldBe("windowSelection.getRangeAt(0).startOffset", "8");
         shouldBe("windowSelection.getRangeAt(0).endOffset", "14");
-        windowSelection.removeAllRanges();
-        windowSelection.addRange(range);
+        windowSelection.collapse(document.getElementById("text").firstChild, 0);
 
         // Select multiple whole word, it should succeed.
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jumped higher");
         shouldBe("result", "'jumped higher'");
         shouldBe("windowSelection.getRangeAt(0).startOffset", "8");
         shouldBe("windowSelection.getRangeAt(0).endOffset", "21");
-        windowSelection.removeAllRanges();
-        windowSelection.addRange(range);
+        windowSelection.collapse(document.getElementById("text").firstChild, 0);
 
         // Select multiple words, where one is not a whole word, it should fail.
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jumped high");

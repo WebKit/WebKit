@@ -4,7 +4,7 @@
         window.onload = function() {
             var selection = window.getSelection();
             if (selection.setBaseAndExtent)
-                selection.setBaseAndExtent(document.body, 0, document.body, 10);
+                selection.setBaseAndExtent(document.body, 0, document.body, document.body.childNodes.length);
             else if (selection.selectAllChildren)
                 selection.selectAllChildren(document.body);
         }

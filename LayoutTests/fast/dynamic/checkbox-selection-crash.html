@@ -16,7 +16,7 @@ Loading this page should not crash.
     var sel = window.getSelection();
     var td1 = document.getElementById('td1')
     // having selection triggers Document::updateRendering() from paint()
-    sel.setBaseAndExtent(td1, 0, td1, 1000);
+    sel.setBaseAndExtent(td1, 0, td1, td1.childNodes.length);
     // this causes style recalc and rendering tree tear down (from updateRendering) in middle of painting, which crashes
     document.body.setAttribute('class','gone');
     var cb = document.getElementById('cb')

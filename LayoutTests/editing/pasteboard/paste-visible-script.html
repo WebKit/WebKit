@@ -28,7 +28,7 @@ if (window.testRunner)
 var s = window.getSelection();
 var p1 = document.getElementById("test1");
 s.setPosition(p1, 0);
-s.setBaseAndExtent(p1, 0, document.getElementById("test2"), 2);
+s.setBaseAndExtent(p1, 0, document.getElementById("test2"), 1);
 document.execCommand("Copy");
 p1 = document.getElementById("pastehere");
 s.setPosition(p1, 0);
