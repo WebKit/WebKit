@@ -1,10 +1,10 @@
 include(GNUInstallDirs)
 include(VersioningUtils)
 
-SET_PROJECT_VERSION(2 30 0)
+SET_PROJECT_VERSION(2 30 1)
 set(WPE_API_VERSION 1.0)
 
-CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 14 3 11)
+CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 14 4 11)
 
 # These are shared variables, but we special case their definition so that we can use the
 # CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
