@@ -1,3 +1,13 @@
+2020-09-21  Aakash Jain  <aakash_jain@apple.com>
+
+        Make ews-app robust against config.json issues (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=216705
+
+        Unreviewed follow-up fix to change a log statement.
+
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot.update_icons_for_queues_mapping):
+
 2020-09-21  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] WKTR has lost access to Pulseaudio

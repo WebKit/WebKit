@@ -102,7 +102,7 @@ class Buildbot():
     def update_icons_for_queues_mapping(cls):
         config = cls.fetch_config()
         if not config:
-            _log.warn('Unable to fetch buildbot config.json')
+            _log.error('Unable to fetch buildbot config.json')
             return
         for builder in config.get('builders', []):
             shortname = builder.get('shortname')
