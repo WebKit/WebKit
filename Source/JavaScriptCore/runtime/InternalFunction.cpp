@@ -43,7 +43,7 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     ASSERT(m_functionForConstruct);
 }
 
-void InternalFunction::finishCreation(VM& vm, const String& name, NameAdditionMode nameAdditionMode)
+void InternalFunction::finishCreation(VM& vm, unsigned length, const String& name, PropertyAdditionMode nameAdditionMode)
 {
     Base::finishCreation(vm);
     ASSERT(jsDynamicCast<InternalFunction*>(vm, this));
@@ -51,12 +51,17 @@ void InternalFunction::finishCreation(VM& vm, const String& name, NameAdditionMo
     ASSERT(methodTable(vm)->getCallData == InternalFunction::info()->methodTable.getCallData);
     ASSERT(methodTable(vm)->getConstructData == InternalFunction::info()->methodTable.getConstructData);
     ASSERT(type() == InternalFunctionType || type() == NullSetterFunctionType);
+
     JSString* nameString = jsString(vm, name);
     m_originalName.set(vm, this, nameString);
-    if (nameAdditionMode == NameAdditionMode::WithStructureTransition)
+    // The enumeration order is length followed by name. So, we make sure to add the properties in that order.
+    if (nameAdditionMode == PropertyAdditionMode::WithStructureTransition) {
+        putDirect(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         putDirect(vm, vm.propertyNames->name, nameString, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
-    else
+    } else {
+        putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         putDirectWithoutTransition(vm, vm.propertyNames->name, nameString, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+    }
 }
 
 void InternalFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -159,8 +164,7 @@ InternalFunction* InternalFunction::createFunctionThatMasqueradesAsUndefined(VM&
     Structure* structure = Structure::create(vm, globalObject, globalObject->objectPrototype(), TypeInfo(InternalFunctionType, InternalFunction::StructureFlags | MasqueradesAsUndefined), InternalFunction::info());
     globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(globalObject->vm(), "Allocated masquerading object");
     InternalFunction* function = new (NotNull, allocateCell<InternalFunction>(vm.heap)) InternalFunction(vm, structure, nativeFunction);
-    function->finishCreation(vm, name, NameAdditionMode::WithoutStructureTransition);
-    function->putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+    function->finishCreation(vm, length, name, PropertyAdditionMode::WithoutStructureTransition);
     return function;
 }
 

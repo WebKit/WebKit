@@ -547,7 +547,7 @@ ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObj
 {
     Structure* structure = globalObject->objcCallbackFunctionStructure();
     ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm.heap)) ObjCCallbackFunction(vm, structure, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTFMove(impl));
-    function->finishCreation(vm, name);
+    function->finishCreation(vm, 0, name);
     return function;
 }
 

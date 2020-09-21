@@ -51,10 +51,8 @@ ProxyRevoke::ProxyRevoke(VM& vm, Structure* structure)
 
 void ProxyRevoke::finishCreation(VM& vm, ProxyObject* proxy)
 {
-    Base::finishCreation(vm, emptyString());
+    Base::finishCreation(vm, 0, emptyString());
     m_proxy.set(vm, this, proxy);
-
-    putDirect(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL performProxyRevoke(JSGlobalObject* globalObject, CallFrame* callFrame)

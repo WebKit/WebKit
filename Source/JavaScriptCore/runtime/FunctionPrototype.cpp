@@ -47,9 +47,8 @@ FunctionPrototype::FunctionPrototype(VM& vm, Structure* structure)
 
 void FunctionPrototype::finishCreation(VM& vm, const String& name)
 {
-    Base::finishCreation(vm, name, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, name, PropertyAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(vm, info()));
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction, JSFunction** hasInstanceSymbolFunction)

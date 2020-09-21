@@ -57,9 +57,8 @@ FunctionConstructor::FunctionConstructor(VM& vm, Structure* structure)
 
 void FunctionConstructor::finishCreation(VM& vm, FunctionPrototype* functionPrototype)
 {
-    Base::finishCreation(vm, vm.propertyNames->Function.string(), NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, vm.propertyNames->Function.string(), PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, functionPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 // ECMA 15.3.2 The Function Constructor

@@ -73,9 +73,8 @@ IntlRelativeTimeFormatConstructor::IntlRelativeTimeFormatConstructor(VM& vm, Str
 
 void IntlRelativeTimeFormatConstructor::finishCreation(VM& vm, IntlRelativeTimeFormatPrototype* relativeTimeFormatPrototype)
 {
-    Base::finishCreation(vm, "RelativeTimeFormat"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "RelativeTimeFormat"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, relativeTimeFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     relativeTimeFormatPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

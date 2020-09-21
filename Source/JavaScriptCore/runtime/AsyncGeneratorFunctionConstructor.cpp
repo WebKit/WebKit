@@ -55,11 +55,8 @@ AsyncGeneratorFunctionConstructor::AsyncGeneratorFunctionConstructor(VM& vm, Str
 
 void AsyncGeneratorFunctionConstructor::finishCreation(VM& vm, AsyncGeneratorFunctionPrototype* prototype)
 {
-    Base::finishCreation(vm, "AsyncGeneratorFunction"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "AsyncGeneratorFunction"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-
-    // Number of arguments for constructor
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 } // namespace JSC

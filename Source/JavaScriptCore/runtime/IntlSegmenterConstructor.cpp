@@ -72,9 +72,8 @@ IntlSegmenterConstructor::IntlSegmenterConstructor(VM& vm, Structure* structure)
 
 void IntlSegmenterConstructor::finishCreation(VM& vm, IntlSegmenterPrototype* segmenterPrototype)
 {
-    Base::finishCreation(vm, "Segmenter"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "Segmenter"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, segmenterPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     segmenterPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

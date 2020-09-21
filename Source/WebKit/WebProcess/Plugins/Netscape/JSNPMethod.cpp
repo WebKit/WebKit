@@ -56,7 +56,7 @@ JSNPMethod::JSNPMethod(JSGlobalObject* globalObject, Structure* structure, NPIde
 
 void JSNPMethod::finishCreation(VM& vm, const String& name)
 {
-    Base::finishCreation(vm, name);
+    Base::finishCreation(vm, 0, name);
     ASSERT(inherits(vm, info()));
 }
 

@@ -36,9 +36,8 @@ const ClassInfo WeakObjectRefConstructor::s_info = { "Function", &Base::s_info, 
 
 void WeakObjectRefConstructor::finishCreation(VM& vm, WeakObjectRefPrototype* prototype)
 {
-    Base::finishCreation(vm, "WeakRef"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "WeakRef"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 static EncodedJSValue JSC_HOST_CALL callWeakRef(JSGlobalObject*, CallFrame*);

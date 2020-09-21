@@ -59,13 +59,12 @@ NumberConstructor::NumberConstructor(VM& vm, Structure* structure)
 
 void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 {
-    Base::finishCreation(vm, vm.propertyNames->Number.string(), NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, vm.propertyNames->Number.string(), PropertyAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(vm, info()));
 
     JSGlobalObject* globalObject = numberPrototype->globalObject(vm);
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "EPSILON"), jsDoubleNumber(std::numeric_limits<double>::epsilon()), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "MAX_VALUE"), jsDoubleNumber(1.7976931348623157E+308), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);

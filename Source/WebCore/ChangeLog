@@ -1,3 +1,19 @@
+2020-09-21  Keith Miller  <keith_miller@apple.com>
+
+        Functions should consistently enumerate length before name
+        https://bugs.webkit.org/show_bug.cgi?id=216789
+
+        Reviewed by Yusuke Suzuki.
+
+        RuntimeMethod inherits from InternalFunction which now sets length by default.
+        RuntimeMethod intercepts length in getOwnPropertySlot so the value we pick
+        doesn't actually matter. Technically, this uses a little extra memory but
+        that's not too big of a deal because RuntimeMethod's are rare (and I believe
+        deprecated).
+
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::finishCreation):
+
 2020-09-20  Darin Adler  <darin@apple.com>
 
         Next step towards eliminating deprecated legacy positions

@@ -66,9 +66,8 @@ putDirectWithoutTransition(vm, Identifier::fromString(vm, #name), Symbol::create
 
 void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
 {
-    Base::finishCreation(vm, vm.propertyNames->Symbol.string(), NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, vm.propertyNames->Symbol.string(), PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_WELL_KNOWN_SYMBOLS)
 }

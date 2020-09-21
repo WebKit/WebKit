@@ -41,9 +41,8 @@ const ClassInfo FinalizationRegistryConstructor::s_info = { "Function", &Base::s
 
 void FinalizationRegistryConstructor::finishCreation(VM& vm, FinalizationRegistryPrototype* prototype)
 {
-    Base::finishCreation(vm, "FinalizationRegistry"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "FinalizationRegistry"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 static EncodedJSValue JSC_HOST_CALL callFinalizationRegistry(JSGlobalObject*, CallFrame*);

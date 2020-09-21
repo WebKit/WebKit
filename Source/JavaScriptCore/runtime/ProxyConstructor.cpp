@@ -75,8 +75,7 @@ static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(JSGlobalObject* globalObj
 
 void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* globalObject)
 {
-    Base::finishCreation(vm, name, NameAdditionMode::WithStructureTransition);
-    putDirect(vm, vm.propertyNames->length, jsNumber(2), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    Base::finishCreation(vm, 2, name, PropertyAdditionMode::WithStructureTransition);
     putDirect(vm, makeIdentifier(vm, "revocable"), JSFunction::create(vm, globalObject, 2, "revocable"_s, makeRevocableProxy));
 }
 

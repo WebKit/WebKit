@@ -74,9 +74,8 @@ IntlDateTimeFormatConstructor::IntlDateTimeFormatConstructor(VM& vm, Structure* 
 
 void IntlDateTimeFormatConstructor::finishCreation(VM& vm, IntlDateTimeFormatPrototype* dateTimeFormatPrototype)
 {
-    Base::finishCreation(vm, "DateTimeFormat"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "DateTimeFormat"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, dateTimeFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(JSGlobalObject* globalObject, CallFrame* callFrame)

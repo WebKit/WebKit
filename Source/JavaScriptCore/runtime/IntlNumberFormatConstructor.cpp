@@ -74,9 +74,8 @@ IntlNumberFormatConstructor::IntlNumberFormatConstructor(VM& vm, Structure* stru
 
 void IntlNumberFormatConstructor::finishCreation(VM& vm, IntlNumberFormatPrototype* numberFormatPrototype)
 {
-    Base::finishCreation(vm, "NumberFormat"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "NumberFormat"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(JSGlobalObject* globalObject, CallFrame* callFrame)

@@ -1,3 +1,17 @@
+2020-09-21  Keith Miller  <keith_miller@apple.com>
+
+        Functions should consistently enumerate length before name
+        https://bugs.webkit.org/show_bug.cgi?id=216789
+
+        Reviewed by Yusuke Suzuki.
+
+        JSNPMethod inherits from InternalFunction which now sets length by default.
+        I chose 0 because it looks like this function doesn't directly look at any
+        arguments and I doubt anyone is looking at the length anyway.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSNPMethod::finishCreation):
+
 2020-09-20  Darin Adler  <darin@apple.com>
 
         Next step towards eliminating deprecated legacy positions

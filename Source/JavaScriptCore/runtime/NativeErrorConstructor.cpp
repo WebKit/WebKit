@@ -39,10 +39,9 @@ NativeErrorConstructor<errorType>::NativeErrorConstructor(VM& vm, Structure* str
 
 void NativeErrorConstructorBase::finishCreation(VM& vm, NativeErrorPrototype* prototype, ErrorType errorType)
 {
-    Base::finishCreation(vm, errorTypeName(errorType), NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, errorTypeName(errorType), PropertyAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(vm, info()));
     
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 

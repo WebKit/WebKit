@@ -37,9 +37,8 @@ const ClassInfo WeakSetConstructor::s_info = { "Function", &Base::s_info, nullpt
 
 void WeakSetConstructor::finishCreation(VM& vm, WeakSetPrototype* prototype)
 {
-    Base::finishCreation(vm, "WeakSet"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "WeakSet"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 static EncodedJSValue JSC_HOST_CALL callWeakSet(JSGlobalObject*, CallFrame*);

@@ -40,10 +40,9 @@ ErrorConstructor::ErrorConstructor(VM& vm, Structure* structure)
 
 void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
 {
-    Base::finishCreation(vm, vm.propertyNames->Error.string(), NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, vm.propertyNames->Error.string(), PropertyAdditionMode::WithoutStructureTransition);
     // ECMA 15.11.3.1 Error.prototype
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, errorPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(globalObject()->stackTraceLimit().valueOr(Options::defaultErrorStackTraceLimit())), static_cast<unsigned>(PropertyAttribute::None));
 }
 

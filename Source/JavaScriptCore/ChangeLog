@@ -1,3 +1,121 @@
+2020-09-21  Keith Miller  <keith_miller@apple.com>
+
+        Functions should consistently enumerate length before name
+        https://bugs.webkit.org/show_bug.cgi?id=216789
+
+        Reviewed by Yusuke Suzuki.
+
+        In https://github.com/tc39/ecma262/pull/2116, which has been
+        approved to be merged into the main JS spec, it's expected that
+        all functions should have their length property enumerated before
+        the name property. To ensure this invariant, this patch moves the
+        length set into InternalFunction::finishCreation.
+
+        There are no new tests since tests will be added to test262 when
+        the spec PR is merged. Adding tests to stress just means we will
+        have the same test twice, which seems like a waste.
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::finishCreation):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunction::create):
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSCCallbackFunction::create):
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::AggregateErrorConstructor::finishCreation):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        * runtime/AsyncFunctionConstructor.cpp:
+        (JSC::AsyncFunctionConstructor::finishCreation):
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        (JSC::AsyncGeneratorFunctionConstructor::finishCreation):
+        * runtime/BigIntConstructor.cpp:
+        (JSC::BigIntConstructor::finishCreation):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::finishCreation):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::finishCreation):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        * runtime/FinalizationRegistryConstructor.cpp:
+        (JSC::FinalizationRegistryConstructor::finishCreation):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::finishCreation):
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::GeneratorFunctionConstructor::finishCreation):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        (JSC::InternalFunction::createFunctionThatMasqueradesAsUndefined):
+        * runtime/InternalFunction.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::finishCreation):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::finishCreation):
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        (JSC::IntlDisplayNamesConstructor::finishCreation):
+        * runtime/IntlLocaleConstructor.cpp:
+        (JSC::IntlLocaleConstructor::finishCreation):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::finishCreation):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::IntlPluralRulesConstructor::finishCreation):
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        (JSC::IntlRelativeTimeFormatConstructor::finishCreation):
+        * runtime/IntlSegmenterConstructor.cpp:
+        (JSC::IntlSegmenterConstructor::finishCreation):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::finishCreation):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation):
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        * runtime/MapConstructor.cpp:
+        (JSC::MapConstructor::finishCreation):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructorBase::finishCreation):
+        * runtime/NullGetterFunction.h:
+        * runtime/NullSetterFunction.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::finishCreation):
+        * runtime/ProxyRevoke.cpp:
+        (JSC::ProxyRevoke::finishCreation):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/SetConstructor.cpp:
+        (JSC::SetConstructor::finishCreation):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::finishCreation):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::finishCreation):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::WeakMapConstructor::finishCreation):
+        * runtime/WeakObjectRefConstructor.cpp:
+        (JSC::WeakObjectRefConstructor::finishCreation):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::WeakSetConstructor::finishCreation):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::WebAssemblyCompileErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::WebAssemblyGlobalConstructor::finishCreation):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::finishCreation):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::WebAssemblyLinkErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::WebAssemblyMemoryConstructor::finishCreation):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::finishCreation):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::WebAssemblyRuntimeErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::WebAssemblyTableConstructor::finishCreation):
+
 2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Proxy should be trapped if base value is primitive

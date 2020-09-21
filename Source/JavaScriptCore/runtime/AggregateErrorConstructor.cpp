@@ -49,10 +49,9 @@ AggregateErrorConstructor::AggregateErrorConstructor(VM& vm, Structure* structur
 
 void AggregateErrorConstructor::finishCreation(VM& vm, AggregateErrorPrototype* prototype)
 {
-    Base::finishCreation(vm, errorTypeName(ErrorType::AggregateError), NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 2, errorTypeName(ErrorType::AggregateError), PropertyAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(vm, info()));
 
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(2), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 

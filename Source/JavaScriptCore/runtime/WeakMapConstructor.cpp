@@ -37,9 +37,8 @@ const ClassInfo WeakMapConstructor::s_info = { "Function", &Base::s_info, nullpt
 
 void WeakMapConstructor::finishCreation(VM& vm, WeakMapPrototype* prototype)
 {
-    Base::finishCreation(vm, "WeakMap"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "WeakMap"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 static EncodedJSValue JSC_HOST_CALL callWeakMap(JSGlobalObject*, CallFrame*);

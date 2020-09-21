@@ -43,9 +43,8 @@ const ClassInfo JSTypedArrayViewConstructor::s_info = { "Function", &Base::s_inf
 
 void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, JSTypedArrayViewPrototype* prototype, GetterSetter* speciesSymbol)
 {
-    Base::finishCreation(vm, "TypedArray"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "TypedArray"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->of, typedArrayConstructorOfCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));

@@ -61,9 +61,8 @@ BooleanConstructor::BooleanConstructor(VM& vm, Structure* structure)
 
 void BooleanConstructor::finishCreation(VM& vm, BooleanPrototype* booleanPrototype)
 {
-    Base::finishCreation(vm, vm.propertyNames->Boolean.string(), NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, vm.propertyNames->Boolean.string(), PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, booleanPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 JSObject* constructBooleanFromImmediateBoolean(JSGlobalObject* globalObject, JSValue immediateBooleanValue)

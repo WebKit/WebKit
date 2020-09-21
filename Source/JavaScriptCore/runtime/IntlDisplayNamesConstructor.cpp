@@ -72,9 +72,8 @@ IntlDisplayNamesConstructor::IntlDisplayNamesConstructor(VM& vm, Structure* stru
 
 void IntlDisplayNamesConstructor::finishCreation(VM& vm, IntlDisplayNamesPrototype* displayNamesPrototype)
 {
-    Base::finishCreation(vm, "DisplayNames"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 2, "DisplayNames"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, displayNamesPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(2), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     displayNamesPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

@@ -200,9 +200,8 @@ Structure* WebAssemblyModuleConstructor::createStructure(VM& vm, JSGlobalObject*
 
 void WebAssemblyModuleConstructor::finishCreation(VM& vm, WebAssemblyModulePrototype* prototype)
 {
-    Base::finishCreation(vm, "Module"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Module"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 WebAssemblyModuleConstructor::WebAssemblyModuleConstructor(VM& vm, Structure* structure)

@@ -54,7 +54,7 @@ RuntimeMethod::RuntimeMethod(VM& vm, Structure* structure, Method* method)
 
 void RuntimeMethod::finishCreation(VM& vm, const String& ident)
 {
-    Base::finishCreation(vm, ident);
+    Base::finishCreation(vm, 0, ident);
     ASSERT(inherits(vm, info()));
 }
 

@@ -57,9 +57,8 @@ JSGenericArrayBufferConstructor<sharingMode>::JSGenericArrayBufferConstructor(VM
 template<ArrayBufferSharingMode sharingMode>
 void JSGenericArrayBufferConstructor<sharingMode>::finishCreation(VM& vm, JSArrayBufferPrototype* prototype, GetterSetter* speciesSymbol)
 {
-    Base::finishCreation(vm, arrayBufferSharingModeName(sharingMode), NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, arrayBufferSharingModeName(sharingMode), PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 
     if (sharingMode == ArrayBufferSharingMode::Default) {

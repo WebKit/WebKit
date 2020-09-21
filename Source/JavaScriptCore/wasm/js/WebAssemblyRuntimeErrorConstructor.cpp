@@ -81,9 +81,8 @@ Structure* WebAssemblyRuntimeErrorConstructor::createStructure(VM& vm, JSGlobalO
 
 void WebAssemblyRuntimeErrorConstructor::finishCreation(VM& vm, WebAssemblyRuntimeErrorPrototype* prototype)
 {
-    Base::finishCreation(vm, "RuntimeError"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "RuntimeError"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 WebAssemblyRuntimeErrorConstructor::WebAssemblyRuntimeErrorConstructor(VM& vm, Structure* structure)

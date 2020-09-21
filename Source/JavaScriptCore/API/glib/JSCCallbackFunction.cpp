@@ -56,7 +56,7 @@ JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalO
 {
     Structure* structure = globalObject->glibCallbackFunctionStructure();
     JSCCallbackFunction* function = new (NotNull, allocateCell<JSCCallbackFunction>(vm.heap)) JSCCallbackFunction(vm, structure, type, jscClass, WTFMove(closure), returnType, WTFMove(parameters));
-    function->finishCreation(vm, name);
+    function->finishCreation(vm, 0, name);
     return function;
 }
 

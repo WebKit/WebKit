@@ -127,9 +127,8 @@ Structure* WebAssemblyTableConstructor::createStructure(VM& vm, JSGlobalObject* 
 
 void WebAssemblyTableConstructor::finishCreation(VM& vm, WebAssemblyTablePrototype* prototype)
 {
-    Base::finishCreation(vm, "Table"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Table"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 WebAssemblyTableConstructor::WebAssemblyTableConstructor(VM& vm, Structure* structure)

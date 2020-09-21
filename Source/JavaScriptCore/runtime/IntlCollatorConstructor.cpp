@@ -75,9 +75,8 @@ IntlCollatorConstructor::IntlCollatorConstructor(VM& vm, Structure* structure)
 
 void IntlCollatorConstructor::finishCreation(VM& vm, IntlCollatorPrototype* collatorPrototype)
 {
-    Base::finishCreation(vm, "Collator"_s, NameAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "Collator"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, collatorPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     collatorPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
