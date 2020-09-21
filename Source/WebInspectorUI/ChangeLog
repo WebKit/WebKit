@@ -1,3 +1,25 @@
+2020-09-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Uncaught Exception: Missing node for given nodeId
+        https://bugs.webkit.org/show_bug.cgi?id=216067
+        <rdar://problem/68520144>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView.prototype.showDetailsSidebarPanels):
+        Rewrite `showDetailsSidebarPanels` in such way that causes no more than one change of selectedSidebarPanel.
+        Previously, `removeSidebarPanel` would cause the change of selectedSidebarPanel, resulting in showing
+        a panel with outdated `this.domNode`.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        Display a useful error with a relevant location instead of a generic Connection.js error.
+
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.removeSidebarPanel):
+        After removing a panel, don't select the nearest panel. There doesn't seem to be a useful case for it.
+        The selected panel is determined at the removeSidebarPanel callsites.
+
 2020-09-21  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Timelines: remove "stop requested" marker

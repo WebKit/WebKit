@@ -87,7 +87,7 @@ WI.Sidebar = class Sidebar extends WI.View
 
     removeSidebarPanel(sidebarPanelOrIdentifierOrIndex)
     {
-        var sidebarPanel = this.findSidebarPanel(sidebarPanelOrIdentifierOrIndex);
+        let sidebarPanel = this.findSidebarPanel(sidebarPanelOrIdentifierOrIndex);
         if (!sidebarPanel)
             return;
 
@@ -95,11 +95,6 @@ WI.Sidebar = class Sidebar extends WI.View
             sidebarPanel.hidden();
 
         sidebarPanel.selected = false;
-
-        if (this._selectedSidebarPanel === sidebarPanel) {
-            var index = this._sidebarPanels.indexOf(sidebarPanel);
-            this.selectedSidebarPanel = this._sidebarPanels[index - 1] || this._sidebarPanels[index + 1] || null;
-        }
 
         this._sidebarPanels.remove(sidebarPanel);
 

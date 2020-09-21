@@ -177,6 +177,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         this._ignoreDetailsSidebarPanelCollapsedEvent = true;
 
         let hiddenSidebarPanels = 0;
+        let sidebarPanelToSelect = null;
 
         for (var i = 0; i < this.detailsSidebarPanels.length; ++i) {
             var sidebarPanel = this.detailsSidebarPanels[i];
@@ -192,7 +193,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
                 if (this._lastSelectedDetailsSidebarPanelSetting.value === sidebarPanel.identifier) {
                     // Restore the sidebar panel selection if this sidebar panel was the last one selected by the user.
-                    WI.detailsSidebar.selectedSidebarPanel = sidebarPanel;
+                    sidebarPanelToSelect = sidebarPanel;
                 }
             } else {
                 // The sidebar panel can't inspect the current represented objects, so remove the panel and hide the toolbar item.
@@ -201,7 +202,9 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             }
         }
 
-        if (!WI.detailsSidebar.selectedSidebarPanel && WI.detailsSidebar.sidebarPanels.length)
+        if (sidebarPanelToSelect)
+            WI.detailsSidebar.selectedSidebarPanel = sidebarPanelToSelect;
+        else if (!WI.detailsSidebar.selectedSidebarPanel && WI.detailsSidebar.sidebarPanels.length)
             WI.detailsSidebar.selectedSidebarPanel = WI.detailsSidebar.sidebarPanels[0];
 
         if (!WI.detailsSidebar.sidebarPanels.length)

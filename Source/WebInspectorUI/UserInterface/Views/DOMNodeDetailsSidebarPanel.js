@@ -262,6 +262,12 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
             const args = undefined;
             const generatePreview = false;
             object.callFunction(inspectedPage_node_collectPrototypes, args, generatePreview, nodePrototypesReady.bind(this));
+        }).catch((error) => {
+            // Bail if the DOM node changed while we were waiting for the async response.
+            if (this.domNode !== domNode)
+                return;
+
+            console.assert(false, "Cannot resolve node.", error, domNode);
         });
 
         function nodePrototypesReady(error, object, wasThrown)
