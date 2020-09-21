@@ -272,6 +272,7 @@ void GStreamerRegistryScanner::initialize()
         m_mimeTypeSet.add(AtomString("audio/mp3"));
         m_mimeTypeSet.add(AtomString("audio/x-mp3"));
         m_codecMap.add(AtomString("audio/mp3"), false);
+        m_codecMap.add(AtomString("mp3"), false);
     }
 
     if (hasElementForMediaType(m_audioDecoderFactories, "audio/mpeg, mpegversion=(int)2")) {

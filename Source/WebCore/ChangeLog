@@ -1,3 +1,16 @@
+2020-09-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] media/media-can-play-mp3.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=216692
+
+        Reviewed by Darin Adler.
+
+        Add mp3 to supported codecs map when a valid decoder has been
+        found by the GStreamer registry scanner.
+
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::initialize):
+
 2020-09-20  Sam Weinig  <weinig@apple.com>
 
         Performance.navigation and Performance.timing are incorrectly exposed to workers
