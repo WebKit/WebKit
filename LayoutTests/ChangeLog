@@ -1,3 +1,12 @@
+2020-09-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] media/media-can-play-mp3.html is failing since added in r267210
+        https://bugs.webkit.org/show_bug.cgi?id=216765
+
+        Unreviewed, unflag now-passing test, since r267335.
+
+        * platform/gtk/TestExpectations: Unflag now-passing test.
+
 2020-09-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Adjust test expectations of several tests failing.
