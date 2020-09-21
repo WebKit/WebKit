@@ -102,7 +102,6 @@ public:
         FindFixedHeightAncestorQuirk,
         DocumentBoxStretchesToViewportQuirk,
         BodyStretchesToViewportQuirk,
-        StrokeOverflowNeedsViewportGeometry,
         TableNeedsAccessToTableWrapper
     };
     const BoxGeometry& geometryForBox(const Box&, Optional<EscapeReason> = WTF::nullopt) const;

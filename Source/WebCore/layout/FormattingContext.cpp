@@ -194,9 +194,6 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, Optio
 
         }
 
-        if (*escapeReason == EscapeReason::StrokeOverflowNeedsViewportGeometry)
-            return is<InitialContainingBlock>(layoutBox);
-
         if (*escapeReason == EscapeReason::NeedsGeometryFromEstablishedFormattingContext) {
             // This is the case when a formatting root collects geometry information from the established
             // formatting context to be able to determine width/height.
