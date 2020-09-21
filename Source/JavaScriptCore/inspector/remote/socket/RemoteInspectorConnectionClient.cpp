@@ -62,7 +62,7 @@ void RemoteInspectorConnectionClient::send(ConnectionID id, const uint8_t* data,
     endpoint.send(id, message.data(), message.size());
 }
 
-void RemoteInspectorConnectionClient::didReceive(ConnectionID clientID, Vector<uint8_t>&& data)
+void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID clientID, Vector<uint8_t>&& data)
 {
     ASSERT(!isMainThread());
 

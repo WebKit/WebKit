@@ -82,7 +82,7 @@ private:
     void sendMessageToFrontend(const Event&);
     void setBackendCommands(const Event&);
 
-    void didClose(ConnectionID) final;
+    void didClose(Inspector::RemoteInspectorSocketEndpoint&, ConnectionID) final;
     HashMap<String, CallHandler>& dispatchMap() final;
 
     void sendWebInspectorEvent(const String&);

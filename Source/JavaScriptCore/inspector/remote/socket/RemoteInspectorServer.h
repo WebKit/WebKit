@@ -46,8 +46,8 @@ private:
     friend class LazyNeverDestroyed<RemoteInspectorServer>;
     RemoteInspectorServer() { Socket::init(); }
 
-    bool didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) final;
-    void didClose(ConnectionID) final { }
+    Optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) final;
+    void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final { };
 
     Optional<ConnectionID> m_server;
 };

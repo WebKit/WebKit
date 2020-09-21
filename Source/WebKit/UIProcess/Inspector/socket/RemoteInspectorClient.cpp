@@ -145,7 +145,7 @@ void RemoteInspectorClient::connectionClosed()
     m_observer.targetListChanged(*this);
 }
 
-void RemoteInspectorClient::didClose(ConnectionID)
+void RemoteInspectorClient::didClose(Inspector::RemoteInspectorSocketEndpoint&, ConnectionID)
 {
     callOnMainThread([this] {
         connectionClosed();

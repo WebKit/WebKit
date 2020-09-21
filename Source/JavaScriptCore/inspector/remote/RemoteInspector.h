@@ -79,7 +79,7 @@ class JS_EXPORT_PRIVATE RemoteInspector final
 #endif
 {
 public:
-    class Client {
+    class JS_EXPORT_PRIVATE Client {
     public:
         struct Capabilities {
             bool remoteAutomationAllowed : 1;
@@ -224,7 +224,7 @@ private:
 #endif
 #if USE(INSPECTOR_SOCKET_SERVER)
     HashMap<String, CallHandler>& dispatchMap() final;
-    void didClose(ConnectionID) final;
+    void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final;
 
     void sendWebInspectorEvent(const String&);
 

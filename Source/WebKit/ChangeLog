@@ -1,3 +1,18 @@
+2020-09-21  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WinCairo][PlayStation] Support different instances of listener client.
+        https://bugs.webkit.org/show_bug.cgi?id=216733
+
+        Reviewed by Don Olmstead.
+
+        Follows the change of RemoteInspectorSocketEndpoint::Client interface change.
+
+        No new tests because there's no behaivior change.
+
+        * UIProcess/Inspector/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::didClose):
+        * UIProcess/Inspector/socket/RemoteInspectorClient.h:
+
 2020-09-21  Youenn Fablet  <youenn@apple.com>
 
         [iOS] MediaRecorder incorrect screen orientation handling

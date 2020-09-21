@@ -28,7 +28,6 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspectorSocket.h"
-
 #include <wtf/Condition.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -38,19 +37,21 @@
 
 namespace Inspector {
 
-class RemoteInspectorSocketEndpoint {
+class JS_EXPORT_PRIVATE RemoteInspectorSocketEndpoint {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class Client {
     public:
-        virtual void didReceive(ConnectionID, Vector<uint8_t>&&) = 0;
-        virtual void didClose(ConnectionID) = 0;
+        virtual ~Client() { }
+        virtual void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) = 0;
+        virtual void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) = 0;
     };
 
     class Listener {
     public:
-        virtual bool didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) = 0;
-        virtual void didClose(ConnectionID) = 0;
+        virtual ~Listener() { }
+        virtual Optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) = 0;
+        virtual void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) = 0;
     };
 
     static RemoteInspectorSocketEndpoint& singleton();
@@ -59,35 +60,61 @@ public:
     ~RemoteInspectorSocketEndpoint();
 
     Optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort, Client&);
-    Optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&, Client&);
+    Optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&);
     void invalidateClient(Client&);
     void invalidateListener(Listener&);
 
     void send(ConnectionID, const uint8_t* data, size_t);
+    inline void send(ConnectionID id, const Vector<uint8_t>& data) { send(id, data.data(), data.size()); }
+    inline void send(ConnectionID id, const char* data, size_t length) { send(id, reinterpret_cast<const uint8_t*>(data), length); }
 
     Optional<ConnectionID> createClient(PlatformSocketType, Client&);
     Optional<ConnectionID> createListener(PlatformSocketType, Listener&, Client&);
 
     Optional<uint16_t> getPort(ConnectionID) const;
 
+    void disconnect(ConnectionID);
+
 protected:
-    struct Connection {
+    struct BaseConnection {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        explicit Connection(Client& client)
-            : client(client)
+
+        BaseConnection(ConnectionID id, PlatformSocketType socket)
+            : id { id }
+            , socket { socket }
+            , poll { Socket::preparePolling(socket) }
         {
+            ASSERT(Socket::isValid(socket));
         }
 
         ConnectionID id;
-        Vector<uint8_t> sendBuffer;
-        PlatformSocketType socket { INVALID_SOCKET_VALUE };
+        PlatformSocketType socket;
         PollingDescriptor poll;
+    };
+
+    struct ClientConnection : public BaseConnection {
+        ClientConnection(ConnectionID id, PlatformSocketType socket, Client& client)
+            : BaseConnection(id, socket)
+            , client { client }
+        {
+        }
+
         Client& client;
-        Listener* listener { };
+        Vector<uint8_t> sendBuffer;
+    };
+
+    struct ListenerConnection : public BaseConnection {
+        ListenerConnection(ConnectionID id, PlatformSocketType socket, Listener& listener)
+            : BaseConnection(id, socket)
+            , listener { listener }
+        {
+        }
+
+        Listener& listener;
     };
 
     ConnectionID generateConnectionID();
-    std::unique_ptr<Connection> makeConnection(PlatformSocketType, Client&);
+    Optional<ConnectionID> createListener(PlatformSocketType, Listener&);
 
     void recvIfEnabled(ConnectionID);
     void sendIfEnabled(ConnectionID);
@@ -97,8 +124,8 @@ protected:
     bool isListening(ConnectionID);
 
     mutable Lock m_connectionsLock;
-    HashMap<ConnectionID, std::unique_ptr<Connection>> m_connections;
-    HashMap<ConnectionID, std::unique_ptr<Connection>> m_listeners;
+    HashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients;
+    HashMap<ConnectionID, std::unique_ptr<ListenerConnection>> m_listeners;
 
     PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };
     PlatformSocketType m_wakeupReceiveSocket { INVALID_SOCKET_VALUE };

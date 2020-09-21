@@ -1,3 +1,44 @@
+2020-09-21  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WinCairo][PlayStation] Support different instances of listener client.
+        https://bugs.webkit.org/show_bug.cgi?id=216733
+
+        Reviewed by Don Olmstead.
+
+        Currently RemoteInspectorSocketEndpoint support one client instance for all
+        listeners. This patch allows listeners to create its own listener client on
+        accept timing.
+
+        * inspector/remote/RemoteControllableTarget.h:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp:
+        (Inspector::RemoteInspectorConnectionClient::didReceive):
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::start):
+        (Inspector::RemoteInspectorServer::doAccept):
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::didClose):
+        * inspector/remote/socket/RemoteInspectorSocket.h:
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::RemoteInspectorSocketEndpoint):
+        (Inspector::RemoteInspectorSocketEndpoint::~RemoteInspectorSocketEndpoint):
+        (Inspector::RemoteInspectorSocketEndpoint::listenInet):
+        (Inspector::RemoteInspectorSocketEndpoint::workerThread):
+        (Inspector::RemoteInspectorSocketEndpoint::generateConnectionID):
+        (Inspector::RemoteInspectorSocketEndpoint::createClient):
+        (Inspector::RemoteInspectorSocketEndpoint::disconnect):
+        (Inspector::RemoteInspectorSocketEndpoint::createListener):
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateClient):
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateListener):
+        (Inspector::RemoteInspectorSocketEndpoint::getPort const):
+        (Inspector::RemoteInspectorSocketEndpoint::recvIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::sendIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::send):
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.h:
+
 2020-09-21  Keith Miller  <keith_miller@apple.com>
 
         Functions should consistently enumerate length before name

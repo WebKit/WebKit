@@ -27,6 +27,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "JSExportMacros.h"
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 

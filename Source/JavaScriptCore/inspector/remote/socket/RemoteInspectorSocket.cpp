@@ -63,7 +63,7 @@ void RemoteInspector::connect(ConnectionID id)
     start();
 }
 
-void RemoteInspector::didClose(ConnectionID)
+void RemoteInspector::didClose(RemoteInspectorSocketEndpoint&, ConnectionID)
 {
     ASSERT(isConnected());
 

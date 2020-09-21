@@ -46,7 +46,7 @@ public:
     Optional<ConnectionID> createClient(PlatformSocketType);
     void send(ConnectionID, const uint8_t* data, size_t);
 
-    void didReceive(ConnectionID, Vector<uint8_t>&&) override;
+    void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) override;
 
     struct Event {
         String methodName;
