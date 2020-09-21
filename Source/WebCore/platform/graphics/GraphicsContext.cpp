@@ -602,6 +602,7 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality imageInt
 
 void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)
 {
+    m_state.strokeColor = { };
     m_state.strokeGradient = nullptr;
     m_state.strokePattern = WTFMove(pattern);
     if (m_impl)
@@ -610,6 +611,7 @@ void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)
 
 void GraphicsContext::setFillPattern(Ref<Pattern>&& pattern)
 {
+    m_state.fillColor = { };
     m_state.fillGradient = nullptr;
     m_state.fillPattern = WTFMove(pattern);
     if (m_impl)
@@ -618,6 +620,7 @@ void GraphicsContext::setFillPattern(Ref<Pattern>&& pattern)
 
 void GraphicsContext::setStrokeGradient(Ref<Gradient>&& gradient)
 {
+    m_state.strokeColor = { };
     m_state.strokeGradient = WTFMove(gradient);
     m_state.strokePattern = nullptr;
     if (m_impl)
@@ -633,6 +636,7 @@ void GraphicsContext::setFillRule(WindRule fillRule)
 
 void GraphicsContext::setFillGradient(Ref<Gradient>&& gradient)
 {
+    m_state.fillColor = { };
     m_state.fillGradient = WTFMove(gradient);
     m_state.fillPattern = nullptr;
     if (m_impl)

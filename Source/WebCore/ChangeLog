@@ -1,3 +1,48 @@
+2020-09-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Several tests in canvas/philip/tests are failing with text diffs
+        https://bugs.webkit.org/show_bug.cgi?id=216800
+
+        Reviewed by Darin Adler.
+
+        When using the GPU process to render canvas elements, we currently fail the 7 tests in `canvas/philip/tests`
+        below, due to gradient and pattern fill/stroke styles lingering on the 2D graphics context state after a fill or
+        stroke color is set, respectively.
+
+        This happens when:
+        1. The fill color is set to a color `C`.
+        2. A fill pattern or gradient is applied.
+        3. The fill color is set to the color `C` again.
+
+        In this case, after step (2), we propagate a graphics context state change indicating that the fill pattern has
+        changed, but we leave the fill color unchanged (i.e., it remains equal to `C`). In step (3), we then set the
+        fill color to `C` again, which doesn't propagate a state change to the GPU process, since the fill color is the
+        same (`C`). As such, the state in the GPU process keeps its fill gradient, and we end up filling with this old
+        gradient instead of the fill color `C`.
+
+        To fix this, we simply revert `fillColor` and `strokeColor` to the invalid color when setting a gradient or
+        pattern in the same way that we currently clear out the fill/stroke gradient and pattern when setting a fill/
+        stroke color, which ensures that a state change will be sent to the GPU process during step (3).
+
+        Fixes the following canvas-related layout tests when using the GPU process:
+        - canvas/philip/tests/2d.gradient.radial.cone.shape2.html
+        - canvas/philip/tests/2d.pattern.basic.nocontext.html
+        - canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html
+        - canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
+        - canvas/philip/tests/2d.pattern.paint.repeatx.outside.html
+        - canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html
+        - canvas/philip/tests/2d.pattern.paint.repeaty.outside.html
+
+        The entire canvas/ directory is currently skipped when enabling the GPU process for canvas rendering, but once
+        we're down to a smaller number of failures, I intend to unskip these directories for GPU process, and
+        individually track any remaining test failures.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         Properly handle AudioParam.setTargetAtTime() followed by a ramp
