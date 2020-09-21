@@ -1,5 +1,20 @@
 2020-09-21  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK][WPE] WKTR has lost access to Pulseaudio
+        https://bugs.webkit.org/show_bug.cgi?id=216745
+
+        Reviewed by Carlos Garcia Campos.
+
+        Let Pulseaudio env vars pass through in the test environment, this is specially needed when
+        the test harness runs in the Flatpak sandbox.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+
+2020-09-21  Philippe Normand  <pnormand@igalia.com>
+
         [GTK][WPE] Missing support for multi-word $WEBKIT_MINI_BROWSER_PREFIX
         https://bugs.webkit.org/show_bug.cgi?id=216604
 

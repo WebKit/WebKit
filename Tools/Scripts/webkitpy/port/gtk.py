@@ -128,6 +128,8 @@ class GtkPort(Port):
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_TOP_LEVEL')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_DEBUG')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_USE_PLAYBIN3')
+        self._copy_value_from_environ_if_set(environment, 'PULSE_SERVER')
+        self._copy_value_from_environ_if_set(environment, 'PULSE_CLIENTCONFIG')
         for gst_variable in ('DEBUG', 'DEBUG_DUMP_DOT_DIR', 'DEBUG_FILE', 'DEBUG_NO_COLOR',
                              'PLUGIN_SCANNER', 'PLUGIN_PATH', 'PLUGIN_SYSTEM_PATH', 'REGISTRY',
                              'PLUGIN_PATH_1_0'):
