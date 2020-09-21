@@ -1,3 +1,14 @@
+2020-09-21  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] MediaRecorder incorrect screen orientation handling
+        https://bugs.webkit.org/show_bug.cgi?id=198912
+        <rdar://problem/51802521>
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::videoSampleAvailable):
+
 2020-09-21  Keith Miller  <keith_miller@apple.com>
 
         Functions should consistently enumerate length before name
