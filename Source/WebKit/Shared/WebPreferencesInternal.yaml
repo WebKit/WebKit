@@ -109,7 +109,7 @@ BlockingOfSmallPluginsEnabled:
 CaptureVideoInGPUProcessEnabled:
   type: bool
   defaultValue: defaultCaptureVideoInGPUProcessEnabled()
-  humanReadableName: "Capture video in GPU Process"
+  humanReadableName: "Use GPU Process to capture video"
   humanReadableDescription: "Enable video capture in GPU Process"
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
@@ -310,7 +310,7 @@ CaptureAudioInUIProcessEnabled:
 CaptureAudioInGPUProcessEnabled:
   type: bool
   defaultValue: defaultCaptureAudioInGPUProcessEnabled()
-  humanReadableName: "Capture audio in GPU Process"
+  humanReadableName: "Use GPU Process to capture audio"
   humanReadableDescription: "Enable audio capture in GPU Process"
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
@@ -318,7 +318,7 @@ CaptureAudioInGPUProcessEnabled:
 RenderCanvasInGPUProcessEnabled:
   type: bool
   defaultValue: defaultRenderCanvasInGPUProcessEnabled()
-  humanReadableName: "Render canvas in GPU Process"
+  humanReadableName: "Use GPU Process to render canvas"
   humanReadableDescription: "Enable canvas rendering in GPU Process"
   webcoreBinding: none
 
@@ -406,7 +406,7 @@ UseGPUProcessForMedia:
   type: bool
   defaultValue: defaultUseGPUProcessForMedia()
   condition: ENABLE(GPU_PROCESS)
-  humanReadableName: "Media in GPU Process"
+  humanReadableName: "Use GPU Process for media"
   humanReadableDescription: "Do all media loading and playback in the GPU Process"
   webcoreName: useGPUProcessForMedia
 

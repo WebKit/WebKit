@@ -1,3 +1,15 @@
+2020-09-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust the human readable names some GPU process internal feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=216794
+
+        Reviewed by Darin Adler.
+
+        Change the human readable names so that all the GPU-process-specific internal features start are of the form
+        "Use GPU Process…".
+
+        * Shared/WebPreferencesInternal.yaml:
+
 2020-09-21  James Savage  <james.savage@apple.com>
 
         WKWebView Swift overlay has mis-annotated nullability for evaluateJavaScript
