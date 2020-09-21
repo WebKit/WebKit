@@ -329,7 +329,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/
 # Values in FAIL lines differ from machine to machine, we should be able to unskip them once they pass.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html [ Pass Failure ]
-webaudio/Analyser/handle-silent-inputs.html [ Pass Failure ]
 webaudio/AudioBufferSource/audiobuffersource-detune-modulation.html [ Pass Failure ]
 webaudio/AudioBufferSource/audiobuffersource-playbackrate-modulation.html [ Pass Failure ]
 

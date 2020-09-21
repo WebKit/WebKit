@@ -1,5 +1,13 @@
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip webaudio/Analyser/handle-silent-inputs.html.
+
+        This test should no longer be flaky now that it is passing.
+
+        * TestExpectations:
+
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
         Values returned by FFTFrame::doFFT() are twice as large as they should be
         https://bugs.webkit.org/show_bug.cgi?id=216781
 
