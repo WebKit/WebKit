@@ -120,6 +120,9 @@ void RealtimeAnalyser::writeInput(AudioBus* bus, size_t framesToProcess)
     m_writeIndex += framesToProcess;
     if (m_writeIndex >= InputBufferSize)
         m_writeIndex = 0;
+
+    // A new render quantum has been processed so we should do the FFT analysis again.
+    m_shouldDoFFTAnalysis = true;
 }
 
 namespace {
@@ -143,9 +146,14 @@ void applyWindow(float* p, size_t n)
 
 } // namespace
 
-void RealtimeAnalyser::doFFTAnalysis()
+void RealtimeAnalyser::doFFTAnalysisIfNecessary()
 {    
     ASSERT(isMainThread());
+
+    if (!m_shouldDoFFTAnalysis)
+        return;
+
+    m_shouldDoFFTAnalysis = false;
 
     // Unroll the input buffer into a temporary buffer, where we'll apply an analysis window followed by an FFT.
     size_t fftSize = this->fftSize();
@@ -197,7 +205,7 @@ void RealtimeAnalyser::getFloatFrequencyData(Float32Array& destinationArray)
 {
     ASSERT(isMainThread());
         
-    doFFTAnalysis();
+    doFFTAnalysisIfNecessary();
     
     // Convert from linear magnitude to floating-point decibels.
     unsigned sourceLength = magnitudeBuffer().size();
@@ -215,7 +223,7 @@ void RealtimeAnalyser::getByteFrequencyData(Uint8Array& destinationArray)
 {
     ASSERT(isMainThread());
         
-    doFFTAnalysis();
+    doFFTAnalysisIfNecessary();
     
     // Convert from linear magnitude to unsigned-byte decibels.
     unsigned sourceLength = magnitudeBuffer().size();

@@ -3,34 +3,10 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "test" 
 PASS Audit report 
 PASS > [test]  
-FAIL X Second call to getFloatFrequencyData expected to be equal to the array [-52.5184440612793,-35.278839111328125,-27.40174102783203,-29.20952796936035,-35.99977493286133,-33.581512451171875,-40.76682662963867,-36.675636291503906,-41.62258529663086,-40.120052337646484,-41.18754959106445,-44.266780853271484,-41.43907165527344,-47.687599182128906,-42.71406173706055,-47.281829833984375...] but differs in 128 places:
-	Index	Actual			Expected
-	[0]	-4.7412990570068359e+1	-5.2518444061279297e+1
-	[1]	-3.0173389434814453e+1	-3.5278839111328125e+1
-	[2]	-2.2296291351318359e+1	-2.7401741027832031e+1
-	[3]	-2.4104078292846680e+1	-2.9209527969360352e+1
-	...and 124 more errors. assert_true: expected true got false
-FAIL X Second call to getByteFrequencyData expected to be equal to the array [199,255,255,255,255,255,252,255,246,248,244,236,242,226,237,225...] but differs in 114 places:
-	Index	Actual			Expected
-	[0]	2.0500000000000000e+2	1.9900000000000000e+2
-	[6]	2.5500000000000000e+2	2.5200000000000000e+2
-	[8]	2.5400000000000000e+2	2.4600000000000000e+2
-	[9]	2.5500000000000000e+2	2.4800000000000000e+2
-	...and 110 more errors. assert_true: expected true got false
-FAIL X Output of getByteFrequencyData after getFloatFrequencyData expected to be equal to the array [195,255,255,255,255,255,255,255,255,255,255,255,255,248,252,245...] but differs in 110 places:
-	Index	Actual			Expected
-	[0]	2.0000000000000000e+2	1.9500000000000000e+2
-	[11]	2.5000000000000000e+2	2.5500000000000000e+2
-	[12]	2.5300000000000000e+2	2.5500000000000000e+2
-	[13]	2.4300000000000000e+2	2.4800000000000000e+2
-	...and 106 more errors. assert_true: expected true got false
-FAIL X Output of getFloatFrequenycData (converted to byte) after getByteFrequencyData expected to be equal to the array [209,255,255,255,255,255,255,255,255,255,255,255,255,251,255,248...] but differs in 108 places:
-	Index	Actual			Expected
-	[0]	2.0300000000000000e+2	2.0900000000000000e+2
-	[13]	2.5000000000000000e+2	2.5100000000000000e+2
-	[14]	2.5400000000000000e+2	2.5500000000000000e+2
-	[15]	2.4700000000000000e+2	2.4800000000000000e+2
-	...and 104 more errors. assert_true: expected true got false
-FAIL < [test] 4 out of 4 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   Second call to getFloatFrequencyData is identical to the array [expected array]. 
+PASS   Second call to getByteFrequencyData is identical to the array [189,254,255,255,255,255,245,250,238,239,236,228,233,219,228,218...]. 
+PASS   Output of getByteFrequencyData after getFloatFrequencyData is identical to the array [185,255,255,255,255,255,255,255,251,250,247,241,243,234,238,231...]. 
+PASS   Output of getFloatFrequenycData (converted to byte) after getByteFrequencyData is identical to the array [198,255,255,255,255,255,255,255,255,255,253,247,249,239,244,237...]. 
+PASS < [test] All assertions passed. (total 4 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

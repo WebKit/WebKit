@@ -86,9 +86,9 @@ private:
     
     size_t m_fftSize;
     std::unique_ptr<FFTFrame> m_analysisFrame;
-    void doFFTAnalysis();
+    void doFFTAnalysisIfNecessary();
     
-    // doFFTAnalysis() stores the floating-point magnitude analysis data here.
+    // doFFTAnalysisIfNecessary() stores the floating-point magnitude analysis data here.
     AudioFloatArray m_magnitudeBuffer;
     AudioFloatArray& magnitudeBuffer() { return m_magnitudeBuffer; }
 
@@ -98,6 +98,9 @@ private:
     // The range used when converting when using getByteFrequencyData(). 
     double m_minDecibels;
     double m_maxDecibels;
+
+    // We should only do the FFT analysis once per render quantum.
+    bool m_shouldDoFFTAnalysis { true };
 };
 
 } // namespace WebCore

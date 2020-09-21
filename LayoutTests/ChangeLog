@@ -1,5 +1,17 @@
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
+        AnalyserNode's getByteFrequencyData() / getFloatFrequencyData() should only do FFT analysis once per render quantum
+        https://bugs.webkit.org/show_bug.cgi?id=216735
+
+        Reviewed by Darin Adler.
+
+        Rebaseline webaudio tests now that more checks are passing.
+
+        * webaudio/Analyser/realtimeanalyser-freq-data-smoothing-expected.txt:
+        * webaudio/Analyser/realtimeanalyser-multiple-calls-expected.txt:
+
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
         AnalyserNode should downmix input audio to mono
         https://bugs.webkit.org/show_bug.cgi?id=216736
 
