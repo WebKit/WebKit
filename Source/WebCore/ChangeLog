@@ -1,3 +1,24 @@
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.exponentialRampToValueAtTime() does not properly deal with negative values
+        https://bugs.webkit.org/show_bug.cgi?id=216790
+
+        Reviewed by Eric Carlson.
+
+        AudioParam.exponentialRampToValueAtTime() does not properly deal with negative values.
+        The specification [1] says:
+        "If V0 and V1 have opposite signs or if V0 is zero, then v(t) = V0 for T0 <= t < T1."
+
+        Our implementation did not match the specification and would just special-case if either
+        V0 or V1 was negative.
+
+        [1] https://www.w3.org/TR/webaudio/#dom-audioparam-exponentialramptovalueattime
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+
 2020-09-21  Youenn Fablet  <youenn@apple.com>
 
         [iOS] MediaRecorder incorrect screen orientation handling

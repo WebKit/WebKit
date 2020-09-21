@@ -420,8 +420,10 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
         if (nextEventType == ParamEvent::LinearRampToValue)
             processLinearRamp(values, writeIndex, fillToFrame, value, value1, value2, deltaTime, time1, samplingPeriod, currentFrame);
         else if (nextEventType == ParamEvent::ExponentialRampToValue) {
-            if (value1 <= 0 || value2 <= 0) {
-                // Handle negative values error case by propagating previous value.
+            if (!value1 || value1 * value2 < 0) {
+                // Per the specification:
+                // If value1 and value2 have opposite signs or if value1 is zero, then v(t) = value1 for T0 <= t < T1.
+                value = value1;
                 for (; writeIndex < fillToFrame; ++writeIndex)
                     values[writeIndex] = value;
             } else {

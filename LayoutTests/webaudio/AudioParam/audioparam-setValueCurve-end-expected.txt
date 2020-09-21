@@ -14,10 +14,10 @@ PASS > [1: linearRampToValueAtTime]
 FAIL X setValueCurve(..., 0, 0.0100390625).linearRampToValueAtTime(2, 0.02): value at time 0.010078125 is not close to 0.3066666666666668 within a relative error of 1.8141e-8 (RelErr=2.2863451086956506). Got 1.0078125. assert_true: expected true got false
 FAIL < [1: linearRampToValueAtTime] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [2: exponentialRampToValueAtTime]  
-FAIL X setValueCurve(..., 0, 0.01).exponentialRampToValueAtTime(2, 0.02): value at time 0.01 is not close to 0.3 within a relative error of 3.9737e-8 (RelErr=2.3333333333333335). Got 1. assert_true: expected true got false
+FAIL X setValueCurve(..., 0, 0.01).exponentialRampToValueAtTime(2, 0.02): value at time 0.01 is not close to 0.3 within a relative error of 3.9737e-8 (RelErr=1). Got 0. assert_true: expected true got false
 FAIL < [2: exponentialRampToValueAtTime] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [3: exponentialRampToValueAtTime]  
-FAIL X setValueCurve(..., 0, 0.0100390625).exponentialRampToValueAtTime(2, 0.02): value at time 0.010078125 is not close to 0.30224022883150364 within a relative error of 7.8294e-8 (RelErr=2.308626399159761). Got 1. assert_true: expected true got false
+FAIL X setValueCurve(..., 0, 0.0100390625).exponentialRampToValueAtTime(2, 0.02): value at time 0.010078125 is not close to 0.30224022883150364 within a relative error of 7.8294e-8 (RelErr=1). Got 0. assert_true: expected true got false
 FAIL < [3: exponentialRampToValueAtTime] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [4: setTargetAtTime]  
 PASS   setValueCurve(..., 0, 0.01).setTargetAtTime(2, 0.02, 0.01): value at time 0.01 is 0.30000000000000004 within an error of 1.5895e-7. 

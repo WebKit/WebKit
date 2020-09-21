@@ -1,3 +1,14 @@
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.exponentialRampToValueAtTime() does not properly deal with negative values
+        https://bugs.webkit.org/show_bug.cgi?id=216790
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline test that is now passing.
+
+        * webaudio/AudioParam/audioparam-negative-exponentialRamp-expected.txt:
+
 2020-09-21  Youenn Fablet  <youenn@apple.com>
 
         [iOS] MediaRecorder incorrect screen orientation handling
