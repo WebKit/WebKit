@@ -1,3 +1,16 @@
+2020-09-21  Antoine Quint  <graouts@webkit.org>
+
+        Remove unused NodeFlag::HasCSSAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=216785
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Element.h:
+        (WebCore::Element::hasCSSAnimation const): Deleted.
+        (WebCore::Element::setHasCSSAnimation): Deleted.
+        (WebCore::Element::clearHasCSSAnimation): Deleted.
+        * dom/Node.h:
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         Throw when AudioConnect::connect() is called for an output that has no channels

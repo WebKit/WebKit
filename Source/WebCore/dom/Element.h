@@ -486,10 +486,6 @@ public:
     void clearHasPendingResources() { clearNodeFlag(NodeFlag::HasPendingResources); }
     virtual void buildPendingResource() { };
 
-    bool hasCSSAnimation() const { return hasNodeFlag(NodeFlag::HasCSSAnimation); }
-    void setHasCSSAnimation() { setNodeFlag(NodeFlag::HasCSSAnimation); }
-    void clearHasCSSAnimation() { clearNodeFlag(NodeFlag::HasCSSAnimation); }
-
     KeyframeEffectStack* keyframeEffectStack() const;
     KeyframeEffectStack& ensureKeyframeEffectStack();
     bool hasKeyframeEffects() const;

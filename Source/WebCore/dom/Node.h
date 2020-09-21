@@ -546,14 +546,13 @@ protected:
         HasCustomStyleResolveCallbacks = 1 << 22,
 
         HasPendingResources = 1 << 23,
-        HasCSSAnimation = 1 << 24,
-        HasElementIdentifier = 1 << 25,
+        HasElementIdentifier = 1 << 24,
 #if ENABLE(FULLSCREEN_API)
-        ContainsFullScreenElement = 1 << 26,
+        ContainsFullScreenElement = 1 << 25,
 #endif
-        IsComputedStyleInvalidFlag = 1 << 27,
+        IsComputedStyleInvalidFlag = 1 << 26,
 
-        // Bits 28-31 are free.
+        // Bits 27-31 are free.
     };
 
     enum class TabIndexState : uint8_t {
