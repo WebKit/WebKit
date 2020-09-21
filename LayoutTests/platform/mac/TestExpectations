@@ -1616,7 +1616,6 @@ webkit.org/b/136627 media/track/track-cue-rendering-vertical.html [ Failure ]
 
 # <rdar://problem/47088939>
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html  [ Failure ]
-webaudio/realtimeanalyser-fft-scaling.html [ Pass Failure ]
 webaudio/oscillator-sine.html [ Skip ]
 
 webkit.org/b/199013 [ Debug ] imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html [ Pass Failure ]

@@ -1,3 +1,50 @@
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Values returned by FFTFrame::doFFT() are twice as large as they should be
+        https://bugs.webkit.org/show_bug.cgi?id=216781
+
+        Reviewed by Darin Adler.
+
+        To provide the best possible execution speeds, the vDSP library's functions don't always adhere strictly
+        to textbook formulas for Fourier transforms, and must be scaled accordingly [1].
+
+        In the case of a Real forward Transform like in FFTFrame::doFFT(): RFimp = RFmath * 2 so we need to
+        divide the output by 2 to get the correct value. We were failing to do this scaling and this was causing
+        AnalyserNode tests to fail.
+
+        [1] See https://developer.apple.com/library/archive/documentation/Performance/Conceptual/vDSP_Programming_Guide/UsingFourierTransforms/UsingFourierTransforms.html#//apple_ref/doc/uid/TP40005147-CH3-SW5
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::createBandLimitedTables):
+        Update normalization factor now that FFTFrame::doInverseFFT() has been fixed. The new normalization factor
+        matches the value used by blink at:
+        - https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/modules/webaudio/periodic_wave.cc
+
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::multiply):
+        We were applying a 0.5 scaling factor to the output of vDSP_zvmul(). However, the documentation for vDSP_zvmul()
+        does not indicate that its output is twice as large as expected. Odds are that this was done because we used
+        to have a bug in FFTFrame::doFFT() that was returning values twice as large as expected. SInce this function
+        relies on VectorMath, there is no need for its implementation to be platform-specific.
+
+        * platform/audio/FFTFrameStub.cpp:
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp:
+        (WebCore::FFTFrame::doFFT):
+        (WebCore::FFTFrame::doInverseFFT):
+        Drop 2 factor in the GStreamer implementation that was added to try and be consistent with the incorrect Mac
+        implementation.
+
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::doFFT):
+        Fix issue where the values returned by doFFT() were twice as large as expected due to the odd behavior of
+        vDSP_fft_zrip().
+
+        (WebCore::FFTFrame::doInverseFFT):
+        Drop 2 factor in doInverseFFT that was added because the output of doFFT() was twice as large as expected
+        and we wanted x == InverseFFT(FFT(x)).
+
 2020-09-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Several tests in canvas/philip/tests are failing with text diffs

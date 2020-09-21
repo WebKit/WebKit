@@ -192,7 +192,7 @@ unsigned PeriodicWave::numberOfPartialsForRange(unsigned rangeIndex) const
 // Thus, higher ranges have more high-frequency partials culled out.
 void PeriodicWave::createBandLimitedTables(const float* realData, const float* imagData, unsigned numberOfComponents, ShouldDisableNormalization disableNormalization)
 {
-    float normalizationScale = 1;
+    float normalizationScale = 0.5;
 
     unsigned fftSize = periodicWaveSize();
     unsigned halfSize = fftSize / 2;

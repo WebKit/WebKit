@@ -103,46 +103,9 @@ FFTFrame::~FFTFrame()
     m_inverseFft = 0;
 }
 
-void FFTFrame::multiply(const FFTFrame& frame)
-{
-    FFTFrame& frame1 = *this;
-    FFTFrame& frame2 = const_cast<FFTFrame&>(frame);
-
-    float* realP1 = frame1.realData();
-    float* imagP1 = frame1.imagData();
-    const float* realP2 = frame2.realData();
-    const float* imagP2 = frame2.imagData();
-
-    size_t size = unpackedFFTDataSize(m_FFTSize);
-    VectorMath::zvmul(realP1, imagP1, realP2, imagP2, realP1, imagP1, size);
-
-    // Scale accounts the peculiar scaling of vecLib on the Mac.
-    // This ensures the right scaling all the way back to inverse FFT.
-    // FIXME: if we change the scaling on the Mac then this scale
-    // factor will need to change too.
-    float scale = 0.5f;
-
-    VectorMath::vsmul(realP1, 1, &scale, realP1, 1, size);
-    VectorMath::vsmul(imagP1, 1, &scale, imagP1, 1, size);
-}
-
 void FFTFrame::doFFT(const float* data)
 {
     gst_fft_f32_fft(m_fft, data, m_complexData.get());
-
-    // Scale the frequency domain data to match vecLib's scale factor
-    // on the Mac. FIXME: if we change the definition of FFTFrame to
-    // eliminate this scale factor then this code will need to change.
-    // Also, if this loop turns out to be hot then we should use SSE
-    // or other intrinsics to accelerate it.
-    float scaleFactor = 2;
-
-    float* imagData = m_imagData.data();
-    float* realData = m_realData.data();
-    for (unsigned i = 0; i < unpackedFFTDataSize(m_FFTSize); ++i) {
-        imagData[i] = m_complexData[i].i * scaleFactor;
-        realData[i] = m_complexData[i].r * scaleFactor;
-    }
 }
 
 void FFTFrame::doInverseFFT(float* data)
@@ -159,7 +122,7 @@ void FFTFrame::doInverseFFT(float* data)
     gst_fft_f32_inverse_fft(m_inverseFft, m_complexData.get(), data);
 
     // Scale so that a forward then inverse FFT yields exactly the original data.
-    const float scaleFactor = 1.0 / (2 * m_FFTSize);
+    const float scaleFactor = 1.0 / m_FFTSize;
     VectorMath::vsmul(data, 1, &scaleFactor, data, 1, m_FFTSize);
 }
 

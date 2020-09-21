@@ -8,58 +8,23 @@ PASS Executing "3-channel"
 PASS Audit report 
 PASS > [mono]  
 PASS   Analyser downmix mono to mono time data is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...]. 
-FAIL X Analyser downmix mono to mono freq data does not equal [-7.535013675689697,-12.041200637817383,-27.95880126953125,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	-1.5144139528274536e+0	-7.5350136756896973e+0	6.0205997228622437e+0	7.9901642943085494e-1	4.7683827043867111e-7
-	[1]	-6.0206003189086914e+0	-1.2041200637817383e+1	6.0206003189086914e+0	5.0000000000000000e-1	7.6200329996299745e-7
-	[2]	-2.1938199996948242e+1	-2.7958801269531250e+1	6.0206012725830078e+0	2.1533831921270877e-1	1.7693168207397460e-6
-	Max AbsError of 6.0206012725830078e+0 at index of 2.
-	Max RelError of 7.9901642943085494e-1 at index of 0.
- assert_true: expected true got false
-FAIL < [mono] 1 out of 2 assertions were failed. assert_true: expected true got false
+PASS   Analyser downmix mono to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}. 
+PASS < [mono] All assertions passed. (total 2 assertions) 
 PASS > [stereo]  
 PASS   Analyser downmix stereo to mono time data is identical to the array [2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5...]. 
-FAIL X Analyser downmix stereo to mono freq data does not equal [0.42378559708595276,-4.082399845123291,-20,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1681e-7}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	6.4443855285644531e+0	4.2378559708595276e-1	6.0205999314785004e+0	1.4206712009274337e+1	4.9502395595610142e-8
-	[1]	1.9382002353668213e+0	-4.0823998451232910e+0	6.0206000804901123e+0	1.4747698189539507e+0	4.7686512590885159e-7
-	[2]	-1.3979400634765625e+1	-2.0000000000000000e+1	6.0205993652343750e+0	3.0102996826171874e-1	2.3361999999999998e-6
-	Max AbsError of 6.0206000804901123e+0 at index of 1.
-	Max RelError of 1.4206712009274337e+1 at index of 0.
- assert_true: expected true got false
-FAIL < [stereo] 1 out of 2 assertions were failed. assert_true: expected true got false
+PASS   Analyser downmix stereo to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1681e-7}. 
+PASS < [stereo] All assertions passed. (total 2 assertions) 
 PASS > [quad]  
 PASS   Analyser downmix quad to mono time data is identical to the array [7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5...]. 
-FAIL X Analyser downmix quad to mono freq data does not equal [9.966211318969727,5.460024833679199,-10.457574844360352,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":4.9793e-7}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	1.5986810684204102e+1	9.9662113189697266e+0	6.0205993652343750e+0	6.0410111451025950e-1	4.9624756020545961e-6
-	[1]	1.1480626106262207e+1	5.4600248336791992e+0	6.0206012725830078e+0	1.1026692104852696e+0	2.7187101654338836e-6
-	[2]	-4.4369745254516602e+0	-1.0457574844360352e+1	6.0206003189086914e+0	5.7571668465328085e-1	5.2071402422523503e-6
-	Max AbsError of 6.0206012725830078e+0 at index of 1.
-	Max RelError of 1.1026692104852696e+0 at index of 1.
- assert_true: expected true got false
-FAIL < [quad] 1 out of 2 assertions were failed. assert_true: expected true got false
+PASS   Analyser downmix quad to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":4.9793e-7}. 
+PASS < [quad] All assertions passed. (total 2 assertions) 
 PASS > [5.1]  
 PASS   Analyser downmix 5.1 to mono time data is identical to the array [expected array]. 
-FAIL X Analyser downmix 5.1 to mono freq data does not equal [25.141529083251953,20.635343551635742,4.717743873596191,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":2.0215e-7}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	3.1162130355834961e+1	2.5141529083251953e+1	6.0206012725830078e+0	2.3946838128447945e-1	5.0823601041793820e-6
-	[1]	2.6655942916870117e+1	2.0635343551635742e+1	6.0205993652343750e+0	2.9176152799051064e-1	4.1714346989631653e-6
-	[2]	1.0738344192504883e+1	4.7177438735961914e+0	6.0206003189086914e+0	1.2761609108549110e+0	9.5369192404747006e-7
-	Max AbsError of 6.0206012725830078e+0 at index of 0.
-	Max RelError of 1.2761609108549110e+0 at index of 2.
- assert_true: expected true got false
-FAIL < [5.1] 1 out of 2 assertions were failed. assert_true: expected true got false
+PASS   Analyser downmix 5.1 to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":2.0215e-7}. 
+PASS < [5.1] All assertions passed. (total 2 assertions) 
 PASS > [3-channel]  
 PASS   Analyser downmix 3-channel to mono time data is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...]. 
-FAIL X Analyser downmix 3-channel to mono freq data does not equal [-7.535013675689697,-12.041200637817383,-27.95880126953125,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	-1.5144139528274536e+0	-7.5350136756896973e+0	6.0205997228622437e+0	7.9901642943085494e-1	4.7683827043867111e-7
-	[1]	-6.0206003189086914e+0	-1.2041200637817383e+1	6.0206003189086914e+0	5.0000000000000000e-1	7.6200329996299745e-7
-	[2]	-2.1938199996948242e+1	-2.7958801269531250e+1	6.0206012725830078e+0	2.1533831921270877e-1	1.7693168207397460e-6
-	Max AbsError of 6.0206012725830078e+0 at index of 2.
-	Max RelError of 7.9901642943085494e-1 at index of 0.
- assert_true: expected true got false
-FAIL < [3-channel] 1 out of 2 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 5 tasks were failed. assert_true: expected true got false
+PASS   Analyser downmix 3-channel to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}. 
+PASS < [3-channel] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

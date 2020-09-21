@@ -114,7 +114,7 @@ function analyseAudio(stream, duration, context)
 
            var hasFrequency = expectedFrequency => {
                 var bin = Math.floor(expectedFrequency * analyser.fftSize / context.sampleRate);
-                return bin < freqDomain.length && freqDomain[bin] >= 150;
+                return bin < freqDomain.length && freqDomain[bin] >= 100;
            };
 
            if (!results.heardHum)

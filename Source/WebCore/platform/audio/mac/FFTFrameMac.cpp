@@ -97,39 +97,21 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
 
 FFTFrame::~FFTFrame() = default;
 
-void FFTFrame::multiply(const FFTFrame& frame)
-{
-    FFTFrame& frame1 = *this;
-    const FFTFrame& frame2 = frame;
-
-    float* realP1 = frame1.realData();
-    float* imagP1 = frame1.imagData();
-    const float* realP2 = frame2.realData();
-    const float* imagP2 = frame2.imagData();
-
-    unsigned halfSize = m_FFTSize / 2;
-    float real0 = realP1[0];
-    float imag0 = imagP1[0];
-
-    // Complex multiply
-    VectorMath::zvmul(realP1, imagP1, realP2, imagP2, realP1, imagP1, halfSize); 
-
-    // Multiply the packed DC/nyquist component
-    realP1[0] = real0 * realP2[0];
-    imagP1[0] = imag0 * imagP2[0];
-
-    // Scale accounts for vecLib's peculiar scaling
-    // This ensures the right scaling all the way back to inverse FFT
-    float scale = 0.5f;
-
-    VectorMath::vsmul(realP1, 1, &scale, realP1, 1, halfSize);
-    VectorMath::vsmul(imagP1, 1, &scale, imagP1, 1, halfSize);
-}
-
 void FFTFrame::doFFT(const float* data)
 {
-    vDSP_ctoz(reinterpret_cast<const DSPComplex*>(data), 2, &m_frame, 1, m_FFTSize / 2);
+    unsigned halfSize = m_FFTSize / 2;
+    vDSP_ctoz(reinterpret_cast<const DSPComplex*>(data), 2, &m_frame, 1, halfSize);
     vDSP_fft_zrip(m_FFTSetup, &m_frame, 1, m_log2FFTSize, FFT_FORWARD);
+
+    // To provide the best possible execution speeds, the vDSP library's functions don't always adhere strictly
+    // to textbook formulas for Fourier transforms, and must be scaled accordingly.
+    // (See https://developer.apple.com/library/archive/documentation/Performance/Conceptual/vDSP_Programming_Guide/UsingFourierTransforms/UsingFourierTransforms.html#//apple_ref/doc/uid/TP40005147-CH3-SW5)
+    // In the case of a Real forward Transform like above: RFimp = RFmath * 2 so we need to divide the output
+    // by 2 to get the correct value.
+    float scale = 0.5f;
+
+    VectorMath::vsmul(realData(), 1, &scale, realData(), 1, halfSize);
+    VectorMath::vsmul(imagData(), 1, &scale, imagData(), 1, halfSize);
 }
 
 void FFTFrame::doInverseFFT(float* data)
@@ -138,8 +120,8 @@ void FFTFrame::doInverseFFT(float* data)
     vDSP_ztoc(&m_frame, 1, (DSPComplex*)data, 2, m_FFTSize / 2);
 
     // Do final scaling so that x == IFFT(FFT(x))
-    float scale = 0.5f / m_FFTSize;
-    vDSP_vsmul(data, 1, &scale, data, 1, m_FFTSize);
+    float scale = 1.0f / m_FFTSize;
+    VectorMath::vsmul(data, 1, &scale, data, 1, m_FFTSize);
 }
 
 FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)
