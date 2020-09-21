@@ -1,3 +1,19 @@
+2020-09-21  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make accessibility isolated tree a non-experimental feature.
+        https://bugs.webkit.org/show_bug.cgi?id=216792
+
+        Reviewed by Chris Fleizach.
+
+        Promote accessibility isolated tree from an experimental feature to a
+        non-experimental one. This avoids the problem where a user can turn off
+        the feature through the Safari > Develop > Experimental Features submenu,
+        while the accessibility request are still coming on a secondary thread,
+        which leads to random crashes.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesExperimental.yaml:
+
 2020-09-21  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WinCairo][PlayStation] Support different instances of listener client.
