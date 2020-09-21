@@ -109,10 +109,6 @@ class AutoinstallImportHook(object):
             self.install_chromedriver()
         elif '.geckodriver' in fullname:
             self.install_geckodriver()
-        elif '.pytest_timeout' in fullname:
-            self._install_pytest_timeout()
-        elif '.pytest' in fullname:
-            self._install_pytest()
         elif '.bs4' in fullname:
             self._install_beautifulsoup()
         elif '.html5lib' in fullname:

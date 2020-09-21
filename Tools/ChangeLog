@@ -1,3 +1,18 @@
+2020-09-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's auto installer for pytest packages
+        https://bugs.webkit.org/show_bug.cgi?id=215895
+        <rdar://problem/67885471>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/__init__.py: Add pytest and it's dependencies.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove pytest and pytest_timeout.
+        (AutoinstallImportHook._install_pytest_timeout): Deleted.
+        (AutoinstallImportHook._install_pytest): Deleted.
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py: Implicitly use webkitcorepy's autoinstaller.
+
 2020-09-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Don't set the UV option if the authenticator doesn't support it
