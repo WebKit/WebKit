@@ -25,6 +25,7 @@
 # * Scrolling
 # * SVG
 # * WebAnimations
+# * WebAudio
 # * WebGL
 # * WebRTC
 # * WebSocket
@@ -189,6 +190,8 @@ webkit.org/b/169988 css3/filters/backdrop/effect-hw.html [ ImageOnlyFailure ]
 webkit.org/b/214682 imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
 
 webkit.org/b/169007 imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict.html [ Failure ]
+
+webkit.org/b/216767 css3/font-feature-settings-stylistic-set.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
@@ -591,6 +594,17 @@ webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-upd
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# WebAudio-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/216768 webaudio/Analyser/realtimeanalyser-downmix.html [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of WebAudio-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
@@ -636,6 +650,7 @@ webkit.org/b/206583 [ Debug ] webrtc/video-gpuProcess.html [ Timeout ]
 
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Failure ]
 
+webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
