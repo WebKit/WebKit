@@ -513,11 +513,11 @@ void BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling
 
 UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::positiveNegativeValues(const Box& layoutBox, MarginType marginType) const
 {
-    auto& blockFormattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
+    auto& formattingState = formattingContext().formattingState();
     // By the time we get here in BFC layout to gather positive and negative margin values for either a previous sibling or a child box,
     // we mush have computed and cached those values.
-    ASSERT(blockFormattingState.hasUsedVerticalMargin(layoutBox));
-    auto positiveAndNegativeVerticalMargin = blockFormattingState.usedVerticalMargin(layoutBox).positiveAndNegativeValues;
+    ASSERT(formattingState.hasUsedVerticalMargin(layoutBox));
+    auto positiveAndNegativeVerticalMargin = formattingState.usedVerticalMargin(layoutBox).positiveAndNegativeValues;
     return marginType == MarginType::Before ? positiveAndNegativeVerticalMargin.before : positiveAndNegativeVerticalMargin.after; 
 }
 

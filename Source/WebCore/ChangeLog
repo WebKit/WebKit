@@ -1,3 +1,15 @@
+2020-09-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][MarginCollapse] The block level box passed in to MarginCollapse::positiveNegativeValues is in the current formatting context
+        https://bugs.webkit.org/show_bug.cgi?id=216758
+
+        Reviewed by Antti Koivisto.
+
+        Let's use the current formatting state when grabbing vertical margin values.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues const):
+
 2020-09-21  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] media/media-can-play-mp3.html fails
