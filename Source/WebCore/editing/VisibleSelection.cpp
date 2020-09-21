@@ -212,7 +212,7 @@ void VisibleSelection::appendTrailingWhitespace()
         UChar c = charIt.text()[0];
         if ((!isSpaceOrNewline(c) && c != noBreakSpace) || c == '\n')
             break;
-        m_end = createLegacyEditingPosition(charIt.range().end);
+        m_end = makeDeprecatedLegacyPosition(charIt.range().end);
     }
 }
 

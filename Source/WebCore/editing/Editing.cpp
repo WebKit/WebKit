@@ -1091,7 +1091,7 @@ VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope)
 {
     if (!scope)
         return { };
-    return { createLegacyEditingPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, TextIteratorEmitsCharactersBetweenAllVisiblePositions)) };
+    return { makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, TextIteratorEmitsCharactersBetweenAllVisiblePositions)) };
 }
 
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int index)
@@ -1107,10 +1107,10 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
         // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines.
         it.advance(1);
         if (!it.atEnd())
-            return { createLegacyEditingPosition(it.range().start) };
+            return { makeDeprecatedLegacyPosition(it.range().start) };
     }
 
-    return { createLegacyEditingPosition((it.atEnd() ? range : it.range()).end), Affinity::Upstream };
+    return { makeDeprecatedLegacyPosition((it.atEnd() ? range : it.range()).end), Affinity::Upstream };
 }
 
 // Determines whether two positions are visibly next to each other (first then second)
@@ -1127,8 +1127,8 @@ bool isNodeVisiblyContainedWithin(Node& node, const SimpleRange& range)
     if (contains(range, node))
         return true;
 
-    auto startPosition = createLegacyEditingPosition(range.start);
-    auto endPosition = createLegacyEditingPosition(range.end);
+    auto startPosition = makeDeprecatedLegacyPosition(range.start);
+    auto endPosition = makeDeprecatedLegacyPosition(range.end);
 
     bool startIsVisuallySame = visiblePositionBeforeNode(node) == startPosition;
     if (startIsVisuallySame && positionInParentAfterNode(&node) < endPosition)

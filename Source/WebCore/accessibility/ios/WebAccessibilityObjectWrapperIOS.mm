@@ -2320,14 +2320,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 if ([self _addAccessibilityObject:headingObject toTextMarkerArray:array])
                     continue;
 
-                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(createLegacyEditingPosition(it.range().start)));
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
                 
                 if (!listMarkerText.isEmpty()) 
                     [array addObject:listMarkerText];
                 // There was not an element representation, so just return the text.
                 [array addObject:it.text().createNSString().get()];
             } else {
-                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(createLegacyEditingPosition(it.range().start)));
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
 
                 if (!listMarkerText.isEmpty()) {
                     NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];

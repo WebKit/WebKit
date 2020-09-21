@@ -498,7 +498,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     // When in editable content, we need to calculate the startPosition from the beginning of the editable area.
     auto& node = *core(self);
     if (node.isContentEditable())
-        return [WebVisiblePosition _wrapVisiblePosition:startOfEditableContent(VisiblePosition(createLegacyEditingPosition(&node, 0)))];
+        return [WebVisiblePosition _wrapVisiblePosition:startOfEditableContent(VisiblePosition(makeDeprecatedLegacyPosition(&node, 0)))];
     return [[self rangeOfContents] startPosition];
 }
 
@@ -507,7 +507,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     // When in editable content, we need to calculate the endPosition from the end of the editable area.
     auto& node = *core(self);
     if (node.isContentEditable())
-        return [WebVisiblePosition _wrapVisiblePosition:endOfEditableContent(VisiblePosition(createLegacyEditingPosition(&node, 0)))];
+        return [WebVisiblePosition _wrapVisiblePosition:endOfEditableContent(VisiblePosition(makeDeprecatedLegacyPosition(&node, 0)))];
     return [[self rangeOfContents] endPosition];
 }
 

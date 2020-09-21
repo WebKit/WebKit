@@ -649,7 +649,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                             offset = n->computeNodeIndex() + 1;
                     }
                     removeChildrenInRange(*m_downstreamEnd.deprecatedNode(), offset, m_downstreamEnd.deprecatedEditingOffset());
-                    m_downstreamEnd = createLegacyEditingPosition(m_downstreamEnd.deprecatedNode(), offset);
+                    m_downstreamEnd = makeDeprecatedLegacyPosition(m_downstreamEnd.deprecatedNode(), offset);
                 }
             }
         }

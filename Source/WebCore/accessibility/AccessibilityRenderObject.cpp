@@ -920,7 +920,7 @@ IntPoint AccessibilityRenderObject::linkClickPoint()
      Hence, return the middle point of the first character in the link if exists.
      */
     if (auto range = elementRange()) {
-        auto start = VisiblePosition { createLegacyEditingPosition(range->start) };
+        auto start = VisiblePosition { makeContainerOffsetPosition(range->start) };
         auto end = nextVisiblePosition(start);
         if (isPointInRange(*range, makeBoundaryPoint(end)))
             return { boundsForRange(*makeSimpleRange(start, end)).center() };
@@ -1654,10 +1654,10 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
         auto elementRange = this->elementRange();
         auto start = visiblePositionForIndexUsingCharacterIterator(node, range.start);
         if (!isPointInRange(*elementRange, makeBoundaryPoint(start)))
-            start = createLegacyEditingPosition(elementRange->start);
+            start = makeContainerOffsetPosition(elementRange->start);
         auto end = visiblePositionForIndexUsingCharacterIterator(node, range.start + range.length);
         if (!isPointInRange(*elementRange, makeBoundaryPoint(end)))
-            end = createLegacyEditingPosition(elementRange->start);
+            end = makeContainerOffsetPosition(elementRange->start);
         m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
     }
     
@@ -2208,7 +2208,7 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
         auto start = range.start;
         if (auto elementRange = this->elementRange()) {
             if (!isPointInRange(*elementRange, makeBoundaryPoint(start)))
-                start = createLegacyEditingPosition(elementRange->start);
+                start = makeContainerOffsetPosition(elementRange->start);
         }
 
         m_renderer->frame().selection().moveTo(start, UserTriggered);

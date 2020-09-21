@@ -160,12 +160,12 @@ DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, boo
         return nullptr;
 
     // To snapshot the range, temporarily select it and take selection snapshot.
-    Position start = createLegacyEditingPosition(range.start);
+    Position start = makeDeprecatedLegacyPosition(range.start);
     Position candidate = start.downstream();
     if (candidate.deprecatedNode() && candidate.deprecatedNode()->renderer())
         start = candidate;
 
-    Position end = createLegacyEditingPosition(range.end);
+    Position end = makeDeprecatedLegacyPosition(range.end);
     candidate = end.upstream();
     if (candidate.deprecatedNode() && candidate.deprecatedNode()->renderer())
         end = candidate;

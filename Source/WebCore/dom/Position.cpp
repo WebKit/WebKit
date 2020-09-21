@@ -372,7 +372,7 @@ Position Position::previous(PositionMoveType moveType) const
     if (previousSibling && positionBeforeOrAfterNodeIsCandidate(*previousSibling))
         return positionAfterNode(previousSibling);
 
-    return makeDeprecatedLegacyPosition(parent, node->computeNodeIndex());
+    return makeContainerOffsetPosition(parent, node->computeNodeIndex());
 }
 
 Position Position::next(PositionMoveType moveType) const
@@ -420,7 +420,7 @@ Position Position::next(PositionMoveType moveType) const
     if (nextSibling && positionBeforeOrAfterNodeIsCandidate(*nextSibling))
         return positionBeforeNode(nextSibling);
 
-    return makeDeprecatedLegacyPosition(parent, node->computeNodeIndex() + 1);
+    return makeContainerOffsetPosition(parent, node->computeNodeIndex() + 1);
 }
 
 int Position::uncheckedPreviousOffset(const Node* n, unsigned current)
@@ -841,7 +841,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
             if (&currentNode != startNode) {
                 ASSERT(currentPosition.atStartOfNode());
-                return makeDeprecatedLegacyPosition(&currentNode, textRenderer.caretMinOffset());
+                return makeContainerOffsetPosition(&currentNode, textRenderer.caretMinOffset());
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();

@@ -349,18 +349,6 @@ inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode)
     return offset < currentOffset;
 }
 
-// FIXME: Delete this after changing all callers to use the makeDeprecatedLegacyPosition name.
-inline Position createLegacyEditingPosition(Node* node, unsigned offset)
-{
-    return makeDeprecatedLegacyPosition(node, offset);
-}
-
-// FIXME: Delete this after changing all callers to use the makeDeprecatedLegacyPosition name.
-inline Position createLegacyEditingPosition(const BoundaryPoint& point)
-{
-    return makeDeprecatedLegacyPosition(point);
-}
-
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

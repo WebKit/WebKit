@@ -231,8 +231,8 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
 
         // If the entire list is selected, then convert the whole list.
         if (switchListType && isNodeVisiblyContainedWithin(*listNode, currentSelection)) {
-            bool rangeStartIsInList = visiblePositionBeforeNode(*listNode) == createLegacyEditingPosition(currentSelection.start);
-            bool rangeEndIsInList = visiblePositionAfterNode(*listNode) == createLegacyEditingPosition(currentSelection.end);
+            bool rangeStartIsInList = visiblePositionBeforeNode(*listNode) == makeDeprecatedLegacyPosition(currentSelection.start);
+            bool rangeEndIsInList = visiblePositionAfterNode(*listNode) == makeDeprecatedLegacyPosition(currentSelection.end);
 
             RefPtr<HTMLElement> newList = createHTMLElement(document(), listTag);
             insertNodeBefore(*newList, *listNode);

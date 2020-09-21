@@ -1,3 +1,22 @@
+2020-09-20  Darin Adler  <darin@apple.com>
+
+        Next step towards eliminating deprecated legacy positions
+        https://bugs.webkit.org/show_bug.cgi?id=216751
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::extendSelection):
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPage::requestAutocorrectionData):
+        (WebKit::WebPage::applyAutocorrectionInternal):
+        (WebKit::focusedElementPositionInformation):
+        (WebKit::dataDetectorLinkPositionInformation):
+        (WebKit::WebPage::requestDocumentEditingContext):
+        Replaced calls to createLegacyEditingPosition with calls to
+        makeDeprecatedLegacyPosition or makeContainerOffsetPosition.
+
 2020-09-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust the human readable names some GPU process internal feature flags

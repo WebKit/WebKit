@@ -279,8 +279,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
         nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    auto startPosition = createLegacyEditingPosition(resolveCharacterLocation(scope, startIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
-    auto endPosition = createLegacyEditingPosition(resolveCharacterLocation(scope, endIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    auto startPosition = makeDeprecatedLegacyPosition(resolveCharacterLocation(scope, startIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    auto endPosition = makeDeprecatedLegacyPosition(resolveCharacterLocation(scope, endIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
     updateStartEnd(startPosition, endPosition);
 }
 

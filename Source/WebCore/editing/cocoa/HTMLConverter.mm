@@ -352,8 +352,8 @@ private:
 };
 
 HTMLConverter::HTMLConverter(const SimpleRange& range)
-    : m_start(createLegacyEditingPosition(range.start))
-    , m_end(createLegacyEditingPosition(range.end))
+    : m_start(makeContainerOffsetPosition(range.start))
+    , m_end(makeContainerOffsetPosition(range.end))
 {
     _attrStr = [[NSMutableAttributedString alloc] init];
     _documentAttrs = [[NSMutableDictionary alloc] init];

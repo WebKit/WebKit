@@ -3405,13 +3405,13 @@ Position RenderBlockFlow::positionForBox(InlineBox *box, bool start) const
         return Position();
 
     if (!box->renderer().nonPseudoNode())
-        return createLegacyEditingPosition(nonPseudoElement(), start ? caretMinOffset() : caretMaxOffset());
+        return makeDeprecatedLegacyPosition(nonPseudoElement(), start ? caretMinOffset() : caretMaxOffset());
 
     if (!is<InlineTextBox>(*box))
-        return createLegacyEditingPosition(box->renderer().nonPseudoNode(), start ? box->renderer().caretMinOffset() : box->renderer().caretMaxOffset());
+        return makeDeprecatedLegacyPosition(box->renderer().nonPseudoNode(), start ? box->renderer().caretMinOffset() : box->renderer().caretMaxOffset());
 
     auto& textBox = downcast<InlineTextBox>(*box);
-    return createLegacyEditingPosition(textBox.renderer().nonPseudoNode(), start ? textBox.start() : textBox.start() + textBox.len());
+    return makeDeprecatedLegacyPosition(textBox.renderer().nonPseudoNode(), start ? textBox.start() : textBox.start() + textBox.len());
 }
 
 RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& point)

@@ -2507,8 +2507,8 @@ Optional<SimpleRange> FrameSelection::elementRangeContainingCaretSelection() con
     if (!element)
         return WTF::nullopt;
 
-    auto start = VisiblePosition(createLegacyEditingPosition(element, 0));
-    auto end = VisiblePosition(createLegacyEditingPosition(element, element->countChildNodes()));
+    auto start = VisiblePosition(makeContainerOffsetPosition(element, 0));
+    auto end = VisiblePosition(makeContainerOffsetPosition(element, element->countChildNodes()));
     if (start.isNull() || end.isNull())
         return WTF::nullopt;
 

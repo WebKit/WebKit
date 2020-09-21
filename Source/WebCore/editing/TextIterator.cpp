@@ -2382,7 +2382,7 @@ SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange range
                 if (!it.atEnd())
                     textRunRange.end = it.range().start;
                 else {
-                    if (auto end = makeBoundaryPoint(VisiblePosition(createLegacyEditingPosition(textRunRange.start)).next().deepEquivalent()))
+                    if (auto end = makeBoundaryPoint(VisiblePosition(makeDeprecatedLegacyPosition(textRunRange.start)).next().deepEquivalent()))
                         textRunRange.end = *end;
                 }
             }

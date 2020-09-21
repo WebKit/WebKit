@@ -339,7 +339,7 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
 
     element.replaceAllChildrenWithNewText(text);
 
-    VisiblePosition afterContents = createLegacyEditingPosition(&element, element.countChildNodes());
+    VisiblePosition afterContents = makeContainerOffsetPosition(&element, element.countChildNodes());
     if (afterContents.isNull())
         return;
     m_document.selection().setSelection(afterContents);

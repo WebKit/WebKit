@@ -935,7 +935,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
 String serializePreservingVisualAppearance(const SimpleRange& range, Vector<Node*>* nodes, AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs resolveURLs)
 {
-    return serializePreservingVisualAppearanceInternal(createLegacyEditingPosition(range.start), createLegacyEditingPosition(range.end),
+    return serializePreservingVisualAppearanceInternal(makeDeprecatedLegacyPosition(range.start), makeDeprecatedLegacyPosition(range.end),
         nodes, resolveURLs, SerializeComposedTree::No,
         annotate, convertBlocksToInlines, StandardFontFamilySerializationMode::Keep, MSOListMode::DoNotPreserve);
 }
@@ -1114,7 +1114,7 @@ bool isPlainTextMarkup(Node* node)
 
 static bool contextPreservesNewline(const SimpleRange& context)
 {
-    auto container = VisiblePosition(createLegacyEditingPosition(context.start)).deepEquivalent().containerNode();
+    auto container = VisiblePosition(makeDeprecatedLegacyPosition(context.start)).deepEquivalent().containerNode();
     return container && container->renderer() && container->renderer()->style().preserveNewline();
 }
 
@@ -1157,7 +1157,7 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
     }
 
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
-    auto start = createLegacyEditingPosition(context.start);
+    auto start = makeDeprecatedLegacyPosition(context.start);
     auto block = enclosingBlock(start.firstNode().get());
     bool useClonesOfEnclosingBlock = block
         && !block->hasTagName(bodyTag)

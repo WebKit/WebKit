@@ -1671,7 +1671,7 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, Affinity affinit
     if (Node* node = nonPseudoNode()) {
         if (!node->hasEditableStyle()) {
             // If it can be found, we prefer a visually equivalent position that is editable. 
-            Position position = createLegacyEditingPosition(node, offset);
+            Position position = makeDeprecatedLegacyPosition(node, offset);
             Position candidate = position.downstream(CanCrossEditingBoundary);
             if (candidate.deprecatedNode()->hasEditableStyle())
                 return VisiblePosition(candidate, affinity);
@@ -1680,7 +1680,7 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, Affinity affinit
                 return VisiblePosition(candidate, affinity);
         }
         // FIXME: Eliminate legacy editing positions
-        return VisiblePosition(createLegacyEditingPosition(node, offset), affinity);
+        return VisiblePosition(makeDeprecatedLegacyPosition(node, offset), affinity);
     }
 
     // We don't want to cross the boundary between editable and non-editable
@@ -2148,7 +2148,7 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
         // Only set the line break bit if the end of the range actually
         // extends all the way to include the <br>. VisiblePosition helps to
         // figure this out.
-        if (is<HTMLBRElement>(VisiblePosition(createLegacyEditingPosition(range.end)).deepEquivalent().firstNode()))
+        if (is<HTMLBRElement>(VisiblePosition(makeContainerOffsetPosition(range.end)).deepEquivalent().firstNode()))
             rects.last().setIsLineBreak(true);
     }
 

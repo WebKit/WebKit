@@ -106,8 +106,8 @@ static void findMisspellings(TextCheckerClient& client, StringView text, Vector<
 
 static SimpleRange expandToParagraphBoundary(const SimpleRange& range)
 {
-    auto start = makeBoundaryPoint(startOfParagraph(createLegacyEditingPosition(range.start)));
-    auto end = makeBoundaryPoint(endOfParagraph(createLegacyEditingPosition(range.end)));
+    auto start = makeBoundaryPoint(startOfParagraph(makeDeprecatedLegacyPosition(range.start)));
+    auto end = makeBoundaryPoint(endOfParagraph(makeDeprecatedLegacyPosition(range.end)));
     if (!start || !end)
         return range;
     return { *start, *end };
@@ -129,7 +129,7 @@ TextCheckingParagraph::TextCheckingParagraph(const SimpleRange& checkingRange, c
 void TextCheckingParagraph::expandRangeToNextEnd()
 {
     paragraphRange();
-    if (auto end = makeBoundaryPoint(endOfParagraph(startOfNextParagraph(createLegacyEditingPosition(m_paragraphRange->start)))))
+    if (auto end = makeBoundaryPoint(endOfParagraph(startOfNextParagraph(makeDeprecatedLegacyPosition(m_paragraphRange->start)))))
         m_paragraphRange->end = WTFMove(*end);
     invalidateParagraphRangeValues();
 }
@@ -303,9 +303,9 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
     // Expand the search range to encompass entire paragraphs, since text checking needs that much context.
     // Determine the character offset from the start of the paragraph to the start of the original search range,
     // since we will want to ignore results in this area.
-    auto paragraphRange = *makeSimpleRange(startOfParagraph(createLegacyEditingPosition(m_range.start)), m_range.end);
+    auto paragraphRange = *makeSimpleRange(startOfParagraph(makeDeprecatedLegacyPosition(m_range.start)), m_range.end);
     auto totalRangeLength = characterCount(paragraphRange);
-    paragraphRange.end = *makeBoundaryPoint(endOfParagraph(createLegacyEditingPosition(m_range.start)));
+    paragraphRange.end = *makeBoundaryPoint(endOfParagraph(makeDeprecatedLegacyPosition(m_range.start)));
     
     auto rangeStartOffset = characterCount({ paragraphRange.start, m_range.start });
     uint64_t totalLengthProcessed = 0;
@@ -317,7 +317,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
         auto currentLength = characterCount(paragraphRange);
         uint64_t currentStartOffset = firstIteration ? rangeStartOffset : 0;
         uint64_t currentEndOffset = currentLength;
-        if (inSameParagraph(createLegacyEditingPosition(paragraphRange.start), createLegacyEditingPosition(m_range.end))) {
+        if (inSameParagraph(makeDeprecatedLegacyPosition(paragraphRange.start), makeDeprecatedLegacyPosition(m_range.end))) {
             // Determine the character offset from the end of the original search range to the end of the paragraph,
             // since we will want to ignore results in this area.
             currentEndOffset = characterCount({ paragraphRange.start, m_range.end });
@@ -399,7 +399,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
         if (lastIteration || totalLengthProcessed + currentLength >= totalRangeLength)
             break;
 
-        auto nextStart = startOfNextParagraph(createLegacyEditingPosition(paragraphRange.end));
+        auto nextStart = startOfNextParagraph(makeDeprecatedLegacyPosition(paragraphRange.end));
         auto nextParagraphRange = makeSimpleRange(nextStart, endOfParagraph(nextStart));
         if (!nextParagraphRange)
             break;

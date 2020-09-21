@@ -1,5 +1,125 @@
 2020-09-20  Darin Adler  <darin@apple.com>
 
+        Next step towards eliminating deprecated legacy positions
+        https://bugs.webkit.org/show_bug.cgi?id=216751
+
+        Reviewed by Sam Weinig.
+
+        Eliminating our old deprecated legacy editing positions is probably a relatively long
+        road. This next step starts using the makeContainerOffsetPosition function in more
+        places, requesting that we not use any of the deprecated legacy position logic. Also
+        renames createLegacyEditingPosition to makeDeprecatedLegacyPosition. The hard part of
+        this project will be removing code that is not inside Position that depends on the old
+        style of position/offset pairs. For this patch, tried to stick to converting cases
+        where it seems clear we don't depend on the legacy behavior. Flaw in that is that we
+        might still depend on legacy behavior where it's unconditionally implemented, without
+        checking the flag on the m_isLegacyEditingPosition Position class; that will be a
+        problem long term, should not be in this patch.
+
+        * dom/Position.h:
+        (WebCore::createLegacyEditingPosition): Deleted.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+        (WebCore::AXObjectCache::rangeMatchesTextNearRange):
+        (WebCore::AXObjectCache::visiblePositionFromCharacterOffset):
+        (WebCore::AXObjectCache::localCaretRectForCharacterOffset):
+        (WebCore::AXObjectCache::indexForCharacterOffset):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::stringForRange const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::linkClickPoint):
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:spellCheck:]):
+        * dom/Position.cpp:
+        (WebCore::Position::previous const):
+        (WebCore::Position::next const):
+        (WebCore::Position::downstream const):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position const):
+        * dom/Range.cpp:
+        (WebCore::Range::expand):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate):
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult):
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        * editing/Editing.cpp:
+        (WebCore::visiblePositionForIndex):
+        (WebCore::visiblePositionForIndexUsingCharacterIterator):
+        (WebCore::isNodeVisiblyContainedWithin):
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDeleteRange const):
+        (WebCore::Editor::selectComposition):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::firstRectForRange const):
+        (WebCore::extendSelection):
+        (WebCore::Editor::adjustedSelectionRange):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::elementRangeContainingCaretSelection const):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApplyForSingleParagraph):
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::positionAtLeftBoundaryOfBiDiRun const):
+        (WebCore::RenderedPosition::positionAtRightBoundaryOfBiDiRun const):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::expandToParagraphBoundary):
+        (WebCore::TextCheckingParagraph::expandRangeToNextEnd):
+        (WebCore::TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase const):
+        * editing/TextIterator.cpp:
+        (WebCore::resolveCharacterRange):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate const):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::appendTrailingWhitespace):
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousRootInlineBoxCandidatePosition):
+        (WebCore::nextRootInlineBoxCandidatePosition):
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        (WebCore::startOfDocument):
+        (WebCore::endOfDocument):
+        (WebCore::closestWordBoundaryForPosition):
+        (WebCore::wordBoundaryForPositionWithoutCrossingLine):
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::HTMLConverter):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAsChildOfElement):
+        * editing/markup.cpp:
+        (WebCore::serializePreservingVisualAppearance):
+        (WebCore::contextPreservesNewline):
+        (WebCore::createFragmentFromText):
+        * page/DragController.cpp:
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret):
+        * page/Page.cpp:
+        (WebCore::Page::replaceRangesWithText):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot const):
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageForRange):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForBox const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition const):
+        (WebCore::RenderObject::collectSelectionRectsInternal):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setSelectionWithoutValidation):
+        Replaced calls to createLegacyEditingPosition with calls to
+        makeDeprecatedLegacyPosition or makeContainerOffsetPosition.
+
+2020-09-20  Darin Adler  <darin@apple.com>
+
         Selection API: A few more refinements to DOMSelection and VisibleSelection to pass all WPT tests
         https://bugs.webkit.org/show_bug.cgi?id=216756
 

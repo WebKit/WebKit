@@ -1237,7 +1237,7 @@ String AccessibilityObject::stringForRange(const SimpleRange& range) const
             // Don't add list marker text for new line character.
             if (it.text().length() != 1 || !isSpaceOrNewline(it.text()[0])) {
                 // FIXME: Seems like the position should be based on it.range(), not range.
-                builder.append(listMarkerTextForNodeAndPosition(it.node(), VisiblePosition(createLegacyEditingPosition(range.start))));
+                builder.append(listMarkerTextForNodeAndPosition(it.node(), VisiblePosition(makeDeprecatedLegacyPosition(range.start))));
             }
             it.appendTextToStringBuilder(builder);
         } else {

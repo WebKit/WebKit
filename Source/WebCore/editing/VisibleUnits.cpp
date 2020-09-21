@@ -90,7 +90,7 @@ static Position previousRootInlineBoxCandidatePosition(Node* node, const Visible
             break;
 
         Position pos = previousNode->hasTagName(brTag) ? positionBeforeNode(previousNode) :
-            createLegacyEditingPosition(previousNode, caretMaxOffset(*previousNode));
+            makeDeprecatedLegacyPosition(previousNode, caretMaxOffset(*previousNode));
         
         if (pos.isCandidate())
             return pos;
@@ -112,7 +112,7 @@ static Position nextRootInlineBoxCandidatePosition(Node* node, const VisiblePosi
             break;
 
         Position pos;
-        pos = createLegacyEditingPosition(nextNode, caretMinOffset(*nextNode));
+        pos = makeDeprecatedLegacyPosition(nextNode, caretMinOffset(*nextNode));
         
         if (pos.isCandidate())
             return pos;
@@ -609,12 +609,12 @@ static VisiblePosition previousBoundary(const VisiblePosition& position, Boundar
     unsigned next = backwardSearchForBoundaryWithTextIterator(it, string, suffixLength, searchFunction);
 
     if (!next)
-        return it.atEnd() ? createLegacyEditingPosition(searchRange->start) : position;
+        return it.atEnd() ? makeDeprecatedLegacyPosition(searchRange->start) : position;
 
     auto& node = (it.atEnd() ? *searchRange : it.range()).start.container.get();
     if ((!suffixLength && is<Text>(node) && next <= downcast<Text>(node).length()) || (node.renderer() && node.renderer()->isBR() && !next)) {
         // The next variable contains a usable index into a text node.
-        return createLegacyEditingPosition(&node, next);
+        return makeDeprecatedLegacyPosition(&node, next);
     }
 
     // Use the character iterator to translate the next value into a DOM position.
@@ -622,7 +622,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& position, Boundar
     if (next < string.size() - suffixLength)
         charIt.advance(string.size() - suffixLength - next);
     // FIXME: charIt can get out of shadow host.
-    return createLegacyEditingPosition(charIt.range().end);
+    return makeDeprecatedLegacyPosition(charIt.range().end);
 }
 
 static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunction searchFunction)
@@ -652,19 +652,19 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     
     if (it.atEnd() && next == string.size())
-        pos = createLegacyEditingPosition(searchRange->end);
+        pos = makeDeprecatedLegacyPosition(searchRange->end);
     else if (next > prefixLength) {
         // Use the character iterator to translate the next value into a DOM position.
         CharacterIterator charIt(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
         charIt.advance(next - prefixLength - 1);
         auto characterRange = charIt.range();
-        pos = createLegacyEditingPosition(characterRange.end);
+        pos = makeDeprecatedLegacyPosition(characterRange.end);
         
         if (charIt.text()[0] == '\n') {
             // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines (see rdar://5192593)
-            if (VisiblePosition(pos) == VisiblePosition(createLegacyEditingPosition(characterRange.start))) {
+            if (VisiblePosition(pos) == VisiblePosition(makeDeprecatedLegacyPosition(characterRange.start))) {
                 charIt.advance(1);
-                pos = createLegacyEditingPosition(charIt.range().start);
+                pos = makeDeprecatedLegacyPosition(charIt.range().start);
             }
         }
     }
@@ -1432,7 +1432,7 @@ VisiblePosition startOfDocument(const Node* node)
     // The canonicalization of the position at (documentElement, 0) can turn the visible
     // position to null, even when there's a valid candidate to be had, because the root HTML element
     // is not content editable.  So we construct directly from the valid candidate.
-    Position firstCandidate = nextCandidate(createLegacyEditingPosition(node->document().documentElement(), 0));
+    Position firstCandidate = nextCandidate(makeDeprecatedLegacyPosition(node->document().documentElement(), 0));
     if (firstCandidate.isNull())
         return VisiblePosition();
     return VisiblePosition(firstCandidate);
@@ -1451,7 +1451,7 @@ VisiblePosition endOfDocument(const Node* node)
     // (As above, in startOfDocument.)  The canonicalization can reject valid visible positions
     // when descending from the root element, so we construct the visible position directly from a
     // valid candidate.
-    Position lastPosition = createLegacyEditingPosition(node->document().documentElement(), node->document().documentElement()->countChildNodes());
+    Position lastPosition = makeDeprecatedLegacyPosition(node->document().documentElement(), node->document().documentElement()->countChildNodes());
     Position lastCandidate = previousCandidate(lastPosition);
     if (lastCandidate.isNull())
         return VisiblePosition();
@@ -1937,9 +1937,9 @@ VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
     } else if (withinTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward)) {
         // The position lies within a word.
         if (auto wordRange = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward)) {
-            result = createLegacyEditingPosition(wordRange->start);
+            result = makeDeprecatedLegacyPosition(wordRange->start);
             if (distanceBetweenPositions(position, result) > 1)
-                result = createLegacyEditingPosition(wordRange->end);
+                result = makeDeprecatedLegacyPosition(wordRange->end);
         }
     } else if (atBoundaryOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Backward)) {
         // The position is at the end of a word.
@@ -1994,9 +1994,9 @@ std::pair<VisiblePosition, WithinWordBoundary> wordBoundaryForPositionWithoutCro
     if (withinTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward)) {
         auto adjustedPosition = position;
         if (auto wordRange = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward)) {
-            adjustedPosition = createLegacyEditingPosition(wordRange->start);
+            adjustedPosition = makeDeprecatedLegacyPosition(wordRange->start);
             if (distanceBetweenPositions(position, adjustedPosition) > 1)
-                adjustedPosition = createLegacyEditingPosition(wordRange->end);
+                adjustedPosition = makeDeprecatedLegacyPosition(wordRange->end);
         }
         return { adjustedPosition, WithinWordBoundary::Yes };
     }

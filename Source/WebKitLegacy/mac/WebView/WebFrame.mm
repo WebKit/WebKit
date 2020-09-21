@@ -1558,7 +1558,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)spaceFollowsWordInRange:(DOMRange *)range
 {
-    return range && isSpaceOrNewline(WebCore::VisiblePosition(createLegacyEditingPosition(makeSimpleRange(core(range))->end)).characterAfter());
+    return range && isSpaceOrNewline(WebCore::VisiblePosition(makeDeprecatedLegacyPosition(makeSimpleRange(core(range))->end)).characterAfter());
 }
 
 - (NSArray *)wordsInCurrentParagraph
@@ -1804,7 +1804,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
 {
-    return [self _caretRectAtPosition:createLegacyEditingPosition(core(node), offset) affinity:affinity];
+    return [self _caretRectAtPosition:makeDeprecatedLegacyPosition(core(node), offset) affinity:affinity];
 }
 
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point
@@ -2302,8 +2302,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!root || !root->hasChildNodes())
         return NO;
 
-    WebCore::VisiblePosition first(createLegacyEditingPosition(root, 0));
-    WebCore::VisiblePosition last(createLegacyEditingPosition(root, root->countChildNodes()));
+    WebCore::VisiblePosition first(makeContainerOffsetPosition(root, 0));
+    WebCore::VisiblePosition last(makeContainerOffsetPosition(root, root->countChildNodes()));
     return first != last;
 }
 

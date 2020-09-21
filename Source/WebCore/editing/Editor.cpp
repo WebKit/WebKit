@@ -513,7 +513,7 @@ bool Editor::canDeleteRange(const SimpleRange& range) const
 
     if (range.collapsed()) {
         // FIXME: We sometimes allow deletions at the start of editable roots, like when the caret is in an empty list item.
-        auto previous = VisiblePosition { createLegacyEditingPosition(range.start) }.previous();
+        auto previous = VisiblePosition { makeDeprecatedLegacyPosition(range.start) }.previous();
         if (previous.isNull() || previous.deepEquivalent().deprecatedNode()->rootEditableElement() != range.start.container->rootEditableElement())
             return false;
     }
@@ -1925,7 +1925,7 @@ void Editor::selectComposition()
     // The composition can start inside a composed character sequence, so we have to override checks.
     // See <http://bugs.webkit.org/show_bug.cgi?id=15781>
     VisibleSelection selection;
-    selection.setWithoutValidation(createLegacyEditingPosition(range->start), createLegacyEditingPosition(range->end));
+    selection.setWithoutValidation(makeDeprecatedLegacyPosition(range->start), makeDeprecatedLegacyPosition(range->end));
     m_document.selection().setSelection(selection, { });
 }
 
@@ -2200,7 +2200,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             spellingSearchRange.start = *makeBoundaryPoint(selection.visibleEnd());
     }
 
-    auto position = createLegacyEditingPosition(spellingSearchRange.start);
+    auto position = makeDeprecatedLegacyPosition(spellingSearchRange.start);
     if (!isEditablePosition(position)) {
         // This shouldn't happen in very often because the Spelling menu items aren't enabled unless the
         // selection is editable.
@@ -2225,7 +2225,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     // If spellingSearchRange starts in the middle of a word, advance to the next word so we start checking
     // at a word boundary. Going back by one char and then forward by a word does the trick.
     if (startedWithSelection) {
-        auto oneBeforeStart = VisiblePosition(createLegacyEditingPosition(spellingSearchRange.start)).previous();
+        auto oneBeforeStart = VisiblePosition(makeContainerOffsetPosition(spellingSearchRange.start)).previous();
         if (oneBeforeStart.isNotNull())
             spellingSearchRange.start = *makeBoundaryPoint(endOfWord(oneBeforeStart));
         // else we were already at the start of the editable node
@@ -2909,7 +2909,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
         extendedParagraph.expandRangeToNextEnd();
         if (restoreSelectionAfterChange && selectionOffset <= extendedParagraph.rangeLength()) {
             auto selectionRange = extendedParagraph.subrange({ 0, selectionOffset });
-            m_document.selection().moveTo(createLegacyEditingPosition(selectionRange.end), Affinity::Downstream);
+            m_document.selection().moveTo(makeContainerOffsetPosition(selectionRange.end), Affinity::Downstream);
         } else {
             // If this fails for any reason, the fallback is to go one position beyond the last replacement
             m_document.selection().moveTo(m_document.selection().selection().end());
@@ -3331,7 +3331,7 @@ IntRect Editor::firstRectForRange(const SimpleRange& range) const
 {
     range.start.document().updateLayout();
 
-    VisiblePosition start(createLegacyEditingPosition(range.start));
+    VisiblePosition start(makeDeprecatedLegacyPosition(range.start));
 
     if (range.collapsed()) {
         // FIXME: Getting caret rect and removing caret width is a very roundabout way to get collapsed range location.
@@ -3341,7 +3341,7 @@ IntRect Editor::firstRectForRange(const SimpleRange& range) const
         return startCaretRect;
     }
 
-    VisiblePosition end(createLegacyEditingPosition(range.end), Affinity::Upstream);
+    VisiblePosition end(makeDeprecatedLegacyPosition(range.end), Affinity::Upstream);
 
     if (inSameLine(start, end))
         return enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(range)));
@@ -3676,8 +3676,8 @@ static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
 
 static SimpleRange extendSelection(const SimpleRange& range, unsigned charactersToExtend)
 {
-    auto start = createLegacyEditingPosition(range.start);
-    auto end = createLegacyEditingPosition(range.end);
+    auto start = makeDeprecatedLegacyPosition(range.start);
+    auto end = makeDeprecatedLegacyPosition(range.end);
     for (unsigned i = 0; i < charactersToExtend; ++i) {
         start = start.previous(Character);
         end = end.next(Character);
@@ -4228,7 +4228,7 @@ Optional<SimpleRange> Editor::adjustedSelectionRange()
     auto range = selectedRange();
     if (range) {
         if (auto enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor(*range).get()), HTMLNames::aTag)) {
-            if (firstPositionInOrBeforeNode(range->start.container.ptr()) >= createLegacyEditingPosition(range->start))
+            if (firstPositionInOrBeforeNode(range->start.container.ptr()) >= makeDeprecatedLegacyPosition(range->start))
                 range->start = makeBoundaryPointBeforeNodeContents(*enclosingAnchor);
         }
     }

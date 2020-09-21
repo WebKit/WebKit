@@ -4004,8 +4004,8 @@ ExceptionOr<Ref<DOMRect>> Internals::selectionBounds()
 void Internals::setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset)
 {
     contextDocument()->frame()->selection().moveTo(
-        VisiblePosition { createLegacyEditingPosition(baseNode.ptr(), baseOffset) },
-        VisiblePosition { createLegacyEditingPosition(extentNode.get(), extentOffset) });
+        VisiblePosition { makeDeprecatedLegacyPosition(baseNode.ptr(), baseOffset) },
+        VisiblePosition { makeDeprecatedLegacyPosition(extentNode.get(), extentOffset) });
 }
 
 ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& element)

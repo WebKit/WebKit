@@ -895,8 +895,8 @@ uint32_t Page::replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace,
     replacementRanges.reserveInitialCapacity(rangesToReplace.size());
 
     for (auto& range : rangesToReplace) {
-        auto highestRoot = makeRefPtr(highestEditableRoot(createLegacyEditingPosition(range.start)));
-        if (!highestRoot || highestRoot != highestEditableRoot(createLegacyEditingPosition(range.end)) || !highestRoot->document().frame())
+        auto highestRoot = makeRefPtr(highestEditableRoot(makeDeprecatedLegacyPosition(range.start)));
+        if (!highestRoot || highestRoot != highestEditableRoot(makeDeprecatedLegacyPosition(range.end)) || !highestRoot->document().frame())
             continue;
         auto scope = makeRangeSelectingNodeContents(*highestRoot);
         replacementRanges.append({ WTFMove(highestRoot), characterRange(scope, range) });

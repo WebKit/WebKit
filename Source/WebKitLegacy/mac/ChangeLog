@@ -1,3 +1,19 @@
+2020-09-20  Darin Adler  <darin@apple.com>
+
+        Next step towards eliminating deprecated legacy positions
+        https://bugs.webkit.org/show_bug.cgi?id=216751
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMNode rangeOfContainingParagraph]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame spaceFollowsWordInRange:]):
+        (-[WebFrame caretRectAtNode:offset:affinity:]):
+        (-[WebFrame focusedNodeHasContent]):
+        Replaced calls to createLegacyEditingPosition with calls to
+        makeDeprecatedLegacyPosition or makeContainerOffsetPosition.
+
 2020-09-17  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the UserTiming and ResourceTiming APIs

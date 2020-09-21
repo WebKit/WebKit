@@ -206,13 +206,13 @@ bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
 
     Position caretPosition = m_document.selection().selection().start();
 
-    if (createLegacyEditingPosition(m_rangeWithAlternative->end) == caretPosition) {
+    if (makeDeprecatedLegacyPosition(m_rangeWithAlternative->end) == caretPosition) {
         handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted));
         return true;
     } 
     
     // Pending correction should always be where caret is. But in case this is not always true, we still want to dismiss the panel without accepting the correction.
-    ASSERT(createLegacyEditingPosition(m_rangeWithAlternative->end) == caretPosition);
+    ASSERT(makeDeprecatedLegacyPosition(m_rangeWithAlternative->end) == caretPosition);
     dismiss(ReasonForDismissingAlternativeTextIgnored);
     return false;
 }
@@ -517,7 +517,7 @@ bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const T
     if (markers.hasMarkers(rangeWithAlternative, DocumentMarker::AcceptedCandidate))
         return false;
 
-    auto precedingCharacterRange = makeSimpleRange(createLegacyEditingPosition(rangeWithAlternative.start).previous(), rangeWithAlternative.start);
+    auto precedingCharacterRange = makeSimpleRange(makeDeprecatedLegacyPosition(rangeWithAlternative.start).previous(), rangeWithAlternative.start);
     if (!precedingCharacterRange)
         return false;
 
@@ -599,7 +599,7 @@ void AlternativeTextController::applyAlternativeTextToRange(const SimpleRange& r
     // of the containing paragraph.
 
     // Take note of the location of autocorrection so that we can add marker after the replacement took place.
-    auto paragraphStart = makeBoundaryPoint(startOfParagraph(createLegacyEditingPosition(range.start)));
+    auto paragraphStart = makeBoundaryPoint(startOfParagraph(makeDeprecatedLegacyPosition(range.start)));
     if (!paragraphStart)
         return;
     auto treeScopeRoot = makeRef(range.start.container->treeScope().rootNode());

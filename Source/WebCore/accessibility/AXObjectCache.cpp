@@ -1817,8 +1817,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
     if (!isNodeInUse(textMarkerData.node))
         return VisiblePosition();
     
-    // FIXME: Accessability should make it clear these are DOM-compliant offsets or store Position objects.
-    VisiblePosition visiblePos = VisiblePosition(createLegacyEditingPosition(textMarkerData.node, textMarkerData.offset), textMarkerData.affinity);
+    VisiblePosition visiblePos = VisiblePosition(makeContainerOffsetPosition(textMarkerData.node, textMarkerData.offset), textMarkerData.affinity);
     Position deepPos = visiblePos.deepEquivalent();
     if (deepPos.isNull())
         return VisiblePosition();
@@ -2002,8 +2001,8 @@ Optional<SimpleRange> AXObjectCache::rangeMatchesTextNearRange(const SimpleRange
 {
     // Create a large enough range for searching the text within.
     unsigned textLength = matchText.length();
-    auto startPosition = visiblePositionForPositionWithOffset(createLegacyEditingPosition(originalRange.start), -textLength);
-    auto endPosition = visiblePositionForPositionWithOffset(createLegacyEditingPosition(originalRange.start), 2 * textLength);
+    auto startPosition = visiblePositionForPositionWithOffset(makeContainerOffsetPosition(originalRange.start), -textLength);
+    auto endPosition = visiblePositionForPositionWithOffset(makeContainerOffsetPosition(originalRange.start), 2 * textLength);
     if (startPosition.isNull())
         startPosition = firstPositionInOrBeforeNode(originalRange.start.container.ptr());
     if (endPosition.isNull())
@@ -2318,7 +2317,7 @@ VisiblePosition AXObjectCache::visiblePositionFromCharacterOffset(const Characte
     auto range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
     if (!range)
         return { };
-    return createLegacyEditingPosition(range->start);
+    return makeContainerOffsetPosition(range->start);
 }
 
 CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisiblePosition& visiblePos)
@@ -2871,7 +2870,7 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     if (!range)
         return IntRect();
 
-    auto [inlineBox, caretOffset] = createLegacyEditingPosition(range->start).inlineBoxAndOffset(Affinity::Downstream);
+    auto [inlineBox, caretOffset] = makeContainerOffsetPosition(range->start).inlineBoxAndOffset(Affinity::Downstream);
     if (inlineBox)
         renderer = &inlineBox->renderer();
 
@@ -3005,7 +3004,7 @@ int AXObjectCache::indexForCharacterOffset(const CharacterOffset& characterOffse
     auto range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
     if (!range)
         return 0;
-    return obj->indexForVisiblePosition(createLegacyEditingPosition(range->start));
+    return obj->indexForVisiblePosition(makeContainerOffsetPosition(range->start));
 }
 
 const Element* AXObjectCache::rootAXEditableElement(const Node* node)

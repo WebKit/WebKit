@@ -993,8 +993,8 @@ void Range::textNodeSplit(Text& oldNode)
 
 ExceptionOr<void> Range::expand(const String& unit)
 {
-    auto start = VisiblePosition { makeDeprecatedLegacyPosition(&startContainer(), startOffset()) };
-    auto end = VisiblePosition { makeDeprecatedLegacyPosition(&endContainer(), endOffset()) };
+    auto start = VisiblePosition { makeContainerOffsetPosition(&startContainer(), startOffset()) };
+    auto end = VisiblePosition { makeContainerOffsetPosition(&endContainer(), endOffset()) };
     if (unit == "word") {
         start = startOfWord(start);
         end = endOfWord(end);
