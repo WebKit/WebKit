@@ -1,3 +1,27 @@
+2020-09-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Don't set the UV option if the authenticator doesn't support it
+        https://bugs.webkit.org/show_bug.cgi?id=215836
+        <rdar://problem/67817359>
+
+        Reviewed by Darin Adler.
+
+        Covered by new API tests.
+
+        UV in the the CTAP 2.0 spec only means internal UV:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#authenticatorGetInfo
+
+        If an authenticator supports ClientPin, it can set the uv bit in the responses to true but it
+        will not advertise itself supporting internal UV, which is the uv in the options.
+        https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#authenticatorMakeCredential
+
+        Hence, setting it to true could result in error if the authenticator doesn't support internal UV even if it supports ClientPin.
+        It's not a way to ask the authenticator to set the uv bit in the response.
+
+        * Modules/webauthn/fido/DeviceRequestConverter.cpp:
+        (fido::encodeMakeCredenitalRequestAsCBOR):
+        (fido::encodeGetAssertionRequestAsCBOR):
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         AudioParam.exponentialRampToValueAtTime() does not properly deal with negative values

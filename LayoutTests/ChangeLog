@@ -1,3 +1,16 @@
+2020-09-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Don't set the UV option if the authenticator doesn't support it
+        https://bugs.webkit.org/show_bug.cgi?id=215836
+        <rdar://problem/67817359>
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid.https.html:
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         AudioParam.exponentialRampToValueAtTime() does not properly deal with negative values
