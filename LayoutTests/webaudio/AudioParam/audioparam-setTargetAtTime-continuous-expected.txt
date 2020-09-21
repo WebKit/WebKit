@@ -8,68 +8,26 @@ PASS Audit report
 PASS > [linear ramp replace]  
 PASS   Linear ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Linear ramp: SetTarget part was correctly replaced by the ramp 
-FAIL X Linear ramp does not equal [1,1.0004401408450705,1.0008802816901408,1.0013204225352113,1.0017605633802817,1.002200704225352,1.0026408450704225,1.003080985915493,1.0035211267605635,1.0039612676056338,1.0044014084507042,1.0048415492957747,1.005281690140845,1.0057218309859155,1.006161971830986,1.0066021126760563...] with an element-wise tolerance of {"absoluteThreshold":0.00000126765,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	0.0000000000000000e+0	1.0000000000000000e+0	1.0000000000000000e+0	1.0000000000000000e+0	1.2676500000000001e-6
-	[1]	8.8028167374432087e-4	1.0004401408450705e+0	9.9955985917132617e-1	9.9912010560371878e-1	1.2676500000000001e-6
-	[2]	1.7605633474886417e-3	1.0008802816901408e+0	9.9911971834265212e-1	9.9824098508113712e-1	1.2676500000000001e-6
-	[3]	2.6408447884023190e-3	1.0013204225352113e+0	9.9867957774680893e-1	9.9736263764428568e-1	1.2676500000000001e-6
-	[4]	3.5211266949772835e-3	1.0017605633802817e+0	9.9823943668530446e-1	9.9648506157689443e-1	1.2676500000000001e-6
-	...and 2267 more errors.
-	Max AbsError of 1.0000000000000000e+0 at index of 0.
-	Max RelError of 1.0000000000000000e+0 at index of 0.
- assert_true: expected true got false
+PASS   Linear ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000126765,"relativeThreshold":0}. 
 PASS   Linear ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [linear ramp replace] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS < [linear ramp replace] All assertions passed. (total 4 assertions) 
 PASS > [delayed linear ramp]  
 PASS   Delayed linear ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Delayed linear ramp: SetTarget part equals [expected array] with an element-wise tolerance of {"absoluteThreshold":3.43632e-7,"relativeThreshold":0}. 
-FAIL X Delayed linear ramp does not equal [0.44932896411722156,0.45015029411504087,0.4509716241128601,0.4517929541106794,0.45261428410849863,0.45343561410631794,0.4542569441041372,0.45507827410195645,0.45589960409977576,0.45672093409759495,0.4575422640954142,0.4583635940932335,0.45918492409105277,0.460006254088872,0.46082758408669133,0.4616489140845106...] with an element-wise tolerance of {"absoluteThreshold":0.00000107972,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	3.3802819252014160e-1	4.4932896411722156e-1	1.1130077159707996e-1	2.4770442256209341e-1	1.0797199999999999e-6
-	[1]	3.3890849351882935e-1	4.5015029411504087e-1	1.1124180059621153e-1	2.4712146598705201e-1	1.0797199999999999e-6
-	[2]	3.3978873491287231e-1	4.5097162411286013e-1	1.1118288919998781e-1	2.4654076499536740e-1	1.0797199999999999e-6
-	[3]	3.4066903591156006e-1	4.5179295411067938e-1	1.1112391819911932e-1	2.4596204342730055e-1	1.0797199999999999e-6
-	[4]	3.4154930710792542e-1	4.5261428410849863e-1	1.1106497700057322e-1	2.4538548804162183e-1	1.0797199999999999e-6
-	...and 1883 more errors.
-	Max AbsError of 1.1130077159707996e-1 at index of 0.
-	Max RelError of 2.4770442256209341e-1 at index of 0.
- assert_true: expected true got false
+PASS   Delayed linear ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000107972,"relativeThreshold":0}. 
 PASS   Delayed linear ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [delayed linear ramp] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS < [delayed linear ramp] All assertions passed. (total 4 assertions) 
 PASS > [expo ramp replace]  
 PASS   Exponential ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Exponential ramp: SetTarget part was correctly replaced by the ramp 
-FAIL X Exponential ramp does not equal [1,1.00030517578125,1.0006103515625,1.0009156465530396,1.0012210607528687,1.0015265941619873,1.001832127571106,1.0021378993988037,1.0024436712265015,1.0027495622634888,1.003055453300476,1.0033615827560425,1.0036677122116089,1.0039739608764648,1.0042803287506104,1.0045866966247559...] with an element-wise tolerance of {"absoluteThreshold":0.0000114441,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	0.0000000000000000e+0	1.0000000000000000e+0	1.0000000000000000e+0	1.0000000000000000e+0	1.1444099999999999e-5
-	[1]	0.0000000000000000e+0	1.0003051757812500e+0	1.0003051757812500e+0	1.0000000000000000e+0	1.1444099999999999e-5
-	[2]	0.0000000000000000e+0	1.0006103515625000e+0	1.0006103515625000e+0	1.0000000000000000e+0	1.1444099999999999e-5
-	[3]	0.0000000000000000e+0	1.0009156465530396e+0	1.0009156465530396e+0	1.0000000000000000e+0	1.1444099999999999e-5
-	[4]	0.0000000000000000e+0	1.0012210607528687e+0	1.0012210607528687e+0	1.0000000000000000e+0	1.1444099999999999e-5
-	...and 2267 more errors.
-	Max AbsError of 1.9993898868560791e+0 at index of 2271.
-	[2271]	0.0000000000000000e+0	1.9993898868560791e+0	1.9993898868560791e+0	1.0000000000000000e+0	1.1444099999999999e-5
-	Max RelError of 1.0000000000000000e+0 at index of 0.
- assert_true: expected true got false
+PASS   Exponential ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000114441,"relativeThreshold":0}. 
 PASS   Exponential ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [expo ramp replace] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS < [expo ramp replace] All assertions passed. (total 4 assertions) 
 PASS > [delayed expo ramp]  
 PASS   Delayed exponential ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Delayed exponential ramp: SetTarget part equals [expected array] with an element-wise tolerance of {"absoluteThreshold":3.43632e-7,"relativeThreshold":0}. 
-FAIL X Delayed exponential ramp does not equal [0.4493289589881897,0.4496844708919525,0.45004022121429443,0.4503962993621826,0.4507526457309723,0.45110926032066345,0.4514661729335785,0.451823353767395,0.4521808326244354,0.4525385797023773,0.4528966248035431,0.45325493812561035,0.4536135494709015,0.4539724290370941,0.4543316066265106,0.4546910524368286...] with an element-wise tolerance of {"absoluteThreshold":0.00000429154,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	0.0000000000000000e+0	4.4932895898818970e-1	4.4932895898818970e-1	1.0000000000000000e+0	4.2915399999999997e-6
-	[1]	0.0000000000000000e+0	4.4968447089195251e-1	4.4968447089195251e-1	1.0000000000000000e+0	4.2915399999999997e-6
-	[2]	0.0000000000000000e+0	4.5004022121429443e-1	4.5004022121429443e-1	1.0000000000000000e+0	4.2915399999999997e-6
-	[3]	0.0000000000000000e+0	4.5039629936218262e-1	4.5039629936218262e-1	1.0000000000000000e+0	4.2915399999999997e-6
-	[4]	0.0000000000000000e+0	4.5075264573097229e-1	4.5075264573097229e-1	1.0000000000000000e+0	4.2915399999999997e-6
-	...and 1883 more errors.
-	Max AbsError of 1.9984188079833984e+0 at index of 1887.
-	[1887]	0.0000000000000000e+0	1.9984188079833984e+0	1.9984188079833984e+0	1.0000000000000000e+0	4.2915399999999997e-6
-	Max RelError of 1.0000000000000000e+0 at index of 0.
- assert_true: expected true got false
+PASS   Delayed exponential ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000429154,"relativeThreshold":0}. 
 PASS   Delayed exponential ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [delayed expo ramp] 1 out of 4 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 4 out of 4 tasks were failed. assert_true: expected true got false
+PASS < [delayed expo ramp] All assertions passed. (total 4 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
 

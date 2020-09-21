@@ -1,5 +1,16 @@
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Properly handle AudioParam.setTargetAtTime() followed by a ramp
+        https://bugs.webkit.org/show_bug.cgi?id=216804
+
+        Reviewed by Darin Adler.
+
+        Rebaseline test that is now passing.
+
+        * webaudio/AudioParam/audioparam-setTargetAtTime-continuous-expected.txt:
+
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
         Throw when AudioConnect::connect() is called for an output that has no channels
         https://bugs.webkit.org/show_bug.cgi?id=216802
 

@@ -388,23 +388,25 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
     // and keeping track of a "current" event index.
     int n = m_events.size();
     for (int i = 0; i < n && writeIndex < numberOfValues; ++i) {
-        auto& event = m_events[i].get();
+        auto* event = &m_events[i].get();
         auto* nextEvent = i < n - 1 ? &m_events[i + 1].get() : nullptr;
 
         // Wait until we get a more recent event.
-        if (!isEventCurrent(event, nextEvent, currentFrame, sampleRate))
+        if (!isEventCurrent(*event, nextEvent, currentFrame, sampleRate))
             continue;
 
         auto nextEventType = nextEvent ? static_cast<ParamEvent::Type>(nextEvent->type()) : ParamEvent::LastType /* unknown */;
 
-        float value1 = event.value();
-        auto time1 = event.time();
+        processSetTargetFollowedByRamp(i, event, nextEventType, currentFrame, sampleRate, controlRate, value);
+
+        float value1 = event->value();
+        auto time1 = event->time();
         float value2 = nextEvent ? nextEvent->value() : value1;
         auto time2 = nextEvent ? nextEvent->time() : Seconds { endFrame * samplingPeriod + 1 };
 
         ASSERT(time2 >= time1);
 
-        handleCancelValues(event, nextEvent, value2, time2, nextEventType);
+        handleCancelValues(*event, nextEvent, value2, time2, nextEventType);
 
         auto deltaTime = time2 - time1;
 
@@ -443,14 +445,14 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
             }
         } else {
             // Handle event types not requiring looking ahead to the next event.
-            switch (event.type()) {
+            switch (event->type()) {
             case ParamEvent::SetValue:
             case ParamEvent::LinearRampToValue:
             case ParamEvent::ExponentialRampToValue:
                 currentFrame = fillToEndFrame;
 
                 // Simply stay at a constant value.
-                value = event.value();
+                value = event->value();
                 for (; writeIndex < fillToFrame; ++writeIndex)
                     values[writeIndex] = value;
 
@@ -460,8 +462,8 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
                 // event, the current value is one sample behind. Update
                 // the sample value by one sample, but only at the start of
                 // this CancelValues event.
-                if (event.hasDefaultCancelledValue())
-                    value = event.value();
+                if (event->hasDefaultCancelledValue())
+                    value = event->value();
                 else {
                     double cancelFrame = time1.value() * sampleRate;
                     if (i >= 1 && cancelFrame <= currentFrame && currentFrame < cancelFrame + 1) {
@@ -483,8 +485,8 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
                 break;
             case ParamEvent::SetTarget: {
                 // Exponential approach to target value with given time constant.
-                float target = event.value();
-                float timeConstant = event.timeConstant();
+                float target = event->value();
+                float timeConstant = event->timeConstant();
                 float discreteTimeConstant = static_cast<float>(AudioUtilities::discreteTimeConstantForSampleRate(timeConstant, controlRate));
 
                 // Set the starting value correctly. This is only needed when the
@@ -520,13 +522,13 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
                 break;
             }
             case ParamEvent::SetValueCurve: {
-                float* curveData = event.curve().data();
-                unsigned numberOfCurvePoints = event.curve().size();
-                float curveEndValue = event.curveEndValue();
+                float* curveData = event->curve().data();
+                unsigned numberOfCurvePoints = event->curve().size();
+                float curveEndValue = event->curveEndValue();
 
                 // Curve events have duration, so don't just use next event time.
-                auto duration = event.duration();
-                double curvePointsPerFrame = event.curvePointsPerSecond() * samplingPeriod;
+                auto duration = event->duration();
+                double curvePointsPerFrame = event->curvePointsPerSecond() * samplingPeriod;
 
                 if (!curveData || !numberOfCurvePoints || duration <= 0_s || sampleRate <= 0) {
                     // Error condition - simply propagate previous value.
@@ -718,6 +720,52 @@ void AudioParamTimeline::processSetTarget(float* values, unsigned& writeIndex, u
     if (writeIndex >= 1)
         value = values[writeIndex - 1];
 }
+
+void AudioParamTimeline::processSetTargetFollowedByRamp(int eventIndex, ParamEvent*& event, ParamEvent::Type nextEventType, size_t currentFrame, double sampleRate, double controlRate, float& value)
+{
+    // If the current event is SetTarget and the next event is a LinearRampToValue or ExponentialRampToValue,
+    // special handling is needed. In this case, the linear and exponential ramp should start at wherever
+    // the SetTarget processing has reached.
+    if (event->type() != ParamEvent::SetTarget)
+        return;
+
+    if (nextEventType != ParamEvent::LinearRampToValue && nextEventType != ParamEvent::ExponentialRampToValue)
+        return;
+
+    // Replace the SetTarget with a SetValue to set the starting time and value for the ramp using the
+    // current frame. We need to update |value| appropriately depending on whether the ramp has started
+    // or not.
+    //
+    // If SetTarget starts somewhere between currentFrame - 1 and currentFrame, we directly compute the
+    // value it would have at currentFrame. If not, we update the value from the value from currentFrame - 1.
+    //
+    // Can't use the condition currentFrame - 1 <= t0 * sampleRate <= currentFrame because currentFrame
+    // is unsigned and could be 0. Instead, compute the condition this way, where f = currentFrame and
+    // Fs = sampleRate:
+    //
+    //    f - 1 <= t0 * Fs <= f
+    //    2 * f - 2 <= 2 * Fs * t0 <= 2 * f
+    //    -2 <= 2 * Fs * t0 - 2 * f <= 0
+    //    -1 <= 2 * Fs * t0 - 2 * f + 1 <= 1
+    //     abs(2 * Fs * t0 - 2 * f + 1) <= 1
+
+    if (fabs(2 * sampleRate * event->time().value() - 2 * currentFrame + 1) <= 1) {
+        // SetTarget is starting somewhere between currentFrame - 1 and currentFrame. Compute the value
+        // the SetTarget would have at the currentFrame.
+        value = event->value() + (value - event->value()) * exp(-(currentFrame / sampleRate - event->time().value()) / event->timeConstant());
+    } else {
+        // SetTarget has already started. Update |value| one frame because it's the value from the previous frame.
+        float discreteTimeConstant = static_cast<float>(AudioUtilities::discreteTimeConstantForSampleRate(event->timeConstant(), controlRate));
+        value += (event->value() - value) * discreteTimeConstant;
+    }
+    // Insert a SetValueEvent to mark the starting value and time.
+    // Clear the clamp check because this doesn't need it.
+    m_events[eventIndex] = ParamEvent::createSetValueEvent(value, Seconds { currentFrame / sampleRate });
+
+    // Update our pointer to the current event because we just changed it.
+    event = &m_events[eventIndex].get();
+}
+
 
 float AudioParamTimeline::linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2)
 {

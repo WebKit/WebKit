@@ -1,3 +1,25 @@
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Properly handle AudioParam.setTargetAtTime() followed by a ramp
+        https://bugs.webkit.org/show_bug.cgi?id=216804
+
+        Reviewed by Darin Adler.
+
+        Properly handle AudioParam.setTargetAtTime() followed by a ramp:
+        - https://www.w3.org/TR/webaudio/#dom-audioparam-settargetattime
+        - https://www.w3.org/TR/webaudio/#dom-audioparam-linearramptovalueattime
+        - https://www.w3.org/TR/webaudio/#dom-audioparam-exponentialramptovalueattime
+
+        This is a merge of the following Blink change:
+        - https://codereview.chromium.org/1485003002
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        (WebCore::AudioParamTimeline::processSetTargetFollowedByRamp):
+        * Modules/webaudio/AudioParamTimeline.h:
+
 2020-09-21  Antoine Quint  <graouts@webkit.org>
 
         Remove unused NodeFlag::HasCSSAnimation
