@@ -28,8 +28,7 @@ import sys
 from multiprocessing import Process, Queue
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-import webkitpy.thirdparty.autoinstalled.mozlog
-import webkitpy.thirdparty.autoinstalled.mozprocess
+
 from mozlog import structuredlog
 
 w3c_tools_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests', 'imported', 'w3c', 'tools')

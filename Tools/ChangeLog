@@ -1,5 +1,20 @@
 2020-09-21  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitpy] Use webkitcorepy's auto installer for moz* packages
+        https://bugs.webkit.org/show_bug.cgi?id=215889
+        <rdar://problem/67877935>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/__init__.py: Add mozprocess, mozlog and mozterm to AutoInstalled packages.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove mozlog and mozprocess.
+        (AutoinstallImportHook._install_mozlog): Deleted.
+        (AutoinstallImportHook._install_mozprocess): Deleted.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py: Implicitly use webkitcorepy's auto-installer.
+
+2020-09-21  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitpy] Use webkitcorepy's auto installer for six
         https://bugs.webkit.org/show_bug.cgi?id=215770
         <rdar://problem/67683133>

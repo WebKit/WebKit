@@ -109,10 +109,6 @@ class AutoinstallImportHook(object):
             self.install_chromedriver()
         elif '.geckodriver' in fullname:
             self.install_geckodriver()
-        elif '.mozlog' in fullname:
-            self._install_mozlog()
-        elif '.mozprocess' in fullname:
-            self._install_mozprocess()
         elif '.pytest_timeout' in fullname:
             self._install_pytest_timeout()
         elif '.pytest' in fullname:
@@ -142,18 +138,6 @@ class AutoinstallImportHook(object):
     def _install_pycodestyle(self):
         self._install("https://files.pythonhosted.org/packages/source/p/pycodestyle/pycodestyle-2.5.0.tar.gz",
                              "pycodestyle-2.5.0/pycodestyle.py")
-
-    def _install_mozlog(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install("https://files.pythonhosted.org/packages/a0/69/5ff6001df98cf1894e6fb4aa74eda1504f830515e52fc6b0a3acc8c1a788/mozterm-1.0.0.tar.gz",
-                              "mozterm-1.0.0/mozterm")
-        self._install("https://files.pythonhosted.org/packages/6b/7d/30d52c3b2cc022280c41f47f0499afc6d87116b23051bf69c683aaa1cdcb/mozlog-5.0.tar.gz",
-                              "mozlog-5.0/mozlog")
-
-    def _install_mozprocess(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install("https://files.pythonhosted.org/packages/97/e7/7907f0bf2d0b42b154741f8ff63a199486fc67c90aac88cde5f2d1ad1ea2/mozprocess-1.1.0.tar.gz",
-                              "mozprocess-1.1.0/mozprocess")
 
     def _install_pytest_timeout(self):
         self._install("https://files.pythonhosted.org/packages/cc/b7/b2a61365ea6b6d2e8881360ae7ed8dad0327ad2df89f2f0be4a02304deb2/pytest-timeout-1.2.0.tar.gz",
