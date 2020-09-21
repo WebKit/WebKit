@@ -332,14 +332,13 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
-    
-    if (!CGRectEqualToRect(self.modelVideoLayerFrame, [self bounds])) {
-        self.modelVideoLayerFrame = [self bounds];
-        if (auto* model = _fullscreenInterface->videoFullscreenModel())
-            model->setVideoLayerFrame(_videoSublayerFrame);
 
-        _previousVideoGravity = _videoGravity;
-    }
+    self.modelVideoLayerFrame = [self bounds];
+    if (auto* model = _fullscreenInterface->videoFullscreenModel())
+        model->setVideoLayerFrame(_videoSublayerFrame);
+
+    _previousVideoGravity = _videoGravity;
+
     [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
     
     [CATransaction commit];
@@ -374,6 +373,8 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     
     if (auto* model = _fullscreenInterface->videoFullscreenModel())
         model->setVideoLayerGravity(gravity);
+
+    [self setNeedsLayout];
 }
 
 - (NSString *)videoGravity

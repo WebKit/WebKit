@@ -1,3 +1,20 @@
+2020-09-21  Peng Liu  <peng.liu6@apple.com>
+
+        Tapping to zoom in and out causes video to become very small on some iPhone models
+        https://bugs.webkit.org/show_bug.cgi?id=216635
+
+        Reviewed by Jer Noble.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer resolveBounds]): On some iPhone models, AVKit does not
+        change "bounds" of WebAVPlayerLayer after changing its video gravity. Therefore,
+        in this function, "modelVideoLayerFrame" and "bounds" might be the same. But we
+        still need to update the video layer frame in the Web process.
+
+        (-[WebAVPlayerLayer setVideoGravity:]): On some iPhone models, AVKit does
+        not call -[WebAVPlayerLayer:layoutSublayers] immediately after changing
+        the video gravity. Forcing a layout can fix that.
+
 2020-09-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Don't set the UV option if the authenticator doesn't support it
