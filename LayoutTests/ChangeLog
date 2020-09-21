@@ -1,5 +1,18 @@
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Remove emphasis/de-emphasis filters from DynamicsCompressor
+        https://bugs.webkit.org/show_bug.cgi?id=216796
+
+        Reviewed by Darin Adler.
+
+        Rebaseline tests that are now passing.
+
+        * webaudio/AudioParam/audioparam-processing-expected.txt:
+        * webaudio/DynamicsCompressor/dynamicscompressor-clear-internal-state-expected.txt:
+        * webaudio/DynamicsCompressor/dynamicscompressor-simple-expected.txt:
+
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
         Vectorize linearRampToValueAtTime processing in AudioParamTimeline
         https://bugs.webkit.org/show_bug.cgi?id=216788
 

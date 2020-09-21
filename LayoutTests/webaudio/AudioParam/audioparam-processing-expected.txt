@@ -24,16 +24,16 @@ FAIL X DelayNode.delayTime.value is not equal to 0.5. Got 0. assert_true: expect
 FAIL < [DelayNode] 1 out of 2 assertions were failed. assert_true: expected true got false
 PASS > [DynamicsCompressorNode]  
 PASS   DynamicsCompressorNode.attack ramp final value is not equal to 0.003000000026077032. 
-FAIL X DynamicsCompressorNode.attack.value is not equal to 0.5. Got 0.003000000026077032. assert_true: expected true got false
+PASS   DynamicsCompressorNode.attack.value is equal to 0.5. 
 PASS   DynamicsCompressorNode.knee ramp final value is not equal to 30. 
-FAIL X DynamicsCompressorNode.knee.value is not equal to 25. Got 30. assert_true: expected true got false
+PASS   DynamicsCompressorNode.knee.value is equal to 25. 
 PASS   DynamicsCompressorNode.ratio ramp final value is not equal to 12. 
-FAIL X DynamicsCompressorNode.ratio.value is not equal to 15. Got 12. assert_true: expected true got false
+PASS   DynamicsCompressorNode.ratio.value is equal to 15. 
 PASS   DynamicsCompressorNode.release ramp final value is not equal to 0.25. 
-FAIL X DynamicsCompressorNode.release.value is not equal to 0.75. Got 0.25. assert_true: expected true got false
+PASS   DynamicsCompressorNode.release.value is equal to 0.75. 
 PASS   DynamicsCompressorNode.threshold ramp final value is not equal to -24. 
-FAIL X DynamicsCompressorNode.threshold.value is not equal to -10. Got -24. assert_true: expected true got false
-FAIL < [DynamicsCompressorNode] 5 out of 10 assertions were failed. assert_true: expected true got false
+PASS   DynamicsCompressorNode.threshold.value is equal to -10. 
+PASS < [DynamicsCompressorNode] All assertions passed. (total 10 assertions) 
 PASS > [GainNode]  
 PASS   GainNode.gain ramp final value is not equal to 1. 
 FAIL X GainNode.gain.value is not equal to 0.5. Got 1. assert_true: expected true got false
@@ -76,5 +76,5 @@ FAIL X AudioListener.upY.value is not equal to 42. Got 1. assert_true: expected 
 PASS   AudioListener.upZ ramp final value is not equal to 0. 
 FAIL X AudioListener.upZ.value is not equal to 137. Got 0. assert_true: expected true got false
 FAIL < [AudioListener] 9 out of 18 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 7 out of 7 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 6 out of 7 tasks were failed. assert_true: expected true got false
 

@@ -59,9 +59,6 @@ public:
         ParamReleaseZone3,
         ParamReleaseZone4,
         ParamPostGain,
-        ParamFilterStageGain,
-        ParamFilterStageRatio,
-        ParamFilterAnchor,
         ParamEffectBlend,
         ParamReduction,
         ParamLast
@@ -79,7 +76,7 @@ public:
     float sampleRate() const { return m_sampleRate; }
     float nyquist() const { return m_sampleRate / 2; }
 
-    double tailTime() const { return 0; }
+    double tailTime() const { return m_compressor.tailTime(); }
     double latencyTime() const { return m_compressor.latencyFrames() / static_cast<double>(sampleRate()); }
     bool requiresTailProcessing() const
     {
@@ -96,25 +93,8 @@ protected:
 
     float m_sampleRate;
 
-    // Emphasis filter controls.
-    float m_lastFilterStageRatio;
-    float m_lastAnchor;
-    float m_lastFilterStageGain;
-
-    struct ZeroPoleFilterPack4 {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        ZeroPole filters[4];
-    };
-
-    // Per-channel emphasis filters.
-    Vector<std::unique_ptr<ZeroPoleFilterPack4>> m_preFilterPacks;
-    Vector<std::unique_ptr<ZeroPoleFilterPack4>> m_postFilterPacks;
-
     UniqueArray<const float*> m_sourceChannels;
     UniqueArray<float*> m_destinationChannels;
-
-    void setEmphasisStageParameters(unsigned stageIndex, float gain, float normalizedFrequency /* 0 -> 1 */);
-    void setEmphasisParameters(float gain, float anchorFreq, float filterStageRatio);
 
     // The core compressor.
     DynamicsCompressorKernel m_compressor;

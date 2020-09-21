@@ -3,7 +3,7 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "test" 
 PASS Audit report 
 PASS > [test] Validate Reduction Value of DynamicsCompressor after Disabling 
-FAIL X Math.abs(compressor.reduction) (6.09318733215332) is not less than or equal to 0.048223. Got 6.09318733215332. assert_true: expected true got false
-FAIL < [test] 1 out of 1 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   Math.abs(compressor.reduction) (0.048222921788692474) is less than or equal to 0.048223. 
+PASS < [test] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

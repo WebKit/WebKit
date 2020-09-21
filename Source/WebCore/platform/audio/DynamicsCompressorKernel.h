@@ -43,7 +43,7 @@ public:
     void setNumberOfChannels(unsigned);
 
     // Performs stereo-linked compression.
-    void process(float* sourceChannels[],
+    void process(const float* sourceChannels[],
                  float* destinationChannels[],
                  unsigned numberOfChannels,
                  unsigned framesToProcess,
@@ -70,6 +70,8 @@ public:
     float sampleRate() const { return m_sampleRate; }
 
     float meteringGain() const { return m_meteringGain; }
+
+    double tailTime() const;
 
 protected:
     float m_sampleRate;
