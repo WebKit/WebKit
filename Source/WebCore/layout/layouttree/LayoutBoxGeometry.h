@@ -71,7 +71,6 @@ public:
     LayoutUnit marginStart() const;
     LayoutUnit marginAfter() const;
     LayoutUnit marginEnd() const;
-    bool hasClearance() const { return m_hasClearance; }
 
     LayoutUnit borderTop() const;
     LayoutUnit borderLeft() const;
@@ -131,7 +130,6 @@ public:
 
     void setHorizontalMargin(HorizontalMargin);
     void setVerticalMargin(VerticalMargin);
-    void setHasClearance() { m_hasClearance = true; }
 
     void setBorder(Layout::Edges);
 
@@ -163,7 +161,6 @@ private:
 
     HorizontalMargin m_horizontalMargin;
     VerticalMargin m_verticalMargin;
-    bool m_hasClearance { false };
 
     Layout::Edges m_border;
     Optional<Layout::Edges> m_padding;

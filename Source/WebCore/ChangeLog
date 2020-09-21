@@ -1,5 +1,29 @@
 2020-09-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Move hasClearance out of BoxGeometry
+        https://bugs.webkit.org/show_bug.cgi?id=216757
+
+        Reviewed by Antti Koivisto.
+
+        Do not cache the hasClearance state in BoxGeometry.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear):
+        (WebCore::Layout::BlockFormattingContext::verticalPositionWithMargin const):
+        * layout/blockformatting/BlockFormattingState.h:
+        (WebCore::Layout::BlockFormattingState::setHasClearance):
+        (WebCore::Layout::BlockFormattingState::clearClearance):
+        (WebCore::Layout::BlockFormattingState::hasClearance const):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::hasClearance const):
+        * layout/layouttree/LayoutBoxGeometry.cpp:
+        (WebCore::Layout::BoxGeometry::BoxGeometry):
+        * layout/layouttree/LayoutBoxGeometry.h:
+        (WebCore::Layout::BoxGeometry::hasClearance const): Deleted.
+        (WebCore::Layout::BoxGeometry::setHasClearance): Deleted.
+
+2020-09-21  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Remove unused EscapeReason::StrokeOverflowNeedsViewportGeometry
         https://bugs.webkit.org/show_bug.cgi?id=216759
 

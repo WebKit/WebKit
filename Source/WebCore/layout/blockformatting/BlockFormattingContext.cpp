@@ -313,7 +313,7 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
     ASSERT(*verticalPositionAndClearance.position >= boxGeometry.logicalTop());
     boxGeometry.setLogicalTop(*verticalPositionAndClearance.position);
     if (verticalPositionAndClearance.clearance)
-        boxGeometry.setHasClearance();
+        formattingState().setHasClearance(layoutBox);
     // FIXME: Reset the margin values on the ancestors/previous siblings now that the float avoider with clearance does not margin collapse anymore.
 }
 
@@ -477,7 +477,7 @@ LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const Box& layoutB
     // 3. Check if the previous box's margins collapse through. If not -> return previous box' bottom excluding margin after + marginBefore (they are supposed to be equal)
     // 4. Go to previous box and start from step #1 until we hit the parent box.
     auto& boxGeometry = geometryForBox(layoutBox);
-    if (boxGeometry.hasClearance())
+    if (formattingState().hasClearance(layoutBox))
         return boxGeometry.logicalTop();
 
     auto* currentLayoutBox = &layoutBox;

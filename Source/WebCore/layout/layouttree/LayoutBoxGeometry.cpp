@@ -41,7 +41,6 @@ BoxGeometry::BoxGeometry(const BoxGeometry& other)
     , m_contentHeight(other.m_contentHeight)
     , m_horizontalMargin(other.m_horizontalMargin)
     , m_verticalMargin(other.m_verticalMargin)
-    , m_hasClearance(other.m_hasClearance)
     , m_border(other.m_border)
     , m_padding(other.m_padding)
 #if ASSERT_ENABLED
