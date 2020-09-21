@@ -8,8 +8,7 @@ Before:
 |     id="element"
 |     <tr>
 |       <td>
-|         <#selection-anchor>
-|         "fsdf"
+|         "<#selection-anchor>fsdf"
 |       <td>
 |         "fsdf"
 |     <tr>
@@ -20,14 +19,14 @@ Before:
 |   <tbody>
 
 After:
-| <#selection-caret>
 | <table>
 |   border="1"
 |   <tbody>
 |     id="element"
 |     <tr>
 |       <td>
-|         "fsdf"
+|         "<#selection-caret>fsdf"
+|         <br>
 |       <td>
 |         "fsdf"
 |     <tr>
@@ -35,3 +34,4 @@ After:
 |         "gghfg"
 |       <td>
 |         "fsfg"
+|   <tbody>

@@ -1,3 +1,17 @@
+2020-09-20  Darin Adler  <darin@apple.com>
+
+        Selection API: A few more refinements to DOMSelection and VisibleSelection to pass all WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=216756
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/inserting/insert-list-in-table-cell-07-expected.txt: Updated results
+        for a slight change in where the insertion point ends up. This is neither a
+        progression nor a regression, but this is also a very strange edge case. It
+        would be better at some point to enhance the editing code so the selection stays
+        intact, which I think means that the entire table body would be selected, but
+        the current behavior, before this patch and after, yields an insertion point.
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         Remove emphasis/de-emphasis filters from DynamicsCompressor

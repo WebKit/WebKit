@@ -87,7 +87,7 @@ public:
     bool isNonOrphanedRange() const { return isRange() && !start().isOrphan() && !end().isOrphan(); }
     bool isNoneOrOrphaned() const { return isNone() || start().isOrphan() || end().isOrphan(); }
 
-    bool isBaseFirst() const { return m_baseIsFirst; }
+    bool isBaseFirst() const { return m_anchorIsFirst; }
     bool isDirectional() const { return m_isDirectional; }
     void setIsDirectional(bool isDirectional) { m_isDirectional = isDirectional; }
 
@@ -156,8 +156,8 @@ private:
     // These are cached, can be recalculated by validate()
     enum class Type : uint8_t { None, Caret, Range };
     Type m_type { Type::None };
-    bool m_baseIsFirst : 1; // True if base is before the extent.
-    bool m_isDirectional : 1; // Non-directional ignores m_baseIsFirst and selection always extends on shift + arrow key.
+    bool m_anchorIsFirst : 1; // True if the anchor is before the focus.
+    bool m_isDirectional : 1; // On Mac, Shift-arrow keys move the anchor in a directional selection and moves either end to always extend in a non-directional selection.
 };
 
 inline bool operator==(const VisibleSelection& a, const VisibleSelection& b)

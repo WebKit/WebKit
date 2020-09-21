@@ -44,7 +44,7 @@
 namespace WebCore {
 
 VisibleSelection::VisibleSelection()
-    : m_baseIsFirst(true)
+    : m_anchorIsFirst(true)
     , m_isDirectional(false)
 {
 }
@@ -98,12 +98,12 @@ Position VisibleSelection::focus() const
 
 Position VisibleSelection::uncanonicalizedStart() const
 {
-    return m_baseIsFirst ? m_anchor : m_focus;
+    return m_anchorIsFirst ? m_anchor : m_focus;
 }
 
 Position VisibleSelection::uncanonicalizedEnd() const
 {
-    return m_baseIsFirst ? m_focus : m_anchor;
+    return m_anchorIsFirst ? m_focus : m_anchor;
 }
 
 Optional<SimpleRange> VisibleSelection::range() const
@@ -225,13 +225,13 @@ void VisibleSelection::setBaseAndExtentToDeepEquivalents()
     if (m_focus.isNull())
         m_focus = m_anchor;
 
+    m_anchorIsFirst = m_anchor <= m_focus;
+
     m_base = VisiblePosition(m_anchor, m_affinity).deepEquivalent();
     if (m_anchor == m_focus)
         m_extent = m_base;
     else
         m_extent = VisiblePosition(m_focus, m_affinity).deepEquivalent();
-
-    m_baseIsFirst = m_base <= m_extent;
 }
 
 void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity granularity)
@@ -375,8 +375,8 @@ void VisibleSelection::validate(TextGranularity granularity)
 {
     setBaseAndExtentToDeepEquivalents();
 
-    m_start = m_baseIsFirst ? m_base : m_extent;
-    m_end = m_baseIsFirst ? m_extent : m_base;
+    m_start = m_anchorIsFirst ? m_base : m_extent;
+    m_end = m_anchorIsFirst ? m_extent : m_base;
 
     auto startBeforeAdjustments = m_start;
     auto endBeforeAdjustments = m_end;
@@ -409,38 +409,32 @@ void VisibleSelection::validate(TextGranularity granularity)
     }
 
     if (shouldUpdateAnchor) {
-        m_anchor = m_baseIsFirst ? m_start : m_end;
+        m_anchor = m_anchorIsFirst ? m_start : m_end;
         m_base = m_anchor;
     }
     if (shouldUpdateFocus) {
-        m_focus = m_baseIsFirst ? m_end : m_start;
+        m_focus = m_anchorIsFirst ? m_end : m_start;
         m_extent = m_focus;
     }
 }
 
-// FIXME: This function breaks the invariant of this class.
-// But because we use VisibleSelection to store values in editing commands for use when
-// undoing the command, we need to be able to create a selection that while currently
+// Because we use VisibleSelection to store values in editing commands for use when
+// undoing the command, we need to be able to create a selection that, while currently
 // invalid, will be valid once the changes are undone. This is a design problem.
-// To fix it we either need to change the invariants of VisibleSelection or create a new
-// class for editing to use that can manipulate selections that are not currently valid.
-void VisibleSelection::setWithoutValidation(const Position& base, const Position& extent)
+// The best fix is likely to get rid of canonicalization from VisibleSelection entirely,
+// and then remove this function.
+void VisibleSelection::setWithoutValidation(const Position& anchor, const Position& focus)
 {
-    ASSERT(base.isNull() == extent.isNull());
+    ASSERT(anchor.isNull() == focus.isNull());
     ASSERT(m_affinity == Affinity::Downstream);
-    m_anchor = base;
-    m_focus = extent;
-    m_base = base;
-    m_extent = extent;
-    m_baseIsFirst = base <= extent;
-    if (m_baseIsFirst) {
-        m_start = base;
-        m_end = extent;
-    } else {
-        m_start = extent;
-        m_end = base;
-    }
-    m_type = base == extent ? Type::Caret : Type::Range;
+    m_anchor = anchor;
+    m_focus = focus;
+    m_anchorIsFirst = m_anchor <= m_focus;
+    m_base = anchor;
+    m_extent = focus;
+    m_start = m_anchorIsFirst ? anchor : focus;
+    m_end = m_anchorIsFirst ? focus : anchor;
+    m_type = anchor == focus ? Type::Caret : Type::Range;
 }
 
 Position VisibleSelection::adjustPositionForEnd(const Position& currentPosition, Node* startContainerNode)
@@ -512,7 +506,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
     }
 
     // Correct the focus if necessary.
-    if (m_baseIsFirst) {
+    if (m_anchorIsFirst) {
         m_extent = adjustPositionForEnd(m_end, m_start.containerNode());
         m_end = m_extent;
     } else {
@@ -621,7 +615,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
     
     // Correct the focus if necessary.
     if (baseEditableAncestor != lowestEditableAncestor(m_extent.containerNode())) {
-        m_extent = m_baseIsFirst ? m_end : m_start;
+        m_extent = m_anchorIsFirst ? m_end : m_start;
         m_focus = m_extent;
     }
 }

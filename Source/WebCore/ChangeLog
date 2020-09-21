@@ -1,3 +1,53 @@
+2020-09-20  Darin Adler  <darin@apple.com>
+
+        Selection API: A few more refinements to DOMSelection and VisibleSelection to pass all WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=216756
+
+        Reviewed by Ryosuke Niwa.
+
+        After these changes, we pass all the tests in imported/w3c/web-platform-tests/selection
+        with no failures except for one due to the rules about absorbing newlines at the start
+        and end <style> and <script> elements.
+
+        However, that's with the live selection range feature enabled, and there are likely issues
+        with other tests in that mode, so that testing still needs to be done. Then we also have to
+        decide how we are going to deal with the compatibility risk of changing the behavior to
+        match the standard.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::VisibleSelection): Updated to rename m_baseIsFirst to
+        m_anchorIsFirst. Not required for the fix, but helpful for clarity.
+        (WebCore::VisibleSelection::uncanonicalizedStart const): Ditto.
+        (WebCore::VisibleSelection::uncanonicalizedEnd const): Ditto.
+        (WebCore::VisibleSelection::setBaseAndExtentToDeepEquivalents): Compute whether
+        the anchor is first *before* canonicalization, otherwise we will reverse the two
+        if their canonical values are equal. Canonicalization is not allowed to change
+        the ordering other than making two values equal.
+        (WebCore::VisibleSelection::validate): Updated for name.
+        (WebCore::VisibleSelection::setWithoutValidation): Ditto, also tweaked other names in the
+        function and removed an if statement.
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries): Ditto.
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries): Ditto.
+
+        * editing/VisibleSelection.h: Renamed m_baseIsFirst to m_anchorIsFirst and improved the
+        comment about m_isDirectional.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::anchorPosition const): Removed use of parentAnchoredEquivalent.
+        The name makes it sound like it would be useful, but really it just triggers some
+        editing behaviors that don't belong in Position code.
+        (WebCore::DOMSelection::focusPosition const): Ditto.
+        (WebCore::DOMSelection::basePosition const): Ditto.
+        (WebCore::DOMSelection::extentPosition const): Ditto.
+        (WebCore::DOMSelection::collapse): Reversed the order of the document check and the
+        check for invalid nodes and offsets. There are some inconsistencies between the
+        specification and WPT but for now matching WPT seems like the way to go.
+        (WebCore::DOMSelection::setBaseAndExtent): Ditto.
+        (WebCore::DOMSelection::extend): Use VisibleSelection::setExtent, which does exactly
+        what we want, rather than FrameSelection::setExtent, which does not. In the future
+        we may want to cut down on the number of subtly-different selection functions,
+        like these two, but for now this fixes this DOM method to work as specified.
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         Remove emphasis/de-emphasis filters from DynamicsCompressor

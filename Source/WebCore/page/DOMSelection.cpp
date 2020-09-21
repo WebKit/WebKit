@@ -83,7 +83,7 @@ Position DOMSelection::anchorPosition() const
     if (!frame)
         return { };
     if (frame->settings().liveRangeSelectionEnabled())
-        return frame->selection().selection().anchor().parentAnchoredEquivalent();
+        return frame->selection().selection().anchor();
     auto& selection = frame->selection().selection();
     return (selection.isBaseFirst() ? selection.start() : selection.end()).parentAnchoredEquivalent();
 }
@@ -94,7 +94,7 @@ Position DOMSelection::focusPosition() const
     if (!frame)
         return { };
     if (frame->settings().liveRangeSelectionEnabled())
-        return frame->selection().selection().focus().parentAnchoredEquivalent();
+        return frame->selection().selection().focus();
     auto& selection = frame->selection().selection();
     return (selection.isBaseFirst() ? selection.end() : selection.start()).parentAnchoredEquivalent();
 }
@@ -106,7 +106,7 @@ Position DOMSelection::basePosition() const
     if (!frame)
         return { };
     if (frame->settings().liveRangeSelectionEnabled())
-        return frame->selection().selection().anchor().parentAnchoredEquivalent();
+        return frame->selection().selection().anchor();
     return frame->selection().selection().base().parentAnchoredEquivalent();
 }
 
@@ -117,7 +117,7 @@ Position DOMSelection::extentPosition() const
     if (!frame)
         return { };
     if (frame->settings().liveRangeSelectionEnabled())
-        return frame->selection().selection().focus().parentAnchoredEquivalent();
+        return frame->selection().selection().focus();
     return frame->selection().selection().extent().parentAnchoredEquivalent();
 }
 
@@ -203,11 +203,10 @@ ExceptionOr<void> DOMSelection::collapse(Node* node, unsigned offset)
             removeAllRanges();
             return { };
         }
-        auto& document = *frame->document();
-        if (!document.contains(*node))
-            return { };
         if (auto result = Range::checkNodeOffsetPair(*node, offset); result.hasException())
             return result.releaseException();
+        if (!frame->document()->contains(*node))
+            return { };
     } else {
         if (!isValidForPosition(node))
             return { };
@@ -264,13 +263,13 @@ ExceptionOr<void> DOMSelection::setBaseAndExtent(Node* baseNode, unsigned baseOf
         // FIXME: We should do this by making the arguments non-nullable in the IDL file, once liveRangeSelectionEnabled is always true.
         if (!baseNode || !extentNode)
             return Exception { TypeError };
-        auto& document = *frame->document();
-        if (!document.contains(*baseNode) || !document.contains(*extentNode))
-            return { };
         if (auto result = Range::checkNodeOffsetPair(*baseNode, baseOffset); result.hasException())
             return result.releaseException();
         if (auto result = Range::checkNodeOffsetPair(*extentNode, extentOffset); result.hasException())
             return result.releaseException();
+        auto& document = *frame->document();
+        if (!document.contains(*baseNode) || !document.contains(*extentNode))
+            return { };
     } else {
         if (!isValidForPosition(baseNode) || !isValidForPosition(extentNode))
             return { };
@@ -344,15 +343,18 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
             return { };
         if (auto result = Range::checkNodeOffsetPair(node, offset); result.hasException())
             return result.releaseException();
+        auto& selection = frame->selection();
+        auto newSelection = selection.selection();
+        newSelection.setExtent(makeContainerOffsetPosition(&node, offset));
+        selection.disassociateLiveRange();
+        selection.setSelection(newSelection);
     } else {
         if (offset > node.length())
             return Exception { IndexSizeError };
         if (!isValidForPosition(&node))
             return { };
+        frame->selection().setExtent(makeContainerOffsetPosition(&node, offset), Affinity::Downstream);
     }
-    auto& selection = frame->selection();
-    selection.disassociateLiveRange();
-    selection.setExtent(makeContainerOffsetPosition(&node, offset), Affinity::Downstream);
     return { };
 }
 
