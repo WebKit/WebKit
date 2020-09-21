@@ -1,3 +1,68 @@
+2020-09-21  James Savage  <james.savage@apple.com>
+
+        WKWebView Swift overlay has mis-annotated nullability for evaluateJavaScript
+        <http://webkit.org/b/216198>
+        <rdar://problem/68035950>
+
+        Reviewed by Darin Adler.
+
+        Due to a mistranslation of evaluateJavaScript, we are vending an API which does not expect
+        to receive nil as a valid result value. This change fixes the crash, but does not yet fix
+        the API to have the correct signature. That will come in a later patch.
+
+        To fix the crash, we need to produce a valid Result<Any, Error> to pass back to clients.
+        Fortunately, instead of inventing something clever, we can just use nil. It's valid to box
+        optional values into Any, and clients can technically retrieve them with the right dynamic cast
+        as well. Since client code must be using dynamic casting to convert the result Any to a usable
+        type, and because in the case where we now return a new value at runtime we would have previously
+        crashed, this shouldn't have any binary compatibility impact either.
+
+        To better validate these changes, I also add new unit tests for the conversion of JavaScript
+        results into Swift values, including a test for the deprecated API.
+
+        * SwiftOverlay/SwiftOverlay/ObjectiveCBlockConversions.swift: Added. For clarity I'm factoring
+        helper methods into a single namespace, as it also makes a nice place to document their expectations.
+        (ObjectiveCBlockConversion.exclusive.exclusive(_:)): This is renamed from the free function,
+            makeResultHandler(_:). It still has the same fatalError (now precondition) as before, but
+            hopefully a better name to clarify that it expects exactly-one value.
+        (ObjectiveCBlockConversions.boxingNilAsAnyForCompatibility(_:)): This is a variant of exclusive(_:)
+            that makes the tradeoff of boxing any nil values as Any to avoid crashing. This is still safe,
+            since as mentioned our clients will need to cast the value they recieve to do anything with it,
+            and since the deprecated API expects `Any`, no one could have been successfully comparing it
+            to `nil` today anyways.
+
+        * SwiftOverlay/Tests/JavaScriptToSwiftTypeConversions.swift: Added.
+        (JavaScriptToSwiftConversions.setUp): Construct a new web view, and add it to a window so that it is
+            in an expected state. I'm using about:blank as the URL, since page content doesn't matter for
+            these tests and I want the web content to be ready immediately.
+        (JavaScriptToSwiftConversions.tearDown): Just perform some window cleanup.
+        (JavaScriptToSwiftConversions.evaluateJavaScript(_:andExpect:)): Helper method to evaluate script and
+            check its result. I'm using String.debugDescription because it escapes quotes and special characters
+            which makes the readout easier to parse.
+        (JavaScriptToSwiftConversions.testNull): JavaScript's null is actually mapped to NSNull, not nil.
+        (JavaScriptToSwiftConversions.testInteger): Some standard type coercion tests. The underlying value for
+            all number types should be NSNumber, so this is actually check against a float or integer type
+            without issue.
+        (JavaScriptToSwiftConversions.testDecimal): Ditto.
+        (JavaScriptToSwiftConversions.testBoolean): Ditto.
+        (JavaScriptToSwiftConversions.testString): Ditto.
+        (JavaScriptToSwiftConversions.testArray): Ditto.
+        (JavaScriptToSwiftConversions.testDictionary): Ditto, only you can't evaluate an object literal directly
+            so I need to store it in a temporary location first.
+        (JavaScriptToSwiftConversions.testUndefined): Test our boxing of nil. The exact value matters less than
+            not crashing at all.
+
+        * SwiftOverlay/WebKitSwiftOverlay.xcodeproj/project.pbxproj: Added new files to project. I kept the
+            new test file and helper files within the SwiftOverlay group, because they do not contribute any API.
+
+        * UIProcess/API/Cocoa/WebKitSwiftOverlay.swift:
+        (WKWebView.callAsyncJavaScript(_:arguments:in:in:completionHandler:)): Switch to a conversion which does
+            not trap on nil.
+        (WKWebView.createPDF(_:completionHandler:)): Updated to use new helper method name.
+        (WKWebView.createWebArchiveData(_:)): Ditto.
+        (WKWebView.evaluateJavaScript(_:in:in:completionHandler:Error:)): See above.
+        (makeResultHandler(_:): This has been subsumed by ObjCBlockConversions.
+
 2020-09-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Allow about:blank subframe loads for non app-bound top frames

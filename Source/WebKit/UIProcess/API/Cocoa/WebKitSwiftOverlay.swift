@@ -36,34 +36,22 @@ extension WKPDFConfiguration {
 @available(iOS 14.0, macOS 10.16, *)
 extension WKWebView {
     public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: ((Result<Any, Error>) -> Void)? = nil) {
-        __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld, completionHandler: completionHandler.map(makeResultHandler))
+        __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld, completionHandler: completionHandler.map(ObjCBlockConversion.boxingNilAsAnyForCompatibility))
     }
 
     public func createPDF(configuration: WKPDFConfiguration = .init(), completionHandler: @escaping (Result<Data, Error>) -> Void) {
-        __createPDF(with: configuration, completionHandler: makeResultHandler(completionHandler))
+        __createPDF(with: configuration, completionHandler: ObjCBlockConversion.exclusive(completionHandler))
     }
 
     public func createWebArchiveData(completionHandler: @escaping (Result<Data, Error>) -> Void) {
-        __createWebArchiveData(completionHandler: makeResultHandler(completionHandler))
+        __createWebArchiveData(completionHandler: ObjCBlockConversion.exclusive(completionHandler))
     }
 
     public func evaluateJavaScript(_ javaScript: String, in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: ((Result<Any, Error>) -> Void)? = nil) {
-        __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld, completionHandler: completionHandler.map(makeResultHandler))
+        __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld, completionHandler: completionHandler.map(ObjCBlockConversion.boxingNilAsAnyForCompatibility))
     }
 
     public func find(_ string: String, configuration: WKFindConfiguration = .init(), completionHandler: @escaping (WKFindResult) -> Void) {
         __find(string, with: configuration, completionHandler: completionHandler)
-    }
-}
-
-func makeResultHandler<Success, Failure>(_ handler: @escaping (Result<Success, Failure>) -> Void) -> (Success?, Failure?) -> Void {
-    return { success, failure in
-        if let success = success {
-            handler(.success(success))
-        } else if let failure = failure {
-            handler(.failure(failure))
-        } else {
-            fatalError("Bug in WebKit: Received neither result or failure.")
-        }
     }
 }
