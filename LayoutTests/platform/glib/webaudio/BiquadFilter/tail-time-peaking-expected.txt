@@ -1,0 +1,49 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "peaking-complex-roots" 
+PASS Executing "peaking-real-distinct-roots" 
+PASS Executing "peaking-repeated-roots" 
+PASS Executing "peaking-repeated-roots 2" 
+PASS Audit report 
+PASS > [peaking-complex-roots] complex roots 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): Actual Tail Frame 2304 is greater than or equal to 2077. 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[128:255] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[256:383] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[384:511] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[512:639] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[640:767] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[768:895] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[896:1023] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[1024:1151] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[1152:1279] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[1280:1407] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[1408:1535] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[1536:1663] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[1664:1791] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[1792:1919] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[1920:2047] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[2048:2175] is not constantly 0 (contains 128 different values). 
+PASS   Peaking complex roots: Biquad({"type":"peaking","Q":10,"gain":40,"frequency":4096}): output[2432:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [peaking-complex-roots] All assertions passed. (total 19 assertions) 
+PASS > [peaking-real-distinct-roots] real distinct roots 
+PASS   Peaking real distinct roots: Biquad({"type":"peaking","Q":0.001,"gain":40,"frequency":4096}): Actual Tail Frame 768 is greater than or equal to 589. 
+PASS   Peaking real distinct roots: Biquad({"type":"peaking","Q":0.001,"gain":40,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
+PASS   Peaking real distinct roots: Biquad({"type":"peaking","Q":0.001,"gain":40,"frequency":4096}): output[128:255] is not constantly 0 (contains 128 different values). 
+PASS   Peaking real distinct roots: Biquad({"type":"peaking","Q":0.001,"gain":40,"frequency":4096}): output[256:383] is not constantly 0 (contains 128 different values). 
+PASS   Peaking real distinct roots: Biquad({"type":"peaking","Q":0.001,"gain":40,"frequency":4096}): output[384:511] is not constantly 0 (contains 128 different values). 
+PASS   Peaking real distinct roots: Biquad({"type":"peaking","Q":0.001,"gain":40,"frequency":4096}): output[512:639] is not constantly 0 (contains 128 different values). 
+PASS   Peaking real distinct roots: Biquad({"type":"peaking","Q":0.001,"gain":40,"frequency":4096}): output[896:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [peaking-real-distinct-roots] All assertions passed. (total 7 assertions) 
+PASS > [peaking-repeated-roots] repeated real root 
+PASS   Peaking repeated roots: Biquad({"type":"peaking","Q":0.5,"gain":0,"frequency":2048}): Actual Tail Frame 1 is greater than or equal to 1. 
+PASS   Peaking repeated roots: Biquad({"type":"peaking","Q":0.5,"gain":0,"frequency":2048}): output[0:127] is not constantly 0 (contains 1 different value). 
+PASS   Peaking repeated roots: Biquad({"type":"peaking","Q":0.5,"gain":0,"frequency":2048}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [peaking-repeated-roots] All assertions passed. (total 3 assertions) 
+PASS > [peaking-repeated-roots 2] repeated real root 
+PASS   Peaking repeated roots 2: Biquad({"type":"peaking","Q":1,"gain":40,"frequency":0}): Actual Tail Frame 1 is greater than or equal to 1. 
+PASS   Peaking repeated roots 2: Biquad({"type":"peaking","Q":1,"gain":40,"frequency":0}): output[0:127] is not constantly 0 (contains 1 different value). 
+PASS   Peaking repeated roots 2: Biquad({"type":"peaking","Q":1,"gain":40,"frequency":0}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [peaking-repeated-roots 2] All assertions passed. (total 3 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+

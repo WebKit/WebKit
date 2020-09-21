@@ -1,3 +1,12 @@
+2020-09-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Emit new baselines for WebAudio tests after r267307.
+
+        The results are slightly different in GLIB ports.
+
+        * platform/glib/webaudio/BiquadFilter/tail-time-lowpass-expected.txt: Added.
+        * platform/glib/webaudio/BiquadFilter/tail-time-peaking-expected.txt: Added.
+
 2020-09-20  Sam Weinig  <weinig@apple.com>
 
         Performance.navigation and Performance.timing are incorrectly exposed to workers
