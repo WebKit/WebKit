@@ -1,4 +1,14 @@
 ================
+WebKitGTK 2.30.1
+================
+
+What's new in WebKitGTK 2.30.1?
+
+  - Bring back the environment variable to force single process mode when PSON is disabled.
+  - Fix downloads started by an ephemeral web context.
+  - Translation updates: Brazilian Portuguese.
+
+================
 WebKitGTK 2.30.0
 ================
 
