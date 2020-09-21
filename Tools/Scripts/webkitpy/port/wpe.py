@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import shlex
 
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
@@ -146,7 +147,8 @@ class WPEPort(Port):
             return 1
         command = [miniBrowser]
         if os.environ.get("WEBKIT_MINI_BROWSER_PREFIX"):
-            command.insert(0, os.environ["WEBKIT_MINI_BROWSER_PREFIX"])
+            command = shlex.split(os.environ["WEBKIT_MINI_BROWSER_PREFIX"]) + command
+
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
         return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False)

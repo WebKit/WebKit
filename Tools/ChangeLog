@@ -1,3 +1,18 @@
+2020-09-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Missing support for multi-word $WEBKIT_MINI_BROWSER_PREFIX
+        https://bugs.webkit.org/show_bug.cgi?id=216604
+
+        Reviewed by Adrian Perez de Castro.
+
+        Gracefully handle cases where the env var contains multiple words, by splitting its contents
+        to a list and inserting it at the beginning of the final minibrowser command.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.run_minibrowser):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.run_minibrowser):
+
 2020-09-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Allow about:blank subframe loads for non app-bound top frames
