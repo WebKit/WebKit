@@ -103,11 +103,11 @@ PASS   node2 = context.createGain() did not throw an exception.
 PASS < [Init test nodes] All assertions passed. (total 2 assertions) 
 PASS > [connections] AudioNode connections 
 PASS   node.connect(null, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode". 
-PASS   node.connect(context.destination, 100, 0) threw IndexSizeError: "The index is not in the allowed range.". 
-PASS   node.connect(context.destination, 0, 100) threw IndexSizeError: "The index is not in the allowed range.". 
-PASS   node.connect(node2.gain, 100) threw IndexSizeError: "The index is not in the allowed range.". 
+PASS   node.connect(context.destination, 100, 0) threw IndexSizeError: "Output index exceeds number of outputs". 
+PASS   node.connect(context.destination, 0, 100) threw IndexSizeError: "Input index exceeds number of inputs". 
+PASS   node.connect(node2.gain, 100) threw IndexSizeError: "Output index exceeds number of outputs". 
 PASS   node.disconnect(99) threw IndexSizeError: "output index is out of bounds". 
-PASS   node.connect(otherContext.destination) threw SyntaxError: "The string did not match the expected pattern.". 
+PASS   node.connect(otherContext.destination) threw SyntaxError: "Source and destination nodes belong to different audio contexts". 
 PASS < [connections] All assertions passed. (total 6 assertions) 
 PASS > [channel-stuff] channelCount, channelCountMode, channelInterpretation 
 PASS   GainNode.channelCount = 99 threw IndexSizeError: "Channel count exceeds maximum limit". 

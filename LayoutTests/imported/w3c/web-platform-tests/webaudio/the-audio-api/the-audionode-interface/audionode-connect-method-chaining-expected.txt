@@ -58,8 +58,8 @@ PASS   The return value of MediaStreamAudioSourceNode.connect(BiquadFilterNode, 
 PASS   The return value of MediaStreamAudioSourceNode.connect(ChannelMergerNode, 0, 1) matches the destination ChannelMergerNode is equal to true. 
 PASS < [media-group] All assertions passed. (total 6 assertions) 
 PASS > [invalid-operation]  
-PASS   Connecting with an invalid output threw IndexSizeError: "The index is not in the allowed range.". 
-PASS   Connecting to a node from the different context threw SyntaxError: "The string did not match the expected pattern.". 
+PASS   Connecting with an invalid output threw IndexSizeError: "Output index exceeds number of outputs". 
+PASS   Connecting to a node from the different context threw SyntaxError: "Source and destination nodes belong to different audio contexts". 
 PASS < [invalid-operation] All assertions passed. (total 2 assertions) 
 PASS > [verification]  
 PASS   The output of chained connection of gain nodes contains only the constant 0.125. 

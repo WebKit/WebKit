@@ -195,16 +195,20 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
     
     // Sanity check input and output indices.
     if (outputIndex >= numberOfOutputs())
-        return Exception { IndexSizeError };
+        return Exception { IndexSizeError, "Output index exceeds number of outputs"_s };
 
     if (inputIndex >= destination.numberOfInputs())
-        return Exception { IndexSizeError };
+        return Exception { IndexSizeError, "Input index exceeds number of inputs"_s };
 
     if (&context() != &destination.context())
-        return Exception { SyntaxError };
+        return Exception { SyntaxError, "Source and destination nodes belong to different audio contexts"_s };
 
     auto* input = destination.input(inputIndex);
     auto* output = this->output(outputIndex);
+
+    if (!output->numberOfChannels())
+        return Exception { InvalidAccessError, "Node has zero output channels"_s };
+
     input->connect(output);
 
     // Let context know that a connection has been made.
@@ -224,10 +228,10 @@ ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
     INFO_LOG(LOGIDENTIFIER, param.name(), ", output = ", outputIndex);
 
     if (outputIndex >= numberOfOutputs())
-        return Exception { IndexSizeError };
+        return Exception { IndexSizeError, "Output index exceeds number of outputs"_s };
 
     if (&context() != &param.context())
-        return Exception { SyntaxError };
+        return Exception { SyntaxError, "Node and AudioParam belong to different audio contexts"_s };
 
     auto* output = this->output(outputIndex);
     param.connect(output);

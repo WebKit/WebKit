@@ -6,8 +6,8 @@ PASS > [test] Basic tests for MediaElementAudioSourceNode API
 PASS   audioNode.numberOfInputs is equal to 0. 
 PASS   audioNode.numberOfOutputs is equal to 1. 
 PASS   audioNode.connect(0, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode". 
-PASS   audioNode.connect(context.destination, 5, 0) threw IndexSizeError: "The index is not in the allowed range.". 
-PASS   audioNode.connect(context.destination, 0, 5) threw IndexSizeError: "The index is not in the allowed range.". 
+PASS   audioNode.connect(context.destination, 5, 0) threw IndexSizeError: "Output index exceeds number of outputs". 
+PASS   audioNode.connect(context.destination, 0, 5) threw IndexSizeError: "Input index exceeds number of inputs". 
 PASS   mediaSource.mediaElement instanceof HTMLMediaElement is true. 
 PASS   mediaSource.mediaElement is same object is true. 
 PASS   audioNode.connect(context.destination, 0, 0) did not throw an exception. 
