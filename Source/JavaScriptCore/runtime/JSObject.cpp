@@ -719,7 +719,7 @@ bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyNam
     PropertyDescriptor ownDescriptor;
     while (true) {
         if (current->type() == ProxyObjectType) {
-            ProxyObject* proxy = jsCast<ProxyObject*>(current);
+            auto* proxy = jsCast<ProxyObject*>(current);
             PutPropertySlot slot(receiver, shouldThrow);
             RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, globalObject, propertyName, value, slot));
         }
@@ -875,7 +875,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
             }
         }
         if (obj->type() == ProxyObjectType) {
-            ProxyObject* proxy = jsCast<ProxyObject*>(obj);
+            auto* proxy = jsCast<ProxyObject*>(obj);
             RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, globalObject, propertyName, value, slot));
         }
         JSValue prototype = obj->getPrototype(vm, globalObject);
@@ -2832,7 +2832,7 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(JSGlobalObject* gl
 
         if (current->type() == ProxyObjectType) {
             scope.release();
-            ProxyObject* proxy = jsCast<ProxyObject*>(current);
+            auto* proxy = jsCast<ProxyObject*>(current);
             putResult = proxy->putByIndexCommon(globalObject, thisValue, i, value, shouldThrow);
             return true;
         }

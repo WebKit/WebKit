@@ -1,3 +1,17 @@
+2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Proxy should be trapped if base value is primitive
+        https://bugs.webkit.org/show_bug.cgi?id=216764
+
+        Reviewed by Darin Adler.
+
+        While we have special care in JSObject::putInline etc., we missed it in JSValue::putToPrimitive.
+        So, if proxy exists in the prototype chain for the primitive values (e.g. StringPrototype -> Proxy chain),
+        we miss the Proxy trap. We should have ProxyObject special check in JSValue::putToPrimitive too.
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+
 2020-09-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Drop Options::useBigInt

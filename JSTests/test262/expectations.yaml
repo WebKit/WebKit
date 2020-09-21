@@ -3738,9 +3738,3 @@ test/language/statements/variable/dstr/ary-init-iter-get-err-array-prototype.js:
 test/language/statements/variable/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/types/reference/put-value-prop-base-primitive-realm.js:
-  default: 'Test262Error: number Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: number Expected SameValue(«0», «1») to be true'
-test/language/types/reference/put-value-prop-base-primitive.js:
-  default: 'Test262Error: number Expected SameValue(«0», «1») to be true'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'

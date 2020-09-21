@@ -184,6 +184,10 @@ bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName property
             Structure* structure = obj->structure(vm);
             if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().hasPutPropertySecurityCheck())
                 break;
+            if (obj->type() == ProxyObjectType) {
+                auto* proxy = jsCast<ProxyObject*>(obj);
+                RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, globalObject, propertyName, value, slot));
+            }
             prototype = obj->getPrototype(vm, globalObject);
             RETURN_IF_EXCEPTION(scope, false);
 
@@ -216,7 +220,10 @@ bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName property
             // prototypes it should be replaced, so break here.
             break;
         }
-
+        if (obj->type() == ProxyObjectType) {
+            auto* proxy = jsCast<ProxyObject*>(obj);
+            RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, globalObject, propertyName, value, slot));
+        }
         prototype = obj->getPrototype(vm, globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (prototype.isNull())
