@@ -80,6 +80,9 @@ private:
     // The audio thread writes the input audio here.
     AudioFloatArray m_inputBuffer;
     unsigned m_writeIndex;
+
+    // AudioBus used for downmixing input audio before copying it to m_inputBuffer.
+    RefPtr<AudioBus> m_downmixBus;
     
     size_t m_fftSize;
     std::unique_ptr<FFTFrame> m_analysisFrame;

@@ -1,3 +1,14 @@
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
+        AnalyserNode should downmix input audio to mono
+        https://bugs.webkit.org/show_bug.cgi?id=216736
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline test now that more checks are passing.
+
+        * webaudio/Analyser/realtimeanalyser-downmix-expected.txt:
+
 2020-09-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r257839): Can't add a memo when transferring funds in First Tech Credit Union App
