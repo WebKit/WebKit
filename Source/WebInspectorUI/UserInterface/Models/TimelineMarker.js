@@ -83,7 +83,6 @@ WI.TimelineMarker.Event = {
 };
 
 WI.TimelineMarker.Type = {
-    StoppingTime: "stopping-time",
     CurrentTime: "current-time",
     LoadEvent: "load-event",
     DOMContentEvent: "dom-content-event",

@@ -1,3 +1,27 @@
+2020-09-21  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Timelines: remove "stop requested" marker
+        https://bugs.webkit.org/show_bug.cgi?id=216423
+
+        Reviewed by Devin Rousso.
+
+        Removed the "Stop Requested" timeline marker, which was made unneccesary in r267038 which makes the recording
+        head marker stop at the moment the stop was requested, even if more time is required to complete the processing
+        of incoming data.
+
+        * UserInterface/Models/TimelineMarker.js:
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview):
+        (WI.TimelineOverview.prototype._recordingReset):
+        (WI.TimelineOverview.prototype._handleTimelineCapturingStateChanged):
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .markers > .marker.current-time::after):
+        (.timeline-ruler > .markers > .marker.stopping-time): Deleted.
+        (.timeline-ruler > .markers > .marker:matches(.stopping-time, .current-time)::after): Deleted.
+        (@media (prefers-color-scheme: dark) .timeline-ruler > .markers > .marker.stopping-time): Deleted.
+        * UserInterface/Views/TimelineRuler.js:
+        (WI.TimelineRuler.prototype.addMarker):
+
 2020-09-14  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Stop Recording in Timelines tab doesn't work reliably

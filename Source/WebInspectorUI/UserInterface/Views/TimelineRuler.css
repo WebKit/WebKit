@@ -174,16 +174,12 @@ body[dir=rtl] .timeline-ruler > .markers > .marker::after {
     right: var(--timeline-ruler-marker-after-offset);
 }
 
-.timeline-ruler > .markers > .marker.stopping-time {
-    color: hsl(0, 0%, 75%);
-}
-
 .timeline-ruler > .markers > .marker.current-time {
     z-index: var(--timeline-current-time-z-index);
     color: red;
 }
 
-.timeline-ruler > .markers > .marker:matches(.stopping-time, .current-time)::after {
+.timeline-ruler > .markers > .marker.current-time::after {
     top: var(--timeline-ruler-marker-after-offset);
     width: var(--timeline-ruler-marker-after-size);
     height: var(--timeline-ruler-marker-after-size);
@@ -294,10 +290,6 @@ body[dir=rtl] .timeline-ruler > .shaded-area.left {
 }
 
 @media (prefers-color-scheme: dark) {
-    .timeline-ruler > .markers > .marker.stopping-time {
-        color: lightgrey;
-    }
-
     .timeline-ruler > .markers > .marker.dom-content-event {
         color: hsl(240, 100%, 70%);
     }

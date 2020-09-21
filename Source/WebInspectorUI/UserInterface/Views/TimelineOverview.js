@@ -83,7 +83,6 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._timelineRuler.addEventListener(WI.TimelineRuler.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
         this.addSubview(this._timelineRuler);
 
-        this._stoppingTimeMarker = null;
         this._currentTimeMarker = new WI.TimelineMarker(0, WI.TimelineMarker.Type.CurrentTime);
         this._timelineRuler.addMarker(this._currentTimeMarker);
 
@@ -816,11 +815,6 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._timelineRuler.clearMarkers();
 
         this._timelineRuler.addMarker(this._currentTimeMarker);
-
-        if (this._stoppingTimeMarker) {
-            this._stoppingTimeMarker.time = -1; // Hide the marker.
-            this._timelineRuler.addMarker(this._stoppingTimeMarker);
-        }
     }
 
     _canShowTimelineType(type)
@@ -1034,22 +1028,9 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
     _handleTimelineCapturingStateChanged(event)
     {
         switch (WI.timelineManager.capturingState) {
-        case WI.TimelineManager.CapturingState.Starting:
-            if (this._stoppingTimeMarker)
-                this._stoppingTimeMarker.time = -1; // Hide the marker when capturing resumes.
-            break;
-
         case WI.TimelineManager.CapturingState.Active:
             this._editInstrumentsButton.enabled = false;
             this._stopEditingInstruments();
-            break;
-
-        case WI.TimelineManager.CapturingState.Stopping:
-            if (!this._stoppingTimeMarker) {
-                this._stoppingTimeMarker = new WI.TimelineMarker(this._currentTime, WI.TimelineMarker.Type.StoppingTime);
-                this._timelineRuler.addMarker(this._stoppingTimeMarker);
-            } else
-                this._stoppingTimeMarker.time = this._currentTime;
             break;
 
         case WI.TimelineManager.CapturingState.Inactive:
