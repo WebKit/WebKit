@@ -35,10 +35,10 @@ FAIL < [positive-end] 1 out of 1 assertions were failed. assert_true: expected t
 PASS > [propagate]  
 FAIL X Exponential ramp from -1 to 1 after the end of the linear ramp: Expected -1 for all values but found 1500 unexpected values: 
 	Index	Actual
-	[0]	-0.997999906539917
-	[1]	-0.997999906539917
-	[2]	-0.997999906539917
-	[3]	-0.997999906539917
+	[0]	-0.9980001449584961
+	[1]	-0.9980001449584961
+	[2]	-0.9980001449584961
+	[3]	-0.9980001449584961
 	...and 1496 more errors. assert_true: expected true got false
 PASS   Exponential ramp after end of ramp contains only the constant 1. 
 FAIL < [propagate] 1 out of 2 assertions were failed. assert_true: expected true got false

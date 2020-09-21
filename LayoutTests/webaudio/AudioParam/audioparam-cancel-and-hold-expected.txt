@@ -18,21 +18,10 @@ PASS Executing "cancel setValueCurve now"
 PASS Executing "linear, cancel, linear, cancel, linear" 
 PASS Audit report 
 PASS > [linear] Cancel linearRampToValueAtTime 
-FAIL X linearRampToValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 does not equal [0,0.0020833334419876337,0.004166666883975267,0.0062500000931322575,0.008333333767950535,0.010416666977107525,0.012500000186264515,0.014583333395421505,0.01666666753590107,0.01875000074505806,0.02083333395421505,0.02291666716337204,0.02500000037252903,0.02708333358168602,0.02916666679084301,0.03125...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[715]	9.9000853300094604e-1	9.9000847339630127e-1	5.9604644775390625e-8	6.0206196590330427e-8	0.0000000000000000e+0
-	[816]	9.8571431636810303e-1	9.8571425676345825e-1	5.9604644775390625e-8	6.0468481982901817e-8	0.0000000000000000e+0
-	[879]	9.8303568363189697e-1	9.8303574323654175e-1	5.9604644775390625e-8	6.0633242672487782e-8	0.0000000000000000e+0
-	[1264]	9.6666663885116577e-1	9.6666669845581055e-1	5.9604644775390625e-8	6.1659975326144279e-8	0.0000000000000000e+0
-	[1368]	9.6224492788314819e-1	9.6224486827850342e-1	5.9604644775390625e-8	6.1943323098231583e-8	0.0000000000000000e+0
-	...and 1140 more errors.
-	Max AbsError of 5.9604644775390625e-8 at index of 715.
-	Max RelError of 1.1671811990452458e-7 at index of 11989.
-	[11989]	5.1067179441452026e-1	5.1067173480987549e-1	5.9604644775390625e-8	1.1671811990452458e-7	0.0000000000000000e+0
- assert_true: expected true got false
+PASS   linearRampToValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Cancelling linearRampToValueAtTime: linearRampToValue(0, 0.5) at time 0.25 contains only the constant 0.5102040767669678. 
 PASS   Expected value for cancelling linearRampToValueAtTime: linearRampToValue(0, 0.5) at time 0.25 is 0.5102040767669678 within an error of 0.000083998. 
-FAIL < [linear] 1 out of 3 assertions were failed. assert_true: expected true got false
+PASS < [linear] All assertions passed. (total 3 assertions) 
 PASS > [exponential] Cancel exponentialRampAtTime 
 PASS   exponentialRampToValue(0.001, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":5.9605e-8,"relativeThreshold":0}. 
 PASS   Cancelling exponentialRampToValue(0.001, 0.5) at time 0.25 contains only the constant 0.033932220190763474. 
@@ -59,90 +48,35 @@ PASS   Cancelling setTargetAtTime(0, 0.01, 0.1) at time 0.25 contains only the c
 PASS   Expected value for cancelling setTargetAtTime(0, 0.01, 0.1) at time 0.25 is 0.09071795642375946 within an error of 0.000001232. 
 PASS < [initial setTarget] All assertions passed. (total 3 assertions) 
 PASS > [post cancel: Linear] LinearRamp after cancelling 
-FAIL X Post cancellation linearRampToValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 does not equal [0,0.0020833334419876337,0.004166666883975267,0.0062500000931322575,0.008333333767950535,0.010416666977107525,0.012500000186264515,0.014583333395421505,0.01666666753590107,0.01875000074505806,0.02083333395421505,0.02291666716337204,0.02500000037252903,0.02708333358168602,0.02916666679084301,0.03125...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[715]	9.9000853300094604e-1	9.9000847339630127e-1	5.9604644775390625e-8	6.0206196590330427e-8	0.0000000000000000e+0
-	[816]	9.8571431636810303e-1	9.8571425676345825e-1	5.9604644775390625e-8	6.0468481982901817e-8	0.0000000000000000e+0
-	[879]	9.8303568363189697e-1	9.8303574323654175e-1	5.9604644775390625e-8	6.0633242672487782e-8	0.0000000000000000e+0
-	[1264]	9.6666663885116577e-1	9.6666669845581055e-1	5.9604644775390625e-8	6.1659975326144279e-8	0.0000000000000000e+0
-	[1368]	9.6224492788314819e-1	9.6224486827850342e-1	5.9604644775390625e-8	6.1943323098231583e-8	0.0000000000000000e+0
-	...and 1140 more errors.
-	Max AbsError of 5.9604644775390625e-8 at index of 715.
-	Max RelError of 1.1671811990452458e-7 at index of 11989.
-	[11989]	5.1067179441452026e-1	5.1067173480987549e-1	5.9604644775390625e-8	1.1671811990452458e-7	0.0000000000000000e+0
- assert_true: expected true got false
+PASS   Post cancellation linearRampToValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Cancelling Post cancellation linearRampToValueAtTime: linearRampToValue(0, 0.5) at time 0.25 contains only the constant 0.5102040767669678. 
 PASS   Expected value for cancelling Post cancellation linearRampToValueAtTime: linearRampToValue(0, 0.5) at time 0.25 is 0.5102040767669678 within an error of 0.000083998. 
 PASS   Post linearRamp(2, 0.375) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [post cancel: Linear] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS < [post cancel: Linear] All assertions passed. (total 4 assertions) 
 PASS > [post cancel: Exponential] ExponentialRamp after cancelling 
-FAIL X Post cancel exponentialRampToValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 does not equal [0,0.0020833334419876337,0.004166666883975267,0.0062500000931322575,0.008333333767950535,0.010416666977107525,0.012500000186264515,0.014583333395421505,0.01666666753590107,0.01875000074505806,0.02083333395421505,0.02291666716337204,0.02500000037252903,0.02708333358168602,0.02916666679084301,0.03125...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[715]	9.9000853300094604e-1	9.9000847339630127e-1	5.9604644775390625e-8	6.0206196590330427e-8	0.0000000000000000e+0
-	[816]	9.8571431636810303e-1	9.8571425676345825e-1	5.9604644775390625e-8	6.0468481982901817e-8	0.0000000000000000e+0
-	[879]	9.8303568363189697e-1	9.8303574323654175e-1	5.9604644775390625e-8	6.0633242672487782e-8	0.0000000000000000e+0
-	[1264]	9.6666663885116577e-1	9.6666669845581055e-1	5.9604644775390625e-8	6.1659975326144279e-8	0.0000000000000000e+0
-	[1368]	9.6224492788314819e-1	9.6224486827850342e-1	5.9604644775390625e-8	6.1943323098231583e-8	0.0000000000000000e+0
-	...and 1140 more errors.
-	Max AbsError of 5.9604644775390625e-8 at index of 715.
-	Max RelError of 1.1671811990452458e-7 at index of 11989.
-	[11989]	5.1067179441452026e-1	5.1067173480987549e-1	5.9604644775390625e-8	1.1671811990452458e-7	0.0000000000000000e+0
- assert_true: expected true got false
+PASS   Post cancel exponentialRampToValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Cancelling Post cancel exponentialRampToValueAtTime: linearRampToValue(0, 0.5) at time 0.25 contains only the constant 0.5102040767669678. 
 PASS   Expected value for cancelling Post cancel exponentialRampToValueAtTime: linearRampToValue(0, 0.5) at time 0.25 is 0.5102040767669678 within an error of 0.000083998. 
 PASS   Post exponentialRamp(2, 0.375) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [post cancel: Exponential] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS < [post cancel: Exponential] All assertions passed. (total 4 assertions) 
 PASS > [post cancel: ValueCurve]  
-FAIL X Post cancel setValueCurveAtTime: linearRampToValue(0, 0.5) up to time 0.25 does not equal [0,0.0020833334419876337,0.004166666883975267,0.0062500000931322575,0.008333333767950535,0.010416666977107525,0.012500000186264515,0.014583333395421505,0.01666666753590107,0.01875000074505806,0.02083333395421505,0.02291666716337204,0.02500000037252903,0.02708333358168602,0.02916666679084301,0.03125...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[715]	9.9000853300094604e-1	9.9000847339630127e-1	5.9604644775390625e-8	6.0206196590330427e-8	0.0000000000000000e+0
-	[816]	9.8571431636810303e-1	9.8571425676345825e-1	5.9604644775390625e-8	6.0468481982901817e-8	0.0000000000000000e+0
-	[879]	9.8303568363189697e-1	9.8303574323654175e-1	5.9604644775390625e-8	6.0633242672487782e-8	0.0000000000000000e+0
-	[1264]	9.6666663885116577e-1	9.6666669845581055e-1	5.9604644775390625e-8	6.1659975326144279e-8	0.0000000000000000e+0
-	[1368]	9.6224492788314819e-1	9.6224486827850342e-1	5.9604644775390625e-8	6.1943323098231583e-8	0.0000000000000000e+0
-	...and 1140 more errors.
-	Max AbsError of 5.9604644775390625e-8 at index of 715.
-	Max RelError of 1.1671811990452458e-7 at index of 11989.
-	[11989]	5.1067179441452026e-1	5.1067173480987549e-1	5.9604644775390625e-8	1.1671811990452458e-7	0.0000000000000000e+0
- assert_true: expected true got false
+PASS   Post cancel setValueCurveAtTime: linearRampToValue(0, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Cancelling Post cancel setValueCurveAtTime: linearRampToValue(0, 0.5) at time 0.25 contains only the constant 0.5102040767669678. 
 PASS   Expected value for cancelling Post cancel setValueCurveAtTime: linearRampToValue(0, 0.5) at time 0.25 is 0.5102040767669678 within an error of 0.000083998. 
 PASS   Post setValueCurve([0.125,2], 0.375, 0.125) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000083998,"relativeThreshold":0}. 
-FAIL < [post cancel: ValueCurve] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS < [post cancel: ValueCurve] All assertions passed. (total 4 assertions) 
 PASS > [post cancel: setTarget]  
-FAIL X Post cancel setTargetAtTime: linearRampToValue(0, 0.5) up to time 0.25 does not equal [0,0.0020833334419876337,0.004166666883975267,0.0062500000931322575,0.008333333767950535,0.010416666977107525,0.012500000186264515,0.014583333395421505,0.01666666753590107,0.01875000074505806,0.02083333395421505,0.02291666716337204,0.02500000037252903,0.02708333358168602,0.02916666679084301,0.03125...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[715]	9.9000853300094604e-1	9.9000847339630127e-1	5.9604644775390625e-8	6.0206196590330427e-8	0.0000000000000000e+0
-	[816]	9.8571431636810303e-1	9.8571425676345825e-1	5.9604644775390625e-8	6.0468481982901817e-8	0.0000000000000000e+0
-	[879]	9.8303568363189697e-1	9.8303574323654175e-1	5.9604644775390625e-8	6.0633242672487782e-8	0.0000000000000000e+0
-	[1264]	9.6666663885116577e-1	9.6666669845581055e-1	5.9604644775390625e-8	6.1659975326144279e-8	0.0000000000000000e+0
-	[1368]	9.6224492788314819e-1	9.6224486827850342e-1	5.9604644775390625e-8	6.1943323098231583e-8	0.0000000000000000e+0
-	...and 1140 more errors.
-	Max AbsError of 5.9604644775390625e-8 at index of 715.
-	Max RelError of 1.1671811990452458e-7 at index of 11989.
-	[11989]	5.1067179441452026e-1	5.1067173480987549e-1	5.9604644775390625e-8	1.1671811990452458e-7	0.0000000000000000e+0
- assert_true: expected true got false
+PASS   Post cancel setTargetAtTime: linearRampToValue(0, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Cancelling Post cancel setTargetAtTime: linearRampToValue(0, 0.5) at time 0.25 contains only the constant 0.5102040767669678. 
 PASS   Expected value for cancelling Post cancel setTargetAtTime: linearRampToValue(0, 0.5) at time 0.25 is 0.5102040767669678 within an error of 0.000083998. 
 PASS   Post setTargetAtTime(0.125, 0.375, 0.1) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000084037,"relativeThreshold":0}. 
-FAIL < [post cancel: setTarget] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS < [post cancel: setTarget] All assertions passed. (total 4 assertions) 
 PASS > [post cancel: setValue]  
-FAIL X Post cancel setValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 does not equal [0,0.0020833334419876337,0.004166666883975267,0.0062500000931322575,0.008333333767950535,0.010416666977107525,0.012500000186264515,0.014583333395421505,0.01666666753590107,0.01875000074505806,0.02083333395421505,0.02291666716337204,0.02500000037252903,0.02708333358168602,0.02916666679084301,0.03125...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[715]	9.9000853300094604e-1	9.9000847339630127e-1	5.9604644775390625e-8	6.0206196590330427e-8	0.0000000000000000e+0
-	[816]	9.8571431636810303e-1	9.8571425676345825e-1	5.9604644775390625e-8	6.0468481982901817e-8	0.0000000000000000e+0
-	[879]	9.8303568363189697e-1	9.8303574323654175e-1	5.9604644775390625e-8	6.0633242672487782e-8	0.0000000000000000e+0
-	[1264]	9.6666663885116577e-1	9.6666669845581055e-1	5.9604644775390625e-8	6.1659975326144279e-8	0.0000000000000000e+0
-	[1368]	9.6224492788314819e-1	9.6224486827850342e-1	5.9604644775390625e-8	6.1943323098231583e-8	0.0000000000000000e+0
-	...and 1140 more errors.
-	Max AbsError of 5.9604644775390625e-8 at index of 715.
-	Max RelError of 1.1671811990452458e-7 at index of 11989.
-	[11989]	5.1067179441452026e-1	5.1067173480987549e-1	5.9604644775390625e-8	1.1671811990452458e-7	0.0000000000000000e+0
- assert_true: expected true got false
+PASS   Post cancel setValueAtTime: linearRampToValue(0, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Cancelling Post cancel setValueAtTime: linearRampToValue(0, 0.5) at time 0.25 contains only the constant 0.5102040767669678. 
 PASS   Expected value for cancelling Post cancel setValueAtTime: linearRampToValue(0, 0.5) at time 0.25 is 0.5102040767669678 within an error of 0.000083998. 
 PASS   Post setValueAtTime(0.125, 0.375) equals [0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [post cancel: setValue] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS < [post cancel: setValue] All assertions passed. (total 4 assertions) 
 PASS > [cancel future setTarget]  
 PASS   After cancelling future setTarget event, output contains only the constant 0.5. 
 PASS < [cancel future setTarget] All assertions passed. (total 1 assertions) 
@@ -156,24 +90,13 @@ PASS > [cancel setValueCurve now]
 PASS   After cancelling current setValueCurve event starting now, output contains only the constant 0.5. 
 PASS < [cancel setValueCurve now] All assertions passed. (total 1 assertions) 
 PASS > [linear, cancel, linear, cancel, linear] Schedules 3 linear ramps, cancelling 2 of them, so that we end up with 2 cancel events next to each other 
-FAIL X 1st linearRamp: linearRampToValue(0, 0.5) up to time 0.25 does not equal [0,0.0020833334419876337,0.004166666883975267,0.0062500000931322575,0.008333333767950535,0.010416666977107525,0.012500000186264515,0.014583333395421505,0.01666666753590107,0.01875000074505806,0.02083333395421505,0.02291666716337204,0.02500000037252903,0.02708333358168602,0.02916666679084301,0.03125...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[715]	9.9000853300094604e-1	9.9000847339630127e-1	5.9604644775390625e-8	6.0206196590330427e-8	0.0000000000000000e+0
-	[816]	9.8571431636810303e-1	9.8571425676345825e-1	5.9604644775390625e-8	6.0468481982901817e-8	0.0000000000000000e+0
-	[879]	9.8303568363189697e-1	9.8303574323654175e-1	5.9604644775390625e-8	6.0633242672487782e-8	0.0000000000000000e+0
-	[1264]	9.6666663885116577e-1	9.6666669845581055e-1	5.9604644775390625e-8	6.1659975326144279e-8	0.0000000000000000e+0
-	[1368]	9.6224492788314819e-1	9.6224486827850342e-1	5.9604644775390625e-8	6.1943323098231583e-8	0.0000000000000000e+0
-	...and 1140 more errors.
-	Max AbsError of 5.9604644775390625e-8 at index of 715.
-	Max RelError of 1.1671811990452458e-7 at index of 11989.
-	[11989]	5.1067179441452026e-1	5.1067173480987549e-1	5.9604644775390625e-8	1.1671811990452458e-7	0.0000000000000000e+0
- assert_true: expected true got false
+PASS   1st linearRamp: linearRampToValue(0, 0.5) up to time 0.25 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Cancelling 1st linearRamp: linearRampToValue(0, 0.5) at time 0.25 contains only the constant 0.5102040767669678. 
 PASS   Expected value for cancelling 1st linearRamp: linearRampToValue(0, 0.5) at time 0.25 is 0.5102040767669678 within an error of 0. 
 PASS   2nd linearRamp(2, 0.5) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Cancelling 2nd linearRamp(2, 0.5) at time 0.375 contains only the constant 1.2551020383834839. 
 PASS   Expected value for cancelling 2nd linearRamp(2, 0.5) at time 0.375 is 1.2551020383834839 within an error of 0. 
 PASS   3rd linearRamp(0, 0.5) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [linear, cancel, linear, cancel, linear] 1 out of 7 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 7 out of 16 tasks were failed. assert_true: expected true got false
+PASS < [linear, cancel, linear, cancel, linear] All assertions passed. (total 7 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 16 tasks ran successfully. 
 

@@ -162,6 +162,7 @@ private:
     float valueCurveAtTime(Seconds t, Seconds time1, Seconds duration, const float* curveData, size_t curveLength);
     void handleCancelValues(ParamEvent&, ParamEvent* nextEvent, float& value2, Seconds& time2, ParamEvent::Type& nextEventType);
     bool isEventCurrent(const ParamEvent&, const ParamEvent* nextEvent, size_t currentFrame, double sampleRate) const;
+    void processLinearRamp(float* values, unsigned& writeIndex, unsigned fillToFrame, float& value, float value1, float value2, Seconds deltaTime, Seconds time1, double samplingPeriod, size_t& currentFrame);
     void processSetTarget(float* values, unsigned& writeIndex, unsigned fillToFrame, float& value, float target, float discreteTimeConstant);
 
     Vector<UniqueRef<ParamEvent>> m_events;

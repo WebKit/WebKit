@@ -417,18 +417,9 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
         fillToFrame = std::min(fillToFrame, numberOfValues);
 
         // First handle linear and exponential ramps which require looking ahead to the next event.
-        if (nextEventType == ParamEvent::LinearRampToValue) {
-            for (; writeIndex < fillToFrame; ++writeIndex) {
-                // Since deltaTime is a double, 1/deltaTime can easily overflow a float. Thus, if deltaTime
-                // is close enough to zero (less than float min), treat it as zero.
-                float k = deltaTime.value() <= std::numeric_limits<float>::min() ? 0 : 1 / deltaTime.value();
-                float x = (currentFrame * samplingPeriod - time1.value()) * k;
-                float valueDelta = value2 - value1;
-                value = value1 + valueDelta * x;
-                values[writeIndex] = value;
-                ++currentFrame;
-            }
-        } else if (nextEventType == ParamEvent::ExponentialRampToValue) {
+        if (nextEventType == ParamEvent::LinearRampToValue)
+            processLinearRamp(values, writeIndex, fillToFrame, value, value1, value2, deltaTime, time1, samplingPeriod, currentFrame);
+        else if (nextEventType == ParamEvent::ExponentialRampToValue) {
             if (value1 <= 0 || value2 <= 0) {
                 // Handle negative values error case by propagating previous value.
                 for (; writeIndex < fillToFrame; ++writeIndex)
@@ -628,6 +619,59 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
         values[writeIndex] = value;
 
     return value;
+}
+
+void AudioParamTimeline::processLinearRamp(float* values, unsigned& writeIndex, unsigned fillToFrame, float& value, float value1, float value2, Seconds deltaTime, Seconds time1, double samplingPeriod, size_t& currentFrame)
+{
+    float valueDelta = value2 - value1;
+    // Since deltaTime is a double, 1/deltaTime can easily overflow a float. Thus, if deltaTime
+    // is close enough to zero (less than float min), treat it as zero.
+    float k = deltaTime.value() <= std::numeric_limits<float>::min() ? 0 : 1 / deltaTime.value();
+
+    unsigned fillToFrameTrunc = writeIndex + ((fillToFrame - writeIndex) / 4) * 4;
+    if (fillToFrameTrunc > writeIndex) {
+        // Minimize in-loop operations. Calculate starting value and increment.
+        // Next step: value += inc.
+        //  value = value1 + (currentFrame/sampleRate - time1) * k * (value2 - value1);
+        //  inc = 4 / sampleRate * k * (value2 - value1);
+        // Resolve recursion by expanding constants to achieve a 4-step loop unrolling.
+        //  value = value1 + ((currentFrame/sampleRate - time1) + i * sampleFrameTimeIncr) * k * (value2 - value1), i in 0..3
+        values[writeIndex] = 0;
+        values[writeIndex + 1] = 1;
+        values[writeIndex + 2] = 2;
+        values[writeIndex + 3] = 3;
+        float scalar = samplingPeriod;
+        VectorMath::vsmul(values + writeIndex, 1, &scalar, values + writeIndex, 1, 4);
+        scalar = currentFrame * samplingPeriod - time1.value();
+        VectorMath::vsadd(values + writeIndex, 1, &scalar, values + writeIndex, 1, 4);
+        scalar = k * valueDelta;
+        VectorMath::vsmul(values + writeIndex, 1, &scalar, values + writeIndex, 1, 4);
+        VectorMath::vsadd(values + writeIndex, 1, &value1, values + writeIndex, 1, 4);
+
+        float inc = 4 * samplingPeriod * k * valueDelta;
+
+        // Truncate loop steps to multiple of 4.
+        unsigned fillToFrameTrunc = writeIndex + ((fillToFrame - writeIndex) / 4) * 4;
+        // Compute final frame.
+        currentFrame += fillToFrameTrunc - writeIndex;
+
+        // Process 4 loop steps.
+        writeIndex += 4;
+        for (; writeIndex < fillToFrameTrunc; writeIndex += 4)
+            VectorMath::vsadd(values + writeIndex - 4, 1, &inc, values + writeIndex, 1, 4);
+    }
+    // Update |value| with the last value computed so that the .value attribute of the AudioParam gets
+    // the correct linear ramp value, in case the following loop doesn't execute.
+    if (writeIndex >= 1)
+        value = values[writeIndex - 1];
+
+    // Serially process remaining values.
+    for (; writeIndex < fillToFrame; ++writeIndex) {
+        float x = (currentFrame * samplingPeriod - time1.value()) * k;
+        value = value1 + valueDelta * x;
+        values[writeIndex] = value;
+        ++currentFrame;
+    }
 }
 
 void AudioParamTimeline::processSetTarget(float* values, unsigned& writeIndex, unsigned fillToFrame, float& value, float target, float discreteTimeConstant)

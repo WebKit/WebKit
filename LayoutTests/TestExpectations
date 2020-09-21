@@ -324,7 +324,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourc
 webaudio/MediaStreamAudioSource/mediastreamaudiosourcenode.html [ Skip ]
 
 # Webaudio tests that are flaky.
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner.html [ Pass Failure ]
 
 # Values in FAIL lines differ from machine to machine, we should be able to unskip them once they pass.
