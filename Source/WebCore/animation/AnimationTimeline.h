@@ -66,8 +66,8 @@ public:
     void willChangeRendererForElement(Element&);
     void cancelDeclarativeAnimationsForElement(Element&, WebAnimation::Silently);
 
-    virtual void animationWasAddedToElement(WebAnimation&, Element&);
-    virtual void animationWasRemovedFromElement(WebAnimation&, Element&);
+    void animationWasAddedToElement(WebAnimation&, Element&);
+    void animationWasRemovedFromElement(WebAnimation&, Element&);
 
     void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&, Element&);
 

@@ -1,3 +1,20 @@
+2020-09-21  Antoine Quint  <graouts@webkit.org>
+
+        Remove dedicated HashSet<Element*> for DocumentTimeline::runningAnimationsForElementAreAllAccelerated()
+        https://bugs.webkit.org/show_bug.cgi?id=216775
+
+        Reviewed by Antti Koivisto.
+
+        * animation/AnimationTimeline.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::detachFromDocument):
+        (WebCore::DocumentTimeline::animationAcceleratedRunningStateDidChange):
+        (WebCore::DocumentTimeline::runningAnimationsForElementAreAllAccelerated const):
+        (WebCore::DocumentTimeline::animationWasAddedToElement): Deleted.
+        (WebCore::DocumentTimeline::animationWasRemovedFromElement): Deleted.
+        (WebCore::DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement): Deleted.
+        * animation/DocumentTimeline.h:
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         AnalyserNode should downmix input audio to mono

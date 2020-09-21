@@ -83,7 +83,6 @@ void DocumentTimeline::detachFromDocument()
         controller->removeTimeline(*this);
 
     m_pendingAnimationEvents.clear();
-    m_elementsWithRunningAcceleratedAnimations.clear();
 
     auto& animationsToRemove = m_animations;
     while (!animationsToRemove.isEmpty())
@@ -421,49 +420,14 @@ std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderEl
     return result;
 }
 
-void DocumentTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)
-{
-    AnimationTimeline::animationWasAddedToElement(animation, element);
-    updateListOfElementsWithRunningAcceleratedAnimationsForElement(element);
-}
-
-void DocumentTimeline::animationWasRemovedFromElement(WebAnimation& animation, Element& element)
-{
-    AnimationTimeline::animationWasRemovedFromElement(animation, element);
-    updateListOfElementsWithRunningAcceleratedAnimationsForElement(element);
-}
-
 void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)
 {
     m_acceleratedAnimationsPendingRunningStateChange.add(&animation);
-
-    if (is<KeyframeEffect>(animation.effect())) {
-        if (auto* target = downcast<KeyframeEffect>(animation.effect())->targetElementOrPseudoElement())
-            updateListOfElementsWithRunningAcceleratedAnimationsForElement(*target);
-    }
 
     if (shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         scheduleAnimationResolution();
     else
         clearTickScheduleTimer();
-}
-
-void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element& element)
-{
-    auto* animations = element.animations();
-    if (!animations || animations->isEmpty()) {
-        m_elementsWithRunningAcceleratedAnimations.remove(&element);
-        return;
-    }
-
-    for (const auto& animation : *animations) {
-        if (!animation->isRunningAccelerated()) {
-            m_elementsWithRunningAcceleratedAnimations.remove(&element);
-            return;
-        }
-    }
-
-    m_elementsWithRunningAcceleratedAnimations.add(&element);
 }
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()
@@ -484,7 +448,16 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
 
 bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element) const
 {
-    return m_elementsWithRunningAcceleratedAnimations.contains(&element);
+    auto* animations = element.animations();
+    if (!animations || animations->isEmpty())
+        return false;
+
+    for (const auto& animation : *animations) {
+        if (!animation->isRunningAccelerated())
+            return false;
+    }
+
+    return true;
 }
 
 void DocumentTimeline::enqueueAnimationEvent(AnimationEventBase& event)

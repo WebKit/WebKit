@@ -52,8 +52,6 @@ public:
 
     void animationTimingDidChange(WebAnimation&) override;
     void removeAnimation(WebAnimation&) override;
-    void animationWasAddedToElement(WebAnimation&, Element&) final;
-    void animationWasRemovedFromElement(WebAnimation&, Element&) final;
     void transitionDidComplete(RefPtr<CSSTransition>);
 
     // If possible, compute the visual extent of any transform animation on the given renderer
@@ -92,14 +90,12 @@ private:
     void scheduleAnimationResolution();
     void clearTickScheduleTimer();
     void internalUpdateAnimationsAndSendEvents();
-    void updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element&);
     void scheduleNextTick();
     bool animationCanBeRemoved(WebAnimation&);
     bool shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState() const;
 
     Timer m_tickScheduleTimer;
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
-    HashSet<Element*> m_elementsWithRunningAcceleratedAnimations;
     AnimationEvents m_pendingAnimationEvents;
     WeakPtr<Document> m_document;
     Seconds m_originTime;
