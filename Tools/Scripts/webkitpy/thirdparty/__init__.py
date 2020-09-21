@@ -122,10 +122,6 @@ class AutoinstallImportHook(object):
         elif '.html5lib' in fullname:
             self._install_html5lib()
 
-    def _install_six(self):
-        self._install("https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz",
-                              "six-1.11.0/six.py")
-
     def _install_html5lib(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
         self._install("https://files.pythonhosted.org/packages/0b/02/ae6ceac1baeda530866a85075641cec12989bd8d31af6d5ab4a3e8c92f47/webencodings-0.5.1.tar.gz",
@@ -138,7 +134,6 @@ class AutoinstallImportHook(object):
         self._install_html5lib()
         self._install("https://files.pythonhosted.org/packages/64/f1/1aa4c96dea14e17a955019b0fc4ac1b8dfbc50e3c90970c1fb8882e74a7b/mechanize-0.4.3.tar.gz",
                              "mechanize-0.4.3/mechanize")
-        self._install_six()
 
     def _install_keyring(self):
         self._install("https://files.pythonhosted.org/packages/7d/a9/8c6bf60710781ce13a9987c0debda8adab35eb79c6b5525f7fe5240b7a8a/keyring-7.3.1.tar.gz",
@@ -171,7 +166,7 @@ class AutoinstallImportHook(object):
                               "pluggy-0.6.0/pluggy")
         self._install("https://files.pythonhosted.org/packages/c0/2f/6773347277d76c5ade4414a6c3f785ef27e7f5c4b0870ec7e888e66a8d83/more-itertools-4.2.0.tar.gz",
                               "more-itertools-4.2.0/more_itertools")
-        self._install_six()
+
         self._install("https://files.pythonhosted.org/packages/a1/e1/2d9bc76838e6e6667fde5814aa25d7feb93d6fa471bf6816daac2596e8b2/atomicwrites-1.1.5.tar.gz",
                               "atomicwrites-1.1.5/atomicwrites")
         self._install("https://files.pythonhosted.org/packages/94/4a/db842e7a0545de1cdb0439bb80e6e42dfe82aaeaadd4072f2263a4fbed23/funcsigs-1.0.2.tar.gz",
