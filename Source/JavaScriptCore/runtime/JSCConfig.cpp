@@ -28,6 +28,15 @@
 
 namespace JSC {
 
+#if !ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+Config g_jscConfig;
+#endif
+
+Config& Config::singleton()
+{
+    return g_jscConfig;
+}
+
 void Config::disableFreezingForTesting()
 {
     RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen());

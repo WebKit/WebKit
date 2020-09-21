@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,6 +95,10 @@
 #if defined(__SCE__)
 #define BPLATORM_PLAYSTATION 1
 #endif
+
+/* ==== Feature decision macros: these define feature choices for a particular port. ==== */
+
+#define BENABLE(WTF_FEATURE) (defined BENABLE_##WTF_FEATURE && BENABLE_##WTF_FEATURE)
 
 /* ==== Policy decision macros: these define policy choices for a particular port. ==== */
 
@@ -317,4 +321,22 @@
 
 #if !defined(BUSE_PRECOMPUTED_CONSTANTS_VMPAGE16K)
 #define BUSE_PRECOMPUTED_CONSTANTS_VMPAGE16K 1
+#endif
+
+/* The unified Config record feature is not available for Windows because the
+   Windows port puts WTF in a separate DLL, and the offlineasm code accessing
+   the config record expects the config record to be directly accessible like
+   a global variable (and not have to go thru DLL shenanigans). C++ code would
+   resolve these DLL bindings automatically, but offlineasm does not.
+
+   The permanently freezing feature also currently relies on the Config records
+   being unified, and the Windows port also does not currently have an
+   implementation for the freezing mechanism anyway. For simplicity, we just
+   disable both the use of unified Config record and config freezing for the
+   Windows port.
+*/
+#if BOS(WINDOWS)
+#define BENABLE_UNIFIED_AND_FREEZABLE_CONFIG_RECORD 0
+#else
+#define BENABLE_UNIFIED_AND_FREEZABLE_CONFIG_RECORD 1
 #endif

@@ -1,3 +1,30 @@
+2020-09-21  Mark Lam  <mark.lam@apple.com>
+
+        Move some LLInt globals into JSC::Config.
+        https://bugs.webkit.org/show_bug.cgi?id=216685
+        rdar://68964544
+
+        Reviewed by Keith Miller.
+
+        1. Introduce ConfigAlignment as a distinct value from ConfigSizeToProtect.
+           This is because ConfigSizeToProtect is now larger than 1 CeilingOnPageSize on
+           some platforms, but ConfigAlignment only needs to match CeilingOnPageSize.
+
+        2. Introduced ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD) to disable using the
+           unified g_config record for Windows ports.
+
+           This is needed because WTF is built as a DLL on Windows.  offlineasm does not
+           know how to resolve a DLL exported variable.  Additionally, the Windows ports
+           have never supported freezing of the Config record to begin with.  So, we're
+           working around this by disabling ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+           for Windows.  This allows JSC to have its own g_jscConfig record, which solves
+           this issue for now.
+
+        * wtf/PlatformEnable.h:
+        * wtf/WTFConfig.cpp:
+        (WTF::Config::permanentlyFreeze):
+        * wtf/WTFConfig.h:
+
 2020-09-18  Don Olmstead  <don.olmstead@sony.com>
 
         [WebGPU] Add ENABLE(WHLSL_COMPILER) guard

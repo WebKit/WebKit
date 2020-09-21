@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,6 +86,8 @@ using namespace JSC::LLInt;
 //============================================================================
 // Define the opcode dispatch mechanism when using the C loop:
 //
+
+using WebConfig::g_config;
 
 // These are for building a C Loop interpreter:
 #define OFFLINE_ASM_BEGIN

@@ -575,6 +575,9 @@ class Instruction
             else
                 $asm.puts "lea #{dst.x86Operand(:ptr)}, #{src.asmLabel}"
             end
+            if src.offset != 0
+                $asm.puts "add#{x86Suffix(kind)} #{orderOperands(const(src.offset), dst.x86Operand(kind))}"
+            end
         else
             $asm.puts "lea#{x86Suffix(kind)} #{orderOperands(src.x86AddressOperand(kind), dst.x86Operand(kind))}"
         end

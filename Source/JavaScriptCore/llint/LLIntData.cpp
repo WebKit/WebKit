@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "ArithProfile.h"
 #include "CodeBlock.h"
+#include "JSCConfig.h"
 #include "LLIntCLoop.h"
 #include "Opcode.h"
 #include "WriteBarrier.h"
@@ -38,13 +39,6 @@
 namespace JSC {
 
 namespace LLInt {
-
-
-uint8_t Data::s_exceptionInstructions[maxOpcodeLength + 1] = { };
-uint8_t Data::s_wasmExceptionInstructions[maxOpcodeLength + 1] = { };
-Opcode g_opcodeMap[numOpcodeIDs + numWasmOpcodeIDs] = { };
-Opcode g_opcodeMapWide16[numOpcodeIDs + numWasmOpcodeIDs] = { };
-Opcode g_opcodeMapWide32[numOpcodeIDs + numWasmOpcodeIDs] = { };
 
 #if !ENABLE(C_LOOP)
 extern "C" void llint_entry(void*, void*, void*);
@@ -61,22 +55,22 @@ void initialize()
     CLoop::initialize();
 
 #else // !ENABLE(C_LOOP)
-    llint_entry(&g_opcodeMap, &g_opcodeMapWide16, &g_opcodeMapWide32);
+    llint_entry(&g_jscConfig.llint.opcodeMap, &g_jscConfig.llint.opcodeMapWide16, &g_jscConfig.llint.opcodeMapWide32);
 
 #if ENABLE(WEBASSEMBLY)
-    wasm_entry(&g_opcodeMap[numOpcodeIDs], &g_opcodeMapWide16[numOpcodeIDs], &g_opcodeMapWide32[numOpcodeIDs]);
+    wasm_entry(&g_jscConfig.llint.opcodeMap[numOpcodeIDs], &g_jscConfig.llint.opcodeMapWide16[numOpcodeIDs], &g_jscConfig.llint.opcodeMapWide32[numOpcodeIDs]);
 #endif // ENABLE(WEBASSEMBLY)
 
     for (int i = 0; i < numOpcodeIDs + numWasmOpcodeIDs; ++i) {
-        g_opcodeMap[i] = tagCodePtr(g_opcodeMap[i], BytecodePtrTag);
-        g_opcodeMapWide16[i] = tagCodePtr(g_opcodeMapWide16[i], BytecodePtrTag);
-        g_opcodeMapWide32[i] = tagCodePtr(g_opcodeMapWide32[i], BytecodePtrTag);
+        g_jscConfig.llint.opcodeMap[i] = tagCodePtr(g_jscConfig.llint.opcodeMap[i], BytecodePtrTag);
+        g_jscConfig.llint.opcodeMapWide16[i] = tagCodePtr(g_jscConfig.llint.opcodeMapWide16[i], BytecodePtrTag);
+        g_jscConfig.llint.opcodeMapWide32[i] = tagCodePtr(g_jscConfig.llint.opcodeMapWide32[i], BytecodePtrTag);
     }
 
     ASSERT(llint_throw_from_slow_path_trampoline < UINT8_MAX);
     for (unsigned i = 0; i < maxOpcodeLength + 1; ++i) {
-        Data::s_exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
-        Data::s_wasmExceptionInstructions[i] = wasm_throw_from_slow_path_trampoline;
+        g_jscConfig.llint.exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
+        g_jscConfig.llint.wasmExceptionInstructions[i] = wasm_throw_from_slow_path_trampoline;
     }
 #endif // ENABLE(C_LOOP)
 }

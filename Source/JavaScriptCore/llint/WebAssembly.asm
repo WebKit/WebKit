@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -95,19 +95,19 @@ end
 
 macro wasmNextInstruction()
     loadb [PB, PC, 1], t0
-    leap _g_opcodeMap, t1
+    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMap, t1
     jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag
 end
 
 macro wasmNextInstructionWide16()
     loadb OpcodeIDNarrowSize[PB, PC, 1], t0
-    leap _g_opcodeMapWide16, t1
+    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMapWide16, t1
     jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag
 end
 
 macro wasmNextInstructionWide32()
     loadb OpcodeIDNarrowSize[PB, PC, 1], t0
-    leap _g_opcodeMapWide32, t1
+    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMapWide32, t1
     jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag
 end
 

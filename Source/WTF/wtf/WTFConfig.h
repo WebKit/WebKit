@@ -42,16 +42,19 @@ constexpr size_t reservedBytesForGigacageConfig = 0;
 #include <bmalloc/GigacageConfig.h>
 #endif
 
+#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 namespace WebConfig {
 
 using Slot = uint64_t;
 extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
 
 } // namespace WebConfig
+#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 namespace WTF {
 
-constexpr size_t ConfigSizeToProtect = CeilingOnPageSize;
+constexpr size_t ConfigAlignment = CeilingOnPageSize;
+constexpr size_t ConfigSizeToProtect = std::max(CeilingOnPageSize, 16 * KB);
 
 struct Config {
     WTF_EXPORT_PRIVATE static void permanentlyFreeze();
@@ -75,6 +78,8 @@ struct Config {
     uint64_t spaceForExtensions[1];
 };
 
+#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+
 constexpr size_t startSlotOfWTFConfig = Gigacage::reservedSlotsForGigacageConfig;
 constexpr size_t startOffsetOfWTFConfig = startSlotOfWTFConfig * sizeof(WebConfig::Slot);
 
@@ -86,6 +91,12 @@ static_assert(Gigacage::reservedBytesForGigacageConfig + sizeof(WTF::Config) <= 
 static_assert(roundUpToMultipleOf<alignmentOfWTFConfig>(startOffsetOfWTFConfig) == startOffsetOfWTFConfig);
 
 #define g_wtfConfig (*bitwise_cast<WTF::Config*>(&WebConfig::g_config[WTF::startSlotOfWTFConfig]))
+
+#else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+
+extern "C" WTF_EXPORT_PRIVATE Config g_wtfConfig;
+
+#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 ALWAYS_INLINE Config::AssertNotFrozenScope::AssertNotFrozenScope()
 {
@@ -100,3 +111,7 @@ ALWAYS_INLINE Config::AssertNotFrozenScope::~AssertNotFrozenScope()
 };
 
 } // namespace WTF
+
+#if !ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+using WTF::g_wtfConfig;
+#endif

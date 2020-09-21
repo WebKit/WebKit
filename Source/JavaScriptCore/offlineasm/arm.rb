@@ -262,9 +262,16 @@ def armLowerLabelReferences(list)
             when "leai", "leap", "leaq"
                 labelRef = node.operands[0]
                 if labelRef.is_a? LabelReference
-                    raise unless labelRef.offset == 0
                     tmp = Tmp.new(node.codeOrigin, :gpr)
                     newList << Instruction.new(codeOrigin, "globaladdr", [LabelReference.new(node.codeOrigin, labelRef.label), node.operands[1], tmp])
+                    # FIXME: This check against 255 is just the simplest check we can do. ARM is capable of encoding some larger constants using
+                    # rotation (subject to some special rules). Perhaps we can add the more comprehensive encoding check here.
+                    if labelRef.offset > 255
+                        newList << Instruction.new(codeOrigin, "move", [Immediate.new(node.codeOrigin, labelRef.offset), tmp])
+                        newList << Instruction.new(codeOrigin, "addp", [tmp, node.operands[1]])
+                    elsif labelRef.offset > 0
+                        newList << Instruction.new(codeOrigin, "addp", [Immediate.new(node.codeOrigin, labelRef.offset), node.operands[1]])
+                    end
                 else
                     newList << node
                 end

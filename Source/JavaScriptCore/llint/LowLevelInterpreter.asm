@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -315,22 +315,29 @@ const OpcodeIDNarrowSize = 1 # OpcodeID
 const OpcodeIDWide16Size = 2 # Wide16 Prefix + OpcodeID
 const OpcodeIDWide32Size = 2 # Wide32 Prefix + OpcodeID
 
+if X86_64_WIN or C_LOOP_WIN
+    const GigacageConfig = _g_gigacageConfig
+    const JSCConfig = _g_jscConfig
+else
+    const GigacageConfig = _g_config + constexpr Gigacage::startOffsetOfGigacageConfig
+    const JSCConfig = _g_config + constexpr WTF::offsetOfWTFConfigExtension
+end
 
 macro nextInstruction()
     loadb [PB, PC, 1], t0
-    leap _g_opcodeMap, t1
+    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMap, t1
     jmp [t1, t0, PtrSize], BytecodePtrTag
 end
 
 macro nextInstructionWide16()
     loadb OpcodeIDNarrowSize[PB, PC, 1], t0
-    leap _g_opcodeMapWide16, t1
+    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMapWide16, t1
     jmp [t1, t0, PtrSize], BytecodePtrTag
 end
 
 macro nextInstructionWide32()
     loadb OpcodeIDNarrowSize[PB, PC, 1], t0
-    leap _g_opcodeMapWide32, t1
+    leap JSCConfig + constexpr JSC::offsetOfJSCConfigOpcodeMapWide32, t1
     jmp [t1, t0, PtrSize], BytecodePtrTag
 end
 

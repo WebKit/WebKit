@@ -36,11 +36,23 @@
 #include <sys/mman.h>
 #endif
 
+#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+
 namespace WebConfig {
 
-alignas(WTF::ConfigSizeToProtect) Slot g_config[WTF::ConfigSizeToProtect / sizeof(Slot)];
+alignas(WTF::ConfigAlignment) Slot g_config[WTF::ConfigSizeToProtect / sizeof(Slot)];
 
 } // namespace WebConfig
+
+#else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+
+namespace WTF {
+
+Config g_wtfConfig;
+
+} // namespace WTF
+
+#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 namespace WTF {
 
@@ -59,6 +71,8 @@ void Config::permanentlyFreeze()
     }
 
     int result = 0;
+
+#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 #if OS(DARWIN)
     enum {
         AllowPermissionChangesAfterThis = false,
@@ -72,7 +86,13 @@ void Config::permanentlyFreeze()
 #elif OS(WINDOWS)
     // FIXME: Implement equivalent, maybe with VirtualProtect.
     // Also need to fix WebKitTestRunner.
+
+    // Note: the Windows port also currently does not support a unified Config
+    // record, which is needed for the current form of the freezing feature to
+    // work. See comments in PlatformEnable.h for UNIFIED_AND_FREEZABLE_CONFIG_RECORD.
 #endif
+#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+
     RELEASE_ASSERT(!result);
     RELEASE_ASSERT(g_wtfConfig.isPermanentlyFrozen);
 }

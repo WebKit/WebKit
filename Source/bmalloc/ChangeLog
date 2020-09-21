@@ -1,3 +1,20 @@
+2020-09-21  Mark Lam  <mark.lam@apple.com>
+
+        Move some LLInt globals into JSC::Config.
+        https://bugs.webkit.org/show_bug.cgi?id=216685
+        rdar://68964544
+
+        Reviewed by Keith Miller.
+
+        Introduce ConfigAlignment to match WTFConfig.h.
+        Added BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD) support to match WTF.
+
+        * bmalloc/BPlatform.h:
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        * bmalloc/GigacageConfig.h:
+        * bmalloc/mbmalloc.cpp:
+
 2020-08-07  Saam Barati  <sbarati@apple.com>
 
         Use thread_switch instead of switch_pri to drop priority to zero for 1ms instead of 10
