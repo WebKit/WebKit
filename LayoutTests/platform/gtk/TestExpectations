@@ -1077,7 +1077,7 @@ webkit.org/b/206655 inspector/page/overrideSetting-MockCaptureDevicesEnabled.htm
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html [ Crash Failure ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
-webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Crash Pass ]
+webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
 
 # LFC (LayoutFormatingContext is disabled by default).
 fast/layoutformattingcontext/ [ Skip ]
@@ -1444,8 +1444,6 @@ webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-she
 
 webkit.org/b/143475 media/audio-repaint.html [ Timeout Failure ImageOnlyFailure Pass Crash ]
 webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure Pass ]
-
-webkit.org/b/131545 media/media-event-listeners.html [ Failure Pass ]
 
 webkit.org/b/143985 editing/pasteboard/drop-text-events.html [ Failure Timeout Crash ]
 
@@ -2260,6 +2258,8 @@ webkit.org/b/61826 fast/events/drag-image-filename.html [ Timeout ]
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
 webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
+
+webkit.org/b/131545 media/media-event-listeners.html [ Timeout ]
 
 webkit.org/b/135053 html5lib/webkit-resumer.html [ Timeout Pass ]
 

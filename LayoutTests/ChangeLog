@@ -1,5 +1,12 @@
 2020-09-21  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Adjust test expectations of several tests failing.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2020-09-21  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Gardened several failures of new tests added.
 
         * platform/glib/TestExpectations:

@@ -193,6 +193,9 @@ webkit.org/b/169007 imported/w3c/web-platform-tests/css/css-flexbox/flex-item-co
 
 webkit.org/b/216767 css3/font-feature-settings-stylistic-set.html [ ImageOnlyFailure ]
 
+webkit.org/b/216770 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_stf-table-singleline-2.html [ ImageOnlyFailure ]
+webkit.org/b/216770 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_stf-table-singleline.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
