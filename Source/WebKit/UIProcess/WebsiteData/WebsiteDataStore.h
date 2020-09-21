@@ -314,7 +314,7 @@ public:
 #if ENABLE(APP_BOUND_DOMAINS)
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
     void clearAppBoundSession(CompletionHandler<void()>&&);
-    void beginAppBoundDomainCheck(const URL&, WebFramePolicyListenerProxy&);
+    void beginAppBoundDomainCheck(const String& host, const String& protocol, WebFramePolicyListenerProxy&);
     void getAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
     void getAppBoundSchemes(CompletionHandler<void(const HashSet<String>&)>&&) const;
     void ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&, const HashSet<String>&)>&&) const;

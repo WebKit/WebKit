@@ -1,3 +1,34 @@
+2020-09-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Allow about:blank subframe loads for non app-bound top frames
+        https://bugs.webkit.org/show_bug.cgi?id=216715
+        <rdar://problem/69070720>
+
+        Reviewed by Darin Adler.
+
+        In the original implementation of App Bound Domains, any loads using
+        certain protocols like about: were automatically considered app-bound.
+        When a subframe loads about:blank for example, this forces web views
+        into app-bound mode even if the top frame is not app-bound, which
+        should not be the case.
+
+        These special protocols inherit security origins from their top-frame
+        loads, so we can refer to those to determine whether subframe loads
+        should be considered app-bound. For about: loads in a main frame there
+        is no behavior change and WKWebViews will still automatically be considered
+        app-bound in this case.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        Refer to the security origin if the subframe load is one of the
+        special protocols caught by the shouldTreatURLProtocolAsAppBound() function.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::schemeOrDomainIsAppBound):
+        (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the project file.

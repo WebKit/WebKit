@@ -113,6 +113,8 @@ static bool subFrameReceivedScriptSource = false;
         mainFrameReceivedScriptSource = true;
     else if ([task.request.URL.path isEqualToString:@"/should-load-for-main-frame-only"])
         subFrameReceivedScriptSource = true;
+    else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-about-blank-subframe"])
+        response = @"<body id = 'body'></body><iframe id='iframe'></iframe></body>";
 
     [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil] autorelease]];
     [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
@@ -321,7 +323,7 @@ TEST(InAppBrowserPrivacy, LocalFilesAreAppBound)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(InAppBrowserPrivacy, DataFilesAreAppBound)
+TEST(InAppBrowserPrivacy, DataProtocolIsAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -339,7 +341,7 @@ TEST(InAppBrowserPrivacy, DataFilesAreAppBound)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(InAppBrowserPrivacy, AboutFilesAreAppBound)
+TEST(InAppBrowserPrivacy, AboutProtocolIsAppBound)
 {
     initializeInAppBrowserPrivacyTestSettings();
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1332,6 +1334,94 @@ TEST(InAppBrowserPrivacy, AppBoundCustomScheme)
         isDone = true;
     }];
     
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+static void loadRequest(RetainPtr<TestWKWebView> webView, NSString *url)
+{
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+
+    __block bool didFinishNavigation = false;
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+
+    [navigationDelegate setDecidePolicyForNavigationAction:[&] (WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        if (action.targetFrame)
+            [allFrames addObject:action.targetFrame];
+
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }];
+
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    // Load an app-bound domain with an about:blank iframe.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+}
+
+TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
+{
+    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    initializeInAppBrowserPrivacyTestSettings();
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    NSString *url = @"in-app-browser://apple.com/in-app-browser-privacy-test-about-blank-subframe";
+    loadRequest(webView, url);
+    
+    EXPECT_EQ(allFrames.count, 2u);
+
+    static size_t finishedFrames = 0;
+    static bool isDone = false;
+
+    for (WKFrameInfo *frame in allFrames) {
+        bool isMainFrame = frame.isMainFrame;
+        [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
+            EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+            EXPECT_FALSE(!!error);
+            if (isMainFrame)
+                EXPECT_TRUE([result isEqualToString:@"in-app-browser://apple.com/in-app-browser-privacy-test-about-blank-subframe"]);
+            else
+                EXPECT_TRUE([result isEqualToString:@"about:blank"]);
+
+            if (++finishedFrames == allFrames.count)
+                isDone = true;
+        }];
+    }
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
+{
+    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    initializeInAppBrowserPrivacyTestSettings();
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    NSString *url = @"in-app-browser://apple.com/in-app-browser-privacy-test-about-blank-subframe";
+    loadRequest(webView, url);
+
+    EXPECT_EQ(allFrames.count, 2u);
+
+    static size_t finishedFrames = 0;
+    static bool isDone = false;
+
+    for (WKFrameInfo *frame in allFrames) {
+        [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[] (id result, NSError *error) {
+            EXPECT_TRUE(!!error);
+            if (++finishedFrames == allFrames.count)
+                isDone = true;
+        }];
+    }
     TestWebKitAPI::Util::run(&isDone);
 }
 

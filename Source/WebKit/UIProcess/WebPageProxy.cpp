@@ -3173,7 +3173,7 @@ bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMai
     if (m_ignoresAppBoundDomains)
         return true;
 
-    if (shouldTreatURLProtocolAsAppBound(requestURL)) {
+    if (isMainFrame && shouldTreatURLProtocolAsAppBound(requestURL)) {
         isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
         m_limitsNavigationsToAppBoundDomains = true;
     }
@@ -5284,7 +5284,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
         beginSafeBrowsingCheck(request.url(), frame.isMainFrame(), listener);
 #if ENABLE(APP_BOUND_DOMAINS)
-    m_websiteDataStore->beginAppBoundDomainCheck(request.url(), listener);
+    bool shouldSendSecurityOriginData = !frame.isMainFrame() && shouldTreatURLProtocolAsAppBound(request.url());
+    auto host = shouldSendSecurityOriginData ? frameInfo.securityOrigin.host : request.url().host();
+    auto protocol = shouldSendSecurityOriginData ? frameInfo.securityOrigin.protocol : request.url().protocol();
+    m_websiteDataStore->beginAppBoundDomainCheck(host.toString(), protocol.toString(), listener);
 #endif
     API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
     WebFrameProxy* originatingFrame = originatingFrameInfoData.frameID ? process->webFrame(*originatingFrameInfoData.frameID) : nullptr;

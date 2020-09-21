@@ -1,3 +1,22 @@
+2020-09-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Allow about:blank subframe loads for non app-bound top frames
+        https://bugs.webkit.org/show_bug.cgi?id=216715
+        <rdar://problem/69070720>
+
+        Reviewed by Darin Adler.
+
+        Two new tests for about:blank loaded under an app-bound domain and
+        non-app bound domain respectively. Tests that the subframe load
+        has the same app-bound status as the parent frame by testing script
+        injection powers.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        Fixed two test names that didn't make sense.
+
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+        (TEST):
+
 2020-09-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Drop Options::useBigInt
