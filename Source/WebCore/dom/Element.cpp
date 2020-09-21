@@ -3383,11 +3383,13 @@ bool Element::isVisibleWithoutResolvingFullStyle() const
     if (renderStyle() || hasValidStyle())
         return renderStyle() && renderStyle()->visibility() == Visibility::Visible;
 
-    // Compute style in yet unstyled subtree.
-    auto* style = hasNodeFlag(NodeFlag::IsComputedStyleInvalidFlag) ? nullptr : existingComputedStyle();
-    if (!style)
-        style = const_cast<Element&>(*this).resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
+    auto computedStyleForElement = [](Element& element) -> const RenderStyle* {
+        auto* style = element.hasNodeFlag(NodeFlag::IsComputedStyleInvalidFlag) ? nullptr : element.existingComputedStyle();
+        return style ? style : element.resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
+    };
 
+    // Compute style in yet unstyled subtree.
+    auto* style = computedStyleForElement(const_cast<Element&>(*this));
     if (!style)
         return false;
 
@@ -3398,9 +3400,7 @@ bool Element::isVisibleWithoutResolvingFullStyle() const
         return false;
 
     for (auto& element : composedTreeAncestors(const_cast<Element&>(*this))) {
-        auto* style = element.existingComputedStyle();
-        if (!style)
-            style = element.resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
+        auto* style = computedStyleForElement(element);
         if (!style || style->display() == DisplayType::None)
             return false;
     }

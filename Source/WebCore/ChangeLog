@@ -1,3 +1,31 @@
+2020-09-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r257839): Can't add a memo when transferring funds in First Tech Credit Union App
+        https://bugs.webkit.org/show_bug.cgi?id=216754
+        <rdar://problem/67045862>
+
+        Reviewed by Antti Koivisto.
+
+        After r257839, attempting to add a memo by tapping on a text box in the First Tech Credit Union app on iOS fails
+        to cause the text box (a `textarea` element) to be focused. This is because the `textarea` is initially hidden
+        away in a `display: none;` parent container, which becomes `display: block;` immediately before `focus()` is
+        called from the page's script.
+
+        Augment the mechanism added in r266887, so that we avoid consulting stale computed styles when checking for
+        hidden ancestors in `Element::isVisibleWithoutResolvingFullStyle()`. To do this, we pull logic to get or compute
+        the `RenderStyle` for the current element or one of its composed ancestors (which respects
+        `IsComputedStyleInvalidFlag`) into a lambda function, and use this lambda function below, when we walk up the
+        ancestor chain in search of a hidden element.
+
+        Note that in Speedometer 2.0, this change does not have any significant impact on the number of partial (i.e.
+        `RenderedOnly`) style resolutions we attempt to perform underneath `Element::resolveComputedStyle` (a little
+        over 3000 before and after this change).
+
+        Test: fast/forms/programmatic-focus-after-displaying-parent.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::isVisibleWithoutResolvingFullStyle const):
+
 2020-09-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Move hasClearance out of BoxGeometry
