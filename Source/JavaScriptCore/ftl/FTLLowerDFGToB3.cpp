@@ -11244,6 +11244,9 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         switch (m_node->child1().useKind()) {
+#if USE(BIGINT32)
+        case BigInt32Use:
+#endif
         case BooleanUse:
         case Int32Use:
         case SymbolUse:
@@ -11254,9 +11257,17 @@ private:
             return;
         }
 
+        case HeapBigIntUse: {
+            LValue key = lowHeapBigInt(m_node->child1());
+            setInt32(m_out.castToInt32(vmCall(Int64, operationMapHash, weakPointer(globalObject), key)));
+            return;
+        }
+
         case CellUse: {
             LBasicBlock isString = m_out.newBlock();
             LBasicBlock notString = m_out.newBlock();
+            LBasicBlock isHeapBigIntCase = m_out.newBlock();
+            LBasicBlock notStringHeapBigIntCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
             LValue value = lowCell(m_node->child1());
@@ -11268,12 +11279,19 @@ private:
             ValueFromBlock stringResult = m_out.anchor(mapHashString(value, m_node->child1()));
             m_out.jump(continuation);
 
-            m_out.appendTo(notString, continuation);
+            m_out.appendTo(notString, isHeapBigIntCase);
+            m_out.branch(isHeapBigInt(value, (provenType(m_node->child1()) & ~SpecString)), unsure(isHeapBigIntCase), unsure(notStringHeapBigIntCase));
+
+            m_out.appendTo(isHeapBigIntCase, notStringHeapBigIntCase);
+            ValueFromBlock heapBigIntResult = m_out.anchor(m_out.castToInt32(vmCall(Int64, operationMapHash, weakPointer(globalObject), value)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(notStringHeapBigIntCase, continuation);
             ValueFromBlock notStringResult = m_out.anchor(wangsInt64Hash(value));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
-            setInt32(m_out.phi(Int32, stringResult, notStringResult));
+            setInt32(m_out.phi(Int32, stringResult, heapBigIntResult, notStringResult));
             return;
         }
 
@@ -11294,16 +11312,20 @@ private:
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock straightHash = m_out.newBlock();
         LBasicBlock isStringCase = m_out.newBlock();
+        LBasicBlock notStringCase = m_out.newBlock();
         LBasicBlock nonEmptyStringCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         m_out.branch(
             isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(straightHash));
 
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, notStringCase);
         LValue isString = m_out.equal(m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType), m_out.constInt32(StringType));
         m_out.branch(
-            isString, unsure(isStringCase), unsure(straightHash));
+            isString, unsure(isStringCase), unsure(notStringCase));
+
+        m_out.appendTo(notStringCase, isStringCase);
+        m_out.branch(isHeapBigInt(value, (provenType(m_node->child1()) & ~SpecString)), unsure(slowCase), unsure(straightHash));
 
         m_out.appendTo(isStringCase, nonEmptyStringCase);
         m_out.branch(isRopeString(value, m_node->child1()), rarely(slowCase), usually(nonEmptyStringCase));
@@ -11331,16 +11353,29 @@ private:
     {
         ASSERT(m_node->child1().useKind() == UntypedUse);
 
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock notCellCase = m_out.newBlock();
+        LBasicBlock isHeapBigIntCase = m_out.newBlock();
         LBasicBlock isNumberCase = m_out.newBlock();
         LBasicBlock notInt32NumberCase = m_out.newBlock();
         LBasicBlock notNaNCase = m_out.newBlock();
         LBasicBlock convertibleCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(isNumberCase);
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(isCellCase);
 
         LValue key = lowJSValue(m_node->child1());
         ValueFromBlock fastResult = m_out.anchor(key);
+        m_out.branch(isNotCell(key, provenType(m_node->child1())), unsure(notCellCase), unsure(isCellCase));
+
+        m_out.appendTo(isCellCase, isHeapBigIntCase);
+        m_out.branch(isNotHeapBigInt(key, (provenType(m_node->child1()) & SpecCellCheck)), unsure(continuation), unsure(isHeapBigIntCase));
+
+        m_out.appendTo(isHeapBigIntCase, notCellCase);
+        ValueFromBlock bigIntResult = m_out.anchor(vmCall(Int64, operationNormalizeMapKey, m_vmValue, key));
+        m_out.jump(continuation);
+
+        m_out.appendTo(notCellCase, isNumberCase);
         m_out.branch(isNotNumber(key), unsure(continuation), unsure(isNumberCase));
 
         m_out.appendTo(isNumberCase, notInt32NumberCase);
@@ -11362,7 +11397,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(Int64, fastResult, normalizedNaNResult, doubleResult, boxedIntResult));
+        setJSValue(m_out.phi(Int64, fastResult, bigIntResult, normalizedNaNResult, doubleResult, boxedIntResult));
     }
 
     void compileGetMapBucket()
@@ -11418,6 +11453,9 @@ private:
         // Perform Object.is()
         switch (m_node->child2().useKind()) {
         case BooleanUse:
+#if USE(BIGINT32)
+        case BigInt32Use:
+#endif
         case Int32Use:
         case SymbolUse:
         case ObjectUse: {
@@ -11441,10 +11479,28 @@ private:
                 unsure(slowPath), unsure(loopAround));
             break;
         }
+        case HeapBigIntUse: {
+            LBasicBlock notBitEqual = m_out.newBlock();
+            LBasicBlock bucketKeyIsCell = m_out.newBlock();
+
+            m_out.branch(m_out.equal(key, bucketKey),
+                unsure(continuation), unsure(notBitEqual));
+
+            m_out.appendTo(notBitEqual, bucketKeyIsCell);
+            m_out.branch(isCell(bucketKey),
+                unsure(bucketKeyIsCell), unsure(loopAround));
+
+            m_out.appendTo(bucketKeyIsCell, loopAround);
+            m_out.branch(isHeapBigInt(bucketKey),
+                unsure(slowPath), unsure(loopAround));
+            break;
+        }
         case CellUse: {
             LBasicBlock notBitEqual = m_out.newBlock();
             LBasicBlock bucketKeyIsCell = m_out.newBlock();
             LBasicBlock bucketKeyIsString = m_out.newBlock();
+            LBasicBlock bucketKeyIsNotString = m_out.newBlock();
+            LBasicBlock bucketKeyIsHeapBigInt = m_out.newBlock();
 
             m_out.branch(m_out.equal(key, bucketKey),
                 unsure(continuation), unsure(notBitEqual));
@@ -11455,10 +11511,18 @@ private:
 
             m_out.appendTo(bucketKeyIsCell, bucketKeyIsString);
             m_out.branch(isString(bucketKey),
-                unsure(bucketKeyIsString), unsure(loopAround));
+                unsure(bucketKeyIsString), unsure(bucketKeyIsNotString));
 
-            m_out.appendTo(bucketKeyIsString, loopAround);
-            m_out.branch(isString(key),
+            m_out.appendTo(bucketKeyIsString, bucketKeyIsNotString);
+            m_out.branch(isString(key, provenType(m_node->child2())),
+                unsure(slowPath), unsure(loopAround));
+
+            m_out.appendTo(bucketKeyIsNotString, bucketKeyIsHeapBigInt);
+            m_out.branch(isHeapBigInt(bucketKey),
+                unsure(bucketKeyIsHeapBigInt), unsure(loopAround));
+
+            m_out.appendTo(bucketKeyIsHeapBigInt, loopAround);
+            m_out.branch(isHeapBigInt(key, provenType(m_node->child2())),
                 unsure(slowPath), unsure(loopAround));
             break;
         }
@@ -11467,6 +11531,8 @@ private:
             LBasicBlock bucketKeyIsCell = m_out.newBlock();
             LBasicBlock bothAreCells = m_out.newBlock();
             LBasicBlock bucketKeyIsString = m_out.newBlock();
+            LBasicBlock bucketKeyIsNotString = m_out.newBlock();
+            LBasicBlock bucketKeyIsHeapBigInt = m_out.newBlock();
 
             m_out.branch(m_out.equal(key, bucketKey),
                 unsure(continuation), unsure(notBitEqual));
@@ -11481,10 +11547,18 @@ private:
 
             m_out.appendTo(bothAreCells, bucketKeyIsString);
             m_out.branch(isString(bucketKey),
-                unsure(bucketKeyIsString), unsure(loopAround));
+                unsure(bucketKeyIsString), unsure(bucketKeyIsNotString));
 
-            m_out.appendTo(bucketKeyIsString, loopAround);
-            m_out.branch(isString(key),
+            m_out.appendTo(bucketKeyIsString, bucketKeyIsNotString);
+            m_out.branch(isString(key, provenType(m_node->child2())),
+                unsure(slowPath), unsure(loopAround));
+
+            m_out.appendTo(bucketKeyIsNotString, bucketKeyIsHeapBigInt);
+            m_out.branch(isHeapBigInt(bucketKey),
+                unsure(bucketKeyIsHeapBigInt), unsure(loopAround));
+
+            m_out.appendTo(bucketKeyIsHeapBigInt, loopAround);
+            m_out.branch(isHeapBigInt(key, provenType(m_node->child2())),
                 unsure(slowPath), unsure(loopAround));
             break;
         }

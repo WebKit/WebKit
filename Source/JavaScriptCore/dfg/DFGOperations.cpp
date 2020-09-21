@@ -3212,6 +3212,14 @@ void JIT_OPERATION operationPutDynamicVarNonStrict(JSGlobalObject* globalObject,
     return putDynamicVar(globalObject, vm, scope, value, impl, getPutInfoBits, isStrictMode);
 }
 
+EncodedJSValue JIT_OPERATION operationNormalizeMapKey(VM* vmPointer, EncodedJSValue input)
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return JSValue::encode(normalizeMapKey(JSValue::decode(input)));
+}
+
 UCPUStrictInt32 JIT_OPERATION operationMapHash(JSGlobalObject* globalObject, EncodedJSValue input)
 {
     VM& vm = globalObject->vm();

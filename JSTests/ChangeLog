@@ -1,5 +1,25 @@
 2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] BigInt should work with Map / Set
+        https://bugs.webkit.org/show_bug.cgi?id=216667
+        <rdar://problem/69107221>
+
+        Reviewed by Robin Morisset.
+
+        * stress/bigint-and-map-set.js: Added.
+        (shouldBe):
+        (opaque1n):
+        (testMap):
+        (let.set new):
+        * stress/bigint-string-map-set.js: Added.
+        (shouldBe):
+        (testMap):
+        * stress/bigint32-map-set.js: Added.
+        (shouldBe):
+        (testMap):
+
+2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Proxy should be trapped if base value is primitive
         https://bugs.webkit.org/show_bug.cgi?id=216764
 

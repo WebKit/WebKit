@@ -3054,7 +3054,7 @@ private:
                 return JSValue();
             }
             m_gcBuffer.appendWithCrashOnOverflow(bigInt);
-            return bigInt;
+            return tryConvertToBigInt32(bigInt);
         }
 #endif
         JSBigInt* bigInt = nullptr;
@@ -3094,7 +3094,7 @@ private:
             return JSValue();
         }
         m_gcBuffer.appendWithCrashOnOverflow(bigInt);
-        return bigInt;
+        return tryConvertToBigInt32(bigInt);
     }
 
     JSValue readTerminal()

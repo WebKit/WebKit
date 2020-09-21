@@ -54,6 +54,7 @@
 #include "ParseInt.h"
 #include "StructureInlines.h"
 #include <algorithm>
+#include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -429,31 +430,6 @@ ALWAYS_INLINE JSBigInt::ImplResult::ImplResult(Int32BigIntImpl& int32Impl)
 ALWAYS_INLINE JSBigInt::ImplResult::ImplResult(JSValue value)
     : payload(value)
 { }
-
-static ALWAYS_INLINE JSValue tryConvertToBigInt32(JSBigInt* bigInt)
-{
-#if USE(BIGINT32)
-    if (UNLIKELY(!bigInt))
-        return JSValue();
-
-    if (bigInt->length() <= 1) {
-        if (!bigInt->length())
-            return jsBigInt32(0);
-        JSBigInt::Digit digit = bigInt->digit(0);
-        if (bigInt->sign()) {
-            static constexpr uint64_t maxValue = -static_cast<int64_t>(std::numeric_limits<int32_t>::min());
-            if (digit <= maxValue)
-                return jsBigInt32(static_cast<int32_t>(-static_cast<int64_t>(digit)));
-        } else {
-            static constexpr uint64_t maxValue = static_cast<uint64_t>(std::numeric_limits<int32_t>::max());
-            if (digit <= maxValue)
-                return jsBigInt32(static_cast<int32_t>(digit));
-        }
-    }
-#endif
-
-    return bigInt;
-}
 
 static ALWAYS_INLINE JSValue tryConvertToBigInt32(JSBigInt::ImplResult implResult)
 {
@@ -3072,5 +3048,28 @@ JSValue JSBigInt::asUintN(JSGlobalObject* globalObject, uint64_t n, int32_t bigI
     return tryConvertToBigInt32(asUintNImpl(globalObject, n, Int32BigIntImpl { bigInt }));
 }
 #endif
+
+static ALWAYS_INLINE unsigned computeHash(JSBigInt::Digit* digits, unsigned length, bool sign)
+{
+    Hasher hasher;
+    WTF::add(hasher, sign);
+    for (unsigned index = 0; index < length; ++index)
+        WTF::add(hasher, digits[index]);
+    return hasher.hash();
+}
+
+Optional<unsigned> JSBigInt::concurrentHash()
+{
+    // FIXME: Implement JSBigInt::concurrentHash by inserting right store barriers.
+    // https://bugs.webkit.org/show_bug.cgi?id=216801
+    return WTF::nullopt;
+}
+
+unsigned JSBigInt::hashSlow()
+{
+    ASSERT(!m_hash);
+    m_hash = computeHash(dataStorage(), length(), m_sign);
+    return m_hash;
+}
 
 } // namespace JSC

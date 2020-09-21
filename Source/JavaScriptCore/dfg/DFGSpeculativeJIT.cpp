@@ -12517,6 +12517,11 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
     CCallHelpers::JumpList passThroughCases;
     CCallHelpers::JumpList doneCases;
 
+    auto isNotCell = m_jit.branchIfNotCell(keyRegs);
+    passThroughCases.append(m_jit.branchIfNotHeapBigInt(keyRegs.payloadGPR()));
+    auto slowPath = m_jit.jump();
+    isNotCell.link(&m_jit);
+
     passThroughCases.append(m_jit.branchIfNotNumber(keyRegs, scratchGPR));
     passThroughCases.append(m_jit.branchIfInt32(keyRegs));
 
@@ -12539,6 +12544,7 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
 
     passThroughCases.link(&m_jit);
     m_jit.moveValueRegs(keyRegs, resultRegs);
+    addSlowPathGenerator(slowPathCall(slowPath, this, operationNormalizeMapKey, resultRegs, &vm(), keyRegs));
 
     doneCases.link(&m_jit);
     jsValueResult(resultRegs, node);

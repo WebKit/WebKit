@@ -1,3 +1,14 @@
+2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BigInt should work with Map / Set
+        https://bugs.webkit.org/show_bug.cgi?id=216667
+
+        Reviewed by Robin Morisset.
+
+        * wtf/Hasher.h:
+        (WTF::Hasher::hash const):
+        (WTF::add):
+
 2020-09-21  Mark Lam  <mark.lam@apple.com>
 
         Move some LLInt globals into JSC::Config.

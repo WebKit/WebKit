@@ -4431,6 +4431,9 @@ void SpeculativeJIT::compile(Node* node)
 
     case MapHash: {
         switch (node->child1().useKind()) {
+#if USE(BIGINT32)
+        case BigInt32Use:
+#endif
         case BooleanUse:
         case Int32Use:
         case SymbolUse:
@@ -4447,6 +4450,20 @@ void SpeculativeJIT::compile(Node* node)
 
             m_jit.move(inputGPR, resultGPR);
             m_jit.wangsInt64Hash(resultGPR, tempGPR);
+            strictInt32Result(resultGPR, node);
+            break;
+        }
+        case HeapBigIntUse: {
+            SpeculateCellOperand input(this, node->child1());
+            GPRReg inputGPR = input.gpr();
+
+            speculateHeapBigInt(node->child1(), inputGPR);
+
+            flushRegisters();
+            GPRFlushedCallResult result(this);
+            GPRReg resultGPR = result.gpr();
+            callOperation(operationMapHash, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputGPR);
+            m_jit.exceptionCheck();
             strictInt32Result(resultGPR, node);
             break;
         }
@@ -4472,8 +4489,10 @@ void SpeculativeJIT::compile(Node* node)
                 speculateString(node->child1(), inputGPR);
             else {
                 auto isString = m_jit.branchIfString(inputGPR);
+                auto isHeapBigInt = m_jit.branchIfHeapBigInt(inputGPR);
                 m_jit.move(inputGPR, resultGPR);
                 m_jit.wangsInt64Hash(resultGPR, tempGPR);
+                addSlowPathGenerator(slowPathCall(isHeapBigInt, this, operationMapHash, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputGPR));
                 done.append(m_jit.jump());
                 isString.link(&m_jit);
             }
@@ -4515,6 +4534,7 @@ void SpeculativeJIT::compile(Node* node)
         MacroAssembler::JumpList done;
         straightHash.append(m_jit.branchIfNotCell(inputGPR));
         MacroAssembler::JumpList slowPath;
+        auto isHeapBigInt = m_jit.branchIfHeapBigInt(inputGPR);
         straightHash.append(m_jit.branchIfNotString(inputGPR));
         m_jit.loadPtr(MacroAssembler::Address(inputGPR, JSString::offsetOfValue()), resultGPR);
         slowPath.append(m_jit.branchIfRopeStringImpl(resultGPR));
@@ -4526,6 +4546,7 @@ void SpeculativeJIT::compile(Node* node)
         straightHash.link(&m_jit);
         m_jit.move(inputGPR, resultGPR);
         m_jit.wangsInt64Hash(resultGPR, tempGPR);
+        addSlowPathGenerator(slowPathCall(isHeapBigInt, this, operationMapHash, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputGPR));
         done.append(m_jit.jump());
 
         slowPath.link(&m_jit);
@@ -4596,6 +4617,9 @@ void SpeculativeJIT::compile(Node* node)
         // Perform Object.is()
         switch (node->child2().useKind()) {
         case BooleanUse:
+#if USE(BIGINT32)
+        case BigInt32Use:
+#endif
         case Int32Use:
         case SymbolUse:
         case ObjectUse: {
@@ -4604,11 +4628,26 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         case CellUse: {
+            // if (bucket.isString()) {
+            //     if (key.isString())
+            //         => slow path
+            // } else if (bucket.isHeapBigInt()) {
+            //     if (key.isHeapBigInt())
+            //         => slow path
+            // }
             done.append(m_jit.branch64(MacroAssembler::Equal, bucketGPR, keyGPR));
             loopAround.append(m_jit.branchIfNotCell(JSValueRegs(bucketGPR)));
-            loopAround.append(m_jit.branchIfNotString(bucketGPR));
+
+            auto isBucketString = m_jit.branchIfString(bucketGPR);
+            loopAround.append(m_jit.branchIfNotHeapBigInt(bucketGPR));
+
+            // bucket is HeapBigInt.
+            slowPathCases.append(m_jit.branchIfHeapBigInt(keyGPR));
+            loopAround.append(m_jit.jump());
+
+            // bucket is String.
+            isBucketString.link(&m_jit);
             loopAround.append(m_jit.branchIfNotString(keyGPR));
-            // They're both strings.
             slowPathCases.append(m_jit.jump());
             break;
         }
@@ -4619,6 +4658,13 @@ void SpeculativeJIT::compile(Node* node)
             slowPathCases.append(m_jit.jump());
             break;
         }
+        case HeapBigIntUse: {
+            done.append(m_jit.branch64(MacroAssembler::Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
+            loopAround.append(m_jit.branchIfNotCell(JSValueRegs(bucketGPR)));
+            loopAround.append(m_jit.branchIfNotHeapBigInt(bucketGPR));
+            slowPathCases.append(m_jit.jump());
+            break;
+        }
         case UntypedUse: { 
             done.append(m_jit.branch64(MacroAssembler::Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
             // The input key and bucket's key are already normalized. So if 64-bit compare fails and one is not a cell, they're definitely not equal.
@@ -4626,11 +4672,16 @@ void SpeculativeJIT::compile(Node* node)
             // first is a cell here.
             loopAround.append(m_jit.branchIfNotCell(JSValueRegs(keyGPR)));
             // Both are cells here.
-            loopAround.append(m_jit.branchIfNotString(bucketGPR));
-            // The first is a string here.
-            slowPathCases.append(m_jit.branchIfString(keyGPR));
-            // The first is a string, but the second is not, we continue to loop around.
+            auto isBucketString = m_jit.branchIfString(bucketGPR);
+            // bucket is not String.
+            loopAround.append(m_jit.branchIfNotHeapBigInt(bucketGPR));
+            // bucket is HeapBigInt.
+            slowPathCases.append(m_jit.branchIfHeapBigInt(keyGPR));
             loopAround.append(m_jit.jump());
+            // bucket is String.
+            isBucketString.link(&m_jit);
+            loopAround.append(m_jit.branchIfNotString(keyGPR));
+            slowPathCases.append(m_jit.jump());
             break;
         }
         default:

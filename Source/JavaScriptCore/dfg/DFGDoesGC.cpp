@@ -164,7 +164,7 @@ bool doesGC(Graph& graph, Node* node)
     case SuperSamplerBegin:
     case SuperSamplerEnd:
     case CPUIntrinsic:
-    case NormalizeMapKey:
+    case NormalizeMapKey: // HeapBigInt => BigInt32 conversion does not involve GC.
     case GetMapBucketHead:
     case GetMapBucketNext:
     case LoadKeyFromMapBucket:
@@ -517,6 +517,10 @@ bool doesGC(Graph& graph, Node* node)
         case Int32Use:
         case SymbolUse:
         case ObjectUse:
+#if USE(BIGINT32)
+        case BigInt32Use:
+#endif
+        case HeapBigIntUse:
             return false;
         default:
             // We might resolve a rope.

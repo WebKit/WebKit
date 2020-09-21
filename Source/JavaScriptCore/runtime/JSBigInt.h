@@ -427,10 +427,20 @@ public:
     JS_EXPORT_PRIVATE JSBigInt* rightTrim(JSGlobalObject*);
     JS_EXPORT_PRIVATE JSBigInt* tryRightTrim(VM&);
 
+    JS_EXPORT_PRIVATE Optional<unsigned> concurrentHash();
+    unsigned hash()
+    {
+        if (m_hash)
+            return m_hash;
+        return hashSlow();
+    }
+
 private:
     JSBigInt(VM&, Structure*, Digit*, unsigned length);
 
     JSBigInt* rightTrim(JSGlobalObject*, VM&);
+
+    JS_EXPORT_PRIVATE unsigned hashSlow();
 
     static JSBigInt* createFromImpl(JSGlobalObject*, uint64_t value, bool sign);
 
@@ -572,8 +582,10 @@ private:
     }
 
     inline Digit* dataStorage() { return m_data.get(m_length); }
+    inline Digit* dataStorageUnsafe() { return m_data.getUnsafe(); }
 
     const unsigned m_length;
+    unsigned m_hash { 0 };
     bool m_sign { false };
     CagedBarrierPtr<Gigacage::Primitive, Digit, tagCagedPtr> m_data;
 };
@@ -606,6 +618,31 @@ ALWAYS_INLINE JSBigInt::ComparisonResult invertBigIntCompareResult(JSBigInt::Com
     default:
         return comparisonResult;
     }
+}
+
+ALWAYS_INLINE JSValue tryConvertToBigInt32(JSBigInt* bigInt)
+{
+#if USE(BIGINT32)
+    if (UNLIKELY(!bigInt))
+        return JSValue();
+
+    if (bigInt->length() <= 1) {
+        if (!bigInt->length())
+            return jsBigInt32(0);
+        JSBigInt::Digit digit = bigInt->digit(0);
+        if (bigInt->sign()) {
+            static constexpr uint64_t maxValue = -static_cast<int64_t>(std::numeric_limits<int32_t>::min());
+            if (digit <= maxValue)
+                return jsBigInt32(static_cast<int32_t>(-static_cast<int64_t>(digit)));
+        } else {
+            static constexpr uint64_t maxValue = static_cast<uint64_t>(std::numeric_limits<int32_t>::max());
+            if (digit <= maxValue)
+                return jsBigInt32(static_cast<int32_t>(digit));
+        }
+    }
+#endif
+
+    return bigInt;
 }
 
 } // namespace JSC

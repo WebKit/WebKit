@@ -1,3 +1,16 @@
+2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BigInt should work with Map / Set
+        https://bugs.webkit.org/show_bug.cgi?id=216667
+        <rdar://problem/69107221>
+
+        Reviewed by Robin Morisset.
+
+        Strongly ensure that BigInt32 is always selected since Map / Set could use it as a key.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readBigInt):
+
 2020-09-21  Peng Liu  <peng.liu6@apple.com>
 
         Tapping to zoom in and out causes video to become very small on some iPhone models

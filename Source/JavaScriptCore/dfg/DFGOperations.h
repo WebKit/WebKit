@@ -243,6 +243,7 @@ char* JIT_OPERATION operationInt32ToStringWithValidRadix(JSGlobalObject*, int32_
 char* JIT_OPERATION operationInt52ToStringWithValidRadix(JSGlobalObject*, int64_t, int32_t);
 char* JIT_OPERATION operationDoubleToStringWithValidRadix(JSGlobalObject*, double, int32_t);
 
+EncodedJSValue JIT_OPERATION operationNormalizeMapKey(VM*, EncodedJSValue input) WTF_INTERNAL;
 UCPUStrictInt32 JIT_OPERATION operationMapHash(JSGlobalObject*, EncodedJSValue input);
 JSCell* JIT_OPERATION operationJSMapFindBucket(JSGlobalObject*, JSCell*, EncodedJSValue, int32_t);
 JSCell* JIT_OPERATION operationJSSetFindBucket(JSGlobalObject*, JSCell*, EncodedJSValue, int32_t);

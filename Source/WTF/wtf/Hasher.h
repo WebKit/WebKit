@@ -47,6 +47,7 @@ private:
 
 template<typename... Types> uint32_t computeHash(const Types&...);
 template<typename T, typename... OtherTypes> uint32_t computeHash(std::initializer_list<T>, std::initializer_list<OtherTypes>...);
+template<typename UnsignedInteger> std::enable_if_t<std::is_unsigned<UnsignedInteger>::value && sizeof(UnsignedInteger) <= sizeof(uint32_t), void> add(Hasher&, UnsignedInteger);
 
 class Hasher {
     WTF_MAKE_FAST_ALLOCATED;
@@ -75,6 +76,11 @@ public:
         hasher.m_underlyingHasher.addCharactersAssumingAligned(sizedInteger, sizedInteger >> 16);
     }
 
+    unsigned hash() const
+    {
+        return m_underlyingHasher.hash();
+    }
+
 private:
     StringHasher m_underlyingHasher;
 };
@@ -89,6 +95,11 @@ template<typename SignedArithmetic> std::enable_if_t<std::is_signed<SignedArithm
 {
     // We overloaded for double and float below, just deal with integers here.
     add(hasher, static_cast<std::make_unsigned_t<SignedArithmetic>>(number));
+}
+
+inline void add(Hasher& hasher, bool boolean)
+{
+    add(hasher, static_cast<uint8_t>(boolean));
 }
 
 inline void add(Hasher& hasher, double number)

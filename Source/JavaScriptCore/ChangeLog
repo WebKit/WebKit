@@ -1,3 +1,45 @@
+2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BigInt should work with Map / Set
+        https://bugs.webkit.org/show_bug.cgi?id=216667
+
+        Reviewed by Robin Morisset.
+
+        This patch makes BigInt supported in Map / Set.
+
+        1. In NormalizeMapKey, we always attempt to convert HeapBigInt to BigInt32 (if supported). So we ensure that,
+            normalized BigInt has one unique form for BigInt32 range. This allows us to use hashing for BigInt32 bit pattern directly.
+        2. In MapHash, for BigInt32, we directly has the JSValue bits. For HeapBigInt, we calculate hash via Hasher.
+        3. In GetMapBucket, we consider HeapBigInt case correctly.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupNormalizeMapKey):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapHash):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNormalizeMapKey):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+        * runtime/HashMapImpl.h:
+        (JSC::normalizeMapKey):
+        (JSC::jsMapHash):
+        (JSC::concurrentJSMapHash):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::concurrentHash):
+        * runtime/JSBigInt.h:
+        (JSC::tryConvertToBigInt32):
+
 2020-09-21  Mark Lam  <mark.lam@apple.com>
 
         Move some LLInt globals into JSC::Config.
