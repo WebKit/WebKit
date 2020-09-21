@@ -1,3 +1,15 @@
+2020-09-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Increase the maximum number of open files for wpt's servers
+        https://bugs.webkit.org/show_bug.cgi?id=215829
+
+        Reviewed by Youenn Fablet.
+
+        macOS has a much lower limits than other OSes by default, and the iOS bots often run into it with their level of parallel test execution. This bumps the limit for each wptserve process up to 2048, which is double the limit on Debian, and should probably be safe.
+
+        * web-platform-tests/tools/serve/serve.py:
+        (ServerProc.create_daemon):
+
 2020-09-20  Sam Weinig  <weinig@apple.com>
 
         Performance.navigation and Performance.timing are incorrectly exposed to workers

@@ -8,8 +8,10 @@ import json
 import logging
 import os
 import platform
+import resource
 import signal
 import socket
+import subprocess
 import sys
 import threading
 import time
@@ -416,6 +418,18 @@ class ServerProc(object):
 
     def create_daemon(self, init_func, host, port, paths, routes, bind_address,
                       config, **kwargs):
+        if sys.platform == "darwin":
+            # on Darwin, NOFILE starts with a very low limit (256), so bump it up a little
+            # by way of comparison, Debian starts with a limit of 1024, Windows 512
+            maxfilesperproc = int(subprocess.check_output(
+                ["sysctl", "-n", "kern.maxfilesperproc"]
+            ).strip())
+            soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+            # 2048 is somewhat arbitrary, but gives us some headroom for wptrunner --parallel
+            # note that it's expected that 2048 will be the min here
+            new_soft = min(2048, maxfilesperproc, hard)
+            if soft < new_soft:
+                resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
         try:
             self.daemon = init_func(host, port, paths, routes, bind_address, config, **kwargs)
         except socket.error:
