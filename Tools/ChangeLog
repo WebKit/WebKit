@@ -1,3 +1,26 @@
+2020-09-21  David Kilzer  <ddkilzer@apple.com>
+
+        Enable AddressSanitizer in C++ std library templates
+        <https://webkit.org/b/216746>
+
+        Reviewed by Darin Adler.
+
+        This change also prevents duplicate command-line switches from
+        being passed to clang since OTHER_CFLAGS is used when compiling
+        C++ sources.
+
+        * sanitizer/asan.xcconfig:
+        (WK_SANITIZER_OTHER_CPLUSPLUSFLAGS_YES): Add.
+        - Undefines _LIBCPP_HAS_NO_ASAN macro to enable ASan for C++ std
+          library templates.
+
+        * sanitizer/sanitizer.xcconfig:
+        (WK_SANITIZER_OTHER_CPLUSPLUSFLAGS_YES): Add.
+        - Provide placeholder.
+        (OTHER_CPLUSPLUSFLAGS):
+        - Switch from WK_SANITIZER_OTHER_CFLAGS_ prefix to
+          WK_SANITIZER_OTHER_CPLUSPLUSFLAGS_ prefix.
+
 2020-09-21  Aakash Jain  <aakash_jain@apple.com>
 
         Make ews-app robust against config.json issues (follow-up fix)
