@@ -1,3 +1,13 @@
+2020-09-21  Paulo Matos  <pmatos@igalia.com>
+
+        Fix MIPS leai,leap when offset is nonzero
+        https://bugs.webkit.org/show_bug.cgi?id=216772
+
+        Reviewed by Mark Lam.
+
+        Fix required by change from webkit#216685
+        * offlineasm/mips.rb:
+
 2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BigInt should work with Map / Set
