@@ -104,7 +104,9 @@ define invoke_xcode
 endef
 
 all:
+ifneq (,$(strip $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION)))
 	@$(call set_webkit_configuration,)
+endif
 	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 debug d development dev develop: force
