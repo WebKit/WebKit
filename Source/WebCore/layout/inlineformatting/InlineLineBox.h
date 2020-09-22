@@ -111,9 +111,8 @@ public:
 
     const InlineBox& inlineBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineBoxRectMap.get(&layoutBox); }
     InlineRect logicalRectForTextRun(const Line::Run&) const;
-
-    using InlineBoxMap = HashMap<const Box*, InlineBox*>;
     auto inlineBoxList() const { return m_inlineBoxRectMap.values(); }
+    bool containsInlineLevelBox(const Box& layoutBox) const { return m_inlineBoxRectMap.contains(&layoutBox); }
 
     InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox->logicalTop() + m_rootInlineBox->baseline(); }
 
@@ -140,7 +139,7 @@ private:
     std::unique_ptr<InlineBox> m_rootInlineBox;
     InlineBoxList m_nonRootInlineBoxList;
 
-    InlineBoxMap m_inlineBoxRectMap;
+    HashMap<const Box*, InlineBox*> m_inlineBoxRectMap;
 };
 
 }

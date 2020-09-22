@@ -29,6 +29,7 @@
 
 #include "FormattingState.h"
 #include "InlineItem.h"
+#include "InlineLineBox.h"
 #include "InlineLineGeometry.h"
 #include "InlineLineRun.h"
 #include <wtf/IsoMalloc.h>
@@ -38,6 +39,7 @@ namespace Layout {
 
 using InlineItems = Vector<InlineItem>;
 using InlineLines = Vector<InlineLineGeometry>;
+using InlineLineBoxes = Vector<LineBox>;
 using InlineLineRuns = Vector<LineRun>;
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
@@ -55,6 +57,9 @@ public:
     InlineLines& lines() { return m_lines; }
     void addLine(const InlineLineGeometry& line) { m_lines.append(line); }
 
+    const InlineLineBoxes& lineBoxes() const { return m_lineBoxes; }
+    void addLineBox(LineBox&& lineBox) { m_lineBoxes.append(WTFMove(lineBox)); }
+
     const InlineLineRuns& lineRuns() const { return m_lineRuns; }
     InlineLineRuns& lineRuns() { return m_lineRuns; }
     void addLineRun(const LineRun& run) { m_lineRuns.append(run); }
@@ -66,18 +71,21 @@ private:
     // Cacheable input to line layout.
     InlineItems m_inlineItems;
     InlineLines m_lines;
+    InlineLineBoxes m_lineBoxes;
     InlineLineRuns m_lineRuns;
 };
 
 inline void InlineFormattingState::clearLineAndRuns()
 {
     m_lines.clear();
+    m_lineBoxes.clear();
     m_lineRuns.clear();
 }
 
 inline void InlineFormattingState::shrinkToFit()
 {
     m_lines.shrinkToFit();
+    m_lineBoxes.shrinkToFit();
     m_lineRuns.shrinkToFit();
 }
 

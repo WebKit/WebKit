@@ -1,3 +1,28 @@
+2020-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for multiline inline box geometry.
+        https://bugs.webkit.org/show_bug.cgi?id=216835
+
+        Reviewed by Antti Koivisto.
+
+        This patch computes the geometry for inline boxes spanning multiple lines (e.g. <span>first line<br>next line</span).
+        However this is not the getBoundingClientRect() type of geometry where we provide geometry for each fragments. This is more like the
+        element.offset* geometry where we compute the enclosing rectangle for all the fragments.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent): Decouple the run construction and inline box geometry update logic,
+        where we loop through the runs and create "line runs" when needed and then we loop through the inline boxes on the current line and
+        update the box geometries.
+ 
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::lineBoxes const):
+        (WebCore::Layout::InlineFormattingState::addLineBox):
+        (WebCore::Layout::InlineFormattingState::clearLineAndRuns):
+        (WebCore::Layout::InlineFormattingState::shrinkToFit):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::containsInlineLevelBox const):
+
 2020-09-22  Chris Dumez  <cdumez@apple.com>
 
         AudioParams with automations must process timelines
