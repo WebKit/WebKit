@@ -23,7 +23,7 @@ PASS   k-rate positionX: a-rate node:positionX.setValueAtTime(0,0) did not throw
 PASS   k-rate positionX: a-rate node:positionX.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
 PASS   k-rate positionX: Output of k-rate PannerNode is identical to the array [expected array]. 
 PASS   k-rate positionX: Output of a-rate PannerNode is identical to the array [expected array]. 
-PASS   k-rate positionX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 635 different values). 
+PASS   k-rate positionX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 637 different values). 
 PASS   k-rate positionX k-rate output [0: 127] contains only the constant 0.00005495094956131652. 
 PASS   k-rate positionX k-rate output [128: 255] contains only the constant 0.0012474509421736002. 
 PASS   k-rate positionX k-rate output [256: 383] contains only the constant 0.0006243652314879. 
@@ -38,7 +38,7 @@ PASS   k-rate positionY: a-rate node:positionY.setValueAtTime(0,0) did not throw
 PASS   k-rate positionY: a-rate node:positionY.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
 PASS   k-rate positionY: Output of k-rate PannerNode is identical to the array [expected array]. 
 PASS   k-rate positionY: Output of a-rate PannerNode is identical to the array [expected array]. 
-PASS   k-rate positionY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 637 different values). 
+PASS   k-rate positionY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 638 different values). 
 PASS   k-rate positionY k-rate output [0: 127] contains only the constant 0.15397992730140686. 
 PASS   k-rate positionY k-rate output [128: 255] contains only the constant 0.0008113961666822433. 
 PASS   k-rate positionY k-rate output [256: 383] contains only the constant 0.00040700039244256914. 

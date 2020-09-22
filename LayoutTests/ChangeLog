@@ -1,3 +1,11 @@
+2020-09-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update baselines after r267389.
+
+        * platform/glib/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt: Update after r267357.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt: Removed.
+
 2020-09-21  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] fast/mediastream/getUserMedia-webaudio.html is failing since 267383
