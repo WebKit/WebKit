@@ -266,7 +266,7 @@ bool defaultWebMParserEnabled()
 #if ENABLE(MEDIA_STREAM)
 bool defaultMediaRecorderEnabled()
 {
-#if PLATFORM(MAC) && HAVE(AVASSETWRITERDELEGATE)
+#if HAVE(AVASSETWRITERDELEGATE)
     return true;
 #else
     return false;
