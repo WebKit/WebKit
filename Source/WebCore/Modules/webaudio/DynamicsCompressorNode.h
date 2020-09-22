@@ -43,6 +43,7 @@ public:
 
     // AudioNode
     void process(size_t framesToProcess) override;
+    void processOnlyAudioParams(size_t framesToProcess) final;
     void reset() override;
     void initialize() override;
     void uninitialize() override;

@@ -108,6 +108,17 @@ void BiquadProcessor::process(const AudioBus* source, AudioBus* destination, siz
         m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
 }
 
+void BiquadProcessor::processOnlyAudioParams(size_t framesToProcess)
+{
+    float values[AudioNode::ProcessingSizeInFrames];
+    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+
+    m_parameter1->calculateSampleAccurateValues(values, framesToProcess);
+    m_parameter2->calculateSampleAccurateValues(values, framesToProcess);
+    m_parameter3->calculateSampleAccurateValues(values, framesToProcess);
+    m_parameter4->calculateSampleAccurateValues(values, framesToProcess);
+}
+
 void BiquadProcessor::setType(BiquadFilterType type)
 {
     if (type != m_type) {

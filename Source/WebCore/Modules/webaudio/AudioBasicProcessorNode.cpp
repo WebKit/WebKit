@@ -87,6 +87,14 @@ void AudioBasicProcessorNode::process(size_t framesToProcess)
     }
 }
 
+void AudioBasicProcessorNode::processOnlyAudioParams(size_t framesToProcess)
+{
+    if (!isInitialized() || !processor())
+        return;
+
+    processor()->processOnlyAudioParams(framesToProcess);
+}
+
 // Nice optimization in the very common case allowing for "in-place" processing
 void AudioBasicProcessorNode::pullInputs(size_t framesToProcess)
 {

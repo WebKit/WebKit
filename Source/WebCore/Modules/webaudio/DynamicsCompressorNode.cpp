@@ -103,6 +103,18 @@ void DynamicsCompressorNode::process(size_t framesToProcess)
     setReduction(m_dynamicsCompressor->parameterValue(DynamicsCompressor::ParamReduction));
 }
 
+void DynamicsCompressorNode::processOnlyAudioParams(size_t framesToProcess)
+{
+    float values[AudioNode::ProcessingSizeInFrames];
+    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+
+    m_threshold->calculateSampleAccurateValues(values, framesToProcess);
+    m_knee->calculateSampleAccurateValues(values, framesToProcess);
+    m_ratio->calculateSampleAccurateValues(values, framesToProcess);
+    m_attack->calculateSampleAccurateValues(values, framesToProcess);
+    m_release->calculateSampleAccurateValues(values, framesToProcess);
+}
+
 void DynamicsCompressorNode::reset()
 {
     m_dynamicsCompressor->reset();

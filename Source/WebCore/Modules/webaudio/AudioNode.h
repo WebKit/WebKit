@@ -116,6 +116,11 @@ public:
     // Called from context's audio thread.
     virtual void process(size_t framesToProcess) = 0;
 
+    // Like process(), but only causes the automations to process; the
+    // normal processing of the node is bypassed. By default, we assume
+    // no AudioParams need to be updated.
+    virtual void processOnlyAudioParams(size_t) { }
+
     // Resets DSP processing state (clears delay lines, filter memory, etc.)
     // Called from context's audio thread.
     virtual void reset() = 0;

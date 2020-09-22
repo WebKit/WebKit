@@ -181,6 +181,22 @@ void PannerNode::process(size_t framesToProcess)
     destination->copyWithGainFrom(*destination, totalGain);
 }
 
+void PannerNode::processOnlyAudioParams(size_t framesToProcess)
+{
+    float values[AudioNode::ProcessingSizeInFrames];
+    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+
+    m_positionX->calculateSampleAccurateValues(values, framesToProcess);
+    m_positionY->calculateSampleAccurateValues(values, framesToProcess);
+    m_positionZ->calculateSampleAccurateValues(values, framesToProcess);
+
+    m_orientationX->calculateSampleAccurateValues(values, framesToProcess);
+    m_orientationY->calculateSampleAccurateValues(values, framesToProcess);
+    m_orientationZ->calculateSampleAccurateValues(values, framesToProcess);
+
+    listener().updateValuesIfNeeded(framesToProcess);
+}
+
 void PannerNode::processSampleAccurateValues(AudioBus* destination, const AudioBus* source, size_t framesToProcess)
 {
     // Get the sample accurate values from all of the AudioParams, including the

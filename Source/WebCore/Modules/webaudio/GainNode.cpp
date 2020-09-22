@@ -102,6 +102,14 @@ void GainNode::process(size_t framesToProcess)
     }
 }
 
+void GainNode::processOnlyAudioParams(size_t framesToProcess)
+{
+    float values[AudioNode::ProcessingSizeInFrames];
+    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+
+    m_gain->calculateSampleAccurateValues(values, framesToProcess);
+}
+
 void GainNode::reset()
 {
 }

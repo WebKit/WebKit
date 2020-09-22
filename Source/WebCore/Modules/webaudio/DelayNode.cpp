@@ -43,6 +43,9 @@ inline DelayNode::DelayNode(BaseAudioContext& context, double maxDelayTime)
 {
     setNodeType(NodeTypeDelay);
     m_processor = makeUnique<DelayProcessor>(context, context.sampleRate(), 1, maxDelayTime);
+
+    // Initialize so that AudioParams can be processed.
+    initialize();
 }
 
 ExceptionOr<Ref<DelayNode>> DelayNode::create(BaseAudioContext& context, const DelayOptions& options)

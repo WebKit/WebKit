@@ -90,6 +90,15 @@ void AudioDSPKernelProcessor::process(const AudioBus* source, AudioBus* destinat
         m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
 }
 
+void AudioDSPKernelProcessor::processOnlyAudioParams(size_t framesToProcess)
+{
+    if (!isInitialized())
+        return;
+
+    for (unsigned i = 0; i < m_kernels.size(); ++i)
+        m_kernels[i]->processOnlyAudioParams(framesToProcess);
+}
+
 // Resets filter state
 void AudioDSPKernelProcessor::reset()
 {

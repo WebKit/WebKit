@@ -1,5 +1,70 @@
 2020-09-22  Chris Dumez  <cdumez@apple.com>
 
+        AudioParams with automations must process timelines
+        https://bugs.webkit.org/show_bug.cgi?id=216837
+
+        Reviewed by Darin Adler.
+
+        Currently, if an AudioNode has no inputs connected, any automations
+        (or connections) to an AudioParam of the node is not processed. Thus,
+        time never advances on the AudioParam, and any upstream graph
+        connected to the AudioParam never gets pulled for data.
+
+        AudioParam should get processed so that time progresses. Normal
+        processing of the node causes AudioParams to be processed, so we were
+        only missing the case where the node has silent inputs (silent or no
+        inputs). Then we just need to update the AudioParams, without having
+        to do the full processing associated with the node.
+
+        See https://webaudio.github.io/web-audio-api/#rendering-loop, step 8.1.1
+        in particular that says any inputs connected to an AudioParam are 
+        processed. There are no conditions on when this happens.
+
+        This is a merge of the following Blink change by Raymond Toy:
+        - https://codereview.chromium.org/2420983002
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::processOnlyAudioParams):
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioListener.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::processIfNecessary):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::processOnlyAudioParams):
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::processOnlyAudioParams):
+        * Modules/webaudio/BiquadProcessor.h:
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::processOnlyAudioParams):
+        * Modules/webaudio/DelayDSPKernel.h:
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::processOnlyAudioParams):
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::processOnlyAudioParams):
+        * Modules/webaudio/GainNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::processOnlyAudioParams):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/StereoPannerNode.cpp:
+        (WebCore::StereoPannerNode::processOnlyAudioParams):
+        * Modules/webaudio/StereoPannerNode.h:
+        * platform/audio/AudioDSPKernel.h:
+        (WebCore::AudioDSPKernel::processOnlyAudioParams):
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::processOnlyAudioParams):
+        * platform/audio/AudioDSPKernelProcessor.h:
+        * platform/audio/AudioProcessor.h:
+        (WebCore::AudioProcessor::processOnlyAudioParams):
+
+2020-09-22  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, partial revert of r267383.
 
         Restore GStreamer-specific implementation of FFTFrame::multiply() since it appears

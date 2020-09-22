@@ -59,6 +59,10 @@ public:
     // Processes the source to destination bus.  The number of channels must match in source and destination.
     virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) = 0;
 
+    // Forces all AudioParams in the processor to run the timeline, bypassing any other processing the processor
+    // would do in process().
+    virtual void processOnlyAudioParams(size_t) { }
+
     // Resets filter state
     virtual void reset() = 0;
 

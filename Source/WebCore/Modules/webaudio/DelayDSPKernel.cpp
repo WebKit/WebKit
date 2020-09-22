@@ -133,6 +133,17 @@ void DelayDSPKernel::process(const float* source, float* destination, size_t fra
     }
 }
 
+void DelayDSPKernel::processOnlyAudioParams(size_t framesToProcess)
+{
+    if (!delayProcessor())
+        return;
+
+    float values[AudioNode::ProcessingSizeInFrames];
+    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+
+    delayProcessor()->delayTime().calculateSampleAccurateValues(values, framesToProcess);
+}
+
 void DelayDSPKernel::reset()
 {
     m_buffer.zero();

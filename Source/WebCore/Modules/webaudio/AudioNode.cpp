@@ -479,9 +479,13 @@ void AudioNode::processIfNecessary(size_t framesToProcess)
         if (!silentInputs)
             m_lastNonSilentTime = (context().currentSampleFrame() + framesToProcess) / static_cast<double>(context().sampleRate());
 
-        if (silentInputs && propagatesSilence())
+        if (silentInputs && propagatesSilence()) {
             silenceOutputs();
-        else
+            // AudioParams still need to be processed so that the value can be updated
+            // if there are automations or so that the upstream nodes get pulled if
+            // any are connected to the AudioParam.
+            processOnlyAudioParams(framesToProcess);
+        } else
             process(framesToProcess);
     }
 }

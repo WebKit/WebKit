@@ -38,6 +38,7 @@ public:
     DelayDSPKernel(double maxDelayTime, float sampleRate);
     
     void process(const float* source, float* destination, size_t framesToProcess) override;
+    void processOnlyAudioParams(size_t framesToProcess) final;
     void reset() override;
     
     double maxDelayTime() const { return m_maxDelayTime; }

@@ -87,11 +87,12 @@ public:
     const float* upYValues(size_t framesToProcess);
     const float* upZValues(size_t framesToProcess);
 
+    void updateValuesIfNeeded(size_t framesToProcess);
+
 protected:
     explicit AudioListener(BaseAudioContext&);
 
 private:
-    void updateValuesIfNeeded(size_t framesToProcess);
 
     Ref<AudioParam> m_positionX;
     Ref<AudioParam> m_positionY;

@@ -100,6 +100,14 @@ void StereoPannerNode::process(size_t framesToProcess)
     StereoPanner::panToTargetValue(source, destination, panValue, framesToProcess);
 }
 
+void StereoPannerNode::processOnlyAudioParams(size_t framesToProcess)
+{
+    float values[AudioNode::ProcessingSizeInFrames];
+    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+
+    m_pan->calculateSampleAccurateValues(values, framesToProcess);
+}
+
 ExceptionOr<void> StereoPannerNode::setChannelCount(unsigned channelCount)
 {
     if (channelCount > 2)
