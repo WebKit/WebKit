@@ -1,3 +1,25 @@
+2020-09-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r267442. rdar://problem/66842535
+
+    [ macOS ] webgl/2.0.0/conformance/textures/misc/texture-upload-size.html is a flaky failure
+    rdar://66842535
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267442 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-22  Hector Lopez  <hector_i_lopez@apple.com>
+
+            [ macOS ] webgl/2.0.0/conformance/textures/misc/texture-upload-size.html is a flaky failure
+            rdar://66842535
+
+            Unreviewed test gardening.
+
+            * platform/mac-wk2/TestExpectations:
+
 2020-09-22  Karl Rackler  <rackler@apple.com>
 
         [ iPadOS wk2 ] fast/forms/ios/time-picker-value-change.html times out or fails

@@ -1270,3 +1270,6 @@ webkit.org/b/215611 [ Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scr
 [ BigSur+ ] media/vp9.html [ Pass ]
 
 webkit.org/b/215700 [ Debug ] fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
+
+#<rdar://66842535> [ macOS ] webgl/2.0.0/conformance/textures/misc/texture-upload-size.html is a flaky failure
+webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Pass Failure ]
