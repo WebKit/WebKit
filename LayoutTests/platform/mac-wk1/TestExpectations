@@ -1135,3 +1135,5 @@ webkit.org/b/215658 svg/custom/object-sizing-no-width-height.xhtml [ Pass Failur
 
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Pass Failure ]
 
+webkit.org/b/215767 [ Debug ] inspector/animation/nameChanged.html [ Pass Crash ]
+
