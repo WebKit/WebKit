@@ -454,12 +454,6 @@
                             "display-scale"))))
 
 (deny mach-lookup (xpc-service-name-prefix ""))
-(allow mach-lookup
-    (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
-    (xpc-service-name "com.apple.audio.SandboxHelper")
-    (xpc-service-name "com.apple.hiservices-xpcservice")
-    (xpc-service-name "com.apple.print.normalizerd")
-)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 (allow mach-lookup
@@ -707,56 +701,18 @@
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
     (ipc-posix-name-regex #"^AudioIO"))
 
-;; Remote Web Inspector
-(allow mach-lookup
-       (global-name "com.apple.webinspector"))
-
-;; Still actively in use
-(allow mach-lookup
-    (global-name "com.apple.coreservices.launchservicesd")
-    (global-name "com.apple.diagnosticd")
-    (global-name "com.apple.iconservices")
-    (global-name "com.apple.iconservices.store")
-    (global-name "com.apple.powerlog.plxpclogger.xpc")
-    (global-name "com.apple.tccd.system")
-    (global-name "com.apple.trustd.agent")
-)
-
-(allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    (with report) (with telemetry)
-#endif
-    (global-name "com.apple.awdd")
-    (global-name "com.apple.cookied")
-    (global-name "com.apple.mobileassetd")
-)
-
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
        (global-name "com.apple.FontObjectsServer")
 #endif
-       (global-name "com.apple.SystemConfiguration.configd")
-       (global-name "com.apple.analyticsd")
-       (global-name "com.apple.assertiond.processassertionconnection")
-       (global-name "com.apple.audio.SystemSoundServer-OSX")
-       (global-name "com.apple.audio.audiohald")
-       (global-name "com.apple.fonts")
        (global-name "com.apple.logd")
        (global-name "com.apple.logd.events")
-       (global-name "com.apple.lskdd") ;; <rdar://problem/49123855>
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
        (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
 #else
        (global-name "com.apple.windowserver.active")
 #endif
-)
-
-(allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    (with report) (with telemetry)
-#endif
-    (global-name "com.apple.PowerManagement.control")
 )
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
@@ -803,7 +759,6 @@
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 (allow mach-lookup
-    (global-name-regex #"^com.apple.distributed_notifications")
 #if !HAVE(CSCHECKFIXDISABLE)
     (global-name "com.apple.CoreServices.coreservicesd")
 #endif
@@ -978,6 +933,36 @@
     (global-name "com.apple.containermanagerd")
 )
 #endif
+
+(allow mach-lookup
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with report) (with telemetry-backtrace)
+#endif
+    (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
+    (xpc-service-name "com.apple.audio.SandboxHelper")
+    (xpc-service-name "com.apple.hiservices-xpcservice")
+    (xpc-service-name "com.apple.print.normalizerd")
+    (global-name "com.apple.webinspector")
+    (global-name "com.apple.coreservices.launchservicesd")
+    (global-name "com.apple.diagnosticd")
+    (global-name "com.apple.iconservices")
+    (global-name "com.apple.iconservices.store")
+    (global-name "com.apple.powerlog.plxpclogger.xpc")
+    (global-name "com.apple.tccd.system")
+    (global-name "com.apple.trustd.agent")
+    (global-name "com.apple.awdd")
+    (global-name "com.apple.cookied")
+    (global-name "com.apple.mobileassetd")
+    (global-name "com.apple.SystemConfiguration.configd")
+    (global-name "com.apple.analyticsd")
+    (global-name "com.apple.assertiond.processassertionconnection")
+    (global-name "com.apple.audio.SystemSoundServer-OSX")
+    (global-name "com.apple.audio.audiohald")
+    (global-name "com.apple.fonts")
+    (global-name "com.apple.lskdd") ;; <rdar://problem/49123855>
+    (global-name "com.apple.PowerManagement.control")
+    (global-name-regex #"^com.apple.distributed_notifications")
+)
 
 (allow mach-lookup
     (require-all
