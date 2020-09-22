@@ -1,3 +1,20 @@
+2020-09-22  Keith Rollin  <krollin@apple.com>
+
+        Refactor build rules in Makefiles and Makefile.shared
+        https://bugs.webkit.org/show_bug.cgi?id=216806
+        <rdar://problem/69332316>
+
+        Reviewed by David Kilzer.
+
+        Factor out the common aspects of the build rules in Makefile.shared
+        and the various Makefiles. This allows us to more easily see what's
+        different between the various build targets, and to apply uniform
+        changes across all of the targets.
+
+        * Makefile:
+        * Makefile.shared:
+        * Source/Makefile:
+
 2020-09-22  Jonathan Bedard  <jbedard@apple.com>
 
         Correct instructions for building iOS in ReadMe

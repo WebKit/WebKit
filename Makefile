@@ -1,29 +1,30 @@
 MODULES = WebKitLibraries Source Tools
 
+define build_target_for_each_module
+	for dir in $(MODULES); do \
+		${MAKE} $@ -C $$dir PATH_FROM_ROOT=$(PATH_FROM_ROOT)/$${dir}; \
+		exit_status=$$?; \
+		[ $$exit_status -ne 0 ] && exit $$exit_status; \
+	done; true
+endef
+
 all:
-	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
-	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+	@$(build_target_for_each_module)
 
 debug d:
-	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
-	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+	@$(build_target_for_each_module)
 
 release r:
-	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
-	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+	@$(build_target_for_each_module)
 
 release+assert ra:
-	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
-	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+	@$(build_target_for_each_module)
 
 testing t:
-	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
-	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+	@$(build_target_for_each_module)
 
 analyze:
-	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
-	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+	@$(build_target_for_each_module)
 
 clean:
-	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
-	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+	@$(build_target_for_each_module)
