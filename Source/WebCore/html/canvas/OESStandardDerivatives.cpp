@@ -28,8 +28,11 @@
 #if ENABLE(WEBGL)
 
 #include "OESStandardDerivatives.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(OESStandardDerivatives);
 
 OESStandardDerivatives::OESStandardDerivatives(WebGLRenderingContextBase& context)
     : WebGLExtension(context)

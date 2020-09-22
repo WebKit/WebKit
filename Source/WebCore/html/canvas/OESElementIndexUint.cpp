@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(OESElementIndexUint);
+
 OESElementIndexUint::OESElementIndexUint(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {

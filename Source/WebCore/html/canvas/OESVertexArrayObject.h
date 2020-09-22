@@ -36,6 +36,7 @@ class WebGLRenderingContextBase;
 class WebGLVertexArrayObjectOES;
 
 class OESVertexArrayObject final : public WebGLExtension {
+    WTF_MAKE_ISO_ALLOCATED(OESVertexArrayObject);
 public:
     explicit OESVertexArrayObject(WebGLRenderingContextBase&);
 

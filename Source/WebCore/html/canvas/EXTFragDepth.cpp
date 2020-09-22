@@ -27,8 +27,11 @@
 
 #if ENABLE(WEBGL)
 #include "EXTFragDepth.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(EXTFragDepth);
 
 EXTFragDepth::EXTFragDepth(WebGLRenderingContextBase& context)
     : WebGLExtension(context)

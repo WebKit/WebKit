@@ -32,8 +32,11 @@
 #include "ExtensionsGL.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDebugShaders);
 
 WebGLDebugShaders::WebGLDebugShaders(WebGLRenderingContextBase& context)
     : WebGLExtension(context)

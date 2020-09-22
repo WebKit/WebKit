@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureETC1);
+
 WebGLCompressedTextureETC1::WebGLCompressedTextureETC1(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
