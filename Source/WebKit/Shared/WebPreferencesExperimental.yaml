@@ -393,14 +393,6 @@ GenericCueAPIEnabled:
   humanReadableDescription: "Enable Generic Text Track Cue API"
   webcoreName: genericCueAPIEnabled
 
-CaptureVideoInUIProcessEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Capture video in UI Process"
-  humanReadableDescription: "Enable video capture in UI Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-
 AspectRatioOfImgFromWidthAndHeightEnabled:
   type: bool
   defaultValue: true

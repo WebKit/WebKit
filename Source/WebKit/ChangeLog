@@ -1,3 +1,35 @@
+2020-09-22  Youenn Fablet  <youenn@apple.com>
+
+        Implement a default prompt for getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=216821
+
+        Reviewed by Eric Carlson.
+
+        Move preferences used by WebRTC develop menu to internals.
+        This allows having them in MiniBrowser.
+
+        Enable video capture in UIProcess by default for non Safari applications.
+        Add support for a getUserMedia prompt, very similar to iOS current prompt.
+        Use the prompt in case the application does not implement any of the two delegates.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureVideoInUIProcessEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/WebPreferencesExperimental.yaml:
+        * Shared/WebPreferencesInternal.yaml:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::requestUserMediaAuthorizationForFrame):
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        * UIProcess/Cocoa/WKUserMediaCaptureAccessAlert.h: Added.
+        * UIProcess/Cocoa/WKUserMediaCaptureAccessAlert.mm: Added.
+        (WebKit::visibleDomain):
+        (WebKit::alertMessageText):
+        (WebKit::presentUserMediaCaptureAccessAlert):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-09-22  Brady Eidson  <beidson@apple.com>
 
         Crashtracer inside PDFPlugin::createScrollbar.

@@ -994,19 +994,3 @@ IsAccessibilityIsolatedTreeEnabled:
   humanReadableDescription: "Enable an accessibility hierarchy for VoiceOver that can be accessed on a secondary thread for improved performance"
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-
-# Deprecated
-
-ICECandidateFilteringEnabled:
-  type: bool
-  defaultValue: true
-
-MockCaptureDevicesEnabled:
-  type: bool
-  defaultValue: DEFAULT_MOCK_CAPTURE_DEVICES_ENABLED
-  condition: ENABLE(MEDIA_STREAM)
-
-MediaCaptureRequiresSecureConnection:
-  type: bool
-  defaultValue: true
-  condition: ENABLE(MEDIA_STREAM)

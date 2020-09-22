@@ -1,3 +1,19 @@
+2020-09-22  Youenn Fablet  <youenn@apple.com>
+
+        Implement a default prompt for getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=216821
+
+        Reviewed by Eric Carlson.
+
+        Remove getUserMedia delegate implementations to use WebKit built-in prompt.
+        Add camera and microphone entitlements to allow using real cameras and microphones.
+        Keep using mock devices as the default.
+
+        * MiniBrowser/MiniBrowser.entitlements:
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController _webView:requestMediaCaptureAuthorization:decisionHandler:]): Deleted.
+        (-[WK2BrowserWindowController _webView:includeSensitiveMediaDeviceDetails:]): Deleted.
+
 2020-09-22  Brian Burg  <bburg@apple.com>
 
         [Cocoa] _WKInspectorDelegate should handle showing external resources

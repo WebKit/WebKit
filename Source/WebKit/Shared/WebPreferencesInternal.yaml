@@ -106,6 +106,30 @@ BlockingOfSmallPluginsEnabled:
   humanReadableName: "Block small plugins"
   humanReadableDescription: "Stop plugins smaller than a certain threshold from loading."
 
+CaptureAudioInUIProcessEnabled:
+  type: bool
+  defaultValue: defaultCaptureAudioInUIProcessEnabled()
+  humanReadableName: "Capture audio in UI Process"
+  humanReadableDescription: "Enable audio capture in UI Process"
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+
+CaptureAudioInGPUProcessEnabled:
+  type: bool
+  defaultValue: defaultCaptureAudioInGPUProcessEnabled()
+  humanReadableName: "Use GPU Process to capture audio"
+  humanReadableDescription: "Enable audio capture in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+
+CaptureVideoInUIProcessEnabled:
+  type: bool
+  defaultValue: defaultCaptureVideoInUIProcessEnabled()
+  humanReadableName: "Capture video in UI Process"
+  humanReadableDescription: "Enable video capture in UI Process"
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+
 CaptureVideoInGPUProcessEnabled:
   type: bool
   defaultValue: defaultCaptureVideoInGPUProcessEnabled()
@@ -299,22 +323,6 @@ LayoutFormattingContextIntegrationEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-CaptureAudioInUIProcessEnabled:
-  type: bool
-  defaultValue: defaultCaptureAudioInUIProcessEnabled()
-  humanReadableName: "Capture audio in UI Process"
-  humanReadableDescription: "Enable audio capture in UI Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-
-CaptureAudioInGPUProcessEnabled:
-  type: bool
-  defaultValue: defaultCaptureAudioInGPUProcessEnabled()
-  humanReadableName: "Use GPU Process to capture audio"
-  humanReadableDescription: "Enable audio capture in GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-
 RenderCanvasInGPUProcessEnabled:
   type: bool
   defaultValue: defaultRenderCanvasInGPUProcessEnabled()
@@ -407,4 +415,23 @@ LiveRangeSelectionEnabled:
   defaultValue: false
   humanReadableName: "Live Ranges in Selection"
   humanReadableDescription: "Live range behavior for ranges in the Selection object"
-  category: internal
+
+ICECandidateFilteringEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Enable ICE Candidate Filtering"
+  humanReadableDescription: "Enable ICE Candidate Filtering"
+
+MockCaptureDevicesEnabled:
+  type: bool
+  defaultValue: DEFAULT_MOCK_CAPTURE_DEVICES_ENABLED
+  condition: ENABLE(MEDIA_STREAM)
+  humanReadableName: "Enable Mock Capture Devices"
+  humanReadableDescription: "Enable Mock Capture Devices"
+
+MediaCaptureRequiresSecureConnection:
+  type: bool
+  defaultValue: true
+  condition: ENABLE(MEDIA_STREAM)
+  humanReadableName: "Limit Media Capture to Secure Sites"
+  humanReadableDescription: "Limit Media Capture to Secure Sites"

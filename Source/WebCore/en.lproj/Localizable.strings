@@ -124,6 +124,21 @@
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” to use cookies and website data while browsing “%@”?";
 
+/* Message for user media prompt */
+"Allow “%@” to use your camera and microphone?" = "Allow “%@” to use your camera and microphone?";
+
+/* Message for user camera access prompt */
+"Allow “%@” to use your camera?" = "Allow “%@” to use your camera?";
+
+/* Message for user microphone access prompt */
+"Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
+
+/* Allow button title in user media prompt */
+"Allow (usermedia)" = "Allow";
+
+/* Disallow button title in user media prompt */
+"Don’t Allow (usermedia)" = "Don’t Allow";
+
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
 

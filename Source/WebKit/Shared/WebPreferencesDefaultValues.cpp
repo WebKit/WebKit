@@ -169,6 +169,15 @@ bool defaultCaptureVideoInGPUProcessEnabled()
     return false;
 }
 
+bool defaultCaptureVideoInUIProcessEnabled()
+{
+#if PLATFORM(MAC)
+    return !MacApplication::isSafari();
+#endif
+
+    return false;
+}
+
 #endif // ENABLE(MEDIA_STREAM)
 
 #if ENABLE(WEB_RTC)
