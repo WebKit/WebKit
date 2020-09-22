@@ -1,5 +1,25 @@
 2020-09-22  Chris Dumez  <cdumez@apple.com>
 
+        Fix BiquadFilterNode's lowpass & highpass filters
+        https://bugs.webkit.org/show_bug.cgi?id=216852
+
+        Reviewed by Eric Carlson.
+
+        Fix BiquadFilterNode's lowpass & highpass filters. They incorrectly clamp the
+        resonance to make it positive.
+
+        Formulas for the filters are specified here:
+        - https://www.w3.org/TR/webaudio/#filters-characteristics
+
+        No new tests, rebaselined existing tests.
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::pow10):
+        (WebCore::Biquad::setLowpassParams):
+        (WebCore::Biquad::setHighpassParams):
+
+2020-09-22  Chris Dumez  <cdumez@apple.com>
+
         Merge AudioBufferSourceNode loop fixes from Blink
         https://bugs.webkit.org/show_bug.cgi?id=216849
 

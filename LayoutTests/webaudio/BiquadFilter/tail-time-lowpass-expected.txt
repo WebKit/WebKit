@@ -29,30 +29,30 @@ PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}): ou
 PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}): output[2432:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [lpf-complex-roots] All assertions passed. (total 19 assertions) 
 PASS > [lpf-real-distinct-roots] real distinct roots 
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): Actual Tail Frame 236 is not greater than or equal to 1700. Got 236. assert_true: expected true got false
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): Actual Tail Frame 1920 is greater than or equal to 1700. 
 PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[0:127] is not constantly 0 (contains 128 different values). 
-PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[128:255] is not constantly 0 (contains 106 different values). 
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[256:383] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[384:511] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[512:639] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[640:767] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[768:895] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[896:1023] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1024:1151] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1152:1279] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1280:1407] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1408:1535] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1536:1663] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1664:1791] should have contain at least one value different from 0. assert_true: expected true got false
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[128:255] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[256:383] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[384:511] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[512:639] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[640:767] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[768:895] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[896:1023] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1024:1151] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1152:1279] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1280:1407] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1408:1535] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1536:1663] is not constantly 0 (contains 128 different values). 
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[1664:1791] is not constantly 0 (contains 128 different values). 
 PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[2048:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-FAIL < [lpf-real-distinct-roots] 13 out of 16 assertions were failed. assert_true: expected true got false
+PASS < [lpf-real-distinct-roots] All assertions passed. (total 16 assertions) 
 PASS > [lpf-repeated-root] repeated real root 
-PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020599913279624,"frequency":4096}): Actual Tail Frame 160 is greater than or equal to 3. 
-PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020599913279624,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
+PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020599913279624,"frequency":4096}): Actual Tail Frame 11 is greater than or equal to 3. 
+PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020599913279624,"frequency":4096}): output[0:127] is not constantly 0 (contains 11 different values). 
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020599913279624,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [lpf-repeated-root] All assertions passed. (total 3 assertions) 
 PASS > [lpf-real-roots-2] complex roots 
-PASS   LPF repeated roots 2: Biquad({"type":"lowpass","Q":-100,"frequency":4096}): Actual Tail Frame 160 is greater than or equal to 0. 
+PASS   LPF repeated roots 2: Biquad({"type":"lowpass","Q":-100,"frequency":4096}): Actual Tail Frame 256 is greater than or equal to 0. 
 PASS   LPF repeated roots 2: Biquad({"type":"lowpass","Q":-100,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
 PASS   LPF repeated roots 2: Biquad({"type":"lowpass","Q":-100,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [lpf-real-roots-2] All assertions passed. (total 3 assertions) 
@@ -774,5 +774,5 @@ PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":500,"fre
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":500,"frequency":100}): output[640:767] is not constantly 0 (contains 110 different values). 
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":500,"frequency":100}): output[1024:] equals [] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [ginormous tail] All assertions passed. (total 8 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 6 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
 

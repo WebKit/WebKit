@@ -27,22 +27,22 @@ PASS   HPF complex roots: Biquad({"type":"highpass","Q":40,"frequency":4096}): o
 PASS   HPF complex roots: Biquad({"type":"highpass","Q":40,"frequency":4096}): output[2432:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [hpf-complex-roots] All assertions passed. (total 19 assertions) 
 PASS > [hpf-real-distinct-roots] real distinct roots 
-FAIL X HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): Actual Tail Frame 236 is not greater than or equal to 408. Got 236. assert_true: expected true got false
+PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): Actual Tail Frame 2560 is greater than or equal to 408. 
 PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[0:127] is not constantly 0 (contains 128 different values). 
-PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[128:255] is not constantly 0 (contains 107 different values). 
-FAIL X HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[256:383] should have contain at least one value different from 0. assert_true: expected true got false
-FAIL X HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[384:511] should have contain at least one value different from 0. assert_true: expected true got false
+PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[128:255] is not constantly 0 (contains 128 different values). 
+PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[256:383] is not constantly 0 (contains 128 different values). 
+PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[384:511] is not constantly 0 (contains 128 different values). 
 PASS   HPF real distinct roots: Biquad({"type":"highpass","Q":-50,"frequency":2048}): output[768:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-FAIL < [hpf-real-distinct-roots] 3 out of 6 assertions were failed. assert_true: expected true got false
+PASS < [hpf-real-distinct-roots] All assertions passed. (total 6 assertions) 
 PASS > [hpf-repeated-root] repeated real root 
-PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020599913279624,"frequency":4096}): Actual Tail Frame 160 is greater than or equal to 3. 
-PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020599913279624,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
+PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020599913279624,"frequency":4096}): Actual Tail Frame 11 is greater than or equal to 3. 
+PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020599913279624,"frequency":4096}): output[0:127] is not constantly 0 (contains 11 different values). 
 PASS   HPF repeated roots (approximately): Biquad({"type":"highpass","Q":-6.020599913279624,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [hpf-repeated-root] All assertions passed. (total 3 assertions) 
 PASS > [hpf-real-roots-2] complex roots 
-PASS   HPF repeated roots 2: Biquad({"type":"highpass","Q":-100,"frequency":4096}): Actual Tail Frame 160 is greater than or equal to 0. 
+PASS   HPF repeated roots 2: Biquad({"type":"highpass","Q":-100,"frequency":4096}): Actual Tail Frame 256 is greater than or equal to 0. 
 PASS   HPF repeated roots 2: Biquad({"type":"highpass","Q":-100,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
 PASS   HPF repeated roots 2: Biquad({"type":"highpass","Q":-100,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [hpf-real-roots-2] All assertions passed. (total 3 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 4 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
 
