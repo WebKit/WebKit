@@ -1,3 +1,15 @@
+2020-09-22  Sam Sneddon  <gsnedders@apple.com>
+
+        REGRESSION(r267354): Only import resource module on Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=216823
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/tools/serve/serve.py:
+        Move the resource import to the local point behind the Darwin platform
+        test. This code is only run once per process initiation, hence it makes
+        no difference to have the import locally.
+
 2020-09-22  Sam Weinig  <weinig@apple.com>
 
         Update User Timing interfaces to User Timing Level 3

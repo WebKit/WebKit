@@ -8,7 +8,6 @@ import json
 import logging
 import os
 import platform
-import resource
 import signal
 import socket
 import subprocess
@@ -421,6 +420,7 @@ class ServerProc(object):
         if sys.platform == "darwin":
             # on Darwin, NOFILE starts with a very low limit (256), so bump it up a little
             # by way of comparison, Debian starts with a limit of 1024, Windows 512
+            import resource  # local, as it only exists on Unix-like systems
             maxfilesperproc = int(subprocess.check_output(
                 ["sysctl", "-n", "kern.maxfilesperproc"]
             ).strip())
