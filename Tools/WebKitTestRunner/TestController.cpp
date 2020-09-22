@@ -837,6 +837,11 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesResetTestRunnerOverrides(preferences);
 
     WKPreferencesEnableAllExperimentalFeatures(preferences);
+    // All experimental features except:
+    static WKStringRef webKitUseGPUProcessForMedia = WKStringCreateWithUTF8CString("UseGPUProcessForMedia");
+    WKPreferencesSetExperimentalFeatureForKey(preferences, false, webKitUseGPUProcessForMedia);
+    static WKStringRef webRTCPlatformCodecsInGPUProcessEnabled = WKStringCreateWithUTF8CString("WebRTCPlatformCodecsInGPUProcessEnabled");
+    WKPreferencesSetExperimentalFeatureForKey(preferences, false, webRTCPlatformCodecsInGPUProcessEnabled);
     for (const auto& experimentalFeature : options.experimentalFeatures)
         WKPreferencesSetExperimentalFeatureForKey(preferences, experimentalFeature.value, toWK(experimentalFeature.key).get());
 

@@ -402,14 +402,6 @@ IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
   humanReadableName: "[ITP Repro] 30 Second Timeout For Non-Cookie Data Removal"
   humanReadableDescription: "Remove all non-cookie website data after just 30 seconds of no user interaction when Intelligent Tracking Prevention is enabled"
 
-UseGPUProcessForMedia:
-  type: bool
-  defaultValue: defaultUseGPUProcessForMedia()
-  condition: ENABLE(GPU_PROCESS)
-  humanReadableName: "Use GPU Process for media"
-  humanReadableDescription: "Do all media loading and playback in the GPU Process"
-  webcoreName: useGPUProcessForMedia
-
 LiveRangeSelectionEnabled:
   type: bool
   defaultValue: false
