@@ -1585,6 +1585,12 @@ void PDFPlugin::installPDFDocument()
     ASSERT(isMainThread());
     LOG(IncrementalPDF, "Installing PDF document");
 
+    if (m_hasBeenDestroyed)
+        return;
+
+    // If we haven't been destroyed yet, there must still be a PluginController
+    RELEASE_ASSERT(controller());
+
 #if HAVE(INCREMENTAL_PDF_APIS)
     maybeClearHighLatencyDataProviderFlag();
 #endif

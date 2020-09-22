@@ -1,3 +1,22 @@
+2020-09-22  Brady Eidson  <beidson@apple.com>
+
+        Crashtracer inside PDFPlugin::createScrollbar.
+        <rdar://problem/69256031> and https://bugs.webkit.org/show_bug.cgi?id=216810
+
+        Reviewed by Tim Horton.
+
+        To quote Tim from r264945:
+        No new tests; timing is such that I can't reproduce without inserting
+        intentional delays into the main thread hops, which is further than
+        I'm willing to go for a test.
+
+        This is a speculative fix due to the aforementioned reproducibility issue.
+        
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::installPDFDocument): With all the past fixes in place, its apparent
+          the plug-in HAS been torn down, and it's somewhat common to bypass the other "hasBeenDestroyed"
+          checks. So put an explicit check here followed by an explicit release assert.
+
 2020-09-22  Brian Burg  <bburg@apple.com>
 
         [Cocoa] _WKInspectorDelegate should handle showing external resources
