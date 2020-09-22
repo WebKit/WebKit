@@ -444,10 +444,14 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 continue;
             }
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-            auto marginBoxLogicalTopLeft = inlineBox->logicalRect().topLeft();
-            auto borderBoxLogicalTopLeft = marginBoxLogicalTopLeft + InlineLayoutSize({ }, boxGeometry.marginBefore());
-
+            // Inline box coordinates are relative to the line box.
+            // Let's convert top/left relative to the formatting context root.
+            auto borderBoxLogicalTopLeft = lineLogicalRect.topLeft();
             borderBoxLogicalTopLeft.move({ }, lineBoxVerticalOffset);
+            auto inlineBoxLogicalTopLeft = inlineBox->logicalRect().topLeft();
+            // Inline box height includes the margin box. Let's account for that.
+            borderBoxLogicalTopLeft.move(inlineBoxLogicalTopLeft.x(), inlineBoxLogicalTopLeft.y() + boxGeometry.marginBefore());
+
             if (layoutBox.isInFlowPositioned())
                 borderBoxLogicalTopLeft += geometry.inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
 
