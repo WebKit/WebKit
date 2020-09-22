@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@ public:
     void dispatchCommand(const String& command, bool argument);
     void dispatchMessageAsync(const String& message);
 
+    void evaluateExpressionForTesting(const String&);
 private:
     void evaluateOrQueueExpression(const String&);
     void evaluateQueuedExpressions();

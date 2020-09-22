@@ -172,7 +172,7 @@ void RemoteWebInspectorProxy::platformStartWindowDrag()
 {
 }
 
-void RemoteWebInspectorProxy::platformOpenInNewTab(const String&)
+void RemoteWebInspectorProxy::platformOpenURLExternally(const String&)
 {
 }
 

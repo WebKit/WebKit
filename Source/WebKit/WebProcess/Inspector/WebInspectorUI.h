@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,10 +86,11 @@ public:
     void didSave(const String& url);
     void didAppend(const String& url);
 
-    void sendMessageToFrontend(const String&);
+    void sendMessageToFrontend(const String& message);
+    void evaluateInFrontendForTesting(const String& expression);
 
 #if ENABLE(INSPECTOR_TELEMETRY)
-    void setDiagnosticLoggingAvailable(bool avaliable);
+    void setDiagnosticLoggingAvailable(bool);
 #endif
 
     // WebCore::InspectorFrontendClient
@@ -125,7 +126,7 @@ public:
 
     void changeSheetRect(const WebCore::FloatRect&) override;
 
-    void openInNewTab(const String& url) override;
+    void openURLExternally(const String& url) override;
 
     bool canSave() override;
     void save(const WTF::String& url, const WTF::String& content, bool base64Encoded, bool forceSaveAs) override;
@@ -153,7 +154,6 @@ private:
     WebPage& m_page;
     WebInspectorFrontendAPIDispatcher m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
-    RefPtr<IPC::Connection> m_backendConnection;
 
     // Keep a pointer to the frontend's inspector controller rather than going through
     // corePage(), since we may need it after the frontend's page has started destruction.

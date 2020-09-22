@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -179,9 +179,9 @@ void RemoteWebInspectorUI::resetState()
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::ResetState(), m_page.identifier());
 }
 
-void RemoteWebInspectorUI::openInNewTab(const String& url)
+void RemoteWebInspectorUI::openURLExternally(const String& url)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::OpenInNewTab(url), m_page.identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::OpenURLExternally(url), m_page.identifier());
 }
 
 void RemoteWebInspectorUI::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)

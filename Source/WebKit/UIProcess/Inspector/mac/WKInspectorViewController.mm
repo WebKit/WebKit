@@ -227,8 +227,13 @@
 
     // Prevent everything else.
     decisionHandler(WKNavigationActionPolicyCancel);
-    
-    // And instead load it in the inspected page.
+
+    if (!!_delegate && [_delegate respondsToSelector:@selector(inspectorViewController:openURLExternally:)]) {
+        [_delegate inspectorViewController:self openURLExternally:navigationAction.request.URL];
+        return;
+    }
+
+    // Try to load the request in the inspected page if the delegate can't handle it.
     if (_inspectedPage)
         _inspectedPage->loadRequest(navigationAction.request);
 }

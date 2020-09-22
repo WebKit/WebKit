@@ -23,29 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKFoundation.h>
+#import "config.h"
 
-@class _WKInspector;
+#import "WKWebView.h"
+#import "_WKInspectorInternal.h"
+#import "_WKInspectorPrivateForTesting.h"
 
-@protocol _WKInspectorDelegate <NSObject>
-@optional
+// This file exists to centralize all fragile code that is used by _WKInspector API tests. The tests
+// trigger WebInspectorUI behavior by evaluating JavaScript or by calling internal methods.
 
-/*! @abstract Called when the Browser domain is enabled for the associated _WKInspector.
-    @param inspector the associated _WKInspector for which the Browser domain has been enabled.
- */
-- (void)inspectorDidEnableBrowserDomain:(_WKInspector *)inspector;
+static NSString *JavaScriptSnippetToOpenURLExternally(NSURL *url)
+{
+    return [NSString stringWithFormat:@"InspectorFrontendHost.openURLExternally(\"%@\")", url.absoluteString];
+}
 
-/*! @abstract Called when the  Browser domain is disabled for the associated _WKInspector.
-    @param inspector the associated _WKInspector for which the Browser domain has been disabled.
- */
-- (void)inspectorDidDisableBrowserDomain:(_WKInspector *)inspector;
+@implementation _WKInspector (WKTesting)
 
-/*! @abstract Called when the _WKInspector requests to show a resource externally. This
-    is used to display documentation pages and to show external URLs that are linkified.
-    @param inspector the associated inspector for which an external navigation should be triggered.
-    @param url The resource to be shown.
- */
-- (void)inspector:(_WKInspector *)inspector openURLExternally:(NSURL *)url;
+- (void)_openURLExternallyForTesting:(NSURL *)url useFrontendAPI:(BOOL)useFrontendAPI
+{
+    if (useFrontendAPI)
+        _inspector->evaluateInFrontendForTesting(JavaScriptSnippetToOpenURLExternally(url));
+    else {
+        // Force the navigation request to be handled naturally through the
+        // internal NavigationDelegate of WKInspectorViewController.
+        [self.inspectorWebView loadRequest:[NSURLRequest requestWithURL:url]];
+    }
+}
 
 @end

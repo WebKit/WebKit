@@ -1,3 +1,19 @@
+2020-09-22  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] _WKInspectorDelegate should handle showing external resources
+        https://bugs.webkit.org/show_bug.cgi?id=216334
+
+        Reviewed by Devin Rousso.
+
+        Adapt to the rename of InspectorFrontendHost.{openInNewTab => openURLExternally}.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (sheetElement.innerHTML.div):
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement.prototype.ondblclick):
+
 2020-09-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Uncaught Exception: Missing node for given nodeId

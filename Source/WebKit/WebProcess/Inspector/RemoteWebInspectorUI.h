@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,7 @@ public:
     void reopen() override;
     void resetState() override;
 
-    void openInNewTab(const String& url) override;
+    void openURLExternally(const String& url) override;
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs) override;
     void append(const String& url, const String& content) override;
     void inspectedURLChanged(const String&) override;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,11 +82,6 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
 
 void WebInspectorUI::updateConnection()
 {
-    if (m_backendConnection) {
-        m_backendConnection->invalidate();
-        m_backendConnection = nullptr;
-    }
-
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
     IPC::Connection::Identifier connectionIdentifier(socketPair.server);
@@ -108,11 +103,6 @@ void WebInspectorUI::updateConnection()
 #else
     notImplemented();
     return;
-#endif
-
-#if USE(UNIX_DOMAIN_SOCKETS) || OS(DARWIN) || PLATFORM(WIN)
-    m_backendConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
-    m_backendConnection->open();
 #endif
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetFrontendConnection(connectionClientPort), m_inspectedPageIdentifier);
@@ -162,11 +152,6 @@ void WebInspectorUI::bringToFront()
 void WebInspectorUI::closeWindow()
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::DidClose(), m_inspectedPageIdentifier);
-
-    if (m_backendConnection) {
-        m_backendConnection->invalidate();
-        m_backendConnection = nullptr;
-    }
 
     if (m_frontendController) {
         m_frontendController->setInspectorFrontendClient(nullptr);
@@ -296,12 +281,9 @@ void WebInspectorUI::changeSheetRect(const FloatRect& rect)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetSheetRect(rect), m_inspectedPageIdentifier);
 }
 
-void WebInspectorUI::openInNewTab(const String& url)
+void WebInspectorUI::openURLExternally(const String& url)
 {
-    if (m_backendConnection) {
-        m_backendConnection->send(Messages::WebInspector::OpenInNewTab(url), 0);
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::BringInspectedPageToFront(), m_inspectedPageIdentifier);
-    }
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::OpenURLExternally(url), m_inspectedPageIdentifier);
 }
 
 void WebInspectorUI::save(const WTF::String& filename, const WTF::String& content, bool base64Encoded, bool forceSaveAs)
@@ -393,6 +375,11 @@ void WebInspectorUI::didAppend(const String& url)
 void WebInspectorUI::sendMessageToFrontend(const String& message)
 {
     m_frontendAPIDispatcher.dispatchMessageAsync(message);
+}
+
+void WebInspectorUI::evaluateInFrontendForTesting(const String& expression)
+{
+    m_frontendAPIDispatcher.evaluateExpressionForTesting(expression);
 }
 
 void WebInspectorUI::pagePaused()

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT void changeAttachedWindowHeight(unsigned) final;
     WEBCORE_EXPORT void changeAttachedWindowWidth(unsigned) final;
     WEBCORE_EXPORT void changeSheetRect(const FloatRect&) final;
-    WEBCORE_EXPORT void openInNewTab(const String& url) final;
+    WEBCORE_EXPORT void openURLExternally(const String& url) final;
     bool canSave()  override { return false; }
     void save(const String&, const String&, bool, bool) override { }
     void append(const String&, const String&) override { }

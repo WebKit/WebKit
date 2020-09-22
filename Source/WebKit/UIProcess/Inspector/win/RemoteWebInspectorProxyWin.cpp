@@ -137,7 +137,7 @@ void RemoteWebInspectorProxy::platformAppend(const String&, const String&) { }
 void RemoteWebInspectorProxy::platformSetSheetRect(const WebCore::FloatRect&) { }
 void RemoteWebInspectorProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorProxy::platformStartWindowDrag() { }
-void RemoteWebInspectorProxy::platformOpenInNewTab(const String&) { }
+void RemoteWebInspectorProxy::platformOpenURLExternally(const String&) { }
 void RemoteWebInspectorProxy::platformShowCertificate(const WebCore::CertificateInfo&) { }
 
 void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()

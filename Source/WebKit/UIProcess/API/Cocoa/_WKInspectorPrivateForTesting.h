@@ -23,29 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKFoundation.h>
+#import "_WKInspector.h"
 
-@class _WKInspector;
-
-@protocol _WKInspectorDelegate <NSObject>
-@optional
-
-/*! @abstract Called when the Browser domain is enabled for the associated _WKInspector.
-    @param inspector the associated _WKInspector for which the Browser domain has been enabled.
- */
-- (void)inspectorDidEnableBrowserDomain:(_WKInspector *)inspector;
-
-/*! @abstract Called when the  Browser domain is disabled for the associated _WKInspector.
-    @param inspector the associated _WKInspector for which the Browser domain has been disabled.
- */
-- (void)inspectorDidDisableBrowserDomain:(_WKInspector *)inspector;
-
-/*! @abstract Called when the _WKInspector requests to show a resource externally. This
-    is used to display documentation pages and to show external URLs that are linkified.
-    @param inspector the associated inspector for which an external navigation should be triggered.
-    @param url The resource to be shown.
- */
-- (void)inspector:(_WKInspector *)inspector openURLExternally:(NSURL *)url;
-
+@interface _WKInspector (WKTesting)
+- (void)_openURLExternallyForTesting:(NSURL *)url useFrontendAPI:(BOOL)useFrontendAPI;
 @end

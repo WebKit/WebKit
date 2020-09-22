@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,25 +156,6 @@ void WebInspector::close()
         return;
 
     closeFrontendConnection();
-}
-
-void WebInspector::openInNewTab(const String& urlString)
-{
-    UserGestureIndicator indicator { ProcessingUserGesture };
-
-    Page* inspectedPage = m_page->corePage();
-    if (!inspectedPage)
-        return;
-
-    Frame& inspectedMainFrame = inspectedPage->mainFrame();
-    FrameLoadRequest frameLoadRequest { *inspectedMainFrame.document(), inspectedMainFrame.document()->securityOrigin(), ResourceRequest { urlString }, "_blank"_s, InitiatedByMainFrame::Unknown };
-
-    NavigationAction action { *inspectedMainFrame.document(), frameLoadRequest.resourceRequest(), frameLoadRequest.initiatedByMainFrame(), NavigationType::LinkClicked };
-    Page* newPage = inspectedPage->chrome().createWindow(inspectedMainFrame, { }, action);
-    if (!newPage)
-        return;
-
-    newPage->mainFrame().loader().load(WTFMove(frameLoadRequest));
 }
 
 void WebInspector::evaluateScriptForTest(const String& script)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
@@ -71,7 +71,7 @@
 
     undefined copyText(DOMString text);
     undefined killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
-    undefined openInNewTab(DOMString url);
+    undefined openURLExternally(DOMString url);
     boolean canSave();
     undefined save(DOMString url, DOMString content, boolean base64Encoded, boolean forceSaveAs);
     undefined append(DOMString url, DOMString content);

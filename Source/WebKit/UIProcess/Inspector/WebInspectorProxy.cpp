@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -605,6 +605,11 @@ void WebInspectorProxy::setForcedAppearance(InspectorFrontendClient::Appearance 
     platformSetForcedAppearance(appearance);
 }
 
+void WebInspectorProxy::openURLExternally(const String& url)
+{
+    m_inspectorClient->openURLExternally(*this, url);
+}
+
 void WebInspectorProxy::inspectedURLChanged(const String& urlString)
 {
     platformInspectedURLChanged(urlString);
@@ -709,6 +714,14 @@ void WebInspectorProxy::append(const String& filename, const String& content)
 bool WebInspectorProxy::shouldOpenAttached()
 {
     return inspectorPagePreferences().inspectorStartsAttached() && canAttach();
+}
+
+void WebInspectorProxy::evaluateInFrontendForTesting(const String& expression)
+{
+    if (!m_inspectorPage)
+        return;
+
+    m_inspectorPage->send(Messages::WebInspectorUI::EvaluateInFrontendForTesting(expression));
 }
 
 // Unsupported configurations can use the stubs provided here.

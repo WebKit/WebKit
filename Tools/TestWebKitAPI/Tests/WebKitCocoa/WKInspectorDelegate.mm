@@ -32,6 +32,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKInspectorDelegate.h>
+#import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -41,7 +42,9 @@
 static bool didAttachLocalInspectorCalled = false;
 static bool browserDomainEnabledForInspectorCalled = false;
 static bool browserDomainDisabledForInspectorCalled = false;
-static RetainPtr<InspectorDelegate> sharedInspectorDelegate;
+static bool openURLExternallyCalled = false;
+static RetainPtr<id <_WKInspectorDelegate>> sharedInspectorDelegate;
+static RetainPtr<NSURL> urlToOpen;
 
 @interface InspectorDelegate : NSObject <_WKInspectorDelegate>
 @end
@@ -60,6 +63,12 @@ static RetainPtr<InspectorDelegate> sharedInspectorDelegate;
 - (void)inspectorDidDisableBrowserDomain:(_WKInspector *)inspector
 {
     browserDomainDisabledForInspectorCalled = true;
+}
+
+- (void)inspector:(_WKInspector *)inspector openURLExternally:(NSURL *)url
+{
+    EXPECT_STREQ(url.absoluteString.UTF8String, urlToOpen.get().absoluteString.UTF8String);
+    openURLExternallyCalled = true;
 }
 
 @end
@@ -85,7 +94,7 @@ static RetainPtr<InspectorDelegate> sharedInspectorDelegate;
 
 @end
 
-TEST(WebKit_WKInspectorDelegate, DidNotifyForLocalInspector)
+TEST(WKInspectorDelegate, DidNotifyForLocalInspector)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
@@ -102,6 +111,30 @@ TEST(WebKit_WKInspectorDelegate, DidNotifyForLocalInspector)
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
     TestWebKitAPI::Util::run(&browserDomainEnabledForInspectorCalled);
     TestWebKitAPI::Util::run(&browserDomainDisabledForInspectorCalled);
+}
+
+TEST(WKInspectorDelegate, ShowURLExternally)
+{
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto uiDelegate = adoptNS([UIDelegate new]);
+
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    [[webView _inspector] show];
+    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+
+    urlToOpen = [NSURL URLWithString:@"https://www.webkit.org/"];
+
+    // Check the case where the load is intercepted by the navigation delegate.
+    [[webView _inspector] _openURLExternallyForTesting:urlToOpen.get() useFrontendAPI:NO];
+    TestWebKitAPI::Util::run(&openURLExternallyCalled);
+
+    // Check the case where the frontend calls InspectorFrontendHost.openURLExternally().
+    [[webView _inspector] _openURLExternallyForTesting:urlToOpen.get() useFrontendAPI:YES];
+    TestWebKitAPI::Util::run(&openURLExternallyCalled);
 }
 
 #endif // PLATFORM(MAC)

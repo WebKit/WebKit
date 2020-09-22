@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -297,7 +297,7 @@ ${topLevelItems.join("\n")}
     document.body.appendChild(sheetElement);
 
     document.getElementById("uncaught-exception-bug-report-link").addEventListener("click", (event) => {
-        InspectorFrontendHost.openInNewTab(prefilledBugReportLink);
+        InspectorFrontendHost.openURLExternally(prefilledBugReportLink);
         event.stopImmediatePropagation();
         event.preventDefault();
     });

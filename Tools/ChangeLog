@@ -1,3 +1,16 @@
+2020-09-22  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] _WKInspectorDelegate should handle showing external resources
+        https://bugs.webkit.org/show_bug.cgi?id=216334
+
+        Reviewed by Devin Rousso.
+
+        Test the delegate using WebKit API and using InspectorFrontendHost API.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (-[InspectorDelegate inspector:openURLExternally:]): Added.
+        (TEST):
+
 2020-09-22  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r267380.

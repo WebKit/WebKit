@@ -54,6 +54,7 @@ void InspectorDelegate::setDelegate(id <_WKInspectorDelegate> delegate)
 
     m_delegateMethods.inspectorDidEnableBrowserDomain = [delegate respondsToSelector:@selector(inspectorDidEnableBrowserDomain:)];
     m_delegateMethods.inspectorDidDisableBrowserDomain = [delegate respondsToSelector:@selector(inspectorDidDisableBrowserDomain:)];
+    m_delegateMethods.inspectorOpenURLExternally = [delegate respondsToSelector:@selector(inspector:openURLExternally:)];
 }
 
 InspectorDelegate::InspectorClient::InspectorClient(InspectorDelegate& delegate)
@@ -85,6 +86,18 @@ void InspectorDelegate::InspectorClient::browserDomainDisabled(WebInspectorProxy
         return;
 
     [delegate inspectorDidDisableBrowserDomain:m_inspectorDelegate.m_inspector.get().get()];
+}
+
+void InspectorDelegate::InspectorClient::openURLExternally(WebInspectorProxy&, const String& url)
+{
+    if (!m_inspectorDelegate.m_delegateMethods.inspectorOpenURLExternally)
+        return;
+
+    auto& delegate = m_inspectorDelegate.m_delegate;
+    if (!delegate)
+        return;
+
+    [delegate inspector:m_inspectorDelegate.m_inspector.get().get() openURLExternally:[NSURL URLWithString:url]];
 }
 
 } // namespace WebKit

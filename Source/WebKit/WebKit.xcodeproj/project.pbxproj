@@ -1406,6 +1406,7 @@
 		9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */; };
 		99788ACB1F421DDA00C08000 /* _WKAutomationSessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 99788AC91F421DCA00C08000 /* _WKAutomationSessionConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9979CA58237F49F10039EC05 /* _WKInspectorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979CA57237F49F00039EC05 /* _WKInspectorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99996A9F25004BCC004F7559 /* _WKInspectorPrivateForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 99996A9D25004BCB004F7559 /* _WKInspectorPrivateForTesting.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99C3AE2D1DADA6AD00AF5C16 /* WebAutomationSessionMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C3AE2C1DADA6A700AF5C16 /* WebAutomationSessionMacros.h */; };
 		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
 		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
@@ -4478,6 +4479,8 @@
 		99788AC91F421DCA00C08000 /* _WKAutomationSessionConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationSessionConfiguration.h; sourceTree = "<group>"; };
 		99788ACA1F421DCA00C08000 /* _WKAutomationSessionConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAutomationSessionConfiguration.mm; sourceTree = "<group>"; };
 		9979CA57237F49F00039EC05 /* _WKInspectorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorPrivate.h; sourceTree = "<group>"; };
+		99996A9D25004BCB004F7559 /* _WKInspectorPrivateForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorPrivateForTesting.h; sourceTree = "<group>"; };
+		99996A9E25004BCB004F7559 /* _WKInspectorTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorTesting.mm; sourceTree = "<group>"; };
 		99C3AE231DAD8E3400AF5C16 /* WebAutomationSessionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionMac.mm; sourceTree = "<group>"; };
 		99C3AE261DAD948500AF5C16 /* WebAutomationSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionCocoa.mm; sourceTree = "<group>"; };
 		99C3AE2C1DADA6A700AF5C16 /* WebAutomationSessionMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSessionMacros.h; sourceTree = "<group>"; };
@@ -7253,6 +7256,8 @@
 				9197940B23DBC50300257892 /* _WKInspectorDelegate.h */,
 				5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */,
 				9979CA57237F49F00039EC05 /* _WKInspectorPrivate.h */,
+				99996A9D25004BCB004F7559 /* _WKInspectorPrivateForTesting.h */,
+				99996A9E25004BCB004F7559 /* _WKInspectorTesting.mm */,
 				A5C0F0AA2000656E00536536 /* _WKInspectorWindow.h */,
 				A5C0F0A92000656E00536536 /* _WKInspectorWindow.mm */,
 				31B362942141EBAD007BFA53 /* _WKInternalDebugFeature.h */,
@@ -10618,6 +10623,7 @@
 				9197940C23DBC50300257892 /* _WKInspectorDelegate.h in Headers */,
 				5CAFDE472130846A00B1F7E1 /* _WKInspectorInternal.h in Headers */,
 				9979CA58237F49F10039EC05 /* _WKInspectorPrivate.h in Headers */,
+				99996A9F25004BCC004F7559 /* _WKInspectorPrivateForTesting.h in Headers */,
 				A5C0F0AB2000658200536536 /* _WKInspectorWindow.h in Headers */,
 				31B362952141EBCD007BFA53 /* _WKInternalDebugFeature.h in Headers */,
 				31B362972141EBD9007BFA53 /* _WKInternalDebugFeatureInternal.h in Headers */,

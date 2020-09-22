@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebKit {
 class WebInspectorProxy;
 }
@@ -38,6 +40,7 @@ public:
 
     virtual void browserDomainEnabled(WebKit::WebInspectorProxy&) { }
     virtual void browserDomainDisabled(WebKit::WebInspectorProxy&) { }
+    virtual void openURLExternally(WebKit::WebInspectorProxy&, const WTF::String& url) { }
 };
 
 } // namespace API

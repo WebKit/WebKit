@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,7 +123,7 @@ private:
     void setSheetRect(const WebCore::FloatRect&);
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void startWindowDrag();
-    void openInNewTab(const String& url);
+    void openURLExternally(const String& url);
     void showCertificate(const WebCore::CertificateInfo&);
     void sendMessageToBackend(const String& message);
 
@@ -140,7 +140,7 @@ private:
     void platformSetSheetRect(const WebCore::FloatRect&);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformStartWindowDrag();
-    void platformOpenInNewTab(const String& url);
+    void platformOpenURLExternally(const String& url);
     void platformShowCertificate(const WebCore::CertificateInfo&);
 
     RemoteWebInspectorProxyClient* m_client { nullptr };

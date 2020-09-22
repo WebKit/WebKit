@@ -259,6 +259,7 @@ UIProcess/API/Cocoa/_WKExperimentalFeature.mm
 UIProcess/API/Cocoa/_WKFrameTreeNode.mm
 UIProcess/API/Cocoa/_WKGeolocationPosition.mm
 UIProcess/API/Cocoa/_WKInspector.mm
+UIProcess/API/Cocoa/_WKInspectorTesting.mm
 UIProcess/API/Cocoa/_WKInspectorDebuggableInfo.mm
 UIProcess/API/Cocoa/_WKInspectorWindow.mm
 UIProcess/API/Cocoa/_WKInternalDebugFeature.mm

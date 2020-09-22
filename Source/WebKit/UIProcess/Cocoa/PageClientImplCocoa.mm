@@ -38,7 +38,7 @@ namespace WebKit {
 
 PageClientImplCocoa::PageClientImplCocoa(WKWebView *webView)
     : m_webView { webView }
-    , m_alternativeTextUIController { makeUnique<AlternativeTextUIController>() }
+    , m_alternativeTextUIController { makeUnique<WebCore::AlternativeTextUIController>() }
 {
 }
 

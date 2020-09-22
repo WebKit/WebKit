@@ -58,6 +58,7 @@ private:
         // API::InspectorClient
         void browserDomainEnabled(WebInspectorProxy&);
         void browserDomainDisabled(WebInspectorProxy&);
+        void openURLExternally(WebInspectorProxy&, const String& url);
 
         InspectorDelegate& m_inspectorDelegate;
     };
@@ -68,6 +69,7 @@ private:
     struct {
         bool inspectorDidEnableBrowserDomain : 1;
         bool inspectorDidDisableBrowserDomain : 1;
+        bool inspectorOpenURLExternally : 1;
     } m_delegateMethods;
 };
 

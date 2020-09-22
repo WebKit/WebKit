@@ -1,3 +1,23 @@
+2020-09-22  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] _WKInspectorDelegate should handle showing external resources
+        https://bugs.webkit.org/show_bug.cgi?id=216334
+
+        Reviewed by Devin Rousso.
+
+        Adapt to the rename of InspectorFrontendHost.{openInNewTab => openURLExternally}.
+
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openURLExternally):
+        (WebCore::InspectorFrontendClientLocal::openInNewTab): Deleted.
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::openURLExternally):
+        (WebCore::InspectorFrontendHost::openInNewTab): Deleted.
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+
 2020-09-22  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Split up Performance.idl into component partials

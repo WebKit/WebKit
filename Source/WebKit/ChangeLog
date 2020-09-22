@@ -1,3 +1,110 @@
+2020-09-22  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] _WKInspectorDelegate should handle showing external resources
+        https://bugs.webkit.org/show_bug.cgi?id=216334
+
+        Reviewed by Devin Rousso.
+
+        WebKit clients need a way to control the loading and presentation of
+        external resources that are linked in Web Inspector's user interface.
+
+        Rename InspectorFrontendHost.openInNewTab to openURLExternally. Change
+        the implementation to forward the request to UIProcess rather than the
+        inspected WebProcess.
+
+        When a navigation is triggered in WKInspectorViewController's WKWebView,
+        allow the delegate to open the requested resource. Otherwise, redirect
+        the navigation to the inspected WebView or open it using NSWorkspace
+        (for the remote case).
+
+        New API test: WKInspectorDelegate.OpenURLExternally.
+
+        * UIProcess/API/Cocoa/_WKInspectorPrivateForTesting.h: Added.
+        * UIProcess/API/Cocoa/_WKInspectorTesting.mm: Added.
+        (snippetToOpenURLExternally):
+        (-[_WKInspector _openURLExternallyForTesting:useFrontendAPI:]):
+        Add some helpers for writing API tests.
+
+        * UIProcess/API/APIInspectorClient.h:
+        (API::InspectorClient::openURLExternally):
+        * UIProcess/API/Cocoa/_WKInspectorDelegate.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.mm:
+        (WebKit::InspectorDelegate::setDelegate):
+        (WebKit::InspectorDelegate::InspectorClient::openURLExternally):
+        Add new delegate method to _WKInspectorDelegate.
+
+        * UIProcess/Inspector/RemoteWebInspectorProxy.messages.in:
+        * UIProcess/Inspector/RemoteWebInspectorProxy.h:
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::openURLExternally):
+        (WebKit::RemoteWebInspectorProxy::platformOpenURLExternally):
+        (WebKit::RemoteWebInspectorProxy::openInNewTab): Deleted.
+        (WebKit::RemoteWebInspectorProxy::platformOpenInNewTab): Deleted.
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformURLExternally):
+        (WebKit::RemoteWebInspectorProxy::platformOpenInNewTab): Deleted.
+        * UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformOpenURLExternally):
+        (WebKit::RemoteWebInspectorProxy::platformOpenInNewTab): Deleted.
+        * UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformOpenURLExternally):
+        (WebKit::RemoteWebInspectorProxy::platformOpenInNewTab): Deleted.
+        Rename openInNewTab to openURLExternally. In some cases the client
+        may not choose to present a new tab, so the name is no longer accurate.
+
+        * UIProcess/Inspector/WebInspectorProxy.messages.in:
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorWindow const):
+        (WebKit::WebInspectorProxy::openURLExternally):
+        (WebKit::WebInspectorProxy::evaluateInFrontendForTesting):
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter inspectorViewController:openURLExternally:]):
+        Add some helpers for writing API tests. Add an IPC message
+        for evaluating a JavaScript expression in the frontend page.
+        Also, add a message receiver for the OpenURLExternally message
+        which passes the request to the API layer.
+
+        * UIProcess/Inspector/mac/WKInspectorViewController.h:
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController webView:decidePolicyForNavigationAction:decisionHandler:]):
+        Call the delegate method if a navigation inside the inspector WKWebView is an external URL.
+        Specifically the request is to load something other than the Web Inspector's main HTML page.
+
+        * WebProcess/Inspector/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab): Deleted.
+        * WebProcess/Inspector/WebInspector.h:
+        * WebProcess/Inspector/WebInspector.messages.in:
+        No need to handle this message anymore in the inspected WebProcess.
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::openURLExternally):
+        (WebKit::RemoteWebInspectorUI::openInNewTab): Deleted.
+        * WebProcess/Inspector/WebInspectorUI.messages.in:
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::updateConnection):
+        (WebKit::WebInspectorUI::closeWindow):
+        (WebKit::WebInspectorUI::openURLExternally):
+        (WebKit::WebInspectorUI::evaluateInFrontendForTesting):
+        (WebKit::WebInspectorUI::openInNewTab): Deleted.
+        When we need to open the URL externally, send an IPC message to UIProcess.
+        The old implementation triggered the navigation from the inspected WebProcess.
+        That approach is no longer desirable. Remove the unneeded IPC connection.
+
+        * WebProcess/Inspector/WebInspectorFrontendAPIDispatcher.h:
+        * WebProcess/Inspector/WebInspectorFrontendAPIDispatcher.cpp:
+        (WebKit::WebInspectorFrontendAPIDispatcher::evaluateExpressionForTesting):
+        Fulfill the request to evaluate the expression in the frontend page.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        Some files were added.
+
+
 2020-09-22  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Start collecting telemetry from message filtering
