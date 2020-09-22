@@ -442,6 +442,10 @@ float AudioParamTimeline::valuesForTimeRangeImpl(size_t startFrame, size_t endFr
                     value *= multiplier;
                     ++currentFrame;
                 }
+
+                // |value| got updated one extra time in the above loop. Restore it to the last computed value.
+                if (writeIndex >= 1)
+                    value /= multiplier;
             }
         } else {
             // Handle event types not requiring looking ahead to the next event.

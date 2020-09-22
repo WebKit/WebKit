@@ -30,27 +30,27 @@ PASS   Gain .value attribute for linearRamp(100, 0.05859375) correctly updated d
 PASS < [linear] All assertions passed. (total 21 assertions) 
 PASS > [exponential]  
 PASS   Initialize exponentialRamp(100, 0.05859375) with setValueAtTime(0.25, 0) 
-FAIL X exponentialRamp(100, 0.05859375) at frame 127 is not close to 0.3715826564497051 within a relative error of 7.4601e-7 (RelErr=0.0031257022818434277). Got 0.3727441132068634. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 255 is not close to 0.5540208398098243 within a relative error of 7.4601e-7 (RelErr=0.003125543759278082). Got 0.5557524561882019. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 383 is not close to 0.8260318010432445 within a relative error of 7.4601e-7 (RelErr=0.003124869750675969). Got 0.8286130428314209. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 511 is not close to 1.2315936284435895 within a relative error of 7.4601e-7 (RelErr=0.003125614408747948). Got 1.235443115234375. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 639 is not close to 1.8362765981977458 within a relative error of 7.4601e-7 (RelErr=0.0031255549856059697). Got 1.8420159816741943. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 767 is not close to 2.737844421418366 within a relative error of 7.4601e-7 (RelErr=0.003125584974401164). Got 2.746401786804199. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 895 is not close to 4.082060449525185 within a relative error of 7.4601e-7 (RelErr=0.0031256509741663416). Got 4.09481954574585. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 1023 is not close to 6.086254347843924 within a relative error of 7.4601e-7 (RelErr=0.0031261474181545606). Got 6.105280876159668. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 1151 is not close to 9.074459441421975 within a relative error of 7.4601e-7 (RelErr=0.0031256755520711168). Got 9.102823257446289. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 1279 is not close to 13.529801655953424 within a relative error of 7.4601e-7 (RelErr=0.003125651633486093). Got 13.572091102600098. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 1407 is not close to 20.172610173764248 within a relative error of 7.4601e-7 (RelErr=0.0031249766182691037). Got 20.23564910888672. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 1535 is not close to 30.076878550809834 within a relative error of 7.4601e-7 (RelErr=0.0031254147731344167). Got 30.170881271362305. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 1663 is not close to 44.843905452388015 within a relative error of 7.4601e-7 (RelErr=0.003125520752921088). Got 44.984066009521484. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 1791 is not close to 66.86118883066644 within a relative error of 7.4601e-7 (RelErr=0.003125446691834669). Got 67.07015991210938. assert_true: expected true got false
-FAIL X exponentialRamp(100, 0.05859375) at frame 1919 is not close to 99.68843094177858 within a relative error of 7.4601e-7 (RelErr=0.003124969255822428). Got 99.99995422363281. assert_true: expected true got false
+PASS   exponentialRamp(100, 0.05859375) at frame 127 is 0.3715826564497051 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 255 is 0.5540208398098243 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 383 is 0.8260318010432445 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 511 is 1.2315936284435895 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 639 is 1.8362765981977458 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 767 is 2.737844421418366 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 895 is 4.082060449525185 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 1023 is 6.086254347843924 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 1151 is 9.074459441421975 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 1279 is 13.529801655953424 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 1407 is 20.172610173764248 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 1535 is 30.076878550809834 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 1663 is 44.843905452388015 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 1791 is 66.86118883066644 within an error of 7.4601e-7. 
+PASS   exponentialRamp(100, 0.05859375) at frame 1919 is 99.68843094177858 within an error of 7.4601e-7. 
 PASS   exponentialRamp(100, 0.05859375) at frame 2047 is 100 within an error of 7.4601e-7. 
 PASS   exponentialRamp(100, 0.05859375) at frame 2175 is 100 within an error of 7.4601e-7. 
 PASS   exponentialRamp(100, 0.05859375) at frame 2303 is 100 within an error of 7.4601e-7. 
 PASS   exponentialRamp(100, 0.05859375) at frame 2431 is 100 within an error of 7.4601e-7. 
 PASS   Gain .value attribute for exponentialRamp(100, 0.05859375) correctly updated during automation 
-FAIL < [exponential] 15 out of 21 assertions were failed. assert_true: expected true got false
+PASS < [exponential] All assertions passed. (total 21 assertions) 
 PASS > [setTarget]  
 PASS   Initialize setTargetAtTime(0, 0, 0.1) with setValueAtTime(0.25, 0) 
 PASS   setTargetAtTime(0, 0, 0.1) at frame 127 is 0.2404960327682138 within an error of 0.0000022599. 
@@ -97,5 +97,5 @@ PASS   setValueCurveAtTime([1,1.5,4], 0, 0.05859375) at frame 2303 is 4 within a
 PASS   setValueCurveAtTime([1,1.5,4], 0, 0.05859375) at frame 2431 is 4 within an error of 7.9577e-8. 
 PASS   Gain .value attribute for setValueCurveAtTime([1,1.5,4], 0, 0.05859375) correctly updated during automation 
 PASS < [setValueCurve] All assertions passed. (total 21 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 4 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
 

@@ -1,5 +1,16 @@
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Value returned by AudioParamTimeline::valuesForTimeRange() is sometimes incorrect for exponential ramps
+        https://bugs.webkit.org/show_bug.cgi?id=216811
+
+        Reviewed by Darin Adler.
+
+        Rebaseline test that is now passing.
+
+        * webaudio/AudioParam/audioparam-update-value-attribute-expected.txt:
+
+2020-09-21  Chris Dumez  <cdumez@apple.com>
+
         AudioBufferSourceNode should update grain parameters when buffer is set after rendering has started
         https://bugs.webkit.org/show_bug.cgi?id=216808
 
