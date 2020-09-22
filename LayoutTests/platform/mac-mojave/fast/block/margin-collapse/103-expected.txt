@@ -46,8 +46,8 @@ layer at (0,0) size 785x1721
                 text run at (0,2) width 110: "Your year of study*"
             RenderMenuList {SELECT} at (325,88) size 180x18 [color=#000000D8] [bgcolor=#FFFFFF]
               RenderBlock (anonymous) at (0,0) size 180x18
-                RenderText at (8,2) size 123x13
-                  text run at (8,2) width 123: "Years you've been here"
+                RenderText at (8,2) size 122x13
+                  text run at (8,2) width 122: "Years you've been here"
             RenderBlock (floating) {SPAN} at (0,108) size 325x20 [color=#333333]
               RenderText {#text} at (0,2) size 153x15
                 text run at (0,2) width 153: "Shakespeare classes taken"

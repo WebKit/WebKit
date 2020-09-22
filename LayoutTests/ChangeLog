@@ -1,5 +1,27 @@
 2020-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r266494. rdar://problem/69341549
+
+    Rebaseline after macOS build progression.
+    Rebaseline fast/block/margin-collapse/103 for Mojave
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-mojave/fast/block/margin-collapse/103-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266494 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-02  Karl Rackler  <rackler@apple.com>
+
+            Rebaseline after macOS build progression.
+            Rebaseline fast/block/margin-collapse/103 for Mojave
+
+            Unreviewed test gardening.
+
+            * platform/mac-mojave/fast/block/margin-collapse/103-expected.txt:
+
+2020-09-21  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r266490. rdar://problem/69341549
 
     Rebaseline after macOS build progression.
