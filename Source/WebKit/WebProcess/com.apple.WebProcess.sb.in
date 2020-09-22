@@ -1194,3 +1194,15 @@
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebContentSandboxAdditionsMac.sb>
 #endif
+
+(when (defined? 'mach-kernel-endpoint)
+    (allow mach-kernel-endpoint
+        (apply-message-filter
+            (allow mach-message-send (with telemetry))
+        )
+    )
+)
+
+(when (defined? 'syscall-mach)
+    (allow syscall-mach (with telemetry))
+)

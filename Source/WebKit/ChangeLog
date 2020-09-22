@@ -1,3 +1,14 @@
+2020-09-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Start collecting telemetry from message filtering
+        <https://bugs.webkit.org/show_bug.cgi?id=216803>
+
+        Reviewed by Darin Adler.
+
+        Start collecting telemetry for message filtering in the WebContent sandbox on macOS.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-09-22  Youenn Fablet  <youenn@apple.com>
 
         Move Media in GPU Process flag from internal to experimental
