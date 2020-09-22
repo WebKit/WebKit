@@ -1,3 +1,14 @@
+2020-09-21  Tim Horton  <timothy_horton@apple.com>
+
+        paper.io ad close buttons cannot be iteracted with via trackpad on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=216812
+        <rdar://problem/68738585>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (applicationIsKnownToIgnoreMouseEvents):
+
 2020-09-21  Timothy Hatcher  <timothy@apple.com>
 
         Add some WKWebProcessPlugInFrame SPI needed by Safari.
