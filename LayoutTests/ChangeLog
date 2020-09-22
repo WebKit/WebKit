@@ -1,3 +1,12 @@
+2020-09-22  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS ] webgl/2.0.0/conformance/textures/misc/texture-upload-size.html is a flaky failure
+        rdar://66842535 
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-09-22  Chris Dumez  <cdumez@apple.com>
 
         AudioParam.setValueCurveAtTime() should have an implicit call to setValueAtTime() at the end

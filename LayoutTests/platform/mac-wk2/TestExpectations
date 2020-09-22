@@ -1324,3 +1324,7 @@ fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass Ima
 [ BigSur+ ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Failure Timeout ]
 
 webkit.org/b/216634 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Pass Failure ]
+
+#<rdar://66842535> [ macOS ] webgl/2.0.0/conformance/textures/misc/texture-upload-size.html is a flaky failure
+webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Pass Failure ]
+
