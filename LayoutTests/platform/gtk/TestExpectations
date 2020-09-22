@@ -50,6 +50,9 @@ webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 # Media - GTK-X11 flaky crash
 webkit.org/b/215499 [ Release ] media/video-load-networkState.html [ Crash Pass ]
 
+# MESA-related
+webkit.org/b/216777 compositing/video/video-update-rendering.html [ Pass Crash ]
+
 # Printing
 webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
 webkit.org/b/196542 printing/printing-events.html [ Crash ]

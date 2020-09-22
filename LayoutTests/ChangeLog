@@ -1,3 +1,11 @@
+2020-09-22  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Mark compositing/video/video-update-rendering.html as flaky crash
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-09-22  Sam Weinig  <weinig@apple.com>
 
         Update User Timing interfaces to User Timing Level 3
