@@ -96,7 +96,7 @@ private:
     // AudioHardwareListenerClient
     void audioHardwareDidBecomeActive() final { }
     void audioHardwareDidBecomeInactive() final { }
-    void audioOutputDeviceChanged() final;
+    void audioOutputDeviceChanged() final { updateSessionState(); }
 
     // PAL::SystemSleepListener
     void systemWillSleep() final { processSystemWillSleep(); }

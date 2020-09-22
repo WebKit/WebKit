@@ -262,13 +262,4 @@
 #endif
 }
 
-- (double)_audioRoutingArbitrationUpdateTime
-{
-#if ENABLE(ROUTING_ARBITRATION)
-    return _page->process().audioSessionRoutingArbitrator().arbitrationUpdateTime().secondsSinceEpoch().seconds();
-#else
-    return 0;
-#endif
-}
-
 @end
