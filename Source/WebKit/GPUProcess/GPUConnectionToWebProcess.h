@@ -94,15 +94,12 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactoryProxy& cdmFactoryProxy();
 #endif
-#if PLATFORM(IOS_FAMILY)
-    RemoteMediaSessionHelperProxy& mediaSessionHelperProxy();
-#endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
 #endif
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
 #endif
 
@@ -119,10 +116,6 @@ private:
 #endif
 #endif
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
-    RemoteAudioSessionProxy& audioSessionProxy();
-#endif
-
     void createRenderingBackend(RenderingBackendIdentifier);
     void releaseRenderingBackend(RenderingBackendIdentifier);
 
@@ -133,12 +126,14 @@ private:
     void enableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
 #endif
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
+    RemoteAudioSessionProxy& audioSessionProxy();
     using EnsureAudioSessionCompletion = CompletionHandler<void(const RemoteAudioSessionConfiguration&)>;
     void ensureAudioSession(EnsureAudioSessionCompletion&&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    RemoteMediaSessionHelperProxy& mediaSessionHelperProxy();
     void ensureMediaSessionHelper();
 #endif
 
@@ -189,7 +184,7 @@ private:
 #if ENABLE(ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
 #endif
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
     std::unique_ptr<RemoteAudioSessionProxy> m_audioSessionProxy;
 #endif
 #if PLATFORM(IOS_FAMILY)

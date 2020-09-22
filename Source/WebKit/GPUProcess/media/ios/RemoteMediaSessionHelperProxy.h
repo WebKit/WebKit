@@ -42,6 +42,8 @@ public:
     RemoteMediaSessionHelperProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteMediaSessionHelperProxy();
 
+    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

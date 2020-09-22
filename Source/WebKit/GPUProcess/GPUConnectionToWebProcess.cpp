@@ -91,6 +91,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "RemoteMediaSessionHelperProxy.h"
+#include "RemoteMediaSessionHelperProxyMessages.h"
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -263,7 +264,7 @@ RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
 }
 #endif
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
 RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
 {
     if (!m_audioSessionProxy) {
@@ -303,7 +304,7 @@ void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSess
     connection().send(Messages::GPUProcessConnection::DidReceiveRemoteCommand { type, argument }, 0);
 }
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
 void GPUConnectionToWebProcess::ensureAudioSession(EnsureAudioSessionCompletion&& completion)
 {
     completion(audioSessionProxy().configuration());
@@ -391,9 +392,15 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
     if (decoder.messageReceiverName() == Messages::RemoteAudioSessionProxy::messageReceiverName()) {
         audioSessionProxy().didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
+#if PLATFORM(IOS_FAMILY)
+    if (decoder.messageReceiverName() == Messages::RemoteMediaSessionHelperProxy::messageReceiverName()) {
+        mediaSessionHelperProxy().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
     }
 #endif
@@ -444,7 +451,7 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
         return true;
     }
 #endif
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
     if (decoder.messageReceiverName() == Messages::RemoteAudioSessionProxy::messageReceiverName()) {
         audioSessionProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
         return true;

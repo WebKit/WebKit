@@ -172,7 +172,6 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/media/RemoteCDMInstanceSession \
 	WebProcess/GPU/media/RemoteLegacyCDMSession \
 	WebProcess/GPU/media/ios/RemoteMediaSessionHelper \
-	WebProcess/GPU/media/RemoteMediaPlayerManager \
 	WebProcess/GPU/media/RemoteAudioDestinationProxy \
 	WebProcess/GPU/media/RemoteAudioSession \
 	WebProcess/WebStorage/StorageAreaMap \

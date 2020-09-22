@@ -128,7 +128,6 @@ $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioDestinationProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in
-$(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/ios/RemoteMediaSessionHelper.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCRemoteCodecs.messages.in

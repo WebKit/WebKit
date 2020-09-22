@@ -1,3 +1,29 @@
+2020-09-22  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Add missing IPC message receivers
+        https://bugs.webkit.org/show_bug.cgi?id=216829
+
+        Reviewed by Jer Noble.
+
+        Add missing IPC message receivers and clean up some macro usages.
+        Also remove the empty RemoteMediaPlayerManager.messages.in.
+
+        No new tests, no functional change.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/ios/RemoteMediaSessionHelperProxy.h:
+        (WebKit::RemoteMediaSessionHelperProxy::didReceiveMessageFromWebProcess):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in: Removed.
+
 2020-09-22  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Start collecting telemetry from a set of XPC services

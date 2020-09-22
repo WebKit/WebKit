@@ -37,7 +37,6 @@
 #include "RemoteCDMProxy.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaPlayerManager.h"
-#include "RemoteMediaPlayerManagerMessages.h"
 #include "SampleBufferDisplayLayerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -49,6 +48,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceSessionMessages.h"
+#endif
+
+#if USE(AUDIO_SESSION)
+#include "RemoteAudioSession.h"
+#include "RemoteAudioSessionMessages.h"
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -124,11 +128,16 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
         sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
         return true;
     }
-
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     if (decoder.messageReceiverName() == Messages::LibWebRTCCodecs::messageReceiverName()) {
         WebProcess::singleton().libWebRTCCodecs().didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
+#if USE(AUDIO_SESSION)
+    if (decoder.messageReceiverName() == Messages::RemoteAudioSession::messageReceiverName()) {
+        // FIXME
         return true;
     }
 #endif
