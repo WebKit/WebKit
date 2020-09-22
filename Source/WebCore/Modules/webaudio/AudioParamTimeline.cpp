@@ -103,7 +103,15 @@ ExceptionOr<void> AudioParamTimeline::setTargetAtTime(float target, Seconds time
 ExceptionOr<void> AudioParamTimeline::setValueCurveAtTime(Vector<float>&& curve, Seconds time, Seconds duration)
 {
     auto locker = holdLock(m_eventsMutex);
-    return insertEvent(ParamEvent::createSetValueCurveEvent(WTFMove(curve), time, duration));
+
+    float curveEndValue = curve.last();
+    auto result = insertEvent(ParamEvent::createSetValueCurveEvent(WTFMove(curve), time, duration));
+    if (result.hasException())
+        return result.releaseException();
+
+    // The specification says an implicit call to setValueAtTime() is made at time T0+TD with value V[N-1]
+    // so that following automations will start from the end of the setValueCurveAtTime() event.
+    return insertEvent(ParamEvent::createSetValueEvent(curveEndValue, time + duration));
 }
 
 static bool isValidNumber(float x)
