@@ -99,7 +99,8 @@ private:
     virtual double legacyGainValue() const { return 1.0; }
     virtual bool shouldThrowOnAttemptToOverwriteBuffer() const { return true; }
 
-    ExceptionOr<void> startPlaying(double when, double grainOffset, double grainDuration);
+    ExceptionOr<void> startPlaying(double when, double grainOffset, Optional<double> grainDuration);
+    void adjustGrainParameters();
 
     // Returns true on success.
     bool renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames, double startFrameOffset);
@@ -134,6 +135,7 @@ private:
     bool m_isGrain { false };
     double m_grainOffset { 0 }; // in seconds
     double m_grainDuration; // in seconds
+    double m_wasGrainDurationGiven { false };
 
     // totalPitchRate() returns the instantaneous pitch rate (non-time preserving).
     // It incorporates the base pitch rate, any sample-rate conversion factor from the buffer, and any doppler shift from an associated panner node.

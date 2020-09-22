@@ -450,6 +450,11 @@ ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 
     m_virtualReadIndex = 0;
     m_buffer = WTFMove(buffer);
+
+    // In case the buffer gets set after playback has started, we need to clamp the grain parameters now.
+    if (m_isGrain)
+        adjustGrainParameters();
+
     return { };
 }
 
@@ -458,21 +463,15 @@ unsigned AudioBufferSourceNode::numberOfChannels()
     return output(0)->numberOfChannels();
 }
 
-ExceptionOr<void> AudioBufferSourceNode::startLater(double when, double grainOffset, Optional<double> optionalGrainDuration)
+ExceptionOr<void> AudioBufferSourceNode::startLater(double when, double grainOffset, Optional<double> grainDuration)
 {
-    double grainDuration = 0;
-    if (optionalGrainDuration)
-        grainDuration = optionalGrainDuration.value();
-    else if (buffer())
-        grainDuration = buffer()->duration() - grainOffset;
-
     return startPlaying(when, grainOffset, grainDuration);
 }
 
-ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainOffset, double grainDuration)
+ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainOffset, Optional<double> grainDuration)
 {
     ASSERT(isMainThread());
-    ALWAYS_LOG(LOGIDENTIFIER, "when = ", when, ", offset = ", grainOffset, ", duration = ", grainDuration);
+    ALWAYS_LOG(LOGIDENTIFIER, "when = ", when, ", offset = ", grainOffset, ", duration = ", grainDuration.valueOr(0));
 
     context().nodeWillBeginPlayback();
 
@@ -485,35 +484,53 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
     if (!std::isfinite(grainOffset) || (grainOffset < 0))
         return Exception { RangeError, "offset value should be positive"_s };
 
-    if (!std::isfinite(grainDuration) || (grainDuration < 0))
+    if (grainDuration && (!std::isfinite(*grainDuration) || (*grainDuration < 0)))
         return Exception { RangeError, "duration value should be positive"_s };
+
+    // This synchronizes with process().
+    auto locker = holdLock(m_processMutex);
 
     m_isGrain = true;
     m_grainOffset = grainOffset;
-    m_grainDuration = grainDuration;
+    m_grainDuration = grainDuration.valueOr(0);
+    m_wasGrainDurationGiven = !!grainDuration;
     m_startTime = when;
 
-    if (buffer()) {
-        // Do sanity checking of grain parameters versus buffer size.
-        double bufferDuration = buffer()->duration();
+    adjustGrainParameters();
 
-        m_grainOffset = std::min(bufferDuration, grainOffset);
-
-        double maxDuration = bufferDuration - m_grainOffset;
-        m_grainDuration = std::min(maxDuration, grainDuration);
-
-        // We call timeToSampleFrame here since at playbackRate == 1 we don't want to go through linear interpolation
-        // at a sub-sample position since it will degrade the quality.
-        // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.
-        // Since playbackRate == 1 is very common, it's worth considering quality.
-        if (playbackRate().value() < 0)
-            m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, buffer()->sampleRate()) - 1;
-        else
-            m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, buffer()->sampleRate());
-    }
     m_playbackState = SCHEDULED_STATE;
 
     return { };
+}
+
+void AudioBufferSourceNode::adjustGrainParameters()
+{
+    ASSERT(m_processMutex.isHeld());
+
+    auto buffer = this->buffer();
+    if (!buffer)
+        return;
+
+    // Do sanity checking of grain parameters versus buffer size.
+    double bufferDuration = buffer->duration();
+
+    m_grainOffset = std::min(bufferDuration, m_grainOffset);
+
+    double maxDuration = bufferDuration - m_grainOffset;
+
+    if (m_wasGrainDurationGiven)
+        m_grainDuration = std::min(m_grainDuration, maxDuration);
+    else
+        m_grainDuration = maxDuration;
+
+    // We call timeToSampleFrame here since at playbackRate == 1 we don't want to go through linear interpolation
+    // at a sub-sample position since it will degrade the quality.
+    // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.
+    // Since playbackRate == 1 is very common, it's worth considering quality.
+    if (playbackRate().value() < 0)
+        m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, buffer->sampleRate()) - 1;
+    else
+        m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, buffer->sampleRate());
 }
 
 double AudioBufferSourceNode::totalPitchRate()
