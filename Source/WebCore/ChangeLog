@@ -1,3 +1,38 @@
+2020-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] TextUtil::split needs logical left
+        https://bugs.webkit.org/show_bug.cgi?id=216798
+
+        Reviewed by Antti Koivisto.
+
+        Measuring text content requires logical left offset (e.g. tab size depends on the logical position).
+        Let's pass in the current logical left position to TextUtil::split.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::ContinuousContent::runs const):
+        (WebCore::Layout::ContinuousContent::isEmpty const):
+        (WebCore::Layout::ContinuousContent::logicalWidth const):
+        (WebCore::Layout::ContinuousContent::logicalLeft const):
+        (WebCore::Layout::ContinuousContent::nonCollapsibleLogicalWidth const):
+        (WebCore::Layout::LineBreaker::isContentWrappingAllowed const):
+        (WebCore::Layout::LineBreaker::shouldKeepEndOfLineWhitespace const):
+        (WebCore::Layout::LineBreaker::shouldWrapInlineContent):
+        (WebCore::Layout::LineBreaker::tryWrappingInlineContent const):
+        (WebCore::Layout::LineBreaker::wrapTextContent const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::ContinuousContent::ContinuousContent):
+        (WebCore::Layout::ContinuousContent::hasTextContentOnly const):
+        (WebCore::Layout::ContinuousContent::isVisuallyEmptyWhitespaceContentOnly const):
+        (WebCore::Layout::ContinuousContent::firstTextRunIndex const):
+        (WebCore::Layout::ContinuousContent::lastContentRunIndex const):
+        (WebCore::Layout::ContinuousContent::hasNonContentRunsOnly const):
+        (WebCore::Layout::ContinuousContent::size const): Deleted.
+        (WebCore::Layout::ContinuousContent::width const): Deleted.
+        (WebCore::Layout::ContinuousContent::nonCollapsibleWidth const): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+
 2020-09-22  Sam Weinig  <weinig@apple.com>
 
         Update User Timing interfaces to User Timing Level 3

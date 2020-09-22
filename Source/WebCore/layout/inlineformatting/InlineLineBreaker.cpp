@@ -63,16 +63,16 @@ static inline Optional<size_t> lastWrapOpportunityIndex(const LineBreaker::RunLi
 }
 
 struct ContinuousContent {
-    ContinuousContent(const LineBreaker::RunList&, InlineLayoutUnit contentLogicalWidth);
+    ContinuousContent(const LineBreaker::CandidateContent&);
 
-    const LineBreaker::RunList& runs() const { return m_runs; }
-    bool isEmpty() const { return m_runs.isEmpty(); }
+    const LineBreaker::RunList& runs() const { return m_candidateContent.runs; }
+    bool isEmpty() const { return runs().isEmpty(); }
     bool hasTextContentOnly() const;
     bool isVisuallyEmptyWhitespaceContentOnly() const;
     bool hasNonContentRunsOnly() const;
-    size_t size() const { return m_runs.size(); }
-    InlineLayoutUnit width() const { return m_width; }
-    InlineLayoutUnit nonCollapsibleWidth() const { return m_width - m_trailingCollapsibleContent.width; }
+    InlineLayoutUnit logicalWidth() const { return m_candidateContent.logicalWidth; }
+    InlineLayoutUnit logicalLeft() const { return m_candidateContent.logicalLeft; }
+    InlineLayoutUnit nonCollapsibleLogicalWidth() const { return logicalWidth() - m_trailingCollapsibleContent.width; }
 
     bool hasTrailingCollapsibleContent() const { return !!m_trailingCollapsibleContent.width; }
     bool isTrailingContentFullyCollapsible() const { return m_trailingCollapsibleContent.isFullyCollapsible; }
@@ -81,7 +81,7 @@ struct ContinuousContent {
     Optional<size_t> lastContentRunIndex() const;
 
 private:
-    const LineBreaker::RunList& m_runs;
+    const LineBreaker::CandidateContent& m_candidateContent;
     struct TrailingCollapsibleContent {
         void reset();
 
@@ -89,57 +89,57 @@ private:
         InlineLayoutUnit width { 0 };
     };
     TrailingCollapsibleContent m_trailingCollapsibleContent;
-    InlineLayoutUnit m_width { 0 };
 };
 
 struct WrappedTextContent {
-    unsigned trailingRunIndex { 0 };
+    size_t trailingRunIndex { 0 };
     bool contentOverflows { false };
     Optional<LineBreaker::PartialRun> partialTrailingRun;
 };
 
-bool LineBreaker::isContentWrappingAllowed(const ContinuousContent& candidateRuns) const
+bool LineBreaker::isContentWrappingAllowed(const ContinuousContent& continuousContent) const
 {
     // Use the last inline item with content (where we would be wrapping) to decide if content wrapping is allowed.
-    auto runIndex = candidateRuns.lastContentRunIndex().valueOr(candidateRuns.size() - 1);
-    return isWrappingAllowed(candidateRuns.runs()[runIndex].inlineItem.style());
+    auto& continuousRuns = continuousContent.runs();
+    auto runIndex = continuousContent.lastContentRunIndex().valueOr(continuousRuns.size() - 1);
+    return isWrappingAllowed(continuousRuns[runIndex].inlineItem.style());
 }
 
-bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& candidateRuns) const
+bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& continuousContent) const
 {
     // Grab the style and check for white-space property to decided whether we should let this whitespace content overflow the current line.
     // Note that the "keep" in the context means we let the whitespace content sit on the current line.
     // It might very well get collapsed when we close the line (normal/nowrap/pre-line).
     // See https://www.w3.org/TR/css-text-3/#white-space-property
-    auto whitespace = candidateRuns.runs()[*candidateRuns.firstTextRunIndex()].inlineItem.style().whiteSpace();
+    auto whitespace = continuousContent.runs()[*continuousContent.firstTextRunIndex()].inlineItem.style().whiteSpace();
     return whitespace == WhiteSpace::Normal || whitespace == WhiteSpace::NoWrap || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::PreLine;
 }
 
-LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidateRuns, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus& lineStatus)
+LineBreaker::Result LineBreaker::shouldWrapInlineContent(const CandidateContent& candidateContent, const LineStatus& lineStatus)
 {
     auto inlineContentWrapping = [&] {
-        if (candidateContentLogicalWidth <= lineStatus.availableWidth)
+        if (candidateContent.logicalWidth <= lineStatus.availableWidth)
             return Result { Result::Action::Keep };
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
         // Preferred width computation sums up floats while line breaker substracts them. This can lead to epsilon-scale differences.
-        if (WTF::areEssentiallyEqual(candidateContentLogicalWidth, lineStatus.availableWidth))
+        if (WTF::areEssentiallyEqual(candidateContent.logicalWidth, lineStatus.availableWidth))
             return Result { Result::Action::Keep };
 #endif
-        return tryWrappingInlineContent(candidateRuns, candidateContentLogicalWidth, lineStatus);
+        return tryWrappingInlineContent(candidateContent, lineStatus);
     };
 
     auto result = inlineContentWrapping();
     if (result.action == Result::Action::Keep) {
         // If this is not the end of the line, hold on to the last eligible line wrap opportunity so that we could revert back
         // to this position if no other line breaking opportunity exists in this content.
-        if (auto lastLineWrapOpportunityIndex = lastWrapOpportunityIndex(candidateRuns)) {
+        if (auto lastLineWrapOpportunityIndex = lastWrapOpportunityIndex(candidateContent.runs)) {
             auto isEligibleLineWrapOpportunity = [&] (auto& candidateItem) {
                 // Just check for leading collapsible whitespace for now.
                 if (!lineStatus.lineIsEmpty || !candidateItem.isText() || !downcast<InlineTextItem>(candidateItem).isWhitespace())
                     return true;
                 return shouldKeepBeginningOfLineWhitespace(candidateItem.style());
             };
-            auto& lastWrapOpportunityCandidateItem = candidateRuns[*lastLineWrapOpportunityIndex].inlineItem;
+            auto& lastWrapOpportunityCandidateItem = candidateContent.runs[*lastLineWrapOpportunityIndex].inlineItem;
             if (isEligibleLineWrapOpportunity(lastWrapOpportunityCandidateItem)) {
                 result.lastWrapOpportunityItem = &lastWrapOpportunityCandidateItem;
                 m_hasWrapOpportunityAtPreviousPosition = true;
@@ -149,46 +149,45 @@ LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidat
     return result;
 }
 
-LineBreaker::Result LineBreaker::tryWrappingInlineContent(const RunList& candidateRuns, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus& lineStatus) const
+LineBreaker::Result LineBreaker::tryWrappingInlineContent(const CandidateContent& candidateContent, const LineStatus& lineStatus) const
 {
-    auto candidateContent = ContinuousContent { candidateRuns, candidateContentLogicalWidth };
-    ASSERT(!candidateContent.isEmpty());
+    auto continuousContent = ContinuousContent { candidateContent };
+    ASSERT(!continuousContent.isEmpty());
 
-    ASSERT(candidateContent.width() > lineStatus.availableWidth);
-    if (candidateContent.hasTrailingCollapsibleContent()) {
-        ASSERT(candidateContent.hasTextContentOnly());
-        auto IsEndOfLine = isContentWrappingAllowed(candidateContent) ? IsEndOfLine::Yes : IsEndOfLine::No;
+    ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
+    if (continuousContent.hasTrailingCollapsibleContent()) {
+        ASSERT(continuousContent.hasTextContentOnly());
+        auto IsEndOfLine = isContentWrappingAllowed(continuousContent) ? IsEndOfLine::Yes : IsEndOfLine::No;
         // First check if the content fits without the trailing collapsible part.
-        if (candidateContent.nonCollapsibleWidth() <= lineStatus.availableWidth)
+        if (continuousContent.nonCollapsibleLogicalWidth() <= lineStatus.availableWidth)
             return { Result::Action::Keep, IsEndOfLine };
         // Now check if we can trim the line too.
-        if (lineStatus.lineHasFullyCollapsibleTrailingRun && candidateContent.isTrailingContentFullyCollapsible()) {
+        if (lineStatus.lineHasFullyCollapsibleTrailingRun && continuousContent.isTrailingContentFullyCollapsible()) {
             // If this new content is fully collapsible, it should surely fit.
             return { Result::Action::Keep, IsEndOfLine };
         }
-    } else if (lineStatus.collapsibleWidth && candidateContent.hasNonContentRunsOnly()) {
+    } else if (lineStatus.collapsibleWidth && continuousContent.hasNonContentRunsOnly()) {
         // Let's see if the non-content runs fit when the line has trailing collapsible content.
         // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after collapsing the trailing whitespace.
-        if (candidateContent.width() <= lineStatus.availableWidth + lineStatus.collapsibleWidth)
+        if (continuousContent.logicalWidth() <= lineStatus.availableWidth + lineStatus.collapsibleWidth)
             return { Result::Action::Keep };
     }
-    if (candidateContent.isVisuallyEmptyWhitespaceContentOnly() && shouldKeepEndOfLineWhitespace(candidateContent)) {
+    if (continuousContent.isVisuallyEmptyWhitespaceContentOnly() && shouldKeepEndOfLineWhitespace(continuousContent)) {
         // This overflowing content apparently falls into the remove/hang end-of-line-spaces category.
         // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
         return { Result::Action::Keep };
     }
 
-    if (candidateContent.hasTextContentOnly()) {
-        auto& runs = candidateContent.runs();
-        if (auto wrappedTextContent = wrapTextContent(runs, lineStatus)) {
+    if (continuousContent.hasTextContentOnly()) {
+        if (auto wrappedTextContent = wrapTextContent(continuousContent, lineStatus)) {
             if (!wrappedTextContent->trailingRunIndex && wrappedTextContent->contentOverflows) {
                 // We tried to split the content but the available space can't even accommodate the first character.
                 // 1. Push the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
                 if (!lineStatus.lineIsEmpty)
                     return { Result::Action::Push, IsEndOfLine::Yes, { } };
-                auto firstTextRunIndex = *candidateContent.firstTextRunIndex();
-                auto& inlineTextItem = downcast<InlineTextItem>(runs[firstTextRunIndex].inlineItem);
+                auto firstTextRunIndex = *continuousContent.firstTextRunIndex();
+                auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[firstTextRunIndex].inlineItem);
                 ASSERT(inlineTextItem.length());
                 if (inlineTextItem.length() == 1)
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
@@ -206,38 +205,40 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const RunList& candida
         return { Result::Action::Keep, IsEndOfLine::No };
     }
     // Now either wrap here or at an earlier position, or not wrap at all.
-    if (isContentWrappingAllowed(candidateContent))
+    if (isContentWrappingAllowed(continuousContent))
         return { Result::Action::Push, IsEndOfLine::Yes };
     if (m_hasWrapOpportunityAtPreviousPosition)
         return { Result::Action::RevertToLastWrapOpportunity, IsEndOfLine::Yes };
     return { Result::Action::Keep, IsEndOfLine::No };
 }
 
-Optional<WrappedTextContent> LineBreaker::wrapTextContent(const RunList& runs, const LineStatus& lineStatus) const
+Optional<WrappedTextContent> LineBreaker::wrapTextContent(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
 {
-    auto isContentSplitAllowed = [] (auto& run) {
+    auto isBreakableRun = [] (auto& run) {
         ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
         if (!run.inlineItem.isText()) {
-            // Can't split horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
+            // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
             // we need to check if there's another inline item beyond the [container end] to split.
             return false;
         }
+        // Check if this text run needs to stay on the current line.  
         return isWrappingAllowed(run.inlineItem.style());
     };
 
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
-    InlineLayoutUnit accumulatedRunWidth = 0;
-    unsigned index = 0;
+    auto& runs = continuousContent.runs();
+    auto accumulatedRunWidth = InlineLayoutUnit { }; 
+    size_t index = 0;
     while (index < runs.size()) {
         auto& run = runs[index];
         ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
-        if (accumulatedRunWidth + run.logicalWidth > lineStatus.availableWidth && isContentSplitAllowed(run)) {
+        if (accumulatedRunWidth + run.logicalWidth > lineStatus.availableWidth && isBreakableRun(run)) {
             // At this point the available width can very well be negative e.g. when some part of the continuous text content can not be broken into parts ->
             // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
             // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
             auto adjustedAvailableWidth = std::max<InlineLayoutUnit>(0, lineStatus.availableWidth - accumulatedRunWidth);
-            if (auto partialRun = tryBreakingTextRun(run, adjustedAvailableWidth)) {
+            if (auto partialRun = tryBreakingTextRun(run, continuousContent.logicalLeft() + accumulatedRunWidth, adjustedAvailableWidth)) {
                  if (partialRun->length)
                      return WrappedTextContent { index, false, partialRun };
                  // When the content is wrapped at the run boundary, the trailing run is the previous run.
@@ -246,19 +247,20 @@ Optional<WrappedTextContent> LineBreaker::wrapTextContent(const RunList& runs, c
                  // Sometimes we can't accommodate even the very first character.
                  return WrappedTextContent { 0, true, { } };
              }
-            // If this run is not breakable, we need to check if any previous run is breakable
+            // If this run is not breakable, we need to check if any previous run is breakable.
             break;
         }
         accumulatedRunWidth += run.logicalWidth;
         ++index;
     }
     // We did not manage to break the run that actually overflows the line.
-    // Let's try to find the first breakable run and wrap it at the content boundary (as it surely fits).
+    // Let's try to find the last breakable position starting from the overflowing run and wrap it at the content boundary (as it surely fits).
     while (index--) {
         auto& run = runs[index];
-        if (isContentSplitAllowed(run)) {
+        accumulatedRunWidth -= run.logicalWidth;
+        if (isBreakableRun(run)) {
             ASSERT(run.inlineItem.isText());
-            if (auto partialRun = tryBreakingTextRun(run, maxInlineLayoutUnit())) {
+            if (auto partialRun = tryBreakingTextRun(run, continuousContent.logicalLeft() + accumulatedRunWidth, maxInlineLayoutUnit())) {
                  // We know this run fits, so if wrapping is allowed on the run, it should return a non-empty left-side.
                  ASSERT(partialRun->length);
                  return WrappedTextContent { index, false, partialRun };
@@ -295,7 +297,7 @@ LineBreaker::WordBreakRule LineBreaker::wordBreakBehavior(const RenderStyle& sty
     return WordBreakRule::NoBreak;
 }
 
-Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth) const
+Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit logicalLeft, InlineLayoutUnit availableWidth) const
 {
     ASSERT(overflowRun.inlineItem.isText());
     auto& inlineTextItem = downcast<InlineTextItem>(overflowRun.inlineItem);
@@ -309,8 +311,7 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
             // let's just return the entire run when it is intended to fit on the line.
             return PartialRun { inlineTextItem.length(), overflowRun.logicalWidth, false };
         }
-        // FIXME: Pass in the content logical left to be able to measure tabs.
-        auto splitData = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
+        auto splitData = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, logicalLeft);
         return PartialRun { splitData.length, splitData.logicalWidth, false };
     }
 
@@ -333,7 +334,7 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
             auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
             if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
                 return { };
-            leftSideLength = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, { }).length;
+            leftSideLength = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
         }
         if (leftSideLength < limitBefore)
             return { };
@@ -351,12 +352,11 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
     return { };
 }
 
-ContinuousContent::ContinuousContent(const LineBreaker::RunList& runs, InlineLayoutUnit contentLogicalWidth)
-    : m_runs(runs)
-    , m_width(contentLogicalWidth)
+ContinuousContent::ContinuousContent(const LineBreaker::CandidateContent& candidateContent)
+    : m_candidateContent(candidateContent)
 {
     // Figure out the trailing collapsible state.
-    for (auto& run : WTF::makeReversedRange(m_runs)) {
+    for (auto& run : WTF::makeReversedRange(runs())) {
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isBox()) {
             // We did reach a non-collapsible content. We have all the trailing whitespace now.
@@ -390,7 +390,7 @@ bool ContinuousContent::hasTextContentOnly() const
 {
     // <span>text</span> is considered a text run even with the [container start][container end] inline items.
     // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
-    for (auto& run : m_runs) {
+    for (auto& run : runs()) {
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
             continue;
@@ -404,7 +404,7 @@ bool ContinuousContent::isVisuallyEmptyWhitespaceContentOnly() const
     // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
     // [<span style="border: 1px solid red"></span> ] while this is whitespace content only, it is not considered visually empty.
     // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
-    for (auto& run : m_runs) {
+    for (auto& run : runs()) {
         auto& inlineItem = run.inlineItem;
         // FIXME: check for padding border etc.
         if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
@@ -416,8 +416,9 @@ bool ContinuousContent::isVisuallyEmptyWhitespaceContentOnly() const
 
 Optional<size_t> ContinuousContent::firstTextRunIndex() const
 {
-    for (size_t index = 0; index < m_runs.size(); ++index) {
-        if (m_runs[index].inlineItem.isText())
+    auto& runs = this->runs();
+    for (size_t index = 0; index < runs.size(); ++index) {
+        if (runs[index].inlineItem.isText())
             return index;
     }
     return { };
@@ -425,8 +426,9 @@ Optional<size_t> ContinuousContent::firstTextRunIndex() const
 
 Optional<size_t> ContinuousContent::lastContentRunIndex() const
 {
-    for (size_t index = m_runs.size(); index--;) {
-        if (m_runs[index].inlineItem.isText() || m_runs[index].inlineItem.isBox())
+    auto& runs = this->runs();
+    for (auto index = runs.size(); index--;) {
+        if (runs[index].inlineItem.isText() || runs[index].inlineItem.isBox())
             return index;
     }
     return { };
@@ -435,7 +437,7 @@ Optional<size_t> ContinuousContent::lastContentRunIndex() const
 bool ContinuousContent::hasNonContentRunsOnly() const
 {
     // <span></span> <- non content runs.
-    for (auto& run : m_runs) {
+    for (auto& run : runs()) {
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
             continue;

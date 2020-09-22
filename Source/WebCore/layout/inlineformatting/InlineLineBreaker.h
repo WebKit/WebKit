@@ -76,13 +76,18 @@ public:
     };
     using RunList = Vector<Run, 3>;
 
+    struct CandidateContent {
+        const RunList& runs;
+        InlineLayoutUnit logicalLeft { 0 };
+        InlineLayoutUnit logicalWidth { 0 };
+    };
     struct LineStatus {
         InlineLayoutUnit availableWidth { 0 };
         InlineLayoutUnit collapsibleWidth { 0 };
         bool lineHasFullyCollapsibleTrailingRun { false };
         bool lineIsEmpty { true };
     };
-    Result shouldWrapInlineContent(const RunList& candidateRuns, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus&);
+    Result shouldWrapInlineContent(const CandidateContent&, const LineStatus&);
 
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 
@@ -96,9 +101,9 @@ private:
     // [content]
     // [container start][span1][container end][between][container start][span2][container end]
     // see https://drafts.csswg.org/css-text-3/#line-break-details
-    Optional<WrappedTextContent> wrapTextContent(const RunList&, const LineStatus&) const;
-    Result tryWrappingInlineContent(const RunList&, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus&) const;
-    Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth) const;
+    Optional<WrappedTextContent> wrapTextContent(const ContinuousContent&, const LineStatus&) const;
+    Result tryWrappingInlineContent(const CandidateContent&, const LineStatus&) const;
+    Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit logicalLeft, InlineLayoutUnit availableWidth) const;
 
     enum class WordBreakRule {
         NoBreak,

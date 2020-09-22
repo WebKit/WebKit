@@ -531,8 +531,8 @@ void LineBuilder::commitFloats(const LineCandidate& lineCandidate, CommitIntrusi
 
 LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineBreaker, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
 {
-    auto& inlineContent = lineCandidate.inlineContent;
-    auto& candidateRuns = inlineContent.runs();
+    auto& candidateInlineContent = lineCandidate.inlineContent;
+    auto& candidateRuns = candidateInlineContent.runs();
     if (candidateRuns.isEmpty()) {
         commitFloats(lineCandidate);
         return { LineBreaker::IsEndOfLine::No };
@@ -551,7 +551,8 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
     auto availableWidth = m_line.availableWidth() - floatContent.intrusiveWidth();
     auto isLineConsideredEmpty = m_line.isVisuallyEmpty() && !m_contentIsConstrainedByFloat;
     auto lineStatus = LineBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
-    auto result = lineBreaker.shouldWrapInlineContent(candidateRuns, inlineContent.logicalWidth(), lineStatus);
+    auto candidateInlineContentLogicalLeft = m_line.contentLogicalWidth(); 
+    auto result = lineBreaker.shouldWrapInlineContent({ candidateRuns, candidateInlineContentLogicalLeft, candidateInlineContent.logicalWidth() }, lineStatus);
     if (result.lastWrapOpportunityItem)
         m_lastWrapOpportunityItem = result.lastWrapOpportunityItem;
     if (result.action == LineBreaker::Result::Action::Keep) {
