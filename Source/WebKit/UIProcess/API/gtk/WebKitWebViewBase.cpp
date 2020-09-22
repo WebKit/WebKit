@@ -2341,7 +2341,7 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
     size.scale(deviceScale);
 
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_RGB24, size.width(), size.height()));
-    cairoSurfaceSetDeviceScale(surface.get(), deviceScale, deviceScale);
+    cairo_surface_set_device_scale(surface.get(), deviceScale, deviceScale);
 
     RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
     if (clipRect) {

@@ -209,7 +209,7 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
     auto* visual = GDK_VISUAL_XVISUAL(gdkVisual);
 #endif
     m_surface = adoptRef(cairo_xlib_surface_create(display, pixmap, visual, size.width(), size.height()));
-    WebCore::cairoSurfaceSetDeviceScale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
+    cairo_surface_set_device_scale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
     m_damage = XDamageCreate(display, pixmap, XDamageReportNonEmpty);
     XDamageNotifier::singleton().add(m_damage.get(), [this] {
         if (m_webPage.isViewVisible())

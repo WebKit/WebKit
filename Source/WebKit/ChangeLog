@@ -1,3 +1,24 @@
+2020-09-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Bump cairo version to support HiDPI
+        https://bugs.webkit.org/show_bug.cgi?id=133378
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove conditional compilation around cairo_{g,s}et_device_scale() as there is no need to
+        support older versions of Cairo which lack the functions. The minimum version of Cairo
+        being required by CMake is 1.14.0, which already includes them.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint): use cairo_surface_set_device_scale() directly.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTakeViewSnapshot): Ditto.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::displayBuffer): Ditto.
+        (WebKit::AcceleratedBackingStoreWayland::downloadTexture): Ditto.
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::update): Ditto.
+
 2020-09-21  Tim Horton  <timothy_horton@apple.com>
 
         paper.io ad close buttons cannot be iteracted with via trackpad on iPad

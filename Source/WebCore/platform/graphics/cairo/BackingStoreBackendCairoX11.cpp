@@ -37,7 +37,7 @@ BackingStoreBackendCairoX11::BackingStoreBackendCairoX11(unsigned long rootWindo
     m_gc.reset(XCreateGC(display, m_pixmap.get(), 0, nullptr));
 
     m_surface = adoptRef(cairo_xlib_surface_create(display, m_pixmap.get(), visual, scaledSize.width(), scaledSize.height()));
-    cairoSurfaceSetDeviceScale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
+    cairo_surface_set_device_scale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
 }
 
 BackingStoreBackendCairoX11::~BackingStoreBackendCairoX11()
@@ -55,7 +55,7 @@ void BackingStoreBackendCairoX11::scroll(const IntRect& scrollRect, const IntSiz
         return;
 
     double xScale, yScale;
-    cairoSurfaceGetDeviceScale(m_surface.get(), xScale, yScale);
+    cairo_surface_get_device_scale(m_surface.get(), &xScale, &yScale);
     ASSERT(xScale == yScale);
 
     IntSize scaledScrollOffset = scrollOffset;

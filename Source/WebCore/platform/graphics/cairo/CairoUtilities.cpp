@@ -361,29 +361,6 @@ void flipImageSurfaceVertically(cairo_surface_t* surface)
     }
 }
 
-void cairoSurfaceSetDeviceScale(cairo_surface_t* surface, double xScale, double yScale)
-{
-    // This function was added pretty much simultaneous to when 1.13 was branched.
-#if HAVE(CAIRO_SURFACE_SET_DEVICE_SCALE)
-    cairo_surface_set_device_scale(surface, xScale, yScale);
-#else
-    UNUSED_PARAM(surface);
-    ASSERT_UNUSED(xScale, 1 == xScale);
-    ASSERT_UNUSED(yScale, 1 == yScale);
-#endif
-}
-
-void cairoSurfaceGetDeviceScale(cairo_surface_t* surface, double& xScale, double& yScale)
-{
-#if HAVE(CAIRO_SURFACE_SET_DEVICE_SCALE)
-    cairo_surface_get_device_scale(surface, &xScale, &yScale);
-#else
-    UNUSED_PARAM(surface);
-    xScale = 1;
-    yScale = 1;
-#endif
-}
-
 RefPtr<cairo_region_t> toCairoRegion(const Region& region)
 {
     RefPtr<cairo_region_t> cairoRegion = adoptRef(cairo_region_create());

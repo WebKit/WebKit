@@ -401,7 +401,7 @@ void AcceleratedBackingStoreWayland::displayBuffer(struct wpe_fdo_shm_exported_b
         cairo_surface_set_user_data(m_surface.get(), &s_surfaceDataKey, surfaceData, [](void* data) {
             fastFree(data);
         });
-        cairoSurfaceSetDeviceScale(m_surface.get(), m_webPage.deviceScaleFactor(), m_webPage.deviceScaleFactor());
+        cairo_surface_set_device_scale(m_surface.get(), m_webPage.deviceScaleFactor(), m_webPage.deviceScaleFactor());
     }
 
     unsigned char* surfaceData = cairo_image_surface_get_data(m_surface.get());
@@ -472,7 +472,7 @@ void AcceleratedBackingStoreWayland::downloadTexture(unsigned texture, const Int
     if (!m_surface || cairo_image_surface_get_width(m_surface.get()) != textureSize.width() || cairo_image_surface_get_height(m_surface.get()) != textureSize.height())
         m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, textureSize.width(), textureSize.height()));
 
-    cairoSurfaceSetDeviceScale(m_surface.get(), m_webPage.deviceScaleFactor(), m_webPage.deviceScaleFactor());
+    cairo_surface_set_device_scale(m_surface.get(), m_webPage.deviceScaleFactor(), m_webPage.deviceScaleFactor());
 
     GLuint fb;
     glGenFramebuffers(1, &fb);
