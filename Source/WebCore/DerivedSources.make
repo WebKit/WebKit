@@ -1041,7 +1041,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/Performance.idl \
     $(WebCore)/page/PerformanceEntry.idl \
     $(WebCore)/page/PerformanceMark.idl \
+    $(WebCore)/page/PerformanceMarkOptions.idl \
     $(WebCore)/page/PerformanceMeasure.idl \
+    $(WebCore)/page/PerformanceMeasureOptions.idl \
     $(WebCore)/page/PerformanceNavigation.idl \
     $(WebCore)/page/PerformanceObserver.idl \
     $(WebCore)/page/PerformanceObserverCallback.idl \

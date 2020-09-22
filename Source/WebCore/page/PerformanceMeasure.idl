@@ -27,6 +27,5 @@
 [
     Exposed=(Window,Worker),
 ] interface PerformanceMeasure : PerformanceEntry {
-    // FIXME: Implement 'detail'.
-    // readonly attribute any detail;
+    [CallWith=GlobalObject, CachedAttribute] readonly attribute any detail;
 };

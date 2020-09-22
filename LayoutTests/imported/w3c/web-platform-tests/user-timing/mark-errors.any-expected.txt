@@ -1,6 +1,6 @@
 
-FAIL Number should be rejected as the mark-options. assert_throws_js: Number passed as a dict argument should cause type-error. function "function () { self.performance.mark("mark1", 123); }" did not throw
-FAIL NaN should be rejected as the mark-options. assert_throws_js: NaN passed as a dict argument should cause type-error. function "function () { self.performance.mark("mark1", NaN); }" did not throw
-FAIL Infinity should be rejected as the mark-options. assert_throws_js: Infinity passed as a dict argument should cause type-error. function "function () { self.performance.mark("mark1", Infinity); }" did not throw
-FAIL String should be rejected as the mark-options. assert_throws_js: String passed as a dict argument should cause type-error. function "function () { self.performance.mark("mark1", "string"); }" did not throw
+PASS Number should be rejected as the mark-options. 
+PASS NaN should be rejected as the mark-options. 
+PASS Infinity should be rejected as the mark-options. 
+PASS String should be rejected as the mark-options. 
 

@@ -1052,7 +1052,9 @@ set(WebCore_NON_SVG_IDL_FILES
     page/Performance.idl
     page/PerformanceEntry.idl
     page/PerformanceMark.idl
+    page/PerformanceMarkOptions.idl
     page/PerformanceMeasure.idl
+    page/PerformanceMeasureOptions.idl
     page/PerformanceObserver.idl
     page/PerformanceObserverCallback.idl
     page/PerformanceObserverEntryList.idl

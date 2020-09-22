@@ -31,21 +31,26 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
 class Performance;
 
 using PerformanceEntryMap = HashMap<String, Vector<RefPtr<PerformanceEntry>>>;
 
-class UserTiming {
+class PerformanceUserTiming {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit UserTiming(Performance&);
+    explicit PerformanceUserTiming(Performance&);
 
-    ExceptionOr<Ref<PerformanceMark>> mark(const String& markName);
+    ExceptionOr<Ref<PerformanceMark>> mark(JSC::JSGlobalObject&, const String& markName, Optional<PerformanceMarkOptions>&&);
     void clearMarks(const String& markName);
 
-    ExceptionOr<Ref<PerformanceMeasure>> measure(const String& measureName, const String& startMark, const String& endMark);
+    using StartOrMeasureOptions = Variant<String, PerformanceMeasureOptions>;
+    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, Optional<StartOrMeasureOptions>&&, const String& endMark);
     void clearMeasures(const String& measureName);
 
     Vector<RefPtr<PerformanceEntry>> getMarks() const;
@@ -54,8 +59,15 @@ public:
     Vector<RefPtr<PerformanceEntry>> getMarks(const String& name) const;
     Vector<RefPtr<PerformanceEntry>> getMeasures(const String& name) const;
 
+    static bool isRestrictedMarkName(const String& markName);
+
 private:
-    ExceptionOr<double> findExistingMarkStartTime(const String& markName);
+    ExceptionOr<double> convertMarkToTimestamp(const Variant<String, double>&) const;
+    ExceptionOr<double> convertMarkToTimestamp(const String& markName) const;
+    ExceptionOr<double> convertMarkToTimestamp(double) const;
+
+    ExceptionOr<Ref<PerformanceMeasure>> measure(const String& measureName, const String& startMark, const String& endMark);
+    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, const PerformanceMeasureOptions&);
 
     Performance& m_performance;
     PerformanceEntryMap m_marksMap;

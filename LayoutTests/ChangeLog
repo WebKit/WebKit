@@ -1,3 +1,17 @@
+2020-09-22  Sam Weinig  <weinig@apple.com>
+
+        Update User Timing interfaces to User Timing Level 3
+        https://bugs.webkit.org/show_bug.cgi?id=216787
+
+        Reviewed by Alex Christensen.
+
+        Update error text due to some changes in which exceptions are thrown due to 
+        new support for User Timing Level 3.
+
+        * performance-api/performance-measure-name-expected.txt:
+        * performance-api/performance-now-api-expected.txt:
+        * performance-api/user-timing-apis-expected.txt:
+
 2020-09-22  Youenn Fablet  <youenn@apple.com>
 
         toRTCIceProtocol should handle ssltcp candidates

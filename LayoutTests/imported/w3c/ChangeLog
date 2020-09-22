@@ -1,3 +1,37 @@
+2020-09-22  Sam Weinig  <weinig@apple.com>
+
+        Update User Timing interfaces to User Timing Level 3
+        https://bugs.webkit.org/show_bug.cgi?id=216787
+
+        Reviewed by Alex Christensen.
+        
+        Import missing case-sensitivity test case from upstream and update the results
+        of User Timing tests now that we support Level 3.
+
+        * web-platform-tests/user-timing/case-sensitivity.any-expected.txt: Added.
+        * web-platform-tests/user-timing/case-sensitivity.any.html: Added.
+        * web-platform-tests/user-timing/case-sensitivity.any.js: Added.
+        * web-platform-tests/user-timing/case-sensitivity.any.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/case-sensitivity.any.worker.html: Added.
+        * web-platform-tests/user-timing/idlharness.any-expected.txt:
+        * web-platform-tests/user-timing/idlharness.any.worker-expected.txt:
+        * web-platform-tests/user-timing/mark-entry-constructor.any-expected.txt:
+        * web-platform-tests/user-timing/mark-entry-constructor.any.worker-expected.txt:
+        * web-platform-tests/user-timing/mark-errors.any-expected.txt:
+        * web-platform-tests/user-timing/mark-errors.any.worker-expected.txt:
+        * web-platform-tests/user-timing/mark-l3.any-expected.txt:
+        * web-platform-tests/user-timing/mark-l3.any.worker-expected.txt:
+        * web-platform-tests/user-timing/mark-measure-return-objects.any-expected.txt:
+        * web-platform-tests/user-timing/mark-measure-return-objects.any.worker-expected.txt:
+        * web-platform-tests/user-timing/measure-l3.any-expected.txt:
+        * web-platform-tests/user-timing/measure-l3.any.worker-expected.txt:
+        * web-platform-tests/user-timing/measure-with-dict.any-expected.txt:
+        * web-platform-tests/user-timing/measure-with-dict.any.worker-expected.txt:
+        * web-platform-tests/user-timing/measure_exception-expected.txt:
+        * web-platform-tests/user-timing/performance-measure-invalid.worker-expected.txt:
+        * web-platform-tests/user-timing/structured-serialize-detail.any-expected.txt:
+        * web-platform-tests/user-timing/structured-serialize-detail.any.worker-expected.txt:
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         Throw when AudioConnect::connect() is called for an output that has no channels

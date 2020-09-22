@@ -1,3 +1,87 @@
+2020-09-22  Sam Weinig  <weinig@apple.com>
+
+        Update User Timing interfaces to User Timing Level 3
+        https://bugs.webkit.org/show_bug.cgi?id=216787
+
+        Reviewed by Alex Christensen.
+
+        Adds support for User Timing Level 3 which adds more flexibility in how PerformanceMarks
+        and PerformanceMeasures are created via synthetic start/end times and associate 'details'
+        values serialized with events themselves.
+
+        Updates results to existing WPT and standalone tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::mark):
+        (WebCore::Performance::clearMarks):
+        (WebCore::Performance::measure):
+        (WebCore::Performance::clearMeasures):
+        * page/Performance.h:
+        * page/Performance.idl:
+        Update for new signatures for mark and measure, and rename of UserTiming to PerformanceUserTiming.
+
+        * page/PerformanceMark.cpp: Added.
+        (WebCore::peformanceNow):
+        (WebCore::PerformanceMark::create):
+        (WebCore::PerformanceMark::PerformanceMark):
+        (WebCore::PerformanceMark::detail):
+        * page/PerformanceMark.h:
+        * page/PerformanceMark.idl:
+        Add support for PerformanceMark's constructor `detail` getter. While the spec says to
+        serialize and the deserialize in the constructor, we only serialize, and delay deserialization
+        until the first access, which is a non-observable difference. We also utilize [CachedAttribute]
+        to only ever deserialize once per wrapper world (and also greatly simplify the GC shenanigans).
+        
+        * page/PerformanceMarkOptions.h: Added.
+        * page/PerformanceMarkOptions.idl: Added.
+        Import and bind PerformanceMarkOptions dictionary to a new struct.
+        
+        * page/PerformanceMeasure.cpp: Added.
+        (WebCore::PerformanceMeasure::create):
+        (WebCore::PerformanceMeasure::PerformanceMeasure):
+        (WebCore::PerformanceMeasure::detail):
+        * page/PerformanceMeasure.h:
+        * page/PerformanceMeasure.idl:
+        Like with PerformanceMark, but there is no constructor here, so we only need to handle adding
+        support for the detail getter.
+
+        * page/PerformanceMeasureOptions.h: Added.
+        * page/PerformanceMeasureOptions.idl: Added.
+        Import and bind PerformanceMeasureOptions dictionary to a new struct.
+        
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::restrictedMarkNamesToNavigationTimingFunctionMap):
+        (WebCore::restrictedMarkFunction):
+        (WebCore::isRestrictedMarkNameNonMainThread):
+        (WebCore::PerformanceUserTiming::isRestrictedMarkName):
+        Split up existing map to enable accessing it safely from a worker using conservative
+        callOnMainThreadAndWait approach, though since the map is immutable after initialization,
+        we can probably optimize this to allow concurrent querying in the future.
+
+        (WebCore::addPerformanceEntry):
+        Add helper, mirroring clearPerformanceEntries, to add entries.
+
+        (WebCore::PerformanceUserTiming::mark):
+        Matching the spec language, utilize the new PerformanceMark constructor to create
+        the mark.
+
+        (WebCore::PerformanceUserTiming::convertMarkToTimestamp const):
+        (WebCore::isNonEmptyDictionary):
+        (WebCore::PerformanceUserTiming::measure):
+        Implement measure support by dispatching various combinations of arguments to
+        overloads manually by inspecting the Variant.
+
+        * page/PerformanceUserTiming.h:
+        Renames class from UserTiming to PerformanceUserTiming to match file names.
+
 2020-09-22  Youenn Fablet  <youenn@apple.com>
 
         toRTCIceProtocol should handle ssltcp candidates

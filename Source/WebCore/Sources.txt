@@ -1633,6 +1633,8 @@ page/Performance.cpp
 page/PerformanceEntry.cpp
 page/PerformanceLogging.cpp
 page/PerformanceLoggingClient.cpp
+page/PerformanceMark.cpp
+page/PerformanceMeasure.cpp
 page/PerformanceMonitor.cpp
 page/PerformanceNavigation.cpp
 page/PerformanceObserver.cpp
@@ -3204,7 +3206,9 @@ JSPbkdf2Params.cpp
 JSPerformance.cpp
 JSPerformanceEntry.cpp
 JSPerformanceMark.cpp
+JSPerformanceMarkOptions.cpp
 JSPerformanceMeasure.cpp
+JSPerformanceMeasureOptions.cpp
 JSPerformanceNavigation.cpp
 JSPerformanceObserver.cpp
 JSPerformanceObserverCallback.cpp

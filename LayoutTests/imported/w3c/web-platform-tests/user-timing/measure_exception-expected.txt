@@ -11,10 +11,6 @@ PASS Invocation of performance.measure("Exception4", "NonExistMark1", "ExistMark
 PASS Invocation of performance.measure("Exception5", "ExistMark", "NonExistMark1") should throw SYNTAX_ERR Exception. 
 PASS Invocation of performance.measure("Exception6", "NonExistMark1", "NonExistMark2") should throw SYNTAX_ERR Exception. 
 PASS Invocation of performance.measure("Exception7", "redirectStart") should throw INVALID_ACCESS_ERR Exception. 
-FAIL Invocation of performance.measure("Exception8", {"detail": "non-empty"}) should throw TypeError Exception. assert_throws_js: Invocation of performance.measure("Exception8", {"detail": "non-empty"}) should throw TypeError Exception. function "function () {eval(func_str)}" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Invocation of performance.measure("Exception9", {"start": 1, "duration": 2, "end": 3}) should throw TypeError Exception. assert_throws_js: Invocation of performance.measure("Exception9", {"start": 1, "duration": 2, "end": 3}) should throw TypeError Exception. function "function () {eval(func_str)}" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Invocation of performance.measure("Exception8", {"detail": "non-empty"}) should throw TypeError Exception. 
+PASS Invocation of performance.measure("Exception9", {"start": 1, "duration": 2, "end": 3}) should throw TypeError Exception. 
 

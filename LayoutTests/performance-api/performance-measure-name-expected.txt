@@ -4,8 +4,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS performance.mark("existing-mark-name") did not throw exception.
-PASS performance.measure("measure-name", "x") threw exception SyntaxError: The string did not match the expected pattern..
-PASS performance.measure("measure-name", "existing-mark-name", "x") threw exception SyntaxError: The string did not match the expected pattern..
+PASS performance.measure("measure-name", "x") threw exception SyntaxError: No mark named 'x' exists.
+PASS performance.measure("measure-name", "existing-mark-name", "x") threw exception SyntaxError: No mark named 'x' exists.
 PASS performance.mark("x") did not throw exception.
 PASS performance.measure("measure-name", "x") did not throw exception.
 PASS performance.measure("measure-name", "existing-mark-name", "x") did not throw exception.

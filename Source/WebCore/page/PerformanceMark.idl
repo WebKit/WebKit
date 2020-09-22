@@ -27,8 +27,6 @@
 [
     Exposed=(Window,Worker),
 ] interface PerformanceMark : PerformanceEntry {
-    // FIXME: Implement constructor.
-    // constructor(DOMString markName, optional PerformanceMarkOptions markOptions = {});
-    // FIXME: Implement 'detail'.
-    // readonly attribute any detail;
+    [CallWith=GlobalObject&ScriptExecutionContext] constructor(DOMString markName, optional PerformanceMarkOptions markOptions);
+    [CallWith=GlobalObject, CachedAttribute] readonly attribute any detail;
 };

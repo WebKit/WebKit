@@ -1,7 +1,7 @@
 
-FAIL L3: performance.measure(name) should return an entry. assert_true: expected true got false
-FAIL L3: performance.measure(name, param1) should return an entry. No mark named '[object Object]' exists
-FAIL L3: performance.measure(name, param1, param2) should return an entry. assert_true: expected true got false
-FAIL L3: performance.mark(name) should return an entry. assert_true: expected true got false
-FAIL L3: performance.mark(name, param) should return an entry. assert_true: expected true got false
+PASS L3: performance.measure(name) should return an entry. 
+PASS L3: performance.measure(name, param1) should return an entry. 
+PASS L3: performance.measure(name, param1, param2) should return an entry. 
+PASS L3: performance.mark(name) should return an entry. 
+PASS L3: performance.mark(name, param) should return an entry. 
 

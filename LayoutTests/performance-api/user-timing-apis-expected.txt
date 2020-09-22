@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PerformanceMark
 PASS PerformanceMark is defined.
-PASS new PerformanceMark() threw exception TypeError: Illegal constructor.
+PASS new PerformanceMark() threw exception TypeError: Not enough arguments.
 
 PerformanceMeasure
 PASS PerformanceMeasure is defined.
@@ -28,7 +28,7 @@ PASS performance.clearMeasures("measure_name") did not throw exception.
 Starting worker: resources/user-timing-api.js
 [Worker] PerformanceMark
 PASS [Worker] PerformanceMark is defined.
-PASS [Worker] new PerformanceMark() threw exception TypeError: Illegal constructor.
+PASS [Worker] new PerformanceMark() threw exception TypeError: Not enough arguments.
 [Worker] 
 [Worker] PerformanceMeasure
 PASS [Worker] PerformanceMeasure is defined.

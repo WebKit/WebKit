@@ -1390,8 +1390,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceEntry.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceEntry.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMark.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMark.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMarkOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMarkOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMeasure.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMeasure.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMeasureOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMeasureOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceNavigation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceNavigation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceObserver.cpp

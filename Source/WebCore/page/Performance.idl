@@ -57,11 +57,9 @@ typedef double DOMHighResTimeStamp;
     attribute EventHandler onresourcetimingbufferfull;
 
     // https://w3c.github.io/user-timing/#extensions-performance-interface
-    // FIXME: 'mark' should return a PerformanceMark.
-    [MayThrowException] undefined mark(DOMString markName);
+    [MayThrowException, CallWith=GlobalObject] PerformanceMark mark(DOMString markName, optional PerformanceMarkOptions markOptions);
     undefined clearMarks(optional DOMString markName);
-    // FIXME: 'measure' should return a PerformanceMeasure.
-    [MayThrowException] undefined measure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
+    [MayThrowException, CallWith=GlobalObject] PerformanceMeasure measure(DOMString measureName, optional (DOMString or PerformanceMeasureOptions) startOrMeasureOptions, optional DOMString endMark);
     undefined clearMeasures(optional DOMString measureName);
 };
 
