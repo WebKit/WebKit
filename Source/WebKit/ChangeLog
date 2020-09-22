@@ -1,3 +1,16 @@
+2020-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Add some WKWebProcessPlugInFrame SPI needed by Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=216809
+        rdar://problem/69336928
+
+        Reviewed by Brian Weinstein.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (+[WKWebProcessPlugInFrame lookUpFrameFromJSContext:]): Added.
+        (-[WKWebProcessPlugInFrame _securityOrigin]): Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h:
+
 2020-09-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Make accessibility isolated tree a non-experimental feature.
