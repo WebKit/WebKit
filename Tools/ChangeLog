@@ -1,3 +1,13 @@
+2020-09-22  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r266075): WebContent process crashes at TextManipulationController::getPath
+        https://bugs.webkit.org/show_bug.cgi?id=216846
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-09-22  Keith Rollin  <krollin@apple.com>
 
         Refactor build rules in Makefiles and Makefile.shared

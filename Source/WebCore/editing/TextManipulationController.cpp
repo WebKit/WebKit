@@ -828,6 +828,9 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         }
     }
 
+    if (!firstContentNode)
+        return ManipulationFailureType::ContentChanged;
+
     while (lastChildOfCommonAncestorInRange && lastChildOfCommonAncestorInRange->parentNode() != commonAncestor)
         lastChildOfCommonAncestorInRange = lastChildOfCommonAncestorInRange->parentNode();
 

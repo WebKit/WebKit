@@ -1,3 +1,18 @@
+2020-09-22  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r266075): WebContent process crashes at TextManipulationController::getPath
+        https://bugs.webkit.org/show_bug.cgi?id=216846
+
+        Reviewed by Wenson Hsieh.
+
+        TextIterator does not visit node that has no renderer, so if node has become hidden, TextManipulationController 
+        will not find content node in paragraph range during replacement.
+
+        API Test: TextManipulation.CompleteTextManipulationParagraphBecomesHidden
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::replace):
+
 2020-09-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Atomic inline-level box with margin is mispositioned
