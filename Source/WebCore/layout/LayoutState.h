@@ -46,6 +46,7 @@ class InlineFormattingState;
 class TableFormattingState;
 
 class LayoutState : public CanMakeWeakPtr<LayoutState> {
+    WTF_MAKE_NONCOPYABLE(LayoutState);
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
     LayoutState(const Document&, const ContainerBox& rootContainer);

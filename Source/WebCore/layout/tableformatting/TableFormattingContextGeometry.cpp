@@ -149,7 +149,7 @@ InlineLayoutUnit TableFormattingContext::Geometry::usedBaselineForCell(const Con
         return layoutState().establishedInlineFormattingState(cellBox).lines()[0].baseline();
     for (auto& cellDescendant : descendantsOfType<ContainerBox>(cellBox)) {
         if (cellDescendant.establishesInlineFormattingContext()) {
-            auto inlineFormattingStateForCell = layoutState().establishedInlineFormattingState(cellDescendant);
+            auto& inlineFormattingStateForCell = layoutState().establishedInlineFormattingState(cellDescendant);
             if (!inlineFormattingStateForCell.lines().isEmpty())
                 return inlineFormattingStateForCell.lines()[0].baseline();
         }

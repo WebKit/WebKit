@@ -40,6 +40,7 @@ class FloatingState;
 enum class StyleDiff;
 
 class FormattingState {
+    WTF_MAKE_NONCOPYABLE(FormattingState);
     WTF_MAKE_ISO_ALLOCATED(FormattingState);
 public:
     FloatingState& floatingState() const { return m_floatingState; }

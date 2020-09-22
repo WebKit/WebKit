@@ -1,3 +1,18 @@
+2020-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingState should never be copied.
+        https://bugs.webkit.org/show_bug.cgi?id=216833
+
+        Reviewed by Antti Koivisto.
+
+        Even when running a throw-away layout, we should not copy the state object but instead generate a new one for the subtree.
+        These objects should never be copied in general.
+
+        * layout/FormattingState.h:
+        * layout/LayoutState.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::usedBaselineForCell):
+
 2020-09-22  Youenn Fablet  <youenn@apple.com>
 
         Implement a default prompt for getUserMedia
