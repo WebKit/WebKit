@@ -128,6 +128,8 @@ void MockLibWebRTCPeerConnectionForIceCandidates::sendCandidates()
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
         MockLibWebRTCIceCandidate candidate("candidate:1019216383 1 tcp 1019216384 192.168.0.100 9 typ host tcptype passive generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
+        MockLibWebRTCIceCandidate candidateSSLTcp("candidate:1019216384 1 ssltcp 1019216385 192.168.0.100 49888 typ host generation 0", "1");
+        m_observer.OnIceCandidate(&candidateSSLTcp);
     });
 
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {

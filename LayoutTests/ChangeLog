@@ -1,3 +1,12 @@
+2020-09-22  Youenn Fablet  <youenn@apple.com>
+
+        toRTCIceProtocol should handle ssltcp candidates
+        https://bugs.webkit.org/show_bug.cgi?id=216762
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/RTCPeerConnection-icecandidate-event-expected.txt:
+
 2020-09-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update baselines after r267389.

@@ -266,7 +266,7 @@ static inline Optional<RTCIceProtocol> toRTCIceProtocol(const std::string& proto
         return { };
     if (protocol == "udp")
         return RTCIceProtocol::Udp;
-    ASSERT(protocol == "tcp");
+    ASSERT(protocol == "tcp" || protocol == "ssltcp");
     return RTCIceProtocol::Tcp;
 }
 

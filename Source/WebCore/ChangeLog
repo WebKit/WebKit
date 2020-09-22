@@ -1,3 +1,16 @@
+2020-09-22  Youenn Fablet  <youenn@apple.com>
+
+        toRTCIceProtocol should handle ssltcp candidates
+        https://bugs.webkit.org/show_bug.cgi?id=216762
+
+        Reviewed by Darin Adler.
+
+        Covered by mock WebRTC backend pushing ssltcp candidates.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCIceProtocol):
+        * testing/MockLibWebRTCPeerConnection.cpp:
+
 2020-09-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Bump cairo version to support HiDPI
