@@ -1,3 +1,13 @@
+2020-09-22  Jonathan Bedard  <jbedard@apple.com>
+
+        Correct instructions for building iOS in ReadMe
+        https://bugs.webkit.org/show_bug.cgi?id=216825
+        <rdar://problem/69372654>
+
+        Reviewed by David Kilzer.
+
+        * ReadMe.md: Update iOS build instructions to apply to all embedded platforms.
+
 2020-09-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Use imported targets in find module for the ATK SPI2 bridge dependency

@@ -75,9 +75,9 @@ You can open `WebKit.xcworkspace` to build and debug WebKit within Xcode.
 
 If you don't use a custom build location in Xcode preferences, you have to update the workspace settings to use `WebKitBuild` directory.  In menu bar, choose File > Workspace Settings, then click the Advanced button, select "Custom", "Relative to Workspace", and enter `WebKitBuild` for both Products and Intermediates.
 
-### Building iOS Port
+### Embedded Builds
 
-The first time after you install a new Xcode, you will need to run the following command to enable Xcode to build command line tools for iOS Simulator:
+iOS, tvOS and watchOS are all considered embedded builds. The first time after you install a new Xcode, you will need to run:
 
 ```
 sudo Tools/Scripts/configure-xcode-for-ios-development
@@ -85,11 +85,18 @@ sudo Tools/Scripts/configure-xcode-for-ios-development
 
 Without this step, you will see the error message: "`target specifies product type ‘com.apple.product-type.tool’, but there’s no such product type for the ‘iphonesimulator’ platform.`" when building target `JSCLLIntOffsetsExtractor` of project `JavaScriptCore`.
 
-Run the following command to build a debug build with debugging symbols and assertions for iOS:
+Run the following command to build a debug build with debugging symbols and assertions for embededded simulators:
 
 ```
-Tools/Scripts/build-webkit --debug --ios-simulator
+Tools/Scripts/build-webkit --debug --<platform>-simulator
 ```
+
+or embedded devices:
+```
+Tools/Scripts/build-webkit --debug --<platform>-device
+```
+
+where `platform` is `ios`, `tvos` or `watchos`.
 
 ### Building the GTK+ Port
 
