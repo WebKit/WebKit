@@ -3753,12 +3753,6 @@ float WebPageProxy::deviceScaleFactor() const
 
 void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
 {
-    // FIXME: Remove this once we bump cairo requirements to support HiDPI.
-    // https://bugs.webkit.org/show_bug.cgi?id=133378
-#if USE(CAIRO) && !HAVE(CAIRO_SURFACE_SET_DEVICE_SCALE)
-    return;
-#endif
-
     if (m_customDeviceScaleFactor && m_customDeviceScaleFactor.value() == customScaleFactor)
         return;
 

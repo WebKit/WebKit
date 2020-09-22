@@ -1,3 +1,13 @@
+2020-09-22  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] REGRESSION(r267398): several hidpi tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=216830
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setCustomDeviceScaleFactor): Remove check for removed define.
+
 2020-09-22  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Add missing IPC message receivers
