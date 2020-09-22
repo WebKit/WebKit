@@ -1,3 +1,19 @@
+2020-09-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, partial revert of r267383.
+
+        Restore GStreamer-specific implementation of FFTFrame::multiply() since it appears
+        r267383 introduced test failures on GTK port.
+
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::multiply): Deleted.
+        * platform/audio/FFTFrameStub.cpp:
+        (WebCore::FFTFrame::multiply):
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp:
+        (WebCore::FFTFrame::multiply):
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::multiply):
+
 2020-09-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] FormattingState should never be copied.

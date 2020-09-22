@@ -64,6 +64,11 @@ FFTFrame::~FFTFrame()
     ASSERT_NOT_REACHED();
 }
 
+void FFTFrame::multiply(const FFTFrame& frame)
+{
+    ASSERT_NOT_REACHED();
+}
+
 void FFTFrame::doFFT(const float* data)
 {
     ASSERT_NOT_REACHED();
