@@ -94,6 +94,9 @@ ExceptionOr<void> AudioParamTimeline::exponentialRampToValueAtTime(float targetV
 ExceptionOr<void> AudioParamTimeline::setTargetAtTime(float target, Seconds time, float timeConstant)
 {
     auto locker = holdLock(m_eventsMutex);
+    // If timeConstant is 0, we instantly jump to the target value, so insert a SetValueEvent instead of SetTargetEvent.
+    if (!timeConstant)
+        return insertEvent(ParamEvent::createSetValueEvent(target, time));
     return insertEvent(ParamEvent::createSetTargetEvent(target, time, timeConstant));
 }
 

@@ -1,3 +1,14 @@
+2020-09-22  Chris Dumez  <cdumez@apple.com>
+
+        webaudio/AudioParam/audioparam-setTarget-timeConstant-0.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=216824
+
+        Reviewed by Darin Adler.
+
+        Unskip test that is passing and no longer crashing.
+
+        * TestExpectations:
+
 2020-09-22  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Mark compositing/video/video-update-rendering.html as flaky crash
