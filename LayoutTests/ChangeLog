@@ -1,3 +1,25 @@
+2020-09-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r266490. rdar://problem/69341549
+
+    Rebaseline after macOS build progression.
+    Rebaseline fast/block/margin-collapse/103 for Catalina
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-catalina/fast/block/margin-collapse/103-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266490 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-02  Karl Rackler  <rackler@apple.com>
+
+            Rebaseline after macOS build progression.
+            Rebaseline fast/block/margin-collapse/103 for Catalina
+
+            Unreviewed test gardening.
+
+            * platform/mac-catalina/fast/block/margin-collapse/103-expected.txt:
+
 2020-09-21  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r264117): [ Mac iOS ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html
