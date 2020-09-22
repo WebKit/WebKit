@@ -174,8 +174,8 @@ ExceptionOr<void> AudioScheduledSourceNode::stopLater(double when)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, when);
 
-    if (m_playbackState == UNSCHEDULED_STATE || m_endTime != UnknownTime)
-        return Exception { InvalidStateError };
+    if (m_playbackState == UNSCHEDULED_STATE)
+        return Exception { InvalidStateError, "cannot call stop without calling start first."_s };
 
     if (!std::isfinite(when) || when < 0)
         return Exception { RangeError, "when value should be positive"_s };

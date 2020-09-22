@@ -189,7 +189,7 @@ PASS   source4 = context.createBufferSource() did not throw an exception.
 PASS   source4.start() did not throw an exception. 
 PASS   source5 = context.createBufferSource() did not throw an exception. 
 PASS   source5.buffer = buffer did not throw an exception. 
-PASS   source5.stop() threw InvalidStateError: "The object is in an invalid state.". 
+PASS   source5.stop() threw InvalidStateError: "cannot call stop without calling start first.". 
 PASS   source6 = context.createBufferSource() did not throw an exception. 
 PASS   source6.buffer = buffer did not throw an exception. 
 PASS   source6.start() did not throw an exception. 
@@ -212,7 +212,7 @@ PASS   source8.stop(-Infinity) threw TypeError: "The provided value is non-finit
 PASS   source8.stop(NaN) threw TypeError: "The provided value is non-finite". 
 PASS   source8.stop() did not throw an exception. 
 PASS   osc = context.createOscillator() did not throw an exception. 
-PASS   osc.stop() threw InvalidStateError: "The object is in an invalid state.". 
+PASS   osc.stop() threw InvalidStateError: "cannot call stop without calling start first.". 
 PASS   osc1 = context.createOscillator() did not throw an exception. 
 PASS   osc1.start() did not throw an exception. 
 PASS   osc1.stop() did not throw an exception. 

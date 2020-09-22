@@ -34,7 +34,7 @@ PASS > [start/stop exceptions]
 PASS   start(NaN) threw TypeError: "The provided value is non-finite". 
 PASS   start(Infinity) threw TypeError: "The provided value is non-finite". 
 PASS   start(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   Calling stop() before start() threw InvalidStateError: "The object is in an invalid state.". 
+PASS   Calling stop() before start() threw InvalidStateError: "cannot call stop without calling start first.". 
 PASS   start(-1) threw RangeError: "when value should be positive". 
 PASS   Calling start() twice threw InvalidStateError: "The object is in an invalid state.". 
 PASS   stop(-1) threw RangeError: "when value should be positive". 

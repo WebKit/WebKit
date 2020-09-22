@@ -1,3 +1,30 @@
+2020-09-22  Chris Dumez  <cdumez@apple.com>
+
+        Merge AudioBufferSourceNode loop fixes from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=216849
+
+        Reviewed by Eric Carlson.
+
+        Merge AudioBufferSourceNode loop fixes from Blink, the following one in particular:
+        - https://codereview.chromium.org/723823002
+
+        This allows us to pass all the checks in:
+        webaudio/AudioBufferSource/audiobuffersource-loop-comprehensive.html.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        (WebCore::AudioBufferSourceNode::adjustGrainParameters):
+        Merge loop fixes from Blink.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::stopLater):
+        Stop throwing when m_endTime is already set. Our behavior did not match
+        Chrome and Firefox here. This was causing some existing tests to start
+        failing now that providing a grain duration when calling start() would
+        set m_endTime if loop() returns true.
+
 2020-09-22  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r266075): WebContent process crashes at TextManipulationController::getPath

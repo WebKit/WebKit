@@ -22,7 +22,7 @@ function runTest() {
 
     var sampleRate = 44100.0;
     var numberOfFrames = 32;
-    var context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+    var context = new OfflineAudioContext(1, numberOfFrames, sampleRate);
     bufferSource = context.createBufferSource();
     bufferSource.buffer = createTestBuffer(context, numberOfFrames);
     bufferSource.connect(context.destination);
@@ -35,8 +35,7 @@ function runTest() {
     shouldThrowErrorName("bufferSource.start(0)", "InvalidStateError");
     bufferSource.stop(0);
 
-    // 'stop' should be called only once.
-    shouldThrowErrorName("bufferSource.stop(0)", "InvalidStateError");
+    shouldNotThrow("bufferSource.stop(0)", "InvalidStateError");
 
     context.oncomplete = finishJSTest;
     context.startRendering();

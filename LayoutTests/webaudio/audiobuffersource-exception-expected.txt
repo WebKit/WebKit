@@ -2,9 +2,9 @@ Tests that AudioBufferSourceNode validates start and stop calls.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS bufferSource.stop(0) threw exception InvalidStateError: The object is in an invalid state..
+PASS bufferSource.stop(0) threw exception InvalidStateError: cannot call stop without calling start first..
 PASS bufferSource.start(0) threw exception InvalidStateError: Cannot call start more than once..
-PASS bufferSource.stop(0) threw exception InvalidStateError: The object is in an invalid state..
+PASS InvalidStateError did not throw exception.
 PASS successfullyParsed is true
 
 TEST COMPLETE

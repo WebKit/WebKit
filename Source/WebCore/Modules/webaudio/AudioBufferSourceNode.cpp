@@ -242,6 +242,13 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         virtualDeltaFrames = virtualMaxFrame - virtualMinFrame;
     }
 
+    // If we're looping and the offset (virtualReadIndex) is past the end of the loop, wrap back to the
+    // beginning of the loop. For other cases, nothing needs to be done.
+    if (loop() && m_virtualReadIndex >= virtualMaxFrame) {
+        m_virtualReadIndex = (m_loopStart < 0) ? 0 : (m_loopStart * buffer()->sampleRate());
+        m_virtualReadIndex = std::min(m_virtualReadIndex, static_cast<double>(bufferLength - 1));
+    }
+
     // Sanity check that our playback rate isn't larger than the loop size.
     if (std::abs(pitchRate) > virtualDeltaFrames)
         return false;
@@ -516,12 +523,18 @@ void AudioBufferSourceNode::adjustGrainParameters()
 
     m_grainOffset = std::min(bufferDuration, m_grainOffset);
 
-    double maxDuration = bufferDuration - m_grainOffset;
+    if (!m_wasGrainDurationGiven)
+        m_grainDuration = bufferDuration - m_grainOffset;
 
-    if (m_wasGrainDurationGiven)
-        m_grainDuration = std::min(m_grainDuration, maxDuration);
-    else
-        m_grainDuration = maxDuration;
+    if (m_wasGrainDurationGiven && loop()) {
+        // We're looping a grain with a grain duration specified. Schedule the loop
+        // to stop after grainDuration seconds after starting, possibly running the
+        // loop multiple times if grainDuration is larger than the buffer duration.
+        // The net effect is as if the user called stop(when + grainDuration).
+        m_grainDuration = clampTo(m_grainDuration, 0.0, std::numeric_limits<double>::infinity());
+        m_endTime = m_startTime + m_grainDuration;
+    } else
+        m_grainDuration = clampTo(m_grainDuration, 0.0,  bufferDuration - m_grainOffset);
 
     // We call timeToSampleFrame here since at playbackRate == 1 we don't want to go through linear interpolation
     // at a sub-sample position since it will degrade the quality.
