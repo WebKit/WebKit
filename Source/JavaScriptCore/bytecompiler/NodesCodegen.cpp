@@ -5233,7 +5233,9 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
 
             if (m_containsRestElement) {
                 if (m_containsComputedProperty) {
-                    if (!target.propertyExpression)
+                    if (target.propertyExpression)
+                        generator.emitToPropertyKey(propertyName.get(), propertyName.get());
+                    else
                         propertyName = generator.emitLoad(nullptr, target.propertyName);
 
                     CallArguments args(generator, nullptr, 1);

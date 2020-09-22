@@ -202,6 +202,27 @@ let assertPropDescriptor = (restObj, prop) => {
     assert(r.baz === 3);
 })();
 
+// Destructuring non-string computed property
+(() => {
+    var a = 1;
+    var {[a]: b, ...r} = {[a]: 1, b: 2, c: 3};
+    assert(b === 1);
+    assert(r[1] === undefined);
+    assert(r.b === 2);
+    assert(r.c === 3);
+})();
+
+// Destructuring Symbol computed property
+(() => {
+    var a = Symbol('a');
+    var b = Symbol('a');
+    var {[a]: c, ...r} = {[b]: 1, b: 2, c: 3};
+    assert(c === undefined);
+    assert(r[b] === 1);
+    assert(r.b === 2);
+    assert(r.c === 3);
+})();
+
 // Catch case
 
 (() => {

@@ -1,3 +1,13 @@
+2020-09-22  HyeockJin Kim  <kherootz@gmail.com>
+
+        Coerce computed property before adding to |excludedList|
+        https://bugs.webkit.org/show_bug.cgi?id=216437
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectPatternNode::bindValue const):
+
 2020-09-21  Paulo Matos  <pmatos@igalia.com>
 
         Fix MIPS leai,leap when offset is nonzero

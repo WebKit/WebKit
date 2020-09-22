@@ -1,3 +1,13 @@
+2020-09-22  HyeockJin Kim  <kherootz@gmail.com>
+
+        Coerce computed property before adding to |excludedList|
+        https://bugs.webkit.org/show_bug.cgi?id=216437
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/object-rest-deconstruct.js:
+        (get 3):
+
 2020-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BigInt should work with Map / Set
