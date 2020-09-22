@@ -1,0 +1,12 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test" 
+PASS Audit report 
+PASS > [test]  
+PASS   Second call to getFloatFrequencyData is identical to the array [-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity,-Infinity...]. 
+PASS   Second call to getByteFrequencyData is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
+PASS   Output of getByteFrequencyData after getFloatFrequencyData is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
+PASS   Output of getFloatFrequenycData (converted to byte) after getByteFrequencyData is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
+PASS < [test] All assertions passed. (total 4 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+
