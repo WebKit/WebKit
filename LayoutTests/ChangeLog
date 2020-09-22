@@ -1,3 +1,11 @@
+2020-09-21  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] fast/mediastream/getUserMedia-webaudio.html is failing since 267383
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-09-21  Chris Dumez  <cdumez@apple.com>
 
         Value returned by AudioParamTimeline::valuesForTimeRange() is sometimes incorrect for exponential ramps

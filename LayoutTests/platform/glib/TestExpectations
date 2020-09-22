@@ -275,6 +275,8 @@ webkit.org/b/216171 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-d
 webkit.org/b/216118 webaudio/convolver-setBuffer-different-samplerate.html [ Skip ]
 webkit.org/b/216118 webaudio/convolver-setBuffer-null.html [ Skip ]
 
+webkit.org/b/216813 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
