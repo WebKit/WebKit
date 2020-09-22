@@ -1027,6 +1027,10 @@ $(PROJECT_DIR)/page/NavigatorOnLine.idl
 $(PROJECT_DIR)/page/NavigatorPlugins.idl
 $(PROJECT_DIR)/page/NavigatorServiceWorker.idl
 $(PROJECT_DIR)/page/NavigatorShare.idl
+$(PROJECT_DIR)/page/Performance+NavigationTiming.idl
+$(PROJECT_DIR)/page/Performance+PerformanceTimeline.idl
+$(PROJECT_DIR)/page/Performance+ResourceTiming.idl
+$(PROJECT_DIR)/page/Performance+UserTiming.idl
 $(PROJECT_DIR)/page/Performance.idl
 $(PROJECT_DIR)/page/PerformanceEntry.idl
 $(PROJECT_DIR)/page/PerformanceMark.idl

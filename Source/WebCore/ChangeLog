@@ -1,3 +1,27 @@
+2020-09-22  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Split up Performance.idl into component partials
+        https://bugs.webkit.org/show_bug.cgi?id=216729
+
+        Reviewed by Darin Adler.
+
+        Split additions to the Peformance interface from the Navagation Timing,
+        Resource Timing, User Timing and Performance Timeline specs into their
+        own IDL files. Trying something new with the naming (using Performance
+        '+' name of the spec supplying the addition) for these partials to test
+        the waters.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Performance+NavigationTiming.idl: Added.
+        * page/Performance+PerformanceTimeline.idl: Added.
+        * page/Performance+ResourceTiming.idl: Added.
+        * page/Performance+UserTiming.idl: Added.
+        * page/Performance.idl:
+
 2020-09-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] TextUtil::split needs logical left

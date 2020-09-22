@@ -1038,6 +1038,10 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/NavigatorPlugins.idl \
     $(WebCore)/page/NavigatorServiceWorker.idl \
     $(WebCore)/page/NavigatorShare.idl \
+    $(WebCore)/page/Performance+NavigationTiming.idl \
+    $(WebCore)/page/Performance+PerformanceTimeline.idl \
+    $(WebCore)/page/Performance+ResourceTiming.idl \
+    $(WebCore)/page/Performance+UserTiming.idl \
     $(WebCore)/page/Performance.idl \
     $(WebCore)/page/PerformanceEntry.idl \
     $(WebCore)/page/PerformanceMark.idl \

@@ -1049,6 +1049,10 @@ set(WebCore_NON_SVG_IDL_FILES
     page/NavigatorPlugins.idl
     page/NavigatorServiceWorker.idl
     page/NavigatorShare.idl
+    page/Performance+NavigationTiming.idl
+    page/Performance+PerformanceTimeline.idl
+    page/Performance+ResourceTiming.idl
+    page/Performance+UserTiming.idl
     page/Performance.idl
     page/PerformanceEntry.idl
     page/PerformanceMark.idl

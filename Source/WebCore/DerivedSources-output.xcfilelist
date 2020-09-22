@@ -1384,6 +1384,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentValidationErrors.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaymentValidationErrors.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPbkdf2Params.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPbkdf2Params.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance+NavigationTiming.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance+NavigationTiming.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance+PerformanceTimeline.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance+PerformanceTimeline.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance+ResourceTiming.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance+ResourceTiming.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance+UserTiming.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance+UserTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformance.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceEntry.cpp
