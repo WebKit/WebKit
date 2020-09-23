@@ -144,6 +144,7 @@ class AutoinstallImportHook(object):
                               "pytest-timeout-1.2.0/pytest_timeout.py")
 
     def _install_pytest(self):
+        self._ensure_autoinstalled_dir_is_in_sys_path()
         self._install("https://files.pythonhosted.org/packages/90/e3/e075127d39d35f09a500ebb4a90afd10f9ef0a1d28a6d09abeec0e444fdd/py-1.5.2.tar.gz",
                               "py-1.5.2/py")
         self._install("https://files.pythonhosted.org/packages/11/bf/cbeb8cdfaffa9f2ea154a30ae31a9d04a1209312e2919138b4171a1f8199/pluggy-0.6.0.tar.gz",

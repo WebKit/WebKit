@@ -1,3 +1,18 @@
+2020-09-23  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r267368) [webkitpy] autoinstalled pytest raises ImportError in run-webdriver-tests
+        https://bugs.webkit.org/show_bug.cgi?id=216879
+
+        Reviewed by Jonathan Bedard.
+
+        Autoinstalled pytest requires sys.path to be updated with the newly
+        installed packages. Before r267368 it worked because
+        webdriver_w3c_executor.py autoinstalled mozlog/mozprocess which
+        updated the sys.path.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_pytest):
+
 2020-09-23  Youenn Fablet  <youenn@apple.com>
 
         Add support for HTMLMediaElement.setSinkId
