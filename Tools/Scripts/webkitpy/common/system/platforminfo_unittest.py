@@ -64,7 +64,7 @@ def fake_platform(mac_version_string='10.6.3', release_string='bar', win_version
 def fake_executive(output=None):
     if output:
         return MockExecutive2(output=output)
-    return MockExecutive2(exception=SystemError)
+    return MockExecutive2(output='10.15.0\n')
 
 
 class TestPlatformInfo(unittest.TestCase):

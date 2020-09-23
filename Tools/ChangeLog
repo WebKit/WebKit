@@ -1,3 +1,16 @@
+2020-09-23  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Make sw_vers the source of truth for the MacOS version
+        https://bugs.webkit.org/show_bug.cgi?id=216903
+        <rdar://problem/69462735>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.__init__): Use sw_vers instead of platform.mac_ver().
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (fake_executive): Set a valid return value for sw_vers by default.
+
 2020-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Move TLS errors API from WebKitContext to WebKitWebsiteDataManager

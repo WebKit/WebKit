@@ -67,7 +67,7 @@ class PlatformInfo(object):
         self._is_cygwin = sys_module.platform == 'cygwin'
 
         if self.os_name.startswith('mac'):
-            self.os_version = Version.from_string(platform_module.mac_ver()[0])
+            self.os_version = Version.from_string(self._executive.run_command(['sw_vers', '-productVersion']).rstrip())
         elif self.os_name.startswith('win'):
             self.os_version = self._win_version()
         else:
