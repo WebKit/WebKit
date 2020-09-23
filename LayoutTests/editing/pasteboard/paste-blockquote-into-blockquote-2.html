@@ -19,7 +19,7 @@ blockquote {
 var sel = window.getSelection();
 var block = document.getElementById("block");
 
-sel.setPosition(block, 3);
+sel.setPosition(block, 1);
 document.execCommand("InsertHTML", false, "<span><blockquote type='cite'><blockquote type='cite'><div>Two</div><div>Three</div></blockquote></blockquote></span>");
 Markup.description("This tests pasting a nested blockquote into a blockquote. "
     + "The text \"One\" should be singly-blockquoted, and the text \"Two Three\" should be doubly-blockquoted. "

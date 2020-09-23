@@ -31,7 +31,7 @@ getSelection().setPosition(foo.childNodes[0], 0);
 document.execCommand("InsertNestedUnorderedList");
 Markup.dump("editor", "After inserting a nested list below the outer list");
 
-getSelection().setPosition(garply.childNodes[0], 3);
+getSelection().setPosition(garply.childNodes[0], garply.childNodes[0].childNodes.length);
 document.execCommand("InsertNestedOrderedList");
 Markup.dump("editor", "After inserting another list under a table cell");
 </script>

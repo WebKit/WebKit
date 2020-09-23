@@ -17,7 +17,7 @@ blockquote {
 var sel = window.getSelection();
 var block = document.getElementById("block");
 
-sel.setPosition(block, 3);
+sel.setPosition(block, 1);
 document.execCommand("InsertHTML", false, "<span><blockquote type='cite'><div>Two</div><div>Three</div></blockquote></span>");
 
 Markup.description(document.getElementById('description').textContent);

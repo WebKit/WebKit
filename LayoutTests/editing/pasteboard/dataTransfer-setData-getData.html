@@ -56,7 +56,7 @@ function moveMouseToCenterOfElement(element)
 
 function dragOntoDragTarget() {
     var e = document.getElementById("dragme");
-    window.getSelection().setBaseAndExtent(e, 0, e, 4); 
+    window.getSelection().setBaseAndExtent(e, 0, e, 1);
     x = e.offsetLeft + 10;
     y = e.offsetTop + e.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);

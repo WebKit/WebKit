@@ -1,3 +1,75 @@
+2020-09-23  Darin Adler  <darin@apple.com>
+
+        Selection API: Update more tests that depend on WebKit's legacy non-standard behavior to set up the selection
+        https://bugs.webkit.org/show_bug.cgi?id=216844
+
+        Reviewed by Ryosuke Niwa.
+
+        Discovered a batch of editing tests that accidentally rely on non-standard selection
+        behavior to set up the tests. In many cases, the tests were clearly written wrong, like
+        using character offsets but a container that is not a text node. These changes keep the
+        tests testing the same things they are today.
+
+        * editing/deleting/delete-block-merge-contents-025.html: Use the actual number of child
+        nodes rather than 2000000000.
+        * editing/deleting/delete-blockquote-large-offsets.html: Ditto. The "large offsets" in
+        the title of this bug might simply be something that can't actually be done in practice,
+        setting an offset that is much higher than the actual number of children. The old code
+        simply clamped the high value.
+
+        * editing/execCommand/format-block-typing-style.html: Use a 1 as an offset so we are
+        past the child text element, rather than 5, which was presumably an attempt at setting
+        an offset to a particular character, but using the wrong container node.
+
+        * editing/execCommand/insert-nested-lists-in-table.html: Use a computed offset instead
+        of a hardcoded, and too high, value of 3.
+
+        * editing/execCommand/outdent-selection.html: Use a 1 instead of a 2 for an offset on
+        a container node that has only one child.
+        * editing/input/select-all-clear-input-method.html: Use a 3 instead of a 5 for an
+        offset in a container that's a text node containing 3 characters.
+
+        * editing/inserting/insert-list-during-node-removal-crash.html: This one is a little
+        different. The code selected the entire document and used the deleteFromDocument method.
+        That function is specified to not do an end-user "editing" delete, but to literally
+        delete all the nodes. That includes all the script nodes. To fix the test, just select
+        the contents of the body of the document.
+
+        * editing/inserting/insert-list-in-table-assert.html: Use a 0 instead of a 1
+        for an offset inside an empty style element.
+        * editing/inserting/insert-list-in-table-cell-04.html: Use a 1 instead of a 2
+        as the offest for the end of the element, given the element had only one child.
+        * editing/inserting/insert-list-in-table-cell-08.html: Ditto.
+        * editing/inserting/page-zoom-font-size.html: Ditto, 1 instead of 12.
+
+        * editing/inserting/replace-at-visible-boundary.html: Select the image by setting end
+        points before and after it, rather than trying to set offsets inside the image with
+        offsets of 0 and 1, since 1 is an illegal offset in an image with no children.
+
+        * editing/pasteboard/dataTransfer-setData-getData.html: Use a 1 instead of a 4
+        for an offset inside the dragme element, which has one child, which was presumably
+        an attempt at setting an offset to a particular character, but using the wrong
+        container node.
+        * editing/pasteboard/drag-drop-to-data-url.html: Ditto.
+
+        * editing/pasteboard/paste-blockquote-into-blockquote-2.html: Use an offset of 1
+        instead of 3 inside the block element which has no children, which was presumably
+        an attempt at setting an offset to a particular character, but using the wrong
+        container node.
+
+        * editing/pasteboard/paste-blockquote-into-blockquote-3.html: Use a range to set
+        the selection after the endContent <br> element rather than trying to use an
+        offset of 1 inside that element, which has no children.
+
+        * editing/pasteboard/paste-blockquote-into-blockquote.html: Use an offset of 1
+        instead of 3 inside the block element which has no children, which was presumably
+        an attempt at setting an offset to a particular character, but using the wrong
+        container node.
+
+        * editing/pasteboard/paste-table-cells.html: Use an offset of 1 instead of 3
+        inside the table, so the selection is after the table body. Presumably the error
+        is that someone thought that the table row elements were each children of the table.
+
 2020-09-23  Philippe Normand  <pnormand@igalia.com>
 
         media/can-play-av1.html is not spec compliant

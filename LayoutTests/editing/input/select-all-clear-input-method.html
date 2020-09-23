@@ -11,7 +11,7 @@ WebKit should not delete contents.</p>
 if (window.testRunner) {
     var container = document.getElementById('container');
     container.firstChild.focus();
-    getSelection().setPosition(container.firstChild.firstChild, 5);
+    getSelection().setPosition(container.firstChild.firstChild, 3);
     if (window.textInputController) {
         Markup.description(document.getElementsByTagName('p')[0].textContent);
 

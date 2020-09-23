@@ -23,7 +23,9 @@
 
 var sel = window.getSelection();
 var endContent = document.getElementById("endContent");
-sel.setPosition(endContent, 1);
+var range = new Range;
+range.selectNode(endContent);
+sel.setPosition(range.endContainer, range.endOffset);
 document.execCommand("InsertHTML", false, "<blockquote type='cite'><div>two</div></blockquote>");
 
 Markup.description(document.getElementsByTagName('p')[0].innerText);

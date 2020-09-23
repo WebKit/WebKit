@@ -16,8 +16,8 @@
 
     window.onload = () => {
         TD.addEventListener("DOMNodeRemovedFromDocument", DomNodeEventHandler);
-        document.execCommand("selectAll", false);
-        window.getSelection().deleteFromDocument();
+        getSelection().setBaseAndExtent(document.body, 0, document.body, document.body.childNodes.length);
+        getSelection().deleteFromDocument();
     }
 </script>
 <body contenteditable="true"><table><td id=TD></td></table><li contenteditable="false"></li><div>a</div>

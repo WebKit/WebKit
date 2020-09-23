@@ -9,7 +9,7 @@ This tests setting caret inside a blockquote with a large offset and running exe
 if (window.testRunner)
     testRunner.dumpAsText();
 
-window.getSelection().setPosition(document.getElementById('blockquote'), 2000000000);
+window.getSelection().setPosition(document.getElementById('blockquote'), document.getElementById('blockquote').childNodes.length);
 document.execCommand("Delete");
 
 var test = document.getElementById('test');

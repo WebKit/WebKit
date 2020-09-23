@@ -6,7 +6,7 @@
     Markup.description('Exec insertOrderedList twice in a table removes the previously inserted list item:');
 
     var e = document.getElementById("element");
-    setSelectionCommand(e, 0, e, 2);
+    setSelectionCommand(e, 0, e, 1);
     Markup.dump('container', 'Before');
 
     document.execCommand("insertOrderedList");

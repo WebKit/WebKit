@@ -27,7 +27,7 @@ var s = window.getSelection();
 var p1 = document.getElementById("item1");
 var p2 = document.getElementById("item2");
 s.setPosition(p1, 0);
-s.setBaseAndExtent(p1, 0, p2, 2);
+s.setBaseAndExtent(p1, 0, p2, 1);
 document.execCommand("Outdent", false, "");
 Markup.description("This test uses the execCommand to Outdent the text below.\n" +
     "This demonstrates a bug: the content in the blockquote that's not in a list is pulled out of position.");
