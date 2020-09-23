@@ -381,7 +381,7 @@ def parse_args(args):
         options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/gpu-process/TestExpectations'))
         if not options.internal_feature:
             options.internal_feature = []
-        options.experimental_feature.append('UseGPUProcessForMedia')
+        options.internal_feature.append('UseGPUProcessForMedia')
         options.internal_feature.append('CaptureAudioInGPUProcessEnabled')
         options.internal_feature.append('RenderCanvasInGPUProcessEnabled')
         if options.result_report_flavor:

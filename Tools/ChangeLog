@@ -1,3 +1,15 @@
+2020-09-23  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r267403.
+
+        Caused 50+ Crashes on iOS Debug
+
+        Reverted changeset:
+
+        "Move Media in GPU Process flag from internal to experimental"
+        https://bugs.webkit.org/show_bug.cgi?id=216473
+        https://trac.webkit.org/changeset/267403
+
 2020-09-23  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r267368) [webkitpy] autoinstalled pytest raises ImportError in run-webdriver-tests

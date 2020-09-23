@@ -85,14 +85,6 @@ RequestIdleCallbackEnabled:
   humanReadableName: "requestIdleCallback"
   humanReadableDescription: "Enable requestIdleCallback support"
 
-UseGPUProcessForMedia:
-  type: bool
-  defaultValue: defaultUseGPUProcessForMedia()
-  condition: ENABLE(GPU_PROCESS)
-  humanReadableName: "Use GPU Process for media"
-  humanReadableDescription: "Do all media loading and playback in the GPU Process"
-  webcoreName: useGPUProcessForMedia
-
 MediaRecorderEnabled:
   type: bool
   defaultValue: defaultMediaRecorderEnabled()
