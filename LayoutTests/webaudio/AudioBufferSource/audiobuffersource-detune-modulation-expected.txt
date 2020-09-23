@@ -6,7 +6,7 @@ PASS Audit report
 PASS > [load-reference]  
 PASS < [load-reference] All assertions passed. (total 0 assertions) 
 PASS > [generate-verify]  
-FAIL X SNR is not greater than or equal to 93.32. Got 90.27890412800858. assert_true: expected true got false
+FAIL X SNR is not greater than or equal to 93.32. Got 90.27890412768754. assert_true: expected true got false
 PASS   : Maximum difference (in ulp units (16-bits)) is less than or equal to 1.0352. 
 PASS   : Number of differences between results is less than or equal to 0. 
 FAIL < [generate-verify] 1 out of 3 assertions were failed. assert_true: expected true got false

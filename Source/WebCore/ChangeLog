@@ -1,3 +1,22 @@
+2020-09-22  Chris Dumez  <cdumez@apple.com>
+
+        Slightly improve AudioBufferSourceNode resampling
+        https://bugs.webkit.org/show_bug.cgi?id=216859
+
+        Reviewed by Eric Carlson.
+
+        Slightly improve AudioBufferSourceNode resampling. Use simple linear extrapolation
+        to resample the data when we reach the end of the buffer. Previously, the last
+        sample would just be repeated enough times.
+
+        This is a merge of the following Blink change by Raymond Toy:
+        - https://chromium-review.googlesource.com/c/chromium/src/+/1211910/
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+
 2020-09-22  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Switch to new file name convention for partial interfaces

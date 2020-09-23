@@ -52,6 +52,19 @@ const double DefaultGrainDuration = 0.020; // 20ms
 // to minimize linear interpolation aliasing.
 const double MaxRate = 1024;
 
+static float computeSampleUsingLinearInterpolation(const float* source, unsigned readIndex, unsigned readIndex2, float interpolationFactor)
+{
+    if (readIndex == readIndex2 && readIndex >= 1) {
+        // We're at the end of the buffer, so just linearly extrapolate from the last two samples.
+        float sample1 = source[readIndex - 1];
+        float sample2 = source[readIndex];
+        return sample2 + (sample2 - sample1) * interpolationFactor;
+    }
+    float sample1 = source[readIndex];
+    float sample2 = source[readIndex2];
+    return sample1 + interpolationFactor * (sample2 - sample1);
+}
+
 ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioContext& context, AudioBufferSourceOptions&& options)
 {
     if (context.isStopped())
@@ -339,22 +352,18 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
         while (framesToProcess--) {
             unsigned readIndex = static_cast<unsigned>(floorf(virtualReadIndex));
-            double interpolationFactor = virtualReadIndex - readIndex;
+            float interpolationFactor = virtualReadIndex - readIndex;
 
             unsigned readIndex2 = readIndex + 1;
             if (readIndex2 >= maxFrame)
-                readIndex2 = loop() ? minFrame : maxFrame - 1;
+                readIndex2 = loop() ? minFrame : readIndex;
 
             // Linear interpolation.
             for (unsigned i = 0; i < numberOfChannels; ++i) {
                 float* destination = destinationChannels[i];
                 const float* source = sourceChannels[i];
 
-                double sample1 = source[readIndex];
-                double sample2 = source[readIndex2];
-                double sample = (1.0 - interpolationFactor) * sample1 + interpolationFactor * sample2;
-
-                destination[writeIndex] = narrowPrecisionToFloat(sample);
+                destination[writeIndex] = computeSampleUsingLinearInterpolation(source, readIndex, readIndex2, interpolationFactor);
             }
 
             writeIndex++;
@@ -371,7 +380,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     } else {
         while (framesToProcess--) {
             unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
-            double interpolationFactor = virtualReadIndex - readIndex;
+            float interpolationFactor = virtualReadIndex - readIndex;
 
             // For linear interpolation we need the next sample-frame too.
             unsigned readIndex2 = readIndex + 1;
@@ -393,11 +402,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
                 float* destination = destinationChannels[i];
                 const float* source = sourceChannels[i];
 
-                double sample1 = source[readIndex];
-                double sample2 = source[readIndex2];
-                double sample = (1.0 - interpolationFactor) * sample1 + interpolationFactor * sample2;
-
-                destination[writeIndex] = narrowPrecisionToFloat(sample);
+                destination[writeIndex] = computeSampleUsingLinearInterpolation(source, readIndex, readIndex2, interpolationFactor);
             }
             writeIndex++;
 

@@ -1,3 +1,15 @@
+2020-09-22  Chris Dumez  <cdumez@apple.com>
+
+        Slightly improve AudioBufferSourceNode resampling
+        https://bugs.webkit.org/show_bug.cgi?id=216859
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching-expected.txt:
+
 2020-09-22  Sam Sneddon  <gsnedders@apple.com>
 
         REGRESSION(r267354): Only import resource module on Darwin

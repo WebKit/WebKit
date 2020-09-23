@@ -326,9 +326,10 @@ webaudio/MediaStreamAudioSource/mediastreamaudiosourcenode.html [ Skip ]
 # Webaudio tests that are flaky.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner.html [ Pass Failure ]
 
-# Values in FAIL lines differ from machine to machine, we should be able to unskip them once they pass.
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling.html [ Pass Failure ]
+# This test is passing but the printed SNR value differs from machine to machine.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html [ Pass Failure ]
+
+# Values in FAIL lines differ from machine to machine, we should be able to unskip them once they pass.
 webaudio/AudioBufferSource/audiobuffersource-detune-modulation.html [ Pass Failure ]
 webaudio/AudioBufferSource/audiobuffersource-playbackrate-modulation.html [ Pass Failure ]
 
