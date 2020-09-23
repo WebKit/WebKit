@@ -1,3 +1,13 @@
+2020-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_SVG_FONTS macro
+        https://bugs.webkit.org/show_bug.cgi?id=216850
+
+        Reviewed by Don Olmstead.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+
 2020-09-23  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Change name of client decoder entitlement

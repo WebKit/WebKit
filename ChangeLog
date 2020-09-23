@@ -1,3 +1,19 @@
+2020-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_SVG_FONTS macro
+        https://bugs.webkit.org/show_bug.cgi?id=216850
+
+        Reviewed by Don Olmstead.
+
+        No ports have this disabled, so remove it.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2020-09-22  Keith Rollin  <krollin@apple.com>
 
         Unify debug and release target aliases

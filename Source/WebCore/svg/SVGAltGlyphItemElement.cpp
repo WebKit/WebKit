@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-#if ENABLE(SVG_FONTS)
 #include "SVGAltGlyphItemElement.h"
 
 #include "ElementIterator.h"
@@ -66,5 +65,3 @@ bool SVGAltGlyphItemElement::hasValidGlyphElements(Vector<String>& glyphNames) c
 }
 
 }
-
-#endif

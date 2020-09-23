@@ -574,9 +574,7 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
         resourceType = DiagnosticLoggingKeys::scriptKey();
         break;
     case CachedResource::Type::FontResource:
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
-#endif
         resourceType = DiagnosticLoggingKeys::fontKey();
         break;
     case CachedResource::Type::Beacon:

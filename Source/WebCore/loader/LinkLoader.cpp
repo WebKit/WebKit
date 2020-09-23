@@ -156,9 +156,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
         return makeUnique<LinkPreloadRawResourceClient>(loader, downcast<CachedRawResource>(resource));
     case CachedResource::Type::MainResource:
     case CachedResource::Type::Icon:
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
-#endif
     case CachedResource::Type::SVGDocumentResource:
 #if ENABLE(XSLT)
     case CachedResource::Type::XSLStyleSheet:

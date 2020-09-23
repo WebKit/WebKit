@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-#if ENABLE(SVG_FONTS)
 bool CSSFontFaceSrcValue::isSVGFontFaceSrc() const
 {
     return equalLettersIgnoringASCIICase(m_format, "svg");
@@ -47,7 +46,6 @@ bool CSSFontFaceSrcValue::isSVGFontTarget() const
 {
     return isSVGFontFaceSrc() || svgFontFaceElement();
 }
-#endif
 
 bool CSSFontFaceSrcValue::isSupportedFormat() const
 {
@@ -60,11 +58,7 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
         return true;
     }
 
-    return FontCustomPlatformData::supportsFormat(m_format)
-#if ENABLE(SVG_FONTS)
-           || isSVGFontFaceSrc()
-#endif
-           ;
+    return FontCustomPlatformData::supportsFormat(m_format) || isSVGFontFaceSrc();
 }
 
 String CSSFontFaceSrcValue::customCSSText() const

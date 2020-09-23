@@ -160,9 +160,7 @@ public:
 
     void updateStyleIfNeeded();
 
-#if ENABLE(SVG_FONTS)
     bool hasSVGFontFaceSource() const;
-#endif
     void setErrorState();
 
     Document* document() const;

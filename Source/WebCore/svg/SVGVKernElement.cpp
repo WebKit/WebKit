@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG_FONTS)
 #include "SVGVKernElement.h"
 
 #include "SVGFontElement.h"
@@ -87,5 +85,3 @@ Optional<SVGKerningPair> SVGVKernElement::buildVerticalKerningPair() const
 }
 
 }
-
-#endif // ENABLE(SVG_FONTS)

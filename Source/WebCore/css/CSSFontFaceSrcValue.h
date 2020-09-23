@@ -56,13 +56,11 @@ public:
 
     bool isSupportedFormat() const;
 
-#if ENABLE(SVG_FONTS)
     bool isSVGFontFaceSrc() const;
     bool isSVGFontTarget() const;
 
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
     void setSVGFontFaceElement(SVGFontFaceElement* element) { m_svgFontFaceElement = element; }
-#endif
 
     String customCSSText() const;
 
@@ -78,9 +76,7 @@ private:
         , m_resource(resource)
         , m_isLocal(local)
         , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
-#if ENABLE(SVG_FONTS)
         , m_svgFontFaceElement(0)
-#endif
     {
     }
 
@@ -91,9 +87,7 @@ private:
 
     CachedResourceHandle<CachedFont> m_cachedFont;
 
-#if ENABLE(SVG_FONTS)
     SVGFontFaceElement* m_svgFontFaceElement;
-#endif
 };
 
 } // namespace WebCore

@@ -23,8 +23,6 @@
 #include "config.h"
 #include "SVGAltGlyphElement.h"
 
-#if ENABLE(SVG_FONTS)
-
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
 #include "SVGAltGlyphDefElement.h"
@@ -96,5 +94,3 @@ bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
 }
 
 }
-
-#endif

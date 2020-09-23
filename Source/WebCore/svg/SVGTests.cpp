@@ -42,13 +42,11 @@ static const HashSet<String, ASCIICaseInsensitiveHash>& supportedSVGFeatures()
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> features = [] {
         static const char* const features10[] = {
-#if ENABLE(SVG_FONTS)
             "dom",
             "dom.svg",
             "dom.svg.static",
             "svg",
             "svg.static",
-#endif
         };
         static const char* const features11[] = {
             "animation",
@@ -87,14 +85,12 @@ static const HashSet<String, ASCIICaseInsensitiveHash>& supportedSVGFeatures()
             "view",
             "viewportattribute",
             "xlinkattribute",
-#if ENABLE(SVG_FONTS)
             "basicfont",
             "font",
             "svg",
             "svg-static",
             "svgdom",
             "svgdom-static",
-#endif
         };
         HashSet<String, ASCIICaseInsensitiveHash> set;
         for (auto& feature : features10)

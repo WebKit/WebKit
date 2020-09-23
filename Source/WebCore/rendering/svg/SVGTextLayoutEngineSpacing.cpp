@@ -21,13 +21,10 @@
 #include "SVGTextLayoutEngineSpacing.h"
 
 #include "FontCascade.h"
-#include "SVGLengthContext.h"
-#include "SVGRenderStyle.h"
-
-#if ENABLE(SVG_FONTS)
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
-#endif
+#include "SVGLengthContext.h"
+#include "SVGRenderStyle.h"
 
 namespace WebCore {
 

@@ -204,9 +204,7 @@ bool SVGTRefElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (parentNode()
         && (parentNode()->hasTagName(SVGNames::aTag)
-#if ENABLE(SVG_FONTS)
             || parentNode()->hasTagName(SVGNames::altGlyphTag)
-#endif
             || parentNode()->hasTagName(SVGNames::textTag)
             || parentNode()->hasTagName(SVGNames::textPathTag)
             || parentNode()->hasTagName(SVGNames::tspanTag)))

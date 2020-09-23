@@ -20,8 +20,6 @@
 
 #pragma once
 
-#if ENABLE(SVG_FONTS)
-
 #include "SVGElement.h"
 #include "SVGURIReference.h"
 
@@ -60,5 +58,3 @@ private:
 };
 
 }
-
-#endif

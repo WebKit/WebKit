@@ -21,8 +21,6 @@
 
 #pragma once
 
-#if ENABLE(SVG_FONTS)
-
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
 
@@ -55,5 +53,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

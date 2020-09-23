@@ -29,6 +29,7 @@
 #include "CSSFontFace.h"
 #include "CSSFontSelector.h"
 #include "CachedFont.h"
+#include "CachedSVGFont.h"
 #include "Document.h"
 #include "Font.h"
 #include "FontCache.h"
@@ -37,16 +38,11 @@
 #include "FontDescription.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SVGToOTFFontConversion.h"
-#include "SharedBuffer.h"
-
-#if ENABLE(SVG_FONTS)
-#include "CachedSVGFont.h"
-#include "FontCustomPlatformData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
+#include "SVGToOTFFontConversion.h"
 #include "SVGURIReference.h"
-#endif
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -75,15 +71,9 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
     , m_font(font)
     , m_face(owner)
     , m_immediateSource(WTFMove(arrayBufferView))
-#if ENABLE(SVG_FONTS)
     , m_svgFontFaceElement(makeWeakPtr(fontFace))
     , m_hasSVGFontFaceElement(m_svgFontFaceElement)
-#endif
 {
-#if !ENABLE(SVG_FONTS)
-    UNUSED_PARAM(fontFace);
-#endif
-
     // This may synchronously call fontLoaded().
     if (m_font)
         m_font->addClient(*this);
@@ -151,7 +141,6 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
         fontSelector->beginLoadingFontSoon(*m_font);
     } else {
         bool success = false;
-#if ENABLE(SVG_FONTS)
         if (m_hasSVGFontFaceElement) {
             if (m_svgFontFaceElement && is<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
                 ASSERT(!m_inDocumentCustomPlatformData);
@@ -163,9 +152,7 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
                     success = static_cast<bool>(m_inDocumentCustomPlatformData);
                 }
             }
-        } else
-#endif
-        if (m_immediateSource) {
+        } else if (m_immediateSource) {
             ASSERT(!m_immediateFontCustomPlatformData);
             bool wrapping;
             auto buffer = SharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
@@ -193,11 +180,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 {
     ASSERT(status() == Status::Success);
 
-#if ENABLE(SVG_FONTS)
     bool usesInDocumentSVGFont = m_hasSVGFontFaceElement;
-#else
-    bool usesInDocumentSVGFont = false;
-#endif
 
     if (!m_font && !usesInDocumentSVGFont) {
         if (m_immediateSource) {
@@ -224,23 +207,19 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     if (!usesInDocumentSVGFont)
         return nullptr;
 
-#if ENABLE(SVG_FONTS)
     if (!m_svgFontFaceElement || !is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
         return nullptr;
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
     return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities), Font::Origin::Remote);
-#endif
 
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-#if ENABLE(SVG_FONTS)
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {
     return m_hasSVGFontFaceElement || is<CachedSVGFont>(m_font.get());
 }
-#endif
 
 }

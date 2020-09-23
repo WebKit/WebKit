@@ -122,10 +122,8 @@ static CachedResource* createResource(CachedResource::Type type, CachedResourceR
         return new CachedScript(WTFMove(request), sessionID, cookieJar);
     case CachedResource::Type::SVGDocumentResource:
         return new CachedSVGDocument(WTFMove(request), sessionID, cookieJar);
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
         return new CachedSVGFont(WTFMove(request), sessionID, cookieJar);
-#endif
     case CachedResource::Type::FontResource:
         return new CachedFont(WTFMove(request), sessionID, cookieJar);
     case CachedResource::Type::Beacon:
@@ -213,12 +211,8 @@ ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::request
 
 ResourceErrorOr<CachedResourceHandle<CachedFont>> CachedResourceLoader::requestFont(CachedResourceRequest&& request, bool isSVG)
 {
-#if ENABLE(SVG_FONTS)
     if (isSVG)
         return castCachedResourceTo<CachedFont>(requestResource(CachedResource::Type::SVGFontResource, WTFMove(request)));
-#else
-    UNUSED_PARAM(isSVG);
-#endif
     return castCachedResourceTo<CachedFont>(requestResource(CachedResource::Type::FontResource, WTFMove(request)));
 }
 
@@ -340,10 +334,8 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
     case CachedResource::Type::FontResource:
         return MixedContentChecker::ContentType::Active;
 
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
         return MixedContentChecker::ContentType::Active;
-#endif
 
     case CachedResource::Type::Beacon:
     case CachedResource::Type::Ping:
@@ -402,9 +394,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::RawResource:
     case CachedResource::Type::Icon:
     case CachedResource::Type::ImageResource:
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
-#endif
     case CachedResource::Type::FontResource: {
         // These resources can corrupt only the frame's pixels.
         if (Frame* frame = this->frame()) {
@@ -455,9 +445,7 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
         if (!m_document->contentSecurityPolicy()->allowImageFromSource(url, redirectResponseReceived))
             return false;
         break;
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
-#endif
     case CachedResource::Type::FontResource:
         if (!m_document->contentSecurityPolicy()->allowFontFromSource(url, redirectResponseReceived))
             return false;
@@ -628,10 +616,8 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
     if (resource.type() == CachedResource::Type::FontResource)
         return false;
 
-#if ENABLE(SVG_FONTS)
     if (resource.type() == CachedResource::Type::SVGFontResource)
         return false;
-#endif
 
 #if ENABLE(XSLT)
     // Load is same-origin, we do not check for CORS.
@@ -752,9 +738,7 @@ static FetchOptions::Destination destinationForType(CachedResource::Type type)
     case CachedResource::Type::Script:
         return FetchOptions::Destination::Script;
     case CachedResource::Type::FontResource:
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
-#endif
         return FetchOptions::Destination::Font;
 #if ENABLE(XSLT)
     case CachedResource::Type::XSLStyleSheet:

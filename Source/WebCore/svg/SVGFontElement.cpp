@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG_FONTS)
 #include "SVGFontElement.h"
 
 #include "Document.h"
@@ -52,5 +50,3 @@ Ref<SVGFontElement> SVGFontElement::create(const QualifiedName& tagName, Documen
 }
 
 }
-
-#endif // ENABLE(SVG_FONTS)

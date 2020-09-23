@@ -21,7 +21,6 @@
 
 #include "config.h"
 
-#if ENABLE(SVG_FONTS)
 #include "SVGFontFaceElement.h"
 
 #include "CSSFontFaceSrcValue.h"
@@ -331,5 +330,3 @@ void SVGFontFaceElement::childrenChanged(const ChildChange& change)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG_FONTS)

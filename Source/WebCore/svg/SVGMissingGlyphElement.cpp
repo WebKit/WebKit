@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-#if ENABLE(SVG_FONTS)
 #include "SVGMissingGlyphElement.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
@@ -40,5 +39,3 @@ Ref<SVGMissingGlyphElement> SVGMissingGlyphElement::create(const QualifiedName& 
 }
 
 }
-
-#endif // ENABLE(SVG_FONTS)

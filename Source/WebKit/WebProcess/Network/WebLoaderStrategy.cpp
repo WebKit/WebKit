@@ -134,9 +134,7 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::Type::Ping:
     case CachedResource::Type::CSSStyleSheet:
     case CachedResource::Type::Script:
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
-#endif
     case CachedResource::Type::FontResource:
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:

@@ -2067,13 +2067,7 @@ if (ENABLE_MATHML)
     list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp)
 endif ()
 
-# SVG extra defines need to map to a numerical value for correct preprocessing of svgtags.in.
-set(SVG_EXTRA_DEFINES "")
-if (ENABLE_SVG_FONTS)
-    list(APPEND SVG_EXTRA_DEFINES "ENABLE_SVG_FONTS=1")
-endif ()
-
-GENERATE_DOM_NAMES(SVG ${WEBCORE_DIR}/svg/svgattrs.in ${WEBCORE_DIR}/svg/svgtags.in "${SVG_EXTRA_DEFINES}")
+GENERATE_DOM_NAMES(SVG ${WEBCORE_DIR}/svg/svgattrs.in ${WEBCORE_DIR}/svg/svgtags.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SVGNames.cpp)
 
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SVGElementFactory.cpp ${WebCore_DERIVED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp)

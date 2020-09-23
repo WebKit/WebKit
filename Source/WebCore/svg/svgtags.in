@@ -4,11 +4,9 @@ fallbackInterfaceName="SVGUnknownElement"
 fallbackJSInterfaceName="SVGElement"
 
 a
-#if ENABLE_SVG_FONTS
 altGlyph
 altGlyphDef
 altGlyphItem
-#endif
 animate
 animateColor
 animateMotion
@@ -49,30 +47,24 @@ feSpotLight
 feTile
 feTurbulence
 filter
-#if ENABLE_SVG_FONTS
 font
 font_face
 font_face_format
 font_face_name
 font_face_src
 font_face_uri
-#endif
 foreignObject
 g
-#if ENABLE_SVG_FONTS
 glyph
 glyphRef
 hkern interfaceName=SVGHKernElement
-#endif
 image
 line
 linearGradient
 marker
 mask
 metadata
-#if ENABLE_SVG_FONTS
 missing_glyph
-#endif
 mpath interfaceName=SVGMPathElement
 path
 pattern
@@ -93,6 +85,4 @@ tref interfaceName=SVGTRefElement
 tspan interfaceName=SVGTSpanElement
 use
 view
-#if ENABLE_SVG_FONTS
 vkern interfaceName=SVGVKernElement
-#endif

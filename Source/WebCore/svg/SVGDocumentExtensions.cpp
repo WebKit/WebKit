@@ -341,8 +341,6 @@ void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement& refe
     m_rebuildElements.removeFirst(&referencedElement);
 }
 
-#if ENABLE(SVG_FONTS)
-
 void SVGDocumentExtensions::registerSVGFontFaceElement(SVGFontFaceElement& element)
 {
     m_svgFontFaceElements.add(&element);
@@ -353,7 +351,5 @@ void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement& ele
     ASSERT(m_svgFontFaceElements.contains(&element));
     m_svgFontFaceElements.remove(&element);
 }
-
-#endif
 
 }

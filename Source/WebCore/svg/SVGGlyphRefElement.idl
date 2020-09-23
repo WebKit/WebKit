@@ -17,9 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    Conditional=SVG_FONTS
-] interface SVGGlyphRefElement : SVGElement {
+interface SVGGlyphRefElement : SVGElement {
     [Reflect=glyphRef] attribute DOMString glyphRef;
     [Reflect] attribute DOMString format;
     attribute unrestricted float x;

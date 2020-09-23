@@ -27,8 +27,6 @@
 #include "config.h"
 #include "CachedSVGFont.h"
 
-#if ENABLE(SVG_FONTS)
-
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SVGDocument.h"
@@ -133,5 +131,3 @@ SVGFontFaceElement* CachedSVGFont::firstFontFace(const AtomString& remoteURI)
 }
 
 }
-
-#endif

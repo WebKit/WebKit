@@ -19,8 +19,6 @@
 
 #pragma once
 
-#if ENABLE(SVG_FONTS)
-
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -38,5 +36,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG_FONTS)

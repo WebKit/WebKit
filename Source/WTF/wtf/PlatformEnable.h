@@ -454,10 +454,6 @@
 #define ENABLE_SPELLCHECK 0
 #endif
 
-#if !defined(ENABLE_SVG_FONTS)
-#define ENABLE_SVG_FONTS 1
-#endif
-
 #if !defined(ENABLE_TEXT_CARET)
 #define ENABLE_TEXT_CARET 1
 #endif

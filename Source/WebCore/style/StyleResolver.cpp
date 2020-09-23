@@ -123,13 +123,11 @@ Resolver::Resolver(Document& document)
 
 void Resolver::addCurrentSVGFontFaceRules()
 {
-#if ENABLE(SVG_FONTS)
     if (m_document.svgExtensions()) {
         const HashSet<SVGFontFaceElement*>& svgFontFaceElements = m_document.svgExtensions()->svgFontFaceElements();
         for (auto* svgFontFaceElement : svgFontFaceElements)
             m_document.fontSelector().addFontFaceRule(svgFontFaceElement->fontFaceRule(), svgFontFaceElement->isInUserAgentShadowTree());
     }
-#endif
 }
 
 void Resolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets)

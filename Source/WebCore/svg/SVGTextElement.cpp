@@ -76,9 +76,7 @@ bool SVGTextElement::childShouldCreateRenderer(const Node& child) const
 {
     if (child.isTextNode()
         || child.hasTagName(SVGNames::aTag)
-#if ENABLE(SVG_FONTS)
         || child.hasTagName(SVGNames::altGlyphTag)
-#endif
         || child.hasTagName(SVGNames::textPathTag)
         || child.hasTagName(SVGNames::trefTag)
         || child.hasTagName(SVGNames::tspanTag))

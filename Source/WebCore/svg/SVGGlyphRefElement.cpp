@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG_FONTS)
 #include "SVGGlyphRefElement.h"
 
 #include "SVGGlyphElement.h"
@@ -99,5 +97,3 @@ void SVGGlyphRefElement::setDy(float dy)
 }
 
 }
-
-#endif

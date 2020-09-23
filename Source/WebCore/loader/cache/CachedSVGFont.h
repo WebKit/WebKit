@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SVG_FONTS)
-
 #include "CachedFont.h"
 
 namespace WebCore {
@@ -57,5 +55,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedSVGFont, CachedResource::Type::SVGFontResource)
-
-#endif // ENABLE(SVG_FONTS)

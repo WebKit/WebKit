@@ -1,3 +1,12 @@
+2020-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_SVG_FONTS macro
+        https://bugs.webkit.org/show_bug.cgi?id=216850
+
+        Reviewed by Don Olmstead.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2020-09-23  Aakash Jain  <aakash_jain@apple.com>
 
         Limit number of emails to send for flaky and pre-existing API and layout test failures

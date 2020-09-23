@@ -19,8 +19,6 @@
 
 #pragma once
 
-#if ENABLE(SVG_FONTS)
-
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
 #include "SVGElement.h"
@@ -52,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG_FONTS)

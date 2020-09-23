@@ -475,9 +475,7 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     auto& svgChild = downcast<SVGElement>(child);
 
     static const QualifiedName* const invalidTextContent[] {
-#if ENABLE(SVG_FONTS)
         &SVGNames::altGlyphTag.get(),
-#endif
         &SVGNames::textPathTag.get(),
         &SVGNames::trefTag.get(),
         &SVGNames::tspanTag.get(),

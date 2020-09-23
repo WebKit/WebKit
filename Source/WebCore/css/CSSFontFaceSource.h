@@ -75,9 +75,7 @@ public:
     CachedFont* cachedFont() const { return m_font.get(); }
     bool requiresExternalResource() const { return m_font; }
 
-#if ENABLE(SVG_FONTS)
     bool isSVGFontFaceSource() const;
-#endif
 
 private:
     bool shouldIgnoreFontLoadCompletions() const;
@@ -94,15 +92,11 @@ private:
     RefPtr<JSC::ArrayBufferView> m_immediateSource;
     std::unique_ptr<FontCustomPlatformData> m_immediateFontCustomPlatformData;
 
-#if ENABLE(SVG_FONTS)
     WeakPtr<SVGFontFaceElement> m_svgFontFaceElement;
-#endif
     std::unique_ptr<FontCustomPlatformData> m_inDocumentCustomPlatformData;
 
     Status m_status { Status::Pending };
-#if ENABLE(SVG_FONTS)
     bool m_hasSVGFontFaceElement;
-#endif
 };
 
 } // namespace WebCore

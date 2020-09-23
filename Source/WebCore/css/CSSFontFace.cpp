@@ -71,10 +71,8 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
         SVGFontFaceElement* fontFaceElement = nullptr;
         bool foundSVGFont = false;
 
-#if ENABLE(SVG_FONTS)
         foundSVGFont = item.isSVGFontFaceSrc() || item.svgFontFaceElement();
         fontFaceElement = item.svgFontFaceElement();
-#endif
         if (!item.isLocal()) {
             const Settings* settings = document ? &document->settings() : nullptr;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
@@ -705,7 +703,6 @@ void CSSFontFace::updateStyleIfNeeded()
         m_fontSelector->document()->updateStyleIfNeeded();
 }
 
-#if ENABLE(SVG_FONTS)
 bool CSSFontFace::hasSVGFontFaceSource() const
 {
     size_t size = m_sources.size();
@@ -715,7 +712,6 @@ bool CSSFontFace::hasSVGFontFaceSource() const
     }
     return false;
 }
-#endif
 
 void CSSFontFace::setErrorState()
 {

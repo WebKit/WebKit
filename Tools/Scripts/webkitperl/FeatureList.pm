@@ -510,9 +510,6 @@ my @features = (
     { option => "spellcheck", desc => "Toggle Spellchecking support (requires Enchant)",
       define => "ENABLE_SPELLCHECK", value => \$spellcheckSupport },
 
-    { option => "svg-fonts", desc => "Toggle SVG Fonts support",
-      define => "ENABLE_SVG_FONTS", value => \$svgFontsSupport },
-
     { option => "telephone-number-detection", desc => "Toggle telephone number detection support",
       define => "ENABLE_TELEPHONE_NUMBER_DETECTION", value => \$telephoneNumberDetectionSupport },
 

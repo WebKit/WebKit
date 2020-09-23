@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SVGToOTFFontConversion.h"
 
-#if ENABLE(SVG_FONTS)
-
 #include "CSSStyleDeclaration.h"
 #include "ElementChildIterator.h"
 #include "Glyph.h"
@@ -1575,5 +1573,3 @@ Optional<Vector<char>> convertSVGToOTFFont(const SVGFontElement& element)
 }
 
 }
-
-#endif // ENABLE(SVG_FONTS)

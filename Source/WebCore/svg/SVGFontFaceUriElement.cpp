@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SVG_FONTS)
 #include "SVGFontFaceUriElement.h"
 
 #include "CSSFontFaceSrcValue.h"
@@ -119,5 +117,3 @@ void SVGFontFaceUriElement::loadFont()
 }
 
 }
-
-#endif // ENABLE(SVG_FONTS)

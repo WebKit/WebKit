@@ -132,9 +132,7 @@ Vector<CachedResource*> InspectorPageAgent::cachedResourcesForFrame(Frame* frame
         switch (cachedResource->type()) {
         case CachedResource::Type::ImageResource:
             // Skip images that were not auto loaded (images disabled in the user agent).
-#if ENABLE(SVG_FONTS)
         case CachedResource::Type::SVGFontResource:
-#endif
         case CachedResource::Type::FontResource:
             // Skip fonts that were referenced in CSS but never used/downloaded.
             if (cachedResource->stillNeedsLoad())
@@ -251,9 +249,7 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(Cache
     switch (type) {
     case CachedResource::Type::ImageResource:
         return InspectorPageAgent::ImageResource;
-#if ENABLE(SVG_FONTS)
     case CachedResource::Type::SVGFontResource:
-#endif
     case CachedResource::Type::FontResource:
         return InspectorPageAgent::FontResource;
 #if ENABLE(XSLT)

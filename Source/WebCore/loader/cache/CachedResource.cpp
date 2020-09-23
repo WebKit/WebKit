@@ -81,9 +81,7 @@ ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
     case Type::CSSStyleSheet:
     case Type::Script:
         return ResourceLoadPriority::High;
-#if ENABLE(SVG_FONTS)
     case Type::SVGFontResource:
-#endif
     case Type::MediaResource:
     case Type::FontResource:
     case Type::RawResource:
@@ -438,9 +436,7 @@ bool CachedResource::isCORSSameOrigin() const
 {
     // Following resource types do not use CORS
     ASSERT(type() != Type::FontResource);
-#if ENABLE(SVG_FONTS)
     ASSERT(type() != Type::SVGFontResource);
-#endif
 #if ENABLE(XSLT)
     ASSERT(type() != Type::XSLStyleSheet);
 #endif

@@ -1,3 +1,112 @@
+2020-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_SVG_FONTS macro
+        https://bugs.webkit.org/show_bug.cgi?id=216850
+
+        Reviewed by Don Olmstead.
+
+        * CMakeLists.txt:
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::appendSources):
+        (WebCore::CSSFontFace::hasSVGFontFaceSource const):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::load):
+        (WebCore::CSSFontFaceSource::font):
+        (WebCore::CSSFontFaceSource::isSVGFontFaceSource const):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::isSVGFontTarget const):
+        (WebCore::CSSFontFaceSrcValue::isSupportedFormat const):
+        * css/CSSFontFaceSrcValue.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::inspectorResourceType):
+        * loader/LinkLoader.cpp:
+        (WebCore::createLinkPreloadResourceClient):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::ContentExtensions::toResourceType):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType):
+        (WebCore::CachedResource::isCORSSameOrigin const):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestFont):
+        (WebCore::contentTypeFromResourceType):
+        (WebCore::CachedResourceLoader::checkInsecureContent const):
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest):
+        (WebCore::destinationForType):
+        * loader/cache/CachedSVGFont.cpp:
+        * loader/cache/CachedSVGFont.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::getStatistics):
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp:
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::addCurrentSVGFontFaceRules):
+        * svg/SVGAltGlyphDefElement.cpp:
+        * svg/SVGAltGlyphDefElement.h:
+        * svg/SVGAltGlyphDefElement.idl:
+        * svg/SVGAltGlyphElement.cpp:
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGAltGlyphElement.idl:
+        * svg/SVGAltGlyphItemElement.cpp:
+        * svg/SVGAltGlyphItemElement.h:
+        * svg/SVGAltGlyphItemElement.idl:
+        * svg/SVGDocumentExtensions.cpp:
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::childShouldCreateRenderer const):
+        * svg/SVGFontElement.cpp:
+        * svg/SVGFontElement.h:
+        * svg/SVGFontElement.idl:
+        * svg/SVGFontFaceElement.cpp:
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceElement.idl:
+        * svg/SVGFontFaceFormatElement.cpp:
+        * svg/SVGFontFaceFormatElement.h:
+        * svg/SVGFontFaceFormatElement.idl:
+        * svg/SVGFontFaceNameElement.cpp:
+        * svg/SVGFontFaceNameElement.h:
+        * svg/SVGFontFaceNameElement.idl:
+        * svg/SVGFontFaceSrcElement.cpp:
+        * svg/SVGFontFaceSrcElement.h:
+        * svg/SVGFontFaceSrcElement.idl:
+        * svg/SVGFontFaceUriElement.cpp:
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGFontFaceUriElement.idl:
+        * svg/SVGGlyphElement.cpp:
+        * svg/SVGGlyphElement.h:
+        * svg/SVGGlyphElement.idl:
+        * svg/SVGGlyphRefElement.cpp:
+        * svg/SVGGlyphRefElement.h:
+        * svg/SVGGlyphRefElement.idl:
+        * svg/SVGHKernElement.cpp:
+        * svg/SVGHKernElement.h:
+        * svg/SVGHKernElement.idl:
+        * svg/SVGMissingGlyphElement.cpp:
+        * svg/SVGMissingGlyphElement.h:
+        * svg/SVGMissingGlyphElement.idl:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::rendererIsNeeded):
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer const):
+        (WebCore::SVGTSpanElement::rendererIsNeeded):
+        * svg/SVGTests.cpp:
+        (WebCore::supportedSVGFeatures):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer const):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::elementFromRenderer):
+        * svg/SVGToOTFFontConversion.cpp:
+        * svg/SVGVKernElement.cpp:
+        * svg/SVGVKernElement.h:
+        * svg/SVGVKernElement.idl:
+        * svg/svgtags.in:
+
 2020-09-23  Tadeu Zagallo  <tzagallo@apple.com>
 
         Missing scope release in JSDOMBuiltinConstructorBase

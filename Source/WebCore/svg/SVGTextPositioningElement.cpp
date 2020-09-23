@@ -124,9 +124,7 @@ SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(Render
 
     if (!is<SVGTextElement>(element)
         && !is<SVGTSpanElement>(element)
-#if ENABLE(SVG_FONTS)
         && !is<SVGAltGlyphElement>(element)
-#endif
         && !is<SVGTRefElement>(element))
         return nullptr;
 

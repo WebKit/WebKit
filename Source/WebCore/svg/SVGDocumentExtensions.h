@@ -70,18 +70,14 @@ public:
     void clearTargetDependencies(SVGElement&);
     void rebuildElements();
 
-#if ENABLE(SVG_FONTS)
     const HashSet<SVGFontFaceElement*>& svgFontFaceElements() const { return m_svgFontFaceElements; }
     void registerSVGFontFaceElement(SVGFontFaceElement&);
     void unregisterSVGFontFaceElement(SVGFontFaceElement&);
-#endif
 
 private:
     Document& m_document;
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
-#if ENABLE(SVG_FONTS)
     HashSet<SVGFontFaceElement*> m_svgFontFaceElements;
-#endif
     HashMap<AtomString, RenderSVGResourceContainer*> m_resources;
     HashMap<AtomString, std::unique_ptr<PendingElements>> m_pendingResources; // Resources that are pending.
     HashMap<AtomString, std::unique_ptr<PendingElements>> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
