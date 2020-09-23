@@ -1,3 +1,15 @@
+2020-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Remove the redundant RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled() check from FloatingState::append
+        https://bugs.webkit.org/show_bug.cgi?id=216866
+
+        Reviewed by Simon Fraser.
+
+        The no-layout-box-for-the-FloatItem codepath is reserved for the IFC integration. This is temporary anyway.
+
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::append):
+
 2020-09-22  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] REGRESSION(r267329): imported/blink/editing/undo/crash-redo-with-iframes.html is crashing
