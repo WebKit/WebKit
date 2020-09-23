@@ -1,3 +1,14 @@
+2020-09-23  Tim Horton  <timothy_horton@apple.com>
+
+        Fix some typo'd wheel event listener logging
+        https://bugs.webkit.org/show_bug.cgi?id=216892
+
+        Reviewed by Wenson Hsieh.
+
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegion::uniteEventListeners):
+        Wheel is passive, NonPassiveWheel is active.
+
 2020-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_SVG_FONTS macro

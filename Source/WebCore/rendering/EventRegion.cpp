@@ -262,11 +262,11 @@ void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListe
 {
     if (eventListenerRegionTypes.contains(EventListenerRegionType::Wheel)) {
         m_wheelEventListenerRegion.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for wheel event listener");
+        LOG_WITH_STREAM(EventRegions, stream << " uniting for passive wheel event listener");
     }
     if (eventListenerRegionTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
         m_nonPassiveWheelEventListenerRegion.unite(region);
-        LOG_WITH_STREAM(EventRegions, stream << " uniting for passive wheel event listener");
+        LOG_WITH_STREAM(EventRegions, stream << " uniting for active wheel event listener");
     }
 }
 
