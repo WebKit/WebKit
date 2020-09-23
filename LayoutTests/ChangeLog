@@ -1,5 +1,14 @@
 2020-09-22  Karl Rackler  <rackler@apple.com>
 
+        REGRESSION: [ iOS wk2 ] http/wpt/cache-storage/quota-third-party.https.html is a flaky failure
+        rdar://69407691
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-09-22  Karl Rackler  <rackler@apple.com>
+
         REGRESSION: [ iOS wk2 ] fast/text/international/complex-character-based-fallback.html is a constant failure
         rdar://69401173
 
