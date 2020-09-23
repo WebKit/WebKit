@@ -1870,3 +1870,6 @@ fast/forms/ios/time-picker-value-change.html [ Timeout Failure ]
 
 #rdar://69401173 (REGRESSION: [ iOS wk2 ] fast/text/international/complex-character-based-fallback.html is a constant failure)
 fast/text/international/complex-character-based-fallback.html [ Failure ]
+
+#rdar://69407691 REGRESSION: [ iOS wk2 ] http/wpt/cache-storage/quota-third-party.https.html is a flaky failure
+http/wpt/cache-storage/quota-third-party.https.html [ Pass Failure ]
