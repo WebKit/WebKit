@@ -37,6 +37,7 @@
 #include "InlineFormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationPagination.h"
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
@@ -65,23 +66,23 @@ LineLayout::LineLayout(const RenderBlockFlow& flow)
 
 LineLayout::~LineLayout() = default;
 
-bool LineLayout::canUseFor(const RenderBlockFlow& flow, Optional<bool> couldUseSimpleLineLayout)
+bool LineLayout::isEnabled()
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+    return RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled();
+}
+
+bool LineLayout::canUseFor(const RenderBlockFlow& flow)
+{
+    if (!isEnabled())
         return false;
 
-    // Initially only a subset of SLL features is supported.
-    auto passesSimpleLineLayoutTest = valueOrCompute(couldUseSimpleLineLayout, [&] {
-        return SimpleLineLayout::canUseFor(flow);
-    });
-
-    return passesSimpleLineLayoutTest;
+    return canUseForLineLayout(flow);
 }
 
 bool LineLayout::canUseForAfterStyleChange(const RenderBlockFlow& flow, StyleDifference diff)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
-    return SimpleLineLayout::canUseForAfterStyleChange(flow, diff);
+    ASSERT(isEnabled());
+    return canUseForLineLayoutAfterStyleChange(flow, diff);
 }
 
 void LineLayout::updateStyle()

@@ -1,3 +1,35 @@
+2020-09-23  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Add canUseFor functions
+        https://bugs.webkit.org/show_bug.cgi?id=216869
+
+        Reviewed by Zalan Bujtas.
+
+        Copy the SLL canUseFor code.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/integration/LayoutIntegrationCoverage.cpp: Added.
+        (WebCore::LayoutIntegration::canUseForCharacter):
+        (WebCore::LayoutIntegration::canUseForText):
+        (WebCore::LayoutIntegration::canUseForFontAndText):
+        (WebCore::LayoutIntegration::canUseForStyle):
+        (WebCore::LayoutIntegration::canUseForLineLayoutWithReason):
+        (WebCore::LayoutIntegration::canUseForLineLayout):
+        (WebCore::LayoutIntegration::canUseForLineLayoutAfterStyleChange):
+        * layout/integration/LayoutIntegrationCoverage.h: Added.
+
+        Also switch to OptionSet.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::isEnabled):
+        (WebCore::LayoutIntegration::LineLayout::canUseFor):
+        (WebCore::LayoutIntegration::LineLayout::canUseForAfterStyleChange):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        (WebCore::LayoutIntegration::LineLayout::canUseFor): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+
 2020-09-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove redundant RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled from Line::Run::hasTrailingLetterSpacing

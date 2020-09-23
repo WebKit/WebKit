@@ -1455,6 +1455,7 @@ layout/inlineformatting/InlineLineBuilder.cpp
 layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/text/TextUtil.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
+layout/integration/LayoutIntegrationCoverage.cpp
 layout/integration/LayoutIntegrationLineLayout.cpp
 layout/integration/LayoutIntegrationPagination.cpp
 layout/invalidation/InvalidationContext.cpp
