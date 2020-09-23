@@ -47,6 +47,7 @@ public:
     ~AudioTrackPrivateMediaStream();
 
     void setTrackIndex(int index) { m_index = index; }
+    void setAudioOutputDevice(const String&);
 
     MediaStreamTrackPrivate& streamTrack() { return m_streamTrack.get(); }
 

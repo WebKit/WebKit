@@ -1166,6 +1166,16 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [audioRenderer setVolume:m_player->volume()];
     [audioRenderer setAudioTimePitchAlgorithm:(m_player->preservesPitch() ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
 
+#if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
+    auto deviceId = m_player->audioOutputDeviceIdOverride();
+    if (!deviceId.isNull()) {
+        if (deviceId.isEmpty())
+            audioRenderer.audioOutputDeviceUniqueID = nil;
+        else
+            audioRenderer.audioOutputDeviceUniqueID = deviceId;
+    }
+#endif
+
     @try {
         [m_synchronizer addRenderer:audioRenderer];
     } @catch(NSException *exception) {
@@ -1274,6 +1284,22 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime(WTF::Function<
         taskIn();
     }];
     return true;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::audioOutputDeviceChanged()
+{
+#if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
+    if (!m_player)
+        return;
+    auto deviceId = m_player->audioOutputDeviceId();
+    for (auto& key : m_sampleBufferAudioRendererMap.keys()) {
+        auto renderer = ((__bridge AVSampleBufferAudioRenderer *)key.get());
+        if (deviceId.isEmpty())
+            renderer.audioOutputDeviceUniqueID = nil;
+        else
+            renderer.audioOutputDeviceUniqueID = deviceId;
+    }
+#endif
 }
 
 WTFLogChannel& MediaPlayerPrivateMediaSourceAVFObjC::logChannel() const

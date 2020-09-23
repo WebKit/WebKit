@@ -268,6 +268,11 @@ public:
     double minFastReverseRate() const;
     double maxFastForwardRate() const;
 
+#if ENABLE(MEDIA_STREAM)
+    void setAudioOutputDevice(String&& deviceId, DOMPromiseDeferred<void>&&);
+    String audioOutputHashedDeviceId() const { return m_audioOutputHashedDeviceId; }
+#endif
+
     using HTMLMediaElementEnums::BufferingPolicy;
     void setBufferingPolicy(BufferingPolicy);
     WEBCORE_EXPORT BufferingPolicy bufferingPolicy() const;
@@ -604,6 +609,9 @@ protected:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
     SecurityOriginData documentSecurityOrigin() const final;
+
+    String audioOutputDeviceId() const final { return m_audioOutputPersistentDeviceId; }
+    String audioOutputDeviceIdOverride() const final { return m_audioOutputPersistentDeviceId; }
 
     bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }
     void setMediaControlsDependOnPageScaleFactor(bool);
@@ -1197,6 +1205,11 @@ private:
     bool m_isPlayingToWirelessTarget { false };
     bool m_playingOnSecondScreen { false };
     bool m_removedBehaviorRestrictionsAfterFirstUserGesture { false };
+
+    String m_audioOutputPersistentDeviceId;
+#if ENABLE(MEDIA_STREAM)
+    String m_audioOutputHashedDeviceId;
+#endif
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

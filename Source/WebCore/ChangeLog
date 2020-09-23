@@ -1,3 +1,68 @@
+2020-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Add support for HTMLMediaElement.setSinkId
+        https://bugs.webkit.org/show_bug.cgi?id=216696
+
+        Reviewed by Eric Carlson.
+
+        Implement setSinkId and sinkId as per https://w3c.github.io/mediacapture-output/#htmlmediaelement-extensions.
+        Introduce a setting to expose these methods and to enable/disable user gesture requirement.
+        Add interfaces to change device output for specific media players.
+        Add support for HLS, MSE and MediaStreamTrack renderers on MacOS.
+        In case of setting the empty string, the default output device is used
+
+        Tests: http/wpt/audio-output/setSinkId.https.html
+               imported/w3c/web-platform-tests/audio-output/idlharness.https.window.html
+               imported/w3c/web-platform-tests/audio-output/setSinkId.https.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::exposeDevices):
+        * Modules/mediastream/MediaDevices.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::audioOutputDevice const):
+        (WebCore::HTMLMediaElement::setAudioOutputDevice):
+        (WebCore::HTMLMediaElement::audioOutputDeviceId const):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::audioOutputHashedDeviceId const):
+        * html/HTMLMediaElementAudioOutput.idl: Added.
+        * page/Settings.yaml:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::audioOutputDeviceChanged):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::audioOutputDeviceId const):
+        (WebCore::MediaPlayerClient::audioOutputDeviceIdOverride const):
+        (WebCore::MediaPlayer::audioOutputDeviceId const):
+        (WebCore::MediaPlayer::audioOutputDeviceIdOverride const):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::audioOutputDeviceChanged):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::audioOutputDeviceChanged):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::audioOutputDeviceChanged):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateTracks):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::audioOutputDeviceChanged):
+        * platform/mediastream/AudioMediaStreamTrackRenderer.h:
+        (WebCore::AudioMediaStreamTrackRenderer::setAudioOutputDevice):
+        * platform/mediastream/AudioTrackPrivateMediaStream.cpp:
+        (WebCore::AudioTrackPrivateMediaStream::setAudioOutputDevice):
+        * platform/mediastream/AudioTrackPrivateMediaStream.h:
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::pushSamples):
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.h:
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.cpp:
+        (WebCore::AudioMediaStreamTrackRendererUnit::setAudioOutputDevice):
+        (WebCore::AudioMediaStreamTrackRendererUnit::createAudioUnitIfNeeded):
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.h:
+
 2020-09-23  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r267383): fast/mediastream/getUserMedia-webaudio.html is failing

@@ -202,6 +202,8 @@ void MediaDevices::exposeDevices(const Vector<CaptureDevice>& newDevices, const 
     bool canAccessMicrophone = checkMicrophoneAccess(document);
     bool canAccessSpeaker = checkSpeakerAccess(document);
 
+    m_audioOutputDeviceIdToPersistentId.clear();
+
     Vector<Ref<MediaDeviceInfo>> devices;
     for (auto& newDevice : newDevices) {
         if (!canAccessMicrophone && newDevice.type() == CaptureDevice::DeviceType::Microphone)
@@ -213,6 +215,9 @@ void MediaDevices::exposeDevices(const Vector<CaptureDevice>& newDevices, const 
 
         auto deviceId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(newDevice.persistentId(), deviceIDHashSalt);
         auto groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(newDevice.groupId(), m_groupIdHashSalt);
+
+        if (newDevice.type() == CaptureDevice::DeviceType::Speaker)
+            m_audioOutputDeviceIdToPersistentId.add(deviceId, newDevice.persistentId());
 
         devices.append(MediaDeviceInfo::create(newDevice.label(), WTFMove(deviceId), WTFMove(groupId), toMediaDeviceInfoKind(newDevice.type())));
     }

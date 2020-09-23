@@ -36,6 +36,11 @@
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
 #include <wtf/Lock.h>
 
+#if PLATFORM(COCOA)
+#include "CoreAudioCaptureDevice.h"
+#include "CoreAudioCaptureDeviceManager.h"
+#endif
+
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
@@ -49,6 +54,33 @@ AudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererUnit::singleton(
 AudioMediaStreamTrackRendererUnit::~AudioMediaStreamTrackRendererUnit()
 {
     stop();
+}
+
+void AudioMediaStreamTrackRendererUnit::setAudioOutputDevice(const String& deviceID)
+{
+#if PLATFORM(MAC)
+    auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(deviceID);
+
+    if (!device && !deviceID.isEmpty()) {
+        RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::setAudioOutputDeviceId - did not find device");
+        return;
+    }
+
+    auto audioUnitDeviceID = device ? device->deviceID() : 0;
+    if (m_deviceID == audioUnitDeviceID)
+        return;
+
+    bool shouldRestart = m_isStarted;
+    if (m_isStarted)
+        stop();
+
+    m_deviceID = audioUnitDeviceID;
+
+    if (shouldRestart)
+        start();
+#else
+    UNUSED_PARAM(deviceID);
+#endif
 }
 
 void AudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSource>&& source)
@@ -158,6 +190,16 @@ void AudioMediaStreamTrackRendererUnit::createAudioUnitIfNeeded()
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererUnit::createAudioUnit unable to enable vpio unit output, error = %d", error);
         return;
+    }
+#endif
+
+#if PLATFORM(MAC)
+    if (m_deviceID) {
+        error = AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &m_deviceID, sizeof(m_deviceID));
+        if (error) {
+            RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererUnit::createAudioUnit unable to set unit device ID %d, error %d (%.4s)", (int)m_deviceID, (int)error, (char*)&error);
+            return;
+        }
     }
 #endif
 

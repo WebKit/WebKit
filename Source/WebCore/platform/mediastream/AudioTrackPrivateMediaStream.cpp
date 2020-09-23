@@ -97,6 +97,11 @@ void AudioTrackPrivateMediaStream::setVolume(float volume)
     updateRenderer();
 }
 
+void AudioTrackPrivateMediaStream::setAudioOutputDevice(const String& deviceId)
+{
+    m_renderer->setAudioOutputDevice(deviceId);
+}
+
 float AudioTrackPrivateMediaStream::volume() const
 {
     return m_renderer->volume();

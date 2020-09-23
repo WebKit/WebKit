@@ -864,6 +864,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/HTMLMapElement.idl \
     $(WebCore)/html/HTMLMarqueeElement.idl \
     $(WebCore)/html/HTMLMediaElement.idl \
+    $(WebCore)/html/HTMLMediaElementAudioOutput.idl \
     $(WebCore)/html/HTMLMenuElement.idl \
     $(WebCore)/html/HTMLMenuItemElement.idl \
     $(WebCore)/html/HTMLMetaElement.idl \

@@ -953,6 +953,16 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     if (m_avPlayerItem)
         setAVPlayerItem(m_avPlayerItem.get());
 
+#if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
+    auto audioOutputDeviceId = player()->audioOutputDeviceIdOverride();
+    if (!audioOutputDeviceId.isNull()) {
+        if (audioOutputDeviceId.isEmpty())
+            m_avPlayer.get().audioOutputDeviceUniqueID = nil;
+        else
+            m_avPlayer.get().audioOutputDeviceUniqueID = audioOutputDeviceId;
+    }
+#endif
+
     setDelayCallbacks(false);
 }
 
@@ -3290,6 +3300,19 @@ void MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode(DynamicRan
         m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(mode);
 #else
     UNUSED_PARAM(mode);
+#endif
+}
+
+void MediaPlayerPrivateAVFoundationObjC::audioOutputDeviceChanged()
+{
+#if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
+    if (!m_avPlayer || !player())
+        return;
+    auto deviceId = player()->audioOutputDeviceId();
+    if (deviceId.isEmpty())
+        m_avPlayer.get().audioOutputDeviceUniqueID = nil;
+    else
+        m_avPlayer.get().audioOutputDeviceUniqueID = deviceId;
 #endif
 }
 

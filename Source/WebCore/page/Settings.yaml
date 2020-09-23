@@ -826,6 +826,12 @@ mediaKeysStorageDirectory:
 exposeSpeakersEnabled:
   initial: false
 
+perElementSpeakerSelectionEnabled:
+  initial: false
+
+speakerSelectionRequiresUserGesture:
+  initial: true
+
 mediaDeviceIdentifierStorageDirectory:
   type: String
   conditional: ENABLE(MEDIA_STREAM)

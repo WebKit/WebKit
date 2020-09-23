@@ -71,6 +71,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaController.h"
 #include "MediaControlsHost.h"
+#include "MediaDevices.h"
 #include "MediaDocument.h"
 #include "MediaError.h"
 #include "MediaFragmentURIParser.h"
@@ -78,6 +79,7 @@
 #include "MediaPlayer.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaResourceLoader.h"
+#include "NavigatorMediaDevices.h"
 #include "NetworkingContext.h"
 #include "PODIntervalTree.h"
 #include "Page.h"
@@ -2842,6 +2844,49 @@ void HTMLMediaElement::fastSeek(const MediaTime& time)
     MediaTime negativeTolerance = delta < MediaTime::zeroTime() ? MediaTime::positiveInfiniteTime() : delta;
     seekWithTolerance(time, negativeTolerance, MediaTime::zeroTime(), true);
 }
+
+#if ENABLE(MEDIA_STREAM)
+void HTMLMediaElement::setAudioOutputDevice(String&& deviceId, DOMPromiseDeferred<void>&& promise)
+{
+    auto* window = document().domWindow();
+    auto* mediaDevices = window ? NavigatorMediaDevices::mediaDevices(window->navigator()) : nullptr;
+    if (!mediaDevices) {
+        promise.reject(Exception { NotAllowedError });
+        return;
+    }
+
+    if (!document().processingUserGestureForMedia() && document().settings().speakerSelectionRequiresUserGesture()) {
+        promise.reject(Exception { NotAllowedError, "A user gesture is required"_s });
+        return;
+    }
+
+    if (deviceId.isEmpty())
+        deviceId = { };
+
+    if (deviceId == m_audioOutputHashedDeviceId) {
+        promise.resolve();
+        return;
+    }
+
+    String persistentId;
+    if (!deviceId.isNull()) {
+        persistentId = mediaDevices->deviceIdToPersistentId(deviceId);
+        if (persistentId.isNull()) {
+            promise.reject(Exception { NotFoundError });
+            return;
+        }
+    }
+
+    m_audioOutputPersistentDeviceId = WTFMove(persistentId);
+    if (m_player)
+        m_player->audioOutputDeviceChanged();
+
+    scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, [this, protectedThis = makeRef(*this), deviceId = WTFMove(deviceId), promise = WTFMove(promise)]() mutable {
+        m_audioOutputHashedDeviceId = WTFMove(deviceId);
+        promise.resolve();
+    });
+}
+#endif
 
 void HTMLMediaElement::seek(const MediaTime& time)
 {

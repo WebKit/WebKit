@@ -843,6 +843,7 @@ $(PROJECT_DIR)/html/HTMLLinkElement.idl
 $(PROJECT_DIR)/html/HTMLMapElement.idl
 $(PROJECT_DIR)/html/HTMLMarqueeElement.idl
 $(PROJECT_DIR)/html/HTMLMediaElement.idl
+$(PROJECT_DIR)/html/HTMLMediaElementAudioOutput.idl
 $(PROJECT_DIR)/html/HTMLMenuElement.idl
 $(PROJECT_DIR)/html/HTMLMenuItemElement.idl
 $(PROJECT_DIR)/html/HTMLMetaElement.idl

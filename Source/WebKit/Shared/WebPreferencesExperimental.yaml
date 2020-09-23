@@ -144,7 +144,14 @@ ExposeSpeakersEnabled:
   defaultValue: false
   humanReadableName: "Allow speaker device selection"
   humanReadableDescription: "Allow speaker device selection"
-  condition: ENABLE(WEB_RTC)
+  condition: ENABLE(MEDIA_STREAM)
+
+PerElementSpeakerSelectionEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Allow per media element speaker device selection"
+  humanReadableDescription: "Allow per media element speaker device selection"
+  condition: ENABLE(MEDIA_STREAM)
 
 VP9DecoderEnabled:
   type: bool

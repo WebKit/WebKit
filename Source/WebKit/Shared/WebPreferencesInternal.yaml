@@ -72,6 +72,13 @@ WebRTCMDNSICECandidatesEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
 
+SpeakerSelectionRequiresUserGesture:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Require a user gesture for speaker selection"
+  humanReadableDescription: "Require a user gesture for speaker selection"
+  condition: ENABLE(MEDIA_STREAM)
+
 FrameFlatteningEnabled:
   type: bool
   defaultValue: DEFAULT_FRAME_FLATTENING

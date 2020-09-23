@@ -992,6 +992,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetMediaPlaybackRequiresUserGesture(preferences, false);
     WKPreferencesSetVideoPlaybackRequiresUserGesture(preferences, false);
     WKPreferencesSetAudioPlaybackRequiresUserGesture(preferences, false);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, WKStringCreateWithUTF8CString("SpeakerSelectionRequiresUserGesture"));
 
     WKPreferencesSetShouldUseServiceWorkerShortTimeout(preferences, options.contextOptions.useServiceWorkerShortTimeout);
 

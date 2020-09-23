@@ -159,6 +159,7 @@ private:
     bool ended() const override { return m_ended; }
 
     void setBufferingPolicy(MediaPlayer::BufferingPolicy) override;
+    void audioOutputDeviceChanged() final;
 
     MediaPlayer::ReadyState currentReadyState();
     void updateReadyState();

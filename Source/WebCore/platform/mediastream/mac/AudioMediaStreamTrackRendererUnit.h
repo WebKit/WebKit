@@ -51,6 +51,8 @@ public:
     void start();
     void stop();
 
+    void setAudioOutputDevice(const String&);
+
     void addSource(Ref<AudioSampleDataSource>&&);
     void removeSource(AudioSampleDataSource&);
 
@@ -68,6 +70,9 @@ private:
     bool m_shouldUpdateRenderSources { false };
     Lock m_sourcesLock;
     bool m_isStarted { false };
+#if PLATFORM(MAC)
+    uint32_t m_deviceID { 0 };
+#endif
 };
 
 }

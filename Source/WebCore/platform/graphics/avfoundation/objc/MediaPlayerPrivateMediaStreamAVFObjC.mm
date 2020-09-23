@@ -867,7 +867,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
 {
     MediaStreamTrackPrivateVector currentTracks = m_mediaStreamPrivate->tracks();
 
-    auto setAudioTrackState = [this](AudioTrackPrivateMediaStream& track, int index, TrackState state)
+    auto deviceId = m_player->audioOutputDeviceIdOverride();
+    auto setAudioTrackState = [this, &deviceId](AudioTrackPrivateMediaStream& track, int index, TrackState state)
     {
         switch (state) {
         case TrackState::Remove:
@@ -884,6 +885,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             track.setVolume(m_volume);
             track.setMuted(m_muted);
             track.setEnabled(track.streamTrack().enabled() && !track.streamTrack().muted());
+            if (!deviceId.isNull())
+                track.setAudioOutputDevice(deviceId);
+
             if (playing())
                 track.play();
             break;
@@ -1015,6 +1019,15 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setBufferingPolicy(MediaPlayer::Buffe
 {
     if (policy != MediaPlayer::BufferingPolicy::Default && m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer->flushAndRemoveImage();
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::audioOutputDeviceChanged()
+{
+    if (!m_player)
+        return;
+    auto deviceId = m_player->audioOutputDeviceId();
+    for (auto& audioTrack : m_audioTrackMap.values())
+        audioTrack->setAudioOutputDevice(deviceId);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(Function<void ()>&& function)

@@ -89,6 +89,8 @@ public:
     void enumerateDevices(EnumerateDevicesPromise&&);
     MediaTrackSupportedConstraints getSupportedConstraints();
 
+    String deviceIdToPersistentId(const String& deviceId) const { return m_audioOutputDeviceIdToPersistentId.get(deviceId); }
+
     using RefCounted<MediaDevices>::ref;
     using RefCounted<MediaDevices>::deref;
 
@@ -130,6 +132,9 @@ private:
 
     OptionSet<GestureAllowedRequest> m_requestTypesForCurrentGesture;
     WeakPtr<UserGestureToken> m_currentGestureToken;
+
+    HashMap<String, String> m_audioOutputDeviceIdToPersistentId;
+    String m_audioOutputDeviceId;
 };
 
 } // namespace WebCore

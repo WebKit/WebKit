@@ -53,6 +53,8 @@ public:
     virtual void setVolume(float);
     float volume() const;
 
+    virtual void setAudioOutputDevice(const String&);
+
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, const void*);
 #endif
@@ -108,6 +110,10 @@ inline const char* AudioMediaStreamTrackRenderer::logClassName() const
     return "AudioMediaStreamTrackRenderer";
 }
 #endif
+
+inline void AudioMediaStreamTrackRenderer::setAudioOutputDevice(const String&)
+{
+}
 
 }
 

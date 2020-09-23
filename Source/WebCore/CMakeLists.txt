@@ -919,6 +919,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLMapElement.idl
     html/HTMLMarqueeElement.idl
     html/HTMLMediaElement.idl
+    html/HTMLMediaElementAudioOutput.idl
     html/HTMLMenuElement.idl
     html/HTMLMenuItemElement.idl
     html/HTMLMetaElement.idl

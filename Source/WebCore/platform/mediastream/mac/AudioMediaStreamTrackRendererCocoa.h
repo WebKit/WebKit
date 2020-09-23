@@ -53,9 +53,11 @@ private:
     void stop() final;
     void clear() final;
     void setVolume(float) final;
+    void setAudioOutputDevice(const String&) final;
 
     std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
     RefPtr<AudioSampleDataSource> m_dataSource;
+    bool m_shouldReset { false };
 };
 
 }

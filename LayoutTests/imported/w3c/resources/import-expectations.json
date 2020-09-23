@@ -49,7 +49,7 @@
     "web-platform-tests/apng": "skip", 
     "web-platform-tests/app-uri": "skip", 
     "web-platform-tests/assumptions": "skip", 
-    "web-platform-tests/audio-output": "skip", 
+    "web-platform-tests/audio-output": "import", 
     "web-platform-tests/auxclick": "skip", 
     "web-platform-tests/background-fetch": "import", 
     "web-platform-tests/battery-status": "skip", 

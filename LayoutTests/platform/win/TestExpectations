@@ -859,6 +859,9 @@ imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
 http/tests/media/media-stream [ Skip ]
 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ]
 
+http/wpt/audio-output [ Skip ]
+imported/w3c/web-platform-tests/audio-output [ Skip ]
+
 # needs enhanced eventSender.contextMenu() return value
 #webkit.org/b/45021 media/context-menu-actions.html
 

@@ -254,6 +254,7 @@ private:
 #endif
 
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
+    void audioOutputDeviceChanged() final;
 
     void ensureLayer();
     void destroyLayer();

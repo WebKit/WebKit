@@ -1,3 +1,13 @@
+2020-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Add support for HTMLMediaElement.setSinkId
+        https://bugs.webkit.org/show_bug.cgi?id=216696
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2020-09-22  Keith Rollin  <krollin@apple.com>
 
         Unify debug and release target aliases

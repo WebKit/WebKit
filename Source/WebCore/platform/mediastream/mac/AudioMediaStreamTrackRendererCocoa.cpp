@@ -67,11 +67,18 @@ void AudioMediaStreamTrackRendererCocoa::setVolume(float volume)
         m_dataSource->setVolume(volume);
 }
 
+void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& deviceId)
+{
+    // FIXME: We should create a unit for ourselves here or use the default unit if deviceId is matching.
+    AudioMediaStreamTrackRendererUnit::singleton().setAudioOutputDevice(deviceId);
+    m_shouldReset = true;
+}
+
 void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
     ASSERT(!isMainThread());
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
-    if (!m_dataSource || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
+    if (!m_dataSource || m_shouldReset || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
         auto dataSource = AudioSampleDataSource::create(description.sampleRate() * 2, *this);
 
         if (dataSource->setInputFormat(toCAAudioStreamDescription(description))) {
@@ -95,6 +102,7 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
             AudioMediaStreamTrackRendererUnit::singleton().addSource(WTFMove(newSource));
         });
         m_dataSource = WTFMove(dataSource);
+        m_shouldReset = false;
     }
 
     m_dataSource->pushSamples(sampleTime, audioData, sampleCount);

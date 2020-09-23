@@ -273,6 +273,9 @@ public:
 
     virtual SecurityOriginData documentSecurityOrigin() const { return { }; }
 
+    virtual String audioOutputDeviceId() const { return { }; }
+    virtual String audioOutputDeviceIdOverride() const { return { }; }
+
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;
@@ -631,6 +634,10 @@ public:
     DynamicRangeMode preferredDynamicRangeMode() const { return m_preferredDynamicRangeMode; }
     void setPreferredDynamicRangeMode(DynamicRangeMode);
 
+    String audioOutputDeviceId() const;
+    String audioOutputDeviceIdOverride() const;
+    void audioOutputDeviceChanged();
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
@@ -704,6 +711,16 @@ public:
     WEBCORE_EXPORT static void setRegisterRemotePlayerCallback(RegisterRemotePlayerCallback&&);
 };
 
+
+inline String MediaPlayer::audioOutputDeviceId() const
+{
+    return m_client ? m_client->audioOutputDeviceId() : String { };
+}
+
+inline String MediaPlayer::audioOutputDeviceIdOverride() const
+{
+    return m_client ? m_client->audioOutputDeviceIdOverride() : String { };
+}
 
 } // namespace WebCore
 

@@ -65,6 +65,9 @@ inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ]
 http/tests/navigation/page-cache-mediastream.html [ Skip ]
 
+http/wpt/audio-output [ Skip ]
+imported/w3c/web-platform-tests/audio-output [ Skip ]
+
 # Datalist is unsupported in WK1
 accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]
