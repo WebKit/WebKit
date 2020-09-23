@@ -1730,7 +1730,7 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
 
         flaky_stress_failures = first_run_stress_failures.union(second_run_stress_failures) - first_run_stress_failures.intersection(second_run_stress_failures)
         flaky_binary_failures = first_run_binary_failures.union(second_run_binary_failures) - first_run_binary_failures.intersection(second_run_binary_failures)
-        flaky_failures = list(flaky_binary_failures) + list(flaky_stress_failures)
+        flaky_failures = (list(flaky_binary_failures) + list(flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
 
         new_stress_failures = stress_failures_with_patch - clean_tree_stress_failures
@@ -1769,7 +1769,7 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
             message = ''
             if clean_tree_failures:
                 message = 'Found {} pre-existing JSC test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
-                for clean_tree_failure in clean_tree_failures:
+                for clean_tree_failure in clean_tree_failures[:self.NUM_FAILURES_TO_DISPLAY]:
                     self.send_email_for_pre_existing_failure(clean_tree_failure)
             if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'

@@ -1,3 +1,13 @@
+2020-09-22  Aakash Jain  <aakash_jain@apple.com>
+
+        Limit number of emails to send for flaky and pre-existing JSC test failures
+        https://bugs.webkit.org/show_bug.cgi?id=216857
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeJSCTestsResults.start):
+
 2020-09-22  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r266075): WebContent process crashes at TextManipulationController::getPath
