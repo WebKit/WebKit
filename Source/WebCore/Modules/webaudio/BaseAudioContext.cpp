@@ -1303,19 +1303,13 @@ void BaseAudioContext::addConsoleMessage(MessageSource source, MessageLevel leve
 
 void BaseAudioContext::clearPendingActivity()
 {
-    if (!m_pendingActivity)
-        return;
     m_pendingActivity = nullptr;
-    // FIXME: Remove this specific deref() and ref() call in makePendingActivity().
-    deref();
 }
 
 void BaseAudioContext::makePendingActivity()
 {
-    if (m_pendingActivity)
-        return;
-    m_pendingActivity = ActiveDOMObject::makePendingActivity(*this);
-    ref();
+    if (!m_pendingActivity)
+        m_pendingActivity = ActiveDOMObject::makePendingActivity(*this);
 }
 
 PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)

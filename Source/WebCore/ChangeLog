@@ -1,5 +1,25 @@
 2020-09-23  Chris Dumez  <cdumez@apple.com>
 
+        Use less explicit ref() / deref() calls in WebAudio code
+        https://bugs.webkit.org/show_bug.cgi?id=216894
+
+        Reviewed by Darin Adler.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::clearPendingActivity):
+        (WebCore::BaseAudioContext::makePendingActivity):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        (WebCore::MediaElementAudioSourceNode::process):
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+
+2020-09-23  Chris Dumez  <cdumez@apple.com>
+
         Turn off the legacy prefixed WebAudio API
         https://bugs.webkit.org/show_bug.cgi?id=216886
 

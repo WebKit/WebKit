@@ -5034,9 +5034,8 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 
 #if ENABLE(WEB_AUDIO)
     if (m_audioSourceNode && audioSourceProvider()) {
-        m_audioSourceNode->lock();
+        auto locker = holdLock(m_audioSourceNode->processLock());
         audioSourceProvider()->setClient(m_audioSourceNode);
-        m_audioSourceNode->unlock();
     }
 #endif
 
@@ -6583,8 +6582,8 @@ void HTMLMediaElement::createMediaPlayer()
     INFO_LOG(LOGIDENTIFIER);
 
 #if ENABLE(WEB_AUDIO)
-    if (m_audioSourceNode)
-        m_audioSourceNode->lock();
+    auto protectedAudioSourceNode = makeRefPtr(m_audioSourceNode);
+    Locker<Lock> audioSourceNodeLocker(m_audioSourceNode ? &m_audioSourceNode->processLock() : nullptr);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -6609,8 +6608,6 @@ void HTMLMediaElement::createMediaPlayer()
         // When creating the player, make sure its AudioSourceProvider knows about the MediaElementAudioSourceNode.
         if (audioSourceProvider())
             audioSourceProvider()->setClient(m_audioSourceNode);
-
-        m_audioSourceNode->unlock();
     }
 #endif
 

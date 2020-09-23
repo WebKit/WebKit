@@ -95,12 +95,13 @@ ExceptionOr<void> OfflineAudioDestinationNode::startRendering()
         return Exception { InvalidStateError, "Already started rendering"_s };
 
     m_startedRendering = true;
-    ref();
+    auto protectedThis = makeRef(*this);
+
     // FIXME: Should we call lazyInitialize here?
     // FIXME: We should probably limit the number of threads we create for offline audio.
-    m_renderThread = Thread::create("offline renderer", [this] {
+    m_renderThread = Thread::create("offline renderer", [this, protectedThis = WTFMove(protectedThis)]() mutable {
         auto result = offlineRender();
-        callOnMainThread([this, result, currentSampleFrame = m_currentSampleFrame] {
+        callOnMainThread([this, result, currentSampleFrame = m_currentSampleFrame, protectedThis = WTFMove(protectedThis)] {
             m_startedRendering = false;
             switch (result) {
             case OfflineRenderResult::Failure:
@@ -113,7 +114,6 @@ ExceptionOr<void> OfflineAudioDestinationNode::startRendering()
                 context().didSuspendRendering(currentSampleFrame);
                 break;
             }
-            deref();
         });
     }, ThreadType::Audio);
     return { };

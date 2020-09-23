@@ -85,6 +85,7 @@ MediaElementAudioSourceNode::~MediaElementAudioSourceNode()
 
 void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
 {
+    auto protectedThis = makeRef(*this);
     m_muted = wouldTaintOrigin();
 
     if (numberOfChannels != m_sourceNumberOfChannels || sourceSampleRate != m_sourceSampleRate) {
@@ -100,7 +101,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
         m_sourceSampleRate = sourceSampleRate;
 
         // Synchronize with process().
-        auto locker = holdLock(*this);
+        auto locker = holdLock(m_processLock);
 
         if (sourceSampleRate != sampleRate()) {
             double scaleFactor = sourceSampleRate / sampleRate();
@@ -146,7 +147,7 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
     // Use a std::try_to_lock to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the HTMLMediaElement must be in the middle of
     // reconfiguring its playback engine, so we output silence in this case.
-    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_processLock, std::try_to_lock);
     if (!lock.owns_lock()) {
         // We failed to acquire the lock.
         outputBus->zero();
@@ -175,18 +176,6 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
 
 void MediaElementAudioSourceNode::reset()
 {
-}
-
-void MediaElementAudioSourceNode::lock()
-{
-    ref();
-    m_processMutex.lock();
-}
-
-void MediaElementAudioSourceNode::unlock()
-{
-    m_processMutex.unlock();
-    deref();
 }
 
 } // namespace WebCore
