@@ -1,3 +1,18 @@
+2020-09-23  Cathie Chen  <cathiechen@igalia.com>
+
+        Wheel event phases of FrameView are not handled correctly
+        https://bugs.webkit.org/show_bug.cgi?id=216870
+
+        Reviewed by Simon Fraser.
+
+        In AsyncScrollingCoordinator::handleWheelEventPhase, the scrollAnimator of a FrameView should be from FrameView itself, not ScrollableArea.
+        It doesn't call nodeDidHandleEvent to handle wheel event phases when !asyncFrameOrOverflowScrollingEnabled. Should call it after handleWheelEvent.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::handleWheelEventPhase): When nodeID is FrameView, we should use the scrollAnimator of FrameView instead.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent): If wheelEvent is handled, we should call nodeDidHandleEvent to handle the phases.
+
 2020-09-23  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Add canUseFor functions

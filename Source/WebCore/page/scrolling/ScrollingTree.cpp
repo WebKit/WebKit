@@ -107,8 +107,12 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
         if (!m_rootNode)
             return WheelEventHandlingResult::unhandled();
 
-        if (!asyncFrameOrOverflowScrollingEnabled())
-            return m_rootNode->handleWheelEvent(wheelEvent);
+        if (!asyncFrameOrOverflowScrollingEnabled()) {
+            auto result = m_rootNode->handleWheelEvent(wheelEvent);
+            if (result.wasHandled)
+                m_gestureState.nodeDidHandleEvent(m_rootNode->scrollingNodeID(), wheelEvent);
+            return result;
+        }
 
         if (m_gestureState.handleGestureCancel(wheelEvent)) {
             clearNodesWithUserScrollInProgress();
