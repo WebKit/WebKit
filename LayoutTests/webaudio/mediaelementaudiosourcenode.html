@@ -18,7 +18,7 @@ var context = 0;
 function runTest() {
     window.jsTestIsAsync = true;
 
-    context = new webkitAudioContext();
+    context = new AudioContext();
 
     audioElement = new Audio();
     mediaSource = context.createMediaElementSource(audioElement);
@@ -74,7 +74,7 @@ function runTest() {
         testPassed("createMediaElementSource() threw error when called twice on same HTMLMediaElement.");
     }
 
-    shouldThrow("context.createMediaElementSource(null)", "'TypeError: Argument 1 (\\'mediaElement\\') to webkitAudioContext.createMediaElementSource must be an instance of HTMLMediaElement'");
+    shouldThrow("context.createMediaElementSource(null)", "'TypeError: Argument 1 (\\'mediaElement\\') to AudioContext.createMediaElementSource must be an instance of HTMLMediaElement'");
 
     finishJSTest();
 }

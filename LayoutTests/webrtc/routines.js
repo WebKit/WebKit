@@ -167,7 +167,7 @@ function waitForVideoSize(video, width, height, count)
 
 async function doHumAnalysis(stream, expected)
 {
-    var context = new webkitAudioContext();
+    var context = new AudioContext();
     for (var cptr = 0; cptr < 20; cptr++) {
         var results = await analyseAudio(stream, 200, context);
         if (results.heardHum === expected)

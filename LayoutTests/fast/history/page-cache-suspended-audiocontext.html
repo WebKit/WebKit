@@ -26,7 +26,7 @@ window.addEventListener("pagehide", function(event) {
 
 window.addEventListener('load', function() {
     // The newly constructed AudioContext is initially in suspended state.
-    audioContext = new webkitAudioContext();
+    audioContext = new AudioContext();
 
     // Needs to happen outside the onload handler so that a history item is created.
     setTimeout(function() {

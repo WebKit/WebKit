@@ -3295,7 +3295,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled([preferences webAudioEnabled]);
-    settings.setPrefixedWebAudioEnabled([preferences webAudioEnabled]);
+    settings.setPrefixedWebAudioEnabled(false);
     settings.setModernUnprefixedWebAudioEnabled([preferences modernUnprefixedWebAudioEnabled]);
 #endif
 

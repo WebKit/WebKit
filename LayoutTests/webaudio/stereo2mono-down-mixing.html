@@ -45,7 +45,7 @@ function runTest() {
     window.jsTestIsAsync = true;
 
     // Create offline audio context, the destination is mono.
-    context = new webkitOfflineAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
+    context = new OfflineAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
     // Create a stereo AudioBuffer.
     toneBuffer = createDataBuffer(context, renderLengthSeconds);
 

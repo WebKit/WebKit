@@ -6,13 +6,13 @@
 <script>
 
 function createContext() {
-    let context = new webkitOfflineAudioContext(2, 1000, 44100);
+    let context = new OfflineAudioContext(2, 1000, 44100);
     if (window.internals)
         return internals.observeGC(context);
 }
 
 function createRenderingContext(completeCallback) {
-    let context = new webkitOfflineAudioContext(2, 1000, 44100);
+    let context = new OfflineAudioContext(2, 1000, 44100);
     let node = context.createBufferSource();
     node.connect(context.destination);
     node.start();

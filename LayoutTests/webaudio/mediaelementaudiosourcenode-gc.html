@@ -19,7 +19,7 @@ function runTest() {
     }
 
     audioElement = document.createElement("audio");
-    context = new webkitOfflineAudioContext(1, 1000, 44100);
+    context = new AudioContext({ sampleRate: 44100 });
     source = context.createMediaElementSource(audioElement);
     audioElement = null;
     context = null;

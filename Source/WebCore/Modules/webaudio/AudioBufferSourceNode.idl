@@ -43,8 +43,8 @@
 
     // FIXME: Those constants are kept for backward compatibility with the prefixed API and should
     // be removed once we stop supporting it.
-    const unsigned short UNSCHEDULED_STATE = 0;
-    const unsigned short SCHEDULED_STATE = 1;
-    const unsigned short PLAYING_STATE = 2;
-    const unsigned short FINISHED_STATE = 3;
+    [EnabledBySetting=PrefixedWebAudio] const unsigned short UNSCHEDULED_STATE = 0;
+    [EnabledBySetting=PrefixedWebAudio] const unsigned short SCHEDULED_STATE = 1;
+    [EnabledBySetting=PrefixedWebAudio] const unsigned short PLAYING_STATE = 2;
+    [EnabledBySetting=PrefixedWebAudio] const unsigned short FINISHED_STATE = 3;
 };

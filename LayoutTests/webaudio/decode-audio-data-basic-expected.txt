@@ -3,7 +3,7 @@ Basic tests for decodeAudioData function.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS context.decodeAudioData(null, function(){}, function(){}); threw exception TypeError: Argument 1 ('audioData') to webkitAudioContext.decodeAudioData must be an instance of ArrayBuffer.
+PASS Passing a null array to AudioContext.decodeAudioData() threw a TypeError
 PASS The resources/media/24bit-44khz.wav test: successCallback has been called correctly.
 PASS The resources/media/invalid-audio-file.txt test: errorCallback has been called correctly.
 PASS successfullyParsed is true

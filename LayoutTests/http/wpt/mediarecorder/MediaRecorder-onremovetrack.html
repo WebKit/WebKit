@@ -12,7 +12,7 @@
 </canvas>
 <script>
 setup({ single_test: true });
-const ac = new webkitAudioContext();
+const ac = new AudioContext();
 const osc = ac.createOscillator();
 const dest = ac.createMediaStreamDestination();
 const audio = dest.stream;

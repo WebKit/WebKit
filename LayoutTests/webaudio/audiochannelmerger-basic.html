@@ -17,7 +17,7 @@ description("Basic tests for AudioChannelMerger.");
 function runTest() {
     window.jsTestIsAsync = true;
 
-    var context = new webkitAudioContext();
+    var context = new AudioContext();
 
     try {
         var mergernode = context.createChannelMerger(0);

@@ -35,7 +35,7 @@
       
         function runTest() 
         {
-            context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+            context = new OfflineAudioContext(1, numberOfFrames, sampleRate);
             // FIXME: Passing more than 6 seems to fail. 6 is the default value so I'm guessing there's a bug there...
             const count = 6;
             let merger = context.createChannelMerger(count);

@@ -11,7 +11,7 @@
 test(() => {
     assert_true(!!window.internals, "Test requires internals API");
 
-    var context = new webkitAudioContext();
+    var context = new AudioContext();
     internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
 
     var node = context.createBufferSource();
@@ -23,7 +23,7 @@ promise_test((test) => {
     if (!window.internals)
         return Promise.reject("Test requires internals API");
 
-    var context = new webkitAudioContext();
+    var context = new AudioContext();
     internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
 
     var node = context.createBufferSource();
@@ -47,7 +47,7 @@ promise_test((test) => {
     if (!window.internals)
         return Promise.reject("Test requires internals API");
     return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
-        var context = new webkitAudioContext();
+        var context = new AudioContext();
         internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
 
         var node = context.createBufferSource();
@@ -60,7 +60,7 @@ promise_test((test) => {
     if (!window.internals)
         return Promise.reject("Test requires internals API");
     return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
-        var context = new webkitAudioContext();
+        var context = new AudioContext();
         internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
 
         var node = context.createBufferSource();

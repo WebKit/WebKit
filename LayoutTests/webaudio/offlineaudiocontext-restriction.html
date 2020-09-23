@@ -20,7 +20,7 @@ var calledResumeWithUserGesture = false;
 function runTest() {
     window.jsTestIsAsync = true;
 
-    context = new webkitOfflineAudioContext(2, 1000, 44100);
+    context = new OfflineAudioContext(2, 1000, 44100);
 
     if (window.internals)
         internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');

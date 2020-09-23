@@ -31,4 +31,6 @@ interface TestEnabledBySetting {
     [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] undefined enabledBySettingOperation(DOMString testParam);
 
     [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting&OtherTestSetting] attribute DOMString enabledByTwoSettingsAttribute;
+
+    [EnabledBySetting=TestSetting] const unsigned short enabledBySettingConstant = 0;
 };

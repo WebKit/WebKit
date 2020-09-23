@@ -29,7 +29,7 @@ window.addEventListener("pagehide", function(event) {
 }, false);
 
 window.addEventListener('load', function() {
-    audioContext = new webkitOfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+    audioContext = new OfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
     bufferLoader = new BufferLoader(
         audioContext,
         [ "../../webaudio/resources/hyper-reality/br-jam-loop.wav", ],

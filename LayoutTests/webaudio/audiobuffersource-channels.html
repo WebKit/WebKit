@@ -19,7 +19,7 @@ var source;
 function runTest() {
     window.jsTestIsAsync = true;
     
-    context = new webkitAudioContext();
+    context = new AudioContext();
     source = context.createBufferSource();
 
     shouldBeNull("source.buffer");
@@ -40,9 +40,9 @@ function runTest() {
     try {
         var stereoBuffer = context.createBuffer(2, 1024, context.sampleRate);
         source.buffer = stereoBuffer;
-        testPassed("Stereo buffer can be set.");
+        testFailed("Stereo buffer can be set.");
     } catch(e) {
-        testFailed("Stereo buffer can not be set.");
+        testPassed("Stereo buffer can not be set.");
     }
     
     // Check buffers with more than two channels.
@@ -51,10 +51,10 @@ function runTest() {
             var buffer = context.createBuffer(i, 1024, context.sampleRate);
             source.buffer = buffer;
             var message = i + " channels buffer can be set.";
-            testPassed(message);
+            testFailed(message);
         } catch(e) {
             var message = i + " channels buffer can not be set.";
-            testFailed(message);
+            testPassed(message);
         }
     }
 

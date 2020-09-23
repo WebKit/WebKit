@@ -28,7 +28,7 @@
 
 PrefixedWebAudioEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: false
   condition: ENABLE(WEB_AUDIO)
   humanReadableName: "Prefixed WebAudio API"
   humanReadableDescription: "Prefixed WebAudio API"

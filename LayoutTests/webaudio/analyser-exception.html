@@ -22,7 +22,7 @@ function runTest() {
 
     var sampleRate = 44100.0;
     var numberOfFrames = 32;
-    var context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+    var context = new OfflineAudioContext(1, numberOfFrames, sampleRate);
     analyser = context.createAnalyser();
     analyser.connect(context.destination);
 

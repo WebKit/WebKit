@@ -10,7 +10,7 @@ description("Test that decoding an audio file which is too short does not cause 
 
 window.jsTestIsAsync = true;
 
-var context = new webkitAudioContext();
+var context = new AudioContext();
 var request = new XMLHttpRequest();
 request.open("GET", 'resources/media/too-short.m4a', true);
 request.responseType = "arraybuffer";

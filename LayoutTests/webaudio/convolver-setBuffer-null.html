@@ -8,7 +8,7 @@
 <script>
 description("Tests that ConvolverNode impulse response buffer can be set to null.");
 
-var context = new webkitAudioContext();
+var context = new AudioContext();
 var conv = context.createConvolver();
 
 shouldNotThrow("conv.buffer = null");

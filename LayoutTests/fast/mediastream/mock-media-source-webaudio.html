@@ -17,7 +17,7 @@
 
     var test = async_test(() => {
         navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
-            var context = new webkitAudioContext();
+            var context = new AudioContext();
             var sourceNode = context.createMediaStreamSource(stream);
             var analyser = context.createAnalyser();
             var gain = context.createGain();

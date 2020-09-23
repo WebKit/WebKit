@@ -9,7 +9,7 @@
 <script>
 description("Tests that ConvolverNode buffer rate must match context rate.");
 
-var context = new webkitOfflineAudioContext(1, 256, 44100);
+var context = new OfflineAudioContext(1, 256, 44100);
 var convolver = context.createConvolver();
 
 shouldThrowErrorName("convolver.buffer = context.createBuffer(1, 256, 22050)", "NotSupportedError");

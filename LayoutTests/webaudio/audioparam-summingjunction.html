@@ -76,7 +76,7 @@ function runTest() {
     var sampleFrameLength = sampleRate * lengthInSeconds;
 
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(1, sampleFrameLength, sampleRate);
+    context = new OfflineAudioContext(1, sampleFrameLength, sampleRate);
 
     // Create buffer used by the source which will have its gain controlled.
     var constantOneBuffer = createConstantBuffer(context, sampleFrameLength, 1);

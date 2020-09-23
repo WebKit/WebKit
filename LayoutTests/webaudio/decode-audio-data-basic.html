@@ -10,10 +10,17 @@ description("Basic tests for decodeAudioData function.");
     
 window.jsTestIsAsync = true;
 
-var context = new webkitAudioContext();
+var context = new AudioContext();
 
-// decodeAudioData should raise exception when arraybuffer parameter is null.
-shouldThrow("context.decodeAudioData(null, function(){}, function(){});", "'TypeError: Argument 1 (\\'audioData\\') to webkitAudioContext.decodeAudioData must be an instance of ArrayBuffer'");
+// decodeAudioData should reject the promise when arraybuffer parameter is null.
+context.decodeAudioData(null, function(){}, function(){}).then(() => {
+    testFailed("Passing a null array to AudioContext.decodeAudioData() did not throw");
+}, (e) => {
+    if (e.name == "TypeError")
+        testPassed("Passing a null array to AudioContext.decodeAudioData() threw a TypeError");
+    else
+        testFailed("Passing a null array to AudioContext.decodeAudioData() threw a " + e.name + " instead of a TypeError");
+});
 
 var decodeCaseArray = [{url: "resources/media/24bit-44khz.wav", result: true},
                        {url: "resources/media/invalid-audio-file.txt", result: false}];
@@ -52,7 +59,9 @@ function runDecodeTest(index) {
     request.send();
 }
 
-runDecodeTest(0);
+setTimeout(() => {
+    runDecodeTest(0);
+}, 0);
 
 </script>
 </body>

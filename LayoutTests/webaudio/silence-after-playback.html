@@ -22,7 +22,7 @@
          }
 
          function runTest() {
-             context = new webkitOfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+             context = new OfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
 
              audioElement = new Audio();
              audioElement.src = "resources/media/128kbps-44khz.mp3";

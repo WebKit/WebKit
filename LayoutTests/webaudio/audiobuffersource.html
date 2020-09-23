@@ -24,7 +24,7 @@ function init() {
         return;
         
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+    context = new OfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
     
     bufferLoader = new BufferLoader(
         context,

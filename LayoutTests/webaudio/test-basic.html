@@ -39,7 +39,7 @@ function runTest() {
     if (!window.testRunner)
         return;
     
-    var context = new webkitAudioContext();
+    var context = new AudioContext();
     var audioBuffer = context.createBuffer(2, lengthInSeconds * sampleRate, sampleRate);
     
     generateSinWave(audioBuffer);

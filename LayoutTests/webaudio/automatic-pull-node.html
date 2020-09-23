@@ -30,7 +30,7 @@ var analyser;
 
 function constructCommonGraph() {
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(1, renderLengthInFrames, sampleRate);
+    context = new OfflineAudioContext(1, renderLengthInFrames, sampleRate);
     constantBuffer = createConstantBuffer(context, renderLengthInFrames, 1);
 
     bufferSource = context.createBufferSource();

@@ -18,7 +18,7 @@ promise_test((test) => {
         return new Promise((resolve, reject) => {
             finishTest = resolve;
             errorTest = reject;
-            var audioContext = new webkitAudioContext();
+            var audioContext = new AudioContext();
             var script = audioContext.createScriptProcessor(2048, 1, 1);
             script.onaudioprocess = (event) => {
                 var squaredSum = 0.0;
@@ -52,7 +52,7 @@ promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: {deviceId: true}});
     internals.setMockAudioTrackChannelNumber(stream.getAudioTracks()[0], 1);
 
-    var audioContext = new webkitAudioContext();
+    var audioContext = new AudioContext();
     var script = audioContext.createScriptProcessor(2048, 1, 1);
     let source = audioContext.createMediaStreamSource(stream);
     source.connect(script);
@@ -73,7 +73,7 @@ promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
     internals.useMockAudioDestinationCocoa();
 
-    var audioContext = new webkitAudioContext();
+    var audioContext = new AudioContext();
     var analyzer = audioContext.createAnalyser();
     analyzer.fftSize = 256;
     let source = audioContext.createMediaStreamSource(stream);
@@ -101,7 +101,7 @@ async function checkForNoise(stream, counter)
 }
 
 promise_test(async (test) => {
-    context = new webkitAudioContext();
+    context = new AudioContext();
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 

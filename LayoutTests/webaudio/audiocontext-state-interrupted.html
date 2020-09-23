@@ -19,7 +19,7 @@ var node = null;
 function runTest() {
     window.jsTestIsAsync = true;
 
-    context = new webkitAudioContext();
+    context = new AudioContext();
 
     shouldBe('context.state', '"suspended"');
     context.onstatechange = beganRunning;

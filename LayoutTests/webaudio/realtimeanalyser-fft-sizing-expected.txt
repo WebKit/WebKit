@@ -39,7 +39,7 @@ PASS Exception thrown for illegal fftSize 65536.
 PASS Exception thrown for illegal fftSize 65537.
 PASS Exception thrown for illegal fftSize 131072.
 PASS Exception thrown for illegal fftSize 131073.
-PASS webkitAudioContext survived multiple invalid FFT array resizings.
+PASS AudioContext survived multiple invalid FFT array resizings.
 PASS successfullyParsed is true
 
 TEST COMPLETE

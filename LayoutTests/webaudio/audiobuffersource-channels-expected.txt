@@ -3,16 +3,16 @@ Tests that AudioBufferSourceNode validates AudioBuffer in .buffer attribute sett
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS source.buffer is null
-PASS source.buffer = 57 threw exception TypeError: The WebKitAudioBufferSourceNode.buffer attribute must be an instance of AudioBuffer.
+PASS source.buffer = 57 threw exception TypeError: The AudioBufferSourceNode.buffer attribute must be an instance of AudioBuffer.
 PASS Mono buffer can be set.
-PASS Stereo buffer can be set.
-PASS 3 channels buffer can be set.
-PASS 4 channels buffer can be set.
-PASS 5 channels buffer can be set.
-PASS 6 channels buffer can be set.
-PASS 7 channels buffer can be set.
-PASS 8 channels buffer can be set.
-PASS 9 channels buffer can be set.
+PASS Stereo buffer can not be set.
+PASS 3 channels buffer can not be set.
+PASS 4 channels buffer can not be set.
+PASS 5 channels buffer can not be set.
+PASS 6 channels buffer can not be set.
+PASS 7 channels buffer can not be set.
+PASS 8 channels buffer can not be set.
+PASS 9 channels buffer can not be set.
 PASS context.createBuffer(64, 1024, context.sampleRate) threw exception NotSupportedError: Number of channels cannot be more than max supported..
 PASS source.buffer is not null
 PASS source.buffer = null did not throw exception.

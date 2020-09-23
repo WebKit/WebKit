@@ -1,3 +1,31 @@
+2020-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Turn off the legacy prefixed WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=216886
+
+        Reviewed by Sam Weinig.
+
+        Turn off the legacy prefixed WebAudio API, now that the modern unprefixed API has been enabled
+        in r267488.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        Make sure legacy constants get unexposed if the PrefixedWebAudio setting is disabled.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GetRuntimeEnabledStaticProperties):
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp:
+        (WebCore::JSTestConditionalIncludesConstructor::initializeProperties):
+        (WebCore::JSTestConditionalIncludesPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySettingConstructor::prototypeForStructure):
+        (WebCore::JSTestEnabledBySettingConstructor::initializeProperties):
+        (WebCore::JSTestEnabledBySettingPrototype::finishCreation):
+        * bindings/scripts/test/TestEnabledBySetting.idl:
+        Add support for using [EnabledBySetting=X] on constants.
+
 2020-09-23  obrufau@igalia.com  <obrufau@igalia.com>
 
         [css-grid] Clear the override width for computing percent margins

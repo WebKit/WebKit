@@ -17,7 +17,7 @@ var context = 0;
 var context2 = 0;
 
 function runTest() {
-    context = new webkitAudioContext();
+    context = new AudioContext();
     window.audioNode = context.createBufferSource();
 
     // Check input and output numbers of AudioSourceNode.
@@ -71,7 +71,7 @@ function runTest() {
     
     // Create a new context and try to connect the other context's node to this one.
     try {
-        context2 = new webkitAudioContext();
+        context2 = new AudioContext();
         window.audioNode.connect(context2.destination);
         testFailed("exception should be thrown when connecting to other context's node.");
     } catch(e) {
@@ -80,7 +80,7 @@ function runTest() {
 
     // Create a new context with too many arguments
     try {
-        context2 = new webkitAudioContext(0, 0);
+        context2 = new AudioContext({ }, 0);
         testPassed("exception should not be thrown when creating audio context with too many arguments.");
     } catch(e) {
         testFailed("exception thrown when creating audio context with too many arguments.");

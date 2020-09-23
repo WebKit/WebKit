@@ -15,7 +15,7 @@
             jsTestIsAsync = true;
 
             var numberOfFrames = sampleRate * lengthInSeconds;
-            context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+            context = new OfflineAudioContext(1, numberOfFrames, sampleRate);
             sourceBuffer = createConstantBuffer(context, numberOfFrames, 0.5);
             var data = sourceBuffer.getChannelData(0).buffer;
 

@@ -75,7 +75,7 @@ TEST(WebKit, WebAudioPreference)
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration]);
         __block bool done = false;
         __block RetainPtr<NSString> result;
-        [webView evaluateJavaScript:@"new Boolean(window.webkitAudioContext).toString()" completionHandler:^(id resultFromJS, NSError *error) {
+        [webView evaluateJavaScript:@"new Boolean(window.AudioContext).toString()" completionHandler:^(id resultFromJS, NSError *error) {
             result = resultFromJS;
             done = true;
         }];

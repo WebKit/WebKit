@@ -1,3 +1,135 @@
+2020-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Turn off the legacy prefixed WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=216886
+
+        Reviewed by Sam Weinig.
+
+        Port existing layout tests from the prefixed WebAudio API to the new
+        unprefixed version.
+
+        * fast/history/page-cache-closed-audiocontext.html:
+        * fast/history/page-cache-running-audiocontext.html:
+        * fast/history/page-cache-suspended-audiocontext.html:
+        * fast/mediastream/getUserMedia-webaudio.html:
+        * fast/mediastream/media-devices-enumerate-devices.html:
+        * fast/mediastream/mediastreamtrack-audio-clone.html:
+        * fast/mediastream/mock-media-source-webaudio.html:
+        * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html:
+        * http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html:
+        * http/wpt/mediarecorder/MediaRecorder-onremovetrack.html:
+        * http/wpt/webaudio/resources/audiocontext-stopped-iframe.html:
+        * platform/ios/webaudio/realtimeanalyser-fft-sizing-expected.txt:
+        * resources/testharnessreport.js:
+        * webaudio/analyser-exception.html:
+        * webaudio/audiobuffer-crash-expected.txt:
+        * webaudio/audiobuffer-crash.html:
+        * webaudio/audiobuffer-expected.txt:
+        * webaudio/audiobuffer-neuter.html:
+        * webaudio/audiobuffer.html:
+        * webaudio/audiobuffersource-channels-expected.txt:
+        * webaudio/audiobuffersource-channels.html:
+        * webaudio/audiobuffersource-ended.html:
+        * webaudio/audiobuffersource-multi-channels.html:
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated-loop.html:
+        * webaudio/audiobuffersource-negative-playbackrate-interpolated.html:
+        * webaudio/audiobuffersource-negative-playbackrate-loop.html:
+        * webaudio/audiobuffersource-negative-playbackrate.html:
+        * webaudio/audiobuffersource-not-gced-until-ended.html:
+        * webaudio/audiobuffersource-playbackState-expected.txt: Removed.
+        * webaudio/audiobuffersource-playbackState.html: Removed.
+        * webaudio/audiobuffersource-playbackrate.html:
+        * webaudio/audiobuffersource-start.html:
+        * webaudio/audiobuffersource.html:
+        * webaudio/audiobuffersourcenode-legacy-api-expected.txt:
+        * webaudio/audiobuffersourcenode-legacy-api.html:
+        * webaudio/audiochannelmerger-basic.html:
+        * webaudio/audiochannelmerger-stereo.html:
+        * webaudio/audiochannelsplitter.html:
+        * webaudio/audiocontext-promise-throwing-expected.txt:
+        * webaudio/audiocontext-promise-throwing.html:
+        * webaudio/audiocontext-promise.html:
+        * webaudio/audiocontext-restriction-audiobuffersourcenode-start.html:
+        * webaudio/audiocontext-restriction.html:
+        * webaudio/audiocontext-state-interrupted.html:
+        * webaudio/audiocontext-state.html:
+        * webaudio/audionode-connect-order.html:
+        * webaudio/audionode.html:
+        * webaudio/audioparam-connect-audioratesignal.html:
+        * webaudio/audioparam-summingjunction.html:
+        * webaudio/audioprocessingevent.html:
+        * webaudio/automatic-pull-node.html:
+        * webaudio/convolution-mono-mono.html:
+        * webaudio/convolver-channels.html:
+        * webaudio/convolver-setBuffer-different-samplerate.html:
+        * webaudio/convolver-setBuffer-null.html:
+        * webaudio/createMediaStreamSource-null-expected.txt:
+        * webaudio/createMediaStreamSource-null.html:
+        * webaudio/decode-audio-data-basic-expected.txt:
+        * webaudio/decode-audio-data-basic.html:
+        * webaudio/decode-audio-data-too-short.html:
+        * webaudio/delaynode-max-default-delay.html:
+        * webaudio/delaynode-max-nondefault-delay.html:
+        * webaudio/delaynode-maxdelay.html:
+        * webaudio/delaynode-maxdelaylimit.html:
+        * webaudio/delaynode-scheduling.html:
+        * webaudio/delaynode.html:
+        * webaudio/distance-exponential.html:
+        * webaudio/distance-inverse.html:
+        * webaudio/distance-linear.html:
+        * webaudio/dynamicscompressor-basic.html:
+        * webaudio/finished-audio-buffer-source-nodes-should-be-collectable.html:
+        * webaudio/gain-basic.html:
+        * webaudio/gain.html:
+        * webaudio/mediaelementaudiosourcenode-expected.txt:
+        * webaudio/mediaelementaudiosourcenode-gc.html:
+        * webaudio/mediaelementaudiosourcenode.html:
+        * webaudio/mixing.html:
+        * webaudio/offlineaudiocontext-gc.html:
+        * webaudio/offlineaudiocontext-restriction.html:
+        * webaudio/oscillatornode-legacy-api-expected.txt:
+        * webaudio/oscillatornode-legacy-api.html:
+        * webaudio/page-canstartmedia.html:
+        * webaudio/panner-equalpower-stereo.html:
+        * webaudio/panner-equalpower.html:
+        * webaudio/prefixed-pannernode-basic-expected.txt: Removed.
+        * webaudio/prefixed-pannernode-basic.html: Removed.
+        * webaudio/realtimeanalyser-fft-sizing-expected.txt:
+        * webaudio/realtimeanalyser-fft-sizing.html:
+        * webaudio/resources/audio-codec-test.js:
+        (runDecodingTest):
+        * webaudio/resources/audiobuffersource-ended-detached-frame-iframe.html:
+        * webaudio/resources/audioparam-testing-legacy.js:
+        (createAudioGraphAndTest):
+        * webaudio/resources/compatibility.js: Removed.
+        * webaudio/resources/javascriptaudionode-testing.js:
+        (runJSNodeTest):
+        * webaudio/resources/oscillator-testing-legacy.js:
+        (generateExponentialOscillatorSweep):
+        * webaudio/sample-accurate-scheduling.html:
+        * webaudio/silence-after-playback.html:
+        * webaudio/silent-audio-interrupted-in-background.html:
+        * webaudio/stereo2mono-down-mixing.html:
+        * webaudio/test-basic.html:
+        * webaudio/up-mixing-mono-51.html:
+        * webaudio/up-mixing-mono-stereo.html:
+        * webaudio/up-mixing-stereo-51.html:
+        * webaudio/waveshaper.html:
+        * webaudio/web-audio-is-playing.html:
+        * webaudio/webaudio-gc.html:
+        * webaudio/webkitofflineaudiocontext-startRendering-crash-expected.txt:
+        * webaudio/webkitofflineaudiocontext-startRendering-crash.html:
+        * webrtc/audio-peer-connection-g722.html:
+        * webrtc/audio-peer-connection-webaudio.html:
+        * webrtc/clone-audio-track.html:
+        * webrtc/getUserMedia-webaudio-autoplay.html:
+        * webrtc/peer-connection-audio-mute.html:
+        * webrtc/peer-connection-audio-mute2.html:
+        * webrtc/peer-connection-createMediaStreamDestination.html:
+        * webrtc/peer-connection-remote-audio-mute.html:
+        * webrtc/peer-connection-remote-audio-mute2.html:
+        * webrtc/routines.js:
+
 2020-09-23  obrufau@igalia.com  <obrufau@igalia.com>
 
         [css-grid] Clear the override width for computing percent margins

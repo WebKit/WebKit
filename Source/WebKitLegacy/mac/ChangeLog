@@ -1,5 +1,18 @@
 2020-09-23  Chris Dumez  <cdumez@apple.com>
 
+        Turn off the legacy prefixed WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=216886
+
+        Reviewed by Sam Weinig.
+
+        Turn off the legacy prefixed WebAudio API, now that the modern unprefixed API has been enabled
+        in r267488.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
+2020-09-23  Chris Dumez  <cdumez@apple.com>
+
         Turn on the modern unprefixed WebAudio API
         https://bugs.webkit.org/show_bug.cgi?id=216885
 

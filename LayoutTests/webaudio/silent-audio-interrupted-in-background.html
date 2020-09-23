@@ -29,7 +29,7 @@ function hidePage()
 }
 
 onload = function() {
-    context = new (window.AudioContext || window.webkitAudioContext)();
+    context = new AudioContext();
 
     audioElement = document.createElement("audio");
     audioElement.loop = true;

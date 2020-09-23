@@ -16,7 +16,7 @@ function checkEvent() {
 }
 
 function init() {
-    let ctx = new webkitAudioContext();
+    let ctx = new AudioContext();
 
     let source = ctx.createOscillator();
     source.frequency.value = 300;

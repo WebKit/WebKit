@@ -3,7 +3,7 @@ Attempting to create a large AudioBuffer should not crash.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS context = new webkitAudioContext().createBuffer(1, -1, 44100) threw exception NotSupportedError: Channel was not able to be created..
+PASS context = new AudioContext().createBuffer(1, -1, 44100) threw exception NotSupportedError: Channel was not able to be created..
 PASS Test passed because if it didn't crash.
 PASS successfullyParsed is true
 

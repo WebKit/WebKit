@@ -102,7 +102,7 @@ function runTest() {
     window.jsTestIsAsync = true;
         
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(1, numberOfRenderFrames, sampleRate);
+    context = new OfflineAudioContext(1, numberOfRenderFrames, sampleRate);
     
     // source -> waveshaper -> destination
     var source = context.createBufferSource();

@@ -4,15 +4,24 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS OscillatorNode.prototype.playbackState is undefined.
-PASS OscillatorNode.UNSCHEDULED_STATE is 0
-PASS OscillatorNode.SCHEDULED_STATE is 1
-PASS OscillatorNode.PLAYING_STATE is 2
-PASS OscillatorNode.FINISHED_STATE is 3
-PASS legacyOscillator.playbackState is defined.
-PASS legacyOscillator.UNSCHEDULED_STATE is 0
-PASS legacyOscillator.SCHEDULED_STATE is 1
-PASS legacyOscillator.PLAYING_STATE is 2
-PASS legacyOscillator.FINISHED_STATE is 3
+PASS OscillatorNode.UNSCHEDULED_STATE is undefined.
+PASS OscillatorNode.SCHEDULED_STATE is undefined.
+PASS OscillatorNode.PLAYING_STATE is undefined.
+PASS OscillatorNode.FINISHED_STATE is undefined.
+PASS OscillatorNode.prototype.UNSCHEDULED_STATE is undefined.
+PASS OscillatorNode.prototype.SCHEDULED_STATE is undefined.
+PASS OscillatorNode.prototype.PLAYING_STATE is undefined.
+PASS OscillatorNode.prototype.FINISHED_STATE is undefined.
+PASS oscillator.playbackState is undefined.
+PASS oscillator.UNSCHEDULED_STATE is undefined.
+PASS oscillator.SCHEDULED_STATE is undefined.
+PASS oscillator.PLAYING_STATE is undefined.
+PASS oscillator.FINISHED_STATE is undefined.
+PASS oscillator.__proto__.playbackState is undefined.
+PASS oscillator.__proto__.UNSCHEDULED_STATE is undefined.
+PASS oscillator.__proto__.SCHEDULED_STATE is undefined.
+PASS oscillator.__proto__.PLAYING_STATE is undefined.
+PASS oscillator.__proto__.FINISHED_STATE is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

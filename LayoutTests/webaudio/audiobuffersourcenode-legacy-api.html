@@ -10,20 +10,29 @@
         shouldBeUndefined("AudioBufferSourceNode.prototype.playbackState");
         shouldBeUndefined("AudioBufferSourceNode.prototype.gain");
 
-        // Tests backward compatibility for prefixed API.
-        shouldBe("AudioBufferSourceNode.UNSCHEDULED_STATE", "0");
-        shouldBe("AudioBufferSourceNode.SCHEDULED_STATE", "1");
-        shouldBe("AudioBufferSourceNode.PLAYING_STATE", "2");
-        shouldBe("AudioBufferSourceNode.FINISHED_STATE", "3");
+        shouldBeUndefined("AudioBufferSourceNode.UNSCHEDULED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.SCHEDULED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.PLAYING_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.FINISHED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.UNSCHEDULED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.SCHEDULED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.PLAYING_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.FINISHED_STATE");
 
-        let legacyContext = new webkitAudioContext;
-        let legacyBufferSource = legacyContext.createBufferSource();
-        shouldBeDefined("legacyBufferSource.playbackState");
-        shouldBeDefined("legacyBufferSource.gain");
-        shouldBe("legacyBufferSource.UNSCHEDULED_STATE", "0");
-        shouldBe("legacyBufferSource.SCHEDULED_STATE", "1");
-        shouldBe("legacyBufferSource.PLAYING_STATE", "2");
-        shouldBe("legacyBufferSource.FINISHED_STATE", "3");
+        let context = new AudioContext;
+        let bufferSource = context.createBufferSource();
+        shouldBeUndefined("bufferSource.playbackState");
+        shouldBeUndefined("bufferSource.gain");
+        shouldBeUndefined("bufferSource.UNSCHEDULED_STATE");
+        shouldBeUndefined("bufferSource.SCHEDULED_STATE");
+        shouldBeUndefined("bufferSource.PLAYING_STATE");
+        shouldBeUndefined("bufferSource.FINISHED_STATE");
+        shouldBeUndefined("bufferSource.__proto__.playbackState");
+        shouldBeUndefined("bufferSource.__proto__.gain");
+        shouldBeUndefined("bufferSource.__proto__.UNSCHEDULED_STATE");
+        shouldBeUndefined("bufferSource.__proto__.SCHEDULED_STATE");
+        shouldBeUndefined("bufferSource.__proto__.PLAYING_STATE");
+        shouldBeUndefined("bufferSource.__proto__.FINISHED_STATE");
     </script>
 </body>
 </html>

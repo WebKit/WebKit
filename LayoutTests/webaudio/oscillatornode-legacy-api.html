@@ -9,19 +9,27 @@
 
         shouldBeUndefined("OscillatorNode.prototype.playbackState");
 
-        // Tests backward compatibility for prefixed API.
-        shouldBe("OscillatorNode.UNSCHEDULED_STATE", "0");
-        shouldBe("OscillatorNode.SCHEDULED_STATE", "1");
-        shouldBe("OscillatorNode.PLAYING_STATE", "2");
-        shouldBe("OscillatorNode.FINISHED_STATE", "3");
+        shouldBeUndefined("OscillatorNode.UNSCHEDULED_STATE");
+        shouldBeUndefined("OscillatorNode.SCHEDULED_STATE");
+        shouldBeUndefined("OscillatorNode.PLAYING_STATE");
+        shouldBeUndefined("OscillatorNode.FINISHED_STATE");
+        shouldBeUndefined("OscillatorNode.prototype.UNSCHEDULED_STATE");
+        shouldBeUndefined("OscillatorNode.prototype.SCHEDULED_STATE");
+        shouldBeUndefined("OscillatorNode.prototype.PLAYING_STATE");
+        shouldBeUndefined("OscillatorNode.prototype.FINISHED_STATE");
 
-        let legacyContext = new webkitAudioContext;
-        let legacyOscillator = legacyContext.createOscillator();
-        shouldBeDefined("legacyOscillator.playbackState");
-        shouldBe("legacyOscillator.UNSCHEDULED_STATE", "0");
-        shouldBe("legacyOscillator.SCHEDULED_STATE", "1");
-        shouldBe("legacyOscillator.PLAYING_STATE", "2");
-        shouldBe("legacyOscillator.FINISHED_STATE", "3");
+        let context = new AudioContext;
+        let oscillator = context.createOscillator();
+        shouldBeUndefined("oscillator.playbackState");
+        shouldBeUndefined("oscillator.UNSCHEDULED_STATE");
+        shouldBeUndefined("oscillator.SCHEDULED_STATE");
+        shouldBeUndefined("oscillator.PLAYING_STATE");
+        shouldBeUndefined("oscillator.FINISHED_STATE");
+        shouldBeUndefined("oscillator.__proto__.playbackState");
+        shouldBeUndefined("oscillator.__proto__.UNSCHEDULED_STATE");
+        shouldBeUndefined("oscillator.__proto__.SCHEDULED_STATE");
+        shouldBeUndefined("oscillator.__proto__.PLAYING_STATE");
+        shouldBeUndefined("oscillator.__proto__.FINISHED_STATE");
     </script>
 </body>
 </html>

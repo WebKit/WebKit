@@ -19,7 +19,7 @@ function runTest() {
 
     window.jsTestIsAsync = true;
 
-    context = new webkitAudioContext();
+    context = new AudioContext();
 
     context.resume().then(resumePromiseResolved).catch(resumePromiseRejected);
 

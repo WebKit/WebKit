@@ -26,7 +26,7 @@
     function go() {
         jsTestIsAsync = true;
 
-        context = new webkitOfflineAudioContext(1, renderFrames, sampleRate);
+        context = new OfflineAudioContext(1, renderFrames, sampleRate);
 
         var bufferSource = context.createBufferSource();
         bufferSource.buffer = createRamp(context, 0, 127, sourceFrames);

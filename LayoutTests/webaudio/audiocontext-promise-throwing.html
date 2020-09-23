@@ -13,12 +13,12 @@
 <div id="console"></div>
 
 <script>
-description("Tests that AudioContext resume/suspend/close methods reject promises when called on an OfflineAudioContext.");
+description("Tests that AudioContext resume/suspend methods reject promises when called on an OfflineAudioContext.");
 
 function runTest() {
     window.jsTestIsAsync = true;
         
-    var context = new webkitOfflineAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
+    context = new OfflineAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
 
     context.resume().then(function() {
         testFailed('context.resume() promise resolved (should have rejected)');
@@ -34,20 +34,10 @@ function runTest() {
         testFailed('context.suspend() promise resolved (should have rejected)');
         finishJSTest();
     }, function(e) {
-       if (e.name == 'InvalidStateError') 
-           testPassed('context.suspend() promise rejected with InvalidStateError value');
+       if (e.name == 'TypeError') 
+           testPassed('context.suspend() promise rejected with TypeError');
        else
-           testFailed('context.suspend() promise rejected, but without InvalidStateError value');
-    });
-
-    context.close().then(function() {
-        testFailed('context.close() promise resolved (should have rejected)');
-        finishJSTest();
-    }, function(e) {
-       if (e.name == 'InvalidStateError')
-           testPassed('context.close() promise rejected with InvalidStateError value');
-       else
-           testFailed('context.close() promise rejected, but without InvalidStateError value');
+           testFailed('context.suspend() promise rejected with ' + e.name + " instead of TypeError");
        finishJSTest();
     });
 }

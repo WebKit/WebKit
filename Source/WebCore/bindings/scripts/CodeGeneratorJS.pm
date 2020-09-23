@@ -4390,6 +4390,7 @@ sub GenerateImplementation
     my $hashName = $className . "Table";
     my @runtimeEnabledOperations = ();
     my @runtimeEnabledAttributes = ();
+    my @runtimeEnabledConstants = ();
 
     # Generate hash table for properties on the instance.
     my $numInstanceProperties = GeneratePropertiesHashTable($object, $interface, 1, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, \@runtimeEnabledOperations, \@runtimeEnabledAttributes);
@@ -4421,6 +4422,10 @@ sub GenerateImplementation
 
             my $conditional = $constant->extendedAttributes->{Conditional};
             $conditionals{$name} = $conditional if $conditional;
+
+            if (NeedsRuntimeCheck($interface, $constant)) {
+                push(@runtimeEnabledConstants, $constant);
+            }
 
             $hashSize++;
         }
@@ -4548,6 +4553,7 @@ sub GenerateImplementation
 
         my @runtimeEnabledProperties = @runtimeEnabledOperations;
         push(@runtimeEnabledProperties, @runtimeEnabledAttributes);
+        push(@runtimeEnabledProperties, @runtimeEnabledConstants);
 
         if (@runtimeEnabledProperties) {
             push(@implContent, "    bool hasDisabledRuntimeProperties = false;\n");
@@ -7815,6 +7821,12 @@ sub GetRuntimeEnabledStaticProperties
 
         if (NeedsRuntimeCheck($interface, $attribute)) {
             push(@runtimeEnabledProperties, $attribute);
+        }
+    }
+
+    foreach my $constant (@{$interface->constants}) {
+        if (NeedsRuntimeCheck($interface, $constant)) {
+            push(@runtimeEnabledProperties, $constant);
         }
     }
 

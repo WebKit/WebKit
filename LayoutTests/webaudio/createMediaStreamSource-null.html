@@ -8,8 +8,8 @@
 <script>
 description("Tests that passing null to context.createMediaStreamSource() throws a TypeError.");
 
-var context = new webkitAudioContext();
-shouldThrow("context.createMediaStreamSource(null)", "'TypeError: Argument 1 (\\'mediaStream\\') to webkitAudioContext.createMediaStreamSource must be an instance of MediaStream'");
+var context = new AudioContext();
+shouldThrow("context.createMediaStreamSource(null)", "'TypeError: Argument 1 (\\'mediaStream\\') to AudioContext.createMediaStreamSource must be an instance of MediaStream'");
 
 </script>
 <script src="../resources/js-test-post.js"></script>

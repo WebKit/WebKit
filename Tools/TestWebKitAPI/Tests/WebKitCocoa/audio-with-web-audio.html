@@ -3,7 +3,7 @@
 <head>
     <script>
         window.addEventListener('load', async event => {
-            let context = new webkitAudioContext();
+            let context = new AudioContext();
             let node = context.createBufferSource();
             node.connect(context.destination);
 

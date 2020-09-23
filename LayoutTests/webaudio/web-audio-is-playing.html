@@ -12,7 +12,7 @@
         if (window.internals)
             shouldBeFalse("window.internals.pageMediaState().includes('IsPlayingAudio')");
 
-        var context = new webkitAudioContext();
+        var context = new AudioContext();
         var frequency = 300;
         var oscillator = context.createOscillator();
 

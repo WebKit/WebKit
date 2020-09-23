@@ -7,7 +7,7 @@
     <script src="../resources/testharnessreport.js"></script>
     <script src ="routines.js"></script>
     <script>
-    const noiseContext = new webkitAudioContext();
+    const noiseContext = new AudioContext();
     const oscillator = noiseContext.createOscillator();
     const audioStreamDestination = noiseContext.createMediaStreamDestination();
     const audioStream = audioStreamDestination.stream;
@@ -15,7 +15,7 @@
     oscillator.start();
     const audioTrack = audioStream.getAudioTracks()[0];
 
-    var context = new webkitAudioContext();
+    var context = new AudioContext();
     var remoteStream;
 
     async function checkForHumBipBop(stream, previousResults, counter)

@@ -106,6 +106,15 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEnabledBySettingPrototype, JSTestEnabl
 
 using JSTestEnabledBySettingConstructor = JSDOMConstructorNotConstructable<JSTestEnabledBySetting>;
 
+/* Hash table for constructor */
+
+static const HashTableValue JSTestEnabledBySettingConstructorTableValues[] =
+{
+    { "enabledBySettingConstant", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(0) } },
+};
+
+static_assert(TestEnabledBySetting::enabledBySettingConstant == 0, "enabledBySettingConstant in TestEnabledBySetting does not match value from IDL");
+
 template<> JSValue JSTestEnabledBySettingConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -117,6 +126,13 @@ template<> void JSTestEnabledBySettingConstructor::initializeProperties(VM& vm, 
     putDirect(vm, vm.propertyNames->prototype, JSTestEnabledBySetting::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestEnabledBySetting"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    reifyStaticProperties(vm, JSTestEnabledBySetting::info(), JSTestEnabledBySettingConstructorTableValues, *this);
+    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext())->settings().testSettingEnabled()) {
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingConstant"), strlen("enabledBySettingConstant"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, &globalObject, propertyName, slot);
+    }
 }
 
 template<> const ClassInfo JSTestEnabledBySettingConstructor::s_info = { "TestEnabledBySetting", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySettingConstructor) };
@@ -142,6 +158,7 @@ static const HashTableValue JSTestEnabledBySettingPrototypeTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
+    { "enabledBySettingConstant", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(0) } },
 };
 
 const ClassInfo JSTestEnabledBySettingPrototype::s_info = { "TestEnabledBySetting", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySettingPrototype) };
@@ -181,6 +198,13 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
     if (!(downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingFromPartialInterfaceAttributeEnabled() && downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingFromPartialInterfaceEnabled())) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("supplementalAttribute"), strlen("supplementalAttribute"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingEnabled()) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingConstant"), strlen("enabledBySettingConstant"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);

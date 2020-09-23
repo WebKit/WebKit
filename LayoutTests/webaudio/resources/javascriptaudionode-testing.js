@@ -65,7 +65,7 @@ function checkStereoOnlyData(buffer, numberOfChannels, length) {
 function runJSNodeTest()
 {
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(2, renderLengthInFrames, sampleRate);
+    context = new OfflineAudioContext(2, renderLengthInFrames, sampleRate);
 
     var sourceBuffer = createBuffer(context, sourceChannels, renderLengthInFrames);
 

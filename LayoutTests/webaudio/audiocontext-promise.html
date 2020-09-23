@@ -16,7 +16,7 @@ description("Tests that AudioContext suspend method resolve promises immediately
 function runTest() {
     window.jsTestIsAsync = true;
 
-    context = new webkitAudioContext();
+    context = new AudioContext();
 
     var isSuspended = false;
     context.suspend().then(function() {

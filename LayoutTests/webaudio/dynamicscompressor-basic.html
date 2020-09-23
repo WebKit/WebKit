@@ -17,7 +17,7 @@ var context;
 var compressor;
 
 function runTest() {
-    context = new webkitAudioContext();
+    context = new AudioContext();
     compressor = context.createDynamicsCompressor();
 
     try {

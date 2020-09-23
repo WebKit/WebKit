@@ -10,7 +10,7 @@
 </head>
 <body>
 <script>
-    var context = new webkitAudioContext();
+    var context = new AudioContext();
     promise_test(async (t) => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
 

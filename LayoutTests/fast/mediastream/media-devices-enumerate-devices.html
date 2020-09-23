@@ -27,7 +27,7 @@
             if (window.testRunner)
                 testRunner.setUserMediaPermission(true);
 
-            new window.webkitAudioContext().createMediaStreamDestination();
+            new window.AudioContext().createMediaStreamDestination();
             return navigator.mediaDevices.enumerateDevices()
                 .then((devices) => {
                     deviceCount = devices.length;

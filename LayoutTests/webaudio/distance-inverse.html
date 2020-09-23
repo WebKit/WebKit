@@ -17,7 +17,7 @@
           window.jsTestIsAsync = true;
 
           // Create offline audio context.
-          context = new webkitOfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+          context = new OfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
 
           // Temp panner node so we can get the inverse value.
           var tempPanner = context.createPanner();

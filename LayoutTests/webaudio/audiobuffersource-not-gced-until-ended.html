@@ -12,7 +12,7 @@
 
             var sampleRate = 44100.0;
             var numberOfFrames = 32;
-            context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+            context = new OfflineAudioContext(1, numberOfFrames, sampleRate);
             var source = context.createBufferSource();
             source.buffer = createTestBuffer(context, numberOfFrames);
             source.connect(context.destination);

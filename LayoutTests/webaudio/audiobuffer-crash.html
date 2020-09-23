@@ -6,7 +6,7 @@
     <body>
         <script>
             description("Attempting to create a large AudioBuffer should not crash.");
-            shouldThrow("context = new webkitAudioContext().createBuffer(1, -1, 44100)");
+            shouldThrow("context = new AudioContext().createBuffer(1, -1, 44100)");
             testPassed("Test passed because if it didn't crash.");
         </script>
 

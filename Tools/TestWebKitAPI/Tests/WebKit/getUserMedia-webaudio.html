@@ -8,7 +8,7 @@ async function capture()
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
         internals.setMockAudioTrackChannelNumber(stream.getAudioTracks()[0], 2);
 
-        var audioContext = new webkitAudioContext();
+        var audioContext = new AudioContext();
         var analyzer = audioContext.createAnalyser();
         analyzer.fftSize = 256;
         let source = audioContext.createMediaStreamSource(stream);

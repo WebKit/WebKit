@@ -17,7 +17,7 @@
         let type = mimeTypeForExtension(mediaFile.split('.').pop());
         audio.src = "http://localhost:8080/security/resources/video-cross-origin-allow.php?name=" + mediaFile + "&type=" + type;
 
-        context = new webkitAudioContext();
+        context = new AudioContext();
         let mediaSource = context.createMediaElementSource(audio);
         let analyser = context.createAnalyser();
         analyser.fftSize = 32;
