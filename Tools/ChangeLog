@@ -1,3 +1,17 @@
+2020-09-22  Alex Christensen  <achristensen@webkit.org>
+
+        Make TLSVersion API tests more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=216704
+
+        Like I did in r267278, the TLSVersion.ShouldAllowDeprecatedTLS API test was also asserting with TCPServer,
+        so use HTTPServer which gracefully handles a variable number of connection attempts.
+        The NetworkSession tests that use NSUserDefaults need to be split into a separate test for bug 216041,
+        so may as well do that here, too.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::makeWebViewWith):
+        (TestWebKitAPI::TEST):
+
 2020-09-22  Aakash Jain  <aakash_jain@apple.com>
 
         Limit number of emails to send for flaky and pre-existing JSC test failures
