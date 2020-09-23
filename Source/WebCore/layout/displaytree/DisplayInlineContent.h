@@ -36,6 +36,7 @@ namespace WebCore {
 namespace Display {
 
 struct InlineContent : public RefCounted<InlineContent> {
+    static Ref<InlineContent> create() { return adoptRef(*new InlineContent); }
     ~InlineContent();
 
     using Runs = Vector<Run, 4>;
@@ -47,6 +48,9 @@ struct InlineContent : public RefCounted<InlineContent> {
     const Line& lineForRun(const Run& run) const { return lines[run.lineIndex()]; }
     WTF::IteratorRange<const Run*> runsForRect(const LayoutRect&) const;
     void shrinkToFit();
+
+private:
+    InlineContent() = default;
 };
 
 inline void InlineContent::shrinkToFit()

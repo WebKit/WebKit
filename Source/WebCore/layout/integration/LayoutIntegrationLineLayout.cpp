@@ -37,6 +37,7 @@
 #include "InlineFormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutIntegrationPagination.h"
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
@@ -74,13 +75,7 @@ bool LineLayout::canUseFor(const RenderBlockFlow& flow, Optional<bool> couldUseS
         return SimpleLineLayout::canUseFor(flow);
     });
 
-    if (!passesSimpleLineLayoutTest)
-        return false;
-
-    if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow)
-        return false;
-
-    return true;
+    return passesSimpleLineLayoutTest;
 }
 
 bool LineLayout::canUseForAfterStyleChange(const RenderBlockFlow& flow, StyleDifference diff)
@@ -225,6 +220,9 @@ void LineLayout::prepareFloatingState()
 
 LayoutUnit LineLayout::contentLogicalHeight() const
 {
+    if (m_paginatedHeight)
+        return *m_paginatedHeight;
+
     auto& lines = m_inlineFormattingState.lines();
     return LayoutUnit { lines.last().logicalBottom() - lines.first().logicalTop() };
 }
@@ -263,6 +261,21 @@ LayoutUnit LineLayout::lastLineBaseline() const
     return Layout::toLayoutUnit(lastLine.logicalTop() + lastLine.baseline());
 }
 
+void LineLayout::adjustForPagination(RenderBlockFlow& flow)
+{
+    ASSERT(&flow == &m_flow);
+    auto paginedInlineContent = adjustLinePositionsForPagination(*m_displayInlineContent, flow);
+    if (paginedInlineContent.ptr() == m_displayInlineContent) {
+        m_paginatedHeight = { };
+        return;
+    }
+
+    auto& lines = paginedInlineContent->lines;
+    m_paginatedHeight = LayoutUnit { lines.last().rect().maxY() - lines.first().rect().y() };
+
+    m_displayInlineContent = WTFMove(paginedInlineContent);
+}
+
 void LineLayout::collectOverflow(RenderBlockFlow& flow)
 {
     ASSERT(&flow == &m_flow);
@@ -277,7 +290,7 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
 Display::InlineContent& LineLayout::ensureDisplayInlineContent()
 {
     if (!m_displayInlineContent)
-        m_displayInlineContent = adoptRef(*new Display::InlineContent);
+        m_displayInlineContent = Display::InlineContent::create();
     return *m_displayInlineContent;
 }
 

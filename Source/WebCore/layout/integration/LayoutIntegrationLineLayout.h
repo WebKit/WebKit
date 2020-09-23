@@ -67,9 +67,11 @@ public:
     LayoutUnit firstLineBaseline() const;
     LayoutUnit lastLineBaseline() const;
 
+    void adjustForPagination(RenderBlockFlow&);
     void collectOverflow(RenderBlockFlow&);
 
     const Display::InlineContent* displayInlineContent() const { return m_displayInlineContent.get(); }
+    bool isPaginated() const { return !!m_paginatedHeight; }
 
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
@@ -95,6 +97,7 @@ private:
     Layout::LayoutState m_layoutState;
     Layout::InlineFormattingState& m_inlineFormattingState;
     RefPtr<Display::InlineContent> m_displayInlineContent;
+    Optional<LayoutUnit> m_paginatedHeight;
 };
 
 }

@@ -3743,6 +3743,9 @@ void RenderBlockFlow::layoutLFCLines(bool, LayoutUnit& repaintLogicalTop, Layout
 
     layoutFormattingContextLineLayout.layout();
 
+    if (view().frameView().layoutContext().layoutState()->isPaginated())
+        layoutFormattingContextLineLayout.adjustForPagination(*this);
+
     auto contentHeight = layoutFormattingContextLineLayout.contentLogicalHeight();
     auto contentBoxTop = borderAndPaddingBefore();
     auto contentBoxBottom = contentBoxTop + contentHeight;
@@ -3766,6 +3769,16 @@ void RenderBlockFlow::ensureLineBoxes()
 
     auto simpleLineLayout = makeRefPtr(this->simpleLineLayout());
 
+    bool needsToPaginateComplexLines = [&] {
+        if (simpleLineLayout && simpleLineLayout->isPaginated())
+            return true;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (layoutFormattingContextLineLayout() && layoutFormattingContextLineLayout()->isPaginated())
+            return true;
+#endif
+        return false;
+    }();
+
     m_lineLayout = makeUnique<ComplexLineLayout>(*this);
 
     if (simpleLineLayout) {
@@ -3785,7 +3798,7 @@ void RenderBlockFlow::ensureLineBoxes()
     bool relayoutChildren = false;
     LayoutUnit repaintLogicalTop;
     LayoutUnit repaintLogicalBottom;
-    if (simpleLineLayout && simpleLineLayout->isPaginated()) {
+    if (needsToPaginateComplexLines) {
         PaginatedLayoutStateMaintainer state(*this);
         complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // This matches relayoutToAvoidWidows.

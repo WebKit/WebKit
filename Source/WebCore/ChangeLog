@@ -1,3 +1,44 @@
+2020-09-22  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Basic pagination support
+        https://bugs.webkit.org/show_bug.cgi?id=215451
+        <rdar://problem/67482721>
+
+        Reviewed by Zalan Bujtas.
+
+        Port the Simple Line Layout pagination code to LFC integration layer.
+        Pagination is the last remaining use of SLL so this patch turns it into dead code.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/displaytree/DisplayInlineContent.h:
+        (WebCore::Display::InlineContent::create):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::canUseFor):
+
+        This now the same as SLL test, covering all cases.
+
+        (WebCore::LayoutIntegration::LineLayout::contentLogicalHeight const):
+        (WebCore::LayoutIntegration::LineLayout::adjustForPagination):
+        (WebCore::LayoutIntegration::LineLayout::ensureDisplayInlineContent):
+
+        This is fairly direct copy of the SLL code. It is not future proof or otherwise great but it serves the job for now.
+
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        (WebCore::LayoutIntegration::LineLayout::isPaginated const):
+        * layout/integration/LayoutIntegrationPagination.cpp: Added.
+        (WebCore::LayoutIntegration::computeLineTopAndBottomWithOverflow):
+        (WebCore::LayoutIntegration::computeLineBreakIndex):
+        (WebCore::LayoutIntegration::computeOffsetAfterLineBreak):
+        (WebCore::LayoutIntegration::setPageBreakForLine):
+        (WebCore::LayoutIntegration::updateMinimumPageHeight):
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        (WebCore::LayoutIntegration::adjustLinePositionsForPagination):
+        * layout/integration/LayoutIntegrationPagination.h: Copied from Source/WebCore/layout/displaytree/DisplayInlineContent.h.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutLFCLines):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+
 2020-09-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Move RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled() check out from LineBuilder::constraintsForLine
