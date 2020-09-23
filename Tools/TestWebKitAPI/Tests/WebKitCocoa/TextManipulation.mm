@@ -3195,6 +3195,46 @@ TEST(TextManipulation, CompleteTextManipulationShouldOnlyChangeNodesInParagraphR
         [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationParagraphBecomesHidden)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<head><style> .hidden { display: none; } </style></head>"
+        "<body><span>hello</span></body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello", items[0].tokens[0].content);
+
+    done = false;
+    [webView evaluateJavaScript:@"document.querySelector('span').classList.add('hidden');" completionHandler:^(id result, NSError *) {
+        EXPECT_NULL(result);
+        done = true;
+    }];
+
+    done = false;
+    __block auto item = createItem(items[0].identifier, {{ items[0].tokens[0].identifier, @"Hello" }});
+    [webView _completeTextManipulationForItems:@[item.get()] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors.count, 1UL);
+        EXPECT_EQ(errors.firstObject.domain, _WKTextManipulationItemErrorDomain);
+        EXPECT_EQ(errors.firstObject.code, _WKTextManipulationItemErrorContentChanged);
+        EXPECT_EQ(errors.firstObject.userInfo[_WKTextManipulationItemErrorItemKey], item.get());
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("<span class=\"hidden\">hello</span>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
 TEST(TextManipulation, TextManipulationTokenDebugDescription)
 {
     auto token = adoptNS([[_WKTextManipulationToken alloc] init]);

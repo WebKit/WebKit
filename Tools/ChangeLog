@@ -1,3 +1,40 @@
+2020-09-23  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r267439. rdar://problem/69441287
+
+    REGRESSION(r266075): WebContent process crashes at TextManipulationController::getPath
+    https://bugs.webkit.org/show_bug.cgi?id=216846
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    TextIterator does not visit node that has no renderer, so if node has become hidden, TextManipulationController
+    will not find content node in paragraph range during replacement.
+    
+    API Test: TextManipulation.CompleteTextManipulationParagraphBecomesHidden
+    
+    * editing/TextManipulationController.cpp:
+    (WebCore::TextManipulationController::replace):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267439 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-22  Sihui Liu  <sihui_liu@apple.com>
+
+            REGRESSION(r266075): WebContent process crashes at TextManipulationController::getPath
+            https://bugs.webkit.org/show_bug.cgi?id=216846
+
+            Reviewed by Wenson Hsieh.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+            (TestWebKitAPI::TEST):
+
 2020-09-19  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Merge API test expectations
