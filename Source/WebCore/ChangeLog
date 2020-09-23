@@ -1,3 +1,20 @@
+2020-09-23  Chris Dumez  <cdumez@apple.com>
+
+        webaudio/AudioBufferSource/audiobuffersource-playbackrate.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=216827
+
+        Reviewed by Darin Adler.
+
+        AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping() would hit an assertion inside
+        finish() because finish() was already called earlier when calling updateSchedulingInfo().
+        updateSchedulingInfo() already takes care of calling finish() when we're done playing.
+        Address the issue by only calling finish() if hasFinished() returns false.
+
+        No new tests, unskipped existing test.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping):
+
 2020-09-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/aria-combobox-control-owns-elements.html in isolated tree mode.

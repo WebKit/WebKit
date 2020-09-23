@@ -333,9 +333,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode
 webaudio/AudioBufferSource/audiobuffersource-detune-modulation.html [ Pass Failure ]
 webaudio/AudioBufferSource/audiobuffersource-playbackrate-modulation.html [ Pass Failure ]
 
-# This WebAudio test is crashing in debug since its import from Blink.
-[ Debug ] webaudio/AudioBufferSource/audiobuffersource-playbackrate.html [ Crash ]
-
 webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 
 # Requires BroadcastChannel.

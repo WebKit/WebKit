@@ -176,7 +176,8 @@ bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(AudioBus*, unsign
                 memset(m_destinationChannels[i] + index, 0, sizeof(float) * framesToProcess);
         }
 
-        finish();
+        if (!hasFinished())
+            finish();
         return true;
     }
     return false;
