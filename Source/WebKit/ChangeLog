@@ -1,3 +1,15 @@
+2020-09-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Change name of client decoder entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=216670
+        <rdar://problem/69101997>
+
+        Reviewed by Darin Adler.
+
+        The client decoder entitlement landed in <https://trac.webkit.org/changeset/266613/webkit> has changed name, and should be updated.
+
+        * Scripts/process-entitlements.sh:
+
 2020-09-23  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Implement caption support in video fullscreen and PiP
