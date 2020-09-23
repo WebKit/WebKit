@@ -1000,6 +1000,7 @@
             "com.apple.cfprefsd.agent"
             "com.apple.cfprefsd.daemon"
             "com.apple.containermanagerd"
+            "com.apple.diagnosticd"
             "com.apple.tccd"
             "com.apple.BluetoothServices"
 

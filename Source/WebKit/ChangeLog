@@ -1,3 +1,24 @@
+2020-09-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Issue sandbox extension for the diagnostic daemon
+        https://bugs.webkit.org/show_bug.cgi?id=216834
+        <rdar://problem/58496834>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::isInternalInstall):
+        (WebKit::agxCompilerClasses):
+        (WebKit::diagnosticServices):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_SVG_FONTS macro

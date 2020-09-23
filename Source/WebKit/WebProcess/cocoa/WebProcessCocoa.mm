@@ -311,8 +311,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.containerManagerExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.containerManagerExtensionHandle);
     
-#if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.diagnosticsExtensionHandles);
+#if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles);
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
 #endif

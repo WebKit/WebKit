@@ -201,13 +201,15 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 #endif
 }
 
-#if PLATFORM(IOS_FAMILY)
 static bool isInternalInstall()
 {
+#if PLATFORM(IOS_FAMILY)
     static bool isInternal = MGGetBoolAnswer(kMGQAppleInternalInstallCapability);
+#else
+    static bool isInternal = FileSystem::fileIsDirectory("/AppleInternal", FileSystem::ShouldFollowSymbolicLinks::No);
+#endif
     return isInternal;
 }
-#endif
 
 // FIXME(207716): The following should be removed when the GPU process is complete.
 static const Vector<ASCIILiteral>& mediaRelatedMachServices()
@@ -260,16 +262,6 @@ static const Vector<ASCIILiteral>& nonBrowserServices()
     return services;
 }
 
-static const Vector<ASCIILiteral>& diagnosticServices()
-{
-    ASSERT(isMainThread());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-        "com.apple.diagnosticd"_s,
-        "com.apple.osanalytics.osanalyticshelper"_s
-    });
-    return services;
-}
-
 static const Vector<ASCIILiteral>& agxCompilerClasses()
 {
     ASSERT(isMainThread());
@@ -287,7 +279,6 @@ static const Vector<ASCIILiteral>& agxCompilerClasses()
     });
     return iokitClasses;
 }
-
 #endif
 
 #if PLATFORM(IOS)
@@ -301,6 +292,19 @@ static const Vector<ASCIILiteral>& agxCompilerServices()
     return services;
 }
 #endif
+
+static const Vector<ASCIILiteral>& diagnosticServices()
+{
+    ASSERT(isMainThread());
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.diagnosticd"_s,
+#if PLATFORM(IOS_FAMILY)
+        "com.apple.osanalytics.osanalyticshelper"_s
+#endif
+    });
+    return services;
+}
+
 
 static bool requiresContainerManagerAccess()
 {
@@ -421,18 +425,16 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if PLATFORM(IOS_FAMILY)
     if (!WebCore::IOSApplication::isMobileSafari())
         parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), WTF::nullopt);
-    
-    if (isInternalInstall())
-        parameters.diagnosticsExtensionHandles = SandboxExtension::createHandlesForMachLookup(diagnosticServices(), WTF::nullopt, SandboxExtension::Flags::NoReport);
 
     if (WebCore::deviceHasAGXCompilerService())
         parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(agxCompilerClasses(), WTF::nullopt);
 #endif
-    
-#if PLATFORM(COCOA)
+
+    if (isInternalInstall())
+        parameters.diagnosticsExtensionHandles = SandboxExtension::createHandlesForMachLookup(diagnosticServices(), WTF::nullopt, SandboxExtension::Flags::NoReport);
+
     parameters.systemHasBattery = systemHasBattery();
     parameters.systemHasAC = cachedSystemHasAC().valueOr(true);
-#endif
 
     if (requiresContainerManagerAccess()) {
         SandboxExtension::Handle handle;
