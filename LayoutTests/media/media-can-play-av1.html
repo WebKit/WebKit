@@ -6,12 +6,14 @@
          function start() {
              video = mediaElement = document.getElementsByTagName('video')[0];
 
-             testExpected("video.canPlayType('video/mp4; codecs=av1')", "");
-             testExpected("video.canPlayType('video/webm; codecs=av1')", "");
+             testExpected("video.canPlayType('video/mp4; codecs=av1')", "probably");
+             testExpected("video.canPlayType('video/webm; codecs=av1')", "probably");
 
-             testExpected("video.canPlayType('video/mp4; codecs=av01.0.04M.08')", "");
-             testExpected("video.canPlayType('video/webm; codecs=av01.0.04M.08')", "");
+             testExpected("video.canPlayType('video/mp4; codecs=av01.0.04M.08')", "probably");
+             testExpected("video.canPlayType('video/webm; codecs=av01.0.04M.08')", "probably");
 
+             testExpected("video.canPlayType('video/webm; codecs=aaaav1')", "");
+             testExpected("video.canPlayType('video/mp4; codecs=bbbav1')", "");
              endTest();
          }
         </script>

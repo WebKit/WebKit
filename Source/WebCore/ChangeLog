@@ -1,3 +1,13 @@
+2020-09-23  Philippe Normand  <pnormand@igalia.com>
+
+        media/can-play-av1.html is not spec compliant
+        https://bugs.webkit.org/show_bug.cgi?id=216873
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::initialize): Add the "av1" codec in the codecs mapping.
+
 2020-09-23  Youenn Fablet  <youenn@apple.com>
 
         Add support for HTMLMediaElement.setSinkId

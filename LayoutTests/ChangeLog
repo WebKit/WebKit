@@ -1,3 +1,15 @@
+2020-09-23  Philippe Normand  <pnormand@igalia.com>
+
+        media/can-play-av1.html is not spec compliant
+        https://bugs.webkit.org/show_bug.cgi?id=216873
+
+        Reviewed by Eric Carlson.
+
+        * media/media-can-play-av1-expected.txt: Update baseline.
+        * media/media-can-play-av1.html: Update test and add another few testing invalid codecs.
+        * platform/glib/TestExpectations: Unflag passing test.
+        * platform/mac/media/media-can-play-av1-expected.txt: Added. This test is expected to fail on mac.
+
 2020-09-23  Youenn Fablet  <youenn@apple.com>
 
         Add support for HTMLMediaElement.setSinkId

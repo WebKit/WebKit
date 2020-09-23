@@ -210,6 +210,7 @@ void GStreamerRegistryScanner::initialize()
     Vector<String> av1DecodersBlacklist { "av1dec"_s };
     if ((matroskaSupported || isContainerTypeSupported("video/mp4")) && hasElementForMediaType(m_videoDecoderFactories, "video/x-av1", false, makeOptional(WTFMove(av1DecodersBlacklist)))) {
         m_codecMap.add(AtomString("av01*"), false);
+        m_codecMap.add(AtomString("av1"), false);
         m_codecMap.add(AtomString("x-av1"), false);
     }
 
