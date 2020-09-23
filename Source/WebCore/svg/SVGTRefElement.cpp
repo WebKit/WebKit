@@ -30,7 +30,6 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "ShadowRoot.h"
-#include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "ScriptDisallowedScope.h"

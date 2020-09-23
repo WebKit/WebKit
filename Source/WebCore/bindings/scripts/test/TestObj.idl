@@ -347,7 +347,7 @@ enum TestConfidence { "high", "kinda-low" };
     Element? getElementById([RequiresExistingAtomString] DOMString elementId);
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
-    [CheckSecurityForNode, MayThrowException] SVGDocument getSVGDocument();
+    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 
     undefined convert1(TestNode value);
     undefined convert2(TestNode? value);

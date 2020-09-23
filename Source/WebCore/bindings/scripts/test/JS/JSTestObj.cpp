@@ -65,7 +65,6 @@
 #include "JSFetchRequest.h"
 #include "JSMediaDevices.h"
 #include "JSNode.h"
-#include "JSSVGDocument.h"
 #include "JSSVGPoint.h"
 #include "JSTestCallbackFunction.h"
 #include "JSTestCallbackInterface.h"
@@ -8355,7 +8354,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetSVGDocumentBody(J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<SVGDocument>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, BindingSecurity::checkSecurityForNode(*lexicalGlobalObject, impl.getSVGDocument()))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Document>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, BindingSecurity::checkSecurityForNode(*lexicalGlobalObject, impl.getSVGDocument()))));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

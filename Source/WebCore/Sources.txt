@@ -2379,6 +2379,7 @@ style/StyleSharingResolver.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/UserAgentStyle.cpp
+svg/DocumentSVG.cpp
 svg/SVGAElement.cpp
 svg/SVGAltGlyphDefElement.cpp
 svg/SVGAltGlyphElement.cpp
@@ -2670,7 +2671,6 @@ JSAudioScheduledSourceNode.cpp
 JSAudioTimestamp.cpp
 JSAudioTrack.cpp
 JSAudioTrackList.cpp
-JSAudioTrackMediaSource.cpp
 JSAuthenticationExtensionsClientInputs.cpp
 JSAuthenticationExtensionsClientOutputs.cpp
 JSAuthenticatorAssertionResponse.cpp
@@ -2779,8 +2779,6 @@ JSCustomEvent.cpp
 JSDOMApplicationCache.cpp
 JSDOMCSSCustomPropertyDescriptor.cpp
 JSDOMCSSNamespace.cpp
-JSDOMCSSPaintWorklet.cpp
-JSDOMCSSRegisterCustomProperty.cpp
 JSDOMCache.cpp
 JSDOMCacheStorage.cpp
 JSDOMException.cpp
@@ -2810,13 +2808,7 @@ JSDOMStringList.cpp
 JSDOMStringMap.cpp
 JSDOMTokenList.cpp
 JSDOMURL.cpp
-JSDOMURLMediaSource.cpp
 JSDOMWindow.cpp
-JSDOMWindowCaches.cpp
-JSDOMWindowIndexedDatabase.cpp
-JSDOMWindowQuota.cpp
-JSDOMWindowSpeechSynthesis.cpp
-JSDOMWindowWebDatabase.cpp
 JSDataCue.cpp
 JSDataTransfer.cpp
 JSDataTransferItem.cpp
@@ -2840,7 +2832,6 @@ JSDocument.cpp
 JSDocumentAndElementEventHandlers.cpp
 JSDocumentFragment.cpp
 JSDocumentOrShadowRoot.cpp
-JSDocumentPictureInPicture.cpp
 JSDocumentTimeline.cpp
 JSDocumentTimelineOptions.cpp
 JSDocumentType.cpp
@@ -2975,7 +2966,6 @@ JSHTMLHyperlinkElementUtils.cpp
 JSHTMLIFrameElement.cpp
 JSHTMLImageElement.cpp
 JSHTMLInputElement.cpp
-JSHTMLInputElementEntriesAPI.cpp
 JSHTMLKeygenElement.cpp
 JSHTMLLIElement.cpp
 JSHTMLLabelElement.cpp
@@ -2984,7 +2974,6 @@ JSHTMLLinkElement.cpp
 JSHTMLMapElement.cpp
 JSHTMLMarqueeElement.cpp
 JSHTMLMediaElement.cpp
-JSHTMLMediaElementMediaSession.cpp
 JSHTMLMenuElement.cpp
 JSHTMLMenuItemElement.cpp
 JSHTMLMetaElement.cpp
@@ -3023,7 +3012,6 @@ JSHTMLTrackElement.cpp
 JSHTMLUListElement.cpp
 JSHTMLUnknownElement.cpp
 JSHTMLVideoElement.cpp
-JSHTMLVideoElementPictureInPicture.cpp
 JSHashChangeEvent.cpp
 JSHdrMetadataType.cpp
 JSHighlightMap.cpp
@@ -3127,23 +3115,6 @@ JSMutationObserver.cpp
 JSMutationRecord.cpp
 JSNamedNodeMap.cpp
 JSNavigator.cpp
-JSNavigatorBeacon.cpp
-JSNavigatorClipboard.cpp
-JSNavigatorCredentials.cpp
-JSNavigatorEME.cpp
-JSNavigatorGPU.cpp
-JSNavigatorGamepad.cpp
-JSNavigatorGeolocation.cpp
-JSNavigatorID.cpp
-JSNavigatorLanguage.cpp
-JSNavigatorMaxTouchPoints.cpp
-JSNavigatorMediaCapabilities.cpp
-JSNavigatorMediaDevices.cpp
-JSNavigatorOnLine.cpp
-JSNavigatorServiceWorker.cpp
-JSNavigatorShare.cpp
-JSNavigatorStorageQuota.cpp
-JSNavigatorWebDriver.cpp
 JSNode.cpp
 JSNodeFilter.cpp
 JSCustomXPathNSResolver.cpp
@@ -3342,7 +3313,6 @@ JSSVGComponentTransferFunctionElement.cpp
 JSSVGCursorElement.cpp
 JSSVGDefsElement.cpp
 JSSVGDescElement.cpp
-JSSVGDocument.cpp
 JSSVGElement.cpp
 JSSVGEllipseElement.cpp
 JSSVGFEBlendElement.cpp
@@ -3516,7 +3486,6 @@ JSTextTrackCue.cpp
 JSTextTrackCueGeneric.cpp
 JSTextTrackCueList.cpp
 JSTextTrackList.cpp
-JSTextTrackMediaSource.cpp
 JSTimeRanges.cpp
 JSTrackEvent.cpp
 JSTransferFunction.cpp
@@ -3545,7 +3514,6 @@ JSVideoConfiguration.cpp
 JSVideoPlaybackQuality.cpp
 JSVideoTrack.cpp
 JSVideoTrackList.cpp
-JSVideoTrackMediaSource.cpp
 JSVisibilityState.cpp
 JSVisualViewport.cpp
 JSVoidCallback.cpp
@@ -3655,15 +3623,10 @@ JSWebXRWebGLLayer.cpp
 JSWheelEvent.cpp
 JSWindowEventHandlers.cpp
 JSWindowOrWorkerGlobalScope.cpp
-JSWindowOrWorkerGlobalScopeFetch.cpp
 JSWorker.cpp
 JSWorkerGlobalScope.cpp
-JSWorkerGlobalScopeCaches.cpp
-JSWorkerGlobalScopeIndexedDatabase.cpp
 JSWorkerLocation.cpp
 JSWorkerNavigator.cpp
-JSWorkerNavigatorGPU.cpp
-JSWorkerNavigatorStorageQuota.cpp
 JSWorkerType.cpp
 JSWorklet.cpp
 JSWorkletGlobalScope.cpp

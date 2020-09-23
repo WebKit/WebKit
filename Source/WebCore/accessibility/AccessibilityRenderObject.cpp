@@ -38,6 +38,7 @@
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
 #include "CachedImage.h"
+#include "DocumentSVG.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
@@ -3194,7 +3195,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     if (!is<SVGDocument>(document))
         return nullptr;
     
-    auto rootElement = SVGDocument::rootElement(*document);
+    auto rootElement = DocumentSVG::rootElement(*document);
     if (!rootElement)
         return nullptr;
     RenderObject* rendererRoot = rootElement->renderer();

@@ -33,6 +33,7 @@
 #include "CommonVM.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
+#include "DocumentSVG.h"
 #include "EditorClient.h"
 #include "ElementIterator.h"
 #include "Frame.h"
@@ -48,7 +49,6 @@
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include "SVGDocument.h"
 #include "SVGFEImageElement.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGImageClients.h"
@@ -99,7 +99,7 @@ inline RefPtr<SVGSVGElement> SVGImage::rootElement() const
 {
     if (!m_page)
         return nullptr;
-    return SVGDocument::rootElement(*m_page->mainFrame().document());
+    return DocumentSVG::rootElement(*m_page->mainFrame().document());
 }
 
 bool SVGImage::hasSingleSecurityOrigin() const

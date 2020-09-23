@@ -25,9 +25,7 @@
 #include "JSHTMLDocument.h"
 #include "JSXMLDocument.h"
 #include "NodeTraversal.h"
-#include "SVGDocument.h"
 #include <JavaScriptCore/HeapAnalyzer.h>
-
 
 namespace WebCore {
 using namespace JSC;

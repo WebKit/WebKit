@@ -225,21 +225,21 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/async-clipboard/Clipboard.idl
     Modules/async-clipboard/ClipboardItem.idl
-    Modules/async-clipboard/NavigatorClipboard.idl
+    Modules/async-clipboard/Navigator+Clipboard.idl
 
-    Modules/beacon/NavigatorBeacon.idl
+    Modules/beacon/Navigator+Beacon.idl
 
     Modules/cache/CacheQueryOptions.idl
     Modules/cache/DOMCache.idl
     Modules/cache/DOMCacheStorage.idl
-    Modules/cache/DOMWindowCaches.idl
-    Modules/cache/WorkerGlobalScopeCaches.idl
+    Modules/cache/DOMWindow+Caches.idl
+    Modules/cache/WorkerGlobalScope+Caches.idl
 
     Modules/credentialmanagement/BasicCredential.idl
     Modules/credentialmanagement/CredentialCreationOptions.idl
     Modules/credentialmanagement/CredentialRequestOptions.idl
     Modules/credentialmanagement/CredentialsContainer.idl
-    Modules/credentialmanagement/NavigatorCredentials.idl
+    Modules/credentialmanagement/Navigator+Credentials.idl
 
     Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
     Modules/encryptedmedia/MediaKeyMessageEvent.idl
@@ -251,7 +251,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/encryptedmedia/MediaKeySystemMediaCapability.idl
     Modules/encryptedmedia/MediaKeys.idl
     Modules/encryptedmedia/MediaKeysRequirement.idl
-    Modules/encryptedmedia/NavigatorEME.idl
+    Modules/encryptedmedia/Navigator+EME.idl
 
     Modules/entriesapi/DOMFileSystem.idl
     Modules/entriesapi/ErrorCallback.idl
@@ -262,7 +262,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/entriesapi/FileSystemEntry.idl
     Modules/entriesapi/FileSystemEntryCallback.idl
     Modules/entriesapi/FileSystemFileEntry.idl
-    Modules/entriesapi/HTMLInputElementEntriesAPI.idl
+    Modules/entriesapi/HTMLInputElement+EntriesAPI.idl
 
     Modules/fetch/FetchBody.idl
     Modules/fetch/FetchHeaders.idl
@@ -274,13 +274,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/fetch/FetchRequestMode.idl
     Modules/fetch/FetchRequestRedirect.idl
     Modules/fetch/FetchResponse.idl
-    Modules/fetch/WindowOrWorkerGlobalScopeFetch.idl
+    Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
 
     Modules/geolocation/Geolocation.idl
     Modules/geolocation/GeolocationCoordinates.idl
     Modules/geolocation/GeolocationPosition.idl
     Modules/geolocation/GeolocationPositionError.idl
-    Modules/geolocation/NavigatorGeolocation.idl
+    Modules/geolocation/Navigator+Geolocation.idl
     Modules/geolocation/PositionCallback.idl
     Modules/geolocation/PositionErrorCallback.idl
     Modules/geolocation/PositionOptions.idl
@@ -288,7 +288,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/highlight/HighlightMap.idl
     Modules/highlight/HighlightRangeGroup.idl
 
-    Modules/indexeddb/DOMWindowIndexedDatabase.idl
+    Modules/indexeddb/DOMWindow+IndexedDatabase.idl
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl
     Modules/indexeddb/IDBCursorWithValue.idl
@@ -302,7 +302,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/indexeddb/IDBTransaction.idl
     Modules/indexeddb/IDBTransactionMode.idl
     Modules/indexeddb/IDBVersionChangeEvent.idl
-    Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl
+    Modules/indexeddb/WorkerGlobalScope+IndexedDatabase.idl
 
     Modules/mediacapabilities/AudioConfiguration.idl
     Modules/mediacapabilities/ColorGamut.idl
@@ -316,7 +316,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediacapabilities/MediaDecodingType.idl
     Modules/mediacapabilities/MediaEncodingConfiguration.idl
     Modules/mediacapabilities/MediaEncodingType.idl
-    Modules/mediacapabilities/NavigatorMediaCapabilities.idl
+    Modules/mediacapabilities/Navigator+MediaCapabilities.idl
     Modules/mediacapabilities/TransferFunction.idl
     Modules/mediacapabilities/VideoConfiguration.idl
 
@@ -326,18 +326,18 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediarecorder/MediaRecorder.idl
     Modules/mediarecorder/MediaRecorderErrorEvent.idl
 
-    Modules/mediasession/HTMLMediaElementMediaSession.idl
+    Modules/mediasession/HTMLMediaElement+MediaSession.idl
     Modules/mediasession/MediaRemoteControls.idl
     Modules/mediasession/MediaSession.idl
 
-    Modules/mediasource/AudioTrackMediaSource.idl
-    Modules/mediasource/DOMURLMediaSource.idl
+    Modules/mediasource/AudioTrack+MediaSource.idl
+    Modules/mediasource/DOMURL+MediaSource.idl
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
-    Modules/mediasource/TextTrackMediaSource.idl
+    Modules/mediasource/TextTrack+MediaSource.idl
     Modules/mediasource/VideoPlaybackQuality.idl
-    Modules/mediasource/VideoTrackMediaSource.idl
+    Modules/mediasource/VideoTrack+MediaSource.idl
 
     Modules/mediastream/CanvasCaptureMediaStreamTrack.idl
     Modules/mediastream/DoubleRange.idl
@@ -349,7 +349,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/MediaStreamTrackEvent.idl
     Modules/mediastream/MediaTrackConstraints.idl
     Modules/mediastream/MediaTrackSupportedConstraints.idl
-    Modules/mediastream/NavigatorMediaDevices.idl
+    Modules/mediastream/Navigator+MediaDevices.idl
     Modules/mediastream/OverconstrainedError.idl
     Modules/mediastream/OverconstrainedErrorEvent.idl
     Modules/mediastream/RTCAnswerOptions.idl
@@ -427,16 +427,16 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/paymentrequest/PaymentShippingType.idl
     Modules/paymentrequest/PaymentValidationErrors.idl
 
-    Modules/pictureinpicture/DocumentOrShadowRootPictureInPicture.idl
-    Modules/pictureinpicture/DocumentPictureInPicture.idl
+    Modules/pictureinpicture/Document+PictureInPicture.idl
+    Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl
     Modules/pictureinpicture/EnterPictureInPictureEvent.idl
-    Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl
+    Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl
     Modules/pictureinpicture/PictureInPictureWindow.idl
 
     Modules/remoteplayback/RemotePlayback.idl
     Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
 
-    Modules/speech/DOMWindowSpeechSynthesis.idl
+    Modules/speech/DOMWindow+SpeechSynthesis.idl
     Modules/speech/SpeechSynthesis.idl
     Modules/speech/SpeechSynthesisEvent.idl
     Modules/speech/SpeechSynthesisUtterance.idl
@@ -547,7 +547,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/PublicKeyCredentialType.idl
     Modules/webauthn/UserVerificationRequirement.idl
 
-    Modules/webdatabase/DOMWindowWebDatabase.idl
+    Modules/webdatabase/DOMWindow+WebDatabase.idl
     Modules/webdatabase/Database.idl
     Modules/webdatabase/DatabaseCallback.idl
     Modules/webdatabase/SQLError.idl
@@ -559,7 +559,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webdatabase/SQLTransactionCallback.idl
     Modules/webdatabase/SQLTransactionErrorCallback.idl
 
-    Modules/webdriver/NavigatorWebDriver.idl
+    Modules/webdriver/Navigator+WebDriver.idl
 
     Modules/webgpu/GPUBindGroupLayoutBinding.idl
     Modules/webgpu/GPUBindGroupLayoutDescriptor.idl
@@ -589,7 +589,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUVertexAttributeDescriptor.idl
     Modules/webgpu/GPUVertexBufferDescriptor.idl
     Modules/webgpu/GPUVertexInputDescriptor.idl
-    Modules/webgpu/NavigatorGPU.idl
+    Modules/webgpu/Navigator+GPU.idl
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUBindGroup.idl
@@ -622,7 +622,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUSwapChain.idl
     Modules/webgpu/WebGPUTexture.idl
     Modules/webgpu/WebGPUTextureView.idl
-    Modules/webgpu/WorkerNavigatorGPU.idl
+    Modules/webgpu/WorkerNavigator+GPU.idl
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
@@ -642,14 +642,14 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/CompositeOperation.idl
     animation/CompositeOperationOrAuto.idl
     animation/ComputedEffectTiming.idl
-    animation/DocumentAnimations.idl
-    animation/DocumentOrShadowRootAnimations.idl
+    animation/Document+WebAnimations.idl
+    animation/DocumentOrShadowRoot+WebAnimations.idl
     animation/DocumentTimeline.idl
     animation/DocumentTimelineOptions.idl
     animation/FillMode.idl
     animation/GetAnimationsOptions.idl
-    animation/GlobalEventHandlersCSSAnimations.idl
-    animation/GlobalEventHandlersCSSTransitions.idl
+    animation/GlobalEventHandlers+CSSAnimations.idl
+    animation/GlobalEventHandlers+CSSTransitions.idl
     animation/IterationCompositeOperation.idl
     animation/KeyframeAnimationOptions.idl
     animation/KeyframeEffect.idl
@@ -705,11 +705,11 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSStyleSheet.idl
     css/CSSSupportsRule.idl
     css/CSSUnknownRule.idl
-    css/DocumentOrShadowRootStyleSheets.idl
+    css/DocumentOrShadowRoot+CSSOM.idl
     css/DOMCSSCustomPropertyDescriptor.idl
+    css/DOMCSSNamespace+CSSPainting.idl
+    css/DOMCSSNamespace+CSSPropertiesandValues.idl
     css/DOMCSSNamespace.idl
-    css/DOMCSSPaintWorklet.idl
-    css/DOMCSSRegisterCustomProperty.idl
     css/DOMMatrix.idl
     css/DOMMatrix2DInit.idl
     css/DOMMatrixInit.idl
@@ -775,33 +775,33 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DeviceMotionEvent.idl
     dom/DeviceOrientationEvent.idl
     dom/DeviceOrientationOrMotionPermissionState.idl
+    dom/Document+CSSOMView.idl
+    dom/Document+Fullscreen.idl
+    dom/Document+HTML.idl
+    dom/Document+HTMLObsolete.idl
+    dom/Document+PageVisibility.idl
+    dom/Document+PointerLock.idl
+    dom/Document+Selection.idl
+    dom/Document+StorageAccess.idl
+    dom/Document+Touch.idl
+    dom/Document+UndoMananger.idl
     dom/Document.idl
     dom/DocumentAndElementEventHandlers.idl
     dom/DocumentFragment.idl
-    dom/DocumentFullscreen.idl
-    dom/DocumentHTML.idl
-    dom/DocumentHTMLObsolete.idl
+    dom/DocumentOrShadowRoot+PointerLock.idl
     dom/DocumentOrShadowRoot.idl
-    dom/DocumentOrShadowRootPointerLock.idl
-    dom/DocumentPageVisibility.idl
-    dom/DocumentPointerLock.idl
-    dom/DocumentScrolling.idl
-    dom/DocumentSelection.idl
-    dom/DocumentStorageAccess.idl
-    dom/DocumentTouch.idl
     dom/DocumentType.idl
-    dom/DocumentUndoMananger.idl
     dom/DragEvent.idl
+    dom/Element+DOMParsing.idl
     dom/Element.idl
-    dom/ElementDOMParsing.idl
     dom/ErrorEvent.idl
     dom/Event.idl
     dom/EventInit.idl
     dom/EventModifierInit.idl
     dom/EventTarget.idl
     dom/FocusEvent.idl
+    dom/GlobalEventHandlers+PointerEvents.idl
     dom/GlobalEventHandlers.idl
-    dom/GlobalEventHandlersPointerEvents.idl
     dom/HashChangeEvent.idl
     dom/IdleDeadline.idl
     dom/IdleRequestCallback.idl
@@ -1136,6 +1136,7 @@ set(WebCore_NON_SVG_IDL_FILES
 )
 
 set(WebCore_SVG_IDL_FILES
+    svg/Document+SVG.idl
     svg/SVGAElement.idl
     svg/SVGAltGlyphDefElement.idl
     svg/SVGAltGlyphElement.idl
@@ -1164,7 +1165,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGCursorElement.idl
     svg/SVGDefsElement.idl
     svg/SVGDescElement.idl
-    svg/SVGDocument.idl
     svg/SVGElement.idl
     svg/SVGEllipseElement.idl
     svg/SVGFEBlendElement.idl
@@ -1294,7 +1294,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/gamepad/Gamepad.idl
     Modules/gamepad/GamepadButton.idl
     Modules/gamepad/GamepadEvent.idl
-    Modules/gamepad/NavigatorGamepad.idl
+    Modules/gamepad/Navigator+Gamepad.idl
 )
 
 if (ENABLE_GAMEPAD)
@@ -1311,7 +1311,7 @@ if (ENABLE_GAMEPAD)
 endif ()
 
 list(APPEND WebCore_NON_SVG_IDL_FILES
-    Modules/webxr/NavigatorWebXR.idl
+    Modules/webxr/Navigator+WebXR.idl
     Modules/webxr/WebXRBoundedReferenceSpace.idl
     Modules/webxr/WebXRFrame.idl
     Modules/webxr/WebXRInputSource.idl
@@ -1558,14 +1558,14 @@ if (ENABLE_QUOTA)
 endif ()
 
 list(APPEND WebCore_IDL_FILES
-    Modules/quota/DOMWindowQuota.idl
-    Modules/quota/NavigatorStorageQuota.idl
+    Modules/quota/DOMWindow+Quota.idl
+    Modules/quota/Navigator+StorageQuota.idl
     Modules/quota/StorageErrorCallback.idl
     Modules/quota/StorageInfo.idl
     Modules/quota/StorageQuota.idl
     Modules/quota/StorageQuotaCallback.idl
     Modules/quota/StorageUsageCallback.idl
-    Modules/quota/WorkerNavigatorStorageQuota.idl
+    Modules/quota/WorkerNavigator+StorageQuota.idl
 )
 
 if (ENABLE_GRAPHICS_CONTEXT_GL)

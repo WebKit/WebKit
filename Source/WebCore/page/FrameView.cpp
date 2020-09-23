@@ -40,6 +40,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
+#include "DocumentSVG.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -2228,7 +2229,7 @@ bool FrameView::scrollToFragmentInternal(const String& fragmentIdentifier)
     if (is<SVGDocument>(document)) {
         if (fragmentIdentifier.isEmpty())
             return false;
-        if (auto rootElement = SVGDocument::rootElement(document)) {
+        if (auto rootElement = DocumentSVG::rootElement(document)) {
             if (rootElement->scrollToFragment(fragmentIdentifier))
                 return true;
             // If SVG failed to scrollToAnchor() and anchorElement is null, no other scrolling will be possible.
@@ -2323,7 +2324,7 @@ void FrameView::resetScrollAnchor()
     document.setCSSTarget(nullptr);
 
     if (is<SVGDocument>(document)) {
-        if (auto rootElement = SVGDocument::rootElement(document)) {
+        if (auto rootElement = DocumentSVG::rootElement(document)) {
             // We need to update the layout before resetScrollAnchor(), otherwise we
             // could really mess things up if resetting the anchor comes at a bad moment.
             document.updateStyleIfNeeded();

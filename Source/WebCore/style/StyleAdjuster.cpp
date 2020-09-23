@@ -50,7 +50,6 @@
 #include "RenderStyle.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SVGDocument.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"

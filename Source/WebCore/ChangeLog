@@ -1,3 +1,151 @@
+2020-09-22  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Switch to new file name convention for partial interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=216843
+
+        Reviewed by Tim Horton.
+
+        Updates all 'partial interface' IDLs to use the new naming convention adopted
+        in https://webkit.org/b/216729, where they are name as the construction of the
+        base interface '+' the supplementing spec. So, additions to Document from the
+        Web Animations spec becomes Document+WebAnimations.idl.
+        
+        * accessibility/AccessibilityRenderObject.cpp:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSXMLDocumentCustom.cpp:
+        * html/HTMLFrameOwnerElement.h:
+        * loader/FrameLoader.cpp:
+        * page/FrameView.cpp:
+        * svg/DocumentSVG.cpp: Added.
+        * svg/DocumentSVG.h: Added.
+        * svg/SVGDocument.cpp:
+        * svg/SVGDocument.h:
+        * svg/SVGTRefElement.cpp:
+        * svg/graphics/SVGImage.cpp:
+        * style/StyleAdjuster.cpp:
+        * svg/Document+SVG.idl: Added.
+        * svg/SVGDocument.idl: Removed.
+        Fix weirdness around SVGDocument. Previously, additions to the Document
+        interface were in a class that was also a document subclass. Now the two
+        are split, so the additions are in DocumentSVG.h/cpp, matching convention,
+        and the subclass remains SVGDocument.h/cpp, also matching convention.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Update for renames.
+
+        * Modules/async-clipboard/Navigator+Clipboard.idl: Added.
+        * Modules/async-clipboard/NavigatorClipboard.idl: Removed.
+        * Modules/beacon/Navigator+Beacon.idl: Added.
+        * Modules/beacon/NavigatorBeacon.idl: Removed.
+        * Modules/cache/DOMWindow+Caches.idl: Added.
+        * Modules/cache/DOMWindowCaches.idl: Removed.
+        * Modules/cache/WorkerGlobalScope+Caches.idl: Added.
+        * Modules/cache/WorkerGlobalScopeCaches.idl: Removed.
+        * Modules/credentialmanagement/Navigator+Credentials.idl: Added.
+        * Modules/credentialmanagement/NavigatorCredentials.idl: Removed.
+        * Modules/encryptedmedia/Navigator+EME.idl: Added.
+        * Modules/encryptedmedia/NavigatorEME.idl: Removed.
+        * Modules/entriesapi/HTMLInputElement+EntriesAPI.idl: Added.
+        * Modules/entriesapi/HTMLInputElementEntriesAPI.idl: Removed.
+        * Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl: Added.
+        * Modules/fetch/WindowOrWorkerGlobalScopeFetch.idl: Removed.
+        * Modules/gamepad/Navigator+Gamepad.idl: Added.
+        * Modules/gamepad/NavigatorGamepad.idl: Removed.
+        * Modules/geolocation/Navigator+Geolocation.idl: Added.
+        * Modules/geolocation/NavigatorGeolocation.idl: Removed.
+        * Modules/indexeddb/DOMWindow+IndexedDatabase.idl: Added.
+        * Modules/indexeddb/DOMWindowIndexedDatabase.idl: Removed.
+        * Modules/indexeddb/WorkerGlobalScope+IndexedDatabase.idl: Added.
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl: Removed.
+        * Modules/mediacapabilities/Navigator+MediaCapabilities.idl: Added.
+        * Modules/mediacapabilities/NavigatorMediaCapabilities.idl: Removed.
+        * Modules/mediasession/HTMLMediaElement+MediaSession.idl: Added.
+        * Modules/mediasession/HTMLMediaElementMediaSession.idl: Removed.
+        * Modules/mediasource/AudioTrack+MediaSource.idl: Added.
+        * Modules/mediasource/AudioTrackMediaSource.idl: Removed.
+        * Modules/mediasource/DOMURL+MediaSource.idl: Added.
+        * Modules/mediasource/DOMURLMediaSource.idl: Removed.
+        * Modules/mediasource/TextTrack+MediaSource.idl: Added.
+        * Modules/mediasource/TextTrackMediaSource.idl: Removed.
+        * Modules/mediasource/VideoTrack+MediaSource.idl: Added.
+        * Modules/mediasource/VideoTrackMediaSource.idl: Removed.
+        * Modules/mediastream/Navigator+MediaDevices.idl: Added.
+        * Modules/mediastream/NavigatorMediaDevices.idl: Removed.
+        * Modules/pictureinpicture/Document+PictureInPicture.idl: Added.
+        * Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl: Added.
+        * Modules/pictureinpicture/DocumentOrShadowRootPictureInPicture.idl: Removed.
+        * Modules/pictureinpicture/DocumentPictureInPicture.idl: Removed.
+        * Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl: Added.
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl: Removed.
+        * Modules/quota/DOMWindow+Quota.idl: Added.
+        * Modules/quota/DOMWindowQuota.idl: Removed.
+        * Modules/quota/Navigator+StorageQuota.idl: Added.
+        * Modules/quota/NavigatorStorageQuota.idl: Removed.
+        * Modules/quota/WorkerNavigator+StorageQuota.idl: Added.
+        * Modules/quota/WorkerNavigatorStorageQuota.idl: Removed.
+        * Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl: Added.
+        * Modules/remoteplayback/HTMLMediaElementRemotePlayback.idl: Removed.
+        * Modules/speech/DOMWindow+SpeechSynthesis.idl: Added.
+        * Modules/speech/DOMWindowSpeechSynthesis.idl: Removed.
+        * Modules/webdatabase/DOMWindow+WebDatabase.idl: Added.
+        * Modules/webdatabase/DOMWindowWebDatabase.idl: Removed.
+        * Modules/webdriver/Navigator+WebDriver.idl: Added.
+        * Modules/webdriver/NavigatorWebDriver.idl: Removed.
+        * Modules/webgpu/Navigator+GPU.idl: Added.
+        * Modules/webgpu/NavigatorGPU.idl: Removed.
+        * Modules/webgpu/WorkerNavigator+GPU.idl: Added.
+        * Modules/webgpu/WorkerNavigatorGPU.idl: Removed.
+        * Modules/webxr/Navigator+WebXR.idl: Added.
+        * Modules/webxr/NavigatorWebXR.idl: Removed.
+        * animation/Document+WebAnimations.idl: Added.
+        * animation/DocumentAnimations.idl: Removed.
+        * animation/DocumentOrShadowRoot+WebAnimations.idl: Added.
+        * animation/DocumentOrShadowRootAnimations.idl: Removed.
+        * animation/GlobalEventHandlers+CSSAnimations.idl: Added.
+        * animation/GlobalEventHandlers+CSSTransitions.idl: Added.
+        * animation/GlobalEventHandlersCSSAnimations.idl: Removed.
+        * animation/GlobalEventHandlersCSSTransitions.idl: Removed.
+        * css/DOMCSSNamespace+CSSPainting.idl: Added.
+        * css/DOMCSSNamespace+CSSPropertiesandValues.idl: Added.
+        * css/DOMCSSPaintWorklet.idl: Removed.
+        * css/DOMCSSRegisterCustomProperty.idl: Removed.
+        * css/DocumentOrShadowRoot+CSSOM.idl: Added.
+        * css/DocumentOrShadowRootStyleSheets.idl: Removed.
+        * dom/Document+CSSOMView.idl: Added.
+        * dom/Document+Fullscreen.idl: Added.
+        * dom/Document+HTML.idl: Added.
+        * dom/Document+HTMLObsolete.idl: Added.
+        * dom/Document+PageVisibility.idl: Added.
+        * dom/Document+PointerLock.idl: Added.
+        * dom/Document+Selection.idl: Added.
+        * dom/Document+StorageAccess.idl: Added.
+        * dom/Document+Touch.idl: Added.
+        * dom/Document+UndoMananger.idl: Added.
+        * dom/DocumentFullscreen.idl: Removed.
+        * dom/DocumentHTML.idl: Removed.
+        * dom/DocumentHTMLObsolete.idl: Removed.
+        * dom/DocumentOrShadowRoot+PointerLock.idl: Added.
+        * dom/DocumentOrShadowRootPointerLock.idl: Removed.
+        * dom/DocumentPageVisibility.idl: Removed.
+        * dom/DocumentPointerLock.idl: Removed.
+        * dom/DocumentScrolling.idl: Removed.
+        * dom/DocumentSelection.idl: Removed.
+        * dom/DocumentStorageAccess.idl: Removed.
+        * dom/DocumentTouch.idl: Removed.
+        * dom/DocumentUndoMananger.idl: Removed.
+        * dom/Element+DOMParsing.idl: Added.
+        * dom/ElementDOMParsing.idl: Removed.
+        * dom/GlobalEventHandlers+PointerEvents.idl: Added.
+        * dom/GlobalEventHandlersPointerEvents.idl: Removed.
+        * page/Navigator+IsLoggedIn.idl: Added.
+        * page/NavigatorIsLoggedIn.idl: Removed.
+        Rename IDLs.
+
 2020-09-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Used geometry for inline level boxes should be in the coordinate system of the formatting context root

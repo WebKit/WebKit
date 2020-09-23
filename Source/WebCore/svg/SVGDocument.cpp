@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGDocument.h"
 
+#include "DocumentSVG.h"
 #include "SVGSVGElement.h"
 #include "SVGViewSpec.h"
 #include <wtf/IsoMallocInlines.h>
@@ -35,17 +36,9 @@ SVGDocument::SVGDocument(Frame* frame, const URL& url)
 {
 }
 
-RefPtr<SVGSVGElement> SVGDocument::rootElement(const Document& document)
-{
-    auto* element = document.documentElement();
-    if (!is<SVGSVGElement>(element))
-        return nullptr;
-    return downcast<SVGSVGElement>(element);
-}
-
 bool SVGDocument::zoomAndPanEnabled() const
 {
-    auto element = rootElement(*this);
+    auto element = DocumentSVG::rootElement(*this);
     if (!element)
         return false;
     return (element->useCurrentView() ? element->currentView().zoomAndPan() : element->zoomAndPan()) == SVGZoomAndPanMagnify;
@@ -53,7 +46,7 @@ bool SVGDocument::zoomAndPanEnabled() const
 
 void SVGDocument::startPan(const FloatPoint& start)
 {
-    auto element = rootElement(*this);
+    auto element = DocumentSVG::rootElement(*this);
     if (!element)
         return;
     m_panningOffset = start - element->currentTranslateValue();
@@ -61,7 +54,7 @@ void SVGDocument::startPan(const FloatPoint& start)
 
 void SVGDocument::updatePan(const FloatPoint& position) const
 {
-    auto element = rootElement(*this);
+    auto element = DocumentSVG::rootElement(*this);
     if (!element)
         return;
     element->setCurrentTranslate(position - m_panningOffset);
