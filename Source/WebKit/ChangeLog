@@ -1,3 +1,39 @@
+2020-09-23  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Implement caption support in video fullscreen and PiP
+        https://bugs.webkit.org/show_bug.cgi?id=208752
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::syncTextTrackBounds): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        Remove syncTextTrackBounds() because the GPU process does not need to deal with
+        the text track bounds.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+        Add a missing IPC message receiver.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenLayer): Set the flag
+        m_requiresTextTrackRepresentation when changing video presentation mode.
+        (WebKit::MediaPlayerPrivateRemote::requiresTextTrackRepresentation const): Deleted.
+        (WebKit::MediaPlayerPrivateRemote::setTextTrackRepresentation): Deleted.
+        (WebKit::MediaPlayerPrivateRemote::syncTextTrackBounds): Deleted.
+        Move the implementation of those functions to MediaPlayerPrivateRemoteCocoa.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        Add the flag m_requiresTextTrackRepresentation and add a reference
+        to the layer used to render text track (in fullscreen or picture-in-picture).
+
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame):
+        (WebKit::MediaPlayerPrivateRemote::setTextTrackRepresentation):
+        (WebKit::MediaPlayerPrivateRemote::syncTextTrackBounds):
+        Those functions share a similar implementation as VideoLayerManagerObjC.
+
 2020-09-23  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Start collecting telemetry from a set of XPC services

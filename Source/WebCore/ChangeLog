@@ -1,3 +1,33 @@
+2020-09-23  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Implement caption support in video fullscreen and PiP
+        https://bugs.webkit.org/show_bug.cgi?id=208752
+
+        Reviewed by Eric Carlson.
+
+        Export TextTrackRepresentation so that WebKit can use it. Also, update the
+        interface of VideoLayerManagerObjC related to text track representation to
+        use PlatformLayer* instead of TextTrackRepresentation*.
+
+        Manually tested.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Change target membership of TextTrackRepresentation.h.
+
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.h:
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm:
+        (WebCore::VideoLayerManagerObjC::setTextTrackRepresentationLayer):
+        (WebCore::VideoLayerManagerObjC::setTextTrackRepresentation): Deleted.
+        Replace setTextTrackRepresentation() with setTextTrackRepresentationLayer().
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation):
+        Use VideoLayerManagerObjC::setTextTrackRepresentationLayer() instead of
+        VideoLayerManagerObjC::setTextTrackRepresentation().
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation): Ditto.
+
 2020-09-23  Chris Dumez  <cdumez@apple.com>
 
         webaudio/AudioBufferSource/audiobuffersource-playbackrate.html is crashing

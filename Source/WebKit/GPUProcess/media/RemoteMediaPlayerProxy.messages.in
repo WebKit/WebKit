@@ -112,7 +112,6 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     NotifyTrackModeChanged()
     TracksChanged()
-    SyncTextTrackBounds()
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)

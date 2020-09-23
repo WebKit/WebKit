@@ -55,6 +55,11 @@
 #include "RemoteAudioSessionMessages.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "RemoteMediaSessionHelper.h"
+#include "RemoteMediaSessionHelperMessages.h"
+#endif
+
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerMessages.h"
@@ -137,6 +142,12 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 #endif
 #if USE(AUDIO_SESSION)
     if (decoder.messageReceiverName() == Messages::RemoteAudioSession::messageReceiverName()) {
+        // FIXME
+        return true;
+    }
+#endif
+#if PLATFORM(IOS_FAMILY)
+    if (decoder.messageReceiverName() == Messages::RemoteMediaSessionHelper::messageReceiverName()) {
         // FIXME
         return true;
     }

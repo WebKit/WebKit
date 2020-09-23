@@ -47,6 +47,7 @@ public:
 
     PlatformLayer *videoInlineLayer() const { return m_videoInlineLayer.get(); }
     void setVideoLayer(PlatformLayer *, IntSize contentSize);
+    void didDestroyVideoLayer();
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     PlatformLayer *videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
@@ -56,10 +57,8 @@ public:
     void setVideoFullscreenFrame(FloatRect);
 #endif
 
-    void didDestroyVideoLayer();
-
     bool requiresTextTrackRepresentation() const;
-    void setTextTrackRepresentation(TextTrackRepresentation*);
+    void setTextTrackRepresentationLayer(PlatformLayer*);
     void syncTextTrackBounds();
 
 private:

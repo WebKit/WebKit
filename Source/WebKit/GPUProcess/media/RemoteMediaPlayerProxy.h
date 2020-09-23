@@ -175,7 +175,6 @@ public:
 
     void notifyTrackModeChanged();
     void tracksChanged();
-    void syncTextTrackBounds();
 
     void performTaskAtMediaTime(const MediaTime&, WallTime, CompletionHandler<void(Optional<MediaTime>)>&&);
     void wouldTaintOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(Optional<bool>)>&&);

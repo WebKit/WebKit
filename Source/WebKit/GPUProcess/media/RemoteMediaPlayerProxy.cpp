@@ -836,11 +836,6 @@ void RemoteMediaPlayerProxy::tracksChanged()
     m_player->tracksChanged();
 }
 
-void RemoteMediaPlayerProxy::syncTextTrackBounds()
-{
-    m_player->syncTextTrackBounds();
-}
-
 void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, WallTime messageTime, CompletionHandler<void(Optional<MediaTime>)>&& completionHandler)
 {
     if (m_performTaskAtMediaTimeCompletionHandler) {

@@ -182,14 +182,13 @@ void VideoLayerManagerObjC::syncTextTrackBounds()
 #endif
 }
 
-void VideoLayerManagerObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
+void VideoLayerManagerObjC::setTextTrackRepresentationLayer(PlatformLayer* representationLayer)
 {
 #if !ENABLE(VIDEO_PRESENTATION_MODE)
-    UNUSED_PARAM(representation);
+    UNUSED_PARAM(representationLayer);
 #else
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    PlatformLayer* representationLayer = representation ? representation->platformLayer() : nil;
     if (representationLayer == m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
         return;

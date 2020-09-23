@@ -651,12 +651,24 @@ PlatformLayer* MediaPlayerPrivateRemote::platformLayer() const
 void MediaPlayerPrivateRemote::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     if (!videoFullscreenLayer) {
-        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::ExitFullscreen(), WTFMove(completionHandler), m_id);
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::ExitFullscreen(), [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+            if (!weakThis)
+                return;
+
+            m_requiresTextTrackRepresentation = false;
+            completionHandler();
+        }, m_id);
         return;
     }
 
     ASSERT(m_videoFullscreenLayer.get() == videoFullscreenLayer);
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::EnterFullscreen(), WTFMove(completionHandler), m_id);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::EnterFullscreen(), [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!weakThis)
+            return;
+
+        m_requiresTextTrackRepresentation = true;
+        completionHandler();
+    }, m_id);
 }
 
 void MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage()
@@ -1008,22 +1020,6 @@ void MediaPlayerPrivateRemote::setShouldContinueAfterKeyNeeded(bool should)
     connection().send(Messages::RemoteMediaPlayerProxy::SetShouldContinueAfterKeyNeeded(should), m_id);
 }
 #endif
-
-bool MediaPlayerPrivateRemote::requiresTextTrackRepresentation() const
-{
-    notImplemented();
-    return false;
-}
-
-void MediaPlayerPrivateRemote::setTextTrackRepresentation(TextTrackRepresentation*)
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivateRemote::syncTextTrackBounds()
-{
-    connection().send(Messages::RemoteMediaPlayerProxy::SyncTextTrackBounds(), m_id);
-}
 
 void MediaPlayerPrivateRemote::tracksChanged()
 {

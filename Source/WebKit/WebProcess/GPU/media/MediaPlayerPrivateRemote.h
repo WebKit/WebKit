@@ -48,6 +48,7 @@ namespace WebCore {
 struct GenericCueData;
 class ISOWebVTTCue;
 class SerializedPlatformDataCueValue;
+class TextTrackRepresentation;
 }
 
 namespace WebKit {
@@ -323,9 +324,11 @@ private:
     void setShouldContinueAfterKeyNeeded(bool) final;
 #endif
 
-    bool requiresTextTrackRepresentation() const final;
+    bool requiresTextTrackRepresentation() const final { return m_requiresTextTrackRepresentation; }
+#if PLATFORM(COCOA)
     void setTextTrackRepresentation(WebCore::TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
+#endif
     void tracksChanged() final;
 
     void beginSimulatedHDCPError() final;
@@ -356,8 +359,12 @@ private:
 
     WebCore::MediaPlayer* m_player { nullptr };
     RefPtr<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
+    bool m_requiresTextTrackRepresentation { false };
     PlatformLayerContainer m_videoInlineLayer;
     PlatformLayerContainer m_videoFullscreenLayer;
+#if PLATFORM(COCOA)
+    RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
+#endif
     Optional<LayerHostingContextID> m_fullscreenLayerHostingContextId;
     RemoteMediaPlayerManager& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
