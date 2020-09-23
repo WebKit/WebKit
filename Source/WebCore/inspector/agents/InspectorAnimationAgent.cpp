@@ -340,7 +340,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorAnimation
 Protocol::ErrorStringOr<void> InspectorAnimationAgent::startTracking()
 {
     if (m_instrumentingAgents.trackingAnimationAgent() == this)
-        return makeUnexpected("Animation domain already tracking"_s);
+        return { };
 
     m_instrumentingAgents.setTrackingAnimationAgent(this);
 

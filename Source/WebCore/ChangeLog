@@ -1,3 +1,16 @@
+2020-09-22  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Change `InspectorAnimationAgent->startTracking` to not error on repeated calls
+        https://bugs.webkit.org/show_bug.cgi?id=216385
+
+        Reviewed by Devin Rousso.
+
+        InpsectorAnimationAgent now mirrors the behavior of other timeline agents by no longer returning an error on a
+        repeated invocation of `startTracking`.
+
+        * inspector/agents/InspectorAnimationAgent.cpp:
+        (WebCore::InspectorAnimationAgent::startTracking):
+
 2020-09-22  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Basic pagination support
