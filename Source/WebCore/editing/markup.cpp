@@ -839,7 +839,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 {
     static NeverDestroyed<const String> interchangeNewlineString(MAKE_STATIC_STRING_IMPL("<br class=\"" AppleInterchangeNewline "\">"));
 
-    if (start == end)
+    if (!(start < end))
         return emptyString();
 
     auto commonAncestor = commonInclusiveAncestor(start, end);
