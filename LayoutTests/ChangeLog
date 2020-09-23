@@ -1,3 +1,15 @@
+2020-09-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/aria-combobox-control-owns-elements.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=216878
+
+        Reviewed by Chris Fleizach.
+
+        Use Promises to make this test work reliably for both single and multithreaded accessibility modes.
+
+        * accessibility/aria-combobox-control-owns-elements-expected.txt:
+        * accessibility/aria-combobox-control-owns-elements.html:
+
 2020-09-23  Darin Adler  <darin@apple.com>
 
         Selection API: Update more tests that depend on WebKit's legacy non-standard behavior to set up the selection

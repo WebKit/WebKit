@@ -1,3 +1,19 @@
+2020-09-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/aria-combobox-control-owns-elements.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=216878
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/aria-combobox-control-owns-elements.html.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::updateIsolatedTree): Update the isolated tree
+        node for ActiveDescendant and SelectedChildren notifications.
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData): Only cache
+        selectedChildren for those AXObjects that canHaveSelectedChildren.
+
 2020-09-23  Philippe Normand  <pnormand@igalia.com>
 
         media/can-play-av1.html is not spec compliant

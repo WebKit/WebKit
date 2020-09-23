@@ -3182,6 +3182,8 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     case AXCheckedStateChanged:
         tree->updateNodeCheckedState(object);
         break;
+    case AXActiveDescendantChanged:
+    case AXSelectedChildrenChanged:
     case AXSelectedTextChanged:
     case AXValueChanged:
         tree->updateNode(object);
@@ -3244,6 +3246,8 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXCheckedStateChanged:
             tree->updateNodeCheckedState(*notification.first);
             break;
+        case AXActiveDescendantChanged:
+        case AXSelectedChildrenChanged:
         case AXSelectedTextChanged:
         case AXValueChanged: {
             bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {

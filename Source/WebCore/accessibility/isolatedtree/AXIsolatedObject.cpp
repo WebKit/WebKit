@@ -284,9 +284,11 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     if (object.isTextControl())
         setProperty(AXPropertyName::TextLength, object.textLength());
 
-    AccessibilityChildrenVector selectedChildren;
-    object.selectedChildren(selectedChildren);
-    setObjectVectorProperty(AXPropertyName::SelectedChildren, selectedChildren);
+    if (object.canHaveSelectedChildren()) {
+        AccessibilityChildrenVector selectedChildren;
+        object.selectedChildren(selectedChildren);
+        setObjectVectorProperty(AXPropertyName::SelectedChildren, selectedChildren);
+    }
 
     AccessibilityChildrenVector visibleChildren;
     object.visibleChildren(visibleChildren);

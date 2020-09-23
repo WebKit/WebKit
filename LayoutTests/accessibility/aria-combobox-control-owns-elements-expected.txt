@@ -15,21 +15,21 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS list.selectedChildrenCount is 0
-PASS list.selectedChildrenCount is 1
-PASS list.selectedChildAtIndex(0).isEqual(listitem1) is true
-PASS listbox.selectedChildrenCount is 0
-PASS listbox.selectedChildrenCount is 1
-PASS listbox.selectedChildAtIndex(0).isEqual(option2_1) is true
-PASS grid.selectedChildrenCount is 0
-PASS grid.selectedChildrenCount is 1
-PASS grid.selectedChildAtIndex(0).isEqual(row3_1) is true
-PASS tree.selectedChildrenCount is 0
-PASS tree.selectedChildrenCount is 1
-PASS tree.selectedChildAtIndex(0).isEqual(treeitem4_1) is true
 Received AXSelectedChildrenChanged for List1
+list has 1 selected children
+PASS list.selectedChildAtIndex(0) is listitem1
+listbox has 0 selected children
 Received AXSelectedChildrenChanged for Listbox2
+listbox has 1 selected children
+PASS listbox.selectedChildAtIndex(0) is option2_1
+grid has 0 selected children
 Received AXSelectedRowsChanged for Grid3
+grid has 1 selected children
+PASS grid.selectedChildAtIndex(0) is row3_1
+tree has 0 selected children
 Received AXSelectedRowsChanged for Tree4
+tree has 1 selected children
+PASS tree.selectedChildAtIndex(0) is treeitem4_1
 PASS successfullyParsed is true
 
 TEST COMPLETE
