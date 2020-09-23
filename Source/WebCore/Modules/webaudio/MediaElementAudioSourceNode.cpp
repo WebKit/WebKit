@@ -123,7 +123,9 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
 
 bool MediaElementAudioSourceNode::wouldTaintOrigin()
 {
-    if (!m_mediaElement->hasSingleSecurityOrigin())
+    // If the resource is redirected to another origin, treat it as tainted if the crossorigin attribute
+    // is not set. This is done for consistency with Blink.
+    if (!m_mediaElement->hasSingleSecurityOrigin() && m_mediaElement->crossOrigin().isNull())
         return true;
 
     if (m_mediaElement->didPassCORSAccessCheck())
