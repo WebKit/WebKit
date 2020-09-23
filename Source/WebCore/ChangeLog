@@ -1,3 +1,31 @@
+2020-09-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Precompute the collapsible trailing width for LineBreaker
+        https://bugs.webkit.org/show_bug.cgi?id=216881
+
+        Reviewed by Antti Koivisto.
+
+        Let's just compute the collapsible trailing width while adding inline content to LineCandidate instead of
+        reverse looping through the runs in LineBreaker.
+        This is also in preparation for reducing the number of RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled calls.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::ContinuousContent::hasTrailingCollapsibleContent const):
+        (WebCore::Layout::ContinuousContent::isFullyCollapsible const):
+        (WebCore::Layout::LineBreaker::shouldKeepEndOfLineWhitespace const):
+        (WebCore::Layout::LineBreaker::shouldWrapInlineContent):
+        (WebCore::Layout::LineBreaker::tryWrappingInlineContent const):
+        (WebCore::Layout::ContinuousContent::ContinuousContent):
+        (WebCore::Layout::ContinuousContent::nonCollapsibleLogicalWidth const):
+        (WebCore::Layout::ContinuousContent::isTrailingContentFullyCollapsible const): Deleted.
+        (WebCore::Layout::ContinuousContent::TrailingCollapsibleContent::reset): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineCandidate::InlineContent::collapsibleTrailingWidth const):
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem):
+        (WebCore::Layout::LineCandidate::InlineContent::reset):
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+
 2020-09-23  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Implement caption support in video fullscreen and PiP

@@ -76,10 +76,21 @@ public:
     };
     using RunList = Vector<Run, 3>;
 
+    // This struct represents the amount of content committed to line breaking at a time e.g.
+    // <div>text content <span>span1</span>between<span>span2</span></div>
+    // [text][ ][content][ ][container start][span1][container end][between][container start][span2][container end]
+    // candidate content at a time:
+    // 1. [text]
+    // 2. [ ]
+    // 3. [content]
+    // 4. [ ]
+    // 5. [container start][span1][container end][between][container start][span2][container end]
+    // see https://drafts.csswg.org/css-text-3/#line-break-details
     struct CandidateContent {
         const RunList& runs;
         InlineLayoutUnit logicalLeft { 0 };
         InlineLayoutUnit logicalWidth { 0 };
+        InlineLayoutUnit collapsibleTrailingWidth { 0 };
     };
     struct LineStatus {
         InlineLayoutUnit availableWidth { 0 };
@@ -92,15 +103,6 @@ public:
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 
 private:
-    // This struct represents the amount of content committed to line breaking at a time e.g.
-    // text content <span>span1</span>between<span>span2</span>
-    // [text][ ][content][ ][container start][span1][container end][between][container start][span2][container end]
-    // -> content chunks ->
-    // [text]
-    // [ ]
-    // [content]
-    // [container start][span1][container end][between][container start][span2][container end]
-    // see https://drafts.csswg.org/css-text-3/#line-break-details
     Optional<WrappedTextContent> wrapTextContent(const ContinuousContent&, const LineStatus&) const;
     Result tryWrappingInlineContent(const CandidateContent&, const LineStatus&) const;
     Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit logicalLeft, InlineLayoutUnit availableWidth) const;

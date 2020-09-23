@@ -182,6 +182,7 @@ struct LineCandidate {
     struct InlineContent {
         const LineBreaker::RunList& runs() const { return m_inlineRuns; }
         InlineLayoutUnit logicalWidth() const { return m_LogicalWidth; }
+        InlineLayoutUnit collapsibleTrailingWidth() const { return m_collapsibleTrailingWidth; }
         const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
 
         void appendInlineItem(const InlineItem&, InlineLayoutUnit logicalWidth);
@@ -192,6 +193,7 @@ struct LineCandidate {
         void setTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
 
         InlineLayoutUnit m_LogicalWidth { 0 };
+        InlineLayoutUnit m_collapsibleTrailingWidth { 0 };
         LineBreaker::RunList m_inlineRuns;
         const InlineItem* m_trailingLineBreak { nullptr };
     };
@@ -223,11 +225,41 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
 {
     m_LogicalWidth += logicalWidth;
     m_inlineRuns.append({ inlineItem, logicalWidth });
+
+    auto isFullyCollapsible = [&] {
+        if (inlineItem.isBox())
+            return false;
+        if (inlineItem.isText()) {
+            auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+            return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
+        }
+        return true;
+    };
+    if (isFullyCollapsible()) {
+        m_collapsibleTrailingWidth += logicalWidth;
+        return;
+    }
+
+    auto partiallyCollapsibleTrailingWidth = [&]() -> InlineLayoutUnit {
+        if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+            return { };
+        if (!inlineItem.isText())
+            return { };
+        if (auto letterSpacing = inlineItem.style().letterSpacing(); letterSpacing > 0)
+            return letterSpacing;
+        return { };
+    };
+    if (auto collapsibleTrailingWidth = partiallyCollapsibleTrailingWidth()) {
+        m_collapsibleTrailingWidth = collapsibleTrailingWidth;
+        return;
+    }
+    m_collapsibleTrailingWidth = { };
 }
 
 inline void LineCandidate::InlineContent::reset()
 {
     m_LogicalWidth = { };
+    m_collapsibleTrailingWidth = { };
     m_inlineRuns.clear();
     m_trailingLineBreak = { };
 }
@@ -553,8 +585,8 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
     auto availableWidth = m_line.availableWidth() - floatContent.intrusiveWidth();
     auto isLineConsideredEmpty = m_line.isVisuallyEmpty() && !m_contentIsConstrainedByFloat;
     auto lineStatus = LineBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
-    auto candidateInlineContentLogicalLeft = m_line.contentLogicalWidth(); 
-    auto result = lineBreaker.shouldWrapInlineContent({ candidateRuns, candidateInlineContentLogicalLeft, candidateInlineContent.logicalWidth() }, lineStatus);
+    auto contentLogicalLeft = m_line.contentLogicalWidth();
+    auto result = lineBreaker.shouldWrapInlineContent({ candidateRuns, contentLogicalLeft, candidateInlineContent.logicalWidth(), candidateInlineContent.collapsibleTrailingWidth() }, lineStatus);
     if (result.lastWrapOpportunityItem)
         m_lastWrapOpportunityItem = result.lastWrapOpportunityItem;
     if (result.action == LineBreaker::Result::Action::Keep) {

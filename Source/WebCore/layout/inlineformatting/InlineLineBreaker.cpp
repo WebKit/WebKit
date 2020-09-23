@@ -32,7 +32,6 @@
 #include "Hyphenation.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 
 namespace WebCore {
@@ -72,23 +71,16 @@ struct ContinuousContent {
     bool hasNonContentRunsOnly() const;
     InlineLayoutUnit logicalWidth() const { return m_candidateContent.logicalWidth; }
     InlineLayoutUnit logicalLeft() const { return m_candidateContent.logicalLeft; }
-    InlineLayoutUnit nonCollapsibleLogicalWidth() const { return logicalWidth() - m_trailingCollapsibleContent.width; }
+    InlineLayoutUnit nonCollapsibleLogicalWidth() const;
 
-    bool hasTrailingCollapsibleContent() const { return !!m_trailingCollapsibleContent.width; }
-    bool isTrailingContentFullyCollapsible() const { return m_trailingCollapsibleContent.isFullyCollapsible; }
+    bool hasTrailingCollapsibleContent() const { return !!m_candidateContent.collapsibleTrailingWidth; }
+    bool isFullyCollapsible() const { return !nonCollapsibleLogicalWidth(); }
 
     Optional<size_t> firstTextRunIndex() const;
     Optional<size_t> lastContentRunIndex() const;
 
 private:
     const LineBreaker::CandidateContent& m_candidateContent;
-    struct TrailingCollapsibleContent {
-        void reset();
-
-        bool isFullyCollapsible { false };
-        InlineLayoutUnit width { 0 };
-    };
-    TrailingCollapsibleContent m_trailingCollapsibleContent;
 };
 
 struct WrappedTextContent {
@@ -107,8 +99,8 @@ bool LineBreaker::isContentWrappingAllowed(const ContinuousContent& continuousCo
 
 bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& continuousContent) const
 {
-    // Grab the style and check for white-space property to decided whether we should let this whitespace content overflow the current line.
-    // Note that the "keep" in the context means we let the whitespace content sit on the current line.
+    // Grab the style and check for white-space property to decide whether we should let this whitespace content overflow the current line.
+    // Note that the "keep" in this context means we let the whitespace content sit on the current line.
     // It might very well get collapsed when we close the line (normal/nowrap/pre-line).
     // See https://www.w3.org/TR/css-text-3/#white-space-property
     auto whitespace = continuousContent.runs()[*continuousContent.firstTextRunIndex()].inlineItem.style().whiteSpace();
@@ -121,7 +113,7 @@ LineBreaker::Result LineBreaker::shouldWrapInlineContent(const CandidateContent&
         if (candidateContent.logicalWidth <= lineStatus.availableWidth)
             return Result { Result::Action::Keep };
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
-        // Preferred width computation sums up floats while line breaker substracts them. This can lead to epsilon-scale differences.
+        // Preferred width computation sums up floats while line breaker subtracts them. This can lead to epsilon-scale differences.
         if (WTF::areEssentiallyEqual(candidateContent.logicalWidth, lineStatus.availableWidth))
             return Result { Result::Action::Keep };
 #endif
@@ -162,7 +154,7 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const CandidateContent
         if (continuousContent.nonCollapsibleLogicalWidth() <= lineStatus.availableWidth)
             return { Result::Action::Keep, IsEndOfLine };
         // Now check if we can trim the line too.
-        if (lineStatus.lineHasFullyCollapsibleTrailingRun && continuousContent.isTrailingContentFullyCollapsible()) {
+        if (lineStatus.lineHasFullyCollapsibleTrailingRun && continuousContent.isFullyCollapsible()) {
             // If this new content is fully collapsible, it should surely fit.
             return { Result::Action::Keep, IsEndOfLine };
         }
@@ -355,35 +347,12 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
 ContinuousContent::ContinuousContent(const LineBreaker::CandidateContent& candidateContent)
     : m_candidateContent(candidateContent)
 {
-    // Figure out the trailing collapsible state.
-    for (auto& run : WTF::makeReversedRange(runs())) {
-        auto& inlineItem = run.inlineItem;
-        if (inlineItem.isBox()) {
-            // We did reach a non-collapsible content. We have all the trailing whitespace now.
-            break;
-        }
-        if (inlineItem.isText()) {
-            auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-            auto isFullyCollapsible = [&] {
-                return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
-            };
-            if (isFullyCollapsible()) {
-                m_trailingCollapsibleContent.width += run.logicalWidth;
-                m_trailingCollapsibleContent.isFullyCollapsible = true;
-                // Let's see if we've got more trailing whitespace content.
-                continue;
-            }
-            if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-                // A run with trailing letter spacing is partially collapsible.
-                if (auto collapsibleWidth = inlineTextItem.style().letterSpacing()) {
-                    m_trailingCollapsibleContent.width += collapsibleWidth;
-                    m_trailingCollapsibleContent.isFullyCollapsible = false;
-                }
-            }
-            // End of whitespace content.
-            break;
-        }
-    }
+}
+
+InlineLayoutUnit ContinuousContent::nonCollapsibleLogicalWidth() const
+{
+    ASSERT(logicalWidth() >= m_candidateContent.collapsibleTrailingWidth);
+    return logicalWidth() - m_candidateContent.collapsibleTrailingWidth;
 }
 
 bool ContinuousContent::hasTextContentOnly() const
@@ -444,12 +413,6 @@ bool ContinuousContent::hasNonContentRunsOnly() const
         return false;
     }
     return true;
-}
-
-void ContinuousContent::TrailingCollapsibleContent::reset()
-{
-    isFullyCollapsible = false;
-    width = 0_lu;
 }
 
 }
