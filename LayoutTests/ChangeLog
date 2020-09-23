@@ -1,3 +1,13 @@
+2020-09-23  Karl Rackler  <rackler@apple.com>
+
+        [iOS] Update fast/text/opticalFontWithTextStyle.html for iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=215667
+
+        Unreviewed test gardening.
+
+        * platform/ios/fast/text/opticalFontWithTextStyle-expected.txt: Added.
+        * platform/ios/fast/text/opticalFontWithTextStyle.html: Added.
+
 2020-09-22  Karl Rackler  <rackler@apple.com>
 
         REGRESSION: [ iOS wk2 ] http/wpt/cache-storage/quota-third-party.https.html is a flaky failure
