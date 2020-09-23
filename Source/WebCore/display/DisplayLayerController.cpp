@@ -30,13 +30,11 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DisplayPainter.h"
+#include "DisplayCSSPainter.h"
+#include "DisplayTree.h"
 #include "DisplayView.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "LayoutBoxGeometry.h"
-#include "LayoutContext.h"
-#include "LayoutState.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Settings.h"
@@ -60,12 +58,14 @@ void LayerController::RootLayerClient::paintContents(const GraphicsLayer* layer,
 {
     ASSERT_UNUSED(layer, layer == m_layerController.contentLayer());
 
-    // FIXME: Temporary; once we do scrolling this root layer won't paint anything.
-    if (auto* layoutState = m_layerController.view().layoutState())
-        Layout::LayoutContext::paint(*layoutState, context, enclosingIntRect(dirtyRect));
+    if (auto* displayTree = m_layerController.m_displayTree.get())
+        CSSPainter::paintTree(*displayTree, context, enclosingIntRect(dirtyRect));
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LayerController);
+float LayerController::RootLayerClient::deviceScaleFactor() const
+{
+    return m_layerController.view().deviceScaleFactor();
+}
 
 LayerController::LayerController(View& view)
     : m_view(view)
@@ -75,22 +75,14 @@ LayerController::LayerController(View& view)
 
 LayerController::~LayerController() = default;
 
-void LayerController::prepareForDisplay(const Layout::LayoutState& layoutState)
+void LayerController::prepareForDisplay(std::unique_ptr<Display::Tree>&& displayTree)
 {
-    if (!layoutState.hasRoot())
-        return;
+    ASSERT(displayTree);
+    m_displayTree = WTFMove(displayTree);
 
-    auto& rootLayoutBox = layoutState.root();
-    if (!rootLayoutBox.firstChild())
-        return;
-
-    ASSERT(layoutState.hasBoxGeometry(rootLayoutBox));
-
-    auto viewSize = layoutState.geometryForBox(rootLayoutBox).logicalSize();
-    auto contentSize = layoutState.geometryForBox(*rootLayoutBox.firstChild()).logicalSize();
-    
-    // FIXME: Using the firstChild() size won't be correct until we compute overflow correctly,
-    contentSize.clampToMinimumSize(viewSize);
+    auto viewSize = m_displayTree->rootBox().borderBoxFrame().size();
+    // FIXME: Do overflow etc.
+    auto contentSize = viewSize;
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "LayerController::prepareForDisplay - viewSize " << viewSize << " contentSize " << contentSize);
 
@@ -136,7 +128,7 @@ void LayerController::scheduleRenderingUpdate()
     page->scheduleRenderingUpdate();
 }
 
-void LayerController::ensureRootLayer(LayoutSize viewSize, LayoutSize contentSize)
+void LayerController::ensureRootLayer(FloatSize viewSize, FloatSize contentSize)
 {
     if (m_rootLayer) {
         updateRootLayerGeometry(viewSize, contentSize);
@@ -171,7 +163,7 @@ void LayerController::setupRootLayerHierarchy()
     m_contentHostLayer->addChild(*m_contentLayer);
 }
 
-void LayerController::updateRootLayerGeometry(LayoutSize viewSize, LayoutSize contentSize)
+void LayerController::updateRootLayerGeometry(FloatSize viewSize, FloatSize contentSize)
 {
     m_rootLayer->setSize(viewSize);
 

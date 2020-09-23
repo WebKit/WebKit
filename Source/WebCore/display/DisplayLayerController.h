@@ -27,9 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayRect.h"
 #include "GraphicsLayer.h"
-#include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -37,22 +35,19 @@ namespace WebCore {
 class GraphicsLayer;
 class GraphicsLayerFactory;
 
-namespace Layout {
-class LayoutState;
-}
-
 namespace Display {
 
+class Tree;
 class View;
 
 // A controller object that makes layerization decisions for a display tree, for a single document.
 class LayerController {
-    WTF_MAKE_ISO_ALLOCATED(LayerController);
+    WTF_MAKE_FAST_ALLOCATED(LayerController);
 public:
     explicit LayerController(View&);
     ~LayerController();
     
-    void prepareForDisplay(const Layout::LayoutState&);
+    void prepareForDisplay(std::unique_ptr<Display::Tree>&&);
     void flushLayers();
 
     void setIsInWindow(bool);
@@ -60,11 +55,13 @@ public:
     const View& view() const { return m_view; }
 
 private:
-    void ensureRootLayer(LayoutSize viewSize, LayoutSize contentSize);
     void attachRootLayer();
     void detachRootLayer();
+
+    void ensureRootLayer(FloatSize viewSize, FloatSize contentSize);
+    void updateRootLayerGeometry(FloatSize viewSize, FloatSize contentSize);
+
     void setupRootLayerHierarchy();
-    void updateRootLayerGeometry(LayoutSize viewSize, LayoutSize contentSize);
     void scheduleRenderingUpdate();
     
     GraphicsLayer* rootGraphicsLayer() const { return m_rootLayer.get(); }
@@ -82,6 +79,7 @@ private:
         // GraphicsLayerClient implementation
         void notifyFlushRequired(const GraphicsLayer*) final;
         void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) final;
+        float deviceScaleFactor() const final;
 
         LayerController& m_layerController;
     };
@@ -92,6 +90,8 @@ private:
     RefPtr<GraphicsLayer> m_rootLayer;
     RefPtr<GraphicsLayer> m_contentHostLayer;
     RefPtr<GraphicsLayer> m_contentLayer;
+
+    std::unique_ptr<Display::Tree> m_displayTree;
 };
 
 } // namespace Display

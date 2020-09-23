@@ -85,6 +85,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/css/typedom"
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/display"
+    "${WEBCORE_DIR}/display/css"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/messageports"
     "${WEBCORE_DIR}/domjit"

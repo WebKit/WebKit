@@ -28,11 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayTreeBuilder.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "FrameViewLayoutContext.h"
-#include "LayoutContext.h"
-#include "LayoutState.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -72,7 +70,10 @@ void View::prepareForDisplay()
     if (!layoutState)
         return;
 
-    m_layerController.prepareForDisplay(*layoutState);
+    auto treeBuilder = TreeBuilder { deviceScaleFactor() };
+    auto displayTree = treeBuilder.build(*layoutState);
+
+    m_layerController.prepareForDisplay(WTFMove(displayTree));
 }
 
 void View::flushLayers()
@@ -83,6 +84,11 @@ void View::flushLayers()
 void View::setIsInWindow(bool isInWindow)
 {
     m_layerController.setIsInWindow(isInWindow);
+}
+
+float View::deviceScaleFactor() const
+{
+    return page() ? page()->deviceScaleFactor() : 1.0f;
 }
 
 } // namespace Display

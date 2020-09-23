@@ -61,9 +61,11 @@ public:
     FrameView& frameView() const { return m_frameView; }
     Frame& frame() const;
 
-    const Layout::LayoutState* layoutState() const;
+    float deviceScaleFactor() const;
 
 private:
+    const Layout::LayoutState* layoutState() const;
+
     FrameView& m_frameView;
     LayerController m_layerController;
 };

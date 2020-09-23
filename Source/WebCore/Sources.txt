@@ -794,7 +794,15 @@ css/typedom/TypedOMCSSStyleValue.cpp
 css/typedom/TypedOMCSSUnitValue.cpp
 css/typedom/TypedOMCSSUnparsedValue.cpp
 cssjit/SelectorCompiler.cpp
+display/css/DisplayBox.cpp
+display/css/DisplayContainerBox.cpp
+display/css/DisplayCSSPainter.cpp
+display/css/DisplayImageBox.cpp
+display/css/DisplayReplacedBox.cpp
+display/css/DisplayStyle.cpp
 display/DisplayLayerController.cpp
+display/DisplayTree.cpp
+display/DisplayTreeBuilder.cpp
 display/DisplayView.cpp
 dom/AbortController.cpp
 dom/AbortSignal.cpp
@@ -1434,7 +1442,6 @@ layout/blockformatting/BlockMarginCollapse.cpp
 layout/blockformatting/PrecomputedBlockMarginCollapse.cpp
 layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp
 layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContextQuirks.cpp
-layout/displaytree/DisplayBox.cpp
 layout/displaytree/DisplayInlineContent.cpp
 layout/displaytree/DisplayPainter.cpp
 layout/flexformatting/FlexFormattingContext.cpp

@@ -1,3 +1,106 @@
+2020-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        [LFC Display] Add the beginnings of a CSS display box hierarchy and CSS painter
+        https://bugs.webkit.org/show_bug.cgi?id=216752
+
+        Reviewed by Zalan Bujtas.
+
+        Add some Display::Box subclasses to display/css, a Display::Tree class to own the
+        display tree, and a DisplayTreeBuilder. Also add css/DisplayCSSPainter which is
+        the beginnings of a class that knows how to paint a CSS stacking context.
+
+        This code other than DisplayCSSPainter is deliberately vague about how much is
+        CSS specific. It's likely that some box classes will be shared with SVG painting.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/DisplayLayerController.cpp:
+        (WebCore::Display::LayerController::RootLayerClient::paintContents):
+        (WebCore::Display::LayerController::RootLayerClient::deviceScaleFactor const):
+        (WebCore::Display::LayerController::prepareForDisplay):
+        (WebCore::Display::LayerController::ensureRootLayer):
+        (WebCore::Display::LayerController::updateRootLayerGeometry):
+        * display/DisplayLayerController.h:
+        * display/DisplayTree.cpp: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::Tree::Tree):
+        * display/DisplayTree.h: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::Tree::rootBox const):
+        * display/DisplayTreeBuilder.cpp: Added.
+        (WebCore::Display::TreeBuilder::TreeBuilder):
+        (WebCore::Display::TreeBuilder::build const):
+        (WebCore::Display::TreeBuilder::recursiveBuildDisplayTree const):
+        (WebCore::Display::TreeBuilder::displayBoxForRootBox const):
+        (WebCore::Display::TreeBuilder::displayBoxForLayoutBox const):
+        (WebCore::Display::outputDisplayBox):
+        (WebCore::Display::outputDisplayTree):
+        (WebCore::Display::showDisplayTree):
+        * display/DisplayTreeBuilder.h: Copied from Source/WebCore/display/DisplayView.h.
+        * display/DisplayView.cpp:
+        (WebCore::Display::View::prepareForDisplay):
+        (WebCore::Display::View::deviceScaleFactor const):
+        * display/DisplayView.h:
+        * display/css/DisplayBox.cpp: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::setNextSibling):
+        (WebCore::Display::Box::debugDescription const):
+        * display/css/DisplayBox.h: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::style const):
+        (WebCore::Display::Box::borderBoxFrame const):
+        (WebCore::Display::Box::isContainerBox const):
+        (WebCore::Display::Box::isImageBox const):
+        (WebCore::Display::Box::isReplacedBox const):
+        (WebCore::Display::Box::nextSibling const):
+        * display/css/DisplayCSSPainter.cpp: Added.
+        (WebCore::Display::CSSPainter::paintBoxDecorations):
+        (WebCore::Display::CSSPainter::paintBoxContent):
+        (WebCore::Display::CSSPainter::paintBox):
+        (WebCore::Display::CSSPainter::recursivePaintDescendants):
+        (WebCore::Display::CSSPainter::paintStackingContext):
+        (WebCore::Display::CSSPainter::isStackingContextPaintingBoundary):
+        (WebCore::Display::CSSPainter::recursiveCollectLayers):
+        (WebCore::Display::CSSPainter::paintTree):
+        * display/css/DisplayCSSPainter.h: Copied from Source/WebCore/display/DisplayView.h.
+        * display/css/DisplayContainerBox.cpp: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::ContainerBox::ContainerBox):
+        (WebCore::Display::ContainerBox::setFirstChild):
+        (WebCore::Display::ContainerBox::debugDescription const):
+        * display/css/DisplayContainerBox.h: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::ContainerBox::firstChild const):
+        * display/css/DisplayImageBox.cpp: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::ImageBox::ImageBox):
+        (WebCore::Display::ImageBox::setImage):
+        (WebCore::Display::ImageBox::debugDescription const):
+        * display/css/DisplayImageBox.h: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::ImageBox::image const):
+        * display/css/DisplayReplacedBox.cpp: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::ReplacedBox::ReplacedBox):
+        * display/css/DisplayReplacedBox.h: Copied from Source/WebCore/display/DisplayView.h.
+        (WebCore::Display::ReplacedBox::replacedContentRect const):
+        * display/css/DisplayStyle.cpp: Copied from Source/WebCore/display/DisplayView.cpp.
+        (WebCore::Display::Style::Style):
+        (WebCore::Display::Style::hasBackground const):
+        (WebCore::Display::Style::hasVisibleBorder const):
+        * display/css/DisplayStyle.h: Added.
+        (WebCore::Display::Style::backgroundColor const):
+        (WebCore::Display::Style::hasBackgroundImage const):
+        (WebCore::Display::Style::borderLeft const):
+        (WebCore::Display::Style::borderRight const):
+        (WebCore::Display::Style::borderTop const):
+        (WebCore::Display::Style::borderBottom const):
+        (WebCore::Display::Style::zIndex const):
+        (WebCore::Display::Style::isStackingContext const):
+        (WebCore::Display::Style::isPositioned const):
+        (WebCore::Display::Style::isFloating const):
+        (WebCore::Display::Style::participatesInZOrderSorting const):
+        (WebCore::Display::Style::setIsPositioned):
+        (WebCore::Display::Style::setIsFloating):
+        * layout/displaytree/DisplayBox.cpp: Removed.
+        * layout/displaytree/DisplayBox.h: Removed.
+        * layout/layouttree/LayoutIterator.h: Unified sources build fix.
+
 2020-09-23  Chris Dumez  <cdumez@apple.com>
 
         web audio api outputs silence for 302 redirected resource in safari

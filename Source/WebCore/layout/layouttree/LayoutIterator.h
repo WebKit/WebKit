@@ -27,6 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutInitialContainingBlock.h"
+
 namespace WebCore {
 namespace Layout {
 
