@@ -1,3 +1,12 @@
+2020-09-22  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some tests
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-09-22  Chris Dumez  <cdumez@apple.com>
 
         Slightly improve AudioBufferSourceNode resampling

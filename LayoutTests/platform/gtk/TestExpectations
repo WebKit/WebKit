@@ -2261,6 +2261,8 @@ webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
 
 webkit.org/b/131545 media/media-event-listeners.html [ Timeout ]
+webkit.org/b/131545 media/video-volume.html [ Failure ]
+webkit.org/b/131545 media/audio-playback-volume-changes-with-restrictions.html [ Failure ]
 
 webkit.org/b/135053 html5lib/webkit-resumer.html [ Timeout Pass ]
 

@@ -196,6 +196,8 @@ webkit.org/b/216767 css3/font-feature-settings-stylistic-set.html [ ImageOnlyFai
 webkit.org/b/216770 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_stf-table-singleline-2.html [ ImageOnlyFailure ]
 webkit.org/b/216770 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_stf-table-singleline.html [ ImageOnlyFailure ]
 
+webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -609,6 +611,7 @@ webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-upd
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/216768 webaudio/Analyser/realtimeanalyser-downmix.html [ Failure ]
+webkit.org/b/216868 webaudio/AudioParam/audioparam-processing.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
