@@ -1,3 +1,15 @@
+2020-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Turn on the modern unprefixed WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=216885
+
+        Reviewed by Eric Carlson.
+
+        Turn on the modern unprefixed WebAudio API now that we support most of the API
+        besides AudioWorklet and now that we have a good pass rate on WPT tests.
+
+        * Shared/WebPreferencesExperimental.yaml:
+
 2020-09-23  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r267403.

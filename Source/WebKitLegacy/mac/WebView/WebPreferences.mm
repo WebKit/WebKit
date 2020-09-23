@@ -536,6 +536,7 @@ public:
         @NO, WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
         @YES, WebKitMediaControlsScaleWithPageZoomPreferenceKey,
         @NO, WebKitWebAudioEnabledPreferenceKey,
+        @NO, WebKitModernUnprefixedWebAudioEnabledPreferenceKey,
         @YES, WebKitBackspaceKeyNavigationEnabledKey,
         @NO, WebKitShouldDisplaySubtitlesPreferenceKey,
         @NO, WebKitShouldDisplayCaptionsPreferenceKey,
@@ -564,6 +565,7 @@ public:
 
         // Enable WebAudio by default in all iOS UIWebViews
         @YES, WebKitWebAudioEnabledPreferenceKey,
+        @YES, WebKitModernUnprefixedWebAudioEnabledPreferenceKey,
 
         @YES, WebKitShouldRespectImageOrientationKey,
 #endif // PLATFORM(IOS_FAMILY)
@@ -576,7 +578,6 @@ public:
         @NO, WebKitDiagnosticLoggingEnabledKey,
         @(WebAllowAllStorage), WebKitStorageBlockingPolicyKey,
         @NO, WebKitPlugInSnapshottingEnabledPreferenceKey,
-        @NO, WebKitModernUnprefixedWebAudioEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
         @YES, WebKitContentChangeObserverEnabledPreferenceKey,

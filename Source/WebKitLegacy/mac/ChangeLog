@@ -1,3 +1,16 @@
+2020-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Turn on the modern unprefixed WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=216885
+
+        Reviewed by Eric Carlson.
+
+        Turn on the modern unprefixed WebAudio API now that we support most of the API
+        besides AudioWorklet and now that we have a good pass rate on WPT tests.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2020-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Remove deprecated script and stylesheet injection SPI, replaced with more inclusively-named SPI
