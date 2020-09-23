@@ -236,7 +236,7 @@ LayoutSize LayoutState::viewportSize() const
 void LayoutState::setIsIntegratedRootBoxFirstChild(bool value)
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
-    m_isIntegratedRootBoxFirstChild = value;
+    m_isIntegratedRootBoxFirstChild = value ? IsIntegratedRootBoxFirstChild::Yes : IsIntegratedRootBoxFirstChild::No;
 }
 
 }

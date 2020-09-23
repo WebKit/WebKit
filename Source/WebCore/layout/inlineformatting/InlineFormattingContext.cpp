@@ -485,6 +485,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
         formattingState.addLine({ lineLogicalRect, lineBoxLogicalRect, lineBoxVerticalOffset + lineBox.alignmentBaseline(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }) });
     };
     constructLineGeometry();
+
     return lineLogicalRect;
 }
 

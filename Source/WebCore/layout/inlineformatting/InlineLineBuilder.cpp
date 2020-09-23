@@ -429,9 +429,11 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingCon
             // Unless otherwise specified by the each-line and/or hanging keywords, only lines that are the first formatted line
             // of an element are affected.
             // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
-            isFormattingContextRootCandidateToTextIndent = RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()
-                ? layoutState().isIntegratedRootBoxFirstChild()
-                : root.parent().firstInFlowChild() == &root;
+            auto isIntegratedRootBoxFirstChild = layoutState().isIntegratedRootBoxFirstChild();
+            if (isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::NotApplicable)
+                isFormattingContextRootCandidateToTextIndent = root.parent().firstInFlowChild() == &root;
+            else
+                isFormattingContextRootCandidateToTextIndent = isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::Yes;
         }
         if (!isFormattingContextRootCandidateToTextIndent)
             return { };

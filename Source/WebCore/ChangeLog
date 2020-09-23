@@ -1,5 +1,21 @@
 2020-09-22  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Integration] Move RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled() check out from LineBuilder::constraintsForLine
+        https://bugs.webkit.org/show_bug.cgi?id=216862
+
+        Reviewed by Simon Fraser.
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::setIsIntegratedRootBoxFirstChild):
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::isIntegratedRootBoxFirstChild const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::constraintsForLine):
+
+2020-09-22  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floats] Remove the redundant RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled() check from FloatingState::append
         https://bugs.webkit.org/show_bug.cgi?id=216866
 

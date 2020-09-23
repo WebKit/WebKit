@@ -89,7 +89,8 @@ public:
     // LFC integration only. Full LFC has proper ICB access.
     void setViewportSize(const LayoutSize&);
     LayoutSize viewportSize() const;
-    bool isIntegratedRootBoxFirstChild() const { return m_isIntegratedRootBoxFirstChild; }
+    enum IsIntegratedRootBoxFirstChild { Yes, No, NotApplicable };
+    IsIntegratedRootBoxFirstChild isIntegratedRootBoxFirstChild() const { return m_isIntegratedRootBoxFirstChild; }
     void setIsIntegratedRootBoxFirstChild(bool);
 
 private:
@@ -113,7 +114,7 @@ private:
 
     // LFC integration only.
     LayoutSize m_viewportSize;
-    bool m_isIntegratedRootBoxFirstChild { false };
+    IsIntegratedRootBoxFirstChild m_isIntegratedRootBoxFirstChild { IsIntegratedRootBoxFirstChild::NotApplicable };
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const
