@@ -24,6 +24,7 @@
 #include "AnimationUtilities.h"
 #include "SVGPathSeg.h"
 #include "SVGPathSource.h"
+#include <functional>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {

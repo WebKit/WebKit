@@ -1,3 +1,9 @@
+2020-09-23  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, prospective GTK build fix after r267449.
+
+        * svg/SVGPathBlender.cpp: Include <functional>, needed for std::invoke().
+
 2020-09-23  Cathie Chen  <cathiechen@igalia.com>
 
         Wheel event phases of FrameView are not handled correctly
