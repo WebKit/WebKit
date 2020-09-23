@@ -1,3 +1,11 @@
+2020-09-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Remove specific baseline for webaudio/BiquadFilter/tail-time-lowpass.html
+
+        The baseline became redudant after r267444.
+
+        * platform/glib/webaudio/BiquadFilter/tail-time-lowpass-expected.txt: Removed.
+
 2020-09-22  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening some tests
