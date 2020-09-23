@@ -38,28 +38,28 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned minimumIntegerDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
+    unsigned minimumIntegerDigits = intlNumberOption(globalObject, options, vm.propertyNames->minimumIntegerDigits, 1, 21, 1);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue minimumFractionDigitsValue = options->get(globalObject, Identifier::fromString(vm, "minimumFractionDigits"));
+    JSValue minimumFractionDigitsValue = options->get(globalObject, vm.propertyNames->minimumFractionDigits);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue maximumFractionDigitsValue = options->get(globalObject, Identifier::fromString(vm, "maximumFractionDigits"));
+    JSValue maximumFractionDigitsValue = options->get(globalObject, vm.propertyNames->maximumFractionDigits);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue minimumSignificantDigitsValue = options->get(globalObject, Identifier::fromString(vm, "minimumSignificantDigits"));
+    JSValue minimumSignificantDigitsValue = options->get(globalObject, vm.propertyNames->minimumSignificantDigits);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue maximumSignificantDigitsValue = options->get(globalObject, Identifier::fromString(vm, "maximumSignificantDigits"));
+    JSValue maximumSignificantDigitsValue = options->get(globalObject, vm.propertyNames->maximumSignificantDigits);
     RETURN_IF_EXCEPTION(scope, void());
 
     intlInstance->m_minimumIntegerDigits = minimumIntegerDigits;
 
     if (!minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined()) {
         intlInstance->m_roundingType = IntlRoundingType::SignificantDigits;
-        unsigned minimumSignificantDigits = intlDefaultNumberOption(globalObject, minimumSignificantDigitsValue, Identifier::fromString(vm, "minimumSignificantDigits"), 1, 21, 1);
+        unsigned minimumSignificantDigits = intlDefaultNumberOption(globalObject, minimumSignificantDigitsValue, vm.propertyNames->minimumSignificantDigits, 1, 21, 1);
         RETURN_IF_EXCEPTION(scope, void());
-        unsigned maximumSignificantDigits = intlDefaultNumberOption(globalObject, maximumSignificantDigitsValue, Identifier::fromString(vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
+        unsigned maximumSignificantDigits = intlDefaultNumberOption(globalObject, maximumSignificantDigitsValue, vm.propertyNames->maximumSignificantDigits, minimumSignificantDigits, 21, 21);
         RETURN_IF_EXCEPTION(scope, void());
         intlInstance->m_minimumSignificantDigits = minimumSignificantDigits;
         intlInstance->m_maximumSignificantDigits = maximumSignificantDigits;
@@ -67,12 +67,22 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
     }
 
     if (!minimumFractionDigitsValue.isUndefined() || !maximumFractionDigitsValue.isUndefined()) {
+        constexpr unsigned undefinedValue = UINT32_MAX;
         intlInstance->m_roundingType = IntlRoundingType::FractionDigits;
-        unsigned minimumFractionDigits = intlDefaultNumberOption(globalObject, minimumFractionDigitsValue, Identifier::fromString(vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
+        unsigned specifiedMinimumFractionDigits = intlDefaultNumberOption(globalObject, minimumFractionDigitsValue, vm.propertyNames->minimumFractionDigits, 0, 20, undefinedValue);
         RETURN_IF_EXCEPTION(scope, void());
-        unsigned maximumFractionDigitsActualDefault = std::max(minimumFractionDigits, maximumFractionDigitsDefault);
-        unsigned maximumFractionDigits = intlDefaultNumberOption(globalObject, maximumFractionDigitsValue, Identifier::fromString(vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsActualDefault);
+        unsigned specifiedMaximumFractionDigits = intlDefaultNumberOption(globalObject, maximumFractionDigitsValue, vm.propertyNames->maximumFractionDigits, 0, 20, undefinedValue);
         RETURN_IF_EXCEPTION(scope, void());
+        if (specifiedMaximumFractionDigits != undefinedValue)
+            minimumFractionDigitsDefault = std::min(minimumFractionDigitsDefault, specifiedMaximumFractionDigits);
+        unsigned minimumFractionDigits = intlDefaultNumberOption(globalObject, (specifiedMinimumFractionDigits == undefinedValue) ? jsUndefined() : jsNumber(specifiedMinimumFractionDigits), vm.propertyNames->minimumFractionDigits, 0, 20, minimumFractionDigitsDefault);
+        RETURN_IF_EXCEPTION(scope, void());
+        unsigned maximumFractionDigits = intlDefaultNumberOption(globalObject, (specifiedMaximumFractionDigits == undefinedValue) ? jsUndefined() : jsNumber(specifiedMaximumFractionDigits), vm.propertyNames->maximumFractionDigits, 0, 20, std::max(maximumFractionDigitsDefault, minimumFractionDigits));
+        RETURN_IF_EXCEPTION(scope, void());
+        if (minimumFractionDigits > maximumFractionDigits) {
+            throwRangeError(globalObject, scope, "Computed minimumFractionDigits is larger than maximumFractionDigits"_s);
+            return;
+        }
         intlInstance->m_minimumFractionDigits = minimumFractionDigits;
         intlInstance->m_maximumFractionDigits = maximumFractionDigits;
         return;

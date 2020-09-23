@@ -153,7 +153,12 @@
     macro(line) \
     macro(locale) \
     macro(localeMatcher) \
+    macro(maximumFractionDigits) \
+    macro(maximumSignificantDigits) \
     macro(message) \
+    macro(minimumFractionDigits) \
+    macro(minimumIntegerDigits) \
+    macro(minimumSignificantDigits) \
     macro(minute) \
     macro(month) \
     macro(multiline) \

@@ -1,3 +1,13 @@
+2020-09-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl spec update: handle awkward rounding behavior
+        https://bugs.webkit.org/show_bug.cgi?id=216760
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-numberformat.js:
+        * test262/expectations.yaml:
+
 2020-09-23  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC][ESNext] Create a new opcode to handle private fields store/define

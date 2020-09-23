@@ -459,3 +459,63 @@ shouldBe(Intl.NumberFormat().format(BigInt(1)), '1');
 shouldBe(Intl.NumberFormat('ar').format(123456789n), '١٢٣٬٤٥٦٬٧٨٩');
 shouldBe(Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(123456789n), '一二三,四五六,七八九');
 shouldBe(Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(123456n), '123,000');
+
+{
+    let nf = new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 1
+    });
+    shouldBe(nf.resolvedOptions().maximumFractionDigits, 1);
+    shouldBe(nf.resolvedOptions().minimumFractionDigits, 1);
+    shouldBe(nf.format(30.333333333333), `$30.3`);
+    shouldBe(nf.format(30.35), `$30.4`);
+    shouldBe(nf.format(30), `$30.0`);
+}
+{
+    let nf = new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+    });
+    shouldBe(nf.resolvedOptions().maximumFractionDigits, 0);
+    shouldBe(nf.resolvedOptions().minimumFractionDigits, 0);
+    shouldBe(nf.format(30.3), `$30`);
+    shouldBe(nf.format(30.5), `$31`);
+    shouldBe(nf.format(30), `$30`);
+}
+{
+    let nf = new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency: 'CLF',
+        maximumFractionDigits: 3
+    });
+    shouldBe(nf.resolvedOptions().maximumFractionDigits, 3);
+    shouldBe(nf.resolvedOptions().minimumFractionDigits, 3);
+    if ($vm.icuVersion() >= 64) {
+        shouldBe([`CLF 30.333`, `CLF 30.333`].includes(nf.format(30.333333333333)), true);
+        shouldBe([`CLF 30.000`, `CLF 30.000`].includes(nf.format(30)), true);
+    }
+}
+{
+    let nf = new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency: 'CLF',
+        maximumFractionDigits: 0
+    });
+    shouldBe(nf.resolvedOptions().maximumFractionDigits, 0);
+    shouldBe(nf.resolvedOptions().minimumFractionDigits, 0);
+    if ($vm.icuVersion() >= 64) {
+        shouldBe([`CLF 30`, `CLF 30`].includes(nf.format(30.333333333333)), true);
+        shouldBe([`CLF 31`, `CLF 31`].includes(nf.format(30.5)), true);
+        shouldBe([`CLF 30`, `CLF 30`].includes(nf.format(30)), true);
+    }
+}
+shouldThrow(() => {
+    let nf = new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency: 'CLF',
+        maximumFractionDigits: 0,
+        minimumFractionDigits: 100
+    });
+}, RangeError);

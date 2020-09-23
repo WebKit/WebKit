@@ -1,3 +1,23 @@
+2020-09-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl spec update: handle awkward rounding behavior
+        https://bugs.webkit.org/show_bug.cgi?id=216760
+
+        Reviewed by Ross Kirsling.
+
+        This patch supports new spec change of "handle awkward rounding behavior"[1].
+        This changes minimumFractionDigits / maximumFractionDigits calculation when the specified ones are less than currency-digits.
+
+        [1]: https://github.com/tc39/ecma402/pull/471
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::resolvedOptions const):
+        * runtime/IntlNumberFormatInlines.h:
+        (JSC::setNumberFormatDigitOptions):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::resolvedOptions const):
+
 2020-09-23  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC][ESNext] Create a new opcode to handle private fields store/define
