@@ -284,6 +284,10 @@ webkit.org/b/216813 webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure 
 webkit.org/b/216813 webaudio/AudioParam/audioparam-k-rate.html [ Crash ]
 webkit.org/b/216813 webrtc/audio-peer-connection-webaudio.html [ Failure ]
 webkit.org/b/216813 webrtc/peer-connection-audio-unmute.html [ Failure ]
+webkit.org/b/216813 webrtc/peer-connection-remote-audio-mute2.html [ Failure ]
+# Tests below are timing out.
+webkit.org/b/216813 webrtc/peer-connection-audio-mute.html [ Skip ]
+webkit.org/b/216813 webrtc/peer-connection-remote-audio-mute.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs

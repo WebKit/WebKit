@@ -1,5 +1,12 @@
 2020-09-23  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Garden more failures in webaudio and webrtc tests.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2020-09-23  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Remove specific baseline for webaudio/BiquadFilter/tail-time-lowpass.html
 
         The baseline became redudant after r267444.
