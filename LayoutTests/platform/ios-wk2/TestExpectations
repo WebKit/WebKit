@@ -1866,7 +1866,7 @@ webkit.org/b/215773 http/tests/websocket/tests/hybi/client-close-2.html [ Pass F
 webkit.org/b/215324 compositing/clipping/border-radius-on-webgl.html [ Pass Failure ]
 
 # <rdar://problem/63108701> [ iPadOS wk2 ] fast/forms/ios/time-picker-value-change.html times out or fails consistently.
-fast/forms/ios/time-picker-value-change.html [ Timeout Failure ]
+fast/forms/ios/time-picker-value-change.html [ Pass Timeout Failure ]
 
 #rdar://69401173 (REGRESSION: [ iOS wk2 ] fast/text/international/complex-character-based-fallback.html is a constant failure)
 fast/text/international/complex-character-based-fallback.html [ Failure ]
