@@ -497,16 +497,13 @@ void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit lo
 
 bool Line::Run::hasTrailingLetterSpacing() const
 {
-    // Complex line layout does not keep track of trailing letter spacing.
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
-        return false;
     return !hasTrailingWhitespace() && style().letterSpacing() > 0;
 }
 
 InlineLayoutUnit Line::Run::trailingLetterSpacing() const
 {
     if (!hasTrailingLetterSpacing())
-        return 0_lu;
+        return { };
     return InlineLayoutUnit { style().letterSpacing() };
 }
 

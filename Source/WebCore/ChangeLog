@@ -1,3 +1,17 @@
+2020-09-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove redundant RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled from Line::Run::hasTrailingLetterSpacing
+        https://bugs.webkit.org/show_bug.cgi?id=216867
+
+        Reviewed by Simon Fraser.
+
+        This codepath is only triggered when Line::TrimmableTrailingContent has a partially trimmable run.
+        However we don't add such runs unless m_shouldIgnoreTrailingLetterSpacing is false (which is already based on the RuntimeEnabledFeatures flag).
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::hasTrailingLetterSpacing const):
+        (WebCore::Layout::Line::Run::trailingLetterSpacing const):
+
 2020-09-22  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Change `InspectorAnimationAgent->startTracking` to not error on repeated calls
