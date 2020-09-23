@@ -1,3 +1,42 @@
+2020-09-23  Matt Lewis  <jlewis3@apple.com>
+
+        Update iOS, watchOS and tvOS builders and tester with new SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=216658
+
+        Reviewed by Jonathan Bedard.
+
+        Bumped the versions on iOS, tvOS, and watchOS in config, dashboard and main CSS. Also, added the updated
+        images for the queues.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS14Device.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS14Device@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS14Simulator.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS14Simulator@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/TvOS14.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/TvOS14@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/TvOS14Simulator.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/TvOS14Simulator@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WatchOS7.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WatchOS7@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WatchOSSimulator7.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WatchOSSimulator7@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform.ios-simulator-14 img.logo):
+        (table.queue-grid tr.platform.ios-14 img.logo):
+        (table.queue-grid tr.platform.tvos-simulator-14 img.logo):
+        (table.queue-grid tr.platform.tvos-14 img.logo):
+        (table.queue-grid tr.platform.watchos-simulator-7 img.logo):
+        (table.queue-grid tr.platform.watchos-7 img.logo):
+        (table.queue-grid tr.platform.ios-simulator-13 img.logo): Deleted.
+        (table.queue-grid tr.platform.ios-13 img.logo): Deleted.
+        (table.queue-grid tr.platform.tvos-simulator-13 img.logo): Deleted.
+        (table.queue-grid tr.platform.tvos-13 img.logo): Deleted.
+        (table.queue-grid tr.platform.watchos-simulator-6 img.logo): Deleted.
+        (table.queue-grid tr.platform.watchos-6 img.logo): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2020-09-23  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Make sw_vers the source of truth for the MacOS version

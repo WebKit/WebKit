@@ -40,22 +40,22 @@
                     { "name": "bot613", "platform": "mac-mojave" },
 
 
-                    { "name": "bot673", "platform": "ios-13" },
-                    { "name": "bot651", "platform": "ios-simulator-13" },
-                    { "name": "bot652", "platform": "ios-simulator-13" },
-                    { "name": "bot653", "platform": "ios-simulator-13" },
-                    { "name": "bot654", "platform": "ios-simulator-13" },
-                    { "name": "bot641", "platform": "ios-simulator-13" },
-                    { "name": "bot682", "platform": "ios-simulator-13" },
-                    { "name": "bot694", "platform": "ios-simulator-13" },
-                    { "name": "bot695", "platform": "ios-simulator-13" },
-                    { "name": "bot667", "platform": "ios-simulator-13"},
-                    { "name": "bot664", "platform": "ios-simulator-13"},
+                    { "name": "bot673", "platform": "ios-14" },
+                    { "name": "bot651", "platform": "ios-simulator-14" },
+                    { "name": "bot652", "platform": "ios-simulator-14" },
+                    { "name": "bot653", "platform": "ios-simulator-14" },
+                    { "name": "bot654", "platform": "ios-simulator-14" },
+                    { "name": "bot641", "platform": "ios-simulator-14" },
+                    { "name": "bot682", "platform": "ios-simulator-14" },
+                    { "name": "bot694", "platform": "ios-simulator-14" },
+                    { "name": "bot695", "platform": "ios-simulator-14" },
+                    { "name": "bot667", "platform": "ios-simulator-14"},
+                    { "name": "bot664", "platform": "ios-simulator-14"},
 
-                    { "name": "bot607", "platform": "tvos-13" },
-                    { "name": "bot608", "platform": "tvos-simulator-13" },
-                    { "name": "bot609", "platform": "watchos-6" },
-                    { "name": "bot672", "platform": "watchos-simulator-6" },
+                    { "name": "bot607", "platform": "tvos-14" },
+                    { "name": "bot608", "platform": "tvos-simulator-14" },
+                    { "name": "bot609", "platform": "watchos-7" },
+                    { "name": "bot672", "platform": "watchos-simulator-7" },
 
                     { "name": "bot545", "platform": "win" },
                     { "name": "bot546", "platform": "win" },
@@ -209,64 +209,64 @@
                       "slavenames": ["bot198", "bot210"]
                     },
                     {
-                      "name": "Apple iOS 13 Release (Build)", "type": "Build", "builddir": "ios-13-release",
-                      "platform": "ios-13", "configuration": "release", "architectures": ["arm64"],
+                      "name": "Apple-iOS-14-Release-Build", "type": "Build", "builddir": "ios-14-release",
+                      "platform": "ios-14", "configuration": "release", "architectures": ["arm64"],
                       "slavenames": ["bot673"]
                     },
                     {
-                      "name": "Apple iOS 13 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-13-release",
-                      "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-13-release-tests-wk2", "ipados-simulator-13-release-tests-wk2"],
+                      "name": "Apple-iOS-14-Simulator-Release-Build", "type": "Build", "builddir": "ios-simulator-14-release",
+                      "platform": "ios-simulator-14", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-14-release-tests-wk2", "ipados-simulator-14-release-tests-wk2"],
                       "slavenames": ["bot641", "bot682"]
                     },
                     {
-                      "name": "Apple iOS 13 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-13-debug",
-                      "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-13-debug-tests-wk2", "ipados-simulator-13-debug-tests-wk2"],
+                      "name": "Apple-iOS-14-Simulator-Debug-Build", "type": "Build", "builddir": "ios-simulator-14-debug",
+                      "platform": "ios-simulator-14", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-14-debug-tests-wk2", "ipados-simulator-14-debug-tests-wk2"],
                       "slavenames": ["bot694", "bot695"]
                     },
                     {
-                      "name": "Apple iOS 13 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-13-release-tests-wk2",
-                      "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"], "device_model": "iphone",
+                      "name": "Apple-iOS-14-Simulator-Release-WK2-Tests", "type": "TestAllButJSC", "builddir": "ios-simulator-14-release-tests-wk2",
+                      "platform": "ios-simulator-14", "configuration": "release", "architectures": ["x86_64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot651", "bot652"]
                     },
                     {
-                      "name": "Apple iOS 13 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-13-debug-tests-wk2",
-                      "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
+                      "name": "Apple-iOS-14-Simulator-Debug-WK2-Tests", "type": "TestAllButJSC", "builddir": "ios-simulator-14-debug-tests-wk2",
+                      "platform": "ios-simulator-14", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot653", "bot654"]
                     },
                     {
-                      "name": "Apple iPadOS 13 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ipados-simulator-13-release-tests-wk2",
-                      "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"], "device_model": "ipad",
+                      "name": "Apple-iPadOS-14-Simulator-Release-WK2-Tests", "type": "TestAllButJSC", "builddir": "ipados-simulator-14-release-tests-wk2",
+                      "platform": "ios-simulator-14", "configuration": "release", "architectures": ["x86_64"], "device_model": "ipad",
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot667"]
                     },
                     {
-                      "name": "Apple iPadOS 13 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ipados-simulator-13-debug-tests-wk2",
-                      "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
+                      "name": "Apple-iPadOS-14-Simulator-Debug-WK2-Tests", "type": "TestAllButJSC", "builddir": "ipados-simulator-14-debug-tests-wk2",
+                      "platform": "ios-simulator-14", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot664"]
                     },
                     {
-                      "name": "Apple-tvOS-13-Release-Build", "type": "Build", "builddir": "tvos-13-release",
-                      "platform": "tvos-13", "configuration": "release", "architectures": ["arm64"],
+                      "name": "Apple-tvOS-14-Release-Build", "type": "Build", "builddir": "tvos-14-release",
+                      "platform": "tvos-14", "configuration": "release", "architectures": ["arm64"],
                       "slavenames": ["bot607"]
                     },
                     {
-                      "name": "Apple-tvOS-Simulator-13-Release-Build", "type": "Build", "builddir": "tvos-simulator-13-release",
-                      "platform": "tvos-simulator-13", "configuration": "release", "architectures": ["x86_64"],
+                      "name": "Apple-tvOS-Simulator-14-Release-Build", "type": "Build", "builddir": "tvos-simulator-14-release",
+                      "platform": "tvos-simulator-14", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot608"]
                     },
                     {
-                      "name": "Apple-watchOS-6-Release-Build", "type": "Build", "builddir": "watchos-13-release",
-                      "platform": "watchos-6", "configuration": "release", "architectures": ["arm64_32", "armv7k"],
+                      "name": "Apple-watchOS-7-Release-Build", "type": "Build", "builddir": "watchos-7-release",
+                      "platform": "watchos-7", "configuration": "release", "architectures": ["arm64_32", "armv7k"],
                       "slavenames": ["bot609"]
                     },
                     {
-                      "name": "Apple-watchOS-Simulator-6-Release-Build", "type": "Build", "builddir": "watchos-simulator-13-release",
-                      "platform": "watchos-simulator-6", "configuration": "release", "architectures": ["i386"],
+                      "name": "Apple-watchOS-Simulator-7-Release-Build", "type": "Build", "builddir": "watchos-simulator-7-release",
+                      "platform": "watchos-simulator-7", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["bot672"]
                     },
                     {
@@ -541,38 +541,38 @@
                     { "type": "Triggerable", "name": "mojave-debug-tests-wk2",
                       "builderNames": ["Apple Mojave Debug WK2 (Tests)"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-13", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple iOS 13 Release (Build)"]
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-14", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-iOS-14-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-13", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple iOS 13 Simulator Release (Build)", "Apple iOS 13 Simulator Debug (Build)"]
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-14", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-iOS-14-Simulator-Release-Build", "Apple-iOS-14-Simulator-Debug-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "tvos-13", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-tvOS-13-Release-Build"]
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-14", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-tvOS-14-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-13", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-tvOS-Simulator-13-Release-Build"]
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-14", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-tvOS-Simulator-14-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "watchos-6", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-watchOS-6-Release-Build"]
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-7", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-watchOS-7-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-6", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-watchOS-Simulator-6-Release-Build"]
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-7", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-watchOS-Simulator-7-Release-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win 10 Release (Build)", "Apple Win 10 Debug (Build)"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-13-release-tests-wk2",
-                      "builderNames": ["Apple iOS 13 Simulator Release WK2 (Tests)"]
+                    { "type": "Triggerable", "name": "ios-simulator-14-release-tests-wk2",
+                      "builderNames": ["Apple-iOS-14-Simulator-Release-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-13-debug-tests-wk2",
-                      "builderNames": ["Apple iOS 13 Simulator Debug WK2 (Tests)"]
+                    { "type": "Triggerable", "name": "ios-simulator-14-debug-tests-wk2",
+                      "builderNames": ["Apple-iOS-14-Simulator-Debug-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "ipados-simulator-13-release-tests-wk2",
-                      "builderNames": ["Apple iPadOS 13 Simulator Release WK2 (Tests)"]
+                    { "type": "Triggerable", "name": "ipados-simulator-14-release-tests-wk2",
+                      "builderNames": ["Apple–iPadOS-14-Simulator-Release-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "ipados-simulator-13-debug-tests-wk2",
-                      "builderNames": ["Apple iPadOS 13 Simulator Debug WK2 (Tests)"]
+                    { "type": "Triggerable", "name": "ipados-simulator-14-debug-tests-wk2",
+                      "builderNames": ["Apple-iPadOS-14-Simulator-Debug-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "win10-release-tests",
                       "builderNames": ["Apple Win 10 Release (Tests)"]
