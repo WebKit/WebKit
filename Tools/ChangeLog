@@ -1,3 +1,14 @@
+2020-09-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Force SYSTEM_VERSION_COMPAT=0 in Webkit scripts
+        https://bugs.webkit.org/show_bug.cgi?id=216895
+        <rdar://problem/69454393>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/configure-xcode-for-embedded-development:
+        * Scripts/webkitpy/__init__.py:
+
 2020-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_SVG_FONTS macro
