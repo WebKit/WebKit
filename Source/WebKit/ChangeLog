@@ -1,3 +1,22 @@
+2020-09-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] fast/canvas/canvas-blend-image.html and fast/canvas/canvas-blend-solid.html fail on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=216860
+
+        Reviewed by Said Abou-Hallawa.
+
+        These two tests disable accelerated drawing for canvas elements; when using the GPU process, this causes us to
+        use `ImageBufferShareableBitmapBackend` as the back-end for the image buffer backing the canvas element.
+
+        On both macOS and iOS, the image buffer is backed by BGRA image data. However, we override
+        `backendColorFormat()` and return `ColorFormat::BGRA` only for `PLATFORM(IOS_FAMILY)`, causing `putImageData`
+        and `getImageData` to result in flipped red and blue channels on macOS, which subsequently causes these two
+        layout tests to fail.
+
+        Fix these tests by removing the `PLATFORM(IOS_FAMILY)` guard.
+
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+
 2020-09-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r267421.
