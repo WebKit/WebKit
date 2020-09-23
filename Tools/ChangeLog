@@ -1,3 +1,16 @@
+2020-09-23  Aakash Jain  <aakash_jain@apple.com>
+
+        Notify igalia team about pre-existing test failures and build failures for JSC queues
+        https://bugs.webkit.org/show_bug.cgi?id=216889
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_preexisting_build_failure): Send email for pre-existing jsc build failures.
+        (AnalyzeJSCTestsResults.send_email_for_pre_existing_failure): Send email for pre-existing jsc test failure.
+        * BuildSlaveSupport/ews-build/send_email.py:
+        * BuildSlaveSupport/ews-build/emails.json: Added email address of igalia jsc team.
+
 2020-09-23  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r267403.

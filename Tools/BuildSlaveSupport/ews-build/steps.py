@@ -30,7 +30,7 @@ from datetime import date
 from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
-from send_email import send_email_to_patch_author, send_email_to_bot_watchers
+from send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_igalia_jsc_team
 
 import json
 import re
@@ -42,6 +42,7 @@ S3URL = 'https://s3-us-west-2.amazonaws.com/'
 S3_RESULTS_URL = 'https://ews-build.s3-us-west-2.amazonaws.com/'
 EWS_BUILD_URL = 'https://ews-build.webkit.org/'
 EWS_URL = 'https://ews.webkit.org/'
+IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'mips', 'i386']
 RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
@@ -1548,6 +1549,8 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
             send_email_to_bot_watchers(email_subject, email_text, 'preexisting-build-failure-{}-{}'.format(builder_name, date.today().strftime("%Y-%d-%m")))
+            if any(pattern in builder_name.lower() for pattern in IGALIA_JSC_QUEUES_PATTERNS):
+                send_email_to_igalia_jsc_team(email_subject, email_text, 'preexisting-build-failure-{}-{}'.format(builder_name, date.today().strftime("%Y-%d-%m")))
         except Exception as e:
             print('Error in sending email for build failure: {}'.format(e))
 
@@ -1811,6 +1814,8 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
             email_subject = u'Pre-existing test failure: {}'.format(test_name)
             email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, 'preexisting-{}'.format(test_name))
+            if any(pattern in builder_name.lower() for pattern in IGALIA_JSC_QUEUES_PATTERNS):
+                send_email_to_igalia_jsc_team(email_subject, email_text, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
 

@@ -80,3 +80,7 @@ def send_email_to_patch_author(author_email, subject, text, reference=''):
 
 def send_email_to_bot_watchers(subject, text, reference=''):
     send_email(get_email_ids('BOT_WATCHERS_EMAILS'), subject, text, reference)
+
+
+def send_email_to_igalia_jsc_team(subject, text, reference=''):
+    send_email(get_email_ids('IGALIA_JSC_TEAM_EMAILS'), subject, text, reference)
