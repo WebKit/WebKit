@@ -444,7 +444,7 @@ bool NetworkDataTaskSoup::tlsConnectionAcceptCertificate(GTlsCertificate* certif
 {
     ASSERT(m_soupRequest);
     URL url = soupURIToURL(soup_request_get_uri(m_soupRequest.get()));
-    auto error = SoupNetworkSession::checkTLSErrors(url, certificate, tlsErrors);
+    auto error = static_cast<NetworkSessionSoup&>(*m_session).soupNetworkSession().checkTLSErrors(url, certificate, tlsErrors);
     if (!error)
         return true;
 

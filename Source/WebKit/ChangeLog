@@ -1,3 +1,68 @@
+2020-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Move TLS errors API from WebKitContext to WebKitWebsiteDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=216822
+
+        Reviewed by Alex Christensen.
+
+        Make TLS errors policy per session instead of global to the network process. The web context API now simply
+        forwards the request to the website data manager. The website data manager created for an ephemeral web view
+        will inherit the network settings from the web context website data manager. This ensures backwards
+        compatibility, but it's also convenient, since it's the desired behavior in most of the cases. Apps can still
+        change the network settings of the web view by getting the website data manager.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::tlsConnectionAcceptCertificate):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        (WebKit::NetworkProcess::setIgnoreTLSErrors):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup):
+        (WebKit::webSocketAcceptCertificateCallback):
+        (WebKit::webSocketMessageNetworkEventCallback):
+        (WebKit::NetworkSessionSoup::createWebSocketTask):
+        (WebKit::NetworkSessionSoup::setIgnoreTLSErrors):
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkitAutomationSessionCreate):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_set_tls_errors_policy):
+        (webkit_web_context_get_tls_errors_policy):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkit_web_view_class_init):
+        (webkitWebViewLoadFailedWithTLSErrors):
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerConstructed):
+        (webkitWebsiteDataManagerGetDataStore):
+        (webkit_website_data_manager_set_tls_errors_policy):
+        (webkit_website_data_manager_get_tls_errors_policy):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitWebContext.h:
+        * UIProcess/API/wpe/WebKitWebsiteDataManager.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::ignoreTLSErrors const):
+        * UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp:
+        (WebKit::WebsiteDataStore::setIgnoreTLSErrors):
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::setIgnoreTLSErrors): Deleted.
+
 2020-09-23  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Issue sandbox extension for the diagnostic daemon

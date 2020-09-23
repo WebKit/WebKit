@@ -222,7 +222,6 @@ struct _WebKitWebContextPrivate {
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
 
     CString faviconDatabaseDirectory;
-    WebKitTLSErrorsPolicy tlsErrorsPolicy;
     WebKitProcessModel processModel;
 
     HashMap<WebPageProxyIdentifier, WebKitWebView*> webViews;
@@ -413,9 +412,6 @@ static void webkitWebContextConstructed(GObject* object)
     });
 
     webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), *priv->processPool);
-
-    priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
-    priv->processPool->setIgnoreTLSErrors(false);
 
     priv->processModel = WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
 
@@ -1496,18 +1492,14 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
  * @policy: a #WebKitTLSErrorsPolicy
  *
  * Set the TLS errors policy of @context as @policy
+ *
+ * Deprecated: 2.32. Use webkit_website_data_manager_set_tls_errors_policy() instead.
  */
 void webkit_web_context_set_tls_errors_policy(WebKitWebContext* context, WebKitTLSErrorsPolicy policy)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    if (context->priv->tlsErrorsPolicy == policy)
-        return;
-
-    context->priv->tlsErrorsPolicy = policy;
-    bool ignoreTLSErrors = policy == WEBKIT_TLS_ERRORS_POLICY_IGNORE;
-    if (context->priv->processPool->ignoreTLSErrors() != ignoreTLSErrors)
-        context->priv->processPool->setIgnoreTLSErrors(ignoreTLSErrors);
+    webkit_website_data_manager_set_tls_errors_policy(context->priv->websiteDataManager.get(), policy);
 }
 
 /**
@@ -1517,12 +1509,14 @@ void webkit_web_context_set_tls_errors_policy(WebKitWebContext* context, WebKitT
  * Get the TLS errors policy of @context
  *
  * Returns: a #WebKitTLSErrorsPolicy
+ *
+ * Deprecated: 2.32. Use webkit_website_data_manager_get_tls_errors_policy() instead.
  */
 WebKitTLSErrorsPolicy webkit_web_context_get_tls_errors_policy(WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
-    return context->priv->tlsErrorsPolicy;
+    return webkit_website_data_manager_get_tls_errors_policy(context->priv->websiteDataManager.get());
 }
 
 /**

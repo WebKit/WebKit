@@ -111,6 +111,7 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> itpDirectory;
     GUniquePtr<char> swRegistrationsDirectory;
     GUniquePtr<char> domCacheDirectory;
+    WebKitTLSErrorsPolicy tlsErrorsPolicy;
 
     GRefPtr<WebKitCookieManager> cookieManager;
     Vector<WebProcessPool*> processPools;
@@ -241,6 +242,8 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
         if (!priv->domCacheDirectory)
             priv->domCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.get(), "CacheStorage", nullptr));
     }
+
+    priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
 }
 
 static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass* findClass)
@@ -489,6 +492,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
         if (priv->domCacheDirectory)
             configuration->setCacheStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.get()));
         priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
+        priv->websiteDataStore->setIgnoreTLSErrors(priv->tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
     }
 
     return *priv->websiteDataStore;
@@ -907,6 +911,43 @@ gboolean webkit_website_data_manager_get_persistent_credential_storage_enabled(W
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), FALSE);
 
     return webkitWebsiteDataManagerGetDataStore(manager).persistentCredentialStorageEnabled();
+}
+
+/**
+ * webkit_website_data_manager_set_tls_errors_policy:
+ * @manager: a #WebKitWebsiteDataManager
+ * @policy: a #WebKitTLSErrorsPolicy
+ *
+ * Set the TLS errors policy of @manager as @policy
+ *
+ * Since: 2.32
+ */
+void webkit_website_data_manager_set_tls_errors_policy(WebKitWebsiteDataManager* manager, WebKitTLSErrorsPolicy policy)
+{
+    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+
+    if (manager->priv->tlsErrorsPolicy == policy)
+        return;
+
+    manager->priv->tlsErrorsPolicy = policy;
+    webkitWebsiteDataManagerGetDataStore(manager).setIgnoreTLSErrors(policy == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+}
+
+/**
+ * webkit_website_data_manager_get_tls_errors_policy:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get the TLS errors policy of @manager
+ *
+ * Returns: a #WebKitTLSErrorsPolicy
+ *
+ * Since: 2.32
+ */
+WebKitTLSErrorsPolicy webkit_website_data_manager_get_tls_errors_policy(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), WEBKIT_TLS_ERRORS_POLICY_FAIL);
+
+    return manager->priv->tlsErrorsPolicy;
 }
 
 static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)

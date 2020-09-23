@@ -44,8 +44,6 @@
 
 namespace WebCore {
 
-static bool gIgnoreTLSErrors;
-
 static CString& initialAcceptLanguages()
 {
     static NeverDestroyed<CString> storage;
@@ -325,17 +323,14 @@ void SoupNetworkSession::setAcceptLanguages(const CString& languages)
     g_object_set(m_soupSession.get(), "accept-language", languages.data(), nullptr);
 }
 
-void SoupNetworkSession::setShouldIgnoreTLSErrors(bool ignoreTLSErrors)
+void SoupNetworkSession::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
-    gIgnoreTLSErrors = ignoreTLSErrors;
+    m_ignoreTLSErrors = ignoreTLSErrors;
 }
 
 Optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& requestURL, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors)
 {
-    if (gIgnoreTLSErrors)
-        return WTF::nullopt;
-
-    if (!tlsErrors)
+    if (m_ignoreTLSErrors || !tlsErrors)
         return WTF::nullopt;
 
     auto it = allowedCertificates().find(requestURL.host().toStringWithoutCopying());

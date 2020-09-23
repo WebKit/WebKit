@@ -445,7 +445,7 @@ private:
     void flushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
 
 #if USE(SOUP)
-    void setIgnoreTLSErrors(bool);
+    void setIgnoreTLSErrors(PAL::SessionID, bool);
     void userPreferredLanguagesChanged(const Vector<String>&);
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
     void setPersistentCredentialStorageEnabled(PAL::SessionID, bool);

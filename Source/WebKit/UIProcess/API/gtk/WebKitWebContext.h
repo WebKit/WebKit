@@ -89,21 +89,6 @@ typedef enum {
 } WebKitProcessModel;
 
 /**
- * WebKitTLSErrorsPolicy:
- * @WEBKIT_TLS_ERRORS_POLICY_IGNORE: Ignore TLS errors.
- * @WEBKIT_TLS_ERRORS_POLICY_FAIL: TLS errors will emit
- *   #WebKitWebView::load-failed-with-tls-errors and, if the signal is handled,
- *   finish the load. In case the signal is not handled,
- *   #WebKitWebView::load-failed is emitted before the load finishes.
- *
- * Enum values used to denote the TLS errors policy.
- */
-typedef enum {
-    WEBKIT_TLS_ERRORS_POLICY_IGNORE,
-    WEBKIT_TLS_ERRORS_POLICY_FAIL
-} WebKitTLSErrorsPolicy;
-
-/**
  * WebKitNetworkProxyMode:
  * @WEBKIT_NETWORK_PROXY_MODE_DEFAULT: Use the default proxy of the system.
  * @WEBKIT_NETWORK_PROXY_MODE_NO_PROXY: Do not use any proxy.
@@ -278,11 +263,11 @@ WEBKIT_API void
 webkit_web_context_set_preferred_languages          (WebKitWebContext              *context,
                                                      const gchar * const           *languages);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_set_tls_errors_policy) void
 webkit_web_context_set_tls_errors_policy            (WebKitWebContext              *context,
                                                      WebKitTLSErrorsPolicy          policy);
 
-WEBKIT_API WebKitTLSErrorsPolicy
+WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_get_tls_errors_policy) WebKitTLSErrorsPolicy
 webkit_web_context_get_tls_errors_policy            (WebKitWebContext              *context);
 
 WEBKIT_API void

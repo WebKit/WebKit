@@ -56,4 +56,14 @@ void WebsiteDataStore::setPersistentCredentialStorageEnabled(bool enabled)
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetPersistentCredentialStorageEnabled(m_sessionID, m_persistentCredentialStorageEnabled));
 }
 
+void WebsiteDataStore::setIgnoreTLSErrors(bool ignoreTLSErrors)
+{
+    if (m_ignoreTLSErrors == ignoreTLSErrors)
+        return;
+
+    m_ignoreTLSErrors = ignoreTLSErrors;
+    for (auto& processPool : processPools())
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetIgnoreTLSErrors(m_sessionID, m_ignoreTLSErrors));
+}
+
 } // namespace WebKit

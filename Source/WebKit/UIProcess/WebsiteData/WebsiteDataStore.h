@@ -259,6 +259,8 @@ public:
 #if USE(SOUP)
     void setPersistentCredentialStorageEnabled(bool);
     bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled && isPersistent(); }
+    void setIgnoreTLSErrors(bool);
+    bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
 #endif
 
     static void allowWebsiteDataRecordsForAllOrigins();
@@ -395,6 +397,7 @@ private:
 
 #if USE(SOUP)
     bool m_persistentCredentialStorageEnabled { true };
+    bool m_ignoreTLSErrors { true };
 #endif
 
     HashSet<WebCore::Cookie> m_pendingCookies;

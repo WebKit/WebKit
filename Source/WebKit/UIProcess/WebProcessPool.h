@@ -414,11 +414,6 @@ public:
 
     void windowServerConnectionStateChanged();
 
-#if USE(SOUP)
-    void setIgnoreTLSErrors(bool);
-    bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
-#endif
-
     static void setInvalidMessageCallback(void (*)(WKStringRef));
     static void didReceiveInvalidMessage(IPC::MessageName);
 
@@ -717,10 +712,6 @@ private:
     std::unique_ptr<NetworkProcessProxy> m_networkProcess;
 
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
-
-#if USE(SOUP)
-    bool m_ignoreTLSErrors { true };
-#endif
 
     bool m_memoryCacheDisabled { false };
     bool m_javaScriptConfigurationFileEnabled { false };

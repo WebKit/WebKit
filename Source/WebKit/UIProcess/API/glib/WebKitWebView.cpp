@@ -755,6 +755,8 @@ static void webkitWebViewConstructed(GObject* object)
 
     if (priv->isEphemeral && !webkit_web_context_is_ephemeral(priv->context.get())) {
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
+        auto* contextDataManager = webkit_web_context_get_website_data_manager(priv->context.get());
+        webkit_website_data_manager_set_tls_errors_policy(priv->websiteDataManager.get(), webkit_website_data_manager_get_tls_errors_policy(contextDataManager));
         webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), webkitWebContextGetProcessPool(priv->context.get()));
     }
 
@@ -1192,9 +1194,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Whether the #WebKitWebView is ephemeral. An ephemeral web view never writes
      * website data to the client storage, no matter what #WebKitWebsiteDataManager
      * its context is using. This is normally used to implement private browsing mode.
-     * This is a %G_PARAM_CONSTRUCT_ONLY property, so you have to create a ephemeral
-     * #WebKitWebView and it can't be changed. Note that all #WebKitWebView<!-- -->s
-     * created with an ephemeral #WebKitWebContext will be ephemeral automatically.
+     * This is a %G_PARAM_CONSTRUCT_ONLY property, so you have to create an ephemeral
+     * #WebKitWebView and it can't be changed. The ephemeral #WebKitWebsiteDataManager
+     * created for the #WebKitWebView will inherit the network settings from the
+     * #WebKitWebContext<!-- -->'s #WebKitWebsiteDataManager. To use different settings
+     * you can get the #WebKitWebsiteDataManager with webkit_web_view_get_website_data_manager()
+     * and set the new ones.
+     * Note that all #WebKitWebView<!-- -->s created with an ephemeral #WebKitWebContext
+     * will be ephemeral automatically.
      * See also webkit_web_context_new_ephemeral().
      *
      * Since: 2.16
@@ -2356,7 +2363,8 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* fa
 {
     webkitWebViewCompleteAuthenticationRequest(webView);
 
-    WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_web_context_get_tls_errors_policy(webView->priv->context.get());
+    auto* websiteDataManager = webkit_web_view_get_website_data_manager(webView);
+    WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_website_data_manager_get_tls_errors_policy(websiteDataManager);
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
         gboolean returnValue;
         g_signal_emit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURI, certificate, tlsErrors, &returnValue);

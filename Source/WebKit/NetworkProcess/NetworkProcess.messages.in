@@ -28,7 +28,7 @@ messages -> NetworkProcess LegacyReceiver {
     CreateNetworkConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID) -> (Optional<IPC::Attachment> connectionIdentifier, enum:uint8_t WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy) Async
 
 #if USE(SOUP)
-    SetIgnoreTLSErrors(bool ignoreTLSErrors)
+    SetIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)
     UserPreferredLanguagesChanged(Vector<String> languages)
     SetNetworkProxySettings(struct WebCore::SoupNetworkProxySettings settings)
     PrefetchDNS(String hostname)

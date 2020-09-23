@@ -136,8 +136,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     if (!parameters.languages.isEmpty())
         userPreferredLanguagesChanged(parameters.languages);
-
-    setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 }
 
 std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
@@ -145,9 +143,10 @@ std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDe
     return makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
 }
 
-void NetworkProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
+void NetworkProcess::setIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)
 {
-    SoupNetworkSession::setShouldIgnoreTLSErrors(ignoreTLSErrors);
+    if (auto* session = networkSession(sessionID))
+        static_cast<NetworkSessionSoup&>(*session).setIgnoreTLSErrors(ignoreTLSErrors);
 }
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)

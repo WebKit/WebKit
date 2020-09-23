@@ -1,3 +1,20 @@
+2020-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Move TLS errors API from WebKitContext to WebKitWebsiteDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=216822
+
+        Reviewed by Alex Christensen.
+
+        Make ignoreTLSErrors a member of SoupNetworkSession, instead of being global.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::setIgnoreTLSErrors):
+        (WebCore::SoupNetworkSession::checkTLSErrors):
+        (WebCore::SoupNetworkSession::setShouldIgnoreTLSErrors): Deleted.
+        * platform/network/soup/SoupNetworkSession.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setAllowsAnySSLCertificate): Do not use SoupNetworkSession in the web process.
+
 2020-09-23  Tim Horton  <timothy_horton@apple.com>
 
         Fix some typo'd wheel event listener logging

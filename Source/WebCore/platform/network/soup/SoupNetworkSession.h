@@ -66,8 +66,8 @@ public:
     static void setInitialAcceptLanguages(const CString&);
     void setAcceptLanguages(const CString&);
 
-    WEBCORE_EXPORT static void setShouldIgnoreTLSErrors(bool);
-    static Optional<ResourceError> checkTLSErrors(const URL&, GTlsCertificate*, GTlsCertificateFlags);
+    WEBCORE_EXPORT void setIgnoreTLSErrors(bool);
+    Optional<ResourceError> checkTLSErrors(const URL&, GTlsCertificate*, GTlsCertificateFlags);
     static void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
 
     void getHostNamesWithHSTSCache(HashSet<String>&);
@@ -79,6 +79,7 @@ private:
 
     GRefPtr<SoupSession> m_soupSession;
     PAL::SessionID m_sessionID;
+    bool m_ignoreTLSErrors { false };
 };
 
 } // namespace WebCore

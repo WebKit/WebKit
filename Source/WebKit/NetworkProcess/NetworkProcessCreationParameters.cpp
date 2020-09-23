@@ -58,7 +58,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << defaultDataStoreParameters;
 #if USE(SOUP)
     encoder << cookieAcceptPolicy;
-    encoder << ignoreTLSErrors;
     encoder << languages;
     encoder << proxySettings;
 #endif
@@ -124,8 +123,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 
 #if USE(SOUP)
     if (!decoder.decode(result.cookieAcceptPolicy))
-        return false;
-    if (!decoder.decode(result.ignoreTLSErrors))
         return false;
     if (!decoder.decode(result.languages))
         return false;

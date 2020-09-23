@@ -63,6 +63,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cookiePersistentStoragePath;
     encoder << cookiePersistentStorageType;
     encoder << persistentCredentialStorageEnabled;
+    encoder << ignoreTLSErrors;
 #endif
 #if USE(CURL)
     encoder << cookiePersistentStorageFile;
@@ -180,6 +181,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     Optional<bool> persistentCredentialStorageEnabled;
     decoder >> persistentCredentialStorageEnabled;
     if (!persistentCredentialStorageEnabled)
+        return WTF::nullopt;
+
+    Optional<bool> ignoreTLSErrors;
+    decoder >> ignoreTLSErrors;
+    if (!ignoreTLSErrors)
         return WTF::nullopt;
 #endif
 
@@ -299,6 +305,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*cookiePersistentStoragePath)
         , WTFMove(*cookiePersistentStorageType)
         , WTFMove(*persistentCredentialStorageEnabled)
+        , WTFMove(*ignoreTLSErrors)
 #endif
 #if USE(CURL)
         , WTFMove(*cookiePersistentStorageFile)

@@ -47,10 +47,6 @@
 #include "ColorChooser.h"
 #endif
 
-#if USE(SOUP)
-#include "SoupNetworkSession.h"
-#endif
-
 #if ENABLE(WEB_AUDIO)
 #include "AudioContext.h"
 #endif
@@ -898,9 +894,6 @@ ExceptionOr<void> InternalSettings::setFrameFlattening(FrameFlatteningValue fram
 void InternalSettings::setAllowsAnySSLCertificate(bool allowsAnyCertificate)
 {
     DeprecatedGlobalSettings::setAllowsAnySSLCertificate(allowsAnyCertificate);
-#if USE(SOUP)
-    SoupNetworkSession::setShouldIgnoreTLSErrors(allowsAnyCertificate);
-#endif
 }
 
 ExceptionOr<bool> InternalSettings::deferredCSSParserEnabled()

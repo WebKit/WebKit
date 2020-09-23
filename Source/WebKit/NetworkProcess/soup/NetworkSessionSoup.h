@@ -57,6 +57,8 @@ public:
     void setPersistentCredentialStorageEnabled(bool enabled) { m_persistentCredentialStorageEnabled = enabled; }
     bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled; }
 
+    void setIgnoreTLSErrors(bool);
+
 private:
     std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
     void clearCredentials() final;
