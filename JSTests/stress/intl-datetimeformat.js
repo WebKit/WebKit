@@ -697,7 +697,7 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric
     {
         let dtf = new Intl.DateTimeFormat("en", {hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 1});
         shouldBe(dtf.format(t), `7:00:23.1 AM`);
-        shouldBe(JSON.stringify(dtf.resolvedOptions()), `{"locale":"en","calendar":"gregory","numberingSystem":"latn","timeZone":"America/Los_Angeles","hourCycle":"h12","hour12":true,"hour":"numeric","minute":"2-digit","second":"2-digit","fractionalSecondDigits":1}`);
+        shouldBe(JSON.stringify(dtf.resolvedOptions()), `{"locale":"en","calendar":"gregory","numberingSystem":"latn","timeZone":"America/Los_Angeles","hourCycle":"h12","hour12":true,"dayPeriod":"short","hour":"numeric","minute":"2-digit","second":"2-digit","fractionalSecondDigits":1}`);
     }
     shouldThrow(() => {
         new Intl.DateTimeFormat("en", {hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 0});
