@@ -1,5 +1,24 @@
 2020-09-23  Philippe Normand  <pnormand@igalia.com>
 
+        REGRESSION(r267383): fast/mediastream/getUserMedia-webaudio.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=216813
+
+        Reviewed by Adrian Perez de Castro.
+
+        Revert r267428 and fixup the GStreamer FFT implementation which broke in r267383.
+
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::multiply):
+        * platform/audio/FFTFrameStub.cpp:
+        (WebCore::FFTFrame::multiply): Deleted.
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp:
+        (WebCore::FFTFrame::doFFT): Update the real and imaginary arrays after applying the FFT.
+        (WebCore::FFTFrame::multiply): Deleted.
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::multiply): Deleted.
+
+2020-09-23  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, prospective GTK build fix after r267449.
 
         * svg/SVGPathBlender.cpp: Include <functional>, needed for std::invoke().

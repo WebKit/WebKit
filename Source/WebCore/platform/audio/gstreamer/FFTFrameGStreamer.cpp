@@ -103,23 +103,16 @@ FFTFrame::~FFTFrame()
     m_inverseFft = 0;
 }
 
-void FFTFrame::multiply(const FFTFrame& frame)
-{
-    FFTFrame& frame1 = *this;
-    FFTFrame& frame2 = const_cast<FFTFrame&>(frame);
-
-    float* realP1 = frame1.realData();
-    float* imagP1 = frame1.imagData();
-    const float* realP2 = frame2.realData();
-    const float* imagP2 = frame2.imagData();
-
-    size_t size = unpackedFFTDataSize(m_FFTSize);
-    VectorMath::zvmul(realP1, imagP1, realP2, imagP2, realP1, imagP1, size);
-}
-
 void FFTFrame::doFFT(const float* data)
 {
     gst_fft_f32_fft(m_fft, data, m_complexData.get());
+
+    float* imagData = m_imagData.data();
+    float* realData = m_realData.data();
+    for (unsigned i = 0; i < unpackedFFTDataSize(m_FFTSize); ++i) {
+        imagData[i] = m_complexData[i].i;
+        realData[i] = m_complexData[i].r;
+    }
 }
 
 void FFTFrame::doInverseFFT(float* data)

@@ -1,0 +1,91 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "5-order FFT" 
+PASS Executing "6-order FFT" 
+PASS Executing "7-order FFT" 
+PASS Executing "8-order FFT" 
+PASS Executing "9-order FFT" 
+PASS Executing "10-order FFT" 
+PASS Executing "11-order FFT" 
+PASS Executing "12-order FFT" 
+PASS Executing "13-order FFT" 
+PASS Executing "14-order FFT" 
+PASS Executing "15-order FFT" 
+PASS Executing "no smoothing" 
+PASS Audit report 
+PASS > [5-order FFT]  
+PASS   32-point float FFT equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":9.6549e-7}. 
+PASS   Order: 5: Min FFT value is less than or equal to -50. 
+PASS   Order: 5: Max FFT value is greater than or equal to -30. 
+PASS   32-point byte FFT equals [153,255,255,255,255,255,255,255,255,249,233,207,178,146,79,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [5-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [6-order FFT]  
+PASS   64-point float FFT equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.000010084}. 
+PASS   Order: 6: Min FFT value is less than or equal to -100. 
+PASS   Order: 6: Max FFT value is greater than or equal to -30. 
+PASS   64-point byte FFT equals [255,255,255,254,246,239,233,228,224,220,217,214,211,208,206,204...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [6-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [7-order FFT]  
+PASS   128-point float FFT equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000011473}. 
+PASS   Order: 7: Min FFT value is less than or equal to -100. 
+PASS   Order: 7: Max FFT value is greater than or equal to -30. 
+PASS   128-point byte FFT equals [255,255,255,255,255,249,239,242,229,232,227,221,224,213,219,212...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [7-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [8-order FFT]  
+PASS   256-point float FFT equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000010442}. 
+PASS   Order: 8: Min FFT value is less than or equal to -100. 
+PASS   Order: 8: Max FFT value is greater than or equal to -30. 
+PASS   256-point byte FFT equals [102,169,255,255,255,255,255,255,252,233,255,253,218,242,250,226...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [8-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [9-order FFT]  
+PASS   512-point float FFT equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.000026427}. 
+PASS   Order: 9: Min FFT value is less than or equal to -100. 
+PASS   Order: 9: Max FFT value is greater than or equal to -30. 
+PASS   512-point byte FFT equals [0,16,36,50,65,231,255,255,255,208,59,75,219,255,255,247...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [9-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [10-order FFT]  
+PASS   1024-point float FFT equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.000029771}. 
+PASS   Order: 10: Min FFT value is less than or equal to -100. 
+PASS   Order: 10: Max FFT value is greater than or equal to -30. 
+PASS   1024-point byte FFT equals [0,0,0,0,2,12,23,35,49,63,74,107,240,255,255,255...] with an element-wise tolerance of {"absoluteThreshold":1,"relativeThreshold":0}. 
+PASS < [10-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [11-order FFT]  
+PASS   2048-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.000013456}. 
+PASS   Order: 11: Min FFT value is less than or equal to -100. 
+PASS   Order: 11: Max FFT value is greater than or equal to -30. 
+PASS   2048-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [11-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [12-order FFT]  
+PASS   4096-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":4.6116e-7}. 
+PASS   Order: 12: Min FFT value is less than or equal to -100. 
+PASS   Order: 12: Max FFT value is greater than or equal to -30. 
+PASS   4096-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [12-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [13-order FFT]  
+PASS   8192-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":3.2106e-7}. 
+PASS   Order: 13: Min FFT value is less than or equal to -100. 
+PASS   Order: 13: Max FFT value is greater than or equal to -30. 
+PASS   8192-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [13-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [14-order FFT]  
+PASS   16384-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1756e-7}. 
+PASS   Order: 14: Min FFT value is less than or equal to -100. 
+PASS   Order: 14: Max FFT value is greater than or equal to -30. 
+PASS   16384-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [14-order FFT] All assertions passed. (total 4 assertions) 
+PASS > [15-order FFT]  
+FAIL X 32768-point float FFT does not equal [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1756e-7}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[14082]	-7.3094314575195313e+1	-7.3094299316406250e+1	1.5258789062500000e-5	2.0875484415615863e-7	8.5929658276367193e-6
+	Max AbsError of 1.5258789062500000e-5 at index of 14082.
+	Max RelError of 2.0875484415615863e-7 at index of 14082.
+ assert_true: expected true got false
+PASS   Order: 15: Min FFT value is less than or equal to -100. 
+PASS   Order: 15: Max FFT value is greater than or equal to -30. 
+PASS   32768-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+FAIL < [15-order FFT] 1 out of 4 assertions were failed. assert_true: expected true got false
+PASS > [no smoothing]  
+PASS   128-point float FFT equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000015684}. 
+PASS < [no smoothing] All assertions passed. (total 1 assertions) 
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 12 tasks were failed. assert_true: expected true got false
+
