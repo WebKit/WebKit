@@ -1,3 +1,11 @@
+2020-09-23  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, add ios baseline for media/media-can-play-av1.html
+
+        This was forgotten in r267474.
+        
+        * platform/ios/media/media-can-play-av1-expected.txt: Added.
+
 2020-09-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/aria-combobox-control-owns-elements.html in isolated tree mode.
