@@ -182,7 +182,7 @@ public:
 
     static bool getPrivateFieldSlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     inline bool getPrivateField(JSGlobalObject*, PropertyName, PropertySlot&);
-    inline void putPrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    inline void setPrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     inline void definePrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     unsigned getArrayLength() const

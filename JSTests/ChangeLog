@@ -1,3 +1,32 @@
+2020-09-23  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC][ESNext] Create a new opcode to handle private fields store/define
+        https://bugs.webkit.org/show_bug.cgi?id=213372
+
+        Reviewed by Yusuke Suzuki.
+
+        Adjusting tests that emit `get_private_name` to avoid execution in
+        FTL/DFG.
+
+        * microbenchmarks/class-fields-private/polymorphic-put-private-field.js: Added.
+        * microbenchmarks/class-fields-private/put-private-field.js: Added.
+        * microbenchmarks/polymorphic-put-public-field.js: Added.
+        * microbenchmarks/put-public-field.js: Added.
+        * stress/dfg-put-private-name-check-barrier-insertion.js: Added.
+        * stress/dfg-put-private-name-compiled-as-put-by-id-direct.js: Added.
+        * stress/dfg-put-private-name-compiled-as-put-private-name-by-id.js: Added.
+        * stress/put-private-name-by-id-set-do-not-add-structure-trasition.js: Added.
+        * stress/put-private-name-check-structure-miss.js: Added.
+        * stress/put-private-name-constant-folding-to-mult-put-by-offset.js: Added.
+        * stress/put-private-name-constant-folding-to-put-by-offset.js: Added.
+        * stress/put-private-name-generic.js: Added.
+        * stress/put-private-name-invalid-define.js: Added.
+        * stress/put-private-name-invalid-store.js: Added.
+        * stress/put-private-name-invalidate-compiled-with-constant-symbol.js: Added.
+        * stress/put-private-name-polymorphic-with-constant-symbol.js: Added.
+        * stress/put-private-name-with-constant-symbol.js: Added.
+        * stress/put-private-name-with-different-identifier.js: Added.
+
 2020-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable Intl.DateTimeFormat dayPeriod

@@ -139,9 +139,9 @@ module DSL
 #include "Instruction.h"
 #include "IterationModeMetadata.h"
 #include "Opcode.h"
+#include "PrivateFieldPutKind.h"
 #include "PutByIdStatus.h"
 #include "PutByIdFlags.h"
-#include "PutByValFlags.h"
 #include "ToThisStatus.h"
 
 namespace JSC {

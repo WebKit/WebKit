@@ -1360,6 +1360,8 @@ public:
     void compilePutByValForCellWithString(Node*, Edge& child1, Edge& child2, Edge& child3);
     void compilePutByValForCellWithSymbol(Node*, Edge& child1, Edge& child2, Edge& child3);
     void compileGetByValWithThis(Node*);
+    void compilePutPrivateName(Node*);
+    void compilePutPrivateNameById(Node*);
     void compileGetByOffset(Node*);
     void compilePutByOffset(Node*);
     void compileMatchStructure(Node*);

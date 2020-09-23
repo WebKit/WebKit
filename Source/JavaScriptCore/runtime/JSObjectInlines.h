@@ -617,7 +617,7 @@ inline bool JSObject::getPrivateField(JSGlobalObject* globalObject, PropertyName
     RELEASE_AND_RETURN(scope, true);
 }
 
-inline void JSObject::putPrivateField(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putSlot)
+inline void JSObject::setPrivateField(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putSlot)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);

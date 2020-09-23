@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "JITMathICForwards.h"
+#include "PrivateFieldPutKind.h"
 #include "SlowPathReturnType.h"
 #include <wtf/Platform.h>
 #include <wtf/text/UniquedStringImpl.h>
@@ -191,9 +192,11 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(JSGlobalObject*, Structu
 void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDefinePrivateFieldStrict(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDefinePrivateFieldStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
-void JIT_OPERATION operationPutByIdPutPrivateFieldStrict(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
-void JIT_OPERATION operationPutByIdPutPrivateFieldStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdSetPrivateFieldStrict(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdSetPrivateFieldStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
 
+void JIT_OPERATION operationPutPrivateNameOptimize(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, PrivateFieldPutKind) WTF_INTERNAL;
+void JIT_OPERATION operationPutPrivateNameGeneric(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, PrivateFieldPutKind) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValOptimize(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode) WTF_INTERNAL;
 void JIT_OPERATION operationDirectPutByValOptimize(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValGeneric(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode) WTF_INTERNAL;

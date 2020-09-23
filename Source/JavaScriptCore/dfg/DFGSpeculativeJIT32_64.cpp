@@ -2590,6 +2590,16 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case PutPrivateName: {
+        compilePutPrivateName(node);
+        break;
+    }
+
+    case PutPrivateNameById: {
+        compilePutPrivateNameById(node);
+        break;
+    }
+
     case PutByValDirect:
     case PutByVal:
     case PutByValAlias: {

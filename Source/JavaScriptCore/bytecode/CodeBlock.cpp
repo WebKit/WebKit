@@ -542,6 +542,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpInByVal)
         LINK(OpPutByVal)
         LINK(OpPutByValDirect)
+        LINK(OpPutPrivateName)
 
         LINK(OpNewArray)
         LINK(OpNewArrayWithSize)
@@ -1136,6 +1137,25 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
                 if (vm.heap.isMarked(oldStructure))
                     visitor.appendUnbarriered(newStructure);
             });
+
+            m_metadata->forEach<OpPutPrivateName>([&] (auto& metadata) {
+                StructureID oldStructureID = metadata.m_oldStructureID;
+                StructureID newStructureID = metadata.m_newStructureID;
+                if (!oldStructureID || !newStructureID)
+                    return;
+
+                JSCell* property = metadata.m_property.get();
+                ASSERT(property);
+                if (!vm.heap.isMarked(property))
+                    return;
+
+                Structure* oldStructure =
+                    vm.heap.structureIDTable().get(oldStructureID);
+                Structure* newStructure =
+                    vm.heap.structureIDTable().get(newStructureID);
+                if (vm.heap.isMarked(oldStructure))
+                    visitor.appendUnbarriered(newStructure);
+            });
         }
     }
 
@@ -1300,6 +1320,22 @@ void CodeBlock::finalizeLLIntInlineCaches()
             metadata.m_offset = 0;
             metadata.m_newStructureID = 0;
             metadata.m_structureChain.clear();
+        });
+
+        m_metadata->forEach<OpPutPrivateName>([&] (auto& metadata) {
+            StructureID oldStructureID = metadata.m_oldStructureID;
+            StructureID newStructureID = metadata.m_newStructureID;
+            JSCell* property = metadata.m_property.get();
+            if ((!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
+                && (!property || vm.heap.isMarked(property))
+                && (!newStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(newStructureID))))
+                return;
+
+            dataLogLnIf(Options::verboseOSR(), "Clearing LLInt put_private_name transition.");
+            metadata.m_oldStructureID = 0;
+            metadata.m_offset = 0;
+            metadata.m_newStructureID = 0;
+            metadata.m_property.clear();
         });
 
         m_metadata->forEach<OpToThis>([&] (auto& metadata) {

@@ -699,21 +699,9 @@ ALWAYS_INLINE ECMAMode JIT::ecmaMode<OpPutById>(OpPutById op)
 }
 
 template<>
-ALWAYS_INLINE ECMAMode JIT::ecmaMode<OpPutByValDirect>(OpPutByValDirect op)
+ALWAYS_INLINE ECMAMode JIT::ecmaMode<OpPutPrivateName>(OpPutPrivateName)
 {
-    return op.m_flags.ecmaMode();
-}
-
-template<typename Op>
-PrivateFieldAccessKind JIT::privateFieldAccessKind(Op)
-{
-    return PrivateFieldAccessKind::None;
-}
-
-template<>
-ALWAYS_INLINE PrivateFieldAccessKind JIT::privateFieldAccessKind<OpPutByValDirect>(OpPutByValDirect op)
-{
-    return op.m_flags.privateFieldAccessKind();
+    return ECMAMode::strict();
 }
 
 } // namespace JSC

@@ -210,6 +210,8 @@ namespace JSC { namespace DFG {
     macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByVal, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs) \
+    macro(PutPrivateName, NodeMustGenerate) \
+    macro(PutPrivateNameById, NodeMustGenerate) \
     macro(TryGetById, NodeResultJS) \
     macro(GetById, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdFlush, NodeResultJS | NodeMustGenerate) \

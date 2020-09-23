@@ -331,6 +331,50 @@ void JIT::emitSlow_op_get_private_name(const Instruction* currentInstruction, Ve
 }
 
 
+void JIT::emit_op_put_private_name(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpPutPrivateName>();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
+    ByValInfo* byValInfo = m_codeBlock->addByValInfo(m_bytecodeIndex);
+
+    emitLoad2(base, regT1, regT0, property, regT3, regT2);
+
+    PatchableJump fastPathJmp = patchableJump();
+    addSlowCase(fastPathJmp);
+
+    Label done = label();
+    
+    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, fastPathJmp, done, done));
+}
+
+void JIT::emitSlow_op_put_private_name(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    auto bytecode = currentInstruction->as<OpPutPrivateName>();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
+    VirtualRegister value = bytecode.m_value;
+
+    ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
+    PrivateFieldPutKind putKind = bytecode.m_putKind;
+
+    linkAllSlowCases(iter);
+    Label slowPath = label();
+
+    JSValueRegs baseRegs(regT1, regT0);
+    JSValueRegs propertyRegs(regT3, regT2);
+    JSValueRegs valueRegs(regT5, regT4);
+
+    emitLoad(base, baseRegs.tagGPR(), baseRegs.payloadGPR());
+    emitLoad(property, propertyRegs.tagGPR(), propertyRegs.payloadGPR());
+    emitLoad(value, valueRegs.tagGPR(), valueRegs.payloadGPR());
+    Call call = callOperation(operationPutPrivateNameOptimize, TrustedImmPtr(m_codeBlock->globalObject()), baseRegs, propertyRegs, valueRegs, byValInfo, TrustedImm32(putKind.value()));
+
+    m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
+    m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
+    m_byValInstructionIndex++;
+}
+
 void JIT::emit_op_put_by_val_direct(const Instruction* currentInstruction)
 {
     emit_op_put_by_val<OpPutByValDirect>(currentInstruction);
@@ -708,7 +752,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident),
         JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2),
-        regT1, bytecode.m_flags.ecmaMode(), direct ? Direct : NotDirect, PrivateFieldAccessKind::None);
+        regT1, bytecode.m_flags.ecmaMode(), direct ? PutKind::Direct : PutKind::NotDirect);
     
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());

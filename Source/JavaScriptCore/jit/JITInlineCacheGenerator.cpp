@@ -135,11 +135,10 @@ void JITGetByIdWithThisGenerator::generateFastPath(MacroAssembler& jit)
 JITPutByIdGenerator::JITPutByIdGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters, CacheableIdentifier,
     JSValueRegs base, JSValueRegs value, GPRReg scratch, 
-    ECMAMode ecmaMode, PutKind putKind, PrivateFieldAccessKind privateFieldAccessKind)
+    ECMAMode ecmaMode, PutKind putKind)
         : JITByIdGenerator(codeBlock, codeOrigin, callSite, AccessType::Put, usedRegisters, base, value)
         , m_ecmaMode(ecmaMode)
         , m_putKind(putKind)
-        , m_privateFieldAccessKind(privateFieldAccessKind)
 {
     m_stubInfo->usedRegisters.clear(scratch);
 }
@@ -151,22 +150,25 @@ void JITPutByIdGenerator::generateFastPath(MacroAssembler& jit)
 
 V_JITOperation_GSsiJJC JITPutByIdGenerator::slowPathFunction()
 {
-    if (m_privateFieldAccessKind != PrivateFieldAccessKind::None) {
-        ASSERT(m_putKind == Direct);
-        ASSERT(m_ecmaMode.isStrict());
-        if (m_privateFieldAccessKind == PrivateFieldAccessKind::Create)
-            return operationPutByIdDefinePrivateFieldStrictOptimize;
-        return operationPutByIdPutPrivateFieldStrictOptimize;
-    }
-
-    if (m_ecmaMode.isStrict()) {
-        if (m_putKind == Direct)
+    switch (m_putKind) {
+    case PutKind::NotDirect:
+        if (m_ecmaMode.isStrict())
+            return operationPutByIdStrictOptimize;
+        return operationPutByIdNonStrictOptimize;
+    case PutKind::Direct:
+        if (m_ecmaMode.isStrict())
             return operationPutByIdDirectStrictOptimize;
-        return operationPutByIdStrictOptimize;
-    }
-    if (m_putKind == Direct)
         return operationPutByIdDirectNonStrictOptimize;
-    return operationPutByIdNonStrictOptimize;
+    case PutKind::DirectPrivateFieldDefine:
+        ASSERT(m_ecmaMode.isStrict());
+        return operationPutByIdDefinePrivateFieldStrictOptimize;
+    case PutKind::DirectPrivateFieldSet:
+        ASSERT(m_ecmaMode.isStrict());
+        return operationPutByIdSetPrivateFieldStrictOptimize;
+    }
+    // Make win port compiler happy
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg scratch)

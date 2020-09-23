@@ -535,34 +535,48 @@ void repatchArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JS
 
 static auto appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind) -> decltype(&operationPutByIdDirectStrict)
 {
-    if (slot.isStrictMode()) {
-        if (putKind == Direct)
+    switch (putKind) {
+    case PutKind::NotDirect:
+        if (slot.isStrictMode())
+            return operationPutByIdStrict;
+        return operationPutByIdNonStrict;
+    case PutKind::Direct:
+        if (slot.isStrictMode())
             return operationPutByIdDirectStrict;
-        if (putKind == DirectPrivateFieldCreate)
-            return operationPutByIdDefinePrivateFieldStrict;
-        if (putKind == DirectPrivateFieldPut)
-            return operationPutByIdPutPrivateFieldStrict;
-        return operationPutByIdStrict;
-    }
-    if (putKind == Direct)
         return operationPutByIdDirectNonStrict;
-    return operationPutByIdNonStrict;
+    case PutKind::DirectPrivateFieldDefine:
+        ASSERT(slot.isStrictMode());
+        return operationPutByIdDefinePrivateFieldStrict;
+    case PutKind::DirectPrivateFieldSet:
+        ASSERT(slot.isStrictMode());
+        return operationPutByIdSetPrivateFieldStrict;
+    }
+    // Make win port compiler happy
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 static auto appropriateOptimizingPutByIdFunction(const PutPropertySlot &slot, PutKind putKind) -> decltype(&operationPutByIdDirectStrictOptimize)
 {
-    if (slot.isStrictMode()) {
-        if (putKind == Direct)
+    switch (putKind) {
+    case PutKind::NotDirect:
+        if (slot.isStrictMode())
+            return operationPutByIdStrictOptimize;
+        return operationPutByIdNonStrictOptimize;
+    case PutKind::Direct:
+        if (slot.isStrictMode())
             return operationPutByIdDirectStrictOptimize;
-        if (putKind == DirectPrivateFieldCreate)
-            return operationPutByIdDefinePrivateFieldStrictOptimize;
-        if (putKind == DirectPrivateFieldPut)
-            return operationPutByIdPutPrivateFieldStrictOptimize;
-        return operationPutByIdStrictOptimize;
-    }
-    if (putKind == Direct)
         return operationPutByIdDirectNonStrictOptimize;
-    return operationPutByIdNonStrictOptimize;
+    case PutKind::DirectPrivateFieldDefine:
+        ASSERT(slot.isStrictMode());
+        return operationPutByIdDefinePrivateFieldStrictOptimize;
+    case PutKind::DirectPrivateFieldSet:
+        ASSERT(slot.isStrictMode());
+        return operationPutByIdSetPrivateFieldStrictOptimize;
+    }
+    // Make win port compiler happy
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
@@ -608,6 +622,9 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
             if (!isCacheableProxy)
                 return GiveUpOnCache;
         }
+
+        if (isProxy && (putKind == PutKind::DirectPrivateFieldSet || putKind == PutKind::DirectPrivateFieldDefine))
+            return GiveUpOnCache;
 
         std::unique_ptr<AccessCase> newCase;
 
@@ -669,8 +686,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 
                 std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
                 ObjectPropertyConditionSet conditionSet;
-                if (putKind == NotDirect) {
-                    ASSERT(putKind != DirectPrivateFieldPut && putKind != DirectPrivateFieldCreate);
+                if (putKind == PutKind::NotDirect) {
                     auto cacheStatus = prepareChainForCaching(globalObject, baseCell, nullptr);
                     if (!cacheStatus)
                         return GiveUpOnCache;
@@ -688,7 +704,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                     }
                 }
 
-                if (putKind == DirectPrivateFieldCreate) {
+                if (putKind == PutKind::DirectPrivateFieldDefine) {
                     ASSERT(ident.isPrivateName());
                     conditionSet = generateConditionsForPropertyMiss(vm, codeBlock, globalObject, newStructure, ident.impl());
                     if (!conditionSet.isValid())
@@ -1521,8 +1537,8 @@ void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
         optimizedFunction = operationPutByIdNonStrictOptimize;
     else if (unoptimizedFunction == operationPutByIdDirectStrict || unoptimizedFunction == operationPutByIdDirectStrictOptimize)
         optimizedFunction = operationPutByIdDirectStrictOptimize;
-    else if (unoptimizedFunction == operationPutByIdPutPrivateFieldStrict || unoptimizedFunction == operationPutByIdPutPrivateFieldStrictOptimize)
-        optimizedFunction = operationPutByIdPutPrivateFieldStrictOptimize;
+    else if (unoptimizedFunction == operationPutByIdSetPrivateFieldStrict || unoptimizedFunction == operationPutByIdSetPrivateFieldStrictOptimize)
+        optimizedFunction = operationPutByIdSetPrivateFieldStrictOptimize;
     else if (unoptimizedFunction == operationPutByIdDefinePrivateFieldStrict || unoptimizedFunction == operationPutByIdDefinePrivateFieldStrictOptimize)
         optimizedFunction = operationPutByIdDefinePrivateFieldStrictOptimize;
     else {

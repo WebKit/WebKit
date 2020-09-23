@@ -1378,6 +1378,8 @@ private:
         case PutByValWithThis:
         case PutByIdWithThis:
         case PutByVal:
+        case PutPrivateName:
+        case PutPrivateNameById:
         case PutClosureVar:
         case PutInternalField:
         case PutToArguments:

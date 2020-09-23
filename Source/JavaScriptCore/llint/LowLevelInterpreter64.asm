@@ -1734,6 +1734,49 @@ llintOpWithMetadata(op_get_private_name, OpGetPrivateName, macro (size, get, dis
     dispatch()
 end)
 
+llintOpWithMetadata(op_put_private_name, OpPutPrivateName, macro (size, get, dispatch, metadata, return)
+    get(m_base, t3)
+    loadConstantOrVariableCell(size, t3, t0, .opPutPrivateNameSlow)
+    get(m_property, t3)
+    loadConstantOrVariableCell(size, t3, t1, .opPutPrivateNameSlow)
+    metadata(t5, t2)
+    loadi OpPutPrivateName::Metadata::m_oldStructureID[t5], t2
+    bineq t2, JSCell::m_structureID[t0], .opPutPrivateNameSlow
+
+    loadi OpPutPrivateName::Metadata::m_property[t5], t3
+    bineq t3, t1, .opPutPrivateNameSlow
+
+    # At this point, we have:
+    # t0 -> object base
+    # t2 -> current structure ID
+    # t5 -> metadata
+
+    loadi OpPutPrivateName::Metadata::m_newStructureID[t5], t1
+    btiz t1, .opPutNotTransition
+
+    storei t1, JSCell::m_structureID[t0]
+    writeBarrierOnOperandWithReload(size, get, m_base, macro ()
+        # Reload metadata into t5
+        metadata(t5, t1)
+        # Reload base into t0
+        get(m_base, t1)
+        loadConstantOrVariable(size, t1, t0)
+    end)
+
+.opPutNotTransition:
+    # The only thing live right now is t0, which holds the base.
+    get(m_value, t1)
+    loadConstantOrVariable(size, t1, t2)
+    loadi OpPutPrivateName::Metadata::m_offset[t5], t1
+    storePropertyAtVariableOffset(t1, t0, t2)
+    writeBarrierOnOperands(size, get, m_base, m_value)
+    dispatch()
+
+.opPutPrivateNameSlow:
+    callSlowPath(_llint_slow_path_put_private_name)
+    dispatch()
+end)
+
 macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
         macro contiguousPutByVal(storeCallback)

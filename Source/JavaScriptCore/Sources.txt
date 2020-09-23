@@ -269,7 +269,6 @@ bytecode/ProxyableAccessCase.cpp
 bytecode/PutByIdFlags.cpp
 bytecode/PutByIdStatus.cpp
 bytecode/PutByIdVariant.cpp
-bytecode/PutByValFlags.cpp
 bytecode/RecordedStatuses.cpp
 bytecode/ReduceWhitespace.cpp
 bytecode/SpeculatedType.cpp
@@ -944,6 +943,7 @@ runtime/ObjectPrototype.cpp
 runtime/Operations.cpp
 runtime/Options.cpp
 runtime/PredictionFileCreatingFuzzerAgent.cpp
+runtime/PrivateFieldPutKind.cpp
 runtime/ProgramExecutable.cpp
 runtime/DeferredWorkTimer.cpp
 runtime/PropertyDescriptor.cpp

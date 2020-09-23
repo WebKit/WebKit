@@ -52,6 +52,7 @@
 #include "GetByIdVariant.h"
 #include "JSCJSValue.h"
 #include "Operands.h"
+#include "PrivateFieldPutKind.h"
 #include "PutByIdVariant.h"
 #include "SpeculatedType.h"
 #include "TypeLocation.h"
@@ -615,7 +616,7 @@ public:
     
     void convertToPutByOffset(StorageAccessData& data, Edge storage, Edge base)
     {
-        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == MultiPutByOffset);
+        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == MultiPutByOffset || m_op == PutPrivateNameById);
         m_opInfo = &data;
         children.setChild3(children.child2());
         children.setChild2(base);
@@ -625,7 +626,7 @@ public:
     
     void convertToMultiPutByOffset(MultiPutByOffsetData* data)
     {
-        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush);
+        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == PutPrivateNameById);
         m_opInfo = data;
         m_op = MultiPutByOffset;
     }
@@ -1087,6 +1088,7 @@ public:
         case PutByIdFlush:
         case PutByIdDirect:
         case PutByIdWithThis:
+        case PutPrivateNameById:
             return true;
         default:
             return false;
@@ -2283,6 +2285,19 @@ public:
         }
     }
     
+    bool hasPrivateFieldPutKind()
+    {
+        if (op() == PutPrivateName || op() == PutPrivateNameById)
+            return true;
+        return false;
+    }
+
+    PrivateFieldPutKind privateFieldPutKind()
+    {
+        ASSERT(hasPrivateFieldPutKind());
+        return PrivateFieldPutKind::fromByte(m_opInfo2.as<uint8_t>());
+    }
+
     bool hasArithMode()
     {
         switch (op()) {

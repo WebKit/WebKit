@@ -1177,22 +1177,10 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     JSValue value = getOperand(callFrame, bytecode.m_value);
     RELEASE_ASSERT(baseValue.isObject());
     JSObject* baseObject = asObject(baseValue);
-    bool isStrictMode = bytecode.m_flags.ecmaMode().isStrict();
-    bool isPrivateFieldAccess = bytecode.m_flags.isPrivateFieldAccess();
+    bool isStrictMode = bytecode.m_ecmaMode.isStrict();
     if (Optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
-        ASSERT(!isPrivateFieldAccess);
         baseObject->putDirectIndex(globalObject, *index, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         LLINT_END();
-    }
-
-    if (subscript.isDouble()) {
-        ASSERT(!isPrivateFieldAccess);
-        double subscriptAsDouble = subscript.asDouble();
-        uint32_t subscriptAsUInt32 = static_cast<uint32_t>(subscriptAsDouble);
-        if (subscriptAsDouble == subscriptAsUInt32 && isIndex(subscriptAsUInt32)) {
-            baseObject->putDirectIndex(globalObject, subscriptAsUInt32, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-            LLINT_END();
-        }
     }
 
     // Don't put to an object if toString threw an exception.
@@ -1200,23 +1188,114 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     if (UNLIKELY(throwScope.exception()))
         LLINT_END();
 
-    ASSERT(property.isPrivateName() == isPrivateFieldAccess);
     if (Optional<uint32_t> index = parseIndex(property))
         baseObject->putDirectIndex(globalObject, index.value(), value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
     else {
-        if (isPrivateFieldAccess) {
-            PutPropertySlot slot(baseObject, isStrictMode);
-            if (bytecode.m_flags.isPrivateFieldAdd())
-                baseObject->definePrivateField(globalObject, property, value, slot);
-            else
-                baseObject->putPrivateField(globalObject, property, value, slot);
-            LLINT_END();    
-        }
-
         PutPropertySlot slot(baseObject, isStrictMode);
         CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, property, value, slot);
     }
     LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
+{
+    LLINT_BEGIN();
+
+    auto bytecode = pc->as<OpPutPrivateName>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue baseValue = getOperand(callFrame, bytecode.m_base);
+    JSValue subscript = getOperand(callFrame, bytecode.m_property);
+    JSValue value = getOperand(callFrame, bytecode.m_value);
+
+    auto property = subscript.toPropertyKey(globalObject);
+    LLINT_CHECK_EXCEPTION();
+    ASSERT(property.isPrivateName());
+
+    Structure* oldStructure = baseValue.isCell() ? baseValue.asCell()->structure(vm) : nullptr;
+
+    // Private fields can only be accessed within class lexical scope
+    // and class methods are always in strict mode
+    const bool isStrictMode = true;
+    auto baseObject = asObject(baseValue);
+    PutPropertySlot slot(baseObject, isStrictMode);
+    if (bytecode.m_putKind.isDefine())
+        baseObject->definePrivateField(globalObject, property, value, slot);
+    else {
+        ASSERT(bytecode.m_putKind.isSet());
+        baseObject->setPrivateField(globalObject, property, value, slot);
+    }
+    LLINT_CHECK_EXCEPTION();
+
+    if (!LLINT_ALWAYS_ACCESS_SLOW
+        && baseValue.isCell()
+        && slot.isCacheablePut()
+        && subscript.isCell()
+        && oldStructure->propertyAccessesAreCacheable()) {
+        {
+            StructureID oldStructureID = metadata.m_oldStructureID;
+            if (oldStructureID) {
+                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* b = baseValue.asCell()->structure(vm);
+                if (slot.type() == PutPropertySlot::NewProperty)
+                    b = b->previousID();
+
+                if (Structure::shouldConvertToPolyProto(a, b)) {
+                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                    b->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                }
+            }
+        }
+
+        // Start out by clearing out the old cache.
+        metadata.m_oldStructureID = 0;
+        metadata.m_offset = 0;
+        metadata.m_newStructureID = 0;
+        metadata.m_property.clear();
+        
+        JSCell* baseCell = baseValue.asCell();
+        Structure* newStructure = baseCell->structure(vm);
+        
+        if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
+            if (slot.type() == PutPropertySlot::NewProperty) {
+                GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
+                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity()) {
+                    ASSERT(oldStructure == newStructure->previousID());
+                    if (oldStructure == newStructure->previousID()) {
+                        ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
+
+                        bool sawPolyProto = false;
+                        auto result = normalizePrototypeChain(globalObject, baseCell, sawPolyProto);
+                        if (result != InvalidPrototypeChain && !sawPolyProto) {
+                            ASSERT(oldStructure->isObject());
+                            metadata.m_oldStructureID = oldStructure->id();
+                            metadata.m_offset = slot.cachedOffset();
+                            metadata.m_newStructureID = newStructure->id();
+                            metadata.m_property.set(vm, codeBlock, subscript.asCell());
+                            vm.heap.writeBarrier(codeBlock);
+                        }
+                    }
+                }
+            } else {
+                // This assert helps catch bugs if we accidentally forget to disable caching
+                // when we transition then store to an existing property. This is common among
+                // paths that reify lazy properties. If we reify a lazy property and forget
+                // to disable caching, we may come down this path. The Replace IC does not
+                // know how to model these types of structure transitions (or any structure
+                // transition for that matter).
+                RELEASE_ASSERT(newStructure == oldStructure);
+                newStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
+                {
+                    ConcurrentJSLocker locker(codeBlock->m_lock);
+                    metadata.m_oldStructureID = newStructure->id();
+                    metadata.m_offset = slot.cachedOffset();
+                    metadata.m_property.set(vm, codeBlock, subscript.asCell());
+                }
+                vm.heap.writeBarrier(codeBlock);
+            }
+        }
+    }
+
+    LLINT_END();    
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_del_by_val)

@@ -4029,17 +4029,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
-        
+
+    case PutPrivateName: {
+        clobberWorld();
+        break;
+    }
+
+    case PutPrivateNameById:
     case PutById:
     case PutByIdFlush:
     case PutByIdDirect: {
         AbstractValue& value = forNode(node->child1());
         if (value.m_structure.isFinite()) {
+            bool isDirect = node->op() == PutByIdDirect || node->op() == PutPrivateNameById;
+            auto privateFieldPutKind = node->op() == PutPrivateNameById ? node->privateFieldPutKind() : PrivateFieldPutKind::none();
             PutByIdStatus status = PutByIdStatus::computeFor(
                 m_graph.globalObjectFor(node->origin.semantic),
                 value.m_structure.toStructureSet(),
                 node->cacheableIdentifier().uid(),
-                node->op() == PutByIdDirect);
+                isDirect, privateFieldPutKind);
 
             bool allGood = true;
             if (status.isSimple()) {

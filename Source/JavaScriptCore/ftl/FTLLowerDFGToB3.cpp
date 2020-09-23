@@ -1017,6 +1017,12 @@ private:
         case PutByValWithThis:
             compilePutByValWithThis();
             break;
+        case PutPrivateName:
+            compilePutPrivateName();
+            break;
+        case PutPrivateNameById:
+            compilePutPrivateNameById();
+            break;
         case AtomicsAdd:
         case AtomicsAnd:
         case AtomicsCompareExchange:
@@ -3945,6 +3951,32 @@ private:
             weakPointer(globalObject), base, thisValue, property, value);
     }
     
+    void compilePutPrivateNameById()
+    {
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse, m_node->child1().useKind());
+
+        LValue base = lowCell(m_node->child1());
+        LValue value = lowJSValue(m_node->child2());
+
+        // We emit property check during DFG generation, so we don't need
+        // to check it here.
+        auto putKind = m_node->privateFieldPutKind().isDefine() ? PutKind::DirectPrivateFieldDefine : PutKind::DirectPrivateFieldSet;
+        cachedPutById(m_node, base, value, ECMAMode::strict(), putKind);
+    }
+
+    void compilePutPrivateName()
+    {
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse, m_node->child1().useKind());
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+
+        LValue base = lowCell(m_node->child1());
+        LValue property = lowSymbol(m_node->child2());
+        LValue value = lowJSValue(m_node->child3());
+
+        vmCall(Void, operationPutPrivateNameGeneric,
+            weakPointer(globalObject), base, property, value, m_out.constIntPtr(0), m_out.constInt32(m_node->privateFieldPutKind().value()));
+    }
+
     void compileAtomicsReadModifyWrite()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
@@ -4191,14 +4223,10 @@ private:
         }
     }
     
-    void compilePutById()
+    void cachedPutById(Node* node, LValue base, LValue value, ECMAMode ecmaMode, PutKind putKind)
     {
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse, m_node->child1().useKind());
-
-        Node* node = m_node;
-        LValue base = lowCell(node->child1());
-        LValue value = lowJSValue(node->child2());
         CacheableIdentifier identifier = node->cacheableIdentifier();
+        ASSERT(identifier);
 
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(base);
@@ -4214,7 +4242,6 @@ private:
             preparePatchpointForExceptions(patchpoint);
 
         State* state = &m_ftlState;
-        ECMAMode ecmaMode = node->ecmaMode();
         
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -4233,7 +4260,7 @@ private:
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), GPRInfo::patchpointScratchRegister, ecmaMode,
-                    node->op() == PutByIdDirect ? Direct : NotDirect, PrivateFieldAccessKind::None);
+                    putKind);
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
@@ -4260,6 +4287,17 @@ private:
                             });
                     });
             });
+    }
+
+    void compilePutById()
+    {
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse, m_node->child1().useKind());
+
+        Node* node = m_node;
+        LValue base = lowCell(node->child1());
+        LValue value = lowJSValue(node->child2());
+        auto putKind = node->op() == PutByIdDirect ? PutKind::Direct : PutKind::NotDirect;
+        cachedPutById(node, base, value, node->ecmaMode(), putKind);
     }
     
     void compileGetButterfly()

@@ -70,9 +70,9 @@
 #include "ObjectConstructor.h"
 #include "OpcodeInlines.h"
 #include "PreciseJumpTargets.h"
+#include "PrivateFieldPutKind.h"
 #include "PutByIdFlags.h"
 #include "PutByIdStatus.h"
-#include "PutByValFlags.h"
 #include "RegExpPrototype.h"
 #include "StackAlignment.h"
 #include "StringConstructor.h"
@@ -251,6 +251,9 @@ private:
     void handlePutById(
         Node* base, CacheableIdentifier, unsigned identifierNumber, Node* value, const PutByIdStatus&,
         bool isDirect, BytecodeIndex osrExitIndex, ECMAMode);
+
+    void handlePutPrivateNameById(
+        Node* base, CacheableIdentifier, unsigned identifierNumber, Node* value, const PutByIdStatus&, PrivateFieldPutKind);
 
     void handleDeleteById(
         VirtualRegister destination, Node* base, CacheableIdentifier, unsigned identifierNumber, DeleteByStatus, ECMAMode);
@@ -1266,18 +1269,6 @@ private:
     bool m_hasDebuggerEnabled;
     bool m_hasAnyForceOSRExits { false };
 };
-
-template<typename Bytecode>
-ECMAMode ecmaMode(Bytecode bytecode)
-{
-    return bytecode.m_ecmaMode;
-}
-
-template<>
-ALWAYS_INLINE ECMAMode ecmaMode<OpPutByValDirect>(OpPutByValDirect bytecode)
-{
-    return bytecode.m_flags.ecmaMode();
-}
 
 BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
 {
@@ -5015,6 +5006,130 @@ void ByteCodeParser::handlePutById(
     } }
 }
 
+void ByteCodeParser::handlePutPrivateNameById(
+    Node* base, CacheableIdentifier identifier, unsigned identifierNumber, Node* value,
+    const PutByIdStatus& putByIdStatus, PrivateFieldPutKind privateFieldPutKind)
+{
+    if (!putByIdStatus.isSimple() || !putByIdStatus.numVariants() || !Options::useAccessInlining()) {
+        if (!putByIdStatus.isSet())
+            addToGraph(ForceOSRExit);
+        addToGraph(PutPrivateNameById, OpInfo(identifier), OpInfo(privateFieldPutKind), base, value);
+        return;
+    }
+    
+    if (putByIdStatus.numVariants() > 1) {
+        if (!m_graph.m_plan.isFTL() || putByIdStatus.makesCalls()
+            || !Options::usePolymorphicAccessInlining()
+            || putByIdStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
+            addToGraph(PutPrivateNameById, OpInfo(identifier), OpInfo(privateFieldPutKind), base, value);
+            return;
+        }
+        
+        if (UNLIKELY(m_graph.compilation()))
+            m_graph.compilation()->noticeInlinedPutById();
+    
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+    
+        for (const PutByIdVariant& variant : putByIdStatus.variants()) {
+            for (Structure* structure : variant.oldStructure())
+                m_graph.registerStructure(structure);
+            if (variant.kind() == PutByIdVariant::Transition)
+                m_graph.registerStructure(variant.newStructure());
+        }
+        
+        MultiPutByOffsetData* data = m_graph.m_multiPutByOffsetData.add();
+        data->variants = putByIdStatus.variants();
+        data->identifierNumber = identifierNumber;
+        addToGraph(MultiPutByOffset, OpInfo(data), base, value);
+        return;
+    }
+    
+    ASSERT(putByIdStatus.numVariants() == 1);
+    const PutByIdVariant& variant = putByIdStatus[0];
+    
+    switch (variant.kind()) {
+    case PutByIdVariant::Replace: {
+        ASSERT(privateFieldPutKind.isSet());
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+    
+        store(base, identifierNumber, variant, value);
+        if (UNLIKELY(m_graph.compilation()))
+            m_graph.compilation()->noticeInlinedPutById();
+        return;
+    }
+    
+    case PutByIdVariant::Transition: {
+        ASSERT(privateFieldPutKind.isDefine());
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+    
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
+        if (!check(variant.conditionSet())) {
+            addToGraph(PutPrivateNameById, OpInfo(identifier), OpInfo(privateFieldPutKind), base, value);
+            return;
+        }
+    
+        ASSERT(variant.oldStructureForTransition()->transitionWatchpointSetHasBeenInvalidated());
+    
+        Node* propertyStorage;
+        Transition* transition = m_graph.m_transitions.add(
+            m_graph.registerStructure(variant.oldStructureForTransition()), m_graph.registerStructure(variant.newStructure()));
+    
+        if (variant.reallocatesStorage()) {
+            // If we're growing the property storage then it must be because we're
+            // storing into the out-of-line storage.
+            ASSERT(!isInlineOffset(variant.offset()));
+    
+            if (!variant.oldStructureForTransition()->outOfLineCapacity()) {
+                propertyStorage = addToGraph(
+                    AllocatePropertyStorage, OpInfo(transition), base);
+            } else {
+                propertyStorage = addToGraph(
+                    ReallocatePropertyStorage, OpInfo(transition),
+                    base, addToGraph(GetButterfly, base));
+            }
+        } else {
+            if (isInlineOffset(variant.offset()))
+                propertyStorage = base;
+            else
+                propertyStorage = addToGraph(GetButterfly, base);
+        }
+    
+        StorageAccessData* data = m_graph.m_storageAccessData.add();
+        data->offset = variant.offset();
+        data->identifierNumber = identifierNumber;
+        
+        // NOTE: We could GC at this point because someone could insert an operation that GCs.
+        // That's fine because:
+        // - Things already in the structure will get scanned because we haven't messed with
+        //   the object yet.
+        // - The value we are fixing to put is going to be kept live by OSR exit handling. So
+        //   if the GC does a conservative scan here it will see the new value.
+        
+        addToGraph(
+            PutByOffset,
+            OpInfo(data),
+            propertyStorage,
+            base,
+            value);
+        
+        if (variant.reallocatesStorage())
+            addToGraph(NukeStructureAndSetButterfly, base, propertyStorage);
+    
+        // FIXME: PutStructure goes last until we fix either
+        // https://bugs.webkit.org/show_bug.cgi?id=142921 or
+        // https://bugs.webkit.org/show_bug.cgi?id=142924.
+        addToGraph(PutStructure, OpInfo(transition), base);
+    
+        if (UNLIKELY(m_graph.compilation()))
+            m_graph.compilation()->noticeInlinedPutById();
+        return;
+    }
+    
+    default: {
+        RELEASE_ASSERT_NOT_REACHED();
+    } }
+}
+
 void ByteCodeParser::prepareToParseBlock()
 {
     clearCaches();
@@ -6062,6 +6177,52 @@ void ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Node::VarArg, PutByValWithThis, OpInfo(bytecode.m_ecmaMode), OpInfo(0));
 
             NEXT_OPCODE(op_put_by_val_with_this);
+        }
+
+        case op_put_private_name: {
+            auto bytecode = currentInstruction->as<OpPutPrivateName>();
+            Node* base = get(bytecode.m_base);
+            Node* property = get(bytecode.m_property);
+            Node* value = get(bytecode.m_value);
+            bool tryCompileAsPutByOffset = false;
+
+            CacheableIdentifier identifier;
+            unsigned identifierNumber = std::numeric_limits<unsigned>::max();
+            PutByIdStatus putByIdStatus;
+            {
+                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                ByValInfo* byValInfo = m_inlineStackTop->m_baselineMap.get(CodeOrigin(currentCodeOrigin().bytecodeIndex())).byValInfo;
+                // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
+                // At that time, there is no information. For `put_private_name`, we might have some info from
+                // LLInt IC, including cached cell that we could use if ByVal is not available.
+                // https://bugs.webkit.org/show_bug.cgi?id=216779
+                if (byValInfo 
+                    && byValInfo->stubInfo
+                    && !byValInfo->tookSlowPath
+                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+                    tryCompileAsPutByOffset = true;
+                    identifier = byValInfo->cachedId;
+                    ASSERT(identifier.isSymbolCell());
+                    identifierNumber = m_graph.identifiers().ensure(identifier.uid());
+                    UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+                    FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+
+                    addToGraph(CheckIsConstant, OpInfo(frozen), property);
+
+                    putByIdStatus = PutByIdStatus::computeForStubInfo(
+                        locker, m_inlineStackTop->m_profiledBlock,
+                        byValInfo->stubInfo, currentCodeOrigin(), uid);
+                }
+            }
+
+            if (tryCompileAsPutByOffset)
+                handlePutPrivateNameById(base, identifier, identifierNumber, value, putByIdStatus, bytecode.m_putKind);
+            else
+                addToGraph(PutPrivateName, OpInfo(), OpInfo(bytecode.m_putKind), base, property, value);
+
+            NEXT_OPCODE(op_put_private_name);
         }
 
         case op_define_data_property: {
@@ -7518,7 +7679,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 PutByIdStatus status;
                 if (uid)
-                    status = PutByIdStatus::computeFor(globalObject, structure, uid, false);
+                    status = PutByIdStatus::computeFor(globalObject, structure, uid, false, PrivateFieldPutKind::none());
                 else
                     status = PutByIdStatus(PutByIdStatus::TakesSlowPath);
                 if (status.numVariants() != 1
@@ -8295,7 +8456,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
         }
 
         if (compiledAsPutById)
-            handlePutById(base, identifier, identifierNumber, value, putByIdStatus, isDirect, osrExitIndex, ecmaMode(bytecode));
+            handlePutById(base, identifier, identifierNumber, value, putByIdStatus, isDirect, osrExitIndex, bytecode.m_ecmaMode);
     }
 
     if (!compiledAsPutById) {
@@ -8306,7 +8467,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
         addVarArgChild(value);
         addVarArgChild(nullptr); // Leave room for property storage.
         addVarArgChild(nullptr); // Leave room for length.
-        addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(ecmaMode(bytecode)));
+        addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
         m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
     }
 }

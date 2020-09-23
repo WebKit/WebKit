@@ -1905,12 +1905,20 @@ private:
             break;
         }
 
+
+        case PutPrivateName: {
+            fixEdge<CellUse>(node->child1());
+            fixEdge<SymbolUse>(node->child2());
+            break;
+        }
+
         case OverridesHasInstance:
         case CheckStructure:
         case CreateThis:
         case CreatePromise:
         case CreateGenerator:
         case CreateAsyncGenerator:
+        case PutPrivateNameById:
         case GetButterfly: {
             fixEdge<CellUse>(node->child1());
             break;

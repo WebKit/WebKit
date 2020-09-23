@@ -29,9 +29,9 @@
 #include "Interpreter.h"
 #include "Label.h"
 #include "OpcodeSize.h"
+#include "PrivateFieldPutKind.h"
 #include "ProfileTypeBytecodeFlag.h"
 #include "PutByIdFlags.h"
-#include "PutByValFlags.h"
 #include "ResultType.h"
 #include "SymbolTableOrScopeDepth.h"
 #include "VirtualRegister.h"
@@ -258,46 +258,6 @@ struct Fits<PutByIdFlags, size> {
     }
 };
 
-template<OpcodeSize size>
-struct Fits<PutByValFlags, size> {
-    using TargetType = typename TypeBySize<size>::unsignedType;
-
-    // PutByValFlags is 2 booleans and a 2 bit enum, encoded as:
-    //          isStrict
-    //             v
-    //     0000|00|0|0 < isDirect
-    //           ^
-    //    PrivateFieldAccessKind {0 = None, 1 = Put, 2 = Create }
-    static constexpr int s_isDirectBit = 1;
-    static constexpr int s_isStrictBit = 2;
-    static constexpr int s_privateFieldAccessKindMask = 12;
-    static constexpr int s_privateFieldAccessKindShift = 2;
-
-    static bool check(PutByValFlags)
-    {
-        return true;
-    }
-
-    static TargetType convert(PutByValFlags flags)
-    {
-        auto isDirect = static_cast<uint8_t>(flags.isDirect());
-        auto isStrict = static_cast<uint8_t>(flags.ecmaMode().isStrict());
-        auto privateFieldAccessKind = static_cast<uint8_t>(flags.privateFieldAccessKind());
-        return (privateFieldAccessKind << s_privateFieldAccessKindShift) | (isStrict << 1) | isDirect;
-    }
-
-    static PutByValFlags convert(TargetType gpi)
-    {
-        auto isDirect = static_cast<bool>(gpi & s_isDirectBit);
-        auto isStrict = static_cast<bool>(gpi & s_isStrictBit);
-        auto access = static_cast<PrivateFieldAccessKind>((gpi & s_privateFieldAccessKindMask) >> s_privateFieldAccessKindShift);
-        auto ecmaMode = isStrict ? ECMAMode::strict() : ECMAMode::sloppy();
-        return access == PrivateFieldAccessKind::None ?
-            isDirect ? PutByValFlags::createDirect(ecmaMode) : PutByValFlags::create(ecmaMode) :
-            access == PrivateFieldAccessKind::Put ? PutByValFlags::createPutPrivateField(ecmaMode) : PutByValFlags::createDefinePrivateField(ecmaMode);
-    }
-};
-
 template<typename E, OpcodeSize size>
 struct Fits<E, size, std::enable_if_t<sizeof(E) != size && std::is_enum<E>::value, std::true_type>> : public Fits<std::underlying_type_t<E>, size> {
     using Base = Fits<std::underlying_type_t<E>, size>;
@@ -424,6 +384,26 @@ struct Fits<ECMAMode, size> : public Fits<uint8_t, size> {
     static ECMAMode convert(typename Base::TargetType ecmaMode)
     {
         return ECMAMode::fromByte(Base::convert(ecmaMode));
+    }
+};
+
+template<OpcodeSize size>
+struct Fits<PrivateFieldPutKind, size> : public Fits<uint8_t, size> {
+    using Base = Fits<uint8_t, size>;
+
+    static bool check(PrivateFieldPutKind putMode)
+    {
+        return Base::check(putMode.value());
+    }
+
+    static typename Base::TargetType convert(PrivateFieldPutKind putMode)
+    {
+        return Base::convert(putMode.value());
+    }
+
+    static PrivateFieldPutKind convert(typename Base::TargetType putMode)
+    {
+        return PrivateFieldPutKind::fromByte(Base::convert(putMode));
     }
 };
 

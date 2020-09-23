@@ -266,6 +266,13 @@ private:
                 break;
             }
                 
+            case PutPrivateNameById: {
+                // We emit IC code when we have a non-null cacheableIdentifier and we need to introduce a
+                // barrier for it. On PutPrivateName, we perform store barrier during slow path execution.
+                considerBarrier(m_node->child1());
+                break;
+            }
+
             case PutById:
             case PutByIdFlush:
             case PutByIdDirect:

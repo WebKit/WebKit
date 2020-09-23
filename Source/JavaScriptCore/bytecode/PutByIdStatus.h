@@ -28,6 +28,7 @@
 #include "CallLinkStatus.h"
 #include "ExitFlag.h"
 #include "ICStatusMap.h"
+#include "PrivateFieldPutKind.h"
 #include "PutByIdVariant.h"
 #include "StubInfoSummary.h"
 
@@ -94,7 +95,7 @@ public:
     }
     
     static PutByIdStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, UniquedStringImpl* uid, ExitFlag, CallLinkStatus::ExitSiteData);
-    static PutByIdStatus computeFor(JSGlobalObject*, const StructureSet&, UniquedStringImpl* uid, bool isDirect);
+    static PutByIdStatus computeFor(JSGlobalObject*, const StructureSet&, UniquedStringImpl* uid, bool isDirect, PrivateFieldPutKind);
     
     static PutByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin, UniquedStringImpl* uid);
 

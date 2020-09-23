@@ -1,3 +1,182 @@
+2020-09-23  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC][ESNext] Create a new opcode to handle private fields store/define
+        https://bugs.webkit.org/show_bug.cgi?id=213372
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is adding a new opcode to handle private field storage.
+        Before this change, we were using `put_by_val_direct` and including
+        the information of `PutKind` into `PutByValFlags`. We initially decided
+        to use `put_by_val_direct` to take advantage of all IC mechanism already
+        implemented for this instruction, however the semantics of private field
+        is different enough to complicate the understanding of
+        `put_by_val_direct`.
+
+        The new instruction is called `put_private_name` and has as its operands
+        `baseObject` where the put is going to be placed, the `property`
+        that's going to be installed (it is always a private symbol of a
+        private field), the `value` we are going to store and the
+        `PrivateFieldPutKind` that can be `Define` or `Set`.
+        The difference of each `PrivateFieldPutKind` is the following:
+        
+        - Define: It defines a new private field. If this field is already
+        present, it throws a `TypeError`.
+        - Set: It sets the value of a private field. If the field is not
+        present at the moment of set, it throws a `TypeError`.
+
+        This patch includes support of IC for all tiers. For DFG and FTL, we
+        are only emmiting IC when we are able to emit `CheckConstant`
+        for subscript identifier during Bytecode parsing. We are adding a new
+        DFG node called `PutPrivateNameById` that handles such cases when we
+        have constant identifiers.
+        We are also adding a new DFG node `PutPrivateName` that handles generic
+        case of `put_private_name`. The strategy used to compile
+        `put_private_name` is very similar with what we are using with
+        `put_by_val[_direct]`. We first try to compile it as `[Multi]PutByOffset`
+        using profiled information from LLInt and Baseline execution. If it
+        is not possible, we then emit `PutPrivateName[ById]` node. We get another
+        chance to transform `PutPrivateNameById` into `PutByOffset` if we can prove
+        its structure set at constant folding phase.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/Fits.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/PutByValFlags.cpp: Removed.
+        * bytecode/PutByValFlags.h: Removed.
+        * bytecode/PutKind.h:
+        (): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDirectPutByVal):
+        (JSC::BytecodeGenerator::emitDefinePrivateField):
+        (JSC::BytecodeGenerator::emitPrivateFieldPut):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handlePutPrivateNameById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        (JSC::DFG::ecmaMode): Deleted.
+        (JSC::DFG::ecmaMode<OpPutByValDirect>): Deleted.
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPutByOffset):
+        (JSC::DFG::Node::convertToMultiPutByOffset):
+        (JSC::DFG::Node::hasCacheableIdentifier):
+        (JSC::DFG::Node::hasPrivateFieldPutKind):
+        (JSC::DFG::Node::privateFieldPutKind):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOpInfo.h:
+        (JSC::DFG::OpInfo::OpInfo):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutPrivateName):
+        (JSC::DFG::SpeculativeJIT::compilePutPrivateNameById):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compilePutById):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdDirect):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutPrivateNameById):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::cachedPutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        * generator/DSL.rb:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        (JSC::ByValCompilationInfo::ByValCompilationInfo):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        (JSC::JITPutByIdGenerator::slowPathFunction):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITInlines.h:
+        (JSC::JIT::ecmaMode<OpPutPrivateName>):
+        (JSC::JIT::ecmaMode<OpPutByValDirect>): Deleted.
+        (JSC::JIT::privateFieldAccessKind): Deleted.
+        (JSC::JIT::privateFieldAccessKind<OpPutByValDirect>): Deleted.
+        * jit/JITOperations.cpp:
+        (JSC::setPrivateField):
+        (JSC::putPrivateField): Deleted.
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitPutPrivateNameWithCachedId):
+        (JSC::JIT::privateCompilePutPrivateNameWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/Repatch.cpp:
+        (JSC::appropriateGenericPutByIdFunction):
+        (JSC::appropriateOptimizingPutByIdFunction):
+        (JSC::tryCachePutByID):
+        (JSC::resetPutByID):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::setPrivateField):
+        (JSC::JSObject::putPrivateField): Deleted.
+        * runtime/PrivateFieldPutKind.cpp: Added.
+        (JSC::PrivateFieldPutKind::dump const):
+        * runtime/PrivateFieldPutKind.h: Added.
+        (JSC::PrivateFieldPutKind::fromByte):
+        (JSC::PrivateFieldPutKind::none):
+        (JSC::PrivateFieldPutKind::set):
+        (JSC::PrivateFieldPutKind::define):
+        (JSC::PrivateFieldPutKind::isNone const):
+        (JSC::PrivateFieldPutKind::isSet const):
+        (JSC::PrivateFieldPutKind::isDefine const):
+        (JSC::PrivateFieldPutKind::value const):
+        (JSC::PrivateFieldPutKind::PrivateFieldPutKind):
+
 2020-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable Intl.DateTimeFormat dayPeriod

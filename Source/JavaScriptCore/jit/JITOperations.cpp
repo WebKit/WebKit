@@ -600,7 +600,7 @@ void JIT_OPERATION operationPutByIdStrictOptimize(JSGlobalObject* globalObject, 
         return;
     
     if (stubInfo->considerCachingBy(vm, codeBlock, structure, identifier))
-        repatchPutByID(globalObject, codeBlock, baseValue, structure, identifier, slot, *stubInfo, NotDirect);
+        repatchPutByID(globalObject, codeBlock, baseValue, structure, identifier, slot, *stubInfo, PutKind::NotDirect);
 }
 
 void JIT_OPERATION operationPutByIdNonStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
@@ -632,7 +632,7 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(JSGlobalObject* globalObjec
         return;
     
     if (stubInfo->considerCachingBy(vm, codeBlock, structure, identifier))
-        repatchPutByID(globalObject, codeBlock, baseValue, structure, identifier, slot, *stubInfo, NotDirect);
+        repatchPutByID(globalObject, codeBlock, baseValue, structure, identifier, slot, *stubInfo, PutKind::NotDirect);
 }
 
 void JIT_OPERATION operationPutByIdDirectStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
@@ -663,7 +663,7 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(JSGlobalObject* globalOb
         return;
     
     if (stubInfo->considerCachingBy(vm, codeBlock, structure, identifier))
-        repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, Direct);
+        repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, PutKind::Direct);
 }
 
 void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
@@ -694,13 +694,13 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globa
         return;
     
     if (stubInfo->considerCachingBy(vm, codeBlock, structure, identifier))
-        repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, Direct);
+        repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, PutKind::Direct);
 }
 
 } // extern "C"
 
 using PutPrivateFieldCallback = std::function<void(VM&, CodeBlock*, Structure*, PutPropertySlot&, const Identifier&)>;
-ALWAYS_INLINE static void putPrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, const PutPrivateFieldCallback& callback = PutPrivateFieldCallback())
+ALWAYS_INLINE static void setPrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, const PutPrivateFieldCallback& callback = PutPrivateFieldCallback())
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -712,7 +712,7 @@ ALWAYS_INLINE static void putPrivateField(VM& vm, JSGlobalObject* globalObject, 
     Structure* oldStructure = baseObject->structure(vm);
 
     PutPropertySlot putSlot(baseObject, true, codeBlock->putByIdContext());
-    baseObject->putPrivateField(globalObject, ident, value, putSlot);
+    baseObject->setPrivateField(globalObject, ident, value, putSlot);
     RETURN_IF_EXCEPTION(scope, void());
 
     if (callback)
@@ -770,11 +770,11 @@ void JIT_OPERATION operationPutByIdDefinePrivateFieldStrictOptimize(JSGlobalObje
         ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(stubInfo->accessType));
 
         if (stubInfo->considerCachingBy(vm, codeBlock, oldStructure, identifier))
-            repatchPutByID(globalObject, codeBlock, baseObject, oldStructure, identifier, putSlot, *stubInfo, DirectPrivateFieldCreate);
+            repatchPutByID(globalObject, codeBlock, baseObject, oldStructure, identifier, putSlot, *stubInfo, PutKind::DirectPrivateFieldDefine);
     });
 }
 
-void JIT_OPERATION operationPutByIdPutPrivateFieldStrict(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
+void JIT_OPERATION operationPutByIdSetPrivateFieldStrict(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -783,10 +783,10 @@ void JIT_OPERATION operationPutByIdPutPrivateFieldStrict(JSGlobalObject* globalO
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
 
-    putPrivateField(vm, globalObject, callFrame, baseValue, identifier, value);
+    setPrivateField(vm, globalObject, callFrame, baseValue, identifier, value);
 }
 
-void JIT_OPERATION operationPutByIdPutPrivateFieldStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
+void JIT_OPERATION operationPutByIdSetPrivateFieldStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     VM& vm = globalObject->vm();
@@ -798,13 +798,13 @@ void JIT_OPERATION operationPutByIdPutPrivateFieldStrictOptimize(JSGlobalObject*
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
 
-    putPrivateField(vm, globalObject, callFrame, baseObject, identifier, value, [&](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
+    setPrivateField(vm, globalObject, callFrame, baseObject, identifier, value, [&](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
         LOG_IC((ICEvent::OperationPutByIdPutPrivateFieldFieldStrictOptimize, baseObject->classInfo(vm), ident, putSlot.base() == baseObject));
 
         ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(stubInfo->accessType));
 
         if (stubInfo->considerCachingBy(vm, codeBlock, oldStructure, identifier))
-            repatchPutByID(globalObject, codeBlock, baseObject, oldStructure, identifier, putSlot, *stubInfo, DirectPrivateFieldPut);
+            repatchPutByID(globalObject, codeBlock, baseObject, oldStructure, identifier, putSlot, *stubInfo, PutKind::DirectPrivateFieldSet);
     });
 }
 
@@ -947,7 +947,7 @@ static OptimizationResult tryPutByValOptimize(JSGlobalObject* globalObject, Call
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId.uid() == propertyName) {
-                    JIT::compilePutByValWithCachedId<OpPutByVal>(vm, codeBlock, byValInfo, returnAddress, NotDirect, byValInfo->cachedId);
+                    JIT::compilePutByValWithCachedId<OpPutByVal>(vm, codeBlock, byValInfo, returnAddress, PutKind::NotDirect, byValInfo->cachedId);
                     optimizationResult = OptimizationResult::Optimized;
                 } else {
                     // Seem like a generic property access site.
@@ -1037,7 +1037,7 @@ static OptimizationResult tryDirectPutByValOptimize(JSGlobalObject* globalObject
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId.uid() == propertyName) {
-                    JIT::compilePutByValWithCachedId<OpPutByValDirect>(vm, codeBlock, byValInfo, returnAddress, Direct, byValInfo->cachedId);
+                    JIT::compilePutByValWithCachedId<OpPutByValDirect>(vm, codeBlock, byValInfo, returnAddress, PutKind::Direct, byValInfo->cachedId);
                     optimizationResult = OptimizationResult::Optimized;
                 } else {
                     // Seem like a generic property access site.
@@ -1117,6 +1117,107 @@ void JIT_OPERATION operationDirectPutByValGeneric(JSGlobalObject* globalObject, 
     JSValue value = JSValue::decode(encodedValue);
     RELEASE_ASSERT(baseValue.isObject());
     directPutByVal(globalObject, asObject(baseValue), subscript, value, byValInfo, ecmaMode);
+}
+
+void JIT_OPERATION operationPutPrivateNameOptimize(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo, PrivateFieldPutKind putKind)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSValue value = JSValue::decode(encodedValue);
+
+    auto propertyName = subscript.toPropertyKey(globalObject);
+    EXCEPTION_ASSERT(!scope.exception());
+
+    OptimizationResult optimizationResult = OptimizationResult::NotOptimized;
+
+    if (baseValue.isObject() && CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
+        ASSERT(subscript.isSymbol());
+        ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
+        ASSERT(!byValInfo->stubRoutine);
+        if (byValInfo->seen) {
+            if (byValInfo->cachedId.uid() == propertyName) {
+                JIT::compilePutPrivateNameWithCachedId(vm, codeBlock, byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS), byValInfo->cachedId);
+                optimizationResult = OptimizationResult::Optimized;
+            } else {
+                // Seem like a generic property access site.
+                optimizationResult = OptimizationResult::GiveUp;
+            }
+        } else {
+            {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                byValInfo->seen = true;
+                byValInfo->cachedId = CacheableIdentifier::createFromCell(subscript.asCell());
+                optimizationResult = OptimizationResult::SeenOnce;
+            }
+            vm.heap.writeBarrier(codeBlock, subscript.asCell());
+        }
+    }
+
+    if (optimizationResult != OptimizationResult::Optimized && optimizationResult != OptimizationResult::SeenOnce) {
+        // If we take slow path more than 10 times without patching then make sure we
+        // never make that mistake again. This gives 10 iterations worth of opportunity
+        // for us to observe that the put_private_name may be polymorphic.
+        // We count up slowPathCount even if the result is GiveUp.
+        if (++byValInfo->slowPathCount >= 10)
+            optimizationResult = OptimizationResult::GiveUp;
+    }
+
+    if (optimizationResult == OptimizationResult::GiveUp) {
+        // Don't ever try to optimize.
+        byValInfo->tookSlowPath = true;
+        ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), operationPutPrivateNameGeneric);
+    }
+
+    scope.release();
+    
+    // Private fields can only be accessed within class lexical scope
+    // and class methods are always in strict mode
+    const bool isStrictMode = true;
+    auto baseObject = asObject(baseValue);
+    PutPropertySlot slot(baseObject, isStrictMode);
+    if (putKind.isDefine())
+        baseObject->definePrivateField(globalObject, propertyName, value, slot);
+    else
+        baseObject->setPrivateField(globalObject, propertyName, value, slot);
+}
+
+// We need to match the signature of operationPutPrivateNameOptimize
+void JIT_OPERATION operationPutPrivateNameGeneric(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo, PrivateFieldPutKind privateFieldPutKind)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSValue value = JSValue::decode(encodedValue);
+
+    auto propertyName = subscript.toPropertyKey(globalObject);
+    EXCEPTION_ASSERT(!scope.exception());
+
+    scope.release();
+
+    // Private fields can only be accessed within class lexical scope
+    // and class methods are always in strict mode
+    const bool isStrictMode = true;
+    auto baseObject = asObject(baseValue);
+    PutPropertySlot slot(baseObject, isStrictMode);
+    if (privateFieldPutKind.isDefine())
+        baseObject->definePrivateField(globalObject, propertyName, value, slot);
+    else
+        baseObject->setPrivateField(globalObject, propertyName, value, slot);
+
+    if (byValInfo)
+        byValInfo->tookSlowPath = true;
 }
 
 EncodedJSValue JIT_OPERATION operationCallEval(JSGlobalObject* globalObject, CallFrame* calleeFrame, ECMAMode ecmaMode)

@@ -48,6 +48,12 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, Bytecode
     VM& vm = profiledBlock->vm();
     
     auto instruction = profiledBlock->instructions().at(bytecodeIndex.offset());
+
+    // We are not yet using `computeFromLLInt` in any place for `put_private_name`.
+    // We can add support for it if this is required in future changes, since we have
+    // IC implemented for this operation on LLInt.
+    ASSERT(!instruction->is<OpPutPrivateName>());
+
     auto bytecode = instruction->as<OpPutById>();
     auto& metadata = bytecode.metadata(profiledBlock);
 
@@ -271,7 +277,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& b
     return computeFor(baselineBlock, baselineMap, bytecodeIndex, uid, didExit, callExitSiteData);
 }
 
-PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const StructureSet& set, UniquedStringImpl* uid, bool isDirect)
+PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const StructureSet& set, UniquedStringImpl* uid, bool isDirect, PrivateFieldPutKind privateFieldPutKind)
 {
     if (parseIndex(*uid))
         return PutByIdStatus(TakesSlowPath);
@@ -294,6 +300,12 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
         unsigned attributes;
         PropertyOffset offset = structure->getConcurrently(uid, attributes);
         if (isValidOffset(offset)) {
+            // We can't have a valid offset for structures on `PutPrivateNameById` define mode
+            // since it means we are redefining a private field. In such case, we need to take 
+            // slow path to throw exception.
+            if (privateFieldPutKind.isDefine())
+                return PutByIdStatus(TakesSlowPath);
+
             if (attributes & PropertyAttribute::CustomAccessorOrValue)
                 return PutByIdStatus(MakesCalls);
 
@@ -316,7 +328,14 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
                 return PutByIdStatus(TakesSlowPath);
             continue;
         }
-    
+
+        // We can have a case with PutPrivateNameById in set mode and it
+        // should never cause a structure transition because it means we are
+        // trying to store in a not installed private field. We need to take
+        // slow path to throw excpetion if it ever gets executed.
+        if (privateFieldPutKind.isSet())
+            return PutByIdStatus(TakesSlowPath);
+
         // Our hypothesis is that we're doing a transition. Before we prove that this is really
         // true, we want to do some sanity checks.
     
@@ -331,6 +350,7 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
     
         ObjectPropertyConditionSet conditionSet;
         if (!isDirect) {
+            ASSERT(privateFieldPutKind.isNone());
             conditionSet = generateConditionsForPropertySetterMissConcurrently(
                 vm, globalObject, structure, uid);
             if (!conditionSet.isValid())

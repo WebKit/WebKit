@@ -426,6 +426,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_by_id)
         DEFINE_OP(op_put_by_val_direct)
         DEFINE_OP(op_put_by_val)
+        DEFINE_OP(op_put_private_name)
         DEFINE_OP(op_put_getter_by_id)
         DEFINE_OP(op_put_setter_by_id)
         DEFINE_OP(op_put_getter_setter_by_id)
@@ -587,6 +588,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_put_by_id)
         case op_put_by_val_direct:
         DEFINE_SLOWCASE_OP(op_put_by_val)
+        DEFINE_SLOWCASE_OP(op_put_private_name)
         DEFINE_SLOWCASE_OP(op_del_by_val)
         DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
@@ -902,7 +904,12 @@ CompilationResult JIT::link()
             auto notIndexJump = CodeLocationJump<JSInternalPtrTag>();
             if (Jump(patchableNotIndexJump).isSet())
                 notIndexJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(patchableNotIndexJump));
-            auto badTypeJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.badTypeJump));
+
+            PatchableJump patchableBadTypeJump = byValCompilationInfo.badTypeJump;
+            auto badTypeJump = CodeLocationJump<JSInternalPtrTag>();
+            if (Jump(patchableBadTypeJump).isSet())
+                badTypeJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.badTypeJump));
+
             auto doneTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.doneTarget));
             auto nextHotPathTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.nextHotPathTarget));
             auto slowPathTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.slowPathTarget));

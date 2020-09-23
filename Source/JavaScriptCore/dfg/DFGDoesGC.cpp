@@ -321,6 +321,8 @@ bool doesGC(Graph& graph, Node* node)
     case PutGetterSetterById:
     case PutSetterById:
     case PutSetterByVal:
+    case PutPrivateName:
+    case PutPrivateNameById:
     case PutStack:
     case PutToArguments:
     case RegExpExec:

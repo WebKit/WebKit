@@ -46,10 +46,10 @@ types [
     :LLIntCallLinkInfo,
     :ResultType,
     :OperandTypes,
+    :PrivateFieldPutKind,
     :ProfileTypeBytecodeFlag,
     :PropertyOffset,
     :PutByIdFlags,
-    :PutByValFlags,
     :ResolveType,
     :Structure,
     :StructureID,
@@ -574,6 +574,20 @@ op :get_private_name,
         property: WriteBarrier[JSCell],
     }
 
+op :put_private_name,
+    args: {
+        base: VirtualRegister,
+        property: VirtualRegister,
+        value: VirtualRegister,
+        putKind: PrivateFieldPutKind,
+    },
+    metadata: {
+        oldStructureID: StructureID,
+        property: WriteBarrier[JSCell],
+        offset: unsigned,
+        newStructureID: StructureID,
+    }
+
 op :put_by_val,
     args: {
         base: VirtualRegister,
@@ -599,7 +613,7 @@ op :put_by_val_direct,
         base: VirtualRegister,
         property: VirtualRegister,
         value: VirtualRegister,
-        flags: PutByValFlags,
+        ecmaMode: ECMAMode,
     },
     metadata: {
         arrayProfile: ArrayProfile,

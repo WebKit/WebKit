@@ -71,6 +71,7 @@ namespace JSC {
 
     struct OpPutByVal;
     struct OpPutByValDirect;
+    struct OpPutPrivateName;
     struct OpPutToScope;
 
     struct CallRecord {
@@ -161,6 +162,15 @@ namespace JSC {
         {
         }
 
+        ByValCompilationInfo(ByValInfo* byValInfo, BytecodeIndex bytecodeIndex, MacroAssembler::PatchableJump notIndexJump, MacroAssembler::Label doneTarget, MacroAssembler::Label nextHotPathTarget)
+            : byValInfo(byValInfo)
+            , bytecodeIndex(bytecodeIndex)
+            , notIndexJump(notIndexJump)
+            , doneTarget(doneTarget)
+            , nextHotPathTarget(nextHotPathTarget)
+        {
+        }
+
         ByValInfo* byValInfo;
         BytecodeIndex bytecodeIndex;
         MacroAssembler::PatchableJump notIndexJump;
@@ -234,6 +244,13 @@ namespace JSC {
             jit.privateCompilePutByValWithCachedId<Op>(byValInfo, returnAddress, putKind, propertyName);
         }
 
+        static void compilePutPrivateNameWithCachedId(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, CacheableIdentifier propertyName)
+        {
+            JIT jit(vm, codeBlock);
+            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
+            jit.privateCompilePutPrivateNameWithCachedId(byValInfo, returnAddress, propertyName);
+        }
+
         static void compileHasIndexedProperty(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
@@ -258,6 +275,8 @@ namespace JSC {
         void privateCompilePutByVal(const ConcurrentJSLocker&, ByValInfo*, ReturnAddressPtr, JITArrayMode);
         template<typename Op>
         void privateCompilePutByValWithCachedId(ByValInfo*, ReturnAddressPtr, PutKind, CacheableIdentifier);
+
+        void privateCompilePutPrivateNameWithCachedId(ByValInfo*, ReturnAddressPtr, CacheableIdentifier);
 
         void privateCompileHasIndexedProperty(ByValInfo*, ReturnAddressPtr, JITArrayMode);
 
@@ -406,10 +425,12 @@ namespace JSC {
 
         // Determines the type of private field access for a bytecode.
         template<typename Op>
-        PrivateFieldAccessKind privateFieldAccessKind(Op);
+        PrivateFieldPutKind privateFieldPutKind(Op);
 
         // Identifier check helper for GetByVal and PutByVal.
         void emitByValIdentifierCheck(RegisterID cell, RegisterID scratch, CacheableIdentifier, JumpList& slowCases);
+
+        JITPutByIdGenerator emitPutPrivateNameWithCachedId(OpPutPrivateName, CacheableIdentifier, JumpList& doneCases, JumpList& slowCases);
 
         template<typename Op>
         JITPutByIdGenerator emitPutByValWithCachedId(Op, PutKind, CacheableIdentifier, JumpList& doneCases, JumpList& slowCases);
@@ -605,6 +626,7 @@ namespace JSC {
         template<typename Op = OpPutByVal>
         void emit_op_put_by_val(const Instruction*);
         void emit_op_put_by_val_direct(const Instruction*);
+        void emit_op_put_private_name(const Instruction*);
         void emit_op_put_getter_by_id(const Instruction*);
         void emit_op_put_setter_by_id(const Instruction*);
         void emit_op_put_getter_setter_by_id(const Instruction*);
@@ -686,6 +708,7 @@ namespace JSC {
         void emitSlow_op_new_object(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_has_indexed_property(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 

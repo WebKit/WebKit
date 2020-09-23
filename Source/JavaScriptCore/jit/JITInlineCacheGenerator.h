@@ -30,7 +30,6 @@
 #include "CodeOrigin.h"
 #include "JITOperations.h"
 #include "JSCJSValue.h"
-#include "PutByValFlags.h"
 #include "PutKind.h"
 #include "RegisterSet.h"
 
@@ -131,12 +130,11 @@ class JITPutByIdGenerator : public JITByIdGenerator {
 public:
     JITPutByIdGenerator()
         : m_ecmaMode(ECMAMode::strict())
-        , m_privateFieldAccessKind(PrivateFieldAccessKind::None)
     { }
 
     JITPutByIdGenerator(
         CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier, JSValueRegs base,
-        JSValueRegs value, GPRReg scratch, ECMAMode, PutKind, PrivateFieldAccessKind privateAccess);
+        JSValueRegs value, GPRReg scratch, ECMAMode, PutKind);
     
     void generateFastPath(MacroAssembler&);
     
@@ -145,7 +143,6 @@ public:
 private:
     ECMAMode m_ecmaMode;
     PutKind m_putKind;
-    PrivateFieldAccessKind m_privateFieldAccessKind;
 };
 
 class JITDelByValGenerator : public JITInlineCacheGenerator {

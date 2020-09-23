@@ -46,6 +46,7 @@
 #include "JSTemplateObjectDescriptor.h"
 #include "LinkTimeConstant.h"
 #include "Options.h"
+#include "PrivateFieldPutKind.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedEvalCodeBlock.h"
@@ -2726,7 +2727,7 @@ RegisterID* BytecodeGenerator::emitDirectGetByVal(RegisterID* dst, RegisterID* b
 
 RegisterID* BytecodeGenerator::emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
-    OpPutByValDirect::emit(this, base, property, value, PutByValFlags::createDirect(ecmaMode()));
+    OpPutByValDirect::emit(this, base, property, value, ecmaMode());
     return value;
 }
 
@@ -2750,13 +2751,13 @@ RegisterID* BytecodeGenerator::emitPutInternalField(RegisterID* base, unsigned i
 
 RegisterID* BytecodeGenerator::emitDefinePrivateField(RegisterID* base, RegisterID* property, RegisterID* value)
 {
-    OpPutByValDirect::emit(this, base, property, value, PutByValFlags::createDefinePrivateField(ecmaMode()));
+    OpPutPrivateName::emit(this, base, property, value, PrivateFieldPutKind::define());
     return value;
 }
 
 RegisterID* BytecodeGenerator::emitPrivateFieldPut(RegisterID* base, RegisterID* property, RegisterID* value)
 {
-    OpPutByValDirect::emit(this, base, property, value, PutByValFlags::createPutPrivateField(ecmaMode()));
+    OpPutPrivateName::emit(this, base, property, value, PrivateFieldPutKind::set());
     return value;
 }
 
