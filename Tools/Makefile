@@ -31,10 +31,10 @@ endef
 all:
 	@$(build_target_for_each_module)
 
-debug d development dev develop:
+debug d:
 	@$(build_target_for_each_module)
 
-release r deployment dep deploy:
+release r:
 	@$(build_target_for_each_module)
 
 release+assert ra:

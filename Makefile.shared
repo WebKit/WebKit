@@ -109,11 +109,11 @@ ifneq (,$(strip $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION)))
 endif
 	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
-debug d development dev develop: force
+debug d: force
 	@$(call set_webkit_configuration,--debug)
 	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
-release r deployment dep deploy: force
+release r: force
 	@$(call set_webkit_configuration,--release)
 	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 

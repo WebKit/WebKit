@@ -1,5 +1,26 @@
 2020-09-22  Keith Rollin  <krollin@apple.com>
 
+        Unify debug and release target aliases
+        https://bugs.webkit.org/show_bug.cgi?id=216863
+        <rdar://problem/69407746>
+
+        Reviewed by Tim Horton.
+
+        All Makefiles have "debug", "d", "release", and "r" for build
+        targets. Others -- but not all -- also include "dev", "develop",
+        "development", "dep", "deploy", and "deployment". Because of this
+        inconsistency, trying to use those additional targets didn't work. It
+        looks like all Makefiles used to support all of those targets, but
+        some got dropped along the way. For instance, the top-level Makefile
+        and Source/Makefile dropped them in 2013 as part of Bug 107863. And it
+        looks like WebKitLibraries/Makefile never had them. Given that those
+        additional targets don't work, it seems like no one uses them, so
+        let's remove them completely.
+
+        * Makefile:
+
+2020-09-22  Keith Rollin  <krollin@apple.com>
+
         Refactor build rules in Makefiles and Makefile.shared
         https://bugs.webkit.org/show_bug.cgi?id=216806
         <rdar://problem/69332316>
