@@ -2041,6 +2041,7 @@ class RunWebKitTests(shell.Test):
 
 class ReRunWebKitTests(RunWebKitTests):
     name = 're-run-layout-tests'
+    NUM_FAILURES_TO_DISPLAY = 10
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
@@ -2050,6 +2051,7 @@ class ReRunWebKitTests(RunWebKitTests):
         second_results_failing_tests = set(self.getProperty('second_run_failures', []))
         tests_that_consistently_failed = first_results_failing_tests.intersection(second_results_failing_tests)
         flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
+        flaky_failures = list(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
 
         if rc == SUCCESS or rc == WARNINGS:
@@ -2164,7 +2166,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             message = 'Found {} pre-existing test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
             if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
-            for clean_tree_failure in clean_tree_failures:
+            for clean_tree_failure in list(clean_tree_failures)[:self.NUM_FAILURES_TO_DISPLAY]:
                 self.send_email_for_pre_existing_failure(clean_tree_failure)
 
         if flaky_failures:
@@ -2173,7 +2175,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             message += ' Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
             if len(flaky_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
-            for flaky_failure in flaky_failures:
+            for flaky_failure in list(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY]:
                 self.send_email_for_flaky_failure(flaky_failure)
 
         self.setProperty('build_summary', message)
@@ -2589,6 +2591,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
 
         failures_with_patch = first_run_failures.intersection(second_run_failures)
         flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
+        flaky_failures = list(flaky_failures)[:self.NUM_API_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
         new_failures = failures_with_patch - clean_tree_failures
         new_failures_to_display = list(new_failures)[:self.NUM_API_FAILURES_TO_DISPLAY]
@@ -2618,7 +2621,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             message = ''
             if clean_tree_failures:
                 message = 'Found {} pre-existing API test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
-                for clean_tree_failure in clean_tree_failures:
+                for clean_tree_failure in clean_tree_failures_to_display:
                     self.send_email_for_pre_existing_failure(clean_tree_failure)
             if len(clean_tree_failures) > self.NUM_API_FAILURES_TO_DISPLAY:
                 message += ' ...'
