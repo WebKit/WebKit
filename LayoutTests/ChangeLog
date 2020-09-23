@@ -1,3 +1,12 @@
+2020-09-22  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: [ iOS wk2 ] fast/text/international/complex-character-based-fallback.html is a constant failure
+        rdar://69401173
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-09-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r267442. rdar://problem/66842535

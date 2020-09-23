@@ -1867,3 +1867,6 @@ webkit.org/b/215324 compositing/clipping/border-radius-on-webgl.html [ Pass Fail
 
 # <rdar://problem/63108701> [ iPadOS wk2 ] fast/forms/ios/time-picker-value-change.html times out or fails consistently.
 fast/forms/ios/time-picker-value-change.html [ Timeout Failure ]
+
+#rdar://69401173 (REGRESSION: [ iOS wk2 ] fast/text/international/complex-character-based-fallback.html is a constant failure)
+fast/text/international/complex-character-based-fallback.html [ Failure ]
