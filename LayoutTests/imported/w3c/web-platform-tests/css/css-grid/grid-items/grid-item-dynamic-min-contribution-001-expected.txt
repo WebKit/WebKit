@@ -2,8 +2,8 @@
 PASS Minimum size: auto 
 PASS Minimum size: 0% 
 PASS Minimum size: 100% 
-FAIL Minimum size: 200% assert_equals: height expected "200px" but got "400px"
-FAIL Minimum size: 300% assert_equals: height expected "300px" but got "5400px"
+PASS Minimum size: 200% 
+PASS Minimum size: 300% 
 PASS Minimum size: 400px 
 PASS Minimum size: 500px 
 

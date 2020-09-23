@@ -1,3 +1,54 @@
+2020-09-23  obrufau@igalia.com  <obrufau@igalia.com>
+
+        [css-grid] Clear the override width for computing percent margins
+        https://bugs.webkit.org/show_bug.cgi?id=209461
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        When calculating the min-content contribution of a grid item of an auto
+        sized grid track we must consider the grid item's margin. When the grid
+        item's area is indefinite, a percent margin is resolved to zero.
+        However, when performing a relayout, the percent margin may be solved
+        against the previously computed grid area, since the grid item has
+        already an OverrideContainingBlockLogicalWidth value.
+
+        In order to re-compute the percent margin properly, we need to clear
+        the previously override value. It's important to be careful of not
+        clearing the override value set during intrinsic size, since we need
+        it for the actual layout phase. Hence, we only reset the 'override'
+        value when we are executing a definite strategy.
+
+        This is a reland of r261841, which was reverted because it broke spotify.
+        This problem is now avoided thanks to bug 210089.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-minimum-contribution-with-percentages.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-minimum-height-orthogonal-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-003.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-004.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-005.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-006.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-007.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-008.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-009.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-010.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-005.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-006.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-009.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-010.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::hasRelativeMarginOrPaddingForChild):
+        (WebCore::hasRelativeOrIntrinsicSizeForChild):
+        (WebCore::shouldClearOverrideContainingBlockContentSizeForChild):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minLogicalSizeForChild const):
+        (WebCore::DefiniteSizeStrategy::minLogicalSizeForChild const):
+        (WebCore::DefiniteSizeStrategy::minContentForChild const):
+        * rendering/GridTrackSizingAlgorithm.h:
+
 2020-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Move TLS errors API from WebKitContext to WebKitWebsiteDataManager

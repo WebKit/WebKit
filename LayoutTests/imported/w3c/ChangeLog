@@ -1,3 +1,25 @@
+2020-09-23  obrufau@igalia.com  <obrufau@igalia.com>
+
+        [css-grid] Clear the override width for computing percent margins
+        https://bugs.webkit.org/show_bug.cgi?id=209461
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Update test expectations.
+
+        The 2 grid-items-percentage-paddings tests are now expected to have some
+        failures because of bug 191964. In fact they were already failing before
+        this patch, as can be seen in wpt.fyi:
+        https://wpt.fyi/results/css/css-grid/grid-items?q=grid-items-percentage-paddings-vertical-%20-002.html
+        It's just that the bug that is being fixed made the test runner think
+        that the tests were passing, probably some racy condition or such.
+
+        * web-platform-tests/css/css-grid/grid-definition/grid-minimum-contribution-with-percentages-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-height-orthogonal-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002-expected.txt:
+
 2020-09-23  Youenn Fablet  <youenn@apple.com>
 
         Add support for HTMLMediaElement.setSinkId

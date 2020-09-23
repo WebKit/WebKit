@@ -1,3 +1,14 @@
+2020-09-23  obrufau@igalia.com  <obrufau@igalia.com>
+
+        [css-grid] Clear the override width for computing percent margins
+        https://bugs.webkit.org/show_bug.cgi?id=209461
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Update test expectations.
+
+        * TestExpectations:
+
 2020-09-23  Tadeu Zagallo  <tzagallo@apple.com>
 
         Missing scope release in JSDOMBuiltinConstructorBase
