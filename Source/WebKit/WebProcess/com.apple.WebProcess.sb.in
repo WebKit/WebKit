@@ -454,7 +454,11 @@
                             "display-scale"))))
 
 (deny mach-lookup (xpc-service-name-prefix ""))
+
 (allow mach-lookup
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with report) (with telemetry-backtrace)
+#endif
     (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
     (xpc-service-name "com.apple.audio.SandboxHelper")
     (xpc-service-name "com.apple.hiservices-xpcservice")
@@ -713,6 +717,9 @@
 
 ;; Still actively in use
 (allow mach-lookup
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with report) (with telemetry-backtrace)
+#endif
     (global-name "com.apple.coreservices.launchservicesd")
     (global-name "com.apple.diagnosticd")
     (global-name "com.apple.iconservices")
@@ -723,8 +730,8 @@
 )
 
 (allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    (with report) (with telemetry)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with report) (with telemetry-backtrace)
 #endif
     (global-name "com.apple.awdd")
     (global-name "com.apple.cookied")
@@ -736,15 +743,8 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
        (global-name "com.apple.FontObjectsServer")
 #endif
-       (global-name "com.apple.SystemConfiguration.configd")
-       (global-name "com.apple.analyticsd")
-       (global-name "com.apple.assertiond.processassertionconnection")
-       (global-name "com.apple.audio.SystemSoundServer-OSX")
-       (global-name "com.apple.audio.audiohald")
-       (global-name "com.apple.fonts")
        (global-name "com.apple.logd")
        (global-name "com.apple.logd.events")
-       (global-name "com.apple.lskdd") ;; <rdar://problem/49123855>
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
        (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
 #else
@@ -753,9 +753,16 @@
 )
 
 (allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    (with report) (with telemetry)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with report) (with telemetry-backtrace)
 #endif
+    (global-name "com.apple.SystemConfiguration.configd")
+    (global-name "com.apple.analyticsd")
+    (global-name "com.apple.assertiond.processassertionconnection")
+    (global-name "com.apple.audio.SystemSoundServer-OSX")
+    (global-name "com.apple.audio.audiohald")
+    (global-name "com.apple.fonts")
+    (global-name "com.apple.lskdd") ;; <rdar://problem/49123855>
     (global-name "com.apple.PowerManagement.control")
 )
 
