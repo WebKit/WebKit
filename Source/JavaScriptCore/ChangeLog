@@ -1,3 +1,41 @@
+2020-09-24  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [MIPS] Broken build after r267371
+        https://bugs.webkit.org/show_bug.cgi?id=216893
+
+        Reviewed by Adrian Perez de Castro.
+
+        This addresses two issues.
+
+        First, the fix in https://bugs.webkit.org/show_bug.cgi?id=216772 was not
+        getting exercised, because the LabelReference offset was always zero.
+
+        The reason the offset was zero is that LabelReference.mapChildren would discard
+        the offset when generating a new LabelReference to wrap the Label returned by
+        the code block it yielded to.
+
+        The reason this was only an issue on MIPS is because only MIPS was using the
+        result of calls to LabelReference.mapChildren (in its lowering phase,
+        assignRegistersToTemporaries -> replaceTemporariesWithRegisters ->
+        mapChildren). Other archs, e.g. X86_64 only call mapChildren in earlier phases
+        (specifically, subsequent to a call to isASTErroneous), in which the new
+        LabelReferences returned by mapChildren are later discarded. Even though ARM
+        32/64 contains indirect calls to mapChildren, those are made after the
+        arm{,64}LowerLabelReferences transformation which doesn't leave any
+        LabelReference nodes around for .mapChildren to be called on.
+
+        So this is not an issue for architectures other than MIPS because
+        (a) AddImmediates.fold correctly constructs a LabelReference with an offset by
+        calling LabelReference.plusOffset and
+        (b) they don't call (and therefore don't use the result of)
+        LabelReference.mapChildren in their lowering code.
+
+        Second, the code we generate needs to look up the /label/ in the GOT, not the
+        computed address. After the lookup, we simply need to add the offset.
+
+        * offlineasm/ast.rb:
+        * offlineasm/mips.rb:
+
 2020-09-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         %TypedArray%.prototype.fill must only evaluate its argument once

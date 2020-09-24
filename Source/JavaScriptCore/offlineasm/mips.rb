@@ -1050,12 +1050,9 @@ class Instruction
         when "leai", "leap"
             if operands[0].is_a? LabelReference
                 labelRef = operands[0]
+                $asm.puts "lw #{operands[1].mipsOperand}, %got(#{labelRef.asmLabel})($gp)"
                 if labelRef.offset > 0
-                    $asm.puts "li #{operands[1].mipsOperand}, #{labelRef.asmLabel}"
                     $asm.puts "addu #{operands[1].mipsOperand}, #{operands[1].mipsOperand}, #{labelRef.offset}"
-                    $asm.puts "lw #{operands[1].mipsOperand}, %got(#{operands[1].mipsOperand})($gp)"
-                else
-                    $asm.puts "lw #{operands[1].mipsOperand}, %got(#{labelRef.asmLabel})($gp)"
                 end
             else
                 operands[0].mipsEmitLea(operands[1])

@@ -1163,7 +1163,9 @@ class LabelReference < Node
     end
     
     def mapChildren
-        LabelReference.new(codeOrigin, (yield @label))
+        result = LabelReference.new(codeOrigin, (yield @label))
+        result.offset = @offset
+        result
     end
     
     def name
