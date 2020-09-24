@@ -1,3 +1,26 @@
+2020-09-24  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (iOS/Safari 14): MediaRecorder produces invalid video files
+        https://bugs.webkit.org/show_bug.cgi?id=216832
+        <rdar://problem/69377550>
+
+        Reviewed by Eric Carlson.
+
+        Start the audio and video timestamps at zero.
+        Compute the audio timestamp based on the sample count and the video timestamp based
+        on the time at which the video sample is received.
+
+        Covered by manually testing Safari generated videos on VLC, Chrome and Firefox.
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::initialize):
+        (WebCore::MediaRecorderPrivateWriter::startAssetWriter):
+        (WebCore::copySampleBufferWithCurrentTimeStamp):
+        (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+        (WebCore::createAudioSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::appendAudioSampleBuffer):
+
 2020-09-23  Peng Liu  <peng.liu6@apple.com>
 
         Add feature flags for GPU Process features
