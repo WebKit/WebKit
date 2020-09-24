@@ -1,3 +1,16 @@
+2020-09-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        CrashTracer: com.apple.WebKit.Networking in NetworkSession::firstPartyHostCNAMEDomain() code
+        https://bugs.webkit.org/show_bug.cgi?id=216934
+        <rdar://problem/69216768>
+
+        Reviewed by Alex Christensen.
+
+        Add a check for a valid key.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::firstPartyHostCNAMEDomain):
+
 2020-09-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix the build for recent SDKs.
