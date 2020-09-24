@@ -72,9 +72,10 @@ WI.Sidebar = class Sidebar extends WI.View
         if (!(sidebarPanel instanceof WI.SidebarPanel))
             return;
 
-        console.assert(!sidebarPanel.parentSidebar);
-        if (sidebarPanel.parentSidebar)
+        if (sidebarPanel.parentSidebar && sidebarPanel.parentSidebar !== this) {
+            console.assert(false, "Failed to insert sidebar panel", sidebarPanel);
             return;
+        }
 
         console.assert(index >= 0 && index <= this._sidebarPanels.length);
         this._sidebarPanels.splice(index, 0, sidebarPanel);

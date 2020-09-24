@@ -1,3 +1,16 @@
+2020-09-24  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r267379): Web Inspector: Sources navigation sidebar is empty every other time it's selected
+        https://bugs.webkit.org/show_bug.cgi?id=216942
+        <rdar://problem/69520398>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.insertSidebarPanel):
+        insertSidebarPanel was exiting early when sidebarPanel.parentSidebar matched the current sidebar,
+        creating a state when `this._sidebarPanels` is an empty array.
+
 2020-09-22  Brian Burg  <bburg@apple.com>
 
         [Cocoa] _WKInspectorDelegate should handle showing external resources
