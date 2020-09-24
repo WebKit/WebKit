@@ -30,6 +30,7 @@
 
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
+#include "AudioUtilities.h"
 #include "PeriodicWave.h"
 #include "VectorMath.h"
 #include <wtf/IsoMallocInlines.h>
@@ -94,6 +95,8 @@ OscillatorNode::OscillatorNode(BaseAudioContext& context, const OscillatorOption
     : AudioScheduledSourceNode(context)
     , m_frequency(AudioParam::create(context, "frequency"_s, options.frequency, -context.sampleRate() / 2, context.sampleRate() / 2, AutomationRate::ARate))
     , m_detune(AudioParam::create(context, "detune"_s, options.detune, -1200 * log2f(std::numeric_limits<float>::max()), 1200 * log2f(std::numeric_limits<float>::max()), AutomationRate::ARate))
+    , m_phaseIncrements(AudioUtilities::renderQuantumSize)
+    , m_detuneValues(AudioUtilities::renderQuantumSize)
 {
     setNodeType(NodeTypeOscillator);
     

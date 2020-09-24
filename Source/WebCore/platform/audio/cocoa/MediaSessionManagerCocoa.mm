@@ -29,6 +29,7 @@
 #if USE(AUDIO_SESSION) && PLATFORM(COCOA)
 
 #import "AudioSession.h"
+#import "AudioUtilities.h"
 #import "DeprecatedGlobalSettings.h"
 #import "HTMLMediaElement.h"
 #import "Logging.h"
@@ -42,7 +43,6 @@
 
 #import "MediaRemoteSoftLink.h"
 
-static const size_t kWebAudioBufferSize = 128;
 static const size_t kLowPowerVideoBufferSize = 4096;
 
 namespace WebCore {
@@ -102,7 +102,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         "WebAudio(", webAudioCount, ")");
 
     if (webAudioCount)
-        AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
+        AudioSession::sharedSession().setPreferredBufferSize(AudioUtilities::renderQuantumSize);
     // In case of audio capture, we want to grab 20 ms chunks to limit the latency so that it is not noticeable by users
     // while having a large enough buffer so that the audio rendering remains stable, hence a computation based on sample rate.
     else if (captureCount)
@@ -112,7 +112,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         if (m_audioHardwareListener && m_audioHardwareListener->outputDeviceSupportsLowPowerMode())
             bufferSize = kLowPowerVideoBufferSize;
         else
-            bufferSize = kWebAudioBufferSize;
+            bufferSize = AudioUtilities::renderQuantumSize;
 
         AudioSession::sharedSession().setPreferredBufferSize(bufferSize);
     }

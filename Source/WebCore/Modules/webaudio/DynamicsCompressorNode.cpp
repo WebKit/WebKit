@@ -32,6 +32,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "AudioUtilities.h"
 #include "DynamicsCompressor.h"
 #include "WebKitDynamicsCompressorNode.h"
 #include <wtf/IsoMallocInlines.h>
@@ -105,8 +106,8 @@ void DynamicsCompressorNode::process(size_t framesToProcess)
 
 void DynamicsCompressorNode::processOnlyAudioParams(size_t framesToProcess)
 {
-    float values[AudioNode::ProcessingSizeInFrames];
-    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+    float values[AudioUtilities::renderQuantumSize];
+    ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
     m_threshold->calculateSampleAccurateValues(values, framesToProcess);
     m_knee->calculateSampleAccurateValues(values, framesToProcess);

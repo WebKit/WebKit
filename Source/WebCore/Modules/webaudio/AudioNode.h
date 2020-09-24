@@ -59,8 +59,6 @@ class AudioNode
     WTF_MAKE_NONCOPYABLE(AudioNode);
     WTF_MAKE_ISO_ALLOCATED(AudioNode);
 public:
-    enum { ProcessingSizeInFrames = 128 };
-
     explicit AudioNode(BaseAudioContext&);
     virtual ~AudioNode();
 

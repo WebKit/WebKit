@@ -25,6 +25,7 @@
 
 #include "AudioChannel.h"
 #include "AudioSourceProvider.h"
+#include "AudioUtilities.h"
 #include "GRefPtrGStreamer.h"
 #include "Logging.h"
 #include "WebKitWebAudioSourceGStreamer.h"
@@ -34,10 +35,6 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebCore {
-
-// Size of the AudioBus for playback. The webkitwebaudiosrc element
-// needs to handle this number of frames per cycle as well.
-const unsigned framesToPull = 128;
 
 gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer* destination)
 {
@@ -79,7 +76,7 @@ unsigned long AudioDestination::maxChannelCount()
 
 AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, float sampleRate)
     : m_callback(callback)
-    , m_renderBus(AudioBus::create(2, framesToPull, false))
+    , m_renderBus(AudioBus::create(2, AudioUtilities::renderQuantumSize, false))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
@@ -93,7 +90,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
                                                                             "rate", sampleRate,
                                                                             "bus", m_renderBus.get(),
                                                                             "provider", &m_callback,
-                                                                            "frames", framesToPull, nullptr));
+                                                                            "frames", AudioUtilities::renderQuantumSize, nullptr));
 
     GRefPtr<GstElement> audioSink = gst_element_factory_make("autoaudiosink", nullptr);
     m_audioSinkAvailable = audioSink;
@@ -138,7 +135,7 @@ AudioDestinationGStreamer::~AudioDestinationGStreamer()
 
 unsigned AudioDestinationGStreamer::framesPerBuffer() const
 {
-    return framesToPull;
+    return AudioUtilities::renderQuantumSize;
 }
 
 gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)

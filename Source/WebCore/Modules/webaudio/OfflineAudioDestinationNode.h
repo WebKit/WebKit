@@ -54,8 +54,6 @@ public:
 
     float sampleRate() const final { return m_renderTarget->sampleRate(); }
 
-    static const size_t renderQuantumSize;
-
 private:
     OfflineAudioDestinationNode(BaseAudioContext&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
 

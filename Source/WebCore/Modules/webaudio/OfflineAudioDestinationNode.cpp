@@ -30,6 +30,7 @@
 
 #include "AudioBus.h"
 #include "AudioContext.h"
+#include "AudioUtilities.h"
 #include "HRTFDatabaseLoader.h"
 #include <algorithm>
 #include <wtf/IsoMallocInlines.h>
@@ -38,8 +39,6 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
-    
-const size_t OfflineAudioDestinationNode::renderQuantumSize = 128;
 
 OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& context, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget)
     : AudioDestinationNode(context)
@@ -47,7 +46,7 @@ OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& conte
     , m_renderTarget(WTFMove(renderTarget))
     , m_framesToProcess(m_renderTarget ? m_renderTarget->length() : 0)
 {
-    m_renderBus = AudioBus::create(numberOfChannels, renderQuantumSize);
+    m_renderBus = AudioBus::create(numberOfChannels, AudioUtilities::renderQuantumSize);
     initializeDefaultNodeOptions(numberOfChannels, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
 }
 
@@ -134,7 +133,7 @@ auto OfflineAudioDestinationNode::offlineRender() -> OfflineRenderResult
     if (!channelsMatch)
         return OfflineRenderResult::Failure;
 
-    bool isRenderBusAllocated = m_renderBus->length() >= renderQuantumSize;
+    bool isRenderBusAllocated = m_renderBus->length() >= AudioUtilities::renderQuantumSize;
     ASSERT(isRenderBusAllocated);
     if (!isRenderBusAllocated)
         return OfflineRenderResult::Failure;
@@ -148,9 +147,9 @@ auto OfflineAudioDestinationNode::offlineRender() -> OfflineRenderResult
             return OfflineRenderResult::Suspended;
 
         // Render one render quantum.
-        render(0, m_renderBus.get(), renderQuantumSize, { });
+        render(0, m_renderBus.get(), AudioUtilities::renderQuantumSize, { });
         
-        size_t framesAvailableToCopy = std::min(m_framesToProcess, renderQuantumSize);
+        size_t framesAvailableToCopy = std::min(m_framesToProcess, AudioUtilities::renderQuantumSize);
         
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
             const float* source = m_renderBus->channel(channelIndex)->data();

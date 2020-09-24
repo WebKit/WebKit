@@ -46,8 +46,6 @@ public:
     Biquad();
     ~Biquad();
 
-    static constexpr size_t MaxFramesToProcess = 128;
-
     void process(const float* sourceP, float* destP, size_t framesToProcess);
 
     bool hasSampleAccurateValues() const { return m_hasSampleAccurateValues; }

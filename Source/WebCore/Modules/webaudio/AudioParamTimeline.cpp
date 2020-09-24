@@ -329,7 +329,7 @@ Optional<float> AudioParamTimeline::valueForContextTime(BaseAudioContext& contex
     double sampleRate = context.sampleRate();
     size_t startFrame = context.currentSampleFrame();
     size_t endFrame = startFrame + 1;
-    double controlRate = sampleRate / AudioNode::ProcessingSizeInFrames; // one parameter change per render quantum
+    double controlRate = sampleRate / AudioUtilities::renderQuantumSize; // one parameter change per render quantum
     value = valuesForTimeRange(startFrame, endFrame, defaultValue, minValue, maxValue, &value, 1, sampleRate, controlRate);
     return value;
 }

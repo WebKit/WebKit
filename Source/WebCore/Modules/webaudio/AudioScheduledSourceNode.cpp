@@ -64,8 +64,8 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
     quantumFrameOffset = 0;
     startFrameOffset = 0;
 
-    ASSERT(quantumFrameSize == AudioNode::ProcessingSizeInFrames);
-    if (quantumFrameSize != AudioNode::ProcessingSizeInFrames)
+    ASSERT(quantumFrameSize == AudioUtilities::renderQuantumSize);
+    if (quantumFrameSize != AudioUtilities::renderQuantumSize)
         return;
 
     double sampleRate = this->sampleRate();

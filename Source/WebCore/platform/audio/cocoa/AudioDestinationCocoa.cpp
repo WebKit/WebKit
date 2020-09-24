@@ -30,15 +30,14 @@
 
 #include "AudioBus.h"
 #include "AudioSession.h"
+#include "AudioUtilities.h"
 #include "Logging.h"
 #include "MultiChannelResampler.h"
 #include "PushPullFIFO.h"
 
 namespace WebCore {
 
-constexpr size_t kRenderBufferSize = 128;
-
-constexpr size_t fifoSize = 96 * kRenderBufferSize;
+constexpr size_t fifoSize = 96 * AudioUtilities::renderQuantumSize;
 
 CreateAudioDestinationCocoaOverride AudioDestinationCocoa::createOverride = nullptr;
 
@@ -74,8 +73,8 @@ unsigned long AudioDestination::maxChannelCount()
 AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate)
     : m_outputUnit(0)
     , m_callback(callback)
-    , m_outputBus(AudioBus::create(numberOfOutputChannels, kRenderBufferSize, false).releaseNonNull())
-    , m_renderBus(AudioBus::create(numberOfOutputChannels, kRenderBufferSize).releaseNonNull())
+    , m_outputBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false).releaseNonNull())
+    , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize).releaseNonNull())
     , m_fifo(makeUniqueRef<PushPullFIFO>(numberOfOutputChannels, fifoSize))
     , m_contextSampleRate(sampleRate)
 {
@@ -84,7 +83,7 @@ AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned
     auto hardwareSampleRate = this->hardwareSampleRate();
     if (sampleRate != hardwareSampleRate) {
         double scaleFactor = static_cast<double>(sampleRate) / hardwareSampleRate;
-        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfOutputChannels, kRenderBufferSize);
+        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfOutputChannels, AudioUtilities::renderQuantumSize);
     }
 }
 
@@ -176,11 +175,11 @@ OSStatus AudioDestinationCocoa::render(const AudioTimeStamp* timestamp, UInt32 n
     assignAudioBuffersToBus(buffers, m_outputBus.get(), numberOfBuffers, numberOfFrames, 0, numberOfFrames);
     size_t framesToRender = m_fifo->pull(m_outputBus.ptr(), numberOfFrames);
 
-    for (size_t pushedFrames = 0; pushedFrames < framesToRender; pushedFrames += kRenderBufferSize) {
+    for (size_t pushedFrames = 0; pushedFrames < framesToRender; pushedFrames += AudioUtilities::renderQuantumSize) {
         if (m_resampler)
-            m_resampler->process(this, m_renderBus.ptr(), kRenderBufferSize);
+            m_resampler->process(this, m_renderBus.ptr(), AudioUtilities::renderQuantumSize);
         else
-            m_callback.render(0, m_renderBus.ptr(), kRenderBufferSize, m_outputTimestamp);
+            m_callback.render(0, m_renderBus.ptr(), AudioUtilities::renderQuantumSize, m_outputTimestamp);
 
         m_fifo->push(m_renderBus.ptr());
     }
@@ -197,8 +196,8 @@ OSStatus AudioDestinationCocoa::inputProc(void* userData, AudioUnitRenderActionF
 
 void AudioDestinationCocoa::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    ASSERT_UNUSED(framesToProcess, framesToProcess == kRenderBufferSize);
-    m_callback.render(0, bus, kRenderBufferSize, m_outputTimestamp);
+    ASSERT_UNUSED(framesToProcess, framesToProcess == AudioUtilities::renderQuantumSize);
+    m_callback.render(0, bus, AudioUtilities::renderQuantumSize, m_outputTimestamp);
 }
 
 } // namespace WebCore

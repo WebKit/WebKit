@@ -183,8 +183,8 @@ void PannerNode::process(size_t framesToProcess)
 
 void PannerNode::processOnlyAudioParams(size_t framesToProcess)
 {
-    float values[AudioNode::ProcessingSizeInFrames];
-    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+    float values[AudioUtilities::renderQuantumSize];
+    ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
     m_positionX->calculateSampleAccurateValues(values, framesToProcess);
     m_positionY->calculateSampleAccurateValues(values, framesToProcess);
@@ -201,13 +201,13 @@ void PannerNode::processSampleAccurateValues(AudioBus* destination, const AudioB
 {
     // Get the sample accurate values from all of the AudioParams, including the
     // values from the AudioListener.
-    float pannerX[AudioNode::ProcessingSizeInFrames];
-    float pannerY[AudioNode::ProcessingSizeInFrames];
-    float pannerZ[AudioNode::ProcessingSizeInFrames];
+    float pannerX[AudioUtilities::renderQuantumSize];
+    float pannerY[AudioUtilities::renderQuantumSize];
+    float pannerZ[AudioUtilities::renderQuantumSize];
 
-    float orientationX[AudioNode::ProcessingSizeInFrames];
-    float orientationY[AudioNode::ProcessingSizeInFrames];
-    float orientationZ[AudioNode::ProcessingSizeInFrames];
+    float orientationX[AudioUtilities::renderQuantumSize];
+    float orientationY[AudioUtilities::renderQuantumSize];
+    float orientationZ[AudioUtilities::renderQuantumSize];
 
     m_positionX->calculateSampleAccurateValues(pannerX, framesToProcess);
     m_positionY->calculateSampleAccurateValues(pannerY, framesToProcess);
@@ -217,22 +217,22 @@ void PannerNode::processSampleAccurateValues(AudioBus* destination, const AudioB
     m_orientationZ->calculateSampleAccurateValues(orientationZ, framesToProcess);
 
     // Get the automation values from the listener.
-    const float* listenerX = listener().positionXValues(AudioNode::ProcessingSizeInFrames);
-    const float* listenerY = listener().positionYValues(AudioNode::ProcessingSizeInFrames);
-    const float* listenerZ = listener().positionZValues(AudioNode::ProcessingSizeInFrames);
+    const float* listenerX = listener().positionXValues(AudioUtilities::renderQuantumSize);
+    const float* listenerY = listener().positionYValues(AudioUtilities::renderQuantumSize);
+    const float* listenerZ = listener().positionZValues(AudioUtilities::renderQuantumSize);
 
-    const float* forwardX = listener().forwardXValues(AudioNode::ProcessingSizeInFrames);
-    const float* forwardY = listener().forwardYValues(AudioNode::ProcessingSizeInFrames);
-    const float* forwardZ = listener().forwardZValues(AudioNode::ProcessingSizeInFrames);
+    const float* forwardX = listener().forwardXValues(AudioUtilities::renderQuantumSize);
+    const float* forwardY = listener().forwardYValues(AudioUtilities::renderQuantumSize);
+    const float* forwardZ = listener().forwardZValues(AudioUtilities::renderQuantumSize);
 
-    const float* upX = listener().upXValues(AudioNode::ProcessingSizeInFrames);
-    const float* upY = listener().upYValues(AudioNode::ProcessingSizeInFrames);
-    const float* upZ = listener().upZValues(AudioNode::ProcessingSizeInFrames);
+    const float* upX = listener().upXValues(AudioUtilities::renderQuantumSize);
+    const float* upY = listener().upYValues(AudioUtilities::renderQuantumSize);
+    const float* upZ = listener().upZValues(AudioUtilities::renderQuantumSize);
 
     // Compute the azimuth, elevation, and total gains for each position.
-    double azimuth[AudioNode::ProcessingSizeInFrames];
-    double elevation[AudioNode::ProcessingSizeInFrames];
-    float totalGain[AudioNode::ProcessingSizeInFrames];
+    double azimuth[AudioUtilities::renderQuantumSize];
+    double elevation[AudioUtilities::renderQuantumSize];
+    float totalGain[AudioUtilities::renderQuantumSize];
 
     for (size_t k = 0; k < framesToProcess; ++k) {
         FloatPoint3D pannerPosition(pannerX[k], pannerY[k], pannerZ[k]);

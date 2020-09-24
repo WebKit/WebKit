@@ -25,6 +25,7 @@
 
 #include "AudioBus.h"
 #include "AudioIOCallback.h"
+#include "AudioUtilities.h"
 #include "GStreamerCommon.h"
 #include <gst/app/gstappsrc.h>
 #include <gst/audio/audio-info.h>
@@ -186,7 +187,7 @@ static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAud
                                     PROP_FRAMES,
                                     g_param_spec_uint("frames", "frames",
                                                       "Number of audio frames to pull at each iteration",
-                                                      0, G_MAXUINT8, 128, flags));
+                                                      0, G_MAXUINT8, AudioUtilities::renderQuantumSize, flags));
 }
 
 static void webKitWebAudioSrcConstructed(GObject* object)

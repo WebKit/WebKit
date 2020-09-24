@@ -55,7 +55,7 @@ const unsigned RealtimeAnalyser::InputBufferSize = RealtimeAnalyser::MaxFFTSize 
 RealtimeAnalyser::RealtimeAnalyser()
     : m_inputBuffer(InputBufferSize)
     , m_writeIndex(0)
-    , m_downmixBus(AudioBus::create(1, AudioNode::ProcessingSizeInFrames))
+    , m_downmixBus(AudioBus::create(1, AudioUtilities::renderQuantumSize))
     , m_fftSize(DefaultFFTSize)
     , m_magnitudeBuffer(DefaultFFTSize / 2)
     , m_smoothingTimeConstant(DefaultSmoothingTimeConstant)

@@ -29,14 +29,13 @@
 #include "IIRFilter.h"
 
 #include "AudioArray.h"
+#include "AudioUtilities.h"
 #include "VectorMath.h"
 #include <algorithm>
 #include <complex>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
-
-constexpr unsigned iirRenderingQuantum = 128;
 
 // The length of the memory buffers for the IIR filter. This MUST be a power of
 // two and must be greater than the possible length of the filter coefficients.
@@ -188,11 +187,11 @@ double IIRFilter::tailTime(double sampleRate, bool isFilterStable)
     // zero out the output of the node.
 
     // Number of render quanta needed to reach the max tail time.
-    int numberOfBlocks = std::ceil(sampleRate * maxTailTime / iirRenderingQuantum);
+    int numberOfBlocks = std::ceil(sampleRate * maxTailTime / AudioUtilities::renderQuantumSize);
 
     // Input and output buffers for filtering.
-    AudioFloatArray input(iirRenderingQuantum);
-    AudioFloatArray output(iirRenderingQuantum);
+    AudioFloatArray input(AudioUtilities::renderQuantumSize);
+    AudioFloatArray output(AudioUtilities::renderQuantumSize);
 
     // Array to hold the max magnitudes
     AudioFloatArray magnitudes(numberOfBlocks);
@@ -201,16 +200,16 @@ double IIRFilter::tailTime(double sampleRate, bool isFilterStable)
     input[0] = 1;
 
     // Process the first block and get the max magnitude of the output.
-    process(input.data(), output.data(), iirRenderingQuantum);
-    VectorMath::vmaxmgv(output.data(), 1, &magnitudes[0], iirRenderingQuantum);
+    process(input.data(), output.data(), AudioUtilities::renderQuantumSize);
+    VectorMath::vmaxmgv(output.data(), 1, &magnitudes[0], AudioUtilities::renderQuantumSize);
 
     // Process the rest of the signal, getting the max magnitude of the
     // output for each block.
     input[0] = 0;
 
     for (int k = 1; k < numberOfBlocks; ++k) {
-        process(input.data(), output.data(), iirRenderingQuantum);
-        VectorMath::vmaxmgv(output.data(), 1, &magnitudes[k], iirRenderingQuantum);
+        process(input.data(), output.data(), AudioUtilities::renderQuantumSize);
+        VectorMath::vmaxmgv(output.data(), 1, &magnitudes[k], AudioUtilities::renderQuantumSize);
     }
 
     // Done computing the impulse response; reset the state so the actual node
@@ -228,7 +227,7 @@ double IIRFilter::tailTime(double sampleRate, bool isFilterStable)
 
     // The magnitude first become lower than the threshold at the next block.
     // Compute the corresponding time value value; that's the tail time.
-    return (index + 1) * iirRenderingQuantum / sampleRate;
+    return (index + 1) * AudioUtilities::renderQuantumSize / sampleRate;
 }
 
 } // namespace WebCore

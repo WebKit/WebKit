@@ -35,6 +35,7 @@
 
 #include "AudioBus.h"
 #include "AudioParam.h"
+#include "AudioUtilities.h"
 
 namespace WebCore {
 
@@ -48,15 +49,15 @@ AudioListener::AudioListener(BaseAudioContext& context)
     , m_upX(AudioParam::create(context, "upX", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
     , m_upY(AudioParam::create(context, "upY", 1.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
     , m_upZ(AudioParam::create(context, "upZ", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
-    , m_positionXValues(AudioNode::ProcessingSizeInFrames)
-    , m_positionYValues(AudioNode::ProcessingSizeInFrames)
-    , m_positionZValues(AudioNode::ProcessingSizeInFrames)
-    , m_forwardXValues(AudioNode::ProcessingSizeInFrames)
-    , m_forwardYValues(AudioNode::ProcessingSizeInFrames)
-    , m_forwardZValues(AudioNode::ProcessingSizeInFrames)
-    , m_upXValues(AudioNode::ProcessingSizeInFrames)
-    , m_upYValues(AudioNode::ProcessingSizeInFrames)
-    , m_upZValues(AudioNode::ProcessingSizeInFrames)
+    , m_positionXValues(AudioUtilities::renderQuantumSize)
+    , m_positionYValues(AudioUtilities::renderQuantumSize)
+    , m_positionZValues(AudioUtilities::renderQuantumSize)
+    , m_forwardXValues(AudioUtilities::renderQuantumSize)
+    , m_forwardYValues(AudioUtilities::renderQuantumSize)
+    , m_forwardZValues(AudioUtilities::renderQuantumSize)
+    , m_upXValues(AudioUtilities::renderQuantumSize)
+    , m_upYValues(AudioUtilities::renderQuantumSize)
+    , m_upZValues(AudioUtilities::renderQuantumSize)
 {
 }
 

@@ -142,7 +142,7 @@ void OfflineAudioContext::suspendOfflineRendering(double suspendTime, Ref<Deferr
     }
 
     size_t frame = AudioUtilities::timeToSampleFrame(suspendTime, sampleRate());
-    frame = OfflineAudioDestinationNode::renderQuantumSize * ((frame + OfflineAudioDestinationNode::renderQuantumSize - 1) / OfflineAudioDestinationNode::renderQuantumSize);
+    frame = AudioUtilities::renderQuantumSize * ((frame + AudioUtilities::renderQuantumSize - 1) / AudioUtilities::renderQuantumSize);
     if (frame < currentSampleFrame()) {
         promise->reject(Exception { InvalidStateError, "Suspension frame is earlier than current frame"_s });
         return;

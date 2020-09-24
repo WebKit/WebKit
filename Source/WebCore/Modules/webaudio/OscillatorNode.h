@@ -88,8 +88,8 @@ private:
     mutable Lock m_processMutex;
 
     // Stores sample-accurate values calculated according to frequency and detune.
-    AudioFloatArray m_phaseIncrements { AudioNode::ProcessingSizeInFrames };
-    AudioFloatArray m_detuneValues { AudioNode::ProcessingSizeInFrames };
+    AudioFloatArray m_phaseIncrements;
+    AudioFloatArray m_detuneValues;
     
     RefPtr<PeriodicWave> m_periodicWave;
 };

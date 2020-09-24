@@ -61,7 +61,7 @@ private:
     double latencyTime() const final { return 0; }
     
     Ref<AudioParam> m_pan;
-    AudioFloatArray m_sampleAccurateValues { AudioNode::ProcessingSizeInFrames };
+    AudioFloatArray m_sampleAccurateValues;
 };
 
 } // namespace WebCore

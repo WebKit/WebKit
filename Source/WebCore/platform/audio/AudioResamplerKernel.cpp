@@ -29,16 +29,15 @@
 #include "AudioResamplerKernel.h"
 
 #include "AudioResampler.h"
+#include "AudioUtilities.h"
 #include <algorithm>
 
 namespace WebCore {
-    
-const size_t AudioResamplerKernel::MaxFramesToProcess = 128;
 
 AudioResamplerKernel::AudioResamplerKernel(AudioResampler* resampler)
     : m_resampler(resampler)
     // The buffer size must be large enough to hold up to two extra sample frames for the linear interpolation.
-    , m_sourceBuffer(2 + static_cast<int>(MaxFramesToProcess * AudioResampler::MaxRate))
+    , m_sourceBuffer(2 + static_cast<int>(AudioUtilities::renderQuantumSize * AudioResampler::MaxRate))
     , m_virtualReadIndex(0.0)
     , m_fillIndex(0)
 {
@@ -48,7 +47,7 @@ AudioResamplerKernel::AudioResamplerKernel(AudioResampler* resampler)
 
 float* AudioResamplerKernel::getSourcePointer(size_t framesToProcess, size_t* numberOfSourceFramesNeededP)
 {
-    ASSERT(framesToProcess <= MaxFramesToProcess);
+    ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
     
     // Calculate the next "virtual" index.  After process() is called, m_virtualReadIndex will equal this value.
     double nextFractionalIndex = m_virtualReadIndex + framesToProcess * rate();
@@ -73,7 +72,7 @@ float* AudioResamplerKernel::getSourcePointer(size_t framesToProcess, size_t* nu
 
 void AudioResamplerKernel::process(float* destination, size_t framesToProcess)
 {
-    ASSERT(framesToProcess <= MaxFramesToProcess);
+    ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
     float* source = m_sourceBuffer.data();
     

@@ -110,8 +110,8 @@ void BiquadProcessor::process(const AudioBus* source, AudioBus* destination, siz
 
 void BiquadProcessor::processOnlyAudioParams(size_t framesToProcess)
 {
-    float values[AudioNode::ProcessingSizeInFrames];
-    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+    float values[AudioUtilities::renderQuantumSize];
+    ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
     m_parameter1->calculateSampleAccurateValues(values, framesToProcess);
     m_parameter2->calculateSampleAccurateValues(values, framesToProcess);

@@ -32,6 +32,7 @@
 #include "AudioBus.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "AudioUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -57,6 +58,7 @@ ExceptionOr<Ref<StereoPannerNode>> StereoPannerNode::create(BaseAudioContext& co
 StereoPannerNode::StereoPannerNode(BaseAudioContext& context, float pan)
     : AudioNode(context)
     , m_pan(AudioParam::create(context, "pan"_s, pan, -1, 1, AutomationRate::ARate))
+    , m_sampleAccurateValues(AudioUtilities::renderQuantumSize)
 {
     setNodeType(NodeTypeStereo);
     
@@ -102,8 +104,8 @@ void StereoPannerNode::process(size_t framesToProcess)
 
 void StereoPannerNode::processOnlyAudioParams(size_t framesToProcess)
 {
-    float values[AudioNode::ProcessingSizeInFrames];
-    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+    float values[AudioUtilities::renderQuantumSize];
+    ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
     m_pan->calculateSampleAccurateValues(values, framesToProcess);
 }

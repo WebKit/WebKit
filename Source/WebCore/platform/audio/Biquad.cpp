@@ -32,6 +32,7 @@
 
 #include "Biquad.h"
 
+#include "AudioUtilities.h"
 #include "DenormalDisabler.h"
 #include <algorithm>
 #include <stdio.h>
@@ -59,11 +60,11 @@ Biquad::Biquad()
 
     // Allocate enough space for the a-rate filter coefficients to handle a
     // rendering quantum of 128 frames.
-    m_b0.allocate(MaxFramesToProcess);
-    m_b1.allocate(MaxFramesToProcess);
-    m_b2.allocate(MaxFramesToProcess);
-    m_a1.allocate(MaxFramesToProcess);
-    m_a2.allocate(MaxFramesToProcess);
+    m_b0.allocate(AudioUtilities::renderQuantumSize);
+    m_b1.allocate(AudioUtilities::renderQuantumSize);
+    m_b2.allocate(AudioUtilities::renderQuantumSize);
+    m_a1.allocate(AudioUtilities::renderQuantumSize);
+    m_a2.allocate(AudioUtilities::renderQuantumSize);
 
     // Initialize as pass-thru (straight-wire, no filter effect)
     setNormalizedCoefficients(0, 1, 0, 0, 1, 0, 0);

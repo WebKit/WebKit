@@ -35,7 +35,7 @@ namespace WebCore {
 
 DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
     : AudioDSPKernel(processor)
-    , m_delayTimes(AudioNode::ProcessingSizeInFrames)
+    , m_delayTimes(AudioUtilities::renderQuantumSize)
 {
     ASSERT(processor && processor->sampleRate() > 0);
     if (!(processor && processor->sampleRate() > 0))
@@ -138,8 +138,8 @@ void DelayDSPKernel::processOnlyAudioParams(size_t framesToProcess)
     if (!delayProcessor())
         return;
 
-    float values[AudioNode::ProcessingSizeInFrames];
-    ASSERT(framesToProcess <= AudioNode::ProcessingSizeInFrames);
+    float values[AudioUtilities::renderQuantumSize];
+    ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
     delayProcessor()->delayTime().calculateSampleAccurateValues(values, framesToProcess);
 }

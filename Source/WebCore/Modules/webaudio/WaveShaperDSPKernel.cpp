@@ -28,12 +28,11 @@
 
 #include "WaveShaperDSPKernel.h"
 
+#include "AudioUtilities.h"
 #include "WaveShaperProcessor.h"
 #include <algorithm>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
-
-const unsigned RenderingQuantum = 128;
 
 namespace WebCore {
 
@@ -49,12 +48,12 @@ void WaveShaperDSPKernel::lazyInitializeOversampling()
     ASSERT(isMainThread());
 
     if (!m_tempBuffer) {
-        m_tempBuffer = makeUnique<AudioFloatArray>(RenderingQuantum * 2);
-        m_tempBuffer2 = makeUnique<AudioFloatArray>(RenderingQuantum * 4);
-        m_upSampler = makeUnique<UpSampler>(RenderingQuantum);
-        m_downSampler = makeUnique<DownSampler>(RenderingQuantum * 2);
-        m_upSampler2 = makeUnique<UpSampler>(RenderingQuantum * 2);
-        m_downSampler2 = makeUnique<DownSampler>(RenderingQuantum * 4);
+        m_tempBuffer = makeUnique<AudioFloatArray>(AudioUtilities::renderQuantumSize * 2);
+        m_tempBuffer2 = makeUnique<AudioFloatArray>(AudioUtilities::renderQuantumSize * 4);
+        m_upSampler = makeUnique<UpSampler>(AudioUtilities::renderQuantumSize);
+        m_downSampler = makeUnique<DownSampler>(AudioUtilities::renderQuantumSize * 2);
+        m_upSampler2 = makeUnique<UpSampler>(AudioUtilities::renderQuantumSize * 2);
+        m_downSampler2 = makeUnique<DownSampler>(AudioUtilities::renderQuantumSize * 4);
     }
 }
 
@@ -117,7 +116,7 @@ void WaveShaperDSPKernel::processCurve(const float* source, float* destination, 
 
 void WaveShaperDSPKernel::processCurve2x(const float* source, float* destination, size_t framesToProcess)
 {
-    bool isSafe = framesToProcess == RenderingQuantum;
+    bool isSafe = framesToProcess == AudioUtilities::renderQuantumSize;
     ASSERT(isSafe);
     if (!isSafe)
         return;
@@ -134,7 +133,7 @@ void WaveShaperDSPKernel::processCurve2x(const float* source, float* destination
 
 void WaveShaperDSPKernel::processCurve4x(const float* source, float* destination, size_t framesToProcess)
 {
-    bool isSafe = framesToProcess == RenderingQuantum;
+    bool isSafe = framesToProcess == AudioUtilities::renderQuantumSize;
     ASSERT(isSafe);
     if (!isSafe)
         return;

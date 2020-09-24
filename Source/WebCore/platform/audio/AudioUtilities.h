@@ -29,6 +29,9 @@ namespace WebCore {
 
 namespace AudioUtilities {
 
+// https://www.w3.org/TR/webaudio/#render-quantum-size
+constexpr size_t renderQuantumSize = 128;
+
 // Standard functions for converting to and from decibel values from linear.
 float linearToDecibels(float);
 float decibelsToLinear(float);

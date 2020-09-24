@@ -1,3 +1,99 @@
+2020-09-24  Chris Dumez  <cdumez@apple.com>
+
+        Declare render quantum size constant in AudioUtilities.h
+        https://bugs.webkit.org/show_bug.cgi?id=216935
+
+        Reviewed by Eric Carlson.
+
+        Declare render quantum size [1] constant in AudioUtilities.h so that it can be used in both
+        platform/ and Modules/webaudio/. Also update the code so that we have a single constant
+        instead of many.
+
+        [1] https://www.w3.org/TR/webaudio/#render-quantum-size
+
+        * Modules/webaudio/AudioListener.cpp:
+        (WebCore::AudioListener::AudioListener):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::AudioNodeInput):
+        (WebCore::AudioNodeInput::updateInternalBus):
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::AudioNodeOutput):
+        (WebCore::AudioNodeOutput::updateInternalBus):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::calculateFinalValues):
+        (WebCore::AudioParam::calculateTimelineValues):
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo):
+        * Modules/webaudio/BiquadDSPKernel.cpp:
+        (WebCore::BiquadDSPKernel::updateCoefficientsIfNecessary):
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::processOnlyAudioParams):
+        * Modules/webaudio/ConstantSourceNode.cpp:
+        (WebCore::ConstantSourceNode::ConstantSourceNode):
+        * Modules/webaudio/ConstantSourceNode.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::setBuffer):
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::DelayDSPKernel):
+        (WebCore::DelayDSPKernel::processOnlyAudioParams):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::processOnlyAudioParams):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::GainNode):
+        (WebCore::GainNode::processOnlyAudioParams):
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::suspendOfflineRendering):
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::offlineRender):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::OscillatorNode):
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::processOnlyAudioParams):
+        (WebCore::PannerNode::processSampleAccurateValues):
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::RealtimeAnalyser):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        * Modules/webaudio/StereoPannerNode.cpp:
+        (WebCore::StereoPannerNode::StereoPannerNode):
+        (WebCore::StereoPannerNode::processOnlyAudioParams):
+        * Modules/webaudio/StereoPannerNode.h:
+        * Modules/webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::lazyInitializeOversampling):
+        (WebCore::WaveShaperDSPKernel::processCurve2x):
+        (WebCore::WaveShaperDSPKernel::processCurve4x):
+        * platform/audio/AudioResamplerKernel.cpp:
+        (WebCore::AudioResamplerKernel::AudioResamplerKernel):
+        (WebCore::AudioResamplerKernel::getSourcePointer):
+        (WebCore::AudioResamplerKernel::process):
+        * platform/audio/AudioResamplerKernel.h:
+        * platform/audio/AudioUtilities.h:
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::Biquad):
+        * platform/audio/Biquad.h:
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::HRTFPanner):
+        (WebCore::HRTFPanner::pan):
+        * platform/audio/IIRFilter.cpp:
+        (WebCore::IIRFilter::tailTime):
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::AudioDestinationCocoa):
+        (WebCore::AudioDestinationCocoa::render):
+        (WebCore::AudioDestinationCocoa::provideInput):
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::updateSessionState):
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        (WebCore::AudioDestinationGStreamer::framesPerBuffer const):
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webkit_web_audio_src_class_init):
+
 2020-09-24  Youenn Fablet  <youenn@apple.com>
 
         Add libwebrtc.dylib version check

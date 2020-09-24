@@ -28,6 +28,7 @@
 
 #include "BiquadDSPKernel.h"
 
+#include "AudioUtilities.h"
 #include "Biquad.h"
 #include "BiquadProcessor.h"
 #include "FloatConversion.h"
@@ -58,12 +59,12 @@ void BiquadDSPKernel::updateCoefficientsIfNecessary(size_t framesToProcess)
 {
     if (biquadProcessor()->filterCoefficientsDirty()) {
         if (biquadProcessor()->hasSampleAccurateValues() && biquadProcessor()->shouldUseARate()) {
-            float cutoffFrequency[Biquad::MaxFramesToProcess];
-            float q[Biquad::MaxFramesToProcess];
-            float gain[Biquad::MaxFramesToProcess];
-            float detune[Biquad::MaxFramesToProcess]; // in Cents
+            float cutoffFrequency[AudioUtilities::renderQuantumSize];
+            float q[AudioUtilities::renderQuantumSize];
+            float gain[AudioUtilities::renderQuantumSize];
+            float detune[AudioUtilities::renderQuantumSize]; // in Cents
 
-            ASSERT(framesToProcess <= Biquad::MaxFramesToProcess);
+            ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
             biquadProcessor()->parameter1().calculateSampleAccurateValues(cutoffFrequency, framesToProcess);
             biquadProcessor()->parameter2().calculateSampleAccurateValues(q, framesToProcess);

@@ -34,6 +34,7 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioProcessingEvent.h"
+#include "AudioUtilities.h"
 #include "Document.h"
 #include "EventNames.h"
 #include <JavaScriptCore/Float32Array.h>
@@ -58,11 +59,11 @@ ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t buffe
     , m_bufferReadWriteIndex(0)
     , m_numberOfInputChannels(numberOfInputChannels)
     , m_numberOfOutputChannels(numberOfOutputChannels)
-    , m_internalInputBus(AudioBus::create(numberOfInputChannels, AudioNode::ProcessingSizeInFrames, false))
+    , m_internalInputBus(AudioBus::create(numberOfInputChannels, AudioUtilities::renderQuantumSize, false))
 {
     // Regardless of the allowed buffer sizes, we still need to process at the granularity of the AudioNode.
-    if (m_bufferSize < AudioNode::ProcessingSizeInFrames)
-        m_bufferSize = AudioNode::ProcessingSizeInFrames;
+    if (m_bufferSize < AudioUtilities::renderQuantumSize)
+        m_bufferSize = AudioUtilities::renderQuantumSize;
 
     ASSERT(numberOfInputChannels <= AudioContext::maxNumberOfChannels());
 
