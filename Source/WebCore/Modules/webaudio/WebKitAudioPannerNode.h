@@ -129,7 +129,7 @@ private:
     void notifyAudioSourcesConnectedToNode(AudioNode*, HashSet<AudioNode*>& visitedNodes);
 
     std::unique_ptr<Panner> m_panner;
-    PanningModelType m_panningModel;
+    PanningModelType m_panningModel { PanningModelType::HRTF };
 
     FloatPoint3D m_position;
     FloatPoint3D m_orientation;
@@ -142,7 +142,7 @@ private:
     // HRTF Database loader
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
 
-    unsigned m_connectionCount;
+    unsigned m_connectionCount { 0 };
 
     // Synchronize process() and setPanningModel() which can change the panner.
     mutable Lock m_pannerMutex;

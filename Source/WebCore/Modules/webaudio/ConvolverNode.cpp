@@ -42,7 +42,7 @@
 // it's important not to make this too high.  In this case 8192 is a good value.
 // But, the Reverb object is multi-threaded, so we want this as high as possible without losing too much accuracy.
 // Very large FFTs will have worse phase errors. Given these constraints 32768 is a good compromise.
-const size_t MaxFFTSize = 32768;
+constexpr size_t MaxFFTSize = 32768;
 
 namespace WebCore {
 

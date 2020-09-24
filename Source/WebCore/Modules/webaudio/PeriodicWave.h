@@ -83,7 +83,6 @@ private:
 
     float m_sampleRate;
     unsigned m_numberOfRanges;
-    float m_centsPerRange;
 
     // The lowest frequency (in Hertz) where playback will include all of the partials.
     // Playing back lower than this frequency will gradually lose more high-frequency information.

@@ -68,8 +68,7 @@ static float extractAverageGroupDelay(AudioChannel* channel, size_t analysisFFTS
 }
 
 HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, float sampleRate)
-    : m_frameDelay(0)
-    , m_sampleRate(sampleRate)
+    : m_sampleRate(sampleRate)
 {
     ASSERT(channel);
 

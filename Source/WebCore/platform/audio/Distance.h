@@ -70,11 +70,11 @@ protected:
     double inverseGain(double distance);
     double exponentialGain(double distance);
 
-    DistanceModelType m_model;
-    bool m_isClamped;
-    double m_refDistance;
-    double m_maxDistance;
-    double m_rolloffFactor;
+    DistanceModelType m_model { DistanceModelType::Inverse };
+    bool m_isClamped { true };
+    double m_refDistance { 1 };
+    double m_maxDistance { 10000 };
+    double m_rolloffFactor { 1 };
 };
 
 } // namespace WebCore

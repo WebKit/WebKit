@@ -34,15 +34,12 @@
 #include <wtf/MathExtras.h>
 
 // Use a 50ms smoothing / de-zippering time-constant.
-const float SmoothingTimeConstant = 0.050f;
+constexpr float SmoothingTimeConstant = 0.050f;
 
 namespace WebCore {
 
 EqualPowerPanner::EqualPowerPanner(float sampleRate)
     : Panner(PanningModelType::Equalpower)
-    , m_isFirstRender(true)
-    , m_gainL(0.0)
-    , m_gainR(0.0)
 {
     m_smoothingConstant = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, sampleRate);
 }

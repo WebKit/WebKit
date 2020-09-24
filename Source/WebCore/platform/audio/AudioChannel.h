@@ -54,19 +54,12 @@ public:
     // Manage storage for us.
     explicit AudioChannel(size_t length)
         : m_length(length)
-        , m_rawPointer(0)
-        , m_silent(true)
     {
         m_memBuffer = makeUnique<AudioFloatArray>(length);
     }
 
     // A "blank" audio channel -- must call set() before it's useful...
-    AudioChannel()
-        : m_length(0)
-        , m_rawPointer(0)
-        , m_silent(true)
-    {
-    }
+    AudioChannel() = default;
 
     // Redefine the memory for this channel.
     // storage represents external memory not managed by this object.
@@ -129,11 +122,11 @@ public:
     float maxAbsValue() const;
 
 private:
-    size_t m_length;
+    size_t m_length { 0 };
 
-    float* m_rawPointer;
+    float* m_rawPointer { nullptr };
     std::unique_ptr<AudioFloatArray> m_memBuffer;
-    bool m_silent;
+    bool m_silent { true };
 };
 
 } // WebCore

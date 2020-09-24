@@ -39,9 +39,7 @@ class AudioParamTimeline {
     WTF_MAKE_NONCOPYABLE(AudioParamTimeline);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AudioParamTimeline()
-    {
-    }
+    AudioParamTimeline() = default;
 
     ExceptionOr<void> setValueAtTime(float value, Seconds time);
     ExceptionOr<void> linearRampToValueAtTime(float targetValue, Seconds endTime, float currentValue, Seconds currentTime);

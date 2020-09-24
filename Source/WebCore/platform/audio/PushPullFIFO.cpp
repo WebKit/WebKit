@@ -31,12 +31,10 @@
 
 namespace WebCore {
 
-const size_t PushPullFIFO::kMaxFIFOLength = 65536;
-
 PushPullFIFO::PushPullFIFO(unsigned numberOfChannels, size_t fifoLength)
     : m_fifoLength(fifoLength)
 {
-    ASSERT(m_fifoLength <= kMaxFIFOLength);
+    ASSERT(m_fifoLength <= maxFIFOLength);
     m_fifoBus = AudioBus::create(numberOfChannels, m_fifoLength);
 }
 

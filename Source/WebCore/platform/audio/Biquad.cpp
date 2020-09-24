@@ -47,7 +47,7 @@
 namespace WebCore {
 
 #if USE(ACCELERATE)
-const int kBufferSize = 1024;
+constexpr int kBufferSize = 1024;
 #endif
 
 Biquad::Biquad()

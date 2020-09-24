@@ -40,7 +40,6 @@ using namespace VectorMath;
     
 FFTConvolver::FFTConvolver(size_t fftSize)
     : m_frame(fftSize)
-    , m_readWriteIndex(0)
     , m_inputBuffer(fftSize) // 2nd half of buffer is always zeroed
     , m_outputBuffer(fftSize)
     , m_lastOverlapBuffer(fftSize / 2)

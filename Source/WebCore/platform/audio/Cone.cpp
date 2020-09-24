@@ -35,12 +35,7 @@
 
 namespace WebCore {
 
-ConeEffect::ConeEffect()
-    : m_innerAngle(360.0)
-    , m_outerAngle(360.0)
-    , m_outerGain(0.0)
-{
-}
+ConeEffect::ConeEffect() = default;
 
 double ConeEffect::gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientation, FloatPoint3D listenerPosition)
 {

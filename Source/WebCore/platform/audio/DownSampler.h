@@ -57,7 +57,7 @@ private:
     // Computes ideal band-limited half-band filter coefficients.
     // In other words, filter out all frequencies higher than 0.25 * Nyquist.
     void initializeKernel();
-    AudioFloatArray m_reducedKernel;
+    AudioFloatArray m_reducedKernel { DefaultKernelSize / 2 };
 
     // Half-band filter.
     DirectConvolver m_convolver;

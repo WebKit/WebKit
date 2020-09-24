@@ -37,14 +37,7 @@
 
 namespace WebCore {
 
-DistanceEffect::DistanceEffect()
-    : m_model(DistanceModelType::Inverse)
-    , m_isClamped(true)
-    , m_refDistance(1.0)
-    , m_maxDistance(10000.0)
-    , m_rolloffFactor(1.0)
-{
-}
+DistanceEffect::DistanceEffect() = default;
 
 double DistanceEffect::gain(double distance)
 {

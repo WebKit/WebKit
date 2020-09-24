@@ -67,8 +67,8 @@ private:
     AudioFloatArray m_preDelayBuffer;
 
     ReverbAccumulationBuffer* m_accumulationBuffer;
-    int m_accumulationReadIndex;
-    int m_inputReadIndex;
+    int m_accumulationReadIndex { 0 };
+    int m_inputReadIndex { 0 };
 
     size_t m_preDelayLength;
     size_t m_postDelayLength;

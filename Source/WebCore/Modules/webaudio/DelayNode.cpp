@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DelayNode);
 
-const double maximumAllowedDelayTime = 180;
+constexpr double maximumAllowedDelayTime = 180;
 
 inline DelayNode::DelayNode(BaseAudioContext& context, double maxDelayTime)
     : AudioBasicProcessorNode(context)

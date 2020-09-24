@@ -34,17 +34,13 @@
 
 namespace WebCore {
 
-const double AudioResampler::MaxRate = 8.0;
-
 AudioResampler::AudioResampler()
-    : m_rate(1.0)
 {
     m_kernels.append(makeUnique<AudioResamplerKernel>(this));
     m_sourceBus = AudioBus::create(1, 0, false);
 }
 
 AudioResampler::AudioResampler(unsigned numberOfChannels)
-    : m_rate(1.0)
 {
     for (unsigned i = 0; i < numberOfChannels; ++i)
         m_kernels.append(makeUnique<AudioResamplerKernel>(this));

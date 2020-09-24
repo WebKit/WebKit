@@ -60,8 +60,8 @@ protected:
     void setOutputDeviceSupportsLowPowerMode(bool support) { m_outputDeviceSupportsLowPowerMode = support; }
 
     Client& m_client;
-    AudioHardwareActivityType m_activity;
-    bool m_outputDeviceSupportsLowPowerMode;
+    AudioHardwareActivityType m_activity { AudioHardwareActivityType::Unknown };
+    bool m_outputDeviceSupportsLowPowerMode { false };
 };
 
 }

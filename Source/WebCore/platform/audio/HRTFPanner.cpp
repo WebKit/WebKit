@@ -40,21 +40,12 @@ namespace WebCore {
 
 // The value of 2 milliseconds is larger than the largest delay which exists in any HRTFKernel from the default HRTFDatabase (0.0136 seconds).
 // We ASSERT the delay values used in process() with this value.
-const double MaxDelayTimeSeconds = 0.002;
-
-const int UninitializedAzimuth = -1;
+constexpr double MaxDelayTimeSeconds = 0.002;
 
 HRTFPanner::HRTFPanner(float sampleRate, HRTFDatabaseLoader* databaseLoader)
     : Panner(PanningModelType::HRTF)
     , m_databaseLoader(databaseLoader)
     , m_sampleRate(sampleRate)
-    , m_crossfadeSelection(CrossfadeSelection1)
-    , m_azimuthIndex1(UninitializedAzimuth)
-    , m_elevation1(0)
-    , m_azimuthIndex2(UninitializedAzimuth)
-    , m_elevation2(0)
-    , m_crossfadeX(0)
-    , m_crossfadeIncr(0)
     , m_convolverL1(fftSizeForSampleRate(sampleRate))
     , m_convolverR1(fftSizeForSampleRate(sampleRate))
     , m_convolverL2(fftSizeForSampleRate(sampleRate))
@@ -186,11 +177,11 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
     int desiredAzimuthIndex = calculateDesiredAzimuthIndexAndBlend(azimuth, azimuthBlend);
 
     // Initially snap azimuth and elevation values to first values encountered.
-    if (m_azimuthIndex1 == UninitializedAzimuth) {
+    if (!m_azimuthIndex1) {
         m_azimuthIndex1 = desiredAzimuthIndex;
         m_elevation1 = elevation;
     }
-    if (m_azimuthIndex2 == UninitializedAzimuth) {
+    if (!m_azimuthIndex2) {
         m_azimuthIndex2 = desiredAzimuthIndex;
         m_elevation2 = elevation;
     }
@@ -202,7 +193,7 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
 
     // Check for azimuth and elevation changes, initiating a cross-fade if needed.
     if (!m_crossfadeX && m_crossfadeSelection == CrossfadeSelection1) {
-        if (desiredAzimuthIndex != m_azimuthIndex1 || elevation != m_elevation1) {
+        if (desiredAzimuthIndex != *m_azimuthIndex1 || elevation != m_elevation1) {
             // Cross-fade from 1 -> 2
             m_crossfadeIncr = 1 / fadeFrames;
             m_azimuthIndex2 = desiredAzimuthIndex;
@@ -210,7 +201,7 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
         }
     }
     if (m_crossfadeX == 1 && m_crossfadeSelection == CrossfadeSelection2) {
-        if (desiredAzimuthIndex != m_azimuthIndex2 || elevation != m_elevation2) {
+        if (desiredAzimuthIndex != *m_azimuthIndex2 || elevation != m_elevation2) {
             // Cross-fade from 2 -> 1
             m_crossfadeIncr = -1 / fadeFrames;
             m_azimuthIndex1 = desiredAzimuthIndex;
@@ -235,8 +226,8 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
         double frameDelayR1;
         double frameDelayL2;
         double frameDelayR2;
-        database->getKernelsFromAzimuthElevation(azimuthBlend, m_azimuthIndex1, m_elevation1, kernelL1, kernelR1, frameDelayL1, frameDelayR1);
-        database->getKernelsFromAzimuthElevation(azimuthBlend, m_azimuthIndex2, m_elevation2, kernelL2, kernelR2, frameDelayL2, frameDelayR2);
+        database->getKernelsFromAzimuthElevation(azimuthBlend, *m_azimuthIndex1, m_elevation1, kernelL1, kernelR1, frameDelayL1, frameDelayR1);
+        database->getKernelsFromAzimuthElevation(azimuthBlend, *m_azimuthIndex2, m_elevation2, kernelL2, kernelR2, frameDelayL2, frameDelayR2);
 
         bool areKernelsGood = kernelL1 && kernelR1 && kernelL2 && kernelR2;
         ASSERT(areKernelsGood);

@@ -47,12 +47,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioScheduledSourceNode);
 
-const double AudioScheduledSourceNode::UnknownTime = -1;
-
 AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context)
     : AudioNode(context)
     , ActiveDOMObject(context.scriptExecutionContext())
-    , m_endTime(UnknownTime)
 {
     suspendIfNeeded();
     m_pendingActivity = makePendingActivity(*this);
@@ -80,15 +77,15 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
     // Round up if the start time isn't on a frame boundary so we don't start too early.
     size_t startFrame = AudioUtilities::timeToSampleFrame(m_startTime, sampleRate, AudioUtilities::SampleFrameRounding::Up);
     size_t endFrame = 0;
-    if (m_endTime != UnknownTime) {
+    if (m_endTime) {
         // The end frame is the end time rounded up because it is an exclusive upper
         // bound of the end time. We also need to take care to handle huge end
         // times and clamp the corresponding frame to the largest size_t value.
-        endFrame = AudioUtilities::timeToSampleFrame(m_endTime, sampleRate, AudioUtilities::SampleFrameRounding::Up);
+        endFrame = AudioUtilities::timeToSampleFrame(*m_endTime, sampleRate, AudioUtilities::SampleFrameRounding::Up);
     }
 
     // If we know the end time and it's already passed, then don't bother doing any more rendering this cycle.
-    if (m_endTime != UnknownTime && endFrame <= quantumStartFrame)
+    if (m_endTime && endFrame <= quantumStartFrame)
         finish();
 
     if (m_playbackState == UNSCHEDULED_STATE || m_playbackState == FINISHED_STATE || startFrame >= quantumEndFrame) {
@@ -127,7 +124,7 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
     // Handle silence after we're done playing.
     // If the end time is somewhere in the middle of this time quantum, then zero out the
     // frames from the end time to the very end of the quantum.
-    if (m_endTime != UnknownTime && endFrame >= quantumStartFrame && endFrame < quantumEndFrame) {
+    if (m_endTime && endFrame >= quantumStartFrame && endFrame < quantumEndFrame) {
         size_t zeroStartFrame = endFrame - quantumStartFrame;
         size_t framesToZero = quantumFrameSize - zeroStartFrame;
 

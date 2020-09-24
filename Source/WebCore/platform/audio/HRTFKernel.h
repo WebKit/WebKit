@@ -85,7 +85,7 @@ private:
     }
     
     std::unique_ptr<FFTFrame> m_fftFrame;
-    float m_frameDelay;
+    float m_frameDelay { 0 };
     float m_sampleRate;
 };
 

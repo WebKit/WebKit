@@ -44,20 +44,15 @@
 
 namespace WebCore {
 
-const unsigned HRTFElevation::AzimuthSpacing = 15;
-const unsigned HRTFElevation::NumberOfRawAzimuths = 360 / AzimuthSpacing;
-const unsigned HRTFElevation::InterpolationFactor = 8;
-const unsigned HRTFElevation::NumberOfTotalAzimuths = NumberOfRawAzimuths * InterpolationFactor;
-
 // Total number of components of an HRTF database.
-const size_t TotalNumberOfResponses = 240;
+constexpr size_t TotalNumberOfResponses = 240;
 
 // Number of frames in an individual impulse response.
-const size_t ResponseFrameSize = 256;
+constexpr size_t ResponseFrameSize = 256;
 
 // Sample-rate of the spatialization impulse responses as stored in the resource file.
 // The impulse responses may be resampled to a different sample-rate (depending on the audio hardware) when they are loaded.
-const float ResponseSampleRate = 44100;
+constexpr float ResponseSampleRate = 44100;
 
 #if PLATFORM(COCOA) || USE(WEBAUDIO_GSTREAMER)
 #define USE_CONCATENATED_IMPULSE_RESPONSES

@@ -34,7 +34,6 @@ namespace WebCore {
     
 WaveShaperProcessor::WaveShaperProcessor(float sampleRate, size_t numberOfChannels)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
-    , m_oversample(OverSampleNone)
 {
 }
 

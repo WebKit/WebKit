@@ -69,7 +69,7 @@ public:
 
 protected:
     Vector<std::unique_ptr<AudioDSPKernel>> m_kernels;
-    bool m_hasJustReset;
+    bool m_hasJustReset { true };
 };
 
 } // namespace WebCore

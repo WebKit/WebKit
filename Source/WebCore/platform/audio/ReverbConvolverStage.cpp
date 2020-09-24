@@ -47,8 +47,6 @@ using namespace VectorMath;
 ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t, size_t reverbTotalLatency, size_t stageOffset, size_t stageLength,
     size_t fftSize, size_t renderPhase, size_t renderSliceSize, ReverbAccumulationBuffer* accumulationBuffer, float scale, bool directMode)
     : m_accumulationBuffer(accumulationBuffer)
-    , m_accumulationReadIndex(0)
-    , m_inputReadIndex(0)
     , m_directMode(directMode)
 {
     ASSERT(impulseResponse);

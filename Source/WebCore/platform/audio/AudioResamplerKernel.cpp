@@ -38,8 +38,6 @@ AudioResamplerKernel::AudioResamplerKernel(AudioResampler* resampler)
     : m_resampler(resampler)
     // The buffer size must be large enough to hold up to two extra sample frames for the linear interpolation.
     , m_sourceBuffer(2 + static_cast<int>(AudioUtilities::renderQuantumSize * AudioResampler::MaxRate))
-    , m_virtualReadIndex(0.0)
-    , m_fillIndex(0)
 {
     m_lastValues[0] = 0.0f;
     m_lastValues[1] = 0.0f;

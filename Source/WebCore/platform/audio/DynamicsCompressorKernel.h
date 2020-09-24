@@ -74,6 +74,7 @@ public:
     double tailTime() const;
 
 protected:
+    static constexpr float uninitializedValue = -1;
     float m_sampleRate;
 
     float m_detectorAverage;
@@ -87,12 +88,12 @@ protected:
     enum { MaxPreDelayFrames = 1024 };
     enum { MaxPreDelayFramesMask = MaxPreDelayFrames - 1 };
     enum { DefaultPreDelayFrames = 256 }; // setPreDelayTime() will override this initial value
-    unsigned m_lastPreDelayFrames;
+    unsigned m_lastPreDelayFrames { DefaultPreDelayFrames };
     void setPreDelayTime(float);
 
     Vector<std::unique_ptr<AudioFloatArray>> m_preDelayBuffers;
-    int m_preDelayReadIndex;
-    int m_preDelayWriteIndex;
+    int m_preDelayReadIndex { 0 };
+    int m_preDelayWriteIndex { DefaultPreDelayFrames };
 
     float m_maxAttackCompressionDiffDb;
 
@@ -106,24 +107,24 @@ protected:
 
     // Amount of input change in dB required for 1 dB of output change.
     // This applies to the portion of the curve above m_kneeThresholdDb (see below).
-    float m_ratio;
-    float m_slope; // Inverse ratio.
+    float m_ratio { uninitializedValue };
+    float m_slope { uninitializedValue }; // Inverse ratio.
 
     // The input to output change below the threshold is linear 1:1.
-    float m_linearThreshold;
-    float m_dbThreshold;
+    float m_linearThreshold { uninitializedValue };
+    float m_dbThreshold { uninitializedValue };
 
     // m_dbKnee is the number of dB above the threshold before we enter the "ratio" portion of the curve.
     // m_kneeThresholdDb = m_dbThreshold + m_dbKnee
     // The portion between m_dbThreshold and m_kneeThresholdDb is the "soft knee" portion of the curve
     // which transitions smoothly from the linear portion to the ratio portion.
-    float m_dbKnee;
-    float m_kneeThreshold;
-    float m_kneeThresholdDb;
-    float m_ykneeThresholdDb;
+    float m_dbKnee { uninitializedValue };
+    float m_kneeThreshold { uninitializedValue };
+    float m_kneeThresholdDb { uninitializedValue };
+    float m_ykneeThresholdDb { uninitializedValue };
 
     // Internal parameter for the knee portion of the curve.
-    float m_K;
+    float m_K { uninitializedValue };
 };
 
 } // namespace WebCore

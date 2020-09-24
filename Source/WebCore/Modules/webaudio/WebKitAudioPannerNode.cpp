@@ -50,8 +50,6 @@ static void fixNANs(double &x)
 
 WebKitAudioPannerNode::WebKitAudioPannerNode(WebKitAudioContext& context)
     : PannerNodeBase(context)
-    , m_panningModel(PanningModelType::HRTF)
-    , m_connectionCount(0)
 {
     setNodeType(NodeTypePanner);
     initializeDefaultNodeOptions(2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers);

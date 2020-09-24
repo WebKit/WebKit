@@ -54,9 +54,9 @@ public:
     double outerGain() const { return m_outerGain; }
 
 protected:
-    double m_innerAngle;
-    double m_outerAngle;
-    double m_outerGain;
+    double m_innerAngle { 360 };
+    double m_outerAngle { 360 };
+    double m_outerGain { 0 };
 };
 
 } // namespace WebCore

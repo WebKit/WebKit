@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBufferSourceNode);
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitAudioBufferSourceNode);
 
-const double DefaultGrainDuration = 0.020; // 20ms
+constexpr double DefaultGrainDuration = 0.020; // 20ms
 
 // Arbitrary upper limit on playback rate.
 // Higher than expected rates can be useful when playing back oversampled buffers

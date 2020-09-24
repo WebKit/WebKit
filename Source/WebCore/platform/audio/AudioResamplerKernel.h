@@ -63,14 +63,14 @@ private:
     AudioFloatArray m_sourceBuffer;
     
     // This is a (floating point) read index on the input stream.
-    double m_virtualReadIndex;
+    double m_virtualReadIndex { 0 };
 
     // We need to have continuity from one call of process() to the next.
     // m_lastValues stores the last two sample values from the last call to process().
     // m_fillIndex represents how many buffered samples we have which can be as many as 2.
     // For the first call to process() (or after reset()) there will be no buffered samples.
     float m_lastValues[2];
-    unsigned m_fillIndex;
+    unsigned m_fillIndex { 0 };
 };
 
 } // namespace WebCore

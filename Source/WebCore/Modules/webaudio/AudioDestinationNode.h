@@ -71,11 +71,11 @@ protected:
     void updateIsEffectivelyPlayingAudio();
 
     // Counts the number of sample-frames processed by the destination.
-    size_t m_currentSampleFrame;
+    size_t m_currentSampleFrame { 0 };
 
-    bool m_isSilent;
-    bool m_isEffectivelyPlayingAudio;
-    bool m_muted;
+    bool m_isSilent { true };
+    bool m_isEffectivelyPlayingAudio { false };
+    bool m_muted { false };
 };
 
 } // namespace WebCore

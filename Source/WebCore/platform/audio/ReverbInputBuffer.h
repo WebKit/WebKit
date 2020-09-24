@@ -57,7 +57,7 @@ public:
 
 private:
     AudioFloatArray m_buffer;
-    size_t m_writeIndex;
+    size_t m_writeIndex { 0 };
 };
 
 } // namespace WebCore

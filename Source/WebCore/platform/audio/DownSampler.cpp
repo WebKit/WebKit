@@ -38,7 +38,6 @@ namespace WebCore {
 
 DownSampler::DownSampler(size_t inputBlockSize)
     : m_inputBlockSize(inputBlockSize)
-    , m_reducedKernel(DefaultKernelSize / 2)
     , m_convolver(inputBlockSize / 2) // runs at 1/2 source sample-rate
     , m_tempBuffer(inputBlockSize / 2)
     , m_inputBuffer(inputBlockSize * 2)

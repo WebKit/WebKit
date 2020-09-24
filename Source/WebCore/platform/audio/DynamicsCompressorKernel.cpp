@@ -42,24 +42,10 @@ namespace WebCore {
 using namespace AudioUtilities;
 
 // Metering hits peaks instantly, but releases this fast (in seconds).
-const float meteringReleaseTimeConstant = 0.325f;
-
-const float uninitializedValue = -1;
+constexpr float meteringReleaseTimeConstant = 0.325f;
 
 DynamicsCompressorKernel::DynamicsCompressorKernel(float sampleRate, unsigned numberOfChannels)
     : m_sampleRate(sampleRate)
-    , m_lastPreDelayFrames(DefaultPreDelayFrames)
-    , m_preDelayReadIndex(0)
-    , m_preDelayWriteIndex(DefaultPreDelayFrames)
-    , m_ratio(uninitializedValue)
-    , m_slope(uninitializedValue)
-    , m_linearThreshold(uninitializedValue)
-    , m_dbThreshold(uninitializedValue)
-    , m_dbKnee(uninitializedValue)
-    , m_kneeThreshold(uninitializedValue)
-    , m_kneeThresholdDb(uninitializedValue)
-    , m_ykneeThresholdDb(uninitializedValue)
-    , m_K(uninitializedValue)
 {
     setNumberOfChannels(numberOfChannels);
 

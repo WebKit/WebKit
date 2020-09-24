@@ -38,8 +38,8 @@
 #include <wtf/Locker.h>
 
 // These are somewhat arbitrary limits, but we need to do some kind of sanity-checking.
-const unsigned minSampleRate = 8000;
-const unsigned maxSampleRate = 192000;
+constexpr unsigned minSampleRate = 8000;
+constexpr unsigned maxSampleRate = 192000;
 
 namespace WebCore {
 

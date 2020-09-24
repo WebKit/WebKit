@@ -59,8 +59,8 @@ public:
 
 private:
     AudioFloatArray m_buffer;
-    size_t m_readIndex;
-    size_t m_readTimeFrame; // for debugging (frame on continuous timeline)
+    size_t m_readIndex { 0 };
+    size_t m_readTimeFrame { 0 }; // for debugging (frame on continuous timeline)
 };
 
 } // namespace WebCore

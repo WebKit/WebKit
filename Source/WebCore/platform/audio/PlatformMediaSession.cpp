@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static const Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
+static constexpr Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
 
 #if !RELEASE_LOG_DISABLED
 String convertEnumerationToString(PlatformMediaSession::State state)
@@ -119,9 +119,6 @@ PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionManager& manager,
     : m_manager(makeWeakPtr(manager))
     , m_client(client)
     , m_mediaSessionIdentifier(MediaSessionIdentifier::generate())
-    , m_state(Idle)
-    , m_stateToRestore(Idle)
-    , m_notifyingClient(false)
 #if !RELEASE_LOG_DISABLED
     , m_logger(client.logger())
     , m_logIdentifier(uniqueLogIdentifier())

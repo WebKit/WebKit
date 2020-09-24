@@ -37,12 +37,6 @@
 
 namespace WebCore {
 
-// FIXME: As a recursive linear filter, depending on its parameters, a biquad filter can have
-// an infinite tailTime. In practice, Biquad filters do not usually (except for very high resonance values) 
-// have a tailTime of longer than approx. 200ms. This value could possibly be calculated based on the
-// settings of the Biquad.
-static const double MaxBiquadDelayTime = 0.2;
-
 static bool hasConstantValues(float* values, int framesToProcess)
 {
     // FIXME: Use SIMD to optimize this. This would speed up processing by a factor of 4

@@ -133,7 +133,6 @@ Ref<PeriodicWave> PeriodicWave::createTriangle(float sampleRate)
 PeriodicWave::PeriodicWave(float sampleRate)
     : m_sampleRate(sampleRate)
     , m_numberOfRanges(0.5 + NumberOfOctaveBands * log2f(periodicWaveSize()))
-    , m_centsPerRange(CentsPerRange)
 {
     float nyquist = 0.5 * m_sampleRate;
     m_lowestFundamentalFrequency = nyquist / maxNumberOfPartials();
@@ -150,7 +149,7 @@ void PeriodicWave::waveDataForFundamentalFrequency(float fundamentalFrequency, f
     float centsAboveLowestFrequency = log2f(ratio) * 1200;
 
     // Add one to round-up to the next range just in time to truncate partials before aliasing occurs.
-    float pitchRange = 1 + centsAboveLowestFrequency / m_centsPerRange;
+    float pitchRange = 1 + centsAboveLowestFrequency / CentsPerRange;
 
     pitchRange = std::max(pitchRange, 0.0f);
     pitchRange = std::min(pitchRange, static_cast<float>(m_numberOfRanges - 1));
@@ -176,7 +175,7 @@ unsigned PeriodicWave::maxNumberOfPartials() const
 unsigned PeriodicWave::numberOfPartialsForRange(unsigned rangeIndex) const
 {
     // Number of cents below nyquist where we cull partials.
-    float centsToCull = rangeIndex * m_centsPerRange;
+    float centsToCull = rangeIndex * CentsPerRange;
 
     // A value from 0 -> 1 representing what fraction of the partials to keep.
     float cullingScale = pow(2, -centsToCull / 1200);

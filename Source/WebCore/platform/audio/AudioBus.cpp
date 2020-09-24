@@ -44,7 +44,7 @@ namespace WebCore {
 
 using namespace VectorMath;
 
-const unsigned MaxBusChannels = 32;
+constexpr unsigned MaxBusChannels = 32;
 
 RefPtr<AudioBus> AudioBus::create(unsigned numberOfChannels, size_t length, bool allocate)
 {
@@ -57,9 +57,6 @@ RefPtr<AudioBus> AudioBus::create(unsigned numberOfChannels, size_t length, bool
 
 AudioBus::AudioBus(unsigned numberOfChannels, size_t length, bool allocate)
     : m_length(length)
-    , m_busGain(1)
-    , m_isFirstTime(true)
-    , m_sampleRate(0)
 {
     m_channels.reserveInitialCapacity(numberOfChannels);
 

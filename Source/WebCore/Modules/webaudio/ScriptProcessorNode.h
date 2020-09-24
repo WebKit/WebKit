@@ -81,12 +81,12 @@ private:
     // Double buffering
     unsigned doubleBufferIndex() const { return m_doubleBufferIndex; }
     void swapBuffers() { m_doubleBufferIndex = 1 - m_doubleBufferIndex; }
-    unsigned m_doubleBufferIndex;
+    unsigned m_doubleBufferIndex { 0 };
     Vector<RefPtr<AudioBuffer>> m_inputBuffers;
     Vector<RefPtr<AudioBuffer>> m_outputBuffers;
 
     size_t m_bufferSize;
-    unsigned m_bufferReadWriteIndex;
+    unsigned m_bufferReadWriteIndex { 0 };
 
     unsigned m_numberOfInputChannels;
     unsigned m_numberOfOutputChannels;

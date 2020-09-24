@@ -42,8 +42,6 @@ using namespace VectorMath;
 
 ReverbAccumulationBuffer::ReverbAccumulationBuffer(size_t length)
     : m_buffer(length)
-    , m_readIndex(0)
-    , m_readTimeFrame(0)
 {
 }
 

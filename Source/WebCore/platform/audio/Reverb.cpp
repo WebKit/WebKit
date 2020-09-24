@@ -44,11 +44,11 @@ namespace WebCore {
 using namespace VectorMath;
 
 // Empirical gain calibration tested across many impulse responses to ensure perceived volume is same as dry (unprocessed) signal
-const float GainCalibration = -58;
-const float GainCalibrationSampleRate = 44100;
+constexpr float GainCalibration = -58;
+constexpr float GainCalibrationSampleRate = 44100;
 
 // A minimum power value to when normalizing a silent (or very quiet) impulse response
-const float MinPower = 0.000125f;
+constexpr float MinPower = 0.000125f;
     
 static float calculateNormalizationScale(AudioBus* response)
 {

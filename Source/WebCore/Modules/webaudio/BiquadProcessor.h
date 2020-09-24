@@ -69,7 +69,7 @@ public:
     bool shouldUseARate() const { return m_shouldUseARate; }
 
 private:
-    BiquadFilterType m_type;
+    BiquadFilterType m_type { BiquadFilterType::Lowpass };
 
     Ref<AudioParam> m_parameter1;
     Ref<AudioParam> m_parameter2;
@@ -77,10 +77,10 @@ private:
     Ref<AudioParam> m_parameter4;
 
     // so DSP kernels know when to re-compute coefficients
-    bool m_filterCoefficientsDirty;
+    bool m_filterCoefficientsDirty { true };
 
     // Set to true if any of the filter parameters are sample-accurate.
-    bool m_hasSampleAccurateValues;
+    bool m_hasSampleAccurateValues { false };
 
     bool m_shouldUseARate { true };
 };

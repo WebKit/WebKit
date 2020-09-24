@@ -58,7 +58,7 @@ private:
     FFTFrame m_frame;
 
     // Buffer input until we get fftSize / 2 samples then do an FFT
-    size_t m_readWriteIndex;
+    size_t m_readWriteIndex { 0 };
     AudioFloatArray m_inputBuffer;
 
     // Stores output which we read a little at a time

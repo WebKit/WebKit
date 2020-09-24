@@ -38,7 +38,7 @@
 #include <wtf/IsoMallocInlines.h>
 
 // Set output to stereo by default.
-static const unsigned defaultNumberOfOutputChannels = 2;
+static constexpr unsigned defaultNumberOfOutputChannels = 2;
 
 namespace WebCore {
 

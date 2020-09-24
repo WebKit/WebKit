@@ -51,7 +51,7 @@
 #include "MediaElementAudioSourceOptions.h"
 #endif
 
-const unsigned MaxPeriodicWaveLength = 4096;
+constexpr unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
 

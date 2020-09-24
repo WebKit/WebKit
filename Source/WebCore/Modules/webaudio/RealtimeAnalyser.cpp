@@ -42,25 +42,9 @@
 
 namespace WebCore {
 
-const double RealtimeAnalyser::DefaultSmoothingTimeConstant  = 0.8;
-const double RealtimeAnalyser::DefaultMinDecibels = -100;
-const double RealtimeAnalyser::DefaultMaxDecibels = -30;
-
-const unsigned RealtimeAnalyser::DefaultFFTSize = 2048;
-// All FFT implementations are expected to handle power-of-two sizes MinFFTSize <= size <= MaxFFTSize.
-const unsigned RealtimeAnalyser::MinFFTSize = 32;
-const unsigned RealtimeAnalyser::MaxFFTSize = 32768;
-const unsigned RealtimeAnalyser::InputBufferSize = RealtimeAnalyser::MaxFFTSize * 2;
-
 RealtimeAnalyser::RealtimeAnalyser()
     : m_inputBuffer(InputBufferSize)
-    , m_writeIndex(0)
     , m_downmixBus(AudioBus::create(1, AudioUtilities::renderQuantumSize))
-    , m_fftSize(DefaultFFTSize)
-    , m_magnitudeBuffer(DefaultFFTSize / 2)
-    , m_smoothingTimeConstant(DefaultSmoothingTimeConstant)
-    , m_minDecibels(DefaultMinDecibels)
-    , m_maxDecibels(DefaultMaxDecibels)
 {
     m_analysisFrame = makeUnique<FFTFrame>(DefaultFFTSize);
 }

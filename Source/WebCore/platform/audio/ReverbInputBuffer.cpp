@@ -36,7 +36,6 @@ namespace WebCore {
 
 ReverbInputBuffer::ReverbInputBuffer(size_t length)
     : m_buffer(length)
-    , m_writeIndex(0)
 {
 }
 

@@ -77,7 +77,7 @@ protected:
     Vector<AudioNodeOutput*> m_renderingOutputs;
 
     // m_renderingStateNeedUpdating keeps track if m_outputs is modified.
-    bool m_renderingStateNeedUpdating;
+    bool m_renderingStateNeedUpdating { false };
 };
 
 } // namespace WebCore

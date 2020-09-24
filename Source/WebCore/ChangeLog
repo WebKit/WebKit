@@ -1,5 +1,118 @@
 2020-09-24  Chris Dumez  <cdumez@apple.com>
 
+        Use more inline initialization and constexpr in WebAudio code
+        https://bugs.webkit.org/show_bug.cgi?id=216939
+
+        Reviewed by Darin Adler.
+
+        Use more inline initialization and constexpr in WebAudio code.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        * Modules/webaudio/AudioDestinationNode.h:
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::AudioNodeOutput):
+        * Modules/webaudio/AudioNodeOutput.h:
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/AudioSummingJunction.cpp:
+        (WebCore::AudioSummingJunction::AudioSummingJunction):
+        * Modules/webaudio/AudioSummingJunction.h:
+        * Modules/webaudio/BiquadDSPKernel.cpp:
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        * Modules/webaudio/BiquadProcessor.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        * Modules/webaudio/DelayNode.cpp:
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::PeriodicWave):
+        (WebCore::PeriodicWave::waveDataForFundamentalFrequency):
+        (WebCore::PeriodicWave::numberOfPartialsForRange const):
+        * Modules/webaudio/PeriodicWave.h:
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::RealtimeAnalyser):
+        * Modules/webaudio/RealtimeAnalyser.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::WaveShaperProcessor):
+        * Modules/webaudio/WaveShaperProcessor.h:
+        * Modules/webaudio/WebKitAudioContext.cpp:
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::WebKitAudioPannerNode):
+        * Modules/webaudio/WebKitAudioPannerNode.h:
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::AudioBus):
+        * platform/audio/AudioBus.h:
+        * platform/audio/AudioChannel.h:
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::AudioDSPKernelProcessor):
+        * platform/audio/AudioDSPKernelProcessor.h:
+        * platform/audio/AudioHardwareListener.cpp:
+        (WebCore::AudioHardwareListener::AudioHardwareListener):
+        * platform/audio/AudioHardwareListener.h:
+        * platform/audio/AudioResampler.cpp:
+        (WebCore::AudioResampler::AudioResampler):
+        * platform/audio/AudioResampler.h:
+        * platform/audio/AudioResamplerKernel.cpp:
+        (WebCore::AudioResamplerKernel::AudioResamplerKernel):
+        * platform/audio/AudioResamplerKernel.h:
+        * platform/audio/Biquad.cpp:
+        * platform/audio/Cone.cpp:
+        * platform/audio/Cone.h:
+        * platform/audio/Distance.cpp:
+        * platform/audio/Distance.h:
+        * platform/audio/DownSampler.cpp:
+        (WebCore::DownSampler::DownSampler):
+        * platform/audio/DownSampler.h:
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::DynamicsCompressorKernel::DynamicsCompressorKernel):
+        * platform/audio/DynamicsCompressorKernel.h:
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::EqualPowerPanner):
+        * platform/audio/EqualPowerPanner.h:
+        * platform/audio/FFTConvolver.cpp:
+        (WebCore::FFTConvolver::FFTConvolver):
+        * platform/audio/FFTConvolver.h:
+        * platform/audio/HRTFDatabase.cpp:
+        (WebCore::HRTFDatabase::HRTFDatabase):
+        * platform/audio/HRTFDatabase.h:
+        * platform/audio/HRTFElevation.cpp:
+        * platform/audio/HRTFElevation.h:
+        * platform/audio/HRTFKernel.cpp:
+        (WebCore::HRTFKernel::HRTFKernel):
+        * platform/audio/HRTFKernel.h:
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::HRTFPanner):
+        * platform/audio/HRTFPanner.h:
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::PlatformMediaSession):
+        * platform/audio/PlatformMediaSession.h:
+        * platform/audio/PushPullFIFO.cpp:
+        (WebCore::PushPullFIFO::PushPullFIFO):
+        * platform/audio/PushPullFIFO.h:
+        * platform/audio/Reverb.cpp:
+        * platform/audio/ReverbAccumulationBuffer.cpp:
+        (WebCore::ReverbAccumulationBuffer::ReverbAccumulationBuffer):
+        * platform/audio/ReverbAccumulationBuffer.h:
+        * platform/audio/ReverbConvolver.cpp:
+        * platform/audio/ReverbConvolverStage.cpp:
+        (WebCore::ReverbConvolverStage::ReverbConvolverStage):
+        * platform/audio/ReverbConvolverStage.h:
+        * platform/audio/ReverbInputBuffer.cpp:
+        (WebCore::ReverbInputBuffer::ReverbInputBuffer):
+        * platform/audio/ReverbInputBuffer.h:
+
+2020-09-24  Chris Dumez  <cdumez@apple.com>
+
         Simplify AudioNode::addInput() / addOutput() call sites
         https://bugs.webkit.org/show_bug.cgi?id=216941
 

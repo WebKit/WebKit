@@ -73,16 +73,16 @@ public:
     void getKernelsFromAzimuth(double azimuthBlend, unsigned azimuthIndex, HRTFKernel* &kernelL, HRTFKernel* &kernelR, double& frameDelayL, double& frameDelayR);
     
     // Spacing, in degrees, between every azimuth loaded from resource.
-    static const unsigned AzimuthSpacing;
+    static constexpr unsigned AzimuthSpacing { 15 };
     
     // Number of azimuths loaded from resource.
-    static const unsigned NumberOfRawAzimuths;
+    static constexpr unsigned NumberOfRawAzimuths { 360 / AzimuthSpacing };
 
     // Interpolates by this factor to get the total number of azimuths from every azimuth loaded from resource.
-    static const unsigned InterpolationFactor;
+    static constexpr unsigned InterpolationFactor { 8 };
     
     // Total number of azimuths after interpolation.
-    static const unsigned NumberOfTotalAzimuths;
+    static constexpr unsigned NumberOfTotalAzimuths { NumberOfRawAzimuths * InterpolationFactor };
 
     // Given a specific azimuth and elevation angle, returns the left and right HRTFKernel.
     // Valid values for azimuth are 0 -> 345 in 15 degree increments.

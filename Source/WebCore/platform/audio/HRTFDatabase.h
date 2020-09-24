@@ -57,24 +57,24 @@ public:
     float sampleRate() const { return m_sampleRate; }
 
     // Number of elevations loaded from resource.
-    static const unsigned NumberOfRawElevations;
+    static const unsigned NumberOfRawElevations { 10 };
 
 private:
     // Minimum and maximum elevation angles (inclusive) for a HRTFDatabase.
-    static const int MinElevation;
-    static const int MaxElevation;
-    static const unsigned RawElevationAngleSpacing;
+    static constexpr int MinElevation { -45 };
+    static constexpr int MaxElevation { 90 };
+    static constexpr unsigned RawElevationAngleSpacing { 15 };
 
     // Interpolates by this factor to get the total number of elevations from every elevation loaded from resource.
-    static const unsigned InterpolationFactor;
+    static constexpr unsigned InterpolationFactor { 1 };
     
     // Total number of elevations after interpolation.
-    static const unsigned NumberOfTotalElevations;
+    static constexpr unsigned NumberOfTotalElevations { NumberOfRawElevations * InterpolationFactor };
 
     // Returns the index for the correct HRTFElevation given the elevation angle.
     static unsigned indexFromElevationAngle(double);
 
-    Vector<std::unique_ptr<HRTFElevation>> m_elevations;
+    Vector<std::unique_ptr<HRTFElevation>> m_elevations { NumberOfTotalElevations };
     float m_sampleRate;
 };
 

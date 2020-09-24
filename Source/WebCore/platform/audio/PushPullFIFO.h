@@ -42,9 +42,9 @@ class PushPullFIFO {
 
 public:
     // Maximum FIFO length. (512 render quanta)
-    static const size_t kMaxFIFOLength;
+    static constexpr size_t maxFIFOLength { 65536 };
 
-    // |fifoLength| cannot exceed |kMaxFIFOLength|. Otherwise it crashes.
+    // |fifoLength| cannot exceed |maxFIFOLength|. Otherwise it crashes.
     PushPullFIFO(unsigned numberOfChannels, size_t fifoLength);
     ~PushPullFIFO();
 

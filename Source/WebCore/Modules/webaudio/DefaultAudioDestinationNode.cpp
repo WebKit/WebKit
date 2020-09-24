@@ -37,7 +37,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 
-const unsigned EnabledInputChannels = 2;
+constexpr unsigned EnabledInputChannels = 2;
 
 namespace WebCore {
 

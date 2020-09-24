@@ -138,16 +138,16 @@ private:
     RefPtr<AudioBus> m_internalBus;
     RefPtr<AudioBus> m_inPlaceBus;
     // If m_isInPlace is true, use m_inPlaceBus as the valid AudioBus; If false, use the default m_internalBus.
-    bool m_isInPlace;
+    bool m_isInPlace { false };
 
     HashSet<AudioNodeInput*> m_inputs;
     typedef HashSet<AudioNodeInput*>::iterator InputsIterator;
-    bool m_isEnabled;
+    bool m_isEnabled { true };
 
     // For the purposes of rendering, keeps track of the number of inputs and AudioParams we're connected to.
     // These value should only be changed at the very start or end of the rendering quantum.
-    unsigned m_renderingFanOutCount;
-    unsigned m_renderingParamFanOutCount;
+    unsigned m_renderingFanOutCount { 0 };
+    unsigned m_renderingParamFanOutCount { 0 };
 
     HashSet<RefPtr<AudioParam>> m_params;
     typedef HashSet<RefPtr<AudioParam>>::iterator ParamsIterator;
