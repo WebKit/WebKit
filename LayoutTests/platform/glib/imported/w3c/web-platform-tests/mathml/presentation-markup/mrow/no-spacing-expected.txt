@@ -1,0 +1,51 @@
+
+FAIL Spacing inside <mfrac>. assert_less_than_equal: expected a number less than or equal to 100 but got 225
+PASS Spacing around <mfrac>. 
+FAIL Spacing inside <msub>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+PASS Spacing around <msub>. 
+FAIL Spacing inside <msup>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+PASS Spacing around <msup>. 
+FAIL Spacing inside <msubsup>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+PASS Spacing around <msubsup>. 
+FAIL Spacing inside <mmultiscripts>. assert_less_than_equal: expected a number less than or equal to 100 but got 685
+PASS Spacing around <mmultiscripts>. 
+FAIL Spacing inside <munder>. assert_less_than_equal: expected a number less than or equal to 100 but got 225
+PASS Spacing around <munder>. 
+FAIL Spacing inside <mover>. assert_less_than_equal: expected a number less than or equal to 100 but got 225
+PASS Spacing around <mover>. 
+FAIL Spacing inside <munderover>. assert_less_than_equal: expected a number less than or equal to 100 but got 225
+PASS Spacing around <munderover>. 
+FAIL Spacing inside <mroot>. assert_less_than_equal: expected a number less than or equal to 100 but got 268.0625
+FAIL Spacing around <mroot>. assert_less_than_equal: expected a number less than or equal to 100 but got 268.0625
+X
+X
+
+X
+X
+
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+
+X
+X
+X
+
+X
+X
+

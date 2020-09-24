@@ -1,0 +1,5 @@
+
+PASS mspace layout in content-editable div 
+PASS mfrac layout in content-editable div 
+This is 
+ a content editable div

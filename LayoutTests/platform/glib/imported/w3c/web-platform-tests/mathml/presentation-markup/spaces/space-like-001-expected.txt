@@ -1,0 +1,70 @@
+
+FAIL mtext is space-like assert_approx_equals: expected 25 +/- 1 but got 0
+FAIL mspace is space-like assert_approx_equals: expected 25 +/- 1 but got 0
+FAIL space-like mrow assert_approx_equals: expected 25 +/- 1 but got 0
+PASS non-space-like mrow 
+FAIL space-like mstyle assert_approx_equals: expected 25 +/- 1 but got 0
+PASS non-space-like mstyle 
+FAIL space-like mphantom assert_approx_equals: expected 25 +/- 1 but got 0
+PASS non-space-like mphantom 
+FAIL space-like mpadded assert_approx_equals: expected 25 +/- 1 but got 0
+PASS non-space-like mpadded 
+FAIL space-like merror assert_approx_equals: expected 25 +/- 1 but got 0
+PASS non-space-like merror 
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+X
+X
+

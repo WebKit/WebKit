@@ -1,3 +1,106 @@
+2020-09-24  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Update baseline and expectations after r267531
+
+        Unreviewed test gardening.
+
+        Also unified some shared expectations between GTK and WPE.
+
+        Some flakies likely to be still around in WPE. Will garden as they
+        appear in the test runs.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mpadded/legacy-orthogonal-pseudo-units-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mpadded/mpadded-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mpadded/mpadded-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mpadded/mpadded-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-baseline-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/merror-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/mrow-preferred-width-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/no-spacing-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/spacing-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-operator-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-operator-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-operator-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/empty-underover-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/space-1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/space-like-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/space-like-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/space-like-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/tables/dynamic-table-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/default-font-family-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/default-properties-on-the-math-root-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-3-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/multi-column-layout-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/scriptlevel-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/content-editable-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/integration-point-5-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002-expected.txt.
+        * platform/glib/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Renamed from LayoutTests/platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.txt.
+        * platform/glib/mathml/presentation/menclose-notation-values-expected.txt: Renamed from LayoutTests/platform/gtk/mathml/presentation/menclose-notation-values-expected.txt.
+        * platform/glib/mathml/presentation/mspace-children-expected.txt: Renamed from LayoutTests/platform/gtk/mathml/presentation/mspace-children-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Copied from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt.
+        * platform/wpe/mathml/presentation/menclose-notation-default-longdiv-expected.txt: Removed.
+        * platform/wpe/mathml/presentation/menclose-notation-values-expected.txt: Removed.
+        * platform/wpe/mathml/presentation/mspace-children-expected.txt: Removed.
+
 2020-09-24  Chris Dumez  <cdumez@apple.com>
 
         web audio api outputs silence for 302 redirected resource in safari

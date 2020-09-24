@@ -1,0 +1,16 @@
+
+PASS Operator dictionary chunk 1 - stretchy 
+FAIL Operator dictionary chunk 2 - stretchy assert_approx_equals: Stretchy property for ⌣ postfix should be 'true' expected 0 +/- 1 but got 18
+PASS Operator dictionary chunk 3 - stretchy 
+PASS Operator dictionary chunk 4 - stretchy 
+FAIL Operator dictionary chunk 5 - stretchy assert_approx_equals: Stretchy property for 𞻰 postfix should be 'true' expected 27.75 +/- 1 but got 66.75
+stretchy for "⌣" (postfix): 
+⌣
+ VS 
+⌣
+stretchy for "𞻰" (postfix): 
+  
+𞻰
+ VS 
+  
+𞻰

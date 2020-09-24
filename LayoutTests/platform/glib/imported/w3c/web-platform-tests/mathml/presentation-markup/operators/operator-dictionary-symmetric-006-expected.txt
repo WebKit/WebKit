@@ -1,0 +1,11 @@
+
+FAIL Operator dictionary chunk 1 - symmetric assert_approx_equals: Symmetric property for ‖ postfix should be 'true' expected 127.0625 +/- 1 but got 75
+PASS Operator dictionary chunk 2 - symmetric 
+PASS Operator dictionary chunk 3 - symmetric 
+PASS Operator dictionary chunk 4 - symmetric 
+PASS Operator dictionary chunk 5 - symmetric 
+symmetric for "‖" (postfix): 
+‖
+ VS 
+‖
+

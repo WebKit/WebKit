@@ -1,0 +1,29 @@
+
+PASS Spacing around ≠ 
+PASS Spacing around =⃒ 
+FAIL Spacing around |̸ assert_approx_equals: expected 21.09375 +/- 1 but got 37.75
+FAIL Spacing around |⃒ assert_approx_equals: expected 21.09375 +/- 1 but got 40.75
+ 
+=
+ 
+
+ 
+≠
+ 
+
+ 
+=⃒
+ 
+
+ 
+|
+ 
+
+ 
+|̸
+ 
+
+ 
+|⃒
+ 
+

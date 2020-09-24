@@ -329,6 +329,8 @@ webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 webkit.org/b/215217 [ Debug ] mathml/opentype/munderover-layout-resize.html [ Crash ]
 webkit.org/b/215217 [ Debug ] mathml/presentation/mo-invisible.html [ Crash ]
 
+webkit.org/b/216871 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.tentative.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of MathML-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

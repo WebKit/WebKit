@@ -1,0 +1,46 @@
+
+FAIL Margin properties on the children of menclose The object can not be modified.
+FAIL Margin properties on the children of merror The object can not be modified.
+FAIL Margin properties on the children of mfrac The object can not be modified.
+FAIL Margin properties on the children of mmultiscripts The object can not be modified.
+FAIL Margin properties on the children of mover The object can not be modified.
+FAIL Margin properties on the children of mpadded The object can not be modified.
+FAIL Margin properties on the children of mphantom The object can not be modified.
+FAIL Margin properties on the children of mroot The object can not be modified.
+FAIL Margin properties on the children of mrow The object can not be modified.
+FAIL Margin properties on the children of msqrt The object can not be modified.
+FAIL Margin properties on the children of mstyle The object can not be modified.
+FAIL Margin properties on the children of msub The object can not be modified.
+FAIL Margin properties on the children of msubsup The object can not be modified.
+FAIL Margin properties on the children of msup The object can not be modified.
+FAIL Margin properties on the children of munder The object can not be modified.
+FAIL Margin properties on the children of munderover The object can not be modified.
+a
+
+a
+a
+
+a
+
+
+
+a
+
+a
+
+
+a
+
+a
+a
+
+a
+a
+
+a
+
+
+
+
+
+
