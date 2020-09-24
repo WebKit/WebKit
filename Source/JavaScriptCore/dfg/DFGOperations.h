@@ -303,8 +303,6 @@ int64_t JIT_OPERATION operationConvertDoubleToInt52(double);
 
 size_t JIT_OPERATION operationNumberIsInteger(JSGlobalObject*, EncodedJSValue);
 
-size_t JIT_OPERATION operationDefaultHasInstance(JSGlobalObject*, JSCell* value, JSCell* proto);
-
 char* JIT_OPERATION operationNewRawObject(VM*, Structure*, int32_t, Butterfly*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewObjectWithButterfly(VM*, Structure*, Butterfly*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(VM*, Structure*, unsigned length, Butterfly*) WTF_INTERNAL;

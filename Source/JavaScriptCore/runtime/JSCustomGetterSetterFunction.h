@@ -56,16 +56,14 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    CustomGetterSetter* customGetterSetter() const { return m_getterSetter.get(); }
+    bool isSetter() const { return m_type == Type::Setter; }
+    const PropertyName& propertyName() const { return m_propertyName; }
+
 private:
     JSCustomGetterSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, Type, const PropertyName&);
     void finishCreation(VM&, NativeExecutable*, CustomGetterSetter*, const String&);
     static void visitChildren(JSCell*, SlotVisitor&);
-
-    static EncodedJSValue JSC_HOST_CALL customGetterSetterFunctionCall(JSGlobalObject*, CallFrame*);
-
-    CustomGetterSetter* customGetterSetter() const { return m_getterSetter.get(); }
-    bool isSetter() const { return m_type == Type::Setter; }
-    const PropertyName& propertyName() const { return m_propertyName; }
 
     WriteBarrier<CustomGetterSetter> m_getterSetter;
     Type m_type;

@@ -35,6 +35,8 @@ namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL callArrayBuffer(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL constructSharedArrayBuffer(JSGlobalObject*, CallFrame*);
 
 template<>
 const ClassInfo JSArrayBufferConstructor::s_info = {
@@ -50,7 +52,7 @@ const ClassInfo JSSharedArrayBufferConstructor::s_info = {
 
 template<ArrayBufferSharingMode sharingMode>
 JSGenericArrayBufferConstructor<sharingMode>::JSGenericArrayBufferConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure, callArrayBuffer, JSGenericArrayBufferConstructor<sharingMode>::constructArrayBuffer)
+    : Base(vm, structure, callArrayBuffer, sharingMode == ArrayBufferSharingMode::Default ? constructArrayBuffer : constructSharedArrayBuffer)
 {
 }
 
@@ -69,7 +71,7 @@ void JSGenericArrayBufferConstructor<sharingMode>::finishCreation(VM& vm, JSArra
 }
 
 template<ArrayBufferSharingMode sharingMode>
-EncodedJSValue JSC_HOST_CALL JSGenericArrayBufferConstructor<sharingMode>::constructArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
+EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -120,6 +122,16 @@ static EncodedJSValue JSC_HOST_CALL callArrayBuffer(JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "ArrayBuffer"));
+}
+
+static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    return JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Default>::constructImpl(globalObject, callFrame);
+}
+
+static EncodedJSValue JSC_HOST_CALL constructSharedArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    return JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Shared>::constructImpl(globalObject, callFrame);
 }
 
 // ------------------------------ Functions --------------------------------

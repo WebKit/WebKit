@@ -52,6 +52,16 @@ static JSObjectRef callAsConstructor(JSContextRef callerContext, JSObjectRef con
 
 const ClassInfo JSCCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCCallbackFunction) };
 
+static EncodedJSValue JSC_HOST_CALL callJSCCallbackFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    return APICallbackFunction::callImpl<JSCCallbackFunction>(globalObject, callFrame);
+}
+
+static EncodedJSValue JSC_HOST_CALL constructJSCCallbackFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    return APICallbackFunction::constructImpl<JSCCallbackFunction>(globalObject, callFrame);
+}
+
 JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, const String& name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, Optional<Vector<GType>>&& parameters)
 {
     Structure* structure = globalObject->glibCallbackFunctionStructure();
@@ -61,7 +71,7 @@ JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalO
 }
 
 JSCCallbackFunction::JSCCallbackFunction(VM& vm, Structure* structure, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, Optional<Vector<GType>>&& parameters)
-    : InternalFunction(vm, structure, APICallbackFunction::call<JSCCallbackFunction>, type == Type::Constructor ? APICallbackFunction::construct<JSCCallbackFunction> : nullptr)
+    : InternalFunction(vm, structure, callJSCCallbackFunction, type == Type::Constructor ? constructJSCCallbackFunction : nullptr)
     , m_functionCallback(callAsFunction)
     , m_constructCallback(callAsConstructor)
     , m_type(type)

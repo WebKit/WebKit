@@ -1495,30 +1495,30 @@ public:
 };
 
 
-static EncodedJSValue customGetAccessor(JSGlobalObject*, EncodedJSValue thisValue, PropertyName)
+static EncodedJSValue JIT_OPERATION customGetAccessor(JSGlobalObject*, EncodedJSValue thisValue, PropertyName)
 {
     // Passed |this|
     return thisValue;
 }
 
-static EncodedJSValue customGetValue(JSGlobalObject* globalObject, EncodedJSValue slotValue, PropertyName)
+static EncodedJSValue JIT_OPERATION customGetValue(JSGlobalObject* globalObject, EncodedJSValue slotValue, PropertyName)
 {
     RELEASE_ASSERT(JSValue::decode(slotValue).inherits<JSTestCustomGetterSetter>(globalObject->vm()));
     // Passed property holder.
     return slotValue;
 }
 
-static EncodedJSValue customGetAccessorGlobalObject(JSGlobalObject* globalObject, EncodedJSValue, PropertyName)
+static EncodedJSValue JIT_OPERATION customGetAccessorGlobalObject(JSGlobalObject* globalObject, EncodedJSValue, PropertyName)
 {
     return JSValue::encode(globalObject);
 }
 
-static EncodedJSValue customGetValueGlobalObject(JSGlobalObject* globalObject, EncodedJSValue, PropertyName)
+static EncodedJSValue JIT_OPERATION customGetValueGlobalObject(JSGlobalObject* globalObject, EncodedJSValue, PropertyName)
 {
     return JSValue::encode(globalObject);
 }
 
-static bool customSetAccessor(JSGlobalObject* globalObject, EncodedJSValue thisObject, EncodedJSValue encodedValue)
+static bool JIT_OPERATION customSetAccessor(JSGlobalObject* globalObject, EncodedJSValue thisObject, EncodedJSValue encodedValue)
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
@@ -1532,7 +1532,7 @@ static bool customSetAccessor(JSGlobalObject* globalObject, EncodedJSValue thisO
     return true;
 }
 
-static bool customSetValue(JSGlobalObject* globalObject, EncodedJSValue slotValue, EncodedJSValue encodedValue)
+static bool JIT_OPERATION customSetValue(JSGlobalObject* globalObject, EncodedJSValue slotValue, EncodedJSValue encodedValue)
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
@@ -1548,7 +1548,7 @@ static bool customSetValue(JSGlobalObject* globalObject, EncodedJSValue slotValu
     return true;
 }
 
-static bool customFunctionSetter(JSGlobalObject* globalObject, EncodedJSValue, EncodedJSValue encodedValue)
+static bool JIT_OPERATION customFunctionSetter(JSGlobalObject* globalObject, EncodedJSValue, EncodedJSValue encodedValue)
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();

@@ -33,7 +33,7 @@ namespace JSC {
 
 const ClassInfo JSCustomGetterSetterFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCustomGetterSetterFunction) };
 
-EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFunctionCall(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL customGetterSetterFunctionCall(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

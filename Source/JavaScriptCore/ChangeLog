@@ -1,3 +1,91 @@
+2020-09-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Simply some of template-specialized host functions by defining each function
+        https://bugs.webkit.org/show_bug.cgi?id=216907
+
+        Reviewed by Saam Barati.
+
+        This makes automatically-registering these functions in JIT-caging easy.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::callImpl):
+        (JSC::APICallbackFunction::constructImpl):
+        (JSC::APICallbackFunction::call): Deleted.
+        (JSC::APICallbackFunction::construct): Deleted.
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallbackConstructor):
+        (JSC::JSCallbackConstructor::getConstructData):
+        * API/JSCallbackFunction.cpp:
+        (JSC::callJSCallbackFunction):
+        (JSC::JSCallbackFunction::JSCallbackFunction):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::callObjCCallbackFunction):
+        (JSC::constructObjCCallbackFunction):
+        (JSC::ObjCCallbackFunction::ObjCCallbackFunction):
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::callJSCCallbackFunction):
+        (JSC::constructJSCCallbackFunction):
+        (JSC::JSCCallbackFunction::JSCCallbackFunction):
+        * dfg/DFGOperations.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (accessorMakeMasquerader):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::JSGenericArrayBufferConstructor):
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::constructImpl):
+        (JSC::constructArrayBuffer):
+        (JSC::constructSharedArrayBuffer):
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::constructArrayBuffer): Deleted.
+        * runtime/JSArrayBufferConstructor.h:
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::customGetterSetterFunctionCall):
+        (JSC::JSCustomGetterSetterFunction::customGetterSetterFunctionCall): Deleted.
+        * runtime/JSCustomGetterSetterFunction.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructImpl):
+        (JSC::NativeErrorConstructor<errorType>::callImpl):
+        (JSC::callEvalError):
+        (JSC::constructEvalError):
+        (JSC::callRangeError):
+        (JSC::constructRangeError):
+        (JSC::callReferenceError):
+        (JSC::constructReferenceError):
+        (JSC::callSyntaxError):
+        (JSC::constructSyntaxError):
+        (JSC::callTypeError):
+        (JSC::constructTypeError):
+        (JSC::callURIError):
+        (JSC::constructURIError):
+        (JSC::callFunction):
+        (JSC::constructFunction):
+        (JSC::NativeErrorConstructor<errorType>::NativeErrorConstructor):
+        (JSC::NativeErrorConstructorBase::finishCreation):
+        (JSC::NativeErrorConstructor<errorType>::constructNativeErrorConstructor): Deleted.
+        (JSC::NativeErrorConstructor<errorType>::callNativeErrorConstructor): Deleted.
+        * runtime/NativeErrorConstructor.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::regExpConstructorDollarImpl):
+        (JSC::regExpConstructorDollar1):
+        (JSC::regExpConstructorDollar2):
+        (JSC::regExpConstructorDollar3):
+        (JSC::regExpConstructorDollar4):
+        (JSC::regExpConstructorDollar5):
+        (JSC::regExpConstructorDollar6):
+        (JSC::regExpConstructorDollar7):
+        (JSC::regExpConstructorDollar8):
+        (JSC::regExpConstructorDollar9):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+        (JSC::regExpConstructorDollar): Deleted.
+        * tools/JSDollarVM.cpp:
+
 2020-09-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Update Array.prototype.sort to be consistent with tightened spec

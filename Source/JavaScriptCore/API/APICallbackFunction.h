@@ -35,14 +35,12 @@
 namespace JSC {
 
 struct APICallbackFunction {
-
-template <typename T> static EncodedJSValue JSC_HOST_CALL call(JSGlobalObject*, CallFrame*);
-template <typename T> static EncodedJSValue JSC_HOST_CALL construct(JSGlobalObject*, CallFrame*);
-
+    template <typename T> static EncodedJSValue callImpl(JSGlobalObject*, CallFrame*);
+    template <typename T> static EncodedJSValue constructImpl(JSGlobalObject*, CallFrame*);
 };
 
 template <typename T>
-EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(JSGlobalObject* globalObject, CallFrame* callFrame)
+EncodedJSValue APICallbackFunction::callImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -75,7 +73,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(JSGlobalObject* globalObj
 }
 
 template <typename T>
-EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* globalObject, CallFrame* callFrame)
+EncodedJSValue APICallbackFunction::constructImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);

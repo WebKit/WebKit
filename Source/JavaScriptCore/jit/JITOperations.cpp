@@ -2110,16 +2110,6 @@ void JIT_OPERATION operationPutGetterSetter(JSGlobalObject* globalObject, JSCell
 }
 #endif
 
-void JIT_OPERATION operationPopScope(JSGlobalObject* globalObject, int32_t scopeReg)
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-
-    auto& scopeSlot = callFrame->uncheckedR(VirtualRegister(scopeReg));
-    scopeSlot = scopeSlot.Register::scope()->next();
-}
-
 size_t JIT_OPERATION operationInstanceOfCustom(JSGlobalObject* globalObject, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance)
 {
     VM& vm = globalObject->vm();

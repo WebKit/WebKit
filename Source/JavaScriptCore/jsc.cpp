@@ -455,6 +455,12 @@ static inline String stringFromUTF(const Vector& utf8)
     return String::fromUTF8WithLatin1Fallback(utf8.data(), utf8.size());
 }
 
+static EncodedJSValue JIT_OPERATION accessorMakeMasquerader(JSGlobalObject* globalObject, EncodedJSValue, PropertyName)
+{
+    VM& vm = globalObject->vm();
+    return JSValue::encode(InternalFunction::createFunctionThatMasqueradesAsUndefined(vm, globalObject, 0, "IsHTMLDDA"_s, functionCallMasquerader));
+}
+
 class GlobalObject final : public JSGlobalObject {
 public:
     using Base = JSGlobalObject;
@@ -606,9 +612,7 @@ private:
         
         dollar->putDirect(vm, Identifier::fromString(vm, "global"), this, DontEnum);
         dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"),
-            CustomGetterSetter::create(vm, [](JSGlobalObject* globalObject, EncodedJSValue, PropertyName) {
-                return functionMakeMasquerader(globalObject, nullptr);
-            }, nullptr),
+            CustomGetterSetter::create(vm, accessorMakeMasquerader, nullptr),
             static_cast<unsigned>(PropertyAttribute::CustomValue)
         );
 
@@ -664,7 +668,7 @@ private:
         return true;
     }
 
-    static bool testCustomAccessorSetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+    static bool JIT_OPERATION testCustomAccessorSetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
     {
         VM& vm = lexicalGlobalObject->vm();
         RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
@@ -675,7 +679,7 @@ private:
         return testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomAccessorSetter");
     }
 
-    static bool testCustomValueSetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+    static bool JIT_OPERATION testCustomValueSetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
     {
         VM& vm = lexicalGlobalObject->vm();
         RELEASE_ASSERT(JSValue::decode(thisValue).isCell());

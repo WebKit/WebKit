@@ -255,7 +255,6 @@ void JIT_OPERATION operationPutGetterSetter(JSGlobalObject*, JSCell*, UniquedStr
 void JIT_OPERATION operationPutGetterSetter(JSGlobalObject*, JSCell*, UniquedStringImpl*, int32_t attribute, JSCell*, JSCell*) WTF_INTERNAL;
 #endif
 void JIT_OPERATION operationPushFunctionNameScope(JSGlobalObject*, int32_t, SymbolTable*, EncodedJSValue) WTF_INTERNAL;
-void JIT_OPERATION operationPopScope(JSGlobalObject*, int32_t) WTF_INTERNAL;
 
 EncodedJSValue JIT_OPERATION operationGetByValOptimize(JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValGeneric(JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;

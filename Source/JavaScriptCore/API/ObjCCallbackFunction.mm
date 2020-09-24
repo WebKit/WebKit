@@ -535,8 +535,18 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
 
 const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
 
+static EncodedJSValue JSC_HOST_CALL callObjCCallbackFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    return APICallbackFunction::callImpl<ObjCCallbackFunction>(globalObject, callFrame);
+}
+
+static EncodedJSValue JSC_HOST_CALL constructObjCCallbackFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    return APICallbackFunction::constructImpl<ObjCCallbackFunction>(globalObject, callFrame);
+}
+
 ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::Structure* structure, JSObjectCallAsFunctionCallback functionCallback, JSObjectCallAsConstructorCallback constructCallback, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
-    : Base(vm, structure, APICallbackFunction::call<ObjCCallbackFunction>, impl->isConstructible() ? APICallbackFunction::construct<ObjCCallbackFunction> : nullptr)
+    : Base(vm, structure, callObjCCallbackFunction, impl->isConstructible() ? constructObjCCallbackFunction : nullptr)
     , m_functionCallback(functionCallback)
     , m_constructCallback(constructCallback)
     , m_impl(WTFMove(impl))

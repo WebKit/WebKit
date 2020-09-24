@@ -51,11 +51,11 @@ public:
     static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
     static const ClassInfo* info();
 
+    static EncodedJSValue constructImpl(JSGlobalObject*, CallFrame*);
+
 private:
     JSGenericArrayBufferConstructor(VM&, Structure*);
     void finishCreation(VM&, JSArrayBufferPrototype*, GetterSetter* speciesSymbol);
-
-    static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(JSGlobalObject*, CallFrame*);
 };
 
 using JSArrayBufferConstructor = JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Default>;
