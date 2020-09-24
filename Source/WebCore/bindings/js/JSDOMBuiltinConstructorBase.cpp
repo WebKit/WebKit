@@ -42,7 +42,6 @@ void JSDOMBuiltinConstructorBase::callFunctionWithCurrentArguments(JSC::JSGlobal
         throwOutOfMemoryError(&lexicalGlobalObject, scope);
         return;
     }
-    scope.release();
     JSC::call(&lexicalGlobalObject, &function, callData, &thisObject, arguments);
 }
 
