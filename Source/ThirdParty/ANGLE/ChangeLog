@@ -1,3 +1,36 @@
+2020-09-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION: Textures Fail to Render in WebGL from HLS Stream [iOS 14]
+        https://bugs.webkit.org/show_bug.cgi?id=215908
+        <rdar://problem/68000962>
+
+        Reviewed by Dean Jackson.
+
+        Disable ANGLE workers until EAGL implementation is more complete.
+        Current implementation fails to compile any shader, since the
+        compilation happens in the worker thread and worker EAGL context
+        which does not use the same sharegroup as the main context.
+        The shader objects are created in the main context but the shader
+        source setting and compilation happens in the worker context.
+        EAGL needs a flush between state changes, and adding that
+        correctly is a bigger change to be done later.
+
+        Use sized formats when calling [EAGLContext -texImageIOSurface]
+        from EGL_ANGLE_iosurface_client_buffer code. The texImageIOSurface
+        accepts parameters with glTexImage2D logic. On ES3, some of the
+        internal formats must be sized formats. The EAGLContext instantiated
+        by ANGLE is ES3, even if the ANGLE context would be ES2.
+
+        No tests added since this should be caught with the many video
+        related tests. It's unclear why this is not the case -- at
+        least on real hw. This is to be investigated later, too.
+
+        * src/libANGLE/renderer/driver_utils.h:
+        (rx::IsIOS):
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm:
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+
 2020-09-11  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Support EXT_color_buffer_half_float on WebGL 2.0 contexts
