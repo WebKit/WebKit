@@ -181,7 +181,6 @@ private:
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     bool m_isVisuallyEmpty { true };
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent;
-    bool m_shouldIgnoreTrailingLetterSpacing { false };
 };
 
 inline void Line::TrimmableTrailingContent::reset()

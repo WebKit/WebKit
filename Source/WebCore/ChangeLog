@@ -1,3 +1,22 @@
+2020-09-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Line layout logic should consult LayoutState whether remove trailing letter spacing.
+        https://bugs.webkit.org/show_bug.cgi?id=216905
+
+        Reviewed by Sam Weinig.
+
+        This is in preparation for completely moving away from the RuntimeEnabledFeatures check. 
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::shouldIgnoreTrailingLetterSpacing const):
+        * layout/LayoutState.h:
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/inlineformatting/InlineLine.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem):
+
 2020-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         [LFC Display] Add the beginnings of a CSS display box hierarchy and CSS painter

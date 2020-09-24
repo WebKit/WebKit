@@ -239,6 +239,11 @@ void LayoutState::setIsIntegratedRootBoxFirstChild(bool value)
     m_isIntegratedRootBoxFirstChild = value ? IsIntegratedRootBoxFirstChild::Yes : IsIntegratedRootBoxFirstChild::No;
 }
 
+bool LayoutState::shouldIgnoreTrailingLetterSpacing() const
+{
+    return RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled();
+}
+
 }
 }
 

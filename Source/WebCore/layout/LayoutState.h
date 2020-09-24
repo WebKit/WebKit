@@ -92,6 +92,7 @@ public:
     enum IsIntegratedRootBoxFirstChild { Yes, No, NotApplicable };
     IsIntegratedRootBoxFirstChild isIntegratedRootBoxFirstChild() const { return m_isIntegratedRootBoxFirstChild; }
     void setIsIntegratedRootBoxFirstChild(bool);
+    bool shouldIgnoreTrailingLetterSpacing() const;
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }

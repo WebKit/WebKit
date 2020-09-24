@@ -31,7 +31,6 @@
 #include "InlineFormattingContext.h"
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutBoxGeometry.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TextFlags.h"
 #include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
@@ -48,7 +47,6 @@ static inline bool isWhitespacePreserved(const RenderStyle& style)
 Line::Line(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_trimmableTrailingContent(m_runs)
-    , m_shouldIgnoreTrailingLetterSpacing(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
 {
 }
 
@@ -317,7 +315,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     }
     // Any non-whitespace, no-trimmable content resets the existing trimmable.
     m_trimmableTrailingContent.reset();
-    if (!m_shouldIgnoreTrailingLetterSpacing && !inlineTextItem.isWhitespace() && inlineTextItem.style().letterSpacing() > 0)
+    if (!formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing() && !inlineTextItem.isWhitespace() && inlineTextItem.style().letterSpacing() > 0)
         m_trimmableTrailingContent.addPartiallyTrimmableContent(m_runs.size() - 1, logicalWidth);
 }
 

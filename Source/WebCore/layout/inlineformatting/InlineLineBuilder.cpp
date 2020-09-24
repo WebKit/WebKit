@@ -33,7 +33,6 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutState.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 
 namespace WebCore {
@@ -177,9 +176,13 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, size_
 }
 
 struct LineCandidate {
+    LineCandidate(bool ignoreTrailingLetterSpacing);
+
     void reset();
 
     struct InlineContent {
+        InlineContent(bool ignoreTrailingLetterSpacing);
+
         const LineBreaker::RunList& runs() const { return m_inlineRuns; }
         InlineLayoutUnit logicalWidth() const { return m_LogicalWidth; }
         InlineLayoutUnit collapsibleTrailingWidth() const { return m_collapsibleTrailingWidth; }
@@ -192,6 +195,7 @@ struct LineCandidate {
     private:
         void setTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
 
+        bool m_ignoreTrailingLetterSpacing { false };
         InlineLayoutUnit m_LogicalWidth { 0 };
         InlineLayoutUnit m_collapsibleTrailingWidth { 0 };
         LineBreaker::RunList m_inlineRuns;
@@ -221,6 +225,16 @@ struct LineCandidate {
     FloatContent floatContent;
 };
 
+LineCandidate::LineCandidate(bool ignoreTrailingLetterSpacing)
+    : inlineContent(ignoreTrailingLetterSpacing)
+{
+}
+
+LineCandidate::InlineContent::InlineContent(bool ignoreTrailingLetterSpacing)
+    : m_ignoreTrailingLetterSpacing(ignoreTrailingLetterSpacing)
+{
+}
+
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     m_LogicalWidth += logicalWidth;
@@ -241,7 +255,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
     }
 
     auto partiallyCollapsibleTrailingWidth = [&]() -> InlineLayoutUnit {
-        if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+        if (m_ignoreTrailingLetterSpacing)
             return { };
         if (!inlineItem.isText())
             return { };
@@ -363,7 +377,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints)
 
 LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, Optional<unsigned> partialLeadingContentLength)
 {
-    auto lineCandidate = LineCandidate { };
+    auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
     auto lineBreaker = LineBreaker { };
 
     auto currentItemIndex = needsLayoutRange.start;
