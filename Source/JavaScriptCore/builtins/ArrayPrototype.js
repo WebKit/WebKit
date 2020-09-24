@@ -320,105 +320,54 @@ function sort(comparator)
         var aString = a.string;
         var bString = b.string;
 
-        var aLength = aString.length;
-        var bLength = bString.length;
-        var length = min(aLength, bLength);
+        if (aString === bString)
+            return 0;
 
-        for (var i = 0; i < length; ++i) {
-            var aCharCode = aString.@charCodeAt(i);
-            var bCharCode = bString.@charCodeAt(i);
-
-            if (aCharCode == bCharCode)
-                continue;
-
-            return aCharCode - bCharCode;
-        }
-
-        return aLength - bLength;
+        return aString > bString ? 1 : -1;
     }
 
-    // Move undefineds and holes to the end of a sparse array. Result is [values..., undefineds..., holes...].
-    function compactSparse(array, dst, src, length)
+    function compact(receiver, receiverLength, compacted, isStringSort)
     {
-        var values = [ ];
-        var seen = { };
-        var valueCount = 0;
         var undefinedCount = 0;
+        var compactedIndex = 0;
 
-        // Clean up after the in-progress non-sparse compaction that failed.
-        for (var i = dst; i < src; ++i)
-            delete array[i];
-
-        for (var object = array; object; object = @Object.@getPrototypeOf(object)) {
-            var propertyNames = @Object.@getOwnPropertyNames(object);
-            for (var i = 0; i < propertyNames.length; ++i) {
-                var index = propertyNames[i];
-                if (index < length) { // Exclude non-numeric properties and properties past length.
-                    if (seen[index]) // Exclude duplicates.
-                        continue;
-                    seen[index] = 1;
-
-                    var value = array[index];
-                    delete array[index];
-
-                    if (value === @undefined) {
-                        ++undefinedCount;
-                        continue;
-                    }
-
-                    array[valueCount++] = value;
+        for (var i = 0; i < receiverLength; ++i) {
+            if (i in receiver) {
+                var value = receiver[i];
+                if (value === @undefined)
+                    ++undefinedCount;
+                else {
+                    @putByValDirect(compacted, compactedIndex, 
+                        isStringSort ? {string: @toString(value), value} : value);
+                    ++compactedIndex;
                 }
             }
         }
 
-        for (var i = valueCount; i < valueCount + undefinedCount; ++i)
-            array[i] = @undefined;
-
-        return valueCount;
-    }
-
-    function compactSlow(array, length)
-    {
-        var holeCount = 0;
-
-        var dst = 0;
-        var src = 0;
-        for (; src < length; ++src) {
-            if (!(src in array)) {
-                ++holeCount;
-                if (holeCount < 256)
-                    continue;
-                return compactSparse(array, dst, src, length);
-            }
-
-            var value = array[src];
-            if (value === @undefined)
-                continue;
-
-            array[dst++] = value;
-        }
-
-        var valueCount = dst;
-        var undefinedCount = length - valueCount - holeCount;
-
-        for (var i = valueCount; i < valueCount + undefinedCount; ++i)
-            array[i] = @undefined;
-
-        for (var i = valueCount + undefinedCount; i < length; ++i)
-            delete array[i];
-
-        return valueCount;
+        return undefinedCount;
     }
 
     // Move undefineds and holes to the end of an array. Result is [values..., undefineds..., holes...].
-    function compact(array, length)
+    function commit(receiver, receiverLength, sorted, undefinedCount)
     {
-        for (var i = 0; i < array.length; ++i) {
-            if (array[i] === @undefined)
-                return compactSlow(array, length);
+        @assert(@isJSArray(sorted));
+        var sortedLength = sorted.length;
+        @assert(sortedLength + undefinedCount <= receiverLength);
+
+        var i = 0;
+        if (@isJSArray(receiver) && sortedLength >= 64 && typeof sorted[0] !== "number") { // heuristic
+            @appendMemcpy(receiver, sorted, 0);
+            i = sortedLength;
+        } else {
+            for (; i < sortedLength; ++i)
+                receiver[i] = sorted[i];
         }
 
-        return length;
+        for (; i < sortedLength + undefinedCount; ++i)
+            receiver[i] = @undefined;
+
+        for (; i < receiverLength; ++i)
+            delete receiver[i];
     }
 
     function merge(dst, src, srcIndex, srcEnd, width, comparator)
@@ -431,26 +380,30 @@ function sort(comparator)
         for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
             if (right < rightEnd) {
                 if (left >= leftEnd) {
-                    dst[dstIndex] = src[right++];
+                    @putByValDirect(dst, dstIndex, src[right]);
+                    ++right;
                     continue;
                 }
 
+                // See https://bugs.webkit.org/show_bug.cgi?id=47825 on boolean special-casing
                 var comparisonResult = comparator(src[right], src[left]);
-                if ((typeof comparisonResult === "boolean" && !comparisonResult) || comparisonResult < 0) {
-                    dst[dstIndex] = src[right++];
+                if (comparisonResult === false || comparisonResult < 0) {
+                    @putByValDirect(dst, dstIndex, src[right]);
+                    ++right;
                     continue;
                 }
 
             }
 
-            dst[dstIndex] = src[left++];
+            @putByValDirect(dst, dstIndex, src[left]);
+            ++left;
         }
     }
 
-    function mergeSort(array, valueCount, comparator)
+    function mergeSort(array, comparator)
     {
-        var buffer = [ ];
-        buffer.length = valueCount;
+        var valueCount = array.length;
+        var buffer = @newArrayWithSize(valueCount);
 
         var dst = buffer;
         var src = array;
@@ -463,18 +416,17 @@ function sort(comparator)
             dst = tmp;
         }
 
-        if (src != array) {
-            for(var i = 0; i < valueCount; i++)
-                array[i] = src[i];
-        }
+        return src;
     }
 
     function bucketSort(array, dst, bucket, depth)
     {
         if (bucket.length < 32 || depth > 32) {
-            mergeSort(bucket, bucket.length, stringComparator);
-            for (var i = 0; i < bucket.length; ++i)
-                array[dst++] = bucket[i].value;
+            var sorted = mergeSort(bucket, stringComparator);
+            for (var i = 0; i < sorted.length; ++i) {
+                @putByValDirect(array, dst, sorted[i].value);
+                ++dst;
+            }
             return dst;
         }
 
@@ -483,14 +435,17 @@ function sort(comparator)
             var entry = bucket[i];
             var string = entry.string;
             if (string.length == depth) {
-                array[dst++] = entry.value;
+                @putByValDirect(array, dst, entry.value);
+                ++dst;
                 continue;
             }
 
             var c = string.@charCodeAt(depth);
-            if (!buckets[c])
-                buckets[c] = [ ];
-            buckets[c][buckets[c].length] = entry;
+            var cBucket = buckets[c];
+            if (cBucket)
+                @putByValDirect(cBucket, cBucket.length, entry);
+            else
+                @putByValDirect(buckets, c, [ entry ]);
         }
 
         for (var i = 0; i < buckets.length; ++i) {
@@ -502,42 +457,32 @@ function sort(comparator)
         return dst;
     }
 
-    function comparatorSort(array, length, comparator)
-    {
-        var valueCount = compact(array, length);
-        mergeSort(array, valueCount, comparator);
-    }
+    var isStringSort = false;
+    if (comparator === @undefined)
+        isStringSort = true;
+    else if (!@isCallable(comparator))
+        @throwTypeError("Array.prototype.sort requires the comparator argument to be a function or undefined");
 
-    function stringSort(array, length)
-    {
-        var valueCount = compact(array, length);
-
-        var strings = @newArrayWithSize(valueCount);
-        for (var i = 0; i < valueCount; ++i)
-            strings[i] = { string: @toString(array[i]), value: array[i] };
-
-        bucketSort(array, 0, strings, 0);
-    }
-
-    var sortFunction;
-    if (@isCallable(comparator))
-        sortFunction = comparatorSort;
-    else if (comparator === @undefined)
-        sortFunction = stringSort;
-    else
-        @throwTypeError("Array.prototype.sort requires the comparsion function be a function or undefined");
-
-    var array = @toObject(this, "Array.prototype.sort requires that |this| not be null or undefined");
-
-    var length = @toLength(array.length);
+    var receiver = @toObject(this, "Array.prototype.sort requires that |this| not be null or undefined");
+    var receiverLength = @toLength(receiver.length);
 
     // For compatibility with Firefox and Chrome, do nothing observable
     // to the target array if it has 0 or 1 sortable properties.
-    if (length < 2)
-        return array;
+    if (receiverLength < 2)
+        return receiver;
 
-    sortFunction(array, length, comparator);
-    return array;
+    var compacted = [ ];
+    var sorted = null;
+    var undefinedCount = compact(receiver, receiverLength, compacted, isStringSort);
+
+    if (isStringSort) {
+        sorted = @newArrayWithSize(compacted.length);
+        bucketSort(sorted, 0, compacted, 0);
+    } else
+        sorted = mergeSort(compacted, comparator);
+
+    commit(receiver, receiverLength, sorted, undefinedCount);
+    return receiver;
 }
 
 @globalPrivate

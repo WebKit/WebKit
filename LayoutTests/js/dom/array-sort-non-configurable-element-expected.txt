@@ -1,0 +1,5 @@
+PASS array.sort() threw exception TypeError: Unable to delete property..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+.sort(comparator) 0-length array:
+get [0]
+undefined
+.sort() 1-length array:
+get [0]
+set [0] with bar
+get [0]
+bar,undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

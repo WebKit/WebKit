@@ -1,0 +1,6 @@
+.sort():
+a,b,c,d,foo,undefined,undefined,hole
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

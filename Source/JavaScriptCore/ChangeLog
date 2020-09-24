@@ -1,3 +1,62 @@
+2020-09-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Update Array.prototype.sort to be consistent with tightened spec
+        https://bugs.webkit.org/show_bug.cgi?id=202582
+
+        Reviewed by Yusuke Suzuki and Keith Miller.
+
+        This patch implements the spec change [1] that reduces amount of cases resulting
+        in an implementation-defined sort order, aligning JSC with V8 and SpiderMonkey.
+
+        To achieve this, we collect all existing non-undefined receiver elements to a
+        temporary array, sort it, and write back sorted items, followed by `undefined`
+        values and holes.
+
+        This change is proven to be web-compatible (shipping since Chrome 76) and neutral
+        on peak memory consumption in the wild.
+
+        Although we can unobservably detect sparse receivers, we can't avoid creating a
+        temporary array for common case since userland comparators may throw; string
+        sorting won't measurably benefit from this, only increasing code complexity.
+
+        This change uses @putByValDirect unless the spec requires [[Set]], avoids using
+        closure variables, and adds a few drive-by optimizations, resulting in ~22%
+        faster string sorting and 13% speed-up for userland comparators.
+        Dromaeo/jslib is neutral.
+
+        [1]: https://github.com/tc39/ecma262/pull/1585
+
+        * builtins/ArrayPrototype.js:
+        (sort.stringComparator):
+        Optimization #1: replace char-by-char comparison loop with > operator, aligning
+        JSC with V8 and SpiderMonkey. This semantically equivalent change alone is a ~15%
+        progression for string sort.
+
+        (sort.compact):
+        (sort.commit):
+        Optimization #2: copy large non-numeric arrays in a loop rather than @appendMemcpy.
+        Using the latter unconditionally regresses provided microbenchmarks.
+
+        (sort.merge):
+        Optimization #3: replace `typeof` check and negation with strict equality.
+
+        (sort.mergeSort):
+        Optimization #4: always return sorted array instead of copying, even if it's the buffer.
+        Tweak: create the buffer with correct length.
+
+        (sort.bucketSort):
+        Optimization #5: avoid emitting 2 extra get_by_val ops by saving bucket lookup to a variable.
+        Tweak: create new bucket via array literal.
+
+        (sort): Fix typo in error message.
+        (sort.compactSparse): Deleted.
+        (sort.compactSlow): Deleted.
+        (sort.comparatorSort): Deleted.
+        (sort.stringSort): Deleted.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        Remove @Object.@getPrototypeOf as it's now unused and we have @getPrototypeOf intrinsic anyway.
+
 2020-09-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Intl spec update: handle awkward rounding behavior

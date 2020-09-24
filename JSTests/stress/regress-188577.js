@@ -2,16 +2,11 @@
 
 var exception;
 try {
-    var i = 25000;
-    var args = [];
-    var v3;
-    while (i--)
-        args[i] = "a";
-    var argsList = args.join();
-    setter = Function(argsList, "");
-    Object.defineProperty(args, '0', {set: setter});
-    args.sort();
-
+    var args = new Array(25000).fill("a");
+    Object.defineProperty(args, "0", {
+        set: new Function(args.join(), ""),
+    });
+    args.unshift(1);
 } catch (e) {
     exception = e;
 }

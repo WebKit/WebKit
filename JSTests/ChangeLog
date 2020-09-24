@@ -1,3 +1,26 @@
+2020-09-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Update Array.prototype.sort to be consistent with tightened spec
+        https://bugs.webkit.org/show_bug.cgi?id=202582
+
+        Reviewed by Yusuke Suzuki and Keith Miller.
+
+        Provided microbenchmarks test receivers that are half-sorted: 50% of their
+        items and item pairs (to accomodate merge sort) are at the right place.
+
+        Arrays of multiple sizes (8/24/64 items) are tested with both userland
+        and default comparator (to cover bucket sort).
+
+        * ChakraCore/test/Array/array_sort.baseline-jsc: Fix typo in error message.
+        * microbenchmarks/array-prototype-sort-large-array-comparator.js: Added.
+        * microbenchmarks/array-prototype-sort-large-array.js: Added.
+        * microbenchmarks/array-prototype-sort-medium-array-comparator.js: Added.
+        * microbenchmarks/array-prototype-sort-medium-array.js: Added.
+        * microbenchmarks/array-prototype-sort-small-array-comparator.js: Added.
+        * microbenchmarks/array-prototype-sort-small-array.js: Added.
+        * mozilla/js1_5/Array/regress-157652.js: Skip sorting sparse array of UINT_MAX size.
+        * stress/regress-188577.js: Replace sort() with unshift() and refactor.
+
 2020-09-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Intl spec update: handle awkward rounding behavior

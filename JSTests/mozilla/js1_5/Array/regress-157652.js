@@ -117,9 +117,12 @@ printBugNumber(bug);
 printStatus(summary);
 
 // JSC doesn't run out of memory, so we don't expect an abnormal exit code 
-//expectExitCode(3);
-var IN_RHINO = inRhino();
+// expectExitCode(3);
 
+// As of https://webkit.org/b/202582, JSC copies internal spare array to a
+// temporary buffer like Rhino, SpiderMonkey, and V8.
+// var IN_RHINO = inRhino();
+var IN_RHINO = true;
 if (!IN_RHINO)
 {
   var a1=Array(0xFFFFFFFF);

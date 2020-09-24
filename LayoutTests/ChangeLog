@@ -1,3 +1,29 @@
+2020-09-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Update Array.prototype.sort to be consistent with tightened spec
+        https://bugs.webkit.org/show_bug.cgi?id=202582
+
+        Reviewed by Yusuke Suzuki and Keith Miller.
+
+        While adding new LayoutTests for JS-only features is undesirable, it's a
+        quick-and-dirty way to import the tests [1] and fix the call count/order
+        of observable operations via debug() and text expectations.
+
+        The tests are imported into LayoutTests/js/dom instead of LayoutTests/js for
+        run-javascriptcore-tests to ignore them as they require array-sort-harness.js.
+
+        These files will be removed shortly in favor of thorough test262 coverage,
+        which is required for the proposal [2] to be merged.
+
+        [1]: https://gist.github.com/szuend/05ae15b4e1329b264ab4c9a1cda09242
+        [2]: https://github.com/tc39/ecma262/pull/1585
+
+        * TestExpectations: Mark a test as slow.
+        * js/dom/array-sort-*-expected.txt: Added.
+        * js/dom/array-sort-*.html: Added.
+        * js/dom/script-tests/array-sort-*.js: Added.
+        * js/resources/array-sort-harness.js: Added.
+
 2020-09-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, we should put it under js/dom since it is not usable in JSC shell
