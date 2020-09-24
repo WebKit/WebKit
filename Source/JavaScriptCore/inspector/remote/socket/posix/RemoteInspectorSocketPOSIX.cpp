@@ -206,7 +206,7 @@ Optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)
 {
     ASSERT(isValid(socket));
 
-    ssize_t readSize = ::read(socket, buffer, bufferSize);
+    ssize_t readSize = ::recv(socket, buffer, bufferSize, MSG_NOSIGNAL);
     if (readSize >= 0)
         return static_cast<size_t>(readSize);
 
@@ -218,7 +218,7 @@ Optional<size_t> write(PlatformSocketType socket, const void* data, int size)
 {
     ASSERT(isValid(socket));
 
-    ssize_t writeSize = ::write(socket, data, size);
+    ssize_t writeSize = ::send(socket, data, size, MSG_NOSIGNAL);
     if (writeSize >= 0)
         return static_cast<size_t>(writeSize);
 

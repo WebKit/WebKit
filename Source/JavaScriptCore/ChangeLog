@@ -1,3 +1,19 @@
+2020-09-24  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Stop raising SIGPIPE when client side of RemoteInspector dies
+        https://bugs.webkit.org/show_bug.cgi?id=216805
+
+        Reviewed by Don Olmstead.
+
+        When communication is stopped caused by peer crash or non-polite close, SIGPIPE will be
+        raised on BSD (and maybe on Linux). We prefer to handle those events by returning error.
+
+        On Windows, there's no such fancy feature from the beginning.
+
+        * inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp:
+        (Inspector::Socket::read):
+        (Inspector::Socket::write):
+
 2020-09-24  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [MIPS] Broken build after r267371
