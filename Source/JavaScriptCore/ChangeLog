@@ -1,3 +1,24 @@
+2020-09-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        %ArrayIteratorPrototype%.next must check for detached buffers
+        https://bugs.webkit.org/show_bug.cgi?id=216904
+
+        Reviewed by Yusuke Suzuki.
+
+        Per https://tc39.es/ecma262/#sec-%arrayiteratorprototype%.next:
+          8. If a has a [[TypedArrayName]] internal slot, then
+            a. If IsDetachedBuffer(a.[[ViewedArrayBuffer]]) is true, throw a TypeError exception.
+
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        * builtins/BuiltinNames.h:
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewPrivateFuncIsNeutered):
+        * runtime/JSTypedArrayViewPrototype.h:
+
 2020-09-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Simply some of template-specialized host functions by defining each function

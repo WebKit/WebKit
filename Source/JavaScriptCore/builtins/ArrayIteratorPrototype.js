@@ -32,6 +32,9 @@ function next()
         @throwTypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
 
     var array = @getArrayIteratorInternalField(this, @arrayIteratorFieldIteratedObject);
+    if (@isTypedArrayView(array) && @isNeutered(array))
+        @throwTypeError("Underlying ArrayBuffer has been detached from the view");
+
     var kind = @getArrayIteratorInternalField(this, @arrayIteratorFieldKind);
     return @arrayIteratorNextHelper.@call(this, array, kind);
 }

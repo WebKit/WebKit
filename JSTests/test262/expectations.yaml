@@ -630,9 +630,6 @@ test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.j
 test/built-ins/ArrayBuffer/prototype/slice/species.js:
   default: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «undefined») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «undefined») to be true'
-test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/Function/call-bind-this-realm-undef.js:
   default: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
   strict mode: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'

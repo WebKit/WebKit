@@ -68,6 +68,13 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsTypedArrayView(JSGlobalO
     return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->classInfo(globalObject->vm())->typedArrayStorageType)));
 }
 
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsNeutered(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    JSValue argument = callFrame->uncheckedArgument(0);
+    ASSERT_UNUSED(globalObject, argument.isCell() && isTypedView(argument.asCell()->classInfo(globalObject->vm())->typedArrayStorageType));
+    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(argument)->isNeutered()));
+}
+
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();

@@ -52,6 +52,7 @@ private:
 };
 
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsTypedArrayView(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsNeutered(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncGetOriginalConstructor(JSGlobalObject*, CallFrame*);
