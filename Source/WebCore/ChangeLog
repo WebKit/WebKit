@@ -1,3 +1,23 @@
+2020-09-24  Antti Koivisto  <antti@apple.com>
+
+        currentColor isn't recalculated when a text node doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=216780
+        <rdar://problem/69320933>
+
+        Reviewed by Antoine Quint.
+
+        We fail to repaint with the new background color when 'background-color' property has value 'currentColor' and the current color changes.
+
+        Test case by Cory LaViska.
+
+        Test: fast/css/currentColor-background-paint.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+        * rendering/style/StyleBackgroundData.cpp:
+        (WebCore::StyleBackgroundData::isEquivalentForPainting const):
+        * rendering/style/StyleBackgroundData.h:
+
 2020-09-24  Cathie Chen  <cathiechen@igalia.com>
 
         Root node with stateless wheel event isn't always scrollable

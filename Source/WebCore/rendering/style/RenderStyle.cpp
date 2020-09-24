@@ -1115,12 +1115,14 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
     if (!requiresPainting(*this) && !requiresPainting(other))
         return false;
 
+    bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
+
     if (m_inheritedFlags.visibility != other.m_inheritedFlags.visibility
         || m_inheritedFlags.printColorAdjust != other.m_inheritedFlags.printColorAdjust
         || m_inheritedFlags.insideLink != other.m_inheritedFlags.insideLink
         || m_inheritedFlags.insideDefaultButton != other.m_inheritedFlags.insideDefaultButton
         || m_surroundData->border != other.m_surroundData->border
-        || !m_backgroundData->isEquivalentForPainting(*other.m_backgroundData))
+        || !m_backgroundData->isEquivalentForPainting(*other.m_backgroundData, currentColorDiffers))
         return true;
 
     if (m_rareNonInheritedData.ptr() != other.m_rareNonInheritedData.ptr()

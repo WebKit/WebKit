@@ -1,0 +1,29 @@
+Both divs should have green background.
+
+<div></div>
+<div>Works with text</div>
+
+<style>
+div {
+    width: 200px;
+    height: 50px;
+    background-color: currentColor;
+    text-shadow: 1px 1px 0 white;
+    margin: 1rem 0;
+}
+</style>
+
+<script>
+window.onload = async function() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    document.body.offsetLeft;
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    [...document.querySelectorAll('div')].map(div => div.style.color = "green");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
