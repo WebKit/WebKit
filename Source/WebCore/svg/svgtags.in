@@ -14,9 +14,6 @@ animateTransform
 set
 circle
 clipPath
-#if 0
-color_profile
-#endif
 cursor
 defs
 desc

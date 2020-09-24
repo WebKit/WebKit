@@ -1,3 +1,16 @@
+2020-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [SVG2] Remove color-profile tag
+        https://bugs.webkit.org/show_bug.cgi?id=216910
+
+        Reviewed by Darin Adler.
+
+        SVG2 removed color-profile element.
+
+        * dom/Document.cpp:
+        (WebCore::Document::validateCustomElementName):
+        * svg/svgtags.in:
+
 2020-09-24  Chris Dumez  <cdumez@apple.com>
 
         Use more inline initialization and constexpr in WebAudio code

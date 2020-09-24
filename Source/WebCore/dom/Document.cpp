@@ -1266,15 +1266,16 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
 #else
     static MainThreadNeverDestroyed<const AtomString> annotationXmlLocalName("annotation-xml", AtomString::ConstructFromLiteral);
 #endif
+    static MainThreadNeverDestroyed<const AtomString> colorProfileLocalName("color-profile", AtomString::ConstructFromLiteral);
 
-    if (localName == SVGNames::color_profileTag->localName()
-        || localName == SVGNames::font_faceTag->localName()
+    if (localName == SVGNames::font_faceTag->localName()
         || localName == SVGNames::font_face_formatTag->localName()
         || localName == SVGNames::font_face_nameTag->localName()
         || localName == SVGNames::font_face_srcTag->localName()
         || localName == SVGNames::font_face_uriTag->localName()
         || localName == SVGNames::missing_glyphTag->localName()
-        || localName == annotationXmlLocalName)
+        || localName == annotationXmlLocalName
+        || localName == colorProfileLocalName)
         return CustomElementNameValidationStatus::ConflictsWithStandardElementName;
 
     return CustomElementNameValidationStatus::Valid;
