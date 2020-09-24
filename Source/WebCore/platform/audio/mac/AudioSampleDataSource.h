@@ -114,6 +114,7 @@ private:
     float m_volume { 1.0 };
     bool m_muted { false };
     bool m_shouldComputeOutputSampleOffset { true };
+    uint64_t m_endFrameWhenNotEnoughData { 0 };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

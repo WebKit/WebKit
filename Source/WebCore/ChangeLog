@@ -1,3 +1,26 @@
+2020-09-24  Youenn Fablet  <youenn@apple.com>
+
+        Regression(r265280) Web Audio sources malfunction when disconnected from the audio graph
+        https://bugs.webkit.org/show_bug.cgi?id=216703
+        <rdar://problem/69158436>
+
+        Reviewed by Eric Carlson.
+
+        In case of an audio source that stops producing data, but does not end or mute the track,
+        we would continuously try to read the data until getting to the end of the data.
+        When reaching the end of the data, we would return silence and go back in time a little bit
+        to restart playing with some margin. This allows to read just one chunk of audio until we are back to the end of data.
+
+        We fix this by storing the end of the data counter when reaching it.
+        When trying to pull some more data, we will go back in time a little bit only if some more data was added in the meantime.
+        Otherwise, we just output silence.
+
+        Covered by manual test.
+
+        * platform/audio/mac/AudioSampleDataSource.h:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+
 2020-09-24  Antti Koivisto  <antti@apple.com>
 
         currentColor isn't recalculated when a text node doesn't exist
