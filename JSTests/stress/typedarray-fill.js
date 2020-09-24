@@ -41,7 +41,7 @@ for (constructor of typedArrays) {
         return target[name];
     }});
     new constructor(10).fill(p);
-    shouldBeTrue("count === 40");
+    shouldBeTrue("count === 4");
 }
 
 

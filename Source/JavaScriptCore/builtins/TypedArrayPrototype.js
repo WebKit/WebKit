@@ -91,14 +91,13 @@ function fill(value /* [, start [, end]] */)
 
     var length = @typedArrayLength(this);
 
-    var start = @argument(1);
-    var end = @argument(2);
+    var number = @toNumber(value);
 
-    start = @typedArrayClampArgumentToStartOrEnd(start, length, 0);
-    end = @typedArrayClampArgumentToStartOrEnd(end, length, length);
+    var start = @typedArrayClampArgumentToStartOrEnd(@argument(1), length, 0);
+    var end = @typedArrayClampArgumentToStartOrEnd(@argument(2), length, length);
 
     for (var i = start; i < end; i++)
-        this[i] = value;
+        this[i] = number;
     return this;
 }
 

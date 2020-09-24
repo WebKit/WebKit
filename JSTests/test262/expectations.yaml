@@ -1245,9 +1245,6 @@ test/built-ins/RegExp/quantifier-integer-limit.js:
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
 test/built-ins/ThrowTypeError/unique-per-realm-non-simple.js:
   default: 'Test262Error: callee.get Expected SameValue(«function () {'
-test/built-ins/TypedArray/prototype/fill/fill-values-conversion-once.js:
-  default: 'Test262Error: additional unexpected ToNumber() calls Expected SameValue(«3», «2») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: additional unexpected ToNumber() calls Expected SameValue(«3», «2») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/filter/speciesctor-get-ctor-returns-throws.js:
   default: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
