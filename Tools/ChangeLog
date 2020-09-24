@@ -1,3 +1,15 @@
+2020-09-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [results.webkit.org] Drop old archive chunks
+        https://bugs.webkit.org/show_bug.cgi?id=216936
+        <rdar://problem/69513686>
+
+        Unreviewed emergency infrastructure change.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Increment package version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/cassandra_archiver.py:
+        (CassandraArchiver.ArchiveChunks): Changer archive chunk table.
+
 2020-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Move proxy settings from WebKitContext to WebKitWebsiteDataManager

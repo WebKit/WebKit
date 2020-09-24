@@ -34,7 +34,7 @@ class CassandraArchiver(Archiver):
     # According to https://cwiki.apache.org/confluence/display/CASSANDRA2/CassandraLimitations, we should shard
     # large data blobs.
     class ArchiveChunks(Model):
-        __table_name__ = 'archive_chunks_02'
+        __table_name__ = 'archive_chunks_03'
         digest = columns.Text(partition_key=True, required=True)
         index = columns.Integer(primary_key=True, required=True)
         chunk = columns.Blob(required=True)
