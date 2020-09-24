@@ -101,7 +101,7 @@ OscillatorNode::OscillatorNode(BaseAudioContext& context, const OscillatorOption
     setNodeType(NodeTypeOscillator);
     
     // An oscillator is always mono.
-    addOutput(makeUnique<AudioNodeOutput>(this, 1));
+    addOutput(1);
     initialize();
 }
 

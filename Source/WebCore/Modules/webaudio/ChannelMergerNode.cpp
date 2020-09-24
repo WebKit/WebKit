@@ -67,9 +67,9 @@ ChannelMergerNode::ChannelMergerNode(BaseAudioContext& context, unsigned numberO
 
     // Create the requested number of inputs.
     for (unsigned i = 0; i < numberOfInputs; ++i)
-        addInput(makeUnique<AudioNodeInput>(this));
+        addInput();
 
-    addOutput(makeUnique<AudioNodeOutput>(this, numberOfInputs));
+    addOutput(numberOfInputs);
     
     initialize();
 

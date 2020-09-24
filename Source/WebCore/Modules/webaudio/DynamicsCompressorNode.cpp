@@ -71,8 +71,8 @@ DynamicsCompressorNode::DynamicsCompressorNode(BaseAudioContext& context, const 
 {
     setNodeType(NodeTypeDynamicsCompressor);
 
-    addInput(makeUnique<AudioNodeInput>(this));
-    addOutput(makeUnique<AudioNodeOutput>(this, defaultNumberOfOutputChannels));
+    addInput();
+    addOutput(defaultNumberOfOutputChannels);
 
     initialize();
 }

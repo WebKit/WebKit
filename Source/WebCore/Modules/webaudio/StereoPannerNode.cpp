@@ -62,8 +62,8 @@ StereoPannerNode::StereoPannerNode(BaseAudioContext& context, float pan)
 {
     setNodeType(NodeTypeStereo);
     
-    addInput(makeUnique<AudioNodeInput>(this));
-    addOutput(makeUnique<AudioNodeOutput>(this, 2));
+    addInput();
+    addOutput(2);
     
     initialize();
 }

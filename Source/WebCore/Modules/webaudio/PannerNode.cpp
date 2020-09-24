@@ -104,8 +104,8 @@ PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
     setConeInnerAngle(options.coneInnerAngle);
     setConeOuterAngle(options.coneOuterAngle);
 
-    addInput(makeUnique<AudioNodeInput>(this));
-    addOutput(makeUnique<AudioNodeOutput>(this, 2));
+    addInput();
+    addOutput(2);
 
     initialize();
 }

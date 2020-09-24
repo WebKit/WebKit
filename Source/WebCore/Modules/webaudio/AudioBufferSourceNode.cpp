@@ -97,7 +97,7 @@ AudioBufferSourceNode::AudioBufferSourceNode(BaseAudioContext& context)
     setNodeType(NodeTypeAudioBufferSource);
 
     // Default to mono.  A call to setBuffer() will set the number of output channels to that of the buffer.
-    addOutput(makeUnique<AudioNodeOutput>(this, 1));
+    addOutput(1);
 
     initialize();
 }

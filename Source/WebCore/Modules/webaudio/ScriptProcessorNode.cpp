@@ -69,8 +69,8 @@ ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t buffe
 
     setNodeType(NodeTypeJavaScript);
     initializeDefaultNodeOptions(numberOfInputChannels, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
-    addInput(makeUnique<AudioNodeInput>(this));
-    addOutput(makeUnique<AudioNodeOutput>(this, numberOfOutputChannels));
+    addInput();
+    addOutput(numberOfOutputChannels);
 
     initialize();
     suspendIfNeeded();

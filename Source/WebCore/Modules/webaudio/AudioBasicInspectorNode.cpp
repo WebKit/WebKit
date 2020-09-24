@@ -40,7 +40,7 @@ AudioBasicInspectorNode::AudioBasicInspectorNode(BaseAudioContext& context)
     : AudioNode(context)
 {
     setNodeType(NodeTypeBasicInspector);
-    addInput(makeUnique<AudioNodeInput>(this));
+    addInput();
 }
 
 // We override pullInputs() as an optimization allowing this node to take advantage of in-place processing,

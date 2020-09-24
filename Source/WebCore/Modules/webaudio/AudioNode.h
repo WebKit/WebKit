@@ -199,8 +199,8 @@ public:
 
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
-    void addInput(std::unique_ptr<AudioNodeInput>);
-    void addOutput(std::unique_ptr<AudioNodeOutput>);
+    void addInput();
+    void addOutput(unsigned numberOfChannels);
 
     struct DefaultAudioNodeOptions {
         unsigned channelCount;

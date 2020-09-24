@@ -47,7 +47,7 @@ AudioDestinationNode::AudioDestinationNode(BaseAudioContext& context)
     , m_muted(false)
 {
     setNodeType(NodeTypeDestination);
-    addInput(makeUnique<AudioNodeInput>(this));
+    addInput();
 }
 
 AudioDestinationNode::~AudioDestinationNode()

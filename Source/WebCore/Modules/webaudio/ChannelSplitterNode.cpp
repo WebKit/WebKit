@@ -61,11 +61,11 @@ ChannelSplitterNode::ChannelSplitterNode(BaseAudioContext& context, unsigned num
 {
     setNodeType(NodeTypeChannelSplitter);
 
-    addInput(makeUnique<AudioNodeInput>(this));
+    addInput();
 
     // Create a fixed number of outputs (able to handle the maximum number of channels fed to an input).
     for (unsigned i = 0; i < numberOfOutputs; ++i)
-        addOutput(makeUnique<AudioNodeOutput>(this, 1));
+        addOutput(1);
     
     initialize();
 }

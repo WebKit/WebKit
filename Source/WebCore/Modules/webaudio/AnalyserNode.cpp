@@ -68,7 +68,7 @@ AnalyserNode::AnalyserNode(BaseAudioContext& context)
     : AudioBasicInspectorNode(context)
 {
     setNodeType(NodeTypeAnalyser);
-    addOutput(makeUnique<AudioNodeOutput>(this, 2));
+    addOutput(2);
     
     initialize();
 }

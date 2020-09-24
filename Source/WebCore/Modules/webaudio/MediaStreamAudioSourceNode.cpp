@@ -83,7 +83,7 @@ MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context
     audioSourceProvider->setClient(this);
     
     // Default to stereo. This could change depending on the format of the MediaStream's audio track.
-    addOutput(makeUnique<AudioNodeOutput>(this, 2));
+    addOutput(2);
 
     initialize();
 }

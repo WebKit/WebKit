@@ -82,8 +82,8 @@ ConvolverNode::ConvolverNode(BaseAudioContext& context)
 {
     setNodeType(NodeTypeConvolver);
 
-    addInput(makeUnique<AudioNodeInput>(this));
-    addOutput(makeUnique<AudioNodeOutput>(this, 1));
+    addInput();
+    addOutput(1);
     
     initialize();
 }

@@ -158,18 +158,18 @@ void AudioNode::lazyInitialize()
         initialize();
 }
 
-void AudioNode::addInput(std::unique_ptr<AudioNodeInput> input)
+void AudioNode::addInput()
 {
     ASSERT(isMainThread());
-    INFO_LOG(LOGIDENTIFIER, input->node()->nodeType());
-    m_inputs.append(WTFMove(input));
+    INFO_LOG(LOGIDENTIFIER);
+    m_inputs.append(makeUnique<AudioNodeInput>(this));
 }
 
-void AudioNode::addOutput(std::unique_ptr<AudioNodeOutput> output)
+void AudioNode::addOutput(unsigned numberOfChannels)
 {
     ASSERT(isMainThread());
-    INFO_LOG(LOGIDENTIFIER, output->node()->nodeType());
-    m_outputs.append(WTFMove(output));
+    INFO_LOG(LOGIDENTIFIER);
+    m_outputs.append(makeUnique<AudioNodeOutput>(this, numberOfChannels));
 }
 
 AudioNodeInput* AudioNode::input(unsigned i)

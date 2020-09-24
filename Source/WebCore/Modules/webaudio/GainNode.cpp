@@ -62,8 +62,8 @@ GainNode::GainNode(BaseAudioContext& context)
 {
     setNodeType(NodeTypeGain);
 
-    addInput(makeUnique<AudioNodeInput>(this));
-    addOutput(makeUnique<AudioNodeOutput>(this, 1));
+    addInput();
+    addOutput(1);
 
     initialize();
 }

@@ -59,7 +59,7 @@ ConstantSourceNode::ConstantSourceNode(BaseAudioContext& context, float offset)
     , m_sampleAccurateValues(AudioUtilities::renderQuantumSize)
 {
     setNodeType(NodeTypeConstant);
-    addOutput(makeUnique<AudioNodeOutput>(this, 1));
+    addOutput(1);
     initialize();
 }
 
