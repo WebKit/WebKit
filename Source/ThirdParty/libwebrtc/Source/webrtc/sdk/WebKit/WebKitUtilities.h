@@ -59,4 +59,5 @@ rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef
 
 CVPixelBufferPoolRef createPixelBufferPool(size_t width, size_t height);
 
+bool isMatchingBundleVersion(const char*);
 }

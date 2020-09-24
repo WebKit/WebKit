@@ -37,7 +37,7 @@ ALLOW_UNUSED_PARAMETERS_END
 #include <wtf/MainThread.h>
 #include <wtf/darwin/WeakLinking.h>
 
-WTF_WEAK_LINK_FORCE_IMPORT(webrtc::setApplicationStatus);
+WTF_WEAK_LINK_FORCE_IMPORT(webrtc::isMatchingBundleVersion);
 
 namespace WebCore {
 
@@ -80,7 +80,7 @@ bool LibWebRTCProvider::webRTCAvailable()
 #if PLATFORM(IOS)
     return true;
 #else
-    return !!webrtc::setApplicationStatus;
+    return !!webrtc::isMatchingBundleVersion;
 #endif
 }
 
@@ -89,6 +89,7 @@ void LibWebRTCProvider::registerWebKitVP9Decoder()
     if (webRTCAvailable())
         webrtc::registerWebKitVP9Decoder();
 }
+
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

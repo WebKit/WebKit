@@ -244,4 +244,9 @@ CVPixelBufferPoolRef createPixelBufferPool(size_t width, size_t height)
     return pool;
 }
 
+bool isMatchingBundleVersion(const char *bundleVersion)
+{
+    return !strcmp(bundleVersion, BUNDLE_VERSION);
+}
+
 }

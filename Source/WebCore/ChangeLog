@@ -1,3 +1,22 @@
+2020-09-24  Youenn Fablet  <youenn@apple.com>
+
+        Add libwebrtc.dylib version check
+        https://bugs.webkit.org/show_bug.cgi?id=216884
+        <rdar://problem/69441354>
+
+        Reviewed by Eric Carlson.
+
+        Use webrtc::isMatchingBundleVersion to check for libwebrtc.dylib presence and for version matching.
+        If version does not match, crash the web process.
+        No change of behavior.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProvider::webRTCAvailable):
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.mm:
+
 2020-09-24  Chris Dumez  <cdumez@apple.com>
 
         Drop AudioNode::reset() and all its overrides

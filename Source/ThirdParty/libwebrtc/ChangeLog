@@ -1,3 +1,21 @@
+2020-09-24  Youenn Fablet  <youenn@apple.com>
+
+        Add libwebrtc.dylib version check
+        https://bugs.webkit.org/show_bug.cgi?id=216884
+        <rdar://problem/69441354>
+
+        Reviewed by Eric Carlson.
+
+        Introduce isMatchingBundleVersion to check libwebrtc.dylib version.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Configurations/libwebrtc.xcconfig:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::isMatchingBundleVersion):
+
 2020-09-09  David Kilzer  <ddkilzer@apple.com>
 
         [WebRTC] Fix uninitialized fields in FilterAnalyzer::ConsistentFilterDetector, FilterAnalyzer::FilterAnalysisState and InterArrival::TimestampGroup
