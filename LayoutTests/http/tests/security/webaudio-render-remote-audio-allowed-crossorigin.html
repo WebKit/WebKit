@@ -30,7 +30,7 @@
 
         window.outputArray = new Float32Array(analyser.frequencyBinCount);
         window.silentArray = new Float32Array(analyser.frequencyBinCount);
-        silentArray.fill(-Infinity);
+        silentArray.fill(analyser.minDecibels);
 
         var intervalToken = setInterval(() => {
             analyser.getFloatFrequencyData(outputArray);

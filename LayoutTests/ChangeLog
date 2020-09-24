@@ -1,3 +1,17 @@
+2020-09-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r267507.
+        https://bugs.webkit.org/show_bug.cgi?id=216923
+
+        Broke two layout tests on windows
+
+        Reverted changeset:
+
+        "web audio api outputs silence for 302 redirected resource in
+        safari"
+        https://bugs.webkit.org/show_bug.cgi?id=214932
+        https://trac.webkit.org/changeset/267507
+
 2020-09-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Update Array.prototype.sort to be consistent with tightened spec
