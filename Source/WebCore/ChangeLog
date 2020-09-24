@@ -1,3 +1,19 @@
+2020-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Move proxy settings from WebKitContext to WebKitWebsiteDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=216927
+
+        Reviewed by Alex Christensen.
+
+        Make proxySettings a member of SoupNetworkSession, instead of being global.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+        (WebCore::SoupNetworkSession::setProxySettings):
+        (WebCore::proxySettings): Deleted.
+        (WebCore::SoupNetworkSession::setupProxy): Deleted.
+        * platform/network/soup/SoupNetworkSession.h:
+
 2020-09-24  Chris Dumez  <cdumez@apple.com>
 
         web audio api outputs silence for 302 redirected resource in safari

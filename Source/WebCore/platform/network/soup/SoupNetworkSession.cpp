@@ -32,7 +32,6 @@
 #include "AuthenticationChallenge.h"
 #include "GUniquePtrSoup.h"
 #include "Logging.h"
-#include "SoupNetworkProxySettings.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
 #include <pal/crypto/CryptoDigest.h>
@@ -48,12 +47,6 @@ static CString& initialAcceptLanguages()
 {
     static NeverDestroyed<CString> storage;
     return storage.get();
-}
-
-static SoupNetworkProxySettings& proxySettings()
-{
-    static NeverDestroyed<SoupNetworkProxySettings> settings;
-    return settings.get();
 }
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
@@ -142,8 +135,6 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
             nullptr);
     }
 
-    if (proxySettings().mode != SoupNetworkProxySettings::Mode::Default)
-        setupProxy();
     setupLogger();
 }
 
@@ -277,10 +268,12 @@ void SoupNetworkSession::clearOldSoupCache(const String& cacheDirectory)
     }
 }
 
-void SoupNetworkSession::setupProxy()
+void SoupNetworkSession::setProxySettings(SoupNetworkProxySettings&& settings)
 {
+    m_proxySettings = WTFMove(settings);
+
     GRefPtr<GProxyResolver> resolver;
-    switch (proxySettings().mode) {
+    switch (m_proxySettings.mode) {
     case SoupNetworkProxySettings::Mode::Default: {
         GRefPtr<GProxyResolver> currentResolver;
         g_object_get(m_soupSession.get(), SOUP_SESSION_PROXY_RESOLVER, &currentResolver.outPtr(), nullptr);
@@ -295,22 +288,17 @@ void SoupNetworkSession::setupProxy()
         break;
     case SoupNetworkProxySettings::Mode::Custom:
         resolver = adoptGRef(g_simple_proxy_resolver_new(nullptr, nullptr));
-        if (!proxySettings().defaultProxyURL.isNull())
-            g_simple_proxy_resolver_set_default_proxy(G_SIMPLE_PROXY_RESOLVER(resolver.get()), proxySettings().defaultProxyURL.data());
-        if (proxySettings().ignoreHosts)
-            g_simple_proxy_resolver_set_ignore_hosts(G_SIMPLE_PROXY_RESOLVER(resolver.get()), proxySettings().ignoreHosts.get());
-        for (const auto& iter : proxySettings().proxyMap)
+        if (!m_proxySettings.defaultProxyURL.isNull())
+            g_simple_proxy_resolver_set_default_proxy(G_SIMPLE_PROXY_RESOLVER(resolver.get()), m_proxySettings.defaultProxyURL.data());
+        if (m_proxySettings.ignoreHosts)
+            g_simple_proxy_resolver_set_ignore_hosts(G_SIMPLE_PROXY_RESOLVER(resolver.get()), m_proxySettings.ignoreHosts.get());
+        for (const auto& iter : m_proxySettings.proxyMap)
             g_simple_proxy_resolver_set_uri_proxy(G_SIMPLE_PROXY_RESOLVER(resolver.get()), iter.key.data(), iter.value.data());
         break;
     }
 
     g_object_set(m_soupSession.get(), SOUP_SESSION_PROXY_RESOLVER, resolver.get(), nullptr);
     soup_session_abort(m_soupSession.get());
-}
-
-void SoupNetworkSession::setProxySettings(const SoupNetworkProxySettings& settings)
-{
-    proxySettings() = settings;
 }
 
 void SoupNetworkSession::setInitialAcceptLanguages(const CString& languages)

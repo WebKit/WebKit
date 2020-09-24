@@ -39,6 +39,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     auto& networkSessionParameters = parameters.networkSessionParameters;
     networkSessionParameters.persistentCredentialStorageEnabled = m_persistentCredentialStorageEnabled;
     networkSessionParameters.ignoreTLSErrors = m_ignoreTLSErrors;
+    networkSessionParameters.proxySettings = m_networkProxySettings;
 
     if (auto* processPool = processPoolForCookieStorageOperations())
         processPool->supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(m_sessionID, networkSessionParameters.cookiePersistentStoragePath, networkSessionParameters.cookiePersistentStorageType);
@@ -65,6 +66,13 @@ void WebsiteDataStore::setIgnoreTLSErrors(bool ignoreTLSErrors)
     m_ignoreTLSErrors = ignoreTLSErrors;
     for (auto& processPool : processPools())
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetIgnoreTLSErrors(m_sessionID, m_ignoreTLSErrors));
+}
+
+void WebsiteDataStore::setNetworkProxySettings(WebCore::SoupNetworkProxySettings&& settings)
+{
+    m_networkProxySettings = WTFMove(settings);
+    for (auto& processPool : processPools())
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetNetworkProxySettings(m_sessionID, m_networkProxySettings));
 }
 
 } // namespace WebKit

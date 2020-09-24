@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SoupNetworkProxySettings.h"
 #include <gio/gio.h>
 #include <glib-object.h>
 #include <pal/SessionID.h>
@@ -43,7 +44,6 @@ namespace WebCore {
 
 class CertificateInfo;
 class ResourceError;
-struct SoupNetworkProxySettings;
 
 class SoupNetworkSession {
     WTF_MAKE_NONCOPYABLE(SoupNetworkSession); WTF_MAKE_FAST_ALLOCATED;
@@ -60,8 +60,7 @@ public:
 
     static void clearOldSoupCache(const String& cacheDirectory);
 
-    static void setProxySettings(const SoupNetworkProxySettings&);
-    void setupProxy();
+    void setProxySettings(SoupNetworkProxySettings&&);
 
     static void setInitialAcceptLanguages(const CString&);
     void setAcceptLanguages(const CString&);
@@ -80,6 +79,7 @@ private:
     GRefPtr<SoupSession> m_soupSession;
     PAL::SessionID m_sessionID;
     bool m_ignoreTLSErrors { false };
+    SoupNetworkProxySettings m_proxySettings;
 };
 
 } // namespace WebCore

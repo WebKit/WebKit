@@ -49,6 +49,9 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSe
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 
+    if (parameters.proxySettings.mode != SoupNetworkProxySettings::Mode::Default)
+        setProxySettings(WTFMove(parameters.proxySettings));
+
     if (!parameters.cookiePersistentStoragePath.isEmpty())
         setCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     else
@@ -134,6 +137,11 @@ std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(NetworkSo
 void NetworkSessionSoup::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_networkSession->setIgnoreTLSErrors(ignoreTLSErrors);
+}
+
+void NetworkSessionSoup::setProxySettings(SoupNetworkProxySettings&& settings)
+{
+    m_networkSession->setProxySettings(WTFMove(settings));
 }
 
 } // namespace WebKit

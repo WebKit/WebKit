@@ -360,7 +360,7 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
     if (capabilities.proxy) {
         WebKitNetworkProxySettings* proxySettings = nullptr;
         auto proxyMode = parseProxyCapabilities(*capabilities.proxy, &proxySettings);
-        webkit_web_context_set_network_proxy_settings(webContext, proxyMode, proxySettings);
+        webkit_website_data_manager_set_network_proxy_settings(webkit_web_context_get_website_data_manager(webContext), proxyMode, proxySettings);
         if (proxySettings)
             webkit_network_proxy_settings_free(proxySettings);
     }

@@ -31,6 +31,22 @@ G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_NETWORK_NETWORK_PROXY_SETTINGS (webkit_network_proxy_settings_get_type())
 
+/**
+ * WebKitNetworkProxyMode:
+ * @WEBKIT_NETWORK_PROXY_MODE_DEFAULT: Use the default proxy of the system.
+ * @WEBKIT_NETWORK_PROXY_MODE_NO_PROXY: Do not use any proxy.
+ * @WEBKIT_NETWORK_PROXY_MODE_CUSTOM: Use custom proxy settings.
+ *
+ * Enum values used to set the network proxy mode.
+ *
+ * Since: 2.16
+ */
+typedef enum {
+    WEBKIT_NETWORK_PROXY_MODE_DEFAULT,
+    WEBKIT_NETWORK_PROXY_MODE_NO_PROXY,
+    WEBKIT_NETWORK_PROXY_MODE_CUSTOM
+} WebKitNetworkProxyMode;
+
 typedef struct _WebKitNetworkProxySettings WebKitNetworkProxySettings;
 
 WEBKIT_API GType

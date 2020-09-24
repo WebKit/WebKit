@@ -43,11 +43,6 @@
 #include <wtf/MachSendRight.h>
 #endif
 
-#if USE(SOUP)
-#include <WebCore/HTTPCookieAcceptPolicy.h>
-#include <WebCore/SoupNetworkProxySettings.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/RenderThemeIOS.h>
 #endif
@@ -172,10 +167,6 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(WAYLAND)
     String waylandCompositorDisplayName;
-#endif
-
-#if USE(SOUP)
-    WebCore::SoupNetworkProxySettings proxySettings;
 #endif
 
 #if PLATFORM(COCOA)

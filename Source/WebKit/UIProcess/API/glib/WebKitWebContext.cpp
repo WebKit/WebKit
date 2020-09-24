@@ -39,7 +39,6 @@
 #include "WebKitGeolocationManagerPrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitInjectedBundleClient.h"
-#include "WebKitNetworkProxySettingsPrivate.h"
 #include "WebKitNotificationProvider.h"
 #include "WebKitPrivate.h"
 #include "WebKitProtocolHandler.h"
@@ -935,29 +934,14 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
  * a valid #WebKitNetworkProxySettings; otherwise, @proxy_settings must be %NULL.
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.32. Use webkit_website_data_manager_set_network_proxy_settings() instead.
  */
 void webkit_web_context_set_network_proxy_settings(WebKitWebContext* context, WebKitNetworkProxyMode proxyMode, WebKitNetworkProxySettings* proxySettings)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
-    g_return_if_fail((proxyMode != WEBKIT_NETWORK_PROXY_MODE_CUSTOM && !proxySettings) || (proxyMode == WEBKIT_NETWORK_PROXY_MODE_CUSTOM && proxySettings));
 
-    WebKitWebContextPrivate* priv = context->priv;
-    switch (proxyMode) {
-    case WEBKIT_NETWORK_PROXY_MODE_DEFAULT:
-        priv->processPool->setNetworkProxySettings({ });
-        break;
-    case WEBKIT_NETWORK_PROXY_MODE_NO_PROXY:
-        priv->processPool->setNetworkProxySettings(WebCore::SoupNetworkProxySettings(WebCore::SoupNetworkProxySettings::Mode::NoProxy));
-        break;
-    case WEBKIT_NETWORK_PROXY_MODE_CUSTOM:
-        const auto& settings = webkitNetworkProxySettingsGetNetworkProxySettings(proxySettings);
-        if (settings.isEmpty()) {
-            g_warning("Invalid attempt to set custom network proxy settings with an empty WebKitNetworkProxySettings. Use "
-                "WEBKIT_NETWORK_PROXY_MODE_NO_PROXY to not use any proxy or WEBKIT_NETWORK_PROXY_MODE_DEFAULT to use the default system settings");
-        } else
-            priv->processPool->setNetworkProxySettings(settings);
-        break;
-    }
+    webkit_website_data_manager_set_network_proxy_settings(context->priv->websiteDataManager.get(), proxyMode, proxySettings);
 }
 
 typedef HashMap<DownloadProxy*, GRefPtr<WebKitDownload> > DownloadsMap;

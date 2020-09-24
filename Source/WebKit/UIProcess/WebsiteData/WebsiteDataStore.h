@@ -59,6 +59,10 @@
 #include <WebCore/CurlProxySettings.h>
 #endif
 
+#if USE(SOUP)
+#include <WebCore/SoupNetworkProxySettings.h>
+#endif
+
 namespace API {
 class HTTPCookieStore;
 }
@@ -261,6 +265,8 @@ public:
     bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled && isPersistent(); }
     void setIgnoreTLSErrors(bool);
     bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
+    void setNetworkProxySettings(WebCore::SoupNetworkProxySettings&&);
+    const WebCore::SoupNetworkProxySettings& networkProxySettings() const { return m_networkProxySettings; }
 #endif
 
     static void allowWebsiteDataRecordsForAllOrigins();
@@ -398,6 +404,7 @@ private:
 #if USE(SOUP)
     bool m_persistentCredentialStorageEnabled { true };
     bool m_ignoreTLSErrors { true };
+    WebCore::SoupNetworkProxySettings m_networkProxySettings;
 #endif
 
     HashSet<WebCore::Cookie> m_pendingCookies;

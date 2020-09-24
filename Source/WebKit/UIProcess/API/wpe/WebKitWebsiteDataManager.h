@@ -27,6 +27,7 @@
 #include <gio/gio.h>
 #include <wpe/WebKitCookieManager.h>
 #include <wpe/WebKitDefines.h>
+#include <wpe/WebKitNetworkProxySettings.h>
 #include <wpe/WebKitWebsiteData.h>
 
 G_BEGIN_DECLS
@@ -140,6 +141,11 @@ webkit_website_data_manager_set_tls_errors_policy                     (WebKitWeb
 
 WEBKIT_API WebKitTLSErrorsPolicy
 webkit_website_data_manager_get_tls_errors_policy                     (WebKitWebsiteDataManager *manager);
+
+WEBKIT_API void
+webkit_website_data_manager_set_network_proxy_settings                (WebKitWebsiteDataManager *manager,
+                                                                       WebKitNetworkProxyMode    proxy_mode,
+                                                                       WebKitNetworkProxySettings *proxy_settings);
 
 WEBKIT_API void
 webkit_website_data_manager_fetch                                     (WebKitWebsiteDataManager *manager,

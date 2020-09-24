@@ -32,6 +32,7 @@ typedef struct _SoupSession SoupSession;
 
 namespace WebCore {
 class SoupNetworkSession;
+struct SoupNetworkProxySettings;
 }
 
 namespace WebKit {
@@ -58,6 +59,7 @@ public:
     bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled; }
 
     void setIgnoreTLSErrors(bool);
+    void setProxySettings(WebCore::SoupNetworkProxySettings&&);
 
 private:
     std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;

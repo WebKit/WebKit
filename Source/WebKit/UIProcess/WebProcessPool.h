@@ -63,10 +63,6 @@
 #include "WebMediaSessionFocusManager.h"
 #endif
 
-#if USE(SOUP)
-#include <WebCore/SoupNetworkProxySettings.h>
-#endif
-
 #if PLATFORM(COCOA)
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSObject;
@@ -296,7 +292,6 @@ public:
 
 #if USE(SOUP)
     void setInitialHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy policy) { m_initialHTTPCookieAcceptPolicy = policy; }
-    void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
 #endif
     void setEnhancedAccessibility(bool);
     
@@ -682,7 +677,6 @@ private:
 
 #if USE(SOUP)
     WebCore::HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain };
-    WebCore::SoupNetworkProxySettings m_networkProxySettings;
 #endif
 
 #if PLATFORM(MAC)

@@ -447,7 +447,7 @@ private:
 #if USE(SOUP)
     void setIgnoreTLSErrors(PAL::SessionID, bool);
     void userPreferredLanguagesChanged(const Vector<String>&);
-    void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
+    void setNetworkProxySettings(PAL::SessionID, WebCore::SoupNetworkProxySettings&&);
     void setPersistentCredentialStorageEnabled(PAL::SessionID, bool);
 #endif
 

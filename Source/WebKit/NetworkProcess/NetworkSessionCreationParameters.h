@@ -33,6 +33,7 @@
 
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"
+#include <WebCore/SoupNetworkProxySettings.h>
 #endif
 
 #if USE(CURL)
@@ -76,6 +77,7 @@ struct NetworkSessionCreationParameters {
     SoupCookiePersistentStorageType cookiePersistentStorageType { SoupCookiePersistentStorageType::Text };
     bool persistentCredentialStorageEnabled { true };
     bool ignoreTLSErrors { false };
+    WebCore::SoupNetworkProxySettings proxySettings;
 #endif
 #if USE(CURL)
     String cookiePersistentStorageFile;

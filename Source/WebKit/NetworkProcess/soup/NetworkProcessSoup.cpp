@@ -125,9 +125,6 @@ void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languag
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
-    if (parameters.proxySettings.mode != SoupNetworkProxySettings::Mode::Default)
-        setNetworkProxySettings(parameters.proxySettings);
-
     GRefPtr<GResolver> cachedResolver = adoptGRef(webkitCachedResolverNew(adoptGRef(g_resolver_get_default())));
     g_resolver_set_default(cachedResolver.get());
 
@@ -168,12 +165,10 @@ void NetworkProcess::platformTerminate()
     notImplemented();
 }
 
-void NetworkProcess::setNetworkProxySettings(const SoupNetworkProxySettings& settings)
+void NetworkProcess::setNetworkProxySettings(PAL::SessionID sessionID, SoupNetworkProxySettings&& settings)
 {
-    SoupNetworkSession::setProxySettings(settings);
-    forEachNetworkSession([](const auto& session) {
-        static_cast<const NetworkSessionSoup&>(session).soupNetworkSession().setupProxy();
-    });
+    if (auto* session = networkSession(sessionID))
+        static_cast<NetworkSessionSoup&>(*session).setProxySettings(WTFMove(settings));
 }
 
 void NetworkProcess::setPersistentCredentialStorageEnabled(PAL::SessionID sessionID, bool enabled)

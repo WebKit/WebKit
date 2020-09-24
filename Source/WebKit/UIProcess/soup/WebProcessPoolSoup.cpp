@@ -42,19 +42,12 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     if (m_websiteDataStore) {
         defaultSessionParameters.persistentCredentialStorageEnabled = m_websiteDataStore->persistentCredentialStorageEnabled();
         defaultSessionParameters.ignoreTLSErrors = m_websiteDataStore->ignoreTLSErrors();
+        defaultSessionParameters.proxySettings = m_websiteDataStore->networkProxySettings();
     }
 
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.languages = userPreferredLanguages();
-    parameters.proxySettings = m_networkProxySettings;
     parameters.shouldEnableITPDatabase = true;
 }
 
-void WebProcessPool::setNetworkProxySettings(const WebCore::SoupNetworkProxySettings& settings)
-{
-    m_networkProxySettings = settings;
-    if (m_networkProcess)
-        m_networkProcess->send(Messages::NetworkProcess::SetNetworkProxySettings(m_networkProxySettings), 0);
-}
-
-}
+} // namespace WebKit

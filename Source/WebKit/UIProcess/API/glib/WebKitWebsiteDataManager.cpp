@@ -22,6 +22,7 @@
 
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitInitialize.h"
+#include "WebKitNetworkProxySettingsPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
@@ -950,6 +951,47 @@ WebKitTLSErrorsPolicy webkit_website_data_manager_get_tls_errors_policy(WebKitWe
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), WEBKIT_TLS_ERRORS_POLICY_FAIL);
 
     return manager->priv->tlsErrorsPolicy;
+}
+
+/**
+ * webkit_website_data_manager_set_network_proxy_settings:
+ * @manager: a #WebKitWebsiteDataManager
+ * @proxy_mode: a #WebKitNetworkProxyMode
+ * @proxy_settings: (allow-none): a #WebKitNetworkProxySettings, or %NULL
+ *
+ * Set the network proxy settings to be used by connections started in @manager session.
+ * By default %WEBKIT_NETWORK_PROXY_MODE_DEFAULT is used, which means that the
+ * system settings will be used (g_proxy_resolver_get_default()).
+ * If you want to override the system default settings, you can either use
+ * %WEBKIT_NETWORK_PROXY_MODE_NO_PROXY to make sure no proxies are used at all,
+ * or %WEBKIT_NETWORK_PROXY_MODE_CUSTOM to provide your own proxy settings.
+ * When @proxy_mode is %WEBKIT_NETWORK_PROXY_MODE_CUSTOM @proxy_settings must be
+ * a valid #WebKitNetworkProxySettings; otherwise, @proxy_settings must be %NULL.
+ *
+ * Since: 2.32
+ */
+void webkit_website_data_manager_set_network_proxy_settings(WebKitWebsiteDataManager* manager, WebKitNetworkProxyMode proxyMode, WebKitNetworkProxySettings* proxySettings)
+{
+    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+    g_return_if_fail((proxyMode != WEBKIT_NETWORK_PROXY_MODE_CUSTOM && !proxySettings) || (proxyMode == WEBKIT_NETWORK_PROXY_MODE_CUSTOM && proxySettings));
+
+    auto& dataStore = webkitWebsiteDataManagerGetDataStore(manager);
+    switch (proxyMode) {
+    case WEBKIT_NETWORK_PROXY_MODE_DEFAULT:
+        dataStore.setNetworkProxySettings({ });
+        break;
+    case WEBKIT_NETWORK_PROXY_MODE_NO_PROXY:
+        dataStore.setNetworkProxySettings(WebCore::SoupNetworkProxySettings(WebCore::SoupNetworkProxySettings::Mode::NoProxy));
+        break;
+    case WEBKIT_NETWORK_PROXY_MODE_CUSTOM:
+        auto settings = webkitNetworkProxySettingsGetNetworkProxySettings(proxySettings);
+        if (settings.isEmpty()) {
+            g_warning("Invalid attempt to set custom network proxy settings with an empty WebKitNetworkProxySettings. Use "
+                "WEBKIT_NETWORK_PROXY_MODE_NO_PROXY to not use any proxy or WEBKIT_NETWORK_PROXY_MODE_DEFAULT to use the default system settings");
+        } else
+            dataStore.setNetworkProxySettings(WTFMove(settings));
+        break;
+    }
 }
 
 static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)

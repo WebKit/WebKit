@@ -96,7 +96,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || LegacyGlobalSettings::singleton().cacheModel() == CacheModel::DocumentViewer;
-    parameters.proxySettings = m_networkProxySettings;
 
     if (memoryPressureMonitorDisabled())
         parameters.shouldSuppressMemoryPressureHandler = true;
