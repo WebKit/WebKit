@@ -510,27 +510,35 @@ TEST(InAppBrowserPrivacy, AppBoundDomainCanAccessMessageHandlers)
 
 static RetainPtr<WKHTTPCookieStore> globalCookieStore;
 static bool gotFlag = false;
+static uint64_t observerCallbacks;
 
-static void setUpCookieTest()
+@interface InAppBrowserPrivacyCookieObserver : NSObject<WKHTTPCookieStoreObserver>
+- (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore;
+@end
+
+@implementation InAppBrowserPrivacyCookieObserver
+
+- (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore
 {
-    globalCookieStore = [[WKWebsiteDataStore defaultDataStore] httpCookieStore];
-    NSArray<NSHTTPCookie *> *cookies = nil;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    ASSERT_EQ(cookieStore, globalCookieStore.get());
+    ++observerCallbacks;
+}
+
+@end
+
+static void setUpCookieTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
+{
+    gotFlag = false;
+    // Clear out any website data.
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
         gotFlag = true;
     }];
-
     TestWebKitAPI::Util::run(&gotFlag);
 
-    for (id cookie in cookies) {
-        gotFlag = false;
-        [globalCookieStore deleteCookie:cookie completionHandler:[]() {
-            gotFlag = true;
-        }];
-        TestWebKitAPI::Util::run(&gotFlag);
-    }
+    observerCallbacks = 0;
+    globalCookieStore = dataStore.httpCookieStore;
 
-    cookies = nil;
+    NSArray<NSHTTPCookie *> *cookies = nil;
     gotFlag = false;
     [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
@@ -549,17 +557,15 @@ static void setUpCookieTest()
 TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
 
     auto dataStore = [WKWebsiteDataStore defaultDataStore];
     auto webView = adoptNS([TestWKWebView new]);
     [webView loadHTMLString:@"Oh hello" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     [webView _test_waitForDidFinishNavigation];
 
-    setUpCookieTest();
-    globalCookieStore = [dataStore httpCookieStore];
-
-    NSArray<NSHTTPCookie *> *cookies = nil;
+    setUpCookieTestWithWebsiteDataStore(dataStore);
+    RetainPtr<InAppBrowserPrivacyCookieObserver> observer = adoptNS([[InAppBrowserPrivacyCookieObserver alloc] init]);
+    [globalCookieStore addObserver:observer.get()];
 
     // Non app-bound cookie.
     RetainPtr<NSHTTPCookie> nonAppBoundCookie = [NSHTTPCookie cookieWithProperties:@{
@@ -594,10 +600,10 @@ TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
     TestWebKitAPI::Util::run(&gotFlag);
 
     cleanUpInAppBrowserPrivacyTestSettings();
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
     gotFlag = false;
 
     // Check the cookie store to make sure only one cookie was set.
+    NSArray<NSHTTPCookie *> *cookies = nil;
     [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
@@ -606,6 +612,9 @@ TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
     TestWebKitAPI::Util::run(&gotFlag);
 
     ASSERT_EQ(cookies.count, 1u);
+    EXPECT_WK_STREQ(cookies[0].domain, @"www.webkit.org");
+    while (observerCallbacks != 1u)
+        TestWebKitAPI::Util::spinRunLoop();
 
     [cookies release];
     gotFlag = false;
@@ -614,17 +623,16 @@ TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
+    [globalCookieStore removeObserver:observer.get()];
 }
 
 TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
 {
     // Since we can't set non-app-bound cookies with In-App Browser privacy protections on,
     // we can turn the protections off to set a cookie we will then try to get with protections enabled.
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
+    cleanUpInAppBrowserPrivacyTestSettings();
 
-    setUpCookieTest();
-    globalCookieStore = [[WKWebsiteDataStore defaultDataStore] httpCookieStore];
-    NSArray<NSHTTPCookie *> *cookies = nil;
+    setUpCookieTestWithWebsiteDataStore([WKWebsiteDataStore defaultDataStore]);
 
     // Non app-bound cookie.
     RetainPtr<NSHTTPCookie> nonAppBoundCookie = [NSHTTPCookie cookieWithProperties:@{
@@ -642,6 +650,7 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
         NSHTTPCookieDomain: @"www.webkit.org",
     }];
 
+    gotFlag = false;
     auto webView = adoptNS([TestWKWebView new]);
     [webView synchronouslyLoadHTMLString:@"start network process"];
 
@@ -660,6 +669,7 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
     TestWebKitAPI::Util::run(&gotFlag);
 
     gotFlag = false;
+    NSArray<NSHTTPCookie *> *cookies = nil;
     [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
@@ -671,9 +681,9 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
     ASSERT_EQ(cookies.count, 2u);
 
     // Now enable protections and ensure we can only retrieve the app-bound cookies.
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
     initializeInAppBrowserPrivacyTestSettings();
 
+    cookies = nil;
     gotFlag = false;
     [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
@@ -695,8 +705,6 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
 
     gotFlag = false;
     [globalCookieStore deleteCookie:appBoundCookie.get() completionHandler:[]() {
-        // Reset flag.
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
         cleanUpInAppBrowserPrivacyTestSettings();
         gotFlag = true;
     }];
@@ -708,8 +716,8 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
 {
     // Since we can't set non-app-bound cookies with In-App Browser privacy protections on,
     // we can turn the protections off to set a cookie we will then try to get with protections enabled.
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
-    setUpCookieTest();
+    cleanUpInAppBrowserPrivacyTestSettings();
+    setUpCookieTestWithWebsiteDataStore([WKWebsiteDataStore defaultDataStore]);
 
     globalCookieStore = [[WKWebsiteDataStore defaultDataStore] httpCookieStore];
     NSHTTPCookie *nonAppBoundCookie = [NSHTTPCookie cookieWithProperties:@{
@@ -733,7 +741,6 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
         [globalCookieStore setCookie:appBoundCookie completionHandler:^{
 
             // Now enable protections and ensure we can only retrieve the app-bound cookies.
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
             initializeInAppBrowserPrivacyTestSettings();
 
             [globalCookieStore _getCookiesForURL:[NSURL URLWithString:@"https://webkit.org/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
@@ -743,7 +750,6 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
                     EXPECT_EQ(cookies.count, 0u);
                     [globalCookieStore deleteCookie:nonAppBoundCookie completionHandler:^{
                         [globalCookieStore deleteCookie:appBoundCookie completionHandler:^{
-                            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
                             cleanUpInAppBrowserPrivacyTestSettings();
                             done = true;
                         }];

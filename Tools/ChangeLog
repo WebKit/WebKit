@@ -1,3 +1,29 @@
+2020-09-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        InAppBrowserPrivacy HTTPCookie tests incorrectly use the IsInAppBrowserPrivacyEnabled NSUserDefaults value
+        https://bugs.webkit.org/show_bug.cgi?id=216896
+        <rdar://problem/69456713>
+
+        Reviewed by Brady Eidson.
+
+        The IsInAppBrowserPrivacyEnabled UserDefaults value no longer enables
+        App-Bound Domains, so the tests should not use it in this way.
+        Changing the bundle identifier using
+        cleanUpInAppBrowserPrivacyTestSettings() and
+        initializeInAppBrowserPrivacyTestSettings() is enough to
+        enable/disable App-Bound Domains.
+
+        This patch also adds a WKHTTPCookieStoreObserver to test setting
+        app-bound cookies. This ensures we don't get a false positive from
+        the test by being allowed to set but not retrieve app-bound cookies.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserPrivacyCookieObserver cookiesDidChangeInCookieStore:]):
+        (setUpCookieTestWithWebsiteDataStore):
+        (TEST):
+        (setUpCookieTest): Deleted.
+        Changed name and simplified.
+
 2020-09-24  Jonathan Bedard  <jbedard@apple.com>
 
         [results.webkit.org] Drop old archive chunks
