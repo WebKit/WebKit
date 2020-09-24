@@ -738,7 +738,9 @@ bool decode(Decoder& decoder, RetainPtr<SecIdentityRef>& result)
     SecKeyRef key = nullptr;
 #if PLATFORM(IOS_FAMILY)
     if (secKeyRefDecodingAllowed)
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         SecKeyFindWithPersistentRef(keyData.get(), &key);
+        ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #if PLATFORM(MAC)
     SecKeychainItemCopyFromPersistentReference(keyData.get(), (SecKeychainItemRef*)&key);
