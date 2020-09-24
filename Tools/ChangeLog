@@ -1,3 +1,16 @@
+2020-09-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [JHBUILD] Port jhbuild-wrapper to python3
+        https://bugs.webkit.org/show_bug.cgi?id=216916
+
+        Reviewed by Adrian Perez de Castro.
+
+        Python2 is at its EOL, distributions are starting to remove it and python3 should be used by default now. Migrated
+        jhbuild wrapper code to python3 (while keeping backwards compatibility with python2 just in case).
+
+        * jhbuild/jhbuild-wrapper:
+        (ensure_jhbuild): Replace has_key() by the more pythonic construction with 'in'.
+
 2020-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r267502): [GTK][WPE] ephemeral WebKitWebsiteDataManager ignores TLS errors by default

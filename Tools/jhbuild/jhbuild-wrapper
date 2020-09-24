@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # Copyright (C) 2011 Igalia S.L.
 # Copyright (C) 2012 Gustavo Noronha Silva <gns@gnome.org>
 # Copyright (C) 2012 Intel Corporation
@@ -117,7 +117,7 @@ def ensure_jhbuild(platform):
 
 # Work-around the fact that we may get called from inside the jhbuild environment
 # which will cause problems if we just cleaned the jhbuild install root
-if os.environ.has_key('UNDER_JHBUILD') and os.environ.has_key('ACLOCAL_FLAGS'):
+if 'UNDER_JHBUILD' in os.environ and 'ACLOCAL_FLAGS' in os.environ:
     del os.environ['ACLOCAL_FLAGS']
 
 ensure_jhbuild(platform)
