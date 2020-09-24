@@ -1,3 +1,15 @@
+2020-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r267502) [GLIB] Make WTR ignoreTLSErrors
+        https://bugs.webkit.org/show_bug.cgi?id=216911
+
+        Reviewed by Adrian Perez de Castro.
+
+        I forgot to initialize ignoreTLSErrors in network session parameters.
+
+        * UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+
 2020-09-23  Peng Liu  <peng.liu6@apple.com>
 
         Add feature flags for GPU Process features

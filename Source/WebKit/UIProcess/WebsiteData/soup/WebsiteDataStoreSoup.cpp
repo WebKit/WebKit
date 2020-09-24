@@ -38,6 +38,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 {
     auto& networkSessionParameters = parameters.networkSessionParameters;
     networkSessionParameters.persistentCredentialStorageEnabled = m_persistentCredentialStorageEnabled;
+    networkSessionParameters.ignoreTLSErrors = m_ignoreTLSErrors;
 
     if (auto* processPool = processPoolForCookieStorageOperations())
         processPool->supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(m_sessionID, networkSessionParameters.cookiePersistentStoragePath, networkSessionParameters.cookiePersistentStorageType);
