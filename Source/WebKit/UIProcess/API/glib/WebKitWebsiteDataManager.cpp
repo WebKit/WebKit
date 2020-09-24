@@ -244,6 +244,8 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
     }
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
+    if (priv->websiteDataStore)
+        priv->websiteDataStore->setIgnoreTLSErrors(false);
 }
 
 static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass* findClass)

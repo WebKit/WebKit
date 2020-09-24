@@ -453,6 +453,34 @@ static void testWebSocketTLSErrors(WebSocketTest* test, gconstpointer)
     webkit_website_data_manager_set_tls_errors_policy(websiteDataManager, originalPolicy);
 }
 
+class EphemeralSSLTest : public SSLTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(EphemeralSSLTest, setup, teardown);
+
+    static void setup()
+    {
+        WebViewTest::shouldCreateEphemeralWebView = true;
+    }
+
+    static void teardown()
+    {
+        WebViewTest::shouldCreateEphemeralWebView = false;
+    }
+};
+
+static void testTLSErrorsEphemeral(EphemeralSSLTest* test, gconstpointer)
+{
+    auto* websiteDataManager = webkit_web_view_get_website_data_manager(test->m_webView);
+    g_assert_true(webkit_website_data_manager_is_ephemeral(websiteDataManager));
+    g_assert_cmpint(webkit_website_data_manager_get_tls_errors_policy(websiteDataManager), ==, WEBKIT_TLS_ERRORS_POLICY_FAIL);
+
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert_true(test->m_loadFailed);
+    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+}
+
 static void httpsServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -540,6 +568,7 @@ void beforeAll()
     TLSSubresourceTest::add("WebKitWebView", "tls-subresource", testSubresourceLoadFailedWithTLSErrors);
     TLSErrorsTest::add("WebKitWebView", "load-failed-with-tls-errors", testLoadFailedWithTLSErrors);
     WebSocketTest::add("WebKitWebView", "web-socket-tls-errors", testWebSocketTLSErrors);
+    EphemeralSSLTest::add("WebKitWebView", "ephemeral-tls-errors", testTLSErrorsEphemeral);
 }
 
 void afterAll()

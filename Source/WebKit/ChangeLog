@@ -1,5 +1,17 @@
 2020-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r267502): [GTK][WPE] ephemeral WebKitWebsiteDataManager ignores TLS errors by default
+        https://bugs.webkit.org/show_bug.cgi?id=216919
+
+        Reviewed by Adrian Perez de Castro.
+
+        Initialize ignoreTLSErrors on website data store for ephemeral sessions.
+
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerConstructed):
+
+2020-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r267502) [GLIB] Make WTR ignoreTLSErrors
         https://bugs.webkit.org/show_bug.cgi?id=216911
 

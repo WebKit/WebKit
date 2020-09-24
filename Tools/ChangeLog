@@ -1,3 +1,18 @@
+2020-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r267502): [GTK][WPE] ephemeral WebKitWebsiteDataManager ignores TLS errors by default
+        https://bugs.webkit.org/show_bug.cgi?id=216919
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a test case to check we propagate the setting to the network process for ephemeral sessions too.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (EphemeralSSLTest::setup):
+        (EphemeralSSLTest::teardown):
+        (testTLSErrorsEphemeral):
+        (beforeAll):
+
 2020-09-23  Antti Koivisto  <antti@apple.com>
 
         [Windows] Ignore render tree dump based results on Windows
