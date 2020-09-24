@@ -7,15 +7,14 @@
 <body>
 <pre id="console"></pre>
 <script>
-    description("Ensure that audio is rendered when tainted by a remote audio resource when CORS is enabled.");
+    description("Ensure that audio is not rendered when tainted by a remote audio resource when CORS is not enabled.");
     window.jsTestIsAsync = true;
 
     function go() {
         let audio = new Audio();
-        audio.crossOrigin = "anonymous";
         let mediaFile = findMediaFile("audio", "../../media/resources/1000Hz-sin");
         let type = mimeTypeForExtension(mediaFile.split('.').pop());
-        audio.src = "http://localhost:8080/security/resources/video-cross-origin-allow.php?name=" + mediaFile + "&type=" + type;
+        audio.src = "http://localhost:8080/security/resources/redirect-allow-star.php?url=" + encodeURIComponent("http://127.0.0.1:8080/security/resources/video-cross-origin-allow.php?name=" + mediaFile + "&type=" + type);
 
         context = new AudioContext();
         let mediaSource = context.createMediaElementSource(audio);
@@ -39,7 +38,7 @@
         audio.addEventListener("ended", event => {
             clearInterval(intervalToken);
             context.suspend().then(() => {
-                shouldNotBe("outputArray", "silentArray");
+                shouldBe("outputArray", "silentArray");
                 finishJSTest();
             });
         });

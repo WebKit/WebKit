@@ -1,3 +1,21 @@
+2020-09-24  Chris Dumez  <cdumez@apple.com>
+
+        web audio api outputs silence for 302 redirected resource in safari
+        https://bugs.webkit.org/show_bug.cgi?id=214932
+        <rdar://problem/66300050>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage. Update existing test to reflect the fact that the frequency returned by
+        the AnalyserNode is -Infinity when input is silent, not minDecibels (this has changed fairly
+        recently).
+
+        * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect-expected.txt: Added.
+        * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html: Copied from LayoutTests/http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html.
+        * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html:
+        * http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect-expected.txt: Added.
+        * http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html: Copied from LayoutTests/http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html.
+
 2020-09-24  Frederic Wang  <fwang@igalia.com>
 
         Resync WPT's mathml and math-script-level-and-math-style tests

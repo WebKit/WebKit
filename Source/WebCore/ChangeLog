@@ -1,3 +1,23 @@
+2020-09-24  Chris Dumez  <cdumez@apple.com>
+
+        web audio api outputs silence for 302 redirected resource in safari
+        https://bugs.webkit.org/show_bug.cgi?id=214932
+        <rdar://problem/66300050>
+
+        Reviewed by Darin Adler.
+
+        If the resource is redirected to another origin, treat it as tainted only if the crossorigin attribute
+        is not set. This is done for consistency with Blink:
+        - https://github.com/chromium/chromium/blob/master/media/blink/webmediaplayer_impl.cc (see WouldTaintOrigin())
+
+        The new behavior also seems to match Firefox.
+
+        Tests: http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html
+               http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html
+
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::wouldTaintOrigin):
+
 2020-09-24  Youenn Fablet  <youenn@apple.com>
 
         Regression(r265280) Web Audio sources malfunction when disconnected from the audio graph

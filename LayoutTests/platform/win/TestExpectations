@@ -529,6 +529,10 @@ webkit.org/b/86914 fast/history/page-cache-closed-audiocontext.html [ Skip ]
 webkit.org/b/86914 fast/history/page-cache-running-audiocontext.html [ Skip ]
 webkit.org/b/86914 fast/history/page-cache-suspended-audiocontext.html [ Skip ]
 webkit.org/b/86914 media/W3C/audio [ Skip ]
+webkit.org/b/86914 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Skip ]
+webkit.org/b/86914 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Skip ]
+webkit.org/b/86914 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Skip ]
+webkit.org/b/86914 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Skip ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html [ Skip ]
@@ -4017,9 +4021,6 @@ webkit.org/b/185075 css3/color-filters/color-filter-current-color.html [ ImageOn
 webkit.org/b/185075 css3/color-filters/color-filter-inherits.html [ ImageOnlyFailure ]
 webkit.org/b/185075 css3/color-filters/color-filter-outline.html [ ImageOnlyFailure ]
 webkit.org/b/185075 css3/color-filters/color-filter-text-emphasis.html [ ImageOnlyFailure ]
-
-webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Skip ]
-webkit.org/b/185471 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Skip ]
 
 webkit.org/b/185765 fast/images/animated-image-mp4-crash.html [ Skip ]
 
