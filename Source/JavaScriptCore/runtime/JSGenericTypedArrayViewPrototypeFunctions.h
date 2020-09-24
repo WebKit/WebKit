@@ -464,7 +464,9 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
         return JSValue::encode(result);
 
     // The species constructor may return an array with any arbitrary length.
-    length = std::min(length, result->length());
+    if (result->length() < length)
+        return throwVMTypeError(globalObject, scope, "TypedArray.prototype.slice constructed typed array of insufficient length"_s);
+
     switch (result->classInfo(vm)->typedArrayStorageType) {
     case TypeInt8:
         scope.release();

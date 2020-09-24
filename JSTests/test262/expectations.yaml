@@ -1245,27 +1245,12 @@ test/built-ins/RegExp/quantifier-integer-limit.js:
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
 test/built-ins/ThrowTypeError/unique-per-realm-non-simple.js:
   default: 'Test262Error: callee.get Expected SameValue(«function () {'
-test/built-ins/TypedArray/prototype/filter/speciesctor-get-ctor-returns-throws.js:
-  default: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/filter/speciesctor-get-species-custom-ctor-length-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/map/speciesctor-get-ctor-returns-throws.js:
-  default: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: 42 Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/map/speciesctor-get-species-custom-ctor-length-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-other-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-same-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/slice/speciesctor-get-species-custom-ctor-length-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/sort/comparefn-nonfunction-call-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'

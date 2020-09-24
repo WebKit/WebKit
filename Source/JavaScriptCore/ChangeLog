@@ -1,3 +1,20 @@
+2020-09-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        %TypedArray% methods should perform TypedArraySpeciesCreate correctly
+        https://bugs.webkit.org/show_bug.cgi?id=216938
+
+        Reviewed by Yusuke Suzuki.
+
+        map, filter, and slice are obliged to throw when:
+        1. this.constructor is defined but not an object
+        2. the species constructor produces a valid typed array which is shorter than the expected length
+
+        * builtins/TypedArrayPrototype.js:
+        (map):
+        (filter):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+
 2020-09-24  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Stop raising SIGPIPE when client side of RemoteInspector dies
