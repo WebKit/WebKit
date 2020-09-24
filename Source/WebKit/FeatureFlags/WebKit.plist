@@ -7,7 +7,27 @@
         <key>Enabled</key>
         <true/>
     </dict>
-    <key>canvas_and_media_in_gpu_process</key>
+    <key>gpu_process_canvas_rendering</key>
+    <dict>
+        <key>Enabled</key>
+        <false/>
+    </dict>
+    <key>gpu_process_dom_rendering</key>
+    <dict>
+        <key>Enabled</key>
+        <false/>
+    </dict>
+    <key>gpu_process_media</key>
+    <dict>
+        <key>Enabled</key>
+        <false/>
+    </dict>
+    <key>gpu_process_webgl</key>
+    <dict>
+        <key>Enabled</key>
+        <false/>
+    </dict>
+    <key>gpu_process_webrtc</key>
     <dict>
         <key>Enabled</key>
         <false/>
@@ -27,6 +47,16 @@
         <key>Enabled</key>
         <false/>
     </dict>
+	<key>sw_vp9_decoder_on_battery</key>
+    <dict>
+        <key>Enabled</key>
+        <false/>
+    </dict>
+	<key>vp9_decoder</key>
+    <dict>
+        <key>Enabled</key>
+        <true/>
+    </dict>
     <key>WebGL2</key>
     <dict>
         <key>Enabled</key>
@@ -38,21 +68,6 @@
         <false/>
     </dict>
     <key>WebXR</key>
-    <dict>
-        <key>Enabled</key>
-        <false/>
-    </dict>
-    <key>webrtc_in_gpu_process</key>
-    <dict>
-        <key>Enabled</key>
-        <false/>
-    </dict>
-    <key>vp9_decoder</key>
-    <dict>
-        <key>Enabled</key>
-        <true/>
-    </dict>
-    <key>sw_vp9_decoder_on_battery</key>
     <dict>
         <key>Enabled</key>
         <false/>

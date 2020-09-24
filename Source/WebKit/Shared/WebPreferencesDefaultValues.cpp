@@ -112,10 +112,37 @@ bool defaultAsyncOverflowScrollingEnabled()
 
 #if ENABLE(GPU_PROCESS)
 
-bool defaultUseGPUProcessForMedia()
+bool defaultUseGPUProcessForCanvasRenderingEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("canvas_and_media_in_gpu_process");
+    return isFeatureFlagEnabled("gpu_process_canvas_rendering");
+#endif
+
+    return false;
+}
+
+bool defaultUseGPUProcessForDOMRenderingEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("gpu_process_dom_rendering");
+#endif
+
+    return false;
+}
+
+bool defaultUseGPUProcessForMediaEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("gpu_process_media");
+#endif
+
+    return false;
+}
+
+bool defaultUseGPUProcessForWebGLEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("gpu_process_webgl");
 #endif
 
     return false;
@@ -123,21 +150,12 @@ bool defaultUseGPUProcessForMedia()
 
 #endif // ENABLE(GPU_PROCESS)
 
-bool defaultRenderCanvasInGPUProcessEnabled()
-{
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("canvas_and_media_in_gpu_process");
-#endif
-
-    return false;
-}
-
 #if ENABLE(MEDIA_STREAM)
 
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
 #if PLATFORM(MAC) && HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("webrtc_in_gpu_process");
+    return isFeatureFlagEnabled("gpu_process_webrtc");
 #endif
 
 #if PLATFORM(IOS_FAMILY) && HAVE(SYSTEM_FEATURE_FLAGS)
@@ -163,7 +181,7 @@ bool defaultCaptureAudioInUIProcessEnabled()
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("webrtc_in_gpu_process");
+    return isFeatureFlagEnabled("gpu_process_webrtc");
 #endif
 
     return false;
@@ -185,7 +203,7 @@ bool defaultCaptureVideoInUIProcessEnabled()
 bool defaultWebRTCCodecsInGPUProcess()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("webrtc_in_gpu_process");
+    return isFeatureFlagEnabled("gpu_process_webrtc");
 #endif
 
     return false;

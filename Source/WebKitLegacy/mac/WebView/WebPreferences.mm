@@ -624,7 +624,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-        @NO, WebKitUseGPUProcessForMediaKey,
+        @NO, WebKitUseGPUProcessForMediaEnabledKey,
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -3323,14 +3323,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitGenericCueAPIEnabledKey];
 }
 
-- (BOOL)useGPUProcessForMedia
+- (BOOL)useGPUProcessForMediaEnabled
 {
-    return [self _boolValueForKey:WebKitUseGPUProcessForMediaKey];
+    return [self _boolValueForKey:WebKitUseGPUProcessForMediaEnabledKey];
 }
 
-- (void)setUseGPUProcessForMedia:(BOOL)flag
+- (void)setUseGPUProcessForMediaEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitUseGPUProcessForMediaKey];
+    [self _setBoolValue:flag forKey:WebKitUseGPUProcessForMediaEnabledKey];
 }
 
 - (BOOL)viewportFitEnabled

@@ -335,10 +335,11 @@ bool defaultAsyncFrameScrollingEnabled();
 bool defaultAsyncOverflowScrollingEnabled();
 
 #if ENABLE(GPU_PROCESS)
-bool defaultUseGPUProcessForMedia();
+bool defaultUseGPUProcessForCanvasRenderingEnabled();
+bool defaultUseGPUProcessForDOMRenderingEnabled();
+bool defaultUseGPUProcessForMediaEnabled();
+bool defaultUseGPUProcessForWebGLEnabled();
 #endif
-
-bool defaultRenderCanvasInGPUProcessEnabled();
 
 #if ENABLE(MEDIA_STREAM)
 bool defaultCaptureAudioInGPUProcessEnabled();

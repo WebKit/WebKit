@@ -579,7 +579,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     updatePreferences(parameters.store);
 
 #if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
-    if (!m_page->settings().useGPUProcessForMedia())
+    if (!m_page->settings().useGPUProcessForMediaEnabled())
         DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 
@@ -783,7 +783,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    if (m_page->settings().useGPUProcessForMedia())
+    if (m_page->settings().useGPUProcessForMediaEnabled())
         WebProcess::singleton().ensureGPUProcessConnection().updateParameters(parameters);
 #endif
 
@@ -3784,10 +3784,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    // FIXME: useGPUProcessForMedia should be a RuntimeEnabledFeature since it's global.
-    static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(settings.useGPUProcessForMedia());
+    // FIXME: useGPUProcessForMediaEnabled should be a RuntimeEnabledFeature since it's global.
+    static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(settings.useGPUProcessForMediaEnabled());
     WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->updatePreferences(settings);
-    WebProcess::singleton().setUseGPUProcessForMedia(settings.useGPUProcessForMedia());
+    WebProcess::singleton().setUseGPUProcessForMedia(settings.useGPUProcessForMediaEnabled());
 #endif
 }
 

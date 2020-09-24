@@ -3399,7 +3399,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    settings.setUseGPUProcessForMedia(preferences.useGPUProcessForMedia);
+    settings.setUseGPUProcessForMediaEnabled(preferences.useGPUProcessForMediaEnabled);
 #endif
 
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(preferences.inspectorAdditionsEnabled);

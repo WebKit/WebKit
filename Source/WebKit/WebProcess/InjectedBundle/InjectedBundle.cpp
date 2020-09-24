@@ -223,10 +223,10 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     }
 
 #if ENABLE(GPU_PROCESS)
-    if (preference == "WebKitUseGPUProcessForMedia" || preference == "WebKitCaptureAudioInGPUProcessEnabledKey") {
-        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::useGPUProcessForMediaKey(), enabled);
+    if (preference == "WebKitUseGPUProcessForMediaEnabled" || preference == "WebKitCaptureAudioInGPUProcessEnabledKey") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::useGPUProcessForMediaEnabledKey(), enabled);
         for (auto* page : pages)
-            page->settings().setUseGPUProcessForMedia(enabled);
+            page->settings().setUseGPUProcessForMediaEnabled(enabled);
         return;
     }
 #endif

@@ -330,13 +330,6 @@ LayoutFormattingContextIntegrationEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-RenderCanvasInGPUProcessEnabled:
-  type: bool
-  defaultValue: defaultRenderCanvasInGPUProcessEnabled()
-  humanReadableName: "Use GPU Process to render canvas"
-  humanReadableDescription: "Enable canvas rendering in GPU Process"
-  webcoreBinding: none
-
 RestrictedHTTPResponseAccess:
   type: bool
   defaultValue: true
@@ -417,13 +410,37 @@ IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
   humanReadableName: "[ITP Repro] 30 Second Timeout For Non-Cookie Data Removal"
   humanReadableDescription: "Remove all non-cookie website data after just 30 seconds of no user interaction when Intelligent Tracking Prevention is enabled"
 
-UseGPUProcessForMedia:
+UseGPUProcessForCanvasRenderingEnabled:
   type: bool
-  defaultValue: defaultUseGPUProcessForMedia()
+  defaultValue: defaultUseGPUProcessForCanvasRenderingEnabled()
   condition: ENABLE(GPU_PROCESS)
-  humanReadableName: "Use GPU Process for media"
+  humanReadableName: "GPU Process: Canvas Rendering"
+  humanReadableDescription: "Enable canvas rendering in GPU Process"
+  webcoreBinding: none
+
+UseGPUProcessForDOMRenderingEnabled:
+  type: bool
+  defaultValue: defaultUseGPUProcessForDOMRenderingEnabled()
+  condition: ENABLE(GPU_PROCESS)
+  humanReadableName: "GPU Process: DOM Rendering"
+  humanReadableDescription: "Enable DOM rendering in GPU Process"
+  webcoreBinding: none
+
+UseGPUProcessForMediaEnabled:
+  type: bool
+  defaultValue: defaultUseGPUProcessForMediaEnabled()
+  condition: ENABLE(GPU_PROCESS)
+  humanReadableName: "GPU Process: Media"
   humanReadableDescription: "Do all media loading and playback in the GPU Process"
-  webcoreName: useGPUProcessForMedia
+  webcoreName: useGPUProcessForMediaEnabled
+
+UseGPUProcessForWebGLEnabled:
+  type: bool
+  defaultValue: defaultUseGPUProcessForWebGLEnabled()
+  condition: ENABLE(GPU_PROCESS)
+  humanReadableName: "GPU Process: WebGL"
+  humanReadableDescription: "Enable WebGL in GPU Process"
+  webcoreBinding: none
 
 LiveRangeSelectionEnabled:
   type: bool

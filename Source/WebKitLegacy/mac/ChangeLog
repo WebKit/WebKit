@@ -1,3 +1,23 @@
+2020-09-23  Peng Liu  <peng.liu6@apple.com>
+
+        Add feature flags for GPU Process features
+        https://bugs.webkit.org/show_bug.cgi?id=216901
+
+        Reviewed by Tim Horton.
+
+        Minor cleanups.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences useGPUProcessForMediaEnabled]):
+        (-[WebPreferences setUseGPUProcessForMediaEnabled:]):
+        (-[WebPreferences useGPUProcessForMedia]): Deleted.
+        (-[WebPreferences setUseGPUProcessForMedia:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2020-09-23  Chris Dumez  <cdumez@apple.com>
 
         Turn off the legacy prefixed WebAudio API

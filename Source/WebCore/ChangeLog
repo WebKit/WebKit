@@ -1,3 +1,16 @@
+2020-09-23  Peng Liu  <peng.liu6@apple.com>
+
+        Add feature flags for GPU Process features
+        https://bugs.webkit.org/show_bug.cgi?id=216901
+
+        Reviewed by Tim Horton.
+
+        Rename useGPUProcessForMedia to useGPUProcessForMediaEnabled.
+
+        No new tests since no functional changes.
+
+        * page/Settings.yaml:
+
 2020-09-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Line layout logic should consult LayoutState whether remove trailing letter spacing.

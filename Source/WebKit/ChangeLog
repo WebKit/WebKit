@@ -1,3 +1,54 @@
+2020-09-23  Peng Liu  <peng.liu6@apple.com>
+
+        Add feature flags for GPU Process features
+        https://bugs.webkit.org/show_bug.cgi?id=216901
+
+        Reviewed by Tim Horton.
+
+        Add feature flags for the following GPU Process features:
+        - 2D canvas in GPU process
+        - WebGL in GPU process
+        - DOM rendering in GPU Process
+
+        Also, clean up some related feature/function names.
+
+        * FeatureFlags/WebKit.plist:
+        Add keys for the GPU process features and sort all keys.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultUseGPUProcessForCanvasRenderingEnabled):
+        (WebKit::defaultUseGPUProcessForDOMRenderingEnabled):
+        (WebKit::defaultUseGPUProcessForMediaEnabled):
+        (WebKit::defaultUseGPUProcessForWebGLEnabled):
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+        (WebKit::defaultCaptureVideoInGPUProcessEnabled):
+        (WebKit::defaultWebRTCCodecsInGPUProcess):
+        (WebKit::defaultUseGPUProcessForMedia): Deleted.
+        (WebKit::defaultRenderCanvasInGPUProcessEnabled): Deleted.
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/WebPreferencesInternal.yaml:
+        Add preferences and corresponding default values.
+
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        Rename useGPUProcessForMedia to useGPUProcessForMediaEnabled.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        Use useGPUProcessForCanvasRenderingEnabled instead of renderCanvasInGPUProcessEnabled.
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::updatePreferences):
+        Use useGPUProcessForMediaEnabled instead of useGPUProcessForMedia.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains): Ditto.
+        (WebKit::WebPage::updatePreferences): Ditto.
+
 2020-09-23  Chris Dumez  <cdumez@apple.com>
 
         Turn off the legacy prefixed WebAudio API

@@ -332,7 +332,7 @@ shouldDisplayTextDescriptions:
 genericCueAPIEnabled:
   initial: false
   conditional: ENABLE(VIDEO)
-useGPUProcessForMedia:
+useGPUProcessForMediaEnabled:
   initial: false
   conditional: ENABLE(GPU_PROCESS)
 scrollingCoordinatorEnabled:

@@ -451,9 +451,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
     parameters.localizedDeviceModel = localizedDeviceModel();
 #endif
-    
+
     // Allow microphone access if either preference is set because WebRTC requires microphone access.
-    bool needWebProcessExtensions = !m_defaultPageGroup->preferences().useGPUProcessForMedia()
+    bool needWebProcessExtensions = !m_defaultPageGroup->preferences().useGPUProcessForMediaEnabled()
         || !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled()
         || !m_defaultPageGroup->preferences().captureVideoInGPUProcessEnabled();
 
