@@ -151,6 +151,9 @@ def parse_args(args):
             dest="sample_on_timeout", help="Don't run sample on timeout (OS X only)"),
         optparse.make_option("--no-ref-tests", action="store_true",
             dest="no_ref_tests", help="Skip all ref tests"),
+        optparse.make_option("--ignore-render-tree-dump-results", action="store_true",
+            dest="ignore_render_tree_dump_results",
+            help="Don't compare or save results for render tree dump tests (they still run and crashes are reported)"),
         optparse.make_option("--tolerance",
             help="Ignore image differences less than this percentage (some "
                 "ports may ignore this option)", type="float"),
@@ -470,6 +473,10 @@ def _set_up_derived_options(port, options):
     # The GTK+ and WPE ports only support WebKit2 so they always use WKTR.
     if options.platform in ["gtk", "wpe"]:
         options.webkit_test_runner = True
+
+    # Don't maintain render tree dump results for Apple Windows port.
+    if port.port_name == "win":
+        options.ignore_render_tree_dump_results = True
 
     if options.leaks:
         options.additional_env_var.append("JSC_usePoisoning=0")

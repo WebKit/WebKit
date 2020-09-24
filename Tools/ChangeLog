@@ -1,3 +1,25 @@
+2020-09-23  Antti Koivisto  <antti@apple.com>
+
+        [Windows] Ignore render tree dump based results on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=209897
+
+        Reviewed by Darin Adler.
+
+        Render tree dumps are port specific and so difficult to maintain. They are mostly very old and
+        have been superseded by more modern ref and text dump tests. They rarely reveal any port specific bugs.
+
+        This patch adds --ignore-render-tree-dump-results option to run-webkit-tests and enables it by
+        default on Apple Windows port.
+
+        With the option set the render tree dump tests are still run (so crashes are detected) but their
+        output is treated as if it always passed. Missing results are not written to disk.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_text):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        (_set_up_derived_options):
+
 2020-09-23  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed config fix.
