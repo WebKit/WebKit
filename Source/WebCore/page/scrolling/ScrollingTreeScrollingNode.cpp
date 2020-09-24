@@ -144,9 +144,10 @@ bool ScrollingTreeScrollingNode::canHandleWheelEvent(const PlatformWheelEvent& w
         return true;
 
     // We always rubber-band the latched node, or the root node.
-    if (isLatchedNode() || isRootNode())
+    // The stateless wheel event doesn't trigger rubber-band.
+    if (isLatchedNode() || (isRootNode() && !wheelEvent.isNonGestureEvent()))
         return true;
-    
+
     return eventCanScrollContents(wheelEvent);
 }
 

@@ -1,3 +1,17 @@
+2020-09-24  Cathie Chen  <cathiechen@igalia.com>
+
+        Root node with stateless wheel event isn't always scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=216875
+
+        Reviewed by Simon Fraser.
+
+        Root nodes are not always capable of handling wheel event. When it is a stateless wheel event which
+        does not trigger rubber-band, we should check the scroll content of the root node.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::canHandleWheelEvent const): Stateless wheel event
+        doesn't trigger rubber-band, should check the scroll content.
+
 2020-09-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r267495 and r267512.
