@@ -40,35 +40,35 @@
 #endif
 
 #ifndef M_PI
-const double piDouble = 3.14159265358979323846;
-const float piFloat = 3.14159265358979323846f;
+constexpr double piDouble = 3.14159265358979323846;
+constexpr float piFloat = 3.14159265358979323846f;
 #else
-const double piDouble = M_PI;
-const float piFloat = static_cast<float>(M_PI);
+constexpr double piDouble = M_PI;
+constexpr float piFloat = static_cast<float>(M_PI);
 #endif
 
 #ifndef M_PI_2
-const double piOverTwoDouble = 1.57079632679489661923;
-const float piOverTwoFloat = 1.57079632679489661923f;
+constexpr double piOverTwoDouble = 1.57079632679489661923;
+constexpr float piOverTwoFloat = 1.57079632679489661923f;
 #else
-const double piOverTwoDouble = M_PI_2;
-const float piOverTwoFloat = static_cast<float>(M_PI_2);
+constexpr double piOverTwoDouble = M_PI_2;
+constexpr float piOverTwoFloat = static_cast<float>(M_PI_2);
 #endif
 
 #ifndef M_PI_4
-const double piOverFourDouble = 0.785398163397448309616;
-const float piOverFourFloat = 0.785398163397448309616f;
+constexpr double piOverFourDouble = 0.785398163397448309616;
+constexpr float piOverFourFloat = 0.785398163397448309616f;
 #else
-const double piOverFourDouble = M_PI_4;
-const float piOverFourFloat = static_cast<float>(M_PI_4);
+constexpr double piOverFourDouble = M_PI_4;
+constexpr float piOverFourFloat = static_cast<float>(M_PI_4);
 #endif
 
 #ifndef M_SQRT2
-const double sqrtOfTwoDouble = 1.41421356237309504880;
-const float sqrtOfTwoFloat = 1.41421356237309504880f;
+constexpr double sqrtOfTwoDouble = 1.41421356237309504880;
+constexpr float sqrtOfTwoFloat = 1.41421356237309504880f;
 #else
-const double sqrtOfTwoDouble = M_SQRT2;
-const float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
+constexpr double sqrtOfTwoDouble = M_SQRT2;
+constexpr float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
 #endif
 
 #if COMPILER(MSVC)
@@ -100,23 +100,41 @@ extern "C" inline double wtf_atan2(double x, double y)
 
 #endif // COMPILER(MSVC)
 
-inline double deg2rad(double d)  { return d * piDouble / 180.0; }
-inline double rad2deg(double r)  { return r * 180.0 / piDouble; }
-inline double deg2grad(double d) { return d * 400.0 / 360.0; }
-inline double grad2deg(double g) { return g * 360.0 / 400.0; }
-inline double turn2deg(double t) { return t * 360.0; }
-inline double deg2turn(double d) { return d / 360.0; }
-inline double rad2grad(double r) { return r * 200.0 / piDouble; }
-inline double grad2rad(double g) { return g * piDouble / 200.0; }
+constexpr double radiansPerDegreeDouble = piDouble / 180.0;
+constexpr double degreesPerRadianDouble = 180.0 / piDouble;
+constexpr double gradientsPerDegreeDouble = 400.0 / 360.0;
+constexpr double degreesPerGradientDouble = 360.0 / 400.0;
+constexpr double turnsPerDegreeDouble = 1.0 / 360.0;
+constexpr double degreesPerTurnDouble = 360.0;
 
-inline float deg2rad(float d)  { return d * piFloat / 180.0f; }
-inline float rad2deg(float r)  { return r * 180.0f / piFloat; }
-inline float deg2grad(float d) { return d * 400.0f / 360.0f; }
-inline float grad2deg(float g) { return g * 360.0f / 400.0f; }
-inline float turn2deg(float t) { return t * 360.0f; }
-inline float deg2turn(float d) { return d / 360.0f; }
-inline float rad2grad(float r) { return r * 200.0f / piFloat; }
-inline float grad2rad(float g) { return g * piFloat / 200.0f; }
+constexpr inline double deg2rad(double d)  { return d * radiansPerDegreeDouble; }
+constexpr inline double rad2deg(double r)  { return r * degreesPerRadianDouble; }
+constexpr inline double deg2grad(double d) { return d * gradientsPerDegreeDouble; }
+constexpr inline double grad2deg(double g) { return g * degreesPerGradientDouble; }
+constexpr inline double deg2turn(double d) { return d * turnsPerDegreeDouble; }
+constexpr inline double turn2deg(double t) { return t * degreesPerTurnDouble; }
+
+
+// Note that these differ from the casting the double values above in their rounding errors.
+constexpr float radiansPerDegreeFloat = piFloat / 180.0f;
+constexpr float degreesPerRadianFloat = 180.0f / piFloat;
+constexpr float gradientsPerDegreeFloat= 400.0f / 360.0f;
+constexpr float degreesPerGradientFloat = 360.0f / 400.0f;
+constexpr float turnsPerDegreeFloat = 1.0f / 360.0f;
+constexpr float degreesPerTurnFloat = 360.0f;
+
+constexpr inline float deg2rad(float d)  { return d * radiansPerDegreeFloat; }
+constexpr inline float rad2deg(float r)  { return r * degreesPerRadianFloat; }
+constexpr inline float deg2grad(float d) { return d * gradientsPerDegreeFloat; }
+constexpr inline float grad2deg(float g) { return g * degreesPerGradientFloat; }
+constexpr inline float deg2turn(float d) { return d * turnsPerDegreeFloat; }
+constexpr inline float turn2deg(float t) { return t * degreesPerTurnFloat; }
+
+// Treat theses as conversions through the cannonical unit for angles, which is degrees.
+constexpr inline double rad2grad(double r) { return deg2grad(rad2deg(r)); }
+constexpr inline double grad2rad(double g) { return deg2rad(grad2deg(g)); }
+constexpr inline float rad2grad(float r) { return deg2grad(rad2deg(r)); }
+constexpr inline float grad2rad(float g) { return deg2rad(grad2deg(g)); }
 
 // std::numeric_limits<T>::min() returns the smallest positive value for floating point types
 template<typename T> constexpr T defaultMinimumForClamp() { return std::numeric_limits<T>::min(); }

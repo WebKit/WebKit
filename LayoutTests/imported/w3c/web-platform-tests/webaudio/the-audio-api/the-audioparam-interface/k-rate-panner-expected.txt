@@ -96,9 +96,9 @@ PASS   Listener positionX.setValueAtTime(1,0) did not throw an exception.
 PASS   Listener positionX.linearRampToValueAtTime(1000,1) did not throw an exception. 
 PASS   Listener k-rate positionX: Output is not constantly 0.0012908608186990023 (contains 512 different values). 
 PASS   Listener k-rate positionX: Output [0, 127] contains only the constant 0.0012908608186990023. 
-PASS   Listener k-rate positionX: Output [128, 255] contains only the constant 0.012697513215243816. 
+PASS   Listener k-rate positionX: Output [128, 255] contains only the constant 0.012697515077888966. 
 PASS   Listener k-rate positionX: Output [256, 383] contains only the constant 0.012066217139363289. 
-PASS   Listener k-rate positionX: Output [384, 511] contains only the constant 0.008956578560173512. 
+PASS   Listener k-rate positionX: Output [384, 511] contains only the constant 0.008956579491496086. 
 PASS   Listener k-rate positionX: Output [512, 639] contains only the constant 0.006926612462848425. 
 PASS < [Listener k-rate positionX] All assertions passed. (total 9 assertions) 
 PASS > [Listener k-rate positionY]  
@@ -130,7 +130,7 @@ PASS   Listener forwardX.linearRampToValueAtTime(1,1) did not throw an exception
 PASS   Listener k-rate forwardX: Output is not constantly 0.00111640605609864 (contains 512 different values). 
 PASS   Listener k-rate forwardX: Output [0, 127] contains only the constant 0.00111640605609864. 
 PASS   Listener k-rate forwardX: Output [128, 255] contains only the constant 0.001115163555368781. 
-PASS   Listener k-rate forwardX: Output [256, 383] contains only the constant 0.001113853300921619. 
+PASS   Listener k-rate forwardX: Output [256, 383] contains only the constant 0.0011138531845062971. 
 PASS   Listener k-rate forwardX: Output [384, 511] contains only the constant 0.0011124692391604185. 
 PASS   Listener k-rate forwardX: Output [512, 639] contains only the constant 0.0011110050836578012. 
 PASS < [Listener k-rate forwardX] All assertions passed. (total 9 assertions) 
@@ -182,8 +182,8 @@ PASS > [Listener k-rate upZ]
 PASS   Listener upZ.automationRate is equal to k-rate. 
 PASS   Listener upZ.setValueAtTime(-1,0) did not throw an exception. 
 PASS   Listener upZ.linearRampToValueAtTime(1000,1) did not throw an exception. 
-PASS   Listener k-rate upZ: Output is not constantly 0.001004426390863955 (contains 512 different values). 
-PASS   Listener k-rate upZ: Output [0, 127] contains only the constant 0.001004426390863955. 
+PASS   Listener k-rate upZ: Output is not constantly 0.0010044265072792768 (contains 512 different values). 
+PASS   Listener k-rate upZ: Output [0, 127] contains only the constant 0.0010044265072792768. 
 PASS   Listener k-rate upZ: Output [128, 255] contains only the constant 0.0010139397345483303. 
 PASS   Listener k-rate upZ: Output [256, 383] contains only the constant 0.0010087323607876897. 
 PASS   Listener k-rate upZ: Output [384, 511] contains only the constant 0.0010072044096887112. 

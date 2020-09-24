@@ -755,13 +755,13 @@ double CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSUnitType unit
         factor = cssPixelsPerInch * 12.0 / 72.0; // 1 pc == 12 pt
         break;
     case CSSUnitType::CSS_RAD:
-        factor = 180 / piDouble;
+        factor = degreesPerRadianDouble;
         break;
     case CSSUnitType::CSS_GRAD:
-        factor = 0.9;
+        factor = degreesPerGradientDouble;
         break;
     case CSSUnitType::CSS_TURN:
-        factor = 360;
+        factor = degreesPerTurnDouble;
         break;
     case CSSUnitType::CSS_S:
     case CSSUnitType::CSS_KHZ:

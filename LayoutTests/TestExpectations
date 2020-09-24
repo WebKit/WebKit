@@ -1188,11 +1188,6 @@ webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/parser/parse
 # selectors
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-rtl-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172a.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172b.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173a.xml [ ImageOnlyFailure ]
@@ -1666,7 +1661,6 @@ imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-w
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-svg.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/display-none-mask.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-with-revalidation.tentative.html [ ImageOnlyFailure ]
 
 webkit.org/b/139595 imported/w3c/web-platform-tests/svg/import/animate-dom-02-f-manual.svg [ Skip ]
 webkit.org/b/201110 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/stacking-context.html [ Skip ]
@@ -2482,7 +2476,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens
 
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-008.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-009.html [ ImageOnlyFailure Pass ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure ]
 
 # overflow-wrap:anywhere feature is not implemented yet.
 webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-001.html [ Skip ]

@@ -16,11 +16,11 @@ PASS max(1grad, 2grad) should be used-value-equivalent to 2grad
 PASS max(1rad, 2rad) should be used-value-equivalent to 2rad 
 PASS max(1turn, 2turn) should be used-value-equivalent to 2turn 
 PASS min(90deg, 0.26turn) should be used-value-equivalent to 90deg 
-FAIL min(1.57rad, 95deg) should be used-value-equivalent to 1.57rad assert_equals: rotate(min(1.57rad, 95deg)) and rotate(1.57rad) serialize to the same thing in used values. expected "matrix(0.0007963267107332633, 0.9999996829318346, -0.9999996829318346, 0.0007963267107332633, 0, 0)" but got "matrix(0.0007963267107334854, 0.9999996829318346, -0.9999996829318346, 0.0007963267107334854, 0, 0)"
+PASS min(1.57rad, 95deg) should be used-value-equivalent to 1.57rad 
 PASS max(91deg, 0.25turn) should be used-value-equivalent to 91deg 
 PASS max(1.58rad, 90deg) should be used-value-equivalent to 1.58rad 
-FAIL min(270deg, max(0.25turn, 3.14rad)) should be used-value-equivalent to 3.14rad assert_equals: rotate(min(270deg, max(0.25turn, 3.14rad))) and rotate(3.14rad) serialize to the same thing in used values. expected "matrix(-0.9999987317275395, 0.0015926529164868282, -0.0015926529164868282, -0.9999987317275395, 0, 0)" but got "matrix(-0.9999987317275395, 0.0015926529164872723, -0.0015926529164872723, -0.9999987317275395, 0, 0)"
-FAIL max(0.25turn, min(270deg, 3.14rad)) should be used-value-equivalent to 3.14rad assert_equals: rotate(max(0.25turn, min(270deg, 3.14rad))) and rotate(3.14rad) serialize to the same thing in used values. expected "matrix(-0.9999987317275395, 0.0015926529164868282, -0.0015926529164868282, -0.9999987317275395, 0, 0)" but got "matrix(-0.9999987317275395, 0.0015926529164872723, -0.0015926529164872723, -0.9999987317275395, 0, 0)"
+PASS min(270deg, max(0.25turn, 3.14rad)) should be used-value-equivalent to 3.14rad 
+PASS max(0.25turn, min(270deg, 3.14rad)) should be used-value-equivalent to 3.14rad 
 PASS calc(min(90deg, 1.58rad) + 0.25turn) should be used-value-equivalent to 180deg 
 PASS calc(min(90deg, 1.58rad) - 0.125turn) should be used-value-equivalent to 45deg 
 PASS calc(min(90deg, 1.58rad) * 2 should be used-value-equivalent to 180deg 

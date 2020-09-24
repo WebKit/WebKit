@@ -1,3 +1,18 @@
+2020-09-24  Keith Miller  <keith_miller@apple.com>
+
+        CSS angle unit conversions should consistently use the same associativity
+        https://bugs.webkit.org/show_bug.cgi?id=216906
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline tests for different rounding errors in angle unit conversions. The minmax-angle-computed test
+        is now passing and the webaudio tests just have slightly different results now.
+
+        * web-platform-tests/css/css-values/minmax-angle-computed-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic-expected.txt:
+
 2020-09-24  Frederic Wang  <fwang@igalia.com>
 
         Resync WPT's mathml and math-script-level-and-math-style tests

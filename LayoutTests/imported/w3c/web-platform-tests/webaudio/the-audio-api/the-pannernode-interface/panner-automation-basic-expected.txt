@@ -92,7 +92,7 @@ PASS < [Stereo listener.positionY] All assertions passed. (total 6 assertions)
 PASS > [Mono listener.positionY]  
 PASS   Mono listener.positionY.value frame [0, 128) channel 0 contains only the constant 0.22094237804412842. 
 PASS   Mono listener.positionY.value frame [0, 128) channel 1 contains only the constant 0.5334020853042603. 
-PASS   Mono listener.positionY.value frame [128, 256) channel 0 contains only the constant 0.00003826833926723339. 
+PASS   Mono listener.positionY.value frame [128, 256) channel 0 contains only the constant 0.00003826833562925458. 
 PASS   Mono listener.positionY.value frame [128, 256) channel 1 contains only the constant 0.00009238795610144734. 
 PASS   Mono listener.positionY: Output at frame 128 channel 0 is not equal to 0.22094237804412842. 
 PASS   Mono listener.positionY: Output at frame 128 channel 1 is not equal to 0.5334020853042603. 

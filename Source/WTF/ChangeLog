@@ -1,3 +1,36 @@
+2020-09-24  Keith Miller  <keith_miller@apple.com>
+
+        CSS angle unit conversions should consistently use the same associativity
+        https://bugs.webkit.org/show_bug.cgi?id=216906
+
+        Reviewed by Simon Fraser.
+
+        Right now we inconsistently associate our floating point math for
+        angle unit conversions. In particular,
+        conversionToCanonicalUnitsScaleFactor expects there to be a single
+        fixed constant we can multiply by to change units. However, the
+        various conversion functions in WTF are not associated in this
+        way. e.g. rad2deg does ((radian * 180) / pi) rather than
+        (radian  *(180 / pi)). Since FP math is NOT associative these
+        produce different results. For example, 1.57 radians is
+        89.954373835539258 degrees in the first case but
+        89.954373835539243 in the second.
+
+        This patch changes those WTF functions to operate on a single
+        scale factor when converting to/from the canonical
+        unit. Conversions between non-canonical units first convert to the
+        canonical unit (degree).
+
+        * wtf/MathExtras.h:
+        (deg2rad):
+        (rad2deg):
+        (deg2grad):
+        (grad2deg):
+        (deg2turn):
+        (turn2deg):
+        (rad2grad):
+        (grad2rad):
+
 2020-09-24  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable on Apple Windows port
