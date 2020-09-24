@@ -271,12 +271,6 @@ bool PannerNode::shouldUseARate() const
         || m_orientationZ->automationRate() == AutomationRate::ARate;
 }
 
-void PannerNode::reset()
-{
-    if (m_panner.get())
-        m_panner->reset();
-}
-
 void PannerNode::initialize()
 {
     if (isInitialized())

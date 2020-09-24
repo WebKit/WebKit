@@ -106,10 +106,6 @@ void ChannelMergerNode::process(size_t framesToProcess)
     }
 }
 
-void ChannelMergerNode::reset()
-{
-}
-
 ExceptionOr<void> ChannelMergerNode::setChannelCount(unsigned channelCount)
 {
     if (channelCount != 1)

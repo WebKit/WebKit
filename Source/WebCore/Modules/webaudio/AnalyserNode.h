@@ -62,7 +62,6 @@ private:
     AnalyserNode(BaseAudioContext&);
 
     void process(size_t framesToProcess) final;
-    void reset() final;
     void updatePullStatus() final;
 
     double tailTime() const final;

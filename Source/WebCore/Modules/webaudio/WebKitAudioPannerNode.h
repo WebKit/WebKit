@@ -66,7 +66,6 @@ public:
     // AudioNode
     void process(size_t framesToProcess) override;
     void pullInputs(size_t framesToProcess) override;
-    void reset() override;
     void initialize() override;
     void uninitialize() override;
 

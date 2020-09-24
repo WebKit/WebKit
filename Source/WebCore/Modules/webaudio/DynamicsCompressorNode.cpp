@@ -115,11 +115,6 @@ void DynamicsCompressorNode::processOnlyAudioParams(size_t framesToProcess)
     m_release->calculateSampleAccurateValues(values, framesToProcess);
 }
 
-void DynamicsCompressorNode::reset()
-{
-    m_dynamicsCompressor->reset();
-}
-
 void DynamicsCompressorNode::initialize()
 {
     if (isInitialized())

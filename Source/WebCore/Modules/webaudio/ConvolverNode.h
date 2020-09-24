@@ -58,7 +58,6 @@ private:
     bool requiresTailProcessing() const final;
 
     void process(size_t framesToProcess) final;
-    void reset() final;
     void checkNumberOfChannelsForInput(AudioNodeInput*) final;
 
     std::unique_ptr<Reverb> m_reverb;

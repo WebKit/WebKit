@@ -44,7 +44,6 @@ public:
     // AudioNode
     void process(size_t framesToProcess) override;
     void processOnlyAudioParams(size_t framesToProcess) final;
-    void reset() override;
 
     // Called in the main thread when the number of channels for the input may have changed.
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;

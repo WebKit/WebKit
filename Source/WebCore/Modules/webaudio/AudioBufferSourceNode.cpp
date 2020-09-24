@@ -425,12 +425,6 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     return true;
 }
 
-
-void AudioBufferSourceNode::reset()
-{
-    m_virtualReadIndex = 0;
-}
-
 ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());

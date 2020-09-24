@@ -43,7 +43,6 @@ public:
     
 private:
     void process(size_t framesToProcess) final;
-    void reset() final { };
 
     ConstantSourceNode(BaseAudioContext&, float);
     

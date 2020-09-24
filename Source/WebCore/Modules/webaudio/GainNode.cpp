@@ -110,10 +110,6 @@ void GainNode::processOnlyAudioParams(size_t framesToProcess)
     m_gain->calculateSampleAccurateValues(values, framesToProcess);
 }
 
-void GainNode::reset()
-{
-}
-
 // FIXME: this can go away when we do mixing with gain directly in summing junction of AudioNodeInput
 //
 // As soon as we know the channel count of our input, we can lazily initialize.

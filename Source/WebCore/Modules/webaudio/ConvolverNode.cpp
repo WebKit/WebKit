@@ -116,13 +116,6 @@ void ConvolverNode::process(size_t framesToProcess)
     }
 }
 
-void ConvolverNode::reset()
-{
-    auto locker = holdLock(m_processMutex);
-    if (m_reverb)
-        m_reverb->reset();
-}
-
 ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());

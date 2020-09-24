@@ -60,7 +60,6 @@ public:
 
     // AudioNode
     void process(size_t framesToProcess) override;
-    void reset() override;
     void initialize() override;
     void uninitialize() override;
     void didBecomeMarkedForDeletion() override;

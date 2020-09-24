@@ -50,7 +50,6 @@ public:
 
     // AudioNode
     void process(size_t framesToProcess) override;
-    void reset() override;
     
     // AudioSourceProviderClient
     void setFormat(size_t numberOfChannels, float sampleRate) override;

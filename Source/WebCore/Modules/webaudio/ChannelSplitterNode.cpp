@@ -93,10 +93,6 @@ void ChannelSplitterNode::process(size_t framesToProcess)
     }
 }
 
-void ChannelSplitterNode::reset()
-{
-}
-
 ExceptionOr<void> ChannelSplitterNode::setChannelCount(unsigned channelCount)
 {
     if (channelCount != numberOfOutputs())

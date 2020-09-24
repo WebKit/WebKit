@@ -38,7 +38,6 @@ public:
 
     // AudioNode
     void process(size_t framesToProcess) override;
-    void reset() override;
     
     ExceptionOr<void> setChannelCount(unsigned) final;
     ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;

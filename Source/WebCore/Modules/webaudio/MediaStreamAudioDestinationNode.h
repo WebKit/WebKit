@@ -47,7 +47,6 @@ public:
 
     // AudioNode.
     void process(size_t framesToProcess) final;
-    void reset() final;
     
 private:
     explicit MediaStreamAudioDestinationNode(BaseAudioContext&);

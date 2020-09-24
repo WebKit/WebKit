@@ -49,7 +49,6 @@ public:
 
     // AudioNode
     void process(size_t framesToProcess) final;
-    void reset() final;
 
     // setBuffer() is called on the main thread.  This is the buffer we use for playback.
     ExceptionOr<void> setBuffer(RefPtr<AudioBuffer>&&);

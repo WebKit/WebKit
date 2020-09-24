@@ -52,7 +52,6 @@ private:
     // AudioNode
     void process(size_t framesToProcess) final;
     void processOnlyAudioParams(size_t framesToProcess) final;
-    void reset() final { };
     bool requiresTailProcessing() const final { return false; }
 
     ExceptionOr<void> setChannelCount(unsigned) final;

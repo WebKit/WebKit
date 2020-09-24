@@ -436,11 +436,6 @@ void OscillatorNode::process(size_t framesToProcess)
     outputBus.clearSilentFlag();
 }
 
-void OscillatorNode::reset()
-{
-    m_virtualReadIndex = 0;
-}
-
 void OscillatorNode::setPeriodicWave(PeriodicWave& periodicWave)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "sample rate = ", periodicWave.sampleRate(), ", wave size = ", periodicWave.periodicWaveSize(), ", rate scale = ", periodicWave.rateScale());

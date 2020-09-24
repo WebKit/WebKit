@@ -135,12 +135,6 @@ void WebKitAudioPannerNode::process(size_t framesToProcess)
     destination->copyWithGainFrom(*destination, totalGain);
 }
 
-void WebKitAudioPannerNode::reset()
-{
-    if (m_panner.get())
-        m_panner->reset();
-}
-
 void WebKitAudioPannerNode::initialize()
 {
     if (isInitialized())

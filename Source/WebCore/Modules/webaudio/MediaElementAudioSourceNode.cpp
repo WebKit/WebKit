@@ -176,10 +176,6 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
     }
 }
 
-void MediaElementAudioSourceNode::reset()
-{
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

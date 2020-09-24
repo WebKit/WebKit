@@ -57,7 +57,6 @@ protected:
 
 private:
     void process(size_t framesToProcess) final;
-    void reset() final;
 
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }

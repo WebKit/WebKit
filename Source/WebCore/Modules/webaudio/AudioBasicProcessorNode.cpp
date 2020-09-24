@@ -102,12 +102,6 @@ void AudioBasicProcessorNode::pullInputs(size_t framesToProcess)
     input(0)->pull(output(0)->bus(), framesToProcess);
 }
 
-void AudioBasicProcessorNode::reset()
-{
-    if (processor())
-        processor()->reset();
-}
-
 // As soon as we know the channel count of our input, we can lazily initialize.
 // Sometimes this may be called more than once with different channel counts, in which case we must safely
 // uninitialize and then re-initialize with the new channel count.

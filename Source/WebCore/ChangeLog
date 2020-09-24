@@ -1,3 +1,48 @@
+2020-09-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop AudioNode::reset() and all its overrides
+        https://bugs.webkit.org/show_bug.cgi?id=216932
+
+        Reviewed by Eric Carlson.
+
+        Drop AudioNode::reset() and all its overrides. This is dead code.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        * Modules/webaudio/AnalyserNode.h:
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioDestinationNode.h:
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        * Modules/webaudio/ChannelMergerNode.h:
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        * Modules/webaudio/ChannelSplitterNode.h:
+        * Modules/webaudio/ConstantSourceNode.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        * Modules/webaudio/GainNode.cpp:
+        * Modules/webaudio/GainNode.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        * Modules/webaudio/RealtimeAnalyser.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webaudio/StereoPannerNode.h:
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        * Modules/webaudio/WebKitAudioPannerNode.h:
+
 2020-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Move proxy settings from WebKitContext to WebKitWebsiteDataManager

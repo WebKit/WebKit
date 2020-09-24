@@ -239,17 +239,6 @@ void ScriptProcessorNode::fireProcessEvent(unsigned doubleBufferIndex)
     }
 }
 
-void ScriptProcessorNode::reset()
-{
-    m_bufferReadWriteIndex = 0;
-    m_doubleBufferIndex = 0;
-
-    for (unsigned i = 0; i < 2; ++i) {
-        m_inputBuffers[i]->zero();
-        m_outputBuffers[i]->zero();
-    }
-}
-
 ExceptionOr<void> ScriptProcessorNode::setChannelCount(unsigned channelCount)
 {
     ASSERT(isMainThread());
