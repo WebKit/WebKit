@@ -2545,6 +2545,8 @@
         "web-platform-tests/infrastructure/assumptions/ahem-notref.html",
         "web-platform-tests/infrastructure/reftest/red.html",
         "web-platform-tests/intersection-observer/observer-in-iframe.html",
+        "web-platform-tests/mathml/crashtests/display-and-column-properties.html",
+        "web-platform-tests/mathml/crashtests/multicol-on-token-elements.html",
         "web-platform-tests/mathml/presentation-markup/fractions/frac-color-001-notref.html",
         "web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-003-notref.html",
         "web-platform-tests/mathml/relations/css-styling/mathbackground-001-notref.html",

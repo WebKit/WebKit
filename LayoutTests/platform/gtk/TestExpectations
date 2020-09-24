@@ -1259,8 +1259,6 @@ webkit.org/b/188406 [ Debug ] imported/w3c/web-platform-tests/html/semantics/sel
 webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Pass ]
 webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Pass ]
 
-imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.html [ ImageOnlyFailure ]
-
 webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal.html [ Pass Crash ]
 
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]

@@ -1,0 +1,14 @@
+
+PASS Empty mspace 
+PASS Different widths 
+PASS Different heights 
+PASS Different depths 
+PASS Various combinations of height, depth and width. 
+PASS Preferred width 
+FAIL dynamic attributes (remove) assert_approx_equals: expected 0 +/- 1 but got 10
+FAIL dynamic attributes (attach) assert_approx_equals: expected 50 +/- 1 but got 0
+FAIL dynamic attributes (modify) assert_approx_equals: expected 50 +/- 1 but got 100
+ 
+
+ 
+

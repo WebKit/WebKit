@@ -34,12 +34,15 @@
               assert_equals(style.getPropertyValue("direction"), "rtl", "attribute specified");
               element.setAttribute("dir", "RtL");
               assert_equals(style.getPropertyValue("direction"), "rtl", "case insensitive");
+              element.setAttribute("dir", "auto");
+              assert_equals(style.getPropertyValue("direction"), "ltr", "auto");
+              element.setAttribute("dir", "foo");
+              assert_equals(style.getPropertyValue("direction"), "ltr", "random value");
           }, `dir on the ${tag} element is mapped to CSS direction`)
 
           test(function() {
               assert_equals(style.getPropertyValue("color"),
-                            tag === "merror" ?
-                            "rgb(255, 0, 0)" : "rgb(0, 0, 255)",
+                            "rgb(0, 0, 255)",
                             "no attribute");
               element.setAttribute("mathcolor", "black");
               assert_equals(style.getPropertyValue("color"), "rgb(0, 0, 0)", "attribute specified");
@@ -63,6 +66,10 @@
           }, `mathbackground on the ${tag} element is mapped to CSS background-color`);
 
           test(function() {
+              // "none" and "mprescripts" can only be used as non-first children of mmultiscripts so font-size
+              // is incremented and the resulting fraction string is hard to test accurately, skip for now.
+              if (tag === "none" || tag === "mprescripts")
+                  return;
               assert_equals(style.getPropertyValue("font-size"), "50px", "no attribute");
               element.setAttribute("mathsize", "20px");
               assert_equals(style.getPropertyValue("font-size"), "20px", "attribute specified");

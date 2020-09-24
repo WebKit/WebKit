@@ -1,3 +1,249 @@
+2020-09-24  Frederic Wang  <fwang@igalia.com>
+
+        Resync WPT's mathml and math-script-level-and-math-style tests
+        https://bugs.webkit.org/show_bug.cgi?id=216871
+
+        Reviewed by Rob Buis.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative.html: Added.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-002.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-003.tentative-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-003.tentative-expected.html.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-003.tentative.html: Added.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-004.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-001.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-002.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-003.tentative-expected.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-003.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-004.tentative-expected.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-004.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-005.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-font-size-clamping-001.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-style-001.tentative.html:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/w3c-import.log:
+        * web-platform-tests/mathml/crashtests/display-and-column-properties.html: Added.
+        * web-platform-tests/mathml/crashtests/multicol-on-token-elements.html: Added.
+        * web-platform-tests/mathml/crashtests/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/tools/utils/w3c-import.log.
+        * web-platform-tests/mathml/presentation-markup/direction/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-invalid-2-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-invalid-2.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-invalid-3-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-invalid-3.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-invalid-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-invalid.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-legacy-bevelled-attribute.tentative-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-legacy-bevelled-attribute.tentative.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/menclose/legacy-menclose-radical-notation-expected.html:
+        * web-platform-tests/mathml/presentation-markup/menclose/legacy-menclose-radical-notation.html:
+        * web-platform-tests/mathml/presentation-markup/mpadded/legacy-orthogonal-pseudo-units.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mpadded/mpadded-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mpadded/mpadded-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mpadded/mpadded-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mpadded/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/w3c-import.log.
+        * web-platform-tests/mathml/presentation-markup/mrow/dynamic-mrow-like-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/dynamic-mrow-like-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-baseline.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/legacy-mfenced-element-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/legacy-mfenced-element-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/legacy-mstyle-attributes.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/merror-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/mrow-painting-order-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/mrow-painting-order.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/mrow-preferred-width.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/no-spacing.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/spacing.html: Added.
+        * web-platform-tests/mathml/presentation-markup/mrow/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/operators/embellished-operator-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/embellished-operator-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/embellished-operator-003.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-operator-001.html.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-expected.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-minus-plus-expected.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-lspace-rspace-dynamic-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-lspace-rspace-dynamic.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-not-in-dictionary-lspace-rspace-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-not-in-dictionary-lspace-rspace.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-not-in-dictionary-movablelimits-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-not-in-dictionary-movablelimits.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-single-char-and-children-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-single-char-and-children.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-001-expected.txt: Removed.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-001.html: Removed.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006.html: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/support/operator-dictionary-tests.css: Added.
+        (@font-face):
+        (math, math *):
+        * web-platform-tests/mathml/presentation-markup/operators/support/operator-dictionary-tests.js: Added.
+        (OperatorDictionaryTests.spaceBetween):
+        (OperatorDictionaryTests.string_appeared_here):
+        (OperatorDictionaryTests.run):
+        * web-platform-tests/mathml/presentation-markup/operators/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/tables/w3c-import.log.
+        * web-platform-tests/mathml/presentation-markup/operators/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/radicals/dynamic-radical-paint-invalidation-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/radicals/dynamic-radical-paint-invalidation-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2.html: Added.
+        * web-platform-tests/mathml/presentation-markup/radicals/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/empty-underover.html: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-legacy-scriptshift-attributes-001.tentative-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-legacy-scriptshift-attributes-001.tentative.html: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-legacy-align-attribute-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-legacy-align-attribute-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-1.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-001.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-002.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-like-003.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-vertical-align.tentative-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-vertical-align.tentative.html: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/tables/dynamic-table-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/tables/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/tokens/dynamic-mtext-like-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/tokens/dynamic-mtext-like-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/tokens/ms-001-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-009-expected.html.
+        * web-platform-tests/mathml/presentation-markup/tokens/ms-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-009.html.
+        * web-platform-tests/mathml/presentation-markup/tokens/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/w3c-import.log.
+        * web-platform-tests/mathml/relations/css-styling/#default-text-properties.html#: Added.
+        * web-platform-tests/mathml/relations/css-styling/attribute-mapping-001.html:
+        * web-platform-tests/mathml/relations/css-styling/attribute-mapping-002.html:
+        * web-platform-tests/mathml/relations/css-styling/blur-filter-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/blur-filter.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/clip-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/clip-path-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/clip-path.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/clip.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/color-001.html:
+        * web-platform-tests/mathml/relations/css-styling/color-002.html:
+        * web-platform-tests/mathml/relations/css-styling/color-003.html:
+        * web-platform-tests/mathml/relations/css-styling/color-004.tentative-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/color-004.tentative.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.html.
+        * web-platform-tests/mathml/relations/css-styling/color-005-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/color-005.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/default-font-family.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/default-properties-on-the-math-root.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/display-2.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-3.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-mathbackground-css-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathcolor-mathbackground-css.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathsize-attribute-css-keywords-expected.html:
+        * web-platform-tests/mathml/relations/css-styling/mathsize-attribute-css-keywords.html:
+        * web-platform-tests/mathml/relations/css-styling/multi-column-layout.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html:
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/w3c-import.log:
+        * web-platform-tests/mathml/relations/css-styling/presentational-hints-001-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/presentational-hints-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/presentational-hints-002-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/presentational-hints-002.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/scriptlevel-001.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/transform-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/transform.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/visibility-001.html:
+        * web-platform-tests/mathml/relations/css-styling/visibility-002.html:
+        * web-platform-tests/mathml/relations/css-styling/visibility-003.html:
+        * web-platform-tests/mathml/relations/css-styling/visibility-004.tentative-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-004-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/visibility-004.tentative.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-004.html.
+        * web-platform-tests/mathml/relations/css-styling/visibility-005-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-004-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/visibility-005.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/w3c-import.log:
+        * web-platform-tests/mathml/relations/html5-tree/clipboard-event-handlers.tentative.html:
+        * web-platform-tests/mathml/relations/html5-tree/content-editable.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/css-inline-style-dynamic.tentative.html:
+        * web-platform-tests/mathml/relations/html5-tree/css-inline-style-interface.tentative.html:
+        * web-platform-tests/mathml/relations/html5-tree/display-1.html:
+        * web-platform-tests/mathml/relations/html5-tree/dynamic-2-expected.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/dynamic-2.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/href-click-3.html:
+        * web-platform-tests/mathml/relations/html5-tree/html-or-foreign-element-interfaces.tentative.html:
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-1.html:
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-4.html:
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-5.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative.html:
+        * web-platform-tests/mathml/relations/html5-tree/required-extensions-2.html:
+        * web-platform-tests/mathml/relations/html5-tree/tabindex-001.html:
+        * web-platform-tests/mathml/relations/html5-tree/tabindex-002.html:
+        * web-platform-tests/mathml/relations/html5-tree/w3c-import.log:
+        * web-platform-tests/mathml/support/box-comparison.js:
+        (compareSizeWithAndWithoutStyle):
+        * web-platform-tests/mathml/support/feature-detection.js:
+        (MathMLFeatureDetection.string_appeared_here):
+        * web-platform-tests/mathml/support/layout-comparison.js:
+        (childrenHaveEmptyBoundingClientRects):
+        * web-platform-tests/mathml/support/mathml-fragments.js:
+        (FragmentHelper.isTokenElement):
+        * web-platform-tests/mathml/support/operator-dictionary.json:
+        * web-platform-tests/mathml/tools/axisheight.py:
+        * web-platform-tests/mathml/tools/fractions.py:
+        * web-platform-tests/mathml/tools/largeop.py:
+        * web-platform-tests/mathml/tools/limits.py:
+        * web-platform-tests/mathml/tools/mathvariant-transforms.py:
+        * web-platform-tests/mathml/tools/operator-dictionary.py:
+        (createStretchy):
+        * web-platform-tests/mathml/tools/percentscaledown.py:
+        * web-platform-tests/mathml/tools/radicals.py:
+        (createStretchyRadical):
+        * web-platform-tests/mathml/tools/scripts.py:
+        * web-platform-tests/mathml/tools/stacks.py:
+        * web-platform-tests/mathml/tools/stretchstacks.py:
+        * web-platform-tests/mathml/tools/underover.py:
+        * web-platform-tests/mathml/tools/use-typo-lineheight.py:
+        * web-platform-tests/mathml/tools/utils/__pycache__/w3c-import.log: Delete
+        * web-platform-tests/mathml/tools/utils/mathfont.py:
+        (create):
+        (drawRectangleGlyph):
+        * web-platform-tests/mathml/tools/utils/misc.py:
+        * web-platform-tests/mathml/tools/utils/w3c-import.log:
+        * web-platform-tests/mathml/tools/xHeight.py:
+
 2020-09-23  Chris Dumez  <cdumez@apple.com>
 
         Turn off the legacy prefixed WebAudio API

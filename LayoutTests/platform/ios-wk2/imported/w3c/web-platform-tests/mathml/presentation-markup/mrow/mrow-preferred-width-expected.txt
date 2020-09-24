@@ -1,0 +1,13 @@
+
+PASS Preferred width of mrow with mspace children 
+PASS Preferred width of mrow with mn and mo children 
+blah
+|
+2
+blah
+|
+2
+blah
+|
+2
+

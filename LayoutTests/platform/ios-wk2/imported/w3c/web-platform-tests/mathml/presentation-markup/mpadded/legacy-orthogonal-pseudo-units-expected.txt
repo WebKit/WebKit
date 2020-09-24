@@ -1,0 +1,16 @@
+
+PASS 200%height is not allowed on width 
+PASS 200%depth is not allowed on width 
+PASS 200%height is not allowed on lspace 
+PASS 200%depth is not allowed on lspace 
+PASS 200%width is not allowed on height 
+PASS 200%width is not allowed on depth 
+PASS 200%width is not allowed on voffset 
+
+ 
+
+ 
+
+
+
+

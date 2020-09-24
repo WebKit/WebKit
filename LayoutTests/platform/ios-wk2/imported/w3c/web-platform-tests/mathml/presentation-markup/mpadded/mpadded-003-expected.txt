@@ -1,0 +1,13 @@
+
+PASS lspace/voffset shifts don't affect mpadded preferred width 
+PASS lspace/voffset shifts don't affect mpadded size 
+PASS content is shifted by the specified lspace/voffset 
+FAIL content is shifted by the specified lspace/voffset (RTL) assert_approx_equals: positive lspace expected -5 +/- 1 but got 5
+FAIL dynamic changes of lspace/voffset assert_approx_equals: attach lspace expected 5 +/- 1 but got 0
+ 
+ 
+ 
+ 
+ 
+ 
+

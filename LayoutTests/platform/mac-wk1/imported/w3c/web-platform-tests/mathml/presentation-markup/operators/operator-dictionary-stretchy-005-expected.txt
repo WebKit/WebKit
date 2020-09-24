@@ -1,0 +1,7 @@
+
+PASS Operator dictionary chunk 1 - stretchy 
+PASS Operator dictionary chunk 2 - stretchy 
+PASS Operator dictionary chunk 3 - stretchy 
+PASS Operator dictionary chunk 4 - stretchy 
+PASS Operator dictionary chunk 5 - stretchy 
+

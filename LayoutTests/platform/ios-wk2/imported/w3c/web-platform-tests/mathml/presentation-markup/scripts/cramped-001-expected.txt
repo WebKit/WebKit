@@ -1,0 +1,148 @@
+
+PASS child of non-cramped element 
+FAIL child of cramped element assert_greater_than: mrow-002 should be cramped expected a number greater than 25 but got 20
+FAIL child of msqrt assert_greater_than: msqrt-001 should be cramped expected a number greater than 25 but got 20
+FAIL child of mroot assert_greater_than: mroot-001 should be cramped expected a number greater than 25 but got 20
+FAIL child of mfrac assert_greater_than: denominator should be cramped expected a number greater than 25 but got 20
+FAIL child of msub assert_greater_than: subscript should be cramped expected a number greater than 25 but got 20
+PASS child of msup 
+FAIL child of msubsup assert_greater_than: subscript should be cramped expected a number greater than 25 but got 20
+PASS child of munder 
+PASS child of mover (non-accent overscript) 
+PASS child of munderover (non-accent overscript) 
+FAIL accent child of mover (accent overscript) assert_greater_than: base should be cramped expected a number greater than 25 but got 20
+FAIL accent child of munderover (accent overscript) assert_greater_than: base should be cramped expected a number greater than 25 but got 20
+FAIL mmultiscripts assert_greater_than: post-subscript should be cramped expected a number greater than 25 but got 20
+FAIL element with specified CSS math-style assert_greater_than: css-002 should be cramped expected a number greater than 25 but got 20
+ 
+
+
+0
+1
+3
+4
+
+0
+
+1
+
+1
+
+0
+
+1
+
+0
+
+1
+
+0
+
+1
+2
+
+0
+2
+
+0
+1
+
+1
+
+0
+
+1
+
+0
+
+1
+
+0
+
+1
+2
+
+0
+2
+
+0
+1
+
+1
+2
+
+0
+2
+
+0
+1
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+0
+1
+2
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+0
+1
+2
+3
+5
+6
+7
+8
+9
+10
+11
+12
+
+0
+1
+2
+3
+4
+5
+6
+7
+8
+10
+11
+12
+
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+11
+12
+
+ 
+ 
+ 
+

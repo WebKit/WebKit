@@ -1,0 +1,13 @@
+
+FAIL minsize < 0 is treated as 0 assert_approx_equals: expected 125 +/- 1 but got 0
+FAIL maxsize < minsize is treated as maxsize = minsize assert_approx_equals: expected 175 +/- 1 but got 0
+PASS minsize < maxsize < 0 is treated as maxsize = minsize = 0 
+FAIL target size = 0 is treated as Tascent = Tdescent = minsize/2 assert_approx_equals: expected 100 +/- 1 but got 0
+⥯
+
+⥯
+
+⥯
+
+⥯
+

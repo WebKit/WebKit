@@ -93,6 +93,7 @@
     "web-platform-tests/css/css-flexbox": "import", 
     "web-platform-tests/css/css-font-loading": "import", 
     "web-platform-tests/css/css-fonts": "import", 
+    "web-platform-tests/css/css-fonts/math-script-level-and-math-style/": "import", 
     "web-platform-tests/css/css-grid": "import", 
     "web-platform-tests/css/css-grid/abspos": "import", 
     "web-platform-tests/css/css-grid/alignment/": "import", 

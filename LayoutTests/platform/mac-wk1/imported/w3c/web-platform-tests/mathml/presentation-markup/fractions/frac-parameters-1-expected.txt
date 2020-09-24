@@ -1,0 +1,41 @@
+
+PASS AxisHeight 
+PASS DenominatorDisplayStyleGapMin 
+PASS DenominatorDisplayStyleShiftDown 
+PASS DenominatorDisplayStyleGapMin Displaystyle 
+PASS DenominatorDisplayStyleShiftDown Displaystyle 
+FAIL DenominatorDisplayStyleGapMin Displaystyle on fraction assert_approx_equals: mfrac: denominator gap expected 50 +/- 1 but got 0
+FAIL DenominatorDisplayStyleShiftDown Displaystyle on fraction assert_approx_equals: mfrac: denominator shift expected 60 +/- 1 but got 0
+PASS DenominatorGapMin 
+PASS DenominatorShiftDown 
+FAIL DenominatorGapMin Displaystyle on fraction assert_approx_equals: mfrac: denominator gap expected 40 +/- 1 but got 0
+FAIL DenominatorShiftDown Displaystyle on fraction assert_approx_equals: mfrac: denominator shift expected 30 +/- 1 but got 0
+PASS NumeratorDisplayStyleGapMin 
+PASS NumeratorDisplayStyleShiftDown 
+PASS NumeratorDisplayStyleGapMin Displaystyle 
+PASS NumeratorDisplayStyleShiftDown Displaystyle 
+FAIL NumeratorDisplayStyleGapMin Displaystyle on fraction assert_approx_equals: mfrac: numerator gap expected 80 +/- 1 but got 0
+FAIL NumeratorDisplayStyleShiftDown Displaystyle on fraction assert_approx_equals: mfrac: numerator shift expected 20 +/- 1 but got 15
+PASS NumeratorGapMin 
+PASS NumeratorShiftDown 
+PASS FractionRuleThickness 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

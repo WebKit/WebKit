@@ -1,0 +1,71 @@
+
+PASS automatic scriptlevel on mfrac (displaystyle=true) 
+FAIL automatic scriptlevel on mfrac (displaystyle=false) assert_approx_equals: numerator expected 71 +/- 0.1 but got 100
+FAIL automatic scriptlevel on mroot assert_approx_equals: index expected 50.41 +/- 0.1 but got 56.25
+FAIL automatic scriptlevel on msub assert_approx_equals: child 1 expected 71 +/- 0.1 but got 75
+FAIL automatic scriptlevel on msup assert_approx_equals: child 1 expected 71 +/- 0.1 but got 75
+FAIL automatic scriptlevel on msubsup assert_approx_equals: child 1 expected 71 +/- 0.1 but got 75
+FAIL automatic scriptlevel on munder assert_approx_equals: child 1 expected 71 +/- 0.1 but got 75
+FAIL automatic scriptlevel on mover assert_approx_equals: child 1 expected 71 +/- 0.1 but got 75
+FAIL automatic scriptlevel on munderover assert_approx_equals: child 1 expected 71 +/- 0.1 but got 75
+FAIL automatic scriptlevel on mmultiscripts assert_approx_equals: child 1 expected 71 +/- 0.1 but got 75
+FAIL automatic scriptlevel on munder (accentunder=true) assert_approx_equals: under expected 100 +/- 0.1 but got 75
+FAIL automatic scriptlevel on mover (accent=true) assert_approx_equals: over expected 100 +/- 0.1 but got 75
+FAIL automatic scriptlevel on munderover (accentunder=true) assert_approx_equals: under expected 100 +/- 0.1 but got 75
+FAIL automatic scriptlevel on munderover (accent=true) assert_approx_equals: under expected 71 +/- 0.1 but got 75
+FAIL checking dynamic/case-insensitive accent/accentunder assert_approx_equals: under expected 71 +/- 0.1 but got 75
+0
+1
+ 
+0
+1
+
+0
+1
+
+0
+1
+ 
+0
+1
+0
+1
+2
+ 
+0
+1
+ 
+0
+1
+0
+1
+2
+ 
+0
+1
+2
+3
+4
+6
+7
+8
+9
+
+0
+1
+ 
+0
+1
+ 
+0
+1
+2
+ 
+0
+1
+2
+
+0
+1
+2
+

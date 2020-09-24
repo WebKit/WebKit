@@ -1,0 +1,11 @@
+
+FAIL nonzero linethickness, displaystyle=false assert_approx_equals: expected 89 +/- 1 but got 80
+FAIL nonzero linethickness, displaystyle=true assert_approx_equals: mfrac: thickness, axis height expected 101 +/- 1 but got 80
+FAIL linethickness=0, displaystyle=false assert_approx_equals: expected 6 +/- 1 but got 15
+FAIL linethickness=0, displaystyle=true assert_approx_equals: expected 14 +/- 1 but got 35
+
+
+
+
+
+

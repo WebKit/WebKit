@@ -1,0 +1,7 @@
+
+PASS Operator dictionary chunk 1 - symmetric 
+PASS Operator dictionary chunk 2 - symmetric 
+PASS Operator dictionary chunk 3 - symmetric 
+PASS Operator dictionary chunk 4 - symmetric 
+PASS Operator dictionary chunk 5 - symmetric 
+

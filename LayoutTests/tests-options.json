@@ -2447,6 +2447,96 @@
     "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-001.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002.html": [
         "slow"
     ],

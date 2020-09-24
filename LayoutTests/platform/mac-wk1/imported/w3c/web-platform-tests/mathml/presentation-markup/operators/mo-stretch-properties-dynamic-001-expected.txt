@@ -1,0 +1,23 @@
+
+FAIL minsize assert_approx_equals: attach expected 100 +/- 1 but got 0
+FAIL maxsize assert_approx_equals: attach expected 100 +/- 1 but got 0
+FAIL largeop assert_approx_equals: set true expected 50 +/- 1 but got 21
+FAIL symmetric assert_approx_equals: set true expected 150 +/- 1 but got 0
+FAIL stretchy assert_approx_equals: set true expected 75 +/- 1 but got 0
+⥯
+⥯
+⥯
+
+⥯
+⥯
+⥯
+
+⥯
+⥯
+
+⥯
+⥯
+
+⥯
+⥯
+

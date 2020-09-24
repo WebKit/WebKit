@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/clipboard-event-handlers.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/color-attributes-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/color-attributes-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/content-editable.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/css-inline-style-dynamic.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/css-inline-style-dynamic.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/css-inline-style-interface.tentative.html
@@ -28,6 +29,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-2.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-2.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-click-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-click-1.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-click-2-expected.html
@@ -41,6 +46,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/integration-point-3-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/integration-point-3.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/integration-point-4.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/integration-point-5.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/required-extensions-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/required-extensions-2.html

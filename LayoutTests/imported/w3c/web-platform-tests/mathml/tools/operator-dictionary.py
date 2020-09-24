@@ -49,11 +49,13 @@ def createSizeVariants(aFont):
 def createStretchy(aFont, codePoint, isHorizontal):
     if isHorizontal:
         aFont[codePoint].horizontalVariants = "h0 h1 h2 h3"
+        # Part: (glyphName, isExtender, startConnector, endConnector, fullAdvance)
         aFont[codePoint].horizontalComponents = \
             (("h2", False, 0, mathfont.em, 3 * mathfont.em), \
              ("h1", True, mathfont.em, mathfont.em, 2 * mathfont.em))
     else:
         aFont[codePoint].verticalVariants = "v0 v1 v2 v3"
+        # Part: (glyphName, isExtender, startConnector, endConnector, fullAdvance)
         aFont[codePoint].verticalComponents = \
             (("v2", False, 0, mathfont.em, 3 * mathfont.em), \
              ("v1", True, mathfont.em, mathfont.em, 2 * mathfont.em))
@@ -96,7 +98,7 @@ for form in ["infix", "prefix", "suffix"]:
     operatorDictionary[key] = value
 
 # Create a WOFF font with glyphs for all the operator strings.
-font = mathfont.create("operators")
+font = mathfont.create("operators", "Copyright (c) 2019 Igalia S.L.")
 
 # Set parameters for largeop and stretchy tests.
 font.math.DisplayOperatorMinHeight = 2 * mathfont.em

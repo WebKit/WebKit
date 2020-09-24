@@ -1,0 +1,38 @@
+
+PASS operator spacing inside Mrow 
+PASS operator spacing inside Sqrt 
+PASS operator spacing inside Style 
+PASS operator spacing inside Error 
+PASS operator spacing inside Phantom 
+PASS operator spacing inside Math 
+PASS operator spacing inside Menclose 
+PASS operator spacing inside Mpadded 
+FAIL operator spacing inside Unknown assert_greater_than_equal: expected a number greater than or equal to 50 but got 0
+1
+|
+2
+ 
+1
+|
+2
+ 
+1
+|
+2
+ 
+1
+2
+ 
+ 
+1
+|
+2
+ 
+1
+|
+2
+ 
+1
+|
+2
+ 
