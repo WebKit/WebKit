@@ -569,7 +569,7 @@
                       "builderNames": ["Apple-iOS-14-Simulator-Debug-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "ipados-simulator-14-release-tests-wk2",
-                      "builderNames": ["Apple–iPadOS-14-Simulator-Release-WK2-Tests"]
+                      "builderNames": ["Apple-iPadOS-14-Simulator-Release-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "ipados-simulator-14-debug-tests-wk2",
                       "builderNames": ["Apple-iPadOS-14-Simulator-Debug-WK2-Tests"]
