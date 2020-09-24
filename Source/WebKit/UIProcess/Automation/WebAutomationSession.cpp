@@ -1855,6 +1855,9 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) && ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Mouse)
             inputSourceType = SimulatedInputSourceType::Touch;
+#elif ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) && !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
+        if (inputSourceType == SimulatedInputSourceType::Touch)
+            inputSourceType = SimulatedInputSourceType::Mouse;
 #endif
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Mouse)

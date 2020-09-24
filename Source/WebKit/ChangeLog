@@ -1,3 +1,19 @@
+2020-09-24  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(iOS WebDriver): action chains with 'Touch' pointerType don't work on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=216937
+        <rdar://problem/69149171>
+
+        Reviewed by Darin Adler.
+
+        Before iOS WebDriver shipped, 'Touch' was unconditionally aliased to 'Mouse.'
+        Make sure the aliasing happens for macOS so the command doesn't fail frivolously.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        Alias 'Touch' to 'Mouse' when touch is not available and mouse is.
+        This is the case for macOS. 
+
 2020-09-24  Kate Cheney  <katherine_cheney@apple.com>
 
         CrashTracer: com.apple.WebKit.Networking in NetworkSession::firstPartyHostCNAMEDomain() code
