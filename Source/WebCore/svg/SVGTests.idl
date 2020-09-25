@@ -33,6 +33,5 @@ interface mixin SVGTests {
     // As of SVG2, the following are no longer part of this interface.
 
     [SameObject] readonly attribute SVGStringList requiredFeatures;
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    boolean hasExtension(optional DOMString extension = "undefined");
+    boolean hasExtension(DOMString extension);
 };

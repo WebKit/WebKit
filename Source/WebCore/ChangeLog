@@ -1,3 +1,20 @@
+2020-09-25  Rob Buis  <rbuis@igalia.com>
+
+        Simplify SVGTests.hasExtension idl
+        https://bugs.webkit.org/show_bug.cgi?id=216984
+
+        Reviewed by Sam Weinig.
+
+        Simplify SVGTests.hasExtension idl by removing optional and default parameter.
+        Skipping the parameter will now result in the parameter being a null string,
+        which gives the same behaviour as before as the method just checks
+        against non null namespaces.
+
+        [1] https://www.w3.org/TR/SVG11/types.html#__svg__SVGTests__hasExtension
+
+        * page/DOMWindow.idl:
+        * svg/SVGTests.idl:
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         visibilitychange:hidden doesn't fire during page navigations

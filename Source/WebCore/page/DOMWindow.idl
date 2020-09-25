@@ -156,7 +156,7 @@ typedef USVString CSSOMString;
     [Replaceable, CustomGetter] readonly attribute Event event;
     attribute DOMString defaultStatus;
     [ImplementedAs=defaultStatus] attribute DOMString defaultstatus; // For compatibility with legacy content.
-    boolean find(optional DOMString string, optional boolean caseSensitive = false, optional boolean backwards = false, optional boolean wrap = false, optional boolean wholeWord = false, optional boolean searchInFrames = false, optional boolean showDialog = false); // FIXME: Using "undefined" as default parameter value is wrong.
+    boolean find(optional DOMString string, optional boolean caseSensitive = false, optional boolean backwards = false, optional boolean wrap = false, optional boolean wholeWord = false, optional boolean searchInFrames = false, optional boolean showDialog = false);
     [Replaceable] readonly attribute  boolean offscreenBuffering;
     [Replaceable] readonly attribute long screenLeft;
     [Replaceable] readonly attribute long screenTop;
