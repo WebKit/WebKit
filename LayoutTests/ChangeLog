@@ -1,3 +1,9 @@
+2020-09-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Several WPT's MathML tests are crashing in GTK/WPE Debug.
+
+        * platform/glib/TestExpectations:
+
 2020-09-24  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Rebaseline and unify some expectations after r267551
