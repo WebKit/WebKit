@@ -480,7 +480,7 @@ UIProcess/Launcher/mac/ProcessLauncherMac.mm
 
 UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayLink.cpp
-UIProcess/mac/HighPerformanceGPUManager.cpp
+UIProcess/mac/HighPerformanceGPUManager.mm
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/SecItemShimProxy.cpp

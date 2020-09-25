@@ -1,3 +1,22 @@
+2020-09-24  Dean Jackson  <dino@apple.com>
+
+        WebGL should use GLES in iOS apps running on Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=216722
+        <rdar://problem/68976337>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebCore.xcconfig: Remove all OpenGL/OpenGLES linking.
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/graphics/GraphicsContextGL.h: Change the ANGLE IOSurface texture binding
+        enums into functions, because they have to be calculated at run-time.
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm: Use the new soft-linked
+        functions from PAL. Also implement the IOSurface texture binding helpers that were
+        previously enums.
+        * platform/mac/PlatformScreenMac.mm:
+        * platform/mac/WebGLBlocklist.mm:
+
 2020-09-25  James Darpinian  <jdarpinian@chromium.org>
 
         Support EXT_float_blend

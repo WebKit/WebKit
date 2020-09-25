@@ -8,14 +8,14 @@
 
 #include "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+#if defined(ANGLE_PLATFORM_IOS) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
 
 #    include "gpu_info_util/SystemInfo_internal.h"
 
 namespace angle
 {
 
-bool GetSystemInfo(SystemInfo *info)
+bool GetSystemInfo_ios(SystemInfo *info)
 {
     {
         // TODO(anglebug.com/4275): Get the actual system version.
@@ -27,4 +27,4 @@ bool GetSystemInfo(SystemInfo *info)
 
 }  // namespace angle
 
-#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+#endif  // defined(ANGLE_PLATFORM_IOS) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))

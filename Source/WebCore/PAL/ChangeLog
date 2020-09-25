@@ -1,3 +1,18 @@
+2020-09-24  Dean Jackson  <dino@apple.com>
+
+        WebGL should use GLES in iOS apps running on Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=216722
+        <rdar://problem/68976337>
+
+        Reviewed by Tim Horton.
+
+        Add soft-linking content for OpenGL/OpenGLES.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/OpenGLSoftLinkCocoa.h: Added.
+        * pal/cocoa/OpenGLSoftLinkCocoa.mm: Added.
+
 2020-09-17  Tim Horton  <timothy_horton@apple.com>
 
         Per-app accent color overrides are broken

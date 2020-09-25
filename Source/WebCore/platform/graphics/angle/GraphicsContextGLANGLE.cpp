@@ -231,10 +231,10 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         gl::BindTexture(GL_TEXTURE_2D, texture2DBinding);
         // Attach m_texture to m_preserveDrawingBufferFBO for later blitting.
         gl::BindFramebuffer(GL_FRAMEBUFFER, m_preserveDrawingBufferFBO);
-        gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GraphicsContextGL::IOSurfaceTextureTarget, m_texture, 0);
+        gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GraphicsContextGL::IOSurfaceTextureTarget(), m_texture, 0);
         gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     } else
-        gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GraphicsContextGL::IOSurfaceTextureTarget, m_texture, 0);
+        gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GraphicsContextGL::IOSurfaceTextureTarget(), m_texture, 0);
 #elif PLATFORM(GTK)
     gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_texture);
     gl::TexImage2D(GL_TEXTURE_RECTANGLE_ANGLE, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);

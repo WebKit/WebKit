@@ -29,6 +29,14 @@ bool ParseMacMachineModel(const std::string &identifier,
                           int32_t *minor);
 bool CMDeviceIDToDeviceAndVendorID(const std::string &id, uint32_t *vendorId, uint32_t *deviceId);
 
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+bool GetSystemInfo_mac(SystemInfo *info);
+#endif
+
+#if defined(ANGLE_PLATFORM_IOS) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+bool GetSystemInfo_ios(SystemInfo *info);
+#endif
+
 }  // namespace angle
 
 #endif  // GPU_INFO_UTIL_SYSTEM_INFO_INTERNAL_H_

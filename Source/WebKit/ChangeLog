@@ -1,3 +1,14 @@
+2020-09-24  Dean Jackson  <dino@apple.com>
+
+        WebGL should use GLES in iOS apps running on Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=216722
+        <rdar://problem/68976337>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKit.xcconfig: Remove OpenGL linking.
+        * UIProcess/mac/HighPerformanceGPUManager.mm: Renamed to .mm. Use the PAL soft-linked OpenGL API.
+
 2020-09-25  Peng Liu  <peng.liu6@apple.com>
 
         Replace the usages of (IPC::Attachment fencePort) with IPC::MachPort

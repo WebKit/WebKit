@@ -2039,8 +2039,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
         return _focusedElementInformation.interactionRect;
 
-    if (!_page->editorState().postLayoutData().selectionClipRect.isEmpty())
-        return _page->editorState().postLayoutData().selectionClipRect;
+    // if (!_page->editorState().postLayoutData().selectionClipRect.isEmpty())
+    //     return _page->editorState().postLayoutData().selectionClipRect;
 
     return CGRectNull;
 }

@@ -1,3 +1,102 @@
+2020-09-24  Dean Jackson  <dino@apple.com>
+
+        WebGL should use GLES in iOS apps running on Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=216722
+        <rdar://problem/68976337>
+
+        Reviewed by Tim Horton.
+
+        Change ANGLE to dynamically load either EAGL (OpenGLES) or CGL (OpenGL) depending
+        on both compile and runtime configurations.
+            Intel Mac -> CGL
+            Intel Mac Catalyst -> CGL
+            Intel iOS Simulator -> EAGL
+            iOS Device -> EAGL
+            Apple Silicon Mac -> CGL
+            Apple Silicon Mac Catalyst (with Mac app) -> CGL
+            Apple Silicon Mac Catalyst (with iOS app) -> EAGL
+
+        The trickiest bit is Apple Silicon Mac Catalyst, which depends on the
+        type of the application it is attempting to run. In that case ANGLE must compile
+        both the CGL and EAGL interfaces and then pick one to use after launch.
+
+        * ANGLE.xcodeproj/project.pbxproj: Add new files.
+
+        * Configurations/ANGLE-dynamic.xcconfig: Remove all the OpenGL* linking.
+        * Configurations/ANGLE-static.xcconfig:
+
+        * GLESv2.cmake: New files.
+
+        * src/common/platform.h: New definitions for CPU type on Apple Systems.
+
+        * src/gpu_info_util/SystemInfo.h: Split SystemInfo for Apple into two
+        files, for iOS and Mac. Added a field for isiOSAppOnMac that will only
+        be true when running an iOS binary on Apple Silicon.
+        * src/gpu_info_util/SystemInfo_apple.mm: Added. Decides which SystemInfo
+        to call.
+        (angle::GetSystemInfo):
+        * src/gpu_info_util/SystemInfo_ios.cpp:
+        (angle::GetSystemInfo_ios):
+        (angle::GetSystemInfo): Deleted.
+        * src/gpu_info_util/SystemInfo_macos.mm:
+        (angle::GetSystemInfo_mac):
+        (angle::GetSystemInfo): Deleted.
+
+        * src/libANGLE/Caps.cpp: Can no longer just check for PLATFORM_IOS. This
+        might still need a runtime check.
+        (gl::DetermineDepthTextureANGLESupport):
+        (gl::DetermineDepthTextureOESSupport):
+
+        * src/libANGLE/Display.cpp: This is the main initialization point for
+        ANGLE, which decides at compile/runtime which variant of Display to
+        create.
+
+        * src/libANGLE/formatutils.cpp: Add the correct formats.
+        (gl::BuildInternalFormatInfoMap):
+
+        * src/libANGLE/renderer/gl/SoftLinking_apple.h: Added. Macros to help soft-link
+        functions and ObjC classes.
+        * src/libANGLE/renderer/gl/cgl/CGLFunctions.cpp: Added. Where we soft-link all
+        the OpenGL/CGL API.
+        * src/libANGLE/renderer/gl/cgl/CGLFunctions.h: Added.
+
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm: Use the soft-linked methods.
+        * src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp:
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h:
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm: Rename WebSwapLayer to WebSwapLayerCGL
+        otherwise it clashes with the EAGL version.
+        (rx::WindowSurfaceCGL::initialize):
+        (-[WebSwapLayer initWithSharedState:withContext:withFunctions:]): Deleted.
+        (-[WebSwapLayer copyCGLPixelFormatForDisplayMask:]): Deleted.
+        (-[WebSwapLayer copyCGLContextForPixelFormat:]): Deleted.
+        (-[WebSwapLayer canDrawInCGLContext:pixelFormat:forLayerTime:displayTime:]): Deleted.
+        (-[WebSwapLayer drawInCGLContext:pixelFormat:forLayerTime:displayTime:]): Deleted.
+
+        * src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp: Similar changes to the CGL implementation.
+        * src/libANGLE/renderer/gl/eagl/DeviceEAGL.h:
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.h:
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+        (rx::DisplayEAGL::initialize):
+        (rx::DisplayEAGL::terminate):
+        (rx::WorkerContextEAGL::~WorkerContextEAGL):
+        (rx::WorkerContextEAGL::makeCurrent):
+        (rx::WorkerContextEAGL::unmakeCurrent):
+        (rx::DisplayEAGL::createWorkerContext):
+        * src/libANGLE/renderer/gl/eagl/EAGLFunctions.h: Added.
+        * src/libANGLE/renderer/gl/eagl/EAGLFunctions.mm: Added.
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm:
+        * src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.cpp:
+        * src/libANGLE/renderer/gl/eagl/RendererEAGL.cpp:
+        * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h:
+        * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm:
+        (-[WebSwapLayerEAGL display]):
+        (rx::WindowSurfaceEAGL::initialize):
+        (-[WebSwapLayer initWithSharedState:withContext:withFunctions:]): Deleted.
+        (-[WebSwapLayer display]): Deleted.
+
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp: Runtime check.
+        (rx::nativegl_gl::GenerateCaps):
+
 2020-09-25  James Darpinian  <jdarpinian@chromium.org>
 
         Support EXT_float_blend

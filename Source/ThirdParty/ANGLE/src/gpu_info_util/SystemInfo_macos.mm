@@ -15,6 +15,8 @@
 #    import <Cocoa/Cocoa.h>
 #    import <IOKit/IOKitLib.h>
 
+#    include "libANGLE/renderer/gl/cgl/CGLFunctions.h"
+
 namespace angle
 {
 
@@ -208,7 +210,7 @@ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask)
     return 0;
 }
 
-bool GetSystemInfo(SystemInfo *info)
+bool GetSystemInfo_mac(SystemInfo *info)
 {
     {
         int32_t major = 0;
