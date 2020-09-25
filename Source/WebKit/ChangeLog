@@ -1,3 +1,16 @@
+2020-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Tweak the names of the GPU process audio/video capture internal feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=216992
+
+        Reviewed by Tim Horton.
+
+        Keep all 6 of the GPU process feature flags together by adjusting the human readable names of
+        `CaptureAudioInGPUProcessEnabled` and `CaptureVideoInGPUProcessEnabled` to start with "GPU Process:", after
+        <https://trac.webkit.org/r267516>.
+
+        * Shared/WebPreferencesInternal.yaml:
+
 2020-09-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION to make host function definition easy-to-scanned for JIT-caging

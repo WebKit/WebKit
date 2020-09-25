@@ -124,7 +124,7 @@ CaptureAudioInUIProcessEnabled:
 CaptureAudioInGPUProcessEnabled:
   type: bool
   defaultValue: defaultCaptureAudioInGPUProcessEnabled()
-  humanReadableName: "Use GPU Process to capture audio"
+  humanReadableName: "GPU Process: Audio Capture"
   humanReadableDescription: "Enable audio capture in GPU Process"
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
@@ -140,7 +140,7 @@ CaptureVideoInUIProcessEnabled:
 CaptureVideoInGPUProcessEnabled:
   type: bool
   defaultValue: defaultCaptureVideoInGPUProcessEnabled()
-  humanReadableName: "Use GPU Process to capture video"
+  humanReadableName: "GPU Process: Video Capture"
   humanReadableDescription: "Enable video capture in GPU Process"
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
