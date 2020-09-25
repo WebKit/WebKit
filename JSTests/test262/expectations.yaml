@@ -1311,15 +1311,6 @@ test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-value-not-obj-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/from/custom-ctor-returns-other-instance.js:
-  default: 'TypeError: TypedArray.from requires its this argument subclass a TypedArray constructor (Testing with Float64Array.)'
-  strict mode: 'TypeError: TypedArray.from requires its this argument subclass a TypedArray constructor (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/from/custom-ctor.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/from/new-instance-using-custom-ctor.js:
-  default: 'TypeError: TypedArray.from requires its this argument subclass a TypedArray constructor (Testing with Float64Array.)'
-  strict mode: 'TypeError: TypedArray.from requires its this argument subclass a TypedArray constructor (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/from/set-value-abrupt-completion.js:
   default: 'Test262Error: interrupted source iteration Expected SameValue(«1», «[object Object]») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: interrupted source iteration Expected SameValue(«1», «[object Object]») to be true (Testing with Float64Array.)'
@@ -1368,15 +1359,6 @@ test/built-ins/TypedArrayConstructors/internals/HasProperty/key-is-not-integer.j
 test/built-ins/TypedArrayConstructors/internals/Set/tonumber-value-throws.js:
   default: 'Test262Error: ToNumber runs before ToInteger(index) Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: ToNumber runs before ToInteger(index) Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/of/custom-ctor-returns-other-instance.js:
-  default: 'TypeError: TypedArray.of requires its this argument to subclass a TypedArray constructor (Testing with Float64Array.)'
-  strict mode: 'TypeError: TypedArray.of requires its this argument to subclass a TypedArray constructor (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/of/custom-ctor.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
-  default: 'TypeError: TypedArray.of requires its this argument to subclass a TypedArray constructor (Testing with Float64Array.)'
-  strict mode: 'TypeError: TypedArray.of requires its this argument to subclass a TypedArray constructor (Testing with Float64Array.)'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'

@@ -44,26 +44,23 @@ JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructo
 }
 
 template<typename ViewClass>
-void JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, const String& name, FunctionExecutable* privateAllocator)
+void JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation(VM& vm, JSGlobalObject*, JSObject* prototype, const String& name)
 {
     Base::finishCreation(vm, ViewClass::TypedArrayStorageType == TypeDataView ? 1 : 3, name, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->BYTES_PER_ELEMENT, jsNumber(ViewClass::elementSize), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete);
-
-    if (privateAllocator)
-        putDirectBuiltinFunction(vm, globalObject, vm.propertyNames->builtinNames().allocateTypedArrayPrivateName(), privateAllocator, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
 template<typename ViewClass>
 JSGenericTypedArrayViewConstructor<ViewClass>*
 JSGenericTypedArrayViewConstructor<ViewClass>::create(
     VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* prototype,
-    const String& name, FunctionExecutable* privateAllocator)
+    const String& name)
 {
     JSGenericTypedArrayViewConstructor* result =
         new (NotNull, allocateCell<JSGenericTypedArrayViewConstructor>(vm.heap))
         JSGenericTypedArrayViewConstructor(vm, structure);
-    result->finishCreation(vm, globalObject, prototype, name, privateAllocator);
+    result->finishCreation(vm, globalObject, prototype, name);
     return result;
 }
 

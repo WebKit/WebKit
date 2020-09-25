@@ -23,20 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// According to the spec we are supposed to crawl the prototype chain looking
-// for the a TypedArray constructor. The way we implement this is with a
-// private function, @alloctateTypedArray, on each of the prototypes.
-// This enables us to optimize this lookup in the inline cache.
-
 function of(/* items... */)
 {
     "use strict";
     var len = arguments.length;
-    var constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
-    if (constructFunction === @undefined)
-        @throwTypeError("TypedArray.of requires its this argument to subclass a TypedArray constructor");
 
-    var result = constructFunction(len);
+    if (!@isConstructor(this))
+        @throwTypeError("TypedArray.of requires |this| to be a constructor");
+
+    var result = new this(len);
+    if (@typedArrayLength(result) < len)
+        @throwTypeError("TypedArray.of constructed typed array of insufficient length");
 
     for (var i = 0; i < len; i++)
         result[i] = arguments[i];
@@ -48,10 +45,11 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 {
     "use strict";
 
+    if (!@isConstructor(this))
+        @throwTypeError("TypedArray.from requires |this| to be a constructor");
+
     var mapFn = @argument(1);
-
     var thisArg;
-
     if (mapFn !== @undefined) {
         if (!@isCallable(mapFn))
             @throwTypeError("TypedArray.from requires that the second argument, when provided, be a function");
@@ -85,26 +83,21 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
             k++;
         }
 
-        var constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
-        if (constructFunction === @undefined)
-            @throwTypeError("TypedArray.from requires its this argument subclass a TypedArray constructor");
-
-        var result = constructFunction(k);
+        var result = new this(k);
+        if (@typedArrayLength(result) < k)
+            @throwTypeError("TypedArray.from constructed typed array of insufficient length");
 
         for (var i = 0; i < k; i++) 
             result[i] = accumulator[i];
-
 
         return result;
     }
 
     var arrayLikeLength = @toLength(arrayLike.length);
 
-    var constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
-    if (constructFunction === @undefined)
-        @throwTypeError("this does not subclass a TypedArray constructor");
-
-    var result = constructFunction(arrayLikeLength);
+    var result = new this(arrayLikeLength);
+    if (@typedArrayLength(result) < arrayLikeLength)
+        @throwTypeError("TypedArray.from constructed typed array of insufficient length");
 
     var k = 0;
     while (k < arrayLikeLength) {
@@ -117,49 +110,4 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     }
 
     return result;
-}
-
-function allocateInt8Array(length)
-{
-    return new @Int8Array(length);
-}
-
-function allocateInt16Array(length)
-{
-    return new @Int16Array(length);    
-}
-
-function allocateInt32Array(length)
-{
-    return new @Int32Array(length);   
-}
-
-function allocateUint32Array(length)
-{
-    return new @Uint32Array(length);
-}
-
-function allocateUint16Array(length)
-{
-    return new @Uint16Array(length);   
-}
-
-function allocateUint8Array(length)
-{
-    return new @Uint8Array(length);   
-}
-
-function allocateUint8ClampedArray(length)
-{
-    return new @Uint8ClampedArray(length);
-}
-
-function allocateFloat32Array(length)
-{
-    return new @Float32Array(length);
-}
-
-function allocateFloat64Array(length)
-{
-    return new @Float64Array(length);
 }

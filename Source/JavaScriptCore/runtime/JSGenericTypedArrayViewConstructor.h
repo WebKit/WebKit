@@ -57,7 +57,7 @@ public:
     using Base = InternalFunction;
 
     static JSGenericTypedArrayViewConstructor* create(
-        VM&, JSGlobalObject*, Structure*, JSObject* prototype, const String& name, FunctionExecutable* privateAllocator);
+        VM&, JSGlobalObject*, Structure*, JSObject* prototype, const String& name);
 
     // FIXME: We should fix the warnings for extern-template in JSObject template classes: https://bugs.webkit.org/show_bug.cgi?id=161979
     IGNORE_CLANG_WARNINGS_BEGIN("undefined-var-template")
@@ -126,7 +126,7 @@ public:
 
 private:
     JSGenericTypedArrayViewConstructor(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*, JSObject* prototype, const String& name, FunctionExecutable* privateAllocator);
+    void finishCreation(VM&, JSGlobalObject*, JSObject* prototype, const String& name);
 };
 
 } // namespace JSC

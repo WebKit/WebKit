@@ -1,3 +1,37 @@
+2020-09-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        %TypedArray%.{from, of} no longer perform AllocateTypedArray
+        https://bugs.webkit.org/show_bug.cgi?id=216991
+
+        Reviewed by Yusuke Suzuki.
+
+        Back in ES2015, %TypedArray%.of and %TypedArray%.from appear to have been based on the abstract operation
+        AllocateTypedArray, which involved crawling the prototype chain to find the appropriate constructor and
+        only permitted `this` to be a (derived) typed array.
+
+        This appears to have gone away as of ES2016 -- we simply expect `this` to be a constructor and verify that it
+        produced a typed array (of sufficient length).
+
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayConstructor.js:
+        (of):
+        (from):
+        (allocateInt8Array): Deleted.
+        (allocateInt16Array): Deleted.
+        (allocateInt32Array): Deleted.
+        (allocateUint32Array): Deleted.
+        (allocateUint16Array): Deleted.
+        (allocateUint8Array): Deleted.
+        (allocateUint8ClampedArray): Deleted.
+        (allocateFloat32Array): Deleted.
+        (allocateFloat64Array): Deleted.
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation):
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::create):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2020-09-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION to make host function definition easy-to-scanned for JIT-caging

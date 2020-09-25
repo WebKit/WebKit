@@ -90,7 +90,6 @@ namespace JSC {
     macro(get) \
     macro(set) \
     macro(shift) \
-    macro(allocateTypedArray) \
     macro(Int8Array) \
     macro(Int16Array) \
     macro(Int32Array) \
