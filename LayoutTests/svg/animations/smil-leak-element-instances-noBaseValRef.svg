@@ -32,36 +32,25 @@ function createAnimatedRectInstance() {
     return use;
 }
 
-function startTest() {
+function runTest() {
     // Collect garbage before recording starting live node count, in case there are live elements from previous tests.
     GCController.collect();
-    originalLiveElements = window.internals.numberOfLiveNodes();
+    var originalLiveElements = window.internals.numberOfLiveNodes();
 
-    for (var i = 0; i < 3; i++)
+    for (var i = 0; i < 1000; i++)
         g.appendChild(createAnimatedRectInstance());
 
-    setTimeout(continueTest, 0);
-}
-
-function continueTest() {
     while (g.hasChildNodes())
         g.removeChild(g.lastChild);
 
-    setTimeout(finishTest, 0);
-}
-
-var attemptsToFinish = 5;
-
-function finishTest() {
     GCController.collect();
-
     var liveDelta = window.internals.numberOfLiveNodes() - originalLiveElements;
-    if (liveDelta == 0)
+
+    // The goal of this test is to verify allocating lots and lots of objects will not
+    // grow the allocated memory a lot once they are removed.
+    if (liveDelta <= 5)
         log("PASS");
-    else if (--attemptsToFinish) {
-        setTimeout(finishTest, 100);
-        return;
-    } else
+    else
         log("FAIL: " + liveDelta + " extra live node(s)");
 
     testRunner.notifyDone();
@@ -76,7 +65,7 @@ function load() {
         return;
     }
 
-    setTimeout(startTest, 0);
+    setTimeout(runTest, 0);
 }
 ]]>
 </script>
