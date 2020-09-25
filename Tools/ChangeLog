@@ -1,3 +1,30 @@
+2020-09-25  Youenn Fablet  <youenn@apple.com>
+
+        Introduce WKWebViewConfiguration mediaCaptureEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=216872
+
+        Reviewed by Alex Christensen.
+
+        Make use of new configuration boolean instead of mediaDevicesEnabled WebPreferences API.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate defaultConfiguration]):
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/MediaStreamTrackDetached.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMedia.mm:
+        (TestWebKitAPI::GetDisplayMediaTest::SetUp):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (MediaCaptureDisabledTest::SetUp):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        (MediaCaptureSimulateFailedSandbox::SetUp):
+
 2020-09-24  Kate Cheney  <katherine_cheney@apple.com>
 
         InAppBrowserPrivacy HTTPCookie tests incorrectly use the IsInAppBrowserPrivacyEnabled NSUserDefaults value

@@ -84,6 +84,7 @@ public:
     virtual void SetUp()
     {
         m_configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        m_configuration.get()._mediaCaptureEnabled = YES;
 
         RetainPtr<SimulateFailedSandboxMessageHandler> handler = adoptNS([[SimulateFailedSandboxMessageHandler alloc] init]);
         [[m_configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
@@ -91,7 +92,6 @@ public:
         m_webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
 
         auto preferences = [m_webView configuration].preferences;
-        preferences._mediaDevicesEnabled = YES;
         preferences._mockCaptureDevicesEnabled = YES;
         preferences._mediaCaptureRequiresSecureConnection = NO;
 

@@ -34,6 +34,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
 static bool wasPrompted = false;
@@ -105,7 +106,7 @@ TEST(WebKit2, GetUserMediaReprompt)
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mediaDevicesEnabled = YES;
+    configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
     auto delegate = adoptNS([[GetUserMediaRepromptUIDelegate alloc] init]);
@@ -144,7 +145,7 @@ TEST(WebKit2, GetUserMediaRepromptAfterAudioVideoBeingDenied)
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mediaDevicesEnabled = YES;
+    configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
     auto delegate = adoptNS([[GetUserMediaOnlyAudioUIDelegate alloc] init]);
@@ -167,7 +168,7 @@ TEST(WebKit2, MultipleGetUserMediaSynchronously)
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mediaDevicesEnabled = YES;
+    configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
     auto delegate = adoptNS([[GetUserMediaRepromptUIDelegate alloc] init]);

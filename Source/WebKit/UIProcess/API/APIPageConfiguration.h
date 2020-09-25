@@ -162,6 +162,9 @@ public:
     void setLimitsNavigationsToAppBoundDomains(bool limits) { m_limitsNavigationsToAppBoundDomains = limits; }
 #endif
 
+    void setMediaCaptureEnabled(bool value) { m_mediaCaptureEnabled = value; }
+    bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
+
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
     
@@ -211,6 +214,8 @@ private:
     bool m_ignoresAppBoundDomains { false };
     bool m_limitsNavigationsToAppBoundDomains { false };
 #endif
+
+    bool m_mediaCaptureEnabled { false };
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 };

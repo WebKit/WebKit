@@ -1196,6 +1196,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _allowMediaContentTypesRequiringHardwareSupportAsFallback;
 }
 
+- (BOOL)_mediaCaptureEnabled
+{
+    return _pageConfiguration->mediaCaptureEnabled();
+}
+
+- (void)_setMediaCaptureEnabled:(BOOL)enabled
+{
+    _pageConfiguration->setMediaCaptureEnabled(enabled);
+}
+
 - (void)_setUndoManagerAPIEnabled:(BOOL)enabled
 {
     _undoManagerAPIEnabled = enabled;

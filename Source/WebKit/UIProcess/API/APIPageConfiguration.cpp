@@ -94,6 +94,8 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_limitsNavigationsToAppBoundDomains = this->m_limitsNavigationsToAppBoundDomains;
 #endif
 
+    copy->m_mediaCaptureEnabled = this->m_mediaCaptureEnabled;
+
     return copy;
 }
 

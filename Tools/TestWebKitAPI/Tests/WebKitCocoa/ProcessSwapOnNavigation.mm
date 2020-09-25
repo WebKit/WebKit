@@ -6440,7 +6440,7 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [webViewConfiguration.get() preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mediaDevicesEnabled = YES;
+    webViewConfiguration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
 
     [webViewConfiguration setProcessPool:processPool.get()];
