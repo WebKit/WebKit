@@ -37,6 +37,7 @@
 #include "KeyframeEffectStack.h"
 #include "Node.h"
 #include "Page.h"
+#include "RenderBoxModelObject.h"
 #include "RenderElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -226,8 +227,8 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         return false;
 
     auto* keyframeEffect = downcast<KeyframeEffect>(effect);
-    auto* target = keyframeEffect->target();
-    if (!target || !target->isDescendantOf(*m_document))
+    auto target = keyframeEffect->targetStyleable();
+    if (!target || !target->element.isDescendantOf(*m_document))
         return false;
 
     HashSet<CSSPropertyID> propertiesToMatch = keyframeEffect->animatedProperties();
@@ -296,8 +297,8 @@ void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
     ASSERT(transition);
     removeAnimation(*transition);
     if (is<KeyframeEffect>(transition->effect())) {
-        if (auto* target = downcast<KeyframeEffect>(transition->effect())->targetElementOrPseudoElement())
-            target->ensureCompletedTransitionsByProperty().set(transition->property(), transition);
+        if (auto styleable = downcast<KeyframeEffect>(transition->effect())->targetStyleable())
+            styleable->ensureCompletedTransitionsByProperty().set(transition->property(), transition);
     }
 }
 
@@ -330,10 +331,11 @@ void DocumentTimeline::scheduleNextTick()
 
 bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutRect& bounds) const
 {
-    if (!renderer.element())
-        return true;
+    auto styleable = Styleable::fromRenderer(renderer);
+    if (!styleable)
+        return false;
 
-    auto* animations = renderer.element()->animations();
+    auto* animations = styleable->animations();
     if (!animations)
         return false;
 
@@ -355,10 +357,11 @@ bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutR
 
 bool DocumentTimeline::isRunningAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
 {
-    if (!renderer.element())
+    auto styleable = Styleable::fromRenderer(renderer);
+    if (!styleable)
         return false;
 
-    auto* animations = renderer.element()->animations();
+    auto* animations = styleable->animations();
     if (!animations)
         return false;
 
@@ -376,10 +379,11 @@ bool DocumentTimeline::isRunningAnimationOnRenderer(RenderElement& renderer, CSS
 
 bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
 {
-    if (!renderer.element())
+    auto styleable = Styleable::fromRenderer(renderer);
+    if (!styleable)
         return false;
 
-    auto* animations = renderer.element()->animations();
+    auto* animations = styleable->animations();
     if (!animations)
         return false;
 
@@ -400,11 +404,11 @@ bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& re
 
 std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderElement& renderer)
 {
-    auto* element = renderer.element();
-    if (!element)
+    auto styleable = Styleable::fromRenderer(renderer);
+    if (!styleable)
         return RenderStyle::clonePtr(renderer.style());
 
-    auto* animations = renderer.element()->animations();
+    auto* animations = styleable->animations();
     if (!animations)
         return RenderStyle::clonePtr(renderer.style());
 
@@ -446,9 +450,13 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
     }
 }
 
-bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element) const
+bool DocumentTimeline::runningAnimationsForRendererAreAllAccelerated(const RenderBoxModelObject& renderer) const
 {
-    auto* animations = element.animations();
+    auto styleable = Styleable::fromRenderer(renderer);
+    if (!styleable)
+        return false;
+
+    auto* animations = styleable->animations();
     if (!animations || animations->isEmpty())
         return false;
 

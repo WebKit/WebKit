@@ -2959,8 +2959,8 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
-    if (auto* element = renderer.element()) {
-        if (auto* effectsStack = element->keyframeEffectStack()) {
+    if (auto styleable = Styleable::fromRenderer(renderer)) {
+        if (auto* effectsStack = styleable->keyframeEffectStack()) {
             return (effectsStack->isCurrentlyAffectingProperty(CSSPropertyOpacity)
                 && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyFilter)
@@ -3494,8 +3494,8 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
-    if (auto* element = renderer.element()) {
-        if (auto* effectsStack = element->keyframeEffectStack())
+    if (auto styleable = Styleable::fromRenderer(renderer)) {
+        if (auto* effectsStack = styleable->keyframeEffectStack())
             return effectsStack->isCurrentlyAffectingProperty(CSSPropertyTransform);
     }
 

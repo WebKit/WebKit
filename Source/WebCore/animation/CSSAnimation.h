@@ -26,19 +26,19 @@
 #pragma once
 
 #include "DeclarativeAnimation.h"
+#include "Styleable.h"
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 class Animation;
-class Element;
 class RenderStyle;
 
 class CSSAnimation final : public DeclarativeAnimation {
     WTF_MAKE_ISO_ALLOCATED(CSSAnimation);
 public:
-    static Ref<CSSAnimation> create(Element&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    static Ref<CSSAnimation> create(const Styleable&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     ~CSSAnimation() = default;
 
     bool isCSSAnimation() const override { return true; }
@@ -48,7 +48,7 @@ public:
     void effectKeyframesWereSetUsingBindings();
 
 private:
-    CSSAnimation(Element&, const Animation&);
+    CSSAnimation(const Styleable&, const Animation&);
 
     void syncPropertiesWithBackingAnimation() final;
     Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) final;

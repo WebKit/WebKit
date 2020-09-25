@@ -89,8 +89,8 @@ public:
     IntPoint savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
     void setSavedLayerScrollPosition(IntPoint position) { m_savedLayerScrollPosition = position; }
 
-    ElementAnimationRareData* elementAnimationRareData() { return m_animationRareData.get(); }
-    ElementAnimationRareData& ensureAnimationRareData();
+    ElementAnimationRareData* animationRareData(PseudoId) const;
+    ElementAnimationRareData& ensureAnimationRareData(PseudoId);
 
     DOMTokenList* partList() const { return m_partList.get(); }
     void setPartList(std::unique_ptr<DOMTokenList> partList) { m_partList = WTFMove(partList); }
@@ -141,7 +141,7 @@ public:
         if (m_resizeObserverData)
             result.add(UseType::ResizeObserver);
 #endif
-        if (m_animationRareData)
+        if (!m_animationRareData.isEmpty())
             result.add(UseType::Animations);
         if (m_beforePseudoElement || m_afterPseudoElement)
             result.add(UseType::PseudoElements);
@@ -175,7 +175,7 @@ private:
     std::unique_ptr<ResizeObserverData> m_resizeObserverData;
 #endif
 
-    std::unique_ptr<ElementAnimationRareData> m_animationRareData;
+    Vector<std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
@@ -237,11 +237,22 @@ inline void ElementRareData::setUnusualTabIndex(int tabIndex)
     m_unusualTabIndex = tabIndex;
 }
 
-inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData()
+inline ElementAnimationRareData* ElementRareData::animationRareData(PseudoId pseudoId) const
 {
-    if (!m_animationRareData)
-        m_animationRareData = makeUnique<ElementAnimationRareData>();
-    return *m_animationRareData.get();
+    for (auto& animationRareData : m_animationRareData) {
+        if (animationRareData->pseudoId() == pseudoId)
+            return animationRareData.get();
+    }
+    return nullptr;
+}
+
+inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData(PseudoId pseudoId)
+{
+    if (auto* animationRareData = this->animationRareData(pseudoId))
+        return *animationRareData;
+
+    m_animationRareData.append(makeUnique<ElementAnimationRareData>(pseudoId));
+    return *m_animationRareData.last().get();
 }
 
 } // namespace WebCore

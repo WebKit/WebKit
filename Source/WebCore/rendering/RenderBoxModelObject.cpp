@@ -2708,7 +2708,7 @@ bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const
 {
     if (auto* node = element()) {
         if (auto* timeline = node->document().existingTimeline())
-            return timeline->runningAnimationsForElementAreAllAccelerated(*node);
+            return timeline->runningAnimationsForRendererAreAllAccelerated(*this);
     }
     return false;
 }

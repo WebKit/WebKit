@@ -37,6 +37,7 @@
 #include "KeyframeList.h"
 #include "RenderStyle.h"
 #include "StyleProperties.h"
+#include "Styleable.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Ref.h>
 
@@ -109,6 +110,8 @@ public:
     const String pseudoElement() const;
     ExceptionOr<void> setPseudoElement(const String&);
 
+    const Optional<const Styleable> targetStyleable() const;
+
     Vector<JSC::Strong<JSC::JSObject>> getBindingsKeyframes(JSC::JSGlobalObject&);
     Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::JSGlobalObject&);
     ExceptionOr<void> setBindingsKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
@@ -178,7 +181,7 @@ private:
     Document* document() const;
     void updateEffectStackMembership();
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
-    void didChangeTargetElementOrPseudoElement(Element*);
+    void didChangeTargetStyleable(const Optional<const Styleable>&);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
     bool canBeAccelerated() const;

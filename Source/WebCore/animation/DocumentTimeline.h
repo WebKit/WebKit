@@ -35,6 +35,7 @@ namespace WebCore {
 
 class AnimationEventBase;
 class DocumentTimelinesController;
+class RenderBoxModelObject;
 class RenderElement;
 
 class DocumentTimeline final : public AnimationTimeline
@@ -62,7 +63,7 @@ public:
     bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
-    bool runningAnimationsForElementAreAllAccelerated(Element&) const;
+    bool runningAnimationsForRendererAreAllAccelerated(const RenderBoxModelObject&) const;
     void detachFromDocument();
 
     void enqueueAnimationEvent(AnimationEventBase&);

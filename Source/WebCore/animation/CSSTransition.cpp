@@ -28,7 +28,6 @@
 
 #include "Animation.h"
 #include "DocumentTimeline.h"
-#include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "TransitionEvent.h"
@@ -38,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransition);
 
-Ref<CSSTransition> CSSTransition::create(Element& owningElement, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {
     ASSERT(oldStyle);
     auto result = adoptRef(*new CSSTransition(owningElement, property, generationTime, backingAnimation, *oldStyle, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
@@ -50,11 +49,11 @@ Ref<CSSTransition> CSSTransition::create(Element& owningElement, CSSPropertyID p
     return result;
 }
 
-CSSTransition::CSSTransition(Element& element, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
-    : DeclarativeAnimation(element, backingAnimation)
+CSSTransition::CSSTransition(const Styleable& styleable, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+    : DeclarativeAnimation(styleable, backingAnimation)
     , m_property(property)
     , m_generationTime(generationTime)
-    , m_timelineTimeAtCreation(element.document().timeline().currentTime())
+    , m_timelineTimeAtCreation(styleable.element.document().timeline().currentTime())
     , m_targetStyle(RenderStyle::clonePtr(targetStyle))
     , m_currentStyle(RenderStyle::clonePtr(oldStyle))
     , m_reversingAdjustedStartStyle(RenderStyle::clonePtr(reversingAdjustedStartStyle))

@@ -1,3 +1,166 @@
+2020-09-25  Antoine Quint  <graouts@webkit.org>
+
+        Reduce the reliance on PseudoElement in the animation code
+        https://bugs.webkit.org/show_bug.cgi?id=216931
+        <rdar://problem/69511682>
+
+        Reviewed by Antti Koivisto.
+
+        We have so far relied on PseudoElement as a foundation for supporting animations of pseudo-elements. This is not a
+        great choice since PseudoElement is currently limited to ::before and ::after pseudo-elements only. This patch
+        refactors animation-related code to rely on PseudoElement as little as possible without making changes outside
+        of the animation code, as a first step towards supporting animation of more pseudo-elements.
+
+        This patch introduces a new struct Styleable which combines an Element& and PseudoId. We use this struct instead
+        of Element objects wherever necessary in the animation code. On top of that, we add a PseudoId parameter to all the
+        Element methods wrapping access to ElementAnimationRareData and use a HashMap<PseudoId, std::unique_ptr<ElementAnimationRareData>>
+        to be able to separate animation data per pseudo-element.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::removeAnimation):
+        (WebCore::AnimationTimeline::animationWasAddedToStyleable):
+        (WebCore::AnimationTimeline::animationWasRemovedFromStyleable):
+        (WebCore::AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement):
+        (WebCore::AnimationTimeline::removeCSSAnimationCreatedByMarkup):
+        (WebCore::AnimationTimeline::elementWasRemoved):
+        (WebCore::AnimationTimeline::willChangeRendererForStyleable):
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForStyleable):
+        (WebCore::shouldConsiderAnimation):
+        (WebCore::AnimationTimeline::updateCSSAnimationsForStyleable):
+        (WebCore::keyframeEffectForElementAndProperty):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForStyleableAndProperty):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForStyleable):
+        (WebCore::AnimationTimeline::animationWasAddedToElement): Deleted.
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement): Deleted.
+        (WebCore::AnimationTimeline::willChangeRendererForElement): Deleted.
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForElement): Deleted.
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): Deleted.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty): Deleted.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement): Deleted.
+        * animation/AnimationTimeline.h:
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::create):
+        (WebCore::CSSAnimation::CSSAnimation):
+        * animation/CSSAnimation.h:
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::create):
+        (WebCore::CSSTransition::CSSTransition):
+        * animation/CSSTransition.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::DeclarativeAnimation):
+        (WebCore::DeclarativeAnimation::owningElement const):
+        (WebCore::DeclarativeAnimation::disassociateFromOwningElement):
+        (WebCore::DeclarativeAnimation::initialize):
+        (WebCore::DeclarativeAnimation::enqueueDOMEvent):
+        * animation/DeclarativeAnimation.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::animationCanBeRemoved):
+        (WebCore::DocumentTimeline::transitionDidComplete):
+        (WebCore::DocumentTimeline::computeExtentOfAnimation const):
+        (WebCore::DocumentTimeline::isRunningAnimationOnRenderer const):
+        (WebCore::DocumentTimeline::isRunningAcceleratedAnimationOnRenderer const):
+        (WebCore::DocumentTimeline::animatedStyleForRenderer):
+        (WebCore::DocumentTimeline::runningAnimationsForRendererAreAllAccelerated const):
+        (WebCore::DocumentTimeline::runningAnimationsForElementAreAllAccelerated const): Deleted.
+        * animation/DocumentTimeline.h:
+        * animation/ElementAnimationRareData.cpp:
+        (WebCore::ElementAnimationRareData::ElementAnimationRareData):
+        * animation/ElementAnimationRareData.h:
+        (WebCore::ElementAnimationRareData::pseudoId const):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::elementOrPseudoElementForStyleable):
+        (WebCore::invalidateElement):
+        (WebCore::KeyframeEffect::animationTimelineDidChange):
+        (WebCore::KeyframeEffect::updateEffectStackMembership):
+        (WebCore::KeyframeEffect::targetStyleable const):
+        (WebCore::KeyframeEffect::setTarget):
+        (WebCore::KeyframeEffect::setPseudoElement):
+        (WebCore::KeyframeEffect::didChangeTargetStyleable):
+        (WebCore::KeyframeEffect::invalidate):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        (WebCore::KeyframeEffect::didChangeTargetElementOrPseudoElement): Deleted.
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::addEffect):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setEffectInternal):
+        (WebCore::WebAnimation::setTimeline):
+        (WebCore::WebAnimation::effectTargetDidChange):
+        (WebCore::WebAnimation::persist):
+        (WebCore::WebAnimation::commitStyles):
+        * animation/WebAnimation.h:
+        * animation/WebAnimationUtilities.cpp:
+        (WebCore::compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder):
+        (WebCore::compareCSSTransitions):
+        (WebCore::compareCSSAnimations):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        (WebCore::Element::animationRareData const):
+        (WebCore::Element::ensureAnimationRareData):
+        (WebCore::Element::keyframeEffectStack const):
+        (WebCore::Element::ensureKeyframeEffectStack):
+        (WebCore::Element::hasKeyframeEffects const):
+        (WebCore::Element::applyKeyframeEffects):
+        (WebCore::Element::animations const):
+        (WebCore::Element::hasCompletedTransitionsForProperty const):
+        (WebCore::Element::hasRunningTransitionsForProperty const):
+        (WebCore::Element::hasRunningTransitions const):
+        (WebCore::Element::ensureAnimations):
+        (WebCore::Element::animationsCreatedByMarkup):
+        (WebCore::Element::setAnimationsCreatedByMarkup):
+        (WebCore::Element::ensureCompletedTransitionsByProperty):
+        (WebCore::Element::ensureRunningTransitionsByProperty):
+        (WebCore::Element::lastStyleChangeEventStyle const):
+        (WebCore::Element::setLastStyleChangeEventStyle):
+        (WebCore::Element::getAnimations):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::useTypes const):
+        (WebCore::ElementRareData::animationRareData const):
+        (WebCore::ElementRareData::ensureAnimationRareData):
+        (WebCore::ElementRareData::elementAnimationRareData): Deleted.
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        (WebCore::PseudoElement::isTargetedByKeyframeEffectRequiringPseudoElement):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasRunningAcceleratedAnimations const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation const):
+        (WebCore::RenderLayerCompositor::isRunningTransformAnimation const):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::resolvePseudoStyle):
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        * style/StyleTreeResolver.h:
+        * style/Styleable.h: Added.
+        (WebCore::Styleable::Styleable):
+        (WebCore::Styleable::fromElement):
+        (WebCore::Styleable::fromRenderer):
+        (WebCore::Styleable::operator== const):
+        (WebCore::Styleable::operator!= const):
+        (WebCore::Styleable::keyframeEffectStack const):
+        (WebCore::Styleable::ensureKeyframeEffectStack const):
+        (WebCore::Styleable::hasKeyframeEffects const):
+        (WebCore::Styleable::applyKeyframeEffects const):
+        (WebCore::Styleable::animations const):
+        (WebCore::Styleable::hasCompletedTransitionsForProperty const):
+        (WebCore::Styleable::hasRunningTransitionsForProperty const):
+        (WebCore::Styleable::hasRunningTransitions const):
+        (WebCore::Styleable::ensureAnimations const):
+        (WebCore::Styleable::ensureCompletedTransitionsByProperty const):
+        (WebCore::Styleable::ensureRunningTransitionsByProperty const):
+        (WebCore::Styleable::animationsCreatedByMarkup const):
+        (WebCore::Styleable::setAnimationsCreatedByMarkup const):
+        (WebCore::Styleable::lastStyleChangeEventStyle const):
+        (WebCore::Styleable::setLastStyleChangeEventStyle const):
+
 2020-09-25  Youenn Fablet  <youenn@apple.com>
 
         Fix LibWebRTCRtpReceiverBackend for internal build

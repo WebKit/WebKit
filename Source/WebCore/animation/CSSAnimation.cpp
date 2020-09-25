@@ -28,7 +28,6 @@
 
 #include "Animation.h"
 #include "AnimationEvent.h"
-#include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
@@ -37,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimation);
 
-Ref<CSSAnimation> CSSAnimation::create(Element& owningElement, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     auto result = adoptRef(*new CSSAnimation(owningElement, backingAnimation));
     result->initialize(oldStyle, newStyle);
@@ -47,7 +46,7 @@ Ref<CSSAnimation> CSSAnimation::create(Element& owningElement, const Animation& 
     return result;
 }
 
-CSSAnimation::CSSAnimation(Element& element, const Animation& backingAnimation)
+CSSAnimation::CSSAnimation(const Styleable& element, const Animation& backingAnimation)
     : DeclarativeAnimation(element, backingAnimation)
     , m_animationName(backingAnimation.name())
 {

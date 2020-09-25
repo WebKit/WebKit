@@ -943,6 +943,7 @@ TextStream& operator<<(TextStream& ts, PseudoId pseudoId)
     case PseudoId::None: ts << "none"; break;
     case PseudoId::FirstLine: ts << "first-line"; break;
     case PseudoId::FirstLetter: ts << "first-letter"; break;
+    case PseudoId::Highlight: ts << "highlight"; break;
     case PseudoId::Marker: ts << "marker"; break;
     case PseudoId::Before: ts << "before"; break;
     case PseudoId::After: ts << "after"; break;

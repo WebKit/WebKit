@@ -486,23 +486,24 @@ public:
     void clearHasPendingResources() { clearNodeFlag(NodeFlag::HasPendingResources); }
     virtual void buildPendingResource() { };
 
-    KeyframeEffectStack* keyframeEffectStack() const;
-    KeyframeEffectStack& ensureKeyframeEffectStack();
-    bool hasKeyframeEffects() const;
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle&);
+    KeyframeEffectStack* keyframeEffectStack(PseudoId) const;
+    KeyframeEffectStack& ensureKeyframeEffectStack(PseudoId);
+    bool hasKeyframeEffects(PseudoId) const;
+    OptionSet<AnimationImpact> applyKeyframeEffects(PseudoId, RenderStyle&);
 
-    const AnimationCollection* animations() const;
-    bool hasCompletedTransitionsForProperty(CSSPropertyID) const;
-    bool hasRunningTransitionsForProperty(CSSPropertyID) const;
-    bool hasRunningTransitions() const;
-    AnimationCollection& ensureAnimations();
-    PropertyToTransitionMap& ensureCompletedTransitionsByProperty();
-    PropertyToTransitionMap& ensureRunningTransitionsByProperty();
-    CSSAnimationCollection& animationsCreatedByMarkup();
-    void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
+    const AnimationCollection* animations(PseudoId) const;
+    bool hasCompletedTransitionsForProperty(PseudoId, CSSPropertyID) const;
+    bool hasRunningTransitionsForProperty(PseudoId, CSSPropertyID) const;
+    bool hasRunningTransitions(PseudoId) const;
+    AnimationCollection& ensureAnimations(PseudoId);
 
-    const RenderStyle* lastStyleChangeEventStyle() const;
-    void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&&);
+    PropertyToTransitionMap& ensureCompletedTransitionsByProperty(PseudoId);
+    PropertyToTransitionMap& ensureRunningTransitionsByProperty(PseudoId);
+    CSSAnimationCollection& animationsCreatedByMarkup(PseudoId);
+    void setAnimationsCreatedByMarkup(PseudoId, CSSAnimationCollection&&);
+
+    const RenderStyle* lastStyleChangeEventStyle(PseudoId) const;
+    void setLastStyleChangeEventStyle(PseudoId, std::unique_ptr<const RenderStyle>&&);
 
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() const { return hasNodeFlag(NodeFlag::ContainsFullScreenElement); }
@@ -716,8 +717,8 @@ private:
     ElementRareData* elementRareData() const;
     ElementRareData& ensureElementRareData();
 
-    ElementAnimationRareData* animationRareData() const;
-    ElementAnimationRareData& ensureAnimationRareData();
+    ElementAnimationRareData* animationRareData(PseudoId) const;
+    ElementAnimationRareData& ensureAnimationRareData(PseudoId);
 
     virtual int defaultTabIndex() const;
 

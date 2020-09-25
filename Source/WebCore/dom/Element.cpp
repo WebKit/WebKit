@@ -2283,7 +2283,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 
     RefPtr<Frame> frame = document().frame();
     if (auto* timeline = document().existingTimeline())
-        timeline->elementWasRemoved(*this);
+        timeline->elementWasRemoved({ *this, pseudoId() });
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     if (frame && frame->page()) {
@@ -3803,42 +3803,42 @@ IntersectionObserverData* Element::intersectionObserverDataIfExists()
 
 #endif
 
-ElementAnimationRareData* Element::animationRareData() const
+ElementAnimationRareData* Element::animationRareData(PseudoId pseudoId) const
 {
-    return hasRareData() ? elementRareData()->elementAnimationRareData() : nullptr;
+    return hasRareData() ? elementRareData()->animationRareData(pseudoId) : nullptr;
 }
 
-ElementAnimationRareData& Element::ensureAnimationRareData()
+ElementAnimationRareData& Element::ensureAnimationRareData(PseudoId pseudoId)
 {
-    return ensureElementRareData().ensureAnimationRareData();
+    return ensureElementRareData().ensureAnimationRareData(pseudoId);
 }
 
-KeyframeEffectStack* Element::keyframeEffectStack() const
+KeyframeEffectStack* Element::keyframeEffectStack(PseudoId pseudoId) const
 {
-    if (auto* animationData = animationRareData())
+    if (auto* animationData = animationRareData(pseudoId))
         return animationData->keyframeEffectStack();
     return nullptr;
 }
 
-KeyframeEffectStack& Element::ensureKeyframeEffectStack()
+KeyframeEffectStack& Element::ensureKeyframeEffectStack(PseudoId pseudoId)
 {
-    return ensureAnimationRareData().ensureKeyframeEffectStack();
+    return ensureAnimationRareData(pseudoId).ensureKeyframeEffectStack();
 }
 
-bool Element::hasKeyframeEffects() const
+bool Element::hasKeyframeEffects(PseudoId pseudoId) const
 {
-    if (auto* animationData = animationRareData()) {
+    if (auto* animationData = animationRareData(pseudoId)) {
         if (auto* keyframeEffectStack = animationData->keyframeEffectStack())
             return keyframeEffectStack->hasEffects();
     }
     return false;
 }
 
-OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyle)
+OptionSet<AnimationImpact> Element::applyKeyframeEffects(PseudoId pseudoId, RenderStyle& targetStyle)
 {
     OptionSet<AnimationImpact> impact;
 
-    for (const auto& effect : ensureKeyframeEffectStack().sortedEffects()) {
+    for (const auto& effect : ensureKeyframeEffectStack(pseudoId).sortedEffects()) {
         ASSERT(effect->animation());
         effect->animation()->resolve(targetStyle);
 
@@ -3852,72 +3852,72 @@ OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyl
     return impact;
 }
 
-const AnimationCollection* Element::animations() const
+const AnimationCollection* Element::animations(PseudoId pseudoId) const
 {
-    if (auto* animationData = animationRareData())
+    if (auto* animationData = animationRareData(pseudoId))
         return &animationData->animations();
     return nullptr;
 }
 
-bool Element::hasCompletedTransitionsForProperty(CSSPropertyID property) const
+bool Element::hasCompletedTransitionsForProperty(PseudoId pseudoId, CSSPropertyID property) const
 {
-    if (auto* animationData = animationRareData())
+    if (auto* animationData = animationRareData(pseudoId))
         return animationData->completedTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitionsForProperty(CSSPropertyID property) const
+bool Element::hasRunningTransitionsForProperty(PseudoId pseudoId, CSSPropertyID property) const
 {
-    if (auto* animationData = animationRareData())
+    if (auto* animationData = animationRareData(pseudoId))
         return animationData->runningTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitions() const
+bool Element::hasRunningTransitions(PseudoId pseudoId) const
 {
-    if (auto* animationData = animationRareData())
+    if (auto* animationData = animationRareData(pseudoId))
         return !animationData->runningTransitionsByProperty().isEmpty();
     return false;
 }
 
-AnimationCollection& Element::ensureAnimations()
+AnimationCollection& Element::ensureAnimations(PseudoId pseudoId)
 {
-    return ensureAnimationRareData().animations();
+    return ensureAnimationRareData(pseudoId).animations();
 }
 
-CSSAnimationCollection& Element::animationsCreatedByMarkup()
+CSSAnimationCollection& Element::animationsCreatedByMarkup(PseudoId pseudoId)
 {
-    return ensureAnimationRareData().animationsCreatedByMarkup();
+    return ensureAnimationRareData(pseudoId).animationsCreatedByMarkup();
 }
 
-void Element::setAnimationsCreatedByMarkup(CSSAnimationCollection&& animations)
+void Element::setAnimationsCreatedByMarkup(PseudoId pseudoId, CSSAnimationCollection&& animations)
 {
-    ensureAnimationRareData().setAnimationsCreatedByMarkup(WTFMove(animations));
+    ensureAnimationRareData(pseudoId).setAnimationsCreatedByMarkup(WTFMove(animations));
 }
 
-PropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty()
+PropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty(PseudoId pseudoId)
 {
-    return ensureAnimationRareData().completedTransitionsByProperty();
+    return ensureAnimationRareData(pseudoId).completedTransitionsByProperty();
 }
 
-PropertyToTransitionMap& Element::ensureRunningTransitionsByProperty()
+PropertyToTransitionMap& Element::ensureRunningTransitionsByProperty(PseudoId pseudoId)
 {
-    return ensureAnimationRareData().runningTransitionsByProperty();
+    return ensureAnimationRareData(pseudoId).runningTransitionsByProperty();
 }
 
-const RenderStyle* Element::lastStyleChangeEventStyle() const
+const RenderStyle* Element::lastStyleChangeEventStyle(PseudoId pseudoId) const
 {
-    if (auto* animationData = animationRareData())
+    if (auto* animationData = animationRareData(pseudoId))
         return animationData->lastStyleChangeEventStyle();
     return nullptr;
 }
 
-void Element::setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style)
+void Element::setLastStyleChangeEventStyle(PseudoId pseudoId, std::unique_ptr<const RenderStyle>&& style)
 {
-    if (auto* animationData = animationRareData())
+    if (auto* animationData = animationRareData(pseudoId))
         animationData->setLastStyleChangeEventStyle(WTFMove(style));
     else if (style)
-        ensureAnimationRareData().setLastStyleChangeEventStyle(WTFMove(style));
+        ensureAnimationRareData(pseudoId).setLastStyleChangeEventStyle(WTFMove(style));
 }
 
 #if ENABLE(RESIZE_OBSERVER)
@@ -4542,8 +4542,8 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(Optional<GetAnimationsOption
     document().updateStyleIfNeeded();
 
     Vector<RefPtr<WebAnimation>> animations;
-    if (keyframeEffectStack()) {
-        for (auto& effect : keyframeEffectStack()->sortedEffects()) {
+    if (auto* effectStack = keyframeEffectStack(PseudoId::None)) {
+        for (auto& effect : effectStack->sortedEffects()) {
             if (effect->animation()->isRelevant())
                 animations.append(effect->animation());
         }

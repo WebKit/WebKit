@@ -90,7 +90,7 @@ void PseudoElement::clearHostElement()
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
 
     if (auto* timeline = document().existingTimeline())
-        timeline->elementWasRemoved(*this);
+        timeline->elementWasRemoved(Styleable::fromElement(*this));
     
     m_hostElement = nullptr;
 }
@@ -102,8 +102,10 @@ bool PseudoElement::rendererIsNeeded(const RenderStyle& style)
 
 bool PseudoElement::isTargetedByKeyframeEffectRequiringPseudoElement()
 {
-    if (auto* stack = keyframeEffectStack())
-        return stack->requiresPseudoElement();
+    if (m_hostElement) {
+        if (auto* stack = m_hostElement->keyframeEffectStack(pseudoId()))
+            return stack->requiresPseudoElement();
+    }
     return false;
 }
 

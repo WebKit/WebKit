@@ -78,17 +78,10 @@ function getPseudoComputedTop(id)
 // FIXME: This test should be modified so subpixel doesn't cause off by one
 // below and it no longer needs shouldBeCloseTo.
 
-function pauseAnimationAtTimeOnPseudoElement(animationName, time, element, pseudoId)
+function pauseAnimationAtTimeOnPseudoElement(animationName, time, element, pseudoElement)
 {
-    const pseudoElement = internals.pseudoElement(element, pseudoId);
-    if (!pseudoElement) {
-        console.log("Failed to find pseudo element");
-        return;
-    }
-
-    const animations = pseudoElement.getAnimations();
-    for (let animation of animations) {
-        if (animation instanceof CSSAnimation && animation.animationName == animationName && animation.effect.getKeyframes().length) {
+    for (let animation of element.getAnimations({ subtree: true })) {
+        if (animation instanceof CSSAnimation && animation.animationName == animationName && animation.effect.target == element && animation.effect.pseudoElement == pseudoElement) {
             animation.currentTime = time * 1000;
             animation.pause();
             return true;
@@ -99,35 +92,20 @@ function pauseAnimationAtTimeOnPseudoElement(animationName, time, element, pseud
 
 function testAnimation(id)
 {
+    const pseudoElement = `::${id}`;
     var div = document.getElementById(id);
     div.className = 'animate';
     window.div = div;
     shouldBe('div.offsetWidth', '52');
-    if (window.internals) {
-        pauseAnimationAtTimeOnPseudoElement('example', 1.0, div, id);
-        shouldBeCloseTo('div.offsetWidth', 20, 1);
-        computedTop = getPseudoComputedTop(id);
-        shouldBeCloseTo('computedTop', 170, 1);
-        pauseAnimationAtTimeOnPseudoElement('example', 2.0, div, id);
-        shouldBeCloseTo('div.offsetWidth', 12, 1);
-        computedTop = getPseudoComputedTop(id);
-        shouldBeCloseTo('computedTop', 200, 1);
-    } else {
-        // This will be flaky, but it's a reasonable approximation for testing
-        // in a browser instead of DRT.
-        setTimeout(function() {
-            window.div = div;
-            shouldBeCloseTo('div.offsetWidth', 20, 1);
-            computedTop = getPseudoComputedTop(id);
-            shouldBeCloseTo('computedTop', 170, 1);
-        }, 1000);
-        setTimeout(function() {
-            window.div = div;
-            shouldBeCloseTo('div.offsetWidth', 12, 1);
-            computedTop = getPseudoComputedTop(id);
-            shouldBeCloseTo('computedTop', 200, 1);
-        }, 2000);
-    }
+
+    pauseAnimationAtTimeOnPseudoElement('example', 1.0, div, pseudoElement);
+    shouldBeCloseTo('div.offsetWidth', 20, 1);
+    computedTop = getPseudoComputedTop(id);
+    shouldBeCloseTo('computedTop', 170, 1);
+    pauseAnimationAtTimeOnPseudoElement('example', 2.0, div, pseudoElement);
+    shouldBeCloseTo('div.offsetWidth', 12, 1);
+    computedTop = getPseudoComputedTop(id);
+    shouldBeCloseTo('computedTop', 200, 1);
 }
 
 onload = function() {

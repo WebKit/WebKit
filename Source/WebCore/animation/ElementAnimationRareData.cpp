@@ -33,7 +33,8 @@
 
 namespace WebCore {
 
-ElementAnimationRareData::ElementAnimationRareData()
+ElementAnimationRareData::ElementAnimationRareData(PseudoId pseudoId)
+    : m_pseudoId(pseudoId)
 {
 }
 

@@ -30,6 +30,7 @@
 #include "StyleChange.h"
 #include "StyleSharingResolver.h"
 #include "StyleUpdate.h"
+#include "Styleable.h"
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 
@@ -60,7 +61,7 @@ private:
 
     ElementUpdates resolveElement(Element&);
 
-    ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, Element&, Change);
+    ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change);
     ElementUpdate resolvePseudoStyle(Element&, const ElementUpdate&, PseudoId);
 
     struct Scope : RefCounted<Scope> {

@@ -42,6 +42,7 @@
 #include "RenderView.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
+#include "Styleable.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
@@ -80,9 +81,9 @@ void AnimationTimeline::removeAnimation(WebAnimation& animation)
     ASSERT(!animation.timeline() || animation.timeline() == this);
     m_animations.remove(&animation);
     if (is<KeyframeEffect>(animation.effect())) {
-        if (auto* target = downcast<KeyframeEffect>(animation.effect())->targetElementOrPseudoElement()) {
-            animationWasRemovedFromElement(animation, *target);
-            target->ensureKeyframeEffectStack().removeEffect(*downcast<KeyframeEffect>(animation.effect()));
+        if (auto styleable = downcast<KeyframeEffect>(animation.effect())->targetStyleable()) {
+            animationWasRemovedFromStyleable(animation, *styleable);
+            styleable->ensureKeyframeEffectStack().removeEffect(*downcast<KeyframeEffect>(animation.effect()));
         }
     }
 }
@@ -95,9 +96,9 @@ Optional<double> AnimationTimeline::bindingsCurrentTime()
     return secondsToWebAnimationsAPITime(*time);
 }
 
-void AnimationTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)
+void AnimationTimeline::animationWasAddedToStyleable(WebAnimation& animation, const Styleable& styleable)
 {
-    element.ensureAnimations().add(&animation);
+    styleable.ensureAnimations().add(&animation);
 }
 
 static inline bool removeCSSTransitionFromMap(CSSTransition& transition, PropertyToTransitionMap& cssTransitionsByProperty)
@@ -110,37 +111,37 @@ static inline bool removeCSSTransitionFromMap(CSSTransition& transition, Propert
     return true;
 }
 
-void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, Element& element)
+void AnimationTimeline::animationWasRemovedFromStyleable(WebAnimation& animation, const Styleable& styleable)
 {
-    element.ensureAnimations().remove(&animation);
+    styleable.ensureAnimations().remove(&animation);
 
     // Now, if we're dealing with a CSS Transition, we remove it from the m_elementToRunningCSSTransitionByCSSPropertyID map.
     // We don't need to do this for CSS Animations because their timing can be set via CSS to end, which would cause this
     // function to be called, but they should remain associated with their owning element until this is changed via a call
     // to the JS API or changing the target element's animation-name property.
     if (is<CSSTransition>(animation))
-        removeDeclarativeAnimationFromListsForOwningElement(animation, element);
+        removeDeclarativeAnimationFromListsForOwningElement(animation, styleable);
 }
 
-void AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement(WebAnimation& animation, Element& element)
+void AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement(WebAnimation& animation, const Styleable& styleable)
 {
     ASSERT(is<DeclarativeAnimation>(animation));
 
     if (is<CSSTransition>(animation)) {
         auto& transition = downcast<CSSTransition>(animation);
-        if (!removeCSSTransitionFromMap(transition, element.ensureRunningTransitionsByProperty()))
-            removeCSSTransitionFromMap(transition, element.ensureCompletedTransitionsByProperty());
+        if (!removeCSSTransitionFromMap(transition, styleable.ensureRunningTransitionsByProperty()))
+            removeCSSTransitionFromMap(transition, styleable.ensureCompletedTransitionsByProperty());
     }
 }
 
-void AnimationTimeline::removeCSSAnimationCreatedByMarkup(Element& element, CSSAnimation& cssAnimation)
+void AnimationTimeline::removeCSSAnimationCreatedByMarkup(const Styleable& styleable, CSSAnimation& cssAnimation)
 {
-    element.animationsCreatedByMarkup().remove(&cssAnimation);
+    styleable.animationsCreatedByMarkup().remove(&cssAnimation);
 
-    if (!element.hasKeyframeEffects())
+    if (!styleable.hasKeyframeEffects())
         return;
 
-    auto& keyframeEffectStack = element.ensureKeyframeEffectStack();
+    auto& keyframeEffectStack = styleable.ensureKeyframeEffectStack();
     auto* cssAnimationList = keyframeEffectStack.cssAnimationList();
     if (!cssAnimationList || cssAnimationList->isEmpty())
         return;
@@ -156,33 +157,33 @@ void AnimationTimeline::removeCSSAnimationCreatedByMarkup(Element& element, CSSA
     }
 }
 
-void AnimationTimeline::elementWasRemoved(Element& element)
+void AnimationTimeline::elementWasRemoved(const Styleable& styleable)
 {
-    cancelDeclarativeAnimationsForElement(element, WebAnimation::Silently::Yes);
+    cancelDeclarativeAnimationsForStyleable(styleable, WebAnimation::Silently::Yes);
 }
 
-void AnimationTimeline::willChangeRendererForElement(Element& element)
+void AnimationTimeline::willChangeRendererForStyleable(const Styleable& styleable)
 {
-    if (auto* animations = element.animations()) {
+    if (auto* animations = styleable.animations()) {
         for (const auto& animation : *animations)
             animation->willChangeRenderer();
     }
 }
 
-void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element, WebAnimation::Silently silently)
+void AnimationTimeline::cancelDeclarativeAnimationsForStyleable(const Styleable& styleable, WebAnimation::Silently silently)
 {
-    if (auto* animations = element.animations()) {
+    if (auto* animations = styleable.animations()) {
         for (auto& animation : *animations) {
             if (is<DeclarativeAnimation>(animation)) {
                 if (is<CSSAnimation>(animation))
-                    removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*animation));
+                    removeCSSAnimationCreatedByMarkup(styleable, downcast<CSSAnimation>(*animation));
                 animation->cancel(silently);
             }
         }
     }
 }
 
-static bool shouldConsiderAnimation(Element& elementOrPseudoElement, const Animation& animation)
+static bool shouldConsiderAnimation(Element& element, const Animation& animation)
 {
     if (!animation.isValidAnimation())
         return false;
@@ -193,21 +194,19 @@ static bool shouldConsiderAnimation(Element& elementOrPseudoElement, const Anima
     if (name == animationNameNone || name.isEmpty())
         return false;
 
-    auto& element = is<PseudoElement>(elementOrPseudoElement) ? *downcast<PseudoElement>(elementOrPseudoElement).hostElement() : elementOrPseudoElement;
-
     if (auto* styleScope = Style::Scope::forOrdinal(element, animation.nameStyleScopeOrdinal()))
         return styleScope->resolver().isAnimationNameValid(name);
 
     return false;
 }
 
-void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const RenderStyle* currentStyle, const RenderStyle& newStyle)
+void AnimationTimeline::updateCSSAnimationsForStyleable(const Styleable& styleable, const RenderStyle* currentStyle, const RenderStyle& newStyle)
 {
-    auto& keyframeEffectStack = element.ensureKeyframeEffectStack();
+    auto& keyframeEffectStack = styleable.ensureKeyframeEffectStack();
 
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
     if (currentStyle && currentStyle->display() != DisplayType::None && newStyle.display() == DisplayType::None) {
-        for (auto& cssAnimation : element.animationsCreatedByMarkup())
+        for (auto& cssAnimation : styleable.animationsCreatedByMarkup())
             cssAnimation->cancelFromStyle();
         keyframeEffectStack.setCSSAnimationList(nullptr);
         return;
@@ -219,7 +218,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         return;
 
     CSSAnimationCollection newAnimations;
-    auto& previousAnimations = element.animationsCreatedByMarkup();
+    auto& previousAnimations = styleable.animationsCreatedByMarkup();
 
     // https://www.w3.org/TR/css-animations-1/#animations
     // The same @keyframes rule name may be repeated within an animation-name. Changes to the animation-name update existing
@@ -233,7 +232,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
     if (currentAnimationList) {
         for (size_t i = currentAnimationList->size(); i > 0; --i) {
             auto& currentAnimation = currentAnimationList->animation(i - 1);
-            if (!shouldConsiderAnimation(element, currentAnimation))
+            if (!shouldConsiderAnimation(styleable.element, currentAnimation))
                 continue;
 
             bool foundMatchingAnimation = false;
@@ -251,7 +250,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
             }
 
             if (!foundMatchingAnimation)
-                newAnimations.add(CSSAnimation::create(element, currentAnimation, currentStyle, newStyle));
+                newAnimations.add(CSSAnimation::create(styleable, currentAnimation, currentStyle, newStyle));
         }
     }
 
@@ -263,14 +262,14 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         }
     }
 
-    element.setAnimationsCreatedByMarkup(WTFMove(newAnimations));
+    styleable.setAnimationsCreatedByMarkup(WTFMove(newAnimations));
 
     keyframeEffectStack.setCSSAnimationList(currentAnimationList);
 }
 
-static KeyframeEffect* keyframeEffectForElementAndProperty(Element& element, CSSPropertyID property)
+static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, CSSPropertyID property)
 {
-    if (auto* keyframeEffectStack = element.keyframeEffectStack()) {
+    if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
         auto effects = keyframeEffectStack->sortedEffects();
         for (const auto& effect : makeReversedRange(effects)) {
             if (effect->animatesProperty(property))
@@ -339,11 +338,17 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
     }
 }
 
-void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& element, CSSPropertyID property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime)
+void AnimationTimeline::updateCSSTransitionsForStyleableAndProperty(const Styleable& styleable, CSSPropertyID property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime)
 {
-    auto* keyframeEffect = keyframeEffectForElementAndProperty(element, property);
+    auto* keyframeEffect = keyframeEffectForElementAndProperty(styleable, property);
     auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
-    bool isDeclarative = animation && is<DeclarativeAnimation>(animation) && downcast<DeclarativeAnimation>(*animation).owningElement() == &element;
+
+    bool isDeclarative = false;
+    if (is<DeclarativeAnimation>(animation)) {
+        if (auto owningElement = downcast<DeclarativeAnimation>(*animation).owningElement())
+            isDeclarative = *owningElement == styleable;
+    }
+
     if (animation && !isDeclarative)
         return;
 
@@ -358,8 +363,8 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
 
     // A CSS Transition might have completed since the last time animations were updated so we must
     // update the running and completed transitions membership in that case.
-    if (is<CSSTransition>(animation) && matchingBackingAnimation && element.hasRunningTransitionsForProperty(property) && animation->playState() == WebAnimation::PlayState::Finished) {
-        element.ensureCompletedTransitionsByProperty().set(property, element.ensureRunningTransitionsByProperty().take(property));
+    if (is<CSSTransition>(animation) && matchingBackingAnimation && styleable.hasRunningTransitionsForProperty(property) && animation->playState() == WebAnimation::PlayState::Finished) {
+        styleable.ensureCompletedTransitionsByProperty().set(property, styleable.ensureRunningTransitionsByProperty().take(property));
         animation = nullptr;
     }
 
@@ -377,7 +382,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         }
 
         // If it exists, use the recorded RenderStyle for this element during a previous call to Style::TreeResolver::createAnimatedElementUpdate().
-        if (auto* lastStyleChangeEventStyle = element.lastStyleChangeEventStyle())
+        if (auto* lastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle())
             return RenderStyle::clone(*lastStyleChangeEventStyle);
 
         // If we haven't computed styles from animations for this element, the before-change style is the previously resolved style for this element.
@@ -399,10 +404,10 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         return RenderStyle::clone(newStyle);
     }();
 
-    if (!element.hasRunningTransitionsForProperty(property)
+    if (!styleable.hasRunningTransitionsForProperty(property)
         && !CSSPropertyAnimation::propertiesEqual(property, &beforeChangeStyle, &afterChangeStyle)
         && CSSPropertyAnimation::canPropertyBeInterpolated(property, &beforeChangeStyle, &afterChangeStyle)
-        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, element.ensureCompletedTransitionsByProperty())
+        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty())
         && matchingBackingAnimation && transitionCombinedDuration(matchingBackingAnimation) > 0) {
         // 1. If all of the following are true:
         //   - the element does not have a running transition for the property,
@@ -412,7 +417,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         //   - the combined duration is greater than 0s,
 
         // then implementations must remove the completed transition (if present) from the set of completed transitions
-        element.ensureCompletedTransitionsByProperty().remove(property);
+        styleable.ensureCompletedTransitionsByProperty().remove(property);
 
         // and start a transition whose:
         //   - start time is the time of the style change event plus the matching transition delay,
@@ -425,25 +430,25 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         auto duration = Seconds(matchingBackingAnimation->duration());
         auto& reversingAdjustedStartStyle = beforeChangeStyle;
         auto reversingShorteningFactor = 1;
-        element.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &beforeChangeStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
-    } else if (element.hasCompletedTransitionsForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, element.ensureCompletedTransitionsByProperty())) {
+        styleable.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(styleable, property, generationTime, *matchingBackingAnimation, &beforeChangeStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+    } else if (styleable.hasCompletedTransitionsForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty())) {
         // 2. Otherwise, if the element has a completed transition for the property and the end value of the completed transition is different from
         //    the after-change style for the property, then implementations must remove the completed transition from the set of completed transitions.
-        element.ensureCompletedTransitionsByProperty().remove(property);
+        styleable.ensureCompletedTransitionsByProperty().remove(property);
     }
 
-    bool hasRunningTransition = element.hasRunningTransitionsForProperty(property);
-    if ((hasRunningTransition || element.hasCompletedTransitionsForProperty(property)) && !matchingBackingAnimation) {
+    bool hasRunningTransition = styleable.hasRunningTransitionsForProperty(property);
+    if ((hasRunningTransition || styleable.hasCompletedTransitionsForProperty(property)) && !matchingBackingAnimation) {
         // 3. If the element has a running transition or completed transition for the property, and there is not a matching transition-property
         //    value, then implementations must cancel the running transition or remove the completed transition from the set of completed transitions.
         if (hasRunningTransition)
-            element.ensureRunningTransitionsByProperty().take(property)->cancel();
+            styleable.ensureRunningTransitionsByProperty().take(property)->cancel();
         else
-            element.ensureCompletedTransitionsByProperty().remove(property);
+            styleable.ensureCompletedTransitionsByProperty().remove(property);
     }
 
-    if (matchingBackingAnimation && element.hasRunningTransitionsForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, element.ensureRunningTransitionsByProperty())) {
-        auto previouslyRunningTransition = element.ensureRunningTransitionsByProperty().take(property);
+    if (matchingBackingAnimation && styleable.hasRunningTransitionsForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureRunningTransitionsByProperty())) {
+        auto previouslyRunningTransition = styleable.ensureRunningTransitionsByProperty().take(property);
         auto& previouslyRunningTransitionCurrentStyle = previouslyRunningTransition->currentStyle();
         // 4. If the element has a running transition for the property, there is a matching transition-property value, and the end value of the running
         //    transition is not equal to the value of the property in the after-change style, then:
@@ -481,7 +486,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             auto delay = matchingBackingAnimation->delay() < 0 ? Seconds(matchingBackingAnimation->delay()) * reversingShorteningFactor : Seconds(matchingBackingAnimation->delay());
             auto duration = Seconds(matchingBackingAnimation->duration()) * reversingShorteningFactor;
 
-            element.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+            styleable.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(styleable, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
         } else {
             // 4. Otherwise, implementations must cancel the running transition
             previouslyRunningTransition->cancelFromStyle();
@@ -497,17 +502,17 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             auto duration = Seconds(matchingBackingAnimation->duration());
             auto& reversingAdjustedStartStyle = currentStyle;
             auto reversingShorteningFactor = 1;
-            element.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+            styleable.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(styleable, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
         }
     }
 }
 
-void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const RenderStyle& currentStyle, const RenderStyle& newStyle)
+void AnimationTimeline::updateCSSTransitionsForStyleable(const Styleable& styleable, const RenderStyle& currentStyle, const RenderStyle& newStyle)
 {
     // In case this element is newly getting a "display: none" we need to cancel all of its transitions and disregard new ones.
     if (currentStyle.hasTransitions() && currentStyle.display() != DisplayType::None && newStyle.display() == DisplayType::None) {
-        if (element.hasRunningTransitions()) {
-            auto runningTransitions = element.ensureRunningTransitionsByProperty();
+        if (styleable.hasRunningTransitions()) {
+            auto runningTransitions = styleable.ensureRunningTransitionsByProperty();
             for (const auto& cssTransitionsByCSSPropertyIDMapItem : runningTransitions)
                 cssTransitionsByCSSPropertyIDMapItem.value->cancelFromStyle();
         }
@@ -532,13 +537,13 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
             auto property = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
             if (isShorthand && *isShorthand)
                 continue;
-            updateCSSTransitionsForElementAndProperty(element, property, currentStyle, newStyle, generationTime);
+            updateCSSTransitionsForStyleableAndProperty(styleable, property, currentStyle, newStyle, generationTime);
         }
         return;
     }
 
     for (auto property : transitionProperties)
-        updateCSSTransitionsForElementAndProperty(element, property, currentStyle, newStyle, generationTime);
+        updateCSSTransitionsForStyleableAndProperty(styleable, property, currentStyle, newStyle, generationTime);
 }
 
 } // namespace WebCore

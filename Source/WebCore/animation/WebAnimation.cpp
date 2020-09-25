@@ -206,26 +206,21 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
 
     auto oldEffect = std::exchange(m_effect, WTFMove(newEffect));
 
-    Element* previousTarget = nullptr;
-    if (is<KeyframeEffect>(oldEffect))
-        previousTarget = downcast<KeyframeEffect>(oldEffect.get())->targetElementOrPseudoElement();
-
-    Element* newTarget = nullptr;
-    if (is<KeyframeEffect>(m_effect))
-        newTarget = downcast<KeyframeEffect>(m_effect.get())->targetElementOrPseudoElement();
+    Optional<const Styleable> previousTarget = is<KeyframeEffect>(oldEffect) ? downcast<KeyframeEffect>(oldEffect.get())->targetStyleable() : WTF::nullopt;
+    Optional<const Styleable> newTarget = is<KeyframeEffect>(m_effect) ? downcast<KeyframeEffect>(m_effect.get())->targetStyleable() : WTF::nullopt;
 
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
         oldEffect->setAnimation(nullptr);
         if (!doNotRemoveFromTimeline && m_timeline && previousTarget && previousTarget != newTarget)
-            m_timeline->animationWasRemovedFromElement(*this, *previousTarget);
+            m_timeline->animationWasRemovedFromStyleable(*this, *previousTarget);
         updateRelevance();
     }
 
     if (m_effect) {
         m_effect->setAnimation(this);
         if (m_timeline && newTarget && previousTarget != newTarget)
-            m_timeline->animationWasAddedToElement(*this, *newTarget);
+            m_timeline->animationWasAddedToStyleable(*this, *newTarget);
     }
 
     InspectorInstrumentation::didSetWebAnimationEffect(*this);
@@ -245,16 +240,14 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
         m_holdTime = WTF::nullopt;
 
     if (is<KeyframeEffect>(m_effect)) {
-        auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
-        auto* target = keyframeEffect->targetElementOrPseudoElement();
-        if (target) {
+        if (auto target = downcast<KeyframeEffect>(m_effect.get())->targetStyleable()) {
             // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
             // while the timeline was set via the API, the element still has a transition or animation set up and we must
             // not break the relationship.
             if (m_timeline && !isDeclarativeAnimation())
-                m_timeline->animationWasRemovedFromElement(*this, *target);
+                m_timeline->animationWasRemovedFromStyleable(*this, *target);
             if (timeline)
-                timeline->animationWasAddedToElement(*this, *target);
+                timeline->animationWasAddedToStyleable(*this, *target);
         }
     }
 
@@ -285,14 +278,14 @@ void WebAnimation::setTimelineInternal(RefPtr<AnimationTimeline>&& timeline)
         m_effect->animationTimelineDidChange(m_timeline.get());
 }
 
-void WebAnimation::effectTargetDidChange(Element* previousTarget, Element* newTarget)
+void WebAnimation::effectTargetDidChange(const Optional<const Styleable>& previousTarget, const Optional<const Styleable>& newTarget)
 {
     if (m_timeline) {
         if (previousTarget)
-            m_timeline->animationWasRemovedFromElement(*this, *previousTarget);
+            m_timeline->animationWasRemovedFromStyleable(*this, *previousTarget);
 
         if (newTarget)
-            m_timeline->animationWasAddedToElement(*this, *newTarget);
+            m_timeline->animationWasAddedToStyleable(*this, *newTarget);
 
         // This could have changed whether we have replaced animations, so we may need to schedule an update.
         m_timeline->animationTimingDidChange(*this);
@@ -1382,9 +1375,9 @@ void WebAnimation::persist()
     if (previousReplaceState == ReplaceState::Removed && m_timeline) {
         if (is<KeyframeEffect>(m_effect)) {
             auto& keyframeEffect = downcast<KeyframeEffect>(*m_effect);
-            auto& target = *keyframeEffect.targetElementOrPseudoElement();
-            m_timeline->animationWasAddedToElement(*this, target);
-            target.ensureKeyframeEffectStack().addEffect(keyframeEffect);
+            auto styleable = keyframeEffect.targetStyleable();
+            m_timeline->animationWasAddedToStyleable(*this, *styleable);
+            styleable->ensureKeyframeEffectStack().addEffect(keyframeEffect);
         }
     }
 }
@@ -1423,7 +1416,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
     auto inlineStyle = styledElement.document().createCSSStyleDeclaration();
     inlineStyle->setCssText(styledElement.getAttribute("style"));
 
-    auto& keyframeStack = styledElement.ensureKeyframeEffectStack();
+    auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
 
     // 2.5 For each property, property, in targeted properties:
     for (auto property : effect->animatedProperties()) {

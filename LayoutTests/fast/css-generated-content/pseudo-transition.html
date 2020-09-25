@@ -56,63 +56,41 @@ function getPseudoComputedTop(id)
 const prefix = "-webkit-";
 const propertiesRequiringPrefix = ["-webkit-text-stroke-color", "-webkit-text-fill-color"];
 
-function pauseTransitionAtTimeOnPseudoElement(transitionProperty, time, element, pseudoId)
+function pauseTransitionAtTimeOnPseudoElement(transitionProperty, time, element, pseudoElement)
 {
-    const pseudoElement = internals.pseudoElement(element, pseudoId);
-    if (!pseudoElement) {
-        console.log("Failed to find pseudo element");
-        return;
-    }
-
     if (transitionProperty.startsWith(prefix) && !propertiesRequiringPrefix.includes(transitionProperty))
         transitionProperty = transitionProperty.substr(prefix.length);
 
-    // Otherwise, use the Web Animations API.
-    const animations = pseudoElement.getAnimations();
-    for (let animation of animations) {
-        if (animation instanceof CSSTransition && animation.transitionProperty == transitionProperty) {
+    for (let animation of element.getAnimations({ subtree: true })) {
+        if (animation instanceof CSSTransition && animation.transitionProperty == transitionProperty && animation.effect.target == element && animation.effect.pseudoElement == pseudoElement) {
             animation.currentTime = time * 1000;
             animation.pause();
             return true;
         }
     }
+
     console.log(`A transition for property ${transitionProperty} could not be found`);
     return false;
 }
 
 function testTransition(id)
 {
+    const pseudoElement = `::${id}`;
     var div = document.getElementById(id);
     div.className = 'transition';
     window.div = div;
     shouldBe('div.offsetWidth', '52');
-    if (window.internals) {
-        pauseTransitionAtTimeOnPseudoElement('width', 1.0, div, id);
-        shouldBeCloseTo('div.offsetWidth', 20, 1);
-        pauseTransitionAtTimeOnPseudoElement('top', 1.0, div, id);
-        computedTop = getPseudoComputedTop(id);
-        shouldBeCloseTo('computedTop', 170, 1);
-        pauseTransitionAtTimeOnPseudoElement('width', 2.0, div, id);
-        shouldBeCloseTo('div.offsetWidth', 12, 1);
-        pauseTransitionAtTimeOnPseudoElement('top', 2.0, div, id);
-        computedTop = getPseudoComputedTop(id);
-        shouldBeCloseTo('computedTop', 200, 1);
-    } else {
-        // This will be flaky, but it's a reasonable approximation for testing
-        // in a browser instead of DRT.
-        setTimeout(function() {
-            window.div = div;
-            shouldBeCloseTo('div.offsetWidth', 20, 1);
-            computedTop = getPseudoComputedTop(id);
-            shouldBeCloseTo('computedTop', 170, 1);
-        }, 1000);
-        setTimeout(function() {
-            window.div = div;
-            shouldBeCloseTo('div.offsetWidth', 12, 1);
-            computedTop = getPseudoComputedTop(id);
-            shouldBeCloseTo('computedTop', 200, 1);
-        }, 2000);
-    }
+
+    pauseTransitionAtTimeOnPseudoElement('width', 1.0, div, pseudoElement);
+    shouldBeCloseTo('div.offsetWidth', 20, 1);
+    pauseTransitionAtTimeOnPseudoElement('top', 1.0, div, pseudoElement);
+    computedTop = getPseudoComputedTop(id);
+    shouldBeCloseTo('computedTop', 170, 1);
+    pauseTransitionAtTimeOnPseudoElement('width', 2.0, div, pseudoElement);
+    shouldBeCloseTo('div.offsetWidth', 12, 1);
+    pauseTransitionAtTimeOnPseudoElement('top', 2.0, div, pseudoElement);
+    computedTop = getPseudoComputedTop(id);
+    shouldBeCloseTo('computedTop', 200, 1);
 }
 
 onload = function() {

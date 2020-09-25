@@ -39,8 +39,10 @@ class ElementAnimationRareData {
     WTF_MAKE_NONCOPYABLE(ElementAnimationRareData);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ElementAnimationRareData();
+    explicit ElementAnimationRareData(PseudoId);
     ~ElementAnimationRareData();
+
+    PseudoId pseudoId() const { return m_pseudoId; }
 
     KeyframeEffectStack* keyframeEffectStack() { return m_keyframeEffectStack.get(); }
     KeyframeEffectStack& ensureKeyframeEffectStack();
@@ -61,6 +63,7 @@ private:
     CSSAnimationCollection m_animationsCreatedByMarkup;
     PropertyToTransitionMap m_completedTransitionsByProperty;
     PropertyToTransitionMap m_runningTransitionsByProperty;
+    PseudoId m_pseudoId;
 };
 
 } // namespace WebCore

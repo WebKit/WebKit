@@ -1,5 +1,16 @@
 2020-09-25  Antoine Quint  <graouts@webkit.org>
 
+        Reduce the reliance on PseudoElement in the animation code
+        https://bugs.webkit.org/show_bug.cgi?id=216931
+
+        Reviewed by Antti Koivisto.
+
+        Mark a WPT test progression.
+
+        * web-platform-tests/css/css-transitions/non-rendered-element-002-expected.txt:
+
+2020-09-25  Antoine Quint  <graouts@webkit.org>
+
         Import WPT tests for css/css-transforms/animation and css/css-transforms/parsing
         https://bugs.webkit.org/show_bug.cgi?id=216973
 

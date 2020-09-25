@@ -1,3 +1,18 @@
+2020-09-25  Antoine Quint  <graouts@webkit.org>
+
+        Reduce the reliance on PseudoElement in the animation code
+        https://bugs.webkit.org/show_bug.cgi?id=216931
+        <rdar://problem/69511682>
+
+        Reviewed by Antti Koivisto.
+
+        Update a couple of tests which relied on an internals method to get a pseudo element and instead use
+        the Web Animations API to determine whether a given animation targets a pseudo-element. This has the
+        added benefit of having the same code run in a testing environment as in a regular browser.
+
+        * fast/css-generated-content/pseudo-animation.html:
+        * fast/css-generated-content/pseudo-transition.html:
+
 2020-09-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         DataView instances should not have own "byteLength" and "byteOffset" properties

@@ -43,9 +43,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimation);
 
-DeclarativeAnimation::DeclarativeAnimation(Element& owningElement, const Animation& backingAnimation)
-    : WebAnimation(owningElement.document())
-    , m_owningElement(makeWeakPtr(owningElement))
+DeclarativeAnimation::DeclarativeAnimation(const Styleable& styleable, const Animation& backingAnimation)
+    : WebAnimation(styleable.element.document())
+    , m_owningElement(makeWeakPtr(styleable.element))
+    , m_owningPseudoId(styleable.pseudoId)
     , m_backingAnimation(const_cast<Animation&>(backingAnimation))
 {
 }
@@ -54,9 +55,11 @@ DeclarativeAnimation::~DeclarativeAnimation()
 {
 }
 
-Element* DeclarativeAnimation::owningElement() const
+const Optional<const Styleable> DeclarativeAnimation::owningElement() const
 {
-    return m_owningElement.get();
+    if (m_owningElement)
+        return Styleable(*m_owningElement.get(), m_owningPseudoId);
+    return WTF::nullopt;
 }
 
 void DeclarativeAnimation::tick()
@@ -93,7 +96,7 @@ void DeclarativeAnimation::disassociateFromOwningElement()
         return;
 
     if (auto* animationTimeline = timeline())
-        animationTimeline->removeDeclarativeAnimationFromListsForOwningElement(*this, *m_owningElement);
+        animationTimeline->removeDeclarativeAnimationFromListsForOwningElement(*this, *owningElement());
     m_owningElement = nullptr;
 }
 
@@ -112,12 +115,7 @@ void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderS
 
     ASSERT(m_owningElement);
 
-    if (is<PseudoElement>(m_owningElement.get())) {
-        auto& pseudoOwningElement = downcast<PseudoElement>(*m_owningElement);
-        ASSERT(pseudoOwningElement.hostElement());
-        setEffect(KeyframeEffect::create(*pseudoOwningElement.hostElement(), pseudoOwningElement.pseudoId()));
-    } else
-        setEffect(KeyframeEffect::create(*m_owningElement, m_owningElement->pseudoId()));
+    setEffect(KeyframeEffect::create(*m_owningElement, m_owningPseudoId));
     setTimeline(&m_owningElement->document().timeline());
     downcast<KeyframeEffect>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle);
     syncPropertiesWithBackingAnimation();
@@ -352,7 +350,7 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
         return;
 
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
-    const auto& pseudoId = PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId());
+    const auto& pseudoId = PseudoElement::pseudoElementNameForEvents(m_owningPseudoId);
     auto timelineTime = timeline() ? timeline()->currentTime() : WTF::nullopt;
     auto event = createEvent(eventType, time, pseudoId, timelineTime);
     event->setTarget(m_owningElement.get());

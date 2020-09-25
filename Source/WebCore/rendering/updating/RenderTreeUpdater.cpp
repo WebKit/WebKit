@@ -558,14 +558,14 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             case TeardownType::RendererUpdateCancelingAnimations:
                 if (timeline) {
                     if (document.renderTreeBeingDestroyed())
-                        timeline->cancelDeclarativeAnimationsForElement(element, WebAnimation::Silently::Yes);
+                        timeline->cancelDeclarativeAnimationsForStyleable(Styleable::fromElement(element), WebAnimation::Silently::Yes);
                     else if (teardownType == TeardownType::RendererUpdateCancelingAnimations)
-                        timeline->cancelDeclarativeAnimationsForElement(element, WebAnimation::Silently::No);
+                        timeline->cancelDeclarativeAnimationsForStyleable(Styleable::fromElement(element), WebAnimation::Silently::No);
                 }
                 break;
             case TeardownType::RendererUpdate:
                 if (timeline)
-                    timeline->willChangeRendererForElement(element);
+                    timeline->willChangeRendererForStyleable(Styleable::fromElement(element));
                 break;
             }
 

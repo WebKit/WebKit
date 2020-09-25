@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Transitions on ::before/::after pseudo-elements are canceled when the content property is cleared Test timed out
+PASS Transitions on ::before/::after pseudo-elements are canceled when the content property is cleared 
 

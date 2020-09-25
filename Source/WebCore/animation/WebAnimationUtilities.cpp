@@ -38,54 +38,71 @@
 
 namespace WebCore {
 
-static bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(Element& a, Element& b)
+static bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(const Styleable& a, const Styleable& b)
 {
     // We should not ever be calling this function with two Elements that are the same. If that were the case,
     // then comparing objects of this kind would yield inconsistent results when comparing A == B and B == A.
     // As such, this function should be called with std::stable_sort().
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&a != &b);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(a != b);
 
     // With regard to pseudo-elements, the sort order is as follows:
+    //
     //     - element
+    //     - ::marker
     //     - ::before
+    //     - any other pseudo-elements not mentioned specifically in this list, sorted in ascending order by the Unicode codepoints that make up each selector
     //     - ::after
     //     - element children
+    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, Highlight, Scrollbar, Selection, After, Other };
+    auto sortingIndex = [](PseudoId pseudoId) -> SortingIndex {
+        switch (pseudoId) {
+        case PseudoId::None:
+            return NotPseudo;
+        case PseudoId::Marker:
+            return Marker;
+        case PseudoId::Before:
+            return Before;
+        case PseudoId::FirstLetter:
+            return FirstLetter;
+        case PseudoId::FirstLine:
+            return FirstLine;
+        case PseudoId::Highlight:
+            return Highlight;
+        case PseudoId::Scrollbar:
+            return Scrollbar;
+        case PseudoId::Selection:
+            return Selection;
+        case PseudoId::After:
+            return After;
+        default:
+            ASSERT_NOT_REACHED();
+            return Other;
+        }
+    };
 
-    enum SortingIndex : uint8_t { NotPseudo, Before, After };
+    auto& aReferenceElement = a.element;
+    int aSortingIndex = sortingIndex(a.pseudoId);
 
-    int aSortingIndex = NotPseudo;
-    Element* aReferenceElement = &a;
-    if (is<PseudoElement>(a)) {
-        auto& aPseudo = downcast<PseudoElement>(a);
-        aSortingIndex = aPseudo.isBeforePseudoElement() ? Before : After;
-        aReferenceElement = aPseudo.hostElement();
-        ASSERT(aReferenceElement);
-    }
+    auto& bReferenceElement = b.element;
+    int bSortingIndex = sortingIndex(b.pseudoId);
 
-    int bSortingIndex = NotPseudo;
-    Element* bReferenceElement = &b;
-    if (is<PseudoElement>(b)) {
-        auto& bPseudo = downcast<PseudoElement>(b);
-        bSortingIndex = bPseudo.isBeforePseudoElement() ? Before : After;
-        bReferenceElement = bPseudo.hostElement();
-        ASSERT(bReferenceElement);
-    }
-
-    if (aReferenceElement == bReferenceElement)
+    if (&aReferenceElement == &bReferenceElement) {
+        ASSERT(aSortingIndex != bSortingIndex);
         return aSortingIndex < bSortingIndex;
-    return aReferenceElement->compareDocumentPosition(*bReferenceElement) & Node::DOCUMENT_POSITION_FOLLOWING;
+    }
+    return aReferenceElement.compareDocumentPosition(bReferenceElement) & Node::DOCUMENT_POSITION_FOLLOWING;
 }
 
 static bool compareCSSTransitions(const CSSTransition& a, const CSSTransition& b)
 {
     ASSERT(a.owningElement());
     ASSERT(b.owningElement());
-    auto& aOwningElement = *a.owningElement();
-    auto& bOwningElement = *b.owningElement();
+    auto& aOwningElement = a.owningElement();
+    auto& bOwningElement = b.owningElement();
 
     // If the owning element of A and B differs, sort A and B by tree order of their corresponding owning elements.
-    if (&aOwningElement != &bOwningElement)
-        return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(aOwningElement, bOwningElement);
+    if (*aOwningElement != *bOwningElement)
+        return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(*aOwningElement, *bOwningElement);
 
     // Otherwise, if A and B have different transition generation values, sort by their corresponding transition generation in ascending order.
     if (a.generationTime() != b.generationTime())
@@ -101,15 +118,15 @@ static bool compareCSSAnimations(const CSSAnimation& a, const CSSAnimation& b)
     // https://drafts.csswg.org/css-animations-2/#animation-composite-order
     ASSERT(a.owningElement());
     ASSERT(b.owningElement());
-    auto& aOwningElement = *a.owningElement();
-    auto& bOwningElement = *b.owningElement();
+    auto& aOwningElement = a.owningElement();
+    auto& bOwningElement = b.owningElement();
 
     // If the owning element of A and B differs, sort A and B by tree order of their corresponding owning elements.
-    if (&aOwningElement != &bOwningElement)
-        return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(aOwningElement, bOwningElement);
+    if (*aOwningElement != *bOwningElement)
+        return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(*aOwningElement, *bOwningElement);
 
     // Sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
-    auto* cssAnimationList = aOwningElement.ensureKeyframeEffectStack().cssAnimationList();
+    auto* cssAnimationList = aOwningElement->ensureKeyframeEffectStack().cssAnimationList();
     ASSERT(cssAnimationList);
     ASSERT(!cssAnimationList->isEmpty());
 

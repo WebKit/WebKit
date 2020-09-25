@@ -46,7 +46,7 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 {
     // To qualify for membership in an effect stack, an effect must have a target, an animation, a timeline and be relevant.
     // This method will be called in WebAnimation and KeyframeEffect as those properties change.
-    if (!effect.targetElementOrPseudoElement() || !effect.animation() || !effect.animation()->timeline() || !effect.animation()->isRelevant())
+    if (!effect.targetStyleable() || !effect.animation() || !effect.animation()->timeline() || !effect.animation()->isRelevant())
         return false;
 
     m_effects.append(makeWeakPtr(&effect));
