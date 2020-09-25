@@ -1,3 +1,13 @@
+2020-09-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][MarginCollapsing] Only inflow boxes collapse their quirk margins with their parents
+        https://bugs.webkit.org/show_bug.cgi?id=216981
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/quirk-margin-not-collapse-when-floating-expected.html: Added.
+        * fast/layoutformattingcontext/quirk-margin-not-collapse-when-floating.html: Added.
+
 2020-09-25  Frederic Wang  <fwang@igalia.com>
 
         Bug 216702 - Implement the CSS math-style property

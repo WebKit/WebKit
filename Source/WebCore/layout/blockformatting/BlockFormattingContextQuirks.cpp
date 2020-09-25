@@ -104,14 +104,23 @@ bool BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin(const Box&
     return layoutState().inQuirksMode() && isQuirkContainer(layoutBox);
 }
 
+enum class VerticalMargin { Before, After };
+static inline bool hasQuirkMarginToCollapse(const Box& layoutBox, VerticalMargin verticalMargin)
+{
+    if (!layoutBox.isInFlow())
+        return false;
+    auto& style = layoutBox.style();
+    return (verticalMargin == VerticalMargin::Before && style.hasMarginBeforeQuirk()) || (verticalMargin == VerticalMargin::After && style.hasMarginAfterQuirk());
+}
+
 bool BlockFormattingContext::Quirks::shouldCollapseMarginBeforeWithParentMarginBefore(const Box& layoutBox) const
 {
-    return layoutState().inQuirksMode() && layoutBox.style().hasMarginBeforeQuirk() && isQuirkContainer(layoutBox.containingBlock());
+    return layoutState().inQuirksMode() && hasQuirkMarginToCollapse(layoutBox, VerticalMargin::Before) && isQuirkContainer(layoutBox.containingBlock());
 }
 
 bool BlockFormattingContext::Quirks::shouldCollapseMarginAfterWithParentMarginAfter(const Box& layoutBox) const
 {
-    return layoutState().inQuirksMode() && layoutBox.style().hasMarginAfterQuirk() && isQuirkContainer(layoutBox.containingBlock());
+    return layoutState().inQuirksMode() && hasQuirkMarginToCollapse(layoutBox, VerticalMargin::After) && isQuirkContainer(layoutBox.containingBlock());
 }
 
 }
