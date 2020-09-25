@@ -1,3 +1,33 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of AudioNode::RefType
+        https://bugs.webkit.org/show_bug.cgi?id=216945
+
+        Reviewed by Darin Adler.
+
+        Add third template parameter to RefPtr allowing to define the traits
+        from incrementing / decrementing the refcount. The default traits
+        call ref() / deref() but this can now be customized to call other
+        functions.
+
+        * wtf/CompactRefPtrTuple.h:
+        * wtf/Forward.h:
+        * wtf/RefPtr.h:
+        (WTF::DefaultRefDerefTraits::refIfNotNull):
+        (WTF::DefaultRefDerefTraits::derefIfNotNull):
+        (WTF::RefPtr::RefPtr):
+        (WTF::RefPtr::~RefPtr):
+        (WTF::V>::RefPtr):
+        (WTF::V>::leakRef):
+        (WTF::=):
+        (WTF::V>::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::adoptRef):
+        (WTF::is):
+
 2020-09-25  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable on Apple Windows port

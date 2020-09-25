@@ -33,23 +33,41 @@ typedef struct _cairo_region cairo_region_t;
 
 namespace WTF {
 
-template<> void refIfNotNull(cairo_t* ptr);
-template<> WEBCORE_EXPORT void derefIfNotNull(cairo_t* ptr);
+template<>
+struct DefaultRefDerefTraits<cairo_t> {
+    static void refIfNotNull(cairo_t* ptr);
+    WEBCORE_EXPORT static void derefIfNotNull(cairo_t* ptr);
+};
 
-template<> WEBCORE_EXPORT void refIfNotNull(cairo_surface_t* ptr);
-template<> WEBCORE_EXPORT void derefIfNotNull(cairo_surface_t* ptr);
+template<>
+struct DefaultRefDerefTraits<cairo_surface_t> {
+    WEBCORE_EXPORT static void refIfNotNull(cairo_surface_t* ptr);
+    WEBCORE_EXPORT static void derefIfNotNull(cairo_surface_t* ptr);
+};
 
-template<> void refIfNotNull(cairo_font_face_t* ptr);
-template<> void derefIfNotNull(cairo_font_face_t* ptr);
+template<>
+struct DefaultRefDerefTraits<cairo_font_face_t> {
+    static void refIfNotNull(cairo_font_face_t* ptr);
+    static void derefIfNotNull(cairo_font_face_t* ptr);
+};
 
-template<> void refIfNotNull(cairo_scaled_font_t* ptr);
-template<> void derefIfNotNull(cairo_scaled_font_t* ptr);
+template<>
+struct DefaultRefDerefTraits<cairo_scaled_font_t> {
+    static void refIfNotNull(cairo_scaled_font_t* ptr);
+    static void derefIfNotNull(cairo_scaled_font_t* ptr);
+};
 
-template<> void refIfNotNull(cairo_pattern_t*);
-template<> void derefIfNotNull(cairo_pattern_t*);
+template<>
+struct DefaultRefDerefTraits<cairo_pattern_t> {
+    static void refIfNotNull(cairo_pattern_t*);
+    static void derefIfNotNull(cairo_pattern_t*);
+};
 
-template<> void refIfNotNull(cairo_region_t*);
-template<> void derefIfNotNull(cairo_region_t*);
+template<>
+struct DefaultRefDerefTraits<cairo_region_t> {
+    static void refIfNotNull(cairo_region_t*);
+    static void derefIfNotNull(cairo_region_t*);
+};
 
 } // namespace WTF
 

@@ -96,17 +96,14 @@ public:
     NodeType nodeType() const { return m_nodeType; }
     void setNodeType(NodeType);
 
-    // We handle our own ref-counting because of the threading issues and subtle nature of
-    // how AudioNodes can continue processing (playing one-shot sound) after there are no more
-    // JavaScript references to the object.
-    enum RefType { RefTypeNormal, RefTypeConnection };
-
     // Can be called from main thread or context's audio thread.
-    void ref(RefType refType = RefTypeNormal);
-    void deref(RefType refType = RefTypeNormal);
+    void ref();
+    void deref();
+    void incrementConnectionCount();
+    void decrementConnectionCount();
 
     // Can be called from main thread or context's audio thread.  It must be called while the context's graph lock is held.
-    void finishDeref(RefType refType);
+    void decrementConnectionCountWithLock();
     virtual void didBecomeMarkedForDeletion() { }
 
     // The AudioNodeInput(s) (if any) will already have their input data available when process() is called.
@@ -202,6 +199,9 @@ protected:
     void addInput();
     void addOutput(unsigned numberOfChannels);
 
+    void markNodeForDeletionIfNecessary();
+    void derefWithLock();
+
     struct DefaultAudioNodeOptions {
         unsigned channelCount;
         ChannelCountMode channelCountMode;
@@ -269,6 +269,23 @@ private:
     ChannelCountMode m_channelCountMode { ChannelCountMode::Max };
     ChannelInterpretation m_channelInterpretation { ChannelInterpretation::Speakers };
 };
+
+template<typename T> struct AudioNodeConnectionRefDerefTraits {
+    static ALWAYS_INLINE void refIfNotNull(T* ptr)
+    {
+        if (LIKELY(ptr != nullptr))
+            ptr->incrementConnectionCount();
+    }
+
+    static ALWAYS_INLINE void derefIfNotNull(T* ptr)
+    {
+        if (LIKELY(ptr != nullptr))
+            ptr->decrementConnectionCount();
+    }
+};
+
+template<typename T>
+using AudioConnectionRefPtr = RefPtr<T, DumbPtrTraits<T>, AudioNodeConnectionRefDerefTraits<T>>;
 
 String convertEnumerationToString(AudioNode::NodeType);
 

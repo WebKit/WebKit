@@ -554,10 +554,10 @@ public:
             return nullptr;
         if (isNewAllocation) {
             decoder.addFinalizer([=] {
-                derefIfNotNull(decodedPtr);
+                WTF::DefaultRefDerefTraits<Source>::derefIfNotNull(decodedPtr);
             });
         }
-        refIfNotNull(decodedPtr);
+        WTF::DefaultRefDerefTraits<Source>::refIfNotNull(decodedPtr);
         return adoptRef(decodedPtr);
     }
 

@@ -229,11 +229,11 @@ public:
     // Returns the maximum number of channels we can support.
     static unsigned maxNumberOfChannels() { return MaxNumberOfChannels; }
     
-    // In AudioNode::deref() a tryLock() is used for calling finishDeref(), but if it fails keep track here.
-    void addDeferredFinishDeref(AudioNode*);
+    // In AudioNode::decrementConnectionCount() a tryLock() is used for calling decrementConnectionCountWithLock(), but if it fails keep track here.
+    void addDeferredDecrementConnectionCount(AudioNode*);
 
-    // In the audio thread at the start of each render cycle, we'll call handleDeferredFinishDerefs().
-    void handleDeferredFinishDerefs();
+    // In the audio thread at the start of each render cycle, we'll call handleDeferredDecrementConnectionCounts().
+    void handleDeferredDecrementConnectionCounts();
 
     // Only accessed when the graph lock is held.
     void markSummingJunctionDirty(AudioSummingJunction*);
@@ -397,10 +397,8 @@ private:
     // Only accessed in the audio thread.
     Vector<AudioNode*> m_finishedNodes;
 
-    // We don't use RefPtr<AudioNode> here because AudioNode has a more complex ref() / deref() implementation
-    // with an optional argument for refType.  We need to use the special refType: RefTypeConnection
     // Either accessed when the graph lock is held, or on the main thread when the audio thread has finished.
-    Vector<AudioNode*> m_referencedNodes;
+    Vector<AudioConnectionRefPtr<AudioNode>> m_referencedNodes;
 
     // Accumulate nodes which need to be deleted here.
     // This is copied to m_nodesToDelete at the end of a render cycle in handlePostRenderTasks(), where we're assured of a stable graph
@@ -427,7 +425,7 @@ private:
     HashSet<AudioNode*> m_automaticPullNodes;
     Vector<AudioNode*> m_renderingAutomaticPullNodes;
     // Only accessed in the audio thread.
-    Vector<AudioNode*> m_deferredFinishDerefList;
+    Vector<AudioNode*> m_deferredBreakConnectionList;
     Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
     std::unique_ptr<PlatformMediaSession> m_mediaSession;

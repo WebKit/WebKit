@@ -29,45 +29,48 @@
 
 namespace WTF {
 
-template<typename T, typename PtrTraits> class RefPtr;
-template<typename T, typename PtrTraits = DumbPtrTraits<T>> RefPtr<T, PtrTraits> adoptRef(T*);
+template<typename T> struct DefaultRefDerefTraits {
+    static ALWAYS_INLINE void refIfNotNull(T* ptr)
+    {
+        if (LIKELY(ptr != nullptr))
+            ptr->ref();
+    }
 
-template<typename T> ALWAYS_INLINE void refIfNotNull(T* ptr)
-{
-    if (LIKELY(ptr != nullptr))
-        ptr->ref();
-}
+    static ALWAYS_INLINE void derefIfNotNull(T* ptr)
+    {
+        if (LIKELY(ptr != nullptr))
+            ptr->deref();
+    }
+};
 
-template<typename T> ALWAYS_INLINE void derefIfNotNull(T* ptr)
-{
-    if (LIKELY(ptr != nullptr))
-        ptr->deref();
-}
+template<typename T, typename PtrTraits, typename RefDerefTraits> class RefPtr;
+template<typename T, typename PtrTraits = DumbPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> RefPtr<T, PtrTraits, RefDerefTraits> adoptRef(T*);
 
-template<typename T, typename Traits>
+template<typename T, typename _PtrTraits, typename _RefDerefTraits>
 class RefPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using PtrTraits = Traits;
+    using PtrTraits = _PtrTraits;
+    using RefDerefTraits = _RefDerefTraits;
     typedef T ValueType;
     typedef ValueType* PtrType;
 
     static constexpr bool isRefPtr = true;
 
     ALWAYS_INLINE constexpr RefPtr() : m_ptr(nullptr) { }
-    ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
-    ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { refIfNotNull(PtrTraits::unwrap(m_ptr)); }
-    template<typename X, typename Y> RefPtr(const RefPtr<X, Y>& o) : m_ptr(o.get()) { refIfNotNull(PtrTraits::unwrap(m_ptr)); }
+    ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { RefDerefTraits::refIfNotNull(ptr); }
+    ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { RefDerefTraits::refIfNotNull(PtrTraits::unwrap(m_ptr)); }
+    template<typename X, typename Y, typename Z> RefPtr(const RefPtr<X, Y, Z>& o) : m_ptr(o.get()) { RefDerefTraits::refIfNotNull(PtrTraits::unwrap(m_ptr)); }
 
     ALWAYS_INLINE RefPtr(RefPtr&& o) : m_ptr(o.leakRef()) { }
-    template<typename X, typename Y> RefPtr(RefPtr<X, Y>&& o) : m_ptr(o.leakRef()) { }
+    template<typename X, typename Y, typename Z> RefPtr(RefPtr<X, Y, Z>&& o) : m_ptr(o.leakRef()) { }
     template<typename X, typename Y> RefPtr(Ref<X, Y>&&);
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     RefPtr(HashTableDeletedValueType) : m_ptr(PtrTraits::hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return PtrTraits::isHashTableDeletedValue(m_ptr); }
 
-    ALWAYS_INLINE ~RefPtr() { derefIfNotNull(PtrTraits::exchange(m_ptr, nullptr)); }
+    ALWAYS_INLINE ~RefPtr() { RefDerefTraits::derefIfNotNull(PtrTraits::exchange(m_ptr, nullptr)); }
 
     T* get() const { return PtrTraits::unwrap(m_ptr); }
 
@@ -90,12 +93,12 @@ public:
     RefPtr& operator=(const RefPtr&);
     RefPtr& operator=(T*);
     RefPtr& operator=(std::nullptr_t);
-    template<typename X, typename Y> RefPtr& operator=(const RefPtr<X, Y>&);
+    template<typename X, typename Y, typename Z> RefPtr& operator=(const RefPtr<X, Y, Z>&);
     RefPtr& operator=(RefPtr&&);
-    template<typename X, typename Y> RefPtr& operator=(RefPtr<X, Y>&&);
+    template<typename X, typename Y, typename Z> RefPtr& operator=(RefPtr<X, Y, Z>&&);
     template<typename X> RefPtr& operator=(Ref<X>&&);
 
-    template<typename X, typename Y> void swap(RefPtr<X, Y>&);
+    template<typename X, typename Y, typename Z> void swap(RefPtr<X, Y, Z>&);
 
     RefPtr copyRef() && = delete;
     RefPtr copyRef() const & WARN_UNUSED_RETURN { return RefPtr(m_ptr); }
@@ -103,8 +106,8 @@ public:
 private:
     void unspecifiedBoolTypeInstance() const { }
 
-    friend RefPtr adoptRef<T, PtrTraits>(T*);
-    template<typename X, typename Y> friend class RefPtr;
+    friend RefPtr adoptRef<T, PtrTraits, RefDerefTraits>(T*);
+    template<typename X, typename Y, typename Z> friend class RefPtr;
 
     enum AdoptTag { Adopt };
     RefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }
@@ -112,142 +115,142 @@ private:
     typename PtrTraits::StorageType m_ptr;
 };
 
-template<typename T, typename U>
+template<typename T, typename U, typename V>
 template<typename X, typename Y>
-inline RefPtr<T, U>::RefPtr(Ref<X, Y>&& reference)
+inline RefPtr<T, U, V>::RefPtr(Ref<X, Y>&& reference)
     : m_ptr(&reference.leakRef())
 {
 }
 
-template<typename T, typename U>
-inline T* RefPtr<T, U>::leakRef()
+template<typename T, typename U, typename V>
+inline T* RefPtr<T, U, V>::leakRef()
 {
     return U::exchange(m_ptr, nullptr);
 }
 
-template<typename T, typename U>
-inline RefPtr<T, U>& RefPtr<T, U>::operator=(const RefPtr& o)
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(const RefPtr& o)
 {
     RefPtr ptr = o;
     swap(ptr);
     return *this;
 }
 
-template<typename T, typename U>
-template<typename X, typename Y>
-inline RefPtr<T, U>& RefPtr<T, U>::operator=(const RefPtr<X, Y>& o)
+template<typename T, typename U, typename V>
+template<typename X, typename Y, typename Z>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(const RefPtr<X, Y, Z>& o)
 {
     RefPtr ptr = o;
     swap(ptr);
     return *this;
 }
 
-template<typename T, typename U>
-inline RefPtr<T, U>& RefPtr<T, U>::operator=(T* optr)
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(T* optr)
 {
     RefPtr ptr = optr;
     swap(ptr);
     return *this;
 }
 
-template<typename T, typename U>
-inline RefPtr<T, U>& RefPtr<T, U>::operator=(std::nullptr_t)
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(std::nullptr_t)
 {
-    derefIfNotNull(U::exchange(m_ptr, nullptr));
+    V::derefIfNotNull(U::exchange(m_ptr, nullptr));
     return *this;
 }
 
-template<typename T, typename U>
-inline RefPtr<T, U>& RefPtr<T, U>::operator=(RefPtr&& o)
-{
-    RefPtr ptr = WTFMove(o);
-    swap(ptr);
-    return *this;
-}
-
-template<typename T, typename U>
-template<typename X, typename Y>
-inline RefPtr<T, U>& RefPtr<T, U>::operator=(RefPtr<X, Y>&& o)
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(RefPtr&& o)
 {
     RefPtr ptr = WTFMove(o);
     swap(ptr);
     return *this;
 }
 
-template<typename T, typename V>
+template<typename T, typename U, typename V>
+template<typename X, typename Y, typename Z>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(RefPtr<X, Y, Z>&& o)
+{
+    RefPtr ptr = WTFMove(o);
+    swap(ptr);
+    return *this;
+}
+
+template<typename T, typename V, typename W>
 template<typename U>
-inline RefPtr<T, V>& RefPtr<T, V>::operator=(Ref<U>&& reference)
+inline RefPtr<T, V, W>& RefPtr<T, V, W>::operator=(Ref<U>&& reference)
 {
     RefPtr ptr = WTFMove(reference);
     swap(ptr);
     return *this;
 }
 
-template<class T, typename U>
-template<typename X, typename Y>
-inline void RefPtr<T, U>::swap(RefPtr<X, Y>& o)
+template<class T, typename U, typename V>
+template<typename X, typename Y, typename Z>
+inline void RefPtr<T, U, V>::swap(RefPtr<X, Y, Z>& o)
 {
     U::swap(m_ptr, o.m_ptr);
 }
 
-template<typename T, typename U, typename X, typename Y, typename = std::enable_if_t<!std::is_same<U, DumbPtrTraits<T>>::value || !std::is_same<Y, DumbPtrTraits<X>>::value>>
-inline void swap(RefPtr<T, U>& a, RefPtr<X, Y>& b)
+template<typename T, typename U, typename V, typename X, typename Y, typename Z, typename = std::enable_if_t<!std::is_same<U, DumbPtrTraits<T>>::value || !std::is_same<Y, DumbPtrTraits<X>>::value>>
+inline void swap(RefPtr<T, U, V>& a, RefPtr<X, Y, Z>& b)
 {
     a.swap(b);
 }
 
-template<typename T, typename U, typename X, typename Y>
-inline bool operator==(const RefPtr<T, U>& a, const RefPtr<X, Y>& b)
+template<typename T, typename U, typename V, typename X, typename Y, typename Z>
+inline bool operator==(const RefPtr<T, U, V>& a, const RefPtr<X, Y, Z>& b)
 { 
     return a.get() == b.get();
 }
 
-template<typename T, typename U, typename X>
-inline bool operator==(const RefPtr<T, U>& a, X* b)
+template<typename T, typename U, typename V, typename X>
+inline bool operator==(const RefPtr<T, U, V>& a, X* b)
 { 
     return a.get() == b; 
 }
 
-template<typename T, typename X, typename Y>
-inline bool operator==(T* a, const RefPtr<X, Y>& b)
+template<typename T, typename X, typename Y, typename Z>
+inline bool operator==(T* a, const RefPtr<X, Y, Z>& b)
 {
     return a == b.get(); 
 }
 
-template<typename T, typename U, typename X, typename Y>
-inline bool operator!=(const RefPtr<T, U>& a, const RefPtr<X, Y>& b)
+template<typename T, typename U, typename V, typename X, typename Y, typename Z>
+inline bool operator!=(const RefPtr<T, U, V>& a, const RefPtr<X, Y, Z>& b)
 { 
     return a.get() != b.get(); 
 }
 
-template<typename T, typename U, typename X>
-inline bool operator!=(const RefPtr<T, U>& a, X* b)
+template<typename T, typename U, typename V, typename X>
+inline bool operator!=(const RefPtr<T, U, V>& a, X* b)
 {
     return a.get() != b; 
 }
 
-template<typename T, typename X, typename Y>
-inline bool operator!=(T* a, const RefPtr<X, Y>& b)
+template<typename T, typename X, typename Y, typename Z>
+inline bool operator!=(T* a, const RefPtr<X, Y, Z>& b)
 { 
     return a != b.get(); 
 }
 
-template<typename T, typename U = DumbPtrTraits<T>, typename X, typename Y>
-inline RefPtr<T, U> static_pointer_cast(const RefPtr<X, Y>& p)
+template<typename T, typename U = DumbPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
+inline RefPtr<T, U, V> static_pointer_cast(const RefPtr<X, Y, Z>& p)
 { 
-    return RefPtr<T, U>(static_cast<T*>(p.get()));
+    return RefPtr<T, U, V>(static_cast<T*>(p.get()));
 }
 
-template <typename T, typename U>
-struct IsSmartPtr<RefPtr<T, U>> {
+template <typename T, typename U, typename V>
+struct IsSmartPtr<RefPtr<T, U, V>> {
     static constexpr bool value = true;
 };
 
-template<typename T, typename U>
-inline RefPtr<T, U> adoptRef(T* p)
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V> adoptRef(T* p)
 {
     adopted(p);
-    return RefPtr<T, U>(p, RefPtr<T, U>::Adopt);
+    return RefPtr<T, U, V>(p, RefPtr<T, U, V>::Adopt);
 }
 
 template<typename T> inline RefPtr<T> makeRefPtr(T* pointer)
@@ -260,14 +263,14 @@ template<typename T> inline RefPtr<T> makeRefPtr(T& reference)
     return &reference;
 }
 
-template<typename ExpectedType, typename ArgType, typename PtrTraits>
-inline bool is(RefPtr<ArgType, PtrTraits>& source)
+template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
+inline bool is(RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
 {
     return is<ExpectedType>(source.get());
 }
 
-template<typename ExpectedType, typename ArgType, typename PtrTraits>
-inline bool is(const RefPtr<ArgType, PtrTraits>& source)
+template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
+inline bool is(const RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
 {
     return is<ExpectedType>(source.get());
 }

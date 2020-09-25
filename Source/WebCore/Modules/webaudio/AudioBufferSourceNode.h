@@ -141,8 +141,8 @@ private:
     double totalPitchRate();
 
     // We optionally keep track of a panner node which has a doppler shift that is incorporated into
-    // the pitch rate. We manually manage ref-counting because we want to use RefTypeConnection.
-    PannerNodeBase* m_pannerNode { nullptr };
+    // the pitch rate.
+    AudioConnectionRefPtr<PannerNodeBase> m_pannerNode;
 
     // This synchronizes process() with setBuffer() which can cause dynamic channel count changes.
     mutable Lock m_processMutex;

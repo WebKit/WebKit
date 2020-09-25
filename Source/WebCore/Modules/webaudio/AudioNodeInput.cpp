@@ -60,9 +60,6 @@ void AudioNodeInput::connect(AudioNodeOutput* output)
 
     output->addInput(this);
     changedOutputs();
-
-    // Sombody has just connected to us, so count it as a reference.
-    node()->ref(AudioNode::RefTypeConnection);
 }
 
 void AudioNodeInput::disconnect(AudioNodeOutput* output)
@@ -76,15 +73,13 @@ void AudioNodeInput::disconnect(AudioNodeOutput* output)
     // First try to disconnect from "active" connections.
     if (m_outputs.remove(output)) {
         changedOutputs();
-        output->removeInput(this);
-        node()->deref(AudioNode::RefTypeConnection); // Note: it's important to return immediately after all deref() calls since the node may be deleted.
+        output->removeInput(this); // Note: it's important to return immediately after this since the node may be deleted.
         return;
     }
     
     // Otherwise, try to disconnect from disabled connections.
     if (m_disabledOutputs.remove(output)) {
-        output->removeInput(this);
-        node()->deref(AudioNode::RefTypeConnection); // Note: it's important to return immediately after all deref() calls since the node may be deleted.
+        output->removeInput(this); // Note: it's important to return immediately after this since the node may be deleted.
         return;
     }
 

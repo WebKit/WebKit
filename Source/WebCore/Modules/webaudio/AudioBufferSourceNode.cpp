@@ -580,22 +580,13 @@ bool AudioBufferSourceNode::propagatesSilence() const
 
 void AudioBufferSourceNode::setPannerNode(PannerNodeBase* pannerNode)
 {
-    if (m_pannerNode != pannerNode && !hasFinished()) {
-        if (pannerNode)
-            pannerNode->ref(AudioNode::RefTypeConnection);
-        if (m_pannerNode)
-            m_pannerNode->deref(AudioNode::RefTypeConnection);
-
+    if (m_pannerNode != pannerNode && !hasFinished())
         m_pannerNode = pannerNode;
-    }
 }
 
 void AudioBufferSourceNode::clearPannerNode()
 {
-    if (m_pannerNode) {
-        m_pannerNode->deref(AudioNode::RefTypeConnection);
-        m_pannerNode = nullptr;
-    }
+    m_pannerNode = nullptr;
 }
 
 void AudioBufferSourceNode::finish()

@@ -197,7 +197,7 @@ BaseAudioContext::~BaseAudioContext()
     if (m_automaticPullNodesNeedUpdating)
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
     ASSERT(m_renderingAutomaticPullNodes.isEmpty());
-    // FIXME: Can we assert that m_deferredFinishDerefList is empty?
+    // FIXME: Can we assert that m_deferredBreakConnectionList is empty?
 
     if (!isOfflineContext() && scriptExecutionContext()) {
         document()->removeAudioProducer(*this);
@@ -681,7 +681,6 @@ void BaseAudioContext::refNode(AudioNode& node)
     ASSERT(isMainThread());
     AutoLocker locker(*this);
     
-    node.ref(AudioNode::RefTypeConnection);
     m_referencedNodes.append(&node);
 }
 
@@ -689,8 +688,6 @@ void BaseAudioContext::derefNode(AudioNode& node)
 {
     ASSERT(isGraphOwner());
     
-    node.deref(AudioNode::RefTypeConnection);
-
     ASSERT(m_referencedNodes.contains(&node));
     m_referencedNodes.removeFirst(&node);
 }
@@ -698,9 +695,6 @@ void BaseAudioContext::derefNode(AudioNode& node)
 void BaseAudioContext::derefUnfinishedSourceNodes()
 {
     ASSERT(isMainThread() && isAudioThreadFinished());
-    for (auto& node : m_referencedNodes)
-        node->deref(AudioNode::RefTypeConnection);
-
     m_referencedNodes.clear();
 }
 
@@ -778,10 +772,10 @@ bool BaseAudioContext::isGraphOwner() const
     return m_graphOwnerThread == &Thread::current();
 }
 
-void BaseAudioContext::addDeferredFinishDeref(AudioNode* node)
+void BaseAudioContext::addDeferredDecrementConnectionCount(AudioNode* node)
 {
     ASSERT(isAudioThread());
-    m_deferredFinishDerefList.append(node);
+    m_deferredBreakConnectionList.append(node);
 }
 
 void BaseAudioContext::handlePreRenderTasks(const AudioIOPosition& outputPosition)
@@ -821,7 +815,7 @@ void BaseAudioContext::handlePostRenderTasks()
     bool mustReleaseLock;
     if (tryLock(mustReleaseLock)) {
         // Take care of finishing any derefs where the tryLock() failed previously.
-        handleDeferredFinishDerefs();
+        handleDeferredDecrementConnectionCounts();
 
         // Dynamically clean up nodes which are no longer needed.
         derefFinishedSourceNodes();
@@ -841,13 +835,13 @@ void BaseAudioContext::handlePostRenderTasks()
     }
 }
 
-void BaseAudioContext::handleDeferredFinishDerefs()
+void BaseAudioContext::handleDeferredDecrementConnectionCounts()
 {
     ASSERT(isAudioThread() && isGraphOwner());
-    for (auto& node : m_deferredFinishDerefList)
-        node->finishDeref(AudioNode::RefTypeConnection);
+    for (auto& node : m_deferredBreakConnectionList)
+        node->decrementConnectionCountWithLock();
     
-    m_deferredFinishDerefList.clear();
+    m_deferredBreakConnectionList.clear();
 }
 
 void BaseAudioContext::markForDeletion(AudioNode& node)

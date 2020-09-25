@@ -59,6 +59,7 @@ using VectorMalloc = FastMalloc;
 #endif
 
 template<typename> struct DumbPtrTraits;
+template<typename> struct DefaultRefDerefTraits;
 
 template<typename> class CompletionHandler;
 template<typename> class Function;
@@ -69,7 +70,7 @@ template<typename> class Optional;
 template<typename> class Packed;
 template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename T, typename = DumbPtrTraits<T>> class Ref;
-template<typename T, typename = DumbPtrTraits<T>> class RefPtr;
+template<typename T, typename = DumbPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class RefPtr;
 template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;

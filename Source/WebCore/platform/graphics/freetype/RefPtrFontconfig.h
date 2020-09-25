@@ -28,11 +28,17 @@ typedef struct _FcConfig FcConfig;
 
 namespace WTF {
 
-template<> void refIfNotNull(FcPattern* ptr);
-template<> void derefIfNotNull(FcPattern* ptr);
+template<>
+struct DefaultRefDerefTraits<FcPattern> {
+    static void refIfNotNull(FcPattern* ptr);
+    static void derefIfNotNull(FcPattern* ptr);
+};
 
-template<> void refIfNotNull(FcConfig* ptr);
-template<> void derefIfNotNull(FcConfig* ptr);
+template<>
+struct DefaultRefDerefTraits<FcConfig> {
+    static void refIfNotNull(FcConfig* ptr);
+    static void derefIfNotNull(FcConfig* ptr);
+};
 
 } // namespace WTF
 

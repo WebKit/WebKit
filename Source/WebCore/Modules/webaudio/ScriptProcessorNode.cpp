@@ -183,12 +183,10 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     // When this happens, fire an event and swap buffers.
     if (!m_bufferReadWriteIndex) {
         // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.
-        auto protector = makeRef(*this);
-
         // We only wait for script code execution when the context is an offline one for performance reasons.
         if (context().isOfflineContext()) {
             BinarySemaphore semaphore;
-            callOnMainThread([this, &semaphore, doubleBufferIndex = m_doubleBufferIndex] {
+            callOnMainThread([this, &semaphore, doubleBufferIndex = m_doubleBufferIndex, protector = makeRef(*this)] {
                 fireProcessEvent(doubleBufferIndex);
                 semaphore.signal();
             });
@@ -202,7 +200,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
                 return;
             }
 
-            callOnMainThread([this, doubleBufferIndex = m_doubleBufferIndex, protector = WTFMove(protector)] {
+            callOnMainThread([this, doubleBufferIndex = m_doubleBufferIndex, protector = makeRef(*this)] {
                 auto locker = holdLock(m_processLock);
                 fireProcessEvent(doubleBufferIndex);
             });

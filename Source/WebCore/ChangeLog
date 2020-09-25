@@ -1,3 +1,72 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of AudioNode::RefType
+        https://bugs.webkit.org/show_bug.cgi?id=216945
+
+        Reviewed by Darin Adler.
+
+        Previously, the node had ref()/deref() function taking a RefType parameter.
+        The RefType would be used to determine which counter should be incremented
+        or decremented: either m_normalRefCount or m_connectionRefCount.
+
+        In a previous patch, I have already ported code that was calling ref() / deref()
+        explicitly with RefTypeNormal to use RefPtr<> instead. This patch goes further by:
+        1. Dropping the RefType parameter to ref() / deref(). ref() / deref() now increment
+           or decrement m_normalRefCount only. Clients are expected to use RefPtr to handle
+           ref counting.
+        2. Introduce new incrementConnectionCount() / decrementConnectionCount() to increment
+           or decrement m_connectionRefCount. To reduce the chance of leakage, clients should
+           not call these functions directly anymore. Instead, they use use the new
+           AudioConnectionRefPtr<> pointer type to handle the connection ref counting for them.
+           AudioConnectionRefPtr<> is a RefPtr<> which special traits causing incrementConnectionCount()
+           and decrementConnectionCount() to get called on the AudioNode instead of ref() and
+           deref().
+
+        I believe this new design is a bit simpler to reason about and less prone to leaks.
+        There is no longer any code explicitly ref'ing or deref'ing the AudioNodes. Instead,
+        RefPtr<> or AudioConnectionRefPtr<> is used to increment/decrement the right internal
+        count.
+
+        No new tests, no Web-facing behavior change.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::setPannerNode):
+        (WebCore::AudioBufferSourceNode::clearPannerNode):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::disableOutputsIfNecessary):
+        (WebCore::AudioNode::incrementConnectionCount):
+        (WebCore::AudioNode::decrementConnectionCount):
+        (WebCore::AudioNode::decrementConnectionCountWithLock):
+        (WebCore::AudioNode::markNodeForDeletionIfNecessary):
+        (WebCore::AudioNode::ref):
+        (WebCore::AudioNode::deref):
+        (WebCore::AudioNode::derefWithLock):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNodeConnectionRefDerefTraits::refIfNotNull):
+        (WebCore::AudioNodeConnectionRefDerefTraits::derefIfNotNull):
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::connect):
+        (WebCore::AudioNodeInput::disconnect):
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::propagateChannelCount):
+        (WebCore::AudioNodeOutput::addInput):
+        (WebCore::AudioNodeOutput::disconnectAllInputs):
+        (WebCore::AudioNodeOutput::disable):
+        (WebCore::AudioNodeOutput::enable):
+        * Modules/webaudio/AudioNodeOutput.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::~BaseAudioContext):
+        (WebCore::BaseAudioContext::refNode):
+        (WebCore::BaseAudioContext::derefNode):
+        (WebCore::BaseAudioContext::derefUnfinishedSourceNodes):
+        (WebCore::BaseAudioContext::addDeferredDecrementConnectionCount):
+        (WebCore::BaseAudioContext::handlePostRenderTasks):
+        (WebCore::BaseAudioContext::handleDeferredDecrementConnectionCounts):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::process):
+
 2020-09-25  Rob Buis  <rbuis@igalia.com>
 
         Simplify SVGTests.hasExtension idl

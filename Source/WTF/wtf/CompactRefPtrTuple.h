@@ -39,7 +39,7 @@ public:
     CompactRefPtrTuple() = default;
     ~CompactRefPtrTuple()
     {
-        derefIfNotNull(m_data.pointer());
+        WTF::DefaultRefDerefTraits<T>::derefIfNotNull(m_data.pointer());
     }
 
     T* pointer() const
@@ -49,10 +49,10 @@ public:
 
     void setPointer(T* pointer)
     {
-        refIfNotNull(pointer);
+        WTF::DefaultRefDerefTraits<T>::refIfNotNull(pointer);
         auto* old = m_data.pointer();
         m_data.setPointer(pointer);
-        derefIfNotNull(old);
+        WTF::DefaultRefDerefTraits<T>::derefIfNotNull(old);
     }
 
     Type type() const { return m_data.type(); }

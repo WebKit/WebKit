@@ -140,8 +140,9 @@ private:
     // If m_isInPlace is true, use m_inPlaceBus as the valid AudioBus; If false, use the default m_internalBus.
     bool m_isInPlace { false };
 
-    HashSet<AudioNodeInput*> m_inputs;
-    typedef HashSet<AudioNodeInput*>::iterator InputsIterator;
+    using InputsMap = HashMap<AudioNodeInput*, AudioConnectionRefPtr<AudioNode>>;
+    InputsMap m_inputs;
+    typedef InputsMap::iterator InputsIterator;
     bool m_isEnabled { true };
 
     // For the purposes of rendering, keeps track of the number of inputs and AudioParams we're connected to.
