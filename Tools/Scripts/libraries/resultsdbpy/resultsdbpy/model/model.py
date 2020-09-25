@@ -45,7 +45,7 @@ class Model(object):
         key = columns.Text(partition_key=True, required=True)
         value = columns.Text(required=True)
 
-    def __init__(self, redis, cassandra, repositories=[], default_ttl_seconds=TTL_YEAR * 5, archive_ttl_seconds=TTL_WEEK * 8, async_processing=False):
+    def __init__(self, redis, cassandra, repositories=[], default_ttl_seconds=TTL_YEAR * 5, archive_ttl_seconds=TTL_WEEK * 8, async_processing=False, s3_credentials=None):
         if default_ttl_seconds is not None and default_ttl_seconds < 4 * self.TTL_WEEK:
             raise ValueError('TTL must be at least 4 weeks')
         if archive_ttl_seconds is not None and archive_ttl_seconds < 2 * self.TTL_WEEK:
@@ -99,6 +99,7 @@ class Model(object):
             configuration_context=self.configuration_context,
             commit_context=self.commit_context,
             ttl_seconds=self.archive_ttl_seconds,
+            s3_credentials=s3_credentials,
         )
 
     def healthy(self, writable=True):

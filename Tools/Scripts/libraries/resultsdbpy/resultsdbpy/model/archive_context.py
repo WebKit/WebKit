@@ -22,20 +22,17 @@
 
 import calendar
 import io
-import json
 import time
 import zipfile
 
 from cassandra.cqlengine import columns
-from cassandra.cqlengine.models import Model
-from collections import OrderedDict
 from datetime import datetime
 from resultsdbpy.controller.commit import Commit
-from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.archiver import Archiver
 from resultsdbpy.model.cassandra_archiver import CassandraArchiver
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
+from resultsdbpy.model.s3_archiver import S3Archiver
 from resultsdbpy.model.upload_context import UploadContext
 
 
@@ -81,11 +78,16 @@ class ArchiveContext(object):
         cls.assert_zipfile(archive)
         return zipfile.ZipFile(archive, mode='r')
 
-    def __init__(self, configuration_context, commit_context, ttl_seconds=None):
+    def __init__(self, configuration_context, commit_context, ttl_seconds=None, s3_credentials=None):
         self.configuration_context = configuration_context
         self.commit_context = commit_context
         self.cassandra = self.configuration_context.cassandra
-        self.archiver = CassandraArchiver(self.cassandra)
+        self.cached_archiver = CassandraArchiver(self.cassandra)
+        self.cold_archiver = S3Archiver(
+            bucket='{}-results-archive'.format(self.cassandra.keyspace.replace('_', '-')),
+            credentials=s3_credentials,
+            ttl_seconds=ttl_seconds,
+        ) if s3_credentials else None
         self.ttl_seconds = ttl_seconds
 
         with self:
@@ -95,12 +97,16 @@ class ArchiveContext(object):
     def __enter__(self):
         self.configuration_context.__enter__()
         self.commit_context.__enter__()
-        self.archiver.__enter__()
+        self.cached_archiver.__enter__()
+        if self.cold_archiver:
+            self.cold_archiver.__enter__()
 
     def __exit__(self, *args, **kwargs):
         self.commit_context.__exit__(*args, **kwargs)
         self.configuration_context.__exit__(*args, **kwargs)
-        self.archiver.__exit__(*args, **kwargs)
+        self.cached_archiver.__exit__(*args, **kwargs)
+        if self.cold_archiver:
+            self.cold_archiver.__exit__()
 
     def register(self, archive, configuration, commits, suite, timestamp=None):
         self.assert_zipfile(archive)
@@ -116,14 +122,17 @@ class ArchiveContext(object):
                 self.configuration_context.insert_row_with_configuration(
                     UploadContext.SuitesByConfiguration.__table_name__, configuration, suite=suite, branch=branch, ttl=ttl,
                 )
-                digest = self.archiver.save(archive, retain_for=ttl)
+
+                archiver_to_use = self.cold_archiver or self.cached_archiver
+                size = Archiver.archive_size(archive)
+                digest = archiver_to_use.save(archive, retain_for=ttl)
 
                 self.configuration_context.insert_row_with_configuration(
                     self.ArchiveMetaDataByCommit.__table_name__, configuration=configuration, suite=suite,
                     branch=branch, uuid=uuid, ttl=ttl,
                     sdk=configuration.sdk or '?', start_time=timestamp,
                     digest=digest,
-                    size=Archiver.archive_size(archive),
+                    size=size,
                 )
 
     def find_archive(
@@ -167,9 +176,19 @@ class ArchiveContext(object):
                         continue
 
                     if not archive_by_digest.get(value.get('digest')):
-                        archive = self.archiver.retrieve(value.get('digest'), value.get('size', None))
+                        archive = self.cached_archiver.retrieve(value.get('digest'), value.get('size', None))
                         if not archive:
-                            continue
+                            if not self.cold_archiver:
+                                continue
+
+                            archive = self.cold_archiver.retrieve(value.get('digest'), value.get('size', None))
+                            if not archive:
+                                continue
+
+                            # If we retrieved an archive from the cold_archiver, it's pretty likely that
+                            # the same archive will be retrieved in the near future. Cache the archive for 6 hours
+                            self.cached_archiver.save(archive, retain_for=60 * 60 * 6)
+
                         archive_by_digest[value.get('digest')] = archive
 
                     archive_by_digest.get(value.get('digest')).seek(0)

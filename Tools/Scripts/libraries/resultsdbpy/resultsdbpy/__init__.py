@@ -43,6 +43,6 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(1, 0, 2)
+version = Version(1, 1, 0)
 
 name = 'resultsdbpy'

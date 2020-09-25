@@ -1,3 +1,31 @@
+2020-09-25  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Use s3 for cold storage
+        https://bugs.webkit.org/show_bug.cgi?id=216662
+        <rdar://problem/69092010>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/archive_context.py:
+        (ArchiveContext.__init__): Differentiate between cache storage and long-term storage of archives.
+        (ArchiveContext.__enter__): Connect to the cold storage archive, if one is available.
+        (ArchiveContext.__exit__): Disconnect from the cold storage archive, if applicable.
+        (ArchiveContext.register): Save to cold storage instead of cache storage by default.
+        (ArchiveContext.find_archive):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/model.py:
+        (Model.__init__): Pass S3 credentials to ArchiveContext.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/s3_archiver.py: Added.
+        (S3Archiver):
+        (S3Archiver.Credentials):
+        (S3Archiver.__init__): Connect to S3 and configure our bucket.
+        (S3Archiver._cipher): Construct new AES cipher, if a key was provided.
+        (S3Archiver.__enter__): Create S3 resource, if one is not available.
+        (S3Archiver.__exit__): Teardown S3 resource.
+        (S3Archiver.save): Save an archive to S3 by it's hash.
+        (S3Archiver.retrieve): Retreive an archive from S3 by its hash.
+        * Scripts/libraries/resultsdbpy/setup.py: Add boto3.
+
 2020-09-25  Youenn Fablet  <youenn@apple.com>
 
         Implement default behavior for getUserMedia requests in case where there is no delegate set
