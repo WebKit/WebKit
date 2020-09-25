@@ -1,3 +1,74 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Drop AudioNode::setNodeType()
+        https://bugs.webkit.org/show_bug.cgi?id=216988
+
+        Reviewed by Eric Carlson.
+
+        Drop AudioNode::setNodeType() in favor of passing the NodeType to the AudioNode constructor.
+        This makes sure we never forget to set the type.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::AnalyserNode):
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::AudioBasicInspectorNode):
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::AudioBasicProcessorNode):
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::convertEnumerationToString):
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::printNodeCounts):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::context):
+        (WebCore::AudioNode::context const):
+        (WebCore::AudioNode::nodeType const):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::ChannelMergerNode):
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::ChannelSplitterNode):
+        * Modules/webaudio/ConstantSourceNode.cpp:
+        (WebCore::ConstantSourceNode::ConstantSourceNode):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode):
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::GainNode):
+        * Modules/webaudio/IIRFilterNode.cpp:
+        (WebCore::IIRFilterNode::IIRFilterNode):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::MediaStreamAudioSourceNode):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::OscillatorNode):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNodeBase::PannerNodeBase):
+        (WebCore::PannerNode::PannerNode):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        * Modules/webaudio/StereoPannerNode.cpp:
+        (WebCore::StereoPannerNode::StereoPannerNode):
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::WaveShaperNode):
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::WebKitAudioPannerNode):
+
 2020-09-24  Dean Jackson  <dino@apple.com>
 
         WebGL should use GLES in iOS apps running on Apple Silicon

@@ -56,10 +56,8 @@ ExceptionOr<Ref<BiquadFilterNode>> BiquadFilterNode::create(BaseAudioContext& co
 }
 
 BiquadFilterNode::BiquadFilterNode(BaseAudioContext& context)
-    : AudioBasicProcessorNode(context)
+    : AudioBasicProcessorNode(context, NodeTypeBiquadFilter)
 {
-    setNodeType(NodeTypeBiquadFilter);
-
     // Initially setup as lowpass filter.
     m_processor = makeUnique<BiquadProcessor>(context, context.sampleRate(), 1, false);
 

@@ -39,9 +39,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DelayNode);
 constexpr double maximumAllowedDelayTime = 180;
 
 inline DelayNode::DelayNode(BaseAudioContext& context, double maxDelayTime)
-    : AudioBasicProcessorNode(context)
+    : AudioBasicProcessorNode(context, NodeTypeDelay)
 {
-    setNodeType(NodeTypeDelay);
     m_processor = makeUnique<DelayProcessor>(context, context.sampleRate(), 1, maxDelayTime);
 
     // Initialize so that AudioParams can be processed.

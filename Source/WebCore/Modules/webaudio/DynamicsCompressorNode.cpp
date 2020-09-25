@@ -62,15 +62,13 @@ ExceptionOr<Ref<DynamicsCompressorNode>> DynamicsCompressorNode::create(BaseAudi
 }
 
 DynamicsCompressorNode::DynamicsCompressorNode(BaseAudioContext& context, const DynamicsCompressorOptions& options)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypeDynamicsCompressor)
     , m_threshold(AudioParam::create(context, "threshold"_s, options.threshold, -100, 0, AutomationRate::KRate, AutomationRateMode::Fixed))
     , m_knee(AudioParam::create(context, "knee"_s, options.knee, 0, 40, AutomationRate::KRate, AutomationRateMode::Fixed))
     , m_ratio(AudioParam::create(context, "ratio"_s, options.ratio, 1, 20, AutomationRate::KRate, AutomationRateMode::Fixed))
     , m_attack(AudioParam::create(context, "attack"_s, options.attack, 0, 1, AutomationRate::KRate, AutomationRateMode::Fixed))
     , m_release(AudioParam::create(context, "release"_s, options.release, 0, 1, AutomationRate::KRate, AutomationRateMode::Fixed))
 {
-    setNodeType(NodeTypeDynamicsCompressor);
-
     addInput();
     addOutput(defaultNumberOfOutputChannels);
 

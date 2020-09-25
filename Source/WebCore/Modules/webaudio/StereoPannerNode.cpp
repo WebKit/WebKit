@@ -56,12 +56,10 @@ ExceptionOr<Ref<StereoPannerNode>> StereoPannerNode::create(BaseAudioContext& co
 }
 
 StereoPannerNode::StereoPannerNode(BaseAudioContext& context, float pan)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypeStereoPanner)
     , m_pan(AudioParam::create(context, "pan"_s, pan, -1, 1, AutomationRate::ARate))
     , m_sampleAccurateValues(AudioUtilities::renderQuantumSize)
 {
-    setNodeType(NodeTypeStereo);
-    
     addInput();
     addOutput(2);
     

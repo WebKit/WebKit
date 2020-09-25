@@ -71,12 +71,10 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
 }
 
 MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypeMediaStreamAudioSource)
     , m_mediaStream(mediaStream)
     , m_audioTrack(audioTrack)
 {
-    setNodeType(NodeTypeMediaStreamAudioSource);
-    
     AudioSourceProvider* audioSourceProvider = m_audioTrack->audioSourceProvider();
     ASSERT(audioSourceProvider);
 

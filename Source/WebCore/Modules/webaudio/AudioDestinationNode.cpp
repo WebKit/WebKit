@@ -40,9 +40,8 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioDestinationNode);
 
 AudioDestinationNode::AudioDestinationNode(BaseAudioContext& context)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypeDestination)
 {
-    setNodeType(NodeTypeDestination);
     addInput();
 }
 

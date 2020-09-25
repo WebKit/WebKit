@@ -51,7 +51,6 @@ static void fixNANs(double &x)
 WebKitAudioPannerNode::WebKitAudioPannerNode(WebKitAudioContext& context)
     : PannerNodeBase(context)
 {
-    setNodeType(NodeTypePanner);
     initializeDefaultNodeOptions(2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers);
 
     // Load the HRTF database asynchronously so we don't block the Javascript thread while creating the HRTF database.

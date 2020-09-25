@@ -34,7 +34,7 @@ namespace WebCore {
 class AudioBasicInspectorNode : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(AudioBasicInspectorNode);
 public:
-    explicit AudioBasicInspectorNode(BaseAudioContext&);
+    AudioBasicInspectorNode(BaseAudioContext&, NodeType);
 
 protected:
     bool m_needAutomaticPull { false }; // When setting to true, AudioBasicInspectorNode will be pulled automatically by AudioContext before the end of each render quantum.

@@ -92,14 +92,12 @@ ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& contex
 }
 
 OscillatorNode::OscillatorNode(BaseAudioContext& context, const OscillatorOptions& options)
-    : AudioScheduledSourceNode(context)
+    : AudioScheduledSourceNode(context, NodeTypeOscillator)
     , m_frequency(AudioParam::create(context, "frequency"_s, options.frequency, -context.sampleRate() / 2, context.sampleRate() / 2, AutomationRate::ARate))
     , m_detune(AudioParam::create(context, "detune"_s, options.detune, -1200 * log2f(std::numeric_limits<float>::max()), 1200 * log2f(std::numeric_limits<float>::max()), AutomationRate::ARate))
     , m_phaseIncrements(AudioUtilities::renderQuantumSize)
     , m_detuneValues(AudioUtilities::renderQuantumSize)
 {
-    setNodeType(NodeTypeOscillator);
-    
     // An oscillator is always mono.
     addOutput(1);
     initialize();

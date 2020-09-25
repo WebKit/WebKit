@@ -52,7 +52,7 @@ Ref<ScriptProcessorNode> ScriptProcessorNode::create(BaseAudioContext& context, 
 }
 
 ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypeJavaScript)
     , ActiveDOMObject(context.scriptExecutionContext())
     , m_bufferSize(bufferSize)
     , m_numberOfInputChannels(numberOfInputChannels)
@@ -65,7 +65,6 @@ ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t buffe
 
     ASSERT(numberOfInputChannels <= AudioContext::maxNumberOfChannels());
 
-    setNodeType(NodeTypeJavaScript);
     initializeDefaultNodeOptions(numberOfInputChannels, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
     addInput();
     addOutput(numberOfOutputChannels);

@@ -47,8 +47,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioScheduledSourceNode);
 
-AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context)
-    : AudioNode(context)
+AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context, NodeType type)
+    : AudioNode(context, type)
     , ActiveDOMObject(context.scriptExecutionContext())
 {
     suspendIfNeeded();

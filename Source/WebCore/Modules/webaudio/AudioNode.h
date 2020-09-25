@@ -59,16 +59,7 @@ class AudioNode
     WTF_MAKE_NONCOPYABLE(AudioNode);
     WTF_MAKE_ISO_ALLOCATED(AudioNode);
 public:
-    explicit AudioNode(BaseAudioContext&);
-    virtual ~AudioNode();
-
-    BaseAudioContext& context() { return m_context.get(); }
-    const BaseAudioContext& context() const { return m_context.get(); }
-
-    Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> contextForBindings() const;
-
     enum NodeType {
-        NodeTypeUnknown,
         NodeTypeDestination,
         NodeTypeOscillator,
         NodeTypeAudioBufferSource,
@@ -86,15 +77,21 @@ public:
         NodeTypeAnalyser,
         NodeTypeDynamicsCompressor,
         NodeTypeWaveShaper,
-        NodeTypeBasicInspector,
         NodeTypeConstant,
-        NodeTypeStereo,
+        NodeTypeStereoPanner,
         NodeTypeIIRFilter,
-        NodeTypeEnd
+        NodeTypeLast = NodeTypeIIRFilter
     };
 
+    AudioNode(BaseAudioContext&, NodeType);
+    virtual ~AudioNode();
+
+    BaseAudioContext& context() { return m_context.get(); }
+    const BaseAudioContext& context() const { return m_context.get(); }
+
+    Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> contextForBindings() const;
+
     NodeType nodeType() const { return m_nodeType; }
-    void setNodeType(NodeType);
 
     // Can be called from main thread or context's audio thread.
     void ref();
@@ -235,7 +232,7 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final;
 
     volatile bool m_isInitialized { false };
-    NodeType m_nodeType { NodeTypeUnknown };
+    NodeType m_nodeType;
     Ref<BaseAudioContext> m_context;
 
     Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
@@ -254,7 +251,7 @@ private:
 
 #if DEBUG_AUDIONODE_REFERENCES
     static bool s_isNodeCountInitialized;
-    static int s_nodeCount[NodeTypeEnd];
+    static int s_nodeCount[NodeTypeLast + 1];
 #endif
 
     void refEventTarget() override { ref(); }

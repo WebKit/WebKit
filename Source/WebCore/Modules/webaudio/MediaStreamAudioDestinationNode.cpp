@@ -56,11 +56,10 @@ ExceptionOr<Ref<MediaStreamAudioDestinationNode>> MediaStreamAudioDestinationNod
 }
 
 MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(BaseAudioContext& context)
-    : AudioBasicInspectorNode(context)
+    : AudioBasicInspectorNode(context, NodeTypeMediaStreamAudioDestination)
     , m_source(MediaStreamAudioSource::create(context.sampleRate()))
     , m_stream(MediaStream::create(*context.document(), MediaStreamPrivate::create(context.document()->logger(), m_source.copyRef())))
 {
-    setNodeType(NodeTypeMediaStreamAudioDestination);
     initialize();
 }
 

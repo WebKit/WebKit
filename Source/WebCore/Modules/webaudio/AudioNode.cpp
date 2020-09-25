@@ -50,7 +50,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AudioNode);
 String convertEnumerationToString(AudioNode::NodeType enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
-        MAKE_STATIC_STRING_IMPL("NodeTypeUnknown"),
         MAKE_STATIC_STRING_IMPL("NodeTypeDestination"),
         MAKE_STATIC_STRING_IMPL("NodeTypeOscillator"),
         MAKE_STATIC_STRING_IMPL("NodeTypeAudioBufferSource"),
@@ -68,42 +67,39 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
         MAKE_STATIC_STRING_IMPL("NodeTypeAnalyser"),
         MAKE_STATIC_STRING_IMPL("NodeTypeDynamicsCompressor"),
         MAKE_STATIC_STRING_IMPL("NodeTypeWaveShaper"),
-        MAKE_STATIC_STRING_IMPL("NodeTypeBasicInspector"),
         MAKE_STATIC_STRING_IMPL("NodeTypeConstant"),
-        MAKE_STATIC_STRING_IMPL("NodeTypeStereo"),
-        MAKE_STATIC_STRING_IMPL("NodeTypeEnd"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeStereoPanner"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeIIRFilter"),
     };
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeUnknown) == 0, "AudioNode::NodeTypeUnknown is not 0 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeDestination) == 1, "AudioNode::NodeTypeDestination is not 1 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeOscillator) == 2, "AudioNode::NodeTypeOscillator is not 2 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeAudioBufferSource) == 3, "AudioNode::NodeTypeAudioBufferSource is not 3 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaElementAudioSource) == 4, "AudioNode::NodeTypeMediaElementAudioSource is not 4 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaStreamAudioDestination) == 5, "AudioNode::NodeTypeMediaStreamAudioDestination is not 5 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaStreamAudioSource) == 6, "AudioNode::NodeTypeMediaStreamAudioSource is not 6 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeJavaScript) == 7, "AudioNode::NodeTypeJavaScript is not 7 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeBiquadFilter) == 8, "AudioNode::NodeTypeBiquadFilter is not 8 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypePanner) == 9, "AudioNode::NodeTypePanner is not 9 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeConvolver) == 10, "AudioNode::NodeTypeConvolver is not 10 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeDelay) == 11, "AudioNode::NodeTypeDelay is not 11 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeGain) == 12, "AudioNode::NodeTypeGain is not 12 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeChannelSplitter) == 13, "AudioNode::NodeTypeChannelSplitter is not 13 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeChannelMerger) == 14, "AudioNode::NodeTypeChannelMerger is not 14 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeAnalyser) == 15, "AudioNode::NodeTypeAnalyser is not 15 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeDynamicsCompressor) == 16, "AudioNode::NodeTypeDynamicsCompressor is not 16 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeWaveShaper) == 17, "AudioNode::NodeTypeWaveShaper is not 17 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeBasicInspector) == 18, "AudioNode::NodeTypeBasicInspector is not 18 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeConstant) == 19, "AudioNode::NodeTypeEnd is not 19 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeStereo) == 20, "AudioNode::NodeTypeStereo is not 20 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeIIRFilter) == 21, "AudioNode::NodeTypeIIRFilter is not 21 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeEnd) == 22, "AudioNode::NodeTypeConstant is not 22 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeDestination) == 0, "AudioNode::NodeTypeDestination is not 1 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeOscillator) == 1, "AudioNode::NodeTypeOscillator is not 2 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeAudioBufferSource) == 2, "AudioNode::NodeTypeAudioBufferSource is not 3 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaElementAudioSource) == 3, "AudioNode::NodeTypeMediaElementAudioSource is not 4 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaStreamAudioDestination) == 4, "AudioNode::NodeTypeMediaStreamAudioDestination is not 5 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaStreamAudioSource) == 5, "AudioNode::NodeTypeMediaStreamAudioSource is not 6 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeJavaScript) == 6, "AudioNode::NodeTypeJavaScript is not 7 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeBiquadFilter) == 7, "AudioNode::NodeTypeBiquadFilter is not 8 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypePanner) == 8, "AudioNode::NodeTypePanner is not 9 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeConvolver) == 9, "AudioNode::NodeTypeConvolver is not 10 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeDelay) == 10, "AudioNode::NodeTypeDelay is not 11 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeGain) == 11, "AudioNode::NodeTypeGain is not 12 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeChannelSplitter) == 12, "AudioNode::NodeTypeChannelSplitter is not 13 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeChannelMerger) == 13, "AudioNode::NodeTypeChannelMerger is not 14 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeAnalyser) == 14, "AudioNode::NodeTypeAnalyser is not 15 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeDynamicsCompressor) == 15, "AudioNode::NodeTypeDynamicsCompressor is not 16 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeWaveShaper) == 16, "AudioNode::NodeTypeWaveShaper is not 17 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeConstant) == 17, "AudioNode::NodeTypeConstant is not 19 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeStereoPanner) == 18, "AudioNode::NodeTypeStereoPanner is not 20 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeIIRFilter) == 19, "AudioNode::NodeTypeIIRFilter is not 21 as expected");
 
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-AudioNode::AudioNode(BaseAudioContext& context)
-    : m_context(context)
+AudioNode::AudioNode(BaseAudioContext& context, NodeType type)
+    : m_nodeType(type)
+    , m_context(context)
 #if !RELEASE_LOG_DISABLED
     , m_logger(context.logger())
     , m_logIdentifier(context.nextAudioNodeLogIdentifier())
@@ -112,6 +108,7 @@ AudioNode::AudioNode(BaseAudioContext& context)
     ALWAYS_LOG(LOGIDENTIFIER);
 
 #if DEBUG_AUDIONODE_REFERENCES
+    ++s_nodeCount[type];
     if (!s_isNodeCountInitialized) {
         s_isNodeCountInitialized = true;
         atexit(AudioNode::printNodeCounts);
@@ -138,18 +135,6 @@ void AudioNode::initialize()
 void AudioNode::uninitialize()
 {
     m_isInitialized = false;
-}
-
-void AudioNode::setNodeType(NodeType type)
-{
-    ASSERT(isMainThread());
-    ALWAYS_LOG(LOGIDENTIFIER, type);
-
-    m_nodeType = type;
-
-#if DEBUG_AUDIONODE_REFERENCES
-    ++s_nodeCount[type];
-#endif
 }
 
 void AudioNode::lazyInitialize()
@@ -723,7 +708,7 @@ ExceptionOr<void> AudioNode::handleAudioNodeOptions(const AudioNodeOptions& opti
 #if DEBUG_AUDIONODE_REFERENCES
 
 bool AudioNode::s_isNodeCountInitialized = false;
-int AudioNode::s_nodeCount[NodeTypeEnd];
+int AudioNode::s_nodeCount[NodeTypeLast + 1];
 
 void AudioNode::printNodeCounts()
 {
@@ -732,7 +717,7 @@ void AudioNode::printNodeCounts()
     fprintf(stderr, "AudioNode: reference counts\n");
     fprintf(stderr, "===========================\n");
 
-    for (unsigned i = 0; i < NodeTypeEnd; ++i)
+    for (unsigned i = 0; i <= NodeTypeLast; ++i)
         fprintf(stderr, "%d: %d\n", i, s_nodeCount[i]);
 
     fprintf(stderr, "===========================\n\n\n");

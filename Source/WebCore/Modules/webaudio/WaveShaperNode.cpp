@@ -70,9 +70,8 @@ ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& contex
 }
 
 WaveShaperNode::WaveShaperNode(BaseAudioContext& context)
-    : AudioBasicProcessorNode(context)
+    : AudioBasicProcessorNode(context, NodeTypeWaveShaper)
 {
-    setNodeType(NodeTypeWaveShaper);
     m_processor = makeUnique<WaveShaperProcessor>(context.sampleRate(), 1);
 
     initialize();

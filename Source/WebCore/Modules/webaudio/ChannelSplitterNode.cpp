@@ -57,10 +57,8 @@ ExceptionOr<Ref<ChannelSplitterNode>> ChannelSplitterNode::create(BaseAudioConte
 }
 
 ChannelSplitterNode::ChannelSplitterNode(BaseAudioContext& context, unsigned numberOfOutputs)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypeChannelSplitter)
 {
-    setNodeType(NodeTypeChannelSplitter);
-
     addInput();
 
     // Create a fixed number of outputs (able to handle the maximum number of channels fed to an input).

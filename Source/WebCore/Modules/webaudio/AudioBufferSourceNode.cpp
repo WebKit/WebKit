@@ -89,13 +89,11 @@ ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioC
 }
 
 AudioBufferSourceNode::AudioBufferSourceNode(BaseAudioContext& context)
-    : AudioScheduledSourceNode(context)
+    : AudioScheduledSourceNode(context, NodeTypeAudioBufferSource)
     , m_detune(AudioParam::create(context, "detune"_s, 0.0, -FLT_MAX, FLT_MAX, AutomationRate::KRate, AutomationRateMode::Fixed))
     , m_playbackRate(AudioParam::create(context, "playbackRate"_s, 1.0, -FLT_MAX, FLT_MAX, AutomationRate::KRate, AutomationRateMode::Fixed))
     , m_grainDuration(DefaultGrainDuration)
 {
-    setNodeType(NodeTypeAudioBufferSource);
-
     // Default to mono.  A call to setBuffer() will set the number of output channels to that of the buffer.
     addOutput(1);
 

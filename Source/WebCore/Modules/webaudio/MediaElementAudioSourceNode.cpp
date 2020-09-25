@@ -66,11 +66,9 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::creat
 }
 
 MediaElementAudioSourceNode::MediaElementAudioSourceNode(BaseAudioContext& context, Ref<HTMLMediaElement>&& mediaElement)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypeMediaElementAudioSource)
     , m_mediaElement(WTFMove(mediaElement))
 {
-    setNodeType(NodeTypeMediaElementAudioSource);
-
     // Default to stereo. This could change depending on what the media element .src is set to.
     addOutput(2);
 

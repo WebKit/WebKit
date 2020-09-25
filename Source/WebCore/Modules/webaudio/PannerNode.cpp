@@ -51,7 +51,7 @@ static void fixNANs(double &x)
 }
 
 PannerNodeBase::PannerNodeBase(BaseAudioContext& context)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypePanner)
 {
 }
 
@@ -99,8 +99,6 @@ PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
     // Load the HRTF database asynchronously so we don't block the Javascript thread while creating the HRTF database.
     , m_hrtfDatabaseLoader(HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(context.sampleRate()))
 {
-    setNodeType(NodeTypePanner);
-
     setDistanceModel(options.distanceModel);
     setConeInnerAngle(options.coneInnerAngle);
     setConeOuterAngle(options.coneOuterAngle);

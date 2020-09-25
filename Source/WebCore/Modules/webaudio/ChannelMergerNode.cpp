@@ -61,10 +61,8 @@ ExceptionOr<Ref<ChannelMergerNode>> ChannelMergerNode::create(BaseAudioContext& 
 }
 
 ChannelMergerNode::ChannelMergerNode(BaseAudioContext& context, unsigned numberOfInputs)
-    : AudioNode(context)
+    : AudioNode(context, NodeTypeChannelMerger)
 {
-    setNodeType(NodeTypeChannelMerger);
-
     // Create the requested number of inputs.
     for (unsigned i = 0; i < numberOfInputs; ++i)
         addInput();

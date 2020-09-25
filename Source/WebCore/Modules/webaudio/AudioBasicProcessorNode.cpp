@@ -39,8 +39,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBasicProcessorNode);
 
-AudioBasicProcessorNode::AudioBasicProcessorNode(BaseAudioContext& context)
-    : AudioNode(context)
+AudioBasicProcessorNode::AudioBasicProcessorNode(BaseAudioContext& context, NodeType type)
+    : AudioNode(context, type)
 {
     addInput();
     addOutput(1);
