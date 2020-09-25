@@ -491,8 +491,6 @@ public:
     void setTimerThrottlingEnabled(bool);
     bool isTimerThrottlingEnabled() const { return m_isTimerThrottlingEnabled; }
 
-    void markAsUnloadingOrUnloaded() { m_isUnloadingOrUnloaded = true; }
-
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> adoptNode(Node& source);
 
     WEBCORE_EXPORT Ref<HTMLCollection> images();
@@ -2129,7 +2127,6 @@ private:
     bool m_hasStartedApplePaySession { false };
 #endif
     bool m_hasVisuallyNonEmptyCustomContent { false };
-    bool m_isUnloadingOrUnloaded { false };
 
     Ref<UndoManager> m_undoManager;
 #if PLATFORM(IOS_FAMILY)

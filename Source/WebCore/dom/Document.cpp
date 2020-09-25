@@ -1772,7 +1772,7 @@ VisibilityState Document::visibilityState() const
     // page. If there is no page associated with the document, we will assume
     // that the page is hidden, as specified by the spec:
     // https://w3c.github.io/page-visibility/#visibilitystate-attribute
-    if (!m_frame || !m_frame->page() || m_isUnloadingOrUnloaded)
+    if (!m_frame || !m_frame->page())
         return VisibilityState::Hidden;
     return m_frame->page()->visibilityState();
 }

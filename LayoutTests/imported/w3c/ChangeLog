@@ -1,5 +1,18 @@
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, reverting r267589.
+
+        Broke document.visibilityState when coming out of back/forward
+        cache
+
+        Reverted changeset:
+
+        "visibilitychange:hidden doesn't fire during page navigations"
+        https://bugs.webkit.org/show_bug.cgi?id=151234
+        https://trac.webkit.org/changeset/267589
+
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
         visibilitychange:hidden doesn't fire during page navigations
         https://bugs.webkit.org/show_bug.cgi?id=151234
         <rdar://problem/23688763>
