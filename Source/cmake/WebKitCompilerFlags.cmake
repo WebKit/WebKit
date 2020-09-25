@@ -240,20 +240,11 @@ if (UNIX AND NOT APPLE AND NOT ENABLED_COMPILER_SANITIZERS)
 endif ()
 
 
-# CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS only matters with GCC >= 4.7.0.  Since this
-# version, -P does not output empty lines, which currently breaks make_names.pl in
-# WebCore. Investigating whether make_names.pl should be changed instead is left as an exercise to
-# the reader.
 if (MSVC)
-    set(CODE_GENERATOR_PREPROCESSOR_ARGUMENTS "/nologo /EP /TP")
-    set(CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS_ARGUMENTS ${CODE_GENERATOR_PREPROCESSOR_ARGUMENTS})
+    set(CODE_GENERATOR_PREPROCESSOR "\"${CMAKE_CXX_COMPILER}\" /nologo /EP /TP")
 else ()
-    set(CODE_GENERATOR_PREPROCESSOR_ARGUMENTS "-E -P -x c++")
-    set(CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS_ARGUMENTS "-E -x c++")
+    set(CODE_GENERATOR_PREPROCESSOR "\"${CMAKE_CXX_COMPILER}\" -E -P -x c++")
 endif ()
-
-set(CODE_GENERATOR_PREPROCESSOR "\"${CMAKE_CXX_COMPILER}\" ${CODE_GENERATOR_PREPROCESSOR_ARGUMENTS}")
-set(CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS "\"${CMAKE_CXX_COMPILER}\" ${CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS_ARGUMENTS}")
 
 
 # Ensure that the default include system directories are added to the list of CMake implicit includes.

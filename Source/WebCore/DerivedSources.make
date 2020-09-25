@@ -1583,7 +1583,7 @@ HTML_TAG_FILES_PATTERNS = $(subst .,%,$(HTML_TAG_FILES))
 all : $(HTML_TAG_FILES)
 
 $(HTML_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --extraDefines "$(FEATURE_AND_PLATFORM_DEFINES)"
+	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
 
 XMLNSNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlnsattrs.in
 	$(PERL) $< --attrs $(WebCore)/xml/xmlnsattrs.in
@@ -1609,7 +1609,7 @@ SVG_TAG_FILES_PATTERNS = $(subst .,%,$(SVG_TAG_FILES))
 all : $(SVG_TAG_FILES)
 
 $(SVG_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory --extraDefines "$(FEATURE_AND_PLATFORM_DEFINES)"
+	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
 
 XLinkNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/xlinkattrs.in
 	$(PERL) $< --attrs $(WebCore)/svg/xlinkattrs.in

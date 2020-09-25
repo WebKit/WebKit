@@ -2046,7 +2046,7 @@ list(APPEND WebCore_SOURCES
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 
 
-GENERATE_DOM_NAMES(HTML ${WEBCORE_DIR}/html/HTMLAttributeNames.in ${WEBCORE_DIR}/html/HTMLTagNames.in "")
+GENERATE_DOM_NAMES(HTML ${WEBCORE_DIR}/html/HTMLAttributeNames.in ${WEBCORE_DIR}/html/HTMLTagNames.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/HTMLNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp)
 
 
@@ -2064,7 +2064,7 @@ GENERATE_FONT_NAMES(${WEBCORE_DIR}/css/WebKitFontFamilyNames.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebKitFontFamilyNames.cpp)
 
 
-GENERATE_DOM_NAMES(MathML ${WEBCORE_DIR}/mathml/mathattrs.in ${WEBCORE_DIR}/mathml/mathtags.in "")
+GENERATE_DOM_NAMES(MathML ${WEBCORE_DIR}/mathml/mathattrs.in ${WEBCORE_DIR}/mathml/mathtags.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/MathMLNames.cpp)
 if (ENABLE_MATHML)
     list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp)

@@ -212,33 +212,20 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
 endmacro()
 
 
-macro(GENERATE_DOM_NAMES _namespace _attrs)
+function(GENERATE_DOM_NAMES _namespace _attrs)
+    list(POP_FRONT ARGN _tags)
     set(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
     set(_arguments  --attrs ${_attrs})
     set(_outputfiles ${WebCore_DERIVED_SOURCES_DIR}/${_namespace}Names.cpp ${WebCore_DERIVED_SOURCES_DIR}/${_namespace}Names.h)
-    set(_extradef)
-    set(_tags)
-
-    foreach (f ${ARGN})
-        if (_tags)
-            set(_extradef "${_extradef} ${f}")
-        else ()
-            set(_tags ${f})
-        endif ()
-    endforeach ()
 
     if (_tags)
         set(_arguments "${_arguments}" --tags ${_tags} --factory --wrapperFactory)
         set(_outputfiles "${_outputfiles}" ${WebCore_DERIVED_SOURCES_DIR}/${_namespace}ElementFactory.cpp ${WebCore_DERIVED_SOURCES_DIR}/${_namespace}ElementFactory.h ${WebCore_DERIVED_SOURCES_DIR}/${_namespace}ElementTypeHelpers.h ${WebCore_DERIVED_SOURCES_DIR}/JS${_namespace}ElementWrapperFactory.cpp ${WebCore_DERIVED_SOURCES_DIR}/JS${_namespace}ElementWrapperFactory.h)
     endif ()
 
-    if (_extradef)
-        set(_additionArguments "${_additionArguments}" --extraDefines=${_extradef})
-    endif ()
-
     add_custom_command(
         OUTPUT  ${_outputfiles}
         DEPENDS ${MAKE_NAMES_DEPENDENCIES} ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_attrs} ${_tags}
-        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --preprocessor "${CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS}" --outputDir ${WebCore_DERIVED_SOURCES_DIR} ${_arguments} ${_additionArguments}
+        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --outputDir ${WebCore_DERIVED_SOURCES_DIR} ${_arguments} ${_additionArguments}
         VERBATIM)
-endmacro()
+endfunction()
