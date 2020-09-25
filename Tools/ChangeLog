@@ -1,3 +1,13 @@
+2020-09-25  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitperl] Check for custom Flatpak user dirs in webkitdirs.pm
+        https://bugs.webkit.org/show_bug.cgi?id=216959
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitdirs.pm: Check for WEBKIT_FLATPAK_USER_DIR
+        (getUserFlatpakPath):
+
 2020-09-25  Youenn Fablet  <youenn@apple.com>
 
         Introduce WKWebViewConfiguration mediaCaptureEnabled

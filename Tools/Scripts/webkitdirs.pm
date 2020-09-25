@@ -2163,6 +2163,10 @@ sub getJhbuildModulesetName()
 
 sub getUserFlatpakPath()
 {
+    if (defined($ENV{'WEBKIT_FLATPAK_USER_DIR'})) {
+       return $ENV{'WEBKIT_FLATPAK_USER_DIR'};
+    }
+
     my $productDir = baseProductDir();
     if (isGit() && isGitBranchBuild() && gitBranch()) {
         my $branch = gitBranch();
