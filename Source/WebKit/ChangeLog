@@ -1,3 +1,16 @@
+2020-09-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny access to diagnosticd in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=216929
+        <rdar://problem/58496834>
+
+        Reviewed by Darin Adler.
+
+        After the change-set <https://trac.webkit.org/changeset/267498> landed, an extension to diagnostics
+        is issued when required, so the unconditional rule can be removed from the WebContent sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-09-25  Youenn Fablet  <youenn@apple.com>
 
         Implement default behavior for getUserMedia requests in case where there is no delegate set

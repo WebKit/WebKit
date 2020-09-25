@@ -721,7 +721,6 @@
     (with report) (with telemetry-backtrace)
 #endif
     (global-name "com.apple.coreservices.launchservicesd")
-    (global-name "com.apple.diagnosticd")
     (global-name "com.apple.iconservices")
     (global-name "com.apple.iconservices.store")
     (global-name "com.apple.powerlog.plxpclogger.xpc")
