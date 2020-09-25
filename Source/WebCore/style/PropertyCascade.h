@@ -67,7 +67,7 @@ public:
     const Vector<Property, 8>& deferredProperties() const { return m_deferredProperties; }
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
-    Direction direction() const { return m_direction; }
+    Direction direction() const;
 
     const PropertyCascade* propertyCascadeForRollback(CascadeLevel) const;
 
@@ -85,7 +85,8 @@ private:
 
     const MatchResult& m_matchResult;
     const IncludedProperties m_includedProperties;
-    const Direction m_direction;
+    mutable Direction m_direction;
+    mutable bool m_directionIsUnresolved { true };
 
     Property m_properties[numCSSProperties + 2];
     std::bitset<numCSSProperties + 2> m_propertyIsPresent;
