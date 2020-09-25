@@ -33,7 +33,7 @@ namespace JSC {
 class JSDataView final : public JSArrayBufferView {
 public:
     using Base = JSArrayBufferView;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesAnyFormOfGetPropertyNames;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static constexpr unsigned elementSize = 1;
 
@@ -72,12 +72,6 @@ public:
 
 private:
     JSDataView(VM&, ConstructionContext&, ArrayBuffer*);
-
-    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
-
-    static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 
     ArrayBuffer* m_buffer;
 };

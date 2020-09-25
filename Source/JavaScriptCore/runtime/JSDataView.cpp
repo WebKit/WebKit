@@ -104,64 +104,6 @@ RefPtr<DataView> JSDataView::unsharedTypedImpl()
     return DataView::create(unsharedBuffer(), byteOffset(), length());
 }
 
-bool JSDataView::put(
-    JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value,
-    PutPropertySlot& slot)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSDataView* thisObject = jsCast<JSDataView*>(cell);
-
-    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
-        RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode()));
-
-    if (propertyName == vm.propertyNames->byteLength
-        || propertyName == vm.propertyNames->byteOffset)
-        return typeError(globalObject, scope, slot.isStrictMode(), "Attempting to write to read-only typed array property."_s);
-
-    RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
-}
-
-bool JSDataView::defineOwnProperty(
-    JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName,
-    const PropertyDescriptor& descriptor, bool shouldThrow)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSDataView* thisObject = jsCast<JSDataView*>(object);
-    if (propertyName == vm.propertyNames->byteLength
-        || propertyName == vm.propertyNames->byteOffset)
-        return typeError(globalObject, scope, shouldThrow, "Attempting to define read-only typed array property."_s);
-
-    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow));
-}
-
-bool JSDataView::deleteProperty(
-    JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
-{
-    VM& vm = globalObject->vm();
-    JSDataView* thisObject = jsCast<JSDataView*>(cell);
-    if (propertyName == vm.propertyNames->byteLength
-        || propertyName == vm.propertyNames->byteOffset)
-        return false;
-
-    return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
-}
-
-void JSDataView::getOwnNonIndexPropertyNames(
-    JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& array, EnumerationMode mode)
-{
-    VM& vm = globalObject->vm();
-    JSDataView* thisObject = jsCast<JSDataView*>(object);
-    
-    if (mode.includeDontEnumProperties()) {
-        array.add(vm.propertyNames->byteOffset);
-        array.add(vm.propertyNames->byteLength);
-    }
-    
-    Base::getOwnNonIndexPropertyNames(thisObject, globalObject, array, mode);
-}
-
 Structure* JSDataView::createStructure(
     VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

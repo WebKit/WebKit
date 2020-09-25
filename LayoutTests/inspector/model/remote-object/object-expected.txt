@@ -310,9 +310,9 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
     "_overflow": false,
     "_properties": [
       {
-        "_name": "byteOffset",
-        "_type": "number",
-        "_value": "0"
+        "_name": "buffer",
+        "_type": "object",
+        "_value": "ArrayBuffer"
       },
       {
         "_name": "byteLength",
@@ -320,9 +320,9 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
         "_value": "16"
       },
       {
-        "_name": "buffer",
-        "_type": "object",
-        "_value": "ArrayBuffer"
+        "_name": "byteOffset",
+        "_type": "number",
+        "_value": "0"
       }
     ],
     "_entries": null

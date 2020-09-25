@@ -1,5 +1,14 @@
 2020-09-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        DataView instances should not have own "byteLength" and "byteOffset" properties
+        https://bugs.webkit.org/show_bug.cgi?id=149906
+
+        Reviewed by Ross Kirsling.
+
+        * stress/dataview-no-own-properties.js: Added.
+
+2020-09-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         REGRESSION (r267514): mozilla-tests.yaml/js1_5/Array/regress-157652.js.mozilla* timing out
         https://bugs.webkit.org/show_bug.cgi?id=216955
 

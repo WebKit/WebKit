@@ -1,3 +1,12 @@
+2020-09-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        DataView instances should not have own "byteLength" and "byteOffset" properties
+        https://bugs.webkit.org/show_bug.cgi?id=149906
+
+        Reviewed by Ross Kirsling.
+
+        * inspector/model/remote-object/object-expected.txt:
+
 2020-09-25  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable on Apple Windows port
