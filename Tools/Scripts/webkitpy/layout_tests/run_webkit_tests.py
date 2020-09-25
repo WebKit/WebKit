@@ -384,9 +384,12 @@ def parse_args(args):
         options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/gpu-process/TestExpectations'))
         if not options.internal_feature:
             options.internal_feature = []
-        options.internal_feature.append('UseGPUProcessForMedia')
+        options.internal_feature.append('UseGPUProcessForMediaEnabled')
         options.internal_feature.append('CaptureAudioInGPUProcessEnabled')
-        options.internal_feature.append('RenderCanvasInGPUProcessEnabled')
+        options.internal_feature.append('CaptureVideoInGPUProcessEnabled')
+        options.internal_feature.append('UseGPUProcessForCanvasRenderingEnabled')
+        options.internal_feature.append('UseGPUProcessForDOMRenderingEnabled')
+        options.internal_feature.append('UseGPUProcessForWebGLEnabled')
         if options.result_report_flavor:
             raise RuntimeError('--use-gpu-process implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'gpuprocess'
