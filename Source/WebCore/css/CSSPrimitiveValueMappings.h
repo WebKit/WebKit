@@ -5755,4 +5755,36 @@ template<> inline CSSPrimitiveValue::operator FontLoadingBehavior() const
     return FontLoadingBehavior::Auto;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(MathStyle mathStyle)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (mathStyle) {
+    case MathStyle::Normal:
+        m_value.valueID = CSSValueNormal;
+        break;
+    case MathStyle::Compact:
+        m_value.valueID = CSSValueCompact;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator MathStyle() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueNormal:
+        return MathStyle::Normal;
+    case CSSValueCompact:
+        return MathStyle::Compact;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return MathStyle::Normal;
+}
+
 }

@@ -157,6 +157,8 @@ public:
     unsigned hasSetStrokeWidth : 1;
     unsigned hasSetStrokeColor : 1;
 
+    unsigned mathStyle : 1;
+
     OptionSet<TouchAction> effectiveTouchActions;
     OptionSet<EventListenerRegionType> eventListenerRegionTypes;
 

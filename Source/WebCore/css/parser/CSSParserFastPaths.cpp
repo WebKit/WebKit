@@ -669,6 +669,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return (valueID >= CSSValueDisc && valueID <= CSSValueKatakanaIroha) || valueID == CSSValueNone;
     case CSSPropertyMaskType:
         return valueID == CSSValueLuminance || valueID == CSSValueAlpha;
+    case CSSPropertyMathStyle:
+        return valueID == CSSValueNormal || valueID == CSSValueCompact;
     case CSSPropertyObjectFit:
         return valueID == CSSValueFill || valueID == CSSValueContain || valueID == CSSValueCover || valueID == CSSValueNone || valueID == CSSValueScaleDown;
     case CSSPropertyOutlineStyle: // (<border-style> except hidden) | auto
@@ -1051,6 +1053,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(VARIATION_FONTS)
     case CSSPropertyFontOpticalSizing:
 #endif
+    case CSSPropertyMathStyle:
         return true;
     default:
         return false;

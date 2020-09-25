@@ -50,7 +50,7 @@ private:
 
     void stretchHorizontalOperatorsAndLayoutChildren();
     bool isValid() const;
-    bool shouldMoveLimits();
+    bool shouldMoveLimits() const;
     RenderBox& base() const;
     RenderBox& under() const;
     RenderBox& over() const;

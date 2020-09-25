@@ -3604,6 +3604,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitBackdropFilter:
             return valueForFilter(style, style.backdropFilter());
 #endif
+        case CSSPropertyMathStyle:
+            return cssValuePool.createValue(style.mathStyle());
 #if ENABLE(CSS_COMPOSITING)
         case CSSPropertyMixBlendMode:
             return cssValuePool.createValue(style.blendMode());

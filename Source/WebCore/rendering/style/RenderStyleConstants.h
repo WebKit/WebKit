@@ -1193,6 +1193,11 @@ enum class EventListenerRegionType : uint8_t {
     NonPassiveWheel = 1 << 1,
 };
 
+enum class MathStyle : uint8_t {
+    Normal,
+    Compact,
+};
+
 extern const float defaultMiterLimit;
 
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationFillMode);
@@ -1306,5 +1311,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, VerticalAlign);
 WTF::TextStream& operator<<(WTF::TextStream&, Visibility);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpace);
 WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
+WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 
 } // namespace WebCore

@@ -3036,6 +3036,16 @@
                 "url": "https://drafts.fxtf.org/css-masking-1/#propdef-mask-type"
             }
         },
+        "math-style": {
+            "values": [
+                "normal",
+                "compact"
+            ],
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://mathml-refresh.github.io/mathml-core/#dfn-math-style"
+            }
+        },
         "max-block-size": {
             "codegen-properties": {
                 "aliases": [

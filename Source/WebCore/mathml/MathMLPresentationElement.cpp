@@ -319,19 +319,6 @@ const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const
     return length.value();
 }
 
-bool MathMLPresentationElement::acceptsDisplayStyleAttribute()
-{
-    return hasTagName(mtableTag);
-}
-
-Optional<bool> MathMLPresentationElement::specifiedDisplayStyle()
-{
-    if (!acceptsDisplayStyleAttribute())
-        return WTF::nullopt;
-    const MathMLElement::BooleanValue& specifiedDisplayStyle = cachedBooleanAttribute(displaystyleAttr, m_displayStyle);
-    return toOptionalBool(specifiedDisplayStyle);
-}
-
 MathMLElement::MathVariant MathMLPresentationElement::parseMathVariantAttribute(const AtomString& attributeValue)
 {
     // The mathvariant attribute values is case-sensitive.
@@ -385,13 +372,10 @@ Optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMathVar
 
 void MathMLPresentationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    bool displayStyleAttribute = name == displaystyleAttr && acceptsDisplayStyleAttribute();
     bool mathVariantAttribute = name == mathvariantAttr && acceptsMathVariantAttribute();
-    if (displayStyleAttribute)
-        m_displayStyle = WTF::nullopt;
     if (mathVariantAttribute)
         m_mathVariant = WTF::nullopt;
-    if ((displayStyleAttribute || mathVariantAttribute) && renderer())
+    if ((mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 
     MathMLElement::parseAttribute(name, value);

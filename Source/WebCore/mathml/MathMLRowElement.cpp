@@ -70,11 +70,6 @@ RenderPtr<RenderElement> MathMLRowElement::createElementRenderer(RenderStyle&& s
     return createRenderer<RenderMathMLRow>(*this, WTFMove(style));
 }
 
-bool MathMLRowElement::acceptsDisplayStyleAttribute()
-{
-    return hasTagName(mstyleTag);
-}
-
 bool MathMLRowElement::acceptsMathVariantAttribute()
 {
     return hasTagName(mstyleTag);

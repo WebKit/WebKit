@@ -56,28 +56,12 @@ RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderMathMLMath>(*this, WTFMove(style));
 }
 
-Optional<bool> MathMLMathElement::specifiedDisplayStyle()
-{
-    if (cachedBooleanAttribute(displaystyleAttr, m_displayStyle) == BooleanValue::Default) {
-        // The default displaystyle value of the <math> depends on the display attribute, so we parse it here.
-        auto& value = attributeWithoutSynchronization(displayAttr);
-        if (value == "block")
-            m_displayStyle = BooleanValue::True;
-        else if (value == "inline")
-            m_displayStyle = BooleanValue::False;
-    }
-    return toOptionalBool(m_displayStyle.value());
-}
-
 void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    bool displayStyleAttribute = (name == displaystyleAttr || name == displayAttr);
     bool mathVariantAttribute = name == mathvariantAttr;
-    if (displayStyleAttribute)
-        m_displayStyle = WTF::nullopt;
     if (mathVariantAttribute)
         m_mathVariant = WTF::nullopt;
-    if ((displayStyleAttribute || mathVariantAttribute) && renderer())
+    if ((mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 
     MathMLElement::parseAttribute(name, value);

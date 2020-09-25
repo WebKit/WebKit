@@ -108,7 +108,7 @@ void MathMLElement::parseAttribute(const QualifiedName& name, const AtomString& 
 
 bool MathMLElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (name == backgroundAttr || name == colorAttr || name == dirAttr || name == fontfamilyAttr || name == fontsizeAttr || name == fontstyleAttr || name == fontweightAttr || name == mathbackgroundAttr || name == mathcolorAttr || name == mathsizeAttr)
+    if (name == backgroundAttr || name == colorAttr || name == dirAttr || name == fontfamilyAttr || name == fontsizeAttr || name == fontstyleAttr || name == fontweightAttr || name == mathbackgroundAttr || name == mathcolorAttr || name == mathsizeAttr || name == displaystyleAttr)
         return true;
     return StyledElement::isPresentationAttribute(name);
 }
@@ -143,6 +143,11 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
     else if (name == dirAttr) {
         if (document().settings().coreMathMLEnabled() || hasTagName(mathTag) || hasTagName(mrowTag) || hasTagName(mstyleTag) || isMathMLToken())
             addPropertyToPresentationAttributeStyle(style, CSSPropertyDirection, value);
+    } else if (name == displaystyleAttr) {
+        if (equalLettersIgnoringASCIICase(value, "false"))
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyMathStyle, CSSValueCompact);
+        else if (equalLettersIgnoringASCIICase(value, "true"))
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyMathStyle, CSSValueNormal);
     } else {
         if (document().settings().coreMathMLEnabled()) {
             StyledElement::collectStyleForPresentationAttribute(name, value, style);

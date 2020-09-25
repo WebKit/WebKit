@@ -15,6 +15,7 @@
 
 math {
     display: inline;
+    math-style: compact;
 
     /*
     We use the exact bounding boxes of glyphs to avoid excessive gaps in mathematical formulas.
@@ -122,9 +123,13 @@ math {
     /* FIXME: Should we reset more CSS properties (http://webkit.org/b/156839)? */
 }
 
-math[display="block"] {
+math[display="block" i] {
     display: block;
     page-break-inside: avoid;
+    math-style: normal;
+}
+math[display="inline" i] {
+  math-style: compact;
 }
 
 ms, mspace, mtext, mi, mn, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose, semantics, mpadded, maction {
@@ -135,13 +140,18 @@ ms, mtext, mi, mn, mo, annotation, mtd {
     white-space: nowrap !important;
 }
 
+mfrac > * {
+    math-style: compact;
+}
+
 msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
     font-size: 0.75em; /* FIXME: MathML standard is 0.71em */
+    math-style: compact;
 }
 mroot > *:last-child {
     font-size: 0.5625em; /* This 0.75^2 since the scriptlevel is incremented by 2 in the index. */
+    math-style: compact;
 }
-
 mi {
     -webkit-padding-end: 0.1em;
 }
@@ -167,6 +177,7 @@ merror {
 mtable {
     display: inline-table;
     text-align: center;
+    math-style: compact;
 }
 
 mtr {

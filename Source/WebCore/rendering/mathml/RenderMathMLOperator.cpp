@@ -287,6 +287,10 @@ void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyl
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     m_mathOperator.reset(style());
+
+    // MathML displaystyle can affect isLargeOperatorInDisplayStyle()
+    if (oldStyle && style().mathStyle() != oldStyle->mathStyle() && !isAnonymous())
+        updateTokenContent();
 }
 
 LayoutUnit RenderMathMLOperator::verticalStretchedOperatorShift() const

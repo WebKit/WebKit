@@ -807,6 +807,8 @@ public:
     ApplePayButtonType applePayButtonType() const { return static_cast<ApplePayButtonType>(m_rareNonInheritedData->applePayButtonType); }
 #endif
 
+    MathStyle mathStyle() const { return static_cast<MathStyle>(m_rareInheritedData->mathStyle); }
+
 // attribute setter methods
 
     void setDisplay(DisplayType v) { m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(v); }
@@ -1468,6 +1470,8 @@ public:
     void setHasExplicitlyInheritedProperties() { m_nonInheritedFlags.hasExplicitlyInheritedProperties = true; }
     bool hasExplicitlyInheritedProperties() const { return m_nonInheritedFlags.hasExplicitlyInheritedProperties; }
     
+    void setMathStyle(const MathStyle& v) { SET_VAR(m_rareInheritedData, mathStyle, static_cast<unsigned>(v)); }
+
     // Initial values for all the properties
     static Overflow initialOverflowX() { return Overflow::Visible; }
     static Overflow initialOverflowY() { return Overflow::Visible; }
@@ -1724,6 +1728,8 @@ public:
     static BlendMode initialBlendMode() { return BlendMode::Normal; }
     static Isolation initialIsolation() { return Isolation::Auto; }
 #endif
+
+    static MathStyle initialMathStyle() { return MathStyle::Normal; }
 
     // Indicates the style is likely to change due to a pending stylesheet load.
     bool isNotFinal() const { return m_rareNonInheritedData->isNotFinal; }

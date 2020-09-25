@@ -1339,6 +1339,15 @@ TextStream& operator<<(TextStream& ts, WordBreak wordBreak)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, MathStyle mathStyle)
+{
+    switch (mathStyle) {
+    case MathStyle::Normal: ts << "normal"; break;
+    case MathStyle::Compact: ts << "compact"; break;
+    }
+    return ts;
+}
+
 bool alwaysPageBreak(BreakBetween between)
 {
     return between >= BreakBetween::Page;

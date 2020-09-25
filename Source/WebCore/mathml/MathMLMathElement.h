@@ -43,9 +43,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     void didAttachRenderers() final;
 
-    bool acceptsDisplayStyleAttribute() final { return true; }
     bool acceptsMathVariantAttribute() final { return true; }
-    Optional<bool> specifiedDisplayStyle() final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 };

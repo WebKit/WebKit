@@ -41,20 +41,19 @@
 
         function updatePageAfterRendering()
         {
-            setTimeout(function()
-                {
-                    // Switch the value of display/displaystyle attributes.
-                    var mathmlElements = document.getElementsByClassName("update");
-                    for (var i = 0; i < mathmlElements.length; i++) {
-                        var e = mathmlElements[i];
-                        if (e.hasAttribute("displaystyle"))
-                          e.setAttribute("displaystyle", e.getAttribute("displaystyle") == "true" ? "false" : "true");
-                        if (e.hasAttribute("display"))
-                          e.setAttribute("display", e.getAttribute("display") == "block" ? "inline" : "block");
-                    }
-                    if (window.testRunner)
-                      testRunner.notifyDone();
-                }, 50);
+            // Switch the value of display/displaystyle attributes.
+            var mathmlElements = document.getElementsByClassName("update");
+            for (var i = 0; i < mathmlElements.length; i++) {
+                var e = mathmlElements[i];
+                if (e.hasAttribute("displaystyle"))
+                    e.setAttribute("displaystyle", e.getAttribute("displaystyle") == "true" ? "false" : "true");
+                if (e.hasAttribute("display"))
+                    e.setAttribute("display", e.getAttribute("display") == "block" ? "inline" : "block");
+            }
+            window.requestAnimationFrame(function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
         }
 
         addEventListener('load', updatePageAfterRendering, false);

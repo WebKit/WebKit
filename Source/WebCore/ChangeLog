@@ -1,3 +1,80 @@
+2020-09-25  Frederic Wang  <fwang@igalia.com>
+
+        Bug 216702 - Implement the CSS math-style property
+        https://bugs.webkit.org/show_bug.cgi?id=216702
+
+        Reviewed by Rob Buis.
+
+        This patch implements the math-style property [1][2] and uses it to map MathML's displaystyle
+        attribute to style, instead of using an internal inheritance mechanism. In addition, four
+        changes are made to improve the MathML implementation:
+        - Support for the displaystyle attribute on all the MathML elements.
+        - Better handling of dynamic update of displaystyle.
+        - RenderMathMLUnderOver uses its own displaystyle (rather than the one of the core operator
+        at its base in order) to determine whether to move its under/over scripts.
+        - display/displaystyle are made case-insensitive.
+
+        [1] https://mathml-refresh.github.io/mathml-core/#the-math-style-property
+        [2] https://github.com/w3c/csswg-drafts/issues/5387
+
+        No new tests, already covered by existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator MathStyle const):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/mathml.css: Implement displaystyle rules using math-style.
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isPresentationAttribute const):
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute):
+        * mathml/MathMLElement.h:
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::parseAttribute):
+        * mathml/MathMLMathElement.h:
+        * mathml/MathMLPresentationElement.cpp:
+        (WebCore::MathMLPresentationElement::parseAttribute):
+        * mathml/MathMLPresentationElement.h:
+        * mathml/MathMLRowElement.cpp:
+        * mathml/MathMLRowElement.h:
+        * mathml/MathMLSpaceElement.h:
+        * mathml/MathMLTokenElement.h:
+        * rendering/mathml/MathMLStyle.cpp:
+        (WebCore::MathMLStyle::updateStyleIfNeeded):
+        (WebCore::MathMLStyle::resolveMathMLStyle):
+        * rendering/mathml/MathMLStyle.h:
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::styleDidChange):
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::fractionParameters const):
+        (WebCore::RenderMathMLFraction::stackParameters const):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::styleDidChange):
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::isLargeOperatorInDisplayStyle const):
+        (WebCore::RenderMathMLOperator::shouldMoveLimits const):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::verticalParameters):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::shouldMoveLimits):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::mathStyle const):
+        (WebCore::RenderStyle::setMathStyle):
+        (WebCore::RenderStyle::initialMathStyle):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+
 2020-09-24  Darin Adler  <darin@apple.com>
 
         Add CSSConditionRule and CSSGroupingRule

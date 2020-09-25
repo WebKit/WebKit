@@ -66,6 +66,8 @@ public:
 #endif
 
 protected:
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+
     LayoutUnit ruleThicknessFallback() const
     {
         // This function returns a value for the default rule thickness (TeX's \xi_8) to be used as a fallback when we lack a MATH table.

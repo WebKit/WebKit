@@ -1,3 +1,47 @@
+2020-09-25  Frederic Wang  <fwang@igalia.com>
+
+        Bug 216702 - Implement the CSS math-style property
+        https://bugs.webkit.org/show_bug.cgi?id=216702
+
+        Reviewed by Rob Buis.
+
+        Rebaseline tests to take into account new PASS results.
+
+        * TestExpectations:
+        * mathml/opentype/large-operators-displaystyle-dynamic.html: Do the dynamic change directly
+        after page load but do a requestAnimationFrame before completing the test.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-style-001.tentative-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-3-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt.
+        * platform/ios-13/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-style-001.tentative-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-3-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-style-001.tentative-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-3-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-style-001.tentative-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-3-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2020-09-24  Darin Adler  <darin@apple.com>
 
         Add CSSConditionRule and CSSGroupingRule

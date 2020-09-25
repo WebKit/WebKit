@@ -172,6 +172,7 @@ PASS marker-mid
 PASS marker-start 
 PASS mask 
 PASS mask-type 
+PASS math-style 
 PASS max-block-size 
 PASS max-height 
 PASS max-inline-size 

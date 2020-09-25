@@ -40,7 +40,6 @@ protected:
     MathMLRowElement(const QualifiedName& tagName, Document&);
     void childrenChanged(const ChildChange&) override;
 
-    bool acceptsDisplayStyleAttribute() override;
     bool acceptsMathVariantAttribute() override;
 
 private:

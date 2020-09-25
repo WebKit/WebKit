@@ -37,9 +37,6 @@ public:
     MathMLStyle() { }
     static Ref<MathMLStyle> create();
 
-    bool displayStyle() const { return m_displayStyle; }
-    void setDisplayStyle(bool displayStyle) { m_displayStyle = displayStyle; }
-
     MathMLElement::MathVariant mathVariant() const { return m_mathVariant; }
     void setMathVariant(MathMLElement::MathVariant mathvariant) { m_mathVariant = mathvariant; }
 
@@ -47,12 +44,10 @@ public:
     static void resolveMathMLStyleTree(RenderObject*);
 
 private:
-    bool isDisplayStyleAlwaysFalse(RenderObject*);
     const MathMLStyle* getMathMLStyle(RenderObject* renderer);
     RenderObject* getMathMLParentNode(RenderObject*);
-    void updateStyleIfNeeded(RenderObject*, bool, MathMLElement::MathVariant);
+    void updateStyleIfNeeded(RenderObject*, MathMLElement::MathVariant);
 
-    bool m_displayStyle { false };
     MathMLElement::MathVariant m_mathVariant { MathMLElement::MathVariant::None };
 };
 

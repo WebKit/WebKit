@@ -1,3 +1,21 @@
+2020-09-25  Frederic Wang  <fwang@igalia.com>
+
+        Bug 216702 - Implement the CSS math-style property
+        https://bugs.webkit.org/show_bug.cgi?id=216702
+
+        Reviewed by Rob Buis.
+
+        Rebaseline tests to take into account new PASS results.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-style-001.tentative-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-2-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-3-expected.txt: Added.
+
 2020-09-24  Darin Adler  <darin@apple.com>
 
         Add CSSConditionRule and CSSGroupingRule

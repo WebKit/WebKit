@@ -51,13 +51,9 @@ protected:
     static Length parseMathMLLength(const String&);
     const Length& cachedMathMLLength(const QualifiedName&, Optional<Length>&);
 
-    virtual bool acceptsDisplayStyleAttribute();
-    Optional<bool> specifiedDisplayStyle() override;
-
     virtual bool acceptsMathVariantAttribute() { return false; }
     Optional<MathVariant> specifiedMathVariant() final;
 
-    Optional<BooleanValue> m_displayStyle;
     Optional<MathVariant> m_mathVariant;
 
 private:

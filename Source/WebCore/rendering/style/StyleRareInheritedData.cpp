@@ -133,6 +133,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , joinStyle(RenderStyle::initialJoinStyle())
     , hasSetStrokeWidth(false)
     , hasSetStrokeColor(false)
+    , mathStyle(static_cast<unsigned>(RenderStyle::initialMathStyle()))
     , effectiveTouchActions(RenderStyle::initialTouchActions())
     , strokeWidth(RenderStyle::initialStrokeWidth())
     , strokeColor(RenderStyle::initialStrokeColor())
@@ -227,6 +228,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , joinStyle(o.joinStyle)
     , hasSetStrokeWidth(o.hasSetStrokeWidth)
     , hasSetStrokeColor(o.hasSetStrokeColor)
+    , mathStyle(o.mathStyle)
     , effectiveTouchActions(o.effectiveTouchActions)
     , eventListenerRegionTypes(o.eventListenerRegionTypes)
     , strokeWidth(o.strokeWidth)
@@ -349,6 +351,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && joinStyle == o.joinStyle
         && hasSetStrokeWidth == o.hasSetStrokeWidth
         && hasSetStrokeColor == o.hasSetStrokeColor
+        && mathStyle == o.mathStyle
         && effectiveTouchActions == o.effectiveTouchActions
         && eventListenerRegionTypes == o.eventListenerRegionTypes
         && strokeWidth == o.strokeWidth

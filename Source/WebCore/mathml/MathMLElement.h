@@ -85,7 +85,6 @@ public:
         Stretched = 18
     };
 
-    virtual Optional<bool> specifiedDisplayStyle() { return WTF::nullopt; }
     virtual Optional<MathVariant> specifiedMathVariant() { return WTF::nullopt; }
 
     virtual void updateSelectedChild() { }

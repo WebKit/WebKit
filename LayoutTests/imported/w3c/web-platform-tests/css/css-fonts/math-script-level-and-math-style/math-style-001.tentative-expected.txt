@@ -1,5 +1,5 @@
 
-FAIL Initial value of math-style assert_equals: expected "inline" but got ""
-FAIL Specified values of math-style assert_equals: expected "inline" but got ""
-FAIL Inherited values of math-style assert_equals: expected "inline" but got ""
+PASS Initial value of math-style 
+PASS Specified values of math-style 
+PASS Inherited values of math-style 
 

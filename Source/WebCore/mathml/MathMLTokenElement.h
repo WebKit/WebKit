@@ -52,7 +52,6 @@ private:
 
     bool isMathMLToken() const final { return true; }
     bool acceptsMathVariantAttribute() final { return true; }
-    bool acceptsDisplayStyleAttribute() final { return false; }
 };
 
 }

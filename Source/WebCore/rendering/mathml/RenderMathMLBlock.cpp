@@ -269,6 +269,15 @@ void RenderMathMLBlock::layoutInvalidMarkup(bool relayoutChildren)
     clearNeedsLayout();
 }
 
+void RenderMathMLBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
+    // MathML displaystyle changes can affect layout.
+    if (oldStyle && style().mathStyle() != oldStyle->mathStyle())
+        setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 }
 
 #endif
