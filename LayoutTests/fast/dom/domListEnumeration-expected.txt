@@ -81,7 +81,7 @@ PASS resultArray[1].i is '1'
 PASS resultArray[1].item is cssValueList.item(1)
 
 [object MediaList]
-PASS resultArray.length is 8
+PASS resultArray.length is 9
 PASS resultArray[0].i is '0'
 PASS resultArray[0].item is mediaList.item(0)
 PASS resultArray[1].i is '1'

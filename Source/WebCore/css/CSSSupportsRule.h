@@ -1,4 +1,6 @@
-/* Copyright (C) 2012 Motorola Mobility Inc. All rights reserved.
+/*
+ * Copyright (C) 2012 Motorola Mobility Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,29 +30,23 @@
 
 #pragma once
 
-#include "CSSGroupingRule.h"
+#include "CSSConditionRule.h"
 
 namespace WebCore {
 
 class CSSRule;
 class StyleRuleSupports;
 
-class CSSSupportsRule final : public CSSGroupingRule {
+class CSSSupportsRule final : public CSSConditionRule {
 public:
-    static Ref<CSSSupportsRule> create(StyleRuleSupports& rule, CSSStyleSheet* sheet)
-    {
-        return adoptRef(*new CSSSupportsRule(rule, sheet));
-    }
-
-    virtual ~CSSSupportsRule() = default;
+    static Ref<CSSSupportsRule> create(StyleRuleSupports&, CSSStyleSheet* parent);
 
     String cssText() const final;
-
-    String conditionText() const;
+    String conditionText() const final;
+    void setConditionText(const String&) final;
 
 private:
     CSSSupportsRule(StyleRuleSupports&, CSSStyleSheet*);
-
     CSSRule::Type type() const final { return SUPPORTS_RULE; }
 };
 

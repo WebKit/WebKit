@@ -1,3 +1,19 @@
+2020-09-24  Darin Adler  <darin@apple.com>
+
+        Add CSSConditionRule and CSSGroupingRule
+        https://bugs.webkit.org/show_bug.cgi?id=216855
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/domListEnumeration.html:
+        Updated since toString is now implemented and enumerable.
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/non-numeric-values-numeric-parameters.html:
+        Updated test and expectations since CSSMediaRule's deleteRule no longer allows omitting
+        the index to delete rule 0 (both non-standard and inconsistent with CSSStyleSheet).
+
 2020-09-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, land test expectations for rdar://69347249.

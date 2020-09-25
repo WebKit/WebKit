@@ -1,3 +1,13 @@
+2020-09-24  Darin Adler  <darin@apple.com>
+
+        Add CSSConditionRule and CSSGroupingRule
+        https://bugs.webkit.org/show_bug.cgi?id=216855
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMCSS.mm:
+        (kitClass): Added a default case since we don't intend to list every single rule type here.
+
 2020-09-25  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Start generating experimental feature preferences for legacy WebKit

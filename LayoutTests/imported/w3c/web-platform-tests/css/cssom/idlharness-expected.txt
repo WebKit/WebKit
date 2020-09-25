@@ -53,7 +53,7 @@ PASS MediaList interface: existence and properties of interface prototype object
 PASS MediaList interface: existence and properties of interface prototype object's "constructor" property 
 PASS MediaList interface: existence and properties of interface prototype object's @@unscopables property 
 PASS MediaList interface: attribute mediaText 
-FAIL MediaList interface: stringifier assert_own_property: interface prototype object missing non-static operation expected property "toString" missing
+PASS MediaList interface: stringifier 
 PASS MediaList interface: attribute length 
 PASS MediaList interface: operation item(unsigned long) 
 PASS MediaList interface: operation appendMedium(CSSOMString) 
@@ -79,7 +79,7 @@ PASS StyleSheet interface: attribute href
 PASS StyleSheet interface: attribute ownerNode 
 PASS StyleSheet interface: attribute parentStyleSheet 
 PASS StyleSheet interface: attribute title 
-FAIL StyleSheet interface: attribute media assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS StyleSheet interface: attribute media 
 PASS StyleSheet interface: attribute disabled 
 PASS CSSStyleSheet interface: existence and properties of interface object 
 PASS CSSStyleSheet interface object length 
@@ -162,8 +162,8 @@ PASS CSSRule interface: constant FONT_FACE_RULE on interface object
 PASS CSSRule interface: constant FONT_FACE_RULE on interface prototype object 
 PASS CSSRule interface: constant PAGE_RULE on interface object 
 PASS CSSRule interface: constant PAGE_RULE on interface prototype object 
-FAIL CSSRule interface: constant MARGIN_RULE on interface object assert_own_property: expected property "MARGIN_RULE" missing
-FAIL CSSRule interface: constant MARGIN_RULE on interface prototype object assert_own_property: expected property "MARGIN_RULE" missing
+PASS CSSRule interface: constant MARGIN_RULE on interface object 
+PASS CSSRule interface: constant MARGIN_RULE on interface prototype object 
 PASS CSSRule interface: constant NAMESPACE_RULE on interface object 
 PASS CSSRule interface: constant NAMESPACE_RULE on interface prototype object 
 PASS CSSStyleRule interface: existence and properties of interface object 
@@ -188,7 +188,7 @@ PASS CSSRule interface: sheet.cssRules[4] must inherit property "IMPORT_RULE" wi
 PASS CSSRule interface: sheet.cssRules[4] must inherit property "MEDIA_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[4] must inherit property "FONT_FACE_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[4] must inherit property "PAGE_RULE" with the proper type 
-FAIL CSSRule interface: sheet.cssRules[4] must inherit property "MARGIN_RULE" with the proper type assert_inherits: property "MARGIN_RULE" not found in prototype chain
+PASS CSSRule interface: sheet.cssRules[4] must inherit property "MARGIN_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[4] must inherit property "NAMESPACE_RULE" with the proper type 
 PASS CSSImportRule interface: existence and properties of interface object 
 PASS CSSImportRule interface object length 
@@ -197,7 +197,7 @@ PASS CSSImportRule interface: existence and properties of interface prototype ob
 PASS CSSImportRule interface: existence and properties of interface prototype object's "constructor" property 
 PASS CSSImportRule interface: existence and properties of interface prototype object's @@unscopables property 
 PASS CSSImportRule interface: attribute href 
-FAIL CSSImportRule interface: attribute media assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS CSSImportRule interface: attribute media 
 PASS CSSImportRule interface: attribute styleSheet 
 PASS CSSImportRule must be primary interface of sheet.cssRules[0] 
 PASS Stringification of sheet.cssRules[0] 
@@ -214,21 +214,25 @@ PASS CSSRule interface: sheet.cssRules[0] must inherit property "IMPORT_RULE" wi
 PASS CSSRule interface: sheet.cssRules[0] must inherit property "MEDIA_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[0] must inherit property "FONT_FACE_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[0] must inherit property "PAGE_RULE" with the proper type 
-FAIL CSSRule interface: sheet.cssRules[0] must inherit property "MARGIN_RULE" with the proper type assert_inherits: property "MARGIN_RULE" not found in prototype chain
+PASS CSSRule interface: sheet.cssRules[0] must inherit property "MARGIN_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[0] must inherit property "NAMESPACE_RULE" with the proper type 
-FAIL CSSGroupingRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSGroupingRule interface object length assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSGroupingRule interface object name assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSGroupingRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSGroupingRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSGroupingRule interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSGroupingRule interface: attribute cssRules assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSGroupingRule interface: operation insertRule(CSSOMString, optional unsigned long) assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSGroupingRule interface: operation deleteRule(unsigned long) assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
-FAIL CSSPageRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+PASS CSSGroupingRule interface: existence and properties of interface object 
+PASS CSSGroupingRule interface object length 
+PASS CSSGroupingRule interface object name 
+PASS CSSGroupingRule interface: existence and properties of interface prototype object 
+PASS CSSGroupingRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSGroupingRule interface: existence and properties of interface prototype object's @@unscopables property 
+PASS CSSGroupingRule interface: attribute cssRules 
+PASS CSSGroupingRule interface: operation insertRule(CSSOMString, optional unsigned long) 
+PASS CSSGroupingRule interface: operation deleteRule(unsigned long) 
+FAIL CSSPageRule interface: existence and properties of interface object assert_equals: prototype of CSSPageRule is not CSSGroupingRule expected function "function CSSGroupingRule() {
+    [native code]
+}" but got function "function CSSRule() {
+    [native code]
+}"
 PASS CSSPageRule interface object length 
 PASS CSSPageRule interface object name 
-FAIL CSSPageRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSGroupingRule" expected property "CSSGroupingRule" missing
+FAIL CSSPageRule interface: existence and properties of interface prototype object assert_equals: prototype of CSSPageRule.prototype is not CSSGroupingRule.prototype expected object "[object CSSGroupingRule]" but got object "[object CSSRule]"
 PASS CSSPageRule interface: existence and properties of interface prototype object's "constructor" property 
 PASS CSSPageRule interface: existence and properties of interface prototype object's @@unscopables property 
 PASS CSSPageRule interface: attribute selectorText 
@@ -252,7 +256,7 @@ PASS CSSRule interface: sheet.cssRules[2] must inherit property "IMPORT_RULE" wi
 PASS CSSRule interface: sheet.cssRules[2] must inherit property "MEDIA_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[2] must inherit property "FONT_FACE_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[2] must inherit property "PAGE_RULE" with the proper type 
-FAIL CSSRule interface: sheet.cssRules[2] must inherit property "MARGIN_RULE" with the proper type assert_inherits: property "MARGIN_RULE" not found in prototype chain
+PASS CSSRule interface: sheet.cssRules[2] must inherit property "MARGIN_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[2] must inherit property "NAMESPACE_RULE" with the proper type 
 FAIL CSSMarginRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
 FAIL CSSMarginRule interface object length assert_own_property: self does not have own property "CSSMarginRule" expected property "CSSMarginRule" missing
@@ -300,7 +304,7 @@ PASS CSSRule interface: sheet.cssRules[1] must inherit property "IMPORT_RULE" wi
 PASS CSSRule interface: sheet.cssRules[1] must inherit property "MEDIA_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[1] must inherit property "FONT_FACE_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[1] must inherit property "PAGE_RULE" with the proper type 
-FAIL CSSRule interface: sheet.cssRules[1] must inherit property "MARGIN_RULE" with the proper type assert_inherits: property "MARGIN_RULE" not found in prototype chain
+PASS CSSRule interface: sheet.cssRules[1] must inherit property "MARGIN_RULE" with the proper type 
 PASS CSSRule interface: sheet.cssRules[1] must inherit property "NAMESPACE_RULE" with the proper type 
 PASS CSSStyleDeclaration interface: existence and properties of interface object 
 PASS CSSStyleDeclaration interface object length 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,10 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
+[Exposed=Window]
 interface CSSImportRule : CSSRule {
-    readonly attribute DOMString? href;
-    readonly attribute MediaList media;
-    readonly attribute CSSStyleSheet styleSheet;
+    readonly attribute USVString href;
+    [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
+    [SameObject] readonly attribute CSSStyleSheet styleSheet;
 };
 

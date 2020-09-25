@@ -1,3 +1,125 @@
+2020-09-24  Darin Adler  <darin@apple.com>
+
+        Add CSSConditionRule and CSSGroupingRule
+        https://bugs.webkit.org/show_bug.cgi?id=216855
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Added CSSConditionRule.idl and CSSGroupingRule.idl.
+
+        * DerivedSources-input.xcfilelist: Updated.
+        * DerivedSources-output.xcfilelist: Updated.
+
+        * DerivedSources.make: Added CSSConditionRule.idl and CSSGroupingRule.idl.
+        * Headers.cmake: Added CSSConditionRule.h.
+        * Sources.txt: Add CSSConditionRule.cpp, JSCSSConditioRule.cpp,
+        and JSCSSGroupingRule.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj: Added all the files.
+
+        * css/CSSConditionRule.cpp: Added.
+        * css/CSSConditionRule.h: Added.
+        * css/CSSConditionRule.idl: Added.
+
+        * css/CSSGroupingRule.cpp:
+        (WebCore::CSSGroupingRule::~CSSGroupingRule): Use a range-based for loop
+        and nullptr.
+        (WebCore::CSSGroupingRule::appendCSSTextForItems const): Use variadic
+        append to clean this up a bit.
+        (WebCore::CSSGroupingRule::item const): Use auto.
+
+        * css/CSSGroupingRule.h: Made m_groupRule private instead of protected.
+        Did some other tweaks.
+
+        * css/CSSGroupingRule.idl: Added.
+
+        * css/CSSImportRule.idl: Added [Exposed=Window], changed href to be a
+        USVString, added [SameObject, PutForwards=mediaText] to media
+        and [SameObject] to styleSheet.
+
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule): Derive from CSSConditionRule.
+        (WebCore::CSSMediaRule::mediaQueries const): Return a reference.
+        (WebCore::CSSMediaRule::cssText const): Streamline since we don't need a
+        null check.
+        (WebCore::CSSMediaRule::conditionText const): Added.
+        (WebCore::CSSMediaRule::setConditionText): Added.
+        (WebCore::CSSMediaRule::media const): Streamline since we don't need a
+        null check.
+        (WebCore::CSSMediaRule::reattach): Ditto.
+
+        * css/CSSMediaRule.h: Derive from CSSConditionRule.
+
+        * css/CSSMediaRule.idl: Derive from CSSConditionRule. Added
+        [Exposed=Window]. Added [SameObject, PutForwards=mediaText] to media.
+        Removed insertRule and deleteRule since they are now inherited from
+        CSSGroupingRule.
+
+        * css/CSSRule.h: Added MARGIN_RULE constant even though we don't have
+        that rule type. Moved inline functions out of the class body to help
+        clarity a bit.
+
+        * css/CSSRule.idl: Added [Exposed=Window], changed a few things to match
+        the specification.
+
+        * css/CSSStyleRule.idl: Added [Exposed=Window]. Added [SameObject]
+        to style.
+
+        * css/CSSStyleSheet.idl: Added [Exposed=Window].
+
+        * css/CSSSupportsRule.cpp:
+        (WebCore::CSSSupportsRule::CSSSupportsRule): Derive from CSSConditionRule.
+        (WebCore::CSSSupportsRule::create): Added.
+        (WebCore::CSSSupportsRule::cssText const): Use variadic append.
+        (WebCore::CSSSupportsRule::conditionText const): Updated to use groupRule.
+        (WebCore::CSSSupportsRule::setConditionText): Added. Not implemented yet.
+
+        * css/CSSSupportsRule.h: Derive from CSSConditionRule.
+
+        * css/CSSSupportsRule.idl: Derive from CSSConditionRule.
+        Added [Exposed=Window].
+
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::set): Use move instead of swap.
+
+        * css/MediaList.idl: Added [Exposed=Window] and marked mediaText as
+        the stringifier.
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::create): Moved here from the header.
+        (WebCore::StyleRule::copy const): Ditto.
+        (WebCore::StyleRulePage::create): Ditto.
+        (WebCore::StyleRuleGroup::StyleRuleGroup): Use move instead of swap.
+        (WebCore::StyleRuleMedia::create): Use move instead of swap.
+        (WebCore::StyleRuleMedia::copy const): Moved out of the header.
+        (WebCore::StyleRuleSupports::StyleRuleSupports): Ditto.
+        (WebCore::StyleRuleSupports::create): Ditto.
+        (WebCore::StyleRuleNamespace::StyleRuleNamespace): Ditto.
+        (WebCore::StyleRuleNamespace::create): Ditto.
+
+        * css/StyleRule.h: Moved function bodies out of the class
+        defintiion for clarity.
+
+        * css/StyleSheet.idl: Added [Exposed=Window] and
+        [SameObject, PutForwards=mediaText] for media.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAppendRule): Updated since
+        mediaQueries returns a reference.
+
+        * css/StyleSheetList.idl: Added [Exposed=Window].
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeMediaRule): Use WTFMove since
+        the create function now takes an rvalue reference.
+        (WebCore::CSSParserImpl::consumeSupportsRule): Ditto.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addChildRules): Updated since mediaQueries
+        returns a reference.
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::addToDefaultStyle): Ditto.
+
 2020-09-25  Peng Liu  <peng.liu6@apple.com>
 
         Clean up VideoLayerManagerObjC

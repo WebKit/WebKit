@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -36,24 +36,19 @@ public:
     virtual ~CSSGroupingRule();
 
     WEBCORE_EXPORT CSSRuleList& cssRules() const;
-
     WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
     WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
-        
-    // For CSSRuleList
     unsigned length() const;
     CSSRule* item(unsigned index) const;
 
 protected:
-    CSSGroupingRule(StyleRuleGroup& groupRule, CSSStyleSheet* parent);
-    
+    CSSGroupingRule(StyleRuleGroup&, CSSStyleSheet* parent);
+    const StyleRuleGroup& groupRule() const { return m_groupRule; }
     void reattach(StyleRuleBase&) override;
-
-    void appendCssTextForItems(StringBuilder&) const;
-
-    Ref<StyleRuleGroup> m_groupRule;
+    void appendCSSTextForItems(StringBuilder&) const;
 
 private:
+    Ref<StyleRuleGroup> m_groupRule;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };

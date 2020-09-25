@@ -5,29 +5,29 @@ PASS Partial interface CSSRule: original interface defined
 PASS Partial interface CSSRule: member names are unique 
 PASS Partial namespace CSS: original namespace defined 
 PASS Partial namespace CSS: member names are unique 
-FAIL CSSConditionRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
-FAIL CSSConditionRule interface object length assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
-FAIL CSSConditionRule interface object name assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
-FAIL CSSConditionRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
-FAIL CSSConditionRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
-FAIL CSSConditionRule interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
-FAIL CSSConditionRule interface: attribute conditionText assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
-FAIL CSSMediaRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+PASS CSSConditionRule interface: existence and properties of interface object 
+PASS CSSConditionRule interface object length 
+PASS CSSConditionRule interface object name 
+PASS CSSConditionRule interface: existence and properties of interface prototype object 
+PASS CSSConditionRule interface: existence and properties of interface prototype object's "constructor" property 
+PASS CSSConditionRule interface: existence and properties of interface prototype object's @@unscopables property 
+PASS CSSConditionRule interface: attribute conditionText 
+PASS CSSMediaRule interface: existence and properties of interface object 
 PASS CSSMediaRule interface object length 
 PASS CSSMediaRule interface object name 
-FAIL CSSMediaRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+PASS CSSMediaRule interface: existence and properties of interface prototype object 
 PASS CSSMediaRule interface: existence and properties of interface prototype object's "constructor" property 
 PASS CSSMediaRule interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL CSSMediaRule interface: attribute media assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS CSSMediaRule interface: attribute media 
 PASS CSSMediaRule must be primary interface of cssMediaRule 
 PASS Stringification of cssMediaRule 
 PASS CSSMediaRule interface: cssMediaRule must inherit property "media" with the proper type 
-FAIL CSSConditionRule interface: cssMediaRule must inherit property "conditionText" with the proper type assert_inherits: property "conditionText" not found in prototype chain
+PASS CSSConditionRule interface: cssMediaRule must inherit property "conditionText" with the proper type 
 PASS CSSRule interface: cssMediaRule must inherit property "SUPPORTS_RULE" with the proper type 
-FAIL CSSSupportsRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+PASS CSSSupportsRule interface: existence and properties of interface object 
 PASS CSSSupportsRule interface object length 
 PASS CSSSupportsRule interface object name 
-FAIL CSSSupportsRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSConditionRule" expected property "CSSConditionRule" missing
+PASS CSSSupportsRule interface: existence and properties of interface prototype object 
 PASS CSSSupportsRule interface: existence and properties of interface prototype object's "constructor" property 
 PASS CSSSupportsRule interface: existence and properties of interface prototype object's @@unscopables property 
 PASS CSSSupportsRule must be primary interface of cssSupportsRule 

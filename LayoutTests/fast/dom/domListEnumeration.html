@@ -200,7 +200,7 @@ shouldBe("resultArray[1].item", "cssValueList.item(1)");
 // MediaList
 var mediaList = document.styleSheets[3].cssRules[0].media;
 resultArray = iterateList(mediaList);
-shouldBe("resultArray.length", "8");
+shouldBe("resultArray.length", "9");
 shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "mediaList.item(0)");
 shouldBe("resultArray[1].i", "'1'");

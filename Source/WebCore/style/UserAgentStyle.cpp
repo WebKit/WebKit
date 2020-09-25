@@ -168,12 +168,10 @@ void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
         if (!is<StyleRuleMedia>(*rule))
             continue;
         auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-        auto* mediaQuery = mediaRule.mediaQueries();
-        if (!mediaQuery)
+        auto& mediaQuery = mediaRule.mediaQueries();
+        if (screenEval().evaluate(mediaQuery, nullptr))
             continue;
-        if (screenEval().evaluate(*mediaQuery, nullptr))
-            continue;
-        if (printEval().evaluate(*mediaQuery, nullptr))
+        if (printEval().evaluate(mediaQuery, nullptr))
             continue;
         mediaQueryStyleSheet->parserAppendRule(mediaRule.copy());
     }

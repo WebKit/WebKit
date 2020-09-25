@@ -663,6 +663,7 @@ css/CSSBorderImageSliceValue.cpp
 css/CSSCalculationValue.cpp
 css/CSSCanvasValue.cpp
 css/CSSComputedStyleDeclaration.cpp
+css/CSSConditionRule.cpp
 css/CSSContentDistributionValue.cpp
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
@@ -2694,7 +2695,9 @@ JSBlobPropertyBag.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
 JSCSSAnimation.cpp
+JSCSSConditionRule.cpp
 JSCSSFontFaceRule.cpp
+JSCSSGroupingRule.cpp
 JSCSSImportRule.cpp
 JSCSSKeyframeRule.cpp
 JSCSSKeyframesRule.cpp

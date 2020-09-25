@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,11 +21,16 @@
 [
     CustomToJSObject,
     ExportToWrappedFunction,
+    Exposed=Window,
     GenerateIsReachable,
     JSCustomHeader,
     JSCustomMarkFunction,
 ] interface CSSRule {
-    // RuleType
+    attribute DOMString? cssText;
+    readonly attribute CSSRule? parentRule;
+    readonly attribute CSSStyleSheet? parentStyleSheet;
+
+    readonly attribute unsigned short type;
     const unsigned short UNKNOWN_RULE = 0;
     const unsigned short STYLE_RULE = 1;
     const unsigned short CHARSET_RULE = 2;
@@ -35,17 +40,11 @@
     const unsigned short PAGE_RULE = 6;
     const unsigned short KEYFRAMES_RULE = 7;
     const unsigned short KEYFRAME_RULE = 8;
+    const unsigned short MARGIN_RULE = 9;
     const unsigned short NAMESPACE_RULE = 10;
     const unsigned short SUPPORTS_RULE = 12;
 
     // Legacy synonyms for the above, kept to avoid breaking existing content.
     const unsigned short WEBKIT_KEYFRAMES_RULE = 7;
     const unsigned short WEBKIT_KEYFRAME_RULE = 8;
-
-    readonly attribute unsigned short type;
-
-    attribute DOMString? cssText;
-
-    readonly attribute CSSStyleSheet? parentStyleSheet;
-    readonly attribute CSSRule? parentRule;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,10 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface CSSMediaRule : CSSRule {
-    readonly attribute MediaList media;
-    readonly attribute CSSRuleList cssRules;
-
-    [MayThrowException] unsigned long insertRule(optional DOMString rule = "undefined", optional unsigned long index = 0);
-    [MayThrowException] undefined deleteRule(optional unsigned long index = 0);
+[Exposed=Window]
+interface CSSMediaRule : CSSConditionRule {
+    [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
 };

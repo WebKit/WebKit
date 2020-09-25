@@ -1,3 +1,16 @@
+2020-09-24  Darin Adler  <darin@apple.com>
+
+        Add CSSConditionRule and CSSGroupingRule
+        https://bugs.webkit.org/show_bug.cgi?id=216855
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/conditional/idlharness-expected.txt:
+        * web-platform-tests/css/cssom/MediaList-expected.txt:
+        * web-platform-tests/css/cssom/cssimportrule-expected.txt:
+        * web-platform-tests/css/cssom/idlharness-expected.txt:
+        Updated expectations to expect more tests to pass.
+
 2020-09-25  Antoine Quint  <graouts@webkit.org>
 
         Reduce the reliance on PseudoElement in the animation code

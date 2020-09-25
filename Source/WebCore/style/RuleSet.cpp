@@ -282,9 +282,9 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, MediaQue
         }
         if (is<StyleRuleMedia>(*rule)) {
             auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-            if (mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
+            if (mediaQueryCollector.pushAndEvaluate(&mediaRule.mediaQueries()))
                 addChildRules(mediaRule.childRules(), mediaQueryCollector, resolver, mode);
-            mediaQueryCollector.pop(mediaRule.mediaQueries());
+            mediaQueryCollector.pop(&mediaRule.mediaQueries());
             continue;
         }
         if (is<StyleRuleFontFace>(*rule)) {

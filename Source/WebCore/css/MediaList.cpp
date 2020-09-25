@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -82,7 +82,7 @@ MediaQuerySet::~MediaQuerySet() = default;
 bool MediaQuerySet::set(const String& mediaString)
 {
     auto result = create(mediaString);
-    m_queries.swap(result->m_queries);
+    m_queries = WTFMove(result->m_queries);
     return true;
 }
 

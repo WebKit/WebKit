@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,12 @@
 
 [
     ExportToWrappedFunction,
+    Exposed=Window,
     GenerateIsReachable,
     ImplementationLacksVTable,
     JSCustomHeader,
 ] interface MediaList {
-    attribute [LegacyNullToEmptyString] DOMString mediaText;
+    stringifier attribute [LegacyNullToEmptyString] DOMString mediaText;
     readonly attribute unsigned long length;
 
     getter DOMString? item(unsigned long index);

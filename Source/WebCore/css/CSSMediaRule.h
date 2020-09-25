@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "CSSGroupingRule.h"
+#include "CSSConditionRule.h"
 
 namespace WebCore {
 
@@ -30,10 +30,9 @@ class MediaList;
 class MediaQuerySet;
 class StyleRuleMedia;
 
-class CSSMediaRule final : public CSSGroupingRule {
+class CSSMediaRule final : public CSSConditionRule {
 public:
     static Ref<CSSMediaRule> create(StyleRuleMedia& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSMediaRule(rule, sheet)); }
-
     virtual ~CSSMediaRule();
 
     WEBCORE_EXPORT MediaList* media() const;
@@ -44,9 +43,11 @@ private:
     CSSRule::Type type() const final { return MEDIA_RULE; }
     void reattach(StyleRuleBase&) final;
     String cssText() const final;
+    String conditionText() const final;
+    void setConditionText(const String&) final;
 
-    MediaQuerySet* mediaQueries() const;
-    
+    MediaQuerySet& mediaQueries() const;
+
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
 };
 

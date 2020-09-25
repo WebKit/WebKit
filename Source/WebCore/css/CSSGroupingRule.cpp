@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-
 #include "CSSGroupingRule.h"
 
 #include "CSSParser.h"
@@ -50,9 +49,9 @@ CSSGroupingRule::CSSGroupingRule(StyleRuleGroup& groupRule, CSSStyleSheet* paren
 CSSGroupingRule::~CSSGroupingRule()
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
-    for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
-        if (m_childRuleCSSOMWrappers[i])
-            m_childRuleCSSOMWrappers[i]->setParentRule(0);
+    for (auto& wrapper : m_childRuleCSSOMWrappers) {
+        if (wrapper)
+            wrapper->setParentRule(nullptr);
     }
 }
 
@@ -111,14 +110,10 @@ ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
     return { };
 }
 
-void CSSGroupingRule::appendCssTextForItems(StringBuilder& result) const
+void CSSGroupingRule::appendCSSTextForItems(StringBuilder& result) const
 {
-    unsigned size = length();
-    for (unsigned i = 0; i < size; ++i) {
-        result.appendLiteral("  ");
-        result.append(item(i)->cssText());
-        result.append('\n');
-    }
+    for (unsigned i = 0, size = length(); i < size; ++i)
+        result.append("  ", item(i)->cssText(), '\n');
 }
 
 unsigned CSSGroupingRule::length() const
@@ -131,7 +126,7 @@ CSSRule* CSSGroupingRule::item(unsigned index) const
     if (index >= length())
         return nullptr;
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
-    RefPtr<CSSRule>& rule = m_childRuleCSSOMWrappers[index];
+    auto& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
         rule = m_groupRule->childRules()[index]->createCSSOMWrapper(const_cast<CSSGroupingRule*>(this));
     return rule.get();

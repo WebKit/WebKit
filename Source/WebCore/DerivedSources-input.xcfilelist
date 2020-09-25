@@ -587,7 +587,9 @@ $(PROJECT_DIR)/crypto/parameters/RsaHashedKeyGenParams.idl
 $(PROJECT_DIR)/crypto/parameters/RsaKeyGenParams.idl
 $(PROJECT_DIR)/crypto/parameters/RsaOaepParams.idl
 $(PROJECT_DIR)/crypto/parameters/RsaPssParams.idl
+$(PROJECT_DIR)/css/CSSConditionRule.idl
 $(PROJECT_DIR)/css/CSSFontFaceRule.idl
+$(PROJECT_DIR)/css/CSSGroupingRule.idl
 $(PROJECT_DIR)/css/CSSImportRule.idl
 $(PROJECT_DIR)/css/CSSKeyframeRule.idl
 $(PROJECT_DIR)/css/CSSKeyframesRule.idl

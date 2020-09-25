@@ -75,14 +75,9 @@ Class kitClass(WebCore::CSSRule* impl)
         return [DOMCSSFontFaceRule class];
     case WebCore::CSSRule::PAGE_RULE:
         return [DOMCSSPageRule class];
-    case WebCore::CSSRule::KEYFRAMES_RULE:
-    case WebCore::CSSRule::NAMESPACE_RULE:
-    case WebCore::CSSRule::KEYFRAME_RULE:
-    case WebCore::CSSRule::SUPPORTS_RULE:
+    default:
         return [DOMCSSRule class];
     }
-    ASSERT_NOT_REACHED();
-    return nil;
 }
 
 //------------------------------------------------------------------------------------------
@@ -95,12 +90,9 @@ Class kitClass(WebCore::DeprecatedCSSOMValue* impl)
         return [DOMCSSPrimitiveValue class];
     case WebCore::DeprecatedCSSOMValue::CSS_VALUE_LIST:
         return [DOMCSSValueList class];
-    case WebCore::DeprecatedCSSOMValue::CSS_INHERIT:
-    case WebCore::DeprecatedCSSOMValue::CSS_CUSTOM:
+    default:
         return [DOMCSSValue class];
     }
-    ASSERT_NOT_REACHED();
-    return nil;
 }
 
 //------------------------------------------------------------------------------------------

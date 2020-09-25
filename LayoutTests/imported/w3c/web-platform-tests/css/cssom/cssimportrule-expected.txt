@@ -5,7 +5,7 @@ PASS Existence and writability of CSSRule attributes
 PASS Values of CSSRule attributes 
 PASS Existence and writability of CSSImportRule attributes 
 PASS Values of CSSImportRule attributes 
-FAIL CSSImportRule : MediaList mediaText attribute should be updated due to [PutForwards] assert_equals: expected "print" but got "screen"
+PASS CSSImportRule : MediaList mediaText attribute should be updated due to [PutForwards] 
 PASS CSSStyleDeclaration cssText attribute should be updated due to [PutForwards] 
-FAIL StyleSheet : MediaList mediaText attribute should be updated due to [PutForwards] assert_equals: expected "screen" but got ""
+PASS StyleSheet : MediaList mediaText attribute should be updated due to [PutForwards] 
 
