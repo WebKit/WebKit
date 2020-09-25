@@ -32,12 +32,17 @@
 #include "LayoutRect.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
+#include "Widget.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 
 #if PLATFORM(WIN)
 #include "AccessibilityObjectWrapperWin.h"
 #include "COMPtr.h"
+#endif
+
+#if USE(ATK)
+#include <wtf/glib/GRefPtr.h>
 #endif
 
 #if PLATFORM(COCOA)

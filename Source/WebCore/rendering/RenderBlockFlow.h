@@ -27,7 +27,6 @@
 #include "LineWidth.h"
 #include "RenderBlock.h"
 #include "RenderLineBoxList.h"
-#include "SimpleLineLayout.h"
 #include "TrailingObjects.h"
 #include <memory>
 
@@ -344,7 +343,7 @@ public:
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
 
-    enum LineLayoutPath { UndeterminedPath = 0, SimpleLinesPath, LineBoxesPath, LayoutFormattingContextPath, ForceLineBoxesPath };
+    enum LineLayoutPath { UndeterminedPath = 0, LineBoxesPath, LayoutFormattingContextPath, ForceLineBoxesPath };
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 
@@ -359,8 +358,6 @@ public:
 
     bool containsNonZeroBidiLevel() const;
 
-    const SimpleLineLayout::Layout* simpleLineLayout() const;
-    SimpleLineLayout::Layout* simpleLineLayout();
     const ComplexLineLayout* complexLineLayout() const;
     ComplexLineLayout* complexLineLayout();
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -543,10 +540,7 @@ public:
 
 private:
     bool hasLineLayout() const;
-    bool hasSimpleLineLayout() const;
     bool hasComplexLineLayout() const;
-
-    void layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool hasLayoutFormattingContextLineLayout() const;
@@ -592,7 +586,6 @@ protected:
 private:
     Variant<
         WTF::Monostate,
-        Ref<SimpleLineLayout::Layout>,
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         std::unique_ptr<LayoutIntegration::LineLayout>,
 #endif
@@ -622,21 +615,6 @@ inline const ComplexLineLayout* RenderBlockFlow::complexLineLayout() const
 inline ComplexLineLayout* RenderBlockFlow::complexLineLayout()
 {
     return hasComplexLineLayout() ? WTF::get<std::unique_ptr<ComplexLineLayout>>(m_lineLayout).get() : nullptr;
-}
-
-inline bool RenderBlockFlow::hasSimpleLineLayout() const
-{
-    return WTF::holds_alternative<Ref<SimpleLineLayout::Layout>>(m_lineLayout);
-}
-
-inline const SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout() const
-{
-    return hasSimpleLineLayout() ? WTF::get<Ref<SimpleLineLayout::Layout>>(m_lineLayout).ptr() : nullptr;
-}
-
-inline SimpleLineLayout::Layout* RenderBlockFlow::simpleLineLayout()
-{
-    return hasSimpleLineLayout() ? WTF::get<Ref<SimpleLineLayout::Layout>>(m_lineLayout).ptr() : nullptr;
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)

@@ -70,48 +70,6 @@ static bool areEssentiallyEqual(LayoutRect a, LayoutRect b)
         && areEssentiallyEqual(a.height(), b.height());
 }
 
-static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ContainerBox& inlineFormattingRoot)
-{
-    auto* lineLayoutData = blockFlow.simpleLineLayout();
-    if (!lineLayoutData) {
-        ASSERT_NOT_REACHED();
-        return true;
-    }
-
-    auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
-    auto& lineRuns = downcast<InlineFormattingState>(inlineFormattingState).lineRuns();
-
-    if (lineRuns.size() != lineLayoutData->runCount()) {
-        stream << "Mismatching number of runs: simple runs(" << lineLayoutData->runCount() << ") inline runs(" << lineRuns.size() << ")";
-        stream.nextLine();
-        return true;
-    }
-
-    auto mismatched = false;
-    for (unsigned i = 0; i < lineLayoutData->runCount(); ++i) {
-        auto& simpleRun = lineLayoutData->runAt(i);
-        auto& lineRun = lineRuns[i];
-        auto matchingRuns = areEssentiallyEqual(simpleRun.logicalLeft, lineRun.logicalLeft()) && areEssentiallyEqual(simpleRun.logicalRight, lineRun.logicalRight());
-        if (matchingRuns && lineRun.text()) {
-            matchingRuns = simpleRun.start == lineRun.text()->start() && simpleRun.end == lineRun.text()->end();
-            // SLL handles strings in a more concatenated format <div>foo<br>bar</div> -> foo -> 0,3 bar -> 3,6 vs. 0,3 and 0,3
-            if (!matchingRuns)
-                matchingRuns = (simpleRun.end - simpleRun.start) == (lineRun.text()->end() - lineRun.text()->start());
-        }
-        if (matchingRuns)
-            continue;
-
-        stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ")";
-        stream << " inline run";
-        if (lineRun.text())
-            stream << " (" << lineRun.text()->start() << ", " << lineRun.text()->end() << ")";
-        stream << " (" << lineRun.logicalLeft() << ", " << lineRun.logicalTop() << ") (" << lineRun.logicalWidth() << "x" << lineRun.logicalHeight() << ")";
-        stream.nextLine();
-        mismatched = true;
-    }
-    return mismatched;
-}
-
 static bool checkForMatchingNonTextRuns(const LineRun& lineRun, const WebCore::InlineBox& inlineBox)
 {
     return areEssentiallyEqual(inlineBox.left(), lineRun.logicalLeft())
@@ -359,7 +317,7 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& contex
 
             auto& blockFlow = downcast<RenderBlockFlow>(*childRenderer);
             auto& formattingRoot = downcast<ContainerBox>(*childLayoutBox);
-            mismtachingGeometry |= blockFlow.lineLayoutPath() == RenderBlockFlow::SimpleLinesPath ? outputMismatchingSimpleLineInformationIfNeeded(stream, context, blockFlow, formattingRoot) : outputMismatchingComplexLineInformationIfNeeded(stream, context, blockFlow, formattingRoot);
+            mismtachingGeometry |= outputMismatchingComplexLineInformationIfNeeded(stream, context, blockFlow, formattingRoot);
         } else {
             auto mismatchingSubtreeGeometry = verifyAndOutputSubtree(stream, context, downcast<RenderBox>(*childRenderer), *childLayoutBox);
             mismtachingGeometry |= mismatchingSubtreeGeometry;

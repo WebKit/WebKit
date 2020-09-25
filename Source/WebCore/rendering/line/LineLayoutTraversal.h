@@ -28,7 +28,6 @@
 #include "InlineElementBox.h"
 #include "LineLayoutTraversalComplexPath.h"
 #include "LineLayoutTraversalDisplayRunPath.h"
-#include "LineLayoutTraversalSimplePath.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -49,8 +48,7 @@ public:
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         DisplayRunPath,
 #endif
-        ComplexPath,
-        SimplePath
+        ComplexPath
     >;
 
     Box(PathVariant&&);

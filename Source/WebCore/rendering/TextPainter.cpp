@@ -228,7 +228,6 @@ void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, c
 void TextPainter::clearGlyphDisplayLists()
 {
     GlyphDisplayListCache<InlineTextBox>::singleton().clear();
-    GlyphDisplayListCache<SimpleLineLayout::Run>::singleton().clear();
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
         GlyphDisplayListCache<Display::Run>::singleton().clear();

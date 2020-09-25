@@ -48,7 +48,6 @@
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
-#include "SimpleLineLayout.h"
 #include "TextDecorationPainter.h"
 #include "TextPainter.h"
 

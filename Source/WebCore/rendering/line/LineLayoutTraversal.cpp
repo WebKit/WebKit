@@ -27,6 +27,7 @@
 #include "LineLayoutTraversal.h"
 
 #include "LayoutIntegrationLineLayout.h"
+#include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
 
 namespace WebCore {
@@ -81,11 +82,6 @@ static const RenderBlockFlow* lineLayoutSystemFlowForRenderer(const RenderObject
 TextBoxIterator firstTextBoxFor(const RenderText& text)
 {
     if (auto* flow = lineLayoutSystemFlowForRenderer(text)) {
-        if (auto* simpleLineLayout = flow->simpleLineLayout()) {
-            auto range = simpleLineLayout->runResolver().rangeForRenderer(text);
-            return { SimplePath { range.begin(), range.end() } };
-        }
-
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
             return layoutFormattingContextLineLayout->textBoxesFor(text);
@@ -129,11 +125,6 @@ bool ElementBoxIterator::atEnd() const
 ElementBoxIterator elementBoxFor(const RenderLineBreak& renderElement)
 {
     if (auto* flow = lineLayoutSystemFlowForRenderer(renderElement)) {
-        if (auto* simpleLineLayout = flow->simpleLineLayout()) {
-            auto range = simpleLineLayout->runResolver().rangeForRenderer(renderElement);
-            return { SimplePath(range.begin(), range.end()) };
-        }
-
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
             return layoutFormattingContextLineLayout->elementBoxFor(renderElement);

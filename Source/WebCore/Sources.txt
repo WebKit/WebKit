@@ -2206,13 +2206,6 @@ rendering/RenderView.cpp
 rendering/RenderWidget.cpp
 rendering/RootInlineBox.cpp
 rendering/ScrollAlignment.cpp
-rendering/SimpleLineLayout.cpp
-rendering/SimpleLineLayoutCoverage.cpp
-rendering/SimpleLineLayoutFlowContents.cpp
-rendering/SimpleLineLayoutFunctions.cpp
-rendering/SimpleLineLayoutPagination.cpp
-rendering/SimpleLineLayoutResolver.cpp
-rendering/SimpleLineLayoutTextFragmentIterator.cpp
 rendering/TableLayout.cpp
 rendering/TextDecorationPainter.cpp
 rendering/TextPaintStyle.cpp

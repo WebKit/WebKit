@@ -1,3 +1,80 @@
+2020-09-25  Antti Koivisto  <antti@apple.com>
+
+        Remove Simple Line Layout
+        https://bugs.webkit.org/show_bug.cgi?id=216914
+
+        Reviewed by Sam Weinig.
+
+        It is already fully covered by LFC and so unused. Remove the code.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXLogger.cpp:
+        * accessibility/AccessibilityObjectInterface.h:
+        * editing/TextIterator.cpp:
+        * layout/Verification.cpp:
+        (WebCore::Layout::verifyAndOutputSubtree):
+        (WebCore::Layout::outputMismatchingSimpleLineInformationIfNeeded): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        * layout/integration/LayoutIntegrationPagination.cpp:
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::ComplexLineLayout::layoutLineBoxes):
+        (WebCore::ComplexLineLayout::addOverflowFromInlineChildren):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::hitTestInlineChildren):
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        (WebCore::RenderBlockFlow::markLinesDirtyInBlockRange):
+        (WebCore::RenderBlockFlow::firstLineBaseline const):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        (WebCore::RenderBlockFlow::lineCount const):
+        (WebCore::RenderBlockFlow::positionForPoint):
+        (WebCore::RenderBlockFlow::paintInlineChildren):
+        (WebCore::RenderBlockFlow::hasLines const):
+        (WebCore::RenderBlockFlow::invalidateLineLayoutPath):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        (WebCore::RenderBlockFlow::outputLineTreeAndMark const):
+        (WebCore::RenderBlockFlow::layoutSimpleLines): Deleted.
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::hasSimpleLineLayout const): Deleted.
+        (WebCore::RenderBlockFlow::simpleLineLayout const): Deleted.
+        (WebCore::RenderBlockFlow::simpleLineLayout): Deleted.
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::removeLineFragmentInfo):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteQuadsForRange const):
+        (WebCore::RenderText::positionForPoint):
+        (WebCore::RenderText::setTextWithOffset):
+        (WebCore::RenderText::usesComplexLineLayoutPath const):
+        (WebCore::RenderText::linesVisualOverflowBoundingBox const):
+        (WebCore::RenderText::collectSelectionRectsForLineBoxes):
+        (WebCore::RenderText::simpleLineLayout const): Deleted.
+        * rendering/RenderText.h:
+        * rendering/SimpleLineLayout.cpp: Removed.
+        * rendering/SimpleLineLayout.h: Removed.
+        * rendering/SimpleLineLayoutCoverage.cpp: Removed.
+        * rendering/SimpleLineLayoutCoverage.h: Removed.
+        * rendering/SimpleLineLayoutFlowContents.cpp: Removed.
+        * rendering/SimpleLineLayoutFlowContents.h: Removed.
+        * rendering/SimpleLineLayoutFunctions.cpp: Removed.
+        * rendering/SimpleLineLayoutFunctions.h: Removed.
+        * rendering/SimpleLineLayoutPagination.cpp: Removed.
+        * rendering/SimpleLineLayoutPagination.h: Removed.
+        * rendering/SimpleLineLayoutResolver.cpp: Removed.
+        * rendering/SimpleLineLayoutResolver.h: Removed.
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp: Removed.
+        * rendering/SimpleLineLayoutTextFragmentIterator.h: Removed.
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::clearGlyphDisplayLists):
+        * rendering/line/LineLayoutTraversal.cpp:
+        (WebCore::LineLayoutTraversal::firstTextBoxFor):
+        (WebCore::LineLayoutTraversal::elementBoxFor):
+        * rendering/line/LineLayoutTraversal.h:
+        * rendering/line/LineLayoutTraversalSimplePath.h: Removed.
+
 2020-09-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late September 2020 edition

@@ -450,7 +450,7 @@ void RenderFragmentedFlow::removeRenderBoxFragmentInfo(RenderBox& box)
 
 void RenderFragmentedFlow::removeLineFragmentInfo(const RenderBlockFlow& blockFlow)
 {
-    if (!m_lineToFragmentMap || blockFlow.lineLayoutPath() == SimpleLinesPath)
+    if (!m_lineToFragmentMap)
         return;
 
     for (auto* curr = blockFlow.firstRootBox(); curr; curr = curr->nextRootBox())

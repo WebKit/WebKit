@@ -33,6 +33,7 @@
 #include "AXIsolatedObject.h"
 #endif
 #include "AXObjectCache.h"
+#include "FrameView.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 

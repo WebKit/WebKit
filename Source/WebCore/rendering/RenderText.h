@@ -24,7 +24,6 @@
 
 #include "RenderElement.h"
 #include "RenderTextLineBoxes.h"
-#include "SimpleLineLayout.h"
 #include "Text.h"
 #include <wtf/Forward.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -169,7 +168,6 @@ public:
 #endif
 
     void ensureLineBoxes();
-    const SimpleLineLayout::Layout* simpleLineLayout() const;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     const LayoutIntegration::LineLayout* layoutFormattingContextLineLayout() const;
 #endif

@@ -30,8 +30,6 @@
 
 #include "FontCascade.h"
 #include "RenderBlockFlow.h"
-#include "SimpleLineLayout.h"
-#include "SimpleLineLayoutFunctions.h"
 
 namespace WebCore {
 namespace LayoutIntegration {

@@ -46,7 +46,6 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "Settings.h"
-#include "SimpleLineLayoutFunctions.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
 #include "VisiblePosition.h"
@@ -443,23 +442,13 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     ASSERT(start <= INT_MAX);
     start = std::min(start, static_cast<unsigned>(INT_MAX));
     end = std::min(end, static_cast<unsigned>(INT_MAX));
-    if (simpleLineLayout() && !useSelectionHeight)
-        return collectAbsoluteQuadsForRange(*this, start, end, *simpleLineLayout(), ignoreEmptyTextSelections, wasFixed);
+
     const_cast<RenderText&>(*this).ensureLineBoxes();
     return m_lineBoxes.absoluteQuadsForRange(*this, start, end, useSelectionHeight, ignoreEmptyTextSelections, wasFixed);
 }
 
 Position RenderText::positionForPoint(const LayoutPoint& point)
 {
-    if (simpleLineLayout() && parent()->firstChild() == parent()->lastChild()) {
-        auto offset = SimpleLineLayout::textOffsetForPoint(point, *this, *simpleLineLayout());
-        // Did not find a valid offset. Fall back to the normal line layout based Position.
-        if (offset == text().length())
-            return positionForPoint(point, nullptr).deepEquivalent();
-        auto position = Position(textNode(), offset);
-        ASSERT(position == positionForPoint(point, nullptr).deepEquivalent());
-        return position;
-    }
     return positionForPoint(point, nullptr).deepEquivalent();
 }
 
@@ -1076,7 +1065,7 @@ void RenderText::setTextWithOffset(const String& newText, unsigned offset, unsig
     int delta = newText.length() - text().length();
     unsigned end = offset + length;
 
-    m_linesDirty = simpleLineLayout() || m_lineBoxes.dirtyRange(*this, offset, end, delta);
+    m_linesDirty = m_lineBoxes.dirtyRange(*this, offset, end, delta);
 
     setText(newText, force || m_linesDirty);
 }
@@ -1300,13 +1289,6 @@ void RenderText::ensureLineBoxes()
     downcast<RenderBlockFlow>(*parent()).ensureLineBoxes();
 }
 
-const SimpleLineLayout::Layout* RenderText::simpleLineLayout() const
-{
-    if (!is<RenderBlockFlow>(*parent()))
-        return nullptr;
-    return downcast<RenderBlockFlow>(*parent()).simpleLineLayout();
-}
-
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 const LayoutIntegration::LineLayout* RenderText::layoutFormattingContextLineLayout() const
 {
@@ -1318,8 +1300,6 @@ const LayoutIntegration::LineLayout* RenderText::layoutFormattingContextLineLayo
 
 bool RenderText::usesComplexLineLayoutPath() const
 {
-    if (simpleLineLayout())
-        return false;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (layoutFormattingContextLineLayout())
         return false;
@@ -1388,7 +1368,6 @@ IntRect RenderText::linesBoundingBox() const
 
 LayoutRect RenderText::linesVisualOverflowBoundingBox() const
 {
-    ASSERT(!simpleLineLayout());
     return m_lineBoxes.visualOverflowBoundingBox(*this);
 }
 
@@ -1411,7 +1390,6 @@ LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObjec
 LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>* rects)
 {
     ASSERT(!needsLayout());
-    ASSERT(!simpleLineLayout());
 
     if (selectionState() == HighlightState::None)
         return LayoutRect();

@@ -1697,8 +1697,6 @@ void ComplexLineLayout::linkToEndLineIfNeeded(LineLayoutState& layoutState)
 
 void ComplexLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    ASSERT(!m_flow.simpleLineLayout());
-
     m_flow.setLogicalHeight(m_flow.borderAndPaddingBefore());
     
     // Lay out our hypothetical grid line as though it occurs at the top of the block.
@@ -2128,8 +2126,6 @@ bool ComplexLineLayout::matchedEndLine(LineLayoutState& layoutState, const Inlin
 
 void ComplexLineLayout::addOverflowFromInlineChildren()
 {
-    ASSERT(!m_flow.simpleLineLayout());
-
     LayoutUnit endPadding = m_flow.hasOverflowClip() ? m_flow.paddingEnd() : 0_lu;
     // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
     if (!endPadding)
