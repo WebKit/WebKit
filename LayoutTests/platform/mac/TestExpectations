@@ -2195,7 +2195,7 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe.sub.html [ Skip ]
 
-#<rdar://63026283> [ macOS iOS ] media/modern-media-controls/playback-support/playback-support-autoplay.html is a flaky failure/timeout
+# <rdar://63026283> [ macOS iOS ] media/modern-media-controls/playback-support/playback-support-autoplay.html is a flaky failure/timeout
 [ BigSur+ ] media/modern-media-controls/playback-support/playback-support-autoplay.html [ Pass Failure ]
 
 # rdar://68736735 (REGRESSION: [ BigSur < 20A2374 ] fast/images/animated-gif-loop-count.html is a constant image failure)
@@ -2211,3 +2211,22 @@ webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ S
 
 # <rdar://68947198> [ macOS iOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html
 [ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Pass Failure ]
+
+# rdar://69347249
+[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes.html [ Failure ]
+[ arm64 ] webaudio/Analyser/realtimeanalyser-byte-data.html [ Failure ]
+[ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
+[ arm64 ] webaudio/BiquadFilter/tail-time-allpass.html [ Failure ]
+[ arm64 ] webaudio/BiquadFilter/tail-time-bandpass.html [ Failure ]
+[ arm64 ] webaudio/BiquadFilter/tail-time-highpass.html [ Failure ]
+[ arm64 ] webaudio/BiquadFilter/tail-time-highshelf.html [ Failure ]
+[ arm64 ] webaudio/BiquadFilter/tail-time-lowpass.html [ Failure ]
+[ arm64 ] webaudio/BiquadFilter/tail-time-peaking.html [ Failure ]
+[ arm64 ] webaudio/IIRFilter/iir-tail-time.html [ Failure ]
+[ arm64 ] webaudio/Oscillator/no-dezippering.html [ Failure ]
+[ arm64 ] webaudio/convolution-mono-mono.html [ Failure ]

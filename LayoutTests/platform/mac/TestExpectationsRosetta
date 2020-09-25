@@ -32,3 +32,22 @@
 
 # rdar://68957822 (REGRESSION: [ BigSur wk2 rosetta ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html is a flaky failure)
 [ BigSur+ ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html  [ Pass Failure ]
+
+# rdar://69347249
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection.html [ Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections.html [ Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse.html [ Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html [ Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes.html [ Failure ]
+webaudio/Analyser/realtimeanalyser-byte-data.html [ Failure ]
+webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
+webaudio/BiquadFilter/tail-time-allpass.html [ Failure ]
+webaudio/BiquadFilter/tail-time-bandpass.html [ Failure ]
+webaudio/BiquadFilter/tail-time-highpass.html [ Failure ]
+webaudio/BiquadFilter/tail-time-highshelf.html [ Failure ]
+webaudio/BiquadFilter/tail-time-lowpass.html [ Failure ]
+webaudio/BiquadFilter/tail-time-peaking.html [ Failure ]
+webaudio/IIRFilter/iir-tail-time.html [ Failure ]
+webaudio/Oscillator/no-dezippering.html [ Failure ]
+webaudio/convolution-mono-mono.html [ Failure ]

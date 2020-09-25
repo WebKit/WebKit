@@ -1,3 +1,10 @@
+2020-09-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, land test expectations for rdar://69347249.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/TestExpectationsRosetta:
+
 2020-09-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Out-of-flow] ASSERTION FAILED: !layoutBox.isOutOfFlowPositioned() in WebCore::Layout::FormattingContext::Geometry::computedHeightValue
