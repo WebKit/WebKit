@@ -31,7 +31,22 @@
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
+ALLOW_UNUSED_PARAMETERS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+#include <webrtc/api/rtp_receiver_interface.h>
+
+ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_UNUSED_PARAMETERS_END
+
 namespace WebCore {
+
+LibWebRTCRtpReceiverBackend::LibWebRTCRtpReceiverBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& rtcReceiver)
+    : m_rtcReceiver(WTFMove(rtcReceiver))
+{
+}
+
+LibWebRTCRtpReceiverBackend::~LibWebRTCRtpReceiverBackend() = default;
 
 RTCRtpParameters LibWebRTCRtpReceiverBackend::getParameters()
 {

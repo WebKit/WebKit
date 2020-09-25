@@ -28,13 +28,11 @@
 
 #include "LibWebRTCMacros.h"
 #include "RTCRtpReceiverBackend.h"
-
-ALLOW_UNUSED_PARAMETERS_BEGIN
-
-#include <webrtc/api/rtp_receiver_interface.h>
 #include <webrtc/api/scoped_refptr.h>
 
-ALLOW_UNUSED_PARAMETERS_END
+namespace webrtc {
+class RtpReceiverInterface;
+}
 
 namespace WebCore {
 
@@ -43,10 +41,8 @@ class RealtimeMediaSource;
 class LibWebRTCRtpReceiverBackend final : public RTCRtpReceiverBackend {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit LibWebRTCRtpReceiverBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& rtcReceiver)
-        : m_rtcReceiver(WTFMove(rtcReceiver))
-    {
-    }
+    explicit LibWebRTCRtpReceiverBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&);
+    ~LibWebRTCRtpReceiverBackend();
 
     webrtc::RtpReceiverInterface* rtcReceiver() { return m_rtcReceiver.get(); }
 
