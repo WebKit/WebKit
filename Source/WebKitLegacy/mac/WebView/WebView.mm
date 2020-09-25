@@ -3054,6 +3054,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     }
 #endif
 
+    [self _preferencesChangedGenerated:preferences];
+
     auto& settings = _private->page->settings();
 
     settings.setCursiveFontFamily([preferences cursiveFontFamily]);
@@ -3176,10 +3178,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setJavaScriptCanOpenWindowsAutomatically([preferences javaScriptCanOpenWindowsAutomatically] || shouldAllowWindowOpenWithoutUserGesture());
 
-    settings.setVisualViewportAPIEnabled([preferences visualViewportAPIEnabled]);
-    settings.setSyntheticEditingCommandsEnabled([preferences syntheticEditingCommandsEnabled]);
     settings.setCSSOMViewScrollingAPIEnabled([preferences CSSOMViewScrollingAPIEnabled]);
-    settings.setCSSOMViewSmoothScrollingEnabled([preferences CSSOMViewSmoothScrollingEnabled]);
     settings.setMediaContentTypesRequiringHardwareSupport([preferences mediaContentTypesRequiringHardwareSupport]);
 
     switch ([preferences storageBlockingPolicy]) {
@@ -3286,7 +3285,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMediaCaptureRequiresSecureConnection(true);
     settings.setMediaStreamEnabled(false);
     settings.setMediaDevicesEnabled(false);
-    settings.setMediaRecorderEnabled(preferences.mediaRecorderEnabled);
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -3296,7 +3294,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled([preferences webAudioEnabled]);
     settings.setPrefixedWebAudioEnabled(false);
-    settings.setModernUnprefixedWebAudioEnabled([preferences modernUnprefixedWebAudioEnabled]);
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -3304,13 +3301,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
     RuntimeEnabledFeatures::sharedFeatures().setCSSLogicalEnabled([preferences cssLogicalEnabled]);
-
     RuntimeEnabledFeatures::sharedFeatures().setLineHeightUnitsEnabled([preferences lineHeightUnitsEnabled]);
 
-    settings.setAdClickAttributionEnabled([preferences adClickAttributionEnabled]);
-
     settings.setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
-
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
 
     WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
@@ -3321,8 +3314,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(GAMEPAD)
     settings.setGamepadsEnabled([preferences gamepadsEnabled]);
 #endif
-
-    RuntimeEnabledFeatures::sharedFeatures().setHighlightAPIEnabled([preferences highlightAPIEnabled]);
 
     settings.setDataTransferItemsEnabled([preferences dataTransferItemsEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setCustomPasteboardDataEnabled([preferences customPasteboardDataEnabled]);
@@ -3336,45 +3327,15 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled([preferences cacheAPIEnabled]);
 
-    RuntimeEnabledFeatures::sharedFeatures().setWritableStreamAPIEnabled([preferences writableStreamAPIEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setReadableByteStreamAPIEnabled([preferences readableByteStreamAPIEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setTransformStreamAPIEnabled([preferences transformStreamAPIEnabled]);
-
-#if ENABLE(WEBGL2)
-    RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled([preferences webGL2Enabled]);
-#endif
-
-#if ENABLE(WEBGPU)
-    RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled([preferences webGPUEnabled]);
-#endif
-
-#if ENABLE(WEBGL) || ENABLE(WEBGL2)
-    RuntimeEnabledFeatures::sharedFeatures().setMaskWebGLStringsEnabled([preferences maskWebGLStringsEnabled]);
-#endif
-
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     settings.setDownloadAttributeEnabled([preferences downloadAttributeEnabled]);
-#endif
-
-    RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsCompositeOperationsEnabled([preferences webAnimationsCompositeOperationsEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsMutableTimelinesEnabled([preferences webAnimationsMutableTimelinesEnabled]);
-
-    settings.setCSSCustomPropertiesAndValuesEnabled([preferences CSSCustomPropertiesAndValuesEnabled]);
-
-#if ENABLE(INTERSECTION_OBSERVER)
-    settings.setIntersectionObserverEnabled(preferences.intersectionObserverEnabled);
 #endif
 
     settings.setLinkPreloadEnabled(preferences.linkPreloadEnabled);
     settings.setMediaPreloadingEnabled(preferences.mediaPreloadingEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setDirectoryUploadEnabled([preferences directoryUploadEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setMenuItemElementEnabled([preferences menuItemElementEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setAccessibilityObjectModelEnabled([preferences accessibilityObjectModelEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setAriaReflectionEnabled([preferences ariaReflectionEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIKeepAliveEnabled([preferences fetchAPIKeepAliveEnabled]);
-    settings.setReferrerPolicyAttributeEnabled([preferences referrerPolicyAttributeEnabled]);
-    settings.setLinkPreloadResponsiveImagesEnabled([preferences linkPreloadResponsiveImagesEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setDialogElementEnabled([preferences dialogElementEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setKeygenElementEnabled([preferences keygenElementEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setLayoutFormattingContextIntegrationEnabled([preferences layoutFormattingContextIntegrationEnabled]);
     settings.setIsInAppBrowserPrivacyEnabled([preferences isInAppBrowserPrivacyEnabled]);
@@ -3388,27 +3349,13 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setEncryptedMediaAPIEnabled(preferences.encryptedMediaAPIEnabled);
 #endif
 
-    RuntimeEnabledFeatures::sharedFeatures().setUserGesturePromisePropagationEnabled(preferences.userGesturePromisePropagationEnabled);
-
 #if ENABLE(PICTURE_IN_PICTURE_API)
     settings.setPictureInPictureAPIEnabled(preferences.pictureInPictureAPIEnabled);
-#endif
-
-#if ENABLE(VIDEO)
-    settings.setGenericCueAPIEnabled(preferences.genericCueAPIEnabled);
-#endif
-
-#if ENABLE(GPU_PROCESS)
-    settings.setUseGPUProcessForMediaEnabled(preferences.useGPUProcessForMediaEnabled);
 #endif
 
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(preferences.inspectorAdditionsEnabled);
 
     settings.setAllowMediaContentTypesRequiringHardwareSupportAsFallback(preferences.allowMediaContentTypesRequiringHardwareSupportAsFallback);
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    settings.setRemotePlaybackEnabled(preferences.remotePlaybackEnabled);
-#endif
 
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
     if (timeout > 0)
@@ -3433,27 +3380,12 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
     settings.setMediaDataLoadsAutomatically([preferences mediaDataLoadsAutomatically]);
-
     settings.setAllowContentSecurityPolicySourceStarToMatchAnyProtocol(shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol());
-
     settings.setShouldConvertInvalidURLsToBlank(shouldConvertInvalidURLsToBlank());
-
     settings.setLargeImageAsyncDecodingEnabled([preferences largeImageAsyncDecodingEnabled]);
     settings.setAnimatedImageAsyncDecodingEnabled([preferences animatedImageAsyncDecodingEnabled]);
     settings.setMediaCapabilitiesEnabled([preferences mediaCapabilitiesEnabled]);
-
-    settings.setCoreMathMLEnabled([preferences coreMathMLEnabled]);
-    settings.setRequestIdleCallbackEnabled([preferences requestIdleCallbackEnabled]);
-    settings.setAsyncClipboardAPIEnabled(preferences.asyncClipboardAPIEnabled);
-
-    RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled([preferences serverTimingEnabled]);
-
     settings.setSelectionAcrossShadowBoundariesEnabled(preferences.selectionAcrossShadowBoundariesEnabled);
-
-#if ENABLE(RESIZE_OBSERVER)
-    settings.setResizeObserverEnabled([preferences resizeObserverEnabled]);
-#endif
-    settings.setAspectRatioOfImgFromWidthAndHeightEnabled([preferences aspectRatioOfImgFromWidthAndHeightEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

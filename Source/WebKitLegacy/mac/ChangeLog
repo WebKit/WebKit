@@ -1,3 +1,51 @@
+2020-09-25  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Start generating experimental feature preferences for legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=216909
+
+        Reviewed by Tim Horton.
+
+        As a stepping stone to unified preferences definitions and generation, this adds
+        generation of "experimental feature" preferences for WebKitLegacy. The generator
+        is almost identical to the one in WebKit, but the templates are changed. The end
+        goal will be to share the preferences definition (yaml) files. In this pass, I
+        have copied WebPreferencesExperimental.yaml from WebKit, but change the default
+        values to match the existing WebKitLegacy default values (and temporarily removed
+        WebSQLDisabled, as WebKitLegacy has a WebSQLEnabled, and its not clear how to map
+        to the inverse yet). I have also imported empty versions of WebPreferences.yaml, 
+        WebPreferencesDebug.yaml, and  WebPreferencesInternal.yaml, to keep the generator 
+        happy, these will be filled in subsequent changes or, if we decide on a good home 
+        for them, perhaps in WTF, we can just switch to using the shared ones.
+
+        Much of the change is moving around existing getter/setters in WebPreferences
+        to go in their own category, with the intention to remove them when we we have
+        determined no more callers remain.
+
+        * Scripts: Added.
+        * Scripts/GeneratePreferences.rb: Added.
+        * Scripts/PreferencesTemplates: Added.
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb: Added.
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb: Added.
+        * Scripts/PreferencesTemplates/WebViewPreferencesChangedGenerated.mm.erb: Added.
+        * WebView/WebFeature.h: Added.
+        * WebView/WebFeature.m: Added.
+        (-[WebFeature initWithKey:preferenceKey:name:details:defaultValue:hidden:]):
+        (-[WebFeature description]):
+        * WebView/WebFeatureInternal.h: Added.
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        * WebView/WebPreferences.yaml: Added.
+        * WebView/WebPreferencesDebug.yaml: Added.
+        * WebView/WebPreferencesDefaultValues.h: Added.
+        * WebView/WebPreferencesDefaultValues.mm: Added.
+        * WebView/WebPreferencesExperimental.yaml: Added.
+        * WebView/WebPreferencesInternal.h: Added.
+        * WebView/WebPreferencesInternal.yaml: Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        * WebView/WebViewInternal.h:
+
 2020-09-23  Peng Liu  <peng.liu6@apple.com>
 
         Add feature flags for GPU Process features

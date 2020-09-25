@@ -343,3 +343,8 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)_setMainFrameIcon:(NSImage *)icon;
 #endif
 @end
+
+@interface WebView (WebViewInternalPreferencesChangedGenerated)
+// Implemented in generated file WebViewPreferencesChangedGenerated.mm
+- (void)_preferencesChangedGenerated:(WebPreferences *)preferences;
+@end

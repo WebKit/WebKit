@@ -1,0 +1,593 @@
+# Copyright (c) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# For experimental features:
+# The type should be boolean.
+# They must include a humanReadableName and humanReadableDescription. This is
+#   the text exposed to the user from the WebKit client.
+# The default value may be either false (for unstable features) or
+#   DEFAULT_EXPERIMENTAL_FEATURES_ENABLED (for features that are ready for
+#   wider testing).
+
+BlankAnchorTargetImpliesNoOpenerEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Blank anchor target implies rel=noopener"
+  humanReadableDescription: "target=_blank on anchor elements implies rel=noopener"
+
+DisallowSyncXHRDuringPageDismissalEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Disallow sync XHR during page dismissal"
+  humanReadableDescription: "Disallow synchronous XMLHttpRequest during page dismissal"
+
+ThirdPartyIframeRedirectBlockingEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Block top-level redirects by third-party iframes"
+  humanReadableDescription: "Block top-level redirects by third-party iframes"
+
+GoogleAntiFlickerOptimizationQuirkEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
+  humanReadableDescription: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
+
+UserGesturePromisePropagationEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "UserGesture Promise Propagation"
+  humanReadableDescription: "UserGesture Promise Propagation"
+
+ModernUnprefixedWebAudioEnabled:
+  type: bool
+  defaultValue: WebKit::defaultModernUnprefixedWebAudioEnabled()
+  condition: ENABLE(WEB_AUDIO)
+  humanReadableName: "Modern WebAudio API"
+  humanReadableDescription: "Modern and unprefixed WebAudio API"
+
+RequestIdleCallbackEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "requestIdleCallback"
+  humanReadableDescription: "Enable requestIdleCallback support"
+
+HighlightAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Highlight API"
+  humanReadableDescription: "Highlight API support"
+  webcoreBinding: RuntimeEnabledFeatures
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+PaintTimingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Paint Timing"
+  humanReadableDescription: "Enable PaintTiming API"
+  webcoreBinding: RuntimeEnabledFeatures
+
+AsyncClipboardAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Async clipboard API"
+  humanReadableDescription: "Enable the async clipboard API"
+
+ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Defer async scripts until DOMContentLoaded or first-paint"
+  humanReadableDescription: "Defer async scripts until DOMContentLoaded or first-paint"
+
+# FIXME: This is set to DEFAULT_EXPERIMENTAL_FEATURES_ENABLED in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
+SpringTimingFunctionEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Spring Animations"
+  humanReadableDescription: "CSS Spring Animation prototype"
+
+# FIXME: This is set to DEFAULT_EXPERIMENTAL_FEATURES_ENABLED in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
+ImageBitmapEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "ImageBitmap"
+  humanReadableDescription: "Support for the ImageBitmap APIs"
+  webcoreBinding: RuntimeEnabledFeatures
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+IntersectionObserverEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Intersection Observer"
+  humanReadableDescription: "Enable Intersection Observer support"
+  condition: ENABLE(INTERSECTION_OBSERVER)
+
+VisualViewportAPIEnabled:
+  type: bool
+  defaultValue: WebKit::defaultVisualViewportAPIEnabled()
+  humanReadableName: "Visual Viewport API"
+  humanReadableDescription: "Enable Visual Viewport API"
+
+SyntheticEditingCommandsEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Synthetic Editing Commands"
+  humanReadableDescription: "Enable Synthetic Editing Commands"
+
+CSSOMViewSmoothScrollingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSSOM View Smooth Scrolling"
+  humanReadableDescription: "Enable DOM API and CSS property for 'smooth' scroll behavior"
+
+# FIXME: This is set to DEFAULT_EXPERIMENTAL_FEATURES_ENABLED in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
+WebAnimationsCompositeOperationsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Animations composite operations"
+  humanReadableDescription: "Support for the CompositeOperation enum and properties consuming it"
+  webcoreBinding: RuntimeEnabledFeatures
+
+# FIXME: This is set to DEFAULT_EXPERIMENTAL_FEATURES_ENABLED in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
+WebAnimationsMutableTimelinesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Animations mutable timelines"
+  humanReadableDescription: "Support for setting the timeline property of an Animation object"
+  webcoreBinding: RuntimeEnabledFeatures
+
+WebGL2Enabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "WebGL 2.0"
+  humanReadableDescription: "WebGL 2 prototype"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBGL2)
+
+WebGPUEnabled:
+  type: bool
+  defaultValue: WebKit::defaultWebGPUEnabled()
+  humanReadableName: "WebGPU"
+  humanReadableDescription: "WebGPU Sketch prototype"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBGPU)
+
+MaskWebGLStringsEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Mask WebGL Strings"
+  humanReadableDescription: "Mask WebGL Vendor, Renderer, Shader Language Strings"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBGL) || ENABLE(WEBGL2)
+
+AccessibilityObjectModelEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Accessibility Object Model"
+  humanReadableDescription: "Accessibility Object Model support"
+  webcoreBinding: RuntimeEnabledFeatures
+
+ServerTimingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Server Timing"
+  humanReadableDescription: "Enable Server Timing API"
+  webcoreBinding: RuntimeEnabledFeatures
+  webcoreName: serverTimingEnabled
+
+CSSCustomPropertiesAndValuesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Custom Properties and Values API"
+  humanReadableDescription: "Enable CSS Custom Properties and Values API"
+
+CSSPaintingAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Painting API"
+  humanReadableDescription: "Enable the CSS Painting API"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(CSS_PAINTING_API)
+
+CSSTypedOMEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Typed OM"
+  humanReadableDescription: "Enable the CSS Typed OM"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(CSS_TYPED_OM)
+
+# WebKitLegacy has a preference called WebSQLEnabled, but there is currently no easy
+# way to map this, WebSQLDisabled, to it.
+#WebSQLDisabled:
+#  type: bool
+#  defaultValue: WebKit::defaultWebSQLDisabled()
+#  humanReadableName: "Disable Web SQL"
+#  humanReadableDescription: "Disable Web SQL"
+#  webcoreBinding: RuntimeEnabledFeatures
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+MediaCapabilitiesExtensionsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Media Capabilities Extensions"
+  humanReadableDescription: "Media Capabilities Extensions"
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+HDRMediaCapabilitiesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "HDR Media Capabilities"
+  humanReadableDescription: "HDR Media Capabilities"
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+ResizeObserverEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Resize Observer"
+  humanReadableDescription: "Enable Resize Observer support"
+  condition: ENABLE(RESIZE_OBSERVER)
+
+AdClickAttributionEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Ad Click Attribution"
+  humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
+
+AdClickAttributionDebugModeEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Ad Click Attribution Debug Mode"
+  humanReadableDescription: "Enable Ad Click Attribution Debug Mode"
+  webcoreBinding: RuntimeEnabledFeatures
+
+# FIXME: This seems to be accidentally enabled for WebKit1 right now due to the old code using the
+# wrong preference key in some places. We should identify whether it really makes sense to keep this
+# enabled.
+FetchAPIKeepAliveEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Fetch API Request KeepAlive"
+  humanReadableDescription: "Enable Fetch API Request KeepAlive"
+  webcoreBinding: RuntimeEnabledFeatures
+  webcoreName: fetchAPIKeepAliveEnabled
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+GenericCueAPIEnabled:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(VIDEO)
+  humanReadableName: "Generic Text Track Cue API"
+  humanReadableDescription: "Enable Generic Text Track Cue API"
+  webcoreName: genericCueAPIEnabled
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+AspectRatioOfImgFromWidthAndHeightEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Aspect ratio of <img> from width and height"
+  humanReadableDescription: "Map HTML attributes width/height to the default aspect ratio of <img>"
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+ReferrerPolicyAttributeEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Referrer Policy attribute"
+  humanReadableDescription: "Enable Referrer Policy attribute"
+
+PageAtRuleSupportEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "@page CSS at-rule support"
+  humanReadableDescription: "Enable @page support"
+  webcoreBinding: RuntimeEnabledFeatures
+
+CoreMathMLEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "MathML Core"
+  humanReadableDescription: "Disable features removed from the MathML Core spec."
+
+LinkPrefetchEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "LinkPrefetch"
+  humanReadableDescription: "Enable LinkedPrefetch"
+
+LinkPreloadResponsiveImagesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Link preload responsive images"
+  humanReadableDescription: "Enable link preload responsive images"
+
+LazyImageLoadingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Lazy image loading"
+  humanReadableDescription: "Enable lazy image loading support"
+
+LazyIframeLoadingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Lazy iframe loading"
+  humanReadableDescription: "Enable lazy iframe loading support"
+
+IsThirdPartyCookieBlockingDisabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Disable Full 3rd-Party Cookie Blocking (ITP)"
+  humanReadableDescription: "Disable full third-party cookie blocking when Intelligent Tracking Prevention is enabled"
+
+IsFirstPartyWebsiteDataRemovalDisabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Disable Removal of Non-Cookie Data After 7 Days of No User Interaction (ITP)"
+  humanReadableDescription: "Disable removal of all non-cookie website data after seven days of no user interaction when Intelligent Tracking Prevention is enabled"
+
+IsSameSiteStrictEnforcementEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "SameSite strict enforcement (ITP)"
+  humanReadableDescription: "Enable SameSite strict enforcement to mitigate bounce tracking"
+
+IsLoggedInAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "IsLoggedIn web API"
+  humanReadableDescription: "Enable the proposed IsLoggedIn web API"
+
+# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
+RemotePlaybackEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Remote Playback API"
+  humanReadableDescription: "Enable Remote Playback API"
+  condition: ENABLE(WIRELESS_PLAYBACK_TARGET)
+
+DialogElementEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Dialog Element"
+  humanReadableDescription: "Enable the Dialog Element"
+  webcoreBinding: RuntimeEnabledFeatures
+
+WebShareFileAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Share API Level 2"
+  humanReadableDescription: "Enable level 2 of Web Share API"
+
+IncrementalPDFLoadingEnabled:
+  type: bool
+  defaultValue: WebKit::defaultIncrementalPDFEnabled()
+  humanReadableName: "Incremental PDF Loading"
+  humanReadableDescription: "Enable Incremental PDF Loading on supported platforms"
+  condition: HAVE(INCREMENTAL_PDF_APIS)
+  webcoreBinding: RuntimeEnabledFeatures
+
+WebXREnabled:
+  type: bool
+  defaultValue: WebKit::defaultWebXREnabled()
+  humanReadableName: "WebXR Device API"
+  humanReadableDescription: "Adds support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBXR)
+
+ReadableByteStreamAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "ReadableByteStream"
+  humanReadableDescription: "Enable Readable Byte Streams"
+  webcoreBinding: RuntimeEnabledFeatures
+
+WritableStreamAPIEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "WritableStream API"
+  humanReadableDescription: "Enable Writable Stream API"
+  webcoreBinding: RuntimeEnabledFeatures
+
+TransformStreamAPIEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "TransformStream API"
+  humanReadableDescription: "Enable Transform Stream API"
+  webcoreBinding: RuntimeEnabledFeatures
+
+CoreImageAcceleratedFilterRenderEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CoreImage-Accelerated Filter Rendering"
+  humanReadableDescription: "Accelerated CSS and SVG filter rendering using CoreImage"
+  condition: ENABLE(CORE_IMAGE_ACCELERATED_FILTER_RENDER)
+
+DisableMediaExperiencePIDInheritance:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "Disable Media Experience PID Inheritance"
+  humanReadableDescription: "Disable Media Experience PID Inheritance"
+  condition: HAVE(CELESTIAL)
+
+
+
+# FIXME: This is not implemented for WebKitLegacy, so should probably be removed.
+HTTPSUpgradeEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Automatic HTTPS upgrade"
+  humanReadableDescription: "Automatic HTTPS upgrade for known supported sites"
+
+# FIXME: This is not relevent for WebKitLegacy, so should probably be removed.
+InProcessCookieCacheEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "In-Process Cookie Cache"
+  humanReadableDescription: "In-Process DOM Cookie Cache"
+
+# FIXME: This is not relevent for WebKitLegacy, so should probably be removed.
+UseGPUProcessForMediaEnabled:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(GPU_PROCESS)
+  humanReadableName: "Use GPU Process for media"
+  humanReadableDescription: "Do all media loading and playback in the GPU Process"
+  webcoreName: useGPUProcessForMediaEnabled
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+MediaRecorderEnabled:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(MEDIA_STREAM)
+  humanReadableName: "MediaRecorder"
+  humanReadableDescription: "MediaRecorder"
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+ScreenCaptureEnabled:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
+  humanReadableName: "ScreenCapture"
+  humanReadableDescription: "Enable ScreenCapture"
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+WebRTCH264LowLatencyEncoderEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC H264 LowLatency encoder"
+  humanReadableDescription: "Enable H264 LowLatency encoder"
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+WebRTCH265CodecEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC H265 codec"
+  humanReadableDescription: "Enable WebRTC H265 codec"
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+WebRTCVP9CodecEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC VP9 codec"
+  humanReadableDescription: "Enable WebRTC VP9 codec"
+
+# FIXME: This is not relevent for WebKitLegacy, so should probably be removed.
+WebRTCPlatformCodecsInGPUProcessEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC Platform Codecs in GPU Process"
+  humanReadableDescription: "Enable WebRTC Platform Codecs in GPU Process"
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+ExposeSpeakersEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Allow speaker device selection"
+  humanReadableDescription: "Allow speaker device selection"
+  condition: ENABLE(MEDIA_STREAM)
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+PerElementSpeakerSelectionEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Allow per media element speaker device selection"
+  humanReadableDescription: "Allow per media element speaker device selection"
+  condition: ENABLE(MEDIA_STREAM)
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+VP9DecoderEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: none
+  humanReadableName: "VP9 decoder"
+  humanReadableDescription: "Enable VP9 decoder"
+  condition: ENABLE(VP9)
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+VP9SWDecoderEnabledOnBattery:
+  type: bool
+  defaultValue: false
+  webcoreBinding: none
+  humanReadableName: "VP9 SW decoder on battery"
+  humanReadableDescription: "Enable VP9 SW decoder on battery"
+  condition: ENABLE(VP9)
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+WebMParserEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "WebM MSE parser"
+  humanReadableDescription: "Enable WebM MSE parser"
+  condition: ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+WebAuthenticationEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Authentication"
+  humanReadableDescription: "Enable Web Authentication support"
+  condition: ENABLE(WEB_AUTHN)
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should probably be removed.
+WebAuthenticationLocalAuthenticatorEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Authentication Local Authenticator"
+  humanReadableDescription: "Enable Web Authentication local authenticator support"
+  condition: ENABLE(WEB_AUTHN)
+
+# FIXME: This is not implemented for WebKitLegacy, so should probably be removed.
+HTTP3Enabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "HTTP/3"
+  humanReadableDescription: "Enable HTTP/3"
+  webcoreBinding: none
+  condition: HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+
+# FIXME: This is not relevent for WebKitLegacy, so should probably be removed.
+ProcessSwapOnCrossSiteNavigationEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Swap Processes on Cross-Site Navigation"
+  humanReadableDescription: "Swap WebContent Processes on cross-site navigations"
+  webcoreBinding: none
+
+# FIXME: This is not implemented for WebKitLegacy, so should probably be removed.
+IsNSURLSessionWebSocketEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "NSURLSession WebSocket"
+  humanReadableDescription: "Use NSURLSession WebSocket API"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: HAVE(NSURLSESSION_WEBSOCKET)

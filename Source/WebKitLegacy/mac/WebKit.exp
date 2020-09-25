@@ -127,6 +127,7 @@
 .objc_class_name_WebDeviceOrientation
 .objc_class_name_WebDeviceOrientationProviderMock
 .objc_class_name_WebDownload
+.objc_class_name_WebFeature
 .objc_class_name_WebFormDelegate
 .objc_class_name_WebFrame
 .objc_class_name_WebFrameView

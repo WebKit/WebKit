@@ -1,3 +1,13 @@
+2020-09-25  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Start generating experimental feature preferences for legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=216909
+
+        Reviewed by Tim Horton.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        Add new files.
+
 2020-09-18  Youenn Fablet  <youenn@apple.com>
 
         XHR.timeout is affected by long tasks

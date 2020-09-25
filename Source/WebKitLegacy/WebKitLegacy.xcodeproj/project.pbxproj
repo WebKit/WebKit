@@ -171,36 +171,11 @@
 		598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C40CD2122D8F9C000E9DAD5 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB82173435C900C5D807 /* PopupMenuMac.mm */; };
 		5C40CD2222D8F9C300E9DAD5 /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */; };
-		5C7DCC4922D9632D00CFEB59 /* UnifiedSource4-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7DCC4722D9631100CFEB59 /* UnifiedSource4-mm.mm */; };
-		5C7DCC4F22D963BD00CFEB59 /* UnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7DCC4D22D9639B00CFEB59 /* UnifiedSource3-mm.mm */; };
-		5C7DCC5022D9643A00CFEB59 /* UnifiedSource8-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786322D95FE20006A230 /* UnifiedSource8-mm.mm */; };
-		5C7E786A22D95FE20006A230 /* UnifiedSource10-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E785D22D95FE10006A230 /* UnifiedSource10-mm.mm */; };
-		5C7E786B22D95FE20006A230 /* UnifiedSource18-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E785E22D95FE10006A230 /* UnifiedSource18-mm.mm */; };
-		5C7E786C22D95FE20006A230 /* UnifiedSource13-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E785F22D95FE10006A230 /* UnifiedSource13-mm.mm */; };
-		5C7E786D22D95FE20006A230 /* UnifiedSource14-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786022D95FE10006A230 /* UnifiedSource14-mm.mm */; };
-		5C7E786E22D95FE20006A230 /* UnifiedSource15-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786122D95FE20006A230 /* UnifiedSource15-mm.mm */; };
-		5C7E786F22D95FE20006A230 /* UnifiedSource16-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786222D95FE20006A230 /* UnifiedSource16-mm.mm */; };
-		5C7E787122D95FE20006A230 /* UnifiedSource17-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786422D95FE20006A230 /* UnifiedSource17-mm.mm */; };
-		5C7E787222D95FE20006A230 /* UnifiedSource6-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786522D95FE20006A230 /* UnifiedSource6-mm.mm */; };
-		5C7E787322D95FE20006A230 /* UnifiedSource9-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786622D95FE20006A230 /* UnifiedSource9-mm.mm */; };
-		5C7E787422D95FE20006A230 /* UnifiedSource7-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786722D95FE20006A230 /* UnifiedSource7-mm.mm */; };
-		5C7E787522D95FE20006A230 /* UnifiedSource12-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786822D95FE20006A230 /* UnifiedSource12-mm.mm */; };
-		5C7E787622D95FE20006A230 /* UnifiedSource11-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786922D95FE20006A230 /* UnifiedSource11-mm.mm */; };
-		5C97EF632342C534006020D4 /* UnifiedSource19-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C97EF612342C534006020D4 /* UnifiedSource19-mm.mm */; };
-		5C97EF642342C534006020D4 /* UnifiedSource20-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C97EF622342C534006020D4 /* UnifiedSource20-mm.mm */; };
 		5C9D925A22D7E8AD008E9266 /* Sources.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925822D7E8AD008E9266 /* Sources.txt */; };
 		5C9D925B22D7E8AD008E9266 /* SourcesCocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */; };
 		5C9EF2F521F061BE003BDC56 /* PageStorageSessionProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */; };
 		5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */; };
-		5CC19FCC22D7F28D00BBC952 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FB822D7F23B00BBC952 /* UnifiedSource1-mm.mm */; };
-		5CC19FCD22D7F28D00BBC952 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBB22D7F23B00BBC952 /* UnifiedSource1.cpp */; };
-		5CC19FCE22D7F28D00BBC952 /* UnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBE22D7F23C00BBC952 /* UnifiedSource2-mm.mm */; };
-		5CC19FCF22D7F28D00BBC952 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBA22D7F23B00BBC952 /* UnifiedSource2.cpp */; };
-		5CC19FD022D7F28D00BBC952 /* UnifiedSource3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBD22D7F23B00BBC952 /* UnifiedSource3.cpp */; };
-		5CC19FD122D7F28D00BBC952 /* UnifiedSource5-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBC22D7F23B00BBC952 /* UnifiedSource5-mm.mm */; };
-		5CC19FD222D7F28D00BBC952 /* UnifiedSource5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FB922D7F23B00BBC952 /* UnifiedSource5.cpp */; };
 		5CE44F4A206D70EA003EFD01 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE44F49206D70E9003EFD01 /* PingHandle.h */; };
-		5CEFBA2F2343BE66009C41F8 /* UnifiedSource21-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CEFBA2E2343BE66009C41F8 /* UnifiedSource21-mm.mm */; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib */; };
 		65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */; };
@@ -218,6 +193,41 @@
 		7A8FF0D11075024A00A80A08 /* WebInspectorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A8FF0D01075024A00A80A08 /* WebInspectorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C01CB85173435C900C5D807 /* PopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C01CB81173435C900C5D807 /* PopupMenuMac.h */; };
 		7C01CB87173435C900C5D807 /* SearchPopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */; };
+		7C023214251B925C00BA7BB6 /* WebFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023212251B925C00BA7BB6 /* WebFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C023215251B925C00BA7BB6 /* WebFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C023213251B925C00BA7BB6 /* WebFeature.m */; };
+		7C02321A251B988200BA7BB6 /* WebFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023219251B988200BA7BB6 /* WebFeatureInternal.h */; };
+		7C023A06251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A05251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm */; };
+		7C023A07251BA19600BA7BB6 /* UnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F2251BA01A00BA7BB6 /* UnifiedSource3-mm.mm */; };
+		7C023A08251BA19600BA7BB6 /* UnifiedSource21-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239EC251BA01A00BA7BB6 /* UnifiedSource21-mm.mm */; };
+		7C023A09251BA19600BA7BB6 /* UnifiedSource20-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F1251BA01A00BA7BB6 /* UnifiedSource20-mm.mm */; };
+		7C023A0A251BA19600BA7BB6 /* UnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239EB251BA01A00BA7BB6 /* UnifiedSource2-mm.mm */; };
+		7C023A0B251BA19600BA7BB6 /* UnifiedSource8-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A01251BA01A00BA7BB6 /* UnifiedSource8-mm.mm */; };
+		7C023A0C251BA19600BA7BB6 /* UnifiedSource14-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A02251BA01A00BA7BB6 /* UnifiedSource14-mm.mm */; };
+		7C023A0D251BA19600BA7BB6 /* UnifiedSource4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239FC251BA01A00BA7BB6 /* UnifiedSource4.cpp */; };
+		7C023A0E251BA19600BA7BB6 /* UnifiedSource19-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F4251BA01A00BA7BB6 /* UnifiedSource19-mm.mm */; };
+		7C023A0F251BA19600BA7BB6 /* UnifiedSource9-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F6251BA01A00BA7BB6 /* UnifiedSource9-mm.mm */; };
+		7C023A10251BA19600BA7BB6 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F0251BA01A00BA7BB6 /* UnifiedSource1-mm.mm */; };
+		7C023A11251BA19600BA7BB6 /* UnifiedSource12-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A04251BA01A00BA7BB6 /* UnifiedSource12-mm.mm */; };
+		7C023A12251BA19600BA7BB6 /* UnifiedSource15-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F9251BA01A00BA7BB6 /* UnifiedSource15-mm.mm */; };
+		7C023A13251BA19600BA7BB6 /* UnifiedSource3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F8251BA01A00BA7BB6 /* UnifiedSource3.cpp */; };
+		7C023A14251BA19600BA7BB6 /* UnifiedSource11-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239FF251BA01A00BA7BB6 /* UnifiedSource11-mm.mm */; };
+		7C023A15251BA19600BA7BB6 /* UnifiedSource13-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239FE251BA01A00BA7BB6 /* UnifiedSource13-mm.mm */; };
+		7C023A16251BA19600BA7BB6 /* UnifiedSource17-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239FA251BA01A00BA7BB6 /* UnifiedSource17-mm.mm */; };
+		7C023A17251BA19600BA7BB6 /* UnifiedSource16-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A00251BA01A00BA7BB6 /* UnifiedSource16-mm.mm */; };
+		7C023A18251BA19600BA7BB6 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F7251BA01A00BA7BB6 /* UnifiedSource2.cpp */; };
+		7C023A19251BA19600BA7BB6 /* UnifiedSource18-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239ED251BA01A00BA7BB6 /* UnifiedSource18-mm.mm */; };
+		7C023A1A251BA19600BA7BB6 /* UnifiedSource7-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F3251BA01A00BA7BB6 /* UnifiedSource7-mm.mm */; };
+		7C023A1B251BA19600BA7BB6 /* UnifiedSource5-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F5251BA01A00BA7BB6 /* UnifiedSource5-mm.mm */; };
+		7C023A1C251BA19600BA7BB6 /* UnifiedSource10-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A03251BA01A00BA7BB6 /* UnifiedSource10-mm.mm */; };
+		7C023A1D251BA19600BA7BB6 /* UnifiedSource4-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239EE251BA01A00BA7BB6 /* UnifiedSource4-mm.mm */; };
+		7C023A1E251BA19600BA7BB6 /* UnifiedSource6-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239EF251BA01A00BA7BB6 /* UnifiedSource6-mm.mm */; };
+		7C023A1F251BA19600BA7BB6 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239FB251BA01A00BA7BB6 /* UnifiedSource1.cpp */; };
+		7C023A20251BA19600BA7BB6 /* UnifiedSource5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239FD251BA01A00BA7BB6 /* UnifiedSource5.cpp */; };
+		7C023A23251BA43E00BA7BB6 /* WebPreferencesDefaultValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023A21251BA43E00BA7BB6 /* WebPreferencesDefaultValues.h */; };
+		7C023A24251BA43E00BA7BB6 /* WebPreferencesDefaultValues.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A22251BA43E00BA7BB6 /* WebPreferencesDefaultValues.mm */; };
+		7C023A27251BAF5100BA7BB6 /* WebViewPreferencesChangedGenerated.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A26251BAF2200BA7BB6 /* WebViewPreferencesChangedGenerated.mm */; };
+		7C023A29251BB5E500BA7BB6 /* WebPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023A28251BB5E500BA7BB6 /* WebPreferencesInternal.h */; };
+		7C023A2F251C05FC00BA7BB6 /* WebPreferencesDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023A2E251C05D500BA7BB6 /* WebPreferencesDefinitions.h */; };
 		7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1FB3C11846E8E1001A03D8 /* WebAllowDenyPolicyListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */; };
@@ -904,8 +914,6 @@
 		51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; };
 		5241ADF30B1BC48A004012BD /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCache.h; sourceTree = "<group>"; };
 		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
-		535E08C52254604E00DF00CA /* postprocess-header-rule */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "postprocess-header-rule"; path = "scripts/postprocess-header-rule"; sourceTree = "<group>"; };
-		537CF83B22EFC13D00C6EBB3 /* check-xcfilelists.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "check-xcfilelists.sh"; path = "scripts/check-xcfilelists.sh"; sourceTree = "<group>"; };
 		598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationClient.h; sourceTree = "<group>"; };
 		598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationClient.mm; sourceTree = "<group>"; };
 		598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientation.h; sourceTree = "<group>"; };
@@ -915,37 +923,12 @@
 		598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationProviderMock.mm; sourceTree = "<group>"; };
 		598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProviderMockInternal.h; sourceTree = "<group>"; };
 		598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProvider.h; sourceTree = "<group>"; };
-		5C7DCC4722D9631100CFEB59 /* UnifiedSource4-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource4-mm.mm"; sourceTree = "<group>"; };
-		5C7DCC4D22D9639B00CFEB59 /* UnifiedSource3-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource3-mm.mm"; sourceTree = "<group>"; };
-		5C7E785D22D95FE10006A230 /* UnifiedSource10-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource10-mm.mm"; sourceTree = "<group>"; };
-		5C7E785E22D95FE10006A230 /* UnifiedSource18-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource18-mm.mm"; sourceTree = "<group>"; };
-		5C7E785F22D95FE10006A230 /* UnifiedSource13-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource13-mm.mm"; sourceTree = "<group>"; };
-		5C7E786022D95FE10006A230 /* UnifiedSource14-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource14-mm.mm"; sourceTree = "<group>"; };
-		5C7E786122D95FE20006A230 /* UnifiedSource15-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource15-mm.mm"; sourceTree = "<group>"; };
-		5C7E786222D95FE20006A230 /* UnifiedSource16-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource16-mm.mm"; sourceTree = "<group>"; };
-		5C7E786322D95FE20006A230 /* UnifiedSource8-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource8-mm.mm"; sourceTree = "<group>"; };
-		5C7E786422D95FE20006A230 /* UnifiedSource17-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource17-mm.mm"; sourceTree = "<group>"; };
-		5C7E786522D95FE20006A230 /* UnifiedSource6-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource6-mm.mm"; sourceTree = "<group>"; };
-		5C7E786622D95FE20006A230 /* UnifiedSource9-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource9-mm.mm"; sourceTree = "<group>"; };
-		5C7E786722D95FE20006A230 /* UnifiedSource7-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource7-mm.mm"; sourceTree = "<group>"; };
-		5C7E786822D95FE20006A230 /* UnifiedSource12-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource12-mm.mm"; sourceTree = "<group>"; };
-		5C7E786922D95FE20006A230 /* UnifiedSource11-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource11-mm.mm"; sourceTree = "<group>"; };
-		5C97EF612342C534006020D4 /* UnifiedSource19-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource19-mm.mm"; sourceTree = "<group>"; };
-		5C97EF622342C534006020D4 /* UnifiedSource20-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource20-mm.mm"; sourceTree = "<group>"; };
 		5C9D925822D7E8AD008E9266 /* Sources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sources.txt; sourceTree = "<group>"; };
 		5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
 		5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageStorageSessionProvider.h; path = WebCoreSupport/PageStorageSessionProvider.h; sourceTree = SOURCE_ROOT; };
 		5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkStorageSessionMap.h; path = WebCoreSupport/NetworkStorageSessionMap.h; sourceTree = SOURCE_ROOT; };
 		5CA46E7721F1451D00CE86B4 /* NetworkStorageSessionMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkStorageSessionMap.cpp; path = WebCoreSupport/NetworkStorageSessionMap.cpp; sourceTree = SOURCE_ROOT; };
-		5CC19FB822D7F23B00BBC952 /* UnifiedSource1-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource1-mm.mm"; sourceTree = "<group>"; };
-		5CC19FB922D7F23B00BBC952 /* UnifiedSource5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource5.cpp; sourceTree = "<group>"; };
-		5CC19FBA22D7F23B00BBC952 /* UnifiedSource2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource2.cpp; sourceTree = "<group>"; };
-		5CC19FBB22D7F23B00BBC952 /* UnifiedSource1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource1.cpp; sourceTree = "<group>"; };
-		5CC19FBC22D7F23B00BBC952 /* UnifiedSource5-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource5-mm.mm"; sourceTree = "<group>"; };
-		5CC19FBD22D7F23B00BBC952 /* UnifiedSource3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource3.cpp; sourceTree = "<group>"; };
-		5CC19FBE22D7F23C00BBC952 /* UnifiedSource2-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource2-mm.mm"; sourceTree = "<group>"; };
 		5CE44F49206D70E9003EFD01 /* PingHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingHandle.h; path = WebCoreSupport/PingHandle.h; sourceTree = SOURCE_ROOT; };
-		5CEFBA2E2343BE66009C41F8 /* UnifiedSource21-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource21-mm.mm"; sourceTree = "<group>"; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
 		5DE83A750D0F7F9400CAD12A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/WebJavaScriptTextInputPanel.xib; sourceTree = SOURCE_ROOT; };
@@ -974,7 +957,54 @@
 		7C01CB82173435C900C5D807 /* PopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PopupMenuMac.mm; sourceTree = "<group>"; };
 		7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchPopupMenuMac.h; sourceTree = "<group>"; };
 		7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchPopupMenuMac.mm; sourceTree = "<group>"; };
+		7C023211251B8E3A00BA7BB6 /* GeneratePreferences.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = GeneratePreferences.rb; sourceTree = "<group>"; };
+		7C023212251B925C00BA7BB6 /* WebFeature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebFeature.h; sourceTree = "<group>"; };
+		7C023213251B925C00BA7BB6 /* WebFeature.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebFeature.m; sourceTree = "<group>"; };
+		7C023216251B96E400BA7BB6 /* WebPreferencesExperimentalFeatures.mm.erb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPreferencesExperimentalFeatures.mm.erb; sourceTree = "<group>"; };
+		7C023219251B988200BA7BB6 /* WebFeatureInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebFeatureInternal.h; sourceTree = "<group>"; };
+		7C02321C251B9BD600BA7BB6 /* WebPreferences.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferences.yaml; sourceTree = "<group>"; };
+		7C02321D251B9BD600BA7BB6 /* WebPreferencesDebug.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesDebug.yaml; sourceTree = "<group>"; };
+		7C02321E251B9BD600BA7BB6 /* WebPreferencesExperimental.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesExperimental.yaml; sourceTree = "<group>"; };
+		7C02321F251B9BD600BA7BB6 /* WebPreferencesInternal.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesInternal.yaml; sourceTree = "<group>"; };
+		7C0239EB251BA01A00BA7BB6 /* UnifiedSource2-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource2-mm.mm"; sourceTree = "<group>"; };
+		7C0239EC251BA01A00BA7BB6 /* UnifiedSource21-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource21-mm.mm"; sourceTree = "<group>"; };
+		7C0239ED251BA01A00BA7BB6 /* UnifiedSource18-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource18-mm.mm"; sourceTree = "<group>"; };
+		7C0239EE251BA01A00BA7BB6 /* UnifiedSource4-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource4-mm.mm"; sourceTree = "<group>"; };
+		7C0239EF251BA01A00BA7BB6 /* UnifiedSource6-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource6-mm.mm"; sourceTree = "<group>"; };
+		7C0239F0251BA01A00BA7BB6 /* UnifiedSource1-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource1-mm.mm"; sourceTree = "<group>"; };
+		7C0239F1251BA01A00BA7BB6 /* UnifiedSource20-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource20-mm.mm"; sourceTree = "<group>"; };
+		7C0239F2251BA01A00BA7BB6 /* UnifiedSource3-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource3-mm.mm"; sourceTree = "<group>"; };
+		7C0239F3251BA01A00BA7BB6 /* UnifiedSource7-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource7-mm.mm"; sourceTree = "<group>"; };
+		7C0239F4251BA01A00BA7BB6 /* UnifiedSource19-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource19-mm.mm"; sourceTree = "<group>"; };
+		7C0239F5251BA01A00BA7BB6 /* UnifiedSource5-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource5-mm.mm"; sourceTree = "<group>"; };
+		7C0239F6251BA01A00BA7BB6 /* UnifiedSource9-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource9-mm.mm"; sourceTree = "<group>"; };
+		7C0239F7251BA01A00BA7BB6 /* UnifiedSource2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource2.cpp; sourceTree = "<group>"; };
+		7C0239F8251BA01A00BA7BB6 /* UnifiedSource3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource3.cpp; sourceTree = "<group>"; };
+		7C0239F9251BA01A00BA7BB6 /* UnifiedSource15-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource15-mm.mm"; sourceTree = "<group>"; };
+		7C0239FA251BA01A00BA7BB6 /* UnifiedSource17-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource17-mm.mm"; sourceTree = "<group>"; };
+		7C0239FB251BA01A00BA7BB6 /* UnifiedSource1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource1.cpp; sourceTree = "<group>"; };
+		7C0239FC251BA01A00BA7BB6 /* UnifiedSource4.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource4.cpp; sourceTree = "<group>"; };
+		7C0239FD251BA01A00BA7BB6 /* UnifiedSource5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource5.cpp; sourceTree = "<group>"; };
+		7C0239FE251BA01A00BA7BB6 /* UnifiedSource13-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource13-mm.mm"; sourceTree = "<group>"; };
+		7C0239FF251BA01A00BA7BB6 /* UnifiedSource11-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource11-mm.mm"; sourceTree = "<group>"; };
+		7C023A00251BA01A00BA7BB6 /* UnifiedSource16-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource16-mm.mm"; sourceTree = "<group>"; };
+		7C023A01251BA01A00BA7BB6 /* UnifiedSource8-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource8-mm.mm"; sourceTree = "<group>"; };
+		7C023A02251BA01A00BA7BB6 /* UnifiedSource14-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource14-mm.mm"; sourceTree = "<group>"; };
+		7C023A03251BA01A00BA7BB6 /* UnifiedSource10-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource10-mm.mm"; sourceTree = "<group>"; };
+		7C023A04251BA01A00BA7BB6 /* UnifiedSource12-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource12-mm.mm"; sourceTree = "<group>"; };
+		7C023A05251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesExperimentalFeatures.mm; sourceTree = "<group>"; };
+		7C023A21251BA43E00BA7BB6 /* WebPreferencesDefaultValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefaultValues.h; sourceTree = "<group>"; };
+		7C023A22251BA43E00BA7BB6 /* WebPreferencesDefaultValues.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesDefaultValues.mm; sourceTree = "<group>"; };
+		7C023A25251BADD100BA7BB6 /* WebViewPreferencesChangedGenerated.mm.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebViewPreferencesChangedGenerated.mm.erb; sourceTree = "<group>"; };
+		7C023A26251BAF2200BA7BB6 /* WebViewPreferencesChangedGenerated.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewPreferencesChangedGenerated.mm; sourceTree = "<group>"; };
+		7C023A28251BB5E500BA7BB6 /* WebPreferencesInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPreferencesInternal.h; sourceTree = "<group>"; };
+		7C023A2C251C05AC00BA7BB6 /* WebPreferencesDefinitions.h.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPreferencesDefinitions.h.erb; sourceTree = "<group>"; };
+		7C023A2E251C05D500BA7BB6 /* WebPreferencesDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefinitions.h; sourceTree = "<group>"; };
 		7C1FB3C11846E8E1001A03D8 /* WebAllowDenyPolicyListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAllowDenyPolicyListener.h; sourceTree = "<group>"; };
+		7C671116251C2459004F4536 /* generate-unified-sources.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "generate-unified-sources.sh"; path = "scripts/generate-unified-sources.sh"; sourceTree = "<group>"; };
+		7C671117251C2459004F4536 /* generate-webkitversion.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = "generate-webkitversion.pl"; path = "scripts/generate-webkitversion.pl"; sourceTree = "<group>"; };
+		7C671118251C2459004F4536 /* postprocess-header-rule */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "postprocess-header-rule"; path = "scripts/postprocess-header-rule"; sourceTree = "<group>"; };
+		7C671119251C2483004F4536 /* check-xcfilelists.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "check-xcfilelists.sh"; path = "scripts/check-xcfilelists.sh"; sourceTree = "<group>"; };
 		7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptDebugDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		833987810543012D00EE146E /* WebDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1431,8 +1461,6 @@
 		A10C1D8F1820307D0036883A /* WebKit.iOS.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = WebKit.iOS.exp; path = ios/WebKit.iOS.exp; sourceTree = "<group>"; };
 		A1382CDE24B15A51001645B0 /* LaBanquePostaleQuirks.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = LaBanquePostaleQuirks.js; sourceTree = "<group>"; };
 		A17A11B0180DC84800E5498C /* WebPluginPackagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginPackagePrivate.h; sourceTree = "<group>"; };
-		A182B74E199E7B8F001FD95A /* migrate-headers.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "migrate-headers.sh"; path = "mac/migrate-headers.sh"; sourceTree = "<group>"; };
-		A182B74F199E7B8F001FD95A /* postprocess-headers.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "postprocess-headers.sh"; path = "mac/postprocess-headers.sh"; sourceTree = "<group>"; };
 		A1B89B90221E022000EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		A560946414D8AD2600799A8A /* WebIndicateLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIndicateLayer.h; sourceTree = "<group>"; };
 		A560946514D8AD2600799A8A /* WebIndicateLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebIndicateLayer.mm; sourceTree = "<group>"; };
@@ -1584,7 +1612,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				537CF83B22EFC13D00C6EBB3 /* check-xcfilelists.sh */,
 				5C9D925822D7E8AD008E9266 /* Sources.txt */,
 				5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */,
 				1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */,
@@ -1592,11 +1619,12 @@
 				319A3F4D1885E5FB00E0C900 /* WebKit.mac.exp */,
 				A10C1D8F1820307D0036883A /* WebKit.iOS.exp */,
 				F5C283730284676D018635CA /* WebKitPrefix.h */,
-				A182B74E199E7B8F001FD95A /* migrate-headers.sh */,
-				535E08C52254604E00DF00CA /* postprocess-header-rule */,
-				A182B74F199E7B8F001FD95A /* postprocess-headers.sh */,
+				7C671116251C2459004F4536 /* generate-unified-sources.sh */,
+				7C671117251C2459004F4536 /* generate-webkitversion.pl */,
+				7C671118251C2459004F4536 /* postprocess-header-rule */,
+				7C671119251C2483004F4536 /* check-xcfilelists.sh */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
-				5C9D925C22D7E95C008E9266 /* Derived Sources */,
+				7C023220251B9FFA00BA7BB6 /* Derived Sources */,
 				F57D194A034E732C01A80180 /* DOM */,
 				25A8176801B5474B0ECA149E /* History */,
 				254DC334016E1D3F0ECA149E /* Misc */,
@@ -1607,6 +1635,7 @@
 				9C7CABBB0190A37C0ECA16EA /* WebView */,
 				1C68F63F095B5F9C00C2984E /* WebInspector */,
 				089C1665FE841158C02AAC07 /* Resources */,
+				7C02320E251B8E3A00BA7BB6 /* Scripts */,
 				0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1C904FCE0BA9DCF20081E9D0 /* Configurations */,
@@ -1882,47 +1911,6 @@
 			name = PDF;
 			sourceTree = "<group>";
 		};
-		5C9D925C22D7E95C008E9266 /* Derived Sources */ = {
-			isa = PBXGroup;
-			children = (
-				5C9D925D22D7E9B5008E9266 /* unified-sources */,
-			);
-			name = "Derived Sources";
-			path = DerivedSources/WebKitLegacy;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5C9D925D22D7E9B5008E9266 /* unified-sources */ = {
-			isa = PBXGroup;
-			children = (
-				5CC19FB822D7F23B00BBC952 /* UnifiedSource1-mm.mm */,
-				5CC19FBB22D7F23B00BBC952 /* UnifiedSource1.cpp */,
-				5CC19FBE22D7F23C00BBC952 /* UnifiedSource2-mm.mm */,
-				5CC19FBA22D7F23B00BBC952 /* UnifiedSource2.cpp */,
-				5C7DCC4D22D9639B00CFEB59 /* UnifiedSource3-mm.mm */,
-				5CC19FBD22D7F23B00BBC952 /* UnifiedSource3.cpp */,
-				5C7DCC4722D9631100CFEB59 /* UnifiedSource4-mm.mm */,
-				5CC19FBC22D7F23B00BBC952 /* UnifiedSource5-mm.mm */,
-				5CC19FB922D7F23B00BBC952 /* UnifiedSource5.cpp */,
-				5C7E786522D95FE20006A230 /* UnifiedSource6-mm.mm */,
-				5C7E786722D95FE20006A230 /* UnifiedSource7-mm.mm */,
-				5C7E786322D95FE20006A230 /* UnifiedSource8-mm.mm */,
-				5C7E786622D95FE20006A230 /* UnifiedSource9-mm.mm */,
-				5C7E785D22D95FE10006A230 /* UnifiedSource10-mm.mm */,
-				5C7E786922D95FE20006A230 /* UnifiedSource11-mm.mm */,
-				5C7E786822D95FE20006A230 /* UnifiedSource12-mm.mm */,
-				5C7E785F22D95FE10006A230 /* UnifiedSource13-mm.mm */,
-				5C7E786022D95FE10006A230 /* UnifiedSource14-mm.mm */,
-				5C7E786122D95FE20006A230 /* UnifiedSource15-mm.mm */,
-				5C7E786222D95FE20006A230 /* UnifiedSource16-mm.mm */,
-				5C7E786422D95FE20006A230 /* UnifiedSource17-mm.mm */,
-				5C7E785E22D95FE10006A230 /* UnifiedSource18-mm.mm */,
-				5C97EF612342C534006020D4 /* UnifiedSource19-mm.mm */,
-				5C97EF622342C534006020D4 /* UnifiedSource20-mm.mm */,
-				5CEFBA2E2343BE66009C41F8 /* UnifiedSource21-mm.mm */,
-			);
-			path = "unified-sources";
-			sourceTree = "<group>";
-		};
 		6508A4A7099B375F00BCBF45 /* Default Delegates */ = {
 			isa = PBXGroup;
 			children = (
@@ -1941,6 +1929,71 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		7C02320E251B8E3A00BA7BB6 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				7C02320F251B8E3A00BA7BB6 /* PreferencesTemplates */,
+				7C023211251B8E3A00BA7BB6 /* GeneratePreferences.rb */,
+			);
+			name = Scripts;
+			path = mac/Scripts;
+			sourceTree = "<group>";
+		};
+		7C02320F251B8E3A00BA7BB6 /* PreferencesTemplates */ = {
+			isa = PBXGroup;
+			children = (
+				7C023A2C251C05AC00BA7BB6 /* WebPreferencesDefinitions.h.erb */,
+				7C023216251B96E400BA7BB6 /* WebPreferencesExperimentalFeatures.mm.erb */,
+				7C023A25251BADD100BA7BB6 /* WebViewPreferencesChangedGenerated.mm.erb */,
+			);
+			path = PreferencesTemplates;
+			sourceTree = "<group>";
+		};
+		7C023220251B9FFA00BA7BB6 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				7C0239EA251BA01A00BA7BB6 /* unified-sources */,
+				7C023A2E251C05D500BA7BB6 /* WebPreferencesDefinitions.h */,
+				7C023A05251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm */,
+				7C023A26251BAF2200BA7BB6 /* WebViewPreferencesChangedGenerated.mm */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/WebKitLegacy;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7C0239EA251BA01A00BA7BB6 /* unified-sources */ = {
+			isa = PBXGroup;
+			children = (
+				7C0239F0251BA01A00BA7BB6 /* UnifiedSource1-mm.mm */,
+				7C0239FB251BA01A00BA7BB6 /* UnifiedSource1.cpp */,
+				7C0239EB251BA01A00BA7BB6 /* UnifiedSource2-mm.mm */,
+				7C0239F7251BA01A00BA7BB6 /* UnifiedSource2.cpp */,
+				7C0239F2251BA01A00BA7BB6 /* UnifiedSource3-mm.mm */,
+				7C0239F8251BA01A00BA7BB6 /* UnifiedSource3.cpp */,
+				7C0239EE251BA01A00BA7BB6 /* UnifiedSource4-mm.mm */,
+				7C0239FC251BA01A00BA7BB6 /* UnifiedSource4.cpp */,
+				7C0239F5251BA01A00BA7BB6 /* UnifiedSource5-mm.mm */,
+				7C0239FD251BA01A00BA7BB6 /* UnifiedSource5.cpp */,
+				7C0239EF251BA01A00BA7BB6 /* UnifiedSource6-mm.mm */,
+				7C0239F3251BA01A00BA7BB6 /* UnifiedSource7-mm.mm */,
+				7C023A01251BA01A00BA7BB6 /* UnifiedSource8-mm.mm */,
+				7C0239F6251BA01A00BA7BB6 /* UnifiedSource9-mm.mm */,
+				7C023A03251BA01A00BA7BB6 /* UnifiedSource10-mm.mm */,
+				7C0239FF251BA01A00BA7BB6 /* UnifiedSource11-mm.mm */,
+				7C023A04251BA01A00BA7BB6 /* UnifiedSource12-mm.mm */,
+				7C0239FE251BA01A00BA7BB6 /* UnifiedSource13-mm.mm */,
+				7C023A02251BA01A00BA7BB6 /* UnifiedSource14-mm.mm */,
+				7C0239F9251BA01A00BA7BB6 /* UnifiedSource15-mm.mm */,
+				7C023A00251BA01A00BA7BB6 /* UnifiedSource16-mm.mm */,
+				7C0239FA251BA01A00BA7BB6 /* UnifiedSource17-mm.mm */,
+				7C0239ED251BA01A00BA7BB6 /* UnifiedSource18-mm.mm */,
+				7C0239F4251BA01A00BA7BB6 /* UnifiedSource19-mm.mm */,
+				7C0239F1251BA01A00BA7BB6 /* UnifiedSource20-mm.mm */,
+				7C0239EC251BA01A00BA7BB6 /* UnifiedSource21-mm.mm */,
+			);
+			path = "unified-sources";
+			sourceTree = "<group>";
 		};
 		848DFF410365F6FB00CA2ACA /* Netscape Plug-ins */ = {
 			isa = PBXGroup;
@@ -2018,6 +2071,9 @@
 				934C11660D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h */,
 				BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */,
 				1C8CB0790AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h */,
+				7C023212251B925C00BA7BB6 /* WebFeature.h */,
+				7C023213251B925C00BA7BB6 /* WebFeature.m */,
+				7C023219251B988200BA7BB6 /* WebFeatureInternal.h */,
 				2D81DAB203EB0B2D00A80166 /* WebFormDelegate.h */,
 				2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */,
 				2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */,
@@ -2054,6 +2110,13 @@
 				EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */,
 				3944606E020F50ED0ECA1767 /* WebPreferences.h */,
 				F5AEBB3D024A527601C1A526 /* WebPreferences.mm */,
+				7C02321C251B9BD600BA7BB6 /* WebPreferences.yaml */,
+				7C02321D251B9BD600BA7BB6 /* WebPreferencesDebug.yaml */,
+				7C023A21251BA43E00BA7BB6 /* WebPreferencesDefaultValues.h */,
+				7C023A22251BA43E00BA7BB6 /* WebPreferencesDefaultValues.mm */,
+				7C02321E251B9BD600BA7BB6 /* WebPreferencesExperimental.yaml */,
+				7C023A28251BB5E500BA7BB6 /* WebPreferencesInternal.h */,
+				7C02321F251B9BD600BA7BB6 /* WebPreferencesInternal.yaml */,
 				9CAE9D070252A4130ECA16EA /* WebPreferencesPrivate.h */,
 				84311A1205EAAAF00088EDA4 /* WebResource.h */,
 				84311A1305EAAAF00088EDA4 /* WebResource.mm */,
@@ -2960,6 +3023,8 @@
 				1C8CB07A0AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h in Headers */,
 				4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */,
 				DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */,
+				7C023214251B925C00BA7BB6 /* WebFeature.h in Headers */,
+				7C02321A251B988200BA7BB6 /* WebFeatureInternal.h in Headers */,
 				A10C1D681820300E0036883A /* WebFixedPositionContent.h in Headers */,
 				A10C1D6A1820300E0036883A /* WebFixedPositionContentInternal.h in Headers */,
 				939810520824BF01008DF038 /* WebFormDelegate.h in Headers */,
@@ -3078,6 +3143,9 @@
 				939810730824BF01008DF038 /* WebPolicyDelegatePrivate.h in Headers */,
 				939810A80824BF01008DF038 /* WebPreferenceKeysPrivate.h in Headers */,
 				9398105D0824BF01008DF038 /* WebPreferences.h in Headers */,
+				7C023A23251BA43E00BA7BB6 /* WebPreferencesDefaultValues.h in Headers */,
+				7C023A2F251C05FC00BA7BB6 /* WebPreferencesDefinitions.h in Headers */,
+				7C023A29251BB5E500BA7BB6 /* WebPreferencesInternal.h in Headers */,
 				9398105E0824BF01008DF038 /* WebPreferencesPrivate.h in Headers */,
 				1A6A208E1886154600E50F5F /* WebProgressTrackerClient.h in Headers */,
 				A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */,
@@ -3132,6 +3200,7 @@
 			buildConfigurationList = 149C282D08902B0F008A9EFC /* Build configuration list for PBXNativeTarget "WebKitLegacy" */;
 			buildPhases = (
 				5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */,
+				7C02321B251B9A8A00BA7BB6 /* Generate Preferences */,
 				1C6CB0510AA63EB000D23BFD /* Migrate Headers */,
 				9398100D0824BF01008DF038 /* Headers */,
 				535E08CB2254637200DF00CA /* Copy Mig Files into Private Framework Headers */,
@@ -3268,7 +3337,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "exec \"${SRCROOT}/mac/migrate-headers.sh\"";
+			shellScript = "exec \"${SRCROOT}/mac/migrate-headers.sh\"\n";
 		};
 		3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3372,6 +3441,35 @@
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${PROJECT_DIR}/mac/Info.plist\";\nfi;\n";
 		};
+		7C02321B251B9A8A00BA7BB6 /* Generate Preferences */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/mac/WebView/WebPreferences.yaml",
+				"$(SRCROOT)/mac/WebView/WebPreferencesDebug.yaml",
+				"$(SRCROOT)/mac/WebView/WebPreferencesExperimental.yaml",
+				"$(SRCROOT)/mac/WebView/WebPreferencesInternal.yaml",
+				"$(SRCROOT)/mac/Scripts/GeneratePreferences.rb",
+				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb",
+				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb",
+				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebViewPreferencesChangedGenerated.mm.erb",
+			);
+			name = "Generate Preferences";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebPreferencesDefinitions.h",
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebPreferencesExperimentalFeatures.mm",
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebViewPreferencesChangedGenerated.mm",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\n${SRCROOT}/mac/Scripts/GeneratePreferences.rb --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ --base ${SRCROOT}/mac/WebView/WebPreferences.yaml --debug ${SRCROOT}/mac/WebView/WebPreferencesDebug.yaml --experimental ${SRCROOT}/mac/WebView/WebPreferencesExperimental.yaml --internal ${SRCROOT}/mac/WebView/WebPreferencesInternal.yaml\n";
+		};
 		A13EE61D185AE82700556064 /* Postprocess Headers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3418,31 +3516,32 @@
 				1A6B31371A51F3A900422975 /* StorageSyncManager.cpp in Sources */,
 				1A6B31391A51F3A900422975 /* StorageThread.cpp in Sources */,
 				1A6B313B1A51F3A900422975 /* StorageTracker.cpp in Sources */,
-				5CC19FCC22D7F28D00BBC952 /* UnifiedSource1-mm.mm in Sources */,
-				5CC19FCD22D7F28D00BBC952 /* UnifiedSource1.cpp in Sources */,
-				5CC19FCE22D7F28D00BBC952 /* UnifiedSource2-mm.mm in Sources */,
-				5CC19FCF22D7F28D00BBC952 /* UnifiedSource2.cpp in Sources */,
-				5CC19FD022D7F28D00BBC952 /* UnifiedSource3.cpp in Sources */,
-				5C7DCC4F22D963BD00CFEB59 /* UnifiedSource3-mm.mm in Sources */,
-				5C7DCC4922D9632D00CFEB59 /* UnifiedSource4-mm.mm in Sources */,
-				5CC19FD122D7F28D00BBC952 /* UnifiedSource5-mm.mm in Sources */,
-				5CC19FD222D7F28D00BBC952 /* UnifiedSource5.cpp in Sources */,
-				5C7E787222D95FE20006A230 /* UnifiedSource6-mm.mm in Sources */,
-				5C7E787422D95FE20006A230 /* UnifiedSource7-mm.mm in Sources */,
-				5C7DCC5022D9643A00CFEB59 /* UnifiedSource8-mm.mm in Sources */,
-				5C7E787322D95FE20006A230 /* UnifiedSource9-mm.mm in Sources */,
-				5C7E786A22D95FE20006A230 /* UnifiedSource10-mm.mm in Sources */,
-				5C7E787622D95FE20006A230 /* UnifiedSource11-mm.mm in Sources */,
-				5C7E787522D95FE20006A230 /* UnifiedSource12-mm.mm in Sources */,
-				5C7E786C22D95FE20006A230 /* UnifiedSource13-mm.mm in Sources */,
-				5C7E786D22D95FE20006A230 /* UnifiedSource14-mm.mm in Sources */,
-				5C7E786E22D95FE20006A230 /* UnifiedSource15-mm.mm in Sources */,
-				5C7E786F22D95FE20006A230 /* UnifiedSource16-mm.mm in Sources */,
-				5C7E787122D95FE20006A230 /* UnifiedSource17-mm.mm in Sources */,
-				5C7E786B22D95FE20006A230 /* UnifiedSource18-mm.mm in Sources */,
-				5C97EF632342C534006020D4 /* UnifiedSource19-mm.mm in Sources */,
-				5C97EF642342C534006020D4 /* UnifiedSource20-mm.mm in Sources */,
-				5CEFBA2F2343BE66009C41F8 /* UnifiedSource21-mm.mm in Sources */,
+				7C023A10251BA19600BA7BB6 /* UnifiedSource1-mm.mm in Sources */,
+				7C023A1F251BA19600BA7BB6 /* UnifiedSource1.cpp in Sources */,
+				7C023A18251BA19600BA7BB6 /* UnifiedSource2.cpp in Sources */,
+				7C023A0A251BA19600BA7BB6 /* UnifiedSource2-mm.mm in Sources */,
+				7C023A07251BA19600BA7BB6 /* UnifiedSource3-mm.mm in Sources */,
+				7C023A13251BA19600BA7BB6 /* UnifiedSource3.cpp in Sources */,
+				7C023A0D251BA19600BA7BB6 /* UnifiedSource4.cpp in Sources */,
+				7C023A1D251BA19600BA7BB6 /* UnifiedSource4-mm.mm in Sources */,
+				7C023A20251BA19600BA7BB6 /* UnifiedSource5.cpp in Sources */,
+				7C023A1B251BA19600BA7BB6 /* UnifiedSource5-mm.mm in Sources */,
+				7C023A1E251BA19600BA7BB6 /* UnifiedSource6-mm.mm in Sources */,
+				7C023A1A251BA19600BA7BB6 /* UnifiedSource7-mm.mm in Sources */,
+				7C023A0B251BA19600BA7BB6 /* UnifiedSource8-mm.mm in Sources */,
+				7C023A0F251BA19600BA7BB6 /* UnifiedSource9-mm.mm in Sources */,
+				7C023A1C251BA19600BA7BB6 /* UnifiedSource10-mm.mm in Sources */,
+				7C023A14251BA19600BA7BB6 /* UnifiedSource11-mm.mm in Sources */,
+				7C023A11251BA19600BA7BB6 /* UnifiedSource12-mm.mm in Sources */,
+				7C023A15251BA19600BA7BB6 /* UnifiedSource13-mm.mm in Sources */,
+				7C023A0C251BA19600BA7BB6 /* UnifiedSource14-mm.mm in Sources */,
+				7C023A12251BA19600BA7BB6 /* UnifiedSource15-mm.mm in Sources */,
+				7C023A17251BA19600BA7BB6 /* UnifiedSource16-mm.mm in Sources */,
+				7C023A16251BA19600BA7BB6 /* UnifiedSource17-mm.mm in Sources */,
+				7C023A19251BA19600BA7BB6 /* UnifiedSource18-mm.mm in Sources */,
+				7C023A0E251BA19600BA7BB6 /* UnifiedSource19-mm.mm in Sources */,
+				7C023A09251BA19600BA7BB6 /* UnifiedSource20-mm.mm in Sources */,
+				7C023A08251BA19600BA7BB6 /* UnifiedSource21-mm.mm in Sources */,
 				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
@@ -3475,6 +3574,7 @@
 				939810F10824BF01008DF038 /* WebDynamicScrollBarsView.mm in Sources */,
 				4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */,
 				DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */,
+				7C023215251B925C00BA7BB6 /* WebFeature.m in Sources */,
 				A10C1D691820300E0036883A /* WebFixedPositionContent.mm in Sources */,
 				939810FC0824BF01008DF038 /* WebFormDelegate.m in Sources */,
 				A10C1D6C1820300E0036883A /* WebFrameIOS.mm in Sources */,
@@ -3549,6 +3649,8 @@
 				1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */,
 				939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */,
 				939810F80824BF01008DF038 /* WebPreferences.mm in Sources */,
+				7C023A24251BA43E00BA7BB6 /* WebPreferencesDefaultValues.mm in Sources */,
+				7C023A06251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm in Sources */,
 				1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */,
 				9398111A0824BF01008DF038 /* WebResource.mm in Sources */,
 				A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */,
@@ -3569,6 +3671,7 @@
 				C1D81128202CD80000EE74F9 /* WebVideoFullscreenController.mm in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
 				1430C12C1B2C5DF700DEA01D /* WebViewGroup.cpp in Sources */,
+				7C023A27251BAF5100BA7BB6 /* WebViewPreferencesChangedGenerated.mm in Sources */,
 				A10C1D771820300E0036883A /* WebVisiblePosition.mm in Sources */,
 				1AC7176E1A26568A002E3115 /* WebVisitedLinkStore.mm in Sources */,
 				C1D8112E202CED0800EE74F9 /* WebWindowAnimation.mm in Sources */,
