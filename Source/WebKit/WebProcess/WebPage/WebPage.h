@@ -1531,7 +1531,7 @@ private:
     void setBackgroundColor(const Optional<WebCore::Color>&);
 
 #if PLATFORM(COCOA)
-    void setTopContentInsetFenced(float, IPC::Attachment);
+    void setTopContentInsetFenced(float, const WTF::MachSendRight&);
 #endif
     void setTopContentInset(float);
 

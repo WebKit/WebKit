@@ -1,3 +1,32 @@
+2020-09-25  Peng Liu  <peng.liu6@apple.com>
+
+        Replace the usages of (IPC::Attachment fencePort) with IPC::MachPort
+        https://bugs.webkit.org/show_bug.cgi?id=207683
+
+        Reviewed by Daniel Bates.
+
+        No new tests, no functional change.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setVideoLayerFrame): Replace the
+        IPC::Attachment argument with a MachSendRight.
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::setVideoLayerFrameFenced):
+        r232451 adds a check for mach port disposition, which is not necessary now.
+        Because ArgumentCoder<MachSendRight>::decode() provides the check.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setTopContentInset): Replace the IPC::Attachment
+        argument with a MachSendRight.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTopContentInsetFenced): Ditto.
+        r232451 adds a check for mach port disposition, which is not necessary now.
+        Because ArgumentCoder<MachSendRight>::decode() provides the check.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Tweak the names of the GPU process audio/video capture internal feature flags

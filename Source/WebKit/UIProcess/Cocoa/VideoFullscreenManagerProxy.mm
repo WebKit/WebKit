@@ -788,18 +788,15 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(PlaybackSessionContextIde
 
 void VideoFullscreenManagerProxy::setVideoLayerFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
 {
-    @autoreleasepool {
 #if PLATFORM(IOS_FAMILY)
-        mach_port_name_t fencePort = [UIWindow _synchronizeDrawingAcrossProcesses];
+    auto fenceSendRight = MachSendRight::adopt([UIWindow _synchronizeDrawingAcrossProcesses]);
 #else
-        MachSendRight fenceSendRight;
-        if (DrawingAreaProxy* drawingArea = m_page->drawingArea())
-            fenceSendRight = drawingArea->createFence();
-        mach_port_name_t fencePort = fenceSendRight.leakSendRight();
+    MachSendRight fenceSendRight;
+    if (DrawingAreaProxy* drawingArea = m_page->drawingArea())
+        fenceSendRight = drawingArea->createFence();
 #endif
 
-        m_page->send(Messages::VideoFullscreenManager::SetVideoLayerFrameFenced(contextId, frame, IPC::Attachment(fencePort, MACH_MSG_TYPE_MOVE_SEND)));
-    }
+    m_page->send(Messages::VideoFullscreenManager::SetVideoLayerFrameFenced(contextId, frame, fenceSendRight));
 }
 
 void VideoFullscreenManagerProxy::setVideoLayerGravity(PlaybackSessionContextIdentifier contextId, WebCore::MediaPlayerEnums::VideoGravity gravity)

@@ -543,14 +543,9 @@ void VideoFullscreenManager::requestRouteSharingPolicyAndContextUID(PlaybackSess
     ensureModel(contextId).requestRouteSharingPolicyAndContextUID(WTFMove(reply));
 }
     
-void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, IPC::Attachment fencePort)
+void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, const WTF::MachSendRight& machSendRight)
 {
     LOG(Fullscreen, "VideoFullscreenManager::setVideoLayerFrameFenced(%p, %x)", this, contextId);
-
-    if (fencePort.disposition() != MACH_MSG_TYPE_MOVE_SEND) {
-        LOG(Fullscreen, "VideoFullscreenManager::setVideoLayerFrameFenced(%p, %x) Received an invalid fence port: %d, disposition: %d", this, contextId, fencePort.port(), fencePort.disposition());
-        return;
-    }
 
     auto [model, interface] = ensureModelAndInterface(contextId);
 
@@ -560,9 +555,8 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIden
     }
     
     if (auto* context = interface->layerHostingContext())
-        context->setFencePort(fencePort.port());
+        context->setFencePort(machSendRight.sendRight());
     model->setVideoLayerFrame(bounds);
-    deallocateSendRightSafely(fencePort.port());
 }
 
 } // namespace WebKit

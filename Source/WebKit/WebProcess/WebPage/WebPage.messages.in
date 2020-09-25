@@ -34,7 +34,7 @@ messages -> WebPage LegacyReceiver {
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply() -> (bool handled) Synchronous
 
 #if PLATFORM(COCOA)
-    SetTopContentInsetFenced(float contentInset, IPC::Attachment fencePort)
+    SetTopContentInsetFenced(float contentInset, MachSendRight machSendRight)
 #endif
     SetTopContentInset(float contentInset)
 

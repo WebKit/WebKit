@@ -1821,10 +1821,7 @@ void WebPageProxy::setTopContentInset(float contentInset)
     if (!hasRunningProcess())
         return;
 #if PLATFORM(COCOA)
-    MachSendRight fence = m_drawingArea->createFence();
-
-    auto fenceAttachment = IPC::Attachment(fence.leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
-    send(Messages::WebPage::SetTopContentInsetFenced(contentInset, fenceAttachment));
+    send(Messages::WebPage::SetTopContentInsetFenced(contentInset, m_drawingArea->createFence()));
 #else
     send(Messages::WebPage::SetTopContentInset(contentInset));
 #endif

@@ -31,7 +31,7 @@ messages -> VideoFullscreenManager {
     DidExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     DidEnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId, Optional<WebCore::FloatSize> size)
     DidCleanupFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
-    SetVideoLayerFrameFenced(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, IPC::Attachment fencePort)
+    SetVideoLayerFrameFenced(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, MachSendRight machSendRight)
     SetVideoLayerGravityEnum(WebKit::PlaybackSessionContextIdentifier contextId, unsigned gravity)
     FullscreenModeChanged(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
     FullscreenWillReturnToInline(WebKit::PlaybackSessionContextIdentifier contextId, bool isPageVisible)

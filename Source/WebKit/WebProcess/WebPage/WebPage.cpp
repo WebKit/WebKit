@@ -3173,18 +3173,10 @@ void WebPage::setBackgroundColor(const Optional<WebCore::Color>& backgroundColor
 }
 
 #if PLATFORM(COCOA)
-void WebPage::setTopContentInsetFenced(float contentInset, IPC::Attachment fencePort)
+void WebPage::setTopContentInsetFenced(float contentInset, const WTF::MachSendRight& machSendRight)
 {
-    if (fencePort.disposition() != MACH_MSG_TYPE_MOVE_SEND) {
-        LOG(Layers, "WebPage::setTopContentInsetFenced(%g, fencePort) Received an invalid fence port: %d, disposition: %d", contentInset, fencePort.port(), fencePort.disposition());
-        return;
-    }
-
-    m_drawingArea->addFence(MachSendRight::create(fencePort.port()));
-
+    m_drawingArea->addFence(machSendRight);
     setTopContentInset(contentInset);
-
-    deallocateSendRightSafely(fencePort.port());
 }
 #endif
 
