@@ -1251,12 +1251,6 @@ test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-same-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/toLocaleString/calls-tostring-from-each-value.js:
-  default: 'Test262Error: should not call valueOf if toString is present (Testing with Float64Array.)'
-  strict mode: 'Test262Error: should not call valueOf if toString is present (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/toLocaleString/calls-valueof-from-each-value.js:
-  default: 'Test262Error: returns expected value Expected SameValue(«hacks2,hacks1», «hacks1,hacks2») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: returns expected value Expected SameValue(«hacks2,hacks1», «hacks1,hacks2») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/buffer-arg/byteoffset-to-number-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'

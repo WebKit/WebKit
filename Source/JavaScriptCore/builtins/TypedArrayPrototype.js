@@ -364,9 +364,9 @@ function toLocaleString(/* locale, options */)
     if (length == 0)
         return "";
 
-    var string = this[0].toLocaleString(@argument(0), @argument(1));
+    var string = @toString(this[0].toLocaleString(@argument(0), @argument(1)));
     for (var i = 1; i < length; i++)
-        string += "," + this[i].toLocaleString(@argument(0), @argument(1));
+        string += "," + @toString(this[i].toLocaleString(@argument(0), @argument(1)));
 
     return string;
 }

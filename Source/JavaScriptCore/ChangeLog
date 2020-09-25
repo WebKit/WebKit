@@ -1,5 +1,19 @@
 2020-09-24  Ross Kirsling  <ross.kirsling@sony.com>
 
+        %TypedArray%.prototype.toLocaleString must make conscious use of @toString
+        https://bugs.webkit.org/show_bug.cgi?id=216956
+
+        Reviewed by Yusuke Suzuki.
+
+        A fascinating bug: if we override Number.prototype.toLocaleString to return { valueOf() { ... } },
+        then we can observe our %TypedArray%.prototype.toLocaleString resolving its element values in the wrong order.
+
+        * builtins/TypedArrayPrototype.js:
+        (toLocaleString):
+        Wrap the toLocaleString call for each element in @toString(), as the spec indicates.
+
+2020-09-24  Ross Kirsling  <ross.kirsling@sony.com>
+
         %TypedArray%.prototype.sort must throw if comparator is defined and uncallable
         https://bugs.webkit.org/show_bug.cgi?id=216952
 
