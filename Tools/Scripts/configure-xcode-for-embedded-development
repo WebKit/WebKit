@@ -35,6 +35,9 @@ import tempfile
 
 from xml.etree import ElementTree as ET
 
+# We always want the real system version
+os.environ['SYSTEM_VERSION_COMPAT'] = '0'
+
 MISSING_HEADERS = [
     "usr/include/libxslt",
     "usr/include/mach/mach_types.defs",

@@ -15,6 +15,9 @@
 import os
 import sys
 
+# We always want the real system version
+os.environ['SYSTEM_VERSION_COMPAT'] = '0'
+
 libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'libraries')
 sys.path.insert(0, os.path.join(libraries, 'webkitcorepy'))
 
