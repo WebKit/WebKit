@@ -1,0 +1,5 @@
+
+PASS e.style['transform-box'] = "margin-box" should not set the property value 
+PASS e.style['transform-box'] = "padding-box" should not set the property value 
+PASS e.style['transform-box'] = "fill-box view-box" should not set the property value 
+

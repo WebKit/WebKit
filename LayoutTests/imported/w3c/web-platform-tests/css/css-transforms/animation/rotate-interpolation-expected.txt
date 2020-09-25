@@ -1,0 +1,362 @@
+
+FAIL CSS Transitions: property <rotate> from [100deg] to [180deg] at (-1) should be [20deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [180deg] at (0) should be [100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [180deg] at (0.125) should be [110deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [180deg] at (0.875) should be [170deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [180deg] at (1) should be [180deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [180deg] at (2) should be [260deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [180deg] at (-1) should be [20deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [180deg] at (0) should be [100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [180deg] at (0.125) should be [110deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [180deg] at (0.875) should be [170deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [180deg] at (1) should be [180deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [180deg] at (2) should be [260deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [180deg] at (-1) should be [20deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [180deg] at (0) should be [100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [180deg] at (0.125) should be [110deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [180deg] at (0.875) should be [170deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [180deg] at (1) should be [180deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [180deg] at (2) should be [260deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [180deg] at (-1) should be [20deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [180deg] at (0) should be [100deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [180deg] at (0.125) should be [110deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [180deg] at (0.875) should be [170deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [180deg] at (1) should be [180deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [180deg] at (2) should be [260deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [45deg] to [-1 1 0 60deg] at (-1) should be [0.447214 -0.447214 0.774597 104.478deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [45deg] to [-1 1 0 60deg] at (0) should be [z 45deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [45deg] to [-1 1 0 60deg] at (0.125) should be [-0.136456 0.136456 0.981203 40.6037deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [45deg] to [-1 1 0 60deg] at (0.875) should be [-0.70246 0.70246 0.114452 53.1994deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [45deg] to [-1 1 0 60deg] at (1) should be [-0.71 0.71 0 60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [45deg] to [-1 1 0 60deg] at (2) should be [-0.637897 0.637897 -0.431479 124.975deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [45deg] to [-1 1 0 60deg] at (-1) should be [0.447214 -0.447214 0.774597 104.478deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [45deg] to [-1 1 0 60deg] at (0) should be [z 45deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [45deg] to [-1 1 0 60deg] at (0.125) should be [-0.136456 0.136456 0.981203 40.6037deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [45deg] to [-1 1 0 60deg] at (0.875) should be [-0.70246 0.70246 0.114452 53.1994deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [45deg] to [-1 1 0 60deg] at (1) should be [-0.71 0.71 0 60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [45deg] to [-1 1 0 60deg] at (2) should be [-0.637897 0.637897 -0.431479 124.975deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (-1) should be [0.447214 -0.447214 0.774597 104.478deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (0) should be [z 45deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (0.125) should be [-0.136456 0.136456 0.981203 40.6037deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (0.875) should be [-0.70246 0.70246 0.114452 53.1994deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (1) should be [-0.71 0.71 0 60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (2) should be [-0.637897 0.637897 -0.431479 124.975deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (-1) should be [0.447214 -0.447214 0.774597 104.478deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (0) should be [z 45deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (0.125) should be [-0.136456 0.136456 0.981203 40.6037deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (0.875) should be [-0.70246 0.70246 0.114452 53.1994deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (1) should be [-0.71 0.71 0 60deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [45deg] to [-1 1 0 60deg] at (2) should be [-0.637897 0.637897 -0.431479 124.975deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [7 -8 9 400grad] at (-1) should be [0.5 -0.57 0.65 -400grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [7 -8 9 400grad] at (0) should be [0.5 -0.57 0.65 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [7 -8 9 400grad] at (0.125) should be [0.5 -0.57 0.65 50grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [7 -8 9 400grad] at (0.875) should be [0.5 -0.57 0.65 350grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [7 -8 9 400grad] at (1) should be [0.5 -0.57 0.65 400grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [7 -8 9 400grad] at (2) should be [0.5 -0.57 0.65 800grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [7 -8 9 400grad] at (-1) should be [0.5 -0.57 0.65 -400grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [7 -8 9 400grad] at (0) should be [0.5 -0.57 0.65 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [7 -8 9 400grad] at (0.125) should be [0.5 -0.57 0.65 50grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [7 -8 9 400grad] at (0.875) should be [0.5 -0.57 0.65 350grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [7 -8 9 400grad] at (1) should be [0.5 -0.57 0.65 400grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [7 -8 9 400grad] at (2) should be [0.5 -0.57 0.65 800grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [7 -8 9 400grad] at (-1) should be [0.5 -0.57 0.65 -400grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [7 -8 9 400grad] at (0) should be [0.5 -0.57 0.65 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [7 -8 9 400grad] at (0.125) should be [0.5 -0.57 0.65 50grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [7 -8 9 400grad] at (0.875) should be [0.5 -0.57 0.65 350grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [7 -8 9 400grad] at (1) should be [0.5 -0.57 0.65 400grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [7 -8 9 400grad] at (2) should be [0.5 -0.57 0.65 800grad] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [7 -8 9 400grad] at (-1) should be [0.5 -0.57 0.65 -400grad] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [7 -8 9 400grad] at (0) should be [0.5 -0.57 0.65 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [7 -8 9 400grad] at (0.125) should be [0.5 -0.57 0.65 50grad] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [7 -8 9 400grad] at (0.875) should be [0.5 -0.57 0.65 350grad] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [7 -8 9 400grad] at (1) should be [0.5 -0.57 0.65 400grad] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [7 -8 9 400grad] at (2) should be [0.5 -0.57 0.65 800grad] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [none] at (-1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [none] at (0.125) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [none] at (0.875) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [none] at (2) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [none] at (-1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [none] at (0.125) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [none] at (0.875) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [none] at (2) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [none] at (-1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [none] at (0.125) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [none] at (0.875) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [none] at (2) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [none] at (-1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [none] at (0.125) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [none] at (0.875) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [none] at (2) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [30deg] at (-1) should be [-30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [30deg] at (0) should be [0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [30deg] at (0.25) should be [7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [30deg] at (0.75) should be [22.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [30deg] at (1) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [none] to [30deg] at (2) should be [60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [30deg] at (-1) should be [-30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [30deg] at (0) should be [0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [30deg] at (0.25) should be [7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [30deg] at (0.75) should be [22.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [30deg] at (1) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [none] to [30deg] at (2) should be [60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [30deg] at (-1) should be [-30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [30deg] at (0) should be [0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [30deg] at (0.25) should be [7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [30deg] at (0.75) should be [22.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [30deg] at (1) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [none] to [30deg] at (2) should be [60deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [30deg] at (-1) should be [-30deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [30deg] at (0) should be [0deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [30deg] at (0.25) should be [7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [30deg] at (0.75) should be [22.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [30deg] at (1) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [none] to [30deg] at (2) should be [60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from neutral to [30deg] at (-1) should be [-10deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from neutral to [30deg] at (0) should be [10deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from neutral to [30deg] at (0.25) should be [15deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from neutral to [30deg] at (0.75) should be [25deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from neutral to [30deg] at (1) should be [30deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from neutral to [30deg] at (2) should be [50deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from neutral to [30deg] at (-1) should be [-10deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from neutral to [30deg] at (0) should be [10deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from neutral to [30deg] at (0.25) should be [15deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from neutral to [30deg] at (0.75) should be [25deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from neutral to [30deg] at (1) should be [30deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from neutral to [30deg] at (2) should be [50deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from neutral to [30deg] at (-1) should be [-10deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from neutral to [30deg] at (0) should be [10deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from neutral to [30deg] at (0.25) should be [15deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from neutral to [30deg] at (0.75) should be [25deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from neutral to [30deg] at (1) should be [30deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from neutral to [30deg] at (2) should be [50deg] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (-1) should be [-10deg] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (0) should be [10deg] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (0.25) should be [15deg] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (0.75) should be [25deg] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (1) should be [30deg] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from neutral to [30deg] at (2) should be [50deg] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [inherit] to [270deg] at (-1) should be [-90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [inherit] to [270deg] at (0) should be [90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [inherit] to [270deg] at (0.25) should be [135deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [inherit] to [270deg] at (0.75) should be [225deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [inherit] to [270deg] at (1) should be [270deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [inherit] to [270deg] at (2) should be [450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [inherit] to [270deg] at (-1) should be [-90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [inherit] to [270deg] at (0) should be [90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [inherit] to [270deg] at (0.25) should be [135deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [inherit] to [270deg] at (0.75) should be [225deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [inherit] to [270deg] at (1) should be [270deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [inherit] to [270deg] at (2) should be [450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [inherit] to [270deg] at (-1) should be [-90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [inherit] to [270deg] at (0) should be [90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [inherit] to [270deg] at (0.25) should be [135deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [inherit] to [270deg] at (0.75) should be [225deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [inherit] to [270deg] at (1) should be [270deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [inherit] to [270deg] at (2) should be [450deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [inherit] to [270deg] at (-1) should be [-90deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [inherit] to [270deg] at (0) should be [90deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [inherit] to [270deg] at (0.25) should be [135deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [inherit] to [270deg] at (0.75) should be [225deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [inherit] to [270deg] at (1) should be [270deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [inherit] to [270deg] at (2) should be [450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [unset] to [30deg] at (-1) should be [-30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [unset] to [30deg] at (0) should be [0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [unset] to [30deg] at (0.25) should be [7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [unset] to [30deg] at (0.75) should be [22.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [unset] to [30deg] at (1) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [unset] to [30deg] at (2) should be [60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [unset] to [30deg] at (-1) should be [-30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [unset] to [30deg] at (0) should be [0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [unset] to [30deg] at (0.25) should be [7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [unset] to [30deg] at (0.75) should be [22.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [unset] to [30deg] at (1) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [unset] to [30deg] at (2) should be [60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [unset] to [30deg] at (-1) should be [-30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [unset] to [30deg] at (0) should be [0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [unset] to [30deg] at (0.25) should be [7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [unset] to [30deg] at (0.75) should be [22.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [unset] to [30deg] at (1) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [unset] to [30deg] at (2) should be [60deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [unset] to [30deg] at (-1) should be [-30deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [unset] to [30deg] at (0) should be [0deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [unset] to [30deg] at (0.25) should be [7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [unset] to [30deg] at (0.75) should be [22.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [unset] to [30deg] at (1) should be [30deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [unset] to [30deg] at (2) should be [60deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [-100deg] at (-1) should be [300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [-100deg] at (0) should be [100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [-100deg] at (0.25) should be [50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [-100deg] at (0.75) should be [-50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [-100deg] at (1) should be [-100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [100deg] to [-100deg] at (2) should be [-300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [-100deg] at (-1) should be [300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [-100deg] at (0) should be [100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [-100deg] at (0.25) should be [50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [-100deg] at (0.75) should be [-50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [-100deg] at (1) should be [-100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [100deg] to [-100deg] at (2) should be [-300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [-100deg] at (-1) should be [300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [-100deg] at (0) should be [100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [-100deg] at (0.25) should be [50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [-100deg] at (0.75) should be [-50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [-100deg] at (1) should be [-100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [100deg] to [-100deg] at (2) should be [-300deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [-100deg] at (-1) should be [300deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [-100deg] at (0) should be [100deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [-100deg] at (0.25) should be [50deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [-100deg] at (0.75) should be [-50deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [-100deg] at (1) should be [-100deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [100deg] to [-100deg] at (2) should be [-300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (-1) should be [0 1 0 300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0) should be [0 1 0 100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0.25) should be [0 1 0 50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0.75) should be [0 1 0 -50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (1) should be [0 1 0 -100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (2) should be [0 1 0 -300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (-1) should be [0 1 0 300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0) should be [0 1 0 100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0.25) should be [0 1 0 50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0.75) should be [0 1 0 -50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (1) should be [0 1 0 -100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (2) should be [0 1 0 -300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (-1) should be [0 1 0 300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0) should be [0 1 0 100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0.25) should be [0 1 0 50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0.75) should be [0 1 0 -50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (1) should be [0 1 0 -100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (2) should be [0 1 0 -300deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (-1) should be [0 1 0 300deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0) should be [0 1 0 100deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0.25) should be [0 1 0 50deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (0.75) should be [0 1 0 -50deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (1) should be [0 1 0 -100deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 100deg] to [0 1 0 -100deg] at (2) should be [0 1 0 -300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (-1) should be [0.22 -0.55 0.8 300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0) should be [0.22 -0.55 0.8 100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0.25) should be [0.22 -0.55 0.8 50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0.75) should be [0.22 -0.55 0.8 -50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (1) should be [0.22 -0.55 0.8 -100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (2) should be [0.22 -0.55 0.8 -300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (-1) should be [0.22 -0.55 0.8 300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0) should be [0.22 -0.55 0.8 100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0.25) should be [0.22 -0.55 0.8 50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0.75) should be [0.22 -0.55 0.8 -50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (1) should be [0.22 -0.55 0.8 -100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (2) should be [0.22 -0.55 0.8 -300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (-1) should be [0.22 -0.55 0.8 300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0) should be [0.22 -0.55 0.8 100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0.25) should be [0.22 -0.55 0.8 50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0.75) should be [0.22 -0.55 0.8 -50deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (1) should be [0.22 -0.55 0.8 -100deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (2) should be [0.22 -0.55 0.8 -300deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (-1) should be [0.22 -0.55 0.8 300deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0) should be [0.22 -0.55 0.8 100deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0.25) should be [0.22 -0.55 0.8 50deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (0.75) should be [0.22 -0.55 0.8 -50deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (1) should be [0.22 -0.55 0.8 -100deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 -2.5 3.64 100deg] to [1 -2.5 3.64 -100deg] at (2) should be [0.22 -0.55 0.8 -300deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (-1) should be [0 1 0 -10deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0) should be [0 1 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0.25) should be [0 1 0 2.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0.75) should be [0 1 0 7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (1) should be [0 1 0 10deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (2) should be [0 1 0 20deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (-1) should be [0 1 0 -10deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0) should be [0 1 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0.25) should be [0 1 0 2.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0.75) should be [0 1 0 7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (1) should be [0 1 0 10deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (2) should be [0 1 0 20deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (-1) should be [0 1 0 -10deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0) should be [0 1 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0.25) should be [0 1 0 2.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0.75) should be [0 1 0 7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (1) should be [0 1 0 10deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (2) should be [0 1 0 20deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (-1) should be [0 1 0 -10deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0) should be [0 1 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0.25) should be [0 1 0 2.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (0.75) should be [0 1 0 7.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (1) should be [0 1 0 10deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 0deg] to [0 1 0 10deg] at (2) should be [0 1 0 20deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (-1) should be [0.67 -0.06 -0.74 124.97deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0) should be [0.71 0.71 0 90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (-1) should be [0.67 -0.06 -0.74 124.97deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0) should be [0.71 0.71 0 90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (-1) should be [0.67 -0.06 -0.74 124.97deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0) should be [0.71 0.71 0 90deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (-1) should be [0.67 -0.06 -0.74 124.97deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0) should be [0.71 0.71 0 90deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (-1) should be [1 0 0 -450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0) should be [1 0 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.25) should be [1 0 0 112.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.75) should be [1 0 0 337.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (1) should be [1 0 0 450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (2) should be [1 0 0 900deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (-1) should be [1 0 0 -450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0) should be [1 0 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.25) should be [1 0 0 112.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.75) should be [1 0 0 337.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (1) should be [1 0 0 450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (2) should be [1 0 0 900deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (-1) should be [1 0 0 -450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0) should be [1 0 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.25) should be [1 0 0 112.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.75) should be [1 0 0 337.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (1) should be [1 0 0 450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (2) should be [1 0 0 900deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (-1) should be [1 0 0 -450deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0) should be [1 0 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.25) should be [1 0 0 112.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.75) should be [1 0 0 337.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (1) should be [1 0 0 450deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (2) should be [1 0 0 900deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (-1) should be [1 0 0 900deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0) should be [1 0 0 450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0.25) should be [1 0 0 337.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0.75) should be [1 0 0 112.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (1) should be [1 0 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (2) should be [1 0 0 -450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (-1) should be [1 0 0 900deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0) should be [1 0 0 450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0.25) should be [1 0 0 337.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0.75) should be [1 0 0 112.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (1) should be [1 0 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (2) should be [1 0 0 -450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (-1) should be [1 0 0 900deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0) should be [1 0 0 450deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0.25) should be [1 0 0 337.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0.75) should be [1 0 0 112.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (1) should be [1 0 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (2) should be [1 0 0 -450deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (-1) should be [1 0 0 900deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0) should be [1 0 0 450deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0.25) should be [1 0 0 337.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (0.75) should be [1 0 0 112.5deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (1) should be [1 0 0 0deg] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <rotate> from [1 0 0 450deg] to [0 1 0 0deg] at (2) should be [1 0 0 -450deg] assert_true: 'from' value should be supported expected true got false
+

@@ -1,0 +1,4 @@
+
+FAIL Property backface-visibility value 'visible' assert_true: backface-visibility doesn't seem to be supported in the computed style expected true got false
+FAIL Property backface-visibility value 'hidden' assert_true: backface-visibility doesn't seem to be supported in the computed style expected true got false
+

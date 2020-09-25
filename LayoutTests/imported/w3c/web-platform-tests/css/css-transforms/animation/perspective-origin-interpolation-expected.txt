@@ -1,0 +1,122 @@
+
+PASS CSS Transitions: property <perspective-origin> from neutral to [20px 20px] at (-0.3) should be [7px 33px] 
+PASS CSS Transitions: property <perspective-origin> from neutral to [20px 20px] at (0) should be [10px 30px] 
+PASS CSS Transitions: property <perspective-origin> from neutral to [20px 20px] at (0.3) should be [13px 27px] 
+PASS CSS Transitions: property <perspective-origin> from neutral to [20px 20px] at (0.6) should be [16px 24px] 
+PASS CSS Transitions: property <perspective-origin> from neutral to [20px 20px] at (1) should be [20px 20px] 
+PASS CSS Transitions: property <perspective-origin> from neutral to [20px 20px] at (1.5) should be [25px 15px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from neutral to [20px 20px] at (-0.3) should be [7px 33px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from neutral to [20px 20px] at (0) should be [10px 30px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from neutral to [20px 20px] at (0.3) should be [13px 27px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from neutral to [20px 20px] at (0.6) should be [16px 24px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from neutral to [20px 20px] at (1) should be [20px 20px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from neutral to [20px 20px] at (1.5) should be [25px 15px] 
+PASS CSS Animations: property <perspective-origin> from neutral to [20px 20px] at (-0.3) should be [7px 33px] 
+PASS CSS Animations: property <perspective-origin> from neutral to [20px 20px] at (0) should be [10px 30px] 
+PASS CSS Animations: property <perspective-origin> from neutral to [20px 20px] at (0.3) should be [13px 27px] 
+PASS CSS Animations: property <perspective-origin> from neutral to [20px 20px] at (0.6) should be [16px 24px] 
+PASS CSS Animations: property <perspective-origin> from neutral to [20px 20px] at (1) should be [20px 20px] 
+PASS CSS Animations: property <perspective-origin> from neutral to [20px 20px] at (1.5) should be [25px 15px] 
+FAIL Web Animations: property <perspective-origin> from neutral to [20px 20px] at (-0.3) should be [7px 33px] assert_equals: expected "7px 33px " but got "10px 30px "
+PASS Web Animations: property <perspective-origin> from neutral to [20px 20px] at (0) should be [10px 30px] 
+FAIL Web Animations: property <perspective-origin> from neutral to [20px 20px] at (0.3) should be [13px 27px] assert_equals: expected "13px 27px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from neutral to [20px 20px] at (0.6) should be [16px 24px] assert_equals: expected "16px 24px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from neutral to [20px 20px] at (1) should be [20px 20px] assert_equals: expected "20px 20px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from neutral to [20px 20px] at (1.5) should be [25px 15px] assert_equals: expected "25px 15px " but got "10px 30px "
+FAIL CSS Transitions: property <perspective-origin> from [initial] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "25px 25px "
+PASS CSS Transitions: property <perspective-origin> from [initial] to [20px 20px] at (0) should be [25px 25px] 
+PASS CSS Transitions: property <perspective-origin> from [initial] to [20px 20px] at (0.3) should be [23.5px 23.5px] 
+PASS CSS Transitions: property <perspective-origin> from [initial] to [20px 20px] at (0.6) should be [22px 22px] 
+PASS CSS Transitions: property <perspective-origin> from [initial] to [20px 20px] at (1) should be [20px 20px] 
+FAIL CSS Transitions: property <perspective-origin> from [initial] to [20px 20px] at (1.5) should be [17.5px 17.5px] assert_equals: expected "17.5px 17.5px " but got "20px 20px "
+FAIL CSS Transitions with transition: all: property <perspective-origin> from [initial] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "25px 25px "
+PASS CSS Transitions with transition: all: property <perspective-origin> from [initial] to [20px 20px] at (0) should be [25px 25px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [initial] to [20px 20px] at (0.3) should be [23.5px 23.5px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [initial] to [20px 20px] at (0.6) should be [22px 22px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [initial] to [20px 20px] at (1) should be [20px 20px] 
+FAIL CSS Transitions with transition: all: property <perspective-origin> from [initial] to [20px 20px] at (1.5) should be [17.5px 17.5px] assert_equals: expected "17.5px 17.5px " but got "20px 20px "
+FAIL CSS Animations: property <perspective-origin> from [initial] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "25px 25px "
+PASS CSS Animations: property <perspective-origin> from [initial] to [20px 20px] at (0) should be [25px 25px] 
+PASS CSS Animations: property <perspective-origin> from [initial] to [20px 20px] at (0.3) should be [23.5px 23.5px] 
+PASS CSS Animations: property <perspective-origin> from [initial] to [20px 20px] at (0.6) should be [22px 22px] 
+PASS CSS Animations: property <perspective-origin> from [initial] to [20px 20px] at (1) should be [20px 20px] 
+FAIL CSS Animations: property <perspective-origin> from [initial] to [20px 20px] at (1.5) should be [17.5px 17.5px] assert_equals: expected "17.5px 17.5px " but got "20px 20px "
+FAIL Web Animations: property <perspective-origin> from [initial] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [initial] to [20px 20px] at (0) should be [25px 25px] assert_equals: expected "25px 25px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [initial] to [20px 20px] at (0.3) should be [23.5px 23.5px] assert_equals: expected "23.5px 23.5px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [initial] to [20px 20px] at (0.6) should be [22px 22px] assert_equals: expected "22px 22px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [initial] to [20px 20px] at (1) should be [20px 20px] assert_equals: expected "20px 20px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [initial] to [20px 20px] at (1.5) should be [17.5px 17.5px] assert_equals: expected "17.5px 17.5px " but got "10px 30px "
+PASS CSS Transitions: property <perspective-origin> from [inherit] to [20px 20px] at (-0.3) should be [33px 7px] 
+PASS CSS Transitions: property <perspective-origin> from [inherit] to [20px 20px] at (0) should be [30px 10px] 
+PASS CSS Transitions: property <perspective-origin> from [inherit] to [20px 20px] at (0.3) should be [27px 13px] 
+PASS CSS Transitions: property <perspective-origin> from [inherit] to [20px 20px] at (0.6) should be [24px 16px] 
+PASS CSS Transitions: property <perspective-origin> from [inherit] to [20px 20px] at (1) should be [20px 20px] 
+PASS CSS Transitions: property <perspective-origin> from [inherit] to [20px 20px] at (1.5) should be [15px 25px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [inherit] to [20px 20px] at (-0.3) should be [33px 7px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [inherit] to [20px 20px] at (0) should be [30px 10px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [inherit] to [20px 20px] at (0.3) should be [27px 13px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [inherit] to [20px 20px] at (0.6) should be [24px 16px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [inherit] to [20px 20px] at (1) should be [20px 20px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [inherit] to [20px 20px] at (1.5) should be [15px 25px] 
+PASS CSS Animations: property <perspective-origin> from [inherit] to [20px 20px] at (-0.3) should be [33px 7px] 
+PASS CSS Animations: property <perspective-origin> from [inherit] to [20px 20px] at (0) should be [30px 10px] 
+PASS CSS Animations: property <perspective-origin> from [inherit] to [20px 20px] at (0.3) should be [27px 13px] 
+PASS CSS Animations: property <perspective-origin> from [inherit] to [20px 20px] at (0.6) should be [24px 16px] 
+PASS CSS Animations: property <perspective-origin> from [inherit] to [20px 20px] at (1) should be [20px 20px] 
+PASS CSS Animations: property <perspective-origin> from [inherit] to [20px 20px] at (1.5) should be [15px 25px] 
+FAIL Web Animations: property <perspective-origin> from [inherit] to [20px 20px] at (-0.3) should be [33px 7px] assert_equals: expected "33px 7px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [inherit] to [20px 20px] at (0) should be [30px 10px] assert_equals: expected "30px 10px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [inherit] to [20px 20px] at (0.3) should be [27px 13px] assert_equals: expected "27px 13px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [inherit] to [20px 20px] at (0.6) should be [24px 16px] assert_equals: expected "24px 16px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [inherit] to [20px 20px] at (1) should be [20px 20px] assert_equals: expected "20px 20px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [inherit] to [20px 20px] at (1.5) should be [15px 25px] assert_equals: expected "15px 25px " but got "10px 30px "
+FAIL CSS Transitions: property <perspective-origin> from [unset] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "25px 25px "
+PASS CSS Transitions: property <perspective-origin> from [unset] to [20px 20px] at (0) should be [25px 25px] 
+PASS CSS Transitions: property <perspective-origin> from [unset] to [20px 20px] at (0.3) should be [23.5px 23.5px] 
+PASS CSS Transitions: property <perspective-origin> from [unset] to [20px 20px] at (0.6) should be [22px 22px] 
+PASS CSS Transitions: property <perspective-origin> from [unset] to [20px 20px] at (1) should be [20px 20px] 
+FAIL CSS Transitions: property <perspective-origin> from [unset] to [20px 20px] at (1.5) should be [17.5px 17.5px] assert_equals: expected "17.5px 17.5px " but got "20px 20px "
+FAIL CSS Transitions with transition: all: property <perspective-origin> from [unset] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "25px 25px "
+PASS CSS Transitions with transition: all: property <perspective-origin> from [unset] to [20px 20px] at (0) should be [25px 25px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [unset] to [20px 20px] at (0.3) should be [23.5px 23.5px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [unset] to [20px 20px] at (0.6) should be [22px 22px] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [unset] to [20px 20px] at (1) should be [20px 20px] 
+FAIL CSS Transitions with transition: all: property <perspective-origin> from [unset] to [20px 20px] at (1.5) should be [17.5px 17.5px] assert_equals: expected "17.5px 17.5px " but got "20px 20px "
+FAIL CSS Animations: property <perspective-origin> from [unset] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "25px 25px "
+PASS CSS Animations: property <perspective-origin> from [unset] to [20px 20px] at (0) should be [25px 25px] 
+PASS CSS Animations: property <perspective-origin> from [unset] to [20px 20px] at (0.3) should be [23.5px 23.5px] 
+PASS CSS Animations: property <perspective-origin> from [unset] to [20px 20px] at (0.6) should be [22px 22px] 
+PASS CSS Animations: property <perspective-origin> from [unset] to [20px 20px] at (1) should be [20px 20px] 
+FAIL CSS Animations: property <perspective-origin> from [unset] to [20px 20px] at (1.5) should be [17.5px 17.5px] assert_equals: expected "17.5px 17.5px " but got "20px 20px "
+FAIL Web Animations: property <perspective-origin> from [unset] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [unset] to [20px 20px] at (0) should be [25px 25px] assert_equals: expected "25px 25px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [unset] to [20px 20px] at (0.3) should be [23.5px 23.5px] assert_equals: expected "23.5px 23.5px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [unset] to [20px 20px] at (0.6) should be [22px 22px] assert_equals: expected "22px 22px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [unset] to [20px 20px] at (1) should be [20px 20px] assert_equals: expected "20px 20px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [unset] to [20px 20px] at (1.5) should be [17.5px 17.5px] assert_equals: expected "17.5px 17.5px " but got "10px 30px "
+PASS CSS Transitions: property <perspective-origin> from [0% 50%] to [100% 150%] at (-0.3) should be [-30% 20%] 
+PASS CSS Transitions: property <perspective-origin> from [0% 50%] to [100% 150%] at (0) should be [0% 50%] 
+PASS CSS Transitions: property <perspective-origin> from [0% 50%] to [100% 150%] at (0.3) should be [30% 80%] 
+PASS CSS Transitions: property <perspective-origin> from [0% 50%] to [100% 150%] at (0.6) should be [60% 110%] 
+PASS CSS Transitions: property <perspective-origin> from [0% 50%] to [100% 150%] at (1) should be [100% 150%] 
+PASS CSS Transitions: property <perspective-origin> from [0% 50%] to [100% 150%] at (1.5) should be [150% 200%] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [0% 50%] to [100% 150%] at (-0.3) should be [-30% 20%] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [0% 50%] to [100% 150%] at (0) should be [0% 50%] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [0% 50%] to [100% 150%] at (0.3) should be [30% 80%] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [0% 50%] to [100% 150%] at (0.6) should be [60% 110%] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [0% 50%] to [100% 150%] at (1) should be [100% 150%] 
+PASS CSS Transitions with transition: all: property <perspective-origin> from [0% 50%] to [100% 150%] at (1.5) should be [150% 200%] 
+PASS CSS Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (-0.3) should be [-30% 20%] 
+PASS CSS Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (0) should be [0% 50%] 
+PASS CSS Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (0.3) should be [30% 80%] 
+PASS CSS Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (0.6) should be [60% 110%] 
+PASS CSS Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (1) should be [100% 150%] 
+PASS CSS Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (1.5) should be [150% 200%] 
+FAIL Web Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (-0.3) should be [-30% 20%] assert_equals: expected "- 15px 10px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (0) should be [0% 50%] assert_equals: expected "0px 25px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (0.3) should be [30% 80%] assert_equals: expected "15px 40px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (0.6) should be [60% 110%] assert_equals: expected "30px 55px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (1) should be [100% 150%] assert_equals: expected "50px 75px " but got "10px 30px "
+FAIL Web Animations: property <perspective-origin> from [0% 50%] to [100% 150%] at (1.5) should be [150% 200%] assert_equals: expected "75px 100px " but got "10px 30px "
+

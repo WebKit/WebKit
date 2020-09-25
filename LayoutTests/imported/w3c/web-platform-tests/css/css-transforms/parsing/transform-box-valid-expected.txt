@@ -1,0 +1,7 @@
+
+PASS e.style['transform-box'] = "content-box" should set the property value 
+PASS e.style['transform-box'] = "border-box" should set the property value 
+PASS e.style['transform-box'] = "fill-box" should set the property value 
+PASS e.style['transform-box'] = "stroke-box" should set the property value 
+PASS e.style['transform-box'] = "view-box" should set the property value 
+

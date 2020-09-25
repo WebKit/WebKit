@@ -1,0 +1,410 @@
+
+FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (-1) should be [-300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (0) should be [-100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (0.25) should be [-50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (0.75) should be [50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (1) should be [100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px] to [100px] at (2) should be [300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (-1) should be [-300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0) should be [-100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0.25) should be [-50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (0.75) should be [50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (1) should be [100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px] to [100px] at (2) should be [300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px] to [100px] at (-1) should be [-300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px] to [100px] at (0) should be [-100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px] to [100px] at (0.25) should be [-50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px] to [100px] at (0.75) should be [50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px] to [100px] at (1) should be [100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px] to [100px] at (2) should be [300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px] to [100px] at (-1) should be [-300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px] to [100px] at (0) should be [-100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px] to [100px] at (0.25) should be [-50px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px] to [100px] at (0.75) should be [50px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px] to [100px] at (1) should be [100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px] to [100px] at (2) should be [300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100%] to [100%] at (-1) should be [-300%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100%] to [100%] at (0) should be [-100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100%] to [100%] at (0.25) should be [-50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100%] to [100%] at (0.75) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100%] to [100%] at (1) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100%] to [100%] at (2) should be [300%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (-1) should be [-300%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (0) should be [-100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (0.25) should be [-50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (0.75) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (1) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100%] to [100%] at (2) should be [300%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100%] to [100%] at (-1) should be [-300%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100%] to [100%] at (0) should be [-100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100%] to [100%] at (0.25) should be [-50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100%] to [100%] at (0.75) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100%] to [100%] at (1) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100%] to [100%] at (2) should be [300%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100%] to [100%] at (-1) should be [-300%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100%] to [100%] at (0) should be [-100%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100%] to [100%] at (0.25) should be [-50%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100%] to [100%] at (0.75) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100%] to [100%] at (1) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100%] to [100%] at (2) should be [300%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (-1) should be [-300px -150px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0) should be [-100px -50px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.25) should be [-50px -25px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (0.75) should be [50px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (1) should be [100px 50px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px] to [100px 50px] at (2) should be [300px 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (-1) should be [140px 80px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0) should be [220px 240px 260px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.125) should be [230px 260px 290px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (0.875) should be [290px 380px 470px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (1) should be [300px 400px 500px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [220px 240px 260px] to [300px 400px 500px] at (2) should be [380px 560px 740px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (-1) should be [100px 50px -100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.25) should be [-25px -12.5px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (0.75) should be [-75px -37.5px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (1) should be [-100px -50px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [0px] to [-100px -50px 100px] at (2) should be [-200px -100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (-1) should be [-200px -100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0) should be [-100px -50px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.25) should be [-75px -37.5px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (0.75) should be [-25px -12.5px 25px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [-100px -50px 100px] to [0px] at (2) should be [100px 50px -100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (-1) should be [calc(960px - 240%) calc(800px - 160%) 640px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0) should be [480px 400px 320px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.125) should be [calc(420px + 30%) calc(350px + 20%) 280px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (0.875) should be [calc(210% + 60px) calc(140% + 50px) 40px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (1) should be [240% 160%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [480px 400px 320px] to [240% 160%] at (2) should be [calc(480% - 480px) calc(320% - 400px) -320px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [none] at (-1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [none] at (0.125) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [none] at (0.875) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [none] at (2) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [none] at (-1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [none] at (0.125) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [none] at (0.875) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [none] at (2) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [none] at (-1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [none] at (0.125) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [none] at (0.875) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [none] at (2) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [none] at (-1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [none] at (0.125) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [none] at (0.875) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [none] at (2) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (-1) should be [-8px -80% -800px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (0.125) should be [1px 10% 100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (0.875) should be [7px 70% 700px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (1) should be [8px 80% 800px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [none] to [8px 80% 800px] at (2) should be [16px 160% 1600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from neutral to [20px] at (-1) should be [0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from neutral to [20px] at (0) should be [10px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from neutral to [20px] at (1) should be [20px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from neutral to [20px] at (2) should be [30px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (-1) should be [0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0) should be [10px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (1) should be [20px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from neutral to [20px] at (2) should be [30px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from neutral to [20px] at (-1) should be [0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from neutral to [20px] at (0) should be [10px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from neutral to [20px] at (1) should be [20px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from neutral to [20px] at (2) should be [30px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <translate> from neutral to [20px] at (-1) should be [0px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <translate> from neutral to [20px] at (0) should be [10px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <translate> from neutral to [20px] at (1) should be [20px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <translate> from neutral to [20px] at (2) should be [30px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (0.75) should be [150px 75px 150px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [200px 100px 200px] at (2) should be [400px 200px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (-1) should be [400px 200px 800px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0) should be [200px 100px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0.25) should be [150px 75px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (0.75) should be [50px 25px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 400px] to [initial] at (2) should be [-200px -100px -400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [unset] to [20px] at (-1) should be [-20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [unset] to [20px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [unset] to [20px] at (0.25) should be [5px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [unset] to [20px] at (0.75) should be [15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [unset] to [20px] at (1) should be [20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [unset] to [20px] at (2) should be [40px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (-1) should be [-20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0.25) should be [5px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (0.75) should be [15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (1) should be [20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [unset] to [20px] at (2) should be [40px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [unset] to [20px] at (-1) should be [-20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [unset] to [20px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [unset] to [20px] at (0.25) should be [5px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [unset] to [20px] at (0.75) should be [15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [unset] to [20px] at (1) should be [20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [unset] to [20px] at (2) should be [40px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [unset] to [20px] at (-1) should be [-20px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [unset] to [20px] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [unset] to [20px] at (0.25) should be [5px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [unset] to [20px] at (0.75) should be [15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [unset] to [20px] at (1) should be [20px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [unset] to [20px] at (2) should be [40px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [inherit] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (0) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [initial] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (1) should be [0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_true: 'from' value should be supported expected true got false
+

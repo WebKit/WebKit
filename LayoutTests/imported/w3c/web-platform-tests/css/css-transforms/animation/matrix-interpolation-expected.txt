@@ -1,0 +1,6 @@
+
+FAIL CSS Transitions: property <transform> from [rotateY(360deg)] to [rotateX(720deg)] at (0.5) should be [matrix(1, 0, 0, 1, 0, 0)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 0 , 0 ) " but got "matrix3d ( 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ) "
+FAIL CSS Transitions with transition: all: property <transform> from [rotateY(360deg)] to [rotateX(720deg)] at (0.5) should be [matrix(1, 0, 0, 1, 0, 0)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 0 , 0 ) " but got "matrix3d ( 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ) "
+FAIL CSS Animations: property <transform> from [rotateY(360deg)] to [rotateX(720deg)] at (0.5) should be [matrix(1, 0, 0, 1, 0, 0)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 0 , 0 ) " but got "matrix3d ( 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ) "
+FAIL Web Animations: property <transform> from [rotateY(360deg)] to [rotateX(720deg)] at (0.5) should be [matrix(1, 0, 0, 1, 0, 0)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 0 , 0 ) " but got "matrix3d ( 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ) "
+
