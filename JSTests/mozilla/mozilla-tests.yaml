@@ -2037,7 +2037,7 @@
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: js1_5/Array/regress-157652.js
   cmd: |
-      if $memoryLimited
+      if ($memoryLimited || $buildType == "debug")
           skip
       else
           defaultRunMozillaTest :normal, "../shell.js"
