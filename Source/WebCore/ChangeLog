@@ -1,3 +1,36 @@
+2020-09-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266198. rdar://problem/69382901
+
+    Avoid unnecessarily copying a Vector in WebCore::transformsForValue
+    https://bugs.webkit.org/show_bug.cgi?id=215858
+    
+    Reviewed by Tim Horton.
+    
+    Avoid copying the `Vector` of `TransformOperation`s in this helper function by directly appending newly created
+    transform operations to the given `TransformOperations`. This does, however, mean that we need to clear these
+    items in the case where conversion fails and we return false.
+    
+    * css/TransformFunctions.cpp:
+    (WebCore::transformsForValue):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266198 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Avoid unnecessarily copying a Vector in WebCore::transformsForValue
+            https://bugs.webkit.org/show_bug.cgi?id=215858
+
+            Reviewed by Tim Horton.
+
+            Avoid copying the `Vector` of `TransformOperation`s in this helper function by directly appending newly created
+            transform operations to the given `TransformOperations`. This does, however, mean that we need to clear these
+            items in the case where conversion fails and we return false.
+
+            * css/TransformFunctions.cpp:
+            (WebCore::transformsForValue):
+
 2020-09-18  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r266619. rdar://problem/69101154
