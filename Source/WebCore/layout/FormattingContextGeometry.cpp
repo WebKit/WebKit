@@ -74,8 +74,6 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box&
         return LayoutUnit { height.value() };
 
     if (!containingBlockHeight) {
-        // Containing block's height is already computed since we layout the out-of-flow boxes as the last step.
-        ASSERT(!layoutBox.isOutOfFlowPositioned());
         if (layoutState().inQuirksMode())
             containingBlockHeight = formattingContext().quirks().heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
         else {
@@ -1174,7 +1172,6 @@ FormattingContext::ConstraintsForOutOfFlowContent FormattingContext::Geometry::c
 FormattingContext::ConstraintsForInFlowContent FormattingContext::Geometry::constraintsForInFlowContent(const ContainerBox& containerBox, Optional<EscapeReason> escapeReason)
 {
     auto& boxGeometry = formattingContext().geometryForBox(containerBox, escapeReason);
-    // FIXME: Find out if min/max-height properties should also be taken into account here.
     return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), computedHeight(containerBox) } };
 }
 

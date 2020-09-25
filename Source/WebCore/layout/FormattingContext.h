@@ -40,7 +40,6 @@ struct Length;
 
 namespace Layout {
 
-class Box;
 class BoxGeometry;
 class ReplacedBox;
 struct ComputedHorizontalMargin;

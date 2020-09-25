@@ -1,3 +1,22 @@
+2020-09-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Out-of-flow] ASSERTION FAILED: !layoutBox.isOutOfFlowPositioned() in WebCore::Layout::FormattingContext::Geometry::computedHeightValue
+        https://bugs.webkit.org/show_bug.cgi?id=216976
+
+        Reviewed by Antti Koivisto.
+
+        Geometry::computedHeightValue is a simple resolver function. It should not really care about
+        whether the box's containing block has valid vertical geometry. The callsite (where this assert is important) is already testing this condition.
+
+        Test: fast/layoutformattingcontext/out-of-flow-with-non-fixed-height-simple.html
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedHeightValue const):
+        (WebCore::Layout::FormattingContext::Geometry::constraintsForInFlowContent):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+
 2020-09-25  Antoine Quint  <graouts@webkit.org>
 
         Reduce the reliance on PseudoElement in the animation code
