@@ -1,3 +1,26 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(267504): [ macOS ] webaudio/silence-after-playback.html results missing
+        https://bugs.webkit.org/show_bug.cgi?id=216983
+        <rdar://problem/69582243>
+
+        Reviewed by Eric Carlson.
+
+        Drop outdated test which no longer makes sense now that the webkit-prefixed WebAudio API has
+        been disabled. The WebKit-prefixed API used to allow calling createMediaElementSource() on
+        an OfflineAudioContext. The test was checking that we were outputting silence after the
+        media element has finished playing, if the OfflineAudioContext buffer length is longer than
+        the media duration. However, as per the specification, createMediaElementSource() is only
+        exposed on AudioContext (which does not have an underlying buffer), not on
+        OfflineAudioContext:
+        - https://www.w3.org/TR/webaudio/#audiocontext
+
+        * platform/gtk/webaudio/silence-after-playback-expected.wav: Removed.
+        * platform/mac-mojave/webaudio/silence-after-playback-expected.wav: Removed.
+        * platform/mac/webaudio/silence-after-playback-expected.wav: Removed.
+        * platform/wpe/webaudio/silence-after-playback-expected.wav: Removed.
+        * webaudio/silence-after-playback.html: Removed.
+
 2020-09-25  James Darpinian  <jdarpinian@chromium.org>
 
         Support EXT_float_blend
