@@ -213,7 +213,10 @@ endmacro()
 
 
 function(GENERATE_DOM_NAMES _namespace _attrs)
-    list(POP_FRONT ARGN _tags)
+    if (ARGN)
+        list(GET ARGN 0 _tags)
+        list(REMOVE_AT ARGN 0)
+    endif ()
     set(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
     set(_arguments  --attrs ${_attrs})
     set(_outputfiles ${WebCore_DERIVED_SOURCES_DIR}/${_namespace}Names.cpp ${WebCore_DERIVED_SOURCES_DIR}/${_namespace}Names.h)

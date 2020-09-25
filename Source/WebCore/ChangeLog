@@ -1,3 +1,14 @@
+2020-09-25  Lauro Moura  <lmoura@igalia.com>
+
+        Use CMake 3.10 compatible list functions
+        https://bugs.webkit.org/show_bug.cgi?id=216996
+
+        Reviewed by Fujii Hironori.
+
+        POP_FRONT and PREPEND were added in CMake 3.15.
+
+        * WebCoreMacros.cmake: Use GET and REMOVE_AT instead of POP_FRONT.
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         Drop AudioNode::setNodeType()
