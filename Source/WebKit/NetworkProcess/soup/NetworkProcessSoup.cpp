@@ -135,11 +135,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         userPreferredLanguagesChanged(parameters.languages);
 }
 
-std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
-{
-    return makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
-}
-
 void NetworkProcess::setIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)
 {
     if (auto* session = networkSession(sessionID))

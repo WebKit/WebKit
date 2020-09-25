@@ -35,6 +35,7 @@
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -152,7 +153,7 @@ TEST(URLSchemeHandler, Leaks3)
 
     runUntilTasksInFlight(2);
 
-    [webView1.get().configuration.processPool _terminateNetworkProcess];
+    [webView1.get().configuration.websiteDataStore _terminateNetworkProcess];
 
     runUntilTasksInFlight(0);
 }

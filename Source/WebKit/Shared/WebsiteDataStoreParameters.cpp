@@ -40,13 +40,9 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << networkSessionParameters;
     encoder << uiProcessCookieStorageIdentifier;
     encoder << cookieStoragePathExtensionHandle;
-    encoder << pendingCookies;
 
 #if ENABLE(INDEXED_DATABASE)
     encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
-#if PLATFORM(IOS_FAMILY)
-    encoder << indexedDatabaseTempBlobDirectoryExtensionHandle;
-#endif
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -83,12 +79,6 @@ Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Dec
         return WTF::nullopt;
     parameters.cookieStoragePathExtensionHandle = WTFMove(*cookieStoragePathExtensionHandle);
 
-    Optional<Vector<WebCore::Cookie>> pendingCookies;
-    decoder >> pendingCookies;
-    if (!pendingCookies)
-        return WTF::nullopt;
-    parameters.pendingCookies = WTFMove(*pendingCookies);
-
 #if ENABLE(INDEXED_DATABASE)
     Optional<String> indexedDatabaseDirectory;
     decoder >> indexedDatabaseDirectory;
@@ -101,14 +91,6 @@ Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Dec
     if (!indexedDatabaseDirectoryExtensionHandle)
         return WTF::nullopt;
     parameters.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
-
-#if PLATFORM(IOS_FAMILY)
-    Optional<SandboxExtension::Handle> indexedDatabaseTempBlobDirectoryExtensionHandle;
-    decoder >> indexedDatabaseTempBlobDirectoryExtensionHandle;
-    if (!indexedDatabaseTempBlobDirectoryExtensionHandle)
-        return WTF::nullopt;
-    parameters.indexedDatabaseTempBlobDirectoryExtensionHandle = WTFMove(*indexedDatabaseTempBlobDirectoryExtensionHandle);
-#endif
 #endif
 
 #if ENABLE(SERVICE_WORKER)

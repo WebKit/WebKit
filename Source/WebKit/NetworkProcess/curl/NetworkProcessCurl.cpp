@@ -39,11 +39,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 {
 }
 
-std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
-{
-    return makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
-}
-
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
     notImplemented();

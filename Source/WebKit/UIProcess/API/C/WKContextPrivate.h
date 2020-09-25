@@ -83,10 +83,7 @@ WK_EXPORT void WKContextWarmInitialProcess(WKContextRef context);
 // At some point it should be removed.
 WK_EXPORT void WKContextSetUsesNetworkProcess(WKContextRef, bool);
 
-WK_EXPORT void WKContextTerminateNetworkProcess(WKContextRef);
 WK_EXPORT void WKContextTerminateServiceWorkers(WKContextRef);
-
-WK_EXPORT void WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(WKContextRef, bool);
 
 typedef void (*WKContextInvalidMessageFunction)(WKStringRef messageName);
 WK_EXPORT void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunction invalidMessageFunction);
@@ -96,8 +93,6 @@ WK_EXPORT void WKContextSetMemoryCacheDisabled(WKContextRef, bool disabled);
 WK_EXPORT void WKContextSetFontAllowList(WKContextRef, WKArrayRef);
 
 WK_EXPORT void WKContextPreconnectToServer(WKContextRef context, WKURLRef serverURL) WK_C_API_DEPRECATED;
-
-WK_EXPORT WKProcessID WKContextGetNetworkProcessIdentifier(WKContextRef context);
 
 WK_EXPORT void WKContextAddSupportedPlugin(WKContextRef context, WKStringRef domain, WKStringRef name, WKArrayRef mimeTypes, WKArrayRef extensions);
 WK_EXPORT void WKContextClearSupportedPlugins(WKContextRef context);

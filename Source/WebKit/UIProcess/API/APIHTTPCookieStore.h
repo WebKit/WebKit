@@ -83,9 +83,6 @@ public:
 private:
     HTTPCookieStore(WebKit::WebsiteDataStore&);
 
-    void registerForNewProcessPoolNotifications();
-    void unregisterForNewProcessPoolNotifications();
-
     void flushDefaultUIProcessCookieStore();
     static Vector<WebCore::Cookie> getAllDefaultUIProcessCookieStoreCookies();
     static void setCookieInDefaultUIProcessCookieStore(const WebCore::Cookie&);

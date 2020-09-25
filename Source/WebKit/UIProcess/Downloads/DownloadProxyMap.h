@@ -71,7 +71,7 @@ private:
     void platformCreate();
     void platformDestroy();
 
-    WeakPtr<NetworkProcessProxy> m_process;
+    NetworkProcessProxy& m_process;
     HashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
 
     bool m_shouldTakeAssertion { false };

@@ -31,6 +31,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
@@ -92,7 +93,7 @@ TEST(IndexedDB, DatabaseProcessKill)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         if (!killedDBProcess && openRequestUpgradeNeeded) {
             killedDBProcess = true;
-            [configuration.get().processPool _terminateNetworkProcess];
+            [configuration.get().websiteDataStore _terminateNetworkProcess];
         }
     }
 

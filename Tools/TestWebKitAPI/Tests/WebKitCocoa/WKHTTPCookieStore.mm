@@ -479,8 +479,6 @@ static bool finished;
 }
 @end
 
-// FIXME: on iOS, UI process should be using the same cookie file as the network process for default session.
-#if PLATFORM(MAC)
 enum class ShouldEnableProcessPrewarming { No, Yes };
 void runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming shouldEnableProcessPrewarming)
 {
@@ -589,19 +587,65 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolWithPrewarming)
     runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming::Yes);
 }
 
-#endif // PLATFORM(MAC)
-
 @interface CheckSessionCookieUIDelegate : NSObject <WKUIDelegate>
+- (NSString *)alertCookieHTML;
+- (NSString *)waitForMessage;
 @end
 
-@implementation CheckSessionCookieUIDelegate
+@implementation CheckSessionCookieUIDelegate {
+    RetainPtr<NSString> _message;
+}
+
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    EXPECT_STREQ("SessionCookieName=CookieValue", message.UTF8String);
+    _message = message;
     finished = true;
     completionHandler();
 }
+
+- (NSString *)waitForMessage
+{
+    while (!_message)
+        TestWebKitAPI::Util::spinRunLoop();
+    return _message.autorelease();
+}
+
+- (NSString *)alertCookieHTML
+{
+    return @"<script>var cookies = document.cookie.split(';'); for (let i = 0; i < cookies.length; i ++) { cookies[i] = cookies[i].trim(); } cookies.sort(); alert(cookies.join('; '));</script>";
+}
+
 @end
+
+TEST(WebKit, WKHTTPCookieStoreMultipleViews)
+{
+    TestWKWebView *webView1 = [[TestWKWebView new] autorelease];
+    [webView1 synchronouslyLoadHTMLString:@"start network process"];
+
+    NSHTTPCookie *sessionCookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"SessionCookieName",
+        NSHTTPCookieValue: @"CookieValue",
+        NSHTTPCookieDomain: @"127.0.0.1",
+    }];
+
+    __block bool setCookieDone = false;
+    [webView1.configuration.websiteDataStore.httpCookieStore setCookie:sessionCookie completionHandler:^{
+        setCookieDone = true;
+    }];
+    TestWebKitAPI::Util::run(&setCookieDone);
+
+    auto delegate = adoptNS([CheckSessionCookieUIDelegate new]);
+    [webView1 setUIDelegate:delegate.get()];
+
+    [webView1 loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
+    EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");
+
+    TestWKWebView *webView2 = [[TestWKWebView new] autorelease];
+    [webView2 setUIDelegate:delegate.get()];
+    [webView2 loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
+    EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");
+}
 
 TEST(WKHTTPCookieStore, WithoutProcessPoolEphemeralSession)
 {
@@ -627,9 +671,8 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolEphemeralSession)
     TestWebKitAPI::Util::run(&finished);
     finished = false;
     
-    NSString *alertCookieHTML = @"<script>var cookies = document.cookie.split(';'); for (let i = 0; i < cookies.length; i ++) { cookies[i] = cookies[i].trim(); } cookies.sort(); alert(cookies.join('; '));</script>";
-    [webView loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
-    TestWebKitAPI::Util::run(&finished);
+    [webView loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
+    EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");
 }
 
 static bool areCookiesEqual(NSHTTPCookie *first, NSHTTPCookie *second)

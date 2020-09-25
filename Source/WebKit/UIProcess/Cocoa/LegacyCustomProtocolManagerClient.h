@@ -41,11 +41,11 @@ namespace WebKit {
 class LegacyCustomProtocolManagerProxy;
 
 class LegacyCustomProtocolManagerClient final : public API::CustomProtocolManagerClient {
-private:
+public:
     void startLoading(LegacyCustomProtocolManagerProxy&, LegacyCustomProtocolID, const WebCore::ResourceRequest&) final;
     void stopLoading(LegacyCustomProtocolManagerProxy&, LegacyCustomProtocolID) final;
     void invalidate(LegacyCustomProtocolManagerProxy&) final;
-
+private:
     HashMap<LegacyCustomProtocolID, RetainPtr<WKCustomProtocolLoader>> m_loaderMap;
 };
 

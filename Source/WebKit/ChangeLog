@@ -1,3 +1,418 @@
+2020-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Move NetworkProcessProxy ownership from WebProcessPool to WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=216041
+
+        Reviewed by Brady Eidson.
+
+        This patch moves the things on WebProcessPool associated with NetworkProcessProxy ownership and moves them
+        to WebsiteDataStore.  It's pretty mechanical, but it reaches its fingers into a lot of things.  Some comments
+        on interesting parts are below.
+
+        Why am I doing this?  I'm glad you asked.
+
+        WKWebView had a fundamental cookie problem before this change.  It had a WKWebsiteDataStore that could point to a cookie store on disk
+        that could be used in multiple network processes at the same time.  This led to problems with cookies being received over the network
+        in those different processes being unable to be shared until they were written to disk, something that does not happen immediately, especially
+        on iOS.  This problem is even worse with session cookies, which should be kept in memory and never be written to disk.  Those processes
+        did not use shared memory to share the cookies.  They just didn't share them, which led to cookie incorrectness.  This was unfortunately
+        the default configuration if you call [[WKWebView alloc] init] more than once, which many developers do.  There was also occasional cookie
+        corruption and loss from multiple processes writing cookies to the same file.  All these problems can be worked around by doing what Safari does:
+        manually setting the WKProcessPool of all WKWebViewConfigurations to the same process pool to only use one network process.  This is not intuitive
+        or well documented, and even though I have spent the majority of WWDC labs for the last 3 years telling developers to do it, most developers do not.
+        The default behavior should not lead to cookie incorrectness, corruption, or loss.  This accomplishes that.
+
+        A bigger problem that can't really be worked around well is what we were doing in our WKHTTPCookieStore API.  Many developers call setCookie:completionHandler:
+        to "log in" the user by setting a cookie, then in the completion handler, they open a WKWebView to their page and expect the cookie to be sent.  Before this
+        change, we would not know which process pool to set the cookie in so we would guess.  If there were no process pools, we would start writing to disk and hope
+        it writes fast enough.  We can't wait for it to complete because it causes hangs like rdar://problem/66961066.  This solution allows to start the network
+        process of that WebsiteDataStore and set the cookie in that process.  We now know that is the only process this WebsiteDataStore will ever use.  Now, users
+        will be able to actually be logged in all the time in such apps.
+
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy):
+        * NetworkProcess/Cookies/WebCookieManager.h:
+        * NetworkProcess/Cookies/WebCookieManager.messages.in:
+        * NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        * NetworkProcess/Cookies/mac/WebCookieManagerMac.mm:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        * NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::ensureSession):
+        (WebKit::NetworkProcess::storageSession const):
+        (WebKit::NetworkProcess::forEachNetworkStorageSession):
+        (WebKit::NetworkProcess::defaultStorageSession const): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::close):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::saveCookies):
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const): Deleted.
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const): Deleted.
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformCreateDefaultStorageSession const): Deleted.
+        * Platform/IPC/Attachment.h:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::HTTPCookieStore):
+        (API::HTTPCookieStore::~HTTPCookieStore):
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::cookiesForURL):
+        (API::HTTPCookieStore::setCookies):
+        (API::HTTPCookieStore::deleteCookie):
+        (API::HTTPCookieStore::deleteAllCookies):
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicy):
+        (API::HTTPCookieStore::registerObserver):
+        (API::HTTPCookieStore::cookieManagerDestroyed):
+        (API::HTTPCookieStore::registerForNewProcessPoolNotifications): Deleted.
+        (API::HTTPCookieStore::unregisterForNewProcessPoolNotifications): Deleted.
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetUseSeparateServiceWorkerProcess):
+        (WKContextSetPrimaryWebsiteDataStore):
+        (WKContextGetCookieManager): Deleted.
+        (WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting): Deleted.
+        (WKContextTerminateNetworkProcess): Deleted.
+        (WKContextGetNetworkProcessIdentifier): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetWebsiteDataStore):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreTerminateNetworkProcess):
+        (WKWebsiteDataStoreGetNetworkProcessIdentifier):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setUseSeparateServiceWorkerProcess:]):
+        (-[WKProcessPool _terminateNetworkProcess]): Deleted.
+        (-[WKProcessPool _sendNetworkProcessWillSuspendImminently]): Deleted.
+        (-[WKProcessPool _sendNetworkProcessPrepareToSuspend:]): Deleted.
+        (-[WKProcessPool _sendNetworkProcessDidResume]): Deleted.
+        (-[WKProcessPool _networkProcessIdentifier]): Deleted.
+        (-[WKProcessPool _makeNextNetworkProcessLaunchFailForTesting]): Deleted.
+        (-[WKProcessPool _synthesizeAppIsBackground:]): Deleted.
+        (-[WKProcessPool _setAllowsAnySSLCertificateForServiceWorker:]): Deleted.
+        (-[WKProcessPool _networkProcessHasEntitlementForTesting:]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _networkProcessHasEntitlementForTesting:]):
+        (-[WKWebsiteDataStore _terminateNetworkProcess]):
+        (-[WKWebsiteDataStore _sendNetworkProcessPrepareToSuspend:]):
+        (-[WKWebsiteDataStore _sendNetworkProcessWillSuspendImminently]):
+        (-[WKWebsiteDataStore _sendNetworkProcessDidResume]):
+        (-[WKWebsiteDataStore _synthesizeAppIsBackground:]):
+        (-[WKWebsiteDataStore _networkProcessIdentifier]):
+        (+[WKWebsiteDataStore _makeNextNetworkProcessLaunchFailForTesting]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        (_WebKitCookieManagerPrivate::cookieManager const):
+        (_WebKitCookieManagerPrivate::~_WebKitCookieManagerPrivate):
+        (webkitCookieManagerCreate):
+        (webkit_cookie_manager_set_persistent_storage):
+        (webkit_cookie_manager_set_accept_policy):
+        (webkit_cookie_manager_get_accept_policy):
+        (webkit_cookie_manager_add_cookie):
+        (webkit_cookie_manager_get_cookies):
+        (webkit_cookie_manager_delete_cookie):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_prefetch_dns):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::updateProcessSuppressionState):
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::networkProcessHasEntitlementForTesting): Deleted.
+        (WebKit::WebProcessPool::xpcEndpointMessage const): Deleted.
+        (WebKit::WebProcessPool::sendNetworkProcessXPCEndpointToWebProcess): Deleted.
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::cancel):
+        (WebKit::DownloadProxy::publishProgress):
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        (WebKit::DownloadProxy::willSendRequest):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync):
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::DownloadProxyMap):
+        (WebKit::DownloadProxyMap::applicationDidEnterBackground):
+        (WebKit::DownloadProxyMap::applicationWillEnterForeground):
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        (WebKit::DownloadProxyMap::downloadFinished):
+        (WebKit::DownloadProxyMap::invalidate):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp:
+        (WebKit::LegacyCustomProtocolManagerProxy::startLoading):
+        (WebKit::LegacyCustomProtocolManagerProxy::stopLoading):
+        (WebKit::LegacyCustomProtocolManagerProxy::invalidate):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::allNetworkProcesses):
+        (WebKit::defaultProcess):
+        (WebKit::NetworkProcessProxy::defaultNetworkProcess):
+        (WebKit::NetworkProcessProxy::terminate):
+        (WebKit::NetworkProcessProxy::didTerminate):
+        (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+        (WebKit::anyProcessPoolAlwaysRunsAtBackgroundPriority):
+        (WebKit::anyProcessPoolShouldTakeUIBackgroundAssertion):
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        (WebKit::NetworkProcessProxy::createDownloadProxy):
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+        (WebKit::NetworkProcessProxy::didReceiveMessage):
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        (WebKit::NetworkProcessProxy::setDomainsWithUserInteraction):
+        (WebKit::NetworkProcessProxy::addSession):
+        (WebKit::NetworkProcessProxy::removeSession):
+        (WebKit::NetworkProcessProxy::websiteDataStoreFromSessionID):
+        (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::anyProcessPoolHasForegroundWebProcesses):
+        (WebKit::anyProcessPoolHasBackgroundWebProcesses):
+        (WebKit::NetworkProcessProxy::updateProcessAssertion):
+        (WebKit::NetworkProcessProxy::hasSession const): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        (WebKit::NetworkProcessProxy::XPCEventHandler::handleXPCEvent const):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::WebCookieManagerProxy):
+        (WebKit::WebCookieManagerProxy::~WebCookieManagerProxy):
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookiesForHostnames):
+        (WebKit::WebCookieManagerProxy::deleteAllCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookie):
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManagerProxy::setCookies):
+        (WebKit::WebCookieManagerProxy::getAllCookies):
+        (WebKit::WebCookieManagerProxy::getCookies):
+        (WebKit::WebCookieManagerProxy::startObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::stopObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::supplementName): Deleted.
+        (WebKit::WebCookieManagerProxy::create): Deleted.
+        (WebKit::WebCookieManagerProxy::processPoolDestroyed): Deleted.
+        (WebKit::WebCookieManagerProxy::processDidClose): Deleted.
+        (WebKit::WebCookieManagerProxy::refWebContextSupplement): Deleted.
+        (WebKit::WebCookieManagerProxy::derefWebContextSupplement): Deleted.
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebKit::WebCookieManagerProxy::create):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setControlledByAutomation):
+        (WebKit::WebPageProxy::disableServiceWorkerEntitlementInNetworkProcess):
+        (WebKit::WebPageProxy::clearServiceWorkerEntitlementOverride):
+        (WebKit::WebPageProxy::preconnectTo):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::logFrameNavigation):
+        (WebKit::WebPageProxy::dumpAdClickAttribution):
+        (WebKit::WebPageProxy::clearAdClickAttribution):
+        (WebKit::WebPageProxy::setAdClickAttributionOverrideTimerForTesting):
+        (WebKit::WebPageProxy::setAdClickAttributionConversionURLForTesting):
+        (WebKit::WebPageProxy::markAdClickAttributionsAsExpiredForTesting):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::urlSchemesWithCustomProtocolHandlers):
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::~WebProcessPool):
+        (WebKit::WebProcessPool::languageChanged):
+        (WebKit::WebProcessPool::sendMemoryPressureEvent):
+        (WebKit::WebProcessPool::networkProcessCrashed):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::removeFromServiceWorkerProcesses):
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::processDidFinishLaunching):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::updateServiceWorkerUserAgent):
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::download):
+        (WebKit::WebProcessPool::resumeDownload):
+        (WebKit::WebProcessPool::registerURLSchemeAsSecure):
+        (WebKit::WebProcessPool::registerURLSchemeAsBypassingContentSecurityPolicy):
+        (WebKit::WebProcessPool::registerURLSchemeAsLocal):
+        (WebKit::WebProcessPool::registerURLSchemeAsNoAccess):
+        (WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers):
+        (WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers):
+        (WebKit::WebProcessPool::setCacheModel):
+        (WebKit::WebProcessPool::setCacheModelSynchronouslyForTesting):
+        (WebKit::WebProcessPool::createDownloadProxy):
+        (WebKit::WebProcessPool::terminateServiceWorkers):
+        (WebKit::WebProcessPool::serviceWorkerProcesses):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::isServiceWorkerPageID const):
+        (WebKit::WebProcessPool::setUseSeparateServiceWorkerProcess):
+        (WebKit::WebProcessPool::hasServiceWorkerForegroundActivityForTesting const):
+        (WebKit::WebProcessPool::hasServiceWorkerBackgroundActivityForTesting const):
+        (WebKit::WebProcessPool::setLegacyCustomProtocolManagerClient): Deleted.
+        (WebKit::WebProcessPool::networkingProcessConnection): Deleted.
+        (WebKit::WebProcessPool::ensureNetworkProcess): Deleted.
+        There seems to be a lot of code removal here, but most of it was duplicate code with
+        WebsiteDataStore::parameters which is used instead.  That which was not duplicate was
+        moved to NetworkProcessProxy::sendCreationParametersToNewProcess.  This was the hardest part of this patch.
+        (WebKit::WebProcessPool::getNetworkProcessConnection): Deleted.
+        (WebKit::WebProcessPool::networkProcessIdentifier): Deleted.
+        (WebKit::WebProcessPool::synthesizeAppIsBackground): Deleted.
+        (WebKit::WebProcessPool::sendSyncToNetworkingProcess): Deleted.
+        (WebKit::WebProcessPool::clearCachedCredentials): Deleted.
+        (WebKit::WebProcessPool::terminateNetworkProcess): Deleted.
+        (WebKit::WebProcessPool::sendNetworkProcessPrepareToSuspendForTesting): Deleted.
+        (WebKit::WebProcessPool::sendNetworkProcessWillSuspendImminentlyForTesting): Deleted.
+        (WebKit::WebProcessPool::sendNetworkProcessDidResume): Deleted.
+        (WebKit::WebProcessPool::flushCookies): Deleted.
+        (WebKit::WebProcessPool::didCommitCrossSiteLoadWithDataTransfer): Deleted.
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToNetworkingProcess): Deleted.
+        (WebKit::WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setWebsiteDataStore):
+        (WebKit::WebProcessProxy::getNetworkProcessConnection):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::networkProcessHasEntitlementForTesting):
+        (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToWebProcess):
+        (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToAllWebProcesses):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::forEachWebsiteDataStore):
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::registerWithSessionIDMap):
+        (WebKit::WebsiteDataStore::existingDataStoreForSessionID):
+        (WebKit::WebsiteDataStore::networkProcess):
+        (WebKit::WebsiteDataStore::networkProcess const):
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::setServiceWorkerTimeoutForTesting):
+        (WebKit::WebsiteDataStore::resetServiceWorkerTimeoutForTesting):
+        (WebKit::WebsiteDataStore::setMaxStatisticsEntries):
+        (WebKit::WebsiteDataStore::setPruneEntriesDownTo):
+        (WebKit::WebsiteDataStore::setGrandfatheringTime):
+        (WebKit::WebsiteDataStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::dumpResourceLoadStatistics):
+        (WebKit::WebsiteDataStore::isPrevalentResource):
+        (WebKit::WebsiteDataStore::isGrandfathered):
+        (WebKit::WebsiteDataStore::setPrevalentResource):
+        (WebKit::WebsiteDataStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebsiteDataStore::isVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::setSubframeUnderTopFrameDomain):
+        (WebKit::WebsiteDataStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebsiteDataStore::setSubresourceUnderTopFrameDomain):
+        (WebKit::WebsiteDataStore::isRegisteredAsSubresourceUnder):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebsiteDataStore::clearPrevalentResource):
+        (WebKit::WebsiteDataStore::resetParametersToDefaultValues):
+        (WebKit::WebsiteDataStore::submitTelemetry):
+        (WebKit::WebsiteDataStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebsiteDataStore::getResourceLoadStatisticsDataSummary):
+        (WebKit::WebsiteDataStore::scheduleCookieBlockingUpdate):
+        (WebKit::WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebsiteDataStore::statisticsDatabaseHasAllTables):
+        (WebKit::WebsiteDataStore::setLastSeen):
+        (WebKit::WebsiteDataStore::domainIDExistsInDatabase):
+        (WebKit::WebsiteDataStore::mergeStatisticForTesting):
+        (WebKit::WebsiteDataStore::insertExpiredStatisticForTesting):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebsiteDataStore::setIsRunningResourceLoadStatisticsTest):
+        (WebKit::WebsiteDataStore::getAllStorageAccessEntries):
+        (WebKit::WebsiteDataStore::setTimeToLiveUserInteraction):
+        (WebKit::WebsiteDataStore::logUserInteraction):
+        (WebKit::WebsiteDataStore::hasHadUserInteraction):
+        (WebKit::WebsiteDataStore::isRelationshipOnlyInDatabaseOnce):
+        (WebKit::WebsiteDataStore::clearUserInteraction):
+        (WebKit::WebsiteDataStore::setGrandfathered):
+        (WebKit::WebsiteDataStore::setUseITPDatabase):
+        (WebKit::WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting):
+        (WebKit::WebsiteDataStore::resetCrossSiteLoadsWithLinkDecorationForTesting):
+        (WebKit::WebsiteDataStore::deleteCookiesForTesting):
+        (WebKit::WebsiteDataStore::hasLocalStorageForTesting const):
+        (WebKit::WebsiteDataStore::hasIsolatedSessionForTesting const):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldDowngradeReferrerForTesting):
+        (WebKit::WebsiteDataStore::setThirdPartyCookieBlockingMode):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldEnbleSameSiteStrictEnforcementForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsToSameSiteStrictCookiesForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting):
+        (WebKit::WebsiteDataStore::syncLocalStorage):
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::processPools const):
+        (WebKit::WebsiteDataStore::allowSpecificHTTPSCertificateForHost):
+        (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+        (WebKit::WebsiteDataStore::networkProcessCrashed):
+        (WebKit::WebsiteDataStore::terminateNetworkProcess):
+        (WebKit::WebsiteDataStore::sendNetworkProcessPrepareToSuspendForTesting):
+        (WebKit::WebsiteDataStore::sendNetworkProcessWillSuspendImminentlyForTesting):
+        (WebKit::WebsiteDataStore::sendNetworkProcessDidResume):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebsiteDataStore::setStatisticsTestingCallback):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebsiteDataStore::isResourceLoadStatisticsEphemeral const):
+        (WebKit::WebsiteDataStore::setAdClickAttributionDebugMode):
+        (WebKit::WebsiteDataStore::flushCookies):
+        (WebKit::WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket):
+        (WebKit::WebsiteDataStore::clearCachedCredentials):
+        (WebKit::WebsiteDataStore::parameters):
+        (WebKit::WebsiteDataStore::getLocalStorageDetails):
+        (WebKit::WebsiteDataStore::resetQuota):
+        (WebKit::WebsiteDataStore::networkProcessHasEntitlementForTesting):
+        (WebKit::WebsiteDataStore::renameOriginInWebsiteData):
+        (WebKit::WebsiteDataStore::hasAppBoundSession const):
+        (WebKit::WebsiteDataStore::clearAppBoundSession):
+        (WebKit::WebsiteDataStore::forwardAppBoundDomainsToITPIfInitialized):
+        (WebKit::WebsiteDataStore::setAppBoundDomainsForITP):
+        (WebKit::WebsiteDataStore::updateBundleIdentifierInNetworkProcess):
+        (WebKit::WebsiteDataStore::clearBundleIdentifierInNetworkProcess):
+        (WebKit::WebsiteDataStore::makeNextNetworkProcessLaunchFailForTesting):
+        (WebKit::WebsiteDataStore::shouldMakeNextNetworkProcessLaunchFailForTesting):
+        (WebKit::WebsiteDataStore::maybeRegisterWithSessionIDMap): Deleted.
+        (WebKit::WebsiteDataStore::existingNonDefaultDataStoreForSessionID): Deleted.
+        (WebKit::WebsiteDataStore::processPoolForCookieStorageOperations): Deleted.
+        (WebKit::WebsiteDataStore::isAssociatedProcessPool const): Deleted.
+        (WebKit::WebsiteDataStore::pendingCookies const): Deleted.
+        (WebKit::WebsiteDataStore::addPendingCookie): Deleted.
+        (WebKit::WebsiteDataStore::removePendingCookie): Deleted.
+        (WebKit::WebsiteDataStore::clearPendingCookies): Deleted.
+        (WebKit::WebsiteDataStore::didCreateNetworkProcess): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp:
+        (WebKit::WebsiteDataStore::setNetworkProxySettings):
+        * UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        (WebKit::WebsiteDataStore::setPersistentCredentialStorageEnabled):
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        * UIProcess/soup/WebCookieManagerProxySoup.cpp:
+        (WebKit::WebCookieManagerProxy::setCookiePersistentStorage):
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::setIgnoreTLSErrors):
+        (WebKit::WebProcessPool::setNetworkProxySettings):
+        * WebProcess/Network/NetworkProcessConnectionInfo.h:
+
 2020-09-24  Dean Jackson  <dino@apple.com>
 
         WebGL should use GLES in iOS apps running on Apple Silicon

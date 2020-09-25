@@ -1062,8 +1062,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     resetQuota();
 
-    WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(platformContext(), true);
-
     WKContextClearCurrentModifierStateForTesting(TestController::singleton().context());
 
     WKContextSetUseSeparateServiceWorkerProcess(TestController::singleton().context(), false);
@@ -1238,7 +1236,7 @@ void TestController::findAndDumpWebKitProcessIdentifiers()
     dumpResponse(makeString(TestController::webProcessName(), ": ",
         WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page()), '\n',
         TestController::networkProcessName(), ": ",
-        WKContextGetNetworkProcessIdentifier(m_context.get()), '\n'));
+        WKWebsiteDataStoreGetNetworkProcessIdentifier(websiteDataStore()), '\n'));
 #else
     dumpResponse("\n"_s);
 #endif
@@ -2298,7 +2296,7 @@ WKRetainPtr<WKTypeRef> TestController::getInjectedBundleInitializationUserData()
 
 void TestController::networkProcessDidCrash()
 {
-    pid_t pid = WKContextGetNetworkProcessIdentifier(m_context.get());
+    pid_t pid = WKWebsiteDataStoreGetNetworkProcessIdentifier(websiteDataStore());
     fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(pid));
     exit(1);
 }
@@ -3137,7 +3135,7 @@ void TestController::setIgnoresViewportScaleLimits(bool ignoresViewportScaleLimi
 
 void TestController::terminateNetworkProcess()
 {
-    WKContextTerminateNetworkProcess(platformContext());
+    WKWebsiteDataStoreTerminateNetworkProcess(websiteDataStore());
 }
 
 void TestController::terminateServiceWorkers()
@@ -3168,9 +3166,8 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
     return new PlatformWebView(configuration, options);
 }
 
-WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
+WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
 {
-    WKContextSetPrimaryWebsiteDataStore(context, defaultWebsiteDataStore());
     return context;
 }
 

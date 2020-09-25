@@ -134,8 +134,9 @@ static void registerUserDefaultsIfNeeded()
 
 void WebProcessPool::updateProcessSuppressionState()
 {
-    if (m_networkProcess)
-        m_networkProcess->setProcessSuppressionEnabled(processSuppressionEnabled());
+    WebsiteDataStore::forEachWebsiteDataStore([enabled = processSuppressionEnabled()] (WebsiteDataStore& dataStore) {
+        dataStore.networkProcess().setProcessSuppressionEnabled(enabled);
+    });
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (!m_processSuppressionDisabledForPageCounter.value())
@@ -165,8 +166,6 @@ void WebProcessPool::platformInitialize()
 
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"])
         installMemoryPressureHandler();
-
-    setLegacyCustomProtocolManagerClient(makeUnique<LegacyCustomProtocolManagerClient>());
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     if (!_MGCacheValid()) {
@@ -495,22 +494,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-    {
-        bool isSafari = false;
-        bool isMiniBrowser = false;
-#if PLATFORM(IOS_FAMILY)
-        isSafari = WebCore::IOSApplication::isMobileSafari();
-        isMiniBrowser = WebCore::IOSApplication::isMiniBrowser();
-#elif PLATFORM(MAC)
-        isSafari = WebCore::MacApplication::isSafari();
-        isMiniBrowser = WebCore::MacApplication::isMiniBrowser();
-#endif
-        if (isSafari || isMiniBrowser) {
-            parameters.defaultDataStoreParameters.networkSessionParameters.httpProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPProxyDefaultsKey]);
-            parameters.defaultDataStoreParameters.networkSessionParameters.httpsProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey]);
-        }
-    }
-
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
@@ -524,12 +507,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     NSNumber *databaseEnabledValue = [defaults objectForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isITPDatabaseEnabledKey().createCFString().get()]];
     if (databaseEnabledValue)
         parameters.shouldEnableITPDatabase = databaseEnabledValue.boolValue;
-    else
-        parameters.shouldEnableITPDatabase = m_defaultPageGroup->preferences().isITPDatabaseEnabled();
 
     parameters.enableAdClickAttributionDebugMode = [defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::adClickAttributionDebugModeEnabledKey().createCFString().get()]];
-
-    parameters.defaultDataStoreParameters.networkSessionParameters.appHasRequestedCrossWebsiteTrackingPermission = hasRequestedCrossWebsiteTrackingPermission();
 }
 
 void WebProcessPool::platformInvalidateContext()
@@ -606,11 +585,6 @@ bool WebProcessPool::omitPDFSupport()
 bool WebProcessPool::processSuppressionEnabled() const
 {
     return !m_userObservablePageCounter.value() && !m_processSuppressionDisabledForPageCounter.value();
-}
-
-bool WebProcessPool::networkProcessHasEntitlementForTesting(const String& entitlement)
-{
-    return WTF::hasEntitlement(ensureNetworkProcess().connection()->xpcConnection(), entitlement.utf8().data());
 }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -948,24 +922,5 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
     });
 }
 #endif
-
-OSObjectPtr<xpc_object_t> WebProcessPool::xpcEndpointMessage() const
-{
-    return m_endpointMessage;
-}
-
-void WebProcessPool::sendNetworkProcessXPCEndpointToWebProcess(OSObjectPtr<xpc_object_t> endpointMessage)
-{
-    m_endpointMessage = endpointMessage;
-
-    for (auto process : m_processes) {
-        if (process->state() != AuxiliaryProcessProxy::State::Running)
-            continue;
-        if (!process->connection())
-            continue;
-        auto connection = process->connection()->xpcConnection();
-        xpc_connection_send_message(connection, endpointMessage.get());
-    }
-}
 
 } // namespace WebKit

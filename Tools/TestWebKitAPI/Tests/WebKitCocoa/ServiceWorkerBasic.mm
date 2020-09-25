@@ -558,7 +558,7 @@ TEST(ServiceWorkers, UserAgentOverride)
 
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    messageHandler = adoptNS([[SWUserAgentMessageHandler alloc] initWithExpectedMessage:@"Message from worker: Bar Custom UserAgent"]);
+    messageHandler = adoptNS([[SWUserAgentMessageHandler alloc] initWithExpectedMessage:@"Message from worker: Foo Custom UserAgent"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -632,8 +632,6 @@ TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
 
     TestWebKitAPI::Util::run(&done);
     done = false;
-
-    [WKWebsiteDataStore _deleteDefaultDataStoreForTesting];
 
     ServiceWorkerTCPServer server({
         { "text/html", mainCacheStorageBytes }
@@ -982,6 +980,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     setConfigurationInjectedBundlePath(configuration.get());
+    RetainPtr<WKProcessPool> originalProcessPool = configuration.get().processPool;
 
     done = false;
 
@@ -1035,7 +1034,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     done = false;
 
     // Make sure that loading the simple page did not start the service worker process.
-    EXPECT_EQ(0u, webView.get().configuration.processPool._serviceWorkerProcessCount);
+    EXPECT_EQ(1u, webView.get().configuration.processPool._serviceWorkerProcessCount);
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
@@ -1043,9 +1042,8 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    // Make sure that loading this page did start the service worker process.
     EXPECT_EQ(1u, webView.get().configuration.processPool._serviceWorkerProcessCount);
-
+    EXPECT_EQ(1u, originalProcessPool.get()._serviceWorkerProcessCount);
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
@@ -1618,21 +1616,35 @@ static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, b
     return webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed;
 }
 
-TEST(ServiceWorkers, OutOfAndInProcessServiceWorker)
+TEST(ServiceWorkers, OutOfProcessServiceWorker)
 {
     bool useSeparateServiceWorkerProcess = true;
     bool firstLoadAboutBlank = true;
 
     EXPECT_EQ(1u, launchServiceWorkerProcess(!useSeparateServiceWorkerProcess, !firstLoadAboutBlank));
+}
+
+TEST(ServiceWorkers, InProcessServiceWorker)
+{
+    bool useSeparateServiceWorkerProcess = true;
+    bool firstLoadAboutBlank = true;
+
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, !firstLoadAboutBlank));
 }
 
-TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughServiceWorker)
+TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughOutOfProcessServiceWorker)
 {
     bool useSeparateServiceWorkerProcess = true;
     bool firstLoadAboutBlank = true;
 
     EXPECT_EQ(1u, launchServiceWorkerProcess(!useSeparateServiceWorkerProcess, firstLoadAboutBlank));
+}
+
+TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughInProcessServiceWorker)
+{
+    bool useSeparateServiceWorkerProcess = true;
+    bool firstLoadAboutBlank = true;
+
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, firstLoadAboutBlank));
 }
 
@@ -1847,8 +1859,8 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
     [[NSFileManager defaultManager] createDirectoryAtURL:swDBPath withIntermediateDirectories:YES attributes:nil error:nil];
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path]);
 
-    // We protect the process pool so that it outlives the WebsiteDataStore.
     RetainPtr<WKProcessPool> protectedProcessPool;
+    RetainPtr<WKWebsiteDataStore> protectedWebsiteDataStore;
 
     ServiceWorkerTCPServer server({
         { "text/html", mainRegisteringWorkerBytes },
@@ -1871,6 +1883,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
 
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
         protectedProcessPool = webView.get().configuration.processPool;
+        protectedWebsiteDataStore = webView.get().configuration.websiteDataStore;
 
         [webView loadRequest:server.request()];
 
@@ -1880,13 +1893,15 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
         [webView.get().configuration.processPool _terminateServiceWorkers];
     }
 
+    // Make us more likely to lose any races with service worker initialization.
+    TestWebKitAPI::Util::spinRunLoop(10);
+    usleep(10000);
+    TestWebKitAPI::Util::spinRunLoop(10);
+
     @autoreleasepool {
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-        auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-        websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swDBPath;
-        auto nonDefaultDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-        configuration.get().websiteDataStore = nonDefaultDataStore.get();
+        configuration.get().websiteDataStore = protectedWebsiteDataStore.get();
 
         auto messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration already has an active worker"]);
         [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -1944,11 +1959,11 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path]);
 
-    [ webView.get().configuration.processPool _sendNetworkProcessWillSuspendImminently];
+    [webView.get().configuration.websiteDataStore _sendNetworkProcessWillSuspendImminently];
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path]);
 
-    [ webView.get().configuration.processPool _sendNetworkProcessDidResume];
+    [webView.get().configuration.websiteDataStore _sendNetworkProcessDidResume];
 
     [webView loadRequest:server.request()];
     TestWebKitAPI::Util::run(&done);

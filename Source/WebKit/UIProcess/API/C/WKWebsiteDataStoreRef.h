@@ -29,6 +29,13 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKDeprecated.h>
 
+#if defined(WIN32) || defined(_WIN32)
+typedef int WKProcessID;
+#else
+#include <unistd.h>
+typedef pid_t WKProcessID;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,6 +56,11 @@ WK_EXPORT void WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(WKWebs
 WK_EXPORT void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDataStoreRef dataStore, bool allows);
 
 WK_EXPORT void WKWebsiteDataStoreClearCachedCredentials(WKWebsiteDataStoreRef dataStoreRef);
+
+WK_EXPORT void WKWebsiteDataStoreClearCachedCredentials(WKWebsiteDataStoreRef dataStore);
+WK_EXPORT void WKWebsiteDataStoreTerminateNetworkProcess(WKWebsiteDataStoreRef dataStore);
+
+WK_EXPORT WKProcessID WKWebsiteDataStoreGetNetworkProcessIdentifier(WKWebsiteDataStoreRef dataStore);
 
 WK_EXPORT bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef);
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable);
