@@ -1,3 +1,21 @@
+2020-09-25  Antoine Quint  <graouts@webkit.org>
+
+        Add an experimental feature flag for CSS individual transform properties
+        https://bugs.webkit.org/show_bug.cgi?id=216271
+        <rdar://problem/68914539>
+
+        Reviewed by Dean Jackson.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::CSSIndividualTransformPropertiesEnabled):
+        (WebPreferences::setCSSIndividualTransformPropertiesEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2020-09-17  Sam Weinig  <weinig@apple.com>
 
         Remove runtime setting for enabling/disabling the UserTiming and ResourceTiming APIs

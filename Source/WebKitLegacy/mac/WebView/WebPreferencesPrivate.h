@@ -642,6 +642,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL transformStreamAPIEnabled;
 @property (nonatomic) BOOL mediaRecorderEnabled;
 @property (nonatomic, setter=_setMediaRecorderEnabled:) BOOL _mediaRecorderEnabled;
+@property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
 @end
 
 @interface WebPreferences (WebPrivateDeprecated)

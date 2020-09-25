@@ -591,3 +591,9 @@ IsNSURLSessionWebSocketEnabled:
   humanReadableDescription: "Use NSURLSession WebSocket API"
   webcoreBinding: RuntimeEnabledFeatures
   condition: HAVE(NSURLSESSION_WEBSOCKET)
+
+CSSIndividualTransformPropertiesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Individual Transform Properties"
+  humanReadableDescription: "Support for the translate, scale and rotate CSS properties"

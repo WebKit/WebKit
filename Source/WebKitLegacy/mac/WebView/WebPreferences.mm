@@ -3206,6 +3206,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:webSQLEnabled forKey:WebKitWebSQLEnabledPreferenceKey];
 }
 
+- (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
+}
+
+- (BOOL)cssIndividualTransformPropertiesEnabled
+{
+    return [self _boolValueForKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)
@@ -3578,6 +3588,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaRecorderEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitMediaRecorderEnabledPreferenceKey];
+}
+
+- (BOOL)CSSIndividualTransformPropertiesEnabled
+{
+    return [self _boolValueForKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
+}
+
+- (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
 }
 
 @end

@@ -256,6 +256,8 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
     HRESULT setAspectRatioOfImgFromWidthAndHeightEnabled([in] BOOL enabled);
     HRESULT setWebSQLEnabled([in] BOOL enabled);
     HRESULT webSQLEnabled([out, retval] BOOL* enabled);
+    HRESULT CSSIndividualTransformPropertiesEnabled([out, retval] BOOL* enabled);
+    HRESULT setCSSIndividualTransformPropertiesEnabled([in] BOOL enabled);
 }
 
 [uuid(04D4AAE1-5D01-4CCD-B46E-C022F10A6826)]

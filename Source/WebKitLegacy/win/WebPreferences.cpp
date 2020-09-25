@@ -343,6 +343,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSQLEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2464,5 +2466,19 @@ HRESULT WebPreferences::modernUnprefixedWebAudioEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setModernUnprefixedWebAudioEnabled(BOOL enabled)
 {
     setBoolValue(WebKitWebAudioEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::CSSIndividualTransformPropertiesEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setCSSIndividualTransformPropertiesEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey, enabled);
     return S_OK;
 }

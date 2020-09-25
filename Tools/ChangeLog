@@ -1,3 +1,16 @@
+2020-09-25  Antoine Quint  <graouts@webkit.org>
+
+        Add an experimental feature flag for CSS individual transform properties
+        https://bugs.webkit.org/show_bug.cgi?id=216271
+        <rdar://problem/68914539>
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+
 2020-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r267516): `--use-gpu-process` no longer enables GPU process when running layout tests

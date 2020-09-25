@@ -297,6 +297,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setAspectRatioOfImgFromWidthAndHeightEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE webSQLEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setWebSQLEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE CSSIndividualTransformPropertiesEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setCSSIndividualTransformPropertiesEnabled(BOOL);
 
     // IWebPreferencesPrivate8
     virtual HRESULT STDMETHODCALLTYPE allowTopNavigationToDataURLs(_Out_ BOOL*);

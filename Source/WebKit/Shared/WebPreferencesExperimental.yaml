@@ -544,3 +544,9 @@ DisableMediaExperiencePIDInheritance:
   humanReadableName: "Disable Media Experience PID Inheritance"
   humanReadableDescription: "Disable Media Experience PID Inheritance"
   condition: HAVE(CELESTIAL)
+
+CSSIndividualTransformPropertiesEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "CSS Individual Transform Properties"
+  humanReadableDescription: "Support for the translate, scale and rotate CSS properties"

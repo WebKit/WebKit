@@ -227,3 +227,5 @@
 #define WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey "WebKitAspectRatioOfImgFromWidthAndHeightEnabled"
 
 #define WebKitWebSQLEnabledPreferenceKey "WebKitWebSQLEnabled"
+
+#define WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey "WebKitCSSIndividualTransformPropertiesEnabled"

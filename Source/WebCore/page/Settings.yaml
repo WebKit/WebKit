@@ -1120,3 +1120,6 @@ shouldUseServiceWorkerShortTimeout:
 # Clients should use per-navigation "allowsContentJavaScript" policies instead
 scriptMarkupEnabled:
   initial: true
+
+cssIndividualTransformPropertiesEnabled:
+  initial: false
