@@ -4573,3 +4573,5 @@ fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
 
 # This test is basically passing, but off by a pixel or two. Not sure this is important enough to track with a bug.
 webanimations/accelerated-css-animation-with-easing.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/216967 fast/text/whitespace/pre-wrap-long-word-simple-lines.html [ Pass ImageOnlyFailure ]

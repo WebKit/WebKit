@@ -1,3 +1,13 @@
+2020-09-25  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Enable on Apple Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=216928
+        <rdar://problem/69505961>
+
+        Reviewed by Zalan Bujtas.
+
+        * wtf/PlatformEnableWinApple.h:
+
 2020-09-24  Keith Miller  <keith_miller@apple.com>
 
         CSS angle unit conversions should consistently use the same associativity

@@ -1,3 +1,13 @@
+2020-09-25  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Enable on Apple Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=216928
+        <rdar://problem/69505961>
+
+        Reviewed by Zalan Bujtas.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2020-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_SVG_FONTS macro
