@@ -1,3 +1,48 @@
+2020-09-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266765. rdar://problem/69382910
+
+    [ macOS iOS ] svg/animations/smil-leak-element-instances-noBaseValRef.svg is a flaky failure
+    https://bugs.webkit.org/show_bug.cgi?id=215353
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2020-09-08
+    Reviewed by Geoffrey Garen.
+    
+    This patch reverts r265780 and goes in the opposite direction: allocating
+    lots and lots of objects, then proving that the number of live objects
+    did not grow a lot.
+    
+    GCController can be conservative sometimes and leaves some objects here
+    and there. So we should not be checking that *all* the objects were freed
+    to verify there was no leak in allocating the SVG properties objects.
+    
+    Instead we can check for an end-to-end test the memory did not grow a lot
+    despite the huge number of allocations.
+    
+    * svg/animations/smil-leak-element-instances-noBaseValRef.svg:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266765 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            [ macOS iOS ] svg/animations/smil-leak-element-instances-noBaseValRef.svg is a flaky failure
+            https://bugs.webkit.org/show_bug.cgi?id=215353
+
+            Reviewed by Geoffrey Garen.
+
+            This patch reverts r265780 and goes in the opposite direction: allocating
+            lots and lots of objects, then proving that the number of live objects
+            did not grow a lot.
+
+            GCController can be conservative sometimes and leaves some objects here
+            and there. So we should not be checking that *all* the objects were freed
+            to verify there was no leak in allocating the SVG properties objects.
+
+            Instead we can check for an end-to-end test the memory did not grow a lot
+            despite the huge number of allocations.
+
+            * svg/animations/smil-leak-element-instances-noBaseValRef.svg:
+
 2020-09-23  Karl Rackler  <rackler@apple.com>
 
         [iOS] Update fast/text/opticalFontWithTextStyle.html for iOS 14
