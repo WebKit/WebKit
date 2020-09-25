@@ -44,7 +44,6 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKStorageAccessAlert.h"
 #import "WKUIDelegatePrivate.h"
-#import "WKUserMediaCaptureAccessAlert.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
@@ -896,6 +895,14 @@ void UIDelegate::UIClient::didChangeFontAttributes(const WebCore::FontAttributes
 #if ENABLE(MEDIA_STREAM)
 static void requestUserMediaAuthorizationForFrame(const WebFrameProxy& frame, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request, id <WKUIDelegatePrivate> delegate, WKWebView& webView)
 {
+    bool respondsToRequestMediaCaptureAuthorization = [delegate respondsToSelector:@selector(_webView:requestMediaCaptureAuthorization:decisionHandler:)];
+    bool respondsToRequestUserMediaAuthorizationForDevices = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
+
+    if (!respondsToRequestMediaCaptureAuthorization && !respondsToRequestUserMediaAuthorizationForDevices) {
+        request.doDefaultAction();
+        return;
+    }
+
     auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestMediaCaptureAuthorization:decisionHandler:));
     auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](BOOL authorized) {
         if (checker->completionHandlerHasBeenCalled())
@@ -919,15 +926,6 @@ static void requestUserMediaAuthorizationForFrame(const WebFrameProxy& frame, AP
     if (request.requiresDisplayCapture()) {
         devices |= _WKCaptureDeviceDisplay;
         ASSERT(!(devices & _WKCaptureDeviceCamera));
-    }
-
-    bool respondsToRequestMediaCaptureAuthorization = [delegate respondsToSelector:@selector(_webView:requestMediaCaptureAuthorization:decisionHandler:)];
-    bool respondsToRequestUserMediaAuthorizationForDevices = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
-    if (!request.requiresDisplayCapture() && !respondsToRequestUserMediaAuthorizationForDevices && !respondsToRequestMediaCaptureAuthorization) {
-        presentUserMediaCaptureAccessAlert(&webView, topLevelOrigin, devices, [decisionHandler = WTFMove(decisionHandler)](bool authorized) mutable {
-            decisionHandler(authorized);
-        });
-        return;
     }
 
     // FIXME: Provide a specific delegate for display capture.

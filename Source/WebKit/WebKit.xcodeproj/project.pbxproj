@@ -902,7 +902,6 @@
 		413075B41DE85F580039EC69 /* LibWebRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A81DE85EE70039EC69 /* LibWebRTCProvider.h */; };
 		413CCD5020DEBC740065A21A /* com.google.googletalkbrowserplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 413CCD4F20DEBC2F0065A21A /* com.google.googletalkbrowserplugin.sb */; };
 		4143751C20EAEA2D00FAD06C /* cn.microdone.cmb.safari.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4143751B20EAEA1E00FAD06C /* cn.microdone.cmb.safari.sb */; };
-		4147DC692519EC3300214EE7 /* WKUserMediaCaptureAccessAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4147DC672519E29D00214EE7 /* WKUserMediaCaptureAccessAlert.mm */; };
 		414DD37920BF43F5006959FB /* com.cisco.webex.plugin.gpc64.sb in Resources */ = {isa = PBXBuildFile; fileRef = 414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */; };
 		414DD37A20BF49A5006959FB /* com.cisco.webex.plugin.gpc64.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */; };
 		4157E4B020E2ECDF00A6C0D7 /* com.google.o1dbrowserplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */; };
@@ -3390,6 +3389,7 @@
 		4118DC1B21E6D11A00DE04C7 /* WebsiteDataStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataStoreClient.h; sourceTree = "<group>"; };
 		411A8DD920DDB6050060D34F /* WKMockMediaDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMockMediaDevice.h; sourceTree = "<group>"; };
 		411A8DDA20DDB6050060D34F /* WKMockMediaDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMockMediaDevice.cpp; sourceTree = "<group>"; };
+		411A9A9A251DE93E00807D7E /* UserMediaPermissionRequestProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaPermissionRequestProxy.mm; sourceTree = "<group>"; };
 		411B22621E371244004F7363 /* LibWebRTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCNetwork.h; path = Network/webrtc/LibWebRTCNetwork.h; sourceTree = "<group>"; };
 		41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocketTaskCocoa.mm; sourceTree = "<group>"; };
 		41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTaskCocoa.h; sourceTree = "<group>"; };
@@ -3412,8 +3412,6 @@
 		4135FBD01F4FB7F20074C47B /* CacheStorageEngineCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineCaches.h; sourceTree = "<group>"; };
 		413CCD4F20DEBC2F0065A21A /* com.google.googletalkbrowserplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.google.googletalkbrowserplugin.sb; sourceTree = "<group>"; };
 		4143751B20EAEA1E00FAD06C /* cn.microdone.cmb.safari.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cn.microdone.cmb.safari.sb; sourceTree = "<group>"; };
-		4147DC672519E29D00214EE7 /* WKUserMediaCaptureAccessAlert.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKUserMediaCaptureAccessAlert.mm; sourceTree = "<group>"; };
-		4147DC682519E29D00214EE7 /* WKUserMediaCaptureAccessAlert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKUserMediaCaptureAccessAlert.h; sourceTree = "<group>"; };
 		414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.cisco.webex.plugin.gpc64.sb; sourceTree = "<group>"; };
 		4150A5A023E06C910051264A /* GPUProcessSessionParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUProcessSessionParameters.h; sourceTree = "<group>"; };
 		41518535222704F5005430C6 /* ServiceWorkerFetchTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerFetchTask.h; sourceTree = "<group>"; };
@@ -6361,6 +6359,7 @@
 				1AFE436318B6C081009C7A48 /* UIDelegate.mm */,
 				463236862314833F00A48FA7 /* UIRemoteObjectRegistry.cpp */,
 				463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */,
+				411A9A9A251DE93E00807D7E /* UserMediaPermissionRequestProxy.mm */,
 				E4E8648E1B1673FB00C82F40 /* VersionChecks.h */,
 				E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */,
 				52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */,
@@ -6393,8 +6392,6 @@
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
 				2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */,
 				2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */,
-				4147DC682519E29D00214EE7 /* WKUserMediaCaptureAccessAlert.h */,
-				4147DC672519E29D00214EE7 /* WKUserMediaCaptureAccessAlert.mm */,
 				C1710CF224A7BD0300D7C112 /* XPCEventHandler.h */,
 			);
 			path = Cocoa;
@@ -12975,7 +12972,6 @@
 				2D11B7BF2126A283006F8878 /* UnifiedSource56-mm.mm in Sources */,
 				2D11B7C12126A283006F8878 /* UnifiedSource57-mm.mm in Sources */,
 				2D11B7C22126A283006F8878 /* UnifiedSource57.cpp in Sources */,
-				4147DC692519EC3300214EE7 /* WKUserMediaCaptureAccessAlert.mm in Sources */,
 				2D11B7C32126A283006F8878 /* UnifiedSource58-mm.mm in Sources */,
 				2D11B7C42126A283006F8878 /* UnifiedSource58.cpp in Sources */,
 				2D11B7C62126A283006F8878 /* UnifiedSource59.cpp in Sources */,

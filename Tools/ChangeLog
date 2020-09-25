@@ -1,3 +1,17 @@
+2020-09-25  Youenn Fablet  <youenn@apple.com>
+
+        Implement default behavior for getUserMedia requests in case where there is no delegate set
+        https://bugs.webkit.org/show_bug.cgi?id=216968
+
+        Reviewed by Eric Carlson.
+
+        Add camera and microphone entitlements to MobileMiniBrowser.
+        Expose mediaDevices to web pages and use mock devices.
+
+        * MobileMiniBrowser/MobileMiniBrowser/Info.plist:
+        * MobileMiniBrowser/MobileMiniBrowserFramework/WebViewController.m:
+        (-[WebViewController createWebView]):
+
 2020-09-25  Lauro Moura  <lmoura@igalia.com>
 
         [webkitperl] Check for custom Flatpak user dirs in webkitdirs.pm

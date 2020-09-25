@@ -1,5 +1,33 @@
 2020-09-25  Youenn Fablet  <youenn@apple.com>
 
+        Implement default behavior for getUserMedia requests in case where there is no delegate set
+        https://bugs.webkit.org/show_bug.cgi?id=216968
+
+        Reviewed by Eric Carlson.
+
+        In case page UIDelegate is not set, make the getUserMedia request do its default action.
+        In case there is a UIDelegate but no getUserMedia specific delegates, make the getUserMedia request do its default action.
+        Default action is deny for getDisplayMedia and for non cocoa ports.
+        For cocoa ports, a prompt is shown.
+
+        Manually tested with MiniBrowser and MobileMiniBrowser.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::decidePolicyForUserMediaPermissionRequest):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::requestUserMediaAuthorizationForFrame):
+        * UIProcess/Cocoa/UserMediaPermissionRequestProxy.mm: Renamed from Source/WebKit/UIProcess/Cocoa/WKUserMediaCaptureAccessAlert.mm.
+        (WebKit::alertMessageText):
+        (WebKit::UserMediaPermissionRequestProxy::doDefaultAction):
+        * UIProcess/Cocoa/WKUserMediaCaptureAccessAlert.h: Removed.
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::doDefaultAction):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2020-09-25  Youenn Fablet  <youenn@apple.com>
+
         Introduce WKWebViewConfiguration mediaCaptureEnabled
         https://bugs.webkit.org/show_bug.cgi?id=216872
 
