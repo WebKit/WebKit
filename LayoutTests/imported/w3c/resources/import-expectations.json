@@ -336,7 +336,7 @@
     "web-platform-tests/old-tests": "skip", 
     "web-platform-tests/orientation-event": "skip", 
     "web-platform-tests/orientation-sensor": "skip", 
-    "web-platform-tests/page-visibility": "skip", 
+    "web-platform-tests/page-visibility": "import", 
     "web-platform-tests/paint-timing": "skip", 
     "web-platform-tests/payment-handler": "skip", 
     "web-platform-tests/payment-method-basic-card": "skip", 

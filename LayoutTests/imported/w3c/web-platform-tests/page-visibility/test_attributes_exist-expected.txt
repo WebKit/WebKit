@@ -1,0 +1,10 @@
+Description
+
+This test validates that all of the attributes associated with the Page Visibility feature exist (but does not validate that their values are correct).
+
+
+PASS document.hidden is defined and not null. 
+PASS document.visibilityState is defined and not null. 
+PASS document.hidden is defined. 
+PASS document.visibilityState is defined. 
+

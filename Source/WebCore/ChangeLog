@@ -1,3 +1,32 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        visibilitychange:hidden doesn't fire during page navigations
+        https://bugs.webkit.org/show_bug.cgi?id=151234
+        <rdar://problem/23688763>
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        Fire a visibilitychange during document unload, as per the specification:
+        - https://www.w3.org/TR/page-visibility/#reacting-to-visibilitychange-changes
+        - https://html.spec.whatwg.org/multipage/browsing-the-web.html#unloading-document-visibility-change-steps
+
+        Tests: imported/w3c/web-platform-tests/page-visibility/idlharness.window.html
+               imported/w3c/web-platform-tests/page-visibility/iframe-unload.html
+               imported/w3c/web-platform-tests/page-visibility/onvisibilitychange.html
+               imported/w3c/web-platform-tests/page-visibility/test_attributes_exist.html
+               imported/w3c/web-platform-tests/page-visibility/test_child_document.html
+               imported/w3c/web-platform-tests/page-visibility/test_default_view.html
+               imported/w3c/web-platform-tests/page-visibility/test_read_only.html
+               imported/w3c/web-platform-tests/page-visibility/unload-bubbles.html
+               imported/w3c/web-platform-tests/page-visibility/unload.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityState const):
+        * dom/Document.h:
+        (WebCore::Document::setIsUnloadingOrUnloaded):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+
 2020-09-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         make_names.pl no longer needs C preprocessor

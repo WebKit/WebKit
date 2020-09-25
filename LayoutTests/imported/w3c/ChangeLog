@@ -1,3 +1,16 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        visibilitychange:hidden doesn't fire during page navigations
+        https://bugs.webkit.org/show_bug.cgi?id=151234
+        <rdar://problem/23688763>
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        Import page-visibility WPT tests from upstream.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/page-visibility/*: Added.
+
 2020-09-25  Frederic Wang  <fwang@igalia.com>
 
         Bug 216702 - Implement the CSS math-style property
