@@ -58,8 +58,7 @@ void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize con
 
     m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
     [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
-    m_videoInlineFrame = CGRectMake(0, 0, contentSize.width(), contentSize.height());
-    [m_videoInlineLayer setFrame:m_videoInlineFrame];
+    [m_videoInlineLayer setFrame:CGRectMake(0, 0, contentSize.width(), contentSize.height())];
     [m_videoInlineLayer setContentsGravity:kCAGravityResizeAspect];
     if (PAL::isAVFoundationFrameworkAvailable() && [videoLayer isKindOfClass:PAL::getAVPlayerLayerClass()])
         [m_videoInlineLayer setPlayerLayer:(AVPlayerLayer *)videoLayer];
@@ -71,9 +70,19 @@ void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize con
     } else
 #endif
     {
-        [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
         [m_videoLayer setFrame:m_videoInlineLayer.get().bounds];
+        [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
     }
+}
+
+void VideoLayerManagerObjC::didDestroyVideoLayer()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    [m_videoLayer removeFromSuperlayer];
+
+    m_videoInlineLayer = nil;
+    m_videoLayer = nil;
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -105,8 +114,8 @@ void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscre
             [m_videoInlineLayer setContents:(__bridge id)currentImage.get()];
 
         if (m_videoFullscreenLayer) {
-            [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
             [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+            [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
         } else if (m_videoInlineLayer) {
             [m_videoLayer setFrame:[m_videoInlineLayer bounds]];
             [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
@@ -144,16 +153,6 @@ void VideoLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFullscreenFra
 }
 
 #endif
-
-void VideoLayerManagerObjC::didDestroyVideoLayer()
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    [m_videoLayer removeFromSuperlayer];
-
-    m_videoInlineLayer = nil;
-    m_videoLayer = nil;
-}
 
 bool VideoLayerManagerObjC::requiresTextTrackRepresentation() const
 {

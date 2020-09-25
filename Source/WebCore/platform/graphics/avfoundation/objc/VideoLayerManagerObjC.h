@@ -46,15 +46,16 @@ public:
     VideoLayerManagerObjC(const Logger&, const void*);
 
     PlatformLayer *videoInlineLayer() const { return m_videoInlineLayer.get(); }
+
     void setVideoLayer(PlatformLayer *, IntSize contentSize);
     void didDestroyVideoLayer();
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     PlatformLayer *videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
-    FloatRect videoFullscreenFrame() const { return m_videoFullscreenFrame; }
     void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler, NativeImagePtr);
-    void updateVideoFullscreenInlineImage(NativeImagePtr);
+    FloatRect videoFullscreenFrame() const { return m_videoFullscreenFrame; }
     void setVideoFullscreenFrame(FloatRect);
+    void updateVideoFullscreenInlineImage(NativeImagePtr);
 #endif
 
     bool requiresTextTrackRepresentation() const;
@@ -70,13 +71,13 @@ private:
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 
-    RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
     RetainPtr<WebVideoContainerLayer> m_videoInlineLayer;
-    FloatRect m_videoInlineFrame;
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     FloatRect m_videoFullscreenFrame;
 #endif
+    RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
+
     RetainPtr<PlatformLayer> m_videoLayer;
 };
 
